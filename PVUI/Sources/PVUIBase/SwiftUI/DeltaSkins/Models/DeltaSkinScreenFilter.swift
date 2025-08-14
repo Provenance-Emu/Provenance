@@ -8,7 +8,7 @@ public class DeltaSkinScreenFilter {
     public let filter: CIFilter
     public let center: CGPoint?
     public let radius: CGFloat
-    
+
     /// Metadata for additional information (display name, identifier, etc.)
     public var metadata: [String: Any] = [:]
 
@@ -50,6 +50,22 @@ public class DeltaSkinScreenFilter {
                     filter.setValue(CIColor(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b)), forKey: key)
                 case .rectangle(let x, let y, let width, let height):
                     filter.setValue(CIVector(x: CGFloat(x), y: CGFloat(y), z: CGFloat(width), w: CGFloat(height)), forKey: key)
+                case .affineTransform(scaleX: let scaleX, scaleY: let scaleY, translateX: let translateX, translateY: let translateY, rotation: let rotation):
+                    var transform = CGAffineTransform.identity
+                    let sx = CGFloat(scaleX ?? 1)
+                    let sy = CGFloat(scaleY ?? 1)
+                    if sx != 1 || sy != 1 {
+                        transform = transform.scaledBy(x: sx, y: sy)
+                    }
+                    if let r = rotation {
+                        transform = transform.rotated(by: CGFloat(r))
+                    }
+                    let tx = CGFloat(translateX ?? 0)
+                    let ty = CGFloat(translateY ?? 0)
+                    if tx != 0 || ty != 0 {
+                        transform = transform.translatedBy(x: tx, y: ty)
+                    }
+                    filter.setValue(NSValue(cgAffineTransform: transform), forKey: key)
                 }
             }
         }
@@ -93,5 +109,3 @@ public class DeltaSkinScreenFilter {
         }
     }
 }
-
-
