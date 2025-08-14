@@ -480,43 +480,23 @@ public struct DeltaSkin: DeltaSkinProtocol {
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            // Decode optional fields
-            resizable = try container.decodeIfPresent(String.self, forKey: .resizable)
-            small = try container.decodeIfPresent(String.self, forKey: .small)
-            medium = try container.decodeIfPresent(String.self, forKey: .medium)
-            large = try container.decodeIfPresent(String.self, forKey: .large)
-
-            // Validate that we have at least one asset
-            if resizable == nil && small == nil && medium == nil && large == nil {
-                throw DecodingError.dataCorrupted(
-                    DecodingError.Context(
-                        codingPath: decoder.codingPath,
-                        debugDescription: "Asset must have at least one size"
-                    )
-                )
+            // Decode optional fields and sanitize empty/whitespace values to nil
+            func clean(_ s: String?) -> String? {
+                guard let t = s?.trimmingCharacters(in: .whitespacesAndNewlines), !t.isEmpty else { return nil }
+                return t
             }
+            let rawResizable = try container.decodeIfPresent(String.self, forKey: .resizable)
+            let rawSmall = try container.decodeIfPresent(String.self, forKey: .small)
+            let rawMedium = try container.decodeIfPresent(String.self, forKey: .medium)
+            let rawLarge = try container.decodeIfPresent(String.self, forKey: .large)
 
-            // If resizable is present, ensure it's a PDF or PNG
-            if let resizable = resizable,
-               !resizable.hasSuffix(".pdf") && !resizable.hasSuffix(".png") {
-                throw DecodingError.dataCorrupted(
-                    DecodingError.Context(
-                        codingPath: decoder.codingPath,
-                        debugDescription: "Resizable asset must be a PDF or PNG file"
-                    )
-                )
-            }
+            resizable = clean(rawResizable)
+            small = clean(rawSmall)
+            medium = clean(rawMedium)
+            large = clean(rawLarge)
 
-            // If size-specific assets are present, ensure they're PNGs
-            let pngAssets = [small, medium, large].compactMap { $0 }
-            if !pngAssets.isEmpty && !pngAssets.allSatisfy({ $0.hasSuffix(".png") }) {
-                throw DecodingError.dataCorrupted(
-                    DecodingError.Context(
-                        codingPath: decoder.codingPath,
-                        debugDescription: "Size-specific assets must be PNG files"
-                    )
-                )
-            }
+            // Do not hard-fail on missing or invalid asset names here.
+            // Validation and fallbacks are handled in toRepresentationInfo().
         }
 
         init(resizable: String?, small: String?, medium: String?, large: String?) {
@@ -693,8 +673,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
     public struct FilterInfo: Codable {
         public let name: String
         public let parameters: [String: FilterParameter]
-        
-        public init(name: String, parameters: [String: FilterParameter]) {
+
+        public init(name: String, parameters: [String: FilterParameter] = [:]) {
             self.name = name
             self.parameters = parameters
         }
@@ -706,7 +686,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             name = try container.decode(String.self, forKey: .name)
-            let rawParameters = try container.decode([String: FilterParameter].self, forKey: .parameters)
+            let rawParameters = try container.decodeIfPresent([String: FilterParameter].self, forKey: .parameters) ?? [:]
 
             // Sanitize parameters during decoding
             if name == "CIGaussianBlur" {
@@ -747,7 +727,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
         /// Frame for the game screen
         public let gameScreenFrame: CGRect?
-        
+
         public init(assets: AssetRepresentation, mappingSize: CGSize = .zero, translucent: Bool? = nil, screens: [ScreenInfo]? = nil, items: [ItemRepresentation]? = nil, extendedEdges: UIEdgeInsets? = nil, gameScreenFrame: CGRect? = nil) {
             self.assets = assets
             self.mappingSize = mappingSize
