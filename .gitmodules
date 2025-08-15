@@ -193,3 +193,6 @@
 [submodule "Cores/Citra/emuThreeDS"]
 	path = Cores/Citra/azahar
 	url = https://github.com/Provenance-Emu/emuThreeDS.git
+[submodule "Cores/Mednafen/ThirdParty/libchdr"]
+	path = Cores/Mednafen/ThirdParty/libchdr
+	url = https://github.com/rtissera/libchdr
