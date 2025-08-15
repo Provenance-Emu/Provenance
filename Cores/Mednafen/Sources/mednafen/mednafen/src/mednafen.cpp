@@ -104,7 +104,7 @@ static const MDFNSetting MednafenSettings[] =
   { "netplay.nick", MDFNSF_NOFLAGS, gettext_noop("Nickname."), gettext_noop("Nickname to use for network play chat."), MDFNST_STRING, "" },
   { "netplay.gamekey", MDFNSF_NOFLAGS, gettext_noop("Key to hash with the MD5 hash of the game."), NULL, MDFNST_STRING, "" },
 
-  { "srwframes", MDFNSF_NOFLAGS, gettext_noop("Number of frames to keep states for when state rewinding is enabled."), 
+  { "srwframes", MDFNSF_NOFLAGS, gettext_noop("Number of frames to keep states for when state rewinding is enabled."),
 	gettext_noop("Caution: Setting this to a large value may cause excessive RAM usage in some circumstances, such as with games that stream large volumes of data off of CDs."), MDFNST_UINT, "600", "10", "99999" },
 
   { "cd.image_memcache", MDFNSF_NOFLAGS, gettext_noop("Cache entire CD images in memory."), gettext_noop("Reads the entire CD image(s) into memory at startup(which will cause a small delay).  Can help obviate emulation hiccups due to emulated CD access.  May cause more harm than good on low memory systems, systems with swap enabled, and/or when the disc images in question are on a fast SSD.\n\nCaution: When using a 32-bit build of Mednafen on Windows or a 32-bit operating system, Mednafen may run out of address space(and error out, possibly in the middle of emulation) if this option is enabled when loading large disc sets(e.g. 3+ discs) via M3U files."), MDFNST_BOOL, "0" },
@@ -293,7 +293,7 @@ static std::vector<CDInterface *> CDInterfaces;
 
 struct DriveMediaStatus
 {
- uint32 state_idx = 0; 
+ uint32 state_idx = 0;
  uint32 media_idx = 0;
  uint32 orientation_idx = 0;
 };
@@ -881,7 +881,7 @@ static MDFN_COLD void LoadCustomPalette(VirtualFS* vfs)
    {
     std::unique_ptr<Stream> fp(vfs->open(cpal_path, VirtualFS::MODE_READ));
     const uint64 fpsz = fp->size();
-   
+
     for(auto vec = cpi->valid_entry_count; *vec; vec++)
     {
      if(fpsz == *vec * 3)
@@ -994,7 +994,7 @@ static MDFN_COLD void LoadCommonPost(const std::string& fbase_name, GameFile* gf
 	MDFNI_SetLayerEnableMask(~0ULL);
 
 	#ifdef WANT_DEBUGGER
-	MDFNDBG_PostGameLoad(); 
+	MDFNDBG_PostGameLoad();
 	#endif
 
 	MDFNSS_CheckStates();
@@ -1068,7 +1068,7 @@ static MDFN_COLD const MDFNGI* FindCompatibleModule(const char* force_module, Ga
    if(!MDFN_GetSettingB(tmpstr))
    {
     MDFN_printf(_("Skipping module \"%s\" per \"%s\" setting.\n"), gi->shortname, tmpstr);
-    continue; 
+    continue;
    }
 
    if(gf)
@@ -1404,11 +1404,12 @@ MDFNGI *MDFNI_LoadGame(const char *force_module, VirtualFS* vfs, const char* pat
  }
  catch(std::exception &e)
  {
+  printf("MDFNI_LoadGame: Error: %s\n", e.what());
   MDFN_Notify(MDFN_NOTICE_ERROR, "%s", e.what());
 
   Cleanup();
 
-  return NULL;
+  throw e;
  }
 
  return MDFNGameInfo;
@@ -1658,7 +1659,7 @@ bool MDFNI_SaveSettings(const char* path)
  {
   MDFN_Notify(MDFN_NOTICE_ERROR, "%s", e.what());
   return false;
- } 
+ }
  return true;
 }
 
@@ -1713,7 +1714,7 @@ static void ProcessAudio(EmulateSpecStruct *espec)
 
    if(MDFNGameInfo->soundchan == 1)
    {
-    for(int x = 0; x < (slen / 2); x++)    
+    for(int x = 0; x < (slen / 2); x++)
     {
      int16 cha = yaybuf[slen - x - 1];
      yaybuf[slen - x - 1] = yaybuf[x];
@@ -1784,7 +1785,7 @@ static void ProcessAudio(EmulateSpecStruct *espec)
       ff_resampler.buffer()[i * 2] = SoundBuf[i];
       ff_resampler.buffer()[i * 2 + 1] = 0;
      }
-    }   
+    }
     ff_resampler.write(SoundBufSize * 2);
 
     int avail = ff_resampler.avail();
@@ -2187,7 +2188,7 @@ void MDFN_printf(const char *format, ...) noexcept
  }
 
  format_temp = (char *)malloc(newlen + 1); // Length + NULL character, duh
- 
+
  // Now, construct our format_temp string
  lastchar = lastchar_backup; // Restore lastchar
  for(newlen=x=0;x<strlen(format);x++)
@@ -2320,7 +2321,7 @@ void MDFNI_ToggleDIP(int which)
 void MDFNI_InsertCoin(void)
 {
  assert(MDFNGameInfo);
- 
+
  MDFN_QSimpleCommand(MDFN_MSC_INSERT_COIN);
 }
 
@@ -2405,7 +2406,7 @@ static bool ValidateDMS(const std::vector<DriveMediaStatus>& dms)
 
 /* Normal chain:
 
-   MDFNI_SetMedia() 
+   MDFNI_SetMedia()
       NetplaySendCommand()
       MDFNMOVAddCommand()
       MDFN_UntrustedSetMedia()

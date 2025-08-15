@@ -56,6 +56,22 @@ private:
   int32 total_frames = 0;   // total sectors/frames
 
   CDUtility::TOC toc;       // parsed TOC
+
+  // Per-track mapping derived from CHD metadata (frame-based, not bytes)
+  struct TrackMap
+  {
+    int32 lba = 0;          // logical start LBA of the track
+    int32 sectors = 0;      // number of logical sectors in the track (excludes pregap_dv)
+    int32 file_offset = 0;  // CHD frame index where this track's index 00/01 data begins
+    uint8 control = 0;      // SUBQ control flags
+    bool  audio_msb_first = false; // true for AUDIO tracks (16-bit big-endian samples)
+    uint8 di_format = 0;    // simplified: 0 = AUDIO, 1 = DATA
+    int32 pregap = 0;       // fixed pregap contributing to LBA (e.g., 150 for track 1)
+    int32 pregap_dv = 0;    // variable pregap present only in file layout
+    int32 postgap = 0;      // postgap sectors present only in file layout
+  };
+
+  TrackMap track_map[101]; // 1..99, 100 leadout copy
 };
 
 }
