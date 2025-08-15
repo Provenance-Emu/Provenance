@@ -658,6 +658,7 @@ static const std::vector<FileExtensionSpecStruct> KnownCDExtensions =
  { ".ccd", -50, "CloneCD" },
  { ".cue", -60, "CUE" },
  { ".toc", -70, "cdrdao TOC" },
+ { ".chd", -80, "CHD" },
 };
 
 static MDFN_COLD void OpenCD(const bool image_memcache, const uint64 affinity, const uint32 m3u_recursion_limit, const uint32 m3u_disc_limit, std::vector<M3U_ListEntry> &file_list, size_t* default_cd, unsigned depth,

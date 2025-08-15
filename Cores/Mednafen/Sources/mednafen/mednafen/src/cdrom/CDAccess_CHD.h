@@ -50,6 +50,7 @@ private:
 
   uint32 bytes_per_hunk = 0;
   uint32 bytes_per_frame = 0;  // 2352 or 2448 typically
+  uint32 frames_per_hunk = 0;  // derived from header: hunkbytes / unitbytes
   bool   subcode_included = false; // true if bytes_per_frame >= 2448
 
   int32 total_frames = 0;   // total sectors/frames
