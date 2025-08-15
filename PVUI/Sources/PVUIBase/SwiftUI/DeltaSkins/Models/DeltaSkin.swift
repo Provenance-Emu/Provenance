@@ -202,21 +202,52 @@ public struct DeltaSkin: DeltaSkinProtocol {
             throw DeltaSkinError.unsupportedTraits
         }
 
-        // Load the asset data
-        let assetData = try loadAssetData(rep.assets.filename)
-        let preserveTransparency = rep.translucent ?? false
+        // Try all candidate filenames in order until one loads
+        let candidates = rep.assets.candidates()
+        var lastError: Error?
+        for name in candidates {
+            do {
+                let data = try loadAssetData(name)
+                let lower = name.lowercased()
+                if lower.hasSuffix(".pdf") {
+                    if let image = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false) {
+                        return image
+                    } else {
+                        lastError = DeltaSkinError.invalidPDF
+                        continue
+                    }
+                } else {
+                    if let image = UIImage(data: data, scale: UIScreen.main.scale) {
+                        return image
+                    } else {
+                        lastError = DeltaSkinError.invalidPNG
+                        continue
+                    }
+                }
+            } catch {
+                ELOG("Failed to load asset candidate: \(name) — \(error)")
+                lastError = error
+                continue
+            }
+        }
 
-        // Create image from data
-        if rep.assets.filename.hasSuffix(".pdf") {
-            guard let image = UIImage(pdfData: assetData, preserveTransparency: preserveTransparency) else {
-                throw DeltaSkinError.invalidPDF
+        // Fallback: try the original filename property (legacy behavior)
+        do {
+            let assetData = try loadAssetData(rep.assets.filename)
+            let lower = rep.assets.filename.lowercased()
+            if lower.hasSuffix(".pdf") {
+                guard let image = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false) else {
+                    throw DeltaSkinError.invalidPDF
+                }
+                return image
+            } else {
+                guard let image = UIImage(data: assetData, scale: UIScreen.main.scale) else {
+                    throw DeltaSkinError.invalidPNG
+                }
+                return image
             }
-            return image
-        } else {
-            guard let image = UIImage(data: assetData, scale: UIScreen.main.scale) else {
-                throw DeltaSkinError.invalidPNG
-            }
-            return image
+        } catch {
+            throw lastError ?? error
         }
     }
 
@@ -449,6 +480,18 @@ public struct DeltaSkin: DeltaSkinProtocol {
             case .medium: return medium
             case .large: return large
             }
+        }
+
+        /// Candidate filenames in priority order, de-duplicated
+        func candidates() -> [String] {
+            var list: [String] = []
+            if let r = resizable { list.append(r) }
+            if let l = large { list.append(l) }
+            if let m = medium { list.append(m) }
+            if let s = small { list.append(s) }
+            // De-duplicate while preserving order
+            var seen = Set<String>()
+            return list.filter { seen.insert($0).inserted }
         }
 
         /// The filename to use for this asset

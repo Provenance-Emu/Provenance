@@ -1073,18 +1073,21 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Handle reconnection event when the menu is dismissed
+    @MainActor
     @objc private func handleReconnectEvent() {
         DLOG("DeltaSkinInputHandler handling reconnect event")
         performReconnection()
     }
 
     /// Handle skin change event
+    @MainActor
     @objc private func handleSkinChangeEvent() {
         DLOG("DeltaSkinInputHandler handling skin change event")
         performReconnection()
     }
 
     /// Common logic to reconnect and reset state
+    @MainActor
     private func performReconnection() {
         // Refresh emulator core reference on the main thread
         DispatchQueue.main.async { [weak self] in
