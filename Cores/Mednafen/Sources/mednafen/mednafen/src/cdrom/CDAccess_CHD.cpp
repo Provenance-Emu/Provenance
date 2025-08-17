@@ -118,7 +118,7 @@ CDAccess_CHD::CDAccess_CHD(VirtualFS* vfs, const std::string& path, bool /*image
   bytes_per_hunk = hd->hunkbytes;  // decompressed bytes per hunk
   // Prefer unitbytes from header when available (matches Beetle-PSX mapping)
 #if CHD_HEADER_VERSION >= 3
-  if (hd->unitbytes)
+  if (hd->unitbytes == 2352 || hd->unitbytes == 2448)
   {
     bytes_per_frame = hd->unitbytes;
     frames_per_hunk = bytes_per_hunk / bytes_per_frame;
@@ -145,7 +145,7 @@ CDAccess_CHD::CDAccess_CHD(VirtualFS* vfs, const std::string& path, bool /*image
     {
       chd_close(chd);
       chd = nullptr;
-      throw MDFN_Error(0, _("Unsupported CHD layout: hunkbytes=%u not divisible by 2352 or 2448"), (unsigned)bytes_per_hunk);
+      throw MDFN_Error(0, _("Unsupported CHD layout: unitbytes=%u hunkbytes=%u not compatible with 2352/2448"), (unsigned)hd->unitbytes, (unsigned)bytes_per_hunk);
     }
   }
 
@@ -372,6 +372,18 @@ void CDAccess_CHD::Read_Raw_Sector(uint8* buf, int32 lba)
   const uint32 cad = (uint32)((int32)lba - (int32)tm.lba) + (uint32)tm.file_offset;
   const uint32 hunknum = cad / frames_per_hunk;
   const uint32 hunkofs = (cad % frames_per_hunk) * bytes_per_frame;
+
+  // Sanity checks to avoid out-of-bounds reads on malformed/odd CHDs
+  if (frames_per_hunk == 0)
+  {
+    throw MDFN_Error(0, _("Invalid CHD layout: frames_per_hunk computed as 0 (hunkbytes=%u, bpf=%u)"), (unsigned)bytes_per_hunk, (unsigned)bytes_per_frame);
+  }
+  if ((uint64)hunkofs + (uint64)bytes_per_frame > (uint64)bytes_per_hunk)
+  {
+    throw MDFN_Error(0, _("CHD hunk offset overflow: hunkofs=%u bpf=%u hunkbytes=%u (cad=%u, hunknum=%u, fph=%u)"),
+                     (unsigned)hunkofs, (unsigned)bytes_per_frame, (unsigned)bytes_per_hunk,
+                     (unsigned)cad, (unsigned)hunknum, (unsigned)frames_per_hunk);
+  }
 
 //  if (lba >= 0 && lba < 150)
 //  {
