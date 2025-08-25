@@ -1156,8 +1156,8 @@ private struct DeltaSkinsSection: View {
             PaidFeatureView {
                 buttonTouchFeedback
             } lockedView: {
-                SettingsRow(title: "Button Sound Effect",
-                            subtitle: "Unlock to select a button sound effect.",
+                SettingsRow(title: "Button Effect Style",
+                            subtitle: "Unlock to select a button effect style.",
                             icon: .sfSymbol("lock.fill"))
             }
         }
