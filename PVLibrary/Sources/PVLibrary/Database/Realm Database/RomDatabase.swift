@@ -37,7 +37,16 @@ public final class RealmConfiguration {
 #if targetEnvironment(macCatalyst)
         return false
 #else
-        return !PVAppGroupId.isEmpty && RealmConfiguration.appGroupContainer != nil
+        guard !PVAppGroupId.isEmpty, let container = RealmConfiguration.appGroupContainer else {
+            return false
+        }
+        let path = container.path
+        let fm = FileManager.default
+        if fm.isReadableFile(atPath: path) {
+            return true
+        } else {
+            return false
+        }
 #endif
     }
 
