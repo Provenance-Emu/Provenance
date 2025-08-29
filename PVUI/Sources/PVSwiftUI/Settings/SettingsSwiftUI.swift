@@ -325,6 +325,7 @@ struct SettingsRow: View {
                         .font(.caption)
                         .foregroundColor(Color.gray.opacity(0.8))
                         .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                 }
             }
 
@@ -973,7 +974,7 @@ private struct LibrarySection2: View {
                     // Cloud Sync Settings
                     NavigationLink(destination: CloudSyncSettingsView()) {
                         SettingsRow(title: "Cloud Sync Settings",
-                                     subtitle: "Manage CloudKit and iCloud Drive sync settings",
+                                     subtitle: "Manage CloudKit and iCloud Drive sync settings.",
                                      icon: .sfSymbol("icloud"))
                     }
                 }  lockedView: {
@@ -986,7 +987,7 @@ private struct LibrarySection2: View {
 
             NavigationLink(destination: BatchArtworkMatchingView()) {
                 SettingsRow(title: "Batch Artwork Matcher",
-                            subtitle: "Find and apply artwork for multiple games at once",
+                            subtitle: "Find and apply artwork for multiple games at once.",
                             icon: .sfSymbol("photo.on.rectangle.angled"))
             }
 
