@@ -234,7 +234,6 @@
 		70E8900EBB344463A618F2AC /* NSError+ALTServerError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB5313B7F1A45BF87FEDCDB /* NSError+ALTServerError.m */; };
 		717C70BEF4E440C18493BBFA /* FpAddTruncate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC476DD57FFE4A8B9506AE26 /* FpAddTruncate.cpp */; };
 		740FE2529B5A409F970ED97E /* MdsDiscImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2855D5890A0140C5BD8F31B0 /* MdsDiscImage.cpp */; };
-		757E6180C39E492C9D5C5FC0 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B2C2DADE6A604A60AFE82567 /* zutil.c */; };
 		75E9C6CD3A784C6688F40F0E /* Iop_Loadcore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE3B4055F75C4B1E8EEA83D4 /* Iop_Loadcore.cpp */; };
 		7614EFDD2E314E74997ADB8E /* GSH_OpenGLiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03170F4790544207AFD69E7C /* GSH_OpenGLiOS.cpp */; };
 		766EAA7ADFF14073A49D0CEF /* MIPSInstructionFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF8D3E4142740869B9584ED /* MIPSInstructionFactory.cpp */; };
@@ -297,6 +296,7 @@
 		91F58FFCFF0549B58B929C4B /* Iop_Dmac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA3DE5279354B23801C4B89 /* Iop_Dmac.cpp */; };
 		922036D795864472A47BB701 /* ArcadeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A25BBBB0B684D6A80B154FD /* ArcadeUtils.cpp */; };
 		935165A0E1A6497089586A95 /* AArch64Assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C769BA3EAFD8452AB664F19A /* AArch64Assembler.cpp */; };
+		9397438A2E62D5E500B9CE60 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 939743892E62D5E500B9CE60 /* zutil.c */; };
 		94A5A94F6039471E8DCBDF70 /* VirtualPadButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = C7F5EF42E54F4386A119FA16 /* VirtualPadButton.mm */; };
 		950ACA5522F146FF95516A9A /* Iop_Sysmem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFC5726D81A541C1AD16653E /* Iop_Sysmem.cpp */; };
 		95BF463918FE4A0FBC2E5B12 /* Iop_PowerOff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 170466A632864670A3E41B0B /* Iop_PowerOff.cpp */; };
@@ -1826,6 +1826,7 @@
 		931725894FA247508394B125 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/Source/ui_ios/Source/FrameworkAmazon/CMakeFiles/Framework_Amazon.dir/Info.plist; sourceTree = "<absolute>"; };
 		93573D943C1D4805BB709664 /* IPU_MacroblockAddressIncrementTable.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IPU_MacroblockAddressIncrementTable.h; path = Source/ee/IPU_MacroblockAddressIncrementTable.h; sourceTree = SOURCE_ROOT; };
 		938B0516F9DA43CDB3614676 /* StallTest5.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest5.h; path = tools/VuTest/StallTest5.h; sourceTree = SOURCE_ROOT; };
+		939743892E62D5E500B9CE60 /* zutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = zutil.c; path = ../PVPlayCore/deps/zutil.c; sourceTree = "<group>"; };
 		9397841B16994ED1A1E543ED /* RegAllocTempTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = RegAllocTempTest.h; path = deps/CodeGen/tests/RegAllocTempTest.h; sourceTree = SOURCE_ROOT; };
 		93AB00611C484D6997F09504 /* CoverViewCell.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CoverViewCell.h; path = Source/ui_ios/CoverViewCell.h; sourceTree = SOURCE_ROOT; };
 		93C43084732C45EEAF56C788 /* OpticalMedia.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = OpticalMedia.cpp; path = Source/OpticalMedia.cpp; sourceTree = SOURCE_ROOT; };
@@ -4439,6 +4440,7 @@
 		D9C78FF150234E13BCCC20D2 = {
 			isa = PBXGroup;
 			children = (
+				939743892E62D5E500B9CE60 /* zutil.c */,
 				B3EA207A2BDDD867003D0239 /* Play.xcconfig */,
 				B3ABAEF92BCCF8A500D77B8C /* Loader.cpp */,
 				AF5F881E94E741A98B0788E6 /* ALL_BUILD */,
@@ -5552,7 +5554,7 @@
 				6AA00B0E6F7247B88FA9E93D /* inftrees.c in Sources */,
 				C61086441A9943A4B622388B /* trees.c in Sources */,
 				A3E04E8C37A6464286A7E536 /* uncompr.c in Sources */,
-				757E6180C39E492C9D5C5FC0 /* zutil.c in Sources */,
+				9397438A2E62D5E500B9CE60 /* zutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

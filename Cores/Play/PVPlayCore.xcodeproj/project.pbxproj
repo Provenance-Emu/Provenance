@@ -503,6 +503,7 @@
 		9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Cheats.mm"; sourceTree = "<group>"; };
 		936FDBA72957F9080073628A /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Play.dylib; path = lib/libMoltenVK_Play.dylib; sourceTree = "<group>"; };
+		939743872E62D53300B9CE60 /* zutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
 		939B190D2948A59C0024133A /* GSH_VulkanPlatformDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GSH_VulkanPlatformDefs.h; sourceTree = "<group>"; };
 		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		939B194929490A820024133A /* CGSH_MTLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGSH_MTLViewController.swift; sourceTree = "<group>"; };
@@ -1821,6 +1822,14 @@
 				9360C579294CB5E6000322B9 /* sub.c */,
 			);
 			path = low_level_funcs;
+			sourceTree = "<group>";
+		};
+		939743882E62D53300B9CE60 /* deps */ = {
+			isa = PBXGroup;
+			children = (
+				939743872E62D53300B9CE60 /* zutil.c */,
+			);
+			path = deps;
 			sourceTree = "<group>";
 		};
 		93BCC5FD2A9E135200641E90 /* Play */ = {
@@ -4062,6 +4071,7 @@
 		B3C762202078327B009950E4 /* PVPlayCore */ = {
 			isa = PBXGroup;
 			children = (
+				939743882E62D53300B9CE60 /* deps */,
 				93BCC5FD2A9E135200641E90 /* Play */,
 				B3447EB5218BCE2000557ACE /* Core */,
 				B3447EA0218B881000557ACE /* PVPlay.mm */,
