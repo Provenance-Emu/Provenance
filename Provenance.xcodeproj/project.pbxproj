@@ -439,6 +439,7 @@
 		93049A882A931E3A00BF257F /* PVMiniVMacRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93049A802A930C6F00BF257F /* PVMiniVMacRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93049A892A931E4E00BF257F /* PVMelonDSRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93049A7E2A930C6000BF257F /* PVMelonDSRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93049A8A2A931E5E00BF257F /* PVDosBoxRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93049A242A9309FB00BF257F /* PVDosBoxRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		93075A652E63DCC600DE8AB3 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B347B39D2BC4CD9E006A3B2D /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93102A4A2A30E879002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A492A30E879002C86C6 /* PVLogging */; };
 		93102A4B2A30E879002C86C6 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93102A492A30E879002C86C6 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93102A4D2A30E955002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A4C2A30E955002C86C6 /* PVLogging */; };
@@ -2610,7 +2611,6 @@
 		B3FAC935292B451E005E8B11 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; };
 		B3FAC936292B451F005E8B11 /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC937292B4585005E8B11 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
-		B3FAC938292B4586005E8B11 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC939292B4588005E8B11 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; };
 		B3FAC93A292B4589005E8B11 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC941292B4593005E8B11 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
@@ -2984,10 +2984,10 @@
 				93DB7D422A750AE5005F8B26 /* libavutil.framework in Embed Frameworks */,
 				93DB7D432A750AE7005F8B26 /* libswresample.framework in Embed Frameworks */,
 				93DB7D442A750AE9005F8B26 /* libswscale.framework in Embed Frameworks */,
+				93075A652E63DCC600DE8AB3 /* PVLibRetro.framework in Embed Frameworks */,
 				93DC577F2A3582C4008645AB /* libMoltenVK_PPSSPP.dylib in Embed Frameworks */,
 				936FDBEC295855A50073628A /* libMoltenVK_Play.dylib in Embed Frameworks */,
 				B3FAC92A292B4505005E8B11 /* PVFCEU.framework in Embed Frameworks */,
-				939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */,
 				B3FAC93A292B4589005E8B11 /* PVMednafen.framework in Embed Frameworks */,
 				B3FAC952292B45A9005E8B11 /* PVSNES.framework in Embed Frameworks */,
 				B3FAC94E292B45A4005E8B11 /* PVPotator.framework in Embed Frameworks */,
@@ -3001,7 +3001,6 @@
 				B3AEDE1D293F2FF10050BDB6 /* PVPlay.framework in Embed Frameworks */,
 				B3AF701421916C3A000FA7F9 /* PVLibrary.framework in Embed Frameworks */,
 				B3AEDE23293F34380050BDB6 /* PVCrabEmu.framework in Embed Frameworks */,
-				B3FAC938292B4586005E8B11 /* PVLibRetro.framework in Embed Frameworks */,
 				93102A512A30E97C002C86C6 /* PVLogging in Embed Frameworks */,
 				B3FAC934292B451B005E8B11 /* PVGenesis.framework in Embed Frameworks */,
 				B3FAC950292B45A7005E8B11 /* PVRSPCXD4.framework in Embed Frameworks */,
@@ -3023,6 +3022,7 @@
 				B3FAC948292B459C005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3DEEF932942F92C00A6957C /* PVBliss.framework in Embed Frameworks */,
 				B3FAC942292B4593005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
+				939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
