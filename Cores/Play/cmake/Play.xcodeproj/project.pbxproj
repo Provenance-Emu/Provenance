@@ -33,7 +33,6 @@
 		0BB995B9C2A7471C8DA8AC9E /* DctCoefficientTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A0F76706BA44B3823F54CA /* DctCoefficientTable.cpp */; };
 		0CD201685F10455DAE91B940 /* Utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517D71631BD744FB8B9FEAC7 /* Utf8.cpp */; };
 		0CE86E1ED1ED494F836EF669 /* VuBasicBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F53D2C3026C24418B6A6868D /* VuBasicBlock.cpp */; };
-		0D09D1FA336442DF9C2FFBFA /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C147AEA4BD24ECBBB320D98 /* NetworkConnection.swift */; };
 		0D240A85236641D887F189AC /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = 37730E82E97D46089F3DC4D1 /* LzmaEnc.c */; };
 		0D2C86B12BBD4A9BAB7E744B /* HashUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D29E627A0D0245658897EF6F /* HashUtils.cpp */; };
 		0E872457F3424935886730FE /* Iop_Thbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E01141C95A164032BC95452F /* Iop_Thbase.cpp */; };
@@ -90,7 +89,6 @@
 		2D1BCF1B959140C2BC31E82E /* down.png in Resources */ = {isa = PBXBuildFile; fileRef = C656E1C86E224A8DA119D469 /* down.png */; };
 		2D668DF4219D43AFA933A804 /* MacroblockTypeBTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFCBE02552DB419D94A7E44A /* MacroblockTypeBTable.cpp */; };
 		2E104E8056A74F4AA98DC8B7 /* ElfFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C712ED9F30B74056929E09D8 /* ElfFile.cpp */; };
-		2EC10F3E0F9B452A9E446745 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564DA46E7D214AC6A1272C59 /* Connection.swift */; };
 		2F2DF14A80A24C1F90A4C3AC /* DirectoryRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8DD93CF2EAC6465AB0857AA8 /* DirectoryRecord.cpp */; };
 		2F4F8B2CFD794830B4818C3B /* Iop_Modload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFC6295183D4F319B5987B0 /* Iop_Modload.cpp */; };
 		3035BE0FD56649E7949E678D /* Jitter_CodeGen_AArch32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 719CCE9F206E4D669C6D33AF /* Jitter_CodeGen_AArch32_64.cpp */; };
@@ -106,7 +104,6 @@
 		349266675AE24EC49ABA1B1B /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = CCCB9343620D4BB8B87165B3 /* xxhash.c */; };
 		373EED7417844268A69687E4 /* lr.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BB555B262F84998BB0C488F /* lr.png */; };
 		374FB6F1E0A948D2979E7C29 /* zstd_v01.c in Sources */ = {isa = PBXBuildFile; fileRef = 3FEB7D564B2847ABBF51E1EC /* zstd_v01.c */; };
-		37882DE5345A411EBF4A1606 /* ALTServerError+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577D71FD4B4C4211A86FC602 /* ALTServerError+Conveniences.swift */; };
 		37A293F6987542BB939D8858 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 322F0926B2B84A02ABDBEF04 /* gzclose.c */; };
 		381C094DEDE8423D84BD0F74 /* GSH_VulkanDrawMobile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A841B0F7D0E246B3B46E8A03 /* GSH_VulkanDrawMobile.cpp */; };
 		386EDD53CC66400D8D74D4EF /* TheGamesDbClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1486885545B8428EA2C81FE8 /* TheGamesDbClient.cpp */; };
@@ -156,7 +153,6 @@
 		4CB4D32AB5D442F5BA9DFC24 /* libchdr_chd.c in Sources */ = {isa = PBXBuildFile; fileRef = 58BD3EE0FD89420398D70FD0 /* libchdr_chd.c */; };
 		4CF5D737F67A4B89B15E19CD /* RegisterStateCollectionFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 446D7652137040F88A39C581 /* RegisterStateCollectionFile.cpp */; };
 		4D27011C7584432E928574F4 /* S3ObjectStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B84321F5374F4CAE263769 /* S3ObjectStream.cpp */; };
-		4DF1683D103543D29A9AE235 /* ServerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A64687F4AA545E89F860D02 /* ServerManager.swift */; };
 		4E5ED870574F460983B2090A /* zdict.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C634AEEB0A44551A256FDEA /* zdict.c */; };
 		4EC49751C6834F99BC6F1CCD /* ZipFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B94DEB63398D4F65846392C0 /* ZipFile.cpp */; };
 		5001D171541F43E7B2B935EB /* StreamBitStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F03D24E1063442AAAABF92A1 /* StreamBitStream.cpp */; };
@@ -182,7 +178,6 @@
 		569C22C2743349F2BAC634DE /* libchdr_huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 22DDBCF2AB80460F82CE50AC /* libchdr_huffman.c */; };
 		576C84CFFC9447989A6AED22 /* ChdCdImageStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13F025C60FEF4BF086F5B96B /* ChdCdImageStream.cpp */; };
 		58C71AB8DF3C4AA7A82D49A0 /* MacroblockTypePTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA0308814B37430B82412757 /* MacroblockTypePTable.cpp */; };
-		59A453B7030A40B3954FB80F /* ServerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1E4871393B4E26B472E691 /* ServerProtocol.swift */; };
 		5A1CAB149C53421D8B4D3916 /* MacroblockAddressIncrementTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22251B988A7B4C1CBA82099F /* MacroblockAddressIncrementTable.cpp */; };
 		5B15625658A948A98BA0B802 /* VolumeDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F7205E6A8794670A7D8A69E /* VolumeDescriptor.cpp */; };
 		5B8E83F4245C4BFB82F91B79 /* IPU_DmVectorTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0A67516A0C61490CBE4E73DB /* IPU_DmVectorTable.cpp */; };
@@ -199,7 +194,6 @@
 		6059BD6A97C24E27BF9DE6E2 /* Device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3435F8EEC51B42739150A061 /* Device.cpp */; };
 		617DF6C2FFAF48358317EE52 /* Iop_SifMan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1411429FC5724CF09D42BAA6 /* Iop_SifMan.cpp */; };
 		61ABC34F0AD643419179302E /* PathUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBC92F8E2A754C299CFFA634 /* PathUtils.cpp */; };
-		637A9F5867BA484388EA996A /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED31B928DCA84A3CB0E9839A /* Result+Conveniences.swift */; };
 		643A7839AAEE44A8A786A08A /* PsuSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD78CE8ADE264096A4B94FCD /* PsuSaveImporter.cpp */; };
 		64A646B7646F4297B1FA43C5 /* LayoutBaseItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1104D8973A8436585AB5DA4 /* LayoutBaseItem.cpp */; };
 		64DAFF1D5AAE44BB95AE66E9 /* BackgroundLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7A20C3E38424BA42D2AB9 /* BackgroundLayer.m */; };
@@ -231,10 +225,8 @@
 		6F8041E8412D4D5FB21BEB85 /* GlslShaderGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07F79CA937FE4301B84B399E /* GlslShaderGenerator.cpp */; };
 		6FA705977CBF4D04A4ECF787 /* hist.c in Sources */ = {isa = PBXBuildFile; fileRef = 3256A5C61A8646C6B538CEA9 /* hist.c */; };
 		70162080E30A43C2A08E5974 /* GSH_Null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87DCCEEE1C76485E92F59266 /* GSH_Null.cpp */; };
-		70E8900EBB344463A618F2AC /* NSError+ALTServerError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB5313B7F1A45BF87FEDCDB /* NSError+ALTServerError.m */; };
 		717C70BEF4E440C18493BBFA /* FpAddTruncate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC476DD57FFE4A8B9506AE26 /* FpAddTruncate.cpp */; };
 		740FE2529B5A409F970ED97E /* MdsDiscImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2855D5890A0140C5BD8F31B0 /* MdsDiscImage.cpp */; };
-		757E6180C39E492C9D5C5FC0 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B2C2DADE6A604A60AFE82567 /* zutil.c */; };
 		75E9C6CD3A784C6688F40F0E /* Iop_Loadcore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE3B4055F75C4B1E8EEA83D4 /* Iop_Loadcore.cpp */; };
 		7614EFDD2E314E74997ADB8E /* GSH_OpenGLiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03170F4790544207AFD69E7C /* GSH_OpenGLiOS.cpp */; };
 		766EAA7ADFF14073A49D0CEF /* MIPSInstructionFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF8D3E4142740869B9584ED /* MIPSInstructionFactory.cpp */; };
@@ -286,7 +278,6 @@
 		8DED35EE10CB4C8FAC838544 /* libchdr_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 5150A3824563411F9B193C1E /* libchdr_flac.c */; };
 		8E2327AA29B54E258B2D27C8 /* HttpServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F8CA40BEFBE4EE69A3CD657 /* HttpServer.cpp */; };
 		8E71DEC2189A491B8A0E2126 /* huf_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 3225144BF69B46C8B8030E3F /* huf_compress.c */; };
-		8EF07DA54DF74BADA77922FF /* ServerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F270BDC5DC3C4C8BBACBC0F3 /* ServerConnection.swift */; };
 		8F691EDB37C1496F893F6214 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97FFA14AF38B4C70A4633DCF /* Profiler.cpp */; };
 		901498AC3C2547CFB9C9AE21 /* Iop_Spu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B793719AFEE49008AEE18EC /* Iop_Spu.cpp */; };
 		901C73B7E4B741459853E324 /* ChdStreamSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 784CB0AFAD6B434694664443 /* ChdStreamSupport.cpp */; };
@@ -297,6 +288,7 @@
 		91F58FFCFF0549B58B929C4B /* Iop_Dmac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA3DE5279354B23801C4B89 /* Iop_Dmac.cpp */; };
 		922036D795864472A47BB701 /* ArcadeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A25BBBB0B684D6A80B154FD /* ArcadeUtils.cpp */; };
 		935165A0E1A6497089586A95 /* AArch64Assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C769BA3EAFD8452AB664F19A /* AArch64Assembler.cpp */; };
+		9397438A2E62D5E500B9CE60 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 939743892E62D5E500B9CE60 /* zutil.c */; };
 		94A5A94F6039471E8DCBDF70 /* VirtualPadButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = C7F5EF42E54F4386A119FA16 /* VirtualPadButton.mm */; };
 		950ACA5522F146FF95516A9A /* Iop_Sysmem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFC5726D81A541C1AD16653E /* Iop_Sysmem.cpp */; };
 		95BF463918FE4A0FBC2E5B12 /* Iop_PowerOff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 170466A632864670A3E41B0B /* Iop_PowerOff.cpp */; };
@@ -310,7 +302,6 @@
 		9B33683352784EF68A889280 /* Iop_Secrman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71239F6D16BF411D897E2FED /* Iop_Secrman.cpp */; };
 		9BD0C8B0637E4D15BCF76497 /* XpsSaveImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFC457834D10448BBF8368CB /* XpsSaveImporter.cpp */; };
 		9C973D82AFE64078A242A207 /* Vif1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5729CF8DAD67491BBD6F7BFD /* Vif1.cpp */; };
-		9D2C174925EA45A3A41DCF01 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE94FD68FEB49498B5A788A /* Server.swift */; };
 		9EA1B222B8A84CE5B7053658 /* InverseScanTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3720E3C0F184D0DAE29FFE9 /* InverseScanTable.cpp */; };
 		9F529E84A1C549E78543AD09 /* UIView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CE363BC02D4CDC949F80DB /* UIView+WebCache.m */; };
 		9F68A30649CA44939AD287B8 /* zstd_lazy.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B1F893D337649FD9FDABD3C /* zstd_lazy.c */; };
@@ -447,7 +438,6 @@
 		EE18E59C49FC42AEB1775B0A /* Iop_Dmacman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 69B8532F194942C880F4AAF3 /* Iop_Dmacman.cpp */; };
 		EEB55CCE811143CE9FDA4D03 /* AmazonClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC1D2401DEBC4C9C9D832C90 /* AmazonClient.cpp */; };
 		EEEFC158479841AEA9410A7B /* Iop_Ilink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0194C1264EC4F72BAF929E5 /* Iop_Ilink.cpp */; };
-		EF374D54AB164F1EBED7DEB8 /* CodableServerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DB00B82DDB44F5BF1E0019 /* CodableServerError.swift */; };
 		EFD8D5A26958451983086365 /* COP_VU_Reflection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14B07B82960B45EFA227DEE5 /* COP_VU_Reflection.cpp */; };
 		F00275645F5B4AAE972893E1 /* zstd_v04.c in Sources */ = {isa = PBXBuildFile; fileRef = D540093330964DB1BA4D3EEA /* zstd_v04.c */; };
 		F0508B402BAA4311AB54391D /* GSH_VulkanFrameCommandBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66736C1CA8254018A5A5B775 /* GSH_VulkanFrameCommandBuffer.cpp */; };
@@ -777,13 +767,6 @@
 			remoteGlobalIDString = 29109A4C926E409898D7C057;
 			remoteInfo = libzstd_static;
 		};
-		7B1F0951A1954E75AFB56075 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 65F0D33CC304490DB163AC05 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DC86612D5DCC4F0491577B88;
-			remoteInfo = CAltKit;
-		};
 		7CD2B83BA7674F339AAE16ED /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 65F0D33CC304490DB163AC05 /* Project object */;
@@ -938,13 +921,6 @@
 			remoteGlobalIDString = A7C394C304554DFFBD66852F;
 			remoteInfo = Framework;
 		};
-		BE42D19316D6481FBD084740 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 65F0D33CC304490DB163AC05 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DC86612D5DCC4F0491577B88;
-			remoteInfo = CAltKit;
-		};
 		C024EFD0037F4959BE052464 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 65F0D33CC304490DB163AC05 /* Project object */;
@@ -1070,13 +1046,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = A0931A2D00744E07898A5CD3;
 			remoteInfo = PlayCore;
-		};
-		EE63A8735BFB490A8FD22A56 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 65F0D33CC304490DB163AC05 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DB2DF0E4E4494E56AEED493E;
-			remoteInfo = AltKit;
 		};
 		F1687D04284F4B0ABCCAC762 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1509,7 +1478,6 @@
 		508A176AA4D6482787800422 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Source/ui_ios/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		50FDE6E4667D47A18F04E2C2 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Source/gs/GSH_OpenGL/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		5150A3824563411F9B193C1E /* libchdr_flac.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_flac.c; path = deps/libchdr/src/libchdr_flac.c; sourceTree = SOURCE_ROOT; };
-		516169E1EE0443EAA18EE654 /* libCAltKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCAltKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		517D71631BD744FB8B9FEAC7 /* Utf8.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Utf8.cpp; path = deps/Framework/src/Utf8.cpp; sourceTree = SOURCE_ROOT; };
 		51DE42C303B445A8BF1B50AE /* RandomAluTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = RandomAluTest3.cpp; path = deps/CodeGen/tests/RandomAluTest3.cpp; sourceTree = SOURCE_ROOT; };
 		52059DD382714589BF29C810 /* xxhash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xxhash.h; path = deps/Dependencies/zstd/lib/common/xxhash.h; sourceTree = SOURCE_ROOT; };
@@ -1826,6 +1794,7 @@
 		931725894FA247508394B125 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/Source/ui_ios/Source/FrameworkAmazon/CMakeFiles/Framework_Amazon.dir/Info.plist; sourceTree = "<absolute>"; };
 		93573D943C1D4805BB709664 /* IPU_MacroblockAddressIncrementTable.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IPU_MacroblockAddressIncrementTable.h; path = Source/ee/IPU_MacroblockAddressIncrementTable.h; sourceTree = SOURCE_ROOT; };
 		938B0516F9DA43CDB3614676 /* StallTest5.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest5.h; path = tools/VuTest/StallTest5.h; sourceTree = SOURCE_ROOT; };
+		939743892E62D5E500B9CE60 /* zutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = zutil.c; path = ../PVPlayCore/deps/zutil.c; sourceTree = "<group>"; };
 		9397841B16994ED1A1E543ED /* RegAllocTempTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = RegAllocTempTest.h; path = deps/CodeGen/tests/RegAllocTempTest.h; sourceTree = SOURCE_ROOT; };
 		93AB00611C484D6997F09504 /* CoverViewCell.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CoverViewCell.h; path = Source/ui_ios/CoverViewCell.h; sourceTree = SOURCE_ROOT; };
 		93C43084732C45EEAF56C788 /* OpticalMedia.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = OpticalMedia.cpp; path = Source/OpticalMedia.cpp; sourceTree = SOURCE_ROOT; };
@@ -1854,7 +1823,6 @@
 		973055BEE2EF40A1B00F11A5 /* NamcoSys147Driver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NamcoSys147Driver.h; path = Source/ui_shared/arcadedrivers/NamcoSys147Driver.h; sourceTree = SOURCE_ROOT; };
 		973FA10E07DC46BAB579F240 /* Jitter_Symbol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Jitter_Symbol.h; path = deps/CodeGen/include/Jitter_Symbol.h; sourceTree = SOURCE_ROOT; };
 		97405E6188F74D40A2326589 /* MemAccessIdxTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MemAccessIdxTest.cpp; path = deps/CodeGen/tests/MemAccessIdxTest.cpp; sourceTree = SOURCE_ROOT; };
-		974D33F945594855B9CA3B87 /* libAltKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libAltKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		97BF564E93C64F78B450A7F4 /* Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = tools/GsAreaTest/Test.h; sourceTree = SOURCE_ROOT; };
 		97FFA14AF38B4C70A4633DCF /* Profiler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Profiler.cpp; path = Source/Profiler.cpp; sourceTree = SOURCE_ROOT; };
 		983819E35F00421F85CC75F4 /* OsVariableWrapper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = OsVariableWrapper.h; path = Source/OsVariableWrapper.h; sourceTree = SOURCE_ROOT; };
@@ -2349,13 +2317,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1A09F3D9009D4076A8882BB9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1A29D1D36DCE469AB491AD13 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2413,13 +2374,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		75E91F27F6D84654B01A39C0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8454B74C8E5E42D1A375370B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3495,8 +3449,6 @@
 		60D875EB90734C3DAC2C5D60 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				974D33F945594855B9CA3B87 /* libAltKit.a */,
-				516169E1EE0443EAA18EE654 /* libCAltKit.a */,
 				7FD2C537E6A74A20914C1BC5 /* libCodeGen.a */,
 				BF93E5AEFEED46669047AA5D /* libFramework.a */,
 				CE24008C50CB422A8BF5C0A2 /* libFramework_Amazon.a */,
@@ -4439,6 +4391,7 @@
 		D9C78FF150234E13BCCC20D2 = {
 			isa = PBXGroup;
 			children = (
+				939743892E62D5E500B9CE60 /* zutil.c */,
 				B3EA207A2BDDD867003D0239 /* Play.xcconfig */,
 				B3ABAEF92BCCF8A500D77B8C /* Loader.cpp */,
 				AF5F881E94E741A98B0788E6 /* ALL_BUILD */,
@@ -5152,8 +5105,6 @@
 				B082F928A9F447758BEB5151 /* PBXTargetDependency */,
 				856CE97773774EA8B67FC8B7 /* PBXTargetDependency */,
 				17A3C566213C46D6930E4DD5 /* PBXTargetDependency */,
-				B129F8580DB34B6CB75A2FFD /* PBXTargetDependency */,
-				9BCC9933F5CD471E82C4D6CC /* PBXTargetDependency */,
 			);
 			name = Play;
 			productName = Play;
@@ -5195,40 +5146,6 @@
 			name = gsh_vulkanPlay;
 			productName = gsh_vulkan;
 			productReference = AFBB1A81F6CA495CAA3FD663 /* libgsh_vulkan.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		DB2DF0E4E4494E56AEED493E /* AltKitPlay */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 159C577FF14546A9AB02B3C7 /* Build configuration list for PBXNativeTarget "AltKitPlay" */;
-			buildPhases = (
-				77E8308927CD4B9DA4F57AA3 /* Sources */,
-				1A09F3D9009D4076A8882BB9 /* Frameworks */,
-				AB2D93E933F4A0743BE4F50F /* CMake PostBuild Rules */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				637A769D5E9242478ABF6894 /* PBXTargetDependency */,
-			);
-			name = AltKitPlay;
-			productName = AltKit;
-			productReference = 974D33F945594855B9CA3B87 /* libAltKit.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		DC86612D5DCC4F0491577B88 /* CAltKitPlay */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3F26C9E7E03A4D698CC9A454 /* Build configuration list for PBXNativeTarget "CAltKitPlay" */;
-			buildPhases = (
-				58DBE6A021AD4706803E4F19 /* Sources */,
-				8454B74C8E5E42D1A375370B /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = CAltKitPlay;
-			productName = CAltKit;
-			productReference = 516169E1EE0443EAA18EE654 /* libCAltKit.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		DFD9988CB59C4CF18D0A5EA7 /* SDWebImage_StaticPlay */ = {
@@ -5285,8 +5202,6 @@
 			projectRoot = "";
 			targets = (
 				AE45024B0CBE4704BEF55B8E /* Play */,
-				DB2DF0E4E4494E56AEED493E /* AltKitPlay */,
-				DC86612D5DCC4F0491577B88 /* CAltKitPlay */,
 				975D23456B0047338231B098 /* CodeGenPlay */,
 				A7C394C304554DFFBD66852F /* FrameworkPlay */,
 				693C7F35EBF246558877B9CD /* Framework_AmazonPlay */,
@@ -5338,25 +5253,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		AB2D93E933F4A0743BE4F50F /* CMake PostBuild Rules */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "CMake PostBuild Rules";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#set -e\n#cd $SRCROOT/../cmake/Source/ui_ios/AltKit\n#cp $DERIVED_SOURCES_DIR/AltKit-Swift.h $SRCROOT/../cmake/Source/ui_ios/AltKit\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2E57133BC44C467C9BBF2318 /* Sources */ = {
@@ -5464,14 +5360,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		58DBE6A021AD4706803E4F19 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				70E8900EBB344463A618F2AC /* NSError+ALTServerError.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5C241236E3784ADBBB188E26 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5522,22 +5410,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		77E8308927CD4B9DA4F57AA3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				37882DE5345A411EBF4A1606 /* ALTServerError+Conveniences.swift in Sources */,
-				637A9F5867BA484388EA996A /* Result+Conveniences.swift in Sources */,
-				2EC10F3E0F9B452A9E446745 /* Connection.swift in Sources */,
-				0D09D1FA336442DF9C2FFBFA /* NetworkConnection.swift in Sources */,
-				9D2C174925EA45A3A41DCF01 /* Server.swift in Sources */,
-				8EF07DA54DF74BADA77922FF /* ServerConnection.swift in Sources */,
-				4DF1683D103543D29A9AE235 /* ServerManager.swift in Sources */,
-				59A453B7030A40B3954FB80F /* ServerProtocol.swift in Sources */,
-				EF374D54AB164F1EBED7DEB8 /* CodableServerError.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		903D19208BF548DEAC6730CC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5552,7 +5424,7 @@
 				6AA00B0E6F7247B88FA9E93D /* inftrees.c in Sources */,
 				C61086441A9943A4B622388B /* trees.c in Sources */,
 				A3E04E8C37A6464286A7E536 /* uncompr.c in Sources */,
-				757E6180C39E492C9D5C5FC0 /* zutil.c in Sources */,
+				9397438A2E62D5E500B9CE60 /* zutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6146,11 +6018,6 @@
 			target = A97E76974B95454FA92985A7 /* gsh_openglPlay */;
 			targetProxy = F2FD8786019E47CDBF8BAD6D /* PBXContainerItemProxy */;
 		};
-		637A769D5E9242478ABF6894 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DC86612D5DCC4F0491577B88 /* CAltKitPlay */;
-			targetProxy = BE42D19316D6481FBD084740 /* PBXContainerItemProxy */;
-		};
 		6CFF2874B2CF422DBA0929AC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A0931A2D00744E07898A5CD3 /* PlayCorePlay */;
@@ -6246,11 +6113,6 @@
 			target = 8C35B130E60447A39870878B /* chdr-staticPlay */;
 			targetProxy = C6809B830B8E40B09DB8595A /* PBXContainerItemProxy */;
 		};
-		9BCC9933F5CD471E82C4D6CC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DB2DF0E4E4494E56AEED493E /* AltKitPlay */;
-			targetProxy = EE63A8735BFB490A8FD22A56 /* PBXContainerItemProxy */;
-		};
 		9BF76D444E7F48A2817C6411 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 29109A4C926E409898D7C057 /* libzstd_staticPlay */;
@@ -6285,11 +6147,6 @@
 			isa = PBXTargetDependency;
 			target = 9C38F19B42314552B6A76EC0 /* iCade_StaticPlay */;
 			targetProxy = E166FCB94C8A4438931E789A /* PBXContainerItemProxy */;
-		};
-		B129F8580DB34B6CB75A2FFD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DC86612D5DCC4F0491577B88 /* CAltKitPlay */;
-			targetProxy = 7B1F0951A1954E75AFB56075 /* PBXContainerItemProxy */;
 		};
 		B4DA1E728D7A4EB7B4D38E9B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6486,36 +6343,6 @@
 				WARNING_CFLAGS = "$(inherited)";
 			};
 			name = MinSizeRel;
-		};
-		05ED5E8B1BA040BA976BBF6B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 1;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_LIBTOOLFLAGS = "";
-				OTHER_REZFLAGS = "";
-				OTHER_SWIFT_FLAGS = "    $(inherited)";
-				PRODUCT_NAME = AltKit;
-				SECTORDER_FLAGS = "";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "PLAY_VERSION $(inherited)";
-				SWIFT_INCLUDE_PATHS = "../Play-/deps/AltKit/Sources/CAltKit";
-				SWIFT_VERSION = 5.0;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "$(inherited)";
-			};
-			name = Release;
 		};
 		066654562F33482FA34C2C0B /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
@@ -7530,37 +7357,6 @@
 			};
 			name = Release;
 		};
-		4613790473E94BAEAD94A53C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
-					"'PLAY_VERSION=\"0.30\"'",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CFLAGS = (
-					"-mios-version-min=12.2",
-					"$(inherited)",
-				);
-				OTHER_LIBTOOLFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = CAltKit;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "$(inherited)";
-			};
-			name = Debug;
-		};
 		46D7CA4E93034A6B9EE2F226 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7650,38 +7446,6 @@
 				WARNING_CFLAGS = "$(inherited)";
 			};
 			name = RelWithDebInfo;
-		};
-		4C37B1A2275E44F583C9F593 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
-					"'PLAY_VERSION=\"0.30\"'",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CFLAGS = (
-					"-mios-version-min=12.2",
-					"-DNDEBUG",
-					"$(inherited)",
-				);
-				OTHER_LIBTOOLFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = CAltKit;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "$(inherited)";
-			};
-			name = Release;
 		};
 		4CEADF2F057E4D0F92DEB9F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -9942,98 +9706,6 @@
 			};
 			name = Release;
 		};
-		DAAD4F6FE0554D58B08A4CA1 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
-					"'PLAY_VERSION=\"0.30\"'",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CFLAGS = (
-					"-mios-version-min=12.2",
-					"-DNDEBUG",
-					"$(inherited)",
-				);
-				OTHER_LIBTOOLFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = CAltKit;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "$(inherited)";
-			};
-			name = MinSizeRel;
-		};
-		DB5D2748A31941A79734DFD9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_LIBTOOLFLAGS = "";
-				OTHER_REZFLAGS = "";
-				OTHER_SWIFT_FLAGS = "-Onone     $(inherited)";
-				PRODUCT_NAME = AltKit;
-				SECTORDER_FLAGS = "";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "PLAY_VERSION $(inherited)";
-				SWIFT_INCLUDE_PATHS = "../Play-/deps/AltKit/Sources/CAltKit";
-				SWIFT_VERSION = 5.0;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "$(inherited)";
-			};
-			name = Debug;
-		};
-		DDF360F192C646FD8397CA5D /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 1;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_LIBTOOLFLAGS = "";
-				OTHER_REZFLAGS = "";
-				OTHER_SWIFT_FLAGS = "       $(inherited)";
-				PRODUCT_NAME = AltKit;
-				SECTORDER_FLAGS = "";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "PLAY_VERSION $(inherited)";
-				SWIFT_INCLUDE_PATHS = "../Play-/deps/AltKit/Sources/CAltKit";
-				SWIFT_VERSION = 5.0;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "$(inherited)";
-			};
-			name = RelWithDebInfo;
-		};
 		DE9CA35C294448B8A4EFF605 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -10752,36 +10424,6 @@
 			};
 			name = MinSizeRel;
 		};
-		F32D08AFDA624623A898926E /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_LIBTOOLFLAGS = "";
-				OTHER_REZFLAGS = "";
-				OTHER_SWIFT_FLAGS = "-Osize  $(inherited)";
-				PRODUCT_NAME = AltKit;
-				SECTORDER_FLAGS = "";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "PLAY_VERSION $(inherited)";
-				SWIFT_INCLUDE_PATHS = "../Play-/deps/AltKit/Sources/CAltKit";
-				SWIFT_VERSION = 5.0;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "$(inherited)";
-			};
-			name = MinSizeRel;
-		};
 		F6B09C29EBDF495CA69F9D0A /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11069,38 +10711,6 @@
 			};
 			name = MinSizeRel;
 		};
-		FE562F25E5FC48ACB0101805 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
-					"'PLAY_VERSION=\"0.30\"'",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CFLAGS = (
-					"-mios-version-min=12.2",
-					"-DNDEBUG",
-					"$(inherited)",
-				);
-				OTHER_LIBTOOLFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = CAltKit;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "$(inherited)";
-			};
-			name = RelWithDebInfo;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -11133,17 +10743,6 @@
 				64DF0AFE9B9F4CF69532DA6A /* Release */,
 				F7515B6E8B6546709F8B2D74 /* MinSizeRel */,
 				07577769EFFC4443814B13AD /* RelWithDebInfo */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		159C577FF14546A9AB02B3C7 /* Build configuration list for PBXNativeTarget "AltKitPlay" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DB5D2748A31941A79734DFD9 /* Debug */,
-				05ED5E8B1BA040BA976BBF6B /* Release */,
-				F32D08AFDA624623A898926E /* MinSizeRel */,
-				DDF360F192C646FD8397CA5D /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -11199,17 +10798,6 @@
 				F0C3B545A1D543C19BCDA8D5 /* Release */,
 				240B2B0019E84310B88ECB06 /* MinSizeRel */,
 				E5F5490B5103460FA0580FCE /* RelWithDebInfo */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3F26C9E7E03A4D698CC9A454 /* Build configuration list for PBXNativeTarget "CAltKitPlay" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4613790473E94BAEAD94A53C /* Debug */,
-				4C37B1A2275E44F583C9F593 /* Release */,
-				DAAD4F6FE0554D58B08A4CA1 /* MinSizeRel */,
-				FE562F25E5FC48ACB0101805 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

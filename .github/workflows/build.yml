@@ -152,7 +152,7 @@ jobs:
       #     signing_identity: ${{ secrets.SIGNING_IDENTITY }}
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: "${{ matrix.IPA_NAME }}.ipa"
           path: "${{ matrix.IPA_NAME }}.ipa"
