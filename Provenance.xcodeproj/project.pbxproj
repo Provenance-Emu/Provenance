@@ -364,7 +364,6 @@
 		930499982A93073800BF257F /* TapActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0F276B470B00D85327 /* TapActionCell.swift */; };
 		930499992A93073800BF257F /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		9304999A2A93073800BF257F /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C10276B470B00D85327 /* SwitchCell.swift */; };
-		9304999D2A93073800BF257F /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5D9EC2959837A00907CFB /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9304999E2A93073800BF257F /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9304999F2A93073800BF257F /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		930499A02A93073800BF257F /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3036,7 +3035,6 @@
 			files = (
 				9304999F2A93073800BF257F /* PVSupport.framework in Embed Frameworks */,
 				930499A02A93073800BF257F /* PVLibrary.framework in Embed Frameworks */,
-				9304999D2A93073800BF257F /* PVLibRetro.framework in Embed Frameworks */,
 				9304999E2A93073800BF257F /* libMoltenVK.dylib in Embed Frameworks */,
 				930499A12A93073800BF257F /* PVLogging in Embed Frameworks */,
 				930499A22A93073800BF257F /* PVRetroArch.framework in Embed Frameworks */,
