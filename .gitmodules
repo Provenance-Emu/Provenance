@@ -27,7 +27,7 @@
 	url = https://github.com/flyinghead/flycast.git
 [submodule "Cores/Dolphin/dolphin-ios"]
 	path = Cores/Dolphin/dolphin-ios
-	url = https://github.com/OatmealDome/dolphin.git
+	url = https://JoeMatt@github.com/Provenance-Emu/dolphin-ios-jitless.git
 [submodule "Cores/DuckStation/duckstation"]
 	path = Cores/DuckStation/duckstation
 	url = https://github.com/stenzek/duckstation.git
