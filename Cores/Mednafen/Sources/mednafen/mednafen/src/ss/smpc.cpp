@@ -232,7 +232,11 @@ static IODevice_Multitap PossibleMultitaps[2];
 static IODevice_Multitap* SPorts[2];
 static IODevice* VirtualPorts[12];
 static uint8* VirtualPortsDPtr[12];
-static uint8* MiscInputPtr;
+// Provide a safe default for MiscInputPtr to avoid null dereference if the
+// frontend/bridge hasn’t set port 12 yet. The bridge should call
+// SMPC_SetInput(12, ...) with a valid pointer as soon as possible.
+static uint8 MiscInputDefault = 0;
+static uint8* MiscInputPtr = &MiscInputDefault;
 
 IODevice::IODevice() { }
 IODevice::~IODevice() { }
@@ -315,11 +319,12 @@ void SMPC_SetInput(unsigned port, const char* type, uint8* ptr)
 {
  assert(port < 13);
 
- if(port == 12) 
- {
-  MiscInputPtr = ptr;
+  if(port == 12) 
+  {
+  // Guard against nullptr from frontend; keep a valid pointer at all times.
+  MiscInputPtr = (ptr ? ptr : &MiscInputDefault);
   return;
- }
+  }
  //
  //
  //

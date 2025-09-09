@@ -1360,7 +1360,24 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
     if (game != nil ) {
+        // Ensure emulation loop is paused while loading state
+        [self setPauseEmulation:YES];
+        // Load state via Mednafen
         BOOL success = Mednafen::MDFNI_LoadState(fileName.fileSystemRepresentation, "");
+        if (success) {
+            // Force event/timing and video state to be consistent after load
+            // Reset display rect widths to ensure Mednafen fills them next frame
+            __strong MednafenGameCoreBridge *strongCurrent = _current;
+            if (strongCurrent) {
+                if (strongCurrent->spec.LineWidths) {
+                    memset((void*)strongCurrent->spec.LineWidths, 0, game->fb_height * sizeof(int32));
+                    strongCurrent->spec.LineWidths[0] = ~0;
+                }
+            }
+            // Run one skipped frame to rebuild internal render state safely
+            emulation_run(YES);
+        }
+        [self setPauseEmulation:NO];
         if (!success) {
             if (error) {
                 NSDictionary *userInfo = @{
@@ -1380,14 +1397,14 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     } else {
         if (error) {
             NSDictionary *userInfo = @{
-                NSLocalizedDescriptionKey: @"Failed to save state.",
-                NSLocalizedFailureReasonErrorKey: @"No game loaded.",
+                NSLocalizedDescriptionKey: @"Failed to load state.",
+                NSLocalizedFailureReasonErrorKey: @"Core failed to load save state because no game is loaded.",
                 NSLocalizedRecoverySuggestionErrorKey: @""
             };
 
             NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
-                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadState
-                                                userInfo:userInfo];
+                                                     code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                 userInfo:userInfo];
 
             *error = newError;
         }
