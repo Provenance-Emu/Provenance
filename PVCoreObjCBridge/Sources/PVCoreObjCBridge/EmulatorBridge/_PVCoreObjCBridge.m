@@ -17,6 +17,9 @@
 @import PVCoreBridge;
 @import PVSettings;
 #import "NSObject+PVAbstractAdditions.h"
+#include <pthread.h>
+#include <mach/mach.h>
+#include <mach/thread_policy.h>
 
 #if !TARGET_OS_OSX
 @import UIKit;
@@ -28,7 +31,7 @@
 #include <mach/mach_time.h>
 #import <QuartzCore/QuartzCore.h>
 
-#define PVTimestamp(x) (((double)mach_absolute_time(x)) * 1.0e-09  * timebase_ratio)
+#define PVTimestamp() (((double)mach_absolute_time()) * 1.0e-09  * timebase_ratio)
 //#define PVTimestamp() CACurrentMediaTime()
 #define GetSecondsSince(x) (PVTimestamp() - x)
 
@@ -378,10 +381,13 @@ static NSString *_systemName;
             self.gameSpeed = GameSpeedNormal;
             if (!_skipEmulationLoop) {
                 MAKEWEAK(self);
-                [NSThread detachNewThreadWithBlock:^{
-                    MAKESTRONG(self);
+                NSThread *emuThread = [[NSThread alloc] initWithBlock:^{
+                    MAKESTRONG_RETURN_IF_NIL(self);
                     [strongself emulationLoopThread];
                 }];
+                emuThread.name = @"PV Emulation";
+                emuThread.stackSize = 2 * 1024 * 1024; // Increase stack to avoid ___chkstk_darwin faults
+                [emuThread start];
             } else {
                 [self setIsFrontBufferReady:YES];
             }
@@ -793,8 +799,7 @@ BOOL iMakeCurrentThreadRealTime(double period, double computation, double constr
     boolean_t get_default = FALSE;
 
     // Convert seconds to absolute time units
-    // These values need to be in absolute time units which are platform dependent
-    uint32_t absoluteTimeFrequency = 0;
+    uint32_t absoluteTimeFrequency = 0; // unused but kept for clarity
 
     // Get the timebase info to convert seconds to absolute time
     mach_timebase_info_data_t timebaseInfo;
@@ -803,7 +808,12 @@ BOOL iMakeCurrentThreadRealTime(double period, double computation, double constr
     // Calculate the conversion factor from seconds to absolute time
     double absoluteTimeToSecondsRatio = ((double)timebaseInfo.denom / (double)timebaseInfo.numer) * 1e-9;
 
-    // Convert the time values from seconds to absolute time units
+    // Clamp to avoid invalid relationships
+    if (computation > constraint) computation = constraint * 0.8;
+    if (constraint > period) constraint = period * 0.95;
+    if (computation <= 0) computation = period * 0.5;
+    if (constraint <= 0) constraint = period * 0.75;
+
     policy.period = (uint32_t)(period / absoluteTimeToSecondsRatio);
     policy.computation = (uint32_t)(computation / absoluteTimeToSecondsRatio);
     policy.constraint = (uint32_t)(constraint / absoluteTimeToSecondsRatio);
@@ -816,6 +826,24 @@ BOOL iMakeCurrentThreadRealTime(double period, double computation, double constr
         (thread_policy_t)&policy,
         THREAD_TIME_CONSTRAINT_POLICY_COUNT
     );
+
+    // If hard real-time fails, try a relaxed profile once
+    if (result != KERN_SUCCESS) {
+        double rperiod = period;
+        double rcomp = period * 0.5;
+        double rconst = period * 0.75;
+        policy.period = (uint32_t)(rperiod / absoluteTimeToSecondsRatio);
+        policy.computation = (uint32_t)(rcomp / absoluteTimeToSecondsRatio);
+        policy.constraint = (uint32_t)(rconst / absoluteTimeToSecondsRatio);
+        policy.preemptible = TRUE;
+        result = thread_policy_set(thread, THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&policy, THREAD_TIME_CONSTRAINT_POLICY_COUNT);
+    }
+
+    // Fallback: elevate QoS to userInteractive if still failing
+    if (result != KERN_SUCCESS) {
+        pthread_t pt = pthread_self();
+        pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0);
+    }
 
     // Release the thread port right that was allocated by mach_thread_self()
     mach_port_deallocate(mach_task_self(), thread);
