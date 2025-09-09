@@ -28,12 +28,20 @@ public struct DocumentPicker: UIViewControllerRepresentable {
         ILOG("DocumentPicker: Creating UIDocumentPickerViewController")
         
         // Define the file types we want to import (ROM files)
-        let supportedTypes: [UTType] = [
-            .item,      // Generic item
-            .content,   // Generic content
-            .data,      // Generic data
-            .archive,   // Archives (zip, 7z, etc.)
+        // Be explicit to avoid some providers filtering out custom UTIs.
+        let romExtensions = [
+            "iso", "rvz", "wia", // Disc images and Dolphin formats
+            "gcm", "gcz",          // GameCube images
+            "wbfs", "wad",         // Wii images and channels
+            "dol", "elf",          // Executables
+            "tgc",                  // Triforce/GameCube container
+            "ciso",                 // Compressed ISO
+            "bin", "cue",          // Cue/bin pairs
+            "chd"                    // MAME/CHD disc images
         ]
+        let romTypes = romExtensions.compactMap { UTType(filenameExtension: $0, conformingTo: .data) }
+        let supportedTypes: [UTType] = romTypes + [.archive]
+        DLOG("DocumentPicker: supported UTTypes -> \(supportedTypes.map { $0.identifier })")
         
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
         picker.allowsMultipleSelection = true
