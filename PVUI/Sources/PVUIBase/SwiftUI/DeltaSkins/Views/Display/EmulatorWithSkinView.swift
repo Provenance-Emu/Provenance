@@ -6,6 +6,7 @@ import Combine
 import ObjectiveC
 import PVLogging
 import RealmSwift
+import Defaults
 
 /// A SwiftUI view that displays a custom skin for the emulator
 struct EmulatorWithSkinView: View {
@@ -26,7 +27,7 @@ struct EmulatorWithSkinView: View {
     #if os(iOS)
     @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
     #endif
-    
+
     // Debug mode
     @State private var showDebugOverlay = false
 
@@ -35,6 +36,31 @@ struct EmulatorWithSkinView: View {
 
     // State for D-pad/joystick toggle in default skin
     @State internal var useJoystick = false
+
+    // Live binding to built-in filter selection
+    @Default(.metalFilterMode) private var metalFilterMode
+
+    /// Map built-in filter selection to overlay effects used by DeltaSkinView
+    private var overlayEffects: Set<TestPatternEffect> {
+        switch metalFilterMode {
+        case .none:
+            return []
+        case .auto(crt: let crt, lcd: let lcd):
+            var s: Set<TestPatternEffect> = []
+            if crt != .none { s.insert(.scanlines) /* consider subpixel subtly */ }
+            if lcd != .none { s.insert(.lcd); s.insert(.subpixel) }
+            return s
+        case .always(filter: let filter):
+            switch filter {
+            case .lcd:
+                return [.lcd, .subpixel]
+            case .none:
+                return []
+            case .simpleCRT, .complexCRT, .megaTron, .ulTron, .gameBoy, .vhs:
+                return [.scanlines]
+            }
+        }
+    }
 
     // Initialize with a game, extracting the necessary properties
     init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void) {
@@ -391,6 +417,7 @@ struct EmulatorWithSkinView: View {
                 DeltaSkinView(
                     skin: deltaSkin,
                     traits: traits,
+                    filters: overlayEffects,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: false,
                     isInEmulator: true,
@@ -402,6 +429,7 @@ struct EmulatorWithSkinView: View {
                 DeltaSkinView(
                     skin: skin,
                     traits: traits,
+                    filters: overlayEffects,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: false,
                     isInEmulator: true,
