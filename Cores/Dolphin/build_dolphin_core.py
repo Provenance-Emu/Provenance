@@ -43,7 +43,7 @@ CONFIG = {
             "suffix": "-tvos",
             "xcode_platform": "appletvos",
         },
-        "SIMULATORARM64_TVOS": {  # tvOS simulator (arm64)
+        "SIMULATOR_TVOS": {  # tvOS simulator (arm64)
             "deployment_target": "16.4",
             "arch_flags": "",  # No architecture-specific flags for simulator
             "suffix": "-tvos-sim",
@@ -88,6 +88,58 @@ class DolphinBuilder:
 
         # Check for required tools
         self._check_required_tools()
+
+    def _ensure_externals_present(self) -> None:
+        """Verify required Externals submodules exist; try to fetch them if missing.
+
+        This prevents CMake errors like "Cannot find source file" for vendored
+        dependencies when submodules haven't been initialized.
+        """
+        # Only require presence of the external project roots and their build scripts
+        # to let CMake drive fetching or discovery (e.g., via FetchContent/ExternalProject).
+        projects = [
+            self.repo_root_dir / "Externals/zstd/CMakeLists.txt",
+            self.repo_root_dir / "Externals/SFML/CMakeLists.txt",
+            self.repo_root_dir / "Externals/rcheevos/CMakeLists.txt",
+        ]
+
+        missing_roots = [str(p.relative_to(self.repo_root_dir)) for p in projects if not p.exists()]
+        if not missing_roots:
+            # Roots exist; do not enforce specific source file presence. Let CMake handle fetching.
+            return
+        else:
+            self._log("Missing Externals build files: " + ", ".join(missing_roots), "warning")
+
+        # Attempt to initialize/update submodules
+        self._log("Attempting to initialize/update git submodules for Externals...", "info")
+        git_cmd = [
+            "git",
+            "-C",
+            str(self.repo_root_dir),
+            "submodule",
+            "update",
+            "--init",
+            "--recursive",
+        ]
+        try:
+            if self.verbose:
+                self._log(f"Running: {' '.join(git_cmd)}", "debug")
+            subprocess.check_call(git_cmd)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            # Either git is unavailable or repo is not a git checkout
+            self._log(
+                "Unable to update submodules automatically (git missing or not a git checkout).",
+                "warning",
+            )
+
+        # Re-check after attempted update; if roots still missing, warn but continue
+        missing_roots = [str(p.relative_to(self.repo_root_dir)) for p in projects if not p.exists()]
+        if missing_roots:
+            self._log(
+                "External project roots still missing: " + ", ".join(missing_roots) +
+                ". Proceeding anyway; CMake may fetch dependencies dynamically.",
+                "warning",
+            )
 
     def _check_required_tools(self):
         """Check if required build tools are installed."""
@@ -214,8 +266,29 @@ class DolphinBuilder:
         cmake_build_dir.mkdir(exist_ok=True)
 
         # Base optimization flags (common to all platforms)
-        base_optimization_flags = "-Ofast"
-        # -ffast-math -fno-strict-aliasing -ftree-vectorize -flto=thin -fomit-frame-pointer -funsafe-math-optimizations -fvectorize"
+        # Matches BuildCore.sh aggressive flags
+        base_optimization_flags = (
+            "-Ofast "
+            "-fvectorize "
+            "-funsafe-math-optimizations "
+            "-funroll-loops "
+            "-ftree-vectorize "
+            "-fsplit-lto-unit "
+            "-freciprocal-math "
+            "-fPIC "
+            "-fpermissive "
+            "-fomit-frame-pointer "
+            "-fno-trapping-math "
+            "-fno-strict-aliasing "
+            "-fno-signed-zeros "
+            "-fno-math-errno "
+            "-finline-functions "
+            "-ffunction-sections "
+            "-ffp-contract=fast "
+            "-ffinite-math-only "
+            "-ffast-math "
+            "-fdata-sections"
+        ).strip()
 
         # Curl build fixes - apply to all platforms to resolve build issues
         curl_fixes = (
@@ -234,8 +307,8 @@ class DolphinBuilder:
 
         # Combine flags with ARM64-only enforcement
         arm64_defines = "-D_M_ARM_64 -U_M_X86_64 -U_M_IX86"  # ARM64 only, explicitly undefine x86 macros
-        c_flags = f"-fPIC {base_optimization_flags} -w {arm64_defines} {curl_fixes}".strip()
-        cxx_flags = f"-fPIC {base_optimization_flags} -w {arm64_defines} {curl_fixes}".strip()
+        c_flags = f"{base_optimization_flags} -w {arm64_defines} {curl_fixes}".strip()
+        cxx_flags = f"{base_optimization_flags} -w {arm64_defines} {curl_fixes}".strip()
 
         # Add architecture-specific flags only for device builds (not simulators)
         if platform not in ["SIMULATORARM64", "SIMULATOR_TVOS"]:
@@ -247,6 +320,12 @@ class DolphinBuilder:
         if arch_flags:
             c_flags += f" {arch_flags}"
             cxx_flags += f" {arch_flags}"
+
+        # Explicit ARM device tuning (mirror BuildCore.sh)
+        if platform in ["OS64", "TVOS"]:
+            tune_flags = "-mcpu=apple-a10 -mtune=apple-a14 -march=armv8-a+simd+crc+crypto"
+            c_flags += f" {tune_flags}"
+            cxx_flags += f" {tune_flags}"
 
         # Explicitly set deployment target flags to override toolchain defaults
         if platform in ["SIMULATORARM64", "SIMULATOR_TVOS"]:
@@ -265,7 +344,8 @@ class DolphinBuilder:
                 cxx_flags += f" -mtvos-version-min={deployment_target}"
 
         # Additional linker optimizations
-        linker_flags = "-Wl,-dead_strip"
+        # Use -noall_load to avoid force-loading every static lib member (conflicts with LTO/bitcode archives)
+        linker_flags = "-Wl,-dead_strip -Wl,-noall_load"
 
         # Configure CMake command
         cmake_cmd = [
@@ -281,14 +361,17 @@ class DolphinBuilder:
         cmake_cmd.append("-DCMAKE_OSX_ARCHITECTURES=arm64")
         # Let the iOS toolchain set CMAKE_SYSTEM_PROCESSOR based on ARCHS
 
-        if platform in ["SIMULATORARM64", "SIMULATORARM64_TVOS"]:
+        if platform in ["SIMULATORARM64", "SIMULATOR_TVOS"]:
             # Explicitly set the correct SDK for simulator builds
             if platform == "SIMULATORARM64":
                 simulator_sdk = subprocess.check_output(["xcrun", "--sdk", "iphonesimulator", "--show-sdk-path"]).decode().strip()
                 cmake_cmd.append(f"-DCMAKE_OSX_SYSROOT={simulator_sdk}")
-            elif platform == "SIMULATORARM64_TVOS":
+            elif platform == "SIMULATOR_TVOS":
                 simulator_sdk = subprocess.check_output(["xcrun", "--sdk", "appletvsimulator", "--show-sdk-path"]).decode().strip()
                 cmake_cmd.append(f"-DCMAKE_OSX_SYSROOT={simulator_sdk}")
+
+        # Ensure Externals (submodules) are present before configuring CMake
+        self._ensure_externals_present()
 
         # iOS toolchain and platform configuration
         cmake_cmd.extend([
@@ -301,10 +384,10 @@ class DolphinBuilder:
         ])
 
         # Override deployment target at CMake level to ensure it's respected
-        if platform in ["SIMULATORARM64", "SIMULATORARM64_TVOS"]:
+        if platform in ["SIMULATORARM64", "SIMULATOR_TVOS"]:
             if platform == "SIMULATORARM64":
                 cmake_cmd.append(f"-DCMAKE_OSX_DEPLOYMENT_TARGET={deployment_target}")
-            elif platform == "SIMULATORARM64_TVOS":
+            elif platform == "SIMULATOR_TVOS":
                 cmake_cmd.append(f"-DCMAKE_TVOS_DEPLOYMENT_TARGET={deployment_target}")
         else:
             if platform == "OS64":
@@ -375,24 +458,31 @@ class DolphinBuilder:
 
             subprocess.check_call(build_cmd)
 
-            # Find the built dylib - CMake doesn't use our suffix, so search for the actual filename
+            # Find the built dylib robustly — filename may vary (suffix and version number differ per config)
             dylib_search_dir = cmake_build_dir / "Source/iOS/Library"
-            dylib_patterns = [
-                str(dylib_search_dir / f"libdolphin{suffix}.1.dylib"),  # Try with suffix first
-                str(dylib_search_dir / "libdolphin-ios.1.dylib"),        # Fallback to standard name
-                str(dylib_search_dir / "libdolphin.1.dylib"),            # Fallback to minimal name
+            candidate_patterns = [
+                f"libdolphin{suffix}*.dylib",  # Prefer platform-suffixed names
+                "libdolphin-ios*.dylib",       # Common iOS naming
+                "libdolphin*.dylib",           # Any libdolphin dylib
             ]
 
-            dylibs = []
-            for pattern in dylib_patterns:
-                dylibs = glob.glob(pattern)
-                if dylibs:
+            found: list[str] = []
+            for pat in candidate_patterns:
+                found = glob.glob(str(dylib_search_dir / pat))
+                if found:
                     break
 
-            if not dylibs:
-                raise BuildError(f"Could not find built dylib for {platform} (xcode_platform: {xcode_platform}). Searched: {dylib_patterns}")
+            if not found:
+                raise BuildError(
+                    f"Could not find built dylib for {platform} (xcode_platform: {xcode_platform}). "
+                    f"Searched patterns: {candidate_patterns} in {dylib_search_dir}"
+                )
 
-            self.dylibs[platform] = dylibs[0]
+            # If multiple, pick the newest by modification time
+            found.sort(key=lambda p: os.path.getmtime(p), reverse=True)
+            chosen = found[0]
+            self._log(f"Found dylib for {platform}: {os.path.basename(chosen)}", "debug")
+            self.dylibs[platform] = chosen
             self._log(f"Build completed for {platform}", "success")
 
         except subprocess.CalledProcessError as e:

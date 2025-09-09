@@ -26,7 +26,6 @@
 
 #include "VideoCommon/AsyncRequests.h"
 #include "VideoCommon/Fifo.h"
-#include "VideoCommon/RenderBase.h"
 #include "VideoCommon/VertexLoaderManager.h"
 #include "VideoCommon/VideoBackendBase.h"
 #include "VideoCommon/VideoCommon.h"
@@ -52,12 +51,12 @@
 - (void)executeFrameSkippingFrame:(BOOL)skip {
     if (![self isEmulationPaused] && !skip) {
         auto& system = Core::System::GetInstance();
-        
+
         // Only execute frame if Dolphin is running
         if (Core::GetState(system) == Core::State::Running) {
             // Process any pending host jobs
             Core::HostDispatchJobs(system);
-            
+
             // Dolphin handles its own frame rendering directly to Metal layer
             // The video output is managed by Dolphin's video backend
             // No frame buffer extraction needed - Dolphin renders directly

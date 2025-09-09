@@ -26,14 +26,14 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
 	static var gsOption: CoreOption = {
 		 .enumeration(.init(title: "Graphics Backend",
-			   description: "Graphics API to use. Vulkan recommended for best performance.",
+			   description: "Graphics API to use. Metal recommended on iOS.",
 			   requiresRestart: true),
 		  values: [
-			   .init(title: "Vulkan", description: "Vulkan (Recommended)", value: 0),
+			   .init(title: "Vulkan", description: "Vulkan", value: 0),
 			   .init(title: "OpenGL", description: "OpenGL", value: 1),
-			   .init(title: "Metal", description: "Metal", value: 2)
+			   .init(title: "Metal", description: "Metal (Recommended)", value: 2)
 		  ],
-		  defaultValue: 0)
+		  defaultValue: 2)
 	}()
 
     static var aspectRatioOption: CoreOption = {
@@ -249,7 +249,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                         .init(title: "Specialized (Default)", description: "Synchronous", value: 0),
                         .init(title: "Exclusive Ubershaders", description: "Synchronous Ubershaders", value: 1),
                         .init(title: "Hybrid Ubershaders", description: "Asynchronous Ubershaders", value: 2),
-                        .init(title: "Skip Drawing", description: "Asynchronous Skip Rendering", value: 3)
+                        .init(titlee: "Skip Drawing", description: "Asynchronous Skip Rendering", value: 3)
                     ],
                     defaultValue: 0)
     }()

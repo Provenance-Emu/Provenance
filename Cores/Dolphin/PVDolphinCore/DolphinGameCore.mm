@@ -119,14 +119,14 @@ extern std::unique_ptr<SoundStream> g_sound_stream;
 - (void)setPauseEmulation:(BOOL)flag
 {
     dol_host->Pause(flag);
-    
+
     [super setPauseEmulation:flag];
 }
 
 - (void)stopEmulation
 {
     _isInitialized = false;
-    
+
     dol_host->RequestStop();
 
     [super stopEmulation];
@@ -142,9 +142,9 @@ extern std::unique_ptr<SoundStream> g_sound_stream;
 
         if(dol_host->LoadFileAtPath())
             _isInitialized = true;
-        
+
         _frameInterval = dol_host->GetFrameInterval();
-        
+
     }
     [super startEmulation];
 
@@ -164,7 +164,7 @@ extern std::unique_ptr<SoundStream> g_sound_stream;
         if(!dol_host->CoreRunning()) {
         dol_host->Pause(false);
         }
-    
+
       dol_host->UpdateFrame();
     }
 }
@@ -284,7 +284,7 @@ extern std::unique_ptr<SoundStream> g_sound_stream;
     {
         //Start a separate thread to load
         autoLoadStatefileName = fileName;
-        
+
         [NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
         block(true, nil);
     } else {
@@ -299,7 +299,7 @@ extern std::unique_ptr<SoundStream> g_sound_stream;
         //Wait here until we get the signal for full initialization
         while (!_isInitialized)
             usleep (100);
-        
+
         dol_host->LoadState([autoLoadStatefileName UTF8String]);
     }
 }

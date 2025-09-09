@@ -85,7 +85,6 @@
 
 #include "VideoCommon/AsyncRequests.h"
 #include "VideoCommon/Fifo.h"
-#include "VideoCommon/RenderBase.h"
 #include "VideoCommon/VertexLoaderManager.h"
 #include "VideoCommon/VideoBackendBase.h"
 #include "VideoCommon/VideoConfig.h"
@@ -305,13 +304,13 @@ static void ResetDolphinStaticState() {
 
     // Graphics renderer
     if (self.gsPreference == 0) {
-        Config::SetBase(Config::MAIN_GFX_BACKEND, "Vulkan");
+        Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("Vulkan"));
         Config::SetBase(Config::MAIN_OSD_MESSAGES, true);
     } else if (self.gsPreference == 1) {
-        Config::SetBase(Config::MAIN_GFX_BACKEND, "OGL");
+        Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("OGL"));
         Config::SetBase(Config::MAIN_OSD_MESSAGES, false);
     } else if (self.gsPreference == 2) {
-        Config::SetBase(Config::MAIN_GFX_BACKEND, "Metal");
+        Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("Metal"));
         Config::SetBase(Config::MAIN_OSD_MESSAGES, true);
     }
 
@@ -484,15 +483,14 @@ static void ResetDolphinStaticState() {
 
     // Audio Backend
     if (self.audioBackend == 0) {
-        Config::SetBase(Config::MAIN_AUDIO_BACKEND, "Cubeb");
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("Cubeb"));
     } else if (self.audioBackend == 1) {
-        Config::SetBase(Config::MAIN_AUDIO_BACKEND, "OpenAL");
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("OpenAL"));
     } else if (self.audioBackend == 2) {
-        Config::SetBase(Config::MAIN_AUDIO_BACKEND, "Null");
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("Null"));
     }
 
-    // Audio Stretching
-    Config::SetBase(Config::MAIN_AUDIO_STRETCH, self.audioStretch);
+    // Audio stretching setting removed in modern Dolphin; do not set MAIN_AUDIO_STRETCH
 
     // Volume (handled by the audio system)
     Config::SetBase(Config::MAIN_AUDIO_VOLUME, self.volume);
@@ -511,8 +509,12 @@ static void ResetDolphinStaticState() {
     Config::SetBase(Config::MAIN_WII_SD_CARD, true);
     Config::SetBase(Config::MAIN_ALLOW_SD_WRITES, true);
 
+    // Disc speed emulation disabled for faster loading
+    Config::SetBase(Config::MAIN_FAST_DISC_SPEED, true);
+
     // CPU High Level / Low Level Emulation
     Config::SetBase(Config::MAIN_DSP_HLE, true);
+    Config::SetBase(Config::MAIN_DSP_THREAD, true);
     Core::SetIsThrottlerTempDisabled(false);
 
     // === DEBUG AND LOGGING ===
@@ -822,7 +824,6 @@ static void ResetDolphinStaticState() {
     m_view_controller = nullptr;
     m_view=nullptr;
     AudioCommon::ShutdownSoundStream(Core::System::GetInstance());
-    g_renderer.release();
 
     // CRITICAL: Shutdown UICommon before resetting state
     try {

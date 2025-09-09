@@ -103,7 +103,8 @@ std::map<int, ActionReplay::ARCode> arcodes{};
             if (value.enabled)
                 activate.push_back(value);
         }
-        Gecko::SetActiveCodes(activate, "");
+        const std::string game_id = SConfig::GetInstance().GetGameID();
+        Gecko::SetActiveCodes(activate, game_id);
     }
     if ([codeType isEqualToString:@"Pro Action Replay"]) {
         if (arcode_encrypted_lines.size())
@@ -123,7 +124,9 @@ std::map<int, ActionReplay::ARCode> arcodes{};
         NSLog(@"Applying AR Code size %d enabled %d\n", arcode.ops
                .size(), arcode.enabled);
         // They are auto applied when activated
-        ActionReplay::ApplyCodes(activate, "");
+        const std::string game_id = SConfig::GetInstance().GetGameID();
+        ActionReplay::ApplyCodes(activate, game_id);
+
     }
     return true;
 }
