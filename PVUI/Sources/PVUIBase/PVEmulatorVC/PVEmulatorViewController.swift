@@ -63,6 +63,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Store the current target frame for positioning
     var currentTargetFrame: CGRect?
 
+    /// Cache the last applied viewport to avoid redundant layout work
+    var lastAppliedViewportFrame: CGRect?
+
     // Store the original calculated frame for reset functionality
     var originalCalculatedFrame: CGRect?
 

@@ -93,7 +93,7 @@ extension PVEmulatorViewController {
     /// Handle app coming to foreground
     @objc private func handleAppWillEnterForeground() {
         DLOG("App entering foreground, refreshing Metal view")
-        configureGPUView()
+        applyViewportFromCurrentSkin()
     }
 
     /// Handle app going to background
@@ -141,29 +141,8 @@ extension PVEmulatorViewController {
         gameScreenView.isHidden = false
         gameScreenView.alpha = 1.0
 
-        // IMPORTANT: Log the current frame before any positioning
-        DLOG("GPU view frame BEFORE positioning: \(gameScreenView.frame)")
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            DLOG("MTLView frame BEFORE positioning: \(metalVC.mtlView.frame)")
-            DLOG("MTLView layer frame BEFORE positioning: \(metalVC.mtlView.layer.frame)")
-        }
-
         // Position the GPU view based on the DeltaSkin screen information
-        // This will call into PVEmulatorViewController+DeltaSkinScreen.swift
         updateGPUViewPositionForDeltaSkin()
-
-        // Force a draw to make sure content is visible
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            DLOG("Forcing initial draw of GPU view")
-            metalVC.draw(in: metalVC.mtlView)
-        }
-
-        // IMPORTANT: Log the frame after positioning
-        DLOG("GPU view frame AFTER positioning: \(gameScreenView.frame)")
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            DLOG("MTLView frame AFTER positioning: \(metalVC.mtlView.frame)")
-            DLOG("MTLView layer frame AFTER positioning: \(metalVC.mtlView.layer.frame)")
-        }
     }
 
     /// Add the skin view to the view hierarchy
@@ -211,11 +190,8 @@ extension PVEmulatorViewController {
             core: core,
             inputHandler: inputHandler,
             onSkinLoaded: { [weak self] in
-                // Force a redraw when skin is loaded
-                if let metalVC = self?.gpuViewController as? PVMetalViewController {
-                    DLOG("Skin loaded, forcing GPU redraw")
-                    metalVC.draw(in: metalVC.mtlView)
-                }
+                // Apply viewport when skin is loaded
+                self?.applyViewportFromCurrentSkin()
 
                 // Pause emulation for 1 second after skin is loaded to ensure smooth startup
                 self?.pauseEmulationTemporarily()
@@ -232,8 +208,7 @@ extension PVEmulatorViewController {
                 }
             },
             onRefreshRequested: { [weak self] in
-                self?.refreshGPUView()
-                // Also re-apply RA viewport on explicit refresh
+                // Re-apply RA viewport on explicit refresh
                 if let self = self, self.core.coreIdentifier?.contains("libretro") == true,
                    let frame = self.currentTargetFrame,
                    let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
@@ -242,6 +217,7 @@ extension PVEmulatorViewController {
                     let rectInParent = self.view.convert(frame, to: parent)
                     viewport.applyRenderViewFrameInTouchView(rectInParent)
                 }
+                self?.applyViewportFromCurrentSkin()
             }
         )
 
@@ -284,13 +260,8 @@ extension PVEmulatorViewController {
         debugTapGesture.numberOfTouchesRequired = 3
         view.addGestureRecognizer(debugTapGesture)
         #endif
-        // Force a redraw of GPU view to make sure it's visible
-        refreshGPUView()
-
-        // Schedule another redraw after a delay for safety
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-            self?.refreshGPUView()
-        }
+        // Apply viewport once
+        applyViewportFromCurrentSkin()
 
         printViewHierarchy()
     }
@@ -316,7 +287,7 @@ extension PVEmulatorViewController {
         // CRITICAL: Update in the correct order to maintain z-order
 
         // 1. Update the GPU view position based on the DeltaSkin screen information
-        updateGPUViewPositionForDeltaSkin()
+        applyViewportFromCurrentSkin()
 
         // 1b. If RA, re-apply its internal renderView frame to keep it visible after rotation
         if core.coreIdentifier?.contains("libretro") == true,
@@ -349,8 +320,7 @@ extension PVEmulatorViewController {
     func refreshGPUView() {
         DLOG("Refreshing GPU view")
 
-        // Update position based on DeltaSkin screen information
-        updateGPUViewPositionForDeltaSkin()
+        applyViewportFromCurrentSkin()
 
         // Make sure the GPU view is visible
         if let gameScreenView = gpuViewController.view {
@@ -358,23 +328,11 @@ extension PVEmulatorViewController {
             gameScreenView.alpha = 1.0
         }
 
-        // Force redraw
-        if let metalVC = gpuViewController as? PVMetalViewController {
-            // Try to update the texture first
-            do {
-                try metalVC.updateInputTexture()
-            } catch {
-                ELOG("Error updating texture: \(error)")
-            }
-
-            // Force a redraw
-            metalVC.draw(in: metalVC.mtlView)
-
-            // Make sure Metal view is visible
-            if let mtlView = metalVC.mtlView {
-                mtlView.isHidden = false
-                mtlView.alpha = 1.0
-            }
+        // Ensure Metal view visible
+        if let metalVC = gpuViewController as? PVMetalViewController,
+           let mtlView = metalVC.mtlView {
+            mtlView.isHidden = false
+            mtlView.alpha = 1.0
         }
     }
 
@@ -857,8 +815,8 @@ extension PVEmulatorViewController {
             // Apply frame to the Metal view
             metalVC.mtlView.frame = frame
 
-            // Force a redraw
-            metalVC.draw(in: metalVC.mtlView)
+            metalVC.mtlView.setNeedsLayout()
+            metalVC.mtlView.layoutIfNeeded()
         }
 
         // Also set the frame on the gameScreenView directly
@@ -894,7 +852,7 @@ extension PVEmulatorViewController {
 #if !os(tvOS)
         let orientation = UIDevice.current.orientation
         let orientationStr = orientation.isPortrait ? "Portrait" : (orientation.isLandscape ? "Landscape" : "Other")
-        #else
+#else
         let orientationStr = "Landspace"
 #endif
         // Get FPS if available

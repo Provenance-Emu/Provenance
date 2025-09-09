@@ -262,6 +262,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let screenBounds = UIScreen.main.bounds
         let metalView = MTKView(frame: screenBounds, device: device)
         metalView.autoresizingMask = [] // Disable autoresizing
+        metalView.isPaused = false
+        metalView.enableSetNeedsDisplay = false
+        metalView.presentsWithTransaction = false
         self.view = metalView
         self.mtlView = metalView
 
@@ -313,6 +316,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         mtlView.colorPixelFormat = .bgra8Unorm
         mtlView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         mtlView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        if let layer = mtlView.layer as? CAMetalLayer {
+            layer.allowsNextDrawableTimeout = true
+            layer.framebufferOnly = true
+            layer.pixelFormat = .bgra8Unorm
+            layer.isOpaque = true
+        }
 
         // Configure VSync settings
         updateVsyncSettings()
@@ -651,6 +660,38 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 
         updatePreferredFPS()
+
+        // Metal render only supports native scale on iOS/tvOS
+        #if !(os(macOS) || targetEnvironment(macCatalyst))
+        let screenBounds = UIScreen.main.bounds
+        let nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+
+        if lastScreenBounds != screenBounds || lastNativeScaleEnabled != nativeScaleEnabled {
+            lastScreenBounds = screenBounds
+            lastNativeScaleEnabled = nativeScaleEnabled
+
+            let scale: CGFloat
+            if screenBounds.size.width > 0 && screenBounds.size.height > 0 {
+                scale = screenBounds.size.width / screenBounds.size.width
+            } else {
+                scale = 1.0
+            }
+
+            let scaledW = floor(screenBounds.size.width * scale)
+            let scaledH = floor(screenBounds.size.height * scale)
+            let newSize = CGSize(width: scaledW, height: scaledH)
+
+            if lastBufferSize != newSize {
+                // Ensure no in-flight command buffers are using the old size
+                commandQueue?.insertDebugCaptureBoundary()
+                lastBufferSize = newSize
+                DLOG("Setting drawable size to: \(newSize)")
+                if newSize.width > 0 && newSize.height > 0 {
+                    mtlView.drawableSize = newSize
+                }
+            }
+        }
+        #endif
     }
 
 #if DEBUG
@@ -1108,7 +1149,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             VertexOut out;
             out.position = float4(positions[vertexID], 0.0, 1.0);
-            
+
             // Apply Y-flip if needed (for OpenGL textures)
             if (flipY) {
                 // Flip the Y coordinate
@@ -1117,7 +1158,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 texCoords[2].y = 1.0 - texCoords[2].y;
                 texCoords[3].y = 1.0 - texCoords[3].y;
             }
-            
+
             out.texCoord = texCoords[vertexID];
             return out;
         }
@@ -1525,7 +1566,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             -1.0,  1.0, 0.0, 0.0, 1.0, // top-left: (u=0, v=1)
              1.0,  1.0, 0.0, 1.0, 1.0  // top-right: (u=1, v=1)
         ]
-        
+
         DLOG("Using standard texture coordinates, flipY will be handled by shader")
 
         let vertexBuffer = device?.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<Float>.size, options: .storageModeShared)
@@ -2073,7 +2114,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             VertexOut out;
             out.position = float4(positions[vertexID], 0.0, 1.0);
-            
+
             // Apply Y-flip if needed (for OpenGL textures)
             if (flipY) {
                 // Flip the Y coordinate
@@ -2082,7 +2123,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 texCoords[2].y = 1.0 - texCoords[2].y;
                 texCoords[3].y = 1.0 - texCoords[3].y;
             }
-            
+
             out.texCoord = texCoords[vertexID];
             return out;
         }
@@ -2748,7 +2789,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 float2(0.0, 1.0),  // Top-left
                 float2(1.0, 1.0)   // Top-right
             };
-            
+
             // Apply Y-flip if needed (for OpenGL textures)
             if (flipY) {
                 // Flip the Y coordinate
@@ -2808,7 +2849,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 var flipY = !(emulatorCore?.rendersToOpenGL ?? false)
                 let constants = MTLFunctionConstantValues()
                 constants.setConstantValue(&flipY, type: .bool, index: 0)
-                
+
                 // Get the vertex function with constants
                 let vertexFunctionWithConstants: MTLFunction
                 do {
@@ -2817,7 +2858,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     ELOG("Failed to create vertex function with constants: \(error)")
                     vertexFunctionWithConstants = vertexFunction
                 }
-                
+
                 // Create a render pipeline descriptor
                 let pipelineDescriptor = MTLRenderPipelineDescriptor()
                 pipelineDescriptor.vertexFunction = vertexFunctionWithConstants
@@ -3120,7 +3161,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 let screenBounds = UIScreen.main.bounds
                 let metalView = MTKView(frame: screenBounds, device: device)
                 metalView.autoresizingMask = [] // Disable autoresizing
-                
+
                 if Defaults[.nativeScaleEnabled] {
                     let scale = UIScreen.main.scale
                     if scale != 1.0 {

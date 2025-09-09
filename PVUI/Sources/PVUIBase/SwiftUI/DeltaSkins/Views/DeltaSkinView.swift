@@ -17,17 +17,6 @@ public struct DeltaSkinView: View {
 
     /// State for touch and button interactions
     @State private var touchLocations: Set<CGPoint> = []
-    /// Current positions per active touch id (not for rendering trails)
-    @State private var touchPositions: [ObjectIdentifier: CGPoint] = [:]
-    private struct TouchDot: Identifiable, Hashable {
-        let id = UUID()
-        let location: CGPoint
-        let expiry: Date
-    }
-    /// Ephemeral touch dots for visual trail rendering
-    @State private var touchDots: [TouchDot] = []
-    /// Per-touch active D-pad tokens (e.g., up, upright, left, etc.)
-    @State private var touchToDpadTokens: [ObjectIdentifier: Set<String>] = [:]
     @State private var activeButton: (frame: CGRect, mappingSize: CGSize, buttonId: String)?
     @State private var lastButtonPressed: String?
     @State private var isButtonHapticEnabled = true  // Add this state
@@ -401,9 +390,8 @@ public struct DeltaSkinView: View {
                         if let skinImage = skinImage {
                             Image(uiImage: skinImage)
                                 .resizable()
-                                .scaledToFill()
+                                .scaledToFit()
                                 .frame(width: layout.width, height: layout.height)
-                                .clipped()
                         } else {
                             // Loading placeholder
                             Rectangle()
@@ -469,21 +457,21 @@ public struct DeltaSkinView: View {
                         }
 
                         // Touch indicators - always on top
-                        // Render ephemeral dots (trail) and current positions
-                        ForEach(touchDots) { dot in
-                            DeltaSkinTouchIndicator(at: dot.location)
-                                .zIndex(5)
-                                .allowsHitTesting(false)
-                                .opacity(max(0, 1.0 - CGFloat(Date().timeIntervalSince(dot.expiry) * -2)))
-                        }
-                        ForEach(Array(touchPositions.values), id: \.self) { location in
+                        ForEach(Array(touchLocations), id: \.self) { location in
                             DeltaSkinTouchIndicator(at: location)
-                                .zIndex(6)
+                                .zIndex(5)
                                 .allowsHitTesting(false)
                         }
                     }
                     .frame(width: layout.width, height: layout.height)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
+                    .position(
+                        x: (traits.device == .iphone && traits.orientation == .portrait)
+                           ? (layout.xOffset + layout.width / 2)
+                           : (geometry.size.width / 2),
+                        y: (traits.device == .iphone && traits.orientation == .portrait)
+                           ? (layout.yOffset + layout.height / 2)
+                           : (geometry.size.height - layout.height / 2)
+                    )
                     .environment(\.skinLayout, layout)
                     .onAppear {
                         DLOG("DeltaSkinView appeared")
@@ -491,8 +479,6 @@ public struct DeltaSkinView: View {
                         loadSkinResources()
                         // Preload thumbstick caps so they render immediately
                         Task { await loadThumbsticks() }
-                        // Start cleanup timer for ephemeral touch dots
-                        startTouchDotsCleanupTimer()
                     }
                 }
 
@@ -527,7 +513,14 @@ public struct DeltaSkinView: View {
                         }
                     }
                     .frame(width: layout.width, height: layout.height)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height - layout.height / 2)
+                    .position(
+                        x: (traits.device == .iphone && traits.orientation == .portrait)
+                           ? (layout.xOffset + layout.width / 2)
+                           : (geometry.size.width / 2),
+                        y: (traits.device == .iphone && traits.orientation == .portrait)
+                           ? (layout.yOffset + layout.height / 2)
+                           : (geometry.size.height - layout.height / 2)
+                    )
                 }
             }
             .onChange(of: geometry.size) { newSize in
@@ -549,180 +542,84 @@ public struct DeltaSkinView: View {
                         DLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
 
                         switch touchPhase {
-                        case .began:
+                        case .began, .moved:
+                            // Process each active touch
                             for touch in touches {
                                 let location = touch.location
                                 DLOG("Processing touch: \(touch.id) at \(location)")
-                                touchLocations.insert(location)
-                                touchPositions[touch.id] = location // Store initial position
-                                touchDots.append(TouchDot(location: location, expiry: Date().addingTimeInterval(0.5))) // Add ephemeral dot
 
-                                // Determine which button this touch is on; if any, press and own it
-                                if let buttons = skin.buttons(for: traits),
-                                   let mappingSize = skin.mappingSize(for: traits),
-                                   let dpad = buttons.first(where: { if case .directional = $0.input { return true } else { return false } }) {
-                                    // Prefer directional D-pad if tap is inside its frame
-                                    let scale = min(geometry.size.width / mappingSize.width, geometry.size.height / mappingSize.height)
-                                    let scaledSkinWidth = mappingSize.width * scale
-                                    let scaledSkinHeight = mappingSize.height * scale
-                                    let xOffset = (geometry.size.width - scaledSkinWidth) / 2
-                                    let hasScreenPosition = skin.screens(for: traits) != nil
-                                    let yOffset: CGFloat = hasScreenPosition ? ((geometry.size.height - scaledSkinHeight) / 2) : (geometry.size.height - scaledSkinHeight)
-                                    let dpadFrame = CGRect(x: dpad.frame.minX * scale + xOffset,
-                                                           y: yOffset + (dpad.frame.minY * scale),
-                                                           width: dpad.frame.width * scale,
-                                                           height: dpad.frame.height * scale)
-                                    if dpadFrame.contains(location) {
-                                        let tokens = resolveDpadTokens(for: location, dpad: dpad, mappingSize: mappingSize, containerSize: geometry.size)
-                                        for token in tokens { if !pressedButtons.contains(token) { handleButtonPress(token) } }
-                                        touchToDpadTokens[touch.id] = tokens
-                                    } else if let button = hitTestButton(at: location, in: geometry.size) {
-                                        switch button.input {
-                                        case .single:
-                                            let command = extractInputCommand(from: button)
-                                            if !pressedButtons.contains(command) { handleButtonPress(command) }
-                                            touchToButtonMap[touch.id] = command
-                                            DLOG("Associated touch \(touch.id) with button \(command)")
-                                        case .directional:
-                                            let tokens = resolveDpadTokens(for: location, dpad: button, mappingSize: mappingSize, containerSize: geometry.size)
-                                            for token in tokens { if !pressedButtons.contains(token) { handleButtonPress(token) } }
-                                            touchToDpadTokens[touch.id] = tokens
-                                        }
-                                    } else {
-                                        touchToButtonMap[touch.id] = nil
-                                    }
-                                } else if let button = hitTestButton(at: location, in: geometry.size) {
-                                    // No D-pad defined; fallback to hit result
-                                    let command = extractInputCommand(from: button)
-                                    if !pressedButtons.contains(command) { handleButtonPress(command) }
-                                    touchToButtonMap[touch.id] = command
-                                } else {
-                                    touchToButtonMap[touch.id] = nil
-                                }
+                                // Store this touch point for visualization
+                                touchLocations.insert(location)
+
+                                // Store the mapping between touch ID and location
+                                touchToButtonMap[touch.id] = nil
+
+                                // Handle this touch location
+                                handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
                             }
                             DLOG("Current touch points: \(touchLocations.count)")
 
-                        case .moved:
-                            for touch in touches {
-                                let location = touch.location
-                                touchLocations.insert(location)
-                                touchPositions[touch.id] = location // Update position
-                                touchDots.append(TouchDot(location: location, expiry: Date().addingTimeInterval(0.5))) // Add ephemeral dot
-
-                                // Button hit-test ownership for non-D-pad handled above
-                                let previousButtonId = touchToButtonMap[touch.id]
-                                if let button = hitTestButton(at: location, in: geometry.size) {
-                                    switch button.input {
-                                    case .single:
-                                        let command = extractInputCommand(from: button)
-                                        if let prev = previousButtonId, prev != command {
-                                            handleButtonRelease(prev)
-                                        }
-                                        if !pressedButtons.contains(command) { handleButtonPress(command) }
-                                        touchToButtonMap[touch.id] = command
-                                    case .directional:
-                                        if let mappingSize = skin.mappingSize(for: traits) {
-                                            let tokens = resolveDpadTokens(for: location, dpad: button, mappingSize: mappingSize, containerSize: geometry.size)
-                                            let prevTokens = touchToDpadTokens[touch.id] ?? []
-                                            for token in prevTokens.subtracting(tokens) { handleButtonRelease(token) }
-                                            for token in tokens.subtracting(prevTokens) { handleButtonPress(token) }
-                                            touchToDpadTokens[touch.id] = tokens
-                                        }
-                                    }
-                                } else {
-                                    if let prev = previousButtonId { handleButtonRelease(prev) }
-                                    touchToButtonMap[touch.id] = nil
-                                }
-
-                                // D-pad per-touch handling if current highlight/button is a D-pad area
-                                if let buttons = skin.buttons(for: traits),
-                                   let mappingSize = skin.mappingSize(for: traits),
-                                   let dpad = buttons.first(where: { if case .directional = $0.input { return true } else { return false } }) {
-                                    // Compute tokens for this touch
-                                    let tokens = resolveDpadTokens(for: location, dpad: dpad, mappingSize: mappingSize, containerSize: geometry.size)
-                                    // Previously active for this touch
-                                    let prevTokens = touchToDpadTokens[touch.id] ?? []
-                                    // Release tokens that are no longer active
-                                    for token in prevTokens.subtracting(tokens) {
-                                        handleButtonRelease(token)
-                                    }
-                                    // Press tokens newly active
-                                    for token in tokens.subtracting(prevTokens) {
-                                        handleButtonPress(token)
-                                    }
-                                    touchToDpadTokens[touch.id] = tokens
-                                }
-                            }
-
                         case .ended, .cancelled:
+                            // Process ended touches
                             for touch in touches {
                                 DLOG("Ending touch: \(touch.id)")
+
+                                // Remove this touch point from visualization
                                 touchLocations.remove(touch.location)
-                                touchPositions.removeValue(forKey: touch.id) // Remove position
-                                touchDots.append(TouchDot(location: touch.location, expiry: Date().addingTimeInterval(0.5))) // Add ephemeral dot for removal
+
+                                // Release any button associated with this touch
                                 if let buttonId = touchToButtonMap[touch.id] {
                                     DLOG("Releasing button \(buttonId) for touch \(touch.id)")
                                     handleButtonRelease(buttonId)
                                     touchToButtonMap.removeValue(forKey: touch.id)
                                 }
-                                // Release any per-touch D-pad tokens
-                                if let tokens = touchToDpadTokens[touch.id] {
-                                    for token in tokens { handleButtonRelease(token) }
-                                    touchToDpadTokens.removeValue(forKey: touch.id)
-                                }
                             }
 
+                            // If all touches are gone, ensure everything is reset
                             if touchToButtonMap.isEmpty {
+                                DLOG("All touches ended, cleaning up")
+
+                                // Clear active buttons to ensure visual feedback is removed
+                                activeButtons.removeAll()
+
+                                // Reset state
+                                touchLocations.removeAll()
                                 currentlyPressedButton = nil
-                                // Clear lingering trails when all touches are up
-                                touchDots.removeAll()
+
+                                // Double-check that all D-pad buttons are released
+                                for direction in ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright"] {
+                                    if pressedButtons.contains(direction) {
+                                        DLOG("Force releasing stuck D-pad button: \(direction)")
+                                        handleButtonRelease(direction)
+                                    }
+                                }
+
+                                // Clear all pressed buttons as a final safety measure
+                                let allButtons = pressedButtons
+                                for buttonId in allButtons {
+                                    handleButtonRelease(buttonId)
+                                }
                             }
                         }
                     }
+                    , ignoredRects: thumbstickIgnoredRects(in: geometry)
                 )
+                .frame(width: geometry.size.width, height: geometry.size.height)
             )
             #endif
         }
-        .onDisappear {
-            // Defensive cleanup when leaving view
-            touchDots.removeAll()
-            touchPositions.removeAll()
-            touchToButtonMap.removeAll()
-            touchToDpadTokens.removeAll()
-        }
     }
 
-    // Clean up expired touch dots periodically
-    @State private var touchDotsTimer: Timer? = nil
-    private func startTouchDotsCleanupTimer() {
-        touchDotsTimer?.invalidate()
-        touchDotsTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            let now = Date()
-            touchDots.removeAll { $0.expiry < now }
-        }
-    }
-
-    /// Compute regions (in view coordinates) occupied by active thumbsticks.
+    /// Compute regions (in view coordinates) occupied by thumbsticks.
     /// Touches within these rects should pass through the MultiTouch overlay to reach the thumbstick drag gesture.
     private func thumbstickIgnoredRects(in geometry: GeometryProxy) -> [CGRect] {
-        guard let mappingSize = skin.mappingSize(for: traits) else { return [] }
-        let scale = min(
-            geometry.size.width / mappingSize.width,
-            geometry.size.height / mappingSize.height
-        )
-        let scaledSkinWidth = mappingSize.width * scale
-        let scaledSkinHeight = mappingSize.height * scale
-        let xOffset = (geometry.size.width - scaledSkinWidth) / 2
-        let hasScreenPosition = skin.screens(for: traits) != nil
-        let yOffset: CGFloat = hasScreenPosition ? ((geometry.size.height - scaledSkinHeight) / 2) : (geometry.size.height - scaledSkinHeight)
-
-        return activeThumbsticks.map { ts in
-            CGRect(
-                x: ts.frame.minX * scale + xOffset,
-                y: yOffset + (ts.frame.minY * scale),
-                width: ts.frame.width * scale,
-                height: ts.frame.height * scale
-            ).insetBy(dx: -8, dy: -8)
+        guard let buttons = skin.buttons(for: traits), let mappingSize = skin.mappingSize(for: traits) else { return [] }
+        // Use the same transform used for button hit testing to ensure coordinates match overlay space
+        let margin: CGFloat = 12
+        return buttons.compactMap { button in
+            guard isThumbstick(button) else { return nil }
+            let scaled = transformFrame(button.frame, in: geometry, mappingSize: mappingSize)
+            return scaled.insetBy(dx: -margin, dy: -margin)
         }
     }
 
@@ -1215,19 +1112,37 @@ public struct DeltaSkinView: View {
                         : nil
                     )
                     // Only show test pattern if not in emulator
-                    .overlay(
-                        !isInEmulator ?
-                        DeltaSkinTestPatternView(
-                            frame: CGRect(
-                                x: 0,
-                                y: 0,
-                                width: scaledFrame.width,
-                                height: scaledFrame.height
-                            ),
-                            filters: filters
-                        )
-                        : nil
-                    )
+                    .overlay {
+                        if !isInEmulator {
+                            DeltaSkinTestPatternView(
+                                frame: CGRect(
+                                    x: 0,
+                                    y: 0,
+                                    width: scaledFrame.width,
+                                    height: scaledFrame.height
+                                ),
+                                filters: filters
+                            )
+                            .allowsHitTesting(false)
+                        }
+                    }
+                    // Apply default filter overlays in emulator mode
+                    .overlay {
+                        if isInEmulator && !filters.isEmpty {
+                            ZStack {
+                                if filters.contains(.scanlines) {
+                                    ScanlinesEffect()
+                                }
+                                if filters.contains(.lcd) {
+                                    LCDEffect()
+                                }
+                                if filters.contains(.subpixel) {
+                                    SubpixelEffect()
+                                }
+                            }
+                            .allowsHitTesting(false)
+                        }
+                    }
                     // Add a tag to help identify this view for debugging
                     .accessibility(identifier: "ScreenView-\(screen.id)")
             }
@@ -1672,82 +1587,6 @@ public struct DeltaSkinView: View {
         for buttonId in allButtons {
             handleButtonRelease(buttonId)
         }
-    }
-
-    /// Return the first button hit at a location along with its DeltaSkinButton
-    private func hitTestButton(at location: CGPoint, in size: CGSize) -> DeltaSkinButton? {
-        guard let buttons = skin.buttons(for: traits), let mappingSize = skin.mappingSize(for: traits) else { return nil }
-        let scale = min(size.width / mappingSize.width, size.height / mappingSize.height)
-        let scaledSkinWidth = mappingSize.width * scale
-        let scaledSkinHeight = mappingSize.height * scale
-        let xOffset = (size.width - scaledSkinWidth) / 2
-        let hasScreenPosition = skin.screens(for: traits) != nil
-        let yOffset: CGFloat = hasScreenPosition ? ((size.height - scaledSkinHeight) / 2) : (size.height - scaledSkinHeight)
-        for button in buttons {
-            let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
-            let scaledFrame = CGRect(
-                x: hitFrame.minX * scale + xOffset,
-                y: yOffset + (hitFrame.minY * scale),
-                width: hitFrame.width * scale,
-                height: hitFrame.height * scale
-            )
-            if scaledFrame.contains(location) {
-                return button
-            }
-        }
-        return nil
-    }
-
-    /// Resolve D-pad tokens (e.g. up, left, upright) for a given location
-    private func resolveDpadTokens(for location: CGPoint, dpad: DeltaSkinButton, mappingSize: CGSize, containerSize: CGSize) -> Set<String> {
-        let scale = min(containerSize.width / mappingSize.width, containerSize.height / mappingSize.height)
-        let scaledSkinWidth = mappingSize.width * scale
-        let scaledSkinHeight = mappingSize.height * scale
-        let xOffset = (containerSize.width - scaledSkinWidth) / 2
-        let hasScreenPosition = skin.screens(for: traits) != nil
-        let yOffset: CGFloat = hasScreenPosition ? ((containerSize.height - scaledSkinHeight) / 2) : (containerSize.height - scaledSkinHeight)
-
-        let centerX = dpad.frame.midX * scale + xOffset
-        let centerY = dpad.frame.midY * scale + yOffset
-        let relativeX = location.x - centerX
-        let relativeY = location.y - centerY
-        let buttonWidth = dpad.frame.width * scale
-        let buttonHeight = dpad.frame.height * scale
-        let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
-
-        var activeDirections: Set<String> = []
-        if sqrt(relativeX * relativeX + relativeY * relativeY) >= deadZoneRadius {
-            let angle = atan2(relativeY, relativeX)
-            let degrees = angle * 180 / .pi
-            if degrees > -135 && degrees < -45 { activeDirections.insert("up") }
-            else if degrees > 45 && degrees < 135 { activeDirections.insert("down") }
-            if degrees > -45 && degrees < 45 { activeDirections.insert("right") }
-            else if degrees > 135 || degrees < -135 { activeDirections.insert("left") }
-            // Resolve opposing
-            if activeDirections.contains("up") && activeDirections.contains("down") {
-                if abs(relativeY) > abs(relativeX) {
-                    if relativeY < 0 { activeDirections.remove("down") } else { activeDirections.remove("up") }
-                } else { activeDirections.remove("up"); activeDirections.remove("down") }
-            }
-            if activeDirections.contains("left") && activeDirections.contains("right") {
-                if abs(relativeX) > abs(relativeY) {
-                    if relativeX < 0 { activeDirections.remove("right") } else { activeDirections.remove("left") }
-                } else { activeDirections.remove("left"); activeDirections.remove("right") }
-            }
-        }
-        let hasUp = activeDirections.contains("up")
-        let hasDown = activeDirections.contains("down")
-        let hasLeft = activeDirections.contains("left")
-        let hasRight = activeDirections.contains("right")
-        if hasUp && hasLeft { return ["upleft"] }
-        if hasUp && hasRight { return ["upright"] }
-        if hasDown && hasLeft { return ["downleft"] }
-        if hasDown && hasRight { return ["downright"] }
-        if hasUp { return ["up"] }
-        if hasDown { return ["down"] }
-        if hasLeft { return ["left"] }
-        if hasRight { return ["right"] }
-        return []
     }
 }
 
