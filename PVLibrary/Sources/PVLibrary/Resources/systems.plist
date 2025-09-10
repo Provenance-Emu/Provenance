@@ -447,7 +447,7 @@
 		<key>PVSupported</key>
 		<false/>
 		<key>PVBit</key>
-		<string>64</string>
+		<string>128</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.wii</string>
 		<key>PVDatabaseID</key>
@@ -569,7 +569,7 @@
 				<key>PVControlType</key>
 				<string>PVRightShoulderButton2</string>
 				<key>PVControlTitle</key>
-				<string>-</string>
+				<string>+</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -585,7 +585,7 @@
 				<key>PVControlType</key>
 				<string>PVLeftShoulderButton2</string>
 				<key>PVControlTitle</key>
-				<string>+</string>
+				<string>-</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
