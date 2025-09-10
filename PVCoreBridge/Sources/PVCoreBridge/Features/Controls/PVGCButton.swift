@@ -154,11 +154,11 @@
  */
 
 @objc public enum PVGCButton: Int, EmulatorCoreButton {
-	// D-Pad
-	case up
-	case down
+    // D-Pad
+    case up
+    case down
     case left
-	case right
+    case right
     @objc(PVGCAnalogUp)
     case analogUp
     @objc(PVGCAnalogDown)
@@ -167,29 +167,29 @@
     case analogLeft
     @objc(PVGCAnalogRight)
     case analogRight
-	// C buttons
+    // C buttons
     @objc(PVGCAnalogCUp)
-	case analogCUp
+    case analogCUp
     @objc(PVGCAnalogCDown)
-	case analogCDown
+    case analogCDown
     @objc(PVGCAnalogCLeft)
-	case analogCLeft
+    case analogCLeft
     @objc(PVGCAnalogCRight)
-	case analogCRight
-	case a
-	case b
-    case x
-    case y
-	// Shoulder buttons
-	case l
-	case r
-	case z
-	case start
+    case analogCRight
+    case a              // 12
+    case b              // 13
+    case x              // 14
+    case y              // 15
+    case l              // 16
+    // FIXED: Z and R swapped to match on-screen controls
+    case z              // 17
+    case r              // 18
+    case start          // 19
     @objc(PVGCDigitalL)
     case digitalL
     @objc(PVGCDigitalR)
     case digitalR
-	case count
+    case count
     case cUp
     case cDown
     case cLeft
