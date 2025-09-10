@@ -47,9 +47,13 @@ final class PVGameCubeControllerViewController: PVControllerViewController<PVGam
             }
         }
 
+        leftShoulderButton?.buttonTag = .l
         leftShoulderButton2?.buttonTag = .l
-        rightShoulderButton2?.buttonTag = .r
-        rightShoulderButton?.buttonTag = .z
+        
+        rightShoulderButton2?.buttonTag = .z
+        
+        rightShoulderButton?.buttonTag = .r
+        
         startButton?.buttonTag = .start
     }
     override func prelayoutSettings() {
