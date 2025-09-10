@@ -7,7 +7,6 @@
 //
 
 #import "PVDolphinCore+Video.h"
-#import "PVDolphinCore.h"
 
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>

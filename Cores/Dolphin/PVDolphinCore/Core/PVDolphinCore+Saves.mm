@@ -7,7 +7,6 @@
 //
 
 #import "PVDolphinCore+Saves.h"
-#import "PVDolphinCore.h"
 #import <PVLogging/PVLoggingObjC.h>
 
 #include "Common/CPUDetect.h"
