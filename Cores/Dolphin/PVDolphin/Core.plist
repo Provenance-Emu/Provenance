@@ -14,9 +14,9 @@
 	<key>PVProjectName</key>
 	<string>Dolphin</string>
 	<key>PVProjectURL</key>
-	<string>https://github.com/OatmealDome/dolphin</string>
+	<string>https://github.com/Provenance-Emu/dolphin-ios-jitless/tree/brand175/master%2Bpatches</string>
 	<key>PVProjectVersion</key>
-	<string>3.2.0b2 (186)</string>
+	<string>4.1.0b4</string>
 	<key>PVAppStoreDisabled</key>
 	<false/>
 </dict>
