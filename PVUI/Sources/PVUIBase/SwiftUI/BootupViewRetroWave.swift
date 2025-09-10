@@ -87,6 +87,16 @@ public struct BootupViewRetroWave: View {
             .scaleEffect(titleScale)
     }
     
+    var appName: String {
+        // If bundle contains LITE use LITE or use app bundle name?
+        let displayName = (Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String) ?? "Provenance"
+        return displayName.uppercased()
+    }
+    
+    var appVersion: String? {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+    
     public var body: some View {
         ZStack {
             // Background color
@@ -133,7 +143,7 @@ public struct BootupViewRetroWave: View {
                 }
                                 
                 // Title with neon effect
-                Text("PROVENANCE")
+                Text(appName)
                     .font(.system(size: 42, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -143,7 +153,7 @@ public struct BootupViewRetroWave: View {
                         )
                     )
                     .overlay(
-                        Text("PROVENANCE")
+                        Text(appName)
                             .font(.system(size: 42, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                             .blur(radius: 5)
@@ -151,6 +161,28 @@ public struct BootupViewRetroWave: View {
                     )
                     .shadow(color: .retroPink.opacity(0.8), radius: 5, x: 0, y: 0)
                     .scaleEffect(titleScale)
+                
+                if let appVersion = appVersion {
+                    // Version with neon effect
+                    Text(appVersion)
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .overlay(
+                            Text(appVersion)
+                                .font(.system(size: 24, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                                .blur(radius: 5)
+                                .opacity(glowOpacity)
+                        )
+                        .shadow(color: .retroPink.opacity(0.8), radius: 5, x: 0, y: 0)
+                        .scaleEffect(titleScale)
+                }
                 
                 // Status text with blinking effect
                 Text(appState.bootupStateManager.currentState.localizedDescription)
