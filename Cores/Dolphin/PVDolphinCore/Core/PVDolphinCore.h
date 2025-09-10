@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 10/20/21.
 //  Copyright © 2021 Provenance. All rights reserved.
 //
+#pragma once
 #import <Foundation/Foundation.h>
 @import PVCoreObjCBridge;
 
@@ -12,6 +13,7 @@
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
+#import <CoreMotion/CoreMotion.h>
 
 @protocol PVWiiSystemResponderClient;
 @protocol PVGameCubeSystemResponderClient;
@@ -121,6 +123,10 @@
 @property (nonatomic, assign) int8_t wiiLanguage;
 @property (nonatomic, assign) bool multiPlayer;
 @property (nonatomic, assign) bool enableLogging;
+@property (nonatomic, assign) bool enableHapticFeedback;
+@property (nonatomic, assign) bool enableGyroMotionControls;
+@property (nonatomic, assign) bool enableGyroIRCursor;
+@property (nonatomic, assign) bool disableJoystickIRCursor;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
 - (void) setupControllers;
@@ -131,6 +137,31 @@
 -(void)controllerConnected:(NSNotification *)notification;
 -(void)controllerDisconnected:(NSNotification *)notification;
 -(void)optionUpdated:(NSNotification *)notification;
+
+// Touch Screen Support for Wii IR Cursor
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event forPlayer:(NSInteger)player;
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event forPlayer:(NSInteger)player;
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event forPlayer:(NSInteger)player;
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event forPlayer:(NSInteger)player;
+
+// Helper methods for touch screen IR cursor
+-(void)updateIRCursorWithLocation:(CGPoint)location inView:(UIView*)view forPlayer:(NSInteger)player;
+-(void)resetIRCursorForPlayer:(NSInteger)player;
+
+// Haptic feedback setup
+-(void)setupHapticFeedback;
+
+// Gyro motion controls setup
+-(void)setupGyroMotionControls;
+-(void)startMotionUpdates;
+-(void)stopMotionUpdates;
++(CMMotionManager*)sharedMotionManager;
+-(void)updateWiimoteGyroFromMotion:(CMDeviceMotion*)motion;
+-(void)updateIRCursorFromMotion:(CMDeviceMotion*)motion;
+
+// JIT detection
+-(BOOL)checkJITAvailable;
+
 @end
 extern __weak PVDolphinCoreBridge *_current;
 

@@ -157,14 +157,14 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
     static var textureCacheAccuracyOption: CoreOption = {
         .enumeration(.init(title: "Texture Cache Accuracy",
-                          description: "Controls accuracy of the texture cache. Higher values are more accurate but slower.",
+                          description: "Controls accuracy of the texture cache. Fast provides best performance with minimal visual impact.",
                           requiresRestart: false),
                     values: [
                         .init(title: "Safe", description: "Most accurate, slowest", value: 0),
                         .init(title: "Medium", description: "Balanced accuracy/performance", value: 1),
-                        .init(title: "Fast", description: "Least accurate, fastest", value: 2)
+                        .init(title: "Fast (Recommended)", description: "Best performance, minimal quality loss", value: 2)
                     ],
-                    defaultValue: 1)
+                    defaultValue: 2)
     }()
 
     static var storeXFBCopiesToTextureOnlyOption: CoreOption = {
@@ -194,9 +194,9 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     static var gpuTextureDecodingOption: CoreOption = {
         .bool(.init(
             title: "GPU Texture Decoding",
-            description: "Use GPU for texture decoding. Faster but may be less accurate.",
+            description: "Use GPU for texture decoding. Provides better performance on modern devices.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var fastDepthCalculationOption: CoreOption = {
@@ -243,23 +243,22 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
     static var shaderCompilationModeOption: CoreOption = {
         .enumeration(.init(title: "Shader Compilation",
-                          description: "How shaders are compiled and cached",
+                          description: "How shaders are compiled and cached. Specialized provides best performance.",
                           requiresRestart: false),
                     values: [
-                        .init(title: "Specialized (Default)", description: "Synchronous", value: 0),
-                        .init(title: "Exclusive Ubershaders", description: "Synchronous Ubershaders", value: 1),
-                        .init(title: "Hybrid Ubershaders", description: "Asynchronous Ubershaders", value: 2),
-                        .init(titlee: "Skip Drawing", description: "Asynchronous Skip Rendering", value: 3)
+                        .init(title: "Synchronous (Slowest)", description: "Compile on-demand, causes stutters", value: 0),
+                        .init(title: "Asynchronous (Uber)", description: "Background compilation with fallback shaders", value: 1),
+                        .init(title: "Specialized (Recommended)", description: "Pre-compile specialized shaders for best performance", value: 2)
                     ],
-                    defaultValue: 0)
+                    defaultValue: 2)
     }()
 
     static var waitForShadersOption: CoreOption = {
         .bool(.init(
-            title: "Wait for Shaders",
-            description: "Wait for all shaders to compile before starting. Reduces stuttering.",
+            title: "Compile Shaders Before Starting",
+            description: "Pre-compile shaders at startup to eliminate in-game stuttering. Recommended for best performance.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     // MARK: - CPU/Emulation Settings
@@ -303,12 +302,12 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
 	static var cpuOption: CoreOption = {
 		 .enumeration(.init(title: "CPU Emulation Engine",
-			   description: "CPU emulation method. JIT provides best performance.",
+			   description: "CPU emulation method. JIT provides best performance when available, with automatic fallback.",
 			   requiresRestart: true),
 		  values: [
 			.init(title: "Interpreter", description: "Interpreter (Slowest, Most Compatible)", value: 0),
-			.init(title: "Cached Interpreter", description: "Cached Interpreter (Balanced)", value: 1),
-			.init(title: "JIT Recompiler", description: "JIT (Fastest)", value: 2)
+			.init(title: "Cached Interpreter", description: "Cached Interpreter (Good Performance)", value: 1),
+			.init(title: "JIT Recompiler", description: "JIT (Fastest, auto-fallback if unavailable)", value: 2)
 		  ],
 		  defaultValue: 1)
 	}()
@@ -337,7 +336,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     static var dualCoreOption: CoreOption = {
         .bool(.init(
             title: "Dual Core",
-            description: "Enables dual-core emulation for better performance. May cause issues in some games.",
+            description: "Enables dual-core emulation for significantly better performance. Recommended for all modern devices.",
             requiresRestart: true),
         defaultValue: true)
     }()
@@ -500,6 +499,38 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             requiresRestart: false),
         defaultValue: false)
     }()
+
+    static var enableHapticFeedbackOption: CoreOption = {
+        .bool(.init(
+            title: "Enable Haptic Feedback",
+            description: "Enable haptic feedback (rumble) using device vibration. Requires compatible iOS device.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
+    static var enableGyroMotionControlsOption: CoreOption = {
+        .bool(.init(
+            title: "Enable Gyro Motion Controls",
+            description: "Use iPhone/iPad gyroscope for Wiimote gyro controls. Tilt left/right and forward/back for motion sensing.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var enableGyroIRCursorOption: CoreOption = {
+        .bool(.init(
+            title: "Enable Gyro IR Cursor",
+            description: "Use iPhone/iPad gyroscope to control Wiimote IR cursor. Alternative to touch screen control.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var disableJoystickIRCursorOption: CoreOption = {
+        .bool(.init(
+            title: "Disable Joystick IR Control",
+            description: "Disable joystick control of IR cursor to prevent conflicts with touch/gyro input.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
 	public static var options: [CoreOption] {
 		var options = [CoreOption]()
 
@@ -579,7 +610,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
         // System Settings Group
         let systemOptions: [CoreOption] = [
-            skipIPLOption, wiiLanguageOption, multiPlayerOption, enableLoggingOption
+            skipIPLOption, wiiLanguageOption, multiPlayerOption, enableLoggingOption, enableHapticFeedbackOption, enableGyroMotionControlsOption, enableGyroIRCursorOption, disableJoystickIRCursorOption
         ]
         let systemGroup: CoreOption = .group(.init(title: "System",
                                                   description: "GameCube and Wii system settings"),
@@ -764,6 +795,18 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     @objc static var enableLogging: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.enableLoggingOption).asBool
     }
+    @objc static var enableHapticFeedback: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.enableHapticFeedbackOption).asBool
+    }
+    @objc static var enableGyroMotionControls: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.enableGyroMotionControlsOption).asBool
+    }
+    @objc static var enableGyroIRCursor: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.enableGyroIRCursorOption).asBool
+    }
+    @objc static var disableJoystickIRCursor: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.disableJoystickIRCursorOption).asBool
+    }
 }
 
 @objc public extension PVDolphinCoreBridge {
@@ -821,5 +864,9 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         self.wiiLanguage = NSNumber(value: PVDolphinCoreOptions.wiiLanguage).int8Value
         self.multiPlayer = PVDolphinCoreOptions.multiPlayer
         self.enableLogging = PVDolphinCoreOptions.enableLogging
+        self.enableHapticFeedback = PVDolphinCoreOptions.enableHapticFeedback
+        self.enableGyroMotionControls = PVDolphinCoreOptions.enableGyroMotionControls
+        self.enableGyroIRCursor = PVDolphinCoreOptions.enableGyroIRCursor
+        self.disableJoystickIRCursor = PVDolphinCoreOptions.disableJoystickIRCursor
     }
 }

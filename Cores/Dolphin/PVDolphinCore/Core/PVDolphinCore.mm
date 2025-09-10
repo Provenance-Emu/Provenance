@@ -6,7 +6,7 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import "PVDolphinCore.h"
+//#import "PVDolphinCore.h"
 #import "PVDolphinCore+Controls.h"
 #import "PVDolphinCore+Audio.h"
 #import "PVDolphinCore+Video.h"
@@ -21,6 +21,10 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <CoreHaptics/CoreHaptics.h>
+#import <sys/types.h>
+#import <sys/sysctl.h>
+#import <assert.h>
 
 /* Dolphin Includes */
 //#include "Core/MachineContext.h"
@@ -409,16 +413,33 @@ static void ResetDolphinStaticState() {
 
     // === CPU/EMULATION SETTINGS ===
 
-    // CPU Core
-    if (self.cpuType == 0) {
+    // CPU Core with JIT detection and fallback
+    int8_t effectiveCpuType = self.cpuType;
+
+    // JIT availability check - if user wants JIT but it's not available, fall back
+    if (self.cpuType == 2) {
+        bool jitAvailable = [self checkJITAvailable];
+        if (!jitAvailable) {
+            NSLog(@"⚠️ JIT requested but not available. Falling back to Cached Interpreter for better performance than Interpreter.");
+            effectiveCpuType = 1; // Fall back to CachedInterpreter
+        } else {
+            NSLog(@"✅ JIT is available and will be used for maximum performance.");
+        }
+    }
+
+    if (effectiveCpuType == 0) {
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::Interpreter);
-    } else if (self.cpuType == 1) {
+        NSLog(@"🐌 CPU Core: Interpreter (Slowest, Most Compatible)");
+    } else if (effectiveCpuType == 1) {
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::CachedInterpreter);
-    } else if (self.cpuType == 2) {
+        NSLog(@"⚡ CPU Core: Cached Interpreter (Balanced Performance)");
+    } else if (effectiveCpuType == 2) {
 #if defined(__x86_64__)
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JIT64);
+        NSLog(@"🚀 CPU Core: JIT64 (Maximum Performance)");
 #else
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JITARM64);
+        NSLog(@"🚀 CPU Core: JITARM64 (Maximum Performance)");
 #endif
     }
 
@@ -531,7 +552,7 @@ static void ResetDolphinStaticState() {
     Config::SetBase(Config::MAIN_ANALYTICS_ENABLED, false); // Disable analytics for privacy/performance
 
     // Wiimote settings optimized for iOS
-    Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
+    // Note: SYSCONF_WIIMOTE_MOTOR is configured in setupHapticFeedback based on device capability and user preference
     Config::SetBase(Config::MAIN_WII_KEYBOARD, false);
     Config::SetBase(Config::MAIN_WIIMOTE_CONTINUOUS_SCANNING, false);
     Config::SetBase(Config::MAIN_BLUETOOTH_PASSTHROUGH_ENABLED, false);
@@ -731,6 +752,7 @@ static void ResetDolphinStaticState() {
         }
 
         // Log every 60 iterations (roughly once per second at 60 FPS)
+        #ifdef DEBUG
         if (loopCount % 60 == 0) {
             NSLog(@"🐬 [DEBUG] Emulation loop iteration %d, Core state: %d, IsRunning: %s",
                   loopCount,
@@ -738,6 +760,7 @@ static void ResetDolphinStaticState() {
                   Core::IsRunning(Core::System::GetInstance()) ? "YES" : "NO");
         }
         loopCount++;
+        #endif
 
         // Wait for events with timeout to prevent indefinite blocking
         if (s_update_main_frame_event.WaitFor(std::chrono::milliseconds(16))) {
@@ -792,6 +815,10 @@ static void ResetDolphinStaticState() {
 - (void)stopEmulation {
     [super stopEmulation];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    // Stop motion updates to save battery
+    [self stopMotionUpdates];
+
     self.shouldStop = YES;
     _isInitialized = false;
     g_controller_interface.Shutdown();
@@ -836,8 +863,45 @@ static void ResetDolphinStaticState() {
     // Reset all static/global state for next load
     ResetDolphinStaticState();
 }
--(void)startHaptic { }
--(void)stopHaptic { }
+/// Haptic feedback is now handled automatically by Dolphin's Motor output system
+/// See setupHapticFeedback method in Controls for implementation
+
+/// JIT availability detection
+/// Based on DolphiniOS's JitManager logic - JIT is available when process is debugged
+/// or on simulator, which allows dynamic code execution
+-(BOOL)checkJITAvailable {
+#if TARGET_OS_SIMULATOR
+    // JIT is always available on iOS Simulator
+    return YES;
+#else
+    // Check if process is being debugged, which enables JIT
+    // This covers AltStore, SideStore, Xcode debugging, etc.
+    return [self isProcessDebugged];
+#endif
+}
+
+/// Check if the current process is being debugged
+/// This is the primary way JIT becomes available on iOS devices
+-(BOOL)isProcessDebugged {
+    int junk;
+    int mib[4];
+    struct kinfo_proc info;
+    size_t size;
+
+    info.kp_proc.p_flag = 0;
+
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_PROC;
+    mib[2] = KERN_PROC_PID;
+    mib[3] = getpid();
+
+    size = sizeof(info);
+    junk = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, NULL, 0);
+    assert(junk == 0);
+
+    // Check if P_TRACED flag is set, indicating the process is being debugged
+    return (info.kp_proc.p_flag & P_TRACED) != 0;
+}
 
 - (void)resetEmulation {
 	Core::System::GetInstance().GetProcessorInterface().ResetButton_Tap();
@@ -886,6 +950,17 @@ static void ResetDolphinStaticState() {
             m_view_controller=(UIViewController *)cgsh_view_controller;
             m_view=cgsh_view_controller.view;
             m_view.contentMode = UIViewContentModeScaleToFill;
+        } else if(self.gsPreference == 2) {
+            // Metal backend - reuse Vulkan view controller since both use CAMetalLayer
+            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+                                                               initWithResFactor:self.resFactor
+                                                               videoWidth: self.videoWidth
+                                                               videoHeight: self.videoHeight
+                                                               core: self];
+            m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
+            m_view_controller=(UIViewController *)cgsh_view_controller;
+            m_view=cgsh_view_controller.view;
+            m_view.contentMode = UIViewContentModeScaleToFill;
         }
 
         m_view=m_view_controller.view;
@@ -927,6 +1002,19 @@ static void ResetDolphinStaticState() {
                                                             videoHeight: self.videoHeight
                                                             core: self];
             m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
+            m_view_controller=(UIViewController *)cgsh_view_controller;
+            m_view=cgsh_view_controller.view;
+            m_view.contentMode = UIViewContentModeScaleToFill;
+            [gl_view_controller addChildViewController:cgsh_view_controller];
+            [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
+        } else if(self.gsPreference == 2) {
+            // Metal backend - reuse Vulkan view controller since both use CAMetalLayer
+            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+                                                               initWithResFactor:self.resFactor
+                                                               videoWidth: self.videoWidth
+                                                               videoHeight: self.videoHeight
+                                                               core: self];
+            m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
             m_view_controller=(UIViewController *)cgsh_view_controller;
             m_view=cgsh_view_controller.view;
             m_view.contentMode = UIViewContentModeScaleToFill;
