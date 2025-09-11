@@ -231,7 +231,7 @@
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>RetroArch needs access to WiFi networks for network features.</string>
+	<string>RetroArch needs access to Wi-Fi networks for network features.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom).</string>
 	<key>NSMotionUsageDescription</key>

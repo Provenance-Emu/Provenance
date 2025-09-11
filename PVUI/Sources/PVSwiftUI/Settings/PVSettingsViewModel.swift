@@ -318,7 +318,7 @@ extension PVSettingsViewModel {
         var errorDescription: String? {
             switch self {
             case .noWiFiConnection:
-                return "Your device needs to be connected to a WiFi network to continue!"
+                return "Your device needs to be connected to a Wi-Fi network to continue!"
             case .serverStartFailed:
                 return "Check your network connection or settings and free up ports: 80, 81."
             case .unsupported:

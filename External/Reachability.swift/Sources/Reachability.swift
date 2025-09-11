@@ -54,7 +54,7 @@ public class Reachability {
         public var description: String {
             switch self {
             case .reachableViaWWAN: return "Cellular"
-            case .reachableViaWiFi: return "WiFi"
+            case .reachableViaWiFi: return "Wi-Fi"
             case .notReachable: return "No Connection"
             }
         }
@@ -65,7 +65,7 @@ public class Reachability {
         public var description: String {
             switch self {
             case .cellular: return "Cellular"
-            case .wifi: return "WiFi"
+            case .wifi: return "Wi-Fi"
             case .unavailable: return "No Connection"
             }
         }

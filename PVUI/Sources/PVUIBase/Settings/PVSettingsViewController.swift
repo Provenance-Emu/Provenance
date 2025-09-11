@@ -782,7 +782,7 @@ public final class PVSettingsViewController: QuickTableViewController {
             }
         } else {
             let alert = UIAlertController(title: "Unable to start web server!",
-                                          message: "Your device needs to be connected to a WiFi network to continue!",
+                                          message: "Your device needs to be connected to a Wi-Fi network to continue!",
                                           preferredStyle: .alert)
             alert.popoverPresentationController?.sourceView = tableView
             alert.popoverPresentationController?.sourceRect = tableView.bounds

@@ -279,9 +279,9 @@ public enum CloudKitSyncNetworkMode: String, Codable, Equatable, UserDefaultsRep
     public var description: String {
         switch self {
         case .wifiAndCellular:
-            return "WiFi & Cellular"
+            return "Wi-Fi & Cellular"
         case .wifiOnly:
-            return "WiFi Only"
+            return "Wi-Fi Only"
         case .cellularOnly:
             return "Cellular Only"
         }
@@ -290,9 +290,9 @@ public enum CloudKitSyncNetworkMode: String, Codable, Equatable, UserDefaultsRep
     public var subtitle: String {
         switch self {
         case .wifiAndCellular:
-            return "Sync on both WiFi and cellular connections"
+            return "Sync on both Wi-Fi and cellular connections"
         case .wifiOnly:
-            return "Sync only when connected to WiFi (recommended for large files)"
+            return "Sync only when connected to Wi-Fi (recommended for large files)"
         case .cellularOnly:
             return "Sync only on cellular connections"
         }

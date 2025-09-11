@@ -167,7 +167,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                 present(alert, animated: true) { () -> Void in }
             }
         } else {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a Wi-Fi network to continue!", preferredStyle: .alert)
             alert.preferredContentSize = CGSize(width: 300, height: 150)
             alert.popoverPresentationController?.barButtonItem = barButtonItem
 #if !os(tvOS)
