@@ -16,7 +16,7 @@
 	<key>PVProjectURL</key>
 	<string>https://github.com/Provenance-Emu/dolphin-ios-jitless/tree/brand175/master%2Bpatches</string>
 	<key>PVProjectVersion</key>
-	<string>4.1.0b4</string>
+	<string>4.1.0b5</string>
 	<key>PVAppStoreDisabled</key>
 	<false/>
 </dict>

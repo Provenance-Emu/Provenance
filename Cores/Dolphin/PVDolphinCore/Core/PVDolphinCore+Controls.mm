@@ -6,8 +6,11 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import <PVDolphin/PVDolphin.h>
+#import "PVDolphinCore+Controls.h"
 #import <Foundation/Foundation.h>
+#import <CoreHaptics/CoreHaptics.h>
+#import <CoreMotion/CoreMotion.h>
+#import <PVLogging/PVLoggingObjC.h>
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
 
@@ -73,6 +76,7 @@
 #include "Core/System.h"
 
 #include "Core/Movie.h"
+#include "iOS/App/Common/Bridging/DOLConfigBridge.h"
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -304,7 +308,14 @@ s8 joyx[4], joyy[4];
     [self writeWiiIniFile];
     [self writeGCIniFile];
     ciface::iOS::StateManager::GetInstance()->Init();
-    NSLog(@"🎮 StateManager initialized");
+    ILOG(@"🎮 StateManager initialized");
+
+    // Setup haptic feedback for iOS device rumble
+    [self setupHapticFeedback];
+
+    // Setup gyro motion controls for Wii motion
+    [self setupGyroMotionControls];
+
     Wiimote::Initialize(Wiimote::InitializeMode::DO_NOT_WAIT_FOR_WIIMOTES);
     Pad::Initialize();
     Wiimote::LoadConfig();
@@ -333,78 +344,78 @@ s8 joyx[4], joyy[4];
 		if (controller.extendedGamepad != nil)
 		{
             controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                    [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_A
+                    [self gamepadEventOnPad:port button:WIIMOTE_BUTTON_A
                      action:(pressed?1:0)];
                     [self gamepadEventOnPad:port
-                     button:ciface::iOS::ButtonType::CLASSIC_BUTTON_B
+                     button:CLASSIC_BUTTON_B
                      action:(pressed?1:0)];
-                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_B
+                    [self gamepadEventOnPad:gcPort button:BUTTON_B
                      action:(pressed?1:0)];
             };
             controller.extendedGamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadEventOnPad:port
-                     button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_B
+                     button:WIIMOTE_BUTTON_B
                      action:(pressed?1:0)];
                     [self gamepadEventOnPad:port
-                     button:ciface::iOS::ButtonType::CLASSIC_BUTTON_Y
+                     button:CLASSIC_BUTTON_Y
                      action:(pressed?1:0)];
-                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Y action:(pressed?1:0)];
+                    [self gamepadEventOnPad:gcPort button:BUTTON_Y action:(pressed?1:0)];
             };
 			controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                    [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_1
+                    [self gamepadEventOnPad:port button:WIIMOTE_BUTTON_1
                          action:(pressed?1:0)];
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
                     [self gamepadEventOnPad:port
-                     button:ciface::iOS::ButtonType::CLASSIC_BUTTON_A
+                     button:CLASSIC_BUTTON_A
                      action:(pressed?1:0)];
-					[self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_A
+					[self gamepadEventOnPad:gcPort button:BUTTON_A
                      action:(pressed?1:0)];
 			};
             controller.extendedGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadEventOnPad:port
-                     button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_2
+                     button:WIIMOTE_BUTTON_2
                      action:(pressed?1:0)];
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:value];
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
                     [self gamepadEventOnPad:port
-                     button:ciface::iOS::ButtonType::CLASSIC_BUTTON_X
+                     button:CLASSIC_BUTTON_X
                      action:(pressed?1:0)];
-                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_X
+                    [self gamepadEventOnPad:gcPort button:BUTTON_X
                      action:(pressed?1:0)];
             };
-			controller.extendedGamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+						controller.extendedGamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
-                    [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_PLUS action:(pressed?1:0)];
+                    [self gamepadEventOnPad:port button:WIIMOTE_BUTTON_PLUS action:(pressed?1:0)];
                     [self gamepadEventOnPad:port
-					 button:ciface::iOS::ButtonType::CLASSIC_BUTTON_ZL
-					 action:(pressed?1:0)];
-					[self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::TRIGGER_L action:(pressed?1:0)];
+				 button:CLASSIC_BUTTON_ZL
+				 action:(pressed?1:0)];
+				[self gamepadMoveEventOnPad:gcPort axis:TRIGGER_L value:(pressed?1.0:0.0)];
 			};
-			controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+						controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:value];
                     [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_MINUS action:(pressed?1:0)];
                     [self gamepadEventOnPad:port
-					 button:ciface::iOS::ButtonType::CLASSIC_BUTTON_ZR
-					 action:(pressed?1:0)];
-					[self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::TRIGGER_R action:(pressed?1:0)];
+				 button:ciface::iOS::ButtonType::CLASSIC_BUTTON_ZR
+				 action:(pressed?1:0)];
+				[self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
 			};
-			controller.extendedGamepad.leftTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+						controller.extendedGamepad.leftTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::NUNCHUK_BUTTON_C action:(pressed?1:0)];
                     [self gamepadEventOnPad:port
-					 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_L
-					 action:(pressed?1:0)];
-                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::TRIGGER_L action:(pressed?1:0)];
+				 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_L
+				 action:(pressed?1:0)];
+                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(pressed?1.0:0.0)];
 			};
-			controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+						controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:pressed?1.0:0];
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:pressed?1.0:0];
                     [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::NUNCHUK_BUTTON_Z action:(pressed?1:0)];
                     [self gamepadEventOnPad:port
-					 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_R
-					 action:(pressed?1:0)];
-                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::TRIGGER_R action:(pressed?1:0)];
+				 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_R
+				 action:(pressed?1:0)];
+                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
 			};
 			controller.extendedGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     if (rotateControls) {
@@ -451,39 +462,22 @@ s8 joyx[4], joyy[4];
 					[self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_DOWN action:(pressed?1:0)];
 			};
             controller.extendedGamepad.leftThumbstick.valueChangedHandler = ^(GCControllerDirectionPad* leftJoypad, float xValue, float yValue) {
-                [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_FORWARD value:xValue];
-                [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_BACKWARD value:xValue];
+                // Nunchuk stick controls (always active in Wii mode)
+                [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:xValue];
+                [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:xValue];
+                [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:-yValue];
+                [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:-yValue];
 
-                if (!rotateIr) {
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:xValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:xValue];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:xValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:xValue];
-                } else {
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:-xValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:-xValue];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:-xValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:-xValue];
+                // GameCube main stick (only in GameCube mode)
+                if (!self.isWii) {
+                    [self gamepadMoveEventOnPad:gcPort axis:11 value:CGFloat(-yValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:12 value:CGFloat(-yValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:13 value:CGFloat(xValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:14 value:CGFloat(xValue)];
                 }
-                if (!rotateIr) {
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:-yValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:-yValue];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:-yValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:-yValue];
-                } else {
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:yValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:yValue];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:yValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:yValue];
-                }
-                // GC
-                [self gamepadMoveEventOnPad:gcPort axis:11 value:CGFloat(-yValue)];
-                [self gamepadMoveEventOnPad:gcPort axis:12 value:CGFloat(-yValue)];
-                [self gamepadMoveEventOnPad:gcPort axis:13 value:CGFloat(xValue)];
-                [self gamepadMoveEventOnPad:gcPort axis:14 value:CGFloat(xValue)];
-
             };
             controller.extendedGamepad.rightThumbstick.valueChangedHandler = ^(GCControllerDirectionPad* rightJoypad, float xValue, float yValue) {
+                // Wiimote motion controls (always active in Wii mode)
                 [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:xValue/adj];
                 [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_BACKWARD value:xValue/adj];
                 if (!rotateIr) {
@@ -497,14 +491,17 @@ s8 joyx[4], joyy[4];
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_UP value:yValue/adj];
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_DOWN value:yValue/adj];
                 }
-                // GC
-                [self gamepadMoveEventOnPad:gcPort axis:16 value:CGFloat(-yValue)];
-                [self gamepadMoveEventOnPad:gcPort axis:17 value:CGFloat(-yValue)];
-                [self gamepadMoveEventOnPad:gcPort axis:18 value:CGFloat(xValue)];
-                [self gamepadMoveEventOnPad:gcPort axis:19 value:CGFloat(xValue)];
+
+                // GameCube C-stick (only in GameCube mode)
+                if (!self.isWii) {
+                    [self gamepadMoveEventOnPad:gcPort axis:16 value:CGFloat(-yValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:17 value:CGFloat(-yValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:18 value:CGFloat(xValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:19 value:CGFloat(xValue)];
+                }
             };
             controller.extendedGamepad.leftThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                NSLog(@"Rotating (opt) controls %d\n", rotateControls);
+                ILOG(@"Rotating (opt) controls %d\n", rotateControls);
                 [self rotate:pressed];
                 // GC
                 [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START action:(pressed?1:0)];
@@ -519,7 +516,7 @@ s8 joyx[4], joyy[4];
                  action:(pressed?1:0)];
             };
             controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                NSLog(@"Rotating (opt) controls %d\n", rotateControls);
+                ILOG(@"Rotating (opt) controls %d\n", rotateControls);
                 [self rotate:pressed];
             };
             controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
@@ -618,7 +615,7 @@ s8 joyx[4], joyy[4];
 {
 	// Convert action to boolean (1 = pressed, 0 = released)
 	bool pressed = (action == 1);
-	NSLog(@"🎮 gamepadEventOnPad: pad=%d, button=%d, action=%d, pressed=%s",
+	DLOG(@"🎮 gamepadEventOnPad: pad=%d, button=%d, action=%d, pressed=%s",
 	      pad, button, action, pressed ? "YES" : "NO");
 	ciface::iOS::StateManager::GetInstance()->SetButtonPressed(pad, static_cast<ciface::iOS::ButtonType>(button), pressed);
 }
@@ -658,30 +655,39 @@ s8 joyx[4], joyy[4];
         int gcPort = 0;
         switch (button) {
             case(PVWiiMoteButtonLeftAnalog):
-                [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_FORWARD value:xValue];
-                [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_BACKWARD value:xValue];
+                // Optional: IR cursor control from left joystick (can be disabled)
+                if (!self.disableJoystickIRCursor) {
+                    // Using IR axis numbers from WiimoteNew.ini: 112-117
+                    [self gamepadMoveEventOnPad:port axis:116 value:xValue]; // IR Forward
+                    [self gamepadMoveEventOnPad:port axis:117 value:xValue]; // IR Backward
 
+                    if (!rotateIr) {
+                        [self gamepadMoveEventOnPad:port axis:114 value:xValue]; // IR Left
+                        [self gamepadMoveEventOnPad:port axis:115 value:xValue]; // IR Right
+                    } else {
+                        [self gamepadMoveEventOnPad:port axis:115 value:-xValue]; // IR Right
+                        [self gamepadMoveEventOnPad:port axis:114 value:-xValue]; // IR Left
+                    }
+                    if (!rotateIr) {
+                        [self gamepadMoveEventOnPad:port axis:113 value:-yValue]; // IR Down
+                        [self gamepadMoveEventOnPad:port axis:112 value:-yValue]; // IR Up
+                    } else {
+                        [self gamepadMoveEventOnPad:port axis:112 value:yValue]; // IR Up
+                        [self gamepadMoveEventOnPad:port axis:113 value:yValue]; // IR Down
+                    }
+                }
+
+                // Always handle Nunchuk stick (unaffected by IR disable option)
                 if (!rotateIr) {
                     [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:xValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:xValue];
                     [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:xValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:xValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:-yValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:-yValue];
                 } else {
                     [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:-xValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:-xValue];
                     [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:-xValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:-xValue];
-                }
-                if (!rotateIr) {
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:-yValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:-yValue];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:-yValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:-yValue];
-                } else {
                     [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:yValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:yValue];
                     [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:yValue];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:yValue];
                 }
                 // GC
                 [self gamepadMoveEventOnPad:gcPort axis:11 value:CGFloat(-yValue)];
@@ -766,138 +772,180 @@ s8 joyx[4], joyy[4];
 	switch (button) {
         case(PVWiiMoteButtonSelect):
             [self rotate:pressed];
-            NSLog(@"Rotating Controls %d\n", rotateControls);
+            ILOG(@"Rotating Controls %d\n", rotateControls);
+            break;
+        case(PVWiiMoteButtonStart):
+            [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_START
+             action:(pressed?1:0)];
             break;
 		case(PVWiiMoteButtonWiiHome):
 //            [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER
 //             action:(pressed?1:0)];
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_HOME
              action:(pressed?1:0)];
-            [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_START
-             action:(pressed?1:0)];
 			break;
 		case(PVWiiMoteButtonWiiDPadLeft):
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_LEFT value:-value];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_RIGHT value:-value];
+            // Don't also send nunchuck, why was this here?
+//            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_LEFT value:-value];
+//            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_RIGHT value:-value];
             if (rotateControls)
                 [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_UP
                  action:(pressed?1:0)];
             else
                 [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_LEFT
                  action:(pressed?1:0)];
-            [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_LEFT
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_LEFT
+                 action:(pressed?1:0)];
+            }
 			break;
 		case(PVWiiMoteButtonWiiDPadRight):
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_RIGHT value:value];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_LEFT value:value];
+//            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_RIGHT value:value];
+//            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_LEFT value:value];
             if (rotateControls)
                 [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_DOWN
                  action:(pressed?1:0)];
             else
                 [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_RIGHT
                  action:(pressed?1:0)];
-            [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_RIGHT
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_RIGHT
+                 action:(pressed?1:0)];
+            }
 			break;
 		case(PVWiiMoteButtonWiiDPadUp):
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_UP value:-value];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_DOWN value:-value];
+//            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_UP value:-value];
+//            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_DOWN value:-value];
             if (rotateControls)
                 [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_RIGHT
                  action:(pressed?1:0)];
             else
                 [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_UP
                  action:(pressed?1:0)];
-            [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_UP
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_UP
+                 action:(pressed?1:0)];
+            }
 			break;
 		case(PVWiiMoteButtonWiiDPadDown):
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_UP value:value];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_DOWN value:value];
+//            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_UP value:value];
+//            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_DOWN value:value];
             if (rotateControls)
                 [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_LEFT
                     action:(pressed?1:0)];
             else
                 [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_DOWN
                  action:(pressed?1:0)];
-            [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_DOWN
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_DOWN
+                 action:(pressed?1:0)];
+            }
 			break;
 		case(PVWiiMoteButtonWiiA):
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_A
              action:(pressed?1:0)];
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_A
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_A
+                 action:(pressed?1:0)];
+            }
 			break;
 		case(PVWiiMoteButtonWiiB):
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_B
              action:(pressed?1:0)];
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_B
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_B
+                 action:(pressed?1:0)];
+            }
 			break;
 		case(PVWiiMoteButtonWiiOne):
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_1
              action:(pressed?1:0)];
             [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Z value:value];
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_Y
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_Y
+                 action:(pressed?1:0)];
+            }
             break;
         case(PVWiiMoteButtonWiiTwo):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_X value:value];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Z value:value];
+//            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_X value:value];
+//            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
+//            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Z value:value];
             [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_2
              action:(pressed?1:0)];
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_X
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_X
+                 action:(pressed?1:0)];
+            }
             break;
 		case(PVWiiMoteButtonWiiPlus):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Z value:value];
+//            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Z value:value];
             [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_PLUS
              action:(pressed?1:0)];
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::TRIGGER_L
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadMoveEventOnPad:0 axis:ciface::iOS::ButtonType::TRIGGER_L value:(pressed?1.0:0.0)];
+            }
 			break;
 		case(PVWiiMoteButtonWiiMinus):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_X value:value];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
+//            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_X value:value];
+//            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_MINUS
              action:(pressed?1:0)];
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::TRIGGER_R
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadMoveEventOnPad:0 axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
+            }
 			break;
 		case(PVWiiMoteButtonNunchukC):
 		[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::NUNCHUK_BUTTON_C
              action:(pressed?1:0)];
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::TRIGGER_R
-             action:(pressed?1:0)];
+        // Only send to GameCube controller if we're not in Wii mode
+        if (!self.isWii) {
+            [self gamepadMoveEventOnPad:0 axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
+        }
 			break;
 		case(PVWiiMoteButtonNunchukZ):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:value];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
+//            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:value];
+//            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::NUNCHUK_BUTTON_Z
              action:(pressed?1:0)];
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_Z
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_Z
+                 action:(pressed?1:0)];
+            }
 			break;
 		default:
+            WLOG(@"Unhandled Wii button %i player: %i, value: %f", button, player, value);
 //            [self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER
 //             action:(pressed?1:0)];
 			[self gamepadEventOnPad:4 button:ciface::iOS::ButtonType::WIIMOTE_BUTTON_HOME
              action:(pressed?1:0)];
-            [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_START
-             action:(pressed?1:0)];
+            // Only send to GameCube controller if we're not in Wii mode
+            if (!self.isWii) {
+                [self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_START
+                 action:(pressed?1:0)];
+            }
 			break;
 	}
 }
 
 
 -(void)sendGCButtonInput:(enum PVGCButton)button isPressed:(bool)pressed withValue:(CGFloat)value forPlayer:(NSInteger)player {
+	DLOG(@"🎮 sendGCButtonInput: button=%d, pressed=%s", (int)button, pressed ? "YES" : "NO");
+
 	switch (button) {
-		case(PVGCButtonStart):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_START action:(pressed?1:0)];
-			break;
+			case(PVGCButtonStart):
+		[self gamepadEventOnPad:0 button:BUTTON_START action:(pressed?1:0)];
+		break;
         case(PVGCButtonCUp):
             [self gamepadMoveEventOnPad:0 axis:STICK_C_UP value:-value];
             [self gamepadMoveEventOnPad:0 axis:STICK_C_DOWN value:-value];
@@ -914,18 +962,18 @@ s8 joyx[4], joyy[4];
             [self gamepadMoveEventOnPad:0 axis:STICK_C_LEFT value:value];
             [self gamepadMoveEventOnPad:0 axis:STICK_C_RIGHT value:value];
             break;
-		case(PVGCButtonLeft):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_LEFT action:(pressed?1:0)];
-			break;
-		case(PVGCButtonRight):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_RIGHT action:(pressed?1:0)];
-			break;
-		case(PVGCButtonUp):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_UP action:(pressed?1:0)];
-			break;
-		case(PVGCButtonDown):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_DOWN action:(pressed?1:0)];
-			break;
+			case(PVGCButtonLeft):
+		[self gamepadEventOnPad:0 button:BUTTON_LEFT action:(pressed?1:0)];
+		break;
+	case(PVGCButtonRight):
+		[self gamepadEventOnPad:0 button:BUTTON_RIGHT action:(pressed?1:0)];
+		break;
+	case(PVGCButtonUp):
+		[self gamepadEventOnPad:0 button:BUTTON_UP action:(pressed?1:0)];
+		break;
+	case(PVGCButtonDown):
+		[self gamepadEventOnPad:0 button:BUTTON_DOWN action:(pressed?1:0)];
+		break;
 		case(PVGCAnalogUp):
             [self gamepadMoveEventOnPad:0 axis:STICK_MAIN_UP value:-value];
             [self gamepadMoveEventOnPad:0 axis:STICK_MAIN_DOWN value:-value];
@@ -942,28 +990,34 @@ s8 joyx[4], joyy[4];
             [self gamepadMoveEventOnPad:0 axis:STICK_MAIN_LEFT value:value];
             [self gamepadMoveEventOnPad:0 axis:STICK_MAIN_RIGHT value:value];
 			break;
-		case(PVGCButtonZ):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_Z action:(pressed?1:0)];
-			break;
-		case(PVGCButtonL):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::TRIGGER_L action:(pressed?1:0)];
-			break;
-		case(PVGCButtonR):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::TRIGGER_R action:(pressed?1:0)];
-			break;
-		case(PVGCButtonX):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_X action:(pressed?1:0)];
-			break;
-		case(PVGCButtonY):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_Y action:(pressed?1:0)];
-			break;
-		case(PVGCButtonA):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_A action:(pressed?1:0)];
-			break;
-		case(PVGCButtonB):
-			[self gamepadEventOnPad:0 button:ciface::iOS::ButtonType::BUTTON_B action:(pressed?1:0)];
-			break;
+			case(PVGCButtonZ):
+		DLOG(@"🎮 Hit PVGCButtonZ case - calling BUTTON_Z");
+		[self gamepadEventOnPad:0 button:BUTTON_Z action:(pressed?1:0)];
+		break;
+	case(PVGCButtonL):
+            DLOG(@"🎮 Hit PVGCButtonL case - calling TRIGGER_L");
+		[self gamepadMoveEventOnPad:0 axis:TRIGGER_L value:value];
+		break;
+	case(PVGCButtonR):
+            DLOG(@"🎮 Hit PVGCButtonR case - calling TRIGGER_R");
+		[self gamepadMoveEventOnPad:0 axis:TRIGGER_R value:value];
+		break;
+			case(PVGCButtonX):
+		[self gamepadEventOnPad:0 button:BUTTON_X action:(pressed?1:0)];
+		break;
+	case(PVGCButtonY):
+		[self gamepadEventOnPad:0 button:BUTTON_Y action:(pressed?1:0)];
+		break;
+	case(PVGCButtonA):
+		NSLog(@"🎮 Hit PVGCButtonA case - calling BUTTON_A");
+		[self gamepadEventOnPad:0 button:BUTTON_A action:(pressed?1:0)];
+		break;
+	case(PVGCButtonB):
+		[self gamepadEventOnPad:0 button:BUTTON_B action:(pressed?1:0)];
+		break;
+
 		default:
+			WLOG(@"🎮 Hit DEFAULT case - button %d not handled", (int)button);
 			break;
 	}
 }
@@ -992,8 +1046,8 @@ s8 joyx[4], joyy[4];
     } else {
         content = [content stringByAppendingString:[self getWiiTouchpadConfig:1 wiiMotePort:4 source:1]];
     }
-    NSLog(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
-    NSLog(@"🎮 Writing Wii config with iOS device source");
+    ILOG(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
+    ILOG(@"🎮 Writing Wii config with iOS device source");
 	[content writeToFile:fileName
 	   atomically:NO
 	   encoding:NSStringEncodingConversionAllowLossy
@@ -1228,8 +1282,8 @@ s8 joyx[4], joyy[4];
     } else {
         content = [self getGCTouchConfig:1 gcPort:0 source:1];
     }
-    NSLog(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
-    NSLog(@"🎮 Writing GC config with iOS device source");
+    ILOG(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
+    ILOG(@"🎮 Writing GC config with iOS device source");
     [content writeToFile:fileName
        atomically:NO
        encoding:NSStringEncodingConversionAllowLossy
@@ -1298,4 +1352,602 @@ s8 joyx[4], joyy[4];
     port, gcPort, name.UTF8String, source];
     return content;
 }
+
+#pragma mark - Touch Screen Support for Wii IR Cursor
+
+/// Touch screen support for Wii IR cursor positioning
+/// This replaces the previous joystick-based IR control system which caused conflicts.
+/// Only active in Wii mode - GameCube mode uses joysticks normally.
+///
+/// Touch coordinates are mapped to IR cursor axes:
+/// - Screen center = IR cursor center
+/// - Touch position = IR cursor position
+/// - Supports rotation via rotateIr flag
+/// - Cursor resets to center when touch ends
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event forPlayer:(NSInteger)player {
+    if (!self.isWii || !_isInitialized) return;
+
+    UITouch *touch = [touches anyObject];
+    if (!touch) return;
+
+    UIView *view = touch.view;
+    CGPoint location = [touch locationInView:view];
+    [self updateIRCursorWithLocation:location inView:view forPlayer:player];
+}
+
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event forPlayer:(NSInteger)player {
+    if (!self.isWii || !_isInitialized) return;
+
+    UITouch *touch = [touches anyObject];
+    if (!touch) return;
+
+    UIView *view = touch.view;
+    CGPoint location = [touch locationInView:view];
+    [self updateIRCursorWithLocation:location inView:view forPlayer:player];
+}
+
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event forPlayer:(NSInteger)player {
+    if (!self.isWii || !_isInitialized) return;
+
+    // Reset IR cursor to center when touch ends
+    [self resetIRCursorForPlayer:player];
+}
+
+-(void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event forPlayer:(NSInteger)player {
+    if (!self.isWii || !_isInitialized) return;
+
+    // Reset IR cursor to center when touch is cancelled
+    [self resetIRCursorForPlayer:player];
+}
+
+-(void)updateIRCursorWithLocation:(CGPoint)location inView:(UIView*)view forPlayer:(NSInteger)player {
+    if (!view) return;
+
+    // Convert touch coordinates to normalized [-1.0, 1.0] range
+    // Origin (0,0) is top-left, we want center to be (0,0)
+    float normalizedX = (location.x / view.bounds.size.width) * 2.0f - 1.0f;
+    float normalizedY = (location.y / view.bounds.size.height) * 2.0f - 1.0f;
+
+    // Clamp to valid range
+    normalizedX = fmaxf(-1.0f, fminf(1.0f, normalizedX));
+    normalizedY = fmaxf(-1.0f, fminf(1.0f, normalizedY));
+
+    // Apply rotation if enabled
+    if (rotateIr) {
+        float temp = normalizedX;
+        normalizedX = normalizedY;
+        normalizedY = -temp;
+    }
+
+    // Map to Dolphin IR axes (pad 4 is Wiimote controller)
+    int port = 4 + (self.multiPlayer ? player : 0);
+
+    // Set IR cursor position - positive values for right/down, negative for left/up
+    // Using axis numbers from WiimoteNew.ini: IR/Left=114, IR/Right=115, IR/Up=112, IR/Down=113
+    [self gamepadMoveEventOnPad:port axis:114 value:normalizedX < 0 ? -normalizedX : 0]; // IR Left
+    [self gamepadMoveEventOnPad:port axis:115 value:normalizedX > 0 ? normalizedX : 0]; // IR Right
+    [self gamepadMoveEventOnPad:port axis:112 value:normalizedY < 0 ? -normalizedY : 0]; // IR Up
+    [self gamepadMoveEventOnPad:port axis:113 value:normalizedY > 0 ? normalizedY : 0]; // IR Down
+
+    NSLog(@"🎯 Touch IR: x=%.2f, y=%.2f -> normalizedX=%.2f, normalizedY=%.2f",
+          location.x, location.y, normalizedX, normalizedY);
+}
+
+-(void)resetIRCursorForPlayer:(NSInteger)player {
+    // Reset all IR axes to center (0.0)
+    // Using axis numbers from WiimoteNew.ini: IR/Left=114, IR/Right=115, IR/Up=112, IR/Down=113
+    int port = 4 + (self.multiPlayer ? player : 0);
+    [self gamepadMoveEventOnPad:port axis:114 value:0.0f]; // IR Left
+    [self gamepadMoveEventOnPad:port axis:115 value:0.0f]; // IR Right
+    [self gamepadMoveEventOnPad:port axis:112 value:0.0f]; // IR Up
+    [self gamepadMoveEventOnPad:port axis:113 value:0.0f]; // IR Down
+}
+
+#pragma mark - Haptic Feedback Setup
+
+/// Sets up haptic feedback for Dolphin rumble
+/// The iOS touchscreen devices created by StateManager automatically include
+/// Motor outputs if the device supports CoreHaptics. This method just logs status.
+-(void)setupHapticFeedback {
+    // Check if haptic feedback is enabled by user
+    if (!self.enableHapticFeedback) {
+        ILOG(@"🎮 Haptic feedback disabled by user setting");
+        Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
+        return;
+    }
+
+    // Check if device supports haptics
+    if ([[CHHapticEngine capabilitiesForHardware] supportsHaptics]) {
+        ILOG(@"🎮 Haptic feedback enabled - device supports CoreHaptics");
+        Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, true);
+    } else {
+        NSLog(@"🎮 Device does not support haptics - rumble disabled");
+        Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
+    }
+}
+
+#pragma mark - Gyro Motion Controls Setup
+
+// Shared CoreMotion manager instance for gyro controls
+static CMMotionManager *g_motionManager = nil;
+
+/// Get or create the shared motion manager instance
++(CMMotionManager*)sharedMotionManager {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        g_motionManager = [[CMMotionManager alloc] init];
+    });
+    return g_motionManager;
+}
+
+/// Sets up iPhone/iPad gyroscope for Wii motion controls
+/// Maps device rotation to Wiimote gyro axes for natural motion control
+-(void)setupGyroMotionControls {
+    // Check if any motion features are enabled
+    BOOL fullMotionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_enable_full_6dof"];
+    BOOL enhancedShakeEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_enhanced_shake_detection"];
+    BOOL gyroIRMode = YES; //(DOLConfigBridge.mainTouchPadIRMode == 0); // TouchIRMode.gyro = 0
+
+    if (!self.enableGyroMotionControls && !gyroIRMode && !fullMotionEnabled && !enhancedShakeEnabled) {
+        ILOG(@"🎮 All motion controls disabled by user setting");
+        return;
+    }
+
+    // Check if device supports motion
+    CMMotionManager *motionManager = [[self class] sharedMotionManager];
+    if (![motionManager isDeviceMotionAvailable]) {
+        ILOG(@"🎮 Device does not support motion - gyro controls disabled");
+        return;
+    }
+
+    // Log which motion features are active
+    NSMutableArray *activeFeatures = [[NSMutableArray alloc] init];
+    if (self.enableGyroMotionControls) [activeFeatures addObject:@"Wiimote Motion"];
+    if (gyroIRMode) [activeFeatures addObject:@"IR Cursor"];
+    if (fullMotionEnabled) [activeFeatures addObject:@"6DOF Motion"];
+    if (enhancedShakeEnabled) [activeFeatures addObject:@"Enhanced Shake"];
+
+    ILOG(@"🎮 Setting up motion controls: %@", [activeFeatures componentsJoinedByString:@", "]);
+
+    // Listen for motion settings changes during gameplay
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleMotionSettingsChanged:)
+                                                 name:@"DOLMotionSettingsChanged"
+                                               object:nil];
+
+    // Listen for IR cursor reset requests
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleResetIRCursor:)
+                                                 name:@"DOLResetIRCursor"
+                                               object:nil];
+
+    // Initialize motion manager in the main thread
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Reset cursor to center before starting motion updates
+        [self resetIRCursorForPlayer:0];
+        [self startMotionUpdates];
+    });
+}
+
+/// Start CoreMotion updates for gyro input
+/// Now uses TCDeviceMotion as the unified motion system
+
+-(void)startMotionUpdates {
+    // Check if any motion features are enabled
+    BOOL fullMotionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_enable_full_6dof"];
+    BOOL enhancedShakeEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_enhanced_shake_detection"];
+    BOOL gyroIRMode = YES; // (DOLConfigBridge.mainTouchPadIRMode == 0); // TouchIRMode.gyro = 0
+
+    if (!self.enableGyroMotionControls && !gyroIRMode && !fullMotionEnabled && !enhancedShakeEnabled) {
+        return;
+    }
+
+    // Use TCDeviceMotion as the unified motion system (handles all enhanced features)
+    NSMutableArray *activeFeatures = [[NSMutableArray alloc] init];
+    if (self.enableGyroMotionControls) [activeFeatures addObject:@"Gyro Controls"];
+    if (gyroIRMode) [activeFeatures addObject:@"IR Cursor"];
+    if (fullMotionEnabled) [activeFeatures addObject:@"6DOF Motion"];
+    if (enhancedShakeEnabled) [activeFeatures addObject:@"Enhanced Shake"];
+
+    ILOG(@"🎮 Enabling motion controls via TCDeviceMotion - Features: %@", [activeFeatures componentsJoinedByString:@", "]);
+
+//    [[TCDeviceMotion shared] setMotionEnabled:YES];
+}
+
+/// Stop CoreMotion updates to save battery
+-(void)stopMotionUpdates {
+//    [[TCDeviceMotion shared] setMotionEnabled:NO];
+    NSLog(@"🎮 Motion controls stopped via TCDeviceMotion");
+
+    // Remove notification observer when stopping motion updates
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                     name:@"DOLMotionSettingsChanged"
+                                                   object:nil];
+}
+
+/// Update Wiimote gyro axes from device motion (for motion sensing games)
+/// Maps device tilt to gyro controls: left/right tilt → roll, forward/back tilt → pitch
+/// Using axis numbers from WiimoteNew.ini: IMUGyroscope entries (631-636)
+-(void)updateWiimoteGyroFromMotion:(CMDeviceMotion*)motion {
+    const double deadZone = 0.1; // Prevent drift when device is still
+    const double sensitivity = 1.5; // Adjust sensitivity as needed
+
+    // Roll: Tilt left/right → Wiimote gyro roll
+    // Positive roll = tilt right, Negative roll = tilt left
+    // IMUGyroscope/Roll Left = Axis 633, IMUGyroscope/Roll Right = Axis 634
+    double roll = motion.attitude.roll; // Radians
+    if (roll > deadZone) {
+        [self gamepadMoveEventOnPad:4 axis:634 value:MIN(roll * sensitivity, 1.0)]; // Roll Right
+        [self gamepadMoveEventOnPad:4 axis:633 value:0.0]; // Roll Left
+    } else if (roll < -deadZone) {
+        [self gamepadMoveEventOnPad:4 axis:633 value:MIN(-roll * sensitivity, 1.0)]; // Roll Left
+        [self gamepadMoveEventOnPad:4 axis:634 value:0.0]; // Roll Right
+    } else {
+        [self gamepadMoveEventOnPad:4 axis:633 value:0.0]; // Roll Left
+        [self gamepadMoveEventOnPad:4 axis:634 value:0.0]; // Roll Right
+    }
+
+    // Pitch: Tilt forward/back → Wiimote gyro pitch
+    // Positive pitch = tilt back (towards you), Negative pitch = tilt forward (away from you)
+    // IMUGyroscope/Pitch Up = Axis 631, IMUGyroscope/Pitch Down = Axis 632
+    double pitch = motion.attitude.pitch; // Radians
+    if (pitch > deadZone) {
+        [self gamepadMoveEventOnPad:4 axis:632 value:MIN(pitch * sensitivity, 1.0)]; // Pitch Down
+        [self gamepadMoveEventOnPad:4 axis:631 value:0.0]; // Pitch Up
+    } else if (pitch < -deadZone) {
+        [self gamepadMoveEventOnPad:4 axis:631 value:MIN(-pitch * sensitivity, 1.0)]; // Pitch Up
+        [self gamepadMoveEventOnPad:4 axis:632 value:0.0]; // Pitch Down
+    } else {
+        [self gamepadMoveEventOnPad:4 axis:631 value:0.0]; // Pitch Up
+        [self gamepadMoveEventOnPad:4 axis:632 value:0.0]; // Pitch Down
+    }
+}
+
+/// Update IR cursor from device motion (alternative to touch screen)
+/// Maps device tilt to IR cursor movement: left/right tilt → cursor left/right, forward/back tilt → cursor up/down
+/// Using axis numbers from WiimoteNew.ini: IR entries (112-115)
+-(void)updateIRCursorFromMotion:(CMDeviceMotion*)motion {
+    const double deadZone = 0.05; // Smaller dead zone for cursor precision
+    const double verticalSensitivity = 2.0;
+    const double horizontalSensitivity = 3.00;
+
+    int port = 4 + (self.multiPlayer ? 0 : 0); // Wiimote port
+
+    // Get inversion settings from UserDefaults
+    BOOL invertRoll = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_invert_roll"];
+    BOOL invertPitch = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_invert_pitch"];
+
+    // Left/Right Movement: Use yaw instead of roll for more natural feel
+    // When holding phone in landscape, yaw (turning left/right) feels more natural than roll
+    // IR/Left = Axis 114, IR/Right = Axis 115
+    BOOL useYawForHorizontal = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_use_yaw_for_horizontal"];
+    double horizontalAxis = useYawForHorizontal ? motion.attitude.yaw : motion.attitude.roll;
+
+    if (invertRoll) { // Keep using "invertRoll" key for backward compatibility
+        horizontalAxis = -horizontalAxis; // Invert horizontal direction
+    }
+
+    // Calculate horizontal output with enhanced sensitivity and proper clamping
+    double horizontalOutput = horizontalAxis * horizontalSensitivity;
+    horizontalOutput = fmax(-1.0, fmin(1.0, horizontalOutput)); // Clamp to [-1, 1]
+
+    if (horizontalAxis > deadZone) {
+        double rightValue = fmax(0.0, fmin(1.0, horizontalOutput)); // Ensure positive and clamped
+        [self gamepadMoveEventOnPad:port axis:115 value:rightValue]; // IR Right
+        [self gamepadMoveEventOnPad:port axis:114 value:0.0]; // IR Left
+    } else if (horizontalAxis < -deadZone) {
+        double leftValue = fmax(0.0, fmin(1.0, -horizontalOutput)); // Convert to positive and clamp
+        [self gamepadMoveEventOnPad:port axis:114 value:leftValue]; // IR Left
+        [self gamepadMoveEventOnPad:port axis:115 value:0.0]; // IR Right
+    } else {
+        [self gamepadMoveEventOnPad:port axis:114 value:0.0]; // IR Left
+        [self gamepadMoveEventOnPad:port axis:115 value:0.0]; // IR Right
+    }
+
+    // Pitch: Tilt forward/back → IR cursor up/down
+    // Positive pitch = tilt back → cursor down, Negative pitch = tilt forward → cursor up
+    // IR/Up = Axis 112, IR/Down = Axis 113
+    double pitch = motion.attitude.pitch; // Radians
+    if (invertPitch) {
+        pitch = -pitch; // Invert pitch direction
+    }
+
+    // Calculate vertical output with standard sensitivity and proper clamping
+    double verticalOutput = pitch * verticalSensitivity;
+    verticalOutput = fmax(-1.0, fmin(1.0, verticalOutput)); // Clamp to [-1, 1]
+
+    if (pitch > deadZone) {
+        double downValue = fmax(0.0, fmin(1.0, verticalOutput)); // Ensure positive and clamped
+        [self gamepadMoveEventOnPad:port axis:113 value:downValue]; // IR Down
+        [self gamepadMoveEventOnPad:port axis:112 value:0.0]; // IR Up
+    } else if (pitch < -deadZone) {
+        double upValue = fmax(0.0, fmin(1.0, -verticalOutput)); // Convert to positive and clamp
+        [self gamepadMoveEventOnPad:port axis:112 value:upValue]; // IR Up
+        [self gamepadMoveEventOnPad:port axis:113 value:0.0]; // IR Down
+    } else {
+        [self gamepadMoveEventOnPad:port axis:112 value:0.0]; // IR Up
+        [self gamepadMoveEventOnPad:port axis:113 value:0.0]; // IR Down
+    }
+}
+
+/// Full 6DOF motion mapping to Wiimote and Nunchuck accelerometer/gyro controls
+/// Maps device motion to all 6 degrees of freedom when not using gyro IR cursor
+/// This provides comprehensive motion control for games that use MotionPlus/IMU features
+-(void)updateFull6DOFMotionFromMotion:(CMDeviceMotion*)motion {
+    const double deadZone = 0.02; // Small dead zone to prevent noise
+    const double accelSensitivity = 1.5; // Sensitivity for accelerometer
+    const double gyroSensitivity = 1.0; // Sensitivity for gyroscope
+
+    int port = 4 + (self.multiPlayer ? 0 : 0); // Wiimote port
+
+    // Get settings for which controls to enable
+    BOOL enableWiimoteIMU = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_wiimote_imu_enabled"];
+    BOOL enableNunchuckIMU = [[NSUserDefaults standardUserDefaults] boolForKey:@"motion_nunchuck_imu_enabled"];
+
+    // === WIIMOTE IMU CONTROLS ===
+    if (enableWiimoteIMU) {
+        // === ACCELEROMETER (User Acceleration - gravity removed) ===
+        CMAcceleration userAccel = motion.userAcceleration;
+
+        // X-axis: Left/Right acceleration
+        if (fabs(userAccel.x) > deadZone) {
+            if (userAccel.x > 0) {
+                [self gamepadMoveEventOnPad:port axis:626 value:MIN(userAccel.x * accelSensitivity, 1.0)]; // Accel Right
+                [self gamepadMoveEventOnPad:port axis:625 value:0.0]; // Accel Left
+            } else {
+                [self gamepadMoveEventOnPad:port axis:625 value:MIN(-userAccel.x * accelSensitivity, 1.0)]; // Accel Left
+                [self gamepadMoveEventOnPad:port axis:626 value:0.0]; // Accel Right
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:625 value:0.0]; // Accel Left
+            [self gamepadMoveEventOnPad:port axis:626 value:0.0]; // Accel Right
+        }
+
+        // Y-axis: Forward/Backward acceleration
+        if (fabs(userAccel.y) > deadZone) {
+            if (userAccel.y > 0) {
+                [self gamepadMoveEventOnPad:port axis:628 value:MIN(userAccel.y * accelSensitivity, 1.0)]; // Accel Backward
+                [self gamepadMoveEventOnPad:port axis:627 value:0.0]; // Accel Forward
+            } else {
+                [self gamepadMoveEventOnPad:port axis:627 value:MIN(-userAccel.y * accelSensitivity, 1.0)]; // Accel Forward
+                [self gamepadMoveEventOnPad:port axis:628 value:0.0]; // Accel Backward
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:627 value:0.0]; // Accel Forward
+            [self gamepadMoveEventOnPad:port axis:628 value:0.0]; // Accel Backward
+        }
+
+        // Z-axis: Up/Down acceleration
+        if (fabs(userAccel.z) > deadZone) {
+            if (userAccel.z > 0) {
+                [self gamepadMoveEventOnPad:port axis:629 value:MIN(userAccel.z * accelSensitivity, 1.0)]; // Accel Up
+                [self gamepadMoveEventOnPad:port axis:630 value:0.0]; // Accel Down
+            } else {
+                [self gamepadMoveEventOnPad:port axis:630 value:MIN(-userAccel.z * accelSensitivity, 1.0)]; // Accel Down
+                [self gamepadMoveEventOnPad:port axis:629 value:0.0]; // Accel Up
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:629 value:0.0]; // Accel Up
+            [self gamepadMoveEventOnPad:port axis:630 value:0.0]; // Accel Down
+        }
+
+        // === GYROSCOPE (Rotation Rate) ===
+        CMRotationRate rotationRate = motion.rotationRate;
+
+        // Pitch: Forward/Back rotation
+        if (fabs(rotationRate.x) > deadZone) {
+            if (rotationRate.x > 0) {
+                [self gamepadMoveEventOnPad:port axis:631 value:MIN(rotationRate.x * gyroSensitivity, 1.0)]; // Pitch Up
+                [self gamepadMoveEventOnPad:port axis:632 value:0.0]; // Pitch Down
+            } else {
+                [self gamepadMoveEventOnPad:port axis:632 value:MIN(-rotationRate.x * gyroSensitivity, 1.0)]; // Pitch Down
+                [self gamepadMoveEventOnPad:port axis:631 value:0.0]; // Pitch Up
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:631 value:0.0]; // Pitch Up
+            [self gamepadMoveEventOnPad:port axis:632 value:0.0]; // Pitch Down
+        }
+
+        // Roll: Left/Right rotation
+        if (fabs(rotationRate.y) > deadZone) {
+            if (rotationRate.y > 0) {
+                [self gamepadMoveEventOnPad:port axis:633 value:MIN(rotationRate.y * gyroSensitivity, 1.0)]; // Roll Left
+                [self gamepadMoveEventOnPad:port axis:634 value:0.0]; // Roll Right
+            } else {
+                [self gamepadMoveEventOnPad:port axis:634 value:MIN(-rotationRate.y * gyroSensitivity, 1.0)]; // Roll Right
+                [self gamepadMoveEventOnPad:port axis:633 value:0.0]; // Roll Left
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:633 value:0.0]; // Roll Left
+            [self gamepadMoveEventOnPad:port axis:634 value:0.0]; // Roll Right
+        }
+
+        // Yaw: Turning rotation
+        if (fabs(rotationRate.z) > deadZone) {
+            if (rotationRate.z > 0) {
+                [self gamepadMoveEventOnPad:port axis:635 value:MIN(rotationRate.z * gyroSensitivity, 1.0)]; // Yaw Left
+                [self gamepadMoveEventOnPad:port axis:636 value:0.0]; // Yaw Right
+            } else {
+                [self gamepadMoveEventOnPad:port axis:636 value:MIN(-rotationRate.z * gyroSensitivity, 1.0)]; // Yaw Right
+                [self gamepadMoveEventOnPad:port axis:635 value:0.0]; // Yaw Left
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:635 value:0.0]; // Yaw Left
+            [self gamepadMoveEventOnPad:port axis:636 value:0.0]; // Yaw Right
+        }
+    }
+
+    // === NUNCHUCK IMU CONTROLS ===
+    if (enableNunchuckIMU) {
+        CMAcceleration userAccel = motion.userAcceleration;
+
+        // X-axis: Left/Right acceleration
+        if (fabs(userAccel.x) > deadZone) {
+            if (userAccel.x > 0) {
+                [self gamepadMoveEventOnPad:port axis:901 value:MIN(userAccel.x * accelSensitivity, 1.0)]; // Nunchuck Accel Right
+                [self gamepadMoveEventOnPad:port axis:900 value:0.0]; // Nunchuck Accel Left
+            } else {
+                [self gamepadMoveEventOnPad:port axis:900 value:MIN(-userAccel.x * accelSensitivity, 1.0)]; // Nunchuck Accel Left
+                [self gamepadMoveEventOnPad:port axis:901 value:0.0]; // Nunchuck Accel Right
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:900 value:0.0]; // Nunchuck Accel Left
+            [self gamepadMoveEventOnPad:port axis:901 value:0.0]; // Nunchuck Accel Right
+        }
+
+        // Y-axis: Forward/Backward acceleration
+        if (fabs(userAccel.y) > deadZone) {
+            if (userAccel.y > 0) {
+                [self gamepadMoveEventOnPad:port axis:903 value:MIN(userAccel.y * accelSensitivity, 1.0)]; // Nunchuck Accel Backward
+                [self gamepadMoveEventOnPad:port axis:902 value:0.0]; // Nunchuck Accel Forward
+            } else {
+                [self gamepadMoveEventOnPad:port axis:902 value:MIN(-userAccel.y * accelSensitivity, 1.0)]; // Nunchuck Accel Forward
+                [self gamepadMoveEventOnPad:port axis:903 value:0.0]; // Nunchuck Accel Backward
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:902 value:0.0]; // Nunchuck Accel Forward
+            [self gamepadMoveEventOnPad:port axis:903 value:0.0]; // Nunchuck Accel Backward
+        }
+
+        // Z-axis: Up/Down acceleration
+        if (fabs(userAccel.z) > deadZone) {
+            if (userAccel.z > 0) {
+                [self gamepadMoveEventOnPad:port axis:904 value:MIN(userAccel.z * accelSensitivity, 1.0)]; // Nunchuck Accel Up
+                [self gamepadMoveEventOnPad:port axis:905 value:0.0]; // Nunchuck Accel Down
+            } else {
+                [self gamepadMoveEventOnPad:port axis:905 value:MIN(-userAccel.z * accelSensitivity, 1.0)]; // Nunchuck Accel Down
+                [self gamepadMoveEventOnPad:port axis:904 value:0.0]; // Nunchuck Accel Up
+            }
+        } else {
+            [self gamepadMoveEventOnPad:port axis:904 value:0.0]; // Nunchuck Accel Up
+            [self gamepadMoveEventOnPad:port axis:905 value:0.0]; // Nunchuck Accel Down
+        }
+
+        // Note: Nunchuck doesn't have gyroscope controls in Dolphin
+    }
+}
+
+/// Enhanced shake detection using user acceleration variance over time
+/// Triggers Wiimote shake events when device is shaken with sufficient intensity
+-(void)updateShakeDetectionFromMotion:(CMDeviceMotion*)motion {
+    static NSMutableArray<NSNumber*> *shakeHistory = nil;
+    static NSTimeInterval lastShakeTime = 0;
+
+    if (!shakeHistory) {
+        shakeHistory = [[NSMutableArray alloc] init];
+    }
+
+    // Calculate user acceleration magnitude (gravity already removed by Core Motion)
+    CMAcceleration userAccel = motion.userAcceleration;
+    double userAccelMagnitude = sqrt(userAccel.x * userAccel.x +
+                                   userAccel.y * userAccel.y +
+                                   userAccel.z * userAccel.z);
+
+    // Add to history for variance calculation
+    [shakeHistory addObject:@(userAccelMagnitude)];
+    if ([shakeHistory count] > 15) { // Keep last 15 samples (about 1/4 second at 60fps)
+        [shakeHistory removeObjectAtIndex:0];
+    }
+
+    // Calculate variance in acceleration
+    if ([shakeHistory count] >= 8) {
+        double mean = 0.0;
+        for (NSNumber *value in shakeHistory) {
+            mean += [value doubleValue];
+        }
+        mean /= [shakeHistory count];
+
+        double variance = 0.0;
+        for (NSNumber *value in shakeHistory) {
+            double diff = [value doubleValue] - mean;
+            variance += diff * diff;
+        }
+        variance /= [shakeHistory count];
+
+        double standardDeviation = sqrt(variance);
+
+        // Detect shake when standard deviation is high AND peak acceleration is above threshold
+        const double varianceThreshold = 0.15; // Tuned for user acceleration (no gravity)
+        const double accelerationThreshold = 0.8; // Lower threshold since gravity is removed
+        const double shakeCooldown = 0.5; // Minimum time between shake events (seconds)
+
+        BOOL hasHighVariance = standardDeviation > varianceThreshold;
+        BOOL hasHighAcceleration = userAccelMagnitude > accelerationThreshold;
+        NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
+        BOOL cooldownExpired = (currentTime - lastShakeTime) > shakeCooldown;
+
+        if (hasHighVariance && hasHighAcceleration && cooldownExpired) {
+            [self triggerWiimoteShakeEvent];
+            lastShakeTime = currentTime;
+
+            NSLog(@"🎮 Shake detected! Accel: %.3f StdDev: %.3f", userAccelMagnitude, standardDeviation);
+        }
+    }
+}
+
+/// Triggers shake events for the Wiimote controller
+/// Using shake button types from TCButtonType: wiiShakeX/Y/Z (132-134)
+-(void)triggerWiimoteShakeEvent {
+    int port = 4 + (self.multiPlayer ? 0 : 0); // Wiimote port
+
+    // Trigger shake on all axes for maximum compatibility
+    // Different games may look for shake on different axes
+    [self gamepadEventOnPad:port button:132 action: 1]; // wiiShakeX
+    [self gamepadEventOnPad:port button:133 action: 1]; // wiiShakeY
+    [self gamepadEventOnPad:port button:134 action: 1]; // wiiShakeZ
+
+    // Release shake buttons after a short delay
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self gamepadEventOnPad:port button:132 action: 0]; // wiiShakeX
+        [self gamepadEventOnPad:port button:133 action: 0]; // wiiShakeY
+        [self gamepadEventOnPad:port button:134 action: 0]; // wiiShakeZ
+    });
+}
+
+/// Handle notification that motion settings have changed during gameplay
+-(void)handleMotionSettingsChanged:(NSNotification*)notification {
+    NSLog(@"🎮 Motion settings changed - restarting motion system");
+
+    // Reset IR cursor to center when motion system restarts
+    [self resetIRCursorForPlayer:0];
+
+    // Stop current motion updates
+    [self stopMotionUpdates];
+
+    // Restart after a brief delay to ensure clean restart
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self startMotionUpdates];
+        NSLog(@"🎮 Motion system restarted with new settings - cursor reset to center");
+    });
+}
+
+/// Enable enhanced motion controls by default for touchscreen controller profiles
+-(void)enableEnhancedMotionControlsForTouchscreen {
+    // Set motion control preferences for optimal touchscreen experience
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"motion_enhanced_shake_detection"];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"motion_enable_ir_cursor"];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"motion_enable_full_6dof"];
+
+    // Use roll instead of yaw for more intuitive tilt-based horizontal movement
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"motion_use_yaw_for_horizontal"];
+
+    // Enable Wiimote IMU by default (required for most motion games), Nunchuck IMU off by default
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"motion_wiimote_imu_enabled"];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"motion_nunchuck_imu_enabled"];
+
+    // Set sensible defaults for axis inversion (can be adjusted by user)
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"motion_invert_roll"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"motion_invert_roll"];
+    }
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"motion_invert_pitch"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"motion_invert_pitch"];
+    }
+
+    // Enable gyro IR cursor by default for touchscreen
+    self.enableGyroIRCursor = YES;
+
+    NSLog(@"🎮 Enhanced motion controls enabled for touchscreen controller profile");
+}
+
 @end

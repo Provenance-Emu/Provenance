@@ -297,6 +297,7 @@ static void ResetDolphinStaticState() {
 
 /* Config at dolphin-ios/Source/Core/Core/Config */
 - (void)setOptionValues {
+    // TODO: Should we use `SetBaseIfUnspecified` here? @jmattiello
     [self parseOptions];
     Config::Load();
 
@@ -325,7 +326,7 @@ static void ResetDolphinStaticState() {
     Config::SetBase(Config::GFX_VSYNC, self.vsync);
 
     // Anisotropic Filtering
-    Config::SetBase(Config::GFX_ENHANCE_MAX_ANISOTROPY, self.anisotropicFiltering);
+    Config::SetBaseOrCurrent(Config::GFX_ENHANCE_MAX_ANISOTROPY, static_cast<AnisotropicFilteringMode>(self.anisotropicFiltering));
 
     // Texture Filtering
     Config::SetBase(Config::GFX_ENHANCE_FORCE_TEXTURE_FILTERING, self.isBilinear ? TextureFilteringMode::Linear : TextureFilteringMode::Default);
@@ -486,6 +487,10 @@ static void ResetDolphinStaticState() {
     // Pause on Panic
     Config::SetBase(Config::MAIN_AUTO_DISC_CHANGE, !self.pauseOnPanic);
 
+    // Fast Disc Speed (faster loading)
+    // If you later add a UI or option for this in Provenance, wire it here instead of hardcoding.
+    Config::SetBase(Config::MAIN_FAST_DISC_SPEED, true);
+
     // Write-Back Cache
     Config::SetBase(Config::MAIN_ACCURATE_NANS, self.enableWriteBackCache);
 
@@ -530,8 +535,7 @@ static void ResetDolphinStaticState() {
     Config::SetBase(Config::MAIN_WII_SD_CARD, true);
     Config::SetBase(Config::MAIN_ALLOW_SD_WRITES, true);
 
-    // Disc speed emulation disabled for faster loading
-    Config::SetBase(Config::MAIN_FAST_DISC_SPEED, true);
+    
 
     // CPU High Level / Low Level Emulation
     Config::SetBase(Config::MAIN_DSP_HLE, true);

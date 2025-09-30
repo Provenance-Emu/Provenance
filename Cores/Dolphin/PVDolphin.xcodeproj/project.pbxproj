@@ -703,6 +703,7 @@
 		B37113852E70AC94006C1ED7 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = "dolphin-ios/build/xcframework/PVlibDolphin.xcframework"; sourceTree = "<group>"; };
 		B372F34D2E2CAFF700B6B563 /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "dolphin-ios/build-appletvos-/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
 		B372F3562E2CB6C300B6B563 /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "dolphin-ios/build-iphoneos-Release/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
+		B390A2122E8A1A8C00CBE9F5 /* TCDeviceMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TCDeviceMotion.swift; path = "dolphin-ios/Source/iOS/App/DolphiniOS/UI/Emulation/TouchController/TCDeviceMotion.swift"; sourceTree = SOURCE_ROOT; };
 		B3AAFB322949F26800CC8234 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
 		B3AAFB382949F2DC00CC8234 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/iOSSupport/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
@@ -1011,6 +1012,7 @@
 			children = (
 				B3447EB5218BCE2000557ACE /* Core */,
 				B3447EA0218B881000557ACE /* PVDolphin.mm */,
+				B390A2122E8A1A8C00CBE9F5 /* TCDeviceMotion.swift */,
 			);
 			path = PVDolphinCore;
 			sourceTree = "<group>";
@@ -1993,6 +1995,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Source/Core/Core/IOS\"",
 					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/fmt/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/fmt/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/soundtouch\"",
@@ -2189,6 +2192,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Source/Core/Core/IOS\"",
 					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/fmt/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/fmt/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/soundtouch\"",
