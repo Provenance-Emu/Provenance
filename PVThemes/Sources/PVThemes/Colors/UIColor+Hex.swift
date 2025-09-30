@@ -157,8 +157,8 @@ extension UIKeyboardAppearance: @retroactive CaseIterable {
 }
 #endif
 
-#if canImport(SwiftUICore)
-import SwiftUICore
+#if canImport(SwiftUI)
+import SwiftUI
 public extension Color {
     init(rgb: UInt32) {
         let rs16 = (rgb >> 16) & 0xFF

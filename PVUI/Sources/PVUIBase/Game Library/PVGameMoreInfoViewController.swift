@@ -21,7 +21,7 @@ import AppKit
 import PVThemes
 
 #if os(iOS)
-    import AssetsLibrary
+    import Photos
     import SafariServices
 #endif
 

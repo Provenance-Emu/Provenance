@@ -14,7 +14,7 @@ internal struct AppearanceScope: Sendable {
     @MainActor internal static var main = AppearanceScope()
 
     @AddAssociatedValueVariable
-    private enum StackElement {
+    private enum StackElement: Sendable {
         case nothing
         case traitCollection(UITraitCollection)
         case containerTypes([UIAppearanceContainer.Type])
