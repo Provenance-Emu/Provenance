@@ -326,7 +326,7 @@ static void ResetDolphinStaticState() {
     Config::SetBase(Config::GFX_VSYNC, self.vsync);
 
     // Anisotropic Filtering
-    Config::SetBaseOrCurrent(Config::GFX_ENHANCE_MAX_ANISOTROPY, static_cast<AnisotropicFilteringMode>(self.anisotropicFiltering));
+    Config::SetBaseOrCurrent(Config::GFX_ENHANCE_MAX_ANISOTROPY, static_cast<int>(self.anisotropicFiltering));
 
     // Texture Filtering
     Config::SetBase(Config::GFX_ENHANCE_FORCE_TEXTURE_FILTERING, self.isBilinear ? TextureFilteringMode::Linear : TextureFilteringMode::Default);

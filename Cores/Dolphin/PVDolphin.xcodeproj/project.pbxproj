@@ -1732,7 +1732,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\nset -e\n\n# Fix path for PVDolphin project - create venv in dolphin-ios directory\nVENV_DIR=\"$PROJECT_DIR/dolphin-ios/venv\"\n\nif [ ! -d \"$VENV_DIR\" ]; then\n  python3 -m venv \"$VENV_DIR\"\nfi\n\n\"$VENV_DIR/bin/python3\" -m pip install polib\n";
+			shellScript = "#!/bin/bash\nexit 0\n\nset -e\n\n# Fix path for PVDolphin project - create venv in dolphin-ios directory\nVENV_DIR=\"$PROJECT_DIR/dolphin-ios/venv\"\n\nif [ ! -d \"$VENV_DIR\" ]; then\n  python3 -m venv \"$VENV_DIR\"\nfi\n\n\"$VENV_DIR/bin/python3\" -m pip install polib\n";
 		};
 		B3C188562E2ED1440014ACC3 /* build_dolphin_core */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1788,7 +1788,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\nset -e\n\n# Fix path for PVDolphin project - create venv in dolphin-ios directory\nVENV_DIR=\"$PROJECT_DIR/dolphin-ios/venv\"\n\nif [ ! -d \"$VENV_DIR\" ]; then\n  python3 -m venv \"$VENV_DIR\"\nfi\n\n\"$VENV_DIR/bin/python3\" -m pip install polib\n";
+			shellScript = "#!/bin/bash\nexit 0\nset -e\n\n# Fix path for PVDolphin project - create venv in dolphin-ios directory\nVENV_DIR=\"$PROJECT_DIR/dolphin-ios/venv\"\n\nif [ ! -d \"$VENV_DIR\" ]; then\n  python3 -m venv \"$VENV_DIR\"\nfi\n\n\"$VENV_DIR/bin/python3\" -m pip install polib\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
