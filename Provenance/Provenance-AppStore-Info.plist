@@ -262,7 +262,7 @@
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>RetroArch needs access to WiFi networks for enhanced emulated WiFi network features.</string>
+	<string>RetroArch needs access to Wi-Fi networks for enhanced emulated Wi-Fi network features.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Some games may use location data to enhance emulated location gameplay features</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
