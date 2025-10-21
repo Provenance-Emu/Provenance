@@ -57,7 +57,11 @@ struct MenuItemView: SwiftUI.View {
                 /// Icon
                 icon.image
                     .renderingMode(.template)
-                    .resizable().scaledToFit().cornerRadius(4).padding(8)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .cornerRadius(4)
+                    .frame(width: 40, height: 40)
                     .tint(iconTint)
                     .foregroundStyle(iconTint)
                     .foregroundColor(iconTint)
