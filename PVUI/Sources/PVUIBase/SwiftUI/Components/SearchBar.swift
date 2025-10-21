@@ -48,6 +48,7 @@ public class SearchBar: NSObject, ObservableObject {
         super.init()
 
         self.searchController.obscuresBackgroundDuringPresentation = false
+        self.searchController.hidesNavigationBarDuringPresentation = false
         self.searchController.searchResultsUpdater = self
     }
     #endif
