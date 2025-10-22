@@ -727,6 +727,7 @@ struct DefaultControllerSkinView: View {
                     }
                 }
                 .contentShape(Circle())
+                #if !os(tvOS)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { value in
@@ -760,6 +761,7 @@ struct DefaultControllerSkinView: View {
                             inputHandler.analogStickMoved("leftAnalog", x: 0, y: 0)
                         }
                 )
+                #endif
             }
         }
     }
