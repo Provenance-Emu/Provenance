@@ -9,7 +9,9 @@
 #import "PVDolphinCore+Controls.h"
 #import <Foundation/Foundation.h>
 #import <CoreHaptics/CoreHaptics.h>
+#if !TARGET_OS_TV
 #import <CoreMotion/CoreMotion.h>
+#endif
 #import <PVLogging/PVLoggingObjC.h>
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
@@ -1470,6 +1472,7 @@ s8 joyx[4], joyy[4];
 #pragma mark - Gyro Motion Controls Setup
 
 // Shared CoreMotion manager instance for gyro controls
+#if !TARGET_OS_TV
 static CMMotionManager *g_motionManager = nil;
 
 /// Get or create the shared motion manager instance
@@ -1480,6 +1483,7 @@ static CMMotionManager *g_motionManager = nil;
     });
     return g_motionManager;
 }
+#endif
 
 /// Sets up iPhone/iPad gyroscope for Wii motion controls
 /// Maps device rotation to Wiimote gyro axes for natural motion control
@@ -1495,11 +1499,13 @@ static CMMotionManager *g_motionManager = nil;
     }
 
     // Check if device supports motion
+#if !TARGET_OS_TV
     CMMotionManager *motionManager = [[self class] sharedMotionManager];
     if (![motionManager isDeviceMotionAvailable]) {
         ILOG(@"🎮 Device does not support motion - gyro controls disabled");
         return;
     }
+#endif
 
     // Log which motion features are active
     NSMutableArray *activeFeatures = [[NSMutableArray alloc] init];
@@ -1569,6 +1575,7 @@ static CMMotionManager *g_motionManager = nil;
 /// Update Wiimote gyro axes from device motion (for motion sensing games)
 /// Maps device tilt to gyro controls: left/right tilt → roll, forward/back tilt → pitch
 /// Using axis numbers from WiimoteNew.ini: IMUGyroscope entries (631-636)
+#if !TARGET_OS_TV
 -(void)updateWiimoteGyroFromMotion:(CMDeviceMotion*)motion {
     const double deadZone = 0.1; // Prevent drift when device is still
     const double sensitivity = 1.5; // Adjust sensitivity as needed
@@ -1885,6 +1892,7 @@ static CMMotionManager *g_motionManager = nil;
         }
     }
 }
+#endif
 
 /// Triggers shake events for the Wiimote controller
 /// Using shake button types from TCButtonType: wiiShakeX/Y/Z (132-134)

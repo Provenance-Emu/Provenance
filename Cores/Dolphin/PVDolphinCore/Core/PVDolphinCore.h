@@ -13,7 +13,9 @@
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
+#if !TARGET_OS_TV
 #import <CoreMotion/CoreMotion.h>
+#endif
 
 @protocol PVWiiSystemResponderClient;
 @protocol PVGameCubeSystemResponderClient;
@@ -155,9 +157,11 @@
 -(void)setupGyroMotionControls;
 -(void)startMotionUpdates;
 -(void)stopMotionUpdates;
+#if !TARGET_OS_TV
 +(CMMotionManager*)sharedMotionManager;
 -(void)updateWiimoteGyroFromMotion:(CMDeviceMotion*)motion;
 -(void)updateIRCursorFromMotion:(CMDeviceMotion*)motion;
+#endif
 
 // JIT detection
 -(BOOL)checkJITAvailable;
