@@ -75,17 +75,20 @@ class PVGameMenuOverlay: UIView {
     @objc func dismiss() {
         DLOG("Dismissing custom game menu")
         
-        // Find the view controller that contains this view
+        // Prefer the emulator VC's own dismissal helper so it can resume emulation
+        if let emulatorVC = emulatorViewController {
+            emulatorVC.dismissNav()
+            return
+        }
+
+        // Fallback: attempt to dismiss the presenting view controller
         var responder: UIResponder? = self
         while responder != nil && !(responder is UIViewController) {
             responder = responder?.next
         }
-        
-        // If we found a view controller, dismiss it
         if let viewController = responder as? UIViewController {
             viewController.dismiss(animated: true, completion: nil)
         } else {
-            // Fallback if we can't find a view controller
             UIView.animate(withDuration: 0.3, animations: {
                 self.alpha = 0
             }, completion: { _ in

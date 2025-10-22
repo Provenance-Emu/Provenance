@@ -19,6 +19,7 @@ import PVSettings
 import PVLogging
 
 extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
+    @MainActor
     @objc public func showMenu(_ sender: AnyObject?) {
         if (!core.isOn) { // TODO: Should we just do this code anyway?
             WLOG("Core isn't on, ignoring showMenu.")
@@ -38,7 +39,7 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
         
         // Create a hosting view controller for our custom menu
         let menuVC = UIViewController()
-        menuVC.modalPresentationStyle = .overFullScreen  // Use overFullScreen to ensure GPU view stays visible
+        menuVC.modalPresentationStyle = .overFullScreen
         menuVC.view.backgroundColor = .clear
         
         // Create our custom menu overlay
@@ -58,13 +59,23 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
         menuVC.presentationController?.delegate = self
         
         // Present the menu view controller
-        present(menuVC, animated: true) {
+        present(menuVC, animated: true) { [weak self, weak menuVC] in
             DLOG("Presented custom game menu overlay")
+            // Some presentation controllers are created during presentation; set the delegate again to be safe
+            if let pc = menuVC?.presentationController, let self = self {
+                pc.delegate = self
+            }
         }
     }
     
     // MARK: - UIAdaptivePresentationControllerDelegate
-    
+
+    /// Also handle the willDismiss phase to ensure we resume even if DidDismiss isn't called in some cases
+    public func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
+        DLOG("Menu will dismiss")
+        cleanupAfterMenuDismissal()
+    }
+
     /// Handle dismissal when clicking outside the menu
     public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         // This is called when the user dismisses by clicking outside the menu

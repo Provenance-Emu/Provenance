@@ -168,7 +168,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     public var isShowingMenu: Bool = false {
         didSet {
-            DispatchQueue.main.async { [self] in
+            Task { @MainActor in
                 // Single authoritative pause toggle to avoid conflicting calls
                 core.setPauseEmulation(isShowingMenu)
             }
