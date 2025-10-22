@@ -871,6 +871,48 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+        WhatsNew(
+            version: "3.1.1",
+            title: "Core Updates & UI Improvements",
+            features: [
+                .init(
+                    image: .init(systemName: "cpu", foregroundColor: .blue),
+                    title: "Dreamcast Core Updates",
+                    subtitle: "Performance fixes and Windows CE support for enhanced compatibility"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .green),
+                    title: "GameCube Controller Fixes",
+                    subtitle: "Improved controller handling and reliability in the GameCube core"
+                ),
+                .init(
+                    image: .init(systemName: "paintbrush.fill", foregroundColor: .purple),
+                    title: "UI Improvements",
+                    subtitle: "General interface polish and usability enhancements"
+                ),
+                .init(
+                    image: .init(systemName: "archivebox.fill", foregroundColor: .orange),
+                    title: "Mednafen Updates",
+                    subtitle: "Added CHD support for PSX & Saturn and fixed save state reliability issues"
+                ),
+                .init(
+                    image: .init(systemName: "display", foregroundColor: .blue),
+                    title: "Jaguar Improvements",
+                    subtitle: "Graphics fixes and improved iCloud sync reliability"
+                ),
+                .init(
+                    image: .init(systemName: "paintpalette", foregroundColor: .pink),
+                    title: "Skins Enhancements",
+                    subtitle: "Improved skin support and visual refinements"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
     }
 }
 #endif
