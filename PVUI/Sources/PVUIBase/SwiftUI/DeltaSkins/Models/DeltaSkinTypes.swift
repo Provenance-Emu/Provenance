@@ -336,6 +336,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
     case psp
     case threeDS            // 3DS
     case pokemonMini
+    case dreamcast
 
     // Implement Comparable
     public static func < (lhs: DeltaSkinGameType, rhs: DeltaSkinGameType) -> Bool {
@@ -345,6 +346,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
             .nes, .snes,            // Nintendo consoles
             .n64,                   // Nintendo 3D
             .nds,                   // Nintendo DS
+            .dreamcast,             // Sega Dreamcast
             .genesis, .gamegear, .masterSystem, .segaCD, .sega32X, .sg1000, // Sega
             .psx, .psp,             // Sony
             .saturn,                // Sega Saturn
@@ -405,6 +407,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case "32x", "sega32x": return .sega32X
         case "sg1000": return .sg1000
         case "ss", "saturn": return .saturn
+        case "dc", "dreamcast": return .dreamcast
 
         // Sony
         case "psx", "ps1", "ps2", "ps3": return .psx
@@ -472,7 +475,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .masterSystem: return "com.rileytestut.delta.game.ms"
         case .psx: return "com.rileytestut.delta.game.psx"
         // Not present in Delta’s identifiers
-        case .segaCD, .sega32X, .sg1000, .saturn, .virtualBoy, .psp, .threeDS, .pokemonMini:
+        case .dreamcast, .segaCD, .sega32X, .sg1000, .saturn, .virtualBoy, .psp, .threeDS, .pokemonMini:
             return nil
         }
     }
@@ -500,6 +503,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .psp: return prefix + "psp"
         case .threeDS: return prefix + "3ds"
         case .pokemonMini: return prefix + "pm"
+        case .dreamcast: return prefix + "dc"
         }
     }
 
@@ -526,6 +530,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .PSP: self = .psp
         case ._3DS: self = .threeDS
         case .PokemonMini: self = .pokemonMini
+        case .Dreamcast: self = .dreamcast
         default : return nil
         }
     }
@@ -551,6 +556,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .psp: return .PSP
         case .threeDS: return ._3DS
         case .pokemonMini: return .PokemonMini
+        case .dreamcast: return .Dreamcast
         }
     }
 
@@ -578,6 +584,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
              (.sega32X, "32x"), (.sega32X, "sega32x"),
              (.sg1000, "sg1000"),
              (.saturn, "ss"), (.saturn, "saturn"),
+             (.dreamcast, "dc"), (.dreamcast, "dreamcast"),
              (.psx, "psx"), (.psx, "ps1"),
              (.psp, "psp"),
              (.pokemonMini, "pm"), (.pokemonMini, "pokemonmini"):
