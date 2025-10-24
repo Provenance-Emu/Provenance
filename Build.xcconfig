@@ -1,8 +1,8 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-MARKETING_VERSION = 3.1.1
-CURRENT_PROJECT_VERSION = 2847
+MARKETING_VERSION = 3.1.2
+CURRENT_PROJECT_VERSION = 2848
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1  NONJAILBROKEN=1 HAVE_DYNAMIC=1 HAVE_CHEEVOS=1
 OTHER_CFLAGS = $(inherited) -mcpu=apple-a10 -mtune=apple-a12 -march=armv8-a+simd+crc+crypto -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC -fmodules -fcxx-modules
