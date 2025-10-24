@@ -59,6 +59,8 @@ public struct DeltaSkinView: View {
     @State private var buttonMappings: [DeltaSkinButtonMapping]?
 
     @State private var pressedButtons: Set<String> = []
+    // Cache of per-button asset images (normal/pressed) keyed by button id
+    @State private var buttonAssetImages: [String: (normal: UIImage, pressed: UIImage?)] = [:]
 
     private static func createButtonSounds() -> [String: PCMBuffer] {
         let soundConfigs = [
@@ -392,6 +394,38 @@ public struct DeltaSkinView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: layout.width, height: layout.height)
+                            // Draw per-button asset layers (if provided by the skin)
+                            if let buttons = skin.buttons(for: traits),
+                               let mappingSize = skin.mappingSize(for: traits) {
+                                let scaleX = layout.width / mappingSize.width
+                                let scaleY = layout.height / mappingSize.height
+                                ForEach(buttons, id: \.id) { button in
+                                    if let assets = buttonAssetImages[button.id] {
+                                        // Determine pressed state based on mapped input(s)
+                                        let isPressed: Bool = {
+                                            switch button.input {
+                                            case .single(let command):
+                                                return pressedButtons.contains(command)
+                                            case .directional(let mapping):
+                                                return mapping.values.contains(where: { pressedButtons.contains($0) })
+                                            }
+                                        }()
+                                        let imageToUse = (isPressed ? (assets.pressed ?? assets.normal) : assets.normal)
+
+                                        Image(uiImage: imageToUse)
+                                            .resizable()
+                                            .frame(
+                                                width: button.frame.width * scaleX,
+                                                height: button.frame.height * scaleY
+                                            )
+                                            .position(
+                                                x: button.frame.midX * scaleX,
+                                                y: button.frame.midY * scaleY
+                                            )
+                                            .allowsHitTesting(false)
+                                    }
+                                }
+                            }
                         } else {
                             // Loading placeholder
                             Rectangle()
@@ -641,7 +675,60 @@ public struct DeltaSkinView: View {
             // Load button mappings
             buttonMappings = skin.buttonMappings(for: traits)
             DLOG("Loaded button mappings: \(buttonMappings?.count ?? 0)")
+
+            // Load per-button asset images (if any)
+            await loadButtonAssets()
         }
+    }
+
+    /// Load and cache per-button images defined in the skin JSON under each item's `asset` key
+    private func loadButtonAssets() async {
+        guard let buttons = skin.buttons(for: traits) else { return }
+        var cache: [String: (normal: UIImage, pressed: UIImage?)] = [:]
+
+        for button in buttons {
+            guard let (normalName, pressedName) = parseButtonAssetNames(for: button) else { continue }
+            do {
+                let normal = try await skin.loadThumbstickImage(named: normalName)
+                var pressedImage: UIImage? = nil
+                if let pn = pressedName {
+                    pressedImage = try? await skin.loadThumbstickImage(named: pn)
+                }
+                cache[button.id] = (normal: normal, pressed: pressedImage)
+            } catch {
+                ELOG("Failed to load button asset image(s) for \(button.id): \(error)")
+            }
+        }
+
+        await MainActor.run {
+            self.buttonAssetImages = cache
+        }
+    }
+
+    /// Find `asset.normal` and optional `asset.pressed` for the JSON item matching this button
+    private func parseButtonAssetNames(for button: DeltaSkinButton) -> (String, String?)? {
+        guard let reps = skin.jsonRepresentation["representations"] as? [String: Any],
+              let deviceRep = reps[traits.device.rawValue] as? [String: Any],
+              let displayRep = deviceRep[traits.displayType.rawValue] as? [String: Any],
+              let orientationRep = displayRep[traits.orientation.rawValue] as? [String: Any],
+              let items = orientationRep["items"] as? [[String: Any]] else {
+            return nil
+        }
+
+        // Match by exact frame to locate the correct item
+        guard let item = items.first(where: { item in
+            guard let frame = item["frame"] as? [String: Any],
+                  let x = frame["x"] as? CGFloat,
+                  let y = frame["y"] as? CGFloat,
+                  let w = frame["width"] as? CGFloat,
+                  let h = frame["height"] as? CGFloat else { return false }
+            return CGRect(x: x, y: y, width: w, height: h) == button.frame
+        }) else { return nil }
+
+        guard let asset = item["asset"] as? [String: Any],
+              let normal = asset["normal"] as? String else { return nil }
+        let pressed = asset["pressed"] as? String
+        return (normal, pressed)
     }
 
     private func loadThumbstickImage(for button: DeltaSkinButton) async -> (UIImage, CGSize)? {
