@@ -1071,96 +1071,66 @@ private struct DeltaSkinsSection: View {
 
     var body: some View {
         Section {
-            // Button to select skins (premium locked)
-            PaidFeatureView {
-                VStack {
-                    Text("SKIN MODE")
-                        .font(.system(.headline, design: .monospaced))
-                        .foregroundColor(.retroBlue)
-                        .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
-
-                    Picker("Select skin mode", selection: $skinMode) {
-                        ForEach(SkinMode.allCases, id: \.self) { theme in
-                            Text(theme.rawValue.uppercased()).tag(theme)
-                        }
+            VStack {
+                Text("SKIN MODE")
+                    .font(.system(.headline, design: .monospaced))
+                    .foregroundColor(.retroBlue)
+                    .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
+                
+                Picker("Select skin mode", selection: $skinMode) {
+                    ForEach(SkinMode.allCases, id: \.self) { theme in
+                        Text(theme.rawValue.uppercased()).tag(theme)
                     }
-                    #if !os(tvOS)
-                    .pickerStyle(.wheel)
-                    #else
-                    .pickerStyle(.automatic)
-                    #endif
-                    .frame(height: 100)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
-                                lineWidth: 1.5
-                            )
-                    )
-                    .background(Color.retroBlack.opacity(0.5))
-                    .cornerRadius(8)
-
-                    Text(skinMode.subtitle)
-                        .font(.system(.subheadline, design: .monospaced))
-                        .foregroundColor(.retroBlue)
-                        .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
                 }
-                .frame(maxWidth: .infinity)
-            } lockedView: {
-                SettingsRow(title: "Controller skin mode",
-                          subtitle: "Unlock to to active controller skin mode.",
-                          icon: .sfSymbol("lock.fill"))
+#if !os(tvOS)
+                .pickerStyle(.wheel)
+#else
+                .pickerStyle(.automatic)
+#endif
+                .frame(height: 100)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                )
+                .background(Color.retroBlack.opacity(0.5))
+                .cornerRadius(8)
+                
+                Text(skinMode.subtitle)
+                    .font(.system(.subheadline, design: .monospaced))
+                    .foregroundColor(.retroBlue)
+                    .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
             }
-
+            .frame(maxWidth: .infinity)
+            
+            
             // Button to select skins (premium locked)
-            PaidFeatureView {
-                NavigationLink {
-                    SystemSkinBrowserView()
-                } label: {
-                    SettingsRow(title: "Select Controller Skins",
-                              subtitle: "Choose controller skins for each system and orientation.",
-                              icon: .sfSymbol("gamecontroller.fill"))
-                }
-            } lockedView: {
+            NavigationLink {
+                SystemSkinBrowserView()
+            } label: {
                 SettingsRow(title: "Select Controller Skins",
-                          subtitle: "Unlock to choose controller skins for each system.",
-                          icon: .sfSymbol("lock.fill"))
+                            subtitle: "Choose controller skins for each system and orientation.",
+                            icon: .sfSymbol("gamecontroller.fill"))
             }
-
+            
             // Button to manage skins (premium locked)
-            PaidFeatureView {
-                NavigationLink {
-                    DeltaSkinListView(manager: DeltaSkinManager.shared)
-                } label: {
-                    SettingsRow(title: "Manage Controller Skins",
-                              subtitle: "View, import, and delete controller skins.",
-                              icon: .sfSymbol("folder.badge.gearshape"))
-                }
-            } lockedView: {
+            NavigationLink {
+                DeltaSkinListView(manager: DeltaSkinManager.shared)
+            } label: {
                 SettingsRow(title: "Manage Controller Skins",
-                          subtitle: "Unlock to manage your controller skins.",
-                          icon: .sfSymbol("lock.fill"))
+                            subtitle: "View, import, and delete controller skins.",
+                            icon: .sfSymbol("folder.badge.gearshape"))
             }
-
-            PaidFeatureView {
-                buttonSoundEFfect
-            } lockedView: {
-                SettingsRow(title: "Button Sound Effect",
-                            subtitle: "Unlock to select a button sound effect.",
-                            icon: .sfSymbol("lock.fill"))
-            }
-
-            PaidFeatureView {
-                buttonTouchFeedback
-            } lockedView: {
-                SettingsRow(title: "Button Effect Style",
-                            subtitle: "Unlock to select a button effect style.",
-                            icon: .sfSymbol("lock.fill"))
-            }
+            
+            buttonSoundEFfect
+            
+            buttonTouchFeedback
         }
     }
 
