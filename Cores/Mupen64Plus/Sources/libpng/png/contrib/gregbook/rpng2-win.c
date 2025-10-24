@@ -33,12 +33,11 @@
     - 2.02:  fixed improper display of usage screen on PNG error(s); fixed
               unexpected-EOF and file-read-error cases
     - 2.03:  removed runtime MMX-enabling/disabling and obsolete -mmx* options
-    - 2.04:
-             (GR-P)
+    - 2.04:  check for integer overflow (Glenn R-P)
 
   ---------------------------------------------------------------------------
 
-      Copyright (c) 1998-2008 Greg Roelofs.  All rights reserved.
+      Copyright (c) 1998-2008, 2017 Greg Roelofs.  All rights reserved.
 
       This software is provided "as is," without warranty of any kind,
       express or implied.  In no event shall the author or contributors
@@ -649,6 +648,13 @@ static void rpng2_win_init()
     Trace((stderr, "  rowbytes = %d\n", rpng2_info.rowbytes))
     Trace((stderr, "  width  = %ld\n", rpng2_info.width))
     Trace((stderr, "  height = %ld\n", rpng2_info.height))
+
+    /* Guard against integer overflow */
+    if (rpng2_info.height > ((size_t)(-1))/rowbytes) {
+        fprintf(stderr, PROGNAME ":  image_data buffer would be too large\n",
+        readpng2_cleanup(&rpng2_info);
+        return;
+    }
 
     rpng2_info.image_data = (uch *)malloc(rowbytes * rpng2_info.height);
     if (!rpng2_info.image_data) {

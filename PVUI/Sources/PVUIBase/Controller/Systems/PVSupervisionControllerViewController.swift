@@ -26,17 +26,44 @@ final class PVSupervisionControllerViewController: PVControllerViewController<PV
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-//            if title == "Fire" || title == "" {
-//                button.buttonTag = .fire1
-//            } else if title == "Select" {
-//                button.buttonTag = .select
-//            } else if title == "Reset" {
-//                button.buttonTag = .reset
-//            }
+            switch title.lowercased() {
+            case "fire", "fire1", "1", "a", "topaction":
+                button.buttonTag = .topAction
+            case "fire2", "2", "b", "bottomleftaction":
+                button.buttonTag = .bottomLeftAction
+            case "fire3", "3", "c", "bottomrightaction":
+                button.buttonTag = .bottomRightAction
+            case "0", "button0":
+                button.buttonTag = .button0
+            case "1", "button1":
+                button.buttonTag = .button1
+            case "2", "button2":
+                button.buttonTag = .button2
+            case "3", "button3":
+                button.buttonTag = .button3
+            case "4", "button4":
+                button.buttonTag = .button4
+            case "5", "button5":
+                button.buttonTag = .button5
+            case "6", "button6":
+                button.buttonTag = .button6
+            case "7", "button7":
+                button.buttonTag = .button7
+            case "8", "button8":
+                button.buttonTag = .button8
+            case "9", "button9":
+                button.buttonTag = .button9
+            case "clear":
+                button.buttonTag = .clear
+            case "enter":
+                button.buttonTag = .enter
+            default:
+                break
+            }
         }
-//
-//        startButton?.buttonTag = .reset
-//        selectButton?.buttonTag = .select
+
+        startButton?.buttonTag = .enter
+        selectButton?.buttonTag = .clear
     }
 
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {

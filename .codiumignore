@@ -1,0 +1,29 @@
+# Dot files
+.bundle
+.cursorignore
+.github
+.gitignore
+.qodo
+.ruby-version
+.vscode
+.vscodeignore
+
+# Directories
+CoreRetro/
+Cores/
+EmuSkinsApp/
+External/
+MoltenVK/
+Provenance Mini*/
+Provenance Mini Watch App/
+Provenance Mini Watch AppTests/
+Provenance Mini Watch AppUITests/
+Provenance Tests/
+Provenance VR/
+ScadeProject/
+Scripts/
+Stencils/
+UITesting/
+fastlane/
+iCloudBrowser/
+modules/

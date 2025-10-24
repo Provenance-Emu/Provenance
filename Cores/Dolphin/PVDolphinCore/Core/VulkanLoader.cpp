@@ -51,22 +51,30 @@ static bool OpenVulkanLibrary()
     const std::vector<std::string> vulkanPaths = {
         File::GetBundleDirectory() + "/Frameworks/libMoltenVK_Dolphin.dylib",
         File::GetBundleDirectory() + "/Frameworks/libMoltenVK.dylib",
+        File::GetBundleDirectory() + "/Frameworks/MoltenVK-1.2.8.framework/MoltenVK",
+        File::GetBundleDirectory() + "/Frameworks/MoltenVK-1.2.8.framework/MoltenVK-1.2.8",
         File::GetBundleDirectory() + "/Frameworks/MoltenVK.framework/MoltenVK",
+        "@executable_path/Frameworks/MoltenVK-1.2.8.framework/MoltenVK",
+        "@executable_path/Frameworks/MoltenVK-1.2.8.framework/MoltenVK-1.2.8",
         "@executable_path/Frameworks/MoltenVK.framework/MoltenVK"
     };
 
     for (const auto& path : vulkanPaths)
     {
         std::cout << "Attempting to load Vulkan library from: " << path << std::endl;
-        
+        GENERIC_LOG_FMT(Common::Log::LogType::VIDEO, Common::Log::LogLevel::LINFO, "{}", "Attempting to load Vulkan library from: " + path);
+
         if (s_vulkan_module.Open(path.c_str()))
         {
             std::cout << "Successfully loaded Vulkan library from: " << path << std::endl;
+            GENERIC_LOG_FMT(Common::Log::LogType::VIDEO, Common::Log::LogLevel::LINFO, "{}", "Successfully loaded Vulkan library from: from: " + path);
+
             return true;
         }
         else
         {
             std::cout << "Failed to load Vulkan library from: " << path << std::endl;
+            GENERIC_LOG_FMT(Common::Log::LogType::VIDEO, Common::Log::LogLevel::LINFO, "{}", "Failed to load Vulkan library from: from: " + path);
         }
     }
 
@@ -240,7 +248,7 @@ void LogVulkanResult(int level, const char* func_name, VkResult res, const char*
   real_msg = fmt::format("({}) {} ({}: {})", func_name, real_msg, static_cast<int>(res),
                          VkResultToString(res));
 
-  GENERIC_LOG_FMT(Common::Log::VIDEO, static_cast<Common::Log::LOG_LEVELS>(level), "{}", real_msg);
+  GENERIC_LOG_FMT(Common::Log::LogType::VIDEO, static_cast<Common::Log::LogLevel>(level), "{}", real_msg);
 }
 
 }  // namespace Vulkan

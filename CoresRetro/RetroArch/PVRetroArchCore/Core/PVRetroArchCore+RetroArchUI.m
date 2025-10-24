@@ -47,6 +47,7 @@
 #endif
 #import <AVFoundation/AVFoundation.h>
 #import <PVLogging/PVLoggingObjC.h>
+#import <objc/runtime.h>
 
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
@@ -120,7 +121,44 @@ int argc =  1;
 
 #pragma mark - PVRetroArchCoreBridge Begin
 
-@interface PVRetroArchCoreBridge (RetroArchUI)
+@interface PVRetroArchCoreBridge (CustomLayout)
+@property (nonatomic, assign) BOOL useCustomRenderViewLayout;
+@end
+
+@implementation PVRetroArchCoreBridge (CustomLayout)
+
+- (void)setUseCustomRenderViewLayout:(BOOL)enabled {
+    objc_setAssociatedObject(self, @selector(useCustomRenderViewLayout), @(enabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    if (!_renderView) { return; }
+    UIView *rootView = [CocoaView get].view;
+    if (!rootView) { return; }
+    // Remove any constraints tying renderView to root
+    NSMutableArray<NSLayoutConstraint *> *toDeactivate = [NSMutableArray array];
+    for (NSLayoutConstraint *c in rootView.constraints) {
+        if (c.firstItem == _renderView || c.secondItem == _renderView) {
+            [toDeactivate addObject:c];
+        }
+    }
+    for (NSLayoutConstraint *c in _renderView.constraints) {
+        [toDeactivate addObject:c];
+    }
+    if (toDeactivate.count > 0) {
+        [NSLayoutConstraint deactivateConstraints:toDeactivate];
+        DLOG(@"[RA] CustomLayout: deactivated %lu constraints", (unsigned long)toDeactivate.count);
+    }
+    _renderView.translatesAutoresizingMaskIntoConstraints = YES;
+    _renderView.autoresizingMask = UIViewAutoresizingNone;
+}
+
+- (BOOL)useCustomRenderViewLayout {
+    NSNumber *val = objc_getAssociatedObject(self, @selector(useCustomRenderViewLayout));
+    return val.boolValue;
+}
+
+@end
+
+@interface PVRetroArchCoreBridge ()
+@property (nonatomic, assign) BOOL useCustomRenderViewLayout;
 @end
 
 @implementation PVRetroArchCoreBridge (RetroArchUI)
@@ -134,6 +172,7 @@ int argc =  1;
 - (void)setupEmulation {
     self.alwaysUseMetal = true;
     self.skipLayout = true;
+    self.skipEmulationLoop = true;
     [self parseOptions];
     settings_t *settings = config_get_ptr();
     if (!settings) {
@@ -161,6 +200,7 @@ int argc =  1;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
+    DLOG(@"RetroArchCoreBridge setPauseEmulation: %i", flag);
     if (!EmulationState.shared.isOn) {
         WLOG(@"Core isn't set to \"on\", skipping set pause : %i", flag);
         return;
@@ -192,8 +232,8 @@ int argc =  1;
     runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
     runloop_st->flags &= ~RUNLOOP_FLAG_PAUSED;
     runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
-        settings_t *settings = config_get_ptr();
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+//        settings_t *settings = config_get_ptr();
         float sm = self.smSpeed / 100.0;
         float ff = self.ffSpeed / 100.0;
         settings->floats.slowmotion_ratio  = sm;
@@ -205,7 +245,7 @@ int argc =  1;
             ILOG(@"RetroArch:slow motion %f", sm);
             apple_direct_input_keyboard_event(true, (int)RETROK_F14, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
         }
-    });
+//    });
 }
 
 - (void)stopEmulation {
@@ -238,9 +278,9 @@ int argc =  1;
 
 void extract_bundles();
 -(void) writeConfigFile {
-    
+
     [PVRetroArchCoreBridge synchronizeOptionsWithRetroArch];
-    
+
     // Initialize file manager
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
@@ -266,6 +306,14 @@ void extract_bundles();
 
     BOOL shouldUpdateAssets = [self shouldUpdateAssets];
     ILOG(@"Should update assets: %@", shouldUpdateAssets ? @"YES" : @"NO");
+
+#if TARGET_OS_TV
+    BOOL shouldUpdateOverlays = false;
+#else
+    BOOL shouldUpdateOverlays = [self shouldUpdateOverlays];
+#endif
+    ILOG(@"Should update overlays: %@", shouldUpdateOverlays ? @"YES" : @"NO");
+
 
     if (!configFileExists || !versionFileExists || shouldUpdateAssets) {
 
@@ -297,6 +345,12 @@ void extract_bundles();
         [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/systematic/png/arrow.png", self.documentsDirectory]];
 
         processing_init=true;
+    }
+
+    // Handle overlay updates
+    if (shouldUpdateOverlays) {
+        ILOG(@"Overlays need updating, starting download...");
+        [self downloadAndExtractOverlays];
     }
     // Additional Override Settings
     NSString* content = @"video_driver = \"vulkan\"\n";
@@ -373,6 +427,92 @@ void extract_bundles();
     ILOG(@"File does not exist or size is not 1687, returning true");
     return true;
 // #endif
+}
+
+- (bool)shouldUpdateOverlays {
+    /// Check if overlays need to be downloaded by looking for the COPYING file
+    NSFileManager *fm = [[NSFileManager alloc] init];
+    NSString *copyingFile = [NSString stringWithFormat:@"%@/RetroArch/overlays/COPYING", self.documentsDirectory];
+    ILOG(@"Checking if overlays COPYING file exists at %@", copyingFile);
+
+    if ([fm fileExistsAtPath:copyingFile]) {
+        ILOG(@"Overlays COPYING file exists, no update needed");
+        return false;
+    }
+
+    ILOG(@"Overlays COPYING file does not exist, update needed");
+    return true;
+}
+
+- (void)downloadAndExtractOverlays {
+    /// Download and extract overlays from libretro buildbot
+    NSString *overlayURL = @"https://buildbot.libretro.com/assets/frontend/overlays.zip";
+    NSString *overlaysDestination = [NSString stringWithFormat:@"%@/RetroArch/overlays", self.documentsDirectory];
+
+    ILOG(@"Starting overlay download from %@", overlayURL);
+
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    config.timeoutIntervalForRequest = 30.0;
+    config.timeoutIntervalForResource = 300.0; // 5 minutes for large file
+
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
+
+    NSURL *url = [NSURL URLWithString:overlayURL];
+    NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:url completionHandler:^(NSURL *tempLocation, NSURLResponse *response, NSError *error) {
+
+        if (error) {
+            ELOG(@"Error downloading overlays: %@", error.localizedDescription);
+            return;
+        }
+
+        if (!tempLocation) {
+            ELOG(@"No temporary file location for downloaded overlays");
+            return;
+        }
+
+        ILOG(@"Overlays downloaded successfully to temporary location: %@", tempLocation.path);
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSFileManager *fm = [[NSFileManager alloc] init];
+
+            // Create overlays directory if it doesn't exist
+            NSError *dirError;
+            if (![fm fileExistsAtPath:overlaysDestination]) {
+                [fm createDirectoryAtPath:overlaysDestination withIntermediateDirectories:YES attributes:nil error:&dirError];
+                if (dirError) {
+                    ELOG(@"Error creating overlays directory: %@", dirError.localizedDescription);
+                    return;
+                }
+                ILOG(@"Created overlays directory at %@", overlaysDestination);
+            }
+
+            // Extract the downloaded zip file
+            BOOL extractSuccess = [self extractZIP:tempLocation.path toDestination:overlaysDestination overwrite:YES];
+
+            if (extractSuccess) {
+                ILOG(@"Overlays extracted successfully to %@", overlaysDestination);
+
+                // Verify the COPYING file exists after extraction
+                NSString *copyingFile = [NSString stringWithFormat:@"%@/COPYING", overlaysDestination];
+                if ([fm fileExistsAtPath:copyingFile]) {
+                    ILOG(@"Overlay installation verified - COPYING file found");
+                } else {
+                    WLOG(@"Warning: COPYING file not found after extraction");
+                }
+            } else {
+                ELOG(@"Failed to extract overlays zip file");
+            }
+
+            // Clean up temporary file
+            NSError *removeError;
+            [fm removeItemAtURL:tempLocation error:&removeError];
+            if (removeError) {
+                WLOG(@"Warning: Could not remove temporary file: %@", removeError.localizedDescription);
+            }
+        });
+    }];
+
+    [downloadTask resume];
 }
 #pragma mark - Running
 
@@ -454,9 +594,6 @@ void extract_bundles();
 #if TARGET_OS_IOS
             v.multipleTouchEnabled  = YES;
 #endif
-//            v.autoresizesSubviews=true;
-//            v.autoResizeDrawable=true;
-//            v.contentMode=UIViewContentModeScaleToFill;
             _renderView = v;
         }
             break;
@@ -492,10 +629,33 @@ void extract_bundles();
     _renderView.translatesAutoresizingMaskIntoConstraints = NO;
     UIView *rootView = [CocoaView get].view;
     [rootView addSubview:_renderView];
-    [[_renderView.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
-    [[_renderView.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
-    [[_renderView.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.leadingAnchor] setActive:YES];
-    [[_renderView.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.trailingAnchor] setActive:YES];
+
+    if (!self.useCustomRenderViewLayout) {
+        // Default: pin to full-screen
+        [[_renderView.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
+        [[_renderView.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
+        [[_renderView.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.leadingAnchor] setActive:YES];
+        [[_renderView.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.trailingAnchor] setActive:YES];
+    }
+}
+
+//
+// Custom Viewport Positioning methods
+- (void)applyRenderViewFrameInTouchView:(CGRect)frame {
+    if (!self.touchViewController) { return; }
+    if (!_renderView) { return; }
+    UIView *parent = self.touchViewController.view;
+    if (_renderView.superview != parent) {
+        [parent addSubview:_renderView];
+    }
+    _renderView.translatesAutoresizingMaskIntoConstraints = YES;
+    _renderView.autoresizingMask = UIViewAutoresizingNone;
+    _renderView.frame = frame;
+    // Keep it under overlays
+    [parent sendSubviewToBack:_renderView];
+    [parent setNeedsLayout];
+    [parent layoutIfNeeded];
+    DLOG(@"[RA] CustomLayout: applied frame=%@", NSStringFromCGRect(_renderView.frame));
 }
 
 - (void)setupView {
@@ -578,7 +738,7 @@ void extract_bundles();
 //     AVAudioSessionCategoryOptionMixWithOthers
 //     error:&error];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAudioSessionInterruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
-    
+
 	[self refreshSystemConfig];
 	[self showGameView];
 	rarch_main(argc, argv, NULL);
@@ -605,7 +765,7 @@ void extract_bundles();
 }
 
 - (void)setupWindow {
-    ILOG(@"Set:METAL VULKAN OPENGLES:Attaching View Controller\n");
+    ILOG(@"Set:METAL VULKAN OPENGLES:Attaching View Controller. isRootView %@\n", self.isRootView ? @"Yes" : @"No");
     if (m_view) {
         [m_view removeFromSuperview];
         m_view=nil;
@@ -691,13 +851,22 @@ void extract_bundles();
 }
 - (void)showGameView {
     ILOG(@"In Show Game View now\n");
-    
+
 #if TARGET_OS_IOS
 //    [self.touchViewController.navigationController setToolbarHidden:true animated:NO];
    [[UIApplication sharedApplication] setStatusBarHidden:true withAnimation:UIStatusBarAnimationNone];
    [[UIApplication sharedApplication] setIdleTimerDisabled:true];
 #endif
-    
+
+    // Disable RetroArch overlay when host UI provides controls (DeltaSkins or ControllerViewController)
+    BOOL hostProvidesControls = YES; // Provenance always supplies skin/controls in-app
+    if (hostProvidesControls) {
+        settings_t *settings = config_get_ptr();
+        settings->bools.input_overlay_enable = false;
+        command_event(CMD_EVENT_OVERLAY_INIT, NULL);
+        ILOG(@"[RA] Disabled RA overlay due to host-provided controls");
+    }
+
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self setVolume];

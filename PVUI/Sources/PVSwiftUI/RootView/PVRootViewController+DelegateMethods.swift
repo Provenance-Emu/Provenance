@@ -134,7 +134,10 @@ extension PVRootViewController: SFSafariViewControllerDelegate {
         controller.dismiss(animated: true) { [weak self] in
             // Check if there are any imports in the queue
             DLOG("safariViewControllerDidFinish, checking if should present ImportStatusView")
-            if GameImporter.shared.importQueue.count > 0 {
+            // Use Task to handle async property access
+            Task {
+                let importQueue = await GameImporter.shared.importQueue
+                if importQueue.count > 0 {
                 DLOG("safariViewControllerDidFinish, there are imports in the queue, presenting ImportStatusView")
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self, let updatesController = self.updatesController else {
@@ -147,12 +150,16 @@ extension PVRootViewController: SFSafariViewControllerDelegate {
                         gameImporter: gameImporter,
                         delegate: self
                     ) {
-                        gameImporter.clearCompleted()
+                        // Use Task to handle the async call
+                        Task {
+                            await gameImporter.clearCompleted()
+                        }
                     }
                     let hostingController = UIHostingController(rootView: settingsView)
                     let navigationController = UINavigationController(rootViewController: hostingController)
                     self.present(navigationController, animated: true)
                 }
+            }
             }
         }
     }

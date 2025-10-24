@@ -14,7 +14,10 @@ class DefaultImportStatusDelegate: ImportStatusDelegate {
 
     func dismissAction() {
         // Default implementation
-        AppState.shared.gameImporter?.clearCompleted()
+        // Use Task to handle the async call
+        Task {
+            await AppState.shared.gameImporter?.clearCompleted()
+        }
     }
 
     func addImportsAction() {
@@ -32,13 +35,19 @@ class DefaultImportStatusDelegate: ImportStatusDelegate {
 
     func forceImportsAction() {
         // Default implementation
-        GameImporter.shared.importQueue.forEach { item in
-            if (item.status == .failure || item.status == .conflict || item.status == .partial) {
-                item.status = .queued
+        // Use Task to handle async operations
+        Task {
+            // Get the import queue asynchronously
+            let importQueue = await GameImporter.shared.importQueue
+            
+            // Update the status of items
+            importQueue.filter({$0.status.canBeRequeued}).forEach { item in
+                item.requeue()
             }
+            
+            // Start processing
+            GameImporter.shared.startProcessing()
         }
-
-        GameImporter.shared.startProcessing()
     }
 
     // Add method to handle system selection

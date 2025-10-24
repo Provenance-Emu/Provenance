@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 320 192"
+   height="192"
+   width="320"
+   xml:space="preserve"
+   id="svg2"
+   version="1.1"><metadata
+     id="metadata8"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+     id="defs6"><clipPath
+       id="clipPath18"
+       clipPathUnits="userSpaceOnUse"><path
+         id="path16"
+         d="M 0,256 H 256 V 0 H 0 Z" /></clipPath></defs><g
+     transform="matrix(1.3333333,0,0,-1.3333333,-10.666666,266.66666)"
+     id="g10"><g
+       id="g12"><g
+         clip-path="url(#clipPath18)"
+         id="g14"><g
+           transform="translate(244,60)"
+           id="g20"><path
+             id="path22"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             d="m 0,0 h -232 v 136 h 8 V 112 108 8 4 h 4 208 4 v 4 100 4 24 h 8 z m -28,36 v 72 h 16 V 8 h -24 z m -58.722,-12 -0.667,-4 h -57.222 l -0.667,4 z m 0.667,4 h -59.89 l -1.333,8 h 62.556 z M -52,112 h -12 v 16 h 12 z m -28,6 c 0,3.313 2.687,6 6,6 3.313,0 6,-2.687 6,-6 0,-3.313 -2.687,-6 -6,-6 -3.313,0 -6,2.687 -6,6 m -60,-10 h 4 12 4 8 4 40 4 12 4 16 V 40 h -48 -72 -48 v 68 h 44 4 z m 0,4 h -12 v 16 h 12 z m 10,0 c -3.313,0 -6,2.687 -6,6 0,3.313 2.687,6 6,6 3.313,0 6,-2.687 6,-6 0,-3.313 -2.687,-6 -6,-6 m 18,0 h -8 v 12 h 8 z m -88,-76 h 48.667 L -148,16 h 64 l 3.333,20 H -32 L -40,8 h -156 z m -20,72 h 16 V 36 l 4,-28 h -20 z m 208,28 v -24 h -16 -20 v 16 4 h -4 -12 -4 v -4 -2.019 c -1.674,1.261 -3.747,2.019 -6,2.019 -5.514,0 -10,-4.486 -10,-10 0,-2.252 0.758,-4.326 2.02,-6 H -108 v 12 4 h -4 -8 -4 v -2.019 c -1.674,1.261 -3.748,2.019 -6,2.019 -2.252,0 -4.326,-0.758 -6,-2.019 v 2.019 4 h -4 -12 -4 v -4 -16 h -48 -16 v 24 z m 12,4 h -232 -4 V 136 0 -4 h 4 232 4 v 4 136 4 z" /></g><g
+           transform="translate(154,176)"
+           id="g24"><path
+             id="path26"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             d="M 0,0 C 1.104,0 2,0.896 2,2 2,3.104 1.104,4 0,4 -1.104,4 -2,3.104 -2,2 -2,0.896 -1.104,0 0,0" /></g></g></g></g></svg>

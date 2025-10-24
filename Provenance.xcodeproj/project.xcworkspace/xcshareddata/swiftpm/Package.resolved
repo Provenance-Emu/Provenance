@@ -1,13 +1,39 @@
 {
-  "originHash" : "70f4010896d060d695e4b7573ad67eca15c0cfc215ce31c60b591757ed964d55",
   "pins" : [
     {
-      "identity" : "altkit",
+      "identity" : "abseil-cpp-binary",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rileytestut/AltKit",
+      "location" : "https://github.com/google/abseil-cpp-binary.git",
       "state" : {
-        "revision" : "f799f60ef6fa8b9676b4102b7dfa169fb40b6c92",
-        "version" : "0.0.2"
+        "revision" : "bbe8b69694d7873315fd3a4ad41efe043e1c07c5",
+        "version" : "1.2024072200.0"
+      }
+    },
+    {
+      "identity" : "activityindicatorview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/ActivityIndicatorView.git",
+      "state" : {
+        "revision" : "36140867802ae4a1d2b11490bcbbefe058001d14",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "animatedgradient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/AnimatedGradient.git",
+      "state" : {
+        "revision" : "c0e19120abda483a61058721c6c7d65c82c4ebe9",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "app-check",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/app-check.git",
+      "state" : {
+        "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
+        "version" : "11.2.0"
       }
     },
     {
@@ -29,6 +55,15 @@
       }
     },
     {
+      "identity" : "buildenvironment",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DimaRU/BuildEnvironment.git",
+      "state" : {
+        "revision" : "5f7dc4a7f9bde8414764b8a342b091b2e987e674",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "checksum",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoeMatt/Checksum.git",
@@ -38,12 +73,12 @@
       }
     },
     {
-      "identity" : "combine-schedulers",
+      "identity" : "daterangepicker",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/combine-schedulers",
+      "location" : "https://github.com/MrAsterisco/DateRangePicker",
       "state" : {
-        "revision" : "9fa31f4403da54855f1e2aeaeff478f4f0e40b13",
-        "version" : "1.0.2"
+        "revision" : "8bad437603a0559cfe29e69df4ef1981ddfb5f2b",
+        "version" : "1.0.4"
       }
     },
     {
@@ -56,12 +91,111 @@
       }
     },
     {
+      "identity" : "firebase-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/firebase/firebase-ios-sdk",
+      "state" : {
+        "revision" : "fbd463894af94d90eb4d6a4e54080459a8179519",
+        "version" : "11.12.0"
+      }
+    },
+    {
+      "identity" : "floatingbutton",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/FloatingButton.git",
+      "state" : {
+        "revision" : "c1e3e6a641ef5bacbcbc2b2c80db54793f75f974",
+        "version" : "1.4.0"
+      }
+    },
+    {
+      "identity" : "freemiumkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FlineDev/FreemiumKit.git",
+      "state" : {
+        "revision" : "3ba71311448d2c7f706b0b5e34b014999a1af856",
+        "version" : "1.18.0"
+      }
+    },
+    {
+      "identity" : "googleappmeasurement",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/GoogleAppMeasurement.git",
+      "state" : {
+        "revision" : "f7460ea630bddf172115c28493ae8b3798d95ce3",
+        "version" : "11.12.0"
+      }
+    },
+    {
+      "identity" : "googledatatransport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/GoogleDataTransport.git",
+      "state" : {
+        "revision" : "617af071af9aa1d6a091d59a202910ac482128f9",
+        "version" : "10.1.0"
+      }
+    },
+    {
+      "identity" : "googleutilities",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/GoogleUtilities.git",
+      "state" : {
+        "revision" : "60da361632d0de02786f709bdc0c4df340f7613e",
+        "version" : "8.1.0"
+      }
+    },
+    {
+      "identity" : "grpc-binary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/grpc-binary.git",
+      "state" : {
+        "revision" : "cc0001a0cf963aa40501d9c2b181e7fc9fd8ec71",
+        "version" : "1.69.0"
+      }
+    },
+    {
+      "identity" : "gtm-session-fetcher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/gtm-session-fetcher.git",
+      "state" : {
+        "revision" : "4d70340d55d7d07cc2fdf8e8125c4c126c1d5f35",
+        "version" : "4.4.0"
+      }
+    },
+    {
       "identity" : "hexcolors",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoeMatt/HexColors.git",
       "state" : {
         "branch" : "main",
         "revision" : "6aec172f32dab98d66458d1d58e98790f173c9ea"
+      }
+    },
+    {
+      "identity" : "highlightr",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/raspu/Highlightr.git",
+      "state" : {
+        "revision" : "bcf2d0590f32ac2528feb72d7e34f5b463801a47",
+        "version" : "2.2.1"
+      }
+    },
+    {
+      "identity" : "interop-ios-for-google-sdks",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
+      "state" : {
+        "revision" : "040d087ac2267d2ddd4cca36c757d1c6a05fdbfe",
+        "version" : "101.0.0"
+      }
+    },
+    {
+      "identity" : "leveldb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/firebase/leveldb.git",
+      "state" : {
+        "revision" : "a0bc79961d7be727d258d33d5a6b2f1023270ba1",
+        "version" : "1.22.5"
       }
     },
     {
@@ -74,6 +208,15 @@
       }
     },
     {
+      "identity" : "markdownview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LiYanan2004/MarkdownView.git",
+      "state" : {
+        "revision" : "8b746c5146b7842e9547b4d60adb2f1712cebb33",
+        "version" : "1.7.0"
+      }
+    },
+    {
       "identity" : "mbprogresshud",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jdg/MBProgressHUD.git",
@@ -83,12 +226,39 @@
       }
     },
     {
+      "identity" : "nanopb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/firebase/nanopb.git",
+      "state" : {
+        "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
+        "version" : "2.30910.0"
+      }
+    },
+    {
+      "identity" : "opendateinterval",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/OpenDateInterval",
+      "state" : {
+        "revision" : "acf88f98adae4ef2f7040d3fcc23685b094b219b",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "openssl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/OpenSSL",
+      "state" : {
+        "revision" : "623c84da314e85363236507ca38a4bde65df21c3",
+        "version" : "3.3.3001"
+      }
+    },
+    {
       "identity" : "packagebuildinfo",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/PackageBuildInfo",
+      "location" : "https://github.com/DimaRU/PackageBuildInfo.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "d9c2c27e799b00dedf0620e5d6268968bcf5320e"
+        "revision" : "b58288cada24fdaaedaaa329afe52d910794fdb2",
+        "version" : "1.0.4"
       }
     },
     {
@@ -110,12 +280,12 @@
       }
     },
     {
-      "identity" : "reachability.swift",
+      "identity" : "promises",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ashleymills/Reachability.swift",
+      "location" : "https://github.com/google/promises.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "a81b7367f2c46875f29577e03a60c39cdfad0c8d"
+        "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
+        "version" : "2.4.0"
       }
     },
     {
@@ -123,8 +293,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "e474a8d2270a8b12ac63ac9504e4757e39814b99",
-        "version" : "14.13.0"
+        "revision" : "15493076ad9fef22c16cc64cbfbf9e5b65c385f9",
+        "version" : "20.1.0"
       }
     },
     {
@@ -132,8 +302,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "863498d37a9f0e72caa65963da9641d8cdfc8228",
-        "version" : "10.54.0"
+        "revision" : "6260534683132eb981338c7c39fd5e69205876e6",
+        "version" : "20.0.3"
       }
     },
     {
@@ -150,8 +320,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/RxSwiftCommunity/RxRealm.git",
       "state" : {
-        "revision" : "267cc8b587a5d5c74b57105050f9838cf20e2541",
-        "version" : "5.1.0"
+        "branch" : "main",
+        "revision" : "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69"
       }
     },
     {
@@ -164,12 +334,30 @@
       }
     },
     {
+      "identity" : "sentry-cocoa",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getsentry/sentry-cocoa/",
+      "state" : {
+        "revision" : "491c87a32af58414bd03825b3029526640d3e73d",
+        "version" : "8.50.0"
+      }
+    },
+    {
       "identity" : "sidekit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SideStore/SideKit.git",
       "state" : {
         "branch" : "main",
         "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
+      }
+    },
+    {
+      "identity" : "siriusrating-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/theappcapital/SiriusRating-iOS.git",
+      "state" : {
+        "revision" : "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
+        "version" : "1.0.8"
       }
     },
     {
@@ -209,12 +397,21 @@
       }
     },
     {
-      "identity" : "swift-clocks",
+      "identity" : "swift-atomics",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-clocks",
+      "location" : "https://github.com/apple/swift-atomics.git",
       "state" : {
-        "revision" : "b9b24b69e2adda099a1fa381cda1eeec272d5b53",
-        "version" : "1.0.5"
+        "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "swift-cmark",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-cmark.git",
+      "state" : {
+        "revision" : "b022b08312decdc46585e0b3440d97f6f22ef703",
+        "version" : "0.6.0"
       }
     },
     {
@@ -227,30 +424,21 @@
       }
     },
     {
-      "identity" : "swift-concurrency-extras",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
-      "state" : {
-        "revision" : "6054df64b55186f08b6d0fd87152081b8ad8d613",
-        "version" : "1.2.0"
-      }
-    },
-    {
-      "identity" : "swift-dependencies",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-dependencies",
-      "state" : {
-        "revision" : "0fc0255e780bf742abeef29dec80924f5f0ae7b9",
-        "version" : "1.4.1"
-      }
-    },
-    {
       "identity" : "swift-http-types",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-http-types",
       "state" : {
         "revision" : "ae67c8178eb46944fd85e4dc6dd970e1f3ed6ccd",
         "version" : "1.3.0"
+      }
+    },
+    {
+      "identity" : "swift-markdown",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-markdown.git",
+      "state" : {
+        "revision" : "ea79e83c8744d2b50b0dc2d5bbd1e857e1253bf9",
+        "version" : "0.6.0"
       }
     },
     {
@@ -263,12 +451,21 @@
       }
     },
     {
-      "identity" : "swift-openapi-urlsession",
+      "identity" : "swift-perception",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-openapi-urlsession",
+      "location" : "https://github.com/pointfreeco/swift-perception.git",
       "state" : {
-        "revision" : "9bf4c712ad7989d6a91dbe68748b8829a50837e4",
-        "version" : "1.0.2"
+        "branch" : "main",
+        "revision" : "d924c62a70fca5f43872f286dbd7cef0957f1c01"
+      }
+    },
+    {
+      "identity" : "swift-protobuf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-protobuf.git",
+      "state" : {
+        "revision" : "d72aed98f8253ec1aa9ea1141e28150f408cf17f",
+        "version" : "1.29.0"
       }
     },
     {
@@ -307,12 +504,39 @@
       }
     },
     {
+      "identity" : "swipecellsui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DominikButz/SwipeCellSUI.git",
+      "state" : {
+        "revision" : "980921a595b098f2ad51198becada43bd0f5888e",
+        "version" : "2.1.6"
+      }
+    },
+    {
       "identity" : "turbo-base64.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JoeMatt/Turbo-Base64.swift.git",
       "state" : {
         "branch" : "master",
         "revision" : "8195ad501aa970e7b9cbe26bc6800f4e3e6e192a"
+      }
+    },
+    {
+      "identity" : "unrar.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mtgto/Unrar.swift.git",
+      "state" : {
+        "revision" : "102c17ef80b48897e53c57316a930c6bf7c8aa2c",
+        "version" : "0.4.2"
+      }
+    },
+    {
+      "identity" : "whatsnewkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SvenTiigi/WhatsNewKit.git",
+      "state" : {
+        "revision" : "6157c77e8be9b3d2310bc680681b61a8d9e290ac",
+        "version" : "2.2.1"
       }
     },
     {
@@ -325,14 +549,14 @@
       }
     },
     {
-      "identity" : "ziparchive",
+      "identity" : "zipfoundation",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ZipArchive/ZipArchive.git",
+      "location" : "https://github.com/weichsel/ZIPFoundation.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "4b4cccf56923c554f08c1554b1480821706c2000"
+        "revision" : "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+        "version" : "0.9.19"
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }

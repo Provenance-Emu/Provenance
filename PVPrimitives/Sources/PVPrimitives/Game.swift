@@ -100,6 +100,10 @@ public struct Game: Codable, Sendable {
         self.systemShortName = systemShortName
         self.language = language
     }
+    
+    
+    // Convenience since PVGame uses md5Hash not md5
+    public var md5Hash: String { md5 }
 }
 
 // MARK: - Equatable

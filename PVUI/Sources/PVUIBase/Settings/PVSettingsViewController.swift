@@ -432,24 +432,22 @@ public final class PVSettingsViewController: QuickTableViewController {
                                 detailText: .subtitle("Use newer Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
                                 key: .useMetal, icon: .sfSymbol("m.square.fill")),
 
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy UIKit UI", comment: "Use UIKit UI"),
-                                detailText: .subtitle("Alternative legacy UI in UIKit  UI. Supports game controller navigation."),
-                                key: .useUIKit, icon: .sfSymbol("swift")) { cell, row in
-                                    //                                    let swiftUIDetailText: DetailText
-                                    //                                    if #available(iOS 14, tvOS 14, *) {
-                                    //                                        row.
-                                    //                                    } else {
-                                    //                                        swiftUIDetailText = .subtitle("Only available in iOS/tvOS 14+")
-                                    //                                    }
-                                    //
-                                    //                                    var swiftUI =
-                                    //
-                                    //                                    if #available(iOS 14, tvOS 14, *) {
-                                    //                                        swiftUI.isSelectable = true
-                                    //                                    } else {
-                                    //                                        swiftUI.isSelectable = false
-                                    //                                        swiftUI.switchValue = false
-                                    //                                    }
+            PVSettingsSegmentedRow<MainUIMode>(text: NSLocalizedString("UI Mode", comment: "UI Mode"),
+                                detailText: .subtitle("Choose between different UI modes."),
+                                key: .mainUIMode, icon: .sfSymbol("switch.2"), viewController: self) { cell, row in
+                                    cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+                                    if let segmentedControl = cell.accessoryView as? UISegmentedControl {
+                                        segmentedControl.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12)], for: .normal)
+                                    }
+                                },
+            
+            PVSettingsSegmentedRow<SkinMode>(text: NSLocalizedString("Controller Skin Mode", comment: "Controller Skin Mode"),
+                                detailText: .subtitle("Choose between different on-screen controller skin modes."),
+                                             key: .skinMode, icon: .sfSymbol("switch.2"), viewController: self) { cell, row in
+                                    cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+                                    if let segmentedControl = cell.accessoryView as? UISegmentedControl {
+                                        segmentedControl.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12)], for: .normal)
+                                    }
                                 },
 
 //            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy Audio Engine", comment: "Use Legacy Audio Engine"),
@@ -784,7 +782,7 @@ public final class PVSettingsViewController: QuickTableViewController {
             }
         } else {
             let alert = UIAlertController(title: "Unable to start web server!",
-                                          message: "Your device needs to be connected to a WiFi network to continue!",
+                                          message: "Your device needs to be connected to a Wi-Fi network to continue!",
                                           preferredStyle: .alert)
             alert.popoverPresentationController?.sourceView = tableView
             alert.popoverPresentationController?.sourceRect = tableView.bounds

@@ -100,8 +100,6 @@ const struct rglgen_sym_map rglgen_symbol_map[] = {
     SYM(GetQueryivEXT),
     SYM(GetQueryObjectivEXT),
     SYM(GetQueryObjectuivEXT),
-    SYM(GetQueryObjecti64vEXT),
-    SYM(GetQueryObjectui64vEXT),
     SYM(DrawBuffersEXT),
     SYM(EnableiEXT),
     SYM(DisableiEXT),
@@ -306,8 +304,6 @@ RGLSYMGLQUERYCOUNTEREXTPROC __rglgen_glQueryCounterEXT;
 RGLSYMGLGETQUERYIVEXTPROC __rglgen_glGetQueryivEXT;
 RGLSYMGLGETQUERYOBJECTIVEXTPROC __rglgen_glGetQueryObjectivEXT;
 RGLSYMGLGETQUERYOBJECTUIVEXTPROC __rglgen_glGetQueryObjectuivEXT;
-RGLSYMGLGETQUERYOBJECTI64VEXTPROC __rglgen_glGetQueryObjecti64vEXT;
-RGLSYMGLGETQUERYOBJECTUI64VEXTPROC __rglgen_glGetQueryObjectui64vEXT;
 RGLSYMGLDRAWBUFFERSEXTPROC __rglgen_glDrawBuffersEXT;
 RGLSYMGLENABLEIEXTPROC __rglgen_glEnableiEXT;
 RGLSYMGLDISABLEIEXTPROC __rglgen_glDisableiEXT;
@@ -411,4 +407,3 @@ RGLSYMGLTEXTURESTORAGE3DEXTPROC __rglgen_glTextureStorage3DEXT;
 RGLSYMGLTEXTUREVIEWEXTPROC __rglgen_glTextureViewEXT;
 RGLSYMGLFRAMEBUFFERTEXTUREMULTIVIEWOVRPROC __rglgen_glFramebufferTextureMultiviewOVR;
 RGLSYMGLFRAMEBUFFERTEXTUREMULTISAMPLEMULTIVIEWOVRPROC __rglgen_glFramebufferTextureMultisampleMultiviewOVR;
-

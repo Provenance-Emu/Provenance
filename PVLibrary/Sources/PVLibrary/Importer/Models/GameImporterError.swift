@@ -6,21 +6,34 @@
 //
 
 public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
+    case archiveIsEmpty
+    case artworkImportFailed
+    case biosNotFound
+    case conflictDetected
     case couldNotCalculateMD5
-    case romAlreadyExistsInDatabase
-    case noSystemMatched
-    case unsupportedSystem
-    case systemNotDetermined
+    case couldNotCreateDestinationPath(path: String)
+    case couldNotOpenArchive
+    case cueProcessingFailed(reason: String)
+    case errorGettingFileAttributes(path: String, error: Error)
     case failedToMoveCDROM(Error)
     case failedToMoveROM(Error)
-    case unsupportedFile
-    case noBIOSMatchForBIOSFileType
-    case unsupportedCDROMFile
+    case fileMoveFailed(source: String, destination: String, error: Error)
     case incorrectDestinationURL
-    case conflictDetected
+    case invalidBIOSLocation(path: String)
+    case m3uProcessingFailed(reason: String)
     case missingRequiredProperty(String)
+    case noBIOSMatchForBIOSFileType
+    case noSystemMatched
+    case romAlreadyExistsInDatabase
+    case systemNotDetermined
     case systemNotFound
-
+    case unsupportedCDROMFile
+    case unsupportedFile
+    case unsupportedFileExtension(ext: String)
+    case unsupportedSystem
+    case userCancelledSelection
+    case waitingForAssociatedFiles(expected: [String])
+    
     /// The domain of the error.
     public static var errorDomain: String {
         return "org.provenance-emu.provenance.GameImporter"
@@ -34,8 +47,8 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
         case .noSystemMatched:              return 1003
         case .unsupportedSystem:            return 1004
         case .systemNotDetermined:          return 1005
-        case .failedToMoveCDROM:           return 1006
-        case .failedToMoveROM:             return 1007
+        case .failedToMoveCDROM:            return 1006
+        case .failedToMoveROM:              return 1007
         case .unsupportedFile:              return 1008
         case .noBIOSMatchForBIOSFileType:   return 1009
         case .unsupportedCDROMFile:         return 1010
@@ -43,6 +56,12 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
         case .conflictDetected:             return 1012
         case .missingRequiredProperty:      return 1013
         case .systemNotFound:               return 1014
+        case .artworkImportFailed:          return 1015
+        case .archiveIsEmpty:               return 1016
+        case .biosNotFound:                     return 1017
+        case .couldNotCreateDestinationPath(_): return 1018
+        case .couldNotOpenArchive:              return 1019
+        default:                            return 9999
         }
     }
 
@@ -101,6 +120,42 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
             return "Missing required property: \(property)"
         case .systemNotFound:
             return "System not found in database"
+        case .artworkImportFailed:
+            return "Artwork import failed"
+        case .unsupportedFileExtension(let ext):
+            return "Unsupported file extension: \(ext)"
+        case .couldNotOpenArchive:
+            return "Could not open archive"
+        case .archiveIsEmpty:
+            return "Archive is empty"
+        case .couldNotCreateDestinationPath(let path):
+            return "Could not create destination path: \(path)"
+        case .fileMoveFailed(let source, let destination, let error):
+            return "Failed to move file from \(source) to \(destination): \(error.localizedDescription)"
+        case .errorGettingFileAttributes(let path, let error):
+            return "Error getting file attributes for \(path): \(error.localizedDescription)"
+        case .noSystemMatched:
+            return "No system matched for this file"
+        case .biosNotFound:
+            return "BIOS file not found"
+        case .romAlreadyExistsInDatabase:
+            return "ROM file already exists in database"
+        case .artworkImportFailed:
+            return "Artwork import failed"
+        case .userCancelledSelection:
+            return "User cancelled selection"
+        case .incorrectDestinationURL:
+            return "Incorrect destination URL"
+        case .couldNotCalculateMD5:
+            return "Could not calculate MD5"
+        case .m3uProcessingFailed(let reason):
+            return "M3U processing failed: \(reason)"
+        case .cueProcessingFailed(let reason):
+            return "CUE processing failed: \(reason)"
+        case .invalidBIOSLocation(let path):
+            return "BIOS file found at invalid location: \(path). BIOS files should be in the BIOS folder or a subfolder."
+        case .waitingForAssociatedFiles(let expected):
+            return "Import item is waiting for associated files: \(expected.joined(separator: ", "))"
         }
     }
 }

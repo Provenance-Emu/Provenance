@@ -62,6 +62,14 @@
 @interface PVLibRetroCoreBridge ()
 {
     BOOL loaded;
+
+    // Touch and mouse input state
+    CGPoint currentTouchPosition;
+    BOOL touchPressed;
+    CGPoint currentMousePosition;
+    BOOL mousePressed;
+    BOOL leftMousePressed;
+    BOOL rightMousePressed;
 }
 @property (nonatomic, strong) NSData *currentRomData;
 @end
@@ -1502,9 +1510,31 @@ static bool environment_callback(unsigned cmd, void *data) {
                                                        * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
                                                        * NULL to retro_video_refresh_t.
                                                        */
-//            struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
-//            ILOG(@"%i", cb);
-            return true;
+        {
+            struct retro_hw_render_callback* hw_render_callback = (struct retro_hw_render_callback*)data;
+            if (!hw_render_callback) {
+                ELOG(@"Hardware render callback is NULL");
+                return false;
+            }
+
+            // Store the hardware render callback for the current core
+            GET_CURRENT_OR_RETURN(false);
+
+            // Check if this is a hardware-accelerated core bridge
+            if ([current respondsToSelector:@selector(setHardwareRenderCallback:)]) {
+                BOOL success = [current performSelector:@selector(setHardwareRenderCallback:) withObject:[NSValue valueWithPointer:hw_render_callback]];
+                if (success) {
+                    ILOG(@"Hardware rendering enabled for context type: %d", hw_render_callback->context_type);
+                    return true;
+                } else {
+                    ELOG(@"Failed to set hardware render callback");
+                    return false;
+                }
+            } else {
+                ELOG(@"Current core bridge does not support hardware rendering");
+                return false;
+            }
+        }
         case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE: {
                                            /* struct retro_rumble_interface * --
                                             * Gets an interface which is used by a libretro core to set
@@ -1853,6 +1883,7 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
     {
         case CORE_TYPE_PLAIN:
 #ifdef HAVE_DYNAMIC
+            ILOG(@"Loading dynamic core");
             load_dynamic_core();
 #endif
             ILOG(@"type:%x, current_core: %x, lib_handle: %x", type, current_core, lib_handle);
@@ -2167,6 +2198,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
             value = strongCurrent->_pad[1][_id];
         }
     }
+    else if (device == RETRO_DEVICE_POINTER || device == RETRO_DEVICE_MOUSE)
+    {
+        // Handle touch and mouse input
+        value = [strongCurrent getPointerState:port device:device index:index id:_id];
+    }
 
     strongCurrent = nil;
 
@@ -2217,7 +2253,12 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
     current->core->retro_set_audio_sample(audio_callback);
     current->core->retro_set_audio_sample_batch(audio_batch_callback);
+    
+    // DEBUG: Confirm video callback registration
+    NSLog(@"🎬 REGISTERING video_callback function: %p", video_callback);
     current->core->retro_set_video_refresh(video_callback);
+    NSLog(@"🎬 VIDEO CALLBACK REGISTERED SUCCESSFULLY");
+    
     current->core->retro_set_input_poll(input_poll_callback);
     current->core->retro_set_input_state(input_state_callback);
 }
@@ -2811,5 +2852,189 @@ unsigned retro_api_version(void)
 {
     return RETRO_API_VERSION;
 }
+
+#pragma mark - Touch and Mouse Input Support
+
+@implementation PVLibRetroCoreBridge (TouchMouseInput)
+
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+- (void)handleTouchEvent:(UIEvent *)event {
+    NSSet *touches = [event allTouches];
+    UITouch *touch = [touches anyObject];
+
+    if (!touch) {
+        return;
+    }
+
+    // Get touch location relative to the view
+    CGPoint location = [touch locationInView:touch.view];
+
+    // Normalize coordinates to 0.0-1.0 range
+    CGSize viewSize = touch.view.bounds.size;
+    if (viewSize.width > 0 && viewSize.height > 0) {
+        currentTouchPosition.x = location.x / viewSize.width;
+        currentTouchPosition.y = location.y / viewSize.height;
+
+        // Clamp to valid range
+        currentTouchPosition.x = MAX(0.0, MIN(1.0, currentTouchPosition.x));
+        currentTouchPosition.y = MAX(0.0, MIN(1.0, currentTouchPosition.y));
+    }
+
+    // Update touch state based on phase
+    switch (touch.phase) {
+        case UITouchPhaseBegan:
+        case UITouchPhaseMoved:
+        case UITouchPhaseStationary:
+            touchPressed = YES;
+            break;
+        case UITouchPhaseEnded:
+        case UITouchPhaseCancelled:
+            touchPressed = NO;
+            break;
+        default:
+            break;
+    }
+
+    DLOG(@"Touch event: position (%.3f, %.3f), pressed: %d",
+         currentTouchPosition.x, currentTouchPosition.y, touchPressed);
+}
+#else
+- (void)handleMouseEvent:(NSEvent *)event {
+    if (!event) {
+        return;
+    }
+
+    // Get mouse location relative to the view
+    NSPoint location = [event locationInWindow];
+    NSView *view = [[event window] contentView];
+
+    if (view) {
+        // Convert to view coordinates
+        location = [view convertPoint:location fromView:nil];
+
+        // Normalize coordinates to 0.0-1.0 range
+        NSSize viewSize = view.bounds.size;
+        if (viewSize.width > 0 && viewSize.height > 0) {
+            currentMousePosition.x = location.x / viewSize.width;
+            currentMousePosition.y = location.y / viewSize.height;
+
+            // Clamp to valid range
+            currentMousePosition.x = MAX(0.0, MIN(1.0, currentMousePosition.x));
+            currentMousePosition.y = MAX(0.0, MIN(1.0, currentMousePosition.y));
+        }
+    }
+
+    // Update mouse button state based on event type
+    switch ([event type]) {
+        case NSEventTypeLeftMouseDown:
+            leftMousePressed = YES;
+            mousePressed = YES;
+            break;
+        case NSEventTypeLeftMouseUp:
+            leftMousePressed = NO;
+            mousePressed = leftMousePressed || rightMousePressed;
+            break;
+        case NSEventTypeRightMouseDown:
+            rightMousePressed = YES;
+            mousePressed = YES;
+            break;
+        case NSEventTypeRightMouseUp:
+            rightMousePressed = NO;
+            mousePressed = leftMousePressed || rightMousePressed;
+            break;
+        case NSEventTypeMouseMoved:
+        case NSEventTypeLeftMouseDragged:
+        case NSEventTypeRightMouseDragged:
+            // Position already updated above
+            break;
+        default:
+            break;
+    }
+
+    DLOG(@"Mouse event: position (%.3f, %.3f), left: %d, right: %d",
+         currentMousePosition.x, currentMousePosition.y, leftMousePressed, rightMousePressed);
+}
+#endif
+
+- (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id {
+    // Only handle port 0 for now
+    if (port != 0) {
+        return 0;
+    }
+
+    switch (device) {
+        case RETRO_DEVICE_POINTER: {
+            switch (id) {
+                case RETRO_DEVICE_ID_POINTER_X:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    // Convert 0.0-1.0 range to libretro's -32768 to 32767 range
+                    return (int16_t)((currentTouchPosition.x * 2.0 - 1.0) * 32767);
+#else
+                    return (int16_t)((currentMousePosition.x * 2.0 - 1.0) * 32767);
+#endif
+
+                case RETRO_DEVICE_ID_POINTER_Y:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    // Convert 0.0-1.0 range to libretro's -32768 to 32767 range
+                    // Note: libretro uses inverted Y (top = -32768, bottom = 32767)
+                    return (int16_t)((currentTouchPosition.y * 2.0 - 1.0) * 32767);
+#else
+                    return (int16_t)((currentMousePosition.y * 2.0 - 1.0) * 32767);
+#endif
+
+                case RETRO_DEVICE_ID_POINTER_PRESSED:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    return touchPressed ? 1 : 0;
+#else
+                    return mousePressed ? 1 : 0;
+#endif
+
+                default:
+                    return 0;
+            }
+        }
+
+        case RETRO_DEVICE_MOUSE: {
+            switch (id) {
+                case RETRO_DEVICE_ID_MOUSE_X:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    // For touch, return relative movement (simplified)
+                    return (int16_t)((currentTouchPosition.x * 2.0 - 1.0) * 100);
+#else
+                    return (int16_t)((currentMousePosition.x * 2.0 - 1.0) * 100);
+#endif
+
+                case RETRO_DEVICE_ID_MOUSE_Y:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    return (int16_t)((currentTouchPosition.y * 2.0 - 1.0) * 100);
+#else
+                    return (int16_t)((currentMousePosition.y * 2.0 - 1.0) * 100);
+#endif
+
+                case RETRO_DEVICE_ID_MOUSE_LEFT:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    return touchPressed ? 1 : 0;
+#else
+                    return leftMousePressed ? 1 : 0;
+#endif
+
+                case RETRO_DEVICE_ID_MOUSE_RIGHT:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    return 0; // Touch doesn't have right click
+#else
+                    return rightMousePressed ? 1 : 0;
+#endif
+
+                default:
+                    return 0;
+            }
+        }
+
+        default:
+            return 0;
+    }
+}
+
+@end
 
 #pragma clang diagnostic pop

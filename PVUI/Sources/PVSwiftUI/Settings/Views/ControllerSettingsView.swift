@@ -127,7 +127,7 @@ struct ControllerSettingsView: View {
 
     /// Helper to get appropriate icon for controller type
     private func controllerIcon(_ controller: GCController?) -> String {
-        guard let controller = controller else { return "gamecontroller.fill.slash" }
+        guard let controller = controller else { return "gamecontroller.fill.circle" }
 
         #if os(tvOS)
         if controller.microGamepad != nil { return "appletv.remote.gen4.fill" }
@@ -145,7 +145,7 @@ struct ControllerSettingsView: View {
     }
 
     private var accentColor: Color {
-        themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .accentColor
+        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
     }
 
     var body: some View {

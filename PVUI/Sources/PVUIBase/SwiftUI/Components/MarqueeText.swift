@@ -107,23 +107,39 @@ public struct MarqueeText: View {
         self.initialDelay = initialDelay
     }
 
+    /// Environment value for reduce motion setting
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
     /// Check if the animation should be running based on all visibility factors
     private var shouldAnimationRun: Bool {
         /// Animation should run only if:
         /// 1. The view is in the view hierarchy
         /// 2. The text is wider than the container (or width hasn't been calculated yet)
         /// 3. The app is in the active scene phase
-        return isInViewHierarchy && (!hasCalculatedWidth || textWidth > containerWidth) && scenePhase == .active
+        /// 4. Reduce motion is not enabled
+        return isInViewHierarchy && 
+               (!hasCalculatedWidth || textWidth > containerWidth) && 
+               scenePhase == .active && 
+               !reduceMotion
     }
 
     public var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .leading) {
+            if reduceMotion {
+                // Static version with truncation when reduce motion is enabled
                 Text(text)
                     .font(font)
                     .lineLimit(1)
-                    .fixedSize()
-                    .background(
+                    .truncationMode(.tail)
+                    .frame(width: containerWidth, alignment: .leading)
+            } else {
+                // Animated marquee when reduce motion is disabled
+                ZStack(alignment: .leading) {
+                    Text(text)
+                        .font(font)
+                        .lineLimit(1)
+                        .fixedSize()
+                        .background(
                         GeometryReader { textGeometry in
                             Color.clear.onAppear {
                                 // Store the container width for later use
@@ -142,10 +158,11 @@ public struct MarqueeText: View {
                         }
                     )
                     .offset(x: offset)
+                }
+                .frame(width: containerWidth, alignment: .leading)
+                .clipped()
+                .contentShape(Rectangle())
             }
-            .frame(width: containerWidth, alignment: .leading)
-            .clipped()
-            .contentShape(Rectangle())
         }
         .frame(height: 20)
         .clipped()
@@ -248,6 +265,11 @@ public struct MarqueeText: View {
     }
 
     private func startAnimation() {
+        /// Don't start animation if reduce motion is enabled
+        if reduceMotion {
+            return
+        }
+        
         /// Ensure we have valid measurements before attempting animation
         if containerWidth <= 0 || !hasCalculatedWidth {
             /// Retry after a short delay if container width isn't ready or text width hasn't been calculated

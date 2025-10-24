@@ -10,7 +10,7 @@
 // MARK: Play Duration
 protocol GameplayDurationTrackerUtil: class {
     var gameStartTime: Date? { get set }
-    var game: PVGame { get }
+    var game: PVGame! { get }
 
     func updatePlayedDuration()
     func updateLastPlayedTime()
@@ -22,7 +22,8 @@ extension GameplayDurationTrackerUtil {
             // Clear any temp pointer to start time
             self.gameStartTime = nil
         }
-        guard let gameStartTime = gameStartTime else {
+        guard let gameStartTime = gameStartTime, let game = game else {
+        ELOG("Game start time or game is nil")
             return
         }
 

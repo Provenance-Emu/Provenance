@@ -125,3 +125,5 @@ build
 /PVLookup/Sources/ShiraGame/Resources/shiragame.sqlite3
 
 .sentryclirc
+*.code-workspace
+/Cores/Dolphin/venv

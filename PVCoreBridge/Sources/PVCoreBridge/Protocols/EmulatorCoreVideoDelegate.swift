@@ -47,6 +47,12 @@ import Foundation
 #endif
 }
 
+/// Optional: Bridges that can position their internal render view within a parent touch view (e.g. RetroArch)
+@objc public protocol EmulatorCoreViewportPositioning {
+    @objc func setUseCustomRenderViewLayout(_ enabled: Bool)
+    @objc func applyRenderViewFrameInTouchView(_ frame: CGRect)
+}
+
 //public extension EmulatorCoreVideoDelegate {
 //    var emulationFPS: Double { 0.0 }
 //    var renderFPS: Double { 0.0 }

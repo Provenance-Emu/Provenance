@@ -16,7 +16,7 @@ import PVPlists
 import PVRealm
 import PVSystems
 import PVFileSystem
-import MBProgressHUD
+import PVUIBase
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
@@ -37,14 +37,14 @@ public protocol GameLaunchingViewController {
     func updateRecentGames(_ game: PVGame)
     func presentCoreSelection(forGame game:
                               PVGame, sender: Any?)
-    
+
     func displayAndLogError(withTitle title: String,
                             message: String,
                             customActions: [UIAlertAction]?)
 }
 
 public extension GameLaunchingViewController {
-    
+
     //MARK: Default protocol implementation `GameLaunchingViewController`
     @MainActor
     func canLoad(_ game: PVGame) async throws {
@@ -54,7 +54,7 @@ public extension GameLaunchingViewController {
 
         try await biosCheck(system: system)
     }
-    
+
     @MainActor func openSaveState(withID objectId: String) async {
         let realm = RomDatabase.sharedInstance
         if let object = realm.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: objectId) {
@@ -62,7 +62,7 @@ public extension GameLaunchingViewController {
             await openSaveState(threadObject!)
         }
     }
-    
+
     @MainActor
     private func biosCheck(system: PVSystem) async throws {
         guard system.requiresBIOS else {
@@ -146,6 +146,7 @@ public extension GameLaunchingViewController {
                     biosPathContentsMD5Cache = biosPathContents.reduce([String: String](), { (hashDictionary, filename) -> [String: String] in
                         let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
                         Task {
+                            // TODO: Not sure this works
                             try await downloadFileIfNeeded(fullBIOSFileURL)
                         }
                         if let hash = FileManager.default.md5ForFile(at: fullBIOSFileURL, fromOffset: 0), !hash.isEmpty {
@@ -198,8 +199,8 @@ public extension GameLaunchingViewController {
             throw GameLaunchingError.missingBIOSes(missingBIOSES)
         }
     }
-    
-    
+
+
     func updateRecentGames(_ game: PVGame) {
         let database = RomDatabase.sharedInstance
         RomDatabase.refresh()
@@ -249,7 +250,7 @@ public extension GameLaunchingViewController {
             }
         }
     }
-    
+
     func doLoad(_ game: PVGame) async throws {
         guard let system = game.system else {
             throw GameLaunchingError.systemNotFound
@@ -277,27 +278,33 @@ extension GameLaunchingViewController where Self: UIViewController {
     func donateShortcut(forGame game: PVGame) {
         let activity = NSUserActivity(activityType: "com.provenance-emu.provenance.openMD5")
         activity.title = "Open \(game.title) in Provenance"
-        activity.userInfo = ["url": "provenance://open?md5=\(game.md5)"]
-        activity.isEligibleForSearch = true
+        activity.userInfo = ["url": "provenance://open?md5=\(game.md5Hash)"]
+        activity.isEligibleForSearch = false
+        activity.isEligibleForPublicIndexing = true
+        activity.isEligibleForHandoff = true
+
         #if !os(tvOS)
         activity.isEligibleForPrediction = true
         activity.persistentIdentifier = NSUserActivityPersistentIdentifier("com.provenance-emu.provenance.openMD5")
         #endif
-        
-        self.userActivity = activity
-        self.userActivity?.becomeCurrent()
+
+        Task { @MainActor in
+            self.userActivity = activity
+            self.userActivity?.becomeCurrent()
+        }
     }
-    
+
     @MainActor
     func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
         guard game.realm != nil else {
             return
         }
 
-        // Show loading HUD
-        let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
-        hud.label.text = "Loading \(game.title)..."
-        hud.mode = .indeterminate
+        ILOG("Loading game: \(game.title) at romPath: \(game.romPath), url: \(game.url?.absoluteString ?? "nil"), partialPath: \(game.file?.partialPath ?? "nil")")
+
+        // Show retrowave-themed loading HUD
+        let hud = RetroProgressHUD.show(in: self.view, animated: true)
+        hud.setText("Loading \(game.title)...")
 
         defer {
             // Ensure HUD is hidden when function exits
@@ -309,8 +316,10 @@ extension GameLaunchingViewController where Self: UIViewController {
         @ThreadSafe var game: PVGame! = game
         @ThreadSafe var core = core
         @ThreadSafe var saveState = saveState
-        
-        donateShortcut(forGame: game)
+
+        Task.detached { [weak self] in
+            self?.donateShortcut(forGame: game)
+        }
 
         guard !(presentedViewController is PVEmualatorControllerProtocol) else {
             let currentGameVC = presentedViewController as! PVEmualatorControllerProtocol
@@ -322,6 +331,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             let path = saveState!.file!.url!.path
             ILOG("Opening with save state at path: \(path)")
             do {
+                // TODO: Not sure this works
                 try await downloadFileIfNeeded(saveState!.file!.url!)
             } catch {
                 ELOG("Save state was not downloaded")
@@ -334,6 +344,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         let offline: Bool = !(game.file?.online ?? true)
         if  offline {
             do {
+                // TODO: Not sure this works
                 try await downloadFileIfNeeded(game.file?.url)
             } catch {
                 displayAndLogError(withTitle: "Cannot open game",
@@ -351,6 +362,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         do {
             ///
             if let url = game.file?.url {
+                // TODO: Not sure this works
                 try await downloadFileIfNeeded(url)
             }
 
@@ -374,11 +386,11 @@ extension GameLaunchingViewController where Self: UIViewController {
                 // If one has "retroarch" and the other doesn't, non-retroarch comes first
                 let aHasRetroarch = a.projectName.localizedCaseInsensitiveContains("retroarch")
                 let bHasRetroarch = b.projectName.localizedCaseInsensitiveContains("retroarch")
-                
+
                 if aHasRetroarch != bHasRetroarch {
                     return !aHasRetroarch // non-retroarch comes first
                 }
-                
+
                 // Within each group, sort alphabetically
                 return a.projectName < b.projectName
             }
@@ -456,9 +468,11 @@ extension GameLaunchingViewController where Self: UIViewController {
                     UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
                 }
             })
-            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
+            let cancelAction =  UIAlertAction(title: "Close", style: .destructive)
+            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction, cancelAction])
 #else
-            displayAndLogError(withTitle: "Missing BIOS files", message: message)
+            let cancelAction =  UIAlertAction(title: "Close", style: .destructive)
+            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [cancelAction])
 #endif
         } catch GameLaunchingError.systemNotFound {
             displayAndLogError(withTitle: "Core not found", message: "No Core was found to run system '\(system.name)'.")

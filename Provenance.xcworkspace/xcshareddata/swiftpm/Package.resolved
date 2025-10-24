@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/google/GoogleUtilities.git",
         "state": {
           "branch": null,
-          "revision": "53156c7ec267db846e6b64c9f4c4e31ba4cf75eb",
-          "version": "8.0.2"
+          "revision": "60da361632d0de02786f709bdc0c4df340f7613e",
+          "version": "8.1.0"
         }
       },
       {
@@ -159,8 +159,8 @@
         "repositoryURL": "https://github.com/google/gtm-session-fetcher.git",
         "state": {
           "branch": null,
-          "revision": "4d70340d55d7d07cc2fdf8e8125c4c126c1d5f35",
-          "version": "4.4.0"
+          "revision": "c756a29784521063b6a1202907e2cc47f41b667c",
+          "version": "4.5.0"
         }
       },
       {
@@ -177,8 +177,8 @@
         "repositoryURL": "https://github.com/raspu/Highlightr.git",
         "state": {
           "branch": null,
-          "revision": "bcf2d0590f32ac2528feb72d7e34f5b463801a47",
-          "version": "2.2.1"
+          "revision": "05e7fcc63b33925cd0c1faaa205cdd5681e7bbef",
+          "version": "2.3.0"
         }
       },
       {
@@ -290,21 +290,12 @@
         }
       },
       {
-        "package": "Reachability",
-        "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
-        "state": {
-          "branch": "master",
-          "revision": "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
-          "version": null
-        }
-      },
-      {
         "package": "RealmDatabase",
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "cccb3ca9e26ec452a29f2f0d4050d1e38b8a3d43",
-          "version": "14.14.0"
+          "revision": "15493076ad9fef22c16cc64cbfbf9e5b65c385f9",
+          "version": "20.1.0"
         }
       },
       {
@@ -312,8 +303,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "8cb364a6a63695df296f05b53f7c3f3b1dda6af3",
-          "version": "10.54.3"
+          "revision": "6260534683132eb981338c7c39fd5e69205876e6",
+          "version": "20.0.3"
         }
       },
       {
@@ -329,9 +320,9 @@
         "package": "RxRealm",
         "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
         "state": {
-          "branch": null,
-          "revision": "267cc8b587a5d5c74b57105050f9838cf20e2541",
-          "version": "5.1.0"
+          "branch": "main",
+          "revision": "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69",
+          "version": null
         }
       },
       {
@@ -375,8 +366,8 @@
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
           "branch": null,
-          "revision": "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
-          "version": "0.15.3"
+          "revision": "392dd6058624d9f6c5b4c769d165ddd8c7293394",
+          "version": "0.15.4"
         }
       },
       {
@@ -402,8 +393,8 @@
         "repositoryURL": "https://github.com/apple/swift-async-algorithms",
         "state": {
           "branch": null,
-          "revision": "4c3ea81f81f0a25d0470188459c6d4bf20cf2f97",
-          "version": "1.0.3"
+          "revision": "042e1c4d9d19748c9c228f8d4ebc97bb1e339b0b",
+          "version": "1.0.4"
         }
       },
       {
@@ -417,11 +408,11 @@
       },
       {
         "package": "cmark-gfm",
-        "repositoryURL": "https://github.com/apple/swift-cmark.git",
+        "repositoryURL": "https://github.com/swiftlang/swift-cmark.git",
         "state": {
           "branch": null,
-          "revision": "3ccff77b2dc5b96b77db3da0d68d28068593fa53",
-          "version": "0.5.0"
+          "revision": "b022b08312decdc46585e0b3440d97f6f22ef703",
+          "version": "0.6.0"
         }
       },
       {
@@ -429,8 +420,8 @@
         "repositoryURL": "https://github.com/apple/swift-collections.git",
         "state": {
           "branch": null,
-          "revision": "671108c96644956dddcd89dd59c203dcdb36cec7",
-          "version": "1.1.4"
+          "revision": "c1805596154bb3a265fd91b8ac0c4433b4348fb0",
+          "version": "1.2.0"
         }
       },
       {
@@ -438,8 +429,8 @@
         "repositoryURL": "https://github.com/apple/swift-http-types",
         "state": {
           "branch": null,
-          "revision": "ef18d829e8b92d731ad27bb81583edd2094d1ce3",
-          "version": "1.3.1"
+          "revision": "a0a57e949a8903563aba4615869310c0ebf14c03",
+          "version": "1.4.0"
         }
       },
       {
@@ -447,8 +438,8 @@
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
           "branch": null,
-          "revision": "8f79cb175981458a0a27e76cb42fee8e17b1a993",
-          "version": "0.5.0"
+          "revision": "ea79e83c8744d2b50b0dc2d5bbd1e857e1253bf9",
+          "version": "0.6.0"
         }
       },
       {
@@ -485,6 +476,15 @@
           "branch": null,
           "revision": "0687f71944021d616d34d922343dcef086855920",
           "version": "600.0.1"
+        }
+      },
+      {
+        "package": "swift-toolchain-sqlite",
+        "repositoryURL": "https://github.com/swiftlang/swift-toolchain-sqlite",
+        "state": {
+          "branch": null,
+          "revision": "b626d3002773b1a1304166643e7f118f724b2132",
+          "version": "1.0.4"
         }
       },
       {
@@ -555,8 +555,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
-          "version": "1.5.2"
+          "revision": "23e3442166b5122f73f9e3e622cd1e4bafeab3b7",
+          "version": "1.6.0"
         }
       },
       {

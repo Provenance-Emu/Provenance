@@ -127,7 +127,7 @@
         return value;
     } else if (V("melonds_jit_enable")) {
         // JIT Enable (Restart); enabled|disabled
-        char * value = strdup("enabled");
+        char * value = strdup("disabled");
         return value;
     } else if (V("melonds_jit_branch_optimisations")) {
         // JIT Branch optimisations; enabled|disabled
@@ -163,7 +163,7 @@
         return value;
     } else if (V("melonds_opengl_renderer")) {
         // OpenGL Renderer (Restart); disabled|enabled
-        char * value = strdup("disabled");
+        char * value = strdup("enabled");
         return value;
     } else if (V("melonds_hybrid_ratio")) {
         // Hybrid ratio (OpenGL only); 2|3

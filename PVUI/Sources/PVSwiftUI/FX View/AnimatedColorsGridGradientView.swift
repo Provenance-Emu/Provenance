@@ -21,7 +21,7 @@ struct AnimatedColorsGridGradientView: View {
     }
     
     var color2: Color {
-        currentPalette.defaultTintColor?.swiftUIColor ?? .Provenance.blue
+        currentPalette.defaultTintColor.swiftUIColor
     }
     
     // Computed property for cell size

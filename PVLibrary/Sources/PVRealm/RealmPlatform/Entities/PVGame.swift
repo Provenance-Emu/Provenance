@@ -31,7 +31,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     @Persisted public var customArtworkURL: String = ""
     @Persisted public var originalArtworkURL: String = ""
     @Persisted public var originalArtworkFile: PVImageFile?
-    
+
     public var artworkURL: String {
         get { customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL }
         set { customArtworkURL = newValue }
@@ -39,6 +39,13 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
 
     @Persisted public var requiresSync: Bool = true
     @Persisted(indexed: true) public var isFavorite: Bool = false
+
+    // CloudKit sync properties
+    @Persisted public var cloudRecordID: String? // CloudKit record ID for on-demand downloads
+    @Persisted public var isDownloaded: Bool = true // Whether the file is downloaded locally
+    @Persisted public var fileSize: Int = 0 // File size in bytes
+    // CloudKit last sync Date
+    @Persisted public var lastCloudSyncDate: Date? = nil
 
     @Persisted public var romSerial: String?
     @Persisted public var romHeader: String?
@@ -53,14 +60,14 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
      Seems sane enough since it's on the serial queue. Could always use
      an async dispatch if it's an issue. - jm
      */
- 
+
     @Persisted(primaryKey: true) public var md5Hash: String = ""
     @Persisted public var crc: String = ""
 
     // If the user has set 'always use' for a specfic core
     // We don't use PVCore incase cores are removed / deleted
     @Persisted public var userPreferredCoreID: String?
-    
+
     @Persisted public var contentless: Bool = false
 
     /* Links to other objects */
@@ -99,7 +106,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     @Persisted public var regionID: Int?
     @Persisted public var systemShortName: String?
     @Persisted public var language: String?
-    
+
     public var selectedDiscFilename: String?
 
     public var validatedGame: PVGame? { return self.isInvalidated ? nil : self }
@@ -115,7 +122,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
             return game
         }
     }
-    
+
     public static func contentlessGenerate(core: PVCore, title: String? = nil) -> PVGame {
         let systemIdentifier = core.supportedSystems.first?.identifier ?? SystemIdentifier.RetroArch.rawValue
         let game = PVGame()
@@ -141,7 +148,7 @@ public extension PVGame {
 }
 
 public extension PVGame {
-    
+
     var genresArray: [String] {
         genres?.components(separatedBy: ",") ?? []
     }
@@ -263,37 +270,41 @@ extension Game: RealmRepresentable {
     }
 
     public func asRealm() -> PVGame {
-        let realm = try! Realm()
-        if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
+        try! Realm().buildGame(from: self)
+    }
+}
+
+public extension Realm {
+    func buildGame(from game: Game) -> PVGame {
+        if let existing = object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
             return existing
         }
 
         return PVGame.build { object in
-            object.id = id
-            object.title = title
+            object.id = game.id
+            object.title = game.title
             // TODO: Test that file is correct
-            object.md5Hash = md5
-            object.crc = crc
-            object.isFavorite = isFavorite
-            object.playCount = Int(playCount)
-            object.lastPlayed = lastPlayed
+            object.md5Hash = game.md5Hash
+            object.crc = game.crc
+            object.isFavorite = game.isFavorite
+            object.playCount = Int(game.playCount)
+            object.lastPlayed = game.lastPlayed
 
-            let realm = try! Realm()
-            object.system = realm.object(ofType: PVSystem.self, forPrimaryKey: "identifier")
+            object.system = self.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier)
 
-            object.gameDescription = gameDescription
-            object.boxBackArtworkURL = boxBackArtworkURL
-            object.developer = developer
-            object.publisher = publisher
-            object.publishDate = publishDate
-            object.genres = genres // Is a comma seperated list or single entry
-            object.referenceURL = referenceURL
-            object.releaseID = releaseID
-            object.regionName = regionName
-            object.regionID = regionID
-            object.systemShortName = systemShortName
-            object.language = language
-            object.file =  PVFile(withPartialPath: file.fileName)
+            object.gameDescription = game.gameDescription
+            object.boxBackArtworkURL = game.boxBackArtworkURL
+            object.developer = game.developer
+            object.publisher = game.publisher
+            object.publishDate = game.publishDate
+            object.genres = game.genres // Is a comma seperated list or single entry
+            object.referenceURL = game.referenceURL
+            object.releaseID = game.releaseID
+            object.regionName = game.regionName
+            object.regionID = game.regionID
+            object.systemShortName = game.systemShortName
+            object.language = game.language
+            object.file =  PVFile(withPartialPath: game.file.fileName, relativeRoot: .iCloud)
         }
     }
 }

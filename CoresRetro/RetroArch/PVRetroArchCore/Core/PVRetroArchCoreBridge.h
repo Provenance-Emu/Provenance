@@ -13,10 +13,11 @@
 @protocol PVRetroArchCoreResponderClient;
 @protocol ObjCBridgedCoreBridge;
 @protocol DiscSwappable;
+@protocol EmulatorCoreViewportPositioning;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-@interface PVRetroArchCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate, DiscSwappable> {
+@interface PVRetroArchCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVRetroArchCoreResponderClient, UIApplicationDelegate, DiscSwappable, EmulatorCoreViewportPositioning> {
 #pragma clang diagnostic pop
     int videoWidth;
     int videoHeight;
@@ -105,6 +106,9 @@
 - (void) setSpeed;
 - (void) syncResources:(NSString*)from to:(NSString*)to;
 - (void) setupJoypad;
+// Viewport positioning API
+- (void)setUseCustomRenderViewLayout:(BOOL)enabled;
+- (void)applyRenderViewFrameInTouchView:(CGRect)frame;
 @end
 
 /* iOS UI */

@@ -39,6 +39,9 @@
 		B30E98952C6EEE7700C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98942C6EEE7700C1431E /* PVSupport */; };
 		B30E99B32C6EF90000C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99B22C6EF90000C1431E /* PVEmulatorCore */; };
 		B30E99F82C6F05B900C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99F72C6F05B900C1431E /* PVCoreBridge */; };
+		B3F8E1002CB3C87D00017D1B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FF2CB3C87D00017D1B /* PVSettings */; };
+		B3F8E1032CB3C95600017D1B /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CC32977B53F00C90E86 /* PVLogging */; };
+		B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0F92CB3C7E600017D1B /* PVPlists */; };
 		B3135B9B26E4CAD40047F338 /* PVDosBoxCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDosBoxCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVDosBoxCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDosBoxCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVDosBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVDosBox.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -162,6 +165,9 @@
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C8A65F2877D6350037A946 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
 		B3C8A6612877D6B30037A946 /* PVDosBoxCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDosBoxCore+Audio.m */; };
+		B3DE9E562E2D892D008E97F6 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DE9E542E2D892D008E97F6 /* CorePlist.swift */; };
+		B3DE9E572E2D892D008E97F6 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DE9E552E2D892D008E97F6 /* CorePlist-Generated.swift */; };
+		B3DE9E582E2D892D008E97F6 /* PVDosBoxCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DE9E532E2D892D008E97F6 /* PVDosBoxCore.swift */; };
 		B3E88CC42977B53F00C90E86 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CC32977B53F00C90E86 /* PVLogging */; };
 		B3EBB2032872B65700EAEB37 /* PVDosBoxCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDosBoxCore+Video.m */; };
 /* End PBXBuildFile section */
@@ -524,6 +530,9 @@
 		B3C76223207833DE009950E4 /* PVDosBoxCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDosBoxCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVDosBoxCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDosBoxCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3DE9E532E2D892D008E97F6 /* PVDosBoxCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDosBoxCore.swift; sourceTree = "<group>"; };
+		B3DE9E542E2D892D008E97F6 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3DE9E552E2D892D008E97F6 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -567,6 +576,8 @@
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3E88CC42977B53F00C90E86 /* PVLogging in Frameworks */,
+				B3F8E1002CB3C87D00017D1B /* PVSettings in Frameworks */,
+				B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1049,6 +1060,9 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B3DE9E532E2D892D008E97F6 /* PVDosBoxCore.swift */,
+				B3DE9E542E2D892D008E97F6 /* CorePlist.swift */,
+				B3DE9E552E2D892D008E97F6 /* CorePlist-Generated.swift */,
 				93BC0502298AECE200BA5157 /* PVDebug.c */,
 				B3C76223207833DE009950E4 /* PVDosBoxCore.h */,
 				B3C76224207833DE009950E4 /* PVDosBoxCore.mm */,
@@ -1257,6 +1271,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1620;
 					};
 				};
 			};
@@ -1285,6 +1300,9 @@
 				B30E98932C6EEE7700C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E99B12C6EF90000C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 				B30E99F62C6F05B900C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3F8E0FB2CB3C83600017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3F8E0FE2CB3C87D00017D1B /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B3F8E1012CB3C95600017D1B /* XCLocalSwiftPackageReference "../../PVLogging" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -1515,6 +1533,9 @@
 				B3C8A65F2877D6350037A946 /* PVDosBoxCore+Controls.mm in Sources */,
 				B3C8A6612877D6B30037A946 /* PVDosBoxCore+Audio.m in Sources */,
 				B3EBB2032872B65700EAEB37 /* PVDosBoxCore+Video.m in Sources */,
+				B3DE9E562E2D892D008E97F6 /* CorePlist.swift in Sources */,
+				B3DE9E572E2D892D008E97F6 /* CorePlist-Generated.swift in Sources */,
+				B3DE9E582E2D892D008E97F6 /* PVDosBoxCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1749,6 +1770,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1765,7 +1787,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDosBox/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1779,8 +1801,9 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -1897,6 +1920,7 @@
 		B3D067942BC4EAA000A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1913,7 +1937,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDosBox/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1927,8 +1951,9 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
+				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -2091,6 +2116,22 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3F8E0F82CB3C7E600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3F8E0FB2CB3C83600017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3F8E0FE2CB3C87D00017D1B /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B3F8E1012CB3C95600017D1B /* XCLocalSwiftPackageReference "../../PVLogging" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLogging;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2106,9 +2147,17 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
 		};
+		B3F8E0F92CB3C7E600017D1B /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
 		B3E88CC32977B53F00C90E86 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3F8E0FF2CB3C87D00017D1B /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -102,6 +102,15 @@ public struct DeltaSkin: DeltaSkinProtocol {
                             ciFilter?.setValue(CIColor(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b)), forKey: key)
                         case .rectangle(let x, let y, let width, let height):
                             ciFilter?.setValue(CIVector(x: CGFloat(x), y: CGFloat(y), z: CGFloat(width), w: CGFloat(height)), forKey: key)
+                        case .affineTransform(let sx, let sy, let tx, let ty, let rot):
+                            // Build a CGAffineTransform: T = Translate * Rotate * Scale
+                            var t = CGAffineTransform.identity
+                            if let sx = sx, let sy = sy {
+                                t = t.scaledBy(x: CGFloat(sx), y: CGFloat(sy))
+                            }
+                            if let rot = rot { t = t.rotated(by: CGFloat(rot)) }
+                            if let tx = tx, let ty = ty { t = t.translatedBy(x: CGFloat(tx), y: CGFloat(ty)) }
+                            ciFilter?.setValue(NSValue(cgAffineTransform: t), forKey: key)
                         }
                     }
                     return ciFilter
@@ -193,21 +202,52 @@ public struct DeltaSkin: DeltaSkinProtocol {
             throw DeltaSkinError.unsupportedTraits
         }
 
-        // Load the asset data
-        let assetData = try loadAssetData(rep.assets.filename)
-        let preserveTransparency = rep.translucent ?? false
+        // Try all candidate filenames in order until one loads
+        let candidates = rep.assets.candidates()
+        var lastError: Error?
+        for name in candidates {
+            do {
+                let data = try loadAssetData(name)
+                let lower = name.lowercased()
+                if lower.hasSuffix(".pdf") {
+                    if let image = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false) {
+                        return image
+                    } else {
+                        lastError = DeltaSkinError.invalidPDF
+                        continue
+                    }
+                } else {
+                    if let image = UIImage(data: data, scale: UIScreen.main.scale) {
+                        return image
+                    } else {
+                        lastError = DeltaSkinError.invalidPNG
+                        continue
+                    }
+                }
+            } catch {
+                ELOG("Failed to load asset candidate: \(name) — \(error)")
+                lastError = error
+                continue
+            }
+        }
 
-        // Create image from data
-        if rep.assets.filename.hasSuffix(".pdf") {
-            guard let image = UIImage(pdfData: assetData, preserveTransparency: preserveTransparency) else {
-                throw DeltaSkinError.invalidPDF
+        // Fallback: try the original filename property (legacy behavior)
+        do {
+            let assetData = try loadAssetData(rep.assets.filename)
+            let lower = rep.assets.filename.lowercased()
+            if lower.hasSuffix(".pdf") {
+                guard let image = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false) else {
+                    throw DeltaSkinError.invalidPDF
+                }
+                return image
+            } else {
+                guard let image = UIImage(data: assetData, scale: UIScreen.main.scale) else {
+                    throw DeltaSkinError.invalidPNG
+                }
+                return image
             }
-            return image
-        } else {
-            guard let image = UIImage(data: assetData, scale: UIScreen.main.scale) else {
-                throw DeltaSkinError.invalidPNG
-            }
-            return image
+        } catch {
+            throw lastError ?? error
         }
     }
 
@@ -442,6 +482,18 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
         }
 
+        /// Candidate filenames in priority order, de-duplicated
+        func candidates() -> [String] {
+            var list: [String] = []
+            if let r = resizable { list.append(r) }
+            if let l = large { list.append(l) }
+            if let m = medium { list.append(m) }
+            if let s = small { list.append(s) }
+            // De-duplicate while preserving order
+            var seen = Set<String>()
+            return list.filter { seen.insert($0).inserted }
+        }
+
         /// The filename to use for this asset
         var filename: String {
             // Try resizable first
@@ -471,43 +523,23 @@ public struct DeltaSkin: DeltaSkinProtocol {
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            // Decode optional fields
-            resizable = try container.decodeIfPresent(String.self, forKey: .resizable)
-            small = try container.decodeIfPresent(String.self, forKey: .small)
-            medium = try container.decodeIfPresent(String.self, forKey: .medium)
-            large = try container.decodeIfPresent(String.self, forKey: .large)
-
-            // Validate that we have at least one asset
-            if resizable == nil && small == nil && medium == nil && large == nil {
-                throw DecodingError.dataCorrupted(
-                    DecodingError.Context(
-                        codingPath: decoder.codingPath,
-                        debugDescription: "Asset must have at least one size"
-                    )
-                )
+            // Decode optional fields and sanitize empty/whitespace values to nil
+            func clean(_ s: String?) -> String? {
+                guard let t = s?.trimmingCharacters(in: .whitespacesAndNewlines), !t.isEmpty else { return nil }
+                return t
             }
+            let rawResizable = try container.decodeIfPresent(String.self, forKey: .resizable)
+            let rawSmall = try container.decodeIfPresent(String.self, forKey: .small)
+            let rawMedium = try container.decodeIfPresent(String.self, forKey: .medium)
+            let rawLarge = try container.decodeIfPresent(String.self, forKey: .large)
 
-            // If resizable is present, ensure it's a PDF or PNG
-            if let resizable = resizable,
-               !resizable.hasSuffix(".pdf") && !resizable.hasSuffix(".png") {
-                throw DecodingError.dataCorrupted(
-                    DecodingError.Context(
-                        codingPath: decoder.codingPath,
-                        debugDescription: "Resizable asset must be a PDF or PNG file"
-                    )
-                )
-            }
+            resizable = clean(rawResizable)
+            small = clean(rawSmall)
+            medium = clean(rawMedium)
+            large = clean(rawLarge)
 
-            // If size-specific assets are present, ensure they're PNGs
-            let pngAssets = [small, medium, large].compactMap { $0 }
-            if !pngAssets.isEmpty && !pngAssets.allSatisfy({ $0.hasSuffix(".png") }) {
-                throw DecodingError.dataCorrupted(
-                    DecodingError.Context(
-                        codingPath: decoder.codingPath,
-                        debugDescription: "Size-specific assets must be PNG files"
-                    )
-                )
-            }
+            // Do not hard-fail on missing or invalid asset names here.
+            // Validation and fallbacks are handled in toRepresentationInfo().
         }
 
         init(resizable: String?, small: String?, medium: String?, large: String?) {
@@ -615,7 +647,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
     /// Screen configuration and filters
     public struct ScreenInfo: Codable {
         let inputFrame: CGRect?
-        let outputFrame: CGRect
+        let outputFrame: CGRect?
         let placement: DeltaSkinScreenPlacement?
         let filters: [FilterInfo]?
 
@@ -637,13 +669,16 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 inputFrame = nil
             }
 
-            // Decode required outputFrame
-            let outputContainer = try container.nestedContainer(keyedBy: DeltaSkinCodingKeys.self, forKey: .outputFrame)
-            let x = try outputContainer.decode(CGFloat.self, forKey: .x)
-            let y = try outputContainer.decode(CGFloat.self, forKey: .y)
-            let width = try outputContainer.decode(CGFloat.self, forKey: .width)
-            let height = try outputContainer.decode(CGFloat.self, forKey: .height)
-            outputFrame = CGRect(x: x, y: y, width: width, height: height)
+            // Decode optional outputFrame
+            if let outputContainer = try? container.nestedContainer(keyedBy: DeltaSkinCodingKeys.self, forKey: .outputFrame) {
+                let x = try outputContainer.decode(CGFloat.self, forKey: .x)
+                let y = try outputContainer.decode(CGFloat.self, forKey: .y)
+                let width = try outputContainer.decode(CGFloat.self, forKey: .width)
+                let height = try outputContainer.decode(CGFloat.self, forKey: .height)
+                outputFrame = CGRect(x: x, y: y, width: width, height: height)
+            } else {
+                outputFrame = nil
+            }
 
             // Decode optional fields
             placement = try container.decodeIfPresent(DeltaSkinScreenPlacement.self, forKey: .placement)
@@ -662,12 +697,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 try inputContainer.encode(inputFrame.size.height, forKey: .height)
             }
 
-            // Encode required outputFrame
-            var outputContainer = container.nestedContainer(keyedBy: DeltaSkinCodingKeys.self, forKey: .outputFrame)
-            try outputContainer.encode(outputFrame.origin.x, forKey: .x)
-            try outputContainer.encode(outputFrame.origin.y, forKey: .y)
-            try outputContainer.encode(outputFrame.size.width, forKey: .width)
-            try outputContainer.encode(outputFrame.size.height, forKey: .height)
+            // Encode optional outputFrame
+            if let frame = outputFrame {
+                var outputContainer = container.nestedContainer(keyedBy: DeltaSkinCodingKeys.self, forKey: .outputFrame)
+                try outputContainer.encode(frame.origin.x, forKey: .x)
+                try outputContainer.encode(frame.origin.y, forKey: .y)
+                try outputContainer.encode(frame.size.width, forKey: .width)
+                try outputContainer.encode(frame.size.height, forKey: .height)
+            }
 
             // Encode optional fields
             try container.encodeIfPresent(placement, forKey: .placement)
@@ -677,8 +714,13 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
     /// CoreImage filter configuration
     public struct FilterInfo: Codable {
-        let name: String
-        let parameters: [String: FilterParameter]
+        public let name: String
+        public let parameters: [String: FilterParameter]
+
+        public init(name: String, parameters: [String: FilterParameter] = [:]) {
+            self.name = name
+            self.parameters = parameters
+        }
 
         private enum CodingKeys: String, CodingKey {
             case name, parameters
@@ -687,7 +729,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             name = try container.decode(String.self, forKey: .name)
-            let rawParameters = try container.decode([String: FilterParameter].self, forKey: .parameters)
+            let rawParameters = try container.decodeIfPresent([String: FilterParameter].self, forKey: .parameters) ?? [:]
 
             // Sanitize parameters during decoding
             if name == "CIGaussianBlur" {
@@ -728,6 +770,16 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
         /// Frame for the game screen
         public let gameScreenFrame: CGRect?
+
+        public init(assets: AssetRepresentation, mappingSize: CGSize = .zero, translucent: Bool? = nil, screens: [ScreenInfo]? = nil, items: [ItemRepresentation]? = nil, extendedEdges: UIEdgeInsets? = nil, gameScreenFrame: CGRect? = nil) {
+            self.assets = assets
+            self.mappingSize = mappingSize
+            self.translucent = translucent
+            self.screens = screens
+            self.items = items
+            self.extendedEdges = extendedEdges
+            self.gameScreenFrame = gameScreenFrame
+        }
     }
 
     public var jsonRepresentation: [String: Any] {

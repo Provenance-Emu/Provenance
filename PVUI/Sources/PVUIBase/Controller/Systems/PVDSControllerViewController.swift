@@ -28,14 +28,17 @@ final class PVDSControllerViewController: PVControllerViewController<PVDSSystemR
                 return
             }
 
-            if button.titleLabel?.text == "A" {
+            switch button.titleLabel?.text?.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if button.titleLabel?.text == "B" {
+            case "b":
                 button.buttonTag = .b
-            } else if button.titleLabel?.text == "X" {
+            case "x":
                 button.buttonTag = .x
-            } else if button.titleLabel?.text == "Y" {
+            case "y":
                 button.buttonTag = .y
+            default:
+                break
             }
         }
 

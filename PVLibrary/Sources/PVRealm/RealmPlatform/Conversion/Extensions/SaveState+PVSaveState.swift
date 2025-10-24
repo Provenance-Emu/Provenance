@@ -31,7 +31,7 @@ public extension SaveState {
             image = nil
         }
         let isAutosave = saveState.isAutosave
-        
+
         self.init(id: id, game: game, core: core, file: file, date: date, lastOpened: lastOpened, image: image, isAutosave: isAutosave)
     }
 }
@@ -49,40 +49,41 @@ extension SaveState: RealmRepresentable {
         return file.fileName
     }
 
-    @MainActor
-    public func asRealm() async -> PVSaveState {
-        return PVSaveState.build { object in
+    public func asRealm() -> PVSaveState {
+        try! Realm().buildSaveState(from: self)
+    }
+}
 
-            object.id = id
-            let realm = try! Realm()
-            
-            if let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5) {
+public extension Realm {
+    func buildSaveState(from save: SaveState) -> PVSaveState {
+        return PVSaveState.build { object in
+            object.id = save.id
+
+            if let rmGame = self.object(ofType: PVGame.self, forPrimaryKey: save.game.md5Hash) {
                 object.game = rmGame
             } else {
-                object.game = game.asRealm()
+                object.game = buildGame(from: save.game)
             }
 
-            if let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) {
+            if let rmCore = self.object(ofType: PVCore.self, forPrimaryKey: save.core.identifier) {
                 object.core = rmCore
             } else {
-                object.core = core.asRealm()
+                object.core = buildCore(from: save.core)
             }
+            //we remove the extension in order to get the correct path
+            let path = save.game.file.fileName.saveStatePath.deletingPathExtension().appendingPathComponent(save.file.fileName)
+            object.file = PVFile(withURL: path, relativeRoot: .iCloud)
+            DLOG("file path: \(path)")
 
-            Task {
-                let path = game.file.fileName.saveStatePath.appendingPathComponent(file.fileName)
-                object.file = PVFile(withURL: path)
-                DLOG("file path: \(path)")
-                
-                object.date = date
-                object.lastOpened = lastOpened
-                if let image = image {
-                    let dir = path.deletingLastPathComponent()
-                    let imagePath = dir.appendingPathComponent(image.fileName)
-                    DLOG("path: \(imagePath)")
-                    object.image = PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
-                }
-                object.isAutosave = isAutosave
+            object.date = save.date
+            object.lastOpened = save.lastOpened
+            if let image = save.image {
+                let dir = path.deletingLastPathComponent()
+                let imagePath = dir.appendingPathComponent(image.fileName)
+                DLOG("path: \(imagePath)")
+                object.image = PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
             }
+            object.isAutosave = save.isAutosave
         }
     }
 }

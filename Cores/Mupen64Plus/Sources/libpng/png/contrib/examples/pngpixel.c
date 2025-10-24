@@ -42,7 +42,7 @@ component(png_const_bytep row, png_uint_32 x, unsigned int c,
    png_uint_32 bit_offset_hi = bit_depth * ((x >> 6) * channels);
    png_uint_32 bit_offset_lo = bit_depth * ((x & 0x3f) * channels + c);
 
-   row = (png_const_bytep)(((PNG_CONST png_byte (*)[8])row) + bit_offset_hi);
+   row = (png_const_bytep)(((const png_byte (*)[8])row) + bit_offset_hi);
    row += bit_offset_lo >> 3;
    bit_offset_lo &= 0x07;
 
@@ -73,7 +73,7 @@ static void
 print_pixel(png_structp png_ptr, png_infop info_ptr, png_const_bytep row,
    png_uint_32 x)
 {
-   PNG_CONST unsigned int bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+   unsigned int bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 
    switch (png_get_color_type(png_ptr, info_ptr))
    {
@@ -87,7 +87,7 @@ print_pixel(png_structp png_ptr, png_infop info_ptr, png_const_bytep row,
        */
       case PNG_COLOR_TYPE_PALETTE:
          {
-            PNG_CONST int index = component(row, x, 0, bit_depth, 1);
+            int index = component(row, x, 0, bit_depth, 1);
             png_colorp palette = NULL;
             int num_palette = 0;
 
@@ -184,11 +184,11 @@ int main(int argc, const char **argv)
                      compression_method, filter_method;
                   png_bytep row_tmp;
 
-                  /* Now associate the recently opened (FILE*) with the default
-                   * libpng initialization functions.  Sometimes libpng is
-                   * compiled without stdio support (it can be difficult to do
-                   * in some environments); in that case you will have to write
-                   * your own read callback to read data from the (FILE*).
+                  /* Now associate the recently opened FILE object with the
+                   * default libpng initialization functions.  Sometimes libpng
+                   * is compiled without stdio support (it can be difficult to
+                   * do in some environments); in that case you will have to
+                   * write your own read callback to read data from the stream.
                    */
                   png_init_io(png_ptr, f);
 

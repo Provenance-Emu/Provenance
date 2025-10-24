@@ -6,7 +6,7 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import "PVDolphinCore.h"
+//#import "PVDolphinCore.h"
 #import "PVDolphinCore+Controls.h"
 #import "PVDolphinCore+Audio.h"
 #import "PVDolphinCore+Video.h"
@@ -21,8 +21,13 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <CoreHaptics/CoreHaptics.h>
+#import <sys/types.h>
+#import <sys/sysctl.h>
+#import <assert.h>
 
 /* Dolphin Includes */
+//#include "Core/MachineContext.h"
 #include "AudioCommon/AudioCommon.h"
 #include "AudioCommon/SoundStream.h"
 
@@ -31,6 +36,7 @@
 #include "Common/CommonTypes.h"
 #include "Common/FileUtil.h"
 #include "Common/IniFile.h"
+#include "Common/FileSearch.h"
 #include "Common/Logging/LogManager.h"
 #include "Common/MsgHandler.h"
 #include "Common/Thread.h"
@@ -60,8 +66,15 @@
 #include "Core/IOS/IOS.h"
 #include "Core/IOS/STM/STM.h"
 #include "Core/PowerPC/PowerPC.h"
-#include "Core/State.h"
-#include "Core/WiiUtils.h"
+#include "Core/PowerPC/MMU.h"
+#ifdef HAVE_JIT
+#include "Core/PowerPC/JitInterface.h"
+#endif
+
+#include "Core/Config/MainSettings.h"
+
+#include "Core/System.h"
+#include "Core/Config/GraphicsSettings.h"
 
 #include "UICommon/CommandLineParse.h"
 #include "UICommon/UICommon.h"
@@ -72,15 +85,15 @@
 #include "InputCommon/ControllerEmu/ControlGroup/Cursor.h"
 #include "InputCommon/ControllerEmu/Control/Control.h"
 #include "InputCommon/ControlReference/ControlReference.h"
-#include "InputCommon/ControllerInterface/Touch/ButtonManager.h"
+#include "InputCommon/ControllerInterface/iOS/StateManager.h"
 
 #include "VideoCommon/AsyncRequests.h"
 #include "VideoCommon/Fifo.h"
-#include "VideoCommon/RenderBase.h"
 #include "VideoCommon/VertexLoaderManager.h"
 #include "VideoCommon/VideoBackendBase.h"
 #include "VideoCommon/VideoConfig.h"
 #include "VideoCommon/OnScreenDisplay.h"
+#include "VideoCommon/Present.h"
 #include "VideoBackends/Vulkan/VideoBackend.h"
 #include "VideoBackends/Vulkan/VulkanContext.h"
 
@@ -112,6 +125,90 @@ bool _isInitialized;
 std::string user_dir;
 static bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgType style);
 static void UpdateWiiPointer();
+
+// Function to reset all static/global state for iOS dynamic library reloading
+static void ResetDolphinStaticState() {
+    NSLog(@"🐬 [RESET] Resetting Dolphin static/global state for iOS dynamic library reload");
+
+    // CRITICAL: Ensure the host identity lock is unlocked before reset
+    // This prevents deadlock on second core load
+    try {
+        // Try to unlock if it's currently locked (non-blocking check)
+        if (s_host_identity_lock.try_lock()) {
+            s_host_identity_lock.unlock();
+            NSLog(@"🐬 [RESET] Host identity lock was unlocked");
+        } else {
+            NSLog(@"🐬 [RESET] Host identity lock was already unlocked or in use");
+        }
+    } catch (...) {
+        NSLog(@"🐬 [RESET] Exception while checking host identity lock state");
+    }
+
+    // Reset static flags and events
+    s_running.Set(true);
+    s_shutdown_requested.Set(false);
+    s_tried_graceful_shutdown.Set(false);
+    s_update_main_frame_event.Reset();
+    s_have_wm_user_stop = false;
+    s_game_metadata_is_valid = false;
+    _isOff = false;
+    _isInitialized = false;
+
+    // Reset Dolphin core systems that may have static state
+    try {
+        // Reset Core system state
+        if (Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized) {
+            Core::Stop(Core::System::GetInstance());
+            while (Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized) {
+                Common::SleepCurrentThread(10);
+            }
+        }
+
+        // Reset PowerPC state (use correct API)
+//        auto& ppc = Core::System::GetInstance().GetPowerPC();
+//        ppc.Reset();
+
+        // Reset memory system
+        auto& memory = Core::System::GetInstance().GetMemory();
+        memory.Shutdown();
+
+        // Reset CPU state
+        auto& cpu = Core::System::GetInstance().GetCPU();
+        cpu.Reset();
+
+        // Reset video backend state
+        if (g_video_backend) {
+            g_video_backend->Shutdown();
+        }
+
+        // Reset audio system
+        AudioCommon::ShutdownSoundStream(Core::System::GetInstance());
+
+        // Reset controller interface
+        g_controller_interface.Shutdown();
+
+        // CRITICAL: Shutdown UICommon to reset its static state
+        try {
+            UICommon::Shutdown();
+            NSLog(@"🐬 [RESET] UICommon shutdown completed in reset");
+        } catch (...) {
+            NSLog(@"🐬 [RESET] UICommon shutdown failed in reset - continuing");
+        }
+
+        // Reset configuration to defaults (if method exists)
+        try {
+            Config::ClearCurrentRunLayer();
+        } catch (...) {
+            // Method may not exist in all Dolphin versions, ignore
+        }
+
+        NSLog(@"🐬 [RESET] Static state reset complete");
+    } catch (const std::exception& e) {
+        NSLog(@"🐬 [ERROR] Exception during state reset: %s", e.what());
+    } catch (...) {
+        NSLog(@"🐬 [ERROR] Unknown exception during state reset");
+    }
+}
 
 #pragma mark - Private
 @interface PVDolphinCoreBridge() {
@@ -200,9 +297,11 @@ static void UpdateWiiPointer();
 
 /* Config at dolphin-ios/Source/Core/Core/Config */
 - (void)setOptionValues {
+    // TODO: Should we use `SetBaseIfUnspecified` here? @jmattiello
     [self parseOptions];
     Config::Load();
-    SConfig::GetInstance().LoadSettings();
+
+    // === GRAPHICS SETTINGS ===
 
     // Resolution upscaling
     Config::SetBase(Config::GFX_EFB_SCALE, self.resFactor);
@@ -210,91 +309,270 @@ static void UpdateWiiPointer();
 
     // Graphics renderer
     if (self.gsPreference == 0) {
-        Config::SetBase(Config::MAIN_GFX_BACKEND, "Vulkan");
+        Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("Vulkan"));
         Config::SetBase(Config::MAIN_OSD_MESSAGES, true);
     } else if (self.gsPreference == 1) {
-        Config::SetBase(Config::MAIN_GFX_BACKEND, "OGL");
+        Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("OGL"));
         Config::SetBase(Config::MAIN_OSD_MESSAGES, false);
-    }
-    VideoBackendBase::PopulateBackendInfoFromUI();
-
-    // CPU
-    if (self.cpuType == 0) {
-        SConfig::GetInstance().cpu_core = PowerPC::CPUCore::Interpreter;
-    } else if (self.cpuType == 1) {
-        SConfig::GetInstance().cpu_core = PowerPC::CPUCore::CachedInterpreter;
-    } else if (self.cpuType == 2) {
-#if defined(__x86_64__)
-        Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JIT64);
-#else
-        Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JITARM64);
-#endif
+    } else if (self.gsPreference == 2) {
+        Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("Metal"));
+        Config::SetBase(Config::MAIN_OSD_MESSAGES, true);
     }
 
-    // SDCard
-    SConfig::GetInstance().m_WiiSDCard = true;
-    SConfig::GetInstance().bEnableMemcardSdWriting = true;
+    // Aspect Ratio
+    Config::SetBase(Config::GFX_ASPECT_RATIO, (AspectMode)self.aspectRatio);
 
-    // Filtering
-    Config::SetBase(Config::GFX_ENHANCE_FORCE_FILTERING, self.isBilinear);
+    // V-Sync
+    Config::SetBase(Config::GFX_VSYNC, self.vsync);
 
-    // Fast Mem
-    if (self.fastMemory) {
-        Config::SetBase(Config::MAIN_FASTMEM, self.fastMemory);
-        SConfig::GetInstance().bFastmem = self.fastMemory;
-        if (can_enable_fastmem) {
-            Config::SetBase(Config::MAIN_DEBUG_HACKY_FASTMEM, hacky_fastmem);
-        }
-    }
-    Config::SetBase(Config::GFX_SHOW_FPS, false);
+    // Anisotropic Filtering
+    Config::SetBaseOrCurrent(Config::GFX_ENHANCE_MAX_ANISOTROPY, static_cast<int>(self.anisotropicFiltering));
 
-    // Anti Aliasing
-    if (self.gsPreference == 0) {
+    // Texture Filtering
+    Config::SetBase(Config::GFX_ENHANCE_FORCE_TEXTURE_FILTERING, self.isBilinear ? TextureFilteringMode::Linear : TextureFilteringMode::Default);
+
+    // FPS Display
+    Config::SetBase(Config::GFX_SHOW_FPS, self.showFPS);
+
+    // === GRAPHICS ENHANCEMENTS ===
+
+    // Scaled EFB Copy
+    Config::SetBase(Config::GFX_HACK_COPY_EFB_SCALED, self.scaledEFBCopy);
+
+    // Disable Fog
+    Config::SetBase(Config::GFX_DISABLE_FOG, self.disableFog);
+
+    // Per-Pixel Lighting
+    Config::SetBase(Config::GFX_ENABLE_PIXEL_LIGHTING, self.pixelLighting);
+
+    // Force True Color
+    Config::SetBase(Config::GFX_ENHANCE_FORCE_TRUE_COLOR, self.forceTrueColor);
+
+    // === GRAPHICS HACKS (DolphinQt Parity) ===
+
+    // Skip EFB Access from CPU (inverted logic - true means disable access)
+    Config::SetBase(Config::GFX_HACK_EFB_ACCESS_ENABLE, !self.skipEFBAccessFromCPU);
+
+    // Ignore Format Changes (inverted logic - true means emulate format changes)
+    Config::SetBase(Config::GFX_HACK_EFB_EMULATE_FORMAT_CHANGES, !self.ignoreFormatChanges);
+
+    // Store EFB Copies to Texture Only (skip copy to RAM)
+    Config::SetBase(Config::GFX_HACK_SKIP_EFB_COPY_TO_RAM, self.storeEFBCopiesToTextureOnly);
+
+    // Defer EFB Copies
+    Config::SetBase(Config::GFX_HACK_DEFER_EFB_COPIES, self.deferEFBCopies);
+
+    // Texture Cache Accuracy (note: this may need special handling as it's not a simple bool)
+    // For now, map: 0=Safe (false), 1=Medium (false), 2=Fast (true)
+    Config::SetBase(Config::GFX_HACK_FAST_TEXTURE_SAMPLING, (self.textureCacheAccuracy == 2));
+
+    // Store XFB Copies to Texture Only (skip copy to RAM)
+    Config::SetBase(Config::GFX_HACK_SKIP_XFB_COPY_TO_RAM, self.storeXFBCopiesToTextureOnly);
+
+    // Immediate XFB
+    Config::SetBase(Config::GFX_HACK_IMMEDIATE_XFB, self.immediateXFB);
+
+    // Skip Duplicate XFBs
+    Config::SetBase(Config::GFX_HACK_SKIP_DUPLICATE_XFBS, self.skipDuplicateXFBs);
+
+    // GPU Texture Decoding
+    Config::SetBase(Config::GFX_ENABLE_GPU_TEXTURE_DECODING, self.gpuTextureDecoding);
+
+    // Fast Depth Calculation
+    Config::SetBase(Config::GFX_FAST_DEPTH_CALC, self.fastDepthCalculation);
+
+    // Disable Bounding Box (inverted logic - true means disable, false means enable)
+    Config::SetBase(Config::GFX_HACK_BBOX_ENABLE, !self.disableBoundingBox);
+
+    // Save Texture Cache to State
+    Config::SetBase(Config::GFX_SAVE_TEXTURE_CACHE_TO_STATE, self.saveTextureCacheToState);
+
+    // Vertex Rounding
+    Config::SetBase(Config::GFX_HACK_VERTEX_ROUNDING, self.vertexRounding);
+
+    // VI Skip
+    Config::SetBase(Config::GFX_HACK_VI_SKIP, self.viSkip);
+
+    // === SHADER SETTINGS ===
+
+    // Shader Compilation Mode
+    Config::SetBase(Config::GFX_SHADER_COMPILATION_MODE, (ShaderCompilationMode)self.shaderCompilationMode);
+
+    // Wait for Shaders
+    Config::SetBase(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING, self.waitForShaders);
+
+    // === ANTI-ALIASING ===
+
+    // MSAA
+    if (self.gsPreference == 0) { // Vulkan supports MSAA better
         Config::SetBase(Config::GFX_MSAA, self.msaa);
         Config::SetBase(Config::GFX_SSAA, self.ssaa);
     } else {
-        Config::SetBase(Config::GFX_MSAA, 1);
-        Config::SetBase(Config::GFX_SSAA, false);
+        Config::SetBase(Config::GFX_MSAA, self.msaa > 0 ? self.msaa : 1);
+        Config::SetBase(Config::GFX_SSAA, false); // SSAA typically not supported on OpenGL/Metal on iOS
+    }
+
+    // === CPU/EMULATION SETTINGS ===
+
+    // CPU Core with JIT detection and fallback
+    int8_t effectiveCpuType = self.cpuType;
+
+    // JIT availability check - if user wants JIT but it's not available, fall back
+    if (self.cpuType == 2) {
+        bool jitAvailable = [self checkJITAvailable];
+        if (!jitAvailable) {
+            NSLog(@"⚠️ JIT requested but not available. Falling back to Cached Interpreter for better performance than Interpreter.");
+            effectiveCpuType = 1; // Fall back to CachedInterpreter
+        } else {
+            NSLog(@"✅ JIT is available and will be used for maximum performance.");
+        }
+    }
+
+    if (effectiveCpuType == 0) {
+        Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::Interpreter);
+        NSLog(@"🐌 CPU Core: Interpreter (Slowest, Most Compatible)");
+    } else if (effectiveCpuType == 1) {
+        Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::CachedInterpreter);
+        NSLog(@"⚡ CPU Core: Cached Interpreter (Balanced Performance)");
+    } else if (effectiveCpuType == 2) {
+#if defined(__x86_64__)
+        Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JIT64);
+        NSLog(@"🚀 CPU Core: JIT64 (Maximum Performance)");
+#else
+        Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JITARM64);
+        NSLog(@"🚀 CPU Core: JITARM64 (Maximum Performance)");
+#endif
+    }
+
+    // CPU Overclock
+    float clockMultiplier = self.cpuOClock / 100.0f;
+    Config::SetBase(Config::MAIN_OVERCLOCK, clockMultiplier);
+    Config::SetBase(Config::MAIN_OVERCLOCK_ENABLE, clockMultiplier != 1.0f);
+
+    // Dual Core
+    Config::SetBase(Config::MAIN_CPU_THREAD, self.dualCore);
+
+    // Idle Skipping
+    Config::SetBase(Config::MAIN_SYNC_ON_SKIP_IDLE, self.idleSkipping);
+
+    // Fast Memory
+    if (self.fastMemory) {
+        Config::SetBase(Config::MAIN_FASTMEM, self.fastMemory);
+        if (can_enable_fastmem) {
+            // Fastmem behavior is automatically determined by the system in modern Dolphin
+        }
     }
 
     // Cheats
-    SConfig::GetInstance().bEnableCheats = self.enableCheatCode;
+    Config::SetBase(Config::MAIN_ENABLE_CHEATS, self.enableCheatCode);
 
-    // CPU Overclock
-    Config::SetBase(Config::MAIN_CPU_THREAD, true);
-    SConfig::GetInstance().m_OCFactor = self.cpuOClock;
-    SConfig::GetInstance().m_OCEnable = self.cpuOClock > 1;
+        // === ADVANCED EMULATION SETTINGS ===
+
+    // VI Overclock (frequency override)
+    if (self.enableVBIOverride) {
+        // Map percentage (4–501%) to factor for MAIN_VI_OVERCLOCK
+        float factor = self.vbiFrequencyRange / 100.0f;
+        if (factor < 0.04f) factor = 0.04f;
+        if (factor > 5.01f) factor = 5.01f;
+        Config::SetBase(Config::MAIN_VI_OVERCLOCK_ENABLE, true);
+        Config::SetBase(Config::MAIN_VI_OVERCLOCK, factor);
+    } else {
+        Config::SetBase(Config::MAIN_VI_OVERCLOCK_ENABLE, false);
+        Config::SetBase(Config::MAIN_VI_OVERCLOCK, 1.0f);
+    }
+
+    // Memory Management Unit
+    Config::SetBase(Config::MAIN_MMU, self.enableMMU);
+
+    // Pause on Panic
+    Config::SetBase(Config::MAIN_AUTO_DISC_CHANGE, !self.pauseOnPanic);
+
+    // Fast Disc Speed (faster loading)
+    // If you later add a UI or option for this in Provenance, wire it here instead of hardcoding.
+    Config::SetBase(Config::MAIN_FAST_DISC_SPEED, true);
+
+    // Write-Back Cache
+    Config::SetBase(Config::MAIN_ACCURATE_NANS, self.enableWriteBackCache);
+
+    // Speed Limit
+    if (self.speedLimit == 0) {
+        Config::SetBase(Config::MAIN_EMULATION_SPEED, 0.0f); // Unlimited
+    } else {
+        float speedMultiplier = self.speedLimit / 100.0f;
+        Config::SetBase(Config::MAIN_EMULATION_SPEED, speedMultiplier);
+    }
+
+    // Fallback Region
+    Config::SetBase(Config::MAIN_FALLBACK_REGION, (DiscIO::Region)self.fallbackRegion);
+
+    // === AUDIO SETTINGS ===
+
+    // Audio Backend
+    if (self.audioBackend == 0) {
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("Cubeb"));
+    } else if (self.audioBackend == 1) {
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("OpenAL"));
+    } else if (self.audioBackend == 2) {
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("Null"));
+    }
+
+    // Audio stretching setting removed in modern Dolphin; do not set MAIN_AUDIO_STRETCH
+
+    // Volume (handled by the audio system)
+    Config::SetBase(Config::MAIN_AUDIO_VOLUME, self.volume);
+
+    // === SYSTEM SETTINGS ===
+
+    // Skip GameCube IPL/BIOS
+    Config::SetBase(Config::MAIN_SKIP_IPL, self.skipIPL);
+
+    // Wii Language
+    Config::SetBase(Config::SYSCONF_LANGUAGE, self.wiiLanguage);
+
+    // === SYSTEM CONFIGURATION ===
+
+    // SDCard (always enabled for compatibility)
+    Config::SetBase(Config::MAIN_WII_SD_CARD, true);
+    Config::SetBase(Config::MAIN_ALLOW_SD_WRITES, true);
+
+    
 
     // CPU High Level / Low Level Emulation
-    SConfig::GetInstance().bDSPHLE = true;
+    Config::SetBase(Config::MAIN_DSP_HLE, true);
+    Config::SetBase(Config::MAIN_DSP_THREAD, true);
     Core::SetIsThrottlerTempDisabled(false);
 
-    // Wait for Shaders
-    Config::SetBase(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING, true);
-
-    // Wiimote
-    Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
-    SConfig::GetInstance().m_WiiKeyboard = false;
-    SConfig::GetInstance().m_WiimoteContinuousScanning = false;
-    SConfig::GetInstance().m_bt_passthrough_enabled = false;
-
-    // Social
-    Discord::SetDiscordPresenceEnabled(false);
-
-    // Alerts
-    Common::SetEnableAlert(false);
-
-    // Audio
-    SConfig::GetInstance().m_Volume = self.volume;
-    SConfig::GetInstance().bAutomaticStart = true;
+    // === DEBUG AND LOGGING ===
 
     // Debug Settings
-    SConfig::GetInstance().bEnableDebugging = false;
-    SConfig::GetInstance().m_ShowFrameCount = false;
+    Config::SetBase(Config::MAIN_ENABLE_DEBUGGING, self.enableLogging);
+
+    // OSD Messages (logging configuration is handled in setupEmulation)
+    Config::SetBase(Config::MAIN_OSD_MESSAGES, self.enableLogging);
+
+    // === iOS OPTIMIZATIONS ===
+
+    // iOS Power Management
+    Config::SetBase(Config::MAIN_ANALYTICS_ENABLED, false); // Disable analytics for privacy/performance
+
+    // Wiimote settings optimized for iOS
+    // Note: SYSCONF_WIIMOTE_MOTOR is configured in setupHapticFeedback based on device capability and user preference
+    Config::SetBase(Config::MAIN_WII_KEYBOARD, false);
+    Config::SetBase(Config::MAIN_WIIMOTE_CONTINUOUS_SCANNING, false);
+    Config::SetBase(Config::MAIN_BLUETOOTH_PASSTHROUGH_ENABLED, false);
+
+    // Social features disabled
+    Discord::SetDiscordPresenceEnabled(false);
+
+    // Alerts disabled for iOS
+    Common::SetEnableAlert(false);
 }
 
 #pragma mark - Running
 - (void)setupEmulation {
+    // CRITICAL: Reset all static/global state to prevent iOS dynamic library issues
+    ResetDolphinStaticState();
+
     NSError *error;
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData" ];
@@ -324,8 +602,47 @@ static void UpdateWiiPointer();
     Common::RegisterMsgAlertHandler(&MsgAlert);
     UICommon::SetUserDirectory(user_dir);
     UICommon::CreateDirectories();
+
+    // CRITICAL: Shutdown UICommon first to prevent deadlock on second load
+    // UICommon::Init() has static state that must be cleaned up between sessions
+    try {
+        UICommon::Shutdown();
+        NSLog(@"🐬 [SETUP] UICommon shutdown completed");
+    } catch (...) {
+        NSLog(@"🐬 [SETUP] UICommon shutdown failed or was not initialized - continuing");
+    }
+
     UICommon::Init();
-    NSLog(@"User Directory set to '%s'\n", user_dir.c_str());
+    NSLog(@"🐬 [SETUP] UICommon initialized, User Directory set to '%s'", user_dir.c_str());
+
+    // Initialize logging system EARLY - before any other configuration
+    Common::Log::LogManager::Init();
+
+    // Apply critical settings immediately after Dolphin initialization
+    // This ensures BIOS skip is set before any game loading attempts
+    [self parseOptions];  // Parse options FIRST to get current enableLogging value
+    Config::Load();
+
+    // Configure logging to output to iOS console AFTER parsing options
+    if (self.enableLogging) {
+        NSLog(@"🐬 Dolphin Debug Logging ENABLED (user setting: %s)", self.enableLogging ? "true" : "false");
+        Common::Log::LogManager::GetInstance()->SetLogLevel(Common::Log::LogLevel::LINFO);
+        Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::OSREPORT, true);
+        Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::CORE, true);
+        Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::BOOT, true);
+        Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::VIDEO, true);
+        Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::AUDIO, true);
+        // Enable console listener for iOS output
+        Common::Log::LogManager::GetInstance()->EnableListener(Common::Log::LogListener::CONSOLE_LISTENER, true);
+    } else {
+        NSLog(@"🐬 Dolphin Debug Logging DISABLED (user setting: %s)", self.enableLogging ? "true" : "false");
+        Common::Log::LogManager::GetInstance()->SetLogLevel(Common::Log::LogLevel::LERROR);
+        Common::Log::LogManager::GetInstance()->EnableListener(Common::Log::LogListener::CONSOLE_LISTENER, false);
+    }
+
+    // CRITICAL: Skip GameCube BIOS - must be set early to prevent BIOS loading errors
+    Config::SetBase(Config::MAIN_SKIP_IPL, self.skipIPL);
+    NSLog(@"GameCube BIOS skip set to: %s", self.skipIPL ? "true" : "false");
     NSString *configPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Config" ofType:nil];
     NSString *configDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData/Config" ];
     [self syncResources:configPath to:configDirectory overWrite:true];
@@ -364,53 +681,127 @@ static void UpdateWiiPointer();
     NSLog(@"Starting VM\n");
     m_view=view;
     // Ensure core is stopped (otherwise game lags)
-    Core::Stop();
-    while (Core::GetState() != Core::State::Uninitialized) {
+    Core::Stop(Core::System::GetInstance());
+    while (Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized) {
         sleep(1);
     }
     [NSThread detachNewThreadSelector:@selector(startDolphin) toTarget:self withObject:nil];
 }
 
 - (void)startDolphin {
+    NSLog(@"🐬 [DEBUG] startDolphin: Beginning Dolphin initialization");
     std::unique_lock<std::mutex> guard(s_host_identity_lock);
     __block WindowSystemInfo wsi;
-    wsi.type = WindowSystemType::IPhoneOS;
+    wsi.type = WindowSystemType::iOS;
     wsi.display_connection = nullptr;
     dispatch_sync(dispatch_get_main_queue(), ^{
-        wsi.render_surface = (__bridge void*)m_view.layer;
+        // Use Provenance's Metal view layer as the render surface
+        if (self.renderDelegate && self.renderDelegate.mtlView) {
+            wsi.render_surface = (__bridge void*)self.renderDelegate.mtlView.layer;
+            NSLog(@"🐬 [DEBUG] Using Metal view layer for rendering");
+        } else {
+            wsi.render_surface = (__bridge void*)m_view.layer;
+            NSLog(@"🐬 [WARNING] Fallback to regular view layer - may not render properly");
+        }
     });
     wsi.render_surface_scale = [UIScreen mainScreen].scale;
+    NSLog(@"🐬 [DEBUG] WindowSystemInfo configured for iOS");
+
     VideoBackendBase::ActivateBackend(Config::Get(Config::MAIN_GFX_BACKEND));
-    NSLog(@"Using GFX backend: %s\n", Config::Get(Config::MAIN_GFX_BACKEND).c_str());
+    NSLog(@"🐬 [DEBUG] Using GFX backend: %s", Config::Get(Config::MAIN_GFX_BACKEND).c_str());
+
+    // Initialize ControllerInterface for iOS input backend
+    g_controller_interface.Initialize(wsi);
+    NSLog(@"🐬 [DEBUG] ControllerInterface initialized for iOS input backend");
+
     std::string gamePath=std::string([_romPath UTF8String]);
     std::vector<std::string> normalized_game_paths;
     normalized_game_paths.push_back(gamePath);
+    NSLog(@"🐬 [DEBUG] Game path: %s", gamePath.c_str());
+
     [self setupControllers];
-    if (!BootManager::BootCore(BootParameters::GenerateFromFile(normalized_game_paths), wsi))
+    NSLog(@"🐬 [DEBUG] Controllers setup complete");
+
+    NSLog(@"🐬 [DEBUG] Attempting to boot game...");
+    if (!BootManager::BootCore(Core::System::GetInstance(), BootParameters::GenerateFromFile(normalized_game_paths), wsi))
     {
-        NSLog(@"Could not boot %s\n", [_romPath UTF8String]);
+        NSLog(@"🐬 [ERROR] Could not boot %s", [_romPath UTF8String]);
         return;
     }
-    AudioCommon::SetSoundStreamRunning(true);
-    while (Core::GetState() == Core::State::Starting && !Core::IsRunning())
+    NSLog(@"🐬 [DEBUG] BootCore succeeded, setting up audio...");
+
+    AudioCommon::SetSoundStreamRunning(Core::System::GetInstance(), true);
+    NSLog(@"🐬 [DEBUG] Audio stream started, waiting for core to start...");
+
+    while (Core::GetState(Core::System::GetInstance()) == Core::State::Starting && !Core::IsRunning(Core::System::GetInstance()))
     {
+        NSLog(@"🐬 [DEBUG] Core state: Starting, waiting...");
         Common::SleepCurrentThread(100);
     }
     _isInitialized = true;
     _isOff = false;
-    NSLog(@"VM Started\n");
+    NSLog(@"🐬 [SUCCESS] VM Started! Core state: %d, IsRunning: %s",
+          (int)Core::GetState(Core::System::GetInstance()),
+          Core::IsRunning(Core::System::GetInstance()) ? "YES" : "NO");
+
+    NSLog(@"🐬 [DEBUG] Entering main emulation loop...");
+    int loopCount = 0;
+    bool guardLocked = true; // Track guard state
+
     while (_isInitialized)
     {
-        guard.unlock();
-        s_update_main_frame_event.Wait();
-        guard.lock();
-        Core::HostDispatchJobs();
+        if (guardLocked) {
+            guard.unlock();
+            guardLocked = false;
+        }
+
+        // Log every 60 iterations (roughly once per second at 60 FPS)
+        #ifdef DEBUG
+        if (loopCount % 60 == 0) {
+            NSLog(@"🐬 [DEBUG] Emulation loop iteration %d, Core state: %d, IsRunning: %s",
+                  loopCount,
+                  (int)Core::GetState(Core::System::GetInstance()),
+                  Core::IsRunning(Core::System::GetInstance()) ? "YES" : "NO");
+        }
+        loopCount++;
+        #endif
+
+        // Wait for events with timeout to prevent indefinite blocking
+        if (s_update_main_frame_event.WaitFor(std::chrono::milliseconds(16))) {
+            // Event received, process jobs
+            if (!guardLocked) {
+                guard.lock();
+                guardLocked = true;
+            }
+            Core::HostDispatchJobs(Core::System::GetInstance());
+        } else {
+            // Timeout - continue emulation loop anyway
+            if (!guardLocked) {
+                guard.lock();
+                guardLocked = true;
+            }
+            Core::HostDispatchJobs(Core::System::GetInstance());
+
+            // Manually trigger frame update if emulation is running
+            if (Core::IsRunning(Core::System::GetInstance())) {
+                // Signal the event to keep the loop active
+                s_update_main_frame_event.Set();
+            }
+        }
     }
+
+    // CRITICAL: Ensure guard is unlocked before method exits
+    if (guardLocked) {
+        guard.unlock();
+        guardLocked = false;
+        NSLog(@"🐬 [DEBUG] Guard unlocked before startDolphin method exit");
+    }
+
     _isOff=true;
 }
 
 - (void)startEmulation {
-    self.skipEmulationLoop = true;
+    self.skipEmulationLoop = true;  // Dolphin handles its own emulation loop
     [self prepareAudio];
     [self setupEmulation];
 
@@ -421,53 +812,108 @@ static void UpdateWiiPointer();
 
 - (void)setPauseEmulation:(BOOL)flag {
     Core::State state = flag ? Core::State::Paused : Core::State::Running;
-    Core::SetState(state);
+    Core::SetState(Core::System::GetInstance(), state);
     [super setPauseEmulation:flag];
 }
 
 - (void)stopEmulation {
     [super stopEmulation];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    // Stop motion updates to save battery
+    [self stopMotionUpdates];
+
     self.shouldStop = YES;
     _isInitialized = false;
     g_controller_interface.Shutdown();
-    Core::SetState(Core::State::Running);
-    ProcessorInterface::PowerButton_Tap();
-    Core::Stop();
+    Core::SetState(Core::System::GetInstance(), Core::State::Running);
+    Core::System::GetInstance().GetProcessorInterface().PowerButton_Tap();
+    Core::Stop(Core::System::GetInstance());
     s_update_main_frame_event.Set();
-    while (CPU::GetState() != CPU::State::PowerDown ||
-           Core::GetState() != Core::State::Uninitialized ||
-           !_isOff) {
-        sleep(1);
+    while (Core::System::GetInstance().GetCPU().GetState() != CPU::State::PowerDown ||
+           Core::GetState(Core::System::GetInstance()) != Core::State::Uninitialized ||
+           _isInitialized) {
+        Common::SleepCurrentThread(20);
     }
-    Core::Shutdown();
-    VertexLoaderManager::Clear();
-    Fifo::ExitGpuLoop();
-    Fifo::Shutdown();
-    Memory::ShutdownFastmemArena();
-    Memory::Shutdown();
-    PowerPC::Shutdown();
+    Core::System::GetInstance().GetMemory().ShutdownFastmemArena();
+    Core::System::GetInstance().GetMemory().Shutdown();
+    Core::System::GetInstance().GetPowerPC().Shutdown();
     g_video_backend->Shutdown();
-    s_host_identity_lock.unlock();
+
+    // CRITICAL: Ensure host identity lock is unlocked before cleanup
+    try {
+        s_host_identity_lock.unlock();
+        NSLog(@"🐬 [STOP] Host identity lock unlocked during stopEmulation");
+    } catch (...) {
+        NSLog(@"🐬 [STOP] Host identity lock was already unlocked or exception occurred");
+    }
+
     [m_view removeFromSuperview];
     [m_view_controller dismissViewControllerAnimated:NO completion:nil];
     m_gl_layer = nullptr;
     m_metal_layer = nullptr;
     m_view_controller = nullptr;
     m_view=nullptr;
-    AudioCommon::ShutdownSoundStream();
-    g_renderer.release();
+    AudioCommon::ShutdownSoundStream(Core::System::GetInstance());
+
+    // CRITICAL: Shutdown UICommon before resetting state
+    try {
+        UICommon::Shutdown();
+        NSLog(@"🐬 [STOP] UICommon shutdown completed in stopEmulation");
+    } catch (...) {
+        NSLog(@"🐬 [STOP] UICommon shutdown failed in stopEmulation - continuing");
+    }
+
+    // Reset all static/global state for next load
+    ResetDolphinStaticState();
 }
--(void)startHaptic { }
--(void)stopHaptic { }
+/// Haptic feedback is now handled automatically by Dolphin's Motor output system
+/// See setupHapticFeedback method in Controls for implementation
+
+/// JIT availability detection
+/// Based on DolphiniOS's JitManager logic - JIT is available when process is debugged
+/// or on simulator, which allows dynamic code execution
+-(BOOL)checkJITAvailable {
+#if TARGET_OS_SIMULATOR
+    // JIT is always available on iOS Simulator
+    return YES;
+#else
+    // Check if process is being debugged, which enables JIT
+    // This covers AltStore, SideStore, Xcode debugging, etc.
+    return [self isProcessDebugged];
+#endif
+}
+
+/// Check if the current process is being debugged
+/// This is the primary way JIT becomes available on iOS devices
+-(BOOL)isProcessDebugged {
+    int junk;
+    int mib[4];
+    struct kinfo_proc info;
+    size_t size;
+
+    info.kp_proc.p_flag = 0;
+
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_PROC;
+    mib[2] = KERN_PROC_PID;
+    mib[3] = getpid();
+
+    size = sizeof(info);
+    junk = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, NULL, 0);
+    assert(junk == 0);
+
+    // Check if P_TRACED flag is set, indicating the process is being debugged
+    return (info.kp_proc.p_flag & P_TRACED) != 0;
+}
 
 - (void)resetEmulation {
-	ProcessorInterface::ResetButton_Tap();
+	Core::System::GetInstance().GetProcessorInterface().ResetButton_Tap();
 }
 
 - (void)refreshScreenSize {
-    if (Core::IsRunningAndStarted() && g_renderer)
-        g_renderer->ResizeSurface();
+    if (Core::IsRunningOrStarting(Core::System::GetInstance()) && g_presenter)
+        g_presenter->ResizeSurface();
 }
 -(void) prepareAudio {
     NSError *error = nil;
@@ -508,8 +954,19 @@ static void UpdateWiiPointer();
             m_view_controller=(UIViewController *)cgsh_view_controller;
             m_view=cgsh_view_controller.view;
             m_view.contentMode = UIViewContentModeScaleToFill;
+        } else if(self.gsPreference == 2) {
+            // Metal backend - reuse Vulkan view controller since both use CAMetalLayer
+            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+                                                               initWithResFactor:self.resFactor
+                                                               videoWidth: self.videoWidth
+                                                               videoHeight: self.videoHeight
+                                                               core: self];
+            m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
+            m_view_controller=(UIViewController *)cgsh_view_controller;
+            m_view=cgsh_view_controller.view;
+            m_view.contentMode = UIViewContentModeScaleToFill;
         }
-        
+
         m_view=m_view_controller.view;
         UIViewController *rootController = m_view_controller;
         [self.touchViewController.view addSubview:m_view];
@@ -549,6 +1006,19 @@ static void UpdateWiiPointer();
                                                             videoHeight: self.videoHeight
                                                             core: self];
             m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
+            m_view_controller=(UIViewController *)cgsh_view_controller;
+            m_view=cgsh_view_controller.view;
+            m_view.contentMode = UIViewContentModeScaleToFill;
+            [gl_view_controller addChildViewController:cgsh_view_controller];
+            [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
+        } else if(self.gsPreference == 2) {
+            // Metal backend - reuse Vulkan view controller since both use CAMetalLayer
+            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+                                                               initWithResFactor:self.resFactor
+                                                               videoWidth: self.videoWidth
+                                                               videoHeight: self.videoHeight
+                                                               core: self];
+            m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
             m_view_controller=(UIViewController *)cgsh_view_controller;
             m_view=cgsh_view_controller.view;
             m_view.contentMode = UIViewContentModeScaleToFill;
@@ -620,32 +1090,35 @@ bool Host_UIBlocksControllerState()
 void Host_Message(HostMessageID id)
 {
     NSLog(@"message id: %i\n", (int)id);
-  if (id == HostMessageID::WMUserJobDispatch)
-	  s_update_main_frame_event.Set();
-  else if (id == HostMessageID::WMUserStop) {
-	s_have_wm_user_stop = true;
-	if (Core::IsRunning())
-	  Core::QueueHostJob(&Core::Stop);
-  } else if (id == HostMessageID::WMUserCreate)
-      NSLog(@"User Create Called %i\n", (int)id);
+    if (id == HostMessageID::WMUserJobDispatch) {
+        // Use async dispatch like original Dolphin iOS
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            Core::HostDispatchJobs(Core::System::GetInstance());
+        });
+        // Also signal the event for our existing loop (for compatibility)
+        s_update_main_frame_event.Set();
+    } else if (id == HostMessageID::WMUserStop) {
+        s_have_wm_user_stop = true;
+        if (Core::IsRunning(Core::System::GetInstance()))
+            Core::QueueHostJob([](Core::System& system) { Core::Stop(system); });
+    } else if (id == HostMessageID::WMUserCreate) {
+        NSLog(@"User Create Called %i\n", (int)id);
+    }
 }
 
-void Host_UpdateTitle(const std::string& title)
-{
+void Host_UpdateTitle(const std::string &title) {
+  NSLog(@"Update Title called: %s\n", title.c_str());
 }
 
-void Host_UpdateDisasmDialog()
-{
+void Host_UpdateDisasmDialog() {
+  NSLog(@"Update Disasm Dialog called\n");
 }
 
-void Host_UpdateMainFrame()
-{
-    NSLog(@"UpdateMainFrame called\n");
+void Host_UpdateMainFrame() {
+  NSLog(@"UpdateMainFrame called\n");
 }
 
-
-void Host_RequestRenderWindowSize(int width, int height)
-{
+void Host_RequestRenderWindowSize(int width, int height) {
     NSLog(@"Requested Render Window Size %d %d\n",width,height);
 	UpdateWiiPointer();
 }
@@ -667,7 +1140,7 @@ bool Host_RendererHasFocus()
 
 bool Host_RendererIsFullscreen()
 {
-	return false;
+	return true;
 }
 
 void Host_YieldToUI()
@@ -701,8 +1174,8 @@ bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgTyp
 void UpdateWiiPointer()
 {
     NSLog(@"Update Wii Pointer\n");
-    if (Core::IsRunningAndStarted() && g_renderer) {
-        g_renderer->ResizeSurface();
-        ButtonManager::GamepadEvent("Touchscreen", 4, ButtonManager::ButtonType::WIIMOTE_IR_RECENTER, 1);
+    if (Core::IsRunningOrStarting(Core::System::GetInstance()) && g_presenter) {
+        g_presenter->ResizeSurface();
+//        ciface::iOS::StateManager::GetInstance()->SetButtonPressed(4, ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER, true);
     }
 }

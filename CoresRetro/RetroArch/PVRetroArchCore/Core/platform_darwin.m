@@ -763,39 +763,36 @@ static int frontend_darwin_parse_drive_list(void *data, bool load_content)
    return ret;
 }
 
-/* TODO/FIXME - is adding iOS/tvOS support possible here? */
 static uint64_t frontend_darwin_get_total_mem(void)
 {
 #if defined(OSX)
     uint64_t size;
     int mib[2]     = { CTL_HW, HW_MEMSIZE };
     u_int namelen  = ARRAY_SIZE(mib);
-    size_t len     = sizeof(size);
-    if (sysctl(mib, namelen, &size, &len, NULL, 0) >= 0)
+    size_t _len    = sizeof(size);
+    if (sysctl(mib, namelen, &size, &_len, NULL, 0) >= 0)
        return size;
+#elif defined(IOS)
+    task_vm_info_data_t vm_info;
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    if (task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vm_info, &count) == KERN_SUCCESS)
+       return vm_info.phys_footprint + vm_info.limit_bytes_remaining;
 #endif
     return 0;
 }
 
-/* TODO/FIXME - is adding iOS/tvOS support possible here? */
 static uint64_t frontend_darwin_get_free_mem(void)
 {
 #if (defined(OSX) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 101200))
-    vm_size_t page_size;
-    vm_statistics64_data_t vm_stats;
-    mach_port_t mach_port        = mach_host_self();
-    mach_msg_type_number_t count = sizeof(vm_stats) / sizeof(natural_t);
-
-    if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
-        KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO,
-           (host_info64_t)&vm_stats, &count))
-    {
-        long long used_memory = (
-              (int64_t)vm_stats.active_count   +
-              (int64_t)vm_stats.inactive_count +
-              (int64_t)vm_stats.wire_count)    * (int64_t)page_size;
-        return used_memory;
-    }
+   task_vm_info_data_t vm_info;
+   mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+   if (task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vm_info, &count) == KERN_SUCCESS)
+        return frontend_darwin_get_total_mem() - vm_info.phys_footprint;
+#elif defined(IOS)
+    task_vm_info_data_t vm_info;
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    if (task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vm_info, &count) == KERN_SUCCESS)
+        return vm_info.limit_bytes_remaining;
 #endif
     return 0;
 }
@@ -805,6 +802,23 @@ static const char* frontend_darwin_get_cpu_model_name(void)
    cpu_features_get_model_name(darwin_cpu_model_name,
          sizeof(darwin_cpu_model_name));
    return darwin_cpu_model_name;
+}
+
+static enum retro_language frontend_darwin_get_user_language(void)
+{
+   char *pos;
+   char s[128];
+   CFArrayRef langs = CFLocaleCopyPreferredLanguages();
+   CFStringRef langCode = CFArrayGetValueAtIndex(langs, 0);
+   CFStringGetCString(langCode, s, sizeof(s), kCFStringEncodingUTF8);
+   /* iOS and OS X only support the language ID syntax consisting
+    * of a language designator and optional region or script designator. */
+   for (pos = s; *pos != '\0'; pos++)
+   {
+      if (*pos == '-')
+         *pos = '_';
+   }
+   return retroarch_get_language_from_iso(s);
 }
 
 #if (defined(OSX) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 101200))
@@ -973,7 +987,7 @@ frontend_ctx_driver_t frontend_ctx_darwin = {
    NULL,                            /* check_for_path_changes */
    NULL,                            /* set_sustained_performance_mode */
    frontend_darwin_get_cpu_model_name, /* get_cpu_model_name */
-   NULL,                            /* get_user_language   */
+    frontend_darwin_get_user_language,                            /* get_user_language   */
 #if (defined(OSX) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 101200))
    is_narrator_running_macos,       /* is_narrator_running */
    accessibility_speak_macos,       /* accessibility_speak */

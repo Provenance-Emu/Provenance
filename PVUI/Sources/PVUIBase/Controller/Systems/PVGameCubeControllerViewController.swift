@@ -11,7 +11,7 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVGCButton {
         get {
-            return PVGCButton(rawValue: tag)!
+            return PVGCButton(rawValue: tag) ?? .a
         }
         set {
             tag = newValue.rawValue
@@ -33,20 +33,27 @@ final class PVGameCubeControllerViewController: PVControllerViewController<PVGam
             guard let button = $0 as? JSButton else {
                 return
             }
-            if button.titleLabel?.text == "A" {
+            switch button.titleLabel?.text?.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if button.titleLabel?.text == "B" {
+            case "b":
                 button.buttonTag = .b
-            } else if button.titleLabel?.text == "X" {
+            case "x":
                 button.buttonTag = .x
-            } else if button.titleLabel?.text == "Y" {
+            case "y":
                 button.buttonTag = .y
+            default:
+                break
             }
         }
 
+        leftShoulderButton?.buttonTag = .l
         leftShoulderButton2?.buttonTag = .l
-        rightShoulderButton2?.buttonTag = .r
-        rightShoulderButton?.buttonTag = .z
+        
+        rightShoulderButton2?.buttonTag = .z
+        
+        rightShoulderButton?.buttonTag = .r
+        
         startButton?.buttonTag = .start
     }
     override func prelayoutSettings() {

@@ -3,7 +3,7 @@
 //  Provenance
 //
 //  Created by Ian Clawson on 1/26/22.
-//  Copyright © 2022 Provenance Emu. All rights reserved.
+//  Copyright 2022 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -65,6 +65,8 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ObservedObject var viewModel: PVRootViewModel
     weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
 
+    @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
+
     @State private var showEmptySystems: Bool
     @State private var gameInfoState: GameInfoState?
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
@@ -75,6 +77,9 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     /// Track the previous tab for comparison
     @State private var previousTab: String = ""
+
+    /// State to control the presentation of ImportStatusView
+    @State private var showImportStatusView = false
 
     /// State for game info presentation
     struct GameInfoState: Identifiable {
@@ -123,6 +128,10 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     var body: some View {
         Group {
+            // Add a glowing border line using glowColor
+            RetroDividerView()
+                .shadow(color: .retroPink, radius: 4, x: 0, y: 1)
+
             if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
                 noConsolesView
             } else {
@@ -151,6 +160,8 @@ struct ConsolesWrapperView: SwiftUI.View {
         .onDisappear {
             isVisible = false
         }
+        .ignoresSafeArea(edges: .all)
+        .padding(.top, 14)
     }
 
     // MARK: - Helper Methods
@@ -170,7 +181,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         case is LightThemePalette:
             return .blue
         default:
-            return themeManager.currentPalette.defaultTintColor?.swiftUIColor ?? .purple
+            return themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .purple
         }
     }
 
@@ -194,26 +205,37 @@ struct ConsolesWrapperView: SwiftUI.View {
             .tag("noConsoles")
     }
 
+    var forceRetroarchConsole: Bool {
+        return true
+    }
+
     @ViewBuilder
     var consolesList: some View {
-        ForEach(sortedConsoles(), id: \.self) { console in
-            ConsoleGamesView(
-                console: console,
-                viewModel: viewModel,
-                rootDelegate: rootDelegate,
-                showGameInfo: showGameInfo
-            )
-            .tabItem {
-                if #available(iOS 17.0, tvOS 17.0, *) {
-                    // Simplified tab item to reduce rendering overhead
-                    Label(console.name, image: ImageResource(name: console.iconName, bundle: PVUIBase.BundleLoader.myBundle))
-                } else {
-                    // Fallback for older iOS versions
-                    Label(console.name, systemImage: "gamecontroller")
+        ForEach(sortedConsoles(), id: \.identifier) { (console: PVSystem) in
+            if console.identifier != SystemIdentifier.RetroArch.rawValue || forceRetroarchConsole { // Skip RetroArch unless in forced
+                ConsoleGamesView(
+                    console: console,
+                    viewModel: viewModel,
+                    rootDelegate: rootDelegate,
+                    showGameInfo: showGameInfo
+                )
+                .id(console.identifier) // Keep ConsoleGamesView instance stable
+                .background(RetroTheme.retroBackground)
+                .toolbarColorScheme(SwiftUI.ColorScheme.dark, for: SwiftUI.ToolbarPlacement.tabBar)
+                .tag(console.identifier)
+                .tabItem {
+                    let iconName = console.iconName
+                    if let icon = rasterizedTabIcon(named: iconName) {
+                        Label {
+                            Text(console.name)
+                        } icon: { icon }
+                    } else {
+                        // Generic fallback
+                        Label(console.name, systemImage: "gamecontroller")
+                            .imageScale(.medium)
+                    }
                 }
             }
-            .tag(console.identifier)
-            .ignoresSafeArea(.all, edges: .bottom)
         }
     }
 
@@ -234,7 +256,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                         preloadArtworkForConsole(selectedConsole)
                     }
                 }
-                
+
                 Task {
                     // Trigger haptic feedback for user-initiated tab changes
                     #if !os(tvOS)
@@ -247,6 +269,30 @@ struct ConsolesWrapperView: SwiftUI.View {
         )
 
         return TabView(selection: binding) {
+            if showFeatureFlagsDebug {
+                RetroDebugView()
+                    .tabItem {
+                        Label("Debug", systemImage: "bug")
+                    }
+                    .tag("debug")
+                    .ignoresSafeArea(.all, edges: .bottom)
+                    .navigationTitle(Text("Debug"))
+
+                ScrollView {
+                    VStack {
+                        RetroStatusControlView()
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+
+                        FileRecoveryTestView()
+                    }
+                }
+                .tabItem {
+                    Label("Test", systemImage: "test")
+                }
+                .tag("test")
+                .ignoresSafeArea(.all, edges: .bottom)
+            }
             HomeView(
                 gameLibrary: rootDelegate.gameLibrary!,
                 delegate: rootDelegate,
@@ -261,15 +307,38 @@ struct ConsolesWrapperView: SwiftUI.View {
 
             consolesList
         }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .onChange(of: delegate.selectedTab) { newValue in
             DLOG("Tab changed in view: \(newValue)")
         }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
-        .id(consoles.count)
-        .tint(themeManager.currentPalette.defaultTintColor?.swiftUIColor)
+        .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+    }
+
+    // MARK: - Icon Rasterization
+    private func rasterizedTabIcon(named name: String) -> Image? {
+        if name.isEmpty { return nil }
+        #if canImport(UIKit)
+        // Derive a conservative size based on tab bar metrics to prevent page style from upscaling
+        let defaultPointSize: CGFloat = 12
+        let font = UIFont.systemFont(ofSize: defaultPointSize, weight: .regular)
+        let metrics = UIFontMetrics(forTextStyle: .footnote)
+        let clamped = metrics.scaledValue(for: font.pointSize)
+        let side = max(36, min(42, clamped))
+        let targetSize = CGSize(width: side, height: side)
+        guard let source = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) else {
+            return nil
+        }
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        let scaled = renderer.image { _ in
+            source.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+        return Image(uiImage: scaled).renderingMode(.template)
+        #else
+        return nil
+        #endif
     }
 }
 

@@ -9,6 +9,8 @@ OTHER_CFLAGS = $(inherited) -fpermissive
 OTHER_CFLAGS = $(inherited) -frename-registers
 OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
 OTHER_CFLAGS = $(inherited) -ftree-vectorize
+OTHER_CFLAGS = $(inherited) -fvisibility=hidden
+OTHER_CFLAGS = $(inherited) -fvisibility-inlines-hidden
 // Experimental
 OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
 //OTHER_CFLAGS = $(inherited) -fdata-sections
@@ -36,7 +38,7 @@ OTHER_CFLAGS = $(inherited) -mtune=apple-a15  // iPhone 13 series, iPhone 14/14+
 //OTHER_CFLAGS = $(inherited) -mcpu=apple-a17  // iPhone 15 Pro/Pro Max
 //OTHER_CFLAGS = $(inherited) -mcpu=apple-a18    // iPhone 16/16+, iPhone 16 Pro/Pro Max
 //OTHER_CFLAGS = $(inherited) -mtune=apple-a18   // iPhone 16/16+, iPhone 16 Pro/Pro Max
-OTHER_CFLAGS = $(inherited) -march=armv8-a+simd // 34-36fps kirby top screen level 1
+OTHER_CFLAGS = $(inherited) -march=armv8-a+simd+crc+crypto // 34-36fps kirby top screen level 1
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_AUDIOTOOLBOX
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) CPPHTTPLIB_OPENSSL_SUPPORT
@@ -50,6 +52,40 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) ENABLE_VULKAN=1
 
 //OTHER_CPPFLAGS = $(inherited) -fmodules -fcxx-modules
 OTHER_LDFLAGS = $(inherited) -ObjC -DIPHONEOS
+
+// ========== COMPREHENSIVE SYMBOL ISOLATION FOR GLSLANG ==========
+// Hide all glslang-related symbols to prevent conflicts with other frameworks
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_glslang*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_SPIRV*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_spv*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_Spv*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_SPV*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TBuiltInResource*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TShader*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TProgram*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TIntermediate*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TPoolAllocator*
+
+// Hide mangled C++ glslang symbols (comprehensive patterns)
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN7glslang*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN4spv*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN5SPIRV*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__Z*glslang*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__Z*SPIRV*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__Z*spv*
+
+// Additional symbol hiding for comprehensive isolation
+//OTHER_LDFLAGS = $(inherited) -Wl,-private_bundle
+OTHER_LDFLAGS = $(inherited) -Wl,-no_implicit_dylibs
+//OTHER_LDFLAGS = $(inherited) -Wl,-two_levelnamespace
+
+// ========== RPATH-BASED ISOLATION ==========
+// Prioritize PVEmuThree's own libraries and prevent cross-framework symbol leakage
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path/../Frameworks/PVEmuThree.framework
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path/../Frameworks/PVEmuThree.framework/Frameworks
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@executable_path/Frameworks/PVEmuThree.framework
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@executable_path/Frameworks/PVEmuThree.framework/Frameworks
 
 // Swift <--> C++ Interop
 // 1. Include the "MYSWIFTMODULENAME-Swift.h" header from your C++ code. (Where MYSWIFTMODULENAME is your Swift module’s name)

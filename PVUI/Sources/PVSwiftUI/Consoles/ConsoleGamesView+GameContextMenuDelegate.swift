@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RealmSwift
 import protocol PVUIBase.GameContextMenuDelegate
 import struct PVUIBase.GameContextMenu
 
@@ -29,57 +30,114 @@ internal struct ContinuesManagementState: Identifiable {
 
 extension ConsoleGamesView: GameContextMenuDelegate {
 
+    // MARK: - CloudKit Download Methods
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDownloadFromCloudFor game: PVGame) {
+        guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
+
+        DLOG("Downloading game from CloudKit: \(game.title) (\(recordID))")
+
+        // Show loading indicator
+        rootDelegate?.showMessage("Downloading \(game.title)...", title: "Downloading")
+
+        Task {
+            do {
+                // Find the appropriate syncer
+                guard let syncer = CloudKitSyncerStore.shared.getSyncer() else {
+                    ELOG("No CloudKit syncer available")
+                    await MainActor.run {
+                        rootDelegate?.showMessage("Failed to download: No CloudKit syncer available", title: "Error")
+                    }
+                    return
+                }
+
+                // Download the file
+                let fileURL = try await syncer.downloadFileOnDemand(recordName: recordID)
+                DLOG("Downloaded file to: \(fileURL.path)")
+
+                // Update the game's download status in the database
+                try await updateGameDownloadStatus(recordID: recordID, isDownloaded: true)
+
+                await MainActor.run {
+                    rootDelegate?.showMessage("\(game.title) has been downloaded successfully", title: "Download Complete")
+                }
+            } catch {
+                ELOG("Error downloading file: \(error.localizedDescription)")
+                await MainActor.run {
+                    rootDelegate?.showMessage("Failed to download: \(error.localizedDescription)", title: "Error")
+                }
+            }
+        }
+    }
+
+    /// Update the download status of a game in the database
+    private func updateGameDownloadStatus(recordID: String, isDownloaded: Bool) async throws {
+        let realm = try await Realm()
+
+        try await realm.asyncWrite {
+            if let game = realm.objects(PVGame.self).filter("cloudRecordID == %@", recordID).first {
+                game.isDownloaded = isDownloaded
+                DLOG("Updated download status for game: \(game.title)")
+            }
+        }
+    }
+
 #if !os(tvOS)
     @ViewBuilder
     internal func imagePickerView() -> some View {
         ImagePicker(sourceType: .photoLibrary) { image in
-            if let game = gameToUpdateCover {
+            if let game = gamesViewModel.gameToUpdateCover {
                 saveArtwork(image: image, forGame: game)
             }
-            gameToUpdateCover = nil
-            showImagePicker = false
+            gamesViewModel.gameToUpdateCover = nil
+            gamesViewModel.showImagePicker = false
         }
     }
 #endif
 
     // MARK: - Rename Methods
     func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
-        gameToRename = game.freeze()
-        newGameTitle = game.title
-        showingRenameAlert = true
+        let frozenGame = game.freeze()
+        Task {
+            await gamesViewModel.prepareRenameAlert(for: frozenGame)
+        }
     }
 
-    private func submitRename() {
-        if !newGameTitle.isEmpty, let frozenGame = gameToRename, newGameTitle != frozenGame.title {
+    internal func submitRename() {
+        if !gamesViewModel.newGameTitle.isEmpty, let frozenGame = gamesViewModel.gameToRename, gamesViewModel.newGameTitle != frozenGame.title {
             do {
                 guard let thawedGame = frozenGame.thaw() else {
                     throw NSError(domain: "ConsoleGamesView", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to thaw game object"])
                 }
-                RomDatabase.sharedInstance.renameGame(thawedGame, toTitle: newGameTitle)
+                RomDatabase.sharedInstance.renameGame(thawedGame, toTitle: gamesViewModel.newGameTitle)
                 rootDelegate?.showMessage("Game renamed successfully.", title: "Success")
             } catch {
                 DLOG("Failed to rename game: \(error.localizedDescription)")
                 rootDelegate?.showMessage("Failed to rename game: \(error.localizedDescription)", title: "Error")
             }
-        } else if newGameTitle.isEmpty {
+        } else if gamesViewModel.newGameTitle.isEmpty {
             rootDelegate?.showMessage("Cannot set a blank title.", title: "Error")
         }
-        showingRenameAlert = false
-        gameToRename = nil
+        // Call the ViewModel's method to reset state
+        Task {
+            await gamesViewModel.completeRenameAction()
+        }
     }
 
     // MARK: - Image Picker Methods
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseCoverFor game: PVGame) {
-        gameToUpdateCover = game
-        showImagePicker = true
+        let frozenGame = game.freeze()
+        Task {
+            await gamesViewModel.prepareArtworkSourceAlert(for: frozenGame)
+        }
     }
 
     internal func saveArtwork(image: UIImage, forGame game: PVGame) {
         DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
 
         let uniqueID: String = UUID().uuidString
-        let md5: String = game.md5 ?? ""
+        let md5: String = game.md5Hash ?? ""
         let key = "artwork_\(md5)_\(uniqueID)"
         DLOG("Generated key for image: \(key)")
 
@@ -117,35 +175,43 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to move game to system")
         let frozenGame = game.isFrozen ? game : game.freeze()
-        systemMoveState = SystemMoveState(game: frozenGame)
+        gamesViewModel.systemMoveState = SystemMoveState(game: frozenGame)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to show save states for game")
-        continuesManagementState = ContinuesManagementState(game: game)
+        gamesViewModel.continuesManagementState = ContinuesManagementState(game: game)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
-        showGameInfo(gameId)
+        DLOG("ConsoleGamesView: Requesting to show game info for game ID: \(gameId) via ViewModel")
+        gamesViewModel.showGameInfo(gameId: gameId)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
-        gameToUpdateCover = game
-        showImagePicker = true
+        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.showImagePicker = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
-        gameToUpdateCover = game
-        showArtworkSearch = true
+        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.showArtworkSearch = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
-        DLOG("Setting gameToUpdateCover with game: \(game.title)")
-        gameToUpdateCover = game
-        showArtworkSourceAlert = true
+        DLOG("ConsoleGamesView: Received request to choose artwork source")
+        gamesViewModel.gameToUpdateCover = game
+        // The following now calls the async function on the ViewModel
+        Task {
+            await gamesViewModel.prepareArtworkSourceAlert(for: game)
+        }
+        // gamesViewModel.showArtworkSourceAlert = true // This line is now handled by prepareArtworkSourceAlert
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
-        gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
+        let frozenGame = game.freeze()
+        Task {
+            await gamesViewModel.presentDiscSelectionAlert(for: frozenGame, rootDelegate: rootDelegate)
+        }
     }
 }

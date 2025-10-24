@@ -1,5 +1,5 @@
 {
-  "originHash" : "f66cbf58fe930d6f89a6686c5004a57b8539af4cd14256193760bf1492feafd7",
+  "originHash" : "5e0006e7daa974d24108c6a7e02582574641a174de7edc21ce0cd5d2f5374b94",
   "pins" : [
     {
       "identity" : "checksum",
@@ -17,6 +17,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "1f693cde80962041d342bfd9fa52581bbcc49577"
+      }
+    },
+    {
+      "identity" : "plzmasdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
+      "state" : {
+        "branch" : "1.2.5",
+        "revision" : "ee2666a06aa1f6632d5060d1cf316520ed8aecbd"
       }
     },
     {

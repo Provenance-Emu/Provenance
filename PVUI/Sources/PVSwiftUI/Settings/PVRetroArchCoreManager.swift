@@ -47,8 +47,9 @@ public final class PVRetroArchCoreManager {
     }
 
     /// Gets the MD5 hash of a file at a given URL
-    public func md5Hash(for url: URL) async -> String? {
-        return FileManager.default.md5ForFile(at: url, fromOffset: 0)
+    public func md5Hash(for url: URL, fromOffset offset: UInt = 0) async -> String? {
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        return FileManager.default.md5ForFile(at: url, fromOffset: offset)
     }
 
     /// Returns the active config file URL in Documents directory

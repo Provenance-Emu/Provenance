@@ -21,6 +21,7 @@ public enum CorePlist {
   public static let pvProjectURL: String = "https://github.com/flyinghead/desmume2015"
   public static let pvProjectVersion: String = "1.1"
   public static let pvSupportedSystems: [String] = ["com.provenance.ds"]
+  public static let pvDisabled: Bool = true
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
@@ -30,7 +31,9 @@ public enum CorePlist {
             supportedSystems: CorePlist.pvSupportedSystems,
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
-            projectVersion: CorePlist.pvProjectVersion)
+            projectVersion: CorePlist.pvProjectVersion,
+            disabled: CorePlist.pvDisabled
+        )
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

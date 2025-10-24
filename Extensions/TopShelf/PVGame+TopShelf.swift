@@ -1,4 +1,4 @@
-//  PVGame+TopShelf.m
+//  PVGame+TopShelf.swift
 //  Provenance
 //
 //  Created by entourloop on 2018-03-29.
@@ -8,6 +8,7 @@
 import Foundation
 import PVLibrary
 import TVServices
+import PVLogging
 
 // Top shelf extensions
 extension PVGame {
@@ -17,13 +18,16 @@ extension PVGame {
         let item = TVTopShelfSectionedItem(identifier: md5Hash)
 
         // Set basic metadata
-        item.title = title
+        // Include system name in title if available
+        if let systemName = system?.name {
+            item.title = "\(title) (\(systemName))"
+        } else {
+            item.title = title
+        }
 
         // Set image URL if available
         let artworkURLString = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
-        if artworkURLString.isEmpty,
-           let imageURL = URL(string: artworkURLString) {
-
+        if !artworkURLString.isEmpty, let imageURL = URL(string: artworkURLString) {
             // Set image shape based on system
             if let system = system {
                 item.imageShape = system.imageType
@@ -33,10 +37,14 @@ extension PVGame {
 
             // Set the image URL
             item.setImageURL(imageURL, for: .screenScale1x)
+            DLOG("TopShelf: Set image URL for \(title): \(imageURL.path)")
+        } else {
+            // If no image URL is available, log a warning
+            WLOG("TopShelf: No artwork URL available for game \(title)")
         }
 
-        // Set display actions
-        item.playAction = TVTopShelfAction(url: URL(string: "provenance://game/\(md5Hash)")!)
+        // Set display actions with deep link to game
+        item.playAction = TVTopShelfAction(url: URL(string: "\(PVAppURLKey)://game/\(md5Hash)")!)
 
         return item
     }

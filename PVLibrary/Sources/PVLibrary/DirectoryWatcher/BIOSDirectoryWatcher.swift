@@ -3,7 +3,7 @@
 //  PVLibrary
 //
 //  Created by Joseph Mattiello on 10/30/24.
-//  Copyright © 2024 Provenance Emu. All rights reserved.
+//  Copyright 2024 Provenance Emu. All rights reserved.
 //
 
 import Foundation
@@ -13,42 +13,6 @@ import PVLogging
 import Perception
 import PVFileSystem
 import RealmSwift
-
-/// A dedicated actor for file system operations to keep them off the main thread
-@globalActor actor FileSystemActor {
-    static let shared = FileSystemActor()
-    private init() {}
-}
-
-/// Actor to prevent crash when mutating and another thread is accessing
-actor FileOperationTasks {
-    private var fileOperationTasks = Set<Task<Void, Never>>()
-
-    /// inserts item into set
-    /// - Parameter item: item to insert
-    func insert(_ item: Task<Void, Never>) {
-        fileOperationTasks.insert(item)
-    }
-
-    /// removes item from set
-    /// - Parameter item: item to remove
-    func remove(_ item: Task<Void, Never>) {
-        fileOperationTasks.remove(item)
-    }
-
-    /// clears set
-    func removeAll() {
-        fileOperationTasks.removeAll()
-    }
-
-    /// Cancels all ongoing file operation tasks and clears set after
-    func cancelAllFileOperations() {
-        for task in fileOperationTasks {
-            task.cancel()
-        }
-        fileOperationTasks.removeAll()
-    }
-}
 
 @Perceptible
 public final class BIOSWatcher: ObservableObject {
@@ -430,62 +394,90 @@ public final class BIOSWatcher: ObservableObject {
     }
 
     public func checkBIOSFile(at path: URL) async -> Bool {
-        // Perform file checking off the main thread
-        let result = await Task.detached(priority: .utility) {
+        ILOG("Checking BIOS file: \(path.path(percentEncoded: false))")
+
+        let isPathInImportsFolder = path.path.starts(with: Paths.romsImportPath.path)
+        let isPathInBiosRootFolder = path.path.starts(with: self.biosPath.path) && !isPathInImportsFolder
+
+        // Detached task to find PVBIOS entry and check current linked status
+        let (matchingBiosRefOpt, isAlreadyCorrectlyAttached): (ThreadSafeReference<PVBIOS>?, Bool) = await Task.detached(priority: .utility) {
             let fileName = path.lastPathComponent.lowercased()
-
-            // Get matching BIOS entry on the main thread
-            let matchingBios = await MainActor.run {
-                do {
-                    let realm = try Realm()
-                    return realm.objects(PVBIOS.self)
-                        .filter("expectedFilename CONTAINS[c] %@", fileName)
-                        .first?
-                        .freeze()
-                } catch {
-                    ELOG("Failed to open Realm: \(error)")
-                    return nil
-                }
+            guard let realm = try? Realm() else {
+                ELOG("checkBIOSFile: Failed to open Realm in detached task for \(fileName)")
+                return (nil, false)
             }
 
-            guard let bios = matchingBios else {
-                ILOG("No BIOS entry found for \(fileName)")
-                return false
+            guard let biosEntry = realm.objects(PVBIOS.self).filter("expectedFilename CONTAINS[c] %@", fileName).first else {
+                ILOG("checkBIOSFile: No PVBIOS definition found for \(fileName) at path \(path.path(percentEncoded: false))")
+                return (nil, false) // No definition for this file
             }
 
-            // Check if already attached
-            if bios.file != nil {
-                ILOG("BIOS file already attached for \(fileName)")
-                return true
+            // Check if already attached to a valid, non-Imports location
+            if let currentFile = biosEntry.file,
+               let currentUrl = currentFile.url,
+               FileManager.default.fileExists(atPath: currentUrl.path),
+               !currentUrl.path.starts(with: Paths.romsImportPath.path) { // Ensure not pointing to Imports
+                ILOG("checkBIOSFile: BIOS \(biosEntry.expectedFilename) already correctly attached at \(currentUrl.path)")
+                return (ThreadSafeReference(to: biosEntry), true) // Correctly attached
             }
-
-            return false
+            
+            // BIOS definition exists, but not currently attached to a valid, non-Imports file
+            ILOG("checkBIOSFile: BIOS \(biosEntry.expectedFilename) definition exists, but not currently attached to a valid, non-Imports file. Original path provided: \(path.path(percentEncoded: false))")
+            return (ThreadSafeReference(to: biosEntry), false)
         }.value
 
-        // If we found a match but it's not attached, attach it on the main thread
-        if result == false {
+        guard let matchingBiosRef = matchingBiosRefOpt else {
+            // No PVBIOS definition was found for this file.
+            ILOG("checkBIOSFile: No PVBIOS definition for \(path.lastPathComponent). Cannot be considered 'handled'.")
+            return false
+        }
+
+        // At this point, we have a PVBIOS definition (matchingBiosRef).
+        // isAlreadyCorrectlyAttached tells us if it's *already* linked correctly to a non-Imports file.
+
+        if isAlreadyCorrectlyAttached {
+            ILOG("checkBIOSFile: BIOS for \(path.lastPathComponent) is already correctly attached. Returning true.")
+            return true // Already handled, GameImporter should skip.
+        }
+
+        // BIOS definition exists, but NOT currently attached to a valid, non-Imports file.
+        // Now, behavior depends on WHERE the input `path` is.
+
+        if isPathInImportsFolder {
+            // The file is in Imports/. GameImporter needs to move it.
+            // checkBIOSFile should tell GameImporter that this BIOS is not yet "handled" correctly.
+            ILOG("checkBIOSFile: BIOS for \(path.lastPathComponent) found at \(path.path) (in Imports). Needs to be moved by GameImporter. Returning false.")
+            return false // Signal to GameImporter to process/move it.
+        }
+        
+        if isPathInBiosRootFolder {
+            // The file is in a BIOS system folder (e.g., user manually placed it there)
+            // but it's not yet linked in the DB to this valid path.
+            // We should update the PVBIOS entry to point to this `path`.
+            ILOG("checkBIOSFile: BIOS for \(path.lastPathComponent) found at \(path.path) (in BIOS folder). Attempting to link it now.")
             return await MainActor.run {
-                do {
-                    let realm = try Realm()
-                    let fileName = path.lastPathComponent.lowercased()
-
-                    if let biosEntry = realm.objects(PVBIOS.self)
-                        .filter("expectedFilename CONTAINS[c] %@", fileName)
-                        .first {
-
-                        try updateBIOSEntry(biosEntry, withFileAt: path)
-                        ILOG("Successfully attached BIOS file \(fileName)")
-                        return true
-                    }
+                guard let realm = try? Realm() else {
+                     ELOG("checkBIOSFile: Failed to get realm on main actor for \(path.lastPathComponent).")
+                     return false
+                }
+                guard let liveBiosEntry = realm.resolve(matchingBiosRef) else {
+                    ELOG("checkBIOSFile: Failed to resolve live Realm object for \(path.lastPathComponent) to update link.")
                     return false
+                }
+                do {
+                    try updateBIOSEntry(liveBiosEntry, withFileAt: path)
+                    ILOG("checkBIOSFile: Successfully attached BIOS file \(liveBiosEntry.expectedFilename) from \(path.path) (in BIOS folder). Returning true.")
+                    return true
                 } catch {
-                    ELOG("Failed to attach BIOS file: \(error)")
+                    ELOG("checkBIOSFile: Failed to attach BIOS file \(liveBiosEntry.expectedFilename) from \(path.path): \(error). Returning false.")
                     return false
                 }
             }
         }
 
-        return result
+        // Path is neither in Imports nor in BIOS root folder, or some other unhandled case for a known BIOS definition.
+        ILOG("checkBIOSFile: BIOS for \(path.lastPathComponent) at \(path.path) is in an unexpected location or state for a defined BIOS. Not handled by checkBIOSFile. Returning false.")
+        return false
     }
 
     // Add a method to manually trigger a rescan of a specific directory

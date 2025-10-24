@@ -11,6 +11,8 @@
 #import "PVDosBoxCore+Controls.h"
 #import "PVDosBoxCore+Audio.h"
 #import "PVDosBoxCore+Video.h"
+@import PVLogging;
+@import PVLoggingObjC;
 
 #import "PVDosBoxCore+Audio.h"
 
@@ -22,15 +24,15 @@
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVDosBoxCore() {
+@interface PVDosBoxCoreBridge() {
 
 }
 
 @end
 
-#pragma mark - PVDosBoxCore Begin
+#pragma mark - PVDosBoxCoreBridge Begin
 
-@implementation PVDosBoxCore
+@implementation PVDosBoxCoreBridge
 {
 }
 

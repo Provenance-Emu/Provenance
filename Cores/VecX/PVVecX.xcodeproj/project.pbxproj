@@ -17,7 +17,6 @@
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B353CC06293F86B900124F12 /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AE2894D32A00CF98C7 /* glsym_es2.c */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
@@ -40,6 +39,7 @@
 		B3D3E7692894E5310016EB85 /* e6809.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1CD2894D32A00CF98C7 /* e6809.c */; };
 		B3D3E76A2894E5310016EB85 /* e8910.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1A02894D32900CF98C7 /* e8910.c */; };
 		B3D3E76B2894E5310016EB85 /* vecx.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19A2894D32900CF98C7 /* vecx.c */; };
+		B3E46CEC2E2C99ED00657240 /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AE2894D32A00CF98C7 /* glsym_es2.c */; };
 		B3EB8B22293F81D600BCCBAE /* skip.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1C92894D32A00CF98C7 /* skip.bin */; };
 		B3EB8B23293F81D600BCCBAE /* fast.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1CA2894D32A00CF98C7 /* fast.bin */; };
 		B3EB8B24293F81D600BCCBAE /* system.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1C82894D32A00CF98C7 /* system.bin */; };
@@ -615,9 +615,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B380C2592894E846007B76FD /* libretro.c in Sources */,
-				B353CC06293F86B900124F12 /* glsym_es2.c in Sources */,
 				B3B498092D0D72BE00CB02D4 /* glsm.c in Sources */,
 				B3EB8B28293F835000BCCBAE /* rglgen.c in Sources */,
+				B3E46CEC2E2C99ED00657240 /* glsym_es2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

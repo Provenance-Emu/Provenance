@@ -34,6 +34,13 @@ extension os.Logger: Sendable {
     public static let general = Logger(subsystem: subsystem, category: "general")
 }
 
+/// current Date/Time stamp using the ISO-8601 format and the device's time zone
+public var currentDatTimeStamp: String {
+    let formatter = ISO8601DateFormatter()
+    formatter.timeZone = TimeZone.current
+    return formatter.string(from: Date())
+}
+
 @inlinable
 public func log(_ message: @autoclosure () -> String,
                 level: OSLogType = .debug,
@@ -53,9 +60,9 @@ public func log(_ message: @autoclosure () -> String,
     case .fault:
         emoji = "💥"
     default:
-        emoji = "📝"
+        emoji = "🔬"
     }
-    let logMessage = "\(emoji) \(fileName):\(line) - \(function): \(message())"
+    let logMessage = "\(emoji) \(currentDatTimeStamp) \(fileName):\(line) - \(function): \(message())"
 
     switch level {
     case .debug:
@@ -75,30 +82,40 @@ public func log(_ message: @autoclosure () -> String,
 @inlinable
 public func DLOG(_ message: @autoclosure () -> String, category: Logger = .general, file: String = #file, function: String = #function, line: Int = #line) {
     #if DEBUG
-    log(message(), level: .debug, category: category, file: file, function: function, line: line)
+    let msg = message()
+    log(msg, level: .debug, category: category, file: file, function: function, line: line)
+    PVLogPublisher.shared.verbose(msg, category: category, file: file, function: function, line: line)
     #endif
 }
 
 @inlinable
 public func ILOG(_ message: @autoclosure () -> String, category: Logger = .general, file: String = #file, function: String = #function, line: Int = #line) {
-    log(message(), level: .info, category: category, file: file, function: function, line: line)
+    let msg = message()
+    log(msg, level: .info, category: category, file: file, function: function, line: line)
+    PVLogPublisher.shared.info(msg, category: category, file: file, function: function, line: line)
 }
 
 @inlinable
 public func ELOG(_ message: @autoclosure () -> String, category: Logger = .general, file: String = #file, function: String = #function, line: Int = #line) {
-    log(message(), level: .error, category: category, file: file, function: function, line: line)
+    let msg = message()
+    log(msg, level: .error, category: category, file: file, function: function, line: line)
+    PVLogPublisher.shared.error(msg, category: category, file: file, function: function, line: line)
 }
 
 @inlinable
 public func WLOG(_ message: @autoclosure () -> String, category: Logger = .general, file: String = #file, function: String = #function, line: Int = #line) {
+    let msg = message()
     let warningPrefix = "⚠️"
-    log(warningPrefix + " " + message(), level: .info, category: category, file: file, function: function, line: line)
+    log(warningPrefix + " " + msg, level: .info, category: category, file: file, function: function, line: line)
+    PVLogPublisher.shared.warning(msg, category: category, file: file, function: function, line: line)
 }
 
 @inlinable
 public func VLOG(_ message: @autoclosure () -> String, category: Logger = .general, file: String = #file, function: String = #function, line: Int = #line) {
     #if DEBUG
-    log("🔬 " + message(), level: .debug, category: category, file: file, function: function, line: line)
+    let msg = message()
+    log(msg, level: .debug, category: category, file: file, function: function, line: line)
+    PVLogPublisher.shared.verbose(msg, category: category, file: file, function: function, line: line)
     #endif
 }
 

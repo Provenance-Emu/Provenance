@@ -4,13 +4,15 @@
 
 #include <algorithm>
 #include <limits>
+#include <thread>
+#include <chrono>
 #include "common/logging/log.h"
 #include "common/microprofile.h"
 #include "common/settings.h"
 #include "video_core/renderer_vulkan/vk_instance.h"
 #include "video_core/renderer_vulkan/vk_swapchain.h"
 
-#define DESTROY_SWAPCHAIN 0
+#define DESTROY_SWAPCHAIN 1
 
 MICROPROFILE_DEFINE(Vulkan_Acquire, "Vulkan", "Swapchain Acquire", MP_RGB(185, 66, 245));
 MICROPROFILE_DEFINE(Vulkan_Present, "Vulkan", "Swapchain Present", MP_RGB(66, 185, 245));
@@ -30,16 +32,20 @@ Swapchain::~Swapchain() {
 }
 
 void Swapchain::Create(u32 width_, u32 height_, vk::SurfaceKHR surface_) {
+    LOG_INFO(Render_Vulkan, "Swapchain::Create called with dimensions {}x{}", width_, height_);
+    
     width = width_;
     height = height_;
     surface = surface_;
     needs_recreation = false;
 
 #if DESTROY_SWAPCHAIN
+    LOG_INFO(Render_Vulkan, "Destroying old swapchain before creating new one");
     Destroy();
 #else
     // Store old swapchain to pass to create info @JoeMatt
     vk::SwapchainKHR old_swapchain = swapchain;
+    LOG_INFO(Render_Vulkan, "Storing old swapchain for recreation (not destroying)");
 #endif
 
     SetPresentMode();
@@ -90,33 +96,50 @@ void Swapchain::Create(u32 width_, u32 height_, vk::SurfaceKHR surface_) {
 
 bool Swapchain::AcquireNextImage() {
     if (needs_recreation) {
+        LOG_DEBUG(Render_Vulkan, "AcquireNextImage: Swapchain needs recreation, returning false");
         return false;
     }
 
     MICROPROFILE_SCOPE(Vulkan_Acquire);
     const vk::Device device = instance.GetDevice();
+    LOG_DEBUG(Render_Vulkan, "AcquireNextImage: Attempting to acquire image, frame_index={}", frame_index);
+    
     const vk::Result result =
         device.acquireNextImageKHR(swapchain, std::numeric_limits<u64>::max(),
                                    image_acquired[frame_index], VK_NULL_HANDLE, &image_index);
 
+    LOG_DEBUG(Render_Vulkan, "AcquireNextImage: Result={}, image_index={}", vk::to_string(result), image_index);
+
     switch (result) {
     case vk::Result::eSuccess:
+        LOG_DEBUG(Render_Vulkan, "AcquireNextImage: Success, acquired image {}", image_index);
         break;
     case vk::Result::eSuboptimalKHR:
+        LOG_WARNING(Render_Vulkan, "AcquireNextImage: Suboptimal swapchain, marking for recreation");
+        needs_recreation = true;
+        break;
     case vk::Result::eErrorSurfaceLostKHR:
+        LOG_ERROR(Render_Vulkan, "AcquireNextImage: Surface lost, marking for recreation");
+        needs_recreation = true;
+        break;
     case vk::Result::eErrorOutOfDateKHR:
+        LOG_ERROR(Render_Vulkan, "AcquireNextImage: Out of date, marking for recreation");
         needs_recreation = true;
         break;
     default:
-        LOG_CRITICAL(Render_Vulkan, "Swapchain acquire returned unknown result {}", result);
+        LOG_CRITICAL(Render_Vulkan, "Swapchain acquire returned unknown result {}", vk::to_string(result));
         UNREACHABLE();
         break;
     }
 
-    return !needs_recreation;
+    bool success = !needs_recreation;
+    LOG_DEBUG(Render_Vulkan, "AcquireNextImage: Returning {}", success);
+    return success;
 }
 
 void Swapchain::Present() {
+    LOG_DEBUG(Render_Vulkan, "Present: Starting presentation for image_index={}, frame_index={}", image_index, frame_index);
+    
     const vk::PresentInfoKHR present_info = {
         .waitSemaphoreCount = 1,
         .pWaitSemaphores = &present_ready[image_index],
@@ -128,15 +151,34 @@ void Swapchain::Present() {
     MICROPROFILE_SCOPE(Vulkan_Present);
     try {
 #if defined(__APPLE__)
-        // On MoltenVK, make sure we wait for all operations to complete before presenting
+        // On MoltenVK, ensure proper synchronization before presenting
         // This helps avoid timing issues with Metal's command buffer scheduling
-        instance.GetPresentQueue().waitIdle();
+        LOG_DEBUG(Render_Vulkan, "Present: MoltenVK synchronization start");
+        
+        // Wait for device to complete all operations for better stability
+        instance.GetDevice().waitIdle();
+        
+        // Small delay to ensure Metal command buffers are properly scheduled
+        // This helps prevent the black screen issue on MoltenVK 1.2.11
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+        
+        LOG_DEBUG(Render_Vulkan, "Present: MoltenVK synchronization complete");
 #endif
-        [[maybe_unused]] vk::Result result = instance.GetPresentQueue().presentKHR(present_info);
-    } catch (vk::OutOfDateKHRError&) {
+        LOG_DEBUG(Render_Vulkan, "Present: Calling presentKHR");
+        vk::Result result = instance.GetPresentQueue().presentKHR(present_info);
+        LOG_DEBUG(Render_Vulkan, "Present: presentKHR returned {}", vk::to_string(result));
+        
+        // Check for suboptimal result even on success
+        if (result == vk::Result::eSuboptimalKHR) {
+            LOG_WARNING(Render_Vulkan, "Present: Suboptimal presentation, marking for recreation");
+            needs_recreation = true;
+        }
+    } catch (vk::OutOfDateKHRError& e) {
+        LOG_ERROR(Render_Vulkan, "Present: Out of date error, marking for recreation: {}", e.what());
         needs_recreation = true;
         return;
-    } catch (vk::SurfaceLostKHRError&) {
+    } catch (vk::SurfaceLostKHRError& e) {
+        LOG_ERROR(Render_Vulkan, "Present: Surface lost error, marking for recreation: {}", e.what());
         needs_recreation = true;
         return;
     } catch (const vk::SystemError& err) {
@@ -144,7 +186,9 @@ void Swapchain::Present() {
         UNREACHABLE();
     }
 
+    u32 old_frame_index = frame_index;
     frame_index = (frame_index + 1) % image_count;
+    LOG_DEBUG(Render_Vulkan, "Present: Complete, frame_index {} -> {}", old_frame_index, frame_index);
 }
 
 void Swapchain::FindPresentFormat() {

@@ -43,7 +43,7 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
         }))
         #endif
 
-        if PVFeatureFlagsManager.shared.inAppFreeROMs {
+        if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] ?? false {
             actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { _ in
                 viewController.dismiss(animated: true) {
                     let freeROMsView = FreeROMsView(
@@ -62,7 +62,10 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
                                 gameImporter: gameImporter,
                                 delegate: delegate,
                                 dismissAction: {
-                                    gameImporter.clearCompleted()
+                                    // Use Task to handle the async call
+                                    Task {
+                                        await gameImporter.clearCompleted()
+                                    }
                                 }
                             )
                             let hostingController = UIHostingController(rootView: settingsView)
@@ -90,7 +93,10 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
                     gameImporter: gameImporter,
                     delegate: delegate,
                     dismissAction: {
-                        gameImporter.clearCompleted()
+                        // Use Task to handle the async call
+                        Task {
+                            await gameImporter.clearCompleted()
+                        }
                     }
                 )
                 let hostingController = UIHostingController(rootView: importStatusView)

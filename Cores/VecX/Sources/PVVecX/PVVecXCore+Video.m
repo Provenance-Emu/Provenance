@@ -9,10 +9,11 @@
 #import "PVVecXCore+Video.h"
 #import "PVVecXCore.h"
 #import <PVLogging/PVLoggingObjC.h>
+#import <PVVecX/PVVecX-Swift.h>
 
 #if !TARGET_OS_OSX
-#import <OpenGLES/ES3/glext.h>
-#import <OpenGLES/ES3/gl.h>
+// OpenGL ES headers are managed by libretro common headers (rglgen_headers.h)
+// Direct includes removed to avoid typedef conflicts with HAVE_OPENGLES3
 #import <GLKit/GLKit.h>
 #else
 #import <OpenGL/OpenGL.h>
@@ -68,17 +69,19 @@
 //    return size;
 //}
 
-//- (BOOL)rendersToOpenGL {
-//    return YES;
-//}
+- (BOOL)rendersToOpenGL {
+    BOOL  rendersToOpenGL = [VecxOptions.useHardware isEqualToString:@"Hardware"];
+    return rendersToOpenGL;
+}
 //
 //- (BOOL)isDoubleBuffered {
 //    return YES;
 //}
 
-//- (const void *)videoBuffer {
-//    return NULL;
-//}
+- (const void *)videoBuffer {
+    const void * videoBuffer = self.rendersToOpenGL ? NULL : [super videoBuffer];
+    return videoBuffer;
+}
 
 /*
  memset(info, 0, sizeof(*info));

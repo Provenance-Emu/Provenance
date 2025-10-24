@@ -10,16 +10,16 @@
 
 @implementation PVMelonDSCoreBridge (Audio)
 
-- (NSTimeInterval)frameInterval {
-    return 60;
-}
-
-- (NSUInteger)channelCount {
-    return 2;
-}
-
-- (double)audioSampleRate {
-    return 44100;
-}
+//- (NSTimeInterval)frameInterval {
+//    return 60;
+//}
+//
+//- (NSUInteger)channelCount {
+//    return 2;
+//}
+//
+//- (double)audioSampleRate {
+//    return 44100;
+//}
 
 @end

@@ -3,7 +3,7 @@
 //  Provenance
 //
 //  Created by Joseph Mattiello on 2/9/18.
-//  Copyright © 2018 James Addyman. All rights reserved.
+//  Copyright 2018 James Addyman. All rights reserved.
 //
 
 import Foundation
@@ -20,11 +20,16 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-let schemaVersion: UInt64 = 16
+public let schemaVersion: UInt64 = 18
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
     case fileManagerDeletionError(Error)
+}
+
+public enum DeletionSource {
+    case userInitiated
+    case cloudKitSync
 }
 
 public final class RealmConfiguration {
@@ -32,10 +37,19 @@ public final class RealmConfiguration {
 #if targetEnvironment(macCatalyst)
         return false
 #else
-        return !PVAppGroupId.isEmpty && RealmConfiguration.appGroupContainer != nil
+        guard !PVAppGroupId.isEmpty, let container = RealmConfiguration.appGroupContainer else {
+            return false
+        }
+        let fm = FileManager.default
+        var isDir: ObjCBool = false
+        let path = container.path
+        guard fm.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue else {
+            return false
+        }
+        return true
 #endif
     }
-    
+
     public class var appGroupContainer: URL? {
 #if targetEnvironment(macCatalyst)
         return nil
@@ -43,15 +57,15 @@ public final class RealmConfiguration {
         return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
 #endif
     }
-    
+
     public class var appGroupPath: URL? {
         guard let appGroupContainer = RealmConfiguration.appGroupContainer else {
             ILOG("appGroupContainer is Nil")
             return nil
         }
-        
+
         ILOG("appGroupContainer => (\(appGroupContainer.absoluteString))")
-        
+
 #if os(tvOS)
         let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/")
 #else
@@ -59,21 +73,21 @@ public final class RealmConfiguration {
 #endif
         return appGroupPath
     }
-    
+
     public class func setDefaultRealmConfig() {
         let config = RealmConfiguration.realmConfig
         Realm.Configuration.defaultConfiguration = config
     }
-    
-    private static var realmConfig: Realm.Configuration = {
+
+    public static var realmConfig: Realm.Configuration = {
         let realmFilename = "default.realm"
         let nonGroupPath = URL.documentsPath.appendingPathComponent(realmFilename, isDirectory: false)
-        
+
         var realmURL: URL = nonGroupPath
         if RealmConfiguration.supportsAppGroups, let appGroupPath = RealmConfiguration.appGroupPath {
             ILOG("AppGroups: Supported")
             realmURL = appGroupPath.appendingPathComponent(realmFilename, isDirectory: false)
-            
+
             let fm = FileManager.default
             if fm.fileExists(atPath: nonGroupPath.path) {
                 do {
@@ -90,24 +104,24 @@ public final class RealmConfiguration {
         } else {
             ILOG("AppGroups: Not Supported")
         }
-        
+
         let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
             if oldSchemaVersion < 2 {
                 ILOG("Migrating to version 2. Adding MD5s")
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
-                
+
                 var counter = 0
                 var deletions = 0
                 migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
                     let romPath = oldObject!["romPath"] as! String
                     let systemID = oldObject!["systemIdentifier"] as! String
                     let system = SystemIdentifier(rawValue: systemID)!
-                    
+
                     var offset: UInt = 0
                     if system == .SNES {
                         offset = 16
                     }
-                    
+
                     let fullPath = URL.documentsPath.appendingPathComponent(romPath, isDirectory: false)
                     let fm = FileManager.default
                     if !fm.fileExists(atPath: fullPath.path) {
@@ -118,7 +132,7 @@ public final class RealmConfiguration {
                         }
                         return
                     }
-                    
+
                     if let md5 = FileManager.default.md5ForFile(at: fullPath, fromOffset: UInt(offset)), !md5.isEmpty {
                         newObject!["md5Hash"] = md5
                         counter += 1
@@ -129,10 +143,10 @@ public final class RealmConfiguration {
                             deletions += 1
                         }
                     }
-                    
+
                     newObject!["importDate"] = Date()
                 }
-                
+
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
                 ILOG("Migration complete of \(counter) roms. Removed \(deletions) bad entries.")
             }
@@ -178,8 +192,45 @@ public final class RealmConfiguration {
                     newObject!["contentless"] = false
                 }
             }
+
+            if oldSchemaVersion < 17 {
+                ILOG("Migrating to version 17. Adding CloudKit sync properties")
+
+                // Add CloudKit sync properties to PVGame
+                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
+                    newObject!["lastCloudSyncDate"] = nil
+                    newObject!["cloudRecordID"] = nil
+                    newObject!["isDownloaded"] = true
+                    newObject!["fileSize"] = 0
+                    // Note: md5Hash is already a primary key and can't be modified during migration
+                }
+
+                // Add CloudKit sync properties to PVSaveState
+                migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
+                    newObject!["cloudRecordID"] = nil
+                    newObject!["isDownloaded"] = true
+                    newObject!["fileSize"] = 0
+                }
+
+                // Add CloudKit sync properties to PVBIOS
+                migration.enumerateObjects(ofType: PVBIOS.className()) { oldObject, newObject in
+                    newObject!["cloudRecordID"] = nil
+                    newObject!["isDownloaded"] = true
+                    newObject!["fileSize"] = 0
+                }
+
+                ILOG("Migration to version 17 complete.")
+            }
+            if oldSchemaVersion < 18 {
+                migration.enumerateObjects(ofType: PVSaveState.className()) { oldObject, newObject in
+                    newObject!["lastUploadedDate"] = nil
+                }
+
+                ILOG("Migration to version 18 complete.")
+
+            }
         }
-        
+
 #if DEBUG
         let deleteIfMigrationNeeded = true
 #else
@@ -188,7 +239,6 @@ public final class RealmConfiguration {
         let config = Realm.Configuration(
             fileURL: realmURL,
             inMemoryIdentifier: nil,
-            syncConfiguration: nil,
             encryptionKey: nil,
             readOnly: false,
             schemaVersion: schemaVersion,
@@ -197,7 +247,7 @@ public final class RealmConfiguration {
             shouldCompactOnLaunch: { totalBytes, usedBytes in
                 // totalBytes refers to the size of the file on disk in bytes (data + free space)
                 // usedBytes refers to the number of bytes used by data in the file
-                
+
                 // Compact if the file is over 20MB in size and less than 60% 'used'
                 let twentyMB = 20 * 1024 * 1024
                 return (totalBytes > twentyMB) && (Double(usedBytes) / Double(totalBytes)) < 0.6
@@ -216,7 +266,7 @@ public final class RealmConfiguration {
                 PVImageFile.self
             ]
         )
-        
+
         return config
     }()
 }
@@ -224,7 +274,7 @@ public final class RealmConfiguration {
 internal final class WeakWrapper: NSObject {
     static var associatedKey = "WeakWrapper"
     weak var weakObject: RomDatabase?
-    
+
     init(_ weakObject: RomDatabase?) {
         self.weakObject = weakObject
     }
@@ -251,11 +301,10 @@ public extension Thread {
 
 public typealias RomDB = RomDatabase
 
-
 public final class RomDatabase {
-    
+
     public private(set) static var databaseInitialized = false
-    
+
     static var _gamesCache: [String: PVGame]?
     public static var gamesCache: [String: PVGame] {
         guard let _gamesCache = _gamesCache else {
@@ -264,7 +313,7 @@ public final class RomDatabase {
         }
         return _gamesCache
     }
-    
+
     static var _systemCache: [String: PVSystem]?
     public static var systemCache: [String: PVSystem] {
         guard let _systemCache = _systemCache else {
@@ -273,7 +322,7 @@ public final class RomDatabase {
         }
         return _systemCache
     }
-    
+
     static var _coreCache: [String: PVCore]?
     public static var coreCache: [String: PVCore] {
         guard let _coreCache = _coreCache else {
@@ -282,7 +331,7 @@ public final class RomDatabase {
         }
         return _coreCache
     }
-    
+
     static var _biosCache: [String: [String]]?
     public static var biosCache: [String: [String]] {
         guard let _biosCache = _biosCache else {
@@ -291,7 +340,7 @@ public final class RomDatabase {
         }
         return _biosCache
     }
-    
+
     static var _fileSystemROMCache: [URL: PVSystem]?
     public static var fileSystemROMCache: [URL: PVSystem] {
         guard let _fileSystemROMCache = _fileSystemROMCache else {
@@ -300,7 +349,7 @@ public final class RomDatabase {
         }
         return _fileSystemROMCache
     }
-    
+
     static var _artMD5DBCache: [String: [String: AnyObject]]?
     public static var artMD5DBCache: [String: [String: AnyObject]] {
         guard let _artMD5DBCache = _artMD5DBCache else {
@@ -309,7 +358,7 @@ public final class RomDatabase {
         }
         return _artMD5DBCache
     }
-    
+
     static var _artFileNameToMD5Cache: [String: String]?
     public static var artFileNameToMD5Cache: [String: String] {
         guard let _artFileNameToMD5Cache = _artFileNameToMD5Cache else {
@@ -318,19 +367,19 @@ public final class RomDatabase {
         }
         return _artFileNameToMD5Cache
     }
-    
+
     @MainActor
     public class func initDefaultDatabase() async throws {
         if !databaseInitialized {
             ILOG("Setting default Realm configuration")
             RealmConfiguration.setDefaultRealmConfig()
-            
+
             ILOG("Creating RomDatabase instance")
             _sharedInstance = try RomDatabase()
-            
+
             ILOG("Checking for existing local libraries")
             let existingLocalLibraries = _sharedInstance.realm.objects(PVLibrary.self).filter("isLocal == YES")
-            
+
             if !existingLocalLibraries.isEmpty, let first = existingLocalLibraries.first {
                 ILOG("Existing PVLibrary found")
                 _sharedInstance.libraryRef = ThreadSafeReference(to: first)
@@ -338,14 +387,15 @@ public final class RomDatabase {
                 ILOG("No local library found, creating initial local library")
                 try await createInitialLocalLibrary()
             }
-            
+
             ILOG("Database initialization completed")
             databaseInitialized = true
+            NotificationCenter.default.post(name: .RomDatabaseInitialized, object: nil)
         } else {
             ILOG("Database already initialized")
         }
     }
-    
+
     @MainActor
     private static func createInitialLocalLibrary() async throws {
         ILOG("Creating initial local library")
@@ -354,12 +404,12 @@ public final class RomDatabase {
         newLibrary.domainname = "localhost"
         newLibrary.name = "Default Library"
         newLibrary.ipaddress = "127.0.0.1"
-        
+
         ILOG("Checking for existing games")
         if let existingGames = _sharedInstance?.realm.objects(PVGame.self).filter("libraries.@count == 0") {
             newLibrary.games.append(objectsIn: existingGames)
         }
-        
+
         ILOG("Adding new library to database")
         do {
             try _sharedInstance?.add(newLibrary)
@@ -370,15 +420,15 @@ public final class RomDatabase {
             throw error
         }
     }
-    
+
     // Primary local library
-    
+
     private var libraryRef: ThreadSafeReference<PVLibrary>!
     public var library: PVLibrary {
         let realm = try! Realm()
         return realm.resolve(libraryRef)!
     }
-    
+
     //    public static var localLibraries : Results<PVLibrary> {
     //        return sharedInstance.realm.objects(PVLibrary.self).filter { $0.isLocal }
     //    }
@@ -386,10 +436,10 @@ public final class RomDatabase {
     //    public static var remoteLibraries : Results<PVLibrary> {
     //        return sharedInstance.realm.objects(PVLibrary.self).filter { !$0.isLocal }
     //    }
-    
+
     // Private shared instance that propery initializes
     private static var _sharedInstance: RomDatabase!
-    
+
     // Public shared instance that makes sure threads are handeled right
     // TODO: Since if a function calls a bunch of RomDatabase.sharedInstance calls,
     // this helper might do more damage than just putting a fatalError() around isMainThread
@@ -402,7 +452,7 @@ public final class RomDatabase {
         guard let shared = RomDatabase._sharedInstance else {
             return try! RomDatabase()
         }
-        
+
         if Thread.isMainThread {
             return shared
         } else {
@@ -415,14 +465,14 @@ public final class RomDatabase {
             }
         }
     }
-    
+
     // For multi-threading
     fileprivate static func temporaryDatabaseContext() throws -> RomDatabase {
         return try RomDatabase()
     }
-    
+
     public private(set) var realm: Realm
-    
+
     private init() throws {
         realm = try Realm()
     }
@@ -435,83 +485,87 @@ public extension RomDatabase {
     func all<T: Object>(_ type: T.Type) -> Results<T> {
         return realm.objects(type)
     }
-    
+
     // Testing a Swift hack to make Swift 4 keypaths work with KVC keypaths
     /*
      public func all<T:Object>(sortedByKeyPath keyPath : KeyPath<T, AnyKeyPath>, ascending: Bool = true) -> Results<T> {
      return realm.objects(T.self).sorted(byKeyPath: keyPath._kvcKeyPathString!, ascending: ascending)
      }
-     
+
      public func all<T:Object>(where keyPath: KeyPath<T, AnyKeyPath>, value : String) -> Results<T> {
      return T.objects(in: self.realm, with: NSPredicate(format: "\(keyPath._kvcKeyPathString) == %@", value))
      }
-     
+
      public func allGames(sortedByKeyPath keyPath: KeyPath<PVGame, AnyKeyPath>, ascending: Bool = true) -> Results<PVGame> {
      return all(sortedByKeyPath: keyPath, ascending: ascending)
      }
-     
+
      */
-    
+
     func all<T: Object>(_: T.Type, sortedByKeyPath keyPath: String, ascending: Bool = true) -> Results<T> {
         return realm.objects(T.self).sorted(byKeyPath: keyPath, ascending: ascending)
     }
-    
+
     func all<T: Object>(_: T.Type, where keyPath: String, value: String) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", value))
     }
-    
+
     func all<T: Object>(_: T.Type, where keyPath: String, contains value: String) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) CONTAINS[cd] %@", value))
     }
-    
+
     func all<T: Object>(_: T.Type, where keyPath: String, beginsWith value: String) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) BEGINSWITH[cd] %@", value))
     }
-    
+
     func all<T: Object>(_: T.Type, where keyPath: String, value: Bool) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", NSNumber(value: value)))
     }
-    
+
     func all<T: Object, KeyType>(_: T.Type, where keyPath: String, value: KeyType) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", [value]))
     }
-    
+
     func all<T: Object>(_: T.Type, where keyPath: String, value: Int) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %i", value))
     }
-    
+
     func all<T: Object>(_: T.Type, filter: NSPredicate) -> Results<T> {
         return realm.objects(T.self).filter(filter)
     }
-    
+
     func object<T: Object, KeyType>(ofType _: T.Type, wherePrimaryKeyEquals value: KeyType) -> T? {
         return realm.object(ofType: T.self, forPrimaryKey: value)
     }
-    
+
     // HELPERS -- TODO: Get rid once we're all swift
     var allGames: Results<PVGame> {
         return all(PVGame.self)
     }
-    
+
     func allGames(sortedByKeyPath keyPath: String, ascending: Bool = true) -> Results<PVGame> {
         return all(PVGame.self, sortedByKeyPath: keyPath, ascending: ascending)
     }
-    
+
     func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
         return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
     }
-    
+
+    func game(withMD5 md5: String) -> PVGame? {
+        return object(ofType: PVGame.self, wherePrimaryKeyEquals: md5)
+    }
+
     // MARK: Save States
-    
+
     func allSaveStates() -> Results<PVSaveState> {
         return all(PVSaveState.self)
     }
-    
+
     func allSaveStates(forGameWithID gameID: String) -> Results<PVSaveState> {
         let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
         return realm.objects(PVSaveState.self).filter("game == %@", game as Any)
     }
-    
+
     func savetate(forID saveStateID: String) -> PVSaveState? {
         if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID) {
             return saveState
@@ -525,7 +579,7 @@ public extension Object {
     static func all() -> Results<PersistedType> {
         try! Realm().objects(Self.PersistedType)
     }
-    
+
     static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
         try! Realm().object(ofType: Self.PersistedType.self, forPrimaryKey: primaryKey)
     }
@@ -547,7 +601,7 @@ public extension RomDatabase {
             }
         }
     }
-    
+
     @objc
     func asyncWriteTransaction(_ block: @escaping () -> Void) {
         //        DispatchQueue.global(qos: .utility).async {
@@ -555,7 +609,7 @@ public extension RomDatabase {
             ELOG("Could not get or create Realm instance")
             return
         }
-        
+
         if realm.isInWriteTransaction {
             block()
         } else {
@@ -567,7 +621,7 @@ public extension RomDatabase {
         }
         //        }
     }
-    
+
     func asyncWriteTransaction(_ block: @escaping (Realm) -> Void) {
         //        DispatchQueue.global(qos: .utility).async {
         guard let realm = Thread.current.realm?.realm ?? (try? Realm()) else {
@@ -585,14 +639,14 @@ public extension RomDatabase {
         }
         //        }
     }
-    
+
     @objc
     func add(_ object: Object, update: Bool = false) throws {
         try writeTransaction {
             realm.add(object, update: update ? .all : .error)
         }
     }
-    
+
     @objc(addObjects:update:completion:)
     func add(_ objects: [Object], update: Bool = false) throws {
         try writeTransaction {
@@ -601,7 +655,7 @@ public extension RomDatabase {
             }
         }
     }
-    
+
     @objc
     func addAsync(_ object: Object, update: Bool = false) async throws {
         ILOG("Adding object to database")
@@ -621,7 +675,7 @@ public extension RomDatabase {
             }
         }
     }
-    
+
     func add<T: Object>(objects: [T], update: Bool = false) throws {
         try writeTransaction {
             realm.add(objects, update: update ? .all : .error)
@@ -653,23 +707,23 @@ public extension RomDatabase {
             realm.deleteAll()
         }
     }
-    
+
     func deleteAllGames() throws {
         let realm = try! Realm()
         let allUploadingObjects = realm.objects(PVGame.self)
-        
+
         try! realm.write {
             realm.delete(allUploadingObjects)
         }
     }
-    
+
     @objc
     func delete(_ object: Object) throws {
         try writeTransaction {
             realm.delete(object)
         }
     }
-    
+
     func renameGame(_ game: PVGame, toTitle title: String) {
         if !title.isEmpty {
             do {
@@ -697,7 +751,7 @@ public extension RomDatabase {
             ELOG("Failed to hide game \(game.title)\n\(error.localizedDescription)")
         }
     }
-    
+
     func delete(bios: PVBIOS) throws {
         guard let biosURL = bios.file?.url else {
             ELOG("No path for BIOS")
@@ -718,8 +772,26 @@ public extension RomDatabase {
             }
         }
     }
-    
-    func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false) throws {
+
+    func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false, source: DeletionSource = .userInitiated) throws {
+        // --- Cloud Sync Pre-Deletion Hook ---
+        // Capture MD5 *before* attempting any local deletion.
+        let md5 = game.md5Hash
+
+        // Only post notification if the deletion was initiated by the user AND md5 is valid
+        if source == .userInitiated {
+            // Use the game object itself for the notification, ensure it's valid
+            if game.isInvalidated {
+                WLOG("Attempted to post deletion notification for an invalidated game object.")
+            } else {
+                NotificationCenter.default.post(name: .PVGameWillBeDeleted, object: game, userInfo: ["md5": md5])
+                VLOG("Posted PVGameWillBeDeleted notification for md5: \(md5)")
+            }
+        } else {
+            VLOG("Skipping PVGameWillBeDeleted notification due to source: \(source)")
+        }
+        // --- End Cloud Sync Hook ---
+
         let romURL = PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {
             do {
@@ -738,7 +810,7 @@ public extension RomDatabase {
                     ELOG("Unable to delete save states at path: " + savesPath.path + "because: " + error.localizedDescription)
                 }
             }
-            
+
             let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
             if FileManager.default.fileExists(atPath: batteryPath.path) {
                 do {
@@ -780,17 +852,17 @@ public extension RomDatabase {
             ELOG("\(error.localizedDescription)")
         }
     }
-    
+
     // Deletes a save state and its associated files
     /// Deletes a save state and its associated files
     func delete(saveState: PVSaveState) throws {
         // Get the actual save state file path from the PVFile
         let actualSavePath = saveState.file?.url
         let imageURL = saveState.image?.url
-        
+
         // Create a thread-safe reference to the save state
         let saveStateRef = ThreadSafeReference(to: saveState)
-        
+
         // First delete the database entry
         do {
             try realm.write {
@@ -806,7 +878,7 @@ public extension RomDatabase {
             ELOG("Failed to delete save state from database: \(error.localizedDescription)")
             throw error
         }
-        
+
         // After successful database deletion, delete the files
         if let actualSavePath = actualSavePath, FileManager.default.fileExists(atPath: actualSavePath.path) {
             do {
@@ -816,7 +888,7 @@ public extension RomDatabase {
                 throw RomDeletionError.fileManagerDeletionError(error)
             }
         }
-        
+
         // Delete the screenshot if it exists
         if let imagePath = imageURL,
            FileManager.default.fileExists(atPath: imagePath.path) {
@@ -837,20 +909,20 @@ public extension RomDatabase {
             }
         }
     }
-    
+
     func deleteRelatedFilesGame(_ game: PVGame) {
         DLOG("\(game.romPath) related files: \(game.relatedFiles)")
         game.relatedFiles.forEach {
             self.handlDeletionOfRelatedFile($0.url, game: game)
         }
-        
+
         guard let gameFileUrl = game.file?.url
         else {
             return
         }
         deleteFilesWithSimilarTitle(gameFileUrl)
     }
-    
+
     func handlDeletionOfRelatedFile(_ relatedFile: URL?, game: PVGame) {
         let fileManager: FileManager = .default
         do {
@@ -865,7 +937,7 @@ public extension RomDatabase {
             ELOG(error.localizedDescription)
         }
     }
-    
+
     /// attempt to delete files with the same name. There's an issue when importing that some of the files do NOT get associated, so this function attempts to find similar files and deletes them. Anything that has the same name, regardless of extension and/or same tile but a suffix of "(Track " or "(Disc ".
     /// - Parameter gameFileUrl: file to use to try to delete similarly named file names
     func deleteFilesWithSimilarTitle(_ gameFileUrl: URL) {

@@ -31,20 +31,20 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
-@interface PVRetroArchCoreBridge (GBControls) <PVSupervisionSystemResponderClient>
+@interface PVRetroArchCoreBridge (SupervisionControls) <PVSupervisionSystemResponderClient>
 @end
 
-@implementation PVRetroArchCoreBridge (GBControls)
+@implementation PVRetroArchCoreBridge (SupervisionControls)
 #pragma mark - Control
 - (void)didPushSupervisionButton:(PVSupervisionButton)button forPlayer:(NSInteger)player {
-    [self handleGBButton:button forPlayer:player pressed:true];
+    [self handleSupervisionButton:button forPlayer:player pressed:true];
 }
 
 - (void)didReleaseSupervisionButton:(PVSupervisionButton)button forPlayer:(NSInteger)player {
-    [self handleGBButton:button forPlayer:player pressed:false];
+    [self handleSupervisionButton:button forPlayer:player pressed:false];
 }
 
-- (void)handleGBButton:(PVSupervisionButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed {
+- (void)handleSupervisionButton:(PVSupervisionButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed {
     static float xAxis=0;
     static float yAxis=0;
 

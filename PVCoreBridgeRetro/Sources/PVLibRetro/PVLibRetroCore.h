@@ -11,6 +11,12 @@
 @import PVCoreObjCBridge;
 
 #import <PVCoreBridgeRetro/libretro.h>
+
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+#import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 //#import <PVLibRetro/dynamic.h>
 
 //#pragma clang diagnostic push
@@ -62,6 +68,14 @@ __attribute__((weak_import))
 - (void)pollControllers;
 
 - (void *_Nonnull)getVariable:(const char *_Nonnull)variable;
+
+// Touch and mouse input support
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+- (void)handleTouchEvent:(UIEvent *)event;
+#else
+- (void)handleMouseEvent:(NSEvent *)event;
+#endif
+- (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
 
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;

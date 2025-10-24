@@ -23,6 +23,9 @@ public struct GameContextMenu: View {
     // Cache computed properties
     @State private var availableCores: [PVCore] = []
     @State private var hasSaveStates: Bool = false
+    @State private var hasCloudRecord: Bool = false
+    @State private var isDownloaded: Bool = true
+    @Default(.iCloudSync) private var iCloudSyncEnabled
 
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
@@ -45,6 +48,8 @@ public struct GameContextMenu: View {
             !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
         } ?? [])
         _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
+        _hasCloudRecord = State(initialValue: game.cloudRecordID != nil)
+        _isDownloaded = State(initialValue: game.isDownloaded)
     }
 
     public var body: some View {
@@ -78,6 +83,20 @@ public struct GameContextMenu: View {
                     Label("Manage Save States", systemImage: "clock.arrow.circlepath")
                 }
                 .disabled(game.saveStates.isEmpty)
+                // Show download option for games available in CloudKit but not downloaded locally
+                if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
+                    Button {
+                        contextMenuDelegate?.gameContextMenu(self, didRequestDownloadFromCloudFor: game)
+                    } label: { Label("Download from Cloud", systemImage: "icloud.and.arrow.down") }
+                }
+
+                // Show offload option for games that are downloaded and have a CloudKit record
+                if iCloudSyncEnabled && hasCloudRecord && isDownloaded {
+                    Button {
+                        offloadGameFromDevice(game)
+                    } label: { Label("Offload from Device", systemImage: "icloud.and.arrow.up") }
+                }
+
                 Button {
                     // Toggle isFavorite for the selected PVGame
                     toggleFavorite()
@@ -162,7 +181,7 @@ public struct GameContextMenu: View {
         Task {
             do {
                 let uniqueID = UUID().uuidString
-                let md5: String = game.md5 ?? ""
+                let md5: String = game.md5Hash ?? ""
                 let key = "artwork_\(md5)_\(uniqueID)"
 
                 // Write image to disk asynchronously
@@ -191,6 +210,88 @@ public struct GameContextMenu: View {
 }
 
 extension GameContextMenu {
+    /// Offload the game's primary ROM file from the device while keeping CloudKit record and metadata
+    private func offloadGameFromDevice(_ game: PVGame) {
+        Task {
+            guard !game.isInvalidated else { return }
+            let fileURL = game.file?.url
+
+            do {
+                if let url = fileURL, FileManager.default.fileExists(atPath: url.path) {
+                    try FileManager.default.removeItem(at: url)
+                }
+
+                // Update Realm to mark as not downloaded and clear PVFile reference
+                try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                    if let thawed = game.thaw() {
+                        thawed.isDownloaded = false
+                        thawed.file = nil
+                    }
+                }
+
+                await MainActor.run {
+                    // Update local state so the menu reflects the new status if reopened
+                    self.isDownloaded = false
+                    rootDelegate?.showMessage("Offloaded \(game.title) from this device. You can re-download it from Cloud later.", title: "Offloaded")
+                }
+            } catch {
+                await MainActor.run {
+                    rootDelegate?.showMessage("Failed to offload \(game.title): \(error.localizedDescription)", title: "Error")
+                }
+            }
+        }
+    }
+    /// Download a game from CloudKit
+    func downloadGameFromCloud() {
+        guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
+
+        DLOG("Downloading game from CloudKit: \(game.title) (\(recordID))")
+
+        // Show loading indicator
+        rootDelegate?.showMessage("Downloading \(game.title)...", title: "Downloading")
+
+        Task {
+            do {
+                // Find the appropriate syncer
+                guard let syncer = CloudKitSyncerStore.shared.getSyncer() else {
+                    ELOG("No CloudKit syncer available")
+                    await MainActor.run {
+                        rootDelegate?.showMessage("Failed to download: No CloudKit syncer available", title: "Error")
+                    }
+                    return
+                }
+
+                // Download the file
+                let fileURL = try await syncer.downloadFileOnDemand(recordName: recordID)
+                DLOG("Downloaded file to: \(fileURL.path)")
+
+                // Update the game's download status in the database
+                try await updateGameDownloadStatus(recordID: recordID, isDownloaded: true)
+
+                await MainActor.run {
+                    rootDelegate?.showMessage("\(game.title) has been downloaded successfully", title: "Download Complete")
+                }
+            } catch {
+                ELOG("Error downloading file: \(error.localizedDescription)")
+                await MainActor.run {
+                    rootDelegate?.showMessage("Failed to download: \(error.localizedDescription)", title: "Error")
+                }
+            }
+        }
+    }
+
+    /// Update the download status of a game in the database
+    private func updateGameDownloadStatus(recordID: String, isDownloaded: Bool) async throws {
+        let realm = try await Realm()
+
+        try await realm.asyncWrite {
+            if let game = realm.objects(PVGame.self).filter("cloudRecordID == %@", recordID).first {
+                game.isDownloaded = isDownloaded
+                DLOG("Updated download status for game: \(game.title)")
+            }
+        }
+    }
+
     func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
         // Get the MD5 of the game

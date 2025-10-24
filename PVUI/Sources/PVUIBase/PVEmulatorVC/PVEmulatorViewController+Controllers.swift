@@ -14,21 +14,26 @@ extension PVEmulatorViewController {
 
     public func hideOrShowMenuButton() {
 
-        // find out how many *real* controllers we have....
-        let controllers = PVControllerManager.shared.controllers.filter { controller in
-            // 8Bitdo controllers don't have a pause button, so don't hide the menu
-            if (controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
-                return false
+        // If DeltaSkins are enabled, hide the legacy overlay menu button
+        if isDeltaSkinEnabled {
+            menuButton?.isHidden = true
+        } else {
+            // find out how many *real* controllers we have....
+            let controllers = PVControllerManager.shared.controllers.filter { controller in
+                // 8Bitdo controllers don't have a pause button, so don't hide the menu
+                if (controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
+                    return false
+                }
+                // show menu for "virtual" controllers
+                if (controller.isSnapshot) {
+                    return false
+                }
+                return true
             }
-            // show menu for "virtual" controllers
-            if (controller.isSnapshot) {
-                return false
-            }
-            return true
-        }
 
-        // don't hide menu button
-        menuButton?.isHidden = false; //controllers.count != 0
+            // don't hide menu button
+            menuButton?.isHidden = false; //controllers.count != 0
+        }
 
         #if os(iOS)
             self.setNeedsStatusBarAppearanceUpdate()

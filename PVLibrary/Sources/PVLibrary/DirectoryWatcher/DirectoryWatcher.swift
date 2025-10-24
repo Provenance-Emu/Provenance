@@ -36,6 +36,7 @@ public enum ExtractionStatus: Equatable {
     case startedArchive(path: URL)
     case updatedArchive(path: URL)
     case completedArchive(paths: [URL])
+    case failed(error: Error)
 
     public static func == (lhs: ExtractionStatus, rhs: ExtractionStatus) -> Bool {
         switch (lhs, rhs) {
@@ -55,7 +56,11 @@ public enum ExtractionStatus: Equatable {
 
 /// Notification names for the directory watcher
 public extension NSNotification.Name {
-    static let PVArchiveInflationFailed = NSNotification.Name("PVArchiveInflationFailedNotification")
+    static let PVArchiveInflationFailed = Notification.Name("PVArchiveInflationFailedNotification")
+    static let archiveExtractionStarted = Notification.Name("archiveExtractionStarted")
+    static let archiveExtractionProgress = Notification.Name("archiveExtractionProgress")
+    static let archiveExtractionCompleted = Notification.Name("archiveExtractionCompleted")
+    static let archiveExtractionFailed = Notification.Name("archiveExtractionFailed")
 }
 
 import Perception
@@ -233,6 +238,19 @@ public final class DirectoryWatcher: ObservableObject {
 
         do {
             updateExtractionStatus(.startedArchive(path: filePath))
+            
+            // Post notification that extraction has started
+            Task { @MainActor in
+                NotificationCenter.default.post(
+                    name: .archiveExtractionStarted,
+                    object: nil,
+                    userInfo: [
+                        "path": filePath.path,
+                        "filename": filePath.lastPathComponent,
+                        "timestamp": Date()
+                    ]
+                )
+            }
 
             let tempDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
             try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
@@ -241,6 +259,20 @@ public final class DirectoryWatcher: ObservableObject {
             for try await extractedFile in extractor.extract(at: filePath, to: tempDirectory, progress: { progress in
                 ILOG("Extraction progress for \(filePath.lastPathComponent): \(Int(progress * 100))%")
                 self.extractionProgress = progress
+                
+                // Post notification for extraction progress
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: .archiveExtractionProgress,
+                        object: nil,
+                        userInfo: [
+                            "progress": progress,
+                            "path": filePath.path,
+                            "filename": filePath.lastPathComponent,
+                            "timestamp": Date()
+                        ]
+                    )
+                }
             }) {
                 extractedFiles.append(extractedFile)
                 updateExtractionStatus(.updatedArchive(path: extractedFile))
@@ -250,6 +282,21 @@ public final class DirectoryWatcher: ObservableObject {
             try await FileManager.default.removeItem(at: filePath)
             updateExtractionStatus(.completedArchive(paths: extractedFiles))
             ILOG("Archive extraction completed for file: \(filePath.path)")
+
+            // Post notification that extraction has completed
+            Task { @MainActor in
+                NotificationCenter.default.post(
+                    name: .archiveExtractionCompleted,
+                    object: nil,
+                    userInfo: [
+                        "paths": extractedFiles.map { $0.path },
+                        "count": extractedFiles.count,
+                        "originalPath": filePath.path,
+                        "originalFilename": filePath.lastPathComponent,
+                        "timestamp": Date()
+                    ]
+                )
+            }
 
             // Sort extracted files, prioritizing .m3u and .cue files
             let sortedFiles = sortExtractedFiles(extractedFiles)
@@ -264,7 +311,23 @@ public final class DirectoryWatcher: ObservableObject {
             try await FileManager.default.removeItem(at: tempDirectory)
         } catch {
             ELOG("Error during archive extraction: \(error.localizedDescription)")
-            // Handle the error appropriately, maybe update the UI or retry the operation
+            updateExtractionStatus(.failed(error: error))
+            
+            // Post notification that extraction has failed
+            Task { @MainActor in
+                NotificationCenter.default.post(
+                    name: .archiveExtractionFailed,
+                    object: nil,
+                    userInfo: [
+                        "error": error.localizedDescription,
+                        "path": filePath.path,
+                        "filename": filePath.lastPathComponent,
+                        "timestamp": Date()
+                    ]
+                )
+            }
+            
+            throw error
         }
     }
 
@@ -349,15 +412,6 @@ public final class DirectoryWatcher: ObservableObject {
 
     private func processFile(at url: URL) {
         ILOG("Processing file: \(url.path)")
-
-        // Check if this is a BIOS file first
-        if isBIOSFile(url) {
-            ILOG("Found BIOS file: \(url.lastPathComponent)")
-            // Don't decompress, just notify the BIOS watcher
-            NotificationCenter.default.post(name: .BIOSFileFound, object: url)
-            completedFilesContinuation?.yield([url])
-            return
-        }
 
         // Handle archives and other files
         if isArchive(url) {
@@ -664,6 +718,9 @@ public extension DirectoryWatcher {
                     case .updated(let path):
                         print("Extraction updated, yielding path: \(path)")
                         continuation.yield([path])
+                    case .failed(let error):
+                        ELOG("Extraction failed with error: \(error)")
+                        // Don't yield anything for failed extractions
                     case .started, .idle:
                         print("Extraction status changed to \(status)")
                         break

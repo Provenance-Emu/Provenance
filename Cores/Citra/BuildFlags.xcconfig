@@ -9,6 +9,8 @@ OTHER_CFLAGS = $(inherited) -fpermissive
 OTHER_CFLAGS = $(inherited) -frename-registers
 OTHER_CFLAGS = $(inherited) -fsingle-precision-constant
 OTHER_CFLAGS = $(inherited) -ftree-vectorize
+OTHER_CFLAGS = $(inherited) -fvisibility=hidden
+OTHER_CFLAGS = $(inherited) -fvisibility-inlines-hidden
 // Experimental
 OTHER_CFLAGS = $(inherited) -Wl,--gc-sections
 //OTHER_CFLAGS = $(inherited) -fdata-sections
@@ -20,6 +22,11 @@ OTHER_CFLAGS = $(inherited) -fomit-frame-pointer
 //OTHER_CFLAGS = $(inherited) -fstrict-aliasing
 OTHER_CFLAGS = $(inherited) -funsafe-math-optimizations
 OTHER_CFLAGS = $(inherited) -fvectorize
+OTHER_CFLAGS = $(inherited) -fvisibility=hidden
+OTHER_CFLAGS = $(inherited) -fvisibility-inlines-hidden
+
+// Add linker flags to hide glslang symbols
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_glslang* -Wl,-unexported_symbol,_SPIRV*
 
 //Note that:
 //The -mcpu flag optimizes specifically for the target CPU architecture
@@ -36,7 +43,7 @@ OTHER_CFLAGS = $(inherited) -mtune=apple-a15  // iPhone 13 series, iPhone 14/14+
 //OTHER_CFLAGS = $(inherited) -mcpu=apple-a17  // iPhone 15 Pro/Pro Max
 //OTHER_CFLAGS = $(inherited) -mcpu=apple-a18    // iPhone 16/16+, iPhone 16 Pro/Pro Max
 //OTHER_CFLAGS = $(inherited) -mtune=apple-a18   // iPhone 16/16+, iPhone 16 Pro/Pro Max
-OTHER_CFLAGS = $(inherited) -march=armv8-a+simd // 34-36fps kirby top screen level 1
+OTHER_CFLAGS = $(inherited) -march=armv8-a+simd+crc+crypto // 34-36fps kirby top screen level 1
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_AUDIOTOOLBOX
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) CPPHTTPLIB_OPENSSL_SUPPORT
@@ -50,6 +57,25 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) ENABLE_VULKAN=1
 
 //OTHER_CPPFLAGS = $(inherited) -fmodules -fcxx-modules
 OTHER_LDFLAGS = $(inherited) -ObjC -DIPHONEOS
+// More aggressive symbol hiding for glslang to prevent conflicts with Dolphin
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_glslang* -Wl,-unexported_symbol,_SPIRV*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TBuiltInResource* -Wl,-unexported_symbol,_EShLanguage*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_EShTargetLanguageVersion* -Wl,-unexported_symbol,_TShader*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TProgram* -Wl,-unexported_symbol,_TIntermediate*
+// Hide all C++ mangled glslang symbols
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN7glslang* -Wl,-unexported_symbol,__ZN5SPIRV*
+// Force all symbols to be private by default
+//OTHER_LDFLAGS = $(inherited) -Wl,-private_bundle
+// rpath-based isolation to prevent library interference
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path/PVAzahar
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path/../Frameworks/PVAzahar.framework
+// Prevent implicit dylib loading and force explicit paths
+OTHER_LDFLAGS = $(inherited) -Wl,-no_implicit_dylibs
+// Use two-level namespace to isolate symbols
+//OTHER_LDFLAGS = $(inherited) -Wl,-two_levelnamespace
+// Additional visibility flags to hide symbols
+OTHER_CFLAGS = $(inherited) -fvisibility=hidden -fvisibility-inlines-hidden
+OTHER_CPLUSPLUSFLAGS = $(inherited) -fvisibility=hidden -fvisibility-inlines-hidden
 
 // Swift <--> C++ Interop
 // 1. Include the "MYSWIFTMODULENAME-Swift.h" header from your C++ code. (Where MYSWIFTMODULENAME is your Swift module’s name)

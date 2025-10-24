@@ -18,7 +18,7 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
 
     // MARK: Memebers
     var core: PVEmulatorCore { get }
-    var game: PVGame { get }
+    var game: PVGame! { get }
 
     // MARK: UI
     var isShowingMenu: Bool  { get set }
@@ -31,7 +31,7 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     var autosaveTimer: Timer?  { get }
     var gameStartTime: Date?  { get }
 
-    var controllerViewController: (UIViewController & StartSelectDelegate)? { get }
+    var controllerViewController: (any ControllerVC)? { get }
     func controllerPauseButtonPressed(_ sender: Any?)
 
     // MARK: - Methods
@@ -41,6 +41,11 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
 
     // MARK: Saves
     func quit(optionallySave canSave: Bool, completion: QuitCompletion?) async
+    func quicksave() async throws -> Bool
+    func quickload() async throws -> Bool
+    func autoSaveState() async throws -> Bool
+
+    func takeScreenshot()
 
     // MARK: Menus
     func hideOrShowMenuButton()
@@ -145,6 +150,49 @@ public extension PVEmualatorControllerProtocol {
 
 // MARK: Screenshots
 public extension PVEmualatorControllerProtocol {
+    
+    @discardableResult
+    @MainActor
+    func quicksave() async throws -> Bool {
+        guard core.supportsSaveStates else {
+            WLOG("Core \(core.description) doesn't support save states.")
+            throw SaveStateError.saveStatesUnsupportedByCore
+        }
+        
+        DLOG("Performing quick save for \(game.title)")
+        let image = captureScreenshot()
+        return try await createNewSaveState(auto: false, screenshot: image)
+    }
+    
+    @discardableResult
+    @MainActor
+    func quickload() async throws -> Bool {
+        guard core.supportsSaveStates else {
+            WLOG("Core \(core.description) doesn't support save states.")
+            throw SaveStateError.saveStatesUnsupportedByCore
+        }
+        
+        // Get the most recent save state (manual or auto)
+        let saveStates = game.saveStates.sorted(byKeyPath: "date", ascending: false)
+        
+        guard let latestSaveState = saveStates.first else {
+            WLOG("No save states found for \(game.title)")
+            throw SaveStateError.noSaveStatesFound
+        }
+        
+        DLOG("Loading most recent save state for \(game.title) from \(latestSaveState.date)")
+        
+        // Load the save state
+        guard let saveStateURL = latestSaveState.url else {
+            ELOG("Save state file URL is nil")
+            throw SaveStateError.saveStateFileNotFound
+        }
+        
+        try await core.loadState(fromFileAtPath: saveStateURL.path)
+        DLOG("Successfully loaded save state")
+        
+        return true
+    }
 
     @discardableResult
     @MainActor
@@ -175,12 +223,14 @@ public extension PVEmualatorControllerProtocol {
         return try await createNewSaveState(auto: true, screenshot: image)
     }
 
-#if os(iOS)
+    @MainActor
     func takeScreenshot() {
         if let screenshot = captureScreenshot() {
+#if os(iOS)
             Task.detached {
                 UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
             }
+#endif
 
             if let pngData = screenshot.pngData() {
                 let dateString = PVEmulatorConfiguration.string(fromDate: Date())
@@ -203,7 +253,6 @@ public extension PVEmualatorControllerProtocol {
         isShowingMenu = false
     }
 
-#endif
 
     //    #error ("Use to https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/iCloud/iCloud.html to save files to iCloud from local url, and setup packages for bundles")
     @MainActor
@@ -262,6 +311,13 @@ public extension PVEmualatorControllerProtocol {
             /// Create and add the save state
             let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
             realm.add(saveState)
+            
+            /// Post notification for CloudKit sync
+            let saveStateID = saveState.id
+            Task { @MainActor in
+                NotificationCenter.default.post(name: .PVSaveStateSaved, object: nil, userInfo: ["saveStateID": saveStateID])
+                DLOG("Posted PVSaveStateSaved notification for save state: \(saveStateID)")
+            }
 
             /// Store metadata asynchronously
             LibrarySerializer.storeMetadata(saveState) { result in

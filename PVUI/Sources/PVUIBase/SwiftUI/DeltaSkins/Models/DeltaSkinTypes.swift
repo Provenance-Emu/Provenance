@@ -2,6 +2,7 @@
 public enum DeltaSkinDevice: String, Codable, Hashable, Equatable, CaseIterable {
     case iphone
     case ipad
+    case tv
 }
 
 public enum DeltaSkinDisplayType: String, Codable, Hashable, Equatable, CaseIterable {
@@ -60,9 +61,9 @@ public struct DeltaSkinTraits: Codable, Hashable, Equatable {
     public let iPadModel: DeltaSkinIPadModel?
     public let externalDisplay: DeltaSkinExternalDisplay
 
-    public init(device: DeltaSkinDevice,
-                displayType: DeltaSkinDisplayType,
-                orientation: DeltaSkinOrientation,
+    public init(device: DeltaSkinDevice = .iphone,
+                displayType: DeltaSkinDisplayType = .standard,
+                orientation: DeltaSkinOrientation = .portrait,
                 iPadModel: DeltaSkinIPadModel? = nil,
                 externalDisplay: DeltaSkinExternalDisplay = .none) {
         self.device = device
@@ -124,6 +125,8 @@ extension DeltaSkinDevice {
             }
         case .ipad:
             // iPad always uses PDF assets
+            return .zero
+        case .tv:
             return .zero
         }
     }
@@ -214,6 +217,7 @@ public enum FilterParameter: Codable, Hashable, Equatable {
     case vector(x: Float, y: Float)
     case color(r: Float, g: Float, b: Float)
     case rectangle(x: Float, y: Float, width: Float, height: Float)
+    case affineTransform(scaleX: Float?, scaleY: Float?, translateX: Float?, translateY: Float?, rotation: Float?)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -221,18 +225,25 @@ public enum FilterParameter: Codable, Hashable, Equatable {
         if let number = try? container.decode(Float.self) {
             self = .number(number)
         } else if let dict = try? container.decode([String: NumericValue].self) {
-            if dict.keys.contains("x") && dict.keys.contains("y") {
-                self = .vector(x: dict["x"]!.value, y: dict["y"]!.value)
-            } else if dict.keys.contains("r") && dict.keys.contains("g") && dict.keys.contains("b") {
-                self = .color(r: dict["r"]!.value, g: dict["g"]!.value, b: dict["b"]!.value)
-            } else if dict.keys.contains("x") && dict.keys.contains("y") &&
-                      dict.keys.contains("width") && dict.keys.contains("height") {
+            if dict.keys.contains("x") && dict.keys.contains("y") &&
+               dict.keys.contains("width") && dict.keys.contains("height") {
                 self = .rectangle(
                     x: dict["x"]!.value,
                     y: dict["y"]!.value,
                     width: dict["width"]!.value,
                     height: dict["height"]!.value
                 )
+            } else if dict.keys.contains("x") && dict.keys.contains("y") {
+                self = .vector(x: dict["x"]!.value, y: dict["y"]!.value)
+            } else if dict.keys.contains("r") && dict.keys.contains("g") && dict.keys.contains("b") {
+                self = .color(r: dict["r"]!.value, g: dict["g"]!.value, b: dict["b"]!.value)
+            } else if dict.keys.contains("scaleX") || dict.keys.contains("scaleY") || dict.keys.contains("translateX") || dict.keys.contains("translateY") || dict.keys.contains("rotation") {
+                let sx = dict["scaleX"]?.value
+                let sy = dict["scaleY"]?.value
+                let tx = dict["translateX"]?.value
+                let ty = dict["translateY"]?.value
+                let rot = dict["rotation"]?.value
+                self = .affineTransform(scaleX: sx, scaleY: sy, translateX: tx, translateY: ty, rotation: rot)
             } else {
                 throw DecodingError.dataCorrupted(
                     DecodingError.Context(
@@ -266,6 +277,14 @@ public enum FilterParameter: Codable, Hashable, Equatable {
                 "x": x, "y": y,
                 "width": width, "height": height
             ])
+        case .affineTransform(let sx, let sy, let tx, let ty, let rot):
+            var dict: [String: Float] = [:]
+            if let sx = sx { dict["scaleX"] = sx }
+            if let sy = sy { dict["scaleY"] = sy }
+            if let tx = tx { dict["translateX"] = tx }
+            if let ty = ty { dict["translateY"] = ty }
+            if let rot = rot { dict["rotation"] = rot }
+            try container.encode(dict)
         }
     }
 }
@@ -296,17 +315,27 @@ private struct NumericValue: Codable {
 import PVPrimitives
 
 /// Game type identifiers
-public enum DeltaSkinGameType: String, Codable, Hashable, Equatable, Comparable {
-    case gb = "com.rileytestut.delta.game.gb"
-    case gbc = "com.rileytestut.delta.game.gbc"
-    case gba = "com.rileytestut.delta.game.gba"
-    case nes = "com.rileytestut.delta.game.nes"
-    case snes = "com.rileytestut.delta.game.snes"
-    case n64 = "com.rileytestut.delta.game.n64"
-    case nds = "com.rileytestut.delta.game.ds"
-    case genesis = "com.rileytestut.delta.game.genesis"
-    case gamegear = "com.rileytestut.delta.game.gg"
-    case masterSystem = "com.rileytestut.delta.game.ms"
+public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
+    case gb
+    case gbc
+    case gba
+    case nes
+    case snes
+    case n64
+    case nds
+    case genesis            // Sega Mega Drive / Genesis
+    case gamegear
+    case masterSystem
+    case psx                // PlayStation (PS1/PSX)
+    // Extended support for Manic + others
+    case segaCD             // Mega CD / Sega CD
+    case sega32X            // 32X
+    case sg1000
+    case saturn
+    case virtualBoy
+    case psp
+    case threeDS            // 3DS
+    case pokemonMini
 
     // Implement Comparable
     public static func < (lhs: DeltaSkinGameType, rhs: DeltaSkinGameType) -> Bool {
@@ -316,7 +345,12 @@ public enum DeltaSkinGameType: String, Codable, Hashable, Equatable, Comparable 
             .nes, .snes,            // Nintendo consoles
             .n64,                   // Nintendo 3D
             .nds,                   // Nintendo DS
-            .genesis, .gamegear, .masterSystem                // Sega
+            .genesis, .gamegear, .masterSystem, .segaCD, .sega32X, .sg1000, // Sega
+            .psx, .psp,             // Sony
+            .saturn,                // Sega Saturn
+            .virtualBoy,            // Nintendo Virtual Boy
+            .threeDS,               // Nintendo 3DS
+            .pokemonMini            // Pokemon Mini
         ]
 
         guard let lhsIndex = order.firstIndex(of: lhs),
@@ -327,18 +361,171 @@ public enum DeltaSkinGameType: String, Codable, Hashable, Equatable, Comparable 
         return lhsIndex < rhsIndex
     }
 
+    // MARK: - String Decoding Helpers
+
+    /// Create from any known representation: full URN, short code, or suffix (e.g., "com.rileytestut.delta.game.gba", "public.aoshuang.game.ps1", "psx", "md", "sega cd").
+    public static func fromAnyString(_ string: String) -> DeltaSkinGameType? {
+        let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return nil }
+
+        let lower = trimmed.lowercased()
+
+        // Extract last component after last '.' if it looks like a namespaced id
+        let suffix: String = {
+            if let last = lower.split(separator: ".").last {
+                return String(last)
+            }
+            return lower
+        }()
+
+        // Normalize separators/spaces
+        let token = suffix
+            .replacingOccurrences(of: "-", with: "")
+            .replacingOccurrences(of: " ", with: "")
+            .replacingOccurrences(of: "_", with: "")
+
+        // Map of aliases -> canonical case
+        switch token {
+        // Nintendo
+        case "gb": return .gb
+        case "gbc": return .gbc
+        case "gba": return .gba
+        case "nes": return .nes
+        case "snes": return .snes
+        case "n64", "gc", "gamecube": return .n64
+        case "ds", "nds": return .nds
+        case "vb", "virtualboy": return .virtualBoy
+        case "3ds", "three3ds", "threeds": return .threeDS
+
+        // Sega
+        case "genesis", "md", "megadrive": return .genesis
+        case "gg", "gamegear": return .gamegear
+        case "ms", "mastersystem": return .masterSystem
+        case "mcd", "segacd", "megacd": return .segaCD
+        case "32x", "sega32x": return .sega32X
+        case "sg1000": return .sg1000
+        case "ss", "saturn": return .saturn
+
+        // Sony
+        case "psx", "ps1", "ps2", "ps3": return .psx
+        case "psp": return .psp
+
+        // Other
+        case "pm", "pokemonmini", "pokemonmini": return .pokemonMini
+        default:
+            // Try to parse known Delta full IDs explicitly
+            if lower.hasPrefix("com.rileytestut.delta.game.") {
+                let deltaSlug = token
+                return fromAnyString(deltaSlug)
+            }
+            // Try to parse known Manic full IDs explicitly
+            if lower.hasPrefix("public.aoshuang.game.") {
+                let manicSlug = token
+                return fromAnyString(manicSlug)
+            }
+            return nil
+        }
+    }
+
+    // MARK: - Codable
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let raw = try container.decode(String.self)
+        if let val = DeltaSkinGameType.fromAnyString(raw) {
+            self = val
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Unsupported DeltaSkinGameType string: \(raw)"
+            )
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        // Prefer Delta ID when available, otherwise fall back to Manic ID
+        if let delta = self.deltaIdentifierString {
+            try container.encode(delta)
+        } else if let manic = self.manicIdentifierString {
+            try container.encode(manic)
+        } else {
+            // Fallback to simple case name if nothing else
+            try container.encode(String(describing: self))
+        }
+    }
+
+    // MARK: - Identifier Strings
+
+    /// Delta-style identifier (when known)
+    public var deltaIdentifierString: String? {
+        switch self {
+        case .gb: return "com.rileytestut.delta.game.gb"
+        case .gbc: return "com.rileytestut.delta.game.gbc"
+        case .gba: return "com.rileytestut.delta.game.gba"
+        case .nes: return "com.rileytestut.delta.game.nes"
+        case .snes: return "com.rileytestut.delta.game.snes"
+        case .n64: return "com.rileytestut.delta.game.n64"
+        case .nds: return "com.rileytestut.delta.game.ds"
+        case .genesis: return "com.rileytestut.delta.game.genesis"
+        case .gamegear: return "com.rileytestut.delta.game.gg"
+        case .masterSystem: return "com.rileytestut.delta.game.ms"
+        case .psx: return "com.rileytestut.delta.game.psx"
+        // Not present in Delta’s identifiers
+        case .segaCD, .sega32X, .sg1000, .saturn, .virtualBoy, .psp, .threeDS, .pokemonMini:
+            return nil
+        }
+    }
+
+    /// Manic-style identifier (when known)
+    public var manicIdentifierString: String? {
+        let prefix = "public.aoshuang.game."
+        switch self {
+        case .gb: return prefix + "gb"
+        case .gbc: return prefix + "gbc"
+        case .gba: return prefix + "gba"
+        case .nes: return prefix + "nes"
+        case .snes: return prefix + "snes"
+        case .n64: return prefix + "n64"
+        case .nds: return prefix + "ds"
+        case .genesis: return prefix + "md"         // Mega Drive
+        case .gamegear: return prefix + "gg"
+        case .masterSystem: return prefix + "ms"
+        case .psx: return prefix + "ps1"
+        case .segaCD: return prefix + "mcd"
+        case .sega32X: return prefix + "32x"
+        case .sg1000: return prefix + "sg1000"
+        case .saturn: return prefix + "ss"
+        case .virtualBoy: return prefix + "vb"
+        case .psp: return prefix + "psp"
+        case .threeDS: return prefix + "3ds"
+        case .pokemonMini: return prefix + "pm"
+        }
+    }
+
+    // MARK: - SystemIdentifier Mapping
+
     public init?(systemIdentifier: SystemIdentifier) {
         switch systemIdentifier {
         case .GB: self = .gb
         case .GBC: self = .gbc
         case .GBA: self = .gba
-        case .NES: self = .nes
+        case .FDS, .NES: self = .nes
         case .SNES: self = .snes
-        case .N64: self = .n64
+        case .N64, .GameCube: self = .n64
         case .DS: self = .nds
         case .Genesis: self = .genesis
         case .GameGear: self = .gamegear
         case .MasterSystem: self = .masterSystem
+        case .SG1000: self = .sg1000
+        case .Sega32X: self = .sega32X
+        case .SegaCD: self = .segaCD
+        case .Saturn: self = .saturn
+        case .VirtualBoy: self = .virtualBoy
+        case .PSX, .PS2, .PS3: self = .psx
+        case .PSP: self = .psp
+        case ._3DS: self = .threeDS
+        case .PokemonMini: self = .pokemonMini
         default : return nil
         }
     }
@@ -355,7 +542,48 @@ public enum DeltaSkinGameType: String, Codable, Hashable, Equatable, Comparable 
         case .genesis: return .Genesis
         case .gamegear: return .GameGear
         case .masterSystem: return .MasterSystem
-        default: return nil
+        case .sg1000: return .SG1000
+        case .sega32X: return .Sega32X
+        case .segaCD: return .SegaCD
+        case .saturn: return .Saturn
+        case .virtualBoy: return .VirtualBoy
+        case .psx: return .PSX
+        case .psp: return .PSP
+        case .threeDS: return ._3DS
+        case .pokemonMini: return .PokemonMini
+        }
+    }
+
+    /// Check whether the game type matches a loose identifier token (e.g., "nes", "md", "ps1").
+    public func matchesIdentifier(_ token: String) -> Bool {
+        let t = token.lowercased()
+        // Match against suffix tokens and both identifier styles
+        if let delta = deltaIdentifierString?.split(separator: ".").last?.lowercased(), delta == t { return true }
+        if let manic = manicIdentifierString?.split(separator: ".").last?.lowercased(), manic == t { return true }
+        // Direct alias matching
+        switch (self, t) {
+        case (.gb, "gb"),
+             (.gbc, "gbc"),
+             (.gba, "gba"),
+             (.nes, "nes"),
+             (.snes, "snes"),
+             (.n64, "n64"),
+             (.nds, "nds"), (.nds, "ds"),
+             (.virtualBoy, "vb"), (.virtualBoy, "virtualboy"),
+             (.threeDS, "3ds"),
+             (.genesis, "genesis"), (.genesis, "md"), (.genesis, "megadrive"),
+             (.gamegear, "gg"), (.gamegear, "gamegear"),
+             (.masterSystem, "ms"), (.masterSystem, "mastersystem"),
+             (.segaCD, "mcd"), (.segaCD, "segacd"), (.segaCD, "megacd"),
+             (.sega32X, "32x"), (.sega32X, "sega32x"),
+             (.sg1000, "sg1000"),
+             (.saturn, "ss"), (.saturn, "saturn"),
+             (.psx, "psx"), (.psx, "ps1"),
+             (.psp, "psp"),
+             (.pokemonMini, "pm"), (.pokemonMini, "pokemonmini"):
+            return true
+        default:
+            return false
         }
     }
 }

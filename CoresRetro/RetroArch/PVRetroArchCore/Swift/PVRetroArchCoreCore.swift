@@ -24,13 +24,27 @@ internal import enum PVCoreBridge.PVDSButton
 @objc
 @objcMembers
 public class PVRetroArchCoreCore: PVEmulatorCore {
-    
+
     public override var rendersToOpenGL: Bool { true }
     public override var isDoubleBuffered: Bool { true }
-    
+    public override var supportsSkins: Bool { true }
+    public override var supportsAudioVisualizer: Bool { true }
+    public override func setPauseEmulation(_ flag: Bool) {
+        _bridge.setPauseEmulation(flag)
+        super.setPauseEmulation(flag)
+    }
+    public override var supportsSaveStates: Bool {
+        let unsupportedCores = [
+            "dreamcast"
+        ]
+        return (!unsupportedCores.contains(self.systemIdentifier ?? "")
+                && !unsupportedCores.contains(self.systemName))
+                || core_info_current_supports_savestate()
+    }
+
     // MARK: Lifecycle
     public lazy var _bridge: PVRetroArchCoreBridge = .init()
-    
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
@@ -44,7 +58,7 @@ extension PVRetroArchCoreCore: DiscSwappable {
     public var currentGameSupportsMultipleDiscs: Bool {
         return _bridge.currentGameSupportsMultipleDiscs
     }
-    
+
     public var numberOfDiscs: UInt {
         return _bridge.numberOfDiscs
     }
@@ -67,7 +81,7 @@ extension PVRetroArchCoreCore: PVGBASystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVGBAButton, forPlayer player: Int) {
         (_bridge as! PVGBASystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PVGBAButton, forPlayer player: Int) {
         (_bridge as! PVGBASystemResponderClient).didRelease(button, forPlayer: player)
     }
@@ -77,7 +91,7 @@ extension PVRetroArchCoreCore: PV2600SystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PV2600Button, forPlayer player: Int) {
         (_bridge as! PV2600SystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PV2600Button, forPlayer player: Int) {
         (_bridge as! PV2600SystemResponderClient).didRelease(button, forPlayer: player)
     }
@@ -90,11 +104,11 @@ extension PVRetroArchCoreCore: PV5200SystemResponderClient {
     public func didMoveJoystick(_ button: PVCoreBridge.PV5200Button, withValue value: CGFloat, forPlayer player: Int) {
         (_bridge as! PV5200SystemResponderClient).didMoveJoystick(button, withValue: value, forPlayer: player)
     }
-    
+
     public func didPush(_ button: PVCoreBridge.PV5200Button, forPlayer player: Int) {
         (_bridge as! PV5200SystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PV5200Button, forPlayer player: Int) {
         (_bridge as! PV5200SystemResponderClient).didRelease(button, forPlayer: player)
     }
@@ -208,9 +222,16 @@ extension PVRetroArchCoreCore: PVPSXSystemResponderClient {
         (_bridge as! PVPSXSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
     public func didPush(_ button: PVCoreBridge.PVPSXButton, forPlayer player: Int) {
+        if button == .analogMode {
+            togglePSXAnalogMode()
+            return
+        }
         (_bridge as! PVPSXSystemResponderClient).didPush(button, forPlayer: player)
     }
     public func didRelease(_ button: PVCoreBridge.PVPSXButton, forPlayer player: Int) {
+        if button == .analogMode {
+            return
+        }
         (_bridge as! PVPSXSystemResponderClient).didRelease(button, forPlayer: player)
     }
 }
@@ -219,7 +240,7 @@ extension PVRetroArchCoreCore: PVPS2SystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVPS2Button, forPlayer player: Int) {
         (_bridge as! PVPS2SystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PVPS2Button, forPlayer player: Int) {
         (_bridge as! PVPS2SystemResponderClient).didRelease(button, forPlayer: player)
     }
@@ -232,7 +253,7 @@ extension PVRetroArchCoreCore: PVGenesisSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVGenesisButton, forPlayer player: Int) {
         (_bridge as! PVGenesisSystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PVGenesisButton, forPlayer player: Int) {
         (_bridge as! PVGenesisSystemResponderClient).didRelease(button, forPlayer: player)
     }
@@ -258,9 +279,9 @@ extension PVRetroArchCoreCore: PVSega32XSystemResponderClient {
 // MARK: Dreamcast
 extension PVRetroArchCoreCore: PVDreamcastSystemResponderClient {
     public func didMoveJoystick(_ button: PVCoreBridge.PVDreamcastButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
-        
+        (_bridge as! PVDreamcastSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
-    
+
     public func didPush(_ button: PVCoreBridge.PVDreamcastButton, forPlayer player: Int) {
         (_bridge as! PVDreamcastSystemResponderClient).didPush(button, forPlayer: player)
     }
@@ -305,15 +326,15 @@ extension PVRetroArchCoreCore: PVDOSSystemResponderClient {
     public func didRelease(_ button: PVCoreBridge.PVDOSButton, forPlayer player: Int) {
         (_bridge as! PVDOSSystemResponderClient).didRelease(button, forPlayer: player)
     }
-    
+
     public var gameSupportsKeyboard: Bool {
         (_bridge as! PVDOSSystemResponderClient).gameSupportsKeyboard
     }
-    
+
     public var requiresKeyboard: Bool {
         (_bridge as! PVDOSSystemResponderClient).requiresKeyboard
     }
-    
+
     public func keyDown(_ key: GCKeyCode) {
         (_bridge as! PVDOSSystemResponderClient).keyDown(key)
     }
@@ -329,7 +350,7 @@ extension PVRetroArchCoreCore: PVDOSSystemResponderClient {
     public func didScroll(_ cursor: GCDeviceCursor) {
         (_bridge as! PVDOSSystemResponderClient).didScroll(cursor)
     }
-    
+
     public var mouseMovedHandler: GCMouseMoved? {
         (_bridge as! PVDOSSystemResponderClient).mouseMovedHandler
     }
@@ -368,7 +389,7 @@ extension PVRetroArchCoreCore: PV3DOSystemResponderClient {
     public func didRelease(_ button: PVCoreBridge.PV3DOButton, forPlayer player: Int) {
         (_bridge as! PV3DOSystemResponderClient).didRelease(button, forPlayer: player)
     }
-    
+
     public func didPush(_ button: PVCoreBridge.PV3DOButton, forPlayer player: Int) {
         (_bridge as! PV3DOSystemResponderClient).didPush(button, forPlayer: player)
     }
@@ -379,7 +400,7 @@ extension PVRetroArchCoreCore: PVPCESystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVPCEButton, forPlayer player: Int) {
         (_bridge as! PVPCESystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PVPCEButton, forPlayer player: Int) {
         (_bridge as! PVPCESystemResponderClient).didPush(button, forPlayer: player)
     }
@@ -390,7 +411,7 @@ extension PVRetroArchCoreCore: PVPCECDSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVPCECDButton, forPlayer player: Int) {
         (_bridge as! PVPCECDSystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PVPCECDButton, forPlayer player: Int) {
         (_bridge as! PVPCECDSystemResponderClient).didPush(button, forPlayer: player)
     }
@@ -401,7 +422,7 @@ extension PVRetroArchCoreCore: PVPCFXSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVPCFXButton, forPlayer player: Int) {
         (_bridge as! PVPCFXSystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PVPCFXButton, forPlayer player: Int) {
         (_bridge as! PVPCFXSystemResponderClient).didPush(button, forPlayer: player)
     }
@@ -419,5 +440,20 @@ extension PVRetroArchCoreCore: PVPSPSystemResponderClient {
     }
     public func didPush(_ button: PVCoreBridge.PVPSPButton, forPlayer player: Int) {
         (_bridge as! PVPSPSystemResponderClient).didPush(button, forPlayer: player)
+    }
+}
+
+// Sega Saturn
+extension PVRetroArchCoreCore: PVSaturnSystemResponderClient {
+    public func didRelease(_ button: PVCoreBridge.PVSaturnButton, forPlayer player: Int) {
+        (_bridge as! PVSaturnSystemResponderClient).didRelease(button, forPlayer: player)
+
+    }
+    public func didMoveJoystick(_ button: PVCoreBridge.PVSaturnButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVSaturnSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+
+    }
+    public func didPush(_ button: PVCoreBridge.PVSaturnButton, forPlayer player: Int) {
+        (_bridge as! PVSaturnSystemResponderClient).didPush(button, forPlayer: player)
     }
 }

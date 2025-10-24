@@ -9,6 +9,7 @@
 // MARK: - All
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATIONS=1
+GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) _ARCH_64=1 _M_ARM_64=1 IPHONEOS=1
 OTHER_CFLAGS = $(inherited) -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fsingle-precision-constant -DTARGET_NO_NIXPROF -fmodules -fcxx-modules -Wno-module-import-in-extern-c
 
 OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
@@ -18,6 +19,25 @@ OTHER_CFLAGS = $(inherited) -mtune=apple-a15
 // -DUSE_MEMORYWATCHER=1
 OTHER_LDFLAGS = $(inherited) -ObjC -l"c++" -l"z" -DIPHONEOS
 //-l"nanopb" -l"PromisesObjC"
+
+// rpath-based isolation to prioritize bundled glslang libraries
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@loader_path/../Frameworks/PVlibDolphin.framework
+OTHER_LDFLAGS = $(inherited) -Wl,-rpath,@executable_path/../Frameworks/PVlibDolphin.framework
+// Prevent implicit dylib loading and force explicit paths
+//OTHER_LDFLAGS = $(inherited) -Wl,-no_implicit_dylibs
+// Use two-level namespace for better symbol isolation
+//OTHER_LDFLAGS = $(inherited) -Wl,-two_levelnamespace
+// Symbol hiding for glslang to prevent conflicts
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_glslang* -Wl,-unexported_symbol,_SPIRV*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,_TBuiltInResource* -Wl,-unexported_symbol,_EShLanguage*
+// Hide C++ mangled glslang symbols
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN7glslang* -Wl,-unexported_symbol,__ZN5SPIRV*
+// Additional C++ mangled symbol patterns for comprehensive glslang hiding
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__ZN4spv* -Wl,-unexported_symbol,__Z*glslang*
+OTHER_LDFLAGS = $(inherited) -Wl,-unexported_symbol,__Z*SPIRV* -Wl,-unexported_symbol,__Z*spv*
+// NOTE: Removed global -fvisibility=hidden flags as they break curl and system headers
+// Using targeted linker-based symbol hiding instead for glslang-specific isolation
 
 // MARK: - Device
 

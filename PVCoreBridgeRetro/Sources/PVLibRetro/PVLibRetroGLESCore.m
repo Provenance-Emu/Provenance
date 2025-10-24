@@ -17,6 +17,11 @@
 @import PVLoggingObjC;
 @import PVCoreBridge;
 
+#include <dlfcn.h>
+#include <string.h>
+#include "dynamic.h"
+#include <dynamic/dylib.h>
+
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
@@ -42,34 +47,9 @@ extern bool runloop_ctl(enum runloop_ctl_state state, void *data);
 #include <sys/time.h>
 #include <unistd.h>
 
-void move_pthread_to_realtime_scheduling_class(pthread_t pthread)
-{
-    mach_timebase_info_data_t timebase_info;
-    mach_timebase_info(&timebase_info);
-
-    const uint64_t NANOS_PER_MSEC = 1000000ULL;
-    double clock2abs = ((double)timebase_info.denom / (double)timebase_info.numer) * NANOS_PER_MSEC;
-
-    thread_time_constraint_policy_data_t policy;
-    policy.period      = 0;
-    policy.computation = (uint32_t)(5 * clock2abs); // 5 ms of work
-    policy.constraint  = (uint32_t)(10 * clock2abs);
-    policy.preemptible = FALSE;
-
-    int kr = thread_policy_set(pthread_mach_thread_np(pthread_self()),
-                               THREAD_TIME_CONSTRAINT_POLICY,
-                               (thread_policy_t)&policy,
-                               THREAD_TIME_CONSTRAINT_POLICY_COUNT);
-    if (kr != KERN_SUCCESS) {
-        mach_error("thread_policy_set:", kr);
-//        exit(1);
-    }
-}
-
-void MakeCurrentThreadRealTime()
-{
-    move_pthread_to_realtime_scheduling_class(pthread_self());
-}
+// Real-time threading functions are defined in PVSupport - using external declarations
+extern void move_pthread_to_realtime_scheduling_class(pthread_t pthread);
+extern void MakeCurrentThreadRealTime(void);
 
 @interface PVLibRetroGLESCoreBridge ()
 {
@@ -79,6 +59,34 @@ void MakeCurrentThreadRealTime()
 
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
+
+    // Hardware rendering state
+    struct retro_hw_render_callback *hw_render_callback;
+    enum retro_hw_context_type current_context_type;
+    BOOL hardware_context_active;
+
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    EAGLContext *hardware_context;
+#else
+    NSOpenGLContext *hardware_context;
+#endif
+
+    // Vulkan state (when using MoltenVK)
+    void *vulkan_library;
+    VkInstance vulkan_instance;
+    VkDevice vulkan_device;
+    VkQueue vulkan_queue;
+    VkPhysicalDevice vulkan_physical_device;
+
+    // Vulkan function pointers
+    PFN_vkVoidFunction (*vkGetInstanceProcAddr)(VkInstance instance, const char* pName);
+    PFN_vkVoidFunction (*vkGetDeviceProcAddr)(VkDevice device, const char* pName);
+    VkResult (*vkCreateInstance)(const void* pCreateInfo, const void* pAllocator, VkInstance* pInstance);
+    void (*vkDestroyInstance)(VkInstance instance, const void* pAllocator);
+    VkResult (*vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
+    VkResult (*vkCreateDevice)(VkPhysicalDevice physicalDevice, const void* pCreateInfo, const void* pAllocator, VkDevice* pDevice);
+    void (*vkDestroyDevice)(VkDevice device, const void* pAllocator);
+    void (*vkGetDeviceQueue)(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
 }
 @end
 
@@ -89,6 +97,12 @@ void gl_swap() {
     [current swapBuffers];
 }
 
+// Forward declarations for hardware rendering callbacks
+static void hw_context_reset(void);
+static void hw_context_destroy(void);
+static uintptr_t hw_get_current_framebuffer(void);
+static void* hw_get_proc_address(const char *symbol);
+
 @implementation PVLibRetroGLESCoreBridge
 
 - (instancetype)init {
@@ -96,6 +110,29 @@ void gl_swap() {
         glesWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
+
+        // Initialize hardware rendering state
+        hw_render_callback = NULL;
+        current_context_type = RETRO_HW_CONTEXT_NONE;
+        hardware_context_active = NO;
+        hardware_context = nil;
+
+        // Initialize Vulkan state
+        vulkan_library = NULL;
+        vulkan_instance = NULL;
+        vulkan_device = NULL;
+        vulkan_queue = NULL;
+        vulkan_physical_device = NULL;
+
+        // Initialize Vulkan function pointers
+        vkGetInstanceProcAddr = NULL;
+        vkGetDeviceProcAddr = NULL;
+        vkCreateInstance = NULL;
+        vkDestroyInstance = NULL;
+        vkEnumeratePhysicalDevices = NULL;
+        vkCreateDevice = NULL;
+        vkDestroyDevice = NULL;
+        vkGetDeviceQueue = NULL;
     }
     return self;
 }
@@ -125,14 +162,24 @@ void gl_swap() {
 
 - (BOOL)rendersToOpenGL { return YES; }
 - (BOOL)isDoubleBuffered { return YES; }
-- (GLenum)pixelFormat { return GL_UNSIGNED_SHORT_5_6_5; }
-- (GLenum)pixelType { return GL_UNSIGNED_BYTE; }
+// Use dynamic pixel format from base class instead of hardcoded values
+// This allows the GLES core to adapt to different pixel formats (RGB565, XRGB8888, etc.)
+- (GLenum)pixelFormat { return [super pixelFormat]; }
+- (GLenum)pixelType { return [super pixelType]; }
 - (GLenum)internalPixelFormat { return GL_RGBA; }
 - (GLenum)depthFormat {
         // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
     return GL_DEPTH_COMPONENT16;
 }
-- (const void *)videoBuffer { return NULL; }
+- (const void *)videoBuffer {
+    // For hardware rendering, return NULL (core renders directly to OpenGL)
+    // For software rendering, delegate to base class to get the actual video buffer
+    if (current_context_type != RETRO_HW_CONTEXT_NONE) {
+        return NULL; // Hardware rendering
+    } else {
+        return [super videoBuffer]; // Software rendering
+    }
+}
 
 - (dispatch_time_t)frameTime {
     float frameTime = 1.0/[self frameInterval];
@@ -184,7 +231,7 @@ void gl_swap() {
     [self.frontBufferCondition lock];
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
-    
+
     [super stopEmulation];
 }
 
@@ -326,13 +373,13 @@ static bool video_driver_cached_frame(void)
 
 
 - (void)libretroMain {
-   
+
     MakeCurrentThreadRealTime();
 
 //    [self.renderDelegate startRenderingOnAlternateThread];
     has_init = true;
-    
-    
+
+
     do {
         switch (self->core_poll_type)
         {
@@ -350,12 +397,602 @@ static bool video_driver_cached_frame(void)
     } while(!self.shouldStop);
 
     has_init = false;
-    
+
     dispatch_semaphore_signal(coreWaitForExitSemaphore);
 }
 
 - (CGSize)bufferSize {
     return CGSizeMake(2048, 2048);
+}
+
+#pragma mark - Hardware Rendering Support
+
+- (BOOL)setHardwareRenderCallback:(NSValue *)callbackValue {
+    if (!callbackValue) {
+        ELOG(@"Hardware render callback value is NULL");
+        return NO;
+    }
+
+    hw_render_callback = (struct retro_hw_render_callback *)[callbackValue pointerValue];
+    if (!hw_render_callback) {
+        ELOG(@"Hardware render callback pointer is NULL");
+        return NO;
+    }
+
+    current_context_type = hw_render_callback->context_type;
+
+    ILOG(@"Libretro core requesting hardware context type: %d", current_context_type);
+
+    // Set up the callback functions that libretro will call
+    hw_render_callback->context_reset = hw_context_reset;
+    hw_render_callback->context_destroy = hw_context_destroy;
+    hw_render_callback->get_current_framebuffer = hw_get_current_framebuffer;
+    hw_render_callback->get_proc_address = (retro_hw_get_proc_address_t)hw_get_proc_address;
+
+    ILOG(@"Hardware rendering callback set for context type: %d", current_context_type);
+
+    // Setup the appropriate hardware context
+    [self setupHardwareContext:current_context_type];
+
+    return YES;
+}
+
+- (void)setupHardwareContext:(enum retro_hw_context_type)contextType {
+    switch (contextType) {
+        case RETRO_HW_CONTEXT_OPENGLES2:
+        case RETRO_HW_CONTEXT_OPENGLES3:
+        case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+            [self setupOpenGLESContext:contextType];
+            break;
+
+        case RETRO_HW_CONTEXT_OPENGL:
+        case RETRO_HW_CONTEXT_OPENGL_CORE:
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
+            [self setupOpenGLContext:contextType];
+#else
+            ELOG(@"Desktop OpenGL not supported on iOS/tvOS");
+#endif
+            break;
+
+        case RETRO_HW_CONTEXT_VULKAN:
+            [self setupVulkanContext];
+            break;
+
+        case RETRO_HW_CONTEXT_NONE:
+            ILOG(@"Using software rendering (RETRO_HW_CONTEXT_NONE)");
+            // Software rendering - no special context setup needed
+            // The core will render to the video buffer directly
+            break;
+
+        default:
+            ELOG(@"Unsupported or unknown hardware context type: %d", contextType);
+            break;
+    }
+}
+
+- (void)setupOpenGLESContext:(enum retro_hw_context_type)contextType {
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    EAGLRenderingAPI api;
+
+    switch (contextType) {
+        case RETRO_HW_CONTEXT_OPENGLES2:
+            api = kEAGLRenderingAPIOpenGLES2;
+            self.glesVersion = GLESVersion2;
+            break;
+        case RETRO_HW_CONTEXT_OPENGLES3:
+        case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+        default:
+            api = kEAGLRenderingAPIOpenGLES3;
+            self.glesVersion = GLESVersion3;
+            break;
+    }
+
+    ILOG(@"Attempting to create OpenGL ES context with API: %ld", (long)api);
+
+    hardware_context = [[EAGLContext alloc] initWithAPI:api];
+    if (!hardware_context) {
+        ELOG(@"Failed to create OpenGL ES context for API: %ld", (long)api);
+        ELOG(@"This will cause hardware rendering to fail and fall back to software");
+        return;
+    }
+
+    hardware_context_active = YES;
+    ILOG(@"OpenGL ES hardware context created successfully with API: %ld", (long)api);
+#endif
+}
+
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
+- (void)setupOpenGLContext:(enum retro_hw_context_type)contextType {
+    NSOpenGLPixelFormatAttribute attrs[] = {
+        NSOpenGLPFADoubleBuffer,
+        NSOpenGLPFAColorSize, 24,
+        NSOpenGLPFAAlphaSize, 8,
+        NSOpenGLPFADepthSize, 16,
+        0
+    };
+
+    if (contextType == RETRO_HW_CONTEXT_OPENGL_CORE) {
+        // Add core profile attributes for modern OpenGL
+        NSOpenGLPixelFormatAttribute coreAttrs[] = {
+            NSOpenGLPFADoubleBuffer,
+            NSOpenGLPFAColorSize, 24,
+            NSOpenGLPFAAlphaSize, 8,
+            NSOpenGLPFADepthSize, 16,
+            NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
+            0
+        };
+        memcpy(attrs, coreAttrs, sizeof(coreAttrs));
+    }
+
+    NSOpenGLPixelFormat *pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+    if (!pixelFormat) {
+        ELOG(@"Failed to create OpenGL pixel format");
+        return;
+    }
+
+    hardware_context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
+    if (!hardware_context) {
+        ELOG(@"Failed to create OpenGL context");
+        return;
+    }
+
+    hardware_context_active = YES;
+    ILOG(@"OpenGL hardware context created successfully");
+}
+#endif
+
+- (void)setupVulkanContext {
+    ILOG(@"Setting up Vulkan context via MoltenVK");
+
+    // Load MoltenVK library with multiple fallback paths
+    if (![self loadMoltenVKLibrary]) {
+        ELOG(@"Failed to load MoltenVK library");
+        return;
+    }
+
+    // Load essential Vulkan function pointers
+    if (![self loadVulkanFunctions]) {
+        ELOG(@"Failed to load Vulkan functions");
+        [self unloadMoltenVKLibrary];
+        return;
+    }
+
+    // Create Vulkan instance
+    if (![self createVulkanInstance]) {
+        ELOG(@"Failed to create Vulkan instance");
+        [self unloadMoltenVKLibrary];
+        return;
+    }
+
+    // Select physical device
+    if (![self selectVulkanPhysicalDevice]) {
+        ELOG(@"Failed to select Vulkan physical device");
+        [self destroyVulkanInstance];
+        [self unloadMoltenVKLibrary];
+        return;
+    }
+
+    // Create logical device
+    if (![self createVulkanDevice]) {
+        ELOG(@"Failed to create Vulkan device");
+        [self destroyVulkanInstance];
+        [self unloadMoltenVKLibrary];
+        return;
+    }
+
+    // Get device queue
+    [self getVulkanDeviceQueue];
+
+    hardware_context_active = YES;
+    ILOG(@"Vulkan hardware context created successfully via MoltenVK");
+}
+
+- (void)destroyHardwareContext {
+    if (!hardware_context_active) {
+        return;
+    }
+
+    switch (current_context_type) {
+        case RETRO_HW_CONTEXT_OPENGLES2:
+        case RETRO_HW_CONTEXT_OPENGLES3:
+        case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+        case RETRO_HW_CONTEXT_OPENGL:
+        case RETRO_HW_CONTEXT_OPENGL_CORE:
+            hardware_context = nil;
+            break;
+
+        case RETRO_HW_CONTEXT_VULKAN:
+            // Clean up Vulkan resources
+            [self destroyVulkanDevice];
+            [self destroyVulkanInstance];
+            [self unloadMoltenVKLibrary];
+            break;
+
+        default:
+            break;
+    }
+
+    hardware_context_active = NO;
+    current_context_type = RETRO_HW_CONTEXT_NONE;
+    hw_render_callback = NULL;
+
+    ILOG(@"Hardware context destroyed");
+}
+
+#pragma mark - Hardware Rendering Callbacks
+
+// C callback functions that libretro will call
+static void hw_context_reset(void) {
+    GET_CURRENT_OR_RETURN();
+    if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
+        PVLibRetroGLESCoreBridge *glesCore = (PVLibRetroGLESCoreBridge *)current;
+        [glesCore contextReset];
+    }
+}
+
+static void hw_context_destroy(void) {
+    GET_CURRENT_OR_RETURN();
+    if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
+        PVLibRetroGLESCoreBridge *glesCore = (PVLibRetroGLESCoreBridge *)current;
+        [glesCore contextDestroy];
+    }
+}
+
+static uintptr_t hw_get_current_framebuffer(void) {
+    GET_CURRENT_OR_RETURN(0);
+    if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
+        PVLibRetroGLESCoreBridge *glesCore = (PVLibRetroGLESCoreBridge *)current;
+        return [glesCore getCurrentFramebuffer];
+    }
+    return 0;
+}
+
+static void* hw_get_proc_address(const char *symbol) {
+    GET_CURRENT_OR_RETURN(NULL);
+    if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
+        PVLibRetroGLESCoreBridge *glesCore = (PVLibRetroGLESCoreBridge *)current;
+        return [glesCore getProcAddress:symbol];
+    }
+    return NULL;
+}
+
+// Objective-C implementations of the callback methods
+- (void)contextReset {
+    ILOG(@"Hardware context reset called");
+
+    switch (current_context_type) {
+        case RETRO_HW_CONTEXT_OPENGLES2:
+        case RETRO_HW_CONTEXT_OPENGLES3:
+        case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+            if (hardware_context) {
+                [EAGLContext setCurrentContext:hardware_context];
+            }
+#endif
+            break;
+
+        case RETRO_HW_CONTEXT_OPENGL:
+        case RETRO_HW_CONTEXT_OPENGL_CORE:
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
+            if (hardware_context) {
+                [hardware_context makeCurrentContext];
+            }
+#endif
+            break;
+
+        case RETRO_HW_CONTEXT_VULKAN:
+            // Vulkan context reset would involve recreating command buffers, etc.
+            ILOG(@"Vulkan context reset");
+            break;
+
+        default:
+            break;
+    }
+}
+
+- (void)contextDestroy {
+    ILOG(@"Hardware context destroy called");
+    [self destroyHardwareContext];
+}
+
+- (uintptr_t)getCurrentFramebuffer {
+    // Return the current framebuffer object name
+    // For OpenGL ES/OpenGL, this would be the FBO name
+    // For Vulkan, this would be handled differently
+
+    switch (current_context_type) {
+        case RETRO_HW_CONTEXT_OPENGLES2:
+        case RETRO_HW_CONTEXT_OPENGLES3:
+        case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+        case RETRO_HW_CONTEXT_OPENGL:
+        case RETRO_HW_CONTEXT_OPENGL_CORE: {
+            GLint framebuffer;
+            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+            return (uintptr_t)framebuffer;
+        }
+
+        case RETRO_HW_CONTEXT_VULKAN:
+            // For Vulkan, return appropriate render target handle
+            return 0; // TODO: Implement Vulkan framebuffer handling
+
+        default:
+            return 0;
+    }
+}
+
+- (void*)getProcAddress:(const char*)symbol {
+    if (!symbol) {
+        return NULL;
+    }
+
+    switch (current_context_type) {
+        case RETRO_HW_CONTEXT_OPENGLES2:
+        case RETRO_HW_CONTEXT_OPENGLES3:
+        case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+            // On iOS, OpenGL ES functions are statically linked
+            return dlsym(RTLD_DEFAULT, symbol);
+#endif
+            break;
+
+        case RETRO_HW_CONTEXT_OPENGL:
+        case RETRO_HW_CONTEXT_OPENGL_CORE:
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
+            // On macOS, use NSOpenGLContext to get function pointers
+            return dlsym(RTLD_DEFAULT, symbol);
+#endif
+            break;
+
+        case RETRO_HW_CONTEXT_VULKAN:
+            // For Vulkan, we'd need to use vkGetInstanceProcAddr or vkGetDeviceProcAddr
+            ILOG(@"Vulkan proc address requested: %s", symbol);
+            return NULL; // TODO: Implement Vulkan function loading
+
+        default:
+            break;
+    }
+
+    return NULL;
+}
+
+#pragma mark - MoltenVK/Vulkan Support Methods
+
+- (BOOL)loadMoltenVKLibrary {
+    // Try multiple paths to find MoltenVK library as specified by user
+    const char* moltenVKPaths[] = {
+        "MoltenVK",
+        "MoltenVK.framework",
+        "MoltenVK.framework/MoltenVK",
+        "../Contents/MoltenVK.framework/MoltenVK",
+        "/System/Library/Frameworks/MoltenVK.framework/MoltenVK",
+        "/usr/local/lib/libMoltenVK.dylib",
+        NULL
+    };
+
+    for (int i = 0; moltenVKPaths[i] != NULL; i++) {
+        vulkan_library = dylib_load(moltenVKPaths[i]);
+        if (vulkan_library) {
+            ILOG(@"MoltenVK library loaded from: %s", moltenVKPaths[i]);
+            return YES;
+        }
+        DLOG(@"Failed to load MoltenVK from: %s", moltenVKPaths[i]);
+    }
+
+    ELOG(@"Failed to load MoltenVK library from any known path");
+    return NO;
+}
+
+- (void)unloadMoltenVKLibrary {
+    if (vulkan_library) {
+        dylib_close(vulkan_library);
+        vulkan_library = NULL;
+        ILOG(@"MoltenVK library unloaded");
+    }
+}
+
+- (BOOL)loadVulkanFunctions {
+    if (!vulkan_library) {
+        ELOG(@"Cannot load Vulkan functions: MoltenVK library not loaded");
+        return NO;
+    }
+
+    // Load essential Vulkan function pointers
+    vkGetInstanceProcAddr = (PFN_vkVoidFunction (*)(VkInstance, const char*))dylib_proc(vulkan_library, "vkGetInstanceProcAddr");
+    if (!vkGetInstanceProcAddr) {
+        ELOG(@"Failed to load vkGetInstanceProcAddr");
+        return NO;
+    }
+
+    // Load global functions (don't require instance)
+    vkCreateInstance = (VkResult (*)(const void*, const void*, VkInstance*))vkGetInstanceProcAddr(NULL, "vkCreateInstance");
+    if (!vkCreateInstance) {
+        ELOG(@"Failed to load vkCreateInstance");
+        return NO;
+    }
+
+    ILOG(@"Essential Vulkan functions loaded successfully");
+    return YES;
+}
+
+- (BOOL)createVulkanInstance {
+    // Minimal VkApplicationInfo structure
+    struct {
+        int sType;           // VK_STRUCTURE_TYPE_APPLICATION_INFO
+        const void* pNext;
+        const char* pApplicationName;
+        uint32_t applicationVersion;
+        const char* pEngineName;
+        uint32_t engineVersion;
+        uint32_t apiVersion;
+    } appInfo = {
+        .sType = 0, // VK_STRUCTURE_TYPE_APPLICATION_INFO
+        .pNext = NULL,
+        .pApplicationName = "PVLibRetro",
+        .applicationVersion = 1,
+        .pEngineName = "PVLibRetro",
+        .engineVersion = 1,
+        .apiVersion = 0x00400000 // VK_API_VERSION_1_0
+    };
+
+    // Minimal VkInstanceCreateInfo structure
+    struct {
+        int sType;           // VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
+        const void* pNext;
+        uint32_t flags;
+        const void* pApplicationInfo;
+        uint32_t enabledLayerCount;
+        const char* const* ppEnabledLayerNames;
+        uint32_t enabledExtensionCount;
+        const char* const* ppEnabledExtensionNames;
+    } createInfo = {
+        .sType = 1, // VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
+        .pNext = NULL,
+        .flags = 0,
+        .pApplicationInfo = &appInfo,
+        .enabledLayerCount = 0,
+        .ppEnabledLayerNames = NULL,
+        .enabledExtensionCount = 0,
+        .ppEnabledExtensionNames = NULL
+    };
+
+    VkResult result = vkCreateInstance(&createInfo, NULL, &vulkan_instance);
+    if (result != 0) { // VK_SUCCESS = 0
+        ELOG(@"Failed to create Vulkan instance, result: %d", result);
+        return NO;
+    }
+
+    // Load instance-specific functions
+    vkDestroyInstance = (void (*)(VkInstance, const void*))vkGetInstanceProcAddr(vulkan_instance, "vkDestroyInstance");
+    vkEnumeratePhysicalDevices = (VkResult (*)(VkInstance, uint32_t*, VkPhysicalDevice*))vkGetInstanceProcAddr(vulkan_instance, "vkEnumeratePhysicalDevices");
+    vkCreateDevice = (VkResult (*)(VkPhysicalDevice, const void*, const void*, VkDevice*))vkGetInstanceProcAddr(vulkan_instance, "vkCreateDevice");
+
+    if (!vkDestroyInstance || !vkEnumeratePhysicalDevices || !vkCreateDevice) {
+        ELOG(@"Failed to load instance-specific Vulkan functions");
+        return NO;
+    }
+
+    ILOG(@"Vulkan instance created successfully");
+    return YES;
+}
+
+- (void)destroyVulkanInstance {
+    if (vulkan_instance && vkDestroyInstance) {
+        vkDestroyInstance(vulkan_instance, NULL);
+        vulkan_instance = NULL;
+        ILOG(@"Vulkan instance destroyed");
+    }
+}
+
+- (BOOL)selectVulkanPhysicalDevice {
+    if (!vulkan_instance || !vkEnumeratePhysicalDevices) {
+        ELOG(@"Cannot select physical device: Vulkan instance not created");
+        return NO;
+    }
+
+    uint32_t deviceCount = 0;
+    VkResult result = vkEnumeratePhysicalDevices(vulkan_instance, &deviceCount, NULL);
+    if (result != 0 || deviceCount == 0) {
+        ELOG(@"No Vulkan physical devices found, result: %d, count: %d", result, deviceCount);
+        return NO;
+    }
+
+    // Just use the first available device for simplicity
+    VkPhysicalDevice devices[1];
+    uint32_t requestCount = 1;
+    result = vkEnumeratePhysicalDevices(vulkan_instance, &requestCount, devices);
+    if (result != 0 || requestCount == 0) {
+        ELOG(@"Failed to get Vulkan physical device, result: %d", result);
+        return NO;
+    }
+
+    vulkan_physical_device = devices[0];
+    ILOG(@"Vulkan physical device selected");
+    return YES;
+}
+
+- (BOOL)createVulkanDevice {
+    if (!vulkan_physical_device || !vkCreateDevice) {
+        ELOG(@"Cannot create device: Physical device not selected");
+        return NO;
+    }
+
+    // Minimal queue create info
+    float queuePriority = 1.0f;
+    struct {
+        int sType;           // VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO
+        const void* pNext;
+        uint32_t flags;
+        uint32_t queueFamilyIndex;
+        uint32_t queueCount;
+        const float* pQueuePriorities;
+    } queueCreateInfo = {
+        .sType = 2, // VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO
+        .pNext = NULL,
+        .flags = 0,
+        .queueFamilyIndex = 0, // Assume graphics queue family 0
+        .queueCount = 1,
+        .pQueuePriorities = &queuePriority
+    };
+
+    // Minimal device create info
+    struct {
+        int sType;           // VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
+        const void* pNext;
+        uint32_t flags;
+        uint32_t queueCreateInfoCount;
+        const void* pQueueCreateInfos;
+        uint32_t enabledLayerCount;
+        const char* const* ppEnabledLayerNames;
+        uint32_t enabledExtensionCount;
+        const char* const* ppEnabledExtensionNames;
+        const void* pEnabledFeatures;
+    } createInfo = {
+        .sType = 3, // VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
+        .pNext = NULL,
+        .flags = 0,
+        .queueCreateInfoCount = 1,
+        .pQueueCreateInfos = &queueCreateInfo,
+        .enabledLayerCount = 0,
+        .ppEnabledLayerNames = NULL,
+        .enabledExtensionCount = 0,
+        .ppEnabledExtensionNames = NULL,
+        .pEnabledFeatures = NULL
+    };
+
+    VkResult result = vkCreateDevice(vulkan_physical_device, &createInfo, NULL, &vulkan_device);
+    if (result != 0) {
+        ELOG(@"Failed to create Vulkan device, result: %d", result);
+        return NO;
+    }
+
+    // Load device-specific functions
+    vkGetDeviceProcAddr = (PFN_vkVoidFunction (*)(VkDevice, const char*))vkGetInstanceProcAddr(vulkan_instance, "vkGetDeviceProcAddr");
+    vkDestroyDevice = (void (*)(VkDevice, const void*))vkGetDeviceProcAddr(vulkan_device, "vkDestroyDevice");
+    vkGetDeviceQueue = (void (*)(VkDevice, uint32_t, uint32_t, VkQueue*))vkGetDeviceProcAddr(vulkan_device, "vkGetDeviceQueue");
+
+    if (!vkGetDeviceProcAddr || !vkDestroyDevice || !vkGetDeviceQueue) {
+        ELOG(@"Failed to load device-specific Vulkan functions");
+        return NO;
+    }
+
+    ILOG(@"Vulkan device created successfully");
+    return YES;
+}
+
+- (void)destroyVulkanDevice {
+    if (vulkan_device && vkDestroyDevice) {
+        vkDestroyDevice(vulkan_device, NULL);
+        vulkan_device = NULL;
+        vulkan_queue = NULL;
+        ILOG(@"Vulkan device destroyed");
+    }
+}
+
+- (void)getVulkanDeviceQueue {
+    if (vulkan_device && vkGetDeviceQueue) {
+        vkGetDeviceQueue(vulkan_device, 0, 0, &vulkan_queue); // Queue family 0, queue index 0
+        ILOG(@"Vulkan device queue obtained");
+    }
 }
 
 @end

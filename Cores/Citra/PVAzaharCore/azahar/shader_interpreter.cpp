@@ -46,7 +46,7 @@ constexpr bool USE_NEON_MATRIX_MULT = true;    // Enable optimized matrix multip
 constexpr bool USE_NEON_FAST_MATH = true;      // Enable fast math approximations (slightly less accurate but faster)
 
 // Parallelization settings
-constexpr bool USE_PARALLEL_SHADER_EXECUTION = false;  // Enable parallel shader execution
+constexpr bool USE_PARALLEL_SHADER_EXECUTION = true;  // Enable parallel shader execution
 constexpr int MAX_SHADER_THREADS = 4;                // Maximum number of threads to use for shader execution
 
 // Helper functions for NEON optimizations
@@ -1488,8 +1488,9 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
                 }
             }
             case OpCode::Type::MultiplyAdd: {
-                if ((instr.opcode.Value().EffectiveOpCode() == OpCode::Id::MAD) ||
-                    (instr.opcode.Value().EffectiveOpCode() == OpCode::Id::MADI)) {
+                // Handle all MultiplyAdd type instructions (MAD and MADI variants)
+                // Since we're already in the MultiplyAdd case, we know this is a multiply-add instruction
+                {
                     const SwizzlePattern& mad_swizzle = *reinterpret_cast<const SwizzlePattern*>(
                                                                                                  &swizzle_data[instr.mad.operand_desc_id]);
                     
@@ -1626,10 +1627,6 @@ static void RunInterpreter(const ShaderSetup& setup, ShaderUnit& state,
                     }
 #endif
                     Record<DebugDataRecord::DEST_OUT>(debug_data, iteration, dest);
-                } else {
-                    LOG_ERROR(HW_GPU, "Unhandled multiply-add instruction: 0x{:02x} ({}): 0x{:08x}",
-                              (int)instr.opcode.Value().EffectiveOpCode(),
-                              instr.opcode.Value().GetInfo().name, instr.hex);
                 }
                 break;
             }

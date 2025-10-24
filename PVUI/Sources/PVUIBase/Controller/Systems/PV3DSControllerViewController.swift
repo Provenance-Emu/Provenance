@@ -28,14 +28,17 @@ final class PV3DSControllerViewController: PVControllerViewController<PV3DSSyste
             guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
                 return
             }
-            if button.titleLabel?.text == "A" {
+            switch text.lowercased() {
+            case "a":
                 button.buttonTag = .a
-            } else if button.titleLabel?.text == "B" {
+            case "b":
                 button.buttonTag = .b
-            } else if button.titleLabel?.text == "X" {
+            case "x":
                 button.buttonTag = .x
-            } else if button.titleLabel?.text == "Y" {
+            case "y":
                 button.buttonTag = .y
+            default:
+                break
             }
         }
 
@@ -46,7 +49,7 @@ final class PV3DSControllerViewController: PVControllerViewController<PV3DSSyste
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .start
     }
-    
+
     override func prelayoutSettings() {
         //alwaysRightAlign = true
         alwaysJoypadOverDpad = false
@@ -62,7 +65,7 @@ final class PV3DSControllerViewController: PVControllerViewController<PV3DSSyste
         x = x < -1 ? -1 : x > 1 ? 1 : x;
         emulatorCore.didMoveJoystick(.rightAnalog, withXValue: x, withYValue: y, forPlayer: 0)
     }
-    
+
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
         var y:CGFloat = -CGFloat(value.y - 0.5) * 5
         var x:CGFloat = CGFloat(value.x - 0.5) * 5
@@ -71,7 +74,7 @@ final class PV3DSControllerViewController: PVControllerViewController<PV3DSSyste
         x = x < -1 ? -1 : x > 1 ? 1 : x;
         emulatorCore.didMoveJoystick(.leftAnalog, withXValue: x, withYValue: y, forPlayer: 0)
     }
-    
+
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)

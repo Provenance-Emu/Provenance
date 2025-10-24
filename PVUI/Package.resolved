@@ -1,5 +1,5 @@
 {
-  "originHash" : "65c263185fdaa962965ea2a300e90b0e43c27eb6e58ffd6c129c514de4abe587",
+  "originHash" : "ebda01eacb658eb6d46b8711e1aa085fe1b55f65b7dd916af73961b2c2e369e5",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -155,21 +155,12 @@
       }
     },
     {
-      "identity" : "reachability.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ashleymills/Reachability.swift.git",
-      "state" : {
-        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
-        "version" : "5.2.4"
-      }
-    },
-    {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "85eeca41654cc9070ad81a21a4b1d153ad467c33",
-        "version" : "14.13.1"
+        "revision" : "15493076ad9fef22c16cc64cbfbf9e5b65c385f9",
+        "version" : "20.1.0"
       }
     },
     {
@@ -177,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "a3abcdf95a3176f5ad990239920aad4ef86e00de",
-        "version" : "10.54.2"
+        "revision" : "6260534683132eb981338c7c39fd5e69205876e6",
+        "version" : "20.0.3"
       }
     },
     {
@@ -195,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/RxSwiftCommunity/RxRealm.git",
       "state" : {
-        "revision" : "267cc8b587a5d5c74b57105050f9838cf20e2541",
-        "version" : "5.1.0"
+        "branch" : "main",
+        "revision" : "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69"
       }
     },
     {
@@ -206,6 +197,24 @@
       "state" : {
         "revision" : "c7c7d2cf50a3211fe2843f76869c698e4e417930",
         "version" : "6.8.0"
+      }
+    },
+    {
+      "identity" : "sidekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/SideKit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
+      }
+    },
+    {
+      "identity" : "siriusrating-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/theappcapital/SiriusRating-iOS.git",
+      "state" : {
+        "revision" : "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
+        "version" : "1.0.8"
       }
     },
     {

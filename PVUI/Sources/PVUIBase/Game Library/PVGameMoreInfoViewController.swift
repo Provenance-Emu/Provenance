@@ -21,7 +21,7 @@ import AppKit
 import PVThemes
 
 #if os(iOS)
-    import AssetsLibrary
+    import Photos
     import SafariServices
 #endif
 
@@ -1067,12 +1067,9 @@ extension PVGameMoreInfoViewController {
             }
 
             if let pastedImage = pastedImageMaybe {
-                var key: String
-                if let pastedURL = pastedURL {
-                    key = pastedURL.lastPathComponent
-                } else {
-                    key = UUID().uuidString
-                }
+                let md5: String = game.md5Hash
+                let uniqueID = UUID().uuidString
+                let key = "artwork_\(md5)_\(uniqueID)"
 
                 do {
                     try RomDatabase.sharedInstance.writeTransaction {

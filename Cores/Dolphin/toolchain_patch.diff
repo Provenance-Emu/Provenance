@@ -1,0 +1,16 @@
+--- ios.toolchain.cmake.orig
++++ ios.toolchain.cmake
+@@ -946,7 +946,12 @@
+ endif()
+ 
+ # Set some common CFLAGS, CXXFLAGS and LDFLAGS for optimization
+-set(ACLEFLAG "-march=armv8-a+crc")
++# Only apply ARM-specific flags for ARM targets, not for x86_64 simulator targets
++if(PLATFORM_INT MATCHES "^SIMULATOR" OR PLATFORM_INT MATCHES "^SIMULATOR_")
++  set(ACLEFLAG "")
++else()
++  set(ACLEFLAG "-march=armv8-a+crc")
++endif()
+ 
+ # Set common C/C++ flags
+ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ACLEFLAG}" CACHE INTERNAL "")

@@ -524,7 +524,8 @@ struct Values {
     SwitchableSetting<bool> custom_textures{false, "custom_textures"};
     SwitchableSetting<bool> preload_textures{false, "preload_textures"};
     SwitchableSetting<bool> async_custom_loading{true, "async_custom_loading"};
-    
+    SwitchableSetting<bool> disable_right_eye_render{false, "disable_right_eye_render"};
+
     // Audio
     bool audio_muted;
     SwitchableSetting<AudioEmulation> audio_emulation{AudioEmulation::HLE, "audio_emulation"};

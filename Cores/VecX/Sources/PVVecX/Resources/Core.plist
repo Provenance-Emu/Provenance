@@ -16,5 +16,7 @@
 	<string>https://github.com/libretro/libretro-vecx</string>
 	<key>PVProjectVersion</key>
 	<string>a4ae282</string>
+	<key>PVDisabled</key>
+	<true/>
 </dict>
 </plist>

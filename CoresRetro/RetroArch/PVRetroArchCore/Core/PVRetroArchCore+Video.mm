@@ -7,7 +7,9 @@
 //
 
 #import "PVRetroArchCoreBridge+Video.h"
-
+@import PVCoreBridge;
+@import PVCoreAudio;
+@import PVAudio;
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
@@ -16,7 +18,9 @@
 
 # pragma mark - Methods
 - (void)videoInterrupt {}
-- (void)swapBuffers {}
+- (void)swapBuffers {
+    [self.renderDelegate didRenderFrameOnAlternateThread];
+}
 - (void)executeFrame {}
 
 # pragma mark - Properties

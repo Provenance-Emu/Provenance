@@ -8,7 +8,7 @@ let package = Package(
         .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
-        .macOS(.v11),
+        .macOS(.v12),
         .macCatalyst(.v17),
         .visionOS(.v1)
     ],
@@ -31,7 +31,8 @@ let package = Package(
         .package(name: "PVLogging", path: "../PVLogging/"),
         .package(name: "PVPlists", path: "../PVPlists/"),
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
-
+        .package(name: "PVPrimitives", path: "../PVPrimitives/"),
+        
         // MARK: Macros
 
         // SwiftMacros
@@ -47,7 +48,9 @@ let package = Package(
                 "PVAudio",
                 "PVLogging",
                 "PVPlists",
-//                "SwiftMacros"
+                "PVObjCUtils",
+                "PVPrimitives",
+        //                "SwiftMacros"
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")],
             cSettings: [
@@ -66,17 +69,17 @@ let package = Package(
             ]
         ),
         
-        .target(
-            name: "PVCoreObjCBridge",
-            dependencies: [
-                "PVLogging",
-                "PVCoreBridge",
-                "PVObjCUtils"
-            ],
-            cSettings: [
-                .unsafeFlags(["-fmodules", "-fcxx-modules"])
-            ]
-        ),
+//        .target(
+//            name: "PVCoreObjCBridge",
+//            dependencies: [
+//                "PVLogging",
+//                "PVCoreBridge",
+//                "PVObjCUtils"
+//            ],
+//            cSettings: [
+//                .unsafeFlags(["-fmodules", "-fcxx-modules"])
+//            ]
+//        ),
 
 
         // MARK: SwiftPM tests

@@ -264,6 +264,7 @@ extension MednafenGameCore: DiscSwappable {
         }
     }
 
+    @MainActor
     public func swapDisc(number: UInt) {
         setPauseEmulation(false)
 

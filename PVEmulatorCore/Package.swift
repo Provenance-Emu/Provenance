@@ -23,7 +23,7 @@ let package = Package(
         .iOS(.v16),
         .tvOS(.v16),
         .watchOS(.v9),
-        .macOS(.v11),
+        .macOS(.v12),
         .macCatalyst(.v17),
         .visionOS(.v1)
     ],

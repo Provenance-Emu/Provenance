@@ -1,7 +1,7 @@
 /*  RetroArch - A frontend for libretro.
  *  Copyright (C) 2010-2014 - Hans-Kristian Arntzen
  *  Copyright (C) 2011-2016 - Daniel De Matteis
- * 
+ *
  *  RetroArch is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Found-
  *  ation, either version 3 of the License, or (at your option) any later version.
@@ -55,7 +55,7 @@ struct audio_driver_input_data
    struct
    {
       float input;
-      bool  control; 
+      bool  control;
       struct
       {
          double original;
@@ -145,7 +145,7 @@ static const audio_driver_t *audio_drivers[] = {
 #endif
 #if defined(PSP) || defined(VITA)
    &audio_psp,
-#endif   
+#endif
 #ifdef _3DS
    &audio_ctr_csnd,
    &audio_ctr_dsp,
@@ -314,7 +314,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
    convert_float_to_s16_init_simd();
 
    /* Accomodate rewind since at some point we might have two full buffers. */
-   outsamples_max = max_bufsamples * AUDIO_MAX_RATIO * 
+   outsamples_max = max_bufsamples * AUDIO_MAX_RATIO *
       settings->slowmotion_ratio;
 
    audio_driver_data.output_samples.conv_buf =
@@ -365,7 +365,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
    else
 #endif
    {
-      audio_driver_context_audio_data = 
+      audio_driver_context_audio_data =
          current_audio->init(*settings->audio.device ?
                settings->audio.device : NULL,
                settings->audio.out_rate, settings->audio.latency);
@@ -378,7 +378,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
    }
 
    audio_driver_data.use_float = false;
-   if (     audio_driver_is_active() 
+   if (     audio_driver_is_active()
          && current_audio->use_float(audio_driver_context_audio_data))
       audio_driver_data.use_float = true;
 
@@ -396,7 +396,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
       audio_driver_data.audio_rate.input = settings->audio.out_rate;
    }
 
-   audio_driver_data.audio_rate.source_ratio.original   = 
+   audio_driver_data.audio_rate.source_ratio.original   =
       audio_driver_data.audio_rate.source_ratio.current =
       (double)settings->audio.out_rate / audio_driver_data.audio_rate.input;
 
@@ -429,7 +429,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
    audio_driver_data.audio_rate.control = false;
    if (
          !audio_cb_inited
-         && audio_driver_is_active() 
+         && audio_driver_is_active()
          && settings->audio.rate_control
          )
    {
@@ -437,7 +437,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
        * and buffer_size to be implemented. */
       if (current_audio->buffer_size)
       {
-         audio_driver_data.driver_buffer_size = 
+         audio_driver_data.driver_buffer_size =
             current_audio->buffer_size(audio_driver_context_audio_data);
          audio_driver_data.audio_rate.control = true;
       }
@@ -474,7 +474,7 @@ static void audio_driver_readjust_input_rate(void)
    unsigned write_idx   = audio_driver_data.free_samples.count++ &
       (AUDIO_BUFFER_FREE_SAMPLES_COUNT - 1);
    int      half_size   = audio_driver_data.driver_buffer_size / 2;
-   int      avail       = 
+   int      avail       =
       current_audio->write_avail(audio_driver_context_audio_data);
    int      delta_mid   = avail - half_size;
    double   direction   = (double)delta_mid / half_size;
@@ -486,7 +486,7 @@ static void audio_driver_readjust_input_rate(void)
 #endif
 
    audio_driver_data.free_samples.buf[write_idx] = avail;
-   audio_driver_data.audio_rate.source_ratio.current = 
+   audio_driver_data.audio_rate.source_ratio.current =
       audio_driver_data.audio_rate.source_ratio.original * adjust;
 
 #if 0
@@ -506,8 +506,8 @@ void audio_driver_set_nonblocking_state(bool enable)
       current_audio->set_nonblock_state(audio_driver_context_audio_data,
             settings->audio.sync ? enable : true);
 
-   audio_driver_data.chunk.size = enable ? 
-      audio_driver_data.chunk.nonblock_size : 
+   audio_driver_data.chunk.size = enable ?
+      audio_driver_data.chunk.nonblock_size :
       audio_driver_data.chunk.block_size;
 }
 
@@ -618,14 +618,23 @@ void audio_driver_sample(int16_t left, int16_t right)
    audio_driver_data.output_samples.conv_buf[audio_driver_data.data_ptr++] = left;
    audio_driver_data.output_samples.conv_buf[audio_driver_data.data_ptr++] = right;
 
+   /* PV: forward most-recent stereo sample for visualizer */
+   {
+      extern void pv_ra_waveform_forward(const int16_t *data, size_t frames);
+      pv_ra_waveform_forward(&audio_driver_data.output_samples.conv_buf[audio_driver_data.data_ptr - 2], 1);
+   }
+
    if (audio_driver_data.data_ptr < audio_driver_data.chunk.size)
       return;
 
-   audio_driver_flush(audio_driver_data.output_samples.conv_buf, 
+   audio_driver_flush(audio_driver_data.output_samples.conv_buf,
          audio_driver_data.data_ptr);
 
    audio_driver_data.data_ptr = 0;
 }
+
+// PV: optional forwarder (defined in PVRetroArchCore) to mirror PCM for visualization
+void pv_ra_waveform_forward(const int16_t *data, size_t frames);
 
 /**
  * audio_driver_sample_batch:
@@ -644,6 +653,9 @@ size_t audio_driver_sample_batch(const int16_t *data, size_t frames)
 
    audio_driver_flush(data, frames << 1);
 
+   // PV: forward to visualization (no-op if not linked)
+   if (pv_ra_waveform_forward) pv_ra_waveform_forward(data, frames);
+
    return frames;
 }
 
@@ -652,8 +664,8 @@ size_t audio_driver_sample_batch(const int16_t *data, size_t frames)
  * @left                 : value of the left audio channel.
  * @right                : value of the right audio channel.
  *
- * Audio sample render callback function (rewind version). 
- * This callback function will be used instead of 
+ * Audio sample render callback function (rewind version).
+ * This callback function will be used instead of
  * audio_driver_sample when rewinding is activated.
  **/
 void audio_driver_sample_rewind(int16_t left, int16_t right)
@@ -667,9 +679,9 @@ void audio_driver_sample_rewind(int16_t left, int16_t right)
  * @data                 : pointer to audio buffer.
  * @frames               : amount of audio frames to push.
  *
- * Batched audio sample render callback function (rewind version). 
+ * Batched audio sample render callback function (rewind version).
  *
- * This callback function will be used instead of 
+ * This callback function will be used instead of
  * audio_driver_sample_batch when rewinding is activated.
  *
  * Returns: amount of frames sampled. Will be equal to @frames
@@ -718,7 +730,7 @@ void audio_driver_monitor_adjust_system_rates(void)
    settings_t                   *settings = config_get_ptr();
    const struct retro_system_timing *info = NULL;
    struct retro_system_av_info   *av_info = video_viewport_get_system_av_info();
-   
+
    if (av_info)
       info = (const struct retro_system_timing*)&av_info->timing;
 
@@ -799,7 +811,7 @@ bool audio_driver_free_devices_list(void)
    if (!current_audio || !current_audio->device_list_free
          || !audio_driver_context_audio_data)
       return false;
-   current_audio->device_list_free(audio_driver_context_audio_data, 
+   current_audio->device_list_free(audio_driver_context_audio_data,
          audio_driver_devices_list);
    audio_driver_devices_list = NULL;
    return true;
@@ -845,7 +857,7 @@ void audio_driver_process_resampler(struct resampler_data *data)
 {
    performance_counter_init(&resampler_proc, "resampler_proc");
    performance_counter_start(&resampler_proc);
-   rarch_resampler_process(audio_driver_resampler, 
+   rarch_resampler_process(audio_driver_resampler,
          audio_driver_resampler_data, data);
    performance_counter_stop(&resampler_proc);
 }
@@ -881,7 +893,7 @@ bool audio_driver_set_callback(const void *data)
 bool audio_driver_enable_callback(void)
 {
    if (!audio_driver_has_callback())
-      return false; 
+      return false;
    if (audio_callback.set_state)
       audio_callback.set_state(true);
    return true;
@@ -901,7 +913,7 @@ bool audio_driver_disable_callback(void)
 void audio_driver_monitor_set_rate(void)
 {
    settings_t *settings = config_get_ptr();
-   double new_src_ratio = (double)settings->audio.out_rate / 
+   double new_src_ratio = (double)settings->audio.out_rate /
       audio_driver_data.audio_rate.input;
 
    audio_driver_data.audio_rate.source_ratio.original = new_src_ratio;
@@ -946,7 +958,7 @@ bool audio_driver_toggle_mute(void)
 
 bool audio_driver_start(void)
 {
-   if (!current_audio || !current_audio->start 
+   if (!current_audio || !current_audio->start
          || !audio_driver_context_audio_data)
       return false;
    return current_audio->start(audio_driver_context_audio_data);
@@ -954,7 +966,7 @@ bool audio_driver_start(void)
 
 bool audio_driver_stop(void)
 {
-   if (!current_audio || !current_audio->stop 
+   if (!current_audio || !current_audio->stop
          || !audio_driver_context_audio_data)
       return false;
    return current_audio->stop(audio_driver_context_audio_data);
@@ -968,7 +980,7 @@ void audio_driver_unset_callback(void)
 
 bool audio_driver_alive(void)
 {
-   if (!current_audio || !current_audio->alive 
+   if (!current_audio || !current_audio->alive
          || !audio_driver_context_audio_data)
       return false;
    return current_audio->alive(audio_driver_context_audio_data);
