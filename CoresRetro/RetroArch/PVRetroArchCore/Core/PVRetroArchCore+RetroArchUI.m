@@ -663,7 +663,15 @@ void extract_bundles();
     }
     _renderView.translatesAutoresizingMaskIntoConstraints = YES;
     _renderView.autoresizingMask = UIViewAutoresizingNone;
-    _renderView.frame = frame;
+    // Pixel-align the frame to avoid subpixel blurring
+    CGFloat scale = UIScreen.mainScreen.scale;
+    CGRect aligned = (CGRect){
+        .origin.x = floor(frame.origin.x * scale) / scale,
+        .origin.y = floor(frame.origin.y * scale) / scale,
+        .size.width = floor(frame.size.width * scale) / scale,
+        .size.height = floor(frame.size.height * scale) / scale
+    };
+    _renderView.frame = aligned;
     // Keep it under overlays
     [parent sendSubviewToBack:_renderView];
     [parent setNeedsLayout];
