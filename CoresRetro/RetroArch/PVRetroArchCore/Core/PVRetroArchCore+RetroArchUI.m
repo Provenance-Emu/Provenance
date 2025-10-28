@@ -41,6 +41,8 @@
 #include "../../verbosity.h"
 #include "../../paths.h"
 #include "../../audio/audio_driver.h"
+#include "../../gfx/video_defines.h"
+#include "../../gfx/video_driver.h"
 
 #ifdef HAVE_MENU
 #include "../../menu/menu_setting.h"
@@ -141,6 +143,15 @@ int argc =  1;
     }
     for (NSLayoutConstraint *c in _renderView.constraints) {
         [toDeactivate addObject:c];
+    }
+    // Also remove constraints from the current superview if different from root
+    UIView *currentParent = _renderView.superview;
+    if (currentParent && currentParent != rootView) {
+        for (NSLayoutConstraint *c in currentParent.constraints) {
+            if (c.firstItem == _renderView || c.secondItem == _renderView) {
+                [toDeactivate addObject:c];
+            }
+        }
     }
     if (toDeactivate.count > 0) {
         [NSLayoutConstraint deactivateConstraints:toDeactivate];
@@ -768,6 +779,13 @@ void extract_bundles();
 
 - (void)setupWindow {
     ILOG(@"Set:METAL VULKAN OPENGLES:Attaching View Controller. isRootView %@\n", self.isRootView ? @"Yes" : @"No");
+    // Ensure UI work is performed on main thread
+    if (![NSThread isMainThread]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setupWindow];
+        });
+        return;
+    }
     if (m_view) {
         [m_view removeFromSuperview];
         m_view=nil;
@@ -777,31 +795,43 @@ void extract_bundles();
         m_view_controller=nil;
     }
     if (self.isRootView) {
-		self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-		[self.window makeKeyAndVisible];
-		CGRect screenBounds = [[UIScreen mainScreen] bounds];
-		m_view=[CocoaView get].view;
-		self.view=m_view;
-		UIWindow *originalWindow=[UIApplication sharedApplication].keyWindow;
-		self->backup_view_controller=originalWindow.rootViewController;
-		UIViewController *rootController = [CocoaView get];
-		[self.window setRootViewController:rootController];
-		self.window.userInteractionEnabled=true;
-		[rootController.view setHidden:false];
-		rootController.view.translatesAutoresizingMaskIntoConstraints = false;
-		rootController.view.contentMode = UIViewContentModeScaleToFill;
-		[[rootController.view.topAnchor constraintEqualToAnchor:self.window.topAnchor] setActive:YES];
-		[[rootController.view.bottomAnchor constraintEqualToAnchor:self.window.bottomAnchor] setActive:YES];
-		[[rootController.view.leadingAnchor constraintEqualToAnchor:self.window.leadingAnchor] setActive:YES];
-		[[rootController.view.trailingAnchor constraintEqualToAnchor:self.window.trailingAnchor] setActive:YES];
-	} else {
+        self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        [self.window makeKeyAndVisible];
+        CGRect screenBounds = [[UIScreen mainScreen] bounds];
+        m_view=[CocoaView get].view;
+        self.view=m_view;
+        UIWindow *originalWindow=[UIApplication sharedApplication].keyWindow;
+        self->backup_view_controller=originalWindow.rootViewController;
+        UIViewController *rootController = [CocoaView get];
+        // Detach from any previous parent before making it a window root
+        if (rootController.parentViewController) {
+            [rootController willMoveToParentViewController:nil];
+            [rootController.view removeFromSuperview];
+            [rootController removeFromParentViewController];
+        }
+        [self.window setRootViewController:rootController];
+        self.window.userInteractionEnabled=true;
+        [rootController.view setHidden:false];
+        rootController.view.translatesAutoresizingMaskIntoConstraints = false;
+        rootController.view.contentMode = UIViewContentModeScaleToFill;
+        [[rootController.view.topAnchor constraintEqualToAnchor:self.window.topAnchor] setActive:YES];
+        [[rootController.view.bottomAnchor constraintEqualToAnchor:self.window.bottomAnchor] setActive:YES];
+        [[rootController.view.leadingAnchor constraintEqualToAnchor:self.window.leadingAnchor] setActive:YES];
+        [[rootController.view.trailingAnchor constraintEqualToAnchor:self.window.trailingAnchor] setActive:YES];
+    } else {
         UIViewController *gl_view_controller = self.renderDelegate;
-		CGRect screenBounds = [[UIScreen mainScreen] bounds];
-		m_view_controller=[CocoaView get];
-		m_view=m_view_controller.view;
-		self.view=m_view;
-		UIViewController *rootController = [CocoaView get];
-		if (self.touchViewController) {
+        CGRect screenBounds = [[UIScreen mainScreen] bounds];
+        m_view_controller=[CocoaView get];
+        m_view=m_view_controller.view;
+        self.view=m_view;
+        UIViewController *rootController = [CocoaView get];
+        if (self.touchViewController) {
+            // If CocoaView is already attached to a different parent, detach first
+            if (rootController.parentViewController && rootController.parentViewController != self.touchViewController) {
+                [rootController willMoveToParentViewController:nil];
+                [rootController.view removeFromSuperview];
+                [rootController removeFromParentViewController];
+            }
             [self.touchViewController.view addSubview:self.view];
             [self.touchViewController addChildViewController:rootController];
             [rootController didMoveToParentViewController:self.touchViewController];
@@ -823,6 +853,12 @@ void extract_bundles();
             self.touchViewController.view.multipleTouchEnabled=true;
 #endif
         } else {
+            // If CocoaView is already attached to a different parent, detach first
+            if (rootController.parentViewController && rootController.parentViewController != gl_view_controller) {
+                [rootController willMoveToParentViewController:nil];
+                [rootController.view removeFromSuperview];
+                [rootController removeFromParentViewController];
+            }
             [gl_view_controller.view addSubview:self.view];
             [gl_view_controller addChildViewController:rootController];
             [rootController didMoveToParentViewController:gl_view_controller];
@@ -849,10 +885,18 @@ void extract_bundles();
 #endif
         self.view.autoresizesSubviews=true;
         self.view.contentMode=UIViewContentModeScaleToFill;
-	}
+    }
 }
+
 - (void)showGameView {
     ILOG(@"In Show Game View now\n");
+    // Ensure UI operations happen on the main thread
+    if (![NSThread isMainThread]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self showGameView];
+        });
+        return;
+    }
 
 #if TARGET_OS_IOS
 //    [self.touchViewController.navigationController setToolbarHidden:true animated:NO];
