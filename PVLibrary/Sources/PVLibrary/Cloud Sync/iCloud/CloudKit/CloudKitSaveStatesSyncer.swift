@@ -94,12 +94,12 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Returns: The cloud URL for the save state file (this is a virtual path for CloudKit)
     public func cloudURL(for saveState: PVSaveState) -> URL? {
         guard let file = saveState.file,
-              let url = file.url else {
+              let url = file.url, let game = saveState.game else {
             return nil
         }
         
         // For CloudKit, we create a virtual path that represents the record
-        let systemPath = (saveState.game.systemIdentifier as NSString)
+        let systemPath = (game.systemIdentifier as NSString)
         let systemDir = systemPath.components(separatedBy: "/").last ?? systemPath as String
         
         // Create a URL with a custom scheme to represent CloudKit records
@@ -127,10 +127,15 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             Task {
                 do {
                     // Upload the file to CloudKit
-                    let systemPath = (saveState.game.systemIdentifier as NSString)
+                    guard let game = saveState.game else {
+                        // Game unlinked for whatever reason
+                        WLOG("SaveState missing game, skipping.")
+                        return
+                    }
+                    let systemPath = (game.systemIdentifier as NSString)
                     let systemDir = systemPath.components(separatedBy: "/").last ?? systemPath as String
                     let filename = saveState.file?.fileName ?? "savestate_\(saveState.id)"
-                    let recordID = CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: saveState.game.id, filename: filename)
+                    let recordID = CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: game.id, filename: filename)
                     
                     // Create the record with all required fields
                     let record = CKRecord(recordType: CloudKitSchema.RecordType.saveState.rawValue, recordID: recordID)
@@ -138,8 +143,8 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     // Populate CloudKit fields according to schema
                     record[CloudKitSchema.SaveStateFields.filename] = filename
                     record[CloudKitSchema.SaveStateFields.directory] = "Saves"
-                    record[CloudKitSchema.SaveStateFields.systemIdentifier] = saveState.game.systemIdentifier
-                    record[CloudKitSchema.SaveStateFields.gameID] = saveState.game.id
+                    record[CloudKitSchema.SaveStateFields.systemIdentifier] = game.systemIdentifier
+                    record[CloudKitSchema.SaveStateFields.gameID] = game.id
                     record[CloudKitSchema.SaveStateFields.lastUploadedDate] = saveState.date
                     record[CloudKitSchema.SaveStateFields.fileSize] = self.getFileSize(from: localURL)
                     record[CloudKitSchema.SaveStateFields.lastModifiedDevice] = UIDevice.current.identifierForVendor?.uuidString
@@ -226,9 +231,13 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             
             Task {
                 do {
+                    guard let game = saveState.game else {
+                        WLOG("saveState.game == nil, skipping.")
+                        return
+                    }
                     // Find the record for this save state
                     let filename = saveState.file?.fileName ?? "savestate_\(saveState.id)"
-                    let recordID = CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: saveState.game.id, filename: filename)
+                    let recordID = CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: game.id, filename: filename)
                     let privateDatabase = self.container.privateCloudDatabase
                     
                     do {
@@ -295,14 +304,18 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         DLOG("Downloaded save state from CloudKit: \(filename)")
                         observer(.completed)
                     } catch {
+                        guard let game = saveState.game else {
+                            WLOG("SaveState.game == nil, skipping.")
+                            return
+                        }
                         // If record not found by ID, try searching by game ID and filename
-                        let systemPath = (saveState.game.systemIdentifier as NSString)
+                        let systemPath = (game.systemIdentifier as NSString)
                         let systemDir = systemPath.components(separatedBy: "/").last ?? systemPath as String
                         let filename = saveState.file?.fileName ?? "savestate_\(saveState.id)"
                         
                         // Create query
                         let predicate = NSPredicate(format: "directory == %@ AND systemIdentifier == %@ AND gameID == %@ AND filename == %@", 
-                                                   "Saves", systemDir, saveState.game.id, filename)
+                                                   "Saves", systemDir, game.id, filename)
                         let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: predicate)
                         
                         // Execute query
