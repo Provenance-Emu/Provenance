@@ -30,6 +30,7 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     public override var supportsSkins: Bool { true }
     public override var supportsAudioVisualizer: Bool { true }
     public override func setPauseEmulation(_ flag: Bool) {
+        ILOG("PVRetroArchCoreCore  setPauseEmulation: \(flag ? "paused" : "resumed")")
         _bridge.setPauseEmulation(flag)
         super.setPauseEmulation(flag)
     }
