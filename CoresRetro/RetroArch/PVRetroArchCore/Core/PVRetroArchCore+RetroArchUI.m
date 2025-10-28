@@ -159,6 +159,9 @@ int argc =  1;
     }
     _renderView.translatesAutoresizingMaskIntoConstraints = YES;
     _renderView.autoresizingMask = UIViewAutoresizingNone;
+    _renderView.transform = CGAffineTransformIdentity;
+    _renderView.contentMode = UIViewContentModeScaleToFill;
+    _renderView.clipsToBounds = NO;
 }
 
 - (BOOL)useCustomRenderViewLayout {
@@ -655,8 +658,14 @@ void extract_bundles();
 //
 // Custom Viewport Positioning methods
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame {
-    if (!self.touchViewController) { return; }
-    if (!_renderView) { return; }
+//    if (!self.touchViewController) {
+//        WLOG(@"self.touchViewController nil, exiting.");
+//        return;
+//    }
+    if (!_renderView) {
+        WLOG(@"_renderView nil, exiting.");
+        return;
+    }
     UIView *parent = self.touchViewController.view;
     if (_renderView.superview != parent) {
         [parent addSubview:_renderView];
@@ -676,7 +685,60 @@ void extract_bundles();
     [parent sendSubviewToBack:_renderView];
     [parent setNeedsLayout];
     [parent layoutIfNeeded];
-    DLOG(@"[RA] CustomLayout: applied frame=%@", NSStringFromCGRect(_renderView.frame));
+    // Ensure backing layer matches the new pixel size (Metal)
+    _renderView.contentScaleFactor = scale;
+    CGSize pixelSize = CGSizeMake(aligned.size.width * scale, aligned.size.height * scale);
+    if ([_renderView respondsToSelector:@selector(setDrawableSize:)]) {
+        // Prefer setting via view API (e.g., MetalView/MTKView)
+        [(id)_renderView setDrawableSize:pixelSize];
+    }
+    if ([_renderView respondsToSelector:@selector(metalLayer)]) {
+        CAMetalLayer *ml = (CAMetalLayer *)[(id)_renderView metalLayer];
+        if (ml) {
+            ml.contentsScale = scale;
+            ml.drawableSize = pixelSize;
+        }
+    } else if ([_renderView.layer isKindOfClass:[CAMetalLayer class]]) {
+        CAMetalLayer *ml = (CAMetalLayer *)_renderView.layer;
+        ml.contentsScale = scale;
+        ml.drawableSize = pixelSize;
+    }
+    // Disable RA's internal aspect/integer scaling so it fills our renderView exactly
+    settings_t *settings = config_get_ptr();
+    if (settings) {
+        settings->bools.video_scale_integer = false;
+        settings->bools.video_force_aspect = false;
+        settings->floats.video_vp_bias_x = 0.0f;
+        settings->floats.video_vp_bias_y = 0.0f;
+        // Set custom viewport to full renderView size in pixels
+        settings->video_vp_custom.x = 0;
+        settings->video_vp_custom.y = 0;
+        settings->video_vp_custom.width  = (unsigned)lrintf(pixelSize.width);
+        settings->video_vp_custom.height = (unsigned)lrintf(pixelSize.height);
+        // Ensure RA uses custom viewport sizing
+        settings->uints.video_aspect_ratio_idx = ASPECT_RATIO_CUSTOM;
+        // Apply video state changes so viewport updates immediately
+        command_event(CMD_EVENT_VIDEO_APPLY_STATE_CHANGES, NULL);
+        // Force viewport recomputation now
+        video_driver_set_viewport_core();
+        // Additionally, force-update viewport to exactly match our pixel size
+        struct video_viewport vp = {0};
+        vp.x = 0;
+        vp.y = 0;
+        vp.width = (unsigned)lrintf(pixelSize.width);
+        vp.height = (unsigned)lrintf(pixelSize.height);
+        vp.full_width = vp.width;
+        vp.full_height = vp.height;
+        video_driver_update_viewport(&vp, true, false);
+        // Read back and log the effective viewport
+        struct video_viewport read_vp;
+        if (video_driver_get_viewport_info(&read_vp)) {
+            DLOG(@"[RA] Viewport after update: x=%d y=%d w=%d h=%d full_w=%d full_h=%d",
+                 (int)read_vp.x, (int)read_vp.y, (int)read_vp.width, (int)read_vp.height,
+                 (int)read_vp.full_width, (int)read_vp.full_height);
+        }
+    }
+    DLOG(@"[RA] CustomLayout: applied frame=%@ (scale=%.2f)", NSStringFromCGRect(_renderView.frame), scale);
 }
 
 - (void)setupView {
