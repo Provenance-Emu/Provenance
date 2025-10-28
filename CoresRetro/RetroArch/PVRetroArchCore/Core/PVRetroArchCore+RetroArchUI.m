@@ -200,27 +200,29 @@ int argc =  1;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    DLOG(@"RetroArchCoreBridge setPauseEmulation: %i", flag);
-    if (!EmulationState.shared.isOn) {
-        WLOG(@"Core isn't set to \"on\", skipping set pause : %i", flag);
-        return;
-    }
+//    DLOG(@"RetroArchCoreBridge setPauseEmulation: %i", flag);
+//    if (!EmulationState.shared.isOn) {
+//        WLOG(@"Core isn't set to \"on\", skipping set pause : %i", flag);
+//        return;
+//    }
     command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);
-    runloop_state_t *runloop_st = runloop_state_get_ptr();
-    if (flag) {
-        ILOG(@"RetroArch: Pause\n");
-        runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
-        runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
-        runloop_st->flags |= RUNLOOP_FLAG_PAUSED;
-        runloop_st->flags |= RUNLOOP_FLAG_IDLE;
-    } else {
-        ILOG(@"RetroArch: UnPause\n");
-        runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
-        runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
-        runloop_st->flags &= ~RUNLOOP_FLAG_PAUSED;
-        runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
-        [self setSpeed];
-    }
+    // I don't know what this code was suppoed to do, but it breaks the retroarch menu
+    // after pausing, seems fine to remove this. @JoeMatt
+//    runloop_state_t *runloop_st = runloop_state_get_ptr();
+//    if (flag) {
+//        ILOG(@"RetroArch: Pause\n");
+//        runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
+//        runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
+//        runloop_st->flags |= RUNLOOP_FLAG_PAUSED;
+//        runloop_st->flags |= RUNLOOP_FLAG_IDLE;
+//    } else {
+//        ILOG(@"RetroArch: UnPause\n");
+//        runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
+//        runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
+//        runloop_st->flags &= ~RUNLOOP_FLAG_PAUSED;
+//        runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
+//        [self setSpeed];
+//    }
     [super setPauseEmulation:flag];
 }
 - (void)setSpeed {
