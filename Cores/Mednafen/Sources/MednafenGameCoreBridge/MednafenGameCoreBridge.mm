@@ -1187,28 +1187,26 @@ static void emulation_run(BOOL skipFrame) {
     }
 }
 
-- (void)executeFrameSkippingFrame: (BOOL) skip
-{
+- (void)executeFrameSkippingFrame: (BOOL) skip {
     // Should we be using controller callbacks instead?
     if (!skip && (self.controller1 || self.controller2 || self.controller3 || self.controller4)) {
         [self pollControllers];
     }
 
-    emulation_run(skip);
+    if(self.isRunning){
+        emulation_run(skip);
+    }
 }
 
-- (void)executeFrame
-{
+- (void)executeFrame {
     [self executeFrameSkippingFrame:NO];
 }
 
-- (void)resetEmulation
-{
+- (void)resetEmulation {
     Mednafen::MDFNI_Reset();
 }
 
-- (void)stopEmulation
-{
+- (void)stopEmulation {
     // Close any loaded content and kill Mednafen to reset global/static state
     Mednafen::MDFNI_CloseGame();
     Mednafen::MDFNI_Kill();
@@ -1232,12 +1230,9 @@ static void emulation_run(BOOL skipFrame) {
 }
 
 - (CGSize)bufferSize {
-    if ( game == NULL )
-    {
+    if ( game == NULL ) {
         return CGSizeMake(0, 0);
-    }
-    else
-    {
+    } else {
         return CGSizeMake(game->fb_width, game->fb_height);
     }
 }
@@ -1247,28 +1242,22 @@ static void emulation_run(BOOL skipFrame) {
 }
 
 - (const void *)videoBuffer {
-    if ( frontBufferSurf == NULL )
-    {
+    if ( frontBufferSurf == NULL ) {
         return NULL;
-    }
-    else
-    {
+    } else {
         return frontBufferSurf->pixels;
     }
 }
 
-- (GLenum)pixelFormat
-{
+- (GLenum)pixelFormat {
     return GL_RGBA;
 }
 
-- (GLenum)pixelType
-{
+- (GLenum)pixelType {
     return GL_UNSIGNED_BYTE;
 }
 
-- (GLenum)internalPixelFormat
-{
+- (GLenum)internalPixelFormat {
     return GL_RGBA;
 }
 
@@ -1276,23 +1265,11 @@ static void emulation_run(BOOL skipFrame) {
     return YES;
 }
 
-- (void)swapBuffers
-{
+- (void)swapBuffers {
     Mednafen::MDFN_Surface *tempSurf = backBufferSurf;
     backBufferSurf = frontBufferSurf;
     frontBufferSurf = tempSurf;
 }
-
-- (void)loadStateFromFileAtPathWithFileName:(NSString * _Nonnull)fileName completionHandler:(void (^ _Nonnull)(NSError * _Nullable))completionHandler {
-#warning Finish me
-}
-
-
-- (void)saveStateToFileAtPathWithFileName:(NSString * _Nonnull)fileName completionHandler:(void (^ _Nonnull)(NSError * _Nullable))completionHandler {
-#warning Finish me
-
-}
-
 
 - (BOOL)rendersToOpenGL {
     return self.video_opengl;
