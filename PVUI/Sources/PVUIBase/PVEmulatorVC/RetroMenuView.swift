@@ -375,10 +375,12 @@ struct RetroMenuView: View {
                 }
             }
 
+            #if os(iOS)
             // Audio visualizer button (iOS 16+ only, if supported by core)
             if emulatorVC.core.supportsAudioVisualizer {
                 AudioVisualizerButton(emulatorVC: emulatorVC, dismissAction: dismissAction)
             }
+            #endif
 
             // Core options button (if available)
             if emulatorVC.core is CoreOptional {

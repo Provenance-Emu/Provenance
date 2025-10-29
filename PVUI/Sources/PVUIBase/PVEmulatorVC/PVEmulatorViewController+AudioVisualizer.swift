@@ -1,3 +1,4 @@
+#if os(iOS)
 import UIKit
 import SwiftUI
 import PVCoreAudio
@@ -396,3 +397,4 @@ extension PVEmulatorViewController {
         return topOffset
     }
 }
+#endif

@@ -95,6 +95,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Shared input handler to maintain input state across skin changes
     var sharedInputHandler: DeltaSkinInputHandler?
 
+    #if os(iOS)
     var audioVisualizerHostingController: UIHostingController<AnyView>? = nil
 
     /// The current visualizer mode
@@ -109,6 +110,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             visualizerMode.saveToUserDefaults()
         }
     }
+    #endif
 
     // Debug overlay view
     var debugOverlayView: UIView?
@@ -701,6 +703,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             createAutosaveTimer()
         }
 
+        #if os(iOS)
         // Initialize the audio visualizer based on saved preferences
         if visualizerMode == .off {
             // Load the last used mode from user defaults
@@ -712,6 +715,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             setupAudioVisualizer()
             ensureVisualizerOnTop()
         }
+        #endif
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -1631,9 +1635,11 @@ extension PVEmulatorViewController {
         // This ensures the game is visible above any skin background elements
         view.bringSubviewToFront(gpuView)
         view.bringSubviewToFront(skinContainer)
+        #if os(iOS)
         if let visualizerView = audioVisualizerHostingController?.view {
             view.bringSubviewToFront(visualizerView)
         }
+        #endif
 
         // If we have a menu button, make sure it's on top of everything
         if let menuButton = menuButton {

@@ -1,3 +1,5 @@
+#if os(iOS)
+
 import SwiftUI
 import PVCoreAudio
 import PVThemes
@@ -497,3 +499,5 @@ extension RetroMenuView {
         // The actual implementation is in the AudioVisualizerButton view
     }
 }
+
+#endif
