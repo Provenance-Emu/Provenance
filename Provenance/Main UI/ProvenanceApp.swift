@@ -913,6 +913,38 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+        WhatsNew(
+            version: "3.1.2",
+            title: "Universal Skins & Stability",
+            features: [
+                .init(
+                    image: .init(systemName: "paintpalette", foregroundColor: .pink),
+                    title: "Universal Skin Support",
+                    subtitle: "Full skin support across all cores — including RetroArch-based cores"
+                ),
+                .init(
+                    image: .init(systemName: "lock.open.display", foregroundColor: .green),
+                    title: "Skins Now Free",
+                    subtitle: "Skin features are available to everyone — no Provenance Plus required"
+                ),
+                .init(
+                    image: .init(systemName: "wrench.and.screwdriver", foregroundColor: .orange),
+                    title: "Crash Fixes",
+                    subtitle: "Resolved multiple crashes and improved startup reliability"
+                ),
+                .init(
+                    image: .init(systemName: "pause.circle", foregroundColor: .blue),
+                    title: "RetroArch Pause Menu",
+                    subtitle: "Fixed an issue where the pause menu could freeze"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
     }
 }
 #endif
