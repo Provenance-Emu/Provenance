@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 18
+public let schemaVersion: UInt64 = 19
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -228,6 +228,21 @@ public final class RealmConfiguration {
 
                 ILOG("Migration to version 18 complete.")
 
+            }
+            if oldSchemaVersion < 19 {
+                ILOG("Migrating to version 19. Adding sizeCache property to PVFile and PVImageFile")
+
+                /// Initialize sizeCache to 0 for all PVFile objects
+                migration.enumerateObjects(ofType: PVFile.className()) { oldObject, newObject in
+                    newObject!["sizeCache"] = 0
+                }
+
+                /// Initialize sizeCache to 0 for all PVImageFile objects (inherits from PVFile but enumerate explicitly)
+                migration.enumerateObjects(ofType: PVImageFile.className()) { oldObject, newObject in
+                    newObject!["sizeCache"] = 0
+                }
+
+                ILOG("Migration to version 19 complete.")
             }
         }
 

@@ -486,9 +486,54 @@ public class CloudSyncManager {
 
                 updateSyncStatus(.idle)
                 return
+            } catch let error as CloudSyncError {
+                retryCount += 1
+
+                // Provide specific error messages based on error type
+                let errorMessage: String
+                switch error {
+                case .invalidData:
+                    errorMessage = "Upload failed: Invalid or corrupted game data. Please verify the ROM file is valid."
+                case .assetTooLarge(let size, let maxSize):
+                    let sizeMB = Double(size) / (1024 * 1024)
+                    let maxMB = Double(maxSize) / (1024 * 1024)
+                    errorMessage = "Upload failed: File size (\(String(format: "%.1f", sizeMB))MB) exceeds CloudKit limit (\(String(format: "%.1f", maxMB))MB)"
+                case .fileSystemError(let underlyingError):
+                    errorMessage = "Upload failed: File system error - \(underlyingError.localizedDescription)"
+                case .cloudKitError(let underlyingError):
+                    if let ckError = underlyingError as? CKError {
+                        switch ckError.code {
+                        case .invalidArguments:
+                            errorMessage = "Upload failed: Invalid CloudKit record structure. The game data may be corrupted."
+                        case .limitExceeded:
+                            errorMessage = "Upload failed: File exceeds CloudKit size limits (500MB max)"
+                        case .networkUnavailable:
+                            errorMessage = "Upload failed: Network unavailable. Please check your internet connection."
+                        default:
+                            errorMessage = "Upload failed: CloudKit error - \(ckError.localizedDescription)"
+                        }
+                    } else {
+                        errorMessage = "Upload failed: CloudKit error - \(underlyingError.localizedDescription)"
+                    }
+                default:
+                    errorMessage = "Upload failed: \(error.localizedDescription)"
+                }
+
+                ELOG("Failed to upload ROM \(title) (attempt \(retryCount)/\(maxRetries)): \(errorMessage)")
+
+                if retryCount >= maxRetries {
+                    updateSyncStatus(.error(error))
+                    // Re-throw with more descriptive error
+                    throw CloudSyncError.genericError(errorMessage)
+                } else {
+                    // Wait before retry (exponential backoff)
+                    let delay = TimeInterval(retryCount * 2)
+                    DLOG("Retrying upload for \(title) after \(delay) seconds...")
+                    try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                }
             } catch {
                 retryCount += 1
-                ELOG("Failed to upload ROM \(title) (attempt \(retryCount)/\(maxRetries)): \(error)")
+                ELOG("Failed to upload ROM \(title) (attempt \(retryCount)/\(maxRetries)): \(error.localizedDescription)")
 
                 if retryCount >= maxRetries {
                     updateSyncStatus(.error(error))

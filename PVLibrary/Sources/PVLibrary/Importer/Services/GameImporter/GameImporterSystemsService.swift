@@ -46,19 +46,6 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
     }
 
     func determineSystems(for item: ImportQueueItem) async throws -> [SystemIdentifier] {
-        // if syncing from icloud, we have the system, so try to get the system this way
-        if let system = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
-            DLOG("found system: \(system)")
-            return [system]
-        }
-        // next try MD5 lookup
-        if let md5 = item.md5 {
-            if let systemID = try await lookup.systemIdentifier(forRomMD5: md5, or: item.url.lastPathComponent) {
-                return [systemID]
-            }
-        }
-
-        // Fallback to extension-based lookup
         let filename = item.url.lastPathComponent
         let fileExtension = filename.components(separatedBy: ".").last?.lowercased() ?? ""
 
@@ -66,30 +53,104 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         DLOG("- Filename: \(filename)")
         DLOG("- Extracted extension: \(fileExtension)")
 
+        /// Step 1: Check if file is already in a system directory (fastest check)
+        if let system = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
+            DLOG("Found system from path: \(system)")
+            return [system]
+        }
+
+        /// Step 2: Extension-based filtering (cheapest - no DB queries)
         let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) ?? []
-        DLOG("- Found \(systems.count) compatible systems")
-
         let systemIdentifiers = systems.compactMap { $0.systemIdentifier }
+        DLOG("- Found \(systemIdentifiers.count) compatible systems by extension")
 
-        // If we have multiple systems or no systems, try to match by system name in filename
-        if systemIdentifiers.count != 1 {
+        let hasKnownExtension = !fileExtension.isEmpty && !systemIdentifiers.isEmpty
+        let hasLimitedSystems = systemIdentifiers.count <= 3 /// Consider "limited" if 3 or fewer systems
+
+        /// Step 3: If we have limited systems from extension, search PVLookup within those systems only
+        if hasLimitedSystems && !systemIdentifiers.isEmpty {
+            if let md5 = item.md5 {
+                /// Try MD5 lookup constrained to extension-matched systems (with filename fallback)
+                if let systemID = try await lookup.systemIdentifier(
+                    forRomMD5: md5,
+                    or: filename,
+                    constrainedToSystems: systemIdentifiers,
+                    allowFilenameSearch: true
+                ) {
+                    DLOG("Found system by MD5/filename within extension-matched systems: \(systemID)")
+                    return [systemID]
+                }
+            } else if hasKnownExtension {
+                /// If no MD5 but extension is known, try filename search within extension-matched systems
+                if let results = try await lookup.searchDatabase(usingFilename: filename, systemIDs: systemIdentifiers),
+                   let firstResult = results.first {
+                    DLOG("Found system by filename within extension-matched systems: \(firstResult.systemID)")
+                    return [firstResult.systemID]
+                }
+            }
+        }
+
+        /// Step 4: If we have extension matches but no constrained lookup match, return them
+        if systemIdentifiers.count == 1 {
+            DLOG("Single system match by extension: \(systemIdentifiers.first!.rawValue)")
+            return systemIdentifiers
+        }
+
+        /// Step 5: If multiple systems from extension, try filename-based matching to narrow down
+        if systemIdentifiers.count > 1 {
             let filenameBasedSystems = findSystemsByNameInFilename(filename)
             if !filenameBasedSystems.isEmpty {
                 DLOG("- Found \(filenameBasedSystems.count) systems by name in filename")
 
-                // If we have extension matches, find the intersection
-                if !systemIdentifiers.isEmpty {
-                    let intersection = Set(systemIdentifiers).intersection(Set(filenameBasedSystems))
-                    if !intersection.isEmpty {
-                        DLOG("- Found \(intersection.count) systems matching both extension and filename")
-                        return Array(intersection)
-                    }
+                /// Find intersection of extension and filename matches
+                let intersection = Set(systemIdentifiers).intersection(Set(filenameBasedSystems))
+                if !intersection.isEmpty {
+                    DLOG("- Found \(intersection.count) systems matching both extension and filename")
+                    return Array(intersection)
                 }
+            }
 
+            /// If we still have multiple systems but MD5 available, try constrained MD5 search
+            if let md5 = item.md5 {
+                if let systemID = try await lookup.systemIdentifier(
+                    forRomMD5: md5,
+                    or: nil, /// Don't use filename for multi-system matches
+                    constrainedToSystems: systemIdentifiers,
+                    allowFilenameSearch: false
+                ) {
+                    DLOG("Found system by MD5 within extension-matched systems: \(systemID)")
+                    return [systemID]
+                }
+            }
+
+            /// Return the extension-matched systems (user will need to choose)
+            return systemIdentifiers
+        }
+
+        /// Step 6: No extension match - if MD5 available, do wider MD5-only search (no filename)
+        if systemIdentifiers.isEmpty, let md5 = item.md5 {
+            DLOG("No extension match, trying wider MD5-only search")
+            if let systemID = try await lookup.systemIdentifier(
+                forRomMD5: md5,
+                or: nil, /// Don't search by filename for unknown extensions
+                constrainedToSystems: nil,
+                allowFilenameSearch: false
+            ) {
+                DLOG("Found system by MD5 (wide search): \(systemID)")
+                return [systemID]
+            }
+        }
+
+        /// Step 7: Fallback to filename-based system matching (if no extension match)
+        if systemIdentifiers.isEmpty {
+            let filenameBasedSystems = findSystemsByNameInFilename(filename)
+            if !filenameBasedSystems.isEmpty {
+                DLOG("- Found \(filenameBasedSystems.count) systems by name in filename (no extension match)")
                 return filenameBasedSystems
             }
         }
 
+        /// Step 8: Return whatever we found (may be empty)
         return systemIdentifiers
     }
 

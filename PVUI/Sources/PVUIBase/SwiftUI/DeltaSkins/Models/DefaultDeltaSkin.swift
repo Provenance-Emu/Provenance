@@ -74,7 +74,7 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
     
     // Required by DeltaSkinProtocol
     public var gameType: DeltaSkinGameType {
-        return DeltaSkinGameType(systemIdentifier: systemIdentifier) ?? .gb
+        return DeltaSkinGameType(systemIdentifier: systemIdentifier) ?? .gbc
     }
     
     public var fileURL: URL {

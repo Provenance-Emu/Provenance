@@ -14,6 +14,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Currently loaded skins
     @Published public private(set) var loadedSkins: [DeltaSkinProtocol] = []
 
+    /// Flag to track if skins have been scanned at least once
+    private var hasScanned: Bool = false
+
+    /// Flag to track if scan is currently in progress (prevents concurrent scans)
+    private var isScanning: Bool = false
+
     /// Session-specific skin selections that persist only for the current session
     /// Maps [SystemIdentifier.rawValue: [SkinOrientation.rawValue: skinIdentifier]]
     private var sessionSkins: [String: [String: String]] = [:]
@@ -51,10 +57,19 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         NotificationCenter.default.removeObserver(self)
     }
 
+    /// Get all available skins (protocol conformance)
+    public func availableSkins() async throws -> [any DeltaSkinProtocol] {
+        try await availableSkins(forceRescan: false)
+    }
+
     /// Get all available skins
-    public func availableSkins() async throws -> [DeltaSkinProtocol] {
+    /// - Parameter forceRescan: If true, forces a rescan even if skins are already loaded. Defaults to false.
+    public func availableSkins(forceRescan: Bool = false) async throws -> [DeltaSkinProtocol] {
         try await queue.asyncResult {
-            try self.scanForSkins()
+            // Only scan if we haven't scanned yet, or if forceRescan is true
+            if !self.hasScanned || forceRescan {
+                try self.scanForSkins()
+            }
             return self.loadedSkins
         }
     }
@@ -65,12 +80,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     public func skin(withIdentifier identifier: String) async throws -> DeltaSkinProtocol? {
         try await queue.asyncResult {
             // Find the skin with the matching identifier
-            if let skin = self.loadedSkins.first { $0.identifier == identifier } {
+            if let skin = self.loadedSkins.first(where: { $0.identifier == identifier }) {
                 return skin
             } else {
                 // Ensure skins are loaded
                 try self.scanForSkins()
-                return self.loadedSkins.first { $0.identifier == identifier }
+                return self.loadedSkins.first(where: { $0.identifier == identifier })
             }
         }
     }
@@ -81,7 +96,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     ///   - orientation: The current orientation
     /// - Returns: The session skin identifier if set, otherwise nil
     public func sessionSkinIdentifier(for systemId: SystemIdentifier, orientation: SkinOrientation) -> String? {
-        return sessionSkins[systemId.rawValue]?[orientation.rawValue]
+        return queue.sync {
+            return sessionSkins[systemId.rawValue]?[orientation.rawValue]
+        }
     }
 
     /// Set the session skin for a system
@@ -128,11 +145,11 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             return sessionSkin
         }
 
-        // Then, ff we have a game ID, check game-specific session skin first
+        // Then, if we have a game ID, check game-specific session skin first
         if let gameId = gameId {
             // Use the composite key for game-specific session skins
             let compositeKey = "\(systemId.rawValue)_\(gameId)"
-            if let gameSpecificSessionSkin = sessionSkins[compositeKey]?[orientation.rawValue] {
+            if let gameSpecificSessionSkin = queue.sync(execute: { sessionSkins[compositeKey]?[orientation.rawValue] }) {
                 return gameSpecificSessionSkin
             }
         }
@@ -176,11 +193,21 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
     /// Scan for available skins
     private func scanForSkins() throws {
+        // Prevent concurrent scans
+        guard !isScanning else {
+            DLOG("Scan already in progress, skipping")
+            return
+        }
+
+        isScanning = true
+        defer { isScanning = false }
+
         DLOG("Starting skin scan...")
         let locations = skinLocations()
         DLOG("Total locations to scan: \(locations.count)")
 
-        // Create a new array to hold all skins
+        // Use Set for O(1) lookup instead of O(n) contains check
+        var scannedSkinIdentifiers = Set<String>()
         var scannedSkins: [DeltaSkinProtocol] = []
 
         for location in locations {
@@ -196,8 +223,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
                 if isDirectory {
                     if location.lastPathComponent.hasSuffix(".deltaskin") || location.lastPathComponent.hasSuffix(".manicskin") {
                         // This is a .deltaskin directory, load it directly
-                        if let skin = try? loadSkinFromURL(location) {
-                            if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                        if let skin = try? loadSkinFromURLWithoutAdding(location) {
+                            if !scannedSkinIdentifiers.contains(skin.identifier) {
+                                scannedSkinIdentifiers.insert(skin.identifier)
                                 scannedSkins.append(skin)
                             }
                         }
@@ -210,17 +238,19 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
                         )
 
                         for url in contents where (url.lastPathComponent.hasSuffix(".deltaskin") || url.lastPathComponent.hasSuffix(".manicskin")) {
-                            if let skin = try? loadSkinFromURL(url) {
-                                if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                            if let skin = try? loadSkinFromURLWithoutAdding(url) {
+                                if !scannedSkinIdentifiers.contains(skin.identifier) {
+                                    scannedSkinIdentifiers.insert(skin.identifier)
                                     scannedSkins.append(skin)
                                 }
                             }
                         }
                     }
-                } else if location.pathExtension == "deltaskin" {
-                    // This is a .deltaskin file (archive)
-                    if let skin = try? loadSkinFromURL(location) {
-                        if !scannedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                } else if location.pathExtension == "deltaskin" || location.pathExtension == "manicskin" {
+                    // This is a .deltaskin or .manicskin file (archive)
+                    if let skin = try? loadSkinFromURLWithoutAdding(location) {
+                        if !scannedSkinIdentifiers.contains(skin.identifier) {
+                            scannedSkinIdentifiers.insert(skin.identifier)
                             scannedSkins.append(skin)
                         }
                     }
@@ -245,27 +275,21 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             }
         }
 
-        // Update loadedSkins
+        // Batch update loadedSkins once at the end (reduces SwiftUI updates)
         Task { @MainActor in
             loadedSkins = scannedSkins
+            hasScanned = true
         }
     }
 
-    /// Load a skin from URL and add to loadedSkins
-    private func loadSkinFromURL(_ url: URL) throws -> DeltaSkinProtocol {
+    /// Load a skin from URL without adding to loadedSkins (for use during scan)
+    private func loadSkinFromURLWithoutAdding(_ url: URL) throws -> DeltaSkinProtocol {
         DLOG("Loading skin from: \(url.lastPathComponent)")
 
         do {
             let skin = try DeltaSkin(fileURL: url)
             let typeLabel = skin.gameType.deltaIdentifierString ?? skin.gameType.manicIdentifierString ?? String(describing: skin.gameType)
-            ILOG("Successfully loaded skin: \(skin.name) (type: \(typeLabel))")
-
-            DLOG("Current loaded skins count: \(loadedSkins.count)")
-            Task { @MainActor in
-                loadedSkins.append(skin)
-            }
-            DLOG("New loaded skins count: \(loadedSkins.count)")
-
+            DLOG("Successfully loaded skin: \(skin.name) (type: \(typeLabel))")
             return skin
         } catch {
             ELOG("Failed to load skin from \(url.lastPathComponent): \(error)")
@@ -276,6 +300,18 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         }
     }
 
+    /// Load a skin from URL and add to loadedSkins (for manual loading)
+    private func loadSkinFromURL(_ url: URL) throws -> DeltaSkinProtocol {
+        let skin = try loadSkinFromURLWithoutAdding(url)
+        // Add to loadedSkins if not already present
+        Task { @MainActor in
+            if !loadedSkins.contains(where: { $0.identifier == skin.identifier }) {
+                loadedSkins.append(skin)
+            }
+        }
+        return skin
+    }
+
     /// Get locations of skin files
     private func skinLocations() -> [URL] {
         var locations: [URL] = []
@@ -284,13 +320,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         let deltaSkins = Bundle.main.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
         let manicSkins = Bundle.main.urls(forResourcesWithExtension: "manicskin", subdirectory: nil) ?? []
         let bundleSkins = deltaSkins + manicSkins
-        locations.append(contentsOf: bundleSkins)
 
         if !bundleSkins.isEmpty {
             DLOG("Found bundle skins: \(bundleSkins.map { $0.lastPathComponent })")
             locations.append(contentsOf: bundleSkins)
         } else {
-            WLOG("No skinds found in any bundles")
+            WLOG("No skins found in any bundles")
         }
 
         // Add framework bundle skins
@@ -334,9 +369,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     public func reloadSkins() async {
         do {
             try await queue.asyncResult {
+                // Force rescan
+                self.hasScanned = false
                 try self.scanForSkins()
-                self.objectWillChange.send()
             }
+            // Trigger objectWillChange after scan completes
+            self.objectWillChange.send()
         } catch {
             ELOG("Failed to reload skins: \(error)")
         }
@@ -389,11 +427,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             DLOG("Deleting skin at: \(skin.fileURL.path)")
             try FileManager.default.removeItem(at: skin.fileURL)
 
-            // Update loadedSkins immediately
-            self.loadedSkins.removeAll { $0.identifier == identifier }
-
-            // Then rescan on main thread
+            // Update loadedSkins on main thread (it's @Published)
             Task { @MainActor in
+                self.loadedSkins.removeAll { $0.identifier == identifier }
                 self.objectWillChange.send()
             }
         }
@@ -568,7 +604,9 @@ extension DeltaSkinManager {
     public func sessionSkinIdentifier(for systemId: SystemIdentifier, gameId: String, orientation: SkinOrientation) -> String? {
         // Create a composite key combining system ID and game ID
         let compositeKey = "\(systemId.rawValue)_\(gameId)"
-        return sessionSkins[compositeKey]?[orientation.rawValue]
+        return queue.sync {
+            return sessionSkins[compositeKey]?[orientation.rawValue]
+        }
     }
 
     /// Get the effective skin identifier for a game, checking game-specific session skins first,

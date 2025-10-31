@@ -22,7 +22,7 @@ public struct EmulatorScene: Scene {
     @Environment(\.scenePhase) private var scenePhase
 
     public init() {}
-    
+
     public var body: some Scene {
         WindowGroup(id: "emulator") {
             EmulatorContainerView()
@@ -393,12 +393,16 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
                 alertController.addAction(action)
             }
         } else {
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                ILOG("EmulatorContainerView: User dismissed error alert, returning to main scene")
+                AppState.shared.emulationUIState.reset()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    SceneCoordinator.shared.closeEmulator()
+                }
+            }))
         }
 
-        viewController.present(alertController, animated: true) {
-            AppState.shared.emulationUIState.reset()
-        }
+        viewController.present(alertController, animated: true)
     }
 
     func updateRecentGames(_ game: PVGame) {
@@ -454,7 +458,13 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
                 alertController.addAction(action)
             }
         } else {
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                ILOG("EmulatorContainerViewController: User dismissed error alert, returning to main scene")
+                AppState.shared.emulationUIState.reset()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    SceneCoordinator.shared.closeEmulator()
+                }
+            }))
         }
 
         present(alertController, animated: true, completion: nil)

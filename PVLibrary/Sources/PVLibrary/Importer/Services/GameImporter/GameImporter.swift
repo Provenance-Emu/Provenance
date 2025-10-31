@@ -602,8 +602,16 @@ public final class GameImporter: GameImporting, ObservableObject {
             newItems.append(item)
         }
 
-        // Add all items to queue first
-        for item in newItems {
+        /// Batch check for existing games before adding to queue (more efficient)
+        let existingURLs = await batchCheckExistingGames(newItems)
+        let itemsToAdd = newItems.filter { !existingURLs.contains($0.url) }
+
+        if existingURLs.count > 0 {
+            ILOG("Skipping \(existingURLs.count) files that already exist in database")
+        }
+
+        // Add filtered items to queue
+        for item in itemsToAdd {
             await self.addImportItemToQueue(item)
         }
 
@@ -619,8 +627,16 @@ public final class GameImporter: GameImporting, ObservableObject {
             newItems.append(item)
         }
 
-        // Add all items to queue first
-        for item in newItems {
+        /// Batch check for existing games before adding to queue (more efficient)
+        let existingURLs = await batchCheckExistingGames(newItems)
+        let itemsToAdd = newItems.filter { !existingURLs.contains($0.url) }
+
+        if existingURLs.count > 0 {
+            ILOG("Skipping \(existingURLs.count) files that already exist in database (target system: \(targetSystem.rawValue))")
+        }
+
+        // Add filtered items to queue
+        for item in itemsToAdd {
             await self.addImportItemToQueue(item)
         }
 
@@ -1590,6 +1606,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         let groupedItems = groupRelatedFiles(itemsToProcess)
         ILOG("Grouped \(itemsToProcess.count) items into \(groupedItems.count) processing groups")
 
+        // Prioritize groups: small files first, CD-ROMs last
+        let prioritizedGroups = prioritizeImportGroups(groupedItems)
+        ILOG("Prioritized \(prioritizedGroups.count) groups for optimal processing order")
+
         // Maximum number of concurrent imports
         let maxConcurrentImports = 4
 
@@ -1597,7 +1617,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         await withTaskGroup(of: Void.self) { group in
             var activeTaskCount = 0
 
-            for fileGroup in groupedItems {
+            for fileGroup in prioritizedGroups {
                 // Check if we've been paused before adding each group
                 if await checkIfPaused() {
                     ILOG("GameImportQueue - processing paused, waiting for resume")
@@ -2102,6 +2122,48 @@ public final class GameImporter: GameImporting, ObservableObject {
         return duplicate
     }
 
+    /// Batch checks multiple items for existing games in database (more efficient than individual checks)
+    /// - Parameter items: Items to check
+    /// - Returns: Set of URLs that already exist in database
+    private func batchCheckExistingGames(_ items: [ImportQueueItem]) async -> Set<URL> {
+        let gamesCache = RomDatabase.gamesCache
+        var existingURLs = Set<URL>()
+
+        /// Group items by system directory for efficient batch queries
+        let itemsBySystem = Dictionary(grouping: items) { item -> String in
+            item.url.deletingLastPathComponent().lastPathComponent
+        }
+
+        for (systemDir, systemItems) in itemsBySystem {
+            guard let systemID = SystemIdentifier(rawValue: systemDir) else { continue }
+
+            /// Batch check by filename for this system
+            for item in systemItems {
+                let filename = item.url.lastPathComponent
+                let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
+                let altName = RomDatabase.altName(item.url, systemIdentifier: systemID)
+
+                /// Check cache by partialPath and altName
+                if gamesCache[partialPath] != nil || gamesCache[altName] != nil {
+                    existingURLs.insert(item.url)
+                    continue
+                }
+
+                /// Check by file path
+                for game in gamesCache.values {
+                    if game.systemIdentifier == systemID.rawValue,
+                       let gameFileURL = game.file?.url,
+                       gameFileURL.path == item.url.path {
+                        existingURLs.insert(item.url)
+                        break
+                    }
+                }
+            }
+        }
+
+        return existingURLs
+    }
+
     private func addImportItemToQueue(_ item: ImportQueueItem) async {
         // First, check if this is a BIOS file
         let fileType = determineImportType(item)
@@ -2123,68 +2185,72 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
 
             // Check if this is a late-arriving file that belongs to an already processed M3U or CUE
-            // This is crucial for handling files that arrive after their parent M3U/CUE has been processed
-            let currentQueue = await importQueueActor.getQueue()
-            let successfulItems = currentQueue.filter { $0.status == .success }
+            // Only check for CD-ROM related files to avoid expensive queue iteration for regular ROMs
+            if fileType == .cdRom || item.url.pathExtension.lowercased() == Extensions.bin.rawValue {
+                let currentQueue = await importQueueActor.getQueue()
+                let successfulItems = currentQueue.filter { $0.status == .success }
 
-            // First check for completed items that might be expecting this file
-            for completedItem in successfulItems where completedItem.fileType == .cdRom {
-                // Check if this file is in the expected associated files list of any completed item
-                if let expectedFiles = completedItem.expectedAssociatedFileNames,
-                   expectedFiles.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
-                    ILOG("Found late-arriving file \(item.url.lastPathComponent) that belongs to completed item \(completedItem.url.lastPathComponent)")
+                // First check for completed items that might be expecting this file
+                for completedItem in successfulItems where completedItem.fileType == .cdRom {
+                    // Check if this file is in the expected associated files list of any completed item
+                    if let expectedFiles = completedItem.expectedAssociatedFileNames,
+                       expectedFiles.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
+                        ILOG("Found late-arriving file \(item.url.lastPathComponent) that belongs to completed item \(completedItem.url.lastPathComponent)")
 
-                    // Handle the late-arriving file
-                    await handleLateAssociatedFile(fileURL: item.url, forCompletedItem: completedItem)
-                    return // Don't add to queue since we've handled it as a late arrival
-                }
-
-                // Check if this is a CUE file mentioned in an M3U
-                if completedItem.url.pathExtension.lowercased() == Extensions.m3u.rawValue,
-                   let m3uContents = try? cdRomFileHandler.parseM3U(from: completedItem.url),
-                   m3uContents.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
-                    ILOG("Found late-arriving CUE file \(item.url.lastPathComponent) that belongs to M3U \(completedItem.url.lastPathComponent)")
-
-                    // Handle the late-arriving file
-                    await handleLateAssociatedFile(fileURL: item.url, forCompletedItem: completedItem)
-                    return // Don't add to queue since we've handled it as a late arrival
-                }
-
-                // Check if this is a BIN file that might be referenced by a CUE file
-                // This is especially important for BIN files that arrive after their CUE
-                if item.url.pathExtension.lowercased() == Extensions.bin.rawValue {
-                    // Check all resolved CUE files associated with this completed item
-                    for resolvedURL in completedItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
-                        // Try to parse the CUE file to find referenced BIN files
-                        if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: resolvedURL),
-                           binFiles.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
-                            ILOG("Found late-arriving BIN file \(item.url.lastPathComponent) referenced by CUE \(resolvedURL.lastPathComponent)")
-
-                            // Handle the late-arriving file
-                            await handleLateAssociatedFile(fileURL: item.url, forCompletedItem: completedItem)
-                            return // Don't add to queue since we've handled it as a late arrival
-                        }
+                        // Handle the late-arriving file
+                        await handleLateAssociatedFile(fileURL: item.url, forCompletedItem: completedItem)
+                        return // Don't add to queue since we've handled it as a late arrival
                     }
 
-                    // If we didn't find a match in the CUE files, check if the BIN file matches the base name of any CUE
-                    let binBaseName = item.url.deletingPathExtension().lastPathComponent.lowercased()
+                    // Check if this is a CUE file mentioned in an M3U
+                    if completedItem.url.pathExtension.lowercased() == Extensions.m3u.rawValue,
+                       let m3uContents = try? cdRomFileHandler.parseM3U(from: completedItem.url),
+                       m3uContents.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
+                        ILOG("Found late-arriving CUE file \(item.url.lastPathComponent) that belongs to M3U \(completedItem.url.lastPathComponent)")
 
-                    for resolvedURL in completedItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
-                        let cueBaseName = resolvedURL.deletingPathExtension().lastPathComponent.lowercased()
+                        // Handle the late-arriving file
+                        await handleLateAssociatedFile(fileURL: item.url, forCompletedItem: completedItem)
+                        return // Don't add to queue since we've handled it as a late arrival
+                    }
 
-                        if binBaseName == cueBaseName {
-                            ILOG("Found late-arriving BIN file \(item.url.lastPathComponent) with matching base name to CUE \(resolvedURL.lastPathComponent)")
+                    // Check if this is a BIN file that might be referenced by a CUE file
+                    // This is especially important for BIN files that arrive after their CUE
+                    if item.url.pathExtension.lowercased() == Extensions.bin.rawValue {
+                        // Check all resolved CUE files associated with this completed item
+                        for resolvedURL in completedItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
+                            // Try to parse the CUE file to find referenced BIN files
+                            if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: resolvedURL),
+                               binFiles.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
+                                ILOG("Found late-arriving BIN file \(item.url.lastPathComponent) referenced by CUE \(resolvedURL.lastPathComponent)")
 
-                            // Handle the late-arriving file
-                            await handleLateAssociatedFile(fileURL: item.url, forCompletedItem: completedItem)
-                            return // Don't add to queue since we've handled it as a late arrival
+                                // Handle the late-arriving file
+                                await handleLateAssociatedFile(fileURL: item.url, forCompletedItem: completedItem)
+                                return // Don't add to queue since we've handled it as a late arrival
+                            }
+                        }
+
+                        // If we didn't find a match in the CUE files, check if the BIN file matches the base name of any CUE
+                        let binBaseName = item.url.deletingPathExtension().lastPathComponent.lowercased()
+
+                        for resolvedURL in completedItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
+                            let cueBaseName = resolvedURL.deletingPathExtension().lastPathComponent.lowercased()
+
+                            if binBaseName == cueBaseName {
+                                ILOG("Found late-arriving BIN file \(item.url.lastPathComponent) with matching base name to CUE \(resolvedURL.lastPathComponent)")
+
+                                // Handle the late-arriving file
+                                await handleLateAssociatedFile(fileURL: item.url, forCompletedItem: completedItem)
+                                return // Don't add to queue since we've handled it as a late arrival
+                            }
                         }
                     }
                 }
             }
 
             // Check for duplicates in the current queue
-            let isDuplicate = await importQueueActor.containsDuplicate(ofItem: item) { existing, newItem in
+            let isDuplicate = await importQueueActor.containsDuplicate(ofItem: item) { [weak self] existing, newItem in
+                guard let self = self else { return false }
+
                 // Check if the URL is the same
                 if existing.url == newItem.url {
                     return true
@@ -2349,6 +2415,52 @@ public final class GameImporter: GameImporting, ObservableObject {
         return result
     }
 
+    /// Prioritizes import groups for optimal processing order
+    /// Small files first, CD-ROMs last, multi-file groups after single files
+    /// - Parameter groups: Groups of related import items
+    /// - Returns: Prioritized groups sorted by processing efficiency
+    private func prioritizeImportGroups(_ groups: [[ImportQueueItem]]) -> [[ImportQueueItem]] {
+        return groups.sorted { lhsGroup, rhsGroup in
+            let lhsScore = priorityScore(for: lhsGroup)
+            let rhsScore = priorityScore(for: rhsGroup)
+            return lhsScore < rhsScore
+        }
+    }
+
+    /// Calculates priority score for a group of import items (lower = higher priority)
+    /// - Parameter group: Group of related import items
+    /// - Returns: Priority score (lower values processed first)
+    private func priorityScore(for group: [ImportQueueItem]) -> Int {
+        guard let firstItem = group.first else { return Int.max }
+
+        var score = 0
+
+        // CD-ROMs get lowest priority (processed last)
+        if firstItem.fileType == .cdRom {
+            score += 10000
+        }
+
+        // Multi-file groups (CUE/BIN, M3U) get lower priority
+        if group.count > 1 {
+            score += 5000
+        }
+
+        // Calculate total file size for the group
+        var totalSize: Int64 = 0
+        for item in group {
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: item.url.path),
+               let size = attributes[.size] as? Int64 {
+                totalSize += size
+            }
+        }
+
+        // Larger files get lower priority (processed later)
+        // Add size in MB to score
+        score += Int(totalSize / 1_000_000)
+
+        return score
+    }
+
     // Add a helper method to check if processing is paused
     private func checkIfPaused() async -> Bool {
         // Check if we're paused
@@ -2357,51 +2469,113 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     /// Checks if a ROM file already exists in the database with a valid file
+    /// Uses fast-path duplicate detection (file size) before expensive MD5 calculation
     /// - Parameter item: The ImportQueueItem to check
     /// - Returns: True if the ROM already exists in the database with a valid file
     private func isROMAlreadyInDatabase(_ item: ImportQueueItem) async -> Bool {
-        // First try to determine the system for this ROM
+        let gamesCache = RomDatabase.gamesCache
+        let filePath = item.url.path
+
+        /// Fast-path: Quick duplicate check using file size (before expensive MD5)
+        if let fileSize = try? FileManager.default.attributesOfItem(atPath: filePath)[.size] as? Int64 {
+            let realm = RomDatabase.sharedInstance.realm
+            /// Check for games with matching file size first (fast database query)
+            let gamesWithSameSize = realm.objects(PVGame.self).filter("file.sizeCache == %@", Int(fileSize))
+
+            /// If we find games with same size, verify they're actually the same file
+            if !gamesWithSameSize.isEmpty {
+                for game in gamesWithSameSize {
+                    if let gameFile = game.file,
+                       gameFile.url?.path == filePath {
+                        /// Exact path match - definitely exists
+                        ILOG("Found existing game by file path match: \(game.title ?? "Unknown")")
+                        return true
+                    }
+                }
+            }
+        }
+
+        /// If file is already in a system ROM directory, check that system first (avoids expensive system detection)
+        if let systemFromPath = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
+            let filename = item.url.lastPathComponent
+            let partialPath = (systemFromPath.rawValue as NSString).appendingPathComponent(filename)
+            let similarName = RomDatabase.altName(item.url, systemIdentifier: systemFromPath)
+
+            /// Check cache by partialPath and altName
+            if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
+               systemFromPath.rawValue == existingGame.systemIdentifier,
+               existingGame.file != nil {
+                /// Verify file path matches (handles cases where file moved but cache not updated)
+                if let gameFileURL = existingGame.file?.url,
+                   gameFileURL.path == filePath {
+                    ILOG("Found existing game in database by path system check: \(existingGame.title ?? "Unknown")")
+                    return true
+                }
+            }
+
+            /// Check by MD5 for this system (fast lookup)
+            if let md5 = item.md5?.uppercased() {
+                let realm = RomDatabase.sharedInstance.realm
+                if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+                   systemFromPath.rawValue == gameWithSameMD5.systemIdentifier,
+                   gameWithSameMD5.file != nil {
+                    /// Verify file path matches
+                    if let gameFileURL = gameWithSameMD5.file?.url,
+                       gameFileURL.path == filePath {
+                        ILOG("Found existing game with same MD5 hash by path system: \(gameWithSameMD5.title ?? "Unknown")")
+                        return true
+                    }
+                }
+            }
+        }
+
+        /// Check if file path matches any existing game's file URL (for files not in ROM directories)
+        /// Only check if file is in Imports or other non-ROM directories to avoid expensive iteration
+        let isInImportsOrOther = filePath.contains("/Imports/") || !filePath.contains(romsPath.path)
+        if isInImportsOrOther {
+            /// Check games cache by iterating (slower but needed for imports)
+            for game in gamesCache.values {
+                if let gameFileURL = game.file?.url,
+                   gameFileURL.path == filePath,
+                   game.file != nil {
+                    ILOG("Found existing game by file path: \(game.title ?? "Unknown") at \(filePath)")
+                    return true
+                }
+            }
+        }
+
+        /// Fallback: try to determine systems (more expensive, but needed for files not in ROM directories)
         do {
             let systems = try await gameImporterSystemsService.determineSystems(for: item)
             guard !systems.isEmpty else {
-                // If we can't determine the system, we can't check the database
                 return false
             }
 
-            // For each potential system, check if the ROM already exists
+            /// For each potential system, check if the ROM already exists
             for system in systems {
-                // Check by filename in the system's directory
                 let filename = item.url.lastPathComponent
                 let partialPath = (system.rawValue as NSString).appendingPathComponent(filename)
                 let similarName = RomDatabase.altName(item.url, systemIdentifier: system)
 
-                // Check the games cache for this ROM
-                let gamesCache = RomDatabase.gamesCache
-
                 if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
                    system.rawValue == existingGame.systemIdentifier,
                    existingGame.file != nil {
-                    // The game exists in the database with a valid file
-                    ILOG("Found existing game in database: \(existingGame.title) with valid file")
+                    ILOG("Found existing game in database: \(existingGame.title ?? "Unknown")")
                     return true
                 }
 
-                // If we have an MD5 hash, check for matches by MD5
+                /// Check by MD5 for this system
                 if let md5 = item.md5?.uppercased() {
                     let realm = RomDatabase.sharedInstance.realm
-                    let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-
-                    if let existingGameWithSameMD5 = gameWithSameMD5,
-                       system.rawValue == existingGameWithSameMD5.systemIdentifier,
-                       existingGameWithSameMD5.file != nil {
-                        // The game exists in the database with a valid file and matching MD5
-                        ILOG("Found existing game with same MD5 hash: \(existingGameWithSameMD5.title) with valid file")
+                    if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+                       system.rawValue == gameWithSameMD5.systemIdentifier,
+                       gameWithSameMD5.file != nil {
+                        ILOG("Found existing game with same MD5 hash: \(gameWithSameMD5.title ?? "Unknown")")
                         return true
                     }
                 }
             }
 
-            // If we get here, the ROM doesn't exist in the database with a valid file
             return false
         } catch {
             ELOG("Error checking if ROM is already in database: \(error.localizedDescription)")

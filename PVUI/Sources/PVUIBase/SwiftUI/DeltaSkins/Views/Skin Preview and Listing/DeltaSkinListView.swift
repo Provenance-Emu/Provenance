@@ -49,12 +49,23 @@ public struct DeltaSkinListView: View {
                     )
                 }
             }
-            .task {
-                do {
-                    availableSkins = try await manager.availableSkins()
-                } catch {
-                    ELOG("Failed to load skins: \(error)")
+            .onAppear {
+                // Use manager's loadedSkins directly if available, otherwise load once
+                if !manager.loadedSkins.isEmpty {
+                    availableSkins = manager.loadedSkins
+                } else {
+                    Task {
+                        do {
+                            availableSkins = try await manager.availableSkins(forceRescan: false)
+                        } catch {
+                            ELOG("Failed to load skins: \(error)")
+                        }
+                    }
                 }
+            }
+            .onChange(of: manager.loadedSkins.count) { _ in
+                // Update availableSkins when manager's loadedSkins changes
+                availableSkins = manager.loadedSkins
             }
         #if !os(tvOS)
             .fileImporter(

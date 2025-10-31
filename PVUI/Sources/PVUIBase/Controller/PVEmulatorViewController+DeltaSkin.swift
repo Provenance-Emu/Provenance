@@ -202,8 +202,29 @@ extension PVEmulatorViewController {
                    let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
                     viewport.setUseCustomRenderViewLayout(true)
                     let parent = (self.core.touchViewController ?? self).view
+
+                    // Force layout update on parent view first to ensure correct coordinate system
+                    guard let parent = parent else { return }
+                    parent.setNeedsLayout()
+                    parent.layoutIfNeeded()
+
+                    // Now convert coordinates - the frame is in self.view's coordinate system
                     let rectInParent = self.view.convert(frame, to: parent)
-                    viewport.applyRenderViewFrameInTouchView(rectInParent)
+
+                    // For landscape, ensure conversion is correct and clamp to parent bounds
+                    let orientation: SkinOrientation = self.view.bounds.width > self.view.bounds.height ? .landscape : .portrait
+                    if orientation == .landscape {
+                        let clampedRect = CGRect(
+                            x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                            y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                            width: min(rectInParent.width, parent.bounds.width),
+                            height: min(rectInParent.height, parent.bounds.height)
+                        )
+                        DLOG("Landscape RA viewport: original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds)")
+                        viewport.applyRenderViewFrameInTouchView(clampedRect)
+                    } else {
+                        viewport.applyRenderViewFrameInTouchView(rectInParent)
+                    }
                     // Keep RA behind skin: retroarch bridge handles sendSubviewToBack internally after frame apply
                 }
             },
@@ -214,8 +235,29 @@ extension PVEmulatorViewController {
                    let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
                     viewport.setUseCustomRenderViewLayout(true)
                     let parent = (self.core.touchViewController ?? self).view
+
+                    // Force layout update on parent view first to ensure correct coordinate system
+                    guard let parent = parent else { return }
+                    parent.setNeedsLayout()
+                    parent.layoutIfNeeded()
+
+                    // Now convert coordinates
                     let rectInParent = self.view.convert(frame, to: parent)
-                    viewport.applyRenderViewFrameInTouchView(rectInParent)
+
+                    // For landscape, ensure conversion is correct and clamp to parent bounds
+                    let orientation: SkinOrientation = self.view.bounds.width > self.view.bounds.height ? .landscape : .portrait
+                    if orientation == .landscape {
+                        let clampedRect = CGRect(
+                            x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                            y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                            width: min(rectInParent.width, parent.bounds.width),
+                            height: min(rectInParent.height, parent.bounds.height)
+                        )
+                        DLOG("Landscape RA refresh viewport: original=\(rectInParent), clamped=\(clampedRect)")
+                        viewport.applyRenderViewFrameInTouchView(clampedRect)
+                    } else {
+                        viewport.applyRenderViewFrameInTouchView(rectInParent)
+                    }
                 }
                 self?.applyViewportFromCurrentSkin()
             }
@@ -223,9 +265,9 @@ extension PVEmulatorViewController {
 
         // Configure the container
         containerView.frame = view.bounds
-        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        containerView.autoresizingMask = [UIView.AutoresizingMask.flexibleWidth, UIView.AutoresizingMask.flexibleHeight]
         containerView.isOpaque = false  // Ensure it's not opaque
-        containerView.backgroundColor = .clear  // Clear background
+        containerView.backgroundColor = UIColor.clear  // Clear background
 
         // Add the Metal view to the main view first (bottom layer)
         if let metalVC = gpuViewController as? PVMetalViewController,

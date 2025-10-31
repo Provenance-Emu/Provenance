@@ -56,6 +56,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     // Optional action for the settings button
     var settingsAction: (() -> Void)?
 
+    // Optional action for the skin selection button
+    var skinSelectionAction: (() -> Void)?
+
     // Context for the settings button
     var settingsContext: SettingsContext = .home
 
@@ -171,10 +174,10 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     @ViewBuilder
     private var coreControlsGroup: some View {
         HStack(spacing: spacing) {
-            
+
             Divider()
                 .frame(width: 1, height: 12)
-            
+
             // Sort indicator
             OptionsIndicator(pointDown: viewModel.sortGamesAscending, action: {
                 #if !os(tvOS)
@@ -203,7 +206,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             Divider()
                 .frame(width: 1, height: 12)
-            
+
             // Zoom out
             Button(action: {
                 #if !os(tvOS)
@@ -234,7 +237,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             Divider()
                 .frame(width: 1, height: 12)
-            
+
             // Consolidated log/status menu
             logStatusMenu
         }
@@ -247,9 +250,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             Menu {
                 // Settings button content
                 settingsMenuContent(for: settingsContext)
-                
+
                 Divider()
-                
+
                 // Log viewer
                 Button(action: {
 #if !os(tvOS)
@@ -273,7 +276,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }) {
                     Label("System Status", systemImage: "info.circle")
                 }
-                
+
                 // Import status - only show if we have an action or binding
                 if importStatusAction != nil || showImportStatusView != nil {
                     Button(action: {
@@ -347,6 +350,18 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
             }) {
                 Label("App Settings", systemImage: "gear")
+            }
+
+            // Skin selection for system
+            if let skinAction = skinSelectionAction {
+                Button(action: {
+                    #if !os(tvOS)
+                    Haptics.impact(style: .light)
+                    #endif
+                    skinAction()
+                }) {
+                    Label("Controller Skins", systemImage: "gamecontroller")
+                }
             }
 
             Divider()

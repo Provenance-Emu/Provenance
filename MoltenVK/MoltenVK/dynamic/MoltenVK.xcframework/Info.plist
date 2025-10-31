@@ -63,7 +63,6 @@
 			<key>SupportedArchitectures</key>
 			<array>
 				<string>arm64</string>
-				<string>arm64e</string>
 			</array>
 			<key>SupportedPlatform</key>
 			<string>tvos</string>

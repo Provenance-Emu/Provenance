@@ -4,23 +4,23 @@ import PVPrimitives
 /// Shows a preview of the selected skins for a system in both portrait and landscape orientations with retrowave styling
 struct SystemSkinPreviewRow: View {
     // MARK: - Properties
-    
+
     let system: SystemIdentifier
-    
+
     @StateObject private var skinManager = DeltaSkinManager.shared
     @StateObject private var preferences = DeltaSkinPreferences.shared
-    
+
     @State private var portraitSkin: (any DeltaSkinProtocol)? = nil
     @State private var landscapeSkin: (any DeltaSkinProtocol)? = nil
     @State private var isLoading = true
-    
+
     // Animation properties
     @State private var glowIntensity: CGFloat = 0.5
     @State private var isHovering = false
     @State private var loadingProgress: Double = 0
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         VStack(spacing: 8) {
             if isLoading {
@@ -33,7 +33,7 @@ struct SystemSkinPreviewRow: View {
                         skin: portraitSkin,
                         title: "PORTRAIT"
                     )
-                    
+
                     // Landscape skin preview
                     orientationPreview(
                         orientation: .landscape,
@@ -49,20 +49,20 @@ struct SystemSkinPreviewRow: View {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
             }
-            
+
             // Load skins with a slight delay for animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 loadSelectedSkins()
             }
         }
     }
-    
+
     // MARK: - UI Components
-    
+
     private var loadingView: some View {
         HStack {
             Spacer()
-            
+
             // Retrowave styled loading indicator
             ZStack {
                 Circle()
@@ -72,7 +72,7 @@ struct SystemSkinPreviewRow: View {
                     )
                     .frame(width: 40, height: 40)
                     .blur(radius: 1 * glowIntensity)
-                
+
                 Circle()
                     .trim(from: 0, to: 0.75)
                     .stroke(
@@ -88,12 +88,12 @@ struct SystemSkinPreviewRow: View {
                         }
                     }
             }
-            
+
             Spacer()
         }
         .frame(height: 100)
     }
-    
+
     private func orientationPreview(orientation: SkinOrientation, skin: (any DeltaSkinProtocol)?, title: String) -> some View {
         VStack(spacing: 6) {
             // Title with orientation
@@ -106,7 +106,7 @@ struct SystemSkinPreviewRow: View {
             }
             .foregroundStyle(RetroTheme.retroHorizontalGradient)
             .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.3), radius: 1)
-            
+
             // Skin preview or placeholder
             ZStack {
                 if let skin = skin {
@@ -130,7 +130,7 @@ struct SystemSkinPreviewRow: View {
                             .font(.system(size: 24))
                             .foregroundStyle(RetroTheme.retroHorizontalGradient)
                             .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 2)
-                        
+
                         Text("DEFAULT")
                             .font(.system(size: 10, weight: .bold, design: .rounded))
                             .foregroundColor(.white.opacity(0.7))
@@ -149,35 +149,35 @@ struct SystemSkinPreviewRow: View {
         }
         .frame(maxWidth: .infinity)
     }
-    
+
     // MARK: - Data Handling
-    
+
     private func loadSelectedSkins() {
         Task {
             isLoading = true
-            
+
             // Add a small delay for animation
             try? await Task.sleep(nanoseconds: 300_000_000)
-            
+
             do {
                 // Get selected skin IDs
                 let portraitSkinId = preferences.selectedSkinIdentifier(for: system, orientation: .portrait)
                 let landscapeSkinId = preferences.selectedSkinIdentifier(for: system, orientation: .landscape)
-                
-                // Load actual skin objects
-                var portraitSkinObj: (any DeltaSkinProtocol)? = nil
-                var landscapeSkinObj: (any DeltaSkinProtocol)? = nil
-                
-                if let portraitSkinId = portraitSkinId {
-                    // Find the skin by its identifier in the loaded skins
-                    portraitSkinObj = try? await skinManager.availableSkins().first(where: { $0.identifier == portraitSkinId })
+
+                // Load all skins once and reuse (use cached loadedSkins if available)
+                let allSkins = skinManager.loadedSkins.isEmpty
+                    ? (try? await skinManager.availableSkins()) ?? []
+                    : skinManager.loadedSkins
+
+                // Find skins by their identifiers
+                let portraitSkinObj = portraitSkinId.flatMap { id in
+                    allSkins.first(where: { $0.identifier == id })
                 }
-                
-                if let landscapeSkinId = landscapeSkinId {
-                    // Find the skin by its identifier in the loaded skins
-                    landscapeSkinObj = try? await skinManager.availableSkins().first(where: { $0.identifier == landscapeSkinId })
+
+                let landscapeSkinObj = landscapeSkinId.flatMap { id in
+                    allSkins.first(where: { $0.identifier == id })
                 }
-                
+
                 // Update UI with animation
                 await MainActor.run {
                     withAnimation(.easeOut(duration: 0.3)) {

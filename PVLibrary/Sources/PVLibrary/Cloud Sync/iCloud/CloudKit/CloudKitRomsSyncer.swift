@@ -340,7 +340,25 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // 2. Map Game Data to Record
         do {
+            // Validate required fields before mapping
+            guard !game.title.isEmpty else {
+                ELOG("Cannot upload game \(md5): Game title is empty")
+                throw CloudSyncError.invalidData
+            }
+            guard !game.systemIdentifier.isEmpty else {
+                ELOG("Cannot upload game \(md5): System identifier is empty")
+                throw CloudSyncError.invalidData
+            }
+
             record = try mapPVGameToRecord(game, existingRecord: record)
+
+            // Validate record metadata size (CloudKit has 1MB limit for record metadata)
+            let recordMetadataSize = try estimateRecordMetadataSize(record)
+            let maxRecordMetadataSize: Int64 = 1024 * 1024 // 1MB
+            if recordMetadataSize > maxRecordMetadataSize {
+                ELOG("Cannot upload game \(md5): Record metadata size \(ByteCountFormatter.string(fromByteCount: recordMetadataSize, countStyle: .file)) exceeds CloudKit limit of \(ByteCountFormatter.string(fromByteCount: maxRecordMetadataSize, countStyle: .file))")
+                throw CloudSyncError.invalidData
+            }
         } catch let error as CloudSyncError {
             throw error // Rethrow known sync errors
         } catch {
@@ -366,6 +384,36 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         guard FileManager.default.fileExists(atPath: primaryFileURL.path) else {
             ELOG("Cannot upload game \(md5): Primary file does not exist at \(primaryFileURL.path)")
             throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: 404, userInfo: [NSLocalizedDescriptionKey: "ROM file not found at expected path"]))
+        }
+
+        // Validate file size before proceeding (CloudKit asset limit is 500MB)
+        let maxAssetSize: Int64 = 500 * 1024 * 1024 // 500MB
+        do {
+            let fileAttributes = try FileManager.default.attributesOfItem(atPath: primaryFileURL.path)
+            if let fileSize = fileAttributes[.size] as? Int64 {
+                if fileSize > maxAssetSize {
+                    let sizeMB = Double(fileSize) / (1024 * 1024)
+                    let maxMB = Double(maxAssetSize) / (1024 * 1024)
+                    ELOG("Cannot upload game \(md5): File size \(String(format: "%.1f", sizeMB))MB exceeds CloudKit limit of \(String(format: "%.1f", maxMB))MB")
+                    throw CloudSyncError.assetTooLarge(size: fileSize, maxSize: maxAssetSize)
+                }
+                if fileSize == 0 {
+                    ELOG("Cannot upload game \(md5): File size is 0 bytes")
+                    throw CloudSyncError.invalidData
+                }
+                VLOG("File size validation passed for \(md5): \(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))")
+            }
+        } catch let error as CloudSyncError {
+            throw error
+        } catch {
+            ELOG("Failed to get file attributes for \(md5): \(error.localizedDescription)")
+            throw CloudSyncError.fileSystemError(error)
+        }
+
+        // Verify file is readable
+        guard FileManager.default.isReadableFile(atPath: primaryFileURL.path) else {
+            ELOG("Cannot upload game \(md5): File is not readable at \(primaryFileURL.path)")
+            throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: 403, userInfo: [NSLocalizedDescriptionKey: "ROM file is not readable"]))
         }
         let relatedFileURLs = game.relatedFiles.filter { $0.url?.lastPathComponent != primaryFileURL.lastPathComponent }.compactMap { $0.url }
         let filesToPackage = [primaryFileURL] + relatedFileURLs
@@ -429,6 +477,30 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         do {
             try await saveRecord(record)
             ILOG("Successfully saved record with asset for game \(md5) to CloudKit.")
+        } catch let error as CKError {
+            // Clean up zip file if upload fails
+            if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
+                try? await FileManager.default.removeItem(at: url)
+            }
+
+            // Provide specific error messages for common CloudKit errors
+            switch error.code {
+            case .invalidArguments:
+                ELOG("CloudKit invalidArguments error for \(md5): \(error.localizedDescription). This may indicate corrupted data or invalid record structure.")
+                throw CloudSyncError.invalidData
+            case .assetFileNotFound:
+                ELOG("CloudKit assetFileNotFound error for \(md5): Asset file was removed or is inaccessible.")
+                throw CloudSyncError.fileSystemError(error)
+            case .assetFileModified:
+                ELOG("CloudKit assetFileModified error for \(md5): Asset file was modified during upload.")
+                throw CloudSyncError.fileSystemError(error)
+            case .limitExceeded:
+                ELOG("CloudKit limitExceeded error for \(md5): Record or asset exceeds CloudKit size limits.")
+                throw CloudSyncError.assetTooLarge(size: 0, maxSize: 500 * 1024 * 1024)
+            default:
+                ELOG("CloudKit error saving record for \(md5): \(error.localizedDescription) (Code: \(error.code.rawValue))")
+                throw CloudSyncError.cloudKitError(error)
+            }
         } catch {
             // Clean up zip file if upload fails
             if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
@@ -944,6 +1016,23 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
         VLOG("Destination directory for download/extraction: \(destinationDirectory.path)")
 
+        // Verify asset file exists and is readable before proceeding
+        guard FileManager.default.fileExists(atPath: assetURL.path) else {
+            ELOG("Download failed: Asset file does not exist at \(assetURL.path) for MD5 \(md5)")
+            try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
+            throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: 404, userInfo: [NSLocalizedDescriptionKey: "Asset file not found after download"]))
+        }
+
+        // Check asset file size (should match expected size if available)
+        let assetFileAttributes = try? FileManager.default.attributesOfItem(atPath: assetURL.path)
+        let assetFileSize = assetFileAttributes?[.size] as? Int64 ?? 0
+        if let expectedFileSize = record[CloudKitSchema.ROMFields.fileSize] as? Int64, expectedFileSize > 0 {
+            if assetFileSize != expectedFileSize && assetFileSize > 0 {
+                WLOG("Asset file size mismatch for \(md5): Expected \(expectedFileSize) bytes, got \(assetFileSize) bytes. File may be corrupted or incomplete.")
+                // Don't fail immediately - CloudKit may have downloaded correctly but size reporting differs
+            }
+        }
+
         // 4. Handle File Placement (Direct Copy or Unzip using ZipArchive)
         var finalPrimaryFileURL: URL? = nil
         do {
@@ -951,10 +1040,15 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 // --- Unzip Archive using ZipArchive ---
                 VLOG("Asset is an archive. Unzipping \(assetURL.path) to \(destinationDirectory.path)")
 
+                // Verify archive integrity before unzipping
+                guard assetFileSize > 0 else {
+                    throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: -1, userInfo: [NSLocalizedDescriptionKey: "Archive file is empty or corrupted"]))
+                }
+
                 // Use ZipArchive
                 let success = SSZipArchive.unzipFile(atPath: assetURL.path, toDestination: destinationDirectory.path)
                 guard success else {
-                    throw CloudSyncError.zipError(DescriptiveError(description: "ZipArchive failed to unzip \(assetURL.path) to \(destinationDirectory.path)"))
+                    throw CloudSyncError.zipError(DescriptiveError(description: "ZipArchive failed to unzip \(assetURL.path) to \(destinationDirectory.path). Archive may be corrupted."))
                 }
                 VLOG("Successfully unzipped archive to \(destinationDirectory.path)")
                 // Find the primary file (e.g., .iso, .bin) to return its URL
@@ -969,15 +1063,30 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 let finalDestinationURL = destinationDirectory.appendingPathComponent(primaryFilename)
                 VLOG("Asset is a single file. Moving \(assetURL.path) to \(finalDestinationURL.path)")
 
+                // Verify source file integrity before moving
+                guard assetFileSize > 0 else {
+                    throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: -1, userInfo: [NSLocalizedDescriptionKey: "Downloaded file is empty or corrupted"]))
+                }
+
                 // Ensure overwrite by removing existing file first.
                 if FileManager.default.fileExists(atPath: finalDestinationURL.path) {
                     VLOG("Removing existing file at \(finalDestinationURL.path)")
                     try await FileManager.default.removeItem(at: finalDestinationURL)
                 }
                 try FileManager.default.moveItem(at: assetURL, to: finalDestinationURL)
+
+                // Verify destination file after move
+                guard FileManager.default.fileExists(atPath: finalDestinationURL.path) else {
+                    throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: -1, userInfo: [NSLocalizedDescriptionKey: "File move failed - destination file not found"]))
+                }
+
                 finalPrimaryFileURL = finalDestinationURL
                 ILOG("Successfully moved single file for \(md5) to \(finalDestinationURL.path).")
             }
+        } catch let error as CloudSyncError {
+            ELOG("CloudSyncError during download/unzip for \(md5): \(error)")
+            try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
+            throw error
         } catch {
             ELOG("File operation or ZipArchive error during download/unzip for \(md5): \(error.localizedDescription)")
             try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
@@ -1866,6 +1975,36 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Extract file size from a CloudKit record for sorting purposes
     /// - Parameter record: The CloudKit record to extract file size from
     /// - Returns: The file size in bytes, or 0 if not available
+    /// Estimate the size of record metadata (excluding CKAssets which are stored separately)
+    private func estimateRecordMetadataSize(_ record: CKRecord) throws -> Int64 {
+        var estimatedSize: Int64 = 0
+
+        // Estimate size of each field (excluding assets)
+        for key in record.allKeys() {
+            // Skip asset fields as they're stored separately
+            if key == CloudKitSchema.ROMFields.fileData || key == CloudKitSchema.ROMFields.customArtworkAsset {
+                continue
+            }
+
+            if let value = record[key] {
+                // Rough estimation of serialized size
+                if let string = value as? String {
+                    estimatedSize += Int64(string.utf8.count)
+                } else if let number = value as? NSNumber {
+                    estimatedSize += 8 // Rough estimate for numbers
+                } else if let date = value as? Date {
+                    estimatedSize += 8 // Date representation
+                } else if let array = value as? [Any] {
+                    estimatedSize += Int64(array.count * 16) // Rough estimate
+                } else if let dict = value as? [String: Any] {
+                    estimatedSize += Int64(dict.count * 32) // Rough estimate
+                }
+            }
+        }
+
+        return estimatedSize
+    }
+
     private func extractFileSize(from record: CKRecord) -> Int64 {
         // Try to get file size from the record's fileSize field
         if let fileSize = record[CloudKitSchema.ROMFields.fileSize] as? Int {

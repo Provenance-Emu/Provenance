@@ -6,43 +6,43 @@ import UniformTypeIdentifiers
 /// View for browsing and selecting skins for all systems with retrowave styling
 public struct SystemSkinBrowserView: View {
     // MARK: - Properties
-    
+
     @StateObject private var skinManager = DeltaSkinManager.shared
     @State private var systemSkinCounts: [SystemIdentifier: Int] = [:]
     @State private var isLoading = true
     @State private var loadingProgress: Double = 0
     @State private var selectedSystem: SystemIdentifier?
-    
+
     // Environment properties
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
-    
+
     // UI state
     @State private var showingDocumentPicker = false
     @State private var showingImportError = false
     @State private var importError: Error?
     @State private var importingFiles = false
     @State private var importProgress: Double = 0
-    
+
     // Animation states
     @State private var appearAnimation = false
     @State private var glowIntensity: CGFloat = 0.5
-    
+
     public init() {}
-    
+
     // MARK: - Body
-    
+
     public var body: some View {
         ZStack {
             // Retrowave background
             RetroTheme.retroBackground
                 .ignoresSafeArea()
-            
+
             // Main content
             VStack(spacing: 0) {
                 // Header
                 headerView
-                
+
                 // Content
                 ScrollView {
                     LazyVStack(spacing: 24) {
@@ -74,7 +74,7 @@ public struct SystemSkinBrowserView: View {
                         .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 }
             }
-            
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     withAnimation {
@@ -94,12 +94,12 @@ public struct SystemSkinBrowserView: View {
             withAnimation(.easeInOut(duration: 0.8)) {
                 appearAnimation = true
             }
-            
+
             // Start glow animation
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
             }
-            
+
             // Load skins with a slight delay for animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 loadSkins()
@@ -131,7 +131,7 @@ public struct SystemSkinBrowserView: View {
     }
 
     // MARK: - UI Components
-    
+
     private var headerView: some View {
         VStack(spacing: 8) {
             Text("CONTROLLER SKINS")
@@ -139,7 +139,7 @@ public struct SystemSkinBrowserView: View {
                 .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 .padding(.top, 20)
                 .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.5), radius: 3)
-            
+
             Text("Select and customize your game controllers")
                 .font(.subheadline)
                 .foregroundColor(.white.opacity(0.7))
@@ -170,11 +170,11 @@ public struct SystemSkinBrowserView: View {
                 )
         )
     }
-    
+
     private var loadingView: some View {
         VStack(spacing: 30) {
             Spacer()
-            
+
             // Retrowave styled loading indicator
             ZStack {
                 Circle()
@@ -184,7 +184,7 @@ public struct SystemSkinBrowserView: View {
                     )
                     .frame(width: 80, height: 80)
                     .blur(radius: 2 * glowIntensity)
-                
+
                 Circle()
                     .trim(from: 0, to: loadingProgress)
                     .stroke(
@@ -194,7 +194,7 @@ public struct SystemSkinBrowserView: View {
                     .frame(width: 80, height: 80)
                     .rotationEffect(.degrees(-90))
                     .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
-                
+
                 Text("\(Int(loadingProgress * 100))%")
                     .font(.system(size: 16, weight: .bold, design: .monospaced))
                     .foregroundStyle(RetroTheme.retroHorizontalGradient)
@@ -204,12 +204,12 @@ public struct SystemSkinBrowserView: View {
                     loadingProgress = 1.0
                 }
             }
-            
+
             Text("LOADING SKINS")
                 .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 .tracking(2)
-            
+
             Spacer()
         }
         .frame(height: 300)
@@ -225,28 +225,28 @@ public struct SystemSkinBrowserView: View {
         )
         .padding(.top, 40)
     }
-    
+
     private var emptyStateView: some View {
         VStack(spacing: 30) {
             Spacer()
-            
+
             Image(systemName: "gamecontroller.fill")
                 .font(.system(size: 60))
                 .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
                 .padding(.bottom, 10)
-            
+
             Text("NO SKINS FOUND")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 .tracking(2)
-            
+
             Text("Add controller skins to customize your gaming experience")
                 .font(.system(size: 16))
                 .foregroundColor(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-            
+
             Button {
                 showingDocumentPicker = true
             } label: {
@@ -265,7 +265,7 @@ public struct SystemSkinBrowserView: View {
                     )
                     .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
             }
-            
+
             Spacer()
         }
         .frame(height: 400)
@@ -281,7 +281,7 @@ public struct SystemSkinBrowserView: View {
         )
         .padding(.top, 40)
     }
-    
+
     private var systemsGridView: some View {
         LazyVGrid(
             columns: [GridItem(.adaptive(minimum: horizontalSizeClass == .regular ? 320 : 280), spacing: 20)],
@@ -294,10 +294,10 @@ public struct SystemSkinBrowserView: View {
         }
         .padding(.top, 20)
     }
-    
+
     private func systemCard(_ system: SystemIdentifier) -> some View {
         let skinCount = systemSkinCounts[system] ?? 0
-        
+
         return NavigationLink(destination: SystemSkinSelectionView(system: system)) {
             VStack(alignment: .leading, spacing: 12) {
                 // System header
@@ -306,9 +306,9 @@ public struct SystemSkinBrowserView: View {
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(RetroTheme.retroHorizontalGradient)
                         .lineLimit(1)
-                    
+
                     Spacer()
-                    
+
                     Text("\(skinCount)")
                         .font(.system(size: 16, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -325,7 +325,7 @@ public struct SystemSkinBrowserView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-                
+
                 // Preview of selected skins for this system
                 SystemSkinPreviewRow(system: system)
                     .padding(.horizontal, 12)
@@ -345,23 +345,35 @@ public struct SystemSkinBrowserView: View {
     }
 
     // MARK: - Data Handling
-    
+
     private var supportedSystems: [SystemIdentifier] {
         systemSkinCounts.filter { $0.value > 0 }.keys.sorted()
     }
-    
+
     private func loadSkins() {
         Task {
             await reloadAllSkins()
         }
     }
-    
+
     private func reloadAllSkins() async {
+        // Check if skins are already loaded - if so, skip reload
+        if !skinManager.loadedSkins.isEmpty {
+            await MainActor.run {
+                isLoading = false
+                loadingProgress = 1.0
+            }
+            // Use cached skins directly
+            let allSkins = skinManager.loadedSkins
+            await updateUI(with: allSkins)
+            return
+        }
+
         await MainActor.run {
             isLoading = true
             loadingProgress = 0.1
         }
-        
+
         // Simulate progress for better UX
         Task {
             for progress in stride(from: 0.1, to: 0.9, by: 0.1) {
@@ -371,27 +383,31 @@ public struct SystemSkinBrowserView: View {
                 }
             }
         }
-        
-        // Reload skins
+
+        // Reload skins only if needed
         await skinManager.reloadSkins()
-        
-        // Get all available skins
-        let allSkins = (try? await skinManager.availableSkins()) ?? []
-        
+
+        // Get all available skins (will use cache now)
+        let allSkins = (try? await skinManager.availableSkins(forceRescan: false)) ?? []
+        await updateUI(with: allSkins)
+    }
+
+    private func updateUI(with allSkins: [any DeltaSkinProtocol]) async {
+
         // Group by system
         var counts: [SystemIdentifier: Int] = [:]
-        
+
         for skin in allSkins {
             if let system = skin.gameType.systemIdentifier {
                 counts[system, default: 0] += 1
             }
         }
-        
+
         // Final update
         await MainActor.run {
             self.systemSkinCounts = counts
             self.loadingProgress = 1.0
-            
+
             // Slight delay before hiding loading screen for smoother transition
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 withAnimation(.easeOut(duration: 0.3)) {
@@ -400,37 +416,37 @@ public struct SystemSkinBrowserView: View {
             }
         }
     }
-    
+
     private func importSkins(from urls: [URL]) async throws {
         await MainActor.run {
             importingFiles = true
             importProgress = 0
         }
-        
+
         for (index, url) in urls.enumerated() {
             // Start accessing the security-scoped resource
             guard url.startAccessingSecurityScopedResource() else {
                 ELOG("Failed to start accessing security-scoped resource")
                 throw DeltaSkinError.accessDenied
             }
-            
+
             defer {
                 url.stopAccessingSecurityScopedResource()
             }
-            
+
             // Import the skin
             try await skinManager.importSkin(from: url)
-            
+
             // Update progress
             let progress = Double(index + 1) / Double(urls.count)
             await MainActor.run {
                 importProgress = progress
             }
         }
-        
+
         // Reload after all imports
         await reloadAllSkins()
-        
+
         await MainActor.run {
             importingFiles = false
         }

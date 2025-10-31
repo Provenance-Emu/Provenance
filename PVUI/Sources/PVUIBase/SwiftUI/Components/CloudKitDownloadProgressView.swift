@@ -169,10 +169,11 @@ public struct CloudKitDownloadProgressView: View {
             .sink { _ in
                 // Check if it completed successfully or failed
                 if progressTracker.failedDownloads.contains(where: { $0.md5 == gameMD5 }) {
-                    // Failed
+                    // Failed - show error and call onCancel to dismiss emulator
                     if let failedDownload = progressTracker.failedDownloads.first(where: { $0.md5 == gameMD5 }) {
                         hasError = true
                         errorMessage = "\(failedDownload.error)"
+                        // Don't auto-dismiss on error - let user choose to retry or cancel
                     }
                 } else {
                     // Completed successfully
@@ -180,6 +181,24 @@ public struct CloudKitDownloadProgressView: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         onComplete()
                     }
+                }
+            }
+            .store(in: &cancellables)
+
+        // Monitor for cancellation (when download is removed from queue without completion)
+        progressTracker.$queuedDownloads
+            .combineLatest(progressTracker.$activeDownloads)
+            .map { queued, active in
+                // Download is cancelled if it's not in queued or active lists and not failed
+                !queued.contains { $0.md5 == gameMD5 } &&
+                !active.contains { $0.md5 == gameMD5 } &&
+                !progressTracker.failedDownloads.contains { $0.md5 == gameMD5 }
+            }
+            .filter { $0 } // Only when true (cancelled)
+            .sink { _ in
+                // Download was cancelled - call onCancel to dismiss emulator
+                DispatchQueue.main.async {
+                    onCancel()
                 }
             }
             .store(in: &cancellables)

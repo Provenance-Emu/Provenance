@@ -34,19 +34,19 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     public let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
-    
+
     public enum State {
         case idle
         case importing
     }
-    
+
     @Published
     public private(set) var state: State = .importing
-    
+
     public func resume() {
         state = .importing
     }
-    
+
     public func pause() {
         state = .idle
         stopObserving()
@@ -339,6 +339,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     }
 
     /// auto scans ROM directories and adds to the import queue
+    /// Uses incremental scanning to only check files modified since last scan
     public func importROMDirectories() async {
         ILOG("PVGameLibrary: Starting Import")
 
@@ -353,19 +354,82 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         let dbSystems: [AnyHashable: PVSystem] = RomDatabase.systemCache
         var queueGames = false
 
+        /// Extract all file partialPaths from games immediately after getting dbGames
+        /// Use romPath directly (which is already a partial path) to avoid accessing Realm relationships
+        var allPartialPaths: Set<String> = []
+        var partialPathsBySystem: [String: Set<String>] = [:]
+        for game in dbGames.values {
+            /// Use romPath which is a direct property, avoiding Realm relationship access
+            let partialPath = game.romPath
+            if !partialPath.isEmpty {
+                allPartialPaths.insert(partialPath)
+                let systemId = game.systemIdentifier
+                if partialPathsBySystem[systemId] == nil {
+                    partialPathsBySystem[systemId] = Set<String>()
+                }
+                partialPathsBySystem[systemId]?.insert(partialPath)
+            }
+        }
+
+        /// Get last scan time for incremental scanning
+        let lastScanKey = "lastROMScanTime"
+        let lastScanTime = UserDefaults.standard.object(forKey: lastScanKey) as? Date ?? Date.distantPast
+        ILOG("Last scan time: \(lastScanTime)")
+
         for system in dbSystems.values {
-            ILOG("PVGameLibrary: Importing \(system.identifier)")
+            ILOG("PVGameLibrary: Scanning \(system.identifier)")
             let files = await RomDatabase.getFileSystemROMCache(for: system)
-            let newGames = files.keys.filter {
-                dbGames.index(forKey: (system.identifier as NSString).appendingPathComponent($0.lastPathComponent)) == nil
+
+            /// Incremental scan: Filter files modified since last scan
+            let potentiallyNewFiles = files.keys.filter { fileURL in
+                /// Check modification time (if available) - skip if not modified since last scan
+                if let modDate = try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.modificationDate] as? Date,
+                   modDate <= lastScanTime {
+                    /// File hasn't changed since last scan, skip database check
+                    return false
+                }
+
+                /// File is new or modified, check database
+                return true
+            }
+
+            /// Get existing partialPaths for this system (already extracted above)
+            let existingPartialPaths = partialPathsBySystem[system.identifier] ?? Set<String>()
+
+            let newGames = potentiallyNewFiles.filter { fileURL in
+                let filename = fileURL.lastPathComponent
+                let partialPath = (system.identifier as NSString).appendingPathComponent(filename)
+                let altName = RomDatabase.altName(fileURL, systemIdentifier: system.identifier)
+
+                /// Check if game exists by partialPath key
+                if dbGames.index(forKey: partialPath) != nil {
+                    return false
+                }
+
+                /// Check if game exists by altName key
+                if dbGames.index(forKey: altName) != nil {
+                    return false
+                }
+
+                /// Check if any game's file partialPath matches (using pre-extracted paths)
+                if existingPartialPaths.contains(partialPath) {
+                    return false
+                }
+
+                /// File doesn't exist in database
+                return true
             }
             if !newGames.isEmpty {
-                ILOG("PVGameLibraryUpdatesController: Adding \(newGames) to the queue")
+                ILOG("PVGameLibraryUpdatesController: Adding \(newGames.count) new files to the queue for system \(system.identifier)")
                 await gameImporter.addImports(forPaths: newGames, targetSystem:system.systemIdentifier)
                 queueGames = true
             }
             ILOG("PVGameLibrary: Added items for \(system.identifier) to queue")
         }
+
+        /// Update last scan time for incremental scanning
+        UserDefaults.standard.set(Date(), forKey: lastScanKey)
+
         if (queueGames) {
             ILOG("PVGameLibrary: Queued new items, starting to process")
             gameImporter.startProcessing()
@@ -378,16 +442,16 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     @MainActor
     public func addImportedGames(to spotlightIndex: CSSearchableIndex = CSSearchableIndex.default(), database: RomDatabase = RomDatabase.sharedInstance) async {
         ILOG("Starting Spotlight indexing for all games")
-        
+
         // Create a batch processor to handle multiple items at once
         var pendingItems: [CSSearchableItem] = []
         let batchSize = 50 // Smaller batch size for more frequent updates
         var totalIndexed = 0
-        
+
         // Function to process a batch of items
         func processBatch() async {
             guard !pendingItems.isEmpty else { return }
-            
+
             do {
                 try await spotlightIndex.indexSearchableItems(pendingItems)
                 totalIndexed += pendingItems.count
@@ -397,46 +461,46 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 ELOG("Error batch indexing games: \(error)")
             }
         }
-        
+
         do {
             // Create an actor to isolate Realm access
             actor RealmIsolator {
                 let config: Realm.Configuration
-                
+
                 init(config: Realm.Configuration) {
                     self.config = config
                 }
-                
+
                 func getAllGames() async throws -> [PVGame] {
                     let realm = RomDatabase.sharedInstance.realm
-                    
+
                     // Get all games and freeze them
                     let allGames = realm.objects(PVGame.self)
                     ILOG("Found \(allGames.count) games to process")
-                    
+
                     // Return frozen copies of all games
                     return allGames.map { $0.freeze() }
                 }
             }
-            
+
             // Use the RealmActor pattern to safely access Realm
             let config = RealmConfiguration.realmConfig
             let isolator = RealmIsolator(config: config)
             let allGames = try await isolator.getAllGames()
-            
+
             ILOG("Processing \(allGames.count) games for indexing")
-            
+
             // Process each game
             for frozenGame in allGames {
-                
+
                 // Create the searchable item
                 let attributeSet = frozenGame.spotlightContentSet
-                
+
                 // Add system information if available
                 if let system = frozenGame.system {
                     attributeSet.contentType = "\(system.manufacturer) \(system.name)"
                 }
-                
+
                 // Add keywords for better searchability
                 if var keywords = attributeSet.keywords as? [String] {
                     if let systemName = frozenGame.system?.name, !keywords.contains(systemName) {
@@ -447,77 +511,77 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                     }
                     attributeSet.keywords = keywords
                 }
-                
+
                 // Create the searchable item
                 let item = CSSearchableItem(
                     uniqueIdentifier: "org.provenance-emu.game.\(frozenGame.md5Hash)",
                     domainIdentifier: "org.provenance-emu.games",
                     attributeSet: attributeSet
                 )
-                
+
                 pendingItems.append(item)
-                
+
                 // Process batch if we've reached the batch size
                 if pendingItems.count >= batchSize {
                     await processBatch()
                 }
             }
-            
+
             // Process any remaining items
             await processBatch()
-            
+
             let realm = RomDatabase.sharedInstance.realm
 
             // Now index save states
             await indexSaveStates(spotlightIndex: spotlightIndex, realm: realm)
-            
+
             ILOG("Completed Spotlight indexing")
         } catch {
             ELOG("Error during Spotlight indexing: \(error)")
         }
     }
-    
+
     /// Index all save states in Spotlight
     private func indexSaveStates(spotlightIndex: CSSearchableIndex, realm: Realm) async {
         ILOG("Starting Spotlight indexing for save states")
-        
+
         // Create an actor to isolate Realm access
         actor RealmIsolator {
             let config: Realm.Configuration
-            
+
             init(config: Realm.Configuration) {
                 // Store the configuration
                 self.config = config
             }
-            
+
             func getSaveStatesWithGames() async throws -> [(saveState: PVSaveState, game: PVGame)] {
                 // Create a new Realm instance with the configuration
                 let realm = RomDatabase.sharedInstance.realm
 
                 // Get all save states with valid games
                 var results: [(saveState: PVSaveState, game: PVGame)] = []
-                
+
                 let saveStates = realm.objects(PVSaveState.self)
                 ILOG("Found \(saveStates.count) save states to process")
-                
+
                 for saveState in saveStates {
                     if let game = saveState.game {
                         // Freeze both objects to safely pass across thread boundaries
                         results.append((saveState: saveState.freeze(), game: game.freeze()))
                     }
                 }
-                
+
                 return results
             }
         }
-        
+
         var pendingItems: [CSSearchableItem] = []
         let batchSize = 50
         var totalIndexed = 0
-        
+
         func processBatch() async {
             guard !pendingItems.isEmpty else { return }
-            
+
             do {
                 try await spotlightIndex.indexSearchableItems(pendingItems)
                 totalIndexed += pendingItems.count
@@ -527,41 +591,41 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 ELOG("Error batch indexing save states: \(error)")
             }
         }
-        
+
         // Create the isolator and get save states with games
         let isolator = RealmIsolator(config: realm.configuration)
         do {
             let saveStatesWithGames = try await isolator.getSaveStatesWithGames()
-            
+
             ILOG("Found \(saveStatesWithGames.count) save states with games to index")
-            
+
             // Process each save state
             for (saveState, game) in saveStatesWithGames {
                 // Create attribute set
                 let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
                 attributeSet.displayName = "Save State: \(game.title)"
                 attributeSet.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
-                
+
                 // Add date information
                 attributeSet.contentCreationDate = saveState.date
                 attributeSet.contentModificationDate = saveState.date
-                
+
                 // Add keywords
                 var keywords = ["save state", "saved game", "provenance", "emulator"]
                 if let systemName = game.system?.name {
                     keywords.append(systemName)
                 }
                 attributeSet.keywords = keywords
-                
+
                 // Create searchable item
                 let item = CSSearchableItem(
                     uniqueIdentifier: "org.provenance-emu.savestate.\(saveState.id)",
                     domainIdentifier: "org.provenance-emu.games",
                     attributeSet: attributeSet
                 )
-                
+
                 pendingItems.append(item)
-                
+
                 // Process batch if we've reached the batch size
                 if pendingItems.count >= batchSize {
                     await processBatch()
@@ -621,7 +685,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
     private func processBIOSFiles(_ files: [URL]) async {
         guard state == .importing else { return }
-        
+
         await files.asyncForEach { file in
             do {
                 try await PVEmulatorConfiguration.validateAndImportBIOS(at: file)
@@ -735,7 +799,7 @@ public extension PVGameLibraryUpdatesController {
             await copyFilesToImports(urls: urls)
         }
     }
-    
+
     /// Async file copying with progress tracking
     private func copyFilesToImports(urls: [URL]) async {
         for url in urls {
@@ -752,13 +816,13 @@ public extension PVGameLibraryUpdatesController {
         }
 
         let destinationURL = Paths.romsImportPath.appendingPathComponent(sourceURL.lastPathComponent)
-        
+
         // Start tracking the copy operation
         let operationId = await FileCopyProgressTracker.shared.startCopyOperation(
             sourceURL: sourceURL,
             destinationURL: destinationURL
         )
-        
+
         do {
             // Update status to copying
             await FileCopyProgressTracker.shared.updateProgress(
@@ -766,21 +830,21 @@ public extension PVGameLibraryUpdatesController {
                 copiedBytes: 0,
                 status: .copying
             )
-            
+
             if sourceURL.hasDirectoryPath {
                 try await copyDirectoryWithProgress(from: sourceURL, to: destinationURL, operationId: operationId)
             } else {
                 try await copyFileWithProgress(from: sourceURL, to: destinationURL, operationId: operationId)
             }
-            
+
             // Mark as completed
             await FileCopyProgressTracker.shared.completeCopyOperation(
                 operationId: operationId,
                 success: true
             )
-            
+
             ILOG("Copied file from \(sourceURL.path) to \(destinationURL.path)")
-            
+
         } catch {
             // Mark as failed
             await FileCopyProgressTracker.shared.completeCopyOperation(
@@ -788,22 +852,22 @@ public extension PVGameLibraryUpdatesController {
                 success: false,
                 error: error
             )
-            
+
             ELOG("Failed to copy file from \(sourceURL.path) to \(destinationURL.path). Error: \(error)")
         }
     }
-    
+
     /// Copy a single file with progress tracking
     private func copyFileWithProgress(from sourceURL: URL, to destinationURL: URL, operationId: UUID) async throws {
         // For cloud files, we need to handle them differently
-        if sourceURL.absoluteString.lowercased().contains("icloud") || 
+        if sourceURL.absoluteString.lowercased().contains("icloud") ||
            sourceURL.absoluteString.lowercased().contains("ubiquity") {
             try await copyCloudFileWithProgress(from: sourceURL, to: destinationURL, operationId: operationId)
         } else {
             try await copyLocalFileWithProgress(from: sourceURL, to: destinationURL, operationId: operationId)
         }
     }
-    
+
     /// Copy a cloud file with progress tracking
     private func copyCloudFileWithProgress(from sourceURL: URL, to destinationURL: URL, operationId: UUID) async throws {
         // Update status to downloading
@@ -812,21 +876,21 @@ public extension PVGameLibraryUpdatesController {
             copiedBytes: 0,
             status: .downloading
         )
-        
+
         // For cloud files, we need to coordinate the download first
         let coordinator = NSFileCoordinator()
         var error: NSError?
         var success = false
-        
+
         coordinator.coordinate(readingItemAt: sourceURL, options: .withoutChanges, error: &error) { (readingURL) in
             do {
                 // Get file size for progress tracking
                 let resources = try readingURL.resourceValues(forKeys: [.fileSizeKey])
                 let totalBytes = Int64(resources.fileSize ?? 0)
-                
+
                 // Copy the file
                 try FileManager.default.copyItem(at: readingURL, to: destinationURL)
-                
+
                 // Update progress to completed
                 Task {
                     await FileCopyProgressTracker.shared.updateProgress(
@@ -835,69 +899,69 @@ public extension PVGameLibraryUpdatesController {
                         status: .completed
                     )
                 }
-                
+
                 success = true
             } catch {
                 ELOG("Failed to copy cloud file: \(error.localizedDescription)")
             }
         }
-        
+
         if let error = error {
             throw error
         }
-        
+
         if !success {
             throw NSError(domain: "FileCopyError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to copy cloud file"])
         }
     }
-    
+
     /// Copy a local file with progress tracking
     private func copyLocalFileWithProgress(from sourceURL: URL, to destinationURL: URL, operationId: UUID) async throws {
         // For local files, we can use the standard copy method
         // In the future, we could implement chunked copying for very large files
         try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
-        
+
         // Get the final file size and update progress
         let resources = try destinationURL.resourceValues(forKeys: [.fileSizeKey])
         let fileSize = Int64(resources.fileSize ?? 0)
-        
+
         await FileCopyProgressTracker.shared.updateProgress(
             operationId: operationId,
             copiedBytes: fileSize,
             status: .completed
         )
     }
-    
+
     /// Copy a directory with progress tracking
     private func copyDirectoryWithProgress(from sourceURL: URL, to destinationURL: URL, operationId: UUID) async throws {
         // For directories, we use the standard copy method
         // In the future, we could implement recursive progress tracking
         try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
-        
+
         // Calculate total directory size and update progress
         let directorySize = try calculateDirectorySize(at: destinationURL)
-        
+
         await FileCopyProgressTracker.shared.updateProgress(
             operationId: operationId,
             copiedBytes: directorySize,
             status: .completed
         )
     }
-    
+
     /// Calculate the total size of a directory
     private func calculateDirectorySize(at url: URL) throws -> Int64 {
         let resourceKeys: [URLResourceKey] = [.isRegularFileKey, .fileSizeKey]
         let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: resourceKeys)
-        
+
         var totalSize: Int64 = 0
-        
+
         while let fileURL = enumerator?.nextObject() as? URL {
             let resources = try fileURL.resourceValues(forKeys: Set(resourceKeys))
             if resources.isRegularFile == true {
                 totalSize += Int64(resources.fileSize ?? 0)
             }
         }
-        
+
         return totalSize
     }
 }

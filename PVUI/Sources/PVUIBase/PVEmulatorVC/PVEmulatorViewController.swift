@@ -371,6 +371,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 //                let customError = error as! CreateEmulatorError
                 //
                 //                presentingViewController?.presentError(customError.localizedDescription, source: self.view)
+            } catch let error as CloudSyncError {
+                // Handle CloudSyncError cases
+                if case .downloadCancelled = error {
+                    // Download was cancelled - just dismiss, don't show error
+                    ILOG("Emulator creation cancelled due to download cancellation")
+                    await MainActor.run {
+                        self.dismiss(animated: true)
+                    }
+                    return
+                }
+                // Fall through to show error for other CloudSyncError cases
+                let neError = error as NSError
             } catch {
                 let neError = error as NSError
 
@@ -478,23 +490,39 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Check if file needs download and handle with improved UI
         if await needsCloudKitDownload(for: game) {
-            try await handleOnDemandDownload(for: game)
-            /// Refresh ROM path after download completes
-            romPathMaybe = game.file?.url
-            /// Handle archives again in case the downloaded asset was a zip
-            romPathMaybe = handleArchives(atPath: romPathMaybe)
+            do {
+                try await handleOnDemandDownload(for: game)
+                /// Refresh ROM path after download completes
+                romPathMaybe = game.file?.url
+                /// Handle archives again in case the downloaded asset was a zip
+                romPathMaybe = handleArchives(atPath: romPathMaybe)
+            } catch {
+                // Download was cancelled or failed - dismiss emulator and return
+                ELOG("Download cancelled or failed for \(game.title): \(error.localizedDescription)")
+                await MainActor.run {
+                    self.dismiss(animated: true)
+                }
+                throw error
+            }
         }
 
         /// Ensure we have a valid ROM URL before attempting to load
-        guard let romURL = romPathMaybe else {
+        guard let romURL = romPathMaybe, !romURL.path.isEmpty else {
+            ELOG("Cannot create emulator: ROM path is nil or empty for \(game.title)")
+            await MainActor.run {
+                self.dismiss(animated: true)
+            }
             throw CreateEmulatorError.gameHasNilRomPath
         }
         /// Ensure file exists locally and is not an iCloud placeholder
         guard FileManager.default.fileExists(atPath: romURL.path), !needsDownload(romURL) else {
-            ELOG("File doesn't exist at path \(romURL.path)")
+            ELOG("File doesn't exist at path \(romURL.path) for \(game.title)")
             #if !os(tvOS)
             UIPasteboard.general.string = romURL.path
             #endif
+            await MainActor.run {
+                self.dismiss(animated: true)
+            }
             throw CreateEmulatorError.fileDoesNotExist(path: romURL.path)
         }
 
@@ -842,9 +870,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 gameMD5: game.md5Hash ?? "",
                 gameTitle: game.title,
                 onCancel: { [weak self] in
-                    // User cancelled - go back to library
+                    // User cancelled - go back to library and stop emulator creation
                     ILOG("User cancelled download for: \(game.title)")
-                    self?.dismiss(animated: true)
+                    Task { @MainActor in
+                        self?.dismiss(animated: true)
+                    }
                 },
                 onComplete: { [weak self] in
                     // Download completed – dismiss progress UI and allow calling flow to continue
@@ -882,10 +912,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 if hasFailed {
                     cancellables.removeAll()
                     if let failure = failed.first(where: { $0.md5 == md5 }) {
+                        ELOG("Download failed for \(game.title): \(failure.error)")
                         continuation.resume(throwing: failure.error)
                     } else {
+                        ELOG("Download failed for \(game.title): Unknown error")
                         continuation.resume(throwing: CloudSyncError.unknown)
                     }
+                    return
+                }
+
+                // Check if download was cancelled (removed from queue without being in failed)
+                let inQueuedOrActive = inQueued || inActive
+                if hasStarted && !inQueuedOrActive && !hasFailed {
+                    // Download was cancelled
+                    cancellables.removeAll()
+                    ELOG("Download cancelled for \(game.title)")
+                    continuation.resume(throwing: CloudSyncError.downloadCancelled)
                     return
                 }
 
@@ -1766,13 +1808,59 @@ extension PVEmulatorViewController {
             skinView.layoutIfNeeded()
         }
         // For RetroArch, re-apply internal render view frame to keep it visible
+        // CRITICAL: Ensure parent view is laid out before coordinate conversion for landscape
         if self.core.coreIdentifier?.contains("libretro") == true,
            let frame = self.currentTargetFrame,
            let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
             viewport.setUseCustomRenderViewLayout(true)
             let parent = (self.core.touchViewController ?? self).view
+
+            // Force layout update on parent view first to ensure correct coordinate system
+            parent?.setNeedsLayout()
+            parent?.layoutIfNeeded()
+
+            // Ensure parent has valid bounds before conversion
+            guard let parent = parent, parent.bounds.width > 0 && parent.bounds.height > 0 else {
+                DLOG("WARNING: Parent view has invalid bounds: \(parent?.bounds ?? .zero), deferring RA viewport update")
+                // Defer the update until next run loop when bounds should be valid
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self,
+                          let parent = (self.core.touchViewController ?? self).view,
+                          parent.bounds.width > 0 && parent.bounds.height > 0 else { return }
+                    let rectInParent = self.view.convert(frame, to: parent)
+                    if orientation == .landscape {
+                        let clampedRect = CGRect(
+                            x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                            y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                            width: min(rectInParent.width, parent.bounds.width),
+                            height: min(rectInParent.height, parent.bounds.height)
+                        )
+                        viewport.applyRenderViewFrameInTouchView(clampedRect)
+                    } else {
+                        viewport.applyRenderViewFrameInTouchView(rectInParent)
+                    }
+                }
+                return
+            }
+
+            // Now convert coordinates - the frame is in self.view's coordinate system
             let rectInParent = self.view.convert(frame, to: parent)
-            viewport.applyRenderViewFrameInTouchView(rectInParent)
+
+            // For landscape, double-check the conversion is correct
+            // Sometimes the coordinate conversion can be off if views haven't updated yet
+            if orientation == .landscape {
+                // Ensure the rect is within parent bounds (clamp if needed)
+                let clampedRect = CGRect(
+                    x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                    y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                    width: min(rectInParent.width, parent.bounds.width),
+                    height: min(rectInParent.height, parent.bounds.height)
+                )
+                DLOG("Landscape frame conversion: original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds), self.view.bounds=\(self.view.bounds)")
+                viewport.applyRenderViewFrameInTouchView(clampedRect)
+            } else {
+                viewport.applyRenderViewFrameInTouchView(rectInParent)
+            }
         }
         self.ensureProperZOrder()
     }

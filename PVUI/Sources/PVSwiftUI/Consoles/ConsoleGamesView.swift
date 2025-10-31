@@ -29,6 +29,16 @@ struct ConsoleGamesFilterModeFlags: OptionSet {
     static let recentlyPlayed = ConsoleGamesFilterModeFlags(rawValue: 1 << 3)
 }
 
+struct GameSkinSelectionState: Identifiable {
+    let id: String
+    let game: PVGame
+
+    init(game: PVGame) {
+        self.id = game.id
+        self.game = game
+    }
+}
+
 struct ConsoleGamesView: SwiftUI.View {
 
     @StateObject internal var gamesViewModel: ConsoleGamesViewModel
@@ -42,13 +52,15 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showFavorites) var showFavorites: Bool
     @Default(.showRecentGames) var showRecentGames: Bool
     @Default(.showSearchbar) var showSearchbar: Bool
-    
+
     // New state variable for HomeContinueSection binding
     @State private var recentGamesForBinding: [PVRecentGame] = []
-    
+
     // Modal state for log viewer and system status
     @State private var showLogViewer = false
     @State private var showSystemStatus = false
+    @State private var showSystemSkinSelection = false
+    @State private var gameForSkinSelection: GameSkinSelectionState? = nil
 
     weak var rootDelegate: PVRootDelegate?
     var showGameInfo: (String) -> Void
@@ -384,6 +396,45 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
+                }
+                // System Skin Selection Modal
+                .sheet(isPresented: $showSystemSkinSelection) {
+                    NavigationStack {
+                        SystemSkinSelectionView(system: console.enumValue)
+                        #if !os(tvOS)
+                            .navigationBarTitleDisplayMode(.inline)
+                        #endif
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") {
+                                        showSystemSkinSelection = false
+                                    }
+                                    .foregroundColor(RetroTheme.retroPink)
+                                }
+                            }
+                    }
+                }
+                // Per-Game Skin Selection Modal
+                .sheet(item: $gameForSkinSelection) { state in
+                    NavigationStack {
+                        SystemSkinSelectionView(system: state.game.system?.enumValue ?? console.enumValue, game: state.game.warmUp())
+                        #if !os(tvOS)
+                            .navigationBarTitleDisplayMode(.inline)
+                        #endif
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") {
+                                        gameForSkinSelection = nil
+                                    }
+                                    .foregroundColor(RetroTheme.retroPink)
+                                }
+                            }
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PVShowGameSkinSelection"))) { notification in
+                    if let game = notification.userInfo?["game"] as? PVGame {
+                        gameForSkinSelection = GameSkinSelectionState(game: game)
+                    }
                 }
                 .sheet(item: $gamesViewModel.continuesManagementState) { state in
                     let game = state.game.warmUp()
@@ -902,6 +953,9 @@ extension ConsoleGamesView {
                 // TODO: This is a hack, we should use the delegate
                 // Use NotificationCenter to trigger settings
                 NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+            },
+            skinSelectionAction: {
+                showSystemSkinSelection = true
             },
             settingsContext: .console(console),
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },

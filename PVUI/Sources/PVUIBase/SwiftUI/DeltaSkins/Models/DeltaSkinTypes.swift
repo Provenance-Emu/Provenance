@@ -389,12 +389,12 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         // Map of aliases -> canonical case
         switch token {
         // Nintendo
-        case "gb": return .gb
+        case "gb": return .gbc
         case "gbc": return .gbc
         case "gba": return .gba
         case "nes": return .nes
         case "snes": return .snes
-        case "n64", "gc", "gamecube": return .n64
+        case "n64", "64dd", "n64dd": return .n64
         case "ds", "nds": return .nds
         case "vb", "virtualboy": return .virtualBoy
         case "3ds", "three3ds", "threeds": return .threeDS
@@ -463,7 +463,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
     /// Delta-style identifier (when known)
     public var deltaIdentifierString: String? {
         switch self {
-        case .gb: return "com.rileytestut.delta.game.gb"
+        case .gb: return "com.rileytestut.delta.game.gbc"
         case .gbc: return "com.rileytestut.delta.game.gbc"
         case .gba: return "com.rileytestut.delta.game.gba"
         case .nes: return "com.rileytestut.delta.game.nes"
@@ -484,7 +484,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
     public var manicIdentifierString: String? {
         let prefix = "public.aoshuang.game."
         switch self {
-        case .gb: return prefix + "gb"
+        case .gb: return prefix + "gbc"
         case .gbc: return prefix + "gbc"
         case .gba: return prefix + "gba"
         case .nes: return prefix + "nes"
@@ -516,7 +516,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .GBA: self = .gba
         case .FDS, .NES: self = .nes
         case .SNES: self = .snes
-        case .N64, .GameCube: self = .n64
+        case .N64: self = .n64
         case .DS: self = .nds
         case .Genesis: self = .genesis
         case .GameGear: self = .gamegear
@@ -568,7 +568,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         if let manic = manicIdentifierString?.split(separator: ".").last?.lowercased(), manic == t { return true }
         // Direct alias matching
         switch (self, t) {
-        case (.gb, "gb"),
+        case (.gb, "gbc"),
              (.gbc, "gbc"),
              (.gba, "gba"),
              (.nes, "nes"),

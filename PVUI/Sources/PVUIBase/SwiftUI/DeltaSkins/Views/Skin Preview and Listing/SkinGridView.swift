@@ -114,9 +114,16 @@ struct SkinGridView: View {
             }
         }
         .background(Color.systemGroupedBackground)
-        .task {
-            await loadSkins()
-            initializeSectionStates()
+        .onAppear {
+            // Only load if skins are empty, otherwise use cached loadedSkins
+            if manager.loadedSkins.isEmpty {
+                Task {
+                    await loadSkins()
+                    initializeSectionStates()
+                }
+            } else {
+                initializeSectionStates()
+            }
         }
         .onChange(of: expandedSections) { newValue in
             expandedSectionsString = newValue.sorted().joined(separator: ",")
@@ -154,11 +161,16 @@ struct SkinGridView: View {
     }
 
     private func loadSkins() async {
-        isLoading = true
+        // Only show loading if skins haven't been loaded yet
+        if manager.loadedSkins.isEmpty {
+            isLoading = true
+        }
+
         defer { isLoading = false }
 
         do {
-            _ = try await manager.availableSkins()  // This will update loadedSkins
+            // Only scan if not already scanned (availableSkins will check hasScanned flag)
+            _ = try await manager.availableSkins(forceRescan: false)
         } catch {
             self.error = error
         }

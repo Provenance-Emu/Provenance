@@ -662,8 +662,27 @@ extension PVEmulatorViewController {
                 viewportBridge.setUseCustomRenderViewLayout(true)
                 // Frame passed is already in self.view coordinates; convert to touchViewController.view
                 if let parent = core.touchViewController?.view {
+                    // Force layout update on parent view first to ensure correct coordinate system
+                    parent.setNeedsLayout()
+                    parent.layoutIfNeeded()
+
+                    // Now convert coordinates
                     let rectInParent = view.convert(frame, to: parent)
-                    viewportBridge.applyRenderViewFrameInTouchView(rectInParent)
+
+                    // For landscape, ensure conversion is correct and clamp to parent bounds
+                    let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+                    if orientation == .landscape {
+                        let clampedRect = CGRect(
+                            x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                            y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                            width: min(rectInParent.width, parent.bounds.width),
+                            height: min(rectInParent.height, parent.bounds.height)
+                        )
+                        DLOG("🔴 Landscape RA viewport (applyFrameToGPUView): original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds)")
+                        viewportBridge.applyRenderViewFrameInTouchView(clampedRect)
+                    } else {
+                        viewportBridge.applyRenderViewFrameInTouchView(rectInParent)
+                    }
                     DLOG("🔴 Applied frame to RA renderView: \(rectInParent)")
                     return
                 }
@@ -725,8 +744,27 @@ extension PVEmulatorViewController {
                 viewportBridge.setUseCustomRenderViewLayout(true)
                 // Frame passed is already in self.view coordinates; convert to touchViewController.view
                 if let parent = core.touchViewController?.view {
+                    // Force layout update on parent view first to ensure correct coordinate system
+                    parent.setNeedsLayout()
+                    parent.layoutIfNeeded()
+
+                    // Now convert coordinates
                     let rectInParent = view.convert(frame, to: parent)
-                    viewportBridge.applyRenderViewFrameInTouchView(rectInParent)
+
+                    // For landscape, ensure conversion is correct and clamp to parent bounds
+                    let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+                    if orientation == .landscape {
+                        let clampedRect = CGRect(
+                            x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                            y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                            width: min(rectInParent.width, parent.bounds.width),
+                            height: min(rectInParent.height, parent.bounds.height)
+                        )
+                        DLOG("🔴 Landscape RA exact viewport (applyExactFrameToGPUView): original=\(rectInParent), clamped=\(clampedRect)")
+                        viewportBridge.applyRenderViewFrameInTouchView(clampedRect)
+                    } else {
+                        viewportBridge.applyRenderViewFrameInTouchView(rectInParent)
+                    }
                     DLOG("🔴 Applied frame to RA renderView: \(rectInParent)")
                     return
                 }

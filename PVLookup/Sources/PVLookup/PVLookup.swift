@@ -580,41 +580,105 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     ///   - filename: Optional filename as fallback
     /// - Returns: SystemIdentifier if found
     public func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
+        return try await systemIdentifier(forRomMD5: md5, or: filename, constrainedToSystems: nil)
+    }
+
+    /// Get SystemIdentifier for a ROM using MD5 or filename, constrained to specific systems
+    /// - Parameters:
+    ///   - md5: MD5 hash of the ROM
+    ///   - filename: Optional filename as fallback (only used if extension is known/limited systems)
+    ///   - constrainedToSystems: Optional array of systems to search within (nil = search all systems)
+    ///   - allowFilenameSearch: Whether to search by filename (should be false for unknown extensions)
+    /// - Returns: SystemIdentifier if found
+    public func systemIdentifier(
+        forRomMD5 md5: String,
+        or filename: String?,
+        constrainedToSystems: [SystemIdentifier]?,
+        allowFilenameSearch: Bool = true
+    ) async throws -> SystemIdentifier? {
         let upperMD5 = md5.uppercased()
         var identifier: SystemIdentifier?
 
         #if canImport(OpenVGDB)
         // Try OpenVGDB first
         if let openVGDB = await isolatedOpenVGDB {
-            if let systemID = try await openVGDB.system(forRomMD5: upperMD5, or: filename),
-               let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemID) {
-                identifier = systemIdentifier
+            // If constrained, try each system individually
+            if let constrainedSystems = constrainedToSystems, !constrainedSystems.isEmpty {
+                for systemID in constrainedSystems {
+                    // Search by MD5 with system constraint
+                    if let results = try? await openVGDB.searchByMD5(upperMD5, systemID: systemID),
+                       let firstResult = results.first {
+                        identifier = firstResult.systemID
+                        break
+                    }
+
+                    // If filename search allowed and no MD5 match, try filename
+                    if identifier == nil && allowFilenameSearch,
+                       let filename = filename,
+                       let results = try? await openVGDB.searchDatabase(usingFilename: filename, systemID: systemID),
+                       let firstResult = results.first {
+                        identifier = firstResult.systemID
+                        break
+                    }
+                }
+            } else {
+                // Unconstrained search (original behavior)
+                if let systemID = try await openVGDB.system(forRomMD5: upperMD5, or: filename),
+                   let systemIdentifier = SystemIdentifier.fromOpenVGDBID(systemID) {
+                    identifier = systemIdentifier
+                }
             }
         }
         #endif
 
         #if canImport(libretrodb)
         // If no result from OpenVGDB, try LibretroDB
-        if identifier == nil,
-           let libreTroDB = await isolatedLibretroDB {
-            if let systemID = try await libreTroDB.systemIdentifier(forRomMD5: upperMD5, or: filename) {
-                identifier = systemID
+        if identifier == nil {
+            if let constrainedSystems = constrainedToSystems, !constrainedSystems.isEmpty {
+                for systemID in constrainedSystems {
+                    // Search by MD5 with system constraint
+                    if let results = try? await isolatedLibretroDB?.searchMetadata(usingKey: "md5", value: upperMD5, systemID: systemID),
+                       let firstResult = results.first {
+                        identifier = firstResult.systemID
+                        break
+                    }
+
+                    // If filename search allowed and no MD5 match, try filename
+                    if identifier == nil && allowFilenameSearch,
+                       let filename = filename,
+                       let results = try? await isolatedLibretroDB?.searchMetadata(usingFilename: filename, systemID: systemID),
+                       let firstResult = results.first {
+                        identifier = firstResult.systemID
+                        break
+                    }
+                }
+            } else {
+                // Unconstrained search
+                if let libreTroDB = await isolatedLibretroDB {
+                    if let systemID = try await libreTroDB.systemIdentifier(forRomMD5: upperMD5, or: filename) {
+                        identifier = systemID
+                    }
+                }
             }
         }
         #endif
 
         #if canImport(ShiraGame)
-        // If still no result, try ShiraGame
-        if identifier == nil,
-           let shiraGame = await getShiraGame() {
-            if let systemID = try await shiraGame.system(forRomMD5: upperMD5, or: filename),
-               let shiraIdentifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
-                identifier = shiraIdentifier
+        // If still no result, try ShiraGame (only if constrained search didn't find anything)
+        if identifier == nil {
+            if let constrainedSystems = constrainedToSystems, !constrainedSystems.isEmpty {
+                // Only search ShiraGame if we have a limited set and MD5 match is important
+                // ShiraGame doesn't support system constraints, so skip it for constrained searches
+            } else if let shiraGame = await getShiraGame() {
+                if let systemID = try await shiraGame.system(forRomMD5: upperMD5, or: filename),
+                   let shiraIdentifier = SystemIdentifier.fromShiraGameID(String(systemID)) {
+                    identifier = shiraIdentifier
+                }
             }
         }
         #endif
 
-        DLOG("System identifier result for MD5: \(upperMD5), filename: \(filename ?? "nil"): \(String(describing: identifier))")
+        DLOG("System identifier result for MD5: \(upperMD5), filename: \(filename ?? "nil"), constrained: \(constrainedToSystems?.map { $0.rawValue }.joined(separator: ",") ?? "none"): \(String(describing: identifier))")
         return identifier
     }
 
@@ -874,7 +938,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
                 return []
             }
             let startTime = Date()
-            
+
             if let theGamesDB = await getTheGamesDB(),
                let results = try? await theGamesDB.getArtwork(
                 forGameID: gameID,

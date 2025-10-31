@@ -128,6 +128,7 @@ struct EmulatorWithSkinView: View {
                     debugOverlayView
                 }
 
+                #if DEBUG
                 // Debug toggle button
                 VStack {
                     Spacer()
@@ -146,6 +147,7 @@ struct EmulatorWithSkinView: View {
                         .padding()
                     }
                 }
+                #endif
             }
             .background(Color.clear) // Ensure the background is transparent
             .onAppear {

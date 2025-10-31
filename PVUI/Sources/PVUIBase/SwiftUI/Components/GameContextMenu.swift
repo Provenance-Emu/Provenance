@@ -113,6 +113,15 @@ public struct GameContextMenu: View {
                         resetCorePreferences(forGame: game)
                     } label: { Label("Reset Core Preferences", systemImage: "arrow.counterclockwise") }
                 }
+                Divider()
+                Button {
+                    contextMenuDelegate?.gameContextMenu(self, didRequestSkinSelectionFor: game)
+                } label: { Label("Controller Skin", systemImage: "gamecontroller") }
+                if hasPerGameSkin(for: game) {
+                    Button {
+                        contextMenuDelegate?.gameContextMenu(self, didRequestResetSkinFor: game)
+                    } label: { Label("Reset Game Skin", systemImage: "arrow.counterclockwise.circle") }
+                }
     #if !os(tvOS)
                 Button {
                     DLOG("GameContextMenu: Choose Cover button tapped")
@@ -400,5 +409,21 @@ extension GameContextMenu {
            let viewController = windowScene.windows.first?.rootViewController {
             viewController.present(alert, animated: true)
         }
+    }
+
+    /// Check if game has a per-game skin preference set
+    private func hasPerGameSkin(for game: PVGame) -> Bool {
+        guard !game.isInvalidated,
+              let systemId = game.system?.enumValue else { return false }
+
+        let skinManager = DeltaSkinManager.shared
+        #if !os(tvOS)
+        let orientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        #else
+        let orientation: SkinOrientation = .landscape
+        #endif
+
+        return skinManager.sessionSkinIdentifier(for: systemId, gameId: game.id, orientation: orientation) != nil ||
+               DeltaSkinPreferences.shared.effectiveSkinIdentifier(for: game.id, system: systemId, orientation: orientation) != nil
     }
 }

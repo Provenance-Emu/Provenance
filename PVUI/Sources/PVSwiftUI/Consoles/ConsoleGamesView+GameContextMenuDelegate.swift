@@ -214,4 +214,41 @@ extension ConsoleGamesView: GameContextMenuDelegate {
             await gamesViewModel.presentDiscSelectionAlert(for: frozenGame, rootDelegate: rootDelegate)
         }
     }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestSkinSelectionFor game: PVGame) {
+        DLOG("ConsoleGamesView: Received request to show skin selection for game: \(game.title)")
+        // Use NotificationCenter to communicate with the parent view
+        NotificationCenter.default.post(
+            name: NSNotification.Name("PVShowGameSkinSelection"),
+            object: nil,
+            userInfo: ["game": game.freeze()]
+        )
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestResetSkinFor game: PVGame) {
+        DLOG("ConsoleGamesView: Received request to reset skin for game: \(game.title)")
+        guard !game.isInvalidated,
+              let systemId = game.system?.enumValue else { return }
+
+        let skinManager = DeltaSkinManager.shared
+        #if !os(tvOS)
+        let portraitOrientation: SkinOrientation = .portrait
+        let landscapeOrientation: SkinOrientation = .landscape
+        #else
+        let portraitOrientation: SkinOrientation = .landscape
+        let landscapeOrientation: SkinOrientation = .landscape
+        #endif
+
+        // Clear session skin for both orientations
+        skinManager.setSessionSkin(nil, for: systemId, gameId: game.id, orientation: portraitOrientation)
+        skinManager.setSessionSkin(nil, for: systemId, gameId: game.id, orientation: landscapeOrientation)
+
+        // Clear preferences for both orientations
+        Task { @MainActor in
+            DeltaSkinPreferences.shared.setSelectedSkin(nil, for: game.id, orientation: portraitOrientation)
+            DeltaSkinPreferences.shared.setSelectedSkin(nil, for: game.id, orientation: landscapeOrientation)
+        }
+
+        rootDelegate?.showMessage("Skin preference reset for \(game.title)", title: "Skin Reset")
+    }
 }
