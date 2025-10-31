@@ -19,6 +19,8 @@ open class PVDolphinCore: PVEmulatorCore, @unchecked Sendable {
     // MARK: Lifecycle
     
     let _bridge: PVDolphinCoreBridge = .init()
+    
+    open override var supportsSkins: Bool { false }
 
     public required init() {
         super.init()
