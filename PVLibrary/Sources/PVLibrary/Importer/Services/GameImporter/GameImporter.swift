@@ -2533,11 +2533,19 @@ public final class GameImporter: GameImporting, ObservableObject {
         /// Only check if file is in Imports or other non-ROM directories to avoid expensive iteration
         let isInImportsOrOther = filePath.contains("/Imports/") || !filePath.contains(romsPath.path)
         if isInImportsOrOther {
-            /// Check games cache by iterating (slower but needed for imports)
-            for game in gamesCache.values {
+            /// Query Realm directly on current thread instead of iterating cache to avoid thread safety issues
+            let realm = RomDatabase.sharedInstance.realm
+            /// Use a Realm query to find games with matching file paths
+            /// Convert file path to partial path format for comparison
+            let fileURL = URL(fileURLWithPath: filePath)
+            let filename = fileURL.lastPathComponent
+
+            /// Check by filename across all systems
+            let gamesWithMatchingFile = realm.objects(PVGame.self).filter("file.partialPath CONTAINS %@", filename)
+            for game in gamesWithMatchingFile {
+                /// Access file URL on the current thread (Realm query ensures we're on correct thread)
                 if let gameFileURL = game.file?.url,
-                   gameFileURL.path == filePath,
-                   game.file != nil {
+                   gameFileURL.path == filePath {
                     ILOG("Found existing game by file path: \(game.title ?? "Unknown") at \(filePath)")
                     return true
                 }
@@ -2557,11 +2565,22 @@ public final class GameImporter: GameImporting, ObservableObject {
                 let partialPath = (system.rawValue as NSString).appendingPathComponent(filename)
                 let similarName = RomDatabase.altName(item.url, systemIdentifier: system)
 
-                if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
-                   system.rawValue == existingGame.systemIdentifier,
-                   existingGame.file != nil {
-                    ILOG("Found existing game in database: \(existingGame.title ?? "Unknown")")
-                    return true
+                /// Check cache for game keys, but query Realm for actual file access to avoid thread issues
+                /// Extract primitive values from cached object before async operation
+                if let cachedGame = gamesCache[partialPath] ?? gamesCache[similarName] {
+                    let cachedSystemId = cachedGame.systemIdentifier
+                    let cachedGameId = cachedGame.id
+
+                    if system.rawValue == cachedSystemId {
+                        /// Query Realm on current thread to verify file exists
+                        let realm = RomDatabase.sharedInstance.realm
+                        let gameId = cachedGameId
+                        if let existingGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameId),
+                           existingGame.file != nil {
+                            ILOG("Found existing game in database: \(existingGame.title ?? "Unknown")")
+                            return true
+                        }
+                    }
                 }
 
                 /// Check by MD5 for this system
