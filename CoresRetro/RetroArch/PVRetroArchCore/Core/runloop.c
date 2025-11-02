@@ -7795,7 +7795,9 @@ void core_run(void)
    else if (late_polling)
       current_core->flags &= ~RETRO_CORE_FLAG_INPUT_POLLED;
     
-   current_core->retro_run();
+    if (current_core->retro_run != NULL) {
+        current_core->retro_run();
+    }
 
 #ifdef HAVE_GAME_AI
    {
