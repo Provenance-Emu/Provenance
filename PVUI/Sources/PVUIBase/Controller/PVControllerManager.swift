@@ -302,7 +302,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
         }
 
         let wrapper = getRemappableController(for: controller)
-        wrapper.loadMappings() // Load any saved mappings
+        /// Mappings are loaded in PVRemappableController.init(), no need to load again
 
 #if !targetEnvironment(macCatalyst) && canImport(SteamController)  && !os(macOS)
         if let steamController = controller as? SteamController {
@@ -944,4 +944,9 @@ public func clearMappings(for controller: GCController) {
 public func loadSavedMappings(for controller: GCController) {
     let wrapper = getRemappableController(for: controller)
     wrapper.loadMappings()
+}
+
+/// Get the remappable controller wrapper for a controller (for UI access)
+public func getRemappableControllerWrapper(for controller: GCController) -> PVRemappableController {
+    return getRemappableController(for: controller)
 }
