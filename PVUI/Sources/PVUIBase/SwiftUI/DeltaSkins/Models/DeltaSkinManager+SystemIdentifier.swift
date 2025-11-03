@@ -14,7 +14,21 @@ public extension DeltaSkinManager {
 
         // Get all skins and filter by game type
         let allSkins = try await availableSkins()
-        return allSkins.filter { $0.gameType == gameType }
+
+        // Filter by game type, including compatible types
+        return allSkins.filter { skin in
+            // Exact match
+            if skin.gameType == gameType {
+                return true
+            }
+
+            // Special case: GB systems can use GBC skins
+            if system == .GB && skin.gameType == .gbc {
+                return true
+            }
+
+            return false
+        }
     }
 
     /// Get the currently selected skin for a system
@@ -64,8 +78,17 @@ public extension DeltaSkinManager {
 
         // Find a skin that matches the identifier
         let matchingSkin = allSkins.first { skin in
-            return skin.identifier.contains(skinIdentifier) ||
-            (skin.gameType.matchesIdentifier(skinIdentifier))
+            if skin.identifier.contains(skinIdentifier) ||
+               skin.gameType.matchesIdentifier(skinIdentifier) {
+                return true
+            }
+
+            // Special case: GB systems can use GBC skins
+            if systemIdentifier == .GB && skin.gameType == .gbc {
+                return true
+            }
+
+            return false
         }
 
         if let skin = matchingSkin {
@@ -94,8 +117,17 @@ public extension DeltaSkinManager {
         // Filter skins for this system and convert to [DeltaSkin]
         let filteredSkins = allSkins.filter { skin in
             // Check if the skin is for this system
-            return skin.gameType.matchesIdentifier(skinIdentifier) ||
-                   skin.identifier.contains(skinIdentifier)
+            if skin.gameType.matchesIdentifier(skinIdentifier) ||
+               skin.identifier.contains(skinIdentifier) {
+                return true
+            }
+
+            // Special case: GB systems can use GBC skins
+            if systemIdentifier == .GB && skin.gameType == .gbc {
+                return true
+            }
+
+            return false
         }
 
         // Convert to [DeltaSkin] - this might need adjustment based on your actual types
@@ -113,8 +145,17 @@ public extension DeltaSkinManager {
         // Filter skins for this system and convert to [DeltaSkin]
         let filteredSkins = allSkins.filter { skin in
             // Check if the skin is for this system
-            return (skin.gameType.matchesIdentifier(skinIdentifier)) ||
-                   skin.identifier.contains(skinIdentifier)
+            if skin.gameType.matchesIdentifier(skinIdentifier) ||
+               skin.identifier.contains(skinIdentifier) {
+                return true
+            }
+
+            // Special case: GB systems can use GBC skins
+            if systemIdentifier == .GB && skin.gameType == .gbc {
+                return true
+            }
+
+            return false
         }
 
         // Convert to [DeltaSkin]
@@ -132,7 +173,17 @@ public extension DeltaSkinManager {
 
     /// Get the default skin for a system
     public func defaultSkin(for systemIdentifier: SystemIdentifier) -> (any DeltaSkinProtocol)? {
-        return loadedSkins.first { $0.gameType.systemIdentifier == systemIdentifier }
+        // First try exact match
+        if let exactMatch = loadedSkins.first(where: { $0.gameType.systemIdentifier == systemIdentifier }) {
+            return exactMatch
+        }
+
+        // Special case: GB systems can use GBC skins
+        if systemIdentifier == .GB {
+            return loadedSkins.first { $0.gameType == .gbc }
+        }
+
+        return nil
     }
 
     /// Convert a SystemIdentifier to a string identifier for DeltaSkinManager
