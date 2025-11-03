@@ -43,17 +43,24 @@ public class AppBootupState: ObservableObject {
         public var localizedDescription: String {
             switch self {
             case .notStarted:
-                return "Not Started"
+                return "Starting..."
             case .initializingDatabase:
-                return "Initializing Database"
+                return "Preparing database..."
             case .databaseInitialized:
-                return "Database Initialized"
+                return "Loading game library..."
             case .initializingLibrary:
-                return "Initializing Library"
+                return "Scanning games..."
             case .completed:
-                return "Bootup Completed"
+                return "Ready"
             case .error(let error):
-                return "Error with library: \(error.localizedDescription)"
+                let errorMsg = error.localizedDescription
+                if errorMsg.contains("database") || errorMsg.contains("realm") {
+                    return "Database error. Try restarting the app. If the problem persists, check available storage space."
+                } else if errorMsg.contains("permission") || errorMsg.contains("access") {
+                    return "Permission error. Check app permissions in Settings."
+                } else {
+                    return "Loading error: \(errorMsg). Try restarting the app."
+                }
             }
         }
 

@@ -178,7 +178,11 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         // Check if the game has a system
         guard let system = game.system else {
             ELOG("EmulatorContainerView: Game has no system, cannot launch")
-            displayAndLogError(withTitle: "Launch Error", message: "Cannot launch game: No system associated with this game.", customActions: nil)
+            displayAndLogError(
+                withTitle: "Cannot Launch Game",
+                message: "This game is not associated with a system.\n\nThis usually happens when:\n• The game file is corrupted\n• The import process was interrupted\n\nTry removing the game from your library and re-importing it.",
+                customActions: nil
+            )
             return
         }
 
@@ -235,7 +239,11 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
 
         // If we get here, there are no cores available
         ELOG("EmulatorContainerView: No cores available for system \(system.name)")
-        displayAndLogError(withTitle: "Launch Error", message: "Cannot launch game: No cores available for system \(system.name).", customActions: nil)
+        displayAndLogError(
+            withTitle: "No Core Available",
+            message: "No emulator core is available for \(system.name).\n\nTo fix this:\n• Make sure the required core is installed\n• Check that cores are enabled in Settings\n• Try restarting the app\n\nIf cores are still missing, you may need to reinstall the app or update cores.",
+            customActions: nil
+        )
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
@@ -274,7 +282,11 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
 
         guard let system = game.system else {
             ELOG("EmulatorContainerView: Game has no system, cannot present core selection")
-            displayAndLogError(withTitle: "Launch Error", message: "Cannot launch game: No system associated with this game.", customActions: nil)
+            displayAndLogError(
+                withTitle: "Cannot Launch Game",
+                message: "This game is not associated with a system.\n\nTry removing the game from your library and re-importing it.",
+                customActions: nil
+            )
             return
         }
 
@@ -283,7 +295,11 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
 
         if availableCores.isEmpty {
             ELOG("EmulatorContainerView: No cores available for system \(system.name)")
-            displayAndLogError(withTitle: "Launch Error", message: "Cannot launch game: No cores available for system \(system.name).", customActions: nil)
+            displayAndLogError(
+                withTitle: "No Core Available",
+                message: "No emulator core is available for \(system.name).\n\nMake sure the required core is installed and enabled in Settings.",
+                customActions: nil
+            )
             return
         }
 
@@ -536,10 +552,27 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
     private func handleGameLaunchingError(_ error: GameLaunchingError, forGame game: PVGame) {
         switch error {
         case .missingBIOSes(let missingBIOSes):
-            let message = "Missing required BIOS files: \(missingBIOSes.joined(separator: ", "))"
+            let biosList = missingBIOSes.joined(separator: ", ")
+            let message = """
+            This game requires BIOS files that are not currently installed:
+
+            \(biosList)
+
+            To fix this:
+            1. Obtain the required BIOS files (you must own the original hardware)
+            2. Open Files app and navigate to Provenance
+            3. Place BIOS files in the BIOS folder
+            4. Restart Provenance to detect the new BIOS files
+
+            Note: BIOS files are copyrighted firmware. You must legally obtain them from hardware you own. Check the Provenance wiki for more information.
+            """
             displayAndLogError(withTitle: "Missing BIOS Files", message: message, customActions: nil)
         case .systemNotFound:
-            displayAndLogError(withTitle: "System Not Found", message: "The system for \(game.title) could not be found.", customActions: nil)
+            displayAndLogError(
+                withTitle: "System Not Found",
+                message: "The system for \(game.title) could not be found.\n\nThis usually happens when:\n• The game file is corrupted\n• The system was removed\n\nTry removing and re-importing the game.",
+                customActions: nil
+            )
         case .generic(let message):
             displayAndLogError(withTitle: "Error", message: message, customActions: nil)
         }

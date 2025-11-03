@@ -32,24 +32,24 @@ public
 final class PVSaveStatesViewController: UICollectionViewController {
     private var autoSaveStatesObserverToken: NotificationToken!
     private var manualSaveStatesObserverToken: NotificationToken!
-    
+
     weak var delegate: PVSaveStatesViewControllerDelegate?
-    
+
     var saveStates: LinkingObjects<PVSaveState>!
     var screenshot: UIImage?
-    
+
     var coreID: String?
-    
+
     private var autoSaves: Results<PVSaveState>!
     private var manualSaves: Results<PVSaveState>!
-    
+
     deinit {
         autoSaveStatesObserverToken.invalidate()
         autoSaveStatesObserverToken = nil
         manualSaveStatesObserverToken.invalidate()
         manualSaveStatesObserverToken = nil
     }
-    
+
     @MainActor
     func refreshSaves() {
         var allSaves: Results<PVSaveState>
@@ -64,7 +64,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
         var didDeleteSave: Bool = false
         allSaves.forEach { save in
             guard !save.isInvalidated else { return }
-            
+
             if let path = save.file?.url?.path, !FileManager.default.fileExists(atPath: path) {
                 do {
                     try PVSaveState.delete(save)
@@ -83,23 +83,23 @@ final class PVSaveStatesViewController: UICollectionViewController {
             }
         }
     }
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.refreshSaves()
-        
+
 #if os(iOS)
         title = "SAVE STATES"
-        
+
         // Apply retrowave styling to the view
         view.backgroundColor = .retroBlack
-        
+
         // Apply retrowave styling to the navigation bar
         navigationController?.navigationBar.applyRetroWaveStyle()
-        
+
         // Apply retrowave styling to the collection view
         collectionView?.applyRetroWaveStyle()
-        
+
         // Add retrowave grid background
         RetroWaveGridBackground.createGridBackground(for: view)
 #endif
@@ -108,12 +108,12 @@ final class PVSaveStatesViewController: UICollectionViewController {
 #else
         collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: BundleLoader.module), forCellWithReuseIdentifier: "SaveStateView")
 #endif
-        
-        
+
+
         if screenshot == nil {
             navigationItem.rightBarButtonItem = nil
         }
-        
+
         //
         //        let dataSource = RxCollectionViewRealmDataSource(sections: [
         //            RxRealmDataSourceSection<PVSaveState>(title: "Auto Saves",
@@ -152,7 +152,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
                 guard !deletions.isEmpty else {
                     return
                 }
-                
+
                 let fromItem = { (item: Int) -> IndexPath in
                     let section = 0
                     return IndexPath(item: item, section: section)
@@ -162,10 +162,10 @@ final class PVSaveStatesViewController: UICollectionViewController {
                 ELOG("Error updating save states: " + error.localizedDescription)
             }
         }
-        
+
         manualSaveStatesObserverToken = manualSaves.observe { [weak self] (changes: RealmCollectionChange) in
             guard let `self` = self else { return }
-            
+
             switch changes {
             case .initial:
                 self.collectionView?.reloadData()
@@ -182,27 +182,27 @@ final class PVSaveStatesViewController: UICollectionViewController {
                 ELOG("Error updating save states: " + error.localizedDescription)
             }
         }
-        
+
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressRecognized(_:)))
         collectionView?.addGestureRecognizer(longPressRecognizer)
     }
-    
+
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         if let emulatorViewController = presentingViewController as? PVEmualatorControllerProtocol {
             emulatorViewController.core.setPauseEmulation(false)
             emulatorViewController.isShowingMenu = false
             emulatorViewController.enableControllerInput(false)
         }
     }
-    
+
     @objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
             let point: CGPoint = recognizer.location(in: collectionView)
             var maybeIndexPath: IndexPath? = collectionView?.indexPathForItem(at: point)
-            
+
 #if os(tvOS)
             if maybeIndexPath == nil, let focusedView = UIScreen.main.focusedView as? UICollectionViewCell {
                 maybeIndexPath = collectionView?.indexPath(for: focusedView)
@@ -212,7 +212,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
                 ELOG("No index path at touch point")
                 return
             }
-            
+
             var state: PVSaveState?
             switch indexPath.section {
             case 0:
@@ -222,12 +222,12 @@ final class PVSaveStatesViewController: UICollectionViewController {
             default:
                 break
             }
-            
+
             guard let saveState = state else {
                 ELOG("No save state at indexPath: \(indexPath)")
                 return
             }
-            
+
             let alert = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
             alert.preferredContentSize = CGSize(width: 300, height: 150)
             alert.popoverPresentationController?.sourceView = collectionView?.cellForItem(at: indexPath)?.contentView
@@ -248,11 +248,11 @@ final class PVSaveStatesViewController: UICollectionViewController {
             break
         }
     }
-    
+
     @IBAction func done(_: Any) {
         delegate?.saveStatesViewControllerDone(self)
     }
-    
+
     @IBAction func newSaveState(_: Any) {
         Task {
             do {
@@ -261,17 +261,26 @@ final class PVSaveStatesViewController: UICollectionViewController {
                     return
                 }
                 let result = try await delegate.saveStatesViewControllerCreateNewState(self)
-                
+
                 if !result {
                     self.presentError("Error creating save state: Uknown reason", source: self.view)
                 }
             } catch {
-                let reason = (error as NSError).localizedFailureReason ?? error.localizedDescription
-                self.presentError("Error creating save state: \(error.localizedDescription) \(reason)", source: self.view)
+                let errorMsg = error.localizedDescription
+                let reason = (error as NSError).localizedFailureReason ?? ""
+                let userMessage: String
+                if errorMsg.contains("space") || errorMsg.contains("storage") || reason.contains("space") {
+                    userMessage = "Failed to create save state. Your device may be out of storage space. Try freeing up space and try again."
+                } else if errorMsg.contains("permission") || errorMsg.contains("access") {
+                    userMessage = "Could not create save state. Check file permissions or try restarting the app."
+                } else {
+                    userMessage = "Failed to create save state: \(errorMsg). The save state directory may be corrupted or inaccessible."
+                }
+                self.presentError(userMessage, source: self.view)
             }
         }
     }
-    
+
     func showSaveStateOptions(saveState: PVSaveState, source: UIView?) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.preferredContentSize = CGSize(width: 300, height: 150)
@@ -287,15 +296,19 @@ final class PVSaveStatesViewController: UICollectionViewController {
             }
             Task {
                 do {
-                    
+
                     let result = try await delegate.saveStatesViewControllerOverwriteState(self, state: saveState)
-                    
+
                     if !result {
                         self.presentError("Error overwriting save state: Uknown reason", source: self.view)
                     }
                 } catch {
                     ELOG("Error overwriting save state: \(error.localizedDescription)")
-                    self.presentError("Error overwriting save state: \(error.localizedDescription)", source: self.view)
+                    let errorMsg = error.localizedDescription
+                    let userMessage = errorMsg.contains("space") || errorMsg.contains("storage")
+                        ? "Failed to save state. Your device may be out of storage space. Try freeing up space and try again."
+                        : "Failed to overwrite save state: \(errorMsg). The save state file may be corrupted or in use."
+                    self.presentError(userMessage, source: self.view)
                 }
             }
         }))
@@ -310,18 +323,22 @@ final class PVSaveStatesViewController: UICollectionViewController {
                     self?.refreshSaves()
                 } catch {
                     ELOG("Error deleting save state: \(error.localizedDescription)")
-                    self?.presentError("Error deleting save state: \(error.localizedDescription)", source: self!.view)
+                    let errorMsg = error.localizedDescription
+                    let userMessage = errorMsg.contains("permission") || errorMsg.contains("access")
+                        ? "Could not delete save state. Check file permissions or try restarting the app."
+                        : "Failed to delete save state: \(errorMsg). The file may be in use or corrupted."
+                    self?.presentError(userMessage, source: self!.view)
                 }
             }
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         present(alert, animated: true)
     }
-    
+
     public override func numberOfSections(in _: UICollectionView) -> Int {
         return 2
     }
-    
+
     public override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let reusableView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SaveStateHeader", for: indexPath) as! PVSaveStateHeaderView
         switch indexPath.section {
@@ -332,10 +349,10 @@ final class PVSaveStatesViewController: UICollectionViewController {
         default:
             break
         }
-        
+
         return reusableView
     }
-    
+
     public override func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
         case 0:
@@ -346,19 +363,19 @@ final class PVSaveStatesViewController: UICollectionViewController {
             return 0
         }
     }
-    
+
     public override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SaveStateView", for: indexPath) as! PVSaveStateCollectionViewCell
-        
+
         // Apply retrowave styling to the cell
         cell.contentView.backgroundColor = .retroBlack
         cell.contentView.applyRetroWaveBorder(color: indexPath.section == 0 ? .retroBlue : .retroPink)
         cell.contentView.applyRetroWaveShadow(color: indexPath.section == 0 ? .retroBlue : .retroPink)
-        
+
 #if os(tvOS)
         cell.saveStateView = true
 #endif
-        
+
         var saveState: PVSaveState?
         switch indexPath.section {
         case 0:
@@ -368,12 +385,12 @@ final class PVSaveStatesViewController: UICollectionViewController {
         default:
             break
         }
-        
+
         cell.saveState = saveState
-        
+
         return cell
     }
-    
+
     public override func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch indexPath.section {
         case 0:

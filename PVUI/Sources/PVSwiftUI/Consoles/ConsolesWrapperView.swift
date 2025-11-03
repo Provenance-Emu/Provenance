@@ -81,6 +81,12 @@ struct ConsolesWrapperView: SwiftUI.View {
     /// State to control the presentation of ImportStatusView
     @State private var showImportStatusView = false
 
+    /// Cache for sorted consoles to avoid repeated array conversions
+    @State private var cachedSortedConsoles: [PVSystem] = []
+
+    /// Cache for rasterized tab icons to avoid repeated image processing
+    private static var iconCache: [String: Image] = [:]
+
     /// State for game info presentation
     struct GameInfoState: Identifiable {
         let id: String
@@ -150,12 +156,23 @@ struct ConsolesWrapperView: SwiftUI.View {
         .onAppear {
             isVisible = true
 
+            // Initialize cached sorted consoles
+            cachedSortedConsoles = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
+
             Task(priority: .userInitiated) {
-                // Preload artwork for visible consoles
+                // Preload artwork for visible console only (lazy loading)
                 if let selectedConsole = consoles.first(where: { $0.identifier == delegate.selectedTab }) {
                     preloadArtworkForConsole(selectedConsole)
                 }
             }
+        }
+        .onChange(of: viewModel.sortConsolesAscending) { _ in
+            // Invalidate cache when sort order changes
+            cachedSortedConsoles = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
+        }
+        .onChange(of: consoles.count) { _ in
+            // Invalidate cache when consoles change
+            cachedSortedConsoles = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
         }
         .onDisappear {
             isVisible = false
@@ -170,8 +187,15 @@ struct ConsolesWrapperView: SwiftUI.View {
         gameInfoState = GameInfoState(id: gameId)
     }
 
+    /// Optimized sorted consoles with caching
     private func sortedConsoles() -> [PVSystem] {
-        viewModel.sortConsolesAscending ? consoles.map { $0 } : consoles.reversed()
+        let sorted = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
+        // Only update cache if consoles actually changed
+        if cachedSortedConsoles.count != sorted.count ||
+           cachedSortedConsoles.map(\.identifier) != sorted.map(\.identifier) {
+            cachedSortedConsoles = sorted
+        }
+        return cachedSortedConsoles
     }
 
     private var glowColor: Color {
@@ -185,14 +209,16 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
     }
 
-    /// Preload artwork for a console's games
+    /// Optimized artwork preloading - only loads visible games first
     private func preloadArtworkForConsole(_ console: PVSystem) {
-        Task(priority: .low) {
-            // Get the first 20 games for this console
-            let games = Array(console.games.prefix(20))
+        Task(priority: .utility) {
+            // Only preload first 10 games initially for faster tab switching
+            // Remaining artwork will load lazily as user scrolls
+            let games = Array(console.games.prefix(10))
 
-            // Preload their artwork
-            ArtworkLoader.shared.preloadArtwork(for: games)
+            if !games.isEmpty {
+                ArtworkLoader.shared.preloadArtwork(for: games)
+            }
         }
     }
 
@@ -244,26 +270,26 @@ struct ConsolesWrapperView: SwiftUI.View {
         let binding = Binding(
             get: { delegate.selectedTab },
             set: { newTab in
-                Task {
-                    // Store the previous tab before changing
-                    previousTab = delegate.selectedTab
+                // Store the previous tab before changing
+                let oldTab = previousTab
+                previousTab = delegate.selectedTab
 
-                    // Set the new tab
-                    delegate.setTab(newTab)
+                // Set the new tab immediately (main thread operation)
+                delegate.setTab(newTab)
 
-                    // Preload artwork for the selected console
-                    if let selectedConsole = consoles.first(where: { console in console.identifier == newTab }) {
-                        preloadArtworkForConsole(selectedConsole)
-                    }
-                }
-
-                Task {
+                // Combine operations into a single Task to reduce overhead
+                Task { @MainActor in
                     // Trigger haptic feedback for user-initiated tab changes
                     #if !os(tvOS)
-                    if isVisible && previousTab != newTab {
+                    if isVisible && oldTab != newTab {
                         Haptics.impact(style: .soft)
                     }
                     #endif
+
+                    // Preload artwork for the selected console (deferred to avoid blocking)
+                    if let selectedConsole = consoles.first(where: { $0.identifier == newTab }) {
+                        preloadArtworkForConsole(selectedConsole)
+                    }
                 }
             }
         )
@@ -318,8 +344,15 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     // MARK: - Icon Rasterization
+    /// Cached icon rasterization to avoid repeated image processing
     private func rasterizedTabIcon(named name: String) -> Image? {
         if name.isEmpty { return nil }
+
+        // Check cache first
+        if let cached = Self.iconCache[name] {
+            return cached
+        }
+
         #if canImport(UIKit)
         // Derive a conservative size based on tab bar metrics to prevent page style from upscaling
         let defaultPointSize: CGFloat = 12
@@ -335,7 +368,11 @@ struct ConsolesWrapperView: SwiftUI.View {
         let scaled = renderer.image { _ in
             source.draw(in: CGRect(origin: .zero, size: targetSize))
         }
-        return Image(uiImage: scaled).renderingMode(.template)
+        let image = Image(uiImage: scaled).renderingMode(.template)
+
+        // Cache the result
+        Self.iconCache[name] = image
+        return image
         #else
         return nil
         #endif

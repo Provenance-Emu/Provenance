@@ -164,9 +164,19 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                     alert.message = self.webServerAlertMessage
                 }
             } else {
-                // Display error
-                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
-                alert.preferredContentSize = CGSize(width: 300, height: 150)
+                /// Display error with troubleshooting tips
+                let message = """
+                Could not start the web server. Try these steps:
+
+                1. Make sure your device is connected to Wi-Fi
+                2. Check that ports 80 and 81 are not in use by other apps
+                3. Restart the app and try again
+                4. If the problem persists, try rebooting your device
+
+                The web server allows you to transfer ROM files from your computer to your device over your local network.
+                """
+                let alert = UIAlertController(title: "Unable to Start Web Server", message: message, preferredStyle: .alert)
+                alert.preferredContentSize = CGSize(width: 300, height: 200)
 #if !os(tvOS)
                 alert.popoverPresentationController?.barButtonItem = barButtonItem
                 alert.popoverPresentationController?.sourceView = sender
@@ -177,8 +187,15 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                 present(alert, animated: true) { () -> Void in }
             }
         } else {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a Wi-Fi network to continue!", preferredStyle: .alert)
-            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            let message = """
+            The web server requires a Wi-Fi connection to work.
+
+            Please connect your device to a Wi-Fi network and try again. The web server allows you to transfer ROM files from your computer to your device over your local network.
+
+            Make sure both your device and computer are on the same Wi-Fi network.
+            """
+            let alert = UIAlertController(title: "Wi-Fi Connection Required", message: message, preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 180)
             alert.popoverPresentationController?.barButtonItem = barButtonItem
 #if !os(tvOS)
             alert.popoverPresentationController?.sourceView = sender
