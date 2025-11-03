@@ -31,6 +31,10 @@ struct ControllerSettingsView: View {
     @State private var connectionAnimation = false
     /// Current window for iCade setup
     @State private var window: UIWindow?
+    /// Controller selected for button remapping
+    @State private var controllerForRemapping: GCController?
+    /// Show button remapping view
+    @State private var showRemappingView = false
 
     /// Keyboard mapping documentation
     private let keyboardMappingDocs = """
@@ -240,14 +244,60 @@ struct ControllerSettingsView: View {
                         .font(.custom("Menlo", size: 14), for: .codeBlock)
                         .tint(accentColor)
                     #endif
+            } header: {
+                HStack {
+                    Image(systemName: "keyboard")
+                    Text("⌨️ Keyboard Controls")
+                }
+                .font(.headline)
+            }
+//            }
+
+            /// Button Remapping Section
+            if !controllerManager.controllers.isEmpty {
+                Section {
+                    ForEach(controllerManager.controllers, id: \.self) { controller in
+                        NavigationLink(destination: ButtonRemappingView(controller: controller)) {
+                            HStack(spacing: 16) {
+                                Image(systemName: controllerIcon(controller))
+                                    .imageScale(.large)
+                                    .foregroundColor(accentColor)
+                                    .frame(width: 30)
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(controller.vendorName ?? "Unknown Controller")
+                                        .font(.headline)
+                                    Text("Remap buttons")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+
+                                if let playerIndex = playerNumber(for: controller) {
+                                    Text("P\(playerIndex)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color.secondary.opacity(0.2))
+                                        .clipShape(Capsule())
+                                }
+                            }
+                        }
+                    }
                 } header: {
                     HStack {
-                        Image(systemName: "keyboard")
-                        Text("⌨️ Keyboard Controls")
+                        Image(systemName: "slider.horizontal.3")
+                        Text("Button Remapping")
                     }
                     .font(.headline)
+                } footer: {
+                    Text("Customize button mappings for each controller. Joy-Con controllers are automatically fixed.")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
                 }
-//            }
+            }
         }
         #if os(tvOS)
         .listStyle(.plain)
@@ -316,6 +366,227 @@ struct ControllerSettingsView: View {
         }
 
         return title
+    }
+}
+
+/// View for remapping controller buttons
+struct ButtonRemappingView: View {
+    let controller: GCController
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @State private var remappableController: PVRemappableController?
+    @State private var currentMappings: [ButtonIdentifier: ButtonIdentifier] = [:]
+    @State private var selectedButton: ButtonIdentifier?
+    @State private var showingDestinationPicker = false
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
+    }
+
+    /// Standard buttons to show for remapping
+    private let standardButtons: [ButtonIdentifier] = [
+        .buttonA, .buttonB, .buttonX, .buttonY,
+        .leftShoulder, .rightShoulder,
+        .leftTrigger, .rightTrigger,
+        .dpadUp, .dpadDown, .dpadLeft, .dpadRight,
+        .menu, .options
+    ]
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(standardButtons, id: \.self) { button in
+                    Button(action: {
+                        selectedButton = button
+                        showingDestinationPicker = true
+                    }) {
+                        HStack {
+                            Text(buttonDisplayName(button))
+                                .foregroundColor(.primary)
+                            Spacer()
+                            if let mappedTo = currentMappings[button] {
+                                Text("→ \(buttonDisplayName(mappedTo))")
+                                    .font(.subheadline)
+                                    .foregroundColor(accentColor)
+                            } else {
+                                Text("Default")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            } header: {
+                Text("Button Mappings")
+            } footer: {
+                Text("Tap a button to remap it. Select the button you want it to trigger.")
+            }
+
+            Section {
+                Button(action: {
+                    clearAllMappings()
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.counterclockwise")
+                        Text("Reset All Mappings")
+                    }
+                    .foregroundColor(.red)
+                }
+
+                Button(action: {
+                    swapABButtons()
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.left.arrow.right")
+                        Text("Swap A ↔ B")
+                    }
+                    .foregroundColor(accentColor)
+                }
+
+                Button(action: {
+                    swapXYButtons()
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.left.arrow.right")
+                        Text("Swap X ↔ Y")
+                    }
+                    .foregroundColor(accentColor)
+                }
+            } header: {
+                Text("Quick Actions")
+            }
+        }
+        .navigationTitle(controller.vendorName ?? "Remap Buttons")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            setupRemappableController()
+            loadCurrentMappings()
+        }
+        .confirmationDialog(
+            "Map \(selectedButton.map { buttonDisplayName($0) } ?? "button") to:",
+            isPresented: $showingDestinationPicker,
+            titleVisibility: .visible
+        ) {
+            ForEach(standardButtons, id: \.self) { destination in
+                Button(buttonDisplayName(destination)) {
+                    if let source = selectedButton {
+                        remapButton(source, to: destination)
+                    }
+                }
+            }
+            Button("Remove Mapping", role: .destructive) {
+                if let source = selectedButton {
+                    clearMapping(for: source)
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                selectedButton = nil
+            }
+        }
+    }
+
+    private func setupRemappableController() {
+        /// Get remappable controller wrapper - this will be created if it doesn't exist
+        /// We access it through a helper function that creates it
+        loadRemappableController()
+    }
+
+    private func loadRemappableController() {
+        /// Access remappable controller through PVControllerManager's public function
+        remappableController = getRemappableControllerWrapper(for: controller)
+    }
+
+    private func loadCurrentMappings() {
+        guard let remappable = remappableController else {
+            loadRemappableController()
+            guard let remappable = remappableController else { return }
+            return loadMappings(from: remappable)
+        }
+        loadMappings(from: remappable)
+    }
+
+    private func loadMappings(from remappable: PVRemappableController) {
+        var mappings: [ButtonIdentifier: ButtonIdentifier] = [:]
+        for button in standardButtons {
+            if let mapped = remappable.mappedButton(for: button) {
+                mappings[button] = mapped
+            }
+        }
+        currentMappings = mappings
+    }
+
+    private func remapButton(_ source: ButtonIdentifier, to destination: ButtonIdentifier) {
+        remap(button: source, to: destination, forController: controller)
+        loadCurrentMappings()
+    }
+
+    private func clearMapping(for button: ButtonIdentifier) {
+        guard let remappable = remappableController else {
+            loadRemappableController()
+            guard let remappable = remappableController else { return }
+            remappable.clearMapping(for: button)
+            remappable.saveMappings()
+            loadCurrentMappings()
+            return
+        }
+        remappable.clearMapping(for: button)
+        remappable.saveMappings()
+        loadCurrentMappings()
+    }
+
+    private func clearAllMappings() {
+        clearMappings(for: controller)
+        loadCurrentMappings()
+    }
+
+    private func swapABButtons() {
+        guard let remappable = remappableController else {
+            loadRemappableController()
+            guard let remappable = remappableController else { return }
+            remappable.swapButtons(.buttonA, .buttonB)
+            remappable.saveMappings()
+            loadCurrentMappings()
+            return
+        }
+        remappable.swapButtons(.buttonA, .buttonB)
+        remappable.saveMappings()
+        loadCurrentMappings()
+    }
+
+    private func swapXYButtons() {
+        guard let remappable = remappableController else {
+            loadRemappableController()
+            guard let remappable = remappableController else { return }
+            remappable.swapButtons(.buttonX, .buttonY)
+            remappable.saveMappings()
+            loadCurrentMappings()
+            return
+        }
+        remappable.swapButtons(.buttonX, .buttonY)
+        remappable.saveMappings()
+        loadCurrentMappings()
+    }
+
+    private func buttonDisplayName(_ button: ButtonIdentifier) -> String {
+        switch button {
+        case .buttonA: return "A Button"
+        case .buttonB: return "B Button"
+        case .buttonX: return "X Button"
+        case .buttonY: return "Y Button"
+        case .leftShoulder: return "Left Shoulder (L1)"
+        case .rightShoulder: return "Right Shoulder (R1)"
+        case .leftTrigger: return "Left Trigger (L2)"
+        case .rightTrigger: return "Right Trigger (R2)"
+        case .dpadUp: return "D-Pad Up"
+        case .dpadDown: return "D-Pad Down"
+        case .dpadLeft: return "D-Pad Left"
+        case .dpadRight: return "D-Pad Right"
+        case .menu: return "Menu"
+        case .options: return "Options"
+        default: return button.rawValue
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 import GameController
 import Foundation
+import PVLogging
 
 /// Identifies which button on a controller
 public enum ButtonIdentifier: String, Codable {
@@ -102,8 +103,14 @@ public final class PVRemappableController: NSObject {
         // Forward controller properties
         wrappedController.playerIndex = controller.playerIndex
 
-        // Set up initial mappings
-        setupDefaultMappings()
+        // Load saved mappings first (if any exist)
+        loadMappings()
+
+        // Set up default mappings (e.g., Joy-Con auto-fix) only if no mappings exist
+        /// This ensures user's manual remappings take precedence over auto-fix
+        if buttonMappings.isEmpty {
+            setupDefaultMappings()
+        }
 
         // Set up input handlers
         setupInputHandlers()
@@ -271,10 +278,48 @@ public final class PVRemappableController: NSObject {
 
     /// Set up any default button mappings
     private func setupDefaultMappings() {
-        // Example: Map B button to A button
-        if let gamepad = wrappedController.extendedGamepad {
-            remap(button: .buttonB, to: .buttonA)
+        /// Detect Joy-Con controllers and fix button swaps
+        if isJoyConController() {
+            /// Joy-Con controllers have swapped A/B and X/Y buttons
+            /// Fix: Swap A<->B and X<->Y
+            swapButtons(.buttonA, .buttonB)
+            swapButtons(.buttonX, .buttonY)
+            /// Save mappings so they persist across reconnections
+            saveMappings()
+            ILOG("Joy-Con controller detected - auto-corrected A/B and X/Y button mappings")
         }
+    }
+
+    /// Check if this is a Joy-Con controller
+    private func isJoyConController() -> Bool {
+        guard let vendorName = wrappedController.vendorName else { return false }
+
+        /// Joy-Con controllers appear with different identifiers:
+        /// - "Joy-Con (L)" or "Joy-Con (R)" when connected separately
+        /// - "Nintendo" when connected as a pair
+        /// - Product category might be "Nintendo Switch"
+        let vendorLower = vendorName.lowercased()
+        let productCategory = wrappedController.productCategory.lowercased()
+
+        /// Check for explicit Joy-Con identifiers
+        if vendorLower.contains("joy-con") || vendorLower.contains("joycon") {
+            return true
+        }
+
+        /// Check for Nintendo Switch controllers (includes Joy-Cons and Pro Controller)
+        /// Joy-Cons often appear as separate Left/Right controllers
+        if vendorLower.contains("nintendo") {
+            /// If it's a Switch controller and not explicitly a Pro Controller, assume Joy-Con
+            if productCategory.contains("switch") && !vendorLower.contains("pro") {
+                return true
+            }
+            /// Left/Right in name usually indicates Joy-Con
+            if vendorLower.contains("left") || vendorLower.contains("right") {
+                return true
+            }
+        }
+
+        return false
     }
 
     /// Get button from identifier
@@ -347,20 +392,119 @@ public final class PVRemappableController: NSObject {
         }
     }
 
+    /// Stored original handler to chain after remapping
+    private var originalValueChangedHandler: GCExtendedGamepadValueChangedHandler?
+
+    /// Track which buttons are currently being remapped to prevent infinite loops
+    private var remappingInProgress: Set<ButtonIdentifier> = []
+
+    /// Store original handlers for each button to prevent loops
+    private var originalButtonHandlers: [ButtonIdentifier: GCControllerButtonValueChangedHandler] = [:]
+
     /// Set up input handlers for button remapping
     private func setupInputHandlers() {
         guard let gamepad = wrappedController.extendedGamepad else { return }
 
+        /// Store original handler if one exists (set by cores or other parts)
+        originalValueChangedHandler = gamepad.valueChangedHandler
+
+        /// Set up individual button handlers for remapping
+        setupButtonRemappingHandlers(on: gamepad)
+
+        /// Chain the original handler after remapping
         gamepad.valueChangedHandler = { [weak self] (gamepad, element) in
             guard let self = self else { return }
 
-            // Find if this button has a mapping
-            if let sourceId = self.identifier(for: element),
-               let mapping = self.buttonMappings[sourceId],
-               let destButton = self.button(for: mapping.destinationId, on: gamepad) {
-                // Forward the pressed state
-                if let buttonInput = element as? GCControllerButtonInput {
-                    destButton.pressedChangedHandler?(destButton, buttonInput.value, buttonInput.isPressed)
+            /// Chain original handler so we don't break existing functionality
+            self.originalValueChangedHandler?(gamepad, element)
+        }
+    }
+
+    /// Set up individual button handlers to apply remapping
+    private func setupButtonRemappingHandlers(on gamepad: GCExtendedGamepad) {
+        /// Set up handlers for all mappable buttons
+        let buttons: [(GCControllerButtonInput, ButtonIdentifier)] = [
+            (gamepad.buttonA, .buttonA),
+            (gamepad.buttonB, .buttonB),
+            (gamepad.buttonX, .buttonX),
+            (gamepad.buttonY, .buttonY),
+            (gamepad.leftShoulder, .leftShoulder),
+            (gamepad.rightShoulder, .rightShoulder),
+            (gamepad.leftTrigger, .leftTrigger),
+            (gamepad.rightTrigger, .rightTrigger),
+            (gamepad.dpad.up, .dpadUp),
+            (gamepad.dpad.down, .dpadDown),
+            (gamepad.dpad.left, .dpadLeft),
+            (gamepad.dpad.right, .dpadRight),
+            (gamepad.buttonMenu, .menu)
+        ]
+
+        for (button, buttonId) in buttons {
+            /// Store original handler BEFORE we modify it
+            originalButtonHandlers[buttonId] = button.valueChangedHandler
+
+            /// Set new handler that applies remapping
+            button.valueChangedHandler = { [weak self] (button, value, pressed) in
+                guard let self = self else { return }
+
+                /// Prevent infinite loops from swapped buttons
+                guard !self.remappingInProgress.contains(buttonId) else {
+                    /// Already remapping this button, just call original handler
+                    self.originalButtonHandlers[buttonId]?(button, value, pressed)
+                    return
+                }
+
+                /// Check if this button has a remapping
+                if let mapping = self.buttonMappings[buttonId],
+                   let destButton = self.button(for: mapping.destinationId, on: gamepad) {
+                    /// Mark as in progress to prevent loops
+                    self.remappingInProgress.insert(buttonId)
+
+                    /// Get the ORIGINAL handler of destination button (before our remapping)
+                    /// This prevents infinite loops when buttons are swapped
+                    if let destId = self.identifier(for: destButton),
+                       let destOriginalHandler = self.originalButtonHandlers[destId] {
+                        /// Call destination's original handler with destination button
+                        destOriginalHandler(destButton, value, pressed)
+                    } else {
+                        /// Fallback: call destination's current handler
+                        destButton.valueChangedHandler?(destButton, value, pressed)
+                    }
+
+                    /// Remove from in-progress set
+                    self.remappingInProgress.remove(buttonId)
+
+                    /// Also call original handler for this button to maintain compatibility
+                    self.originalButtonHandlers[buttonId]?(button, value, pressed)
+                } else {
+                    /// No remapping, call original handler
+                    self.originalButtonHandlers[buttonId]?(button, value, pressed)
+                }
+            }
+        }
+
+        /// Handle options button if available
+        if #available(iOS 14.0, tvOS 14.0, *), let optionsButton = gamepad.buttonOptions {
+            originalButtonHandlers[.options] = optionsButton.valueChangedHandler
+            optionsButton.valueChangedHandler = { [weak self] (button, value, pressed) in
+                guard let self = self else { return }
+                guard !self.remappingInProgress.contains(.options) else {
+                    self.originalButtonHandlers[.options]?(button, value, pressed)
+                    return
+                }
+                if let mapping = self.buttonMappings[.options],
+                   let destButton = self.button(for: mapping.destinationId, on: gamepad) {
+                    self.remappingInProgress.insert(.options)
+                    if let destId = self.identifier(for: destButton),
+                       let destOriginalHandler = self.originalButtonHandlers[destId] {
+                        destOriginalHandler(destButton, value, pressed)
+                    } else {
+                        destButton.valueChangedHandler?(destButton, value, pressed)
+                    }
+                    self.remappingInProgress.remove(.options)
+                    self.originalButtonHandlers[.options]?(button, value, pressed)
+                } else {
+                    self.originalButtonHandlers[.options]?(button, value, pressed)
                 }
             }
         }
