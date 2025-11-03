@@ -150,8 +150,17 @@ public class AppState: ObservableObject {
     private let initialImportResumeDelay: TimeInterval = 10.0
 
     public var isAppStore: Bool {
-        guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
-        return appType.lowercased().contains("appstore")
+        // Check bundle identifier matches official App Store bundle ID
+        guard let bundleID = Bundle.main.bundleIdentifier else { return false }
+        guard bundleID.hasPrefix("org.provenance-emu.provenance") else { return false }
+
+        // Also check PVAppType if available
+        if let appType = Bundle.main.infoDictionary?["PVAppType"] as? String {
+            return appType.lowercased().contains("appstore")
+        }
+
+        // If PVAppType is not set but bundle ID matches, assume App Store
+        return true
     }
 
     public var isSimulator: Bool {
