@@ -23,6 +23,7 @@ public struct CloudKitDownloadProgressView: View {
     @State private var isCompleted: Bool = false
     @State private var hasError: Bool = false
     @State private var errorMessage: String = ""
+    @State private var cancellables = Set<AnyCancellable>()
 
     public init(
         gameMD5: String,
@@ -203,8 +204,6 @@ public struct CloudKitDownloadProgressView: View {
             }
             .store(in: &cancellables)
     }
-
-    @State private var cancellables = Set<AnyCancellable>()
 
     /// Platform-appropriate background color
     private var backgroundColorForPlatform: Color {
