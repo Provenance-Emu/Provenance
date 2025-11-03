@@ -1018,13 +1018,22 @@ struct DefaultControllerSkinView: View {
                     let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
 
                     if !buttonGroups.isEmpty {
-                        // Check if any button group has many buttons (9+) - show popover instead
-                        let hasLargeButtonGroup = buttonGroups.contains { group in
-                            (group.PVGroupedButtons?.count ?? 0) >= 9
+                        // Separate number pad groups from standard button groups
+                        let (numPadGroups, standardGroups) = separateButtonGroups(buttonGroups)
+
+                        // Show standard button groups always
+                        if !standardGroups.isEmpty {
+                            VStack(spacing: 15) {
+                                ForEach(0..<standardGroups.count, id: \.self) { index in
+                                    if let groupedButtons = standardGroups[index].PVGroupedButtons {
+                                        createButtonGroup(from: groupedButtons)
+                                    }
+                                }
+                            }
                         }
 
-                        if hasLargeButtonGroup {
-                            // Show a popover button for num pad systems
+                        // Show number pad popover button if we have number pad groups
+                        if !numPadGroups.isEmpty {
                             Button(action: {
                                 showNumPadPopover = true
                             }) {
@@ -1045,19 +1054,10 @@ struct DefaultControllerSkinView: View {
                             .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
                             .popover(isPresented: $showNumPadPopover) {
                                 NumPadPopoverView(
-                                    buttonGroups: buttonGroups,
+                                    buttonGroups: numPadGroups,
                                     createButton: createButton,
                                     inputHandler: inputHandler
                                 )
-                            }
-                        } else {
-                            // If we have button groups but not many buttons, display them normally
-                            VStack(spacing: 15) {
-                                ForEach(0..<buttonGroups.count, id: \.self) { index in
-                                    if let groupedButtons = buttonGroups[index].PVGroupedButtons {
-                                        createButtonGroup(from: groupedButtons)
-                                    }
-                                }
                             }
                         }
                     } else {
@@ -1173,13 +1173,23 @@ struct DefaultControllerSkinView: View {
                     let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
 
                     if !buttonGroups.isEmpty {
-                        // Check if any button group has many buttons (9+) - show popover instead
-                        let hasLargeButtonGroup = buttonGroups.contains { group in
-                            (group.PVGroupedButtons?.count ?? 0) >= 9
+                        // Separate number pad groups from standard button groups
+                        let (numPadGroups, standardGroups) = separateButtonGroups(buttonGroups)
+
+                        // Show standard button groups always
+                        if !standardGroups.isEmpty {
+                            VStack(spacing: 15) {
+                                ForEach(0..<standardGroups.count, id: \.self) { index in
+                                    if let groupedButtons = standardGroups[index].PVGroupedButtons {
+                                        createButtonGroup(from: groupedButtons)
+                                            .id("buttonGroup_\(index)")
+                                    }
+                                }
+                            }
                         }
 
-                        if hasLargeButtonGroup {
-                            // Show a popover button for num pad systems
+                        // Show number pad popover button if we have number pad groups
+                        if !numPadGroups.isEmpty {
                             Button(action: {
                                 showNumPadPopover = true
                             }) {
@@ -1200,20 +1210,10 @@ struct DefaultControllerSkinView: View {
                             .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
                             .popover(isPresented: $showNumPadPopover) {
                                 NumPadPopoverView(
-                                    buttonGroups: buttonGroups,
+                                    buttonGroups: numPadGroups,
                                     createButton: createButton,
                                     inputHandler: inputHandler
                                 )
-                            }
-                        } else {
-                            // If we have button groups but not many buttons, display them normally
-                            VStack(spacing: 15) {
-                                ForEach(0..<buttonGroups.count, id: \.self) { index in
-                                    if let groupedButtons = buttonGroups[index].PVGroupedButtons {
-                                        createButtonGroup(from: groupedButtons)
-                                            .id("buttonGroup_\(index)")
-                                    }
-                                }
                             }
                         }
                     } else {
@@ -1449,6 +1449,36 @@ struct DefaultControllerSkinView: View {
     // Check if a specific control type with a specific title exists in the layout
     private func hasControl(type: String, title: String, in layout: [ControlLayoutEntry]) -> Bool {
         return layout.contains(where: { $0.PVControlType == type && $0.PVControlTitle == title })
+    }
+
+    /// Separate button groups into number pad groups (0-9, *, #) and standard button groups (A, B, C, X, Y, Z, etc.)
+    private func separateButtonGroups(_ buttonGroups: [ControlLayoutEntry]) -> (numPadGroups: [ControlLayoutEntry], standardGroups: [ControlLayoutEntry]) {
+        var numPadGroups: [ControlLayoutEntry] = []
+        var standardGroups: [ControlLayoutEntry] = []
+
+        for group in buttonGroups {
+            guard let buttons = group.PVGroupedButtons else {
+                standardGroups.append(group)
+                continue
+            }
+
+            /// Check if this group contains primarily number pad buttons (0-9, *, #)
+            let numPadButtonTitles = Set(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#"])
+            let buttonTitles = Set(buttons.compactMap { $0.PVControlTitle })
+
+            /// Count how many buttons are number pad buttons vs standard buttons
+            let numPadCount = buttonTitles.filter { numPadButtonTitles.contains($0) }.count
+            let standardCount = buttonTitles.count - numPadCount
+
+            /// If the majority of buttons are number pad buttons, treat this as a number pad group
+            if numPadCount > standardCount && numPadCount >= 9 {
+                numPadGroups.append(group)
+            } else {
+                standardGroups.append(group)
+            }
+        }
+
+        return (numPadGroups, standardGroups)
     }
 }
 

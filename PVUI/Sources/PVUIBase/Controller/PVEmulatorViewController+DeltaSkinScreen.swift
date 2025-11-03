@@ -207,17 +207,52 @@ extension PVEmulatorViewController {
             (viewSize.height - scaledHeight) : ((viewSize.height - scaledHeight) / 2)
 
         // Try to get screen frame from skin
+        // Note: outputFrame from skin.screens() should already be normalized (0-1)
         if let screens = skin.screens(for: traits),
            let screen = screens.first,
            let outputFrame = screen.outputFrame {
             let layoutWidth = scaledWidth
             let layoutHeight = scaledHeight
-            return CGRect(
-                x: xOffset + (outputFrame.minX * layoutWidth),
-                y: yOffset + (outputFrame.minY * layoutHeight),
-                width: outputFrame.width * layoutWidth,
-                height: outputFrame.height * layoutHeight
+
+            // outputFrame from DeltaSkinScreen should typically be normalized (0-1)
+            // However, some skins might provide absolute pixel coordinates
+            // Use a conservative threshold (> 10.0) to detect absolute pixels vs normalized
+            let normalizedFrame: CGRect
+            if outputFrame.width > 10.0 || outputFrame.height > 10.0 {
+                // Values are large, likely absolute pixels - normalize by mappingSize
+                if mappingSize.width > 0 && mappingSize.height > 0 {
+                    normalizedFrame = CGRect(
+                        x: outputFrame.minX / mappingSize.width,
+                        y: outputFrame.minY / mappingSize.height,
+                        width: outputFrame.width / mappingSize.width,
+                        height: outputFrame.height / mappingSize.height
+                    )
+                    DLOG("🎮 SKIN: Normalized outputFrame from pixels: \(outputFrame) -> \(normalizedFrame)")
+                } else {
+                    DLOG("🎮 SKIN: Invalid mappingSize, treating outputFrame as normalized")
+                    normalizedFrame = outputFrame
+                }
+            } else {
+                // Values are small, assume already normalized (0-1) - use as-is
+                normalizedFrame = outputFrame
+            }
+
+            // Scale normalized frame by layout dimensions and add offset
+            var finalFrame = CGRect(
+                x: xOffset + (normalizedFrame.minX * layoutWidth),
+                y: yOffset + (normalizedFrame.minY * layoutHeight),
+                width: normalizedFrame.width * layoutWidth,
+                height: normalizedFrame.height * layoutHeight
             )
+
+            // Clamp frame to viewport bounds to prevent extending outside
+            finalFrame.origin.x = max(0, min(finalFrame.origin.x, viewSize.width - finalFrame.width))
+            finalFrame.origin.y = max(0, min(finalFrame.origin.y, viewSize.height - finalFrame.height))
+            finalFrame.size.width = min(finalFrame.width, viewSize.width)
+            finalFrame.size.height = min(finalFrame.height, viewSize.height)
+
+            DLOG("🎮 SKIN: Calculated frame from screens - outputFrame: \(outputFrame), normalized: \(normalizedFrame), layout: \(scaledWidth)x\(scaledHeight), final: \(finalFrame)")
+            return finalFrame
         }
 
         // Default: center in available space
@@ -276,12 +311,22 @@ extension PVEmulatorViewController {
 
             // Clamp to parent bounds for both portrait and landscape
             let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+
+            // Clamp to parent bounds - ensure frame stays within valid bounds
+            // For portrait mode, the frame calculation should already account for skin positioning
+            // but we need to ensure the converted coordinates are correct
             let clampedRect = CGRect(
                 x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
                 y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
                 width: min(rectInParent.width, parent.bounds.width),
                 height: min(rectInParent.height, parent.bounds.height)
             )
+
+            // Debug logging for portrait mode to help diagnose positioning issues
+            if orientation == .portrait {
+                let parentOrigin = view.convert(CGRect.zero, to: parent)
+                DLOG("🎮 SKIN: Portrait conversion - frame: \(frame), rectInParent: \(rectInParent), parentOrigin: \(parentOrigin), parent.bounds: \(parent.bounds), clamped: \(clampedRect)")
+            }
 
             // Validate clamped rect
             guard isValidFrame(clampedRect) else {
@@ -291,6 +336,9 @@ extension PVEmulatorViewController {
 
             DLOG("🎮 SKIN: RetroArch viewport (\(orientation == .landscape ? "landscape" : "portrait")): original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds), view.bounds=\(view.bounds)")
             viewport.applyRenderViewFrameInTouchView(clampedRect)
+
+            // Ensure GPU view is visible and below skin
+            ensureGPUViewVisibilityAndZOrder()
 
             // Frame applied - no verification delay needed (blocks like RetroArch)
             return

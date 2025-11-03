@@ -315,8 +315,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if let aView = controllerViewController?.view {
             view.addSubview(aView)
             ILOG("controllerViewController \(controllerViewController), core: \(core)")
-            // For RetroArch with DeltaSkins, attach RA views to self to avoid hiding issues
-            if Defaults[.skinMode] != .off && (core.coreIdentifier?.contains("libretro") == true) {
+            // For RetroArch and PPSSPP with DeltaSkins, attach views to self to avoid hiding issues
+            if Defaults[.skinMode] != .off && (core.coreIdentifier?.contains("libretro") == true || core.coreIdentifier?.contains("ppsspp") == true) {
                 core.touchViewController = self
             } else {
                 core.touchViewController = controllerViewController

@@ -196,6 +196,10 @@ public struct DeltaSkin: DeltaSkinProtocol {
         return orientationReps?.toRepresentationInfo()
     }
 
+    /// Cache for decoded images keyed by skin identifier + traits + asset filename
+    private static var imageCache: [String: UIImage] = [:]
+    private static let imageCacheQueue = DispatchQueue(label: "com.provenance.deltaskin.imagecache", attributes: .concurrent)
+
     public func image(for traits: DeltaSkinTraits) async throws -> UIImage {
         // Get the representation for these traits
         guard let rep = representation(for: traits) else {
@@ -206,23 +210,42 @@ public struct DeltaSkin: DeltaSkinProtocol {
         let candidates = rep.assets.candidates()
         var lastError: Error?
         for name in candidates {
+            // Check cache first
+            let cacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(name)"
+            if let cachedImage = Self.imageCacheQueue.sync(execute: { Self.imageCache[cacheKey] }) {
+                return cachedImage
+            }
+
             do {
                 let data = try loadAssetData(name)
                 let lower = name.lowercased()
+                let decodedImage: UIImage?
                 if lower.hasSuffix(".pdf") {
-                    if let image = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false) {
-                        return image
-                    } else {
+                    decodedImage = UIImage(pdfData: data, preserveTransparency: rep.translucent ?? false)
+                    if decodedImage == nil {
                         lastError = DeltaSkinError.invalidPDF
                         continue
                     }
                 } else {
-                    if let image = UIImage(data: data, scale: UIScreen.main.scale) {
-                        return image
-                    } else {
+                    decodedImage = UIImage(data: data, scale: UIScreen.main.scale)
+                    if decodedImage == nil {
                         lastError = DeltaSkinError.invalidPNG
                         continue
                     }
+                }
+
+                // Cache the decoded image
+                if let imageToCache = decodedImage {
+                    Self.imageCacheQueue.async(flags: .barrier) {
+                        Self.imageCache[cacheKey] = imageToCache
+                        // Limit cache size to ~50MB (approximately 50 images)
+                        if Self.imageCache.count > 50 {
+                            // Remove oldest entries (simple FIFO, in production could use LRU)
+                            let keysToRemove = Array(Self.imageCache.keys.prefix(10))
+                            keysToRemove.forEach { Self.imageCache.removeValue(forKey: $0) }
+                        }
+                    }
+                    return imageToCache
                 }
             } catch {
                 ELOG("Failed to load asset candidate: \(name) — \(error)")
@@ -232,43 +255,91 @@ public struct DeltaSkin: DeltaSkinProtocol {
         }
 
         // Fallback: try the original filename property (legacy behavior)
+        let fallbackName = rep.assets.filename
+        let fallbackCacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(fallbackName)"
+        if let cachedImage = Self.imageCacheQueue.sync(execute: { Self.imageCache[fallbackCacheKey] }) {
+            return cachedImage
+        }
+
         do {
-            let assetData = try loadAssetData(rep.assets.filename)
-            let lower = rep.assets.filename.lowercased()
+            let assetData = try loadAssetData(fallbackName)
+            let lower = fallbackName.lowercased()
+            let decodedImage: UIImage?
             if lower.hasSuffix(".pdf") {
-                guard let image = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false) else {
+                decodedImage = UIImage(pdfData: assetData, preserveTransparency: rep.translucent ?? false)
+                guard decodedImage != nil else {
                     throw DeltaSkinError.invalidPDF
                 }
-                return image
             } else {
-                guard let image = UIImage(data: assetData, scale: UIScreen.main.scale) else {
+                decodedImage = UIImage(data: assetData, scale: UIScreen.main.scale)
+                guard decodedImage != nil else {
                     throw DeltaSkinError.invalidPNG
                 }
-                return image
             }
+
+            // Cache the decoded image
+            if let imageToCache = decodedImage {
+                Self.imageCacheQueue.async(flags: .barrier) {
+                    Self.imageCache[fallbackCacheKey] = imageToCache
+                    // Limit cache size
+                    if Self.imageCache.count > 50 {
+                        let keysToRemove = Array(Self.imageCache.keys.prefix(10))
+                        keysToRemove.forEach { Self.imageCache.removeValue(forKey: $0) }
+                    }
+                }
+                return imageToCache
+            }
+
+            throw lastError ?? DeltaSkinError.invalidPNG
         } catch {
             throw lastError ?? error
         }
     }
 
+    /// Cache for thumbstick images keyed by skin identifier + filename
+    private static var thumbstickImageCache: [String: UIImage] = [:]
+    private static let thumbstickCacheQueue = DispatchQueue(label: "com.provenance.deltaskin.thumbstickcache", attributes: .concurrent)
+
     /// Load the thumbstick image
     func loadThumbstickImage(named: String) async throws -> UIImage {
+        // Check cache first
+        let cacheKey = "\(identifier)-thumbstick-\(named)"
+        if let cachedImage = Self.thumbstickCacheQueue.sync(execute: { Self.thumbstickImageCache[cacheKey] }) {
+            return cachedImage
+        }
+
         // Load the asset data
         let assetData = try loadAssetData(named)
 
         // Create image from PDF data since thumbsticks are PDFs
+        let decodedImage: UIImage?
         if named.hasSuffix(".pdf") {
-            guard let image = UIImage(pdfData: assetData, preserveTransparency: true) else {
+            decodedImage = UIImage(pdfData: assetData, preserveTransparency: true)
+            guard decodedImage != nil else {
                 throw DeltaSkinError.invalidPDF
             }
-            return image
         } else {
             // For PNG thumbsticks, ensure we preserve alpha channel
-            guard let image = UIImage(data: assetData)?.imageWithAlpha() else {
+            decodedImage = UIImage(data: assetData)?.imageWithAlpha()
+            guard decodedImage != nil else {
                 throw DeltaSkinError.invalidPNG
             }
-            return image
         }
+
+        // Cache the decoded image
+        if let imageToCache = decodedImage {
+            Self.thumbstickCacheQueue.async(flags: .barrier) {
+                Self.thumbstickImageCache[cacheKey] = imageToCache
+                // Limit cache size to ~20MB (approximately 40 thumbstick images)
+                if Self.thumbstickImageCache.count > 40 {
+                    let keysToRemove = Array(Self.thumbstickImageCache.keys.prefix(10))
+                    keysToRemove.forEach { Self.thumbstickImageCache.removeValue(forKey: $0) }
+                }
+            }
+            return imageToCache
+        }
+
+        throw DeltaSkinError.invalidPNG
     }
 
     /// JSON structure for DeltaSkin info.json

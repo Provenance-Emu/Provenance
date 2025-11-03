@@ -31,7 +31,8 @@ struct DeltaSkinScreenPositionWrapper: View {
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
 
             // Validate outputFrame is normalized (should be 0-1)
-            if outputFrame.width > 1.0 || outputFrame.height > 1.0 {
+            // Use conservative threshold (> 10.0) to detect absolute pixels vs small normalized values
+            if outputFrame.width > 10.0 || outputFrame.height > 10.0 {
                 ELOG("🎮 SKIN: WARNING - outputFrame appears to be absolute pixels, not normalized!")
                 ELOG("🎮 SKIN:   outputFrame: \(outputFrame)")
                 ELOG("🎮 SKIN:   mappingSize: \(mappingSize)")
@@ -92,7 +93,8 @@ struct DeltaSkinScreenPositionWrapper: View {
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
 
             // Validate outputFrame is normalized (should be 0-1)
-            if outputFrame.width > 1.0 || outputFrame.height > 1.0 {
+            // Use conservative threshold (> 10.0) to detect absolute pixels vs small normalized values
+            if outputFrame.width > 10.0 || outputFrame.height > 10.0 {
                 ELOG("🎮 SKIN: WARNING - outputFrame appears to be absolute pixels, not normalized!")
                 ELOG("🎮 SKIN:   outputFrame: \(outputFrame)")
                 ELOG("🎮 SKIN:   mappingSize: \(mappingSize)")
@@ -269,6 +271,17 @@ struct DeltaSkinScreenPositionWrapper: View {
     private func broadcastFrame(_ frame: CGRect) {
         guard isInEmulator else { return }
 
+        // Prevent duplicate broadcasts - only broadcast if frame actually changed
+        if let lastFrame = lastBroadcastFrame,
+           abs(lastFrame.origin.x - frame.origin.x) < 0.5 &&
+           abs(lastFrame.origin.y - frame.origin.y) < 0.5 &&
+           abs(lastFrame.width - frame.width) < 0.5 &&
+           abs(lastFrame.height - frame.height) < 0.5 {
+            DLOG("🎮 SKIN: Frame unchanged, skipping broadcast: \(frame)")
+            return
+        }
+
+        lastBroadcastFrame = frame
         DLOG("🎮 SKIN: Broadcasting frame: \(frame)")
 
         NotificationCenter.default.post(
@@ -281,23 +294,27 @@ struct DeltaSkinScreenPositionWrapper: View {
     @State private var lastSize: CGSize = .zero
     @State private var lastLayout: DeltaSkinView.SkinLayout?
     @State private var calculationTask: Task<Void, Never>?
+    @State private var lastBroadcastFrame: CGRect?
 
     var body: some View {
         Color.clear
             .onAppear {
                 lastSize = size
                 lastLayout = layout
+                // Calculate immediately on appear - no debounce needed
                 _ = calculateScreenFrame()
             }
             .onChange(of: size) { newSize in
-                guard newSize != lastSize else { return }
+                // Only recalculate if size actually changed significantly (more than 1 point)
+                guard abs(newSize.width - lastSize.width) > 1.0 || abs(newSize.height - lastSize.height) > 1.0 else { return }
                 lastSize = newSize
 
-                // Debounce calculations during rotation to avoid intermediate states
+                // Cancel any pending calculations
                 calculationTask?.cancel()
+
+                // For size changes, debounce slightly to avoid intermediate rotation states
                 calculationTask = Task {
-                    // Wait for rotation to stabilize
-                    try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+                    try? await Task.sleep(nanoseconds: 50_000_000) // 50ms debounce (reduced from 150ms)
                     guard !Task.isCancelled else { return }
                     _ = await MainActor.run {
                         calculateScreenFrame()
@@ -305,17 +322,25 @@ struct DeltaSkinScreenPositionWrapper: View {
                 }
             }
             .onChange(of: layout) { newLayout in
+                // Only recalculate if layout actually changed (using Equatable check)
                 guard newLayout != lastLayout else { return }
                 lastLayout = newLayout
 
-                // Debounce calculations during rotation to avoid intermediate states
+                // Cancel any pending calculations
                 calculationTask?.cancel()
-                calculationTask = Task {
-                    // Wait for layout to stabilize
-                    try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
-                    guard !Task.isCancelled else { return }
-                    _ = await MainActor.run {
-                        calculateScreenFrame()
+
+                // For layout changes, calculate immediately if layout is valid
+                // Layout changes happen after size stabilizes, so we can calculate right away
+                if (layout?.width ?? 0) > 0 && (layout?.height ?? 0) > 0 && size.width > 0 && size.height > 0 {
+                    calculateScreenFrame()
+                } else {
+                    // If layout is invalid, wait a bit for it to stabilize
+                    calculationTask = Task {
+                        try? await Task.sleep(nanoseconds: 100_000_000) // 100ms debounce
+                        guard !Task.isCancelled else { return }
+                        _ = await MainActor.run {
+                            calculateScreenFrame()
+                        }
                     }
                 }
             }

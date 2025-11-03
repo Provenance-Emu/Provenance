@@ -50,6 +50,12 @@ public struct DeltaSkinView: View {
     // Map touch IDs to button IDs for tracking which touch is pressing which button
     @State private var touchToButtonMap: [ObjectIdentifier: String] = [:]
 
+    // Map touch IDs to D-pad button for tracking which touch is on the D-pad
+    @State private var touchToDPadMap: [ObjectIdentifier: DeltaSkinButton] = [:]
+
+    // Map touch IDs to their locations for D-pad input calculation
+    @State private var touchLocationsMap: [ObjectIdentifier: CGPoint] = [:]
+
     // Track the current preview size
     @State private var previewSize: CGSize = .zero
 
@@ -612,6 +618,9 @@ public struct DeltaSkinView: View {
                                 // Store this touch point for visualization
                                 touchLocations.insert(location)
 
+                                // Store the mapping between touch ID and location for D-pad tracking
+                                touchLocationsMap[touch.id] = location
+
                                 // Store the mapping between touch ID and location
                                 touchToButtonMap[touch.id] = nil
 
@@ -628,11 +637,21 @@ public struct DeltaSkinView: View {
                                 // Remove this touch point from visualization
                                 touchLocations.remove(touch.location)
 
+                                // Remove touch location mapping
+                                touchLocationsMap.removeValue(forKey: touch.id)
+
                                 // Release any button associated with this touch
                                 if let buttonId = touchToButtonMap[touch.id] {
                                     DLOG("Releasing button \(buttonId) for touch \(touch.id)")
                                     handleButtonRelease(buttonId)
                                     touchToButtonMap.removeValue(forKey: touch.id)
+                                }
+
+                                // Release D-pad directions if this touch was on the D-pad
+                                if touchToDPadMap[touch.id] != nil {
+                                    DLOG("Releasing D-pad directions for touch \(touch.id)")
+                                    releaseDPadDirectionsForTouch(touch.id)
+                                    touchToDPadMap.removeValue(forKey: touch.id)
                                 }
                             }
 
@@ -877,9 +896,19 @@ public struct DeltaSkinView: View {
                 }
             } else if case .directional = button.input {
                 // Special handling for D-pad buttons to allow direction changes
-                handleDPadInput(button, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize)
+                // Track this touch as being on the D-pad
+                touchToDPadMap[touchId] = button
+                handleDPadInput(button, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
             } else {
                 // For non-D-pad buttons, use our multi-button press system
+                // If this touch was previously on the D-pad, release D-pad directions for it
+                if touchToDPadMap[touchId] != nil {
+                    DLOG("Touch moved from D-pad to non-D-pad button, releasing D-pad directions")
+                    // Remove from map first so releaseDPadDirectionsForTouch doesn't include it
+                    touchToDPadMap.removeValue(forKey: touchId)
+                    releaseDPadDirectionsForTouch(touchId)
+                }
+
                 // Extract the input command
                 let inputCommand = extractInputCommand(from: button)
 
@@ -892,8 +921,11 @@ public struct DeltaSkinView: View {
                     DLOG("Associated touch \(touchId) with button \(inputCommand)")
                 }
 
-                // Set as current button for legacy support
-                currentlyPressedButton = button
+                // Don't update currentlyPressedButton for non-D-pad buttons when D-pad is active
+                // This prevents releasing D-pad when tapping other buttons
+                if touchToDPadMap.isEmpty {
+                    currentlyPressedButton = button
+                }
 
                 // Add visual feedback
                 let highlightButtonId = button.id
@@ -912,19 +944,23 @@ public struct DeltaSkinView: View {
                 }
             }
 
-        } else if let previousButton = currentlyPressedButton {
-            // Touch is not on any button, but we had a pressed button
-            // Extract the input command using the proper method
-            let inputCommand = extractInputCommand(from: previousButton)
-
-            // Use our enhanced button release handling
-            handleButtonRelease(inputCommand)
-
-            // Clear the current button
-            currentlyPressedButton = nil
         } else {
-            // Touch is not on any button and no previous button was pressed
-            currentlyPressedButton = nil
+            // Touch is not on any button
+            // Only release D-pad if this specific touch was on the D-pad
+            if let dpadButton = touchToDPadMap[touchId] {
+                // This touch was on D-pad but moved off, release D-pad directions for this touch
+                releaseDPadDirectionsForTouch(touchId)
+                touchToDPadMap.removeValue(forKey: touchId)
+            } else if let buttonId = touchToButtonMap[touchId] {
+                // This touch was on a non-D-pad button, release it
+                handleButtonRelease(buttonId)
+                touchToButtonMap.removeValue(forKey: touchId)
+            }
+
+            // Only clear currentlyPressedButton if no D-pad touches are active
+            if touchToDPadMap.isEmpty {
+                currentlyPressedButton = nil
+            }
         }
     }
 
@@ -1015,10 +1051,60 @@ public struct DeltaSkinView: View {
         )
     }
 
+    /// Release D-pad directions for a specific touch
+    /// Since we support multiple directions simultaneously, we need to recalculate
+    /// which directions should remain active based on other active D-pad touches
+    private func releaseDPadDirectionsForTouch(_ touchId: ObjectIdentifier) {
+        // Calculate what directions should remain active from other D-pad touches
+        var remainingDirections: Set<String> = []
+
+        for (remainingTouchId, dpadButton) in touchToDPadMap {
+            if remainingTouchId != touchId, let location = touchLocationsMap[remainingTouchId] {
+                guard let mappingSize = skin.mappingSize(for: traits) else { continue }
+                let (buttonScaleX, buttonScaleY, xOffset, yOffset) = calculateButtonTransform(
+                    in: previewSize.width > 0 && previewSize.height > 0 ? previewSize : CGSize(width: location.x * 2, height: location.y * 2),
+                    mappingSize: mappingSize
+                )
+
+                let buttonCenterX = dpadButton.frame.midX * buttonScaleX + xOffset
+                let buttonCenterY = dpadButton.frame.midY * buttonScaleY + yOffset
+                let relativeX = location.x - buttonCenterX
+                let relativeY = location.y - buttonCenterY
+
+                let buttonWidth = dpadButton.frame.width * buttonScaleX
+                let buttonHeight = dpadButton.frame.height * buttonScaleY
+                let thresholdX = buttonWidth * 0.3
+                let thresholdY = buttonHeight * 0.3
+
+                // Add directions from this remaining touch
+                if relativeY < -thresholdY { remainingDirections.insert("up") }
+                if relativeY > thresholdY { remainingDirections.insert("down") }
+                if relativeX > thresholdX { remainingDirections.insert("right") }
+                if relativeX < -thresholdX { remainingDirections.insert("left") }
+            }
+        }
+
+        // Get currently pressed D-pad directions
+        let dpadTokens = ["up", "down", "left", "right"]
+        let currentDirections: Set<String> = Set(dpadTokens.filter { pressedButtons.contains($0) })
+
+        // Release directions that are no longer needed
+        for direction in currentDirections.subtracting(remainingDirections) {
+            ILOG("skins: Releasing D-pad direction after touch ended: \(direction)")
+            handleButtonRelease(direction)
+        }
+
+        // Clear currentlyPressedButton if no D-pad touches remain
+        if touchToDPadMap.isEmpty {
+            currentlyPressedButton = nil
+        }
+    }
+
     /// Handle D-pad input with support for direction changes and diagonals
-    private func handleDPadInput(_ button: DeltaSkinButton, scale: CGFloat, xOffset: CGFloat, yOffset: CGFloat, mappingSize: CGSize) {
-        // Use the first touch location for D-pad input
-        guard let touchLocation = touchLocations.first else { return }
+    private func handleDPadInput(_ button: DeltaSkinButton, scale: CGFloat, xOffset: CGFloat, yOffset: CGFloat, mappingSize: CGSize, touchId: ObjectIdentifier, touchLocation: CGPoint? = nil) {
+        // Get the touch location for this specific touch ID
+        let location = touchLocation ?? touchLocationsMap[touchId] ?? touchLocations.first
+        guard let touchLocation = location else { return }
 
         // Use the actual preview size instead of estimating from touch location
         // The scale parameter passed in is buttonScaleX, we need buttonScaleY
@@ -1108,44 +1194,75 @@ public struct DeltaSkinView: View {
             }
         }
 
-        // Resolve to diagonal token if both a vertical and horizontal are active
+        // Support multiple directions simultaneously instead of resolving to diagonal tokens
+        // This allows pressing up+left separately, or up+right, etc.
         let hasUp = activeDirections.contains("up")
         let hasDown = activeDirections.contains("down")
         let hasLeft = activeDirections.contains("left")
         let hasRight = activeDirections.contains("right")
 
+        // Build resolved directions set - allow multiple directions at once
         var resolvedDirections: Set<String> = []
-        if hasUp && hasLeft { resolvedDirections = ["upleft"] }
-        else if hasUp && hasRight { resolvedDirections = ["upright"] }
-        else if hasDown && hasLeft { resolvedDirections = ["downleft"] }
-        else if hasDown && hasRight { resolvedDirections = ["downright"] }
-        else if hasUp { resolvedDirections = ["up"] }
-        else if hasDown { resolvedDirections = ["down"] }
-        else if hasLeft { resolvedDirections = ["left"] }
-        else if hasRight { resolvedDirections = ["right"] }
+        if hasUp { resolvedDirections.insert("up") }
+        if hasDown { resolvedDirections.insert("down") }
+        if hasLeft { resolvedDirections.insert("left") }
+        if hasRight { resolvedDirections.insert("right") }
 
-        // Get currently pressed D-pad directions (include diagonals)
-        let dpadTokens = ["up","down","left","right","upleft","upright","downleft","downright"]
+        // Merge directions from all active D-pad touches
+        // Calculate desired directions for ALL active D-pad touches
+        var allResolvedDirections: Set<String> = resolvedDirections
+
+        // Add directions from other active D-pad touches
+        for (otherTouchId, otherDPadButton) in touchToDPadMap {
+            if otherTouchId != touchId, let otherLocation = touchLocationsMap[otherTouchId] {
+                // Calculate directions for this other touch
+                let (otherButtonScaleX, otherButtonScaleY, otherXOffset, otherYOffset) = calculateButtonTransform(
+                    in: previewSize.width > 0 && previewSize.height > 0 ? previewSize : CGSize(width: otherLocation.x * 2, height: otherLocation.y * 2),
+                    mappingSize: mappingSize
+                )
+
+                let otherButtonCenterX = otherDPadButton.frame.midX * otherButtonScaleX + otherXOffset
+                let otherButtonCenterY = otherDPadButton.frame.midY * otherButtonScaleY + otherYOffset
+                let otherRelativeX = otherLocation.x - otherButtonCenterX
+                let otherRelativeY = otherLocation.y - otherButtonCenterY
+
+                let otherButtonWidth = otherDPadButton.frame.width * otherButtonScaleX
+                let otherButtonHeight = otherDPadButton.frame.height * otherButtonScaleY
+                let otherThresholdX = otherButtonWidth * 0.3
+                let otherThresholdY = otherButtonHeight * 0.3
+
+                // Add directions from this other touch
+                if otherRelativeY < -otherThresholdY { allResolvedDirections.insert("up") }
+                if otherRelativeY > otherThresholdY { allResolvedDirections.insert("down") }
+                if otherRelativeX > otherThresholdX { allResolvedDirections.insert("right") }
+                if otherRelativeX < -otherThresholdX { allResolvedDirections.insert("left") }
+            }
+        }
+
+        // Get currently pressed D-pad directions
+        let dpadTokens = ["up", "down", "left", "right"]
         let currentDirections: Set<String> = Set(dpadTokens.filter { pressedButtons.contains($0) })
 
-        // Release tokens not in resolved set
-        for direction in currentDirections.subtracting(resolvedDirections) {
+        // Release directions not in the merged resolved set
+        for direction in currentDirections.subtracting(allResolvedDirections) {
             ILOG("skins: Releasing D-pad direction: \(direction)")
             handleButtonRelease(direction)
         }
 
-        // Press tokens in resolved set not already active
-        for direction in resolvedDirections.subtracting(currentDirections) {
+        // Press directions in the merged resolved set that aren't already active
+        for direction in allResolvedDirections.subtracting(currentDirections) {
             ILOG("skins: Pressing D-pad direction: \(direction)")
             handleButtonPress(direction)
         }
 
-        // Update the current button for legacy support
-        currentlyPressedButton = button
+        // Update the current button for legacy support (only if this is the only D-pad touch)
+        if touchToDPadMap.count == 1 {
+            currentlyPressedButton = button
+        }
 
-        // Add visual feedback for active directions
-        if !resolvedDirections.isEmpty {
-            for direction in resolvedDirections {
+        // Add visual feedback for active directions (show all merged directions)
+        if !allResolvedDirections.isEmpty {
+            for direction in allResolvedDirections {
                 let newButton = (
                     frame: button.frame,
                     mappingSize: mappingSize,
