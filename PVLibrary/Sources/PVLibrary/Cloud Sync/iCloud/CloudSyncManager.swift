@@ -502,16 +502,54 @@ public class CloudSyncManager {
                     errorMessage = "Upload failed: File system error - \(underlyingError.localizedDescription)"
                 case .cloudKitError(let underlyingError):
                     if let ckError = underlyingError as? CKError {
+                        var baseMessage = "Upload failed: CloudKit error"
+                        baseMessage += " (code: \(ckError.code.rawValue))"
+
                         switch ckError.code {
                         case .invalidArguments:
-                            errorMessage = "Upload failed: Invalid CloudKit record structure. The game data may be corrupted."
+                            baseMessage = "Upload failed: Invalid CloudKit record structure. The game data may be corrupted."
                         case .limitExceeded:
-                            errorMessage = "Upload failed: File exceeds CloudKit size limits (500MB max)"
-                        case .networkUnavailable:
-                            errorMessage = "Upload failed: Network unavailable. Please check your internet connection."
+                            baseMessage = "Upload failed: File exceeds CloudKit size limits (500MB max)"
+                        case .networkUnavailable, .networkFailure:
+                            baseMessage = "Upload failed: Network unavailable. Please check your internet connection."
+                        case .partialFailure:
+                            baseMessage = "Upload failed: Partial failure"
+                            if let partialErrors = ckError.partialErrorsByItemID {
+                                baseMessage += " - \(partialErrors.count) items failed"
+                                for (itemID, itemError) in partialErrors.prefix(3) {
+                                    let recordIDString: String
+                                    if let recordID = itemID as? CKRecord.ID {
+                                        recordIDString = recordID.recordName
+                                    } else {
+                                        recordIDString = "\(itemID)"
+                                    }
+
+                                    if let itemCKError = itemError as? CKError {
+                                        baseMessage += "\n  \(recordIDString): code \(itemCKError.code.rawValue) - \(itemCKError.localizedDescription)"
+                                    } else {
+                                        baseMessage += "\n  \(recordIDString): \(itemError.localizedDescription)"
+                                    }
+                                }
+                                if partialErrors.count > 3 {
+                                    baseMessage += "\n  ... and \(partialErrors.count - 3) more"
+                                }
+                            }
+                        case .serviceUnavailable:
+                            baseMessage = "Upload failed: CloudKit service unavailable. Please try again later."
+                        case .requestRateLimited:
+                            baseMessage = "Upload failed: Rate limited"
+                            if let retryAfter = ckError.retryAfterSeconds {
+                                baseMessage += " - Retry after \(retryAfter) seconds"
+                            }
+                        case .quotaExceeded:
+                            baseMessage = "Upload failed: iCloud storage quota exceeded"
                         default:
-                            errorMessage = "Upload failed: CloudKit error - \(ckError.localizedDescription)"
+                            baseMessage += " - \(ckError.localizedDescription)"
+                            if let retryAfter = ckError.retryAfterSeconds {
+                                baseMessage += " (Retry after \(retryAfter) seconds)"
+                            }
                         }
+                        errorMessage = baseMessage
                     } else {
                         errorMessage = "Upload failed: CloudKit error - \(underlyingError.localizedDescription)"
                     }

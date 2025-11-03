@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import CloudKit
 import RealmSwift
 import PVLogging
-import PVRealm // Assuming PVGame is here
-// Assuming CloudKitRomsSyncer is accessible, potentially via PVLibrary module itself or another import
+import PVRealm
+import PVSupport
 
 /// Monitors local Realm database changes for PVGame objects and triggers
 /// CloudKit uploads/updates accordingly.
@@ -93,9 +94,9 @@ public final class LocalGameSyncMonitor {
             if !insertions.isEmpty {
                 VLOG("Processing \(insertions.count) PVGame insertions...")
                 for index in insertions {
-                    guard index < currentResults.count else { 
+                    guard index < currentResults.count else {
                         WLOG("Insertion index \(index) out of bounds (count \(currentResults.count)). Skipping.")
-                        continue 
+                        continue
                     }
                     let insertedGame = currentResults[index]
                     let md5 = insertedGame.md5Hash.uppercased()
@@ -116,22 +117,62 @@ public final class LocalGameSyncMonitor {
             if !modifications.isEmpty {
                 VLOG("Processing \(modifications.count) PVGame modifications...")
                 for index in modifications {
-                    guard index < currentResults.count else { 
+                    guard index < currentResults.count else {
                         WLOG("Modification index \(index) out of bounds (count \(currentResults.count)). Skipping.")
-                        continue 
+                        continue
                     }
                     let modifiedGame = currentResults[index]
                     let md5 = modifiedGame.md5Hash
+
+                    // Skip if game is marked as not downloaded (likely downloading/syncing)
+                    if !modifiedGame.isDownloaded {
+                        VLOG("Skipping upload for \(md5): Game marked as not downloaded (likely syncing)")
+                        continue
+                    }
+
+                    // Skip if file doesn't exist (can't upload what isn't there)
+                    guard let fileURL = modifiedGame.file?.url,
+                          FileManager.default.fileExists(atPath: fileURL.path) else {
+                        WLOG("Skipping upload for \(md5): File not found at expected location")
+                        continue
+                    }
+
                     Task {
-                         do {
-                             VLOG("Realm modification detected for \(md5). Triggering CloudKit upload/update.")
-                             try await self.romsSyncer.uploadGame(md5)
-                             VLOG("CloudKit upload/update task completed for modified game \(md5).")
-                         } catch {
-                             ELOG("Error uploading/updating modified game \(md5) to CloudKit: \(error)")
-                             // TODO: Implement retry logic or flag for later sync?
-                         }
-                     }
+                        do {
+                            VLOG("Realm modification detected for \(md5). Triggering CloudKit upload/update.")
+                            try await self.romsSyncer.uploadGame(md5)
+                            VLOG("CloudKit upload/update task completed for modified game \(md5).")
+                        } catch let error as CloudSyncError {
+                            // Log specific error types
+                            switch error {
+                            case .invalidData:
+                                ELOG("Failed to upload \(md5): Invalid game data")
+                            case .assetTooLarge(let size, let maxSize):
+                                let sizeMB = Double(size) / (1024 * 1024)
+                                let maxMB = Double(maxSize) / (1024 * 1024)
+                                ELOG("Failed to upload \(md5): File too large (\(String(format: "%.1f", sizeMB))MB > \(String(format: "%.1f", maxMB))MB)")
+                            case .fileSystemError(let underlyingError):
+                                ELOG("Failed to upload \(md5): File system error - \(underlyingError.localizedDescription)")
+                            case .cloudKitError(let ckError):
+                                if let ckErr = ckError as? CKError {
+                                    switch ckErr.code {
+                                    case .networkUnavailable, .networkFailure:
+                                        WLOG("Failed to upload \(md5): Network unavailable - will retry later")
+                                    case .quotaExceeded:
+                                        ELOG("Failed to upload \(md5): iCloud storage quota exceeded")
+                                    default:
+                                        ELOG("Failed to upload \(md5): CloudKit error - \(ckErr.localizedDescription)")
+                                    }
+                                } else {
+                                    ELOG("Failed to upload \(md5): CloudKit error - \(ckError.localizedDescription)")
+                                }
+                            default:
+                                ELOG("Failed to upload \(md5): \(error.localizedDescription)")
+                            }
+                        } catch {
+                            ELOG("Error uploading/updating modified game \(md5) to CloudKit: \(error.localizedDescription)")
+                        }
+                    }
                 }
             }
 

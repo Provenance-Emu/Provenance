@@ -271,6 +271,22 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } catch let error as CKError where error.code == .unknownItem {
             VLOG("Record not found: \(recordID.recordName)")
             return nil
+        } catch let ckError as CKError {
+            // Check if this is a partial failure where the only error is "record not found"
+            if ckError.code == .partialFailure,
+               let partialErrors = ckError.partialErrorsByItemID,
+               partialErrors.count == 1,
+               let (partialItemID, partialError) = partialErrors.first,
+               let partialCKError = partialError as? CKError,
+               partialCKError.code == .unknownItem {
+                // Only one partial error and it's "record not found" - treat as record doesn't exist
+                VLOG("Record not found (via partial failure): \(recordID.recordName)")
+                return nil
+            }
+
+            let errorDetails = formatCloudKitError(ckError)
+            ELOG("Failed to fetch record \(recordID.recordName): \(errorDetails)")
+            throw CloudSyncError.cloudKitError(ckError)
         } catch {
             ELOG("Failed to fetch record \(recordID.recordName): \(error.localizedDescription)")
             throw CloudSyncError.cloudKitError(error)
@@ -326,9 +342,15 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         var record: CKRecord
         do {
             record = try await fetchRecord(recordID: recordID) ?? CKRecord(recordType: CloudKitSchema.RecordType.rom.rawValue, recordID: recordID)
+        } catch let cloudSyncError as CloudSyncError {
+            // Extract underlying error details if it's a wrapped CloudKit error
+            let errorDetails = extractErrorDetails(cloudSyncError)
+            ELOG("Failed to fetch or create base record for \(md5): \(errorDetails)")
+            throw cloudSyncError
         } catch {
-            ELOG("Failed to fetch or create base record for \(md5): \(error.localizedDescription)")
-            throw CloudSyncError.cloudKitError(error) // Rethrow specific error if needed
+            let errorDetails = extractErrorDetails(CloudSyncError.cloudKitError(error))
+            ELOG("Failed to fetch or create base record for \(md5): \(errorDetails)")
+            throw CloudSyncError.cloudKitError(error)
         }
 
         // Check if already marked deleted remotely, if so, skip upload
@@ -2087,6 +2109,80 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Writes PVGame Realm objects from metadata records only (no assets)
     private func writePVGames(from records: [CKRecord]) async throws {
         // existing Realm write logic creating PVGame entries if missing, updating metadata fields
+    }
+
+    /// Formats a CloudKit error with detailed information
+    private func formatCloudKitError(_ error: CKError) -> String {
+        var details = "\(error.localizedDescription)"
+        details += " (code: \(error.code.rawValue))"
+
+        // Add specific error code information
+        switch error.code {
+        case .notAuthenticated:
+            details += " - Not authenticated"
+        case .networkUnavailable, .networkFailure:
+            details += " - Network issue"
+        case .quotaExceeded:
+            details += " - Quota exceeded"
+        case .serviceUnavailable:
+            details += " - Service unavailable"
+        case .requestRateLimited:
+            details += " - Rate limited"
+        case .partialFailure:
+            if let partialErrors = error.partialErrorsByItemID {
+                details += " - Partial failure affecting \(partialErrors.count) items"
+                for (itemID, itemError) in partialErrors {
+                    let recordIDString: String
+                    if let recordID = itemID as? CKRecord.ID {
+                        recordIDString = recordID.recordName
+                    } else {
+                        recordIDString = "\(itemID)"
+                    }
+
+                    if let itemCKError = itemError as? CKError {
+                        details += "\n  Item \(recordIDString): \(itemCKError.localizedDescription) (code: \(itemCKError.code.rawValue))"
+                    } else {
+                        details += "\n  Item \(recordIDString): \(itemError.localizedDescription)"
+                    }
+                }
+            }
+        default:
+            break
+        }
+
+        // Add retry after information if available
+        if let retryAfter = error.retryAfterSeconds {
+            details += " - Retry after \(retryAfter) seconds"
+        }
+
+        return details
+    }
+
+    /// Extracts detailed error information from a CloudSyncError
+    private func extractErrorDetails(_ error: CloudSyncError) -> String {
+        switch error {
+        case .cloudKitError(let underlyingError):
+            if let ckError = underlyingError as? CKError {
+                return formatCloudKitError(ckError)
+            }
+            return "CloudKit error: \(underlyingError.localizedDescription)"
+        case .fileSystemError(let underlyingError):
+            return "File system error: \(underlyingError.localizedDescription)"
+        case .zipError(let underlyingError):
+            return "Zip error: \(underlyingError.localizedDescription)"
+        case .realmError(let underlyingError):
+            return "Realm error: \(underlyingError.localizedDescription)"
+        case .genericError(let message):
+            return message
+        case .gameNotFound(let message):
+            return "Game not found: \(message)"
+        case .invalidData:
+            return "Invalid data"
+        case .unknown:
+            return "Unknown error"
+        default:
+            return error.localizedDescription
+        }
     }
 }
 
