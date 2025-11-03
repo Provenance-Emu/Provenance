@@ -225,7 +225,9 @@ struct ProvenanceApp: App {
                     openEmulatorSceneIfNeeded()
                 }
 
+                ILOG("skins: Setting SkinImporterInjector service to DeltaSkinManager.shared")
                 SkinImporterInjector.shared.service = DeltaSkinManager.shared
+                ILOG("skins: SkinImporterInjector service initialized")
             }
 
             // Handle scene phase changes for import pausing
@@ -915,27 +917,37 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
         )
         WhatsNew(
             version: "3.1.2",
-            title: "Universal Skins & Stability",
+            title: "3DS Keyboard Fix & Controller Remapping, Universal Skin Support, and Stability Improvements, MAME ZIP Support",
             features: [
+                .init(
+                    image: .init(systemName: "keyboard", foregroundColor: .blue),
+                    title: "3DS Keyboard Input Fixed",
+                    subtitle: "Resolved crashes when typing in 3DS games. Keyboard now handles text input safely with proper validation and timeout protection"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .green),
+                    title: "Controller Button Remapping",
+                    subtitle: "Easily remap controller buttons with a new intuitive UI. Joy-Con controllers now automatically fix swapped A/B and X/Y buttons"
+                ),
                 .init(
                     image: .init(systemName: "paintpalette", foregroundColor: .pink),
                     title: "Universal Skin Support",
                     subtitle: "Full skin support across all cores — including RetroArch-based cores"
                 ),
                 .init(
-                    image: .init(systemName: "lock.open.display", foregroundColor: .green),
+                    image: .init(systemName: "lock.open.display", foregroundColor: .purple),
                     title: "Skins Now Free",
                     subtitle: "Skin features are available to everyone — no Provenance Plus required"
                 ),
                 .init(
                     image: .init(systemName: "wrench.and.screwdriver", foregroundColor: .orange),
-                    title: "Crash Fixes",
-                    subtitle: "Resolved multiple crashes and improved startup reliability"
+                    title: "Stability Improvements",
+                    subtitle: "Resolved various crashes and improved overall app reliability"
                 ),
                 .init(
-                    image: .init(systemName: "pause.circle", foregroundColor: .blue),
-                    title: "RetroArch Pause Menu",
-                    subtitle: "Fixed an issue where the pause menu could freeze"
+                    image: .init(systemName: "arcade.stick", foregroundColor: .yellow),
+                    title: "MAME ZIP Support",
+                    subtitle: "Added importer support for MAME ZIP files"
                 )
             ],
             primaryAction: .init(
