@@ -626,4 +626,10 @@ public final class PVSettingsWrapper: NSObject {
 
 public extension Defaults.Keys {
     static let showFavorites = Key<Bool>("showFavorites", default: true)
+
+    /// Total number of game launches since installation
+    static let gameLaunchCount = Key<Int>("gameLaunchCount", default: 0)
+
+    /// Last time the support nag screen was shown (to prevent spam)
+    static let lastSupportNagShown = Key<Date?>("lastSupportNagShown", default: nil)
 }
