@@ -224,32 +224,54 @@ public struct DeltaSkinView: View {
     internal func calculateLayout(for geometry: GeometryProxy) -> SkinLayout? {
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
 
+        // For simple image-based skins (no screens array, just background image),
+        // use the actual image size for scaling instead of mappingSize
+        // A gameScreenFrame alone doesn't make it a complex skin - it's just metadata
+        let effectiveImageSize: CGSize
+        if let image = skinImage {
+            // Check if this is a simple image-based skin (no screens array defined)
+            let hasScreens = skin.screens(for: traits) != nil || skin.screenGroups(for: traits) != nil
+
+            if !hasScreens {
+                // Simple image-based skin: use actual image size for scaling
+                // Even if it has gameScreenFrame, it's still a simple image skin
+                effectiveImageSize = image.size
+                DLOG("Simple image-based skin detected. Image size: \(effectiveImageSize), mappingSize: \(mappingSize)")
+            } else {
+                // Complex skin with screens array: use mappingSize as before
+                effectiveImageSize = mappingSize
+            }
+        } else {
+            // No image loaded yet, use mappingSize
+            effectiveImageSize = mappingSize
+        }
+
         // Calculate the scale to fit the skin in the available space
         var scale: CGFloat
 
         // For portrait mode on iPhone, prioritize filling width while maintaining aspect ratio
         if traits.device == .iphone && traits.orientation == .portrait {
             // Start with width scale to fill screen
-            scale = geometry.size.width / mappingSize.width
+            scale = geometry.size.width / effectiveImageSize.width
 
             // Calculate resulting height
-            let scaledHeight = mappingSize.height * scale
+            let scaledHeight = effectiveImageSize.height * scale
 
             // If height exceeds screen, scale down while maintaining aspect ratio
             if scaledHeight > geometry.size.height {
-                let heightScale = geometry.size.height / mappingSize.height
+                let heightScale = geometry.size.height / effectiveImageSize.height
                 scale = min(scale, heightScale)
             }
         } else {
             // For landscape, use standard fit scaling
             scale = min(
-                geometry.size.width / mappingSize.width,
-                geometry.size.height / mappingSize.height
+                geometry.size.width / effectiveImageSize.width,
+                geometry.size.height / effectiveImageSize.height
             )
         }
 
-        let scaledWidth = mappingSize.width * scale
-        let scaledHeight = mappingSize.height * scale
+        let scaledWidth = effectiveImageSize.width * scale
+        let scaledHeight = effectiveImageSize.height * scale
 
         // Center horizontally
         let xOffset = (geometry.size.width - scaledWidth) / 2
@@ -394,9 +416,13 @@ public struct DeltaSkinView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: layout.width, height: layout.height)
+                                .clipped()
                             // Draw per-button asset layers (if provided by the skin)
                             if let buttons = skin.buttons(for: traits),
                                let mappingSize = skin.mappingSize(for: traits) {
+                                // Button coordinates are always in mappingSize space
+                                // Layout is calculated based on effective image size (image size for simple skins, mappingSize for complex)
+                                // So button scaling automatically accounts for the difference
                                 let scaleX = layout.width / mappingSize.width
                                 let scaleY = layout.height / mappingSize.height
                                 ForEach(buttons, id: \.id) { button in
@@ -461,7 +487,8 @@ public struct DeltaSkinView: View {
                             DeltaSkinHitTestOverlay(
                                 skin: skin,
                                 traits: traits,
-                                size: geometry.size
+                                size: geometry.size,
+                                skinImage: skinImage
                             )
                             .zIndex(2)
                             .allowsHitTesting(false)
@@ -790,23 +817,8 @@ public struct DeltaSkinView: View {
         guard let buttons = skin.buttons(for: traits),
               let mappingSize = skin.mappingSize(for: traits) else { return }
 
-        // Use same transformation as hit test overlay
-        let scale = min(
-            size.width / mappingSize.width,
-            size.height / mappingSize.height
-        )
-
-        let scaledSkinWidth = mappingSize.width * scale
-        let scaledSkinHeight = mappingSize.height * scale
-        let xOffset = (size.width - scaledSkinWidth) / 2
-
-        // Check if skin has fixed screen position
-        let hasScreenPosition = skin.screens(for: traits) != nil
-
-        // Calculate Y offset based on skin type
-        let yOffset: CGFloat = hasScreenPosition ?
-            ((size.height - scaledSkinHeight) / 2) :
-            (size.height - scaledSkinHeight)
+        // Use the same transformation logic as transformFrame
+        let (buttonScaleX, buttonScaleY, xOffset, yOffset) = calculateButtonTransform(in: size, mappingSize: mappingSize)
 
         // Find the button being touched
         var touchedButton: DeltaSkinButton?
@@ -817,10 +829,10 @@ public struct DeltaSkinView: View {
             // For D-pad, use a larger hit area to allow sliding between directions
             let extendedHitFrame = currentButton.frame.insetBy(dx: -40, dy: -40) // Larger hit area for D-pad
             let scaledFrame = CGRect(
-                x: extendedHitFrame.minX * scale + xOffset,
-                y: yOffset + (extendedHitFrame.minY * scale),
-                width: extendedHitFrame.width * scale,
-                height: extendedHitFrame.height * scale
+                x: extendedHitFrame.minX * buttonScaleX + xOffset,
+                y: yOffset + (extendedHitFrame.minY * buttonScaleY),
+                width: extendedHitFrame.width * buttonScaleX,
+                height: extendedHitFrame.height * buttonScaleY
             )
 
             if scaledFrame.contains(location) {
@@ -841,10 +853,10 @@ public struct DeltaSkinView: View {
             for button in buttons {
                 let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
                 let scaledFrame = CGRect(
-                    x: hitFrame.minX * scale + xOffset,
-                    y: yOffset + (hitFrame.minY * scale),
-                    width: hitFrame.width * scale,
-                    height: hitFrame.height * scale
+                    x: hitFrame.minX * buttonScaleX + xOffset,
+                    y: yOffset + (hitFrame.minY * buttonScaleY),
+                    width: hitFrame.width * buttonScaleX,
+                    height: hitFrame.height * buttonScaleY
                 )
 
                 if scaledFrame.contains(location) {
@@ -865,7 +877,7 @@ public struct DeltaSkinView: View {
                 }
             } else if case .directional = button.input {
                 // Special handling for D-pad buttons to allow direction changes
-                handleDPadInput(button, scale: scale, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize)
+                handleDPadInput(button, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize)
             } else {
                 // For non-D-pad buttons, use our multi-button press system
                 // Extract the input command
@@ -927,29 +939,79 @@ public struct DeltaSkinView: View {
     }()
     #endif
 
+    /// Calculate button transformation parameters using the same logic as calculateLayout
+    private func calculateButtonTransform(in size: CGSize, mappingSize: CGSize) -> (buttonScaleX: CGFloat, buttonScaleY: CGFloat, xOffset: CGFloat, yOffset: CGFloat) {
+        // Use the same logic as calculateLayout to determine effective image size
+        let effectiveImageSize: CGSize
+        if let image = skinImage {
+            // Check if this is a simple image-based skin (no screens array defined)
+            // A gameScreenFrame alone doesn't make it a complex skin - it's just metadata
+            let hasScreens = skin.screens(for: traits) != nil || skin.screenGroups(for: traits) != nil
+
+            if !hasScreens {
+                // Simple image-based skin: use actual image size for scaling
+                // Even if it has gameScreenFrame, it's still a simple image skin
+                effectiveImageSize = image.size
+            } else {
+                // Complex skin with screens array: use mappingSize as before
+                effectiveImageSize = mappingSize
+            }
+        } else {
+            // No image loaded yet, use mappingSize
+            effectiveImageSize = mappingSize
+        }
+
+        // Use the same scale calculation as calculateLayout
+        var scale: CGFloat
+        if traits.device == .iphone && traits.orientation == .portrait {
+            // Start with width scale to fill screen
+            scale = size.width / effectiveImageSize.width
+
+            // Calculate resulting height
+            let scaledHeight = effectiveImageSize.height * scale
+
+            // If height exceeds screen, scale down while maintaining aspect ratio
+            if scaledHeight > size.height {
+                let heightScale = size.height / effectiveImageSize.height
+                scale = min(scale, heightScale)
+            }
+        } else {
+            // For landscape, use standard fit scaling
+            scale = min(
+                size.width / effectiveImageSize.width,
+                size.height / effectiveImageSize.height
+            )
+        }
+
+        let scaledSkinWidth = effectiveImageSize.width * scale
+        let scaledSkinHeight = effectiveImageSize.height * scale
+        let xOffset = (size.width - scaledSkinWidth) / 2
+
+        // Use the same Y offset calculation as calculateLayout
+        let yOffset: CGFloat
+        if traits.device == .iphone && traits.orientation == .portrait {
+            // Position at bottom of screen for iPhone portrait
+            yOffset = size.height - scaledSkinHeight
+        } else {
+            // Center vertically for landscape or iPad
+            yOffset = (size.height - scaledSkinHeight) / 2
+        }
+
+        // Calculate button frame scale factor (for mapping button coordinates from mappingSize space to effectiveImageSize space)
+        let buttonScaleX = scaledSkinWidth / mappingSize.width
+        let buttonScaleY = scaledSkinHeight / mappingSize.height
+
+        return (buttonScaleX, buttonScaleY, xOffset, yOffset)
+    }
+
     private func transformFrame(_ frame: CGRect, in geometry: GeometryProxy, mappingSize: CGSize) -> CGRect {
-        let scale = min(
-            geometry.size.width / mappingSize.width,
-            geometry.size.height / mappingSize.height
-        )
-
-        let scaledSkinWidth = mappingSize.width * scale
-        let scaledSkinHeight = mappingSize.height * scale
-        let xOffset = (geometry.size.width - scaledSkinWidth) / 2
-
-        // Check if skin has fixed screen position
-        let hasScreenPosition = skin.screens(for: traits) != nil
-
-        // Calculate Y offset based on skin type
-        let yOffset: CGFloat = hasScreenPosition ?
-            ((geometry.size.height - scaledSkinHeight) / 2) :
-            (geometry.size.height - scaledSkinHeight)
+        let (buttonScaleX, buttonScaleY, xOffset, yOffset) = calculateButtonTransform(in: geometry.size, mappingSize: mappingSize)
 
         return CGRect(
-            x: frame.minX * scale + xOffset,
-            y: yOffset + (frame.minY * scale),
-            width: frame.width * scale,
-            height: frame.height * scale
+            x: frame.minX * buttonScaleX + xOffset,
+            y: yOffset + (frame.minY * buttonScaleY),
+            width: frame.width * buttonScaleX,
+            height: frame.height * buttonScaleY
         )
     }
 
@@ -958,17 +1020,23 @@ public struct DeltaSkinView: View {
         // Use the first touch location for D-pad input
         guard let touchLocation = touchLocations.first else { return }
 
+        // Use the actual preview size instead of estimating from touch location
+        // The scale parameter passed in is buttonScaleX, we need buttonScaleY
+        // Recalculate transform using actual view size (fallback to passed values if previewSize not set)
+        let viewSize = previewSize.width > 0 && previewSize.height > 0 ? previewSize : CGSize(width: touchLocation.x * 2, height: touchLocation.y * 2)
+        let (buttonScaleXActual, buttonScaleYActual, buttonXOffset, buttonYOffset) = calculateButtonTransform(in: viewSize, mappingSize: mappingSize)
+
         // Calculate the button center in view coordinates
-        let buttonCenterX = button.frame.midX * scale + xOffset
-        let buttonCenterY = button.frame.midY * scale + yOffset
+        let buttonCenterX = button.frame.midX * buttonScaleXActual + buttonXOffset
+        let buttonCenterY = button.frame.midY * buttonScaleYActual + buttonYOffset
 
         // Calculate the touch position relative to the button center
         let relativeX = touchLocation.x - buttonCenterX
         let relativeY = touchLocation.y - buttonCenterY
 
         // Define the center dead zone (15% of button size - smaller dead zone)
-        let buttonWidth = button.frame.width * scale
-        let buttonHeight = button.frame.height * scale
+        let buttonWidth = button.frame.width * buttonScaleXActual
+        let buttonHeight = button.frame.height * buttonScaleYActual
         let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
 
         // Add debug logging to help diagnose direction issues
@@ -1543,28 +1611,13 @@ public struct DeltaSkinView: View {
             // For directional inputs, we need to determine which direction is being pressed
             // This requires checking the touch location relative to the button's center
             if let touchLocation = touchLocations.first, let mappingSize = skin.mappingSize(for: traits) {
-                // We need to use the same coordinate transformation as in handleTouch
-                // to ensure consistent direction detection
-                let scale = min(
-                    previewSize.width / mappingSize.width,
-                    previewSize.height / mappingSize.height
-                )
-
-                let scaledSkinWidth = mappingSize.width * scale
-                let scaledSkinHeight = mappingSize.height * scale
-                let xOffset = (previewSize.width - scaledSkinWidth) / 2
-
-                // Check if skin has fixed screen position
-                let hasScreenPosition = skin.screens(for: traits) != nil
-
-                // Calculate Y offset based on skin type
-                let yOffset: CGFloat = hasScreenPosition ?
-                    ((previewSize.height - scaledSkinHeight) / 2) :
-                    (previewSize.height - scaledSkinHeight)
+                // Use the same coordinate transformation as handleTouch for consistency
+                let viewSize = previewSize.width > 0 && previewSize.height > 0 ? previewSize : CGSize(width: touchLocation.x * 2, height: touchLocation.y * 2)
+                let (buttonScaleX, buttonScaleY, xOffset, yOffset) = calculateButtonTransform(in: viewSize, mappingSize: mappingSize)
 
                 // Calculate the button center in view coordinates
-                let buttonCenterX = button.frame.midX * scale + xOffset
-                let buttonCenterY = button.frame.midY * scale + yOffset
+                let buttonCenterX = button.frame.midX * buttonScaleX + xOffset
+                let buttonCenterY = button.frame.midY * buttonScaleY + yOffset
 
                 // Calculate the touch position relative to the button center
                 let relativeX = touchLocation.x - buttonCenterX
@@ -1574,8 +1627,8 @@ public struct DeltaSkinView: View {
                 DLOG("D-pad: relativeX=\(relativeX), relativeY=\(relativeY)")
 
                 // Define the center dead zone (15% of button size - smaller dead zone)
-                let buttonWidth = button.frame.width * scale
-                let buttonHeight = button.frame.height * scale
+                let buttonWidth = button.frame.width * buttonScaleX
+                let buttonHeight = button.frame.height * buttonScaleY
                 let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
 
                 // Check if touch is in the dead zone
@@ -1693,46 +1746,103 @@ private struct DeltaSkinHitTestOverlay: View {
     let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
     let size: CGSize
+    let skinImage: UIImage?
 
     var body: some View {
         GeometryReader { geometry in
             if let buttons = skin.buttons(for: traits),
                let mappingSize = skin.mappingSize(for: traits) {
-                // Calculate the scale to fit the skin in the available space
-                let scale = min(
-                    geometry.size.width / mappingSize.width,
-                    geometry.size.height / mappingSize.height
-                )
-
-                let scaledSkinWidth = mappingSize.width * scale
-                let scaledSkinHeight = mappingSize.height * scale
-
-                // Calculate the offset to center the skin
-                let xOffset = (geometry.size.width - scaledSkinWidth) / 2
-                let yOffset = (geometry.size.height - scaledSkinHeight) / 2
-
-                // Draw hit boxes for each button
-                ForEach(buttons, id: \.id) { button in
-                    let scaledFrame = CGRect(
-                        x: button.frame.minX * scale + xOffset,
-                        y: button.frame.minY * scale + yOffset,
-                        width: button.frame.width * scale,
-                        height: button.frame.height * scale
-                    )
-
-                    Rectangle()
-                        .stroke(.red.opacity(0.5), lineWidth: 1)
-                        .frame(width: scaledFrame.width, height: scaledFrame.height)
-                        .position(x: scaledFrame.midX, y: scaledFrame.midY)
-                        .overlay(
-                            Text(button.id)
-                                .font(.caption2)
-                                .foregroundColor(.white)
-                                .background(Color.black.opacity(0.5))
-                                .padding(2)
-                        )
-                }
+                hitTestOverlayContent(geometry: geometry, buttons: buttons, mappingSize: mappingSize)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func hitTestOverlayContent(geometry: GeometryProxy, buttons: [DeltaSkinButton], mappingSize: CGSize) -> some View {
+        // Use the same logic as calculateLayout to determine effective image size
+        let effectiveImageSize: CGSize = {
+            if let image = skinImage {
+                // Check if this is a simple image-based skin (no screens array defined)
+                // A gameScreenFrame alone doesn't make it a complex skin - it's just metadata
+                let hasScreens = skin.screens(for: traits) != nil || skin.screenGroups(for: traits) != nil
+
+                if !hasScreens {
+                    // Simple image-based skin: use actual image size for scaling
+                    // Even if it has gameScreenFrame, it's still a simple image skin
+                    return image.size
+                } else {
+                    // Complex skin with screens array: use mappingSize as before
+                    return mappingSize
+                }
+            } else {
+                // No image loaded yet, use mappingSize
+                return mappingSize
+            }
+        }()
+
+        // Use the same scale calculation as calculateLayout
+        let scale: CGFloat = {
+            if traits.device == .iphone && traits.orientation == .portrait {
+                // Start with width scale to fill screen
+                var scale = geometry.size.width / effectiveImageSize.width
+
+                // Calculate resulting height
+                let scaledHeight = effectiveImageSize.height * scale
+
+                // If height exceeds screen, scale down while maintaining aspect ratio
+                if scaledHeight > geometry.size.height {
+                    let heightScale = geometry.size.height / effectiveImageSize.height
+                    scale = min(scale, heightScale)
+                }
+                return scale
+            } else {
+                // For landscape, use standard fit scaling
+                return min(
+                    geometry.size.width / effectiveImageSize.width,
+                    geometry.size.height / effectiveImageSize.height
+                )
+            }
+        }()
+
+        let scaledSkinWidth = effectiveImageSize.width * scale
+        let scaledSkinHeight = effectiveImageSize.height * scale
+        let xOffset = (geometry.size.width - scaledSkinWidth) / 2
+
+        // Use the same Y offset calculation as calculateLayout
+        let yOffset: CGFloat = {
+            if traits.device == .iphone && traits.orientation == .portrait {
+                // Position at bottom of screen for iPhone portrait
+                return geometry.size.height - scaledSkinHeight
+            } else {
+                // Center vertically for landscape or iPad
+                return (geometry.size.height - scaledSkinHeight) / 2
+            }
+        }()
+
+        // Calculate button frame scale factor (for mapping button coordinates from mappingSize space to effectiveImageSize space)
+        let buttonScaleX = scaledSkinWidth / mappingSize.width
+        let buttonScaleY = scaledSkinHeight / mappingSize.height
+
+        // Draw hit boxes for each button
+        ForEach(buttons, id: \.id) { button in
+            let scaledFrame = CGRect(
+                x: button.frame.minX * buttonScaleX + xOffset,
+                y: yOffset + (button.frame.minY * buttonScaleY),
+                width: button.frame.width * buttonScaleX,
+                height: button.frame.height * buttonScaleY
+            )
+
+            Rectangle()
+                .stroke(.red.opacity(0.5), lineWidth: 1)
+                .frame(width: scaledFrame.width, height: scaledFrame.height)
+                .position(x: scaledFrame.midX, y: scaledFrame.midY)
+                .overlay(
+                    Text(button.id)
+                        .font(.caption2)
+                        .foregroundColor(.white)
+                        .background(Color.black.opacity(0.5))
+                        .padding(2)
+                )
         }
     }
 }

@@ -190,42 +190,54 @@ extension PVEmulatorViewController {
             core: core,
             inputHandler: inputHandler,
             onSkinLoaded: { [weak self] in
-                // Apply viewport when skin is loaded
-                self?.applyViewportFromCurrentSkin()
+                guard let self = self else { return }
 
-                // Pause emulation for 1 second after skin is loaded to ensure smooth startup
-                self?.pauseEmulationTemporarily()
+                // Wait a bit for the color bars notification to arrive with the correct frame
+                // The notification frame is more accurate than the calculated one
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                    guard let self = self else { return }
 
-                // Re-apply RA viewport to ensure z-order and sizing after rebuild
-                if let self = self, self.core.coreIdentifier?.contains("libretro") == true,
-                   let frame = self.currentTargetFrame,
-                   let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
-                    viewport.setUseCustomRenderViewLayout(true)
-                    let parent = (self.core.touchViewController ?? self).view
+                    // Ensure view is laid out before applying viewport
+                    self.view.setNeedsLayout()
+                    self.view.layoutIfNeeded()
 
-                    // Force layout update on parent view first to ensure correct coordinate system
-                    guard let parent = parent else { return }
-                    parent.setNeedsLayout()
-                    parent.layoutIfNeeded()
+                    // Apply viewport when skin is loaded and layout is complete
+                    self.applyViewportFromCurrentSkin()
 
-                    // Now convert coordinates - the frame is in self.view's coordinate system
-                    let rectInParent = self.view.convert(frame, to: parent)
+                    // Pause emulation for 1 second after skin is loaded to ensure smooth startup
+                    self.pauseEmulationTemporarily()
 
-                    // For landscape, ensure conversion is correct and clamp to parent bounds
-                    let orientation: SkinOrientation = self.view.bounds.width > self.view.bounds.height ? .landscape : .portrait
-                    if orientation == .landscape {
-                        let clampedRect = CGRect(
-                            x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
-                            y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
-                            width: min(rectInParent.width, parent.bounds.width),
-                            height: min(rectInParent.height, parent.bounds.height)
-                        )
-                        DLOG("Landscape RA viewport: original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds)")
-                        viewport.applyRenderViewFrameInTouchView(clampedRect)
-                    } else {
-                        viewport.applyRenderViewFrameInTouchView(rectInParent)
+                    // Re-apply RA viewport to ensure z-order and sizing after rebuild
+                    if self.core.coreIdentifier?.contains("libretro") == true,
+                       let frame = self.currentTargetFrame,
+                       let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
+                        viewport.setUseCustomRenderViewLayout(true)
+                        let parent = (self.core.touchViewController ?? self).view
+
+                        // Force layout update on parent view first to ensure correct coordinate system
+                        guard let parent = parent else { return }
+                        parent.setNeedsLayout()
+                        parent.layoutIfNeeded()
+
+                        // Now convert coordinates - the frame is in self.view's coordinate system
+                        let rectInParent = self.view.convert(frame, to: parent)
+
+                        // For landscape, ensure conversion is correct and clamp to parent bounds
+                        let orientation: SkinOrientation = self.view.bounds.width > self.view.bounds.height ? .landscape : .portrait
+                        if orientation == .landscape {
+                            let clampedRect = CGRect(
+                                x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                                y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                                width: min(rectInParent.width, parent.bounds.width),
+                                height: min(rectInParent.height, parent.bounds.height)
+                            )
+                            DLOG("Landscape RA viewport: original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds)")
+                            viewport.applyRenderViewFrameInTouchView(clampedRect)
+                        } else {
+                            viewport.applyRenderViewFrameInTouchView(rectInParent)
+                        }
+                        // Keep RA behind skin: retroarch bridge handles sendSubviewToBack internally after frame apply
                     }
-                    // Keep RA behind skin: retroarch bridge handles sendSubviewToBack internally after frame apply
                 }
             },
             onRefreshRequested: { [weak self] in
@@ -269,6 +281,16 @@ extension PVEmulatorViewController {
         containerView.isOpaque = false  // Ensure it's not opaque
         containerView.backgroundColor = UIColor.clear  // Clear background
 
+        // CRITICAL: Ensure GPU view exists and is visible before adding skin
+        guard let gameScreenView = gpuViewController.view else {
+            ELOG("GPU view not found when adding skin")
+            return
+        }
+
+        // Ensure GPU view is visible
+        gameScreenView.isHidden = false
+        gameScreenView.alpha = 1.0
+
         // Add the Metal view to the main view first (bottom layer)
         if let metalVC = gpuViewController as? PVMetalViewController,
            let mtlView = metalVC.mtlView {
@@ -286,11 +308,22 @@ extension PVEmulatorViewController {
             DLOG("MTLView added to hierarchy but not positioning it here - DeltaSkinScreen will handle that")
         }
 
+        // Store reference to skin container view for z-order management
+        self.skinContainerView = containerView
+
         // Now add the skin container on top
         view.addSubview(containerView)
 
-        // Make sure skin is on top
-        view.bringSubviewToFront(containerView)
+        // CRITICAL: Ensure correct z-order - GPU view must be below skin
+        // Use insertSubview instead of bringSubviewToFront for more reliable ordering
+        view.insertSubview(gameScreenView, belowSubview: containerView)
+
+        // Also ensure Metal view is below skin if it exists separately
+        if let metalVC = gpuViewController as? PVMetalViewController,
+           let mtlView = metalVC.mtlView,
+           mtlView.superview == view {
+            view.insertSubview(mtlView, belowSubview: containerView)
+        }
 
         if let menuButton = menuButton {
             view.bringSubviewToFront(menuButton)
@@ -329,22 +362,50 @@ extension PVEmulatorViewController {
         // CRITICAL: Update in the correct order to maintain z-order
 
         // 1. Update the GPU view position based on the DeltaSkin screen information
+        // This will recalculate the viewport frame for the new orientation
         applyViewportFromCurrentSkin()
 
         // 1b. If RA, re-apply its internal renderView frame to keep it visible after rotation
-        if core.coreIdentifier?.contains("libretro") == true,
-           let frame = currentTargetFrame,
-           let viewport = (core.bridge as? EmulatorCoreViewportPositioning) {
-            viewport.setUseCustomRenderViewLayout(true)
-            let parent = (core.touchViewController ?? self).view
-            let rectInParent = view.convert(frame, to: parent)
-            viewport.applyRenderViewFrameInTouchView(rectInParent)
+        // Wait a bit for viewport to be recalculated
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self else { return }
+            if self.core.coreIdentifier?.contains("libretro") == true,
+               let frame = self.currentTargetFrame,
+               let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
+                viewport.setUseCustomRenderViewLayout(true)
+                let parent = (self.core.touchViewController ?? self).view
+
+                // Force layout update on parent view first
+                parent?.setNeedsLayout()
+                parent?.layoutIfNeeded()
+
+                let rectInParent = self.view.convert(frame, to: parent)
+
+                // For landscape, clamp to parent bounds
+                let orientation: SkinOrientation = self.view.bounds.width > self.view.bounds.height ? .landscape : .portrait
+                if orientation == .landscape {
+                    let clampedRect = CGRect(
+                        x: max(0, min(rectInParent.origin.x, (parent?.bounds.width ?? 0) - rectInParent.width)),
+                        y: max(0, min(rectInParent.origin.y, (parent?.bounds.height ?? 0) - rectInParent.height)),
+                        width: min(rectInParent.width, parent?.bounds.width ?? rectInParent.width),
+                        height: min(rectInParent.height, parent?.bounds.height ?? rectInParent.height)
+                    )
+                    viewport.applyRenderViewFrameInTouchView(clampedRect)
+                } else {
+                    viewport.applyRenderViewFrameInTouchView(rectInParent)
+                }
+            }
         }
 
-        // 2. Then update Metal view (middle layer)
+        // 2. Update Metal view frame - but only if not using custom positioning
+        // For skins with explicit viewports, the frame will be set by applyViewportFromCurrentSkin
         if let metalVC = gpuViewController as? PVMetalViewController,
            let mtlView = metalVC.mtlView {
-            mtlView.frame = currentBounds
+            // Only update to full bounds if not using custom positioning
+            if !(metalVC as PVGPUViewController).useCustomPositioning {
+                mtlView.frame = currentBounds
+            }
+            // Otherwise, the frame is already set by applyViewportFromCurrentSkin
         }
 
         // 3. Finally update skin view (top layer)
@@ -352,7 +413,11 @@ extension PVEmulatorViewController {
             skinView.frame = currentBounds
 
             // CRITICAL: Ensure skin view is ALWAYS on top
-            if let superview = skinView.superview {
+            // Also ensure GPU view stays below skin
+            if let superview = skinView.superview,
+               let gameScreenView = gpuViewController.view {
+                // Use insertSubview for more reliable z-order
+                superview.insertSubview(gameScreenView, belowSubview: skinView)
                 superview.bringSubviewToFront(skinView)
             }
         }

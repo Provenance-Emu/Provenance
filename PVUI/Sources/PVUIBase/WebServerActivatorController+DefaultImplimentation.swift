@@ -35,15 +35,15 @@ extension WebServerActivatorController where Self: UIViewController & SFSafariVi
         let message = """
         Read about how to import ROMs on the Provenance wiki at:
         https://wiki.provenance-emu.com
-        
+
         Upload/Download files to your device at:
-        
+
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
         \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
         """
         return message
     }
-    
+
     public func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
         let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
         alert.popoverPresentationController?.barButtonItem = barButtonItem
@@ -67,10 +67,14 @@ extension WebServerActivatorController where Self: UIViewController & SFSafariVi
             self.showServer()
         })
         alert.addAction(viewAction)
-        alert.preferredAction = alert.actions.last
+        /// Add "Hide" button that dismisses alert without stopping server
+        alert.addAction(UIAlertAction(title: "Hide (Server Continues Running)", style: .default, handler: { (_: UIAlertAction) -> Void in
+            /// Server continues running in background
+        }))
+        alert.preferredAction = alert.actions[alert.actions.count - 2] // Keep "View" as preferred
         present(alert, animated: true) { () -> Void in }
     }
-    
+
     func showServer() {
         guard let ipURL: String = PVWebServer.shared.urlString else {
             return
@@ -101,7 +105,7 @@ typealias WebServerActivatorControllerRootClass = PVGameLibraryViewController
 
 public
 extension WebServerActivatorController where Self: WebServerActivatorControllerRootClass {
-    
+
     var webServerAlertMessage: String {
         // get the IP address or bonjour name of the device
         let webServerAddress: String = PVWebServer.shared.urlString ?? "null"
@@ -109,26 +113,26 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         let message = """
         Read about how to import ROMs on the Provenance wiki at:
         https://wiki.provenance-emu.com
-        
+
         Upload/Download files to your device at:
-        
+
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
         \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
         """
         return message
     }
-    
+
     func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
         // Start Webserver
         // Check to see if we are connected to WiFi. Cannot continue otherwise.
         let reachability = try! Reachability()
-        
+
         do {
             try reachability.startNotifier()
         } catch {
             ELOG("Failed to start reachability: \(error.localizedDescription)")
         }
-        
+
         if reachability.connection == .wifi {
             // connected via wifi, let's continue
             // start web transfer service
@@ -148,8 +152,14 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                     self.showServer()
                 })
                 alert.addAction(viewAction)
-#endif
+                /// Add "Hide" button that dismisses alert without stopping server
+                alert.addAction(UIAlertAction(title: "Hide (Server Continues Running)", style: .default, handler: { (_: UIAlertAction) -> Void in
+                    /// Server continues running in background
+                }))
+                alert.preferredAction = alert.actions[alert.actions.count - 2] // Keep "View" as preferred
+#else
                 alert.preferredAction = alert.actions.last
+#endif
                 present(alert, animated: true) { () -> Void in
                     alert.message = self.webServerAlertMessage
                 }

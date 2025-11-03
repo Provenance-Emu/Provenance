@@ -82,6 +82,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     var currentOrientation: SkinOrientation = .landscape
     #endif
 
+    /// Track frames received from skin system for dual screens
+    internal var receivedScreenFrames: [String: CGRect] = [:]
+
     // Rotation handling state
     private var isHandlingRotation: Bool = false
     private var pendingRotationWorkItem: DispatchWorkItem?
@@ -1151,6 +1154,9 @@ extension PVEmulatorViewController {
         // Store the current skin for rotation handling
         currentSkin = skin
 
+        // Clear dual screen frame cache when skin changes
+        clearReceivedScreenFrames()
+
         // IMPORTANT: Use device orientation for skin traits
         // First get the real device orientation
         #if !os(tvOS)
@@ -1801,65 +1807,81 @@ extension PVEmulatorViewController {
     }
 
     private func minimalRelayout(with skin: DeltaSkinProtocol, orientation: SkinOrientation) {
-        self.repositionGameScreen(for: skin, orientation: orientation, forceRecalculation: true)
+        // Update currentSkin and currentOrientation for viewport calculation
+        self.currentSkin = skin
+        self.currentOrientation = orientation
+
+        // Clear cached frame to force recalculation for new orientation
+        // The color bars notification will provide the new frame
+        self.currentTargetFrame = nil
+        self.lastAppliedViewportFrame = nil
+
+        // Use the new viewport system to recalculate position
+        self.applyViewportFromCurrentSkin()
+
         if let skinView = self.skinContainerView {
             skinView.frame = self.view.bounds
             skinView.setNeedsLayout()
             skinView.layoutIfNeeded()
         }
+
         // For RetroArch, re-apply internal render view frame to keep it visible
-        // CRITICAL: Ensure parent view is laid out before coordinate conversion for landscape
-        if self.core.coreIdentifier?.contains("libretro") == true,
-           let frame = self.currentTargetFrame,
-           let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
-            viewport.setUseCustomRenderViewLayout(true)
-            let parent = (self.core.touchViewController ?? self).view
+        // Wait a bit for viewport to be recalculated
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+            guard let self = self else { return }
+            // CRITICAL: Ensure parent view is laid out before coordinate conversion for landscape
+            if self.core.coreIdentifier?.contains("libretro") == true,
+               let frame = self.currentTargetFrame,
+               let viewport = (self.core.bridge as? EmulatorCoreViewportPositioning) {
+                viewport.setUseCustomRenderViewLayout(true)
+                let parent = (self.core.touchViewController ?? self).view
 
-            // Force layout update on parent view first to ensure correct coordinate system
-            parent?.setNeedsLayout()
-            parent?.layoutIfNeeded()
+                // Force layout update on parent view first to ensure correct coordinate system
+                parent?.setNeedsLayout()
+                parent?.layoutIfNeeded()
 
-            // Ensure parent has valid bounds before conversion
-            guard let parent = parent, parent.bounds.width > 0 && parent.bounds.height > 0 else {
-                DLOG("WARNING: Parent view has invalid bounds: \(parent?.bounds ?? .zero), deferring RA viewport update")
-                // Defer the update until next run loop when bounds should be valid
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self,
-                          let parent = (self.core.touchViewController ?? self).view,
-                          parent.bounds.width > 0 && parent.bounds.height > 0 else { return }
-                    let rectInParent = self.view.convert(frame, to: parent)
-                    if orientation == .landscape {
-                        let clampedRect = CGRect(
-                            x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
-                            y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
-                            width: min(rectInParent.width, parent.bounds.width),
-                            height: min(rectInParent.height, parent.bounds.height)
-                        )
-                        viewport.applyRenderViewFrameInTouchView(clampedRect)
-                    } else {
-                        viewport.applyRenderViewFrameInTouchView(rectInParent)
+                // Ensure parent has valid bounds before conversion
+                guard let parent = parent, parent.bounds.width > 0 && parent.bounds.height > 0 else {
+                    DLOG("WARNING: Parent view has invalid bounds: \(parent?.bounds ?? .zero), deferring RA viewport update")
+                    // Defer the update until next run loop when bounds should be valid
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self,
+                              let parent = (self.core.touchViewController ?? self).view,
+                              parent.bounds.width > 0 && parent.bounds.height > 0 else { return }
+                        let rectInParent = self.view.convert(frame, to: parent)
+                        if orientation == .landscape {
+                            let clampedRect = CGRect(
+                                x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                                y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                                width: min(rectInParent.width, parent.bounds.width),
+                                height: min(rectInParent.height, parent.bounds.height)
+                            )
+                            viewport.applyRenderViewFrameInTouchView(clampedRect)
+                        } else {
+                            viewport.applyRenderViewFrameInTouchView(rectInParent)
+                        }
                     }
+                    return
                 }
-                return
-            }
 
-            // Now convert coordinates - the frame is in self.view's coordinate system
-            let rectInParent = self.view.convert(frame, to: parent)
+                // Now convert coordinates - the frame is in self.view's coordinate system
+                let rectInParent = self.view.convert(frame, to: parent)
 
-            // For landscape, double-check the conversion is correct
-            // Sometimes the coordinate conversion can be off if views haven't updated yet
-            if orientation == .landscape {
-                // Ensure the rect is within parent bounds (clamp if needed)
-                let clampedRect = CGRect(
-                    x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
-                    y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
-                    width: min(rectInParent.width, parent.bounds.width),
-                    height: min(rectInParent.height, parent.bounds.height)
-                )
-                DLOG("Landscape frame conversion: original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds), self.view.bounds=\(self.view.bounds)")
-                viewport.applyRenderViewFrameInTouchView(clampedRect)
-            } else {
-                viewport.applyRenderViewFrameInTouchView(rectInParent)
+                // For landscape, double-check the conversion is correct
+                // Sometimes the coordinate conversion can be off if views haven't updated yet
+                if orientation == .landscape {
+                    // Ensure the rect is within parent bounds (clamp if needed)
+                    let clampedRect = CGRect(
+                        x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
+                        y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
+                        width: min(rectInParent.width, parent.bounds.width),
+                        height: min(rectInParent.height, parent.bounds.height)
+                    )
+                    DLOG("Landscape frame conversion: original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds), self.view.bounds=\(self.view.bounds)")
+                    viewport.applyRenderViewFrameInTouchView(clampedRect)
+                } else {
+                    viewport.applyRenderViewFrameInTouchView(rectInParent)
+                }
             }
         }
         self.ensureProperZOrder()

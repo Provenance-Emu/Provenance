@@ -160,6 +160,9 @@ struct DefaultControllerSkinView: View {
     // State for control layout data
     @State private var controlLayout: [ControlLayoutEntry]? = nil
 
+    // State for num pad popover
+    @State private var showNumPadPopover = false
+
     init(useJoystick: Bool, inputHandler: DeltaSkinInputHandler, systemId: SystemIdentifier?, coreInstance: PVEmulatorCore) {
         self._useJoystickInternal = State(initialValue: useJoystick)
         self.inputHandler = inputHandler
@@ -382,58 +385,46 @@ struct DefaultControllerSkinView: View {
 
             Spacer().frame(height: 20) // Add space to raise D-pad position
 
-            HStack(spacing: 30) { // Increased spacing between D-pad and action buttons
+            HStack(spacing: 20) { // Reduced spacing to prevent off-screen issues
                 // Left side - D-Pad or Joystick
-                VStack(spacing: 5) {
-                    // D-pad/Joystick toggle
-                    Button(action: {
-                        // Toggle the internal state which we can modify
-                        useJoystickInternal.toggle()
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
-                                .font(.system(size: 14))
-                                .foregroundColor(.white)
-
-                            Text(useJoystickInternal ? "JOYSTICK" : "D-PAD")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 8)
-                        .background(Color.blue.opacity(0.7))
-                        .cornerRadius(10)
-                    }
-                    .buttonStyle(GameButtonStyle(pressAction: {
-                        inputHandler.buttonPressed("toggle")
-                    }, releaseAction: {
-                        inputHandler.buttonReleased("toggle")
-                    }))
-
+                VStack(spacing: 8) {
                     // Show either D-pad or joystick based on toggle
                     if useJoystickInternal {
                         joystickView()
                     } else {
                         dPadView()
                     }
+
+                    // D-pad/Joystick toggle - moved below dpad/joystick, icon only
+                    Button(action: {
+                        useJoystickInternal.toggle()
+                    }) {
+                        Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
+                            .font(.system(size: 16))
+                            .foregroundColor(.white)
+                            .padding(8)
+                            .background(Color.blue.opacity(0.7))
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Spacer() // Push action buttons to the right
-
-                // Right side - Action buttons (right-aligned) with increased spacing
-                VStack(spacing: 20) { // Increased vertical spacing
-                    HStack(spacing: 30) { // Significantly increased horizontal spacing
-                        VStack(spacing: 25) { // Increased vertical spacing between Y and X
+                // Right side - Action buttons (constrained to prevent off-screen)
+                VStack(spacing: 20) {
+                    HStack(spacing: 20) { // Reduced spacing to fit better
+                        VStack(spacing: 20) { // Reduced vertical spacing
                             circleButton(label: "Y", color: .yellow)
                             circleButton(label: "X", color: .blue)
                         }
 
-                        VStack(spacing: 25) { // Increased vertical spacing between B and A
+                        VStack(spacing: 20) { // Reduced vertical spacing
                             circleButton(label: "B", color: .red)
                             circleButton(label: "A", color: .green)
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
 
             Spacer().frame(height: 15) // Reduced space before Start/Select buttons to move them up
@@ -991,10 +982,27 @@ struct DefaultControllerSkinView: View {
                 VStack {
                     Spacer()
                     HStack {
-                        if useJoystickInternal && hasControl(type: "PVJoyPad", in: layout) {
-                            joystickView()
-                        } else if hasControl(type: "PVDPad", in: layout) {
-                            dPadView()
+                        VStack(spacing: 8) {
+                            if useJoystickInternal && hasControl(type: "PVJoyPad", in: layout) {
+                                joystickView()
+                            } else if hasControl(type: "PVDPad", in: layout) {
+                                dPadView()
+                            }
+
+                            // Toggle button below dpad/joystick - icon only
+                            if hasControl(type: "PVDPad", in: layout) && hasControl(type: "PVJoyPad", in: layout) {
+                                Button(action: {
+                                    useJoystickInternal.toggle()
+                                }) {
+                                    Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(.white)
+                                        .padding(8)
+                                        .background(Color.blue.opacity(0.7))
+                                        .clipShape(Circle())
+                                }
+                                .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
+                            }
                         }
                         Spacer()
                     }
@@ -1010,24 +1018,57 @@ struct DefaultControllerSkinView: View {
                     let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
 
                     if !buttonGroups.isEmpty {
-                        // If we have button groups, display them in a VStack
-                        VStack(spacing: 20) {
-                            ForEach(0..<buttonGroups.count, id: \.self) { index in
-                                if let groupedButtons = buttonGroups[index].PVGroupedButtons {
-                                    // Create a grid of buttons for each button group
-                                    createButtonGroup(from: groupedButtons)
+                        // Check if any button group has many buttons (9+) - show popover instead
+                        let hasLargeButtonGroup = buttonGroups.contains { group in
+                            (group.PVGroupedButtons?.count ?? 0) >= 9
+                        }
+
+                        if hasLargeButtonGroup {
+                            // Show a popover button for num pad systems
+                            Button(action: {
+                                showNumPadPopover = true
+                            }) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.blue.opacity(0.7))
+                                        .frame(width: 60, height: 60)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color.white, lineWidth: 2)
+                                        )
+
+                                    Image(systemName: "number.circle.fill")
+                                        .font(.system(size: 28))
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
+                            .popover(isPresented: $showNumPadPopover) {
+                                NumPadPopoverView(
+                                    buttonGroups: buttonGroups,
+                                    createButton: createButton,
+                                    inputHandler: inputHandler
+                                )
+                            }
+                        } else {
+                            // If we have button groups but not many buttons, display them normally
+                            VStack(spacing: 15) {
+                                ForEach(0..<buttonGroups.count, id: \.self) { index in
+                                    if let groupedButtons = buttonGroups[index].PVGroupedButtons {
+                                        createButtonGroup(from: groupedButtons)
+                                    }
                                 }
                             }
                         }
                     } else {
-                        // Fallback to generic ABXY layout with improved spacing
-                        HStack(spacing: 30) {
-                            VStack(spacing: 25) {
+                        // Fallback to generic ABXY layout with reduced spacing
+                        HStack(spacing: 20) {
+                            VStack(spacing: 20) {
                                 circleButton(label: "Y", color: .yellow)
                                 circleButton(label: "X", color: .blue)
                             }
 
-                            VStack(spacing: 25) {
+                            VStack(spacing: 20) {
                                 circleButton(label: "B", color: .red)
                                 circleButton(label: "A", color: .green)
                             }
@@ -1035,8 +1076,8 @@ struct DefaultControllerSkinView: View {
                     }
                     Spacer()
                 }
-                .frame(width: 300) // Further increased width to prevent clipping
-                .position(x: geometry.size.width - 200, y: geometry.size.height / 2)
+                .frame(width: 250) // Reduced width to prevent clipping
+                .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
             }
         }
     }
@@ -1099,82 +1140,98 @@ struct DefaultControllerSkinView: View {
 
             Spacer().frame(height: 20) // Add space to raise D-pad position
 
-            HStack(spacing: 30) { // Increased spacing between D-pad and action buttons
+            HStack(spacing: 20) { // Reduced spacing to prevent off-screen issues
                 // Left side - D-Pad or Joystick
-                VStack(spacing: 5) {
-                    // Only show D-pad/joystick toggle if the system has both
-                    if hasControl(type: "PVDPad", in: layout) && hasControl(type: "PVJoyPad", in: layout) {
-                        Button(action: {
-                            useJoystickInternal.toggle()
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.white)
-
-                                Text(useJoystickInternal ? "JOYSTICK" : "D-PAD")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(.white)
-                            }
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 8)
-                            .background(Color.blue.opacity(0.7))
-                            .cornerRadius(10)
-                        }
-                        .buttonStyle(GameButtonStyle(pressAction: {
-                            inputHandler.buttonPressed("up")
-                        }, releaseAction: {
-                            inputHandler.buttonReleased("up")
-                        }))
-                    }
-
+                VStack(spacing: 8) {
                     // Show either D-pad or joystick based on toggle and system support
                     if useJoystickInternal && hasControl(type: "PVJoyPad", in: layout) {
                         joystickView()
                     } else if hasControl(type: "PVDPad", in: layout) {
                         dPadView()
                     }
+
+                    // Only show D-pad/joystick toggle if the system has both - moved below, icon only
+                    if hasControl(type: "PVDPad", in: layout) && hasControl(type: "PVJoyPad", in: layout) {
+                        Button(action: {
+                            useJoystickInternal.toggle()
+                        }) {
+                            Image(systemName: useJoystickInternal ? "circle.grid.cross" : "dpad")
+                                .font(.system(size: 16))
+                                .foregroundColor(.white)
+                                .padding(8)
+                                .background(Color.blue.opacity(0.7))
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Spacer() // Push action buttons to the right
-
-                // Right side - Action buttons (right-aligned)
+                // Right side - Action buttons (constrained to prevent off-screen)
                 VStack(spacing: 10) {
                     // Find all button groups in the layout
                     let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
 
                     if !buttonGroups.isEmpty {
-                        // If we have button groups, display them in a VStack
-                        VStack(spacing: 20) {
-                            ForEach(0..<buttonGroups.count, id: \.self) { index in
-                                if let groupedButtons = buttonGroups[index].PVGroupedButtons {
-                                    // Create a grid of buttons for each button group
-                                    HStack {
-                                        Spacer() // Push buttons to the right
+                        // Check if any button group has many buttons (9+) - show popover instead
+                        let hasLargeButtonGroup = buttonGroups.contains { group in
+                            (group.PVGroupedButtons?.count ?? 0) >= 9
+                        }
+
+                        if hasLargeButtonGroup {
+                            // Show a popover button for num pad systems
+                            Button(action: {
+                                showNumPadPopover = true
+                            }) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.blue.opacity(0.7))
+                                        .frame(width: 60, height: 60)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color.white, lineWidth: 2)
+                                        )
+
+                                    Image(systemName: "number.circle.fill")
+                                        .font(.system(size: 28))
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
+                            .popover(isPresented: $showNumPadPopover) {
+                                NumPadPopoverView(
+                                    buttonGroups: buttonGroups,
+                                    createButton: createButton,
+                                    inputHandler: inputHandler
+                                )
+                            }
+                        } else {
+                            // If we have button groups but not many buttons, display them normally
+                            VStack(spacing: 15) {
+                                ForEach(0..<buttonGroups.count, id: \.self) { index in
+                                    if let groupedButtons = buttonGroups[index].PVGroupedButtons {
                                         createButtonGroup(from: groupedButtons)
-                                            .id("buttonGroup_\(index)") // Add unique ID to force redraw
+                                            .id("buttonGroup_\(index)")
                                     }
                                 }
                             }
                         }
                     } else {
-                        // Fallback to generic ABXY layout with improved spacing
-                        HStack {
-                            Spacer() // Push buttons to the right
-                            HStack(spacing: 30) { // Significantly increased horizontal spacing
-                                VStack(spacing: 25) { // Increased vertical spacing between Y and X
-                                    circleButton(label: "Y", color: .yellow)
-                                    circleButton(label: "X", color: .blue)
-                                }
+                        // Fallback to generic ABXY layout with reduced spacing
+                        HStack(spacing: 20) {
+                            VStack(spacing: 20) {
+                                circleButton(label: "Y", color: .yellow)
+                                circleButton(label: "X", color: .blue)
+                            }
 
-                                VStack(spacing: 25) { // Increased vertical spacing between B and A
-                                    circleButton(label: "B", color: .red)
-                                    circleButton(label: "A", color: .green)
-                                }
+                            VStack(spacing: 20) {
+                                circleButton(label: "B", color: .red)
+                                circleButton(label: "A", color: .green)
                             }
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
 
             Spacer().frame(height: 15) // Reduced space before Start/Select buttons to move them up
@@ -1282,7 +1339,7 @@ struct DefaultControllerSkinView: View {
     }
 
     // Create a button from a ControlGroupButton
-    private func createButton(from button: ControlGroupButton) -> some View {
+    private func createButton(from button: ControlGroupButton) -> AnyView {
         let displayLabel = button.PVControlTitle ?? "Button"
 
         // Map special PlayStation symbols to their proper identifiers
@@ -1321,6 +1378,7 @@ struct DefaultControllerSkinView: View {
             inputHandler.buttonReleased(actionIdentifier)
         }))
         .id("button_\(actionIdentifier)_\(UUID().uuidString)") // Ensure each button has a unique ID
+        .eraseToAnyView()
     }
 
     // Custom button style that handles press and release events
@@ -1391,5 +1449,118 @@ struct DefaultControllerSkinView: View {
     // Check if a specific control type with a specific title exists in the layout
     private func hasControl(type: String, title: String, in layout: [ControlLayoutEntry]) -> Bool {
         return layout.contains(where: { $0.PVControlType == type && $0.PVControlTitle == title })
+    }
+}
+
+/// Popover view for num pad buttons
+struct NumPadPopoverView: View {
+    let buttonGroups: [ControlLayoutEntry]
+    let createButton: (ControlGroupButton) -> AnyView
+    let inputHandler: DeltaSkinInputHandler
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 15) {
+                ForEach(Array(buttonGroups.enumerated()), id: \.offset) { index, entry in
+                    if let groupedButtons = entry.PVGroupedButtons {
+                        NumPadButtonGroupView(
+                            groupedButtons: groupedButtons,
+                            createButton: createButton
+                        )
+                    }
+                }
+            }
+            .padding()
+        }
+        .frame(width: 300, height: 400)
+        .background(Color.black.opacity(0.9))
+    }
+}
+
+/// Helper view for a single button group
+private struct NumPadButtonGroupView: View {
+    let groupedButtons: [ControlGroupButton]
+    let createButton: (ControlGroupButton) -> AnyView
+
+    var body: some View {
+        if groupedButtons.count >= 9 {
+            NumberPadLayoutView(
+                groupedButtons: groupedButtons,
+                createButton: createButton
+            )
+        } else {
+            GridLayoutView(
+                groupedButtons: groupedButtons,
+                createButton: createButton
+            )
+        }
+    }
+}
+
+/// Number pad layout (3x4 grid) for 9+ buttons
+private struct NumberPadLayoutView: View {
+    let groupedButtons: [ControlGroupButton]
+    let createButton: (ControlGroupButton) -> AnyView
+
+    var body: some View {
+        VStack(spacing: 8) {
+            // Row 1: 1, 2, 3
+            ButtonRowView(
+                buttons: Array(groupedButtons.prefix(3)),
+                createButton: createButton
+            )
+
+            // Row 2: 4, 5, 6
+            if groupedButtons.count > 3 {
+                ButtonRowView(
+                    buttons: Array(groupedButtons[3..<min(6, groupedButtons.count)]),
+                    createButton: createButton
+                )
+            }
+
+            // Row 3: 7, 8, 9
+            if groupedButtons.count > 6 {
+                ButtonRowView(
+                    buttons: Array(groupedButtons[6..<min(9, groupedButtons.count)]),
+                    createButton: createButton
+                )
+            }
+
+            // Row 4: 0, A, B, C (or whatever remains)
+            if groupedButtons.count > 9 {
+                ButtonRowView(
+                    buttons: Array(groupedButtons[9..<groupedButtons.count]),
+                    createButton: createButton
+                )
+            }
+        }
+    }
+}
+
+/// Single row of buttons
+private struct ButtonRowView: View {
+    let buttons: [ControlGroupButton]
+    let createButton: (ControlGroupButton) -> AnyView
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<buttons.count, id: \.self) { i in
+                createButton(buttons[i])
+            }
+        }
+    }
+}
+
+/// Grid layout for smaller button groups
+private struct GridLayoutView: View {
+    let groupedButtons: [ControlGroupButton]
+    let createButton: (ControlGroupButton) -> AnyView
+
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 10) {
+            ForEach(0..<groupedButtons.count, id: \.self) { i in
+                createButton(groupedButtons[i])
+            }
+        }
     }
 }

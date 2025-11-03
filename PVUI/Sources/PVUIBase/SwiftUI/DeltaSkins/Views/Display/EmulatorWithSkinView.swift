@@ -89,9 +89,9 @@ struct EmulatorWithSkinView: View {
                     skinContentView(skin: skin, geometry: geometry)
                         .background(Color.clear) // Ensure background is transparent
                         .onAppear {
-                            // When the skin content appears, mark as complete after a short delay
-                            // to ensure it's fully rendered
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            // When the skin content appears, wait for layout to stabilize
+                            // before marking as complete to ensure correct initial positioning
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 if !skinRenderComplete {
                                     skinRenderComplete = true
                                     onSkinLoaded()
@@ -106,8 +106,8 @@ struct EmulatorWithSkinView: View {
                                     )
                                     DLOG("🎮 Posted DeltaSkinLoaded notification for skin: \(skin.identifier)")
 
-                                    // Request a refresh after the skin is loaded
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    // Request a refresh after the skin is loaded to ensure screen positions are correct
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                                         onRefreshRequested()
                                     }
                                 }
@@ -411,6 +411,7 @@ struct EmulatorWithSkinView: View {
     // MARK: - Skin Content View
 
     private func skinContentView(skin: any DeltaSkinProtocol, geometry: GeometryProxy) -> some View {
+        // Create traits reactively - this will be recalculated when currentOrientation changes
         let traits = createSkinTraits()
 
         return Group {
@@ -425,7 +426,6 @@ struct EmulatorWithSkinView: View {
                     isInEmulator: true,
                     inputHandler: inputHandler
                 )
-                .id("skin-view-\(rotationCount)")
             } else {
                 // For other skin types
                 DeltaSkinView(
@@ -437,10 +437,10 @@ struct EmulatorWithSkinView: View {
                     isInEmulator: true,
                     inputHandler: inputHandler
                 )
-                .id("async-skin-view-\(rotationCount)")
             }
         }
         .environmentObject(inputHandler)
+        .id("\(rotationCount)-\(currentOrientation.rawValue)") // Update when orientation changes without full rebuild
     }
 
     // MARK: - Debug Overlay
@@ -520,8 +520,15 @@ struct EmulatorWithSkinView: View {
 
     /// Refresh the view after orientation changes
     private func refreshView() {
-        // This will be called by the parent view controller
-        DLOG("🎮 EmulatorWithSkinView: Refreshing view")
+        // Force traits recalculation by updating rotation count
+        // This triggers trait recalculation without full view rebuild
+        rotationCount += 1
+        DLOG("🎮 EmulatorWithSkinView: Refreshing view, rotation count: \(rotationCount)")
+
+        // Request a refresh after orientation change to update screen positions
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            onRefreshRequested()
+        }
     }
 
     // MARK: - Skin Traits

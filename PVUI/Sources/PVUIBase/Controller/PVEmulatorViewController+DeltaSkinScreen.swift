@@ -22,6 +22,9 @@ extension PVEmulatorViewController {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleColorBarsFrameUpdated), name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"), object: nil)
 
+        // Set up dual screen observers if needed
+        setupDualScreenObservers()
+
         // Apply immediately from current skin if available
         if isDeltaSkinEnabled, currentSkin != nil {
             applyViewportFromCurrentSkin()
@@ -38,7 +41,37 @@ extension PVEmulatorViewController {
 
     @objc private func handleSkinLoaded(_ notification: Notification) {
         DLOG("🎮 Received skin loaded notification")
-        applyViewportFromCurrentSkin()
+
+        // Fetch and set the current skin so applyViewportFromCurrentSkin can use it
+        Task {
+            guard let systemId = game.system?.systemIdentifier else {
+                DLOG("🎮 No system identifier available for skin loading")
+                return
+            }
+
+            do {
+                if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
+                    await MainActor.run {
+                        self.currentSkin = skin
+                        DLOG("🎮 Set currentSkin: \(skin.name) (\(skin.identifier))")
+                        // Now apply viewport with the skin set
+                        self.applyViewportFromCurrentSkin()
+                    }
+                } else {
+                    DLOG("🎮 No skin available for system: \(systemId)")
+                    await MainActor.run {
+                        self.currentSkin = nil
+                        self.resetGPUViewPosition()
+                    }
+                }
+            } catch {
+                ELOG("🎮 Error loading skin: \(error)")
+                await MainActor.run {
+                    self.currentSkin = nil
+                    self.resetGPUViewPosition()
+                }
+            }
+        }
     }
 
     /// Handle the color bars frame updated notification
@@ -79,15 +112,93 @@ extension PVEmulatorViewController {
             DLOG("🔴   Screen ID: \(screenId)")
         }
 
+        // Ensure currentSkin is set if not already set
+        // This ensures applyViewportFromCurrentSkin can work correctly
+        if currentSkin == nil, let systemId = game.system?.systemIdentifier {
+            Task {
+                do {
+                    if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
+                        await MainActor.run {
+                            self.currentSkin = skin
+                            DLOG("🔴 Set currentSkin from color bars notification: \(skin.name)")
+                        }
+                    }
+                } catch {
+                    DLOG("🔴 Error loading skin in color bars handler: \(error)")
+                }
+            }
+        }
+
         // Apply the exact same frame to the GPU view
+        // Use the same method as applyViewportFromCurrentSkin to ensure consistency
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
 
-            // Create a debug overlay to show the frame
-            self.createDebugOverlay(frame: colorBarsFrame)
+            // For dual-screen systems, let applyDualScreenViewport handle it
+            if self.core.supportsDualScreens {
+                // Dual-screen systems handle notifications in applyDualScreenViewport
+                return
+            }
 
-            // Apply the frame to the GPU view - DIRECTLY without any modifications
-            self.applyExactFrameToGPUView(colorBarsFrame)
+            // Validate frame before applying
+            guard colorBarsFrame.width > 0 && colorBarsFrame.height > 0 else {
+                DLOG("🔴 Invalid frame dimensions from notification, skipping")
+                return
+            }
+
+            // Ensure view is laid out before applying frame
+            self.view.setNeedsLayout()
+            self.view.layoutIfNeeded()
+
+            // CRITICAL: Validate view bounds are valid
+            let viewBounds = self.view.bounds
+            guard viewBounds.width > 0 && viewBounds.height > 0,
+                  viewBounds.width < 10000 && viewBounds.height < 10000 else {
+                ELOG("🔴 CRITICAL: Invalid view bounds: \(viewBounds), refusing to apply notification frame: \(colorBarsFrame)")
+                return
+            }
+
+            // Metal maximum texture size is 16384 - prevent crashes
+            let maxMetalDimension: CGFloat = 16384
+            let isValidFrame = colorBarsFrame.width > 0 && colorBarsFrame.height > 0 &&
+                               colorBarsFrame.width <= maxMetalDimension &&
+                               colorBarsFrame.height <= maxMetalDimension &&
+                               colorBarsFrame.width.isFinite && colorBarsFrame.height.isFinite &&
+                               colorBarsFrame.origin.x.isFinite && colorBarsFrame.origin.y.isFinite &&
+                               colorBarsFrame.width <= viewBounds.width * 2 &&
+                               colorBarsFrame.height <= viewBounds.height * 2 &&
+                               colorBarsFrame.minX >= -viewBounds.width &&
+                               colorBarsFrame.minY >= -viewBounds.height &&
+                               colorBarsFrame.maxX <= viewBounds.width * 2 &&
+                               colorBarsFrame.maxY <= viewBounds.height * 2
+
+            if !isValidFrame {
+                DLOG("🔴 Frame from notification seems invalid (out of reasonable bounds): \(colorBarsFrame), view.bounds: \(viewBounds)")
+                DLOG("🔴 Falling back to calculated frame")
+                // Fall back to calculated frame
+                self.applyViewportFromCurrentSkin()
+                return
+            }
+
+            // Only apply if this is a different frame to avoid unnecessary updates
+            if self.lastAppliedViewportFrame != colorBarsFrame {
+                // Create a debug overlay to show the frame
+                self.createDebugOverlay(frame: colorBarsFrame)
+
+                DLOG("🔴 Applying notification frame: \(colorBarsFrame), view.bounds: \(viewBounds)")
+
+                // Apply the frame to the GPU view - DIRECTLY without any modifications
+                // This is the exact frame calculated by the skin system
+                self.applyExactFrameToGPUView(colorBarsFrame)
+
+                // Update tracking
+                self.lastAppliedViewportFrame = colorBarsFrame
+
+                // Verify the frame was applied correctly
+                if let gpuView = self.gpuViewController.view {
+                    DLOG("🔴 GPU view frame after applying: \(gpuView.frame)")
+                }
+            }
         }
     }
 
@@ -121,6 +232,15 @@ extension PVEmulatorViewController {
     /// Compute the active viewport frame for the game screen based on the current skin and traits
     internal func currentSkinViewportFrame() -> CGRect? {
         guard isDeltaSkinEnabled, let skin = currentSkin else { return nil }
+
+        // CRITICAL: Ensure view is laid out and has valid bounds before calculating frame
+        let viewBounds = view.bounds
+        guard viewBounds.width > 0 && viewBounds.height > 0,
+              viewBounds.width < 10000 && viewBounds.height < 10000 else {
+            DLOG("🔴 ERROR: Invalid view bounds for viewport calculation: \(viewBounds)")
+            return nil
+        }
+
         let device: DeltaSkinDevice = {
             #if os(tvOS)
             return .tv
@@ -135,28 +255,148 @@ extension PVEmulatorViewController {
             orientation: orientation
         )
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
-        let viewSize = view.bounds.size
-        let scale = min(viewSize.width / mappingSize.width, viewSize.height / mappingSize.height)
-        let offset = CGPoint(
-            x: (viewSize.width - (mappingSize.width * scale)) / 2,
-            y: (viewSize.height - (mappingSize.height * scale)) / 2
-        )
+
+        // Validate mapping size is reasonable
+        guard mappingSize.width > 0 && mappingSize.height > 0,
+              mappingSize.width < 10000 && mappingSize.height < 10000 else {
+            DLOG("🔴 ERROR: Invalid mapping size: \(mappingSize)")
+            return nil
+        }
+
+        let viewSize = viewBounds.size
+
+        // Use the same scale calculation as DeltaSkinScreenPositionWrapper for consistency
+        var scale: CGFloat
+        if traits.device == .iphone && traits.orientation == .portrait {
+            // Start with width scale to fill screen
+            guard mappingSize.width > 0 else {
+                DLOG("🔴 ERROR: mappingSize.width is zero")
+                return nil
+            }
+            scale = viewSize.width / mappingSize.width
+
+            // Validate scale is reasonable
+            guard scale.isFinite && scale > 0 && scale < 1000 else {
+                DLOG("🔴 ERROR: Invalid scale calculated: \(scale), viewSize: \(viewSize), mappingSize: \(mappingSize)")
+                return nil
+            }
+
+            // Calculate resulting height
+            let scaledHeight = mappingSize.height * scale
+
+            // If height exceeds screen, scale down while maintaining aspect ratio
+            if scaledHeight > viewSize.height {
+                guard mappingSize.height > 0 else {
+                    DLOG("🔴 ERROR: mappingSize.height is zero")
+                    return nil
+                }
+                let heightScale = viewSize.height / mappingSize.height
+                scale = min(scale, heightScale)
+            }
+        } else {
+            // For landscape or iPad, use standard fit scaling
+            guard mappingSize.width > 0 && mappingSize.height > 0 else {
+                DLOG("🔴 ERROR: mappingSize has zero dimensions: \(mappingSize)")
+                return nil
+            }
+            scale = min(
+                viewSize.width / mappingSize.width,
+                viewSize.height / mappingSize.height
+            )
+        }
+
+        // Final validation of scale
+        guard scale.isFinite && scale > 0 && scale < 1000 else {
+            DLOG("🔴 ERROR: Invalid scale after calculation: \(scale)")
+            return nil
+        }
+
+        let scaledWidth = mappingSize.width * scale
+        let scaledHeight = mappingSize.height * scale
+
+        // Validate scaled dimensions are reasonable (Metal max is 16384, but we'll be more conservative)
+        guard scaledWidth > 0 && scaledHeight > 0,
+              scaledWidth < 16384 && scaledHeight < 16384 else {
+            DLOG("🔴 ERROR: Scaled dimensions too large: \(scaledWidth)x\(scaledHeight)")
+            return nil
+        }
+
+        // Calculate offset with same logic as DeltaSkinScreenPositionWrapper
+        let xOffset = (viewSize.width - scaledWidth) / 2
+        let yOffset: CGFloat
+        if traits.device == .iphone && traits.orientation == .portrait {
+            // Position at bottom of screen for iPhone portrait
+            yOffset = viewSize.height - scaledHeight
+        } else {
+            // Center vertically for landscape or iPad
+            yOffset = (viewSize.height - scaledHeight) / 2
+        }
+
+        let offset = CGPoint(x: xOffset, y: yOffset)
+        // Calculate layout dimensions (scaled mappingSize)
+        let layoutWidth = mappingSize.width * scale
+        let layoutHeight = mappingSize.height * scale
+
         if let screens = skin.screens(for: traits) {
             let gameScreens = screens.filter { $0.placement == DeltaSkinScreenPlacement.app }
             if let first = gameScreens.first, let output = first.outputFrame {
-                return scaledFrame(output, mappingSize: mappingSize, scale: scale, offset: offset)
+                // outputFrame is normalized (0.0-1.0), scale using layout dimensions to match DeltaSkinScreenPositionWrapper
+                let scaledInLayout = CGRect(
+                    x: output.minX * layoutWidth,
+                    y: output.minY * layoutHeight,
+                    width: output.width * layoutWidth,
+                    height: output.height * layoutHeight
+                )
+                let result = CGRect(
+                    x: xOffset + scaledInLayout.minX,
+                    y: yOffset + scaledInLayout.minY,
+                    width: scaledInLayout.width,
+                    height: scaledInLayout.height
+                )
+                return validateFrame(result)
             }
             if let first = screens.first, let output = first.outputFrame {
-                return scaledFrame(output, mappingSize: mappingSize, scale: scale, offset: offset)
+                // outputFrame is normalized (0.0-1.0), scale using layout dimensions to match DeltaSkinScreenPositionWrapper
+                let scaledInLayout = CGRect(
+                    x: output.minX * layoutWidth,
+                    y: output.minY * layoutHeight,
+                    width: output.width * layoutWidth,
+                    height: output.height * layoutHeight
+                )
+                let result = CGRect(
+                    x: xOffset + scaledInLayout.minX,
+                    y: yOffset + scaledInLayout.minY,
+                    width: scaledInLayout.width,
+                    height: scaledInLayout.height
+                )
+                return validateFrame(result)
             }
         }
         if let buttons = skin.buttons(for: traits), !buttons.isEmpty,
            let topButton = buttons.min(by: { $0.frame.minY < $1.frame.minY }) {
             let defaultFrame = CGRect(x: 0, y: 0, width: mappingSize.width, height: topButton.frame.minY * 0.95)
-            return scaledFrame(defaultFrame, mappingSize: mappingSize, scale: scale, offset: offset)
+            let result = scaledFrame(defaultFrame, mappingSize: mappingSize, scale: scale, offset: offset)
+            return validateFrame(result)
         }
         let defaultFrame = CGRect(x: 0, y: 0, width: mappingSize.width, height: mappingSize.height * 0.5)
-        return scaledFrame(defaultFrame, mappingSize: mappingSize, scale: scale, offset: offset)
+        let result = scaledFrame(defaultFrame, mappingSize: mappingSize, scale: scale, offset: offset)
+        return validateFrame(result)
+    }
+
+    /// Validate that a frame is reasonable and safe for Metal
+    private func validateFrame(_ frame: CGRect) -> CGRect? {
+        // Metal maximum texture size is 16384, but we'll be more conservative
+        let maxDimension: CGFloat = 16384
+
+        guard frame.width > 0 && frame.height > 0,
+              frame.width <= maxDimension && frame.height <= maxDimension,
+              frame.width.isFinite && frame.height.isFinite,
+              frame.origin.x.isFinite && frame.origin.y.isFinite else {
+            DLOG("🔴 ERROR: Invalid frame for Metal: \(frame)")
+            return nil
+        }
+
+        return frame
     }
 
     /// Compute and apply viewport from the current skin once
@@ -165,14 +405,161 @@ extension PVEmulatorViewController {
             DispatchQueue.main.async { [weak self] in self?.applyViewportFromCurrentSkin() }
             return
         }
+
+        // CRITICAL: Ensure view is laid out and has valid bounds before calculating/applying viewport
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        // Validate view bounds are reasonable before proceeding
+        let viewBounds = view.bounds
+        guard viewBounds.width > 0 && viewBounds.height > 0,
+              viewBounds.width < 10000 && viewBounds.height < 10000,
+              viewBounds.width.isFinite && viewBounds.height.isFinite else {
+            DLOG("🔴 ERROR: Invalid view bounds, cannot apply viewport: \(viewBounds)")
+            // Don't apply viewport if view isn't ready - this prevents Metal crashes
+            return
+        }
+
+        // Ensure GPU view is visible and properly layered before positioning
+        ensureGPUViewVisibilityAndZOrder()
+
+        // Check if this core supports dual screens and use dual screen positioning
+        if core.supportsDualScreens {
+            applyDualScreenViewport()
+            return
+        }
+
+        // For skins with explicit viewports, prefer the notification-based frame
+        // (from color bars) as it's the authoritative source calculated by the skin system
+        if let notificationFrame = currentTargetFrame,
+           let skin = currentSkin {
+            let device: DeltaSkinDevice = {
+                #if os(tvOS)
+                return .tv
+                #else
+                return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+                #endif
+            }()
+            let orientation: DeltaSkinOrientation = (currentOrientation == .landscape) ? .landscape : .portrait
+            let traits = DeltaSkinTraits(
+                device: device,
+                displayType: .standard,
+                orientation: orientation
+            )
+
+            // If skin has explicit viewport and we have a notification frame, use it
+            // Always prefer notification frames as they're calculated by the skin system with correct layout
+            if hasScreenPosition(skin: skin, traits: traits) {
+                // Validate frame before applying
+                if notificationFrame.width > 0 && notificationFrame.height > 0 {
+                    // Verify frame is reasonable for current view size and Metal limits
+                    let viewBounds = view.bounds
+                    let maxMetalDimension: CGFloat = 16384
+                    // More lenient validation - allow frames slightly outside view bounds as they may be positioned correctly
+                    let frameIsValid = notificationFrame.width > 0 && notificationFrame.height > 0 &&
+                                       notificationFrame.width <= maxMetalDimension &&
+                                       notificationFrame.height <= maxMetalDimension &&
+                                       notificationFrame.width.isFinite && notificationFrame.height.isFinite &&
+                                       notificationFrame.origin.x.isFinite && notificationFrame.origin.y.isFinite &&
+                                       notificationFrame.width <= viewBounds.width * 3 &&
+                                       notificationFrame.height <= viewBounds.height * 3 &&
+                                       notificationFrame.minX >= -viewBounds.width &&
+                                       notificationFrame.minY >= -viewBounds.height * 2 &&
+                                       notificationFrame.maxX <= viewBounds.width * 2 &&
+                                       notificationFrame.maxY <= viewBounds.height * 2
+
+                    if frameIsValid {
+                        DLOG("🔴 Using notification-based frame for explicit viewport: \(notificationFrame), view.bounds: \(viewBounds)")
+                        if lastAppliedViewportFrame != notificationFrame {
+                            applyExactFrameToGPUView(notificationFrame)
+                            lastAppliedViewportFrame = notificationFrame
+                        }
+                        return
+                    } else {
+                        ELOG("🔴 CRITICAL: Notification frame invalid for Metal or view size: \(notificationFrame), view.bounds: \(viewBounds)")
+                        ELOG("🔴 Falling back to calculated frame to prevent crash")
+                        // Fall through to calculated frame
+                    }
+                } else {
+                    DLOG("🔴 Invalid notification frame dimensions, falling back to calculated frame")
+                    // Fall through to calculated frame
+                }
+            } else {
+                // Even if skin doesn't have explicit viewport, prefer notification frame if available
+                // It's still calculated by the skin system and likely more accurate
+                if notificationFrame.width > 0 && notificationFrame.height > 0 {
+                    let viewBounds = view.bounds
+                    let maxMetalDimension: CGFloat = 16384
+                    let frameIsValid = notificationFrame.width > 0 && notificationFrame.height > 0 &&
+                                       notificationFrame.width <= maxMetalDimension &&
+                                       notificationFrame.height <= maxMetalDimension &&
+                                       notificationFrame.width.isFinite && notificationFrame.height.isFinite &&
+                                       notificationFrame.origin.x.isFinite && notificationFrame.origin.y.isFinite &&
+                                       notificationFrame.width <= viewBounds.width * 3 &&
+                                       notificationFrame.height <= viewBounds.height * 3
+
+                    if frameIsValid {
+                        DLOG("🔴 Using notification frame for skin without explicit viewport: \(notificationFrame)")
+                        if lastAppliedViewportFrame != notificationFrame {
+                            applyExactFrameToGPUView(notificationFrame)
+                            lastAppliedViewportFrame = notificationFrame
+                        }
+                        return
+                    }
+                }
+            }
+        }
+
+        // Fall back to calculated frame if no notification frame or skin doesn't have explicit viewport
         guard let frame = currentSkinViewportFrame() else {
+            // If we have a currentTargetFrame from notifications, use it as fallback
+            if let fallbackFrame = currentTargetFrame,
+               fallbackFrame.width > 0 && fallbackFrame.height > 0 {
+                DLOG("🔴 Using fallback notification frame: \(fallbackFrame)")
+                if lastAppliedViewportFrame != fallbackFrame {
+                    applyExactFrameToGPUView(fallbackFrame)
+                    lastAppliedViewportFrame = fallbackFrame
+                }
+                return
+            }
             resetGPUViewPosition()
             return
         }
+
+        // Validate frame before applying
+        guard frame.width > 0 && frame.height > 0 else {
+            DLOG("🔴 Invalid frame calculated, resetting GPU view position")
+            resetGPUViewPosition()
+            return
+        }
+
         if lastAppliedViewportFrame != frame {
             applyExactFrameToGPUView(frame)
             currentTargetFrame = frame
             lastAppliedViewportFrame = frame
+        }
+    }
+
+    /// Ensure GPU view is visible and has correct z-order (below skin)
+    internal func ensureGPUViewVisibilityAndZOrder() {
+        guard let gameScreenView = gpuViewController.view else {
+            return
+        }
+
+        // Ensure GPU view is visible
+        gameScreenView.isHidden = false
+        gameScreenView.alpha = 1.0
+
+        // Ensure GPU view is below skin container
+        if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
+            view.insertSubview(gameScreenView, belowSubview: skinContainerView)
+        }
+
+        // Also ensure Metal view is visible if present
+        if let metalVC = gpuViewController as? PVMetalViewController,
+           let mtlView = metalVC.mtlView {
+            mtlView.isHidden = false
+            mtlView.alpha = 1.0
         }
     }
 
@@ -380,6 +767,9 @@ extension PVEmulatorViewController {
             metalVC.mtlView.setNeedsLayout()
             metalVC.mtlView.layoutIfNeeded()
         }
+
+        // Ensure z-order is maintained
+        ensureGPUViewVisibilityAndZOrder()
     }
 
     /// Manually set the GPU view to a specific position and size
@@ -647,13 +1037,46 @@ extension PVEmulatorViewController {
 
     // Method moved to PVEmulatorViewController+DeltaSkin.swift
 
-    /// Apply a frame directly to the GPU view with optimized positioning
+    /// Apply a frame directly to the GPU view
+    /// For skins with explicit viewports, uses the exact frame
+    /// For skins without explicit viewports, may apply optimizations
     private func applyFrameToGPUView(_ frame: CGRect) {
         guard let gameScreenView = gpuViewController.view else {
             DLOG("🔴 ERROR: GPU view not found")
             return
         }
 
+        // Check if the current skin has explicit screen position
+        // If it does, use the exact frame without modifications
+        let hasExplicitViewport: Bool
+        if let skin = currentSkin {
+            let device: DeltaSkinDevice = {
+                #if os(tvOS)
+                return .tv
+                #else
+                return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+                #endif
+            }()
+            let orientation: DeltaSkinOrientation = (currentOrientation == .landscape) ? .landscape : .portrait
+            let traits = DeltaSkinTraits(
+                device: device,
+                displayType: .standard,
+                orientation: orientation
+            )
+            hasExplicitViewport = hasScreenPosition(skin: skin, traits: traits)
+        } else {
+            // If no skin, assume no explicit viewport
+            hasExplicitViewport = false
+        }
+
+        // For skins with explicit viewports, use the exact frame
+        if hasExplicitViewport {
+            DLOG("🔴 Skin has explicit viewport, using exact frame: \(frame)")
+            applyExactFrameToGPUView(frame)
+            return
+        }
+
+        // For skins without explicit viewports, apply positioning optimizations
         // If this is a RetroArch core, size its internal renderView directly
         if core.coreIdentifier?.contains("libretro") == true,
            let bridge = core.bridge as? (any NSObjectProtocol) {
@@ -720,7 +1143,7 @@ extension PVEmulatorViewController {
         }
 
         // Just log the frame for debugging
-        DLOG("🔴 Using frame: \(optimizedFrame)")
+        DLOG("🔴 Using optimized frame: \(optimizedFrame)")
 
         DLOG("🔴 Applying frame to GPU view: \(optimizedFrame)")
         DLOG("🔴 Current GPU view frame before: \(gameScreenView.frame)")
@@ -730,10 +1153,56 @@ extension PVEmulatorViewController {
     }
 
     /// Apply an exact frame to the GPU view without any modifications
-    private func applyExactFrameToGPUView(_ frame: CGRect) {
+    internal func applyExactFrameToGPUView(_ frame: CGRect) {
         guard let gameScreenView = gpuViewController.view else {
             DLOG("🔴 ERROR: GPU view not found")
             return
+        }
+
+        // Ensure view is fully laid out before applying frame
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        // CRITICAL: Validate view bounds are valid before processing frame
+        let viewBounds = view.bounds
+        guard viewBounds.width > 0 && viewBounds.height > 0,
+              viewBounds.width < 10000 && viewBounds.height < 10000 else {
+            DLOG("🔴 ERROR: Invalid view bounds: \(viewBounds), refusing to apply frame: \(frame)")
+            return
+        }
+
+        // Validate the frame - ensure it has valid dimensions and is reasonable
+        // Metal maximum texture size is 16384, so we must prevent frames larger than that
+        let maxMetalDimension: CGFloat = 16384
+        guard frame.width > 0 && frame.height > 0,
+              frame.width <= maxMetalDimension && frame.height <= maxMetalDimension,
+              frame.width.isFinite && frame.height.isFinite,
+              frame.origin.x.isFinite && frame.origin.y.isFinite else {
+            ELOG("🔴 CRITICAL ERROR: Invalid frame dimensions for Metal - would crash! Frame: \(frame)")
+            ELOG("🔴 View bounds: \(viewBounds)")
+            // Reset to safe default instead of crashing
+            resetGPUViewPosition()
+            return
+        }
+
+        // Clamp frame to view bounds to prevent it from being positioned incorrectly
+        let clampedFrame = CGRect(
+            x: max(0, min(frame.origin.x, viewBounds.width - frame.width)),
+            y: max(0, min(frame.origin.y, viewBounds.height - frame.height)),
+            width: min(frame.width, viewBounds.width),
+            height: min(frame.height, viewBounds.height)
+        )
+
+        // Only clamp if the original frame was significantly out of bounds
+        let frameToApply: CGRect
+        if abs(frame.origin.x - clampedFrame.origin.x) > 1 ||
+           abs(frame.origin.y - clampedFrame.origin.y) > 1 ||
+           abs(frame.width - clampedFrame.width) > 1 ||
+           abs(frame.height - clampedFrame.height) > 1 {
+            DLOG("🔴 Frame was out of bounds, clamping: original=\(frame), clamped=\(clampedFrame), view.bounds=\(viewBounds)")
+            frameToApply = clampedFrame
+        } else {
+            frameToApply = frame
         }
 
         // If this is a RetroArch core, size its internal renderView directly
@@ -749,7 +1218,7 @@ extension PVEmulatorViewController {
                     parent.layoutIfNeeded()
 
                     // Now convert coordinates
-                    let rectInParent = view.convert(frame, to: parent)
+                    let rectInParent = view.convert(frameToApply, to: parent)
 
                     // For landscape, ensure conversion is correct and clamp to parent bounds
                     let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
@@ -771,24 +1240,19 @@ extension PVEmulatorViewController {
             }
         }
 
-        // Validate the frame - ensure it has valid dimensions
-        guard frame.width > 0 && frame.height > 0 else {
-            DLOG("🔴 ERROR: Invalid frame dimensions: \(frame)")
-            return
-        }
-
-        DLOG("🔴 Applying EXACT frame to GPU view: \(frame)")
+        DLOG("🔴 Applying EXACT frame to GPU view: \(frameToApply)")
+        DLOG("🔴 Original frame: \(frame), view.bounds: \(viewBounds)")
         DLOG("🔴 Current GPU view frame before: \(gameScreenView.frame)")
 
         // Apply the frame - ONLY set the frame, nothing else
         if let metalVC = gpuViewController as? PVMetalViewController {
             // Enable custom positioning - explicitly reference properties from PVGPUViewController
             (metalVC as PVGPUViewController).useCustomPositioning = true
-            (metalVC as PVGPUViewController).customFrame = frame
+            (metalVC as PVGPUViewController).customFrame = frameToApply
 
             // Apply the frame to the Metal container view; let mtlView fill its bounds
             UIView.performWithoutAnimation {
-                metalVC.view.frame = frame
+                metalVC.view.frame = frameToApply
                 metalVC.mtlView.frame = metalVC.view.bounds
             }
             metalVC.view.isHidden = false
@@ -799,14 +1263,14 @@ extension PVEmulatorViewController {
             metalVC.mtlView.layoutIfNeeded()
             DLOG("🔴 Applied EXACT frame to Metal view: \(metalVC.view.frame)")
             DLOG("🔴 Applied size to MTLView: \(metalVC.mtlView.frame)")
-            DLOG("🔴 Enabled custom positioning with EXACT frame: \(frame)")
+            DLOG("🔴 Enabled custom positioning with EXACT frame: \(frameToApply)")
         } else {
             // For non-Metal views
             UIView.performWithoutAnimation {
-                gameScreenView.frame = frame
+                gameScreenView.frame = frameToApply
             }
             (gpuViewController as PVGPUViewController).useCustomPositioning = true
-            (gpuViewController as PVGPUViewController).customFrame = frame
+            (gpuViewController as PVGPUViewController).customFrame = frameToApply
 
             // Make sure the view is visible
             gameScreenView.isHidden = false
@@ -818,14 +1282,14 @@ extension PVEmulatorViewController {
         gameScreenView.setNeedsLayout()
         gameScreenView.layoutIfNeeded()
 
-        // Make sure GPU view is behind the skin view
-        if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
-            view.insertSubview(gameScreenView, belowSubview: skinContainerView)
-        }
+        // CRITICAL: Ensure GPU view is always behind the skin view
+        // This must happen after frame is set to maintain correct z-order
+        ensureGPUViewVisibilityAndZOrder()
 
         // Log the result
         DLOG("🔴 After applying frame:")
         DLOG("🔴   GPU view frame: \(gameScreenView.frame)")
+        DLOG("🔴   View bounds: \(view.bounds)")
     }
 
     // Method moved to PVEmulatorViewController+DeltaSkin.swift
