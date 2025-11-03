@@ -76,11 +76,18 @@ public struct SystemPickerView: View {
             let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: newSystem.identifier)
                 .appendingPathComponent(sourceURL.lastPathComponent)
 
+            // Save old values for cache cleanup
+            let oldRomPath = game.romPath
+            let oldSystemIdentifier = game.systemIdentifier
+            let oldFileURL = game.file?.url
+            let oldRelatedFiles = Array(game.relatedFiles.compactMap { $0.url })
+
             // Move the actual file first
             try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
             DLOG("Successfully moved game file to new system directory <\(destinationURL.path())>")
 
             let realm = try Realm()
+            var updatedGame: PVGame?
             try realm.write {
                 /// Thaw the PVGame for editing
                 let thawedGame = game.thaw()
@@ -100,6 +107,15 @@ public struct SystemPickerView: View {
                 let newFile = PVFile(withURL: destinationURL)
                 thawedGame?.file = newFile
                 DLOG("Updated PVFile to point to new location: \(newFile.partialPath)")
+
+                updatedGame = thawedGame
+            }
+
+            // Update cache: remove old entries and add new ones
+            if let game = updatedGame {
+                RomDatabase.removeGameFromCache(oldRomPath: oldRomPath, oldSystemIdentifier: oldSystemIdentifier, oldFileURL: oldFileURL, oldRelatedFiles: oldRelatedFiles)
+                RomDatabase.addGameToCache(game)
+                DLOG("Updated games cache after moving game to new system")
             }
 
         } catch {

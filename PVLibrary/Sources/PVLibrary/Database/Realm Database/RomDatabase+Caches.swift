@@ -152,7 +152,18 @@ public extension RomDatabase {
             _gamesCache = await addGameCache(game, cache: RomDatabase.gamesCache ?? [:])
         }
     }
-    
+
+    /// Synchronously adds a game to the cache (useful when moving games between systems)
+    /// - Parameter game: The game to add to the cache
+    static func addGameToCache(_ game: PVGame) {
+        guard var cache = _gamesCache else {
+            // Cache doesn't exist, use async version to initialize it
+            addGamesCache(game)
+            return
+        }
+        _gamesCache = addGameCache(game, cache: cache)
+    }
+
     /// Removes a game from the games cache without reloading the entire cache
     /// - Parameter game: The game to remove from the cache
     static func removeGameFromCache(_ game: PVGame) {
@@ -161,15 +172,15 @@ public extension RomDatabase {
             // Cache doesn't exist, nothing to remove
             return
         }
-        
+
         // Remove the main entry for the game's ROM path
         cache.removeValue(forKey: game.romPath)
-        
+
         // Remove any entries for the game's file URL
         if let url = game.file?.url {
             cache.removeValue(forKey: altName(url, systemIdentifier: game.systemIdentifier))
         }
-        
+
         // Remove any entries for related files
         game.relatedFiles.forEach { relatedFile in
             if let url = relatedFile.url {
@@ -178,7 +189,38 @@ public extension RomDatabase {
                 cache.removeValue(forKey: altName(url, systemIdentifier: game.systemIdentifier))
             }
         }
-        
+
+        // Update the cache
+        _gamesCache = cache
+    }
+
+    /// Removes cache entries for a game using old values (useful when moving games between systems)
+    /// - Parameters:
+    ///   - oldRomPath: The old ROM path that was in the cache
+    ///   - oldSystemIdentifier: The old system identifier
+    ///   - oldFileURL: The old file URL (optional)
+    ///   - oldRelatedFiles: The old related files (optional)
+    static func removeGameFromCache(oldRomPath: String, oldSystemIdentifier: String, oldFileURL: URL? = nil, oldRelatedFiles: [URL] = []) {
+        DLOG("Removing game from cache using old values: romPath=\(oldRomPath), system=\(oldSystemIdentifier)")
+        guard var cache = _gamesCache else {
+            return
+        }
+
+        // Remove the main entry for the old ROM path
+        cache.removeValue(forKey: oldRomPath)
+
+        // Remove any entries for the old file URL
+        if let oldURL = oldFileURL {
+            cache.removeValue(forKey: altName(oldURL, systemIdentifier: oldSystemIdentifier))
+        }
+
+        // Remove any entries for old related files
+        oldRelatedFiles.forEach { url in
+            let key = (oldSystemIdentifier as NSString).appendingPathComponent(url.lastPathComponent)
+            cache.removeValue(forKey: key)
+            cache.removeValue(forKey: altName(url, systemIdentifier: oldSystemIdentifier))
+        }
+
         // Update the cache
         _gamesCache = cache
     }
