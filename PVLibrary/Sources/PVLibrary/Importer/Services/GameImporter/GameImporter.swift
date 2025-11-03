@@ -627,18 +627,34 @@ public final class GameImporter: GameImporting, ObservableObject {
             newItems.append(item)
         }
 
+        ILOG("GameImporter: addImports called with \(paths.count) paths for system \(targetSystem.rawValue)")
+
         /// Batch check for existing games before adding to queue (more efficient)
         let existingURLs = await batchCheckExistingGames(newItems)
         let itemsToAdd = newItems.filter { !existingURLs.contains($0.url) }
 
         if existingURLs.count > 0 {
-            ILOG("Skipping \(existingURLs.count) files that already exist in database (target system: \(targetSystem.rawValue))")
+            ILOG("GameImporter: Skipping \(existingURLs.count) files that already exist in database (target system: \(targetSystem.rawValue))")
         }
 
+        ILOG("GameImporter: Adding \(itemsToAdd.count) files to queue after filtering (from \(paths.count) total)")
+
         // Add filtered items to queue
+        var addedCount = 0
+        var skippedCount = 0
         for item in itemsToAdd {
+            let beforeCount = await importQueueActor.getQueue().count
             await self.addImportItemToQueue(item)
+            let afterCount = await importQueueActor.getQueue().count
+            if afterCount > beforeCount {
+                addedCount += 1
+            } else {
+                skippedCount += 1
+                VLOG("GameImporter: File \(item.url.lastPathComponent) was not added to queue (duplicate check or other filter)")
+            }
         }
+
+        ILOG("GameImporter: Successfully added \(addedCount) items to queue, \(skippedCount) were skipped (duplicates/filters)")
 
         // Then re-run preProcessQueue to ensure proper organization with the new items
         await preProcessQueue()
@@ -1578,6 +1594,11 @@ public final class GameImporter: GameImporting, ObservableObject {
                 if self.processingState != .paused {
                     ILOG("GameImporter: processQueue finished, setting state to idle")
                     self.processingState = .idle
+
+                    // Process enhanced artwork search queue after imports complete (lower priority)
+                    Task.detached(priority: .utility) {
+                        await ArtworkSearchQueue.shared.processPendingSearches()
+                    }
                 } else {
                     ILOG("GameImporter: processQueue finished but staying paused")
                 }
@@ -1924,9 +1945,27 @@ public final class GameImporter: GameImporting, ObservableObject {
         if isArtwork(item) { return .artwork }
         if isCDROM(item) { return .cdRom } // Covers .cue, .m3u, .iso, .chd etc.
 
-        // Must check for archives AFTER CDROM, as some CD images can be archives (e.g. .zip containing .iso)
-        // However, our current definition of cdRom covers extensions like .iso, .chd directly.
-        // If an archive contains a game, it's still initially an archive until extraction.
+        // Check for zip files - if in a system directory that supports zip-as-ROM, treat as game
+        if item.url.pathExtension.lowercased() == "zip" {
+            // Check if file is in a system directory that supports zip
+            if let systemFromPath = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent),
+               let pvSystem = PVSystem.all.first(where: { $0.identifier == systemFromPath.rawValue }),
+               pvSystem.supportedExtensions.contains("zip") {
+                // This is a zip-as-ROM file, treat it as a game
+                return .game
+            }
+            // Check if user explicitly chose a system that supports zip
+            if let userSystem = item.userChosenSystem,
+               let pvSystem = PVSystem.all.first(where: { $0.identifier == userSystem.rawValue }),
+               pvSystem.supportedExtensions.contains("zip") {
+                // User chose a system that supports zip, treat as game
+                return .game
+            }
+            // Otherwise, treat as archive that needs extraction
+            return .zip
+        }
+
+        // Check for other archive types
         if Extensions.archiveExtensions.contains(item.url.pathExtension.lowercased()) { return .zip }
 
         if !item.url.pathExtension.isEmpty { return .game } // Default to .game if has an extension and not other types
@@ -2126,8 +2165,10 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// - Parameter items: Items to check
     /// - Returns: Set of URLs that already exist in database
     private func batchCheckExistingGames(_ items: [ImportQueueItem]) async -> Set<URL> {
-        let gamesCache = RomDatabase.gamesCache
         var existingURLs = Set<URL>()
+        let realm = RomDatabase.sharedInstance.realm
+
+        ILOG("GameImporter: batchCheckExistingGames checking \(items.count) items")
 
         /// Group items by system directory for efficient batch queries
         let itemsBySystem = Dictionary(grouping: items) { item -> String in
@@ -2135,32 +2176,66 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         for (systemDir, systemItems) in itemsBySystem {
-            guard let systemID = SystemIdentifier(rawValue: systemDir) else { continue }
+            guard let systemID = SystemIdentifier(rawValue: systemDir) else {
+                WLOG("GameImporter: batchCheckExistingGames - Invalid system directory: \(systemDir)")
+                continue
+            }
 
-            /// Batch check by filename for this system
+            ILOG("GameImporter: batchCheckExistingGames - Checking \(systemItems.count) items for system \(systemID.rawValue)")
+
+            /// Batch query: Get all games for this system at once (single query instead of per-file)
+            let allGamesForSystem = realm.objects(PVGame.self)
+                .filter("systemIdentifier == %@", systemID.rawValue)
+
+            /// Build lookup sets for fast in-memory checking
+            var romPathsSet = Set<String>()
+            var md5Set = Set<String>()
+            var filePathsSet = Set<String>()
+
+            for game in allGamesForSystem {
+                if !game.romPath.isEmpty {
+                    romPathsSet.insert(game.romPath)
+                }
+                if !game.md5Hash.isEmpty {
+                    md5Set.insert(game.md5Hash.uppercased())
+                }
+                if let fileURL = game.file?.url?.path {
+                    filePathsSet.insert(fileURL)
+                }
+            }
+
+            ILOG("GameImporter: batchCheckExistingGames - Built lookup sets: \(romPathsSet.count) romPaths, \(md5Set.count) MD5s, \(filePathsSet.count) file paths")
+
+            /// Now check each item against the pre-built sets (fast in-memory lookups)
             for item in systemItems {
                 let filename = item.url.lastPathComponent
                 let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
-                let altName = RomDatabase.altName(item.url, systemIdentifier: systemID)
 
-                /// Check cache by partialPath and altName
-                if gamesCache[partialPath] != nil || gamesCache[altName] != nil {
+                /// Fast-path: Check by romPath (in-memory set lookup)
+                if romPathsSet.contains(partialPath) {
+                    VLOG("GameImporter: batchCheckExistingGames - Found existing game by romPath: \(filename)")
                     existingURLs.insert(item.url)
                     continue
                 }
 
-                /// Check by file path
-                for game in gamesCache.values {
-                    if game.systemIdentifier == systemID.rawValue,
-                       let gameFileURL = game.file?.url,
-                       gameFileURL.path == item.url.path {
-                        existingURLs.insert(item.url)
-                        break
-                    }
+                /// Check by MD5 if available (in-memory set lookup, skip expensive MD5 calculation if not needed)
+                /// Only calculate MD5 if we have games with MD5s to check against
+                if !md5Set.isEmpty, let md5 = item.md5?.uppercased(), md5Set.contains(md5) {
+                    VLOG("GameImporter: batchCheckExistingGames - Found existing game by MD5: \(filename)")
+                    existingURLs.insert(item.url)
+                    continue
+                }
+
+                /// Check by file path (in-memory set lookup)
+                if filePathsSet.contains(item.url.path) {
+                    VLOG("GameImporter: batchCheckExistingGames - Found existing game by file path: \(filename)")
+                    existingURLs.insert(item.url)
+                    continue
                 }
             }
         }
 
+        ILOG("GameImporter: batchCheckExistingGames - Found \(existingURLs.count) existing files out of \(items.count) checked")
         return existingURLs
     }
 
@@ -2178,10 +2253,16 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
         } else if fileType == .game || fileType == .cdRom {
             // For ROM files, check if we already have a matching game entry in the database
-            let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
-            if isROMAlreadyImported {
-                ILOG("GameImportQueue - Skipping ROM file that already exists in database: \(item.url.lastPathComponent)")
-                return
+            // Skip this check if userChosenSystem is set (meaning it came from scan and was already batch-checked)
+            // Only do individual check if this is a manual import
+            if item.userChosenSystem == nil {
+                let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
+                if isROMAlreadyImported {
+                    ILOG("GameImportQueue - Skipping ROM file that already exists in database: \(item.url.lastPathComponent)")
+                    return
+                }
+            } else {
+                VLOG("GameImportQueue - Skipping duplicate check for \(item.url.lastPathComponent) (already batch-checked with userChosenSystem)")
             }
 
             // Check if this is a late-arriving file that belongs to an already processed M3U or CUE
@@ -2278,12 +2359,12 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
 
             guard !isDuplicate else {
-                WLOG("GameImportQueue - Trying to add duplicate ImportItem to import queue with url: \(item.url) and id: \(item.id)")
+                WLOG("GameImportQueue - Trying to add duplicate ImportItem to import queue with url: \(item.url.lastPathComponent) and id: \(item.id)")
                 return
             }
 
             await importQueueActor.addImport(item)
-            ILOG("GameImportQueue - add ImportItem to import queue with url: \(item.url) and id: \(item.id)")
+            ILOG("GameImportQueue - Added ImportItem to import queue: \(item.url.lastPathComponent) (id: \(item.id))")
         }
     }
 
@@ -2482,15 +2563,23 @@ public final class GameImporter: GameImporting, ObservableObject {
             /// Check for games with matching file size first (fast database query)
             let gamesWithSameSize = realm.objects(PVGame.self).filter("file.sizeCache == %@", Int(fileSize))
 
-            /// If we find games with same size, verify they're actually the same file
-            if !gamesWithSameSize.isEmpty {
-                for game in gamesWithSameSize {
-                    if let gameFile = game.file,
-                       gameFile.url?.path == filePath {
-                        /// Exact path match - definitely exists
-                        ILOG("Found existing game by file path match: \(game.title ?? "Unknown")")
+            /// If we find games with same size, check by romPath first (much faster than URL lookup)
+            /// Only check one game to avoid expensive iteration
+            if let gameWithSameSize = gamesWithSameSize.first {
+                let filename = item.url.lastPathComponent
+                /// Check if romPath matches (avoids expensive URL computation)
+                if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
+                    let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
+                    if gameWithSameSize.romPath == partialPath {
+                        ILOG("Found existing game by file size and romPath match: \(gameWithSameSize.title ?? "Unknown")")
                         return true
                     }
+                }
+                /// Fallback: Only check URL if romPath doesn't match (rare case)
+                if let gameFile = gameWithSameSize.file,
+                   gameFile.url?.path == filePath {
+                    ILOG("Found existing game by file path match: \(gameWithSameSize.title ?? "Unknown")")
+                    return true
                 }
             }
         }
@@ -2513,26 +2602,32 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
             }
 
-            /// Check by MD5 for this system (fast lookup)
+            /// Check by MD5 for this system (fast lookup - primary key is very fast)
             if let md5 = item.md5?.uppercased() {
                 let realm = RomDatabase.sharedInstance.realm
                 if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
                    systemFromPath.rawValue == gameWithSameMD5.systemIdentifier,
                    gameWithSameMD5.file != nil {
-                    /// Verify file path matches
-                    if let gameFileURL = gameWithSameMD5.file?.url,
-                       gameFileURL.path == filePath {
-                        ILOG("Found existing game with same MD5 hash by path system: \(gameWithSameMD5.title ?? "Unknown")")
-                        return true
-                    }
+                    /// MD5 match + system match + file exists = definitely exists (no need to check URL)
+                    ILOG("Found existing game with same MD5 hash by path system: \(gameWithSameMD5.title ?? "Unknown")")
+                    return true
                 }
             }
         }
 
-        /// Check if file path matches any existing game's file URL (for files not in ROM directories)
-        /// Only check if file is in Imports or other non-ROM directories to avoid expensive iteration
-        let isInImportsOrOther = filePath.contains("/Imports/") || !filePath.contains(romsPath.path)
-        if isInImportsOrOther {
+        /// Check if file path matches any existing game's file URL (for files not already checked above)
+        /// Files in ROMs/system subfolders (e.g., ROMs/com.provenance.nes/) are already handled above (lines 2545-2577)
+        /// This check handles:
+        ///   1. Files in Imports folder
+        ///   2. Files in ROMs root (ROMs/ directly, not in a system subfolder)
+        ///   3. Files outside ROMs directory entirely
+        let isInImportsFolder = filePath.contains("/Imports/")
+        let isInRomsRoot = filePath.hasPrefix(romsPath.path) &&
+                          item.url.deletingLastPathComponent().path == romsPath.path
+        let isOutsideRomsDirectory = !filePath.hasPrefix(romsPath.path)
+        let needsPathCheck = isInImportsFolder || isInRomsRoot || isOutsideRomsDirectory
+
+        if needsPathCheck {
             /// Query Realm directly on current thread instead of iterating cache to avoid thread safety issues
             let realm = RomDatabase.sharedInstance.realm
             /// Use a Realm query to find games with matching file paths
@@ -2541,12 +2636,26 @@ public final class GameImporter: GameImporting, ObservableObject {
             let filename = fileURL.lastPathComponent
 
             /// Check by filename across all systems
-            let gamesWithMatchingFile = realm.objects(PVGame.self).filter("file.partialPath CONTAINS %@", filename)
-            for game in gamesWithMatchingFile {
-                /// Access file URL on the current thread (Realm query ensures we're on correct thread)
-                if let gameFileURL = game.file?.url,
+            /// Use romPath instead of file.partialPath (both store same format, but romPath is direct property)
+            /// Check if any game has this filename in its romPath
+            /// Only check games where romPath ends with the filename (faster than CONTAINS)
+            let gamesWithMatchingFile = realm.objects(PVGame.self)
+                .filter("romPath ENDSWITH %@", filename)
+            /// Only check first match to avoid expensive iteration
+            if let matchingGame = gamesWithMatchingFile.first {
+                /// If romPath matches exactly, no need to check URL
+                /// Extract system from path to build expected romPath
+                if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
+                    let expectedRomPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
+                    if matchingGame.romPath == expectedRomPath {
+                        ILOG("Found existing game by romPath match: \(matchingGame.title ?? "Unknown") at \(filePath)")
+                        return true
+                    }
+                }
+                /// Fallback: check URL only if romPath doesn't match exactly
+                if let gameFileURL = matchingGame.file?.url,
                    gameFileURL.path == filePath {
-                    ILOG("Found existing game by file path: \(game.title ?? "Unknown") at \(filePath)")
+                    ILOG("Found existing game by file path: \(matchingGame.title ?? "Unknown") at \(filePath)")
                     return true
                 }
             }

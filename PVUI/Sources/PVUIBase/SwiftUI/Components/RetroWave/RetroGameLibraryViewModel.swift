@@ -359,13 +359,36 @@ public class RetroGameLibraryViewModel: ObservableObject {
         }
 
         do {
+            guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
+                ELOG("Cannot move game with no path")
+                return
+            }
+
+            let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
+                .appendingPathComponent(sourceURL.lastPathComponent)
+
+            // Move the actual file first
+            try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
+            DLOG("Successfully moved game file to new system directory: \(destinationURL.path)")
+
             try realm.write {
                 guard !game.isInvalidated else { return }
 
                 let thawedGame = game.thaw() ?? game
+                thawedGame.system = system
                 thawedGame.systemIdentifier = system.identifier
 
-                // Update any other system-specific properties if needed
+                // Update file path to new system directory
+                let fileName = sourceURL.lastPathComponent
+                let partialPath: String = (system.identifier as NSString).appendingPathComponent(fileName)
+                thawedGame.romPath = partialPath
+                DLOG("Updated game romPath to: \(partialPath)")
+
+                // Update PVFile to point to the new location
+                let newFile = PVFile(withURL: destinationURL)
+                thawedGame.file = newFile
+                DLOG("Updated PVFile to point to new location: \(newFile.partialPath)")
+
                 DLOG("Successfully moved game \(thawedGame.title) to system \(system.name)")
             }
         } catch {

@@ -18,7 +18,7 @@ public struct SystemPickerView: View {
     let game: PVGame
     let availableSystems: [PVSystem]
     @Binding var isPresented: Bool
-    
+
     /// Initialize with game and isPresented binding
     /// - Parameters:
     ///   - game: The game to move
@@ -29,7 +29,7 @@ public struct SystemPickerView: View {
         self.availableSystems = availableSystems
         _isPresented = isPresented
     }
-    
+
     /// Backward compatibility initializer
     public init(game: PVGame, isPresented: Binding<Bool>) {
         self.game = game
@@ -76,6 +76,10 @@ public struct SystemPickerView: View {
             let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: newSystem.identifier)
                 .appendingPathComponent(sourceURL.lastPathComponent)
 
+            // Move the actual file first
+            try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
+            DLOG("Successfully moved game file to new system directory <\(destinationURL.path())>")
+
             let realm = try Realm()
             try realm.write {
                 /// Thaw the PVGame for editing
@@ -83,20 +87,20 @@ public struct SystemPickerView: View {
                 thawedGame?.system = newSystem
                 DLOG("Updated game system to: \(newSystem.name)")
                 thawedGame?.systemIdentifier = newSystem.identifier
-                DLOG("Updated game system to: \(newSystem.identifier)")
+                DLOG("Updated game systemIdentifier to: \(newSystem.identifier)")
 
                 // Update file path to new system directory
-                let fileName = (thawedGame?.romPath as NSString?)?.lastPathComponent ?? ""
+                let fileName = sourceURL.lastPathComponent
                 let partialPath: String = (newSystem.identifier as NSString).appendingPathComponent(fileName)
                 thawedGame?.romPath = partialPath
-                DLOG("Updated game file path to: \(partialPath)")
-//                thawedGame?.romPath = "\(newSystem.identifier)/\(fileName)"
+                DLOG("Updated game romPath to: \(partialPath)")
+
+                // Update PVFile to point to the new location
+                // Create a new PVFile with the destination URL, which will calculate the correct partialPath
+                let newFile = PVFile(withURL: destinationURL)
+                thawedGame?.file = newFile
+                DLOG("Updated PVFile to point to new location: \(newFile.partialPath)")
             }
-
-            // Move the actual file
-
-            try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
-            DLOG("Successfully moved game file to new system directory <\(destinationURL.path())>")
 
         } catch {
             ELOG("Failed to move game to new system: \(error.localizedDescription)")
@@ -106,7 +110,7 @@ public struct SystemPickerView: View {
 
 public struct SystemRowView: View {
     let system: PVSystem
-    
+
     public init(system: PVSystem) {
         self.system = system
     }

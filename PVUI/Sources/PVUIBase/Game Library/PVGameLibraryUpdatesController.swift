@@ -376,62 +376,79 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         let lastScanTime = UserDefaults.standard.object(forKey: lastScanKey) as? Date ?? Date.distantPast
         ILOG("Last scan time: \(lastScanTime)")
 
+        /// Collect all files that need importing before adding them to the queue
+        /// This prevents auto-start from triggering multiple times during the scan
+        var allNewGames: [(files: [URL], system: SystemIdentifier)] = []
+
         for system in dbSystems.values {
             ILOG("PVGameLibrary: Scanning \(system.identifier)")
             let files = await RomDatabase.getFileSystemROMCache(for: system)
 
-            /// Incremental scan: Filter files modified since last scan
-            let potentiallyNewFiles = files.keys.filter { fileURL in
-                /// Check modification time (if available) - skip if not modified since last scan
-                if let modDate = try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.modificationDate] as? Date,
-                   modDate <= lastScanTime {
-                    /// File hasn't changed since last scan, skip database check
-                    return false
-                }
-
-                /// File is new or modified, check database
-                return true
-            }
-
             /// Get existing partialPaths for this system (already extracted above)
             let existingPartialPaths = partialPathsBySystem[system.identifier] ?? Set<String>()
+            let realm = RomDatabase.sharedInstance.realm
 
-            let newGames = potentiallyNewFiles.filter { fileURL in
+            /// Check all files, but use modification time as optimization hint
+            /// Files modified since last scan definitely need checking
+            /// Files not modified might still need checking if they're not in database
+            let newGames = files.keys.filter { fileURL in
                 let filename = fileURL.lastPathComponent
                 let partialPath = (system.identifier as NSString).appendingPathComponent(filename)
                 let altName = RomDatabase.altName(fileURL, systemIdentifier: system.identifier)
 
-                /// Check if game exists by partialPath key
-                if dbGames.index(forKey: partialPath) != nil {
+                /// Quick check: If file exists in cache by partialPath or altName, skip
+                if dbGames.index(forKey: partialPath) != nil || dbGames.index(forKey: altName) != nil {
                     return false
                 }
 
-                /// Check if game exists by altName key
-                if dbGames.index(forKey: altName) != nil {
-                    return false
-                }
-
-                /// Check if any game's file partialPath matches (using pre-extracted paths)
+                /// Quick check: If partialPath is in existing paths set, skip
                 if existingPartialPaths.contains(partialPath) {
                     return false
                 }
 
-                /// File doesn't exist in database
+                /// Optimize: If file hasn't been modified since last scan AND was scanned before,
+                /// we can skip it (but files that exist but weren't scanned still need checking)
+                /// However, to be safe, we'll verify the file actually exists in database by checking file path
+                let filePath = fileURL.path
+                let modDate = try? FileManager.default.attributesOfItem(atPath: filePath)[.modificationDate] as? Date
+
+                /// If file hasn't been modified since last scan, do a quick verification it's actually in DB
+                if let modDate = modDate, modDate <= lastScanTime {
+                    /// Verify file exists in database by checking romPath (faster than URL check)
+                    /// romPath stores the partial path like "{systemId}.filename" which matches our partialPath
+                    let gameExists = realm.objects(PVGame.self)
+                        .filter("systemIdentifier == %@ AND romPath == %@", system.identifier, partialPath)
+                        .first != nil
+                    if gameExists {
+                        /// File exists in database, skip
+                        return false
+                    }
+                }
+
+                /// File doesn't exist in database (verified by cache check and optionally by path check)
                 return true
             }
             if !newGames.isEmpty {
-                ILOG("PVGameLibraryUpdatesController: Adding \(newGames.count) new files to the queue for system \(system.identifier)")
-                await gameImporter.addImports(forPaths: newGames, targetSystem:system.systemIdentifier)
+                ILOG("PVGameLibraryUpdatesController: Found \(newGames.count) new files for system \(system.identifier)")
+                allNewGames.append((files: newGames, system: system.systemIdentifier))
                 queueGames = true
             }
-            ILOG("PVGameLibrary: Added items for \(system.identifier) to queue")
+            ILOG("PVGameLibrary: Scanned \(system.identifier)")
         }
 
         /// Update last scan time for incremental scanning
         UserDefaults.standard.set(Date(), forKey: lastScanKey)
 
-        if (queueGames) {
-            ILOG("PVGameLibrary: Queued new items, starting to process")
+        /// Add all files to the queue in batches after scanning is complete
+        /// This ensures auto-start only triggers once instead of per-system
+        if queueGames {
+            let totalFiles = allNewGames.reduce(0) { $0 + $1.files.count }
+            ILOG("PVGameLibrary: Adding \(totalFiles) files to queue from \(allNewGames.count) systems")
+            for (files, system) in allNewGames {
+                ILOG("PVGameLibrary: Adding \(files.count) files for system \(system.rawValue)")
+                await gameImporter.addImports(forPaths: files, targetSystem: system)
+            }
+            ILOG("PVGameLibrary: Queued all new items, starting to process")
             gameImporter.startProcessing()
         }
         ILOG("PVGameLibrary: importROMDirectories complete")

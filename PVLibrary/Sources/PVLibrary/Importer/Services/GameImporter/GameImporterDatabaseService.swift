@@ -79,12 +79,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
 
         DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.libretroDatabaseName)")
-        
+
         #if !os(tvOS)
         // Check if this file is currently being recovered from iCloud
         if iCloudDriveSync.isFileBeingRecovered(queueItem.url.path) {
             ILOG("File \(queueItem.url.lastPathComponent) is currently being recovered from iCloud. Delaying import.")
-            
+
             // Re-queue this item with a delay
             Task {
                 try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 second delay
@@ -104,20 +104,20 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         DLOG("Checking game cache for partialPath: \(partialPath) or similarName: \(similarName)")
         let gamesCache = RomDatabase.gamesCache
-        
+
         // Check if the file is already in the correct location and has a database entry
         let isInCorrectLocation = destUrl.path == queueItem.url.path
-        
+
         if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
            targetSystem.rawValue == existingGame.systemIdentifier {
             DLOG("Found existing game in cache: \(existingGame.title)")
-            
+
             // If the game already has a valid file and is in the correct location, we can skip further processing
             if isInCorrectLocation && existingGame.file != nil {
                 ILOG("Game \(existingGame.title) already has a database entry with a valid file and is in the correct location, skipping import")
                 return
             }
-            
+
             // Otherwise, just update the relative path
             DLOG("Updating relative path for existing game")
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
@@ -126,14 +126,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             if let md5 = queueItem.md5?.uppercased() {
                 let realm = RomDatabase.sharedInstance.realm
                 let gamesWithSameMD5 = realm.objects(PVGame.self).filter("md5Hash == %@", md5)
-                
+
                 if let existingGameWithSameMD5 = gamesWithSameMD5.first, targetSystem.rawValue == existingGameWithSameMD5.systemIdentifier {
                     ILOG("Found existing game with same MD5 hash: \(existingGameWithSameMD5.title), updating relative path")
                     await saveRelativePath(existingGameWithSameMD5, partialPath: partialPath, file: queueItem.url)
                     return
                 }
             }
-            
+
             DLOG("No existing game found, starting import to database")
             try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: nil)
         }
@@ -184,12 +184,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let name = RomDatabase.altName(queueItem.url, systemIdentifier: system.identifier)
 
         DLOG("Searching for related files with name: \(name) among \(files.count) cached files")
-        
+
         // Optimize: Use synchronous processing instead of asyncForEach to avoid hang
         // and reduce logging overhead for better performance
         let startTime = Date()
         var matchedCount = 0
-        
+
         for url in files {
             let relativeName = RomDatabase.altName(url, systemIdentifier: system.identifier)
             if relativeName == name {
@@ -199,7 +199,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 DLOG("Found matching related file: \(url.lastPathComponent)")
             }
         }
-        
+
         let duration = Date().timeIntervalSince(startTime)
         DLOG("Completed related file search in \(String(format: "%.2f", duration))s: found \(matchedCount) matches out of \(files.count) files")
 
@@ -223,14 +223,23 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         DLOG("About to append \(relatedPVFiles.count) related files to game")
         game.relatedFiles.append(objectsIn: relatedPVFiles)
         game.md5Hash = md5
-        
+
         DLOG("About to call finishUpdateOrImport for game: \(partialPath)")
         let finishStartTime = Date()
         try await finishUpdateOrImport(ofGame: game)
         let finishDuration = Date().timeIntervalSince(finishStartTime)
         DLOG("Completed finishUpdateOrImport for game: \(partialPath) in \(String(format: "%.2f", finishDuration))s")
-        
+
         queueItem.gameDatabaseID = game.id
+
+        // Queue game for enhanced artwork search if it doesn't have artwork
+        // This runs at lower priority after primary import completes
+        if game.originalArtworkFile == nil && game.originalArtworkURL.isEmpty {
+            Task {
+                await ArtworkSearchQueue.shared.queueGameForArtworkSearch(game.id)
+            }
+        }
+
         DLOG("Successfully completed database import for: \(partialPath)")
     }
 
@@ -244,14 +253,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     /// Finishes the update or import of a game
     internal func finishUpdateOrImport(ofGame game: PVGame) async throws {
         DLOG("finishUpdateOrImport: Starting for game: \(game.romPath)")
-        
+
         // Only process if rom doensn't exist in DB
         DLOG("finishUpdateOrImport: Checking if game already exists in cache")
         if RomDatabase.gamesCache[game.romPath] != nil {
             DLOG("finishUpdateOrImport: Game already exists in database cache: \(game.romPath)")
             throw GameImporterError.romAlreadyExistsInDatabase
         }
-        
+
         var game:PVGame = game
         if game.requiresSync {
             DLOG("finishUpdateOrImport: About to call getUpdatedGameInfo for: \(game.romPath)")
@@ -262,7 +271,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         } else {
             DLOG("finishUpdateOrImport: Skipping getUpdatedGameInfo (requiresSync = false)")
         }
-        
+
         if game.originalArtworkFile == nil {
             DLOG("finishUpdateOrImport: About to call getArtwork for: \(game.romPath)")
             let artworkStartTime = Date()
@@ -272,7 +281,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         } else {
             DLOG("finishUpdateOrImport: Skipping getArtwork (originalArtworkFile already exists)")
         }
-        
+
         DLOG("finishUpdateOrImport: About to save game to database: \(game.romPath)")
         let saveStartTime = Date()
         try self.saveGame(game)
@@ -286,11 +295,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let md5 = game.md5Hash
         if !md5.isEmpty {
             DLOG("Checking for existing custom artwork for game with MD5: \(md5)")
-            
+
             // Try to find existing custom artwork with this MD5
             if let customArtworkKey = PVMediaCache.findExistingCustomArtwork(forMD5: md5) {
                 DLOG("Found existing custom artwork with key: \(customArtworkKey)")
-                
+
                 // If we found a custom artwork key, set it as the customArtworkURL
                 if let localURL = PVMediaCache.filePath(forKey: customArtworkKey) {
                     DLOG("Setting custom artwork URL: \(localURL.path)")
@@ -300,7 +309,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 DLOG("No existing custom artwork found for game with MD5: \(md5)")
             }
         }
-        
+
         // Continue with original artwork handling
         var url = game.originalArtworkURL
         if url.isEmpty {
@@ -544,7 +553,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.failedToMoveROM(error)
         }
     }
-    
+
     /// Calculates the MD5 hash for a given game
     @objc
     public func calculateMD5(forGame game: PVGame) async -> String? {
@@ -570,7 +579,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         return nil
     }
-    
+
     /// Async MD5 calculation that yields control periodically to prevent blocking the import queue
     private func calculateMD5Async(at url: URL, fromOffset offset: UInt) async -> String? {
         return await withCheckedContinuation { continuation in
@@ -578,45 +587,45 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 do {
                     let fileHandle = try FileHandle(forReadingFrom: url)
                     defer { try? fileHandle.close() }
-                    
+
                     try fileHandle.seek(toOffset: UInt64(offset))
-                    
+
                     var md5Context = CC_MD5_CTX()
                     CC_MD5_Init(&md5Context)
-                    
+
                     let chunkSize = 1024 * 32 // 32KB chunks
                     var iterationCount = 0
-                    
+
                     while true {
                         let data = try fileHandle.read(upToCount: chunkSize)
-                        
+
                         guard let data = data, !data.isEmpty else {
                             break
                         }
-                        
+
                         data.withUnsafeBytes { bytes in
                             CC_MD5_Update(&md5Context, bytes.bindMemory(to: UInt8.self).baseAddress, CC_LONG(data.count))
                         }
-                        
+
                         // Yield control every 100 iterations (~3.2MB) to prevent blocking
                         iterationCount += 1
                         if iterationCount % 100 == 0 {
                             await Task.yield()
                         }
-                        
+
                         // Break if we read less than the chunk size (end of file)
                         if data.count < chunkSize {
                             break
                         }
                     }
-                    
+
                     // Finalize MD5
                     var md5Digest = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
                     CC_MD5_Final(&md5Digest, &md5Context)
-                    
+
                     let md5String = md5Digest.map { String(format: "%02x", $0) }.joined().uppercased()
                     continuation.resume(returning: md5String)
-                    
+
                 } catch {
                     ELOG("Error calculating MD5 for file \(url.path): \(error)")
                     continuation.resume(returning: nil)

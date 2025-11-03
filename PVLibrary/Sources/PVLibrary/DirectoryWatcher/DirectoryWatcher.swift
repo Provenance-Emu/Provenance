@@ -15,6 +15,7 @@ import SWCompression
 @_exported import ZipArchive
 import Combine
 import Observation
+import PVLibrary
 
 /// Extension for FileManager to remove an item asynchronously
 extension FileManager {
@@ -209,24 +210,20 @@ public final class DirectoryWatcher: ObservableObject {
     public func extractArchive(at filePath: URL) async throws {
         ILOG("Starting archive extraction for file: \(filePath.path)")
         stopWatchingFile(at: filePath)
-        //stopMonitoring() // Stop monitoring to avoid interference
-
-//        defer {
-//            Task {
-//                ILOG("Scheduling delayed start of monitoring after extraction")
-//                try? await delay(2) {
-//                    do {
-//                        try self.startMonitoring()
-//                    } catch {
-//                        ELOG("Error starting monitoring after extraction: \(error.localizedDescription)")
-//                    }
-//                }
-//            }
-//        }
 
         guard !filePath.path.contains("MACOSX"),
               FileManager.default.fileExists(atPath: filePath.path) else {
             ILOG("Invalid file path or file doesn't exist: \(filePath.path)")
+            return
+        }
+
+        // Check if archive should be kept as-is (for systems that support archives directly)
+        let zipChecker = ArchiveZipSupportChecker.shared
+        let (shouldKeepAsIs, systemID) = await zipChecker.shouldKeepArchiveAsIs(filePath)
+
+        if shouldKeepAsIs, let systemID = systemID {
+            ILOG("Archive \(filePath.lastPathComponent) supports zip-as-ROM for system \(systemID.rawValue) - moving directly to system folder")
+            try await handleZipAsROM(filePath: filePath, systemID: systemID)
             return
         }
 
@@ -238,7 +235,7 @@ public final class DirectoryWatcher: ObservableObject {
 
         do {
             updateExtractionStatus(.startedArchive(path: filePath))
-            
+
             // Post notification that extraction has started
             Task { @MainActor in
                 NotificationCenter.default.post(
@@ -252,14 +249,18 @@ public final class DirectoryWatcher: ObservableObject {
                 )
             }
 
-            let tempDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-            try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
+            // Extract to temp directory that's NOT watched by file scanner
+            // This prevents race conditions where files are detected mid-extraction
+            let tempExtractionDir = FileManager.default.temporaryDirectory
+                .appendingPathComponent("ArchiveExtraction")
+                .appendingPathComponent(UUID().uuidString)
+            try FileManager.default.createDirectory(at: tempExtractionDir, withIntermediateDirectories: true, attributes: nil)
 
             var extractedFiles: [URL] = []
-            for try await extractedFile in extractor.extract(at: filePath, to: tempDirectory, progress: { progress in
+            for try await extractedFile in extractor.extract(at: filePath, to: tempExtractionDir, progress: { progress in
                 ILOG("Extraction progress for \(filePath.lastPathComponent): \(Int(progress * 100))%")
                 self.extractionProgress = progress
-                
+
                 // Post notification for extraction progress
                 Task { @MainActor in
                     NotificationCenter.default.post(
@@ -279,6 +280,7 @@ public final class DirectoryWatcher: ObservableObject {
                 ILOG("Extracted file: \(extractedFile.path)")
             }
 
+            // Delete archive AFTER extraction succeeds (before moving files)
             try await FileManager.default.removeItem(at: filePath)
             updateExtractionStatus(.completedArchive(paths: extractedFiles))
             ILOG("Archive extraction completed for file: \(filePath.path)")
@@ -301,18 +303,19 @@ public final class DirectoryWatcher: ObservableObject {
             // Sort extracted files, prioritizing .m3u and .cue files
             let sortedFiles = sortExtractedFiles(extractedFiles)
 
-            // Move files to the watched directory
-            let movedFiles = try await moveExtractedFiles(sortedFiles, from: tempDirectory, to: watchedDirectory)
+            // Move files FLATLY to the watched directory (no subdirectory structure)
+            // This ensures files are immediately available for import without race conditions
+            let movedFiles = try await moveExtractedFilesFlat(sortedFiles, from: tempExtractionDir, to: watchedDirectory)
 
             // Notify about the completed files
             completedFilesContinuation?.yield(movedFiles)
 
             // Clean up temporary directory
-            try await FileManager.default.removeItem(at: tempDirectory)
+            try await FileManager.default.removeItem(at: tempExtractionDir)
         } catch {
             ELOG("Error during archive extraction: \(error.localizedDescription)")
             updateExtractionStatus(.failed(error: error))
-            
+
             // Post notification that extraction has failed
             Task { @MainActor in
                 NotificationCenter.default.post(
@@ -326,9 +329,63 @@ public final class DirectoryWatcher: ObservableObject {
                     ]
                 )
             }
-            
+
             throw error
         }
+    }
+
+    /// Handle zip files that should be kept as-is (for systems like MAME that support zip directly)
+    private func handleZipAsROM(filePath: URL, systemID: SystemIdentifier) async throws {
+        let systemRomsDirectory = Paths.romsPath(forSystemIdentifier: systemID)
+        let destinationURL = systemRomsDirectory.appendingPathComponent(filePath.lastPathComponent)
+
+        // Create system directory if needed
+        try FileManager.default.createDirectory(at: systemRomsDirectory, withIntermediateDirectories: true, attributes: nil)
+
+        // Check if file already exists at destination
+        if FileManager.default.fileExists(atPath: destinationURL.path) {
+            ILOG("Zip file \(filePath.lastPathComponent) already exists at destination, removing source")
+            try await FileManager.default.removeItem(at: filePath)
+            completedFilesContinuation?.yield([destinationURL])
+            return
+        }
+
+        // Move zip directly to system folder
+        try FileManager.default.moveItem(at: filePath, to: destinationURL)
+        ILOG("Moved zip-as-ROM \(filePath.lastPathComponent) directly to system folder \(systemID.rawValue)")
+
+        // Trigger import for the moved file
+        Task {
+            await GameImporter.shared.addImports(forPaths: [destinationURL], targetSystem: systemID)
+            ILOG("Triggered import for zip-as-ROM \(filePath.lastPathComponent) in system \(systemID.rawValue)")
+        }
+
+        completedFilesContinuation?.yield([destinationURL])
+    }
+
+    /// Move extracted files flatly (preserving only filenames, no directory structure)
+    private func moveExtractedFilesFlat(_ files: [URL], from sourceDir: URL, to destinationDir: URL) async throws -> [URL] {
+        var movedFiles: [URL] = []
+        for file in files {
+            // Only preserve the filename, flatten directory structure
+            let fileName = file.lastPathComponent
+            let destinationURL = destinationDir.appendingPathComponent(fileName)
+
+            // Handle filename conflicts
+            var finalDestinationURL = destinationURL
+            var counter = 1
+            while FileManager.default.fileExists(atPath: finalDestinationURL.path) {
+                let nameWithoutExt = destinationURL.deletingPathExtension().lastPathComponent
+                let ext = destinationURL.pathExtension
+                finalDestinationURL = destinationDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                counter += 1
+            }
+
+            try FileManager.default.moveItem(at: file, to: finalDestinationURL)
+            movedFiles.append(finalDestinationURL)
+            ILOG("Moved extracted file flatly: \(fileName) -> \(finalDestinationURL.lastPathComponent)")
+        }
+        return movedFiles
     }
 
     private func sortExtractedFiles(_ files: [URL]) -> [URL] {
