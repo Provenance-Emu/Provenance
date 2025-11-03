@@ -33,7 +33,7 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
     case unsupportedSystem
     case userCancelledSelection
     case waitingForAssociatedFiles(expected: [String])
-    
+
     /// The domain of the error.
     public static var errorDomain: String {
         return "org.provenance-emu.provenance.GameImporter"
@@ -93,69 +93,59 @@ public enum GameImporterError: Error, Sendable, CustomNSError, LocalizedError {
     var errorString: String {
         switch self {
         case .couldNotCalculateMD5:
-            return "Fail to get MD5"
+            return "Unable to verify file integrity. The file may be corrupted or inaccessible."
         case .romAlreadyExistsInDatabase:
-            return "Duplicate ROM"
+            return "This game is already in your library. To import it again, remove the existing copy first."
         case .noSystemMatched:
-            return "No System Match"
+            return "Could not identify which system this game belongs to. Try renaming the file to include the system name (e.g., \"Game Name (NES).zip\")."
         case .unsupportedSystem:
-            return "Unsupported System"
+            return "This system is not supported. Check that the required core is installed."
         case .systemNotDetermined:
-            return "Failed to determine system"
+            return "Could not determine the game system. Make sure the file extension matches a supported system."
         case .failedToMoveCDROM(let error):
-            return "Failed to move CDROM files: \(error.localizedDescription)"
+            return "Failed to import CD-ROM files: \(error.localizedDescription). Check that you have enough storage space."
         case .failedToMoveROM(let error):
-            return "Failed to move ROM files: \(error.localizedDescription)"
+            return "Failed to import game: \(error.localizedDescription). Check that you have enough storage space and file permissions."
         case .unsupportedFile:
-            return "Unsupported File type"
+            return "This file type is not supported. Supported formats include ZIP archives and ROM files for supported systems."
         case .noBIOSMatchForBIOSFileType:
-            return "Failed to find BIOS System Match"
+            return "Could not match this BIOS file to a system. Place BIOS files in the BIOS folder with their correct names."
         case .unsupportedCDROMFile:
-            return "Unsupported CDROM File"
+            return "This CD-ROM format is not supported. Make sure you have all required files (CUE and BIN files together)."
         case .incorrectDestinationURL:
-            return "Internal Error - Bad Destination Path"
+            return "Internal error: Invalid destination path. Please try importing again."
         case .conflictDetected:
-            return "Conflict"
+            return "Multiple systems match this file. Please select which system to use in the import queue."
         case .missingRequiredProperty(let property):
-            return "Missing required property: \(property)"
+            return "Missing required information: \(property). The file may be incomplete or corrupted."
         case .systemNotFound:
-            return "System not found in database"
+            return "The system for this game was not found. Make sure the required core is installed."
         case .artworkImportFailed:
-            return "Artwork import failed"
+            return "Failed to import artwork. The image file may be corrupted or in an unsupported format."
         case .unsupportedFileExtension(let ext):
-            return "Unsupported file extension: \(ext)"
+            return "File extension \".\(ext)\" is not supported. Check the file format and try again."
         case .couldNotOpenArchive:
-            return "Could not open archive"
+            return "Could not open archive file. The ZIP file may be corrupted or password-protected."
         case .archiveIsEmpty:
-            return "Archive is empty"
+            return "The archive file is empty. Make sure the ZIP file contains game files."
         case .couldNotCreateDestinationPath(let path):
-            return "Could not create destination path: \(path)"
+            return "Could not create destination folder: \(path). Check storage permissions and available space."
         case .fileMoveFailed(let source, let destination, let error):
-            return "Failed to move file from \(source) to \(destination): \(error.localizedDescription)"
+            return "Failed to move file: \(error.localizedDescription). Check storage space and permissions."
         case .errorGettingFileAttributes(let path, let error):
-            return "Error getting file attributes for \(path): \(error.localizedDescription)"
-        case .noSystemMatched:
-            return "No system matched for this file"
+            return "Could not read file information: \(error.localizedDescription). The file may be inaccessible."
         case .biosNotFound:
-            return "BIOS file not found"
-        case .romAlreadyExistsInDatabase:
-            return "ROM file already exists in database"
-        case .artworkImportFailed:
-            return "Artwork import failed"
+            return "Required BIOS file not found. Place BIOS files in the BIOS folder. Check the wiki for required BIOS files."
         case .userCancelledSelection:
-            return "User cancelled selection"
-        case .incorrectDestinationURL:
-            return "Incorrect destination URL"
-        case .couldNotCalculateMD5:
-            return "Could not calculate MD5"
+            return "Import cancelled"
         case .m3uProcessingFailed(let reason):
-            return "M3U processing failed: \(reason)"
+            return "Failed to process playlist file: \(reason). Make sure all referenced files are present."
         case .cueProcessingFailed(let reason):
-            return "CUE processing failed: \(reason)"
+            return "Failed to process CUE sheet: \(reason). Make sure the CUE file and all referenced BIN files are in the same folder."
         case .invalidBIOSLocation(let path):
-            return "BIOS file found at invalid location: \(path). BIOS files should be in the BIOS folder or a subfolder."
+            return "BIOS file found at invalid location: \(path). BIOS files should be placed in the BIOS folder or a system-specific subfolder."
         case .waitingForAssociatedFiles(let expected):
-            return "Import item is waiting for associated files: \(expected.joined(separator: ", "))"
+            return "Waiting for required files: \(expected.joined(separator: ", ")). Make sure all files are imported together."
         }
     }
 }

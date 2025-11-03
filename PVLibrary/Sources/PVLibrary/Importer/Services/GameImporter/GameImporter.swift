@@ -607,7 +607,12 @@ public final class GameImporter: GameImporting, ObservableObject {
         let itemsToAdd = newItems.filter { !existingURLs.contains($0.url) }
 
         if existingURLs.count > 0 {
-            ILOG("Skipping \(existingURLs.count) files that already exist in database")
+            let fileNames = existingURLs.map { $0.lastPathComponent }.prefix(3).joined(separator: ", ")
+            let moreFiles = existingURLs.count > 3 ? " and \(existingURLs.count - 3) more" : ""
+            ILOG("Skipping \(existingURLs.count) file(s) that already exist in library: \(fileNames)\(moreFiles)")
+            await MainActor.run {
+                self.updateImporterStatus("Skipped \(existingURLs.count) duplicate file(s)")
+            }
         }
 
         // Add filtered items to queue
@@ -634,7 +639,12 @@ public final class GameImporter: GameImporting, ObservableObject {
         let itemsToAdd = newItems.filter { !existingURLs.contains($0.url) }
 
         if existingURLs.count > 0 {
-            ILOG("GameImporter: Skipping \(existingURLs.count) files that already exist in database (target system: \(targetSystem.rawValue))")
+            let fileNames = existingURLs.map { $0.lastPathComponent }.prefix(3).joined(separator: ", ")
+            let moreFiles = existingURLs.count > 3 ? " and \(existingURLs.count - 3) more" : ""
+            ILOG("GameImporter: Skipping \(existingURLs.count) file(s) that already exist in library: \(fileNames)\(moreFiles) (target system: \(targetSystem.rawValue))")
+            await MainActor.run {
+                self.updateImporterStatus("Skipped \(existingURLs.count) duplicate file(s)")
+            }
         }
 
         ILOG("GameImporter: Adding \(itemsToAdd.count) files to queue after filtering (from \(paths.count) total)")
@@ -784,17 +794,20 @@ public final class GameImporter: GameImporting, ObservableObject {
         currentTimeoutTask = nil
         processingStartTime = nil
 
-        // Reset state to idle on main actor
+        // Reset state to idle on main actor with helpful message
         await MainActor.run {
             self.processingState = .idle
-            self.updateImporterStatus("Import processing recovered from timeout")
+            self.updateImporterStatus("Import processing timed out. Check the import queue for any failed items and try again.")
         }
 
-        // Post notification about the timeout recovery
+        /// Post notification about timeout with user-friendly message
         NotificationCenter.default.post(
             name: .GameImporterDidFinish,
             object: nil,
-            userInfo: ["reason": "timeout_recovery"]
+            userInfo: [
+                "reason": "timeout_recovery",
+                "message": "Import processing took too long and was cancelled. Check the import queue and try importing files in smaller batches."
+            ]
         )
 
         ILOG("GameImporter: Processing state reset to idle after timeout recovery")
@@ -1711,12 +1724,14 @@ public final class GameImporter: GameImporting, ObservableObject {
                 switch error {
                 case .conflictDetected:
                     item.status = .conflict
-                    updateImporterStatus("Conflict for \(itemName). User action needed.")
+                    updateImporterStatus("Conflict detected for \(itemName). This file matches multiple systems. Please select the correct system in the import queue.")
                     WLOG("GameImportQueue - processing item in queue: \(itemName) resulted in conflict.")
 
                 case .waitingForAssociatedFiles(let expectedFiles):
                     item.status = .partial(expectedFiles: expectedFiles)
-                    updateImporterStatus("Waiting for files for \(itemName)")
+                    let fileList = expectedFiles.prefix(3).joined(separator: ", ")
+                    let moreFiles = expectedFiles.count > 3 ? " and \(expectedFiles.count - 3) more" : ""
+                    updateImporterStatus("Waiting for required files for \(itemName): \(fileList)\(moreFiles)")
                     ILOG("GameImportQueue - item \(itemName) is waiting for associated files: \(expectedFiles.joined(separator: ", ")).")
 
                 default:
