@@ -234,10 +234,10 @@ extension PVEmulatorViewController {
 
             if lastAppliedViewportFrame != combinedRect {
                 DLOG("🎮 Using notification-based dual screen frame: \(combinedRect)")
-                if core.coreIdentifier?.contains("emuThree") == true || core.coreIdentifier?.contains("3DS") == true {
+                if core.coreIdentifier?.contains("emuThree") == true || core.coreIdentifier?.contains("3DS") == true || core.coreIdentifier?.contains("azahar") == true {
                     applyDualScreenViewportForEmuThree(frame: combinedRect)
                 } else {
-                    applyExactFrameToGPUView(combinedRect)
+                    applyFrameToGPUView(combinedRect)
                 }
                 currentTargetFrame = combinedRect
                 lastAppliedViewportFrame = combinedRect
@@ -293,7 +293,7 @@ extension PVEmulatorViewController {
             if core.coreIdentifier?.contains("emuThree") == true || core.coreIdentifier?.contains("3DS") == true {
                 applyDualScreenViewportForEmuThree(frame: frame)
             } else {
-                applyExactFrameToGPUView(frame)
+                applyFrameToGPUView(frame)
             }
 
             currentTargetFrame = frame
@@ -305,48 +305,79 @@ extension PVEmulatorViewController {
 
     /// Special handling for emuThreeDS dual screen positioning
     private func applyDualScreenViewportForEmuThree(frame: CGRect) {
+        DLOG("🎮 SKIN: applyDualScreenViewportForEmuThree called with frame: \(frame)")
+
         // emuThreeDS adds its view to touchViewController.view
         // We need to position the view relative to touchViewController.view, not self.view
         guard let touchView = core.touchViewController?.view else {
-            DLOG("🎮 emuThreeDS: touchViewController.view not found")
+            DLOG("🎮 SKIN: emuThreeDS: touchViewController.view not found, falling back to standard positioning")
+            // Fallback to standard positioning
+            applyFrameToGPUView(frame)
             return
         }
 
-        DLOG("🎮 emuThreeDS positioning:")
-        DLOG("🎮   Frame in view coords: \(frame)")
-        DLOG("🎮   View bounds: \(view.bounds)")
-        DLOG("🎮   TouchView bounds: \(touchView.bounds)")
+        DLOG("🎮 SKIN: emuThreeDS dual screen positioning:")
+        DLOG("🎮 SKIN:   Frame in view coords: \(frame)")
+        DLOG("🎮 SKIN:   View bounds: \(view.bounds)")
+        DLOG("🎮 SKIN:   TouchView bounds: \(touchView.bounds)")
+        DLOG("🎮 SKIN:   TouchView subviews count: \(touchView.subviews.count)")
+
+        // Ensure touchView has valid bounds
+        if !(touchView.bounds.width > 0 && touchView.bounds.height > 0) {
+            DLOG("🎮 SKIN: TouchView has invalid bounds, forcing layout")
+            touchView.setNeedsLayout()
+            touchView.layoutIfNeeded()
+        }
 
         // Convert frame from self.view coordinates to touchViewController.view coordinates
         let frameInTouchView = view.convert(frame, to: touchView)
 
-        DLOG("🎮   Frame in touchView coords: \(frameInTouchView)")
+        DLOG("🎮 SKIN:   Frame in touchView coords: \(frameInTouchView)")
 
         // Find the emuThreeDS view (should be a subview of touchView)
         // emuThreeDS adds its view with tag or we can find it by type
         var emuThreeView: UIView? = nil
-        for subview in touchView.subviews {
-            // Look for EmuThreeVulkanViewController's view or EmuThreeOGLViewController's view
-            if type(of: subview).description().contains("EmuThree") ||
-               subview.classForCoder.description().contains("EmuThree") {
+        for (index, subview) in touchView.subviews.enumerated() {
+            let subviewType = type(of: subview).description()
+            let subviewClass = subview.classForCoder.description()
+            DLOG("🎮 SKIN:   Subview \(index): \(subviewType) / \(subviewClass)")
+
+            // Look for EmuThreeVulkanViewController's view, EmuThreeOGLViewController's view, or Azahar views
+            if subviewType.contains("EmuThree") || subviewClass.contains("EmuThree") ||
+               subviewType.contains("Azahar") || subviewClass.contains("Azahar") {
                 emuThreeView = subview
+                DLOG("🎮 SKIN:   Found emuThree/Azahar view: \(subviewType)")
                 break
             }
         }
 
         // Fallback: use gpuViewController.view if it's in the touchView hierarchy
-        if emuThreeView == nil, let gpuView = gpuViewController.view, gpuView.isDescendant(of: touchView) {
-            emuThreeView = gpuView
+        if emuThreeView == nil {
+            if let gpuView = gpuViewController.view {
+                DLOG("🎮 SKIN:   Checking if GPU view is descendant of touchView")
+                if gpuView.isDescendant(of: touchView) {
+                    emuThreeView = gpuView
+                    DLOG("🎮 SKIN:   Using GPU view as emuThree view")
+                } else {
+                    DLOG("🎮 SKIN:   GPU view is not descendant of touchView")
+                }
+            } else {
+                DLOG("🎮 SKIN:   GPU view is nil")
+            }
         }
 
         guard let viewToPosition = emuThreeView else {
-            DLOG("🎮 emuThreeDS: Could not find view to position, using gpuViewController.view")
+            DLOG("🎮 SKIN: emuThreeDS: Could not find view to position")
+            DLOG("🎮 SKIN:   TouchView subviews: \(touchView.subviews.map { type(of: $0).description() })")
+            DLOG("🎮 SKIN:   Falling back to standard positioning")
             // Fallback to standard positioning
-            applyExactFrameToGPUView(frame)
+            applyFrameToGPUView(frame)
             return
         }
 
-        DLOG("🎮 emuThreeDS: Positioning view at \(frameInTouchView) in touchView bounds: \(touchView.bounds)")
+        DLOG("🎮 SKIN: emuThreeDS: Found view to position: \(type(of: viewToPosition).description())")
+        DLOG("🎮 SKIN:   Current frame: \(viewToPosition.frame)")
+        DLOG("🎮 SKIN:   Positioning at: \(frameInTouchView) in touchView bounds: \(touchView.bounds)")
 
         // Ensure view is visible
         viewToPosition.isHidden = false
@@ -357,9 +388,13 @@ extension PVEmulatorViewController {
 
         // Remove existing constraints from superview that might conflict
         if let superview = viewToPosition.superview {
-            NSLayoutConstraint.deactivate(superview.constraints.filter { constraint in
+            let constraintsToRemove = superview.constraints.filter { constraint in
                 constraint.firstItem === viewToPosition || constraint.secondItem === viewToPosition
-            })
+            }
+            if !constraintsToRemove.isEmpty {
+                DLOG("🎮 SKIN:   Removing \(constraintsToRemove.count) conflicting constraints")
+                NSLayoutConstraint.deactivate(constraintsToRemove)
+            }
         }
 
         // Apply frame
@@ -370,9 +405,11 @@ extension PVEmulatorViewController {
         viewToPosition.setNeedsLayout()
         viewToPosition.layoutIfNeeded()
 
+        DLOG("🎮 SKIN:   Frame after positioning: \(viewToPosition.frame)")
+
         // Verify the view is still visible after positioning
         if viewToPosition.isHidden || viewToPosition.alpha == 0 {
-            DLOG("🎮 WARNING: emuThreeDS view became hidden after positioning!")
+            DLOG("🎮 SKIN: WARNING: emuThreeDS view became hidden after positioning!")
             viewToPosition.isHidden = false
             viewToPosition.alpha = 1.0
         }
@@ -381,7 +418,10 @@ extension PVEmulatorViewController {
         if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }),
            let gpuView = gpuViewController.view {
             view.insertSubview(gpuView, belowSubview: skinContainerView)
+            DLOG("🎮 SKIN:   Maintained z-order: GPU view below skin")
         }
+
+        DLOG("🎮 SKIN: emuThreeDS dual screen positioning complete")
     }
 
     /// Handle swap screen action - reposition screens when swap is toggled
@@ -443,18 +483,26 @@ extension PVEmulatorViewController {
 
     /// Handle frame updates from skin system for dual screens
     @objc private func handleSkinFrameUpdated(_ notification: Notification) {
-        guard isDualScreenSystem, isDeltaSkinEnabled else { return }
+        guard isDualScreenSystem, isDeltaSkinEnabled else {
+            DLOG("🎮 SKIN: Not a dual screen system or skin disabled, skipping dual screen handler")
+            return
+        }
 
         guard let userInfo = notification.userInfo,
               let frameValue = userInfo["frame"] as? NSValue else {
+            DLOG("🎮 SKIN: Missing frame in notification userInfo")
             return
         }
 
         let frame = frameValue.cgRectValue
         let screenId = userInfo["screenId"] as? String ?? "default"
 
+        DLOG("🎮 SKIN: Received dual screen frame for screen '\(screenId)': \(frame)")
+
         // Store the frame for this screen
         receivedScreenFrames[screenId] = frame
+
+        DLOG("🎮 SKIN: Total screens received: \(receivedScreenFrames.count), screens: \(receivedScreenFrames.keys.joined(separator: ", "))")
 
         // If we have both screens, combine them
         if receivedScreenFrames.count >= 2 {
@@ -462,28 +510,43 @@ extension PVEmulatorViewController {
                 result.union(rect)
             }
 
-            DLOG("🎮 Combined dual screen frames from notifications: \(combinedRect)")
+            DLOG("🎮 SKIN: Combined dual screen frames from notifications: \(combinedRect)")
+            DLOG("🎮 SKIN: Individual frames: \(receivedScreenFrames)")
 
             // Apply the combined frame
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
+                guard !self.isApplyingViewport else {
+                    DLOG("🎮 SKIN: Already applying viewport, skipping")
+                    return
+                }
+                self.isApplyingViewport = true
+                defer { self.isApplyingViewport = false }
+
                 if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true {
+                    DLOG("🎮 SKIN: Applying dual screen viewport for emuThreeDS: \(combinedRect)")
                     self.applyDualScreenViewportForEmuThree(frame: combinedRect)
                 } else {
-                    self.applyExactFrameToGPUView(combinedRect)
+                    DLOG("🎮 SKIN: Applying dual screen viewport (standard): \(combinedRect)")
+                    self.applyFrameToGPUView(combinedRect)
                 }
                 self.currentTargetFrame = combinedRect
                 self.lastAppliedViewportFrame = combinedRect
             }
         } else if receivedScreenFrames.count == 1 {
-            // Single screen or first screen received - apply it
-            DLOG("🎮 Received single screen frame from notification: \(frame)")
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
+            // Single screen or first screen received - wait for second screen or apply after timeout
+            DLOG("🎮 SKIN: Received first screen frame, waiting for second screen...")
+            // Don't apply yet - wait for second screen
+            // But set a timeout to apply if second screen doesn't arrive
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                guard let self = self, self.receivedScreenFrames.count == 1 else { return }
+                // Only one screen received after timeout - apply it anyway
+                let frame = self.receivedScreenFrames.values.first!
+                DLOG("🎮 SKIN: Timeout - only one screen received, applying single frame: \(frame)")
                 if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true {
                     self.applyDualScreenViewportForEmuThree(frame: frame)
                 } else {
-                    self.applyExactFrameToGPUView(frame)
+                    self.applyFrameToGPUView(frame)
                 }
                 self.currentTargetFrame = frame
                 self.lastAppliedViewportFrame = frame

@@ -9,26 +9,18 @@ class DeltaSkinLoader: ObservableObject {
     // Published properties for UI updates
     @Published var isLoading = true
     @Published var loadingProgress: Double = 0.0
-    @Published var loadingStage: LoadingStage = .initializing
+    @Published var loadingStage: LoadingStage = .loading
     @Published var selectedSkin: (any DeltaSkinProtocol)?
     @Published var loadingError: Error?
 
     // Loading stages for better progress reporting
     enum LoadingStage: String, CaseIterable {
-        case initializing = "Initializing..."
-        case loadingSkin = "Loading skin..."
-        case processingAssets = "Processing assets..."
-        case renderingLayout = "Rendering layout..."
-        case finalizing = "Finalizing..."
+        case loading = "Loading skin..."
         case complete = "Complete"
 
         var progressValue: Double {
             switch self {
-            case .initializing: return 0.1
-            case .loadingSkin: return 0.3
-            case .processingAssets: return 0.5
-            case .renderingLayout: return 0.7
-            case .finalizing: return 0.9
+            case .loading: return 0.5
             case .complete: return 1.0
             }
         }
@@ -37,57 +29,107 @@ class DeltaSkinLoader: ObservableObject {
     /// Load a skin for the given system identifier
     /// Returns a task that completes when the skin is loaded
     func loadSkin(forSystem systemId: SystemIdentifier, systemName: String = "Unknown") async -> (any DeltaSkinProtocol)? {
-        DLOG("🎮 DeltaSkinLoader: Starting to load Delta Skin for system: \(systemId.rawValue)")
+        ILOG("skins: DeltaSkinLoader starting to load skin for system: \(systemId.rawValue) (name: \(systemName))")
 
-        // Start with initializing stage
-        await updateLoadingState(.initializing)
+        await updateLoadingState(.loading)
 
-        do {
-            // Move to loading skin stage
-            await updateLoadingState(.loadingSkin)
+        // Wrap the actual loading in a timeout to prevent hanging
+        return await withTaskGroup(of: (any DeltaSkinProtocol)?.self) { group in
+            // Start the actual load task
+            group.addTask {
+                do {
+                    // Try to use already-loaded skins first (fast path)
+                    let manager = DeltaSkinManager.shared
 
-            // Convert SystemIdentifier to string for DeltaSkinManager
+                    // Check if skins are already loaded
+                    if manager.skinsAreLoaded {
+                        ILOG("skins: Skins already loaded, using fast path lookup")
+                        // Fast path: use synchronous lookup from already-loaded skins
+                        if let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: systemId),
+                           let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
+                            // Update UI state immediately but don't await - return skin right away
+                            Task { @MainActor in
+                                self.selectedSkin = skin
+                                self.updateLoadingState(.complete)
+                            }
+                            ILOG("skins: Found selected skin '\(skin.name)' in cache for system \(systemId.rawValue)")
+                            return skin
+                        }
 
-            // Load the skin directly using the system ID
-            if let skin = try await DeltaSkinManager.shared.skinToUse(for: systemId) {
-                // Move to processing assets stage
-                await updateLoadingState(.processingAssets)
+                        // Try default skin from cache
+                        if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
+                           let skin = manager.loadedSkins.first(where: {
+                               $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                           }) {
+                            // Update UI state immediately but don't await - return skin right away
+                            Task { @MainActor in
+                                self.selectedSkin = skin
+                                self.updateLoadingState(.complete)
+                            }
+                            ILOG("skins: Found default skin '\(skin.name)' in cache for system \(systemId.rawValue)")
+                            return skin
+                        }
+                        WLOG("skins: No skin found in cache for system \(systemId.rawValue), falling back to async load")
+                    } else {
+                        ILOG("skins: Skins not loaded yet, will trigger async load")
+                    }
 
-                // Simulate asset processing time (in a real implementation, this would be actual processing)
-//                try await Task.sleep(nanoseconds: 200_000_000)
-
-                // Move to rendering layout stage
-                await updateLoadingState(.renderingLayout)
-
-                // Set the skin and prepare for display
-                await MainActor.run {
-                    // Store the skin
-                    self.selectedSkin = skin
-
-                    // Move to finalizing stage
-                    self.updateLoadingState(.finalizing)
+                    // Fallback: async load (triggers scan if needed)
+                    ILOG("skins: Attempting async load of skin for system \(systemId.rawValue)")
+                    if let skin = try await manager.skinToUse(for: systemId) {
+                        await MainActor.run {
+                            self.selectedSkin = skin
+                            self.updateLoadingState(.complete)
+                        }
+                        ILOG("skins: Successfully loaded skin '\(skin.name)' for system \(systemId.rawValue)")
+                        return skin
+                    } else {
+                        WLOG("skins: No skin available for system: \(systemId.rawValue)")
+                        await self.updateLoadingState(.complete)
+                        return nil
+                    }
+                } catch {
+                    ELOG("skins: Error loading skin for system \(systemId.rawValue): \(error)")
+                    await MainActor.run {
+                        self.loadingError = error
+                        self.updateLoadingState(.complete)
+                    }
+                    return nil
                 }
+            }
 
-                // Wait a moment to ensure UI updates
-//                try await Task.sleep(nanoseconds: 300_000_000)
-
-                // Complete loading
-                await updateLoadingState(.complete)
-
-                DLOG("🎮 DeltaSkinLoader: Skin loaded for system: \(systemId.rawValue)")
-                return skin
-            } else {
-                ELOG("🎮 DeltaSkinLoader: No skin available for system: \(systemId.rawValue)")
-                await updateLoadingState(.complete)
+            // Start timeout task (only fires if skin loading takes too long)
+            group.addTask {
+                try? await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds max (increased from 2.5s)
+                // Check if skin was found before timing out
+                let skinFound = await MainActor.run {
+                    self.selectedSkin != nil
+                }
+                if !skinFound {
+                    WLOG("skins: Loading timeout (5s) - completing without skin for system \(systemId.rawValue)")
+                    await MainActor.run {
+                        self.updateLoadingState(.complete)
+                    }
+                }
                 return nil
             }
-        } catch {
-            ELOG("🎮 DeltaSkinLoader: Error loading skin: \(error)")
-            await MainActor.run {
-                self.loadingError = error
+
+            // Return first non-nil result (prioritize skin over timeout)
+            // Use a loop to get the first non-nil result, or wait for timeout
+            var result: (any DeltaSkinProtocol)? = nil
+            for await value in group {
+                if let skin = value {
+                    // Found skin - return immediately and cancel timeout
+                    result = skin
+                    group.cancelAll()
+                    return skin
+                }
+                // If we got nil from timeout, but haven't found a skin yet, continue waiting
+                // The timeout task returns nil, so we need to check if skin task is still running
             }
-            await updateLoadingState(.complete)
-            return nil
+            // If we get here, timeout fired and no skin was found
+            group.cancelAll()
+            return result
         }
     }
 
@@ -102,6 +144,6 @@ class DeltaSkinLoader: ObservableObject {
             isLoading = false
         }
 
-        DLOG("🎮 DeltaSkinLoader: Loading stage: \(stage.rawValue) (\(Int(loadingProgress * 100))%)")
+        ILOG("skins: DeltaSkinLoader loading stage: \(stage.rawValue) (\(Int(loadingProgress * 100))%)")
     }
 }

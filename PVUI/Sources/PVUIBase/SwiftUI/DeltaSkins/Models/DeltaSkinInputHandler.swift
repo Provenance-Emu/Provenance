@@ -908,6 +908,12 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
+        case ._3DS:
+            if let r = core as? PV3DSSystemResponderClient {
+                let b = PV3DSButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
         case .WonderSwan, .WonderSwanColor:
             if let r = core as? PVWonderSwanSystemResponderClient {
                 let b = PVWSButton(id)
@@ -951,6 +957,14 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["a", "b", "x", "y"].contains(s) { return s }
         case .Genesis, .SegaCD:
             if ["a", "b", "c", "x", "y", "z"].contains(s) { return s }
+        case ._3DS:
+            // 3DS uses standard button names
+            if ["a", "b", "x", "y", "l", "r", "zl", "zr", "start", "select", "up", "down", "left", "right"].contains(s) { return s }
+            // Map l1/l2/r1/r2 to l/r/zl/zr for 3DS
+            if s == "l1" { return "l" }
+            if s == "r1" { return "r" }
+            if s == "l2" { return "zl" }
+            if s == "r2" { return "zr" }
         default:
             break
         }

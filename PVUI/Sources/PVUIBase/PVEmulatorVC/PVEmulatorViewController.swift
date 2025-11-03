@@ -89,6 +89,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     private var isHandlingRotation: Bool = false
     private var pendingRotationWorkItem: DispatchWorkItem?
 
+    // Viewport application state to prevent layout loops
+    var isApplyingViewport: Bool = false
+
     // Keep track of whether we've positioned the GPU view
     static var hasPositionedGPUView = false
 
@@ -722,6 +725,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     override public func viewDidAppear(_: Bool) {
         super.viewDidAppear(true)
+
+        /// Update safe area insets for cores that support it
+        #if os(iOS)
+        if let safeAreaCore = core as? EmulatorCoreSafeAreaSupport {
+            safeAreaCore.updateSafeAreaInsets(view.safeAreaInsets)
+        }
+        #endif
         // Notifies UIKit that your view controller updated its preference regarding the visual indicator
 
         #if os(iOS)
@@ -759,6 +769,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Handle skin changes for orientation
         handleOrientationChange(to: size, with: coordinator)
+
+        /// Update safe area insets for cores that support it after orientation change
+        coordinator.animate(alongsideTransition: { [weak self] _ in
+            guard let self = self else { return }
+            if let safeAreaCore = self.core as? EmulatorCoreSafeAreaSupport {
+                safeAreaCore.updateSafeAreaInsets(self.view.safeAreaInsets)
+            }
+        }, completion: nil)
     }
 
     // MARK: - CloudKit Download Handling
@@ -950,9 +968,23 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             let requiredStr = ByteCountFormatter.string(fromByteCount: required, countStyle: .file)
             let availableStr = ByteCountFormatter.string(fromByteCount: available, countStyle: .file)
 
+            let message = """
+            Cannot download \(gameTitle).
+
+            Required: \(requiredStr)
+            Available: \(availableStr)
+
+            To free up space:
+            • Delete unused games or save states
+            • Remove large media files
+            • Clear app cache in Settings
+            • Offload unused apps
+
+            After freeing space, try downloading again.
+            """
             let alert = UIAlertController(
                 title: "Insufficient Storage",
-                message: "Cannot download \(gameTitle). Requires \(requiredStr) but only \(availableStr) available.\n\nPlease free up space and try again.",
+                message: message,
                 preferredStyle: .alert
             )
 
@@ -1003,6 +1035,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         super.viewDidLayoutSubviews()
         #if os(iOS)
         layoutMenuButton()
+
+        /// Update safe area insets for cores that support it
+        if let safeAreaCore = core as? EmulatorCoreSafeAreaSupport {
+            safeAreaCore.updateSafeAreaInsets(view.safeAreaInsets)
+        }
         #endif
     }
 
@@ -1825,10 +1862,29 @@ extension PVEmulatorViewController {
             skinView.layoutIfNeeded()
         }
 
+        // Force SwiftUI to recalculate frame after rotation
+        NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinForceRecalculate"), object: nil)
+
         // For RetroArch, re-apply internal render view frame to keep it visible
         // Wait a bit for viewport to be recalculated
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             guard let self = self else { return }
+
+            // For non-RetroArch cores, ensure we have a frame
+            if self.core.coreIdentifier?.contains("libretro") != true {
+                // If we still don't have a frame, calculate one manually
+                if self.currentTargetFrame == nil {
+                    DLOG("🎮 SKIN: No frame received for non-RetroArch core, calculating fallback")
+                    if let calculatedFrame = self.currentSkinViewportFrame() {
+                        self.currentTargetFrame = calculatedFrame
+                        self.applyFrameToGPUView(calculatedFrame)
+                    }
+                } else {
+                    // Apply the frame we have
+                    self.applyFrameToGPUView(self.currentTargetFrame!)
+                }
+            }
+
             // CRITICAL: Ensure parent view is laid out before coordinate conversion for landscape
             if self.core.coreIdentifier?.contains("libretro") == true,
                let frame = self.currentTargetFrame,

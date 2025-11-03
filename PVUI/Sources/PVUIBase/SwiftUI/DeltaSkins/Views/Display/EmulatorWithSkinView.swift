@@ -14,6 +14,7 @@ struct EmulatorWithSkinView: View {
     let gameTitle: String
     let systemName: String?
     let systemId: SystemIdentifier?
+    let gameId: String?
 
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
@@ -37,30 +38,17 @@ struct EmulatorWithSkinView: View {
     // State for D-pad/joystick toggle in default skin
     @State internal var useJoystick = false
 
+    // Timeout for skin loading to prevent hanging
+    @State private var loadingTimeoutTask: Task<Void, Never>?
+
     // Live binding to built-in filter selection
     @Default(.metalFilterMode) private var metalFilterMode
 
-    /// Map built-in filter selection to overlay effects used by DeltaSkinView
-    private var overlayEffects: Set<TestPatternEffect> {
-        switch metalFilterMode {
-        case .none:
-            return []
-        case .auto(crt: let crt, lcd: let lcd):
-            var s: Set<TestPatternEffect> = []
-            if crt != .none { s.insert(.scanlines) /* consider subpixel subtly */ }
-            if lcd != .none { s.insert(.lcd); s.insert(.subpixel) }
-            return s
-        case .always(filter: let filter):
-            switch filter {
-            case .lcd:
-                return [.lcd, .subpixel]
-            case .none:
-                return []
-            case .simpleCRT, .complexCRT, .megaTron, .ulTron, .gameBoy, .vhs:
-                return [.scanlines]
-            }
-        }
-    }
+    // User-selected filter from pause menu (takes precedence)
+    @State private var selectedFilterName: String?
+
+    // Track if we have a user-selected filter
+    @State private var hasUserSelectedFilter = false
 
     // Initialize with a game, extracting the necessary properties
     init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void) {
@@ -69,6 +57,9 @@ struct EmulatorWithSkinView: View {
 
         // Convert string system identifier to enum
         self.systemId = game.system?.systemIdentifier
+
+        // Get game ID for filter preferences (md5Hash or crc)
+        self.gameId = game.md5Hash ?? game.crc
 
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
@@ -84,14 +75,35 @@ struct EmulatorWithSkinView: View {
                 if skinLoader.isLoading {
                     // Loading view with progress
                     loadingView
+                        .onAppear {
+                            // Set timeout to prevent hanging - call onSkinLoaded after 2 seconds max
+                            loadingTimeoutTask?.cancel()
+                            loadingTimeoutTask = Task {
+                                try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+                                if !Task.isCancelled && skinLoader.isLoading {
+                                    DLOG("🎮 EmulatorWithSkinView: Skin loading timeout - proceeding without skin")
+                                    await MainActor.run {
+                                        // Force completion to show game view
+                                        skinLoader.isLoading = false
+                                        onSkinLoaded()
+                                    }
+                                }
+                            }
+                        }
+                        .onDisappear {
+                            loadingTimeoutTask?.cancel()
+                        }
                 } else if let skin = skinLoader.selectedSkin {
                     // Render the skin
                     skinContentView(skin: skin, geometry: geometry)
                         .background(Color.clear) // Ensure background is transparent
                         .onAppear {
+                            // Cancel timeout since skin loaded successfully
+                            loadingTimeoutTask?.cancel()
+
                             // When the skin content appears, wait for layout to stabilize
                             // before marking as complete to ensure correct initial positioning
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 if !skinRenderComplete {
                                     skinRenderComplete = true
                                     onSkinLoaded()
@@ -107,19 +119,26 @@ struct EmulatorWithSkinView: View {
                                     DLOG("🎮 Posted DeltaSkinLoaded notification for skin: \(skin.identifier)")
 
                                     // Request a refresh after the skin is loaded to ensure screen positions are correct
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                         onRefreshRequested()
                                     }
                                 }
                             }
                         }
                 } else {
-                    // Fallback controller with input handling
+                    // No skin loaded - show fallback controller with input handling
+                    // This ensures the game is always playable even if skin loading fails
                     defaultControllerSkin()
                         .background(Color.clear) // Ensure background is transparent
                         .onAppear {
+                            // Cancel timeout if we got here
+                            loadingTimeoutTask?.cancel()
                             // Even with the fallback, notify that we're ready
-                            onSkinLoaded()
+                            if !skinRenderComplete {
+                                skinRenderComplete = true
+                                onSkinLoaded()
+                                DLOG("🎮 EmulatorWithSkinView: Showing fallback controller, skin loading failed or no skin available")
+                            }
                         }
                 }
 
@@ -154,17 +173,33 @@ struct EmulatorWithSkinView: View {
                 // Set the emulator core in the input handler
                 inputHandler.setEmulatorCore(coreInstance)
 
-                // Start loading the skin using a simplified approach
-                Task {
-                    await loadSkinSafely()
-                }
+                // Load user-selected filter preference
+                selectedFilterName = getUserSelectedFilter()
+                hasUserSelectedFilter = selectedFilterName != nil
+                ILOG("skins: Loaded filter preference on appear: \(selectedFilterName ?? "none")")
+
+                // Start loading the skin - completely non-blocking
+                loadSkinSafely()
 
                 // Set up orientation handling
                 setupOrientationHandling()
+
+                // Listen for filter changes from pause menu
+                setupFilterNotificationObserver()
             }
             .onDisappear {
                 // Clean up notification
                 NotificationCenter.default.removeObserver(self)
+            }
+            .onChange(of: selectedFilterName) { _ in
+                // Force view refresh when filter changes
+                ILOG("skins: Filter changed, refreshing view")
+                rotationCount += 1
+            }
+            .onChange(of: metalFilterMode) { _ in
+                // Also refresh when metalFilterMode changes
+                ILOG("skins: metalFilterMode changed, refreshing view")
+                rotationCount += 1
             }
             .environment(\.debugSkinMappings, showDebugOverlay)
         }
@@ -414,13 +449,16 @@ struct EmulatorWithSkinView: View {
         // Create traits reactively - this will be recalculated when currentOrientation changes
         let traits = createSkinTraits()
 
+        // Get overlay effects with proper priority (user filter > skin filter > metalFilterMode)
+        let effects = overlayEffects(for: skin)
+
         return Group {
             if let deltaSkin = skin as? DeltaSkin {
                 // If we have a DeltaSkin, use the specialized view
                 DeltaSkinView(
                     skin: deltaSkin,
                     traits: traits,
-                    filters: overlayEffects,
+                    filters: effects,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: false,
                     isInEmulator: true,
@@ -431,7 +469,7 @@ struct EmulatorWithSkinView: View {
                 DeltaSkinView(
                     skin: skin,
                     traits: traits,
-                    filters: overlayEffects,
+                    filters: effects,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: false,
                     isInEmulator: true,
@@ -440,7 +478,7 @@ struct EmulatorWithSkinView: View {
             }
         }
         .environmentObject(inputHandler)
-        .id("\(rotationCount)-\(currentOrientation.rawValue)") // Update when orientation changes without full rebuild
+        .id("\(rotationCount)-\(currentOrientation.rawValue)-\(selectedFilterName ?? "none")") // Update when filter changes
     }
 
     // MARK: - Debug Overlay
@@ -584,21 +622,185 @@ struct EmulatorWithSkinView: View {
         )
     }
 
+    // MARK: - Filter Handling
+
+    /// Map filter name from pause menu to overlay effects
+    private func filterNameToEffects(_ filterName: String) -> Set<TestPatternEffect> {
+        switch filterName.lowercased() {
+        case "none":
+            return []
+        case "crt", "scanlines":
+            return [.scanlines]
+        case "lcd":
+            return [.lcd, .subpixel]
+        case "game boy", "gba":
+            return [.scanlines]
+        default:
+            return []
+        }
+    }
+
+    /// Get user-selected filter from UserDefaults (game-specific or system-specific)
+    /// Returns the filter name including "None" if explicitly set
+    private func getUserSelectedFilter() -> String? {
+        // Check game-specific filter first
+        if let gameId = gameId,
+           let gameFilter = UserDefaults.standard.string(forKey: "ScreenFilter_Game_\(gameId)") {
+            ILOG("skins: Found game-specific filter: \(gameFilter)")
+            return gameFilter // Return even if "None" - that's an explicit user choice
+        }
+
+        // Check system-specific filter
+        if let systemId = systemId,
+           let systemFilter = UserDefaults.standard.string(forKey: "ScreenFilter_System_\(systemId.rawValue)") {
+            ILOG("skins: Found system-specific filter: \(systemFilter)")
+            return systemFilter // Return even if "None" - that's an explicit user choice
+        }
+
+        return nil
+    }
+
+    /// Get overlay effects, prioritizing user-selected filter, then skin filters, then metalFilterMode
+    private func overlayEffects(for skin: any DeltaSkinProtocol) -> Set<TestPatternEffect> {
+        // Check if user has explicitly selected a filter (including "None")
+        let userFilter = selectedFilterName ?? getUserSelectedFilter()
+
+        // 1. If user selected a filter (even if "None"), use it (replaces skin filter)
+        if let filter = userFilter {
+            if filter == "None" {
+                ILOG("skins: User selected 'None' - checking for skin filters")
+                // User explicitly selected None, but check if skin has filters to use instead
+                if let screens = skin.screens(for: createSkinTraits()),
+                   let screen = screens.first,
+                   let skinFilters = screen.filters,
+                   !skinFilters.isEmpty {
+                    ILOG("skins: User selected None but skin has \(skinFilters.count) custom CIFilters - skin filters will be used")
+                    // Skin filters are CIFilters applied to the image, not overlay effects
+                    // Return empty overlay effects since skin handles its own filters
+                    return []
+                }
+                // User selected None and no skin filters - return empty
+                ILOG("skins: User selected 'None' and no skin filters")
+                return []
+            } else {
+                // User selected a specific filter - use it (replaces skin filter)
+                ILOG("skins: Using user-selected filter: \(filter) (replacing any skin filters)")
+                return filterNameToEffects(filter)
+            }
+        }
+
+        // 2. No user selection - check if skin has its own filters
+        if let screens = skin.screens(for: createSkinTraits()),
+           let screen = screens.first,
+           let skinFilters = screen.filters,
+           !skinFilters.isEmpty {
+            ILOG("skins: No user filter selected, skin has \(skinFilters.count) custom CIFilters - using skin filters")
+            // Skin filters are CIFilters applied to the image, not overlay effects
+            // Return empty overlay effects since skin handles its own filters
+            return []
+        }
+
+        // 3. No user filter and no skin filters - fall back to metalFilterMode setting
+        ILOG("skins: No user filter and no skin filters, using metalFilterMode setting")
+        switch metalFilterMode {
+        case .none:
+            return []
+        case .auto(crt: let crt, lcd: let lcd):
+            var s: Set<TestPatternEffect> = []
+            if crt != .none { s.insert(.scanlines) }
+            if lcd != .none { s.insert(.lcd); s.insert(.subpixel) }
+            return s
+        case .always(filter: let filter):
+            switch filter {
+            case .lcd:
+                return [.lcd, .subpixel]
+            case .none:
+                return []
+            case .simpleCRT, .complexCRT, .megaTron, .ulTron, .gameBoy, .vhs:
+                return [.scanlines]
+            }
+        }
+    }
+
+    /// Set up notification observer for filter changes from pause menu
+    private func setupFilterNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("ApplyScreenFilter"),
+            object: nil,
+            queue: .main
+        ) { notification in
+
+            if let filterName = notification.userInfo?["filterName"] as? String {
+                ILOG("skins: Received ApplyScreenFilter notification: \(filterName)")
+
+                // Update selected filter on main actor
+                Task { @MainActor in
+                    selectedFilterName = filterName == "None" ? nil : filterName
+                    hasUserSelectedFilter = filterName != "None"
+
+                    // Reload filter preference from UserDefaults to ensure consistency
+                    selectedFilterName = getUserSelectedFilter()
+
+                    ILOG("skins: Updated filter to: \(selectedFilterName ?? "none")")
+
+                    // Force view refresh to apply new filter
+                    rotationCount += 1
+                }
+            }
+        }
+    }
+
     // MARK: - Loading Logic
 
     /// Load the skin safely without Realm threading issues
-    private func loadSkinSafely() async {
+    /// Completely non-blocking: sets isLoading=false immediately, loads skin in background
+    @MainActor
+    private func loadSkinSafely() {
         DLOG("🎮 EmulatorWithSkinView: Starting to load skin safely")
 
-        // If we have a system ID, we can load the skin directly
-        if let systemId = systemId {
-            _ = await skinLoader.loadSkin(forSystem: systemId, systemName: systemName ?? "Unknown")
-        } else {
-            ELOG("🎮 EmulatorWithSkinView: No system ID available, cannot load skin")
-            await MainActor.run {
-                skinLoader.loadingError = NSError(domain: "EmulatorWithSkinView", code: 404, userInfo: [NSLocalizedDescriptionKey: "No system ID available"])
-                skinLoader.isLoading = false
-                onSkinLoaded() // Still notify that we're done, even with an error
+        // IMMEDIATELY set loading to false so UI doesn't block
+        skinLoader.isLoading = false
+        skinLoader.loadingProgress = 1.0
+        skinLoader.loadingStage = .complete
+        onSkinLoaded()
+        DLOG("🎮 EmulatorWithSkinView: Set loading=false immediately, game can boot now")
+
+        guard let systemId = systemId else {
+            ELOG("🎮 EmulatorWithSkinView: No system ID available")
+            return
+        }
+
+        // Load skin in background without blocking
+        Task.detached(priority: .utility) {
+            // Fast path: check cache synchronously first
+            let manager = DeltaSkinManager.shared
+            var foundSkin: (any DeltaSkinProtocol)? = nil
+
+            if manager.skinsAreLoaded {
+                if let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: systemId),
+                   let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
+                    foundSkin = skin
+                    DLOG("🎮 EmulatorWithSkinView: Found skin in cache: \(skin.name)")
+                } else if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
+                          let skin = manager.loadedSkins.first(where: {
+                              $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                          }) {
+                    foundSkin = skin
+                    DLOG("🎮 EmulatorWithSkinView: Found default skin in cache: \(skin.name)")
+                }
+            }
+
+            // If not in cache, load async
+            if foundSkin == nil {
+                foundSkin = try? await DeltaSkinManager.shared.skinToUse(for: systemId)
+            }
+
+            // Update UI with skin if found
+            if let skin = foundSkin {
+                await MainActor.run {
+                    self.skinLoader.selectedSkin = skin
+                }
+                DLOG("🎮 EmulatorWithSkinView: Updated UI with skin: \(skin.name)")
             }
         }
     }

@@ -1048,28 +1048,37 @@ public struct DeltaSkinView: View {
         // Determine which directions to activate based on touch position
         if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
             // In dead zone, no directions are active
-            DLOG("D-pad highlight: In dead zone")
+            DLOG("skins: D-pad highlight: In dead zone")
         } else {
-            // Calculate angle to determine direction
-            let angle = atan2(relativeY, relativeX)
-            let degrees = angle * 180 / .pi
+            // Use threshold-based detection instead of angle to properly support diagonals
+            // Calculate thresholds as a percentage of button size
+            let thresholdX = buttonWidth * 0.3
+            let thresholdY = buttonHeight * 0.3
 
-            // Determine vertical component
-            if degrees > -135 && degrees < -45 {
+            ILOG("skins: D-pad input - relativeX=\(relativeX), relativeY=\(relativeY), thresholdX=\(thresholdX), thresholdY=\(thresholdY)")
+
+            // Determine vertical component - check if touch is above or below center
+            if relativeY < -thresholdY {
                 activeDirections.insert("up")
-            } else if degrees > 45 && degrees < 135 {
+                ILOG("skins: D-pad detected UP")
+            } else if relativeY > thresholdY {
                 activeDirections.insert("down")
+                ILOG("skins: D-pad detected DOWN")
             }
 
-            // Determine horizontal component
-            if degrees > -45 && degrees < 45 {
+            // Determine horizontal component - check if touch is left or right of center
+            if relativeX > thresholdX {
                 activeDirections.insert("right")
-            } else if degrees > 135 || degrees < -135 {
+                ILOG("skins: D-pad detected RIGHT")
+            } else if relativeX < -thresholdX {
                 activeDirections.insert("left")
+                ILOG("skins: D-pad detected LEFT")
             }
 
-            // Resolve opposing directions
+            // Prevent opposite directions on the same axis from being active simultaneously
+            // This should never happen with threshold-based detection, but add safety check
             if activeDirections.contains("up") && activeDirections.contains("down") {
+                // If both vertical directions detected, choose the stronger one
                 if abs(relativeY) > abs(relativeX) {
                     if relativeY < 0 {
                         activeDirections.remove("down")
@@ -1077,12 +1086,14 @@ public struct DeltaSkinView: View {
                         activeDirections.remove("up")
                     }
                 } else {
+                    // If horizontal component is stronger, remove both vertical directions
                     activeDirections.remove("up")
                     activeDirections.remove("down")
                 }
             }
 
             if activeDirections.contains("left") && activeDirections.contains("right") {
+                // If both horizontal directions detected, choose the stronger one
                 if abs(relativeX) > abs(relativeY) {
                     if relativeX < 0 {
                         activeDirections.remove("right")
@@ -1090,6 +1101,7 @@ public struct DeltaSkinView: View {
                         activeDirections.remove("left")
                     }
                 } else {
+                    // If vertical component is stronger, remove both horizontal directions
                     activeDirections.remove("left")
                     activeDirections.remove("right")
                 }
@@ -1118,13 +1130,13 @@ public struct DeltaSkinView: View {
 
         // Release tokens not in resolved set
         for direction in currentDirections.subtracting(resolvedDirections) {
-            DLOG("Releasing D-pad direction: \(direction)")
+            ILOG("skins: Releasing D-pad direction: \(direction)")
             handleButtonRelease(direction)
         }
 
         // Press tokens in resolved set not already active
         for direction in resolvedDirections.subtracting(currentDirections) {
-            DLOG("Pressing D-pad direction: \(direction)")
+            ILOG("skins: Pressing D-pad direction: \(direction)")
             handleButtonPress(direction)
         }
 

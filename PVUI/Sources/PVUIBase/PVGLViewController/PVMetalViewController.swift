@@ -87,7 +87,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Also update the MTKView's preferred FPS
         if let mtlView = self.mtlView {
             let fps = rate > 0 ? Int(rate) : 60
+            // Only update if the value has changed to prevent loops
+            guard fps != lastPreferredFPS else {
+                DLOG("setPreferredRefreshRate skipping - already set to \(fps)")
+                return
+            }
             mtlView.preferredFramesPerSecond = fps
+            lastPreferredFPS = fps
             ILOG("Set MTKView preferred FPS to \(fps)")
         }
     }
@@ -172,6 +178,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     private var lastPixelType: GLenum = 0
     private var lastScreenBounds: CGRect = .zero
     private var lastNativeScaleEnabled: Bool = false
+    private var lastPreferredFPS: Int = 0
+    private var lastDrawableSize: CGSize = .zero
+    private var isLayouting: Bool = false
 
     /// Tracks the number of buffer allocations for performance monitoring
     private var bufferCreationCount: Int = 0
@@ -494,22 +503,26 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     func updatePreferredFPS() {
         let preferredFPS: Int = Int(emulatorCore?.frameInterval ?? 0)
-        ILOG("updatePreferredFPS (\(preferredFPS))")
 
+        // Determine the actual FPS to set
+        let fpsToSet: Int
         if preferredFPS < 10 {
             WLOG("Cores frame interval (\(preferredFPS)) too low. Setting to 60")
-            mtlView.preferredFramesPerSecond = 60
+            fpsToSet = 60
         } else {
-            if vsyncEnabled {
-                // With VSync enabled, we synchronize with the display's refresh rate
-                // but still set the preferred FPS as a hint to the system
-                mtlView.preferredFramesPerSecond = preferredFPS
-            } else {
-                // With VSync disabled, we try to run at the exact core rate
-                // Note: This may not be fully honored by Metal on all platforms
-                mtlView.preferredFramesPerSecond = preferredFPS
-            }
+            fpsToSet = preferredFPS
         }
+
+        // Only update if the value has changed to prevent loops
+        guard fpsToSet != lastPreferredFPS else {
+            DLOG("updatePreferredFPS skipping - already set to \(fpsToSet)")
+            return
+        }
+
+        ILOG("updatePreferredFPS (\(preferredFPS) -> \(fpsToSet))")
+
+        mtlView.preferredFramesPerSecond = fpsToSet
+        lastPreferredFPS = fpsToSet
 
         ILOG("Set MTKView preferred FPS to \(mtlView.preferredFramesPerSecond) (VSync: \(vsyncEnabled))")
     }
@@ -527,6 +540,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+
+        // Prevent re-entrant layout calls that could cause loops
+        guard !isLayouting else {
+            DLOG("viewDidLayoutSubviews skipping - already layouting")
+            return
+        }
+
+        isLayouting = true
+        defer { isLayouting = false }
 
         DLOG("viewDidLayoutSubviews called")
 
@@ -634,28 +656,43 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             ILOG("Calculated frame: \(frame)")
 #endif
 
-            if renderSettings.nativeScaleEnabled {
-                let scale = UIScreen.main.scale
+            // Only update frames if they actually changed to prevent layout loops
+            let viewFrameChanged = abs(view.frame.origin.x - frame.origin.x) > 0.5 ||
+                                   abs(view.frame.origin.y - frame.origin.y) > 0.5 ||
+                                   abs(view.frame.width - frame.width) > 0.5 ||
+                                   abs(view.frame.height - frame.height) > 0.5
 
-                /// Apply frame to main view
-                view.frame = frame
+            if viewFrameChanged {
+                if renderSettings.nativeScaleEnabled {
+                    let scale = UIScreen.main.scale
 
-                /// Position MTKView using frame directly
-                mtlView.frame = CGRect(x: x, y: y, width: width, height: height)
-                mtlView.contentScaleFactor = scale
+                    /// Apply frame to main view without triggering additional layout
+                    UIView.performWithoutAnimation {
+                        view.frame = frame
+                        /// Position MTKView using frame directly
+                        mtlView.frame = CGRect(x: x, y: y, width: width, height: height)
+                    }
+                    if abs(mtlView.contentScaleFactor - scale) > 0.01 {
+                        mtlView.contentScaleFactor = scale
+                    }
 
 #if DEBUG
-                ILOG("Applied scale factor: \(scale)")
-                ILOG("Final MTKView frame: \(mtlView.frame)")
+                    ILOG("Applied scale factor: \(scale)")
+                    ILOG("Final MTKView frame: \(mtlView.frame)")
 #endif
-            } else {
-                view.frame = frame
-                mtlView.frame = frame
-                mtlView.contentScaleFactor = 1.0
+                } else {
+                    UIView.performWithoutAnimation {
+                        view.frame = frame
+                        mtlView.frame = frame
+                    }
+                    if abs(mtlView.contentScaleFactor - 1.0) > 0.01 {
+                        mtlView.contentScaleFactor = 1.0
+                    }
 
 #if DEBUG
-                ILOG("Final MTKView frame (no scale): \(mtlView.frame)")
+                    ILOG("Final MTKView frame (no scale): \(mtlView.frame)")
 #endif
+                }
             }
         }
 
@@ -2727,10 +2764,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // In Metal, VSync is controlled through the displaySyncEnabled property
         mtlView.isPaused = false
 
+        // Reset lastPreferredFPS to force update when VSync changes
+        lastPreferredFPS = 0
+
         #if os(iOS) || os(tvOS)
         if #available(iOS 16.0, tvOS 16.0, *) {
             // On iOS/tvOS 16+, we can directly control display sync
-            mtlView.preferredFramesPerSecond = vsyncEnabled ? Int(emulatorCore?.frameInterval ?? 60) : 0
+            let fps = vsyncEnabled ? Int(emulatorCore?.frameInterval ?? 60) : 0
+            mtlView.preferredFramesPerSecond = fps
+            lastPreferredFPS = fps
             ILOG("Setting VSync to \(vsyncEnabled ? "enabled" : "disabled")")
         } else {
             // On older iOS versions, we can only provide hints through preferredFramesPerSecond
@@ -2990,9 +3032,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         lastBufferSize = .zero
         lastNativeScaleEnabled = false
 
-        // Force a layout update
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
+        // Don't force layout here - it causes call loops with viewDidLayoutSubviews
+        // Layout will happen naturally when the view controller handles orientation change
+//        view.setNeedsLayout()
+//        view.layoutIfNeeded()
+
 
         // Update the texture
         do {
@@ -3167,7 +3211,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     if scale != 1.0 {
                         mtlView.layer.contentsScale = scale;
                         mtlView.layer.rasterizationScale = scale;
-                        mtlView.contentScaleFactor = scale;
+                        if abs(mtlView.contentScaleFactor - scale) > 0.01 {
+                            mtlView.contentScaleFactor = scale;
+                        }
                     }
                 }
 

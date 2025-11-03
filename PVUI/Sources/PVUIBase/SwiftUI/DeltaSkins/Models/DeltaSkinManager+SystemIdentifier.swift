@@ -7,16 +7,19 @@ public extension DeltaSkinManager {
     /// - Parameter system: The system identifier
     /// - Returns: Array of skins compatible with the system
     func skins(for system: SystemIdentifier) async throws -> [any DeltaSkinProtocol] {
+        ILOG("skins: skins(for: \(system.rawValue)) called")
         // Convert SystemIdentifier to DeltaSkinGameType
         guard let gameType = DeltaSkinGameType(systemIdentifier: system) else {
+            WLOG("skins: No game type found for system \(system.rawValue)")
             return []
         }
 
         // Get all skins and filter by game type
         let allSkins = try await availableSkins()
+        ILOG("skins: Filtering \(allSkins.count) total skins for system \(system.rawValue)")
 
         // Filter by game type, including compatible types
-        return allSkins.filter { skin in
+        let filtered = allSkins.filter { skin in
             // Exact match
             if skin.gameType == gameType {
                 return true
@@ -29,41 +32,67 @@ public extension DeltaSkinManager {
 
             return false
         }
+        ILOG("skins: Found \(filtered.count) skins for system \(system.rawValue)")
+        return filtered
     }
 
     /// Get the currently selected skin for a system
     /// - Parameter system: The system identifier
     /// - Returns: The selected skin, or nil if none selected
     func selectedSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
+        ILOG("skins: selectedSkin(for: \(system.rawValue)) called")
         // Get the selected skin identifier from preferences
         guard let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: system) else {
+            ILOG("skins: No selected skin identifier found for system \(system.rawValue)")
             return nil
         }
+        ILOG("skins: Selected skin identifier for \(system.rawValue): \(selectedIdentifier)")
 
         // Find the skin with this identifier
         let systemSkins = try await skins(for: system)
-        return systemSkins.first { $0.identifier == selectedIdentifier }
+        if let skin = systemSkins.first(where: { $0.identifier == selectedIdentifier }) {
+            ILOG("skins: Found selected skin '\(skin.name)' for system \(system.rawValue)")
+            return skin
+        } else {
+            WLOG("skins: Selected skin identifier '\(selectedIdentifier)' not found in available skins for system \(system.rawValue)")
+            return nil
+        }
     }
 
     /// Get the default skin for a system (first available)
     /// - Parameter system: The system identifier
     /// - Returns: The default skin, or nil if none available
     func defaultSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
+        ILOG("skins: defaultSkin(for: \(system.rawValue)) called")
         let systemSkins = try await skins(for: system)
-        return systemSkins.first
+        if let skin = systemSkins.first {
+            ILOG("skins: Found default skin '\(skin.name)' for system \(system.rawValue)")
+            return skin
+        } else {
+            WLOG("skins: No default skin available for system \(system.rawValue)")
+            return nil
+        }
     }
 
     /// Get the skin to use for a system (selected or default)
     /// - Parameter system: The system identifier
     /// - Returns: The skin to use, or nil if none available
     func skinToUse(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
+        ILOG("skins: skinToUse(for: \(system.rawValue)) called")
         // Try to get selected skin first
         if let selected = try await selectedSkin(for: system) {
+            ILOG("skins: Using selected skin '\(selected.name)' for system \(system.rawValue)")
             return selected
         }
 
         // Fall back to default skin
-        return try await defaultSkin(for: system)
+        if let defaultSkin = try await defaultSkin(for: system) {
+            ILOG("skins: Using default skin '\(defaultSkin.name)' for system \(system.rawValue)")
+            return defaultSkin
+        }
+
+        WLOG("skins: No skin available for system \(system.rawValue)")
+        return nil
     }
 
     /// Get a skin for a specific system identifier (synchronous version)
