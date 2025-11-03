@@ -158,21 +158,23 @@ struct ConsoleGamesView: SwiftUI.View {
     var gamesScrollView: some View {
         ScrollViewWithOffset(
             offsetChanged: { offset in
-                // Detect scroll direction and distance
-                let scrollingDown = offset < gamesViewModel.previousScrollOffset
+                // Throttle scroll updates to reduce overhead
                 let scrollDistance = abs(offset - gamesViewModel.previousScrollOffset)
 
-                // Only respond to significant scroll movements
-                if scrollDistance > 5 {
-                    // Hide search bar when scrolling down, show when scrolling up
-                    if scrollingDown && offset < -10 { // Add a threshold for hiding
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            gamesViewModel.isSearchBarVisible = false // Use gamesViewModel
-                        }
-                    } else if !scrollingDown && scrollDistance > 10 { // Add a threshold for showing
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            gamesViewModel.isSearchBarVisible = true // Use gamesViewModel
-                        }
+                // Only process if scroll distance is significant (reduces update frequency)
+                guard scrollDistance > 8 else { return }
+
+                // Detect scroll direction
+                let scrollingDown = offset < gamesViewModel.previousScrollOffset
+
+                // Hide search bar when scrolling down, show when scrolling up
+                if scrollingDown && offset < -10 {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        gamesViewModel.isSearchBarVisible = false
+                    }
+                } else if !scrollingDown && scrollDistance > 10 {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        gamesViewModel.isSearchBarVisible = true
                     }
                 }
 
@@ -851,15 +853,9 @@ struct ConsoleGamesView: SwiftUI.View {
     //    )
     //}
 
-    /// Function to filter games based on search text
+    /// Optimized search results using ViewModel cache
     private func filteredSearchResults() -> [PVGame] {
-        guard !gamesViewModel.searchText.isEmpty else { return [] }
-
-        let searchTextLowercased = gamesViewModel.searchText.lowercased()
-        /// Only search games for this console
-        return Array(games.filter { game in
-            game.title.lowercased().contains(searchTextLowercased)
-        })
+        return gamesViewModel.getFilteredSearchResults(from: games)
     }
 
     @ViewBuilder

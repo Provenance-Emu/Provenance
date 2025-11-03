@@ -45,7 +45,7 @@ class ConsoleGamesViewModel: ObservableObject {
     /// Game Info Presentation State
     @Published var selectedGameForInfo: PVGame? = nil
     @Published var showingGameInfo: Bool = false
-    
+
     var gameToUpdateCover: PVGame?
 
     @Published var gameLibraryItemsPerRow: Int = 4
@@ -55,13 +55,36 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var renameTitleFieldIsFocused: Bool = false // For FocusState
     @Published var systemMoveState: SystemMoveState? = nil
     @Published var continuesManagementState: ContinuesManagementState? = nil
-    
+
     // Properties that were @State in the View, now @Published in ViewModel
-    @Published var searchText: String = ""
+    @Published var searchText: String = "" {
+        didSet {
+            // Debounce search updates to reduce filtering overhead
+            searchDebounceTimer?.invalidate()
+            let searchValue = searchText
+            searchDebounceTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { [weak self] _ in
+                Task { @MainActor in
+                    self?.isSearching = !searchValue.isEmpty
+                    // Clear cache when search text changes
+                    if self?.cachedSearchQuery != searchValue {
+                        self?.cachedSearchResults = []
+                        self?.cachedSearchQuery = ""
+                    }
+                }
+            }
+        }
+    }
     @Published var isSearching: Bool = false
     @Published var scrollOffset: CGFloat = 0
     @Published var previousScrollOffset: CGFloat = 0
     @Published var isSearchBarVisible: Bool = true
+
+    /// Cache for filtered search results
+    private var cachedSearchResults: [PVGame] = []
+    private var cachedSearchQuery: String = ""
+
+    /// Timer for debouncing search
+    private var searchDebounceTimer: Timer?
 
     /// Initialize the view model with a console
     init(console: PVSystem) {
@@ -94,7 +117,7 @@ class ConsoleGamesViewModel: ObservableObject {
         let alertDiscs = discs.compactMap { disc -> DiscSelectionAlert.Disc? in
             return DiscSelectionAlert.Disc(fileName: disc.fileName, path: disc.url!.path)
         }
-        
+
         await MainActor.run {
             self.discSelectionAlert = DiscSelectionAlert(
                 game: game,
@@ -183,5 +206,34 @@ class ConsoleGamesViewModel: ObservableObject {
         DLOG("ConsoleGamesViewModel: Dismissing game info")
         self.showingGameInfo = false
         self.selectedGameForInfo = nil
+    }
+
+    /// Get cached filtered search results
+    func getFilteredSearchResults(from games: Results<PVGame>) -> [PVGame] {
+        guard !searchText.isEmpty else {
+            cachedSearchResults = []
+            cachedSearchQuery = ""
+            return []
+        }
+
+        // Return cached results if query hasn't changed
+        if cachedSearchQuery == searchText && !cachedSearchResults.isEmpty {
+            return cachedSearchResults
+        }
+
+        let searchTextLowercased = searchText.lowercased()
+        let results = Array(games.filter { game in
+            game.title.lowercased().contains(searchTextLowercased)
+        })
+
+        // Cache results
+        cachedSearchResults = results
+        cachedSearchQuery = searchText
+
+        return results
+    }
+
+    deinit {
+        searchDebounceTimer?.invalidate()
     }
 }
