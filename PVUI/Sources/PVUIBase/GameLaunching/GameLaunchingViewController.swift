@@ -17,6 +17,12 @@ import PVRealm
 import PVSystems
 import PVFileSystem
 import PVUIBase
+import SwiftUI
+import Defaults
+import PVSettings
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
@@ -650,6 +656,9 @@ extension GameLaunchingViewController where Self: UIViewController {
 
     // Used to just show and then optionally quickly load any passed in PVSaveStates
     @MainActor private func presentEMUVC(_ emulatorViewController: PVEmulatorViewController, withGame game: PVGame, loadingSaveState saveState: PVSaveState? = nil) {
+        // Check if we should show the support nag screen
+        checkAndShowSupportNag()
+
         // Present the emulator VC
         emulatorViewController.modalTransitionStyle = .crossDissolve
         emulatorViewController.modalPresentationStyle = .fullScreen
@@ -799,6 +808,33 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
         } else {
             completion(nil)
+        }
+    }
+
+    /// Check if we should show the support nag screen and present it if needed
+    @MainActor
+    private func checkAndShowSupportNag() {
+        guard SupportNagManager.incrementLaunchCount() else {
+            return
+        }
+
+        let launchCount = SupportNagManager.currentLaunchCount
+
+        // Delay presentation slightly to avoid interrupting game launch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self = self else { return }
+
+            #if canImport(FreemiumKit)
+            let nagView = SupportNagView(gameLaunchCount: launchCount) {
+                // Dismiss handler - nothing special needed
+            }
+
+            let hostingController = UIHostingController(rootView: nagView)
+            hostingController.modalPresentationStyle = .fullScreen
+            hostingController.modalTransitionStyle = .crossDissolve
+
+            self.present(hostingController, animated: true)
+            #endif
         }
     }
 }
