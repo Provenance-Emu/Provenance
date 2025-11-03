@@ -52,6 +52,8 @@ struct CloudKitRecordViewModel: Identifiable {
     let recordType: String // Raw value from CloudKitSchema.RecordType
     let title: String
     let subtitle: String
+    let modificationDate: Date // For date sorting
+    let fileSize: Int64 // For size sorting
     var isDownloaded: Bool
     var isDownloading: Bool = false
 
@@ -80,7 +82,6 @@ final class CloudKitOnDemandViewModel: ObservableObject {
     @Published var error: String? = nil // Store error messages as String
     @Published var selectedScope: CKDatabase.Scope = .private
     @Published var sortOrder: CloudKitSortOption = .title
-    @Published var filterText: String = ""
 
     // Use CloudKitSyncAnalytics for observing status
     @ObservedObject var analytics = CloudKitSyncAnalytics.shared
@@ -88,7 +89,6 @@ final class CloudKitOnDemandViewModel: ObservableObject {
     // Keep track of download/delete operations keyed by record name
     @Published var activeOperations: [String: Bool] = [:] // recordName -> true if active
 
-    private var allFetchedRecords: [CloudKitRecordViewModel] = [] // Store unfiltered/unsorted records
 
     // MARK: - Data Fetching Logic
 
@@ -119,7 +119,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                 // Consider adding sorting to the CKQuery itself if performance is an issue
                 // typeQuery.sortDescriptors = [NSSortDescriptor(key: CKRecord.SystemFieldKey.modificationDate, ascending: false)]
                 let database = CKContainer.default().privateCloudDatabase
-                let (matchResults, _) = try await database.records(matching: typeQuery, resultsLimit: CKQueryOperation.maximumResults) // Handle pagination later if needed
+                let (matchResults, _) = try await database.records(matching: typeQuery, resultsLimit: 100) // Handle pagination later if needed
 
                 let fetchedCKRecords = matchResults.compactMap { try? $0.1.get() }
 
@@ -241,11 +241,15 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             return nil // Don't create view models for these types
         }
 
+        let modificationDate = record.modificationDate ?? record.creationDate ?? Date()
+
         return CloudKitRecordViewModel(
             recordID: record.recordID,
             recordType: recordType.rawValue,
             title: title,
             subtitle: subtitle,
+            modificationDate: modificationDate,
+            fileSize: fileSize,
             isDownloaded: isDownloaded, // Set based on parameter
             isDownloading: false // Assume false initially
         )
@@ -276,18 +280,21 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             DLOG("Found \(games.count) local Games linked to CloudKit")
             viewModels = games.compactMap { game -> CloudKitRecordViewModel? in
                 guard let recordName = game.cloudRecordID else { return nil }
-                let recordID = CKRecord.ID(recordName: recordName) // Fix: Create CKRecord.ID from String
+                let recordID = CKRecord.ID(recordName: recordName)
                 let systemName = getSystemName(fromIdentifier: game.systemIdentifier)
-                // Cast Int to Int64
-                let fileSize = formatBytes(Int64(game.fileSize)) // PVGame stores fileSize directly
+                let fileSizeBytes = Int64(game.fileSize)
+                let fileSizeFormatted = formatBytes(fileSizeBytes)
+                let modificationDate = game.importDate
 
                 return CloudKitRecordViewModel(
                     recordID: recordID,
                     recordType: recordType.rawValue,
                     title: game.title,
-                    subtitle: "\(systemName) • \(fileSize)",
+                    subtitle: "\(systemName) • \(fileSizeFormatted)",
+                    modificationDate: modificationDate,
+                    fileSize: fileSizeBytes,
                     isDownloaded: game.isDownloaded,
-                    isDownloading: false // Default
+                    isDownloading: false
                 )
             }
 
@@ -300,19 +307,22 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                 guard let recordName = saveState.cloudRecordID,
                       let file = saveState.file,
                       let game = saveState.game else { return nil }
-                let recordID = CKRecord.ID(recordName: recordName) // Fix: Create CKRecord.ID from String
+                let recordID = CKRecord.ID(recordName: recordName)
                 let systemName = getSystemName(fromIdentifier: game.systemIdentifier)
-                // Cast UInt64 to Int64
-                let fileSize = formatBytes(Int64(file.size)) // PVSaveState uses PVFile relationship
+                let fileSizeBytes = Int64(file.size)
+                let fileSizeFormatted = formatBytes(fileSizeBytes)
                 let gameTitle = game.title
+                let modificationDate = saveState.date ?? Date()
 
                 return CloudKitRecordViewModel(
                     recordID: recordID,
                     recordType: recordType.rawValue,
-                    title: file.fileName, // Use filename from PVFile
-                    subtitle: "\(gameTitle) (\(systemName)) • \(fileSize)",
+                    title: file.fileName,
+                    subtitle: "\(gameTitle) (\(systemName)) • \(fileSizeFormatted)",
+                    modificationDate: modificationDate,
+                    fileSize: fileSizeBytes,
                     isDownloaded: saveState.isDownloaded,
-                    isDownloading: false // Default
+                    isDownloading: false
                 )
             }
 
@@ -322,20 +332,22 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             DLOG("Found \(bioses.count) local BIOSes linked to CloudKit")
             viewModels = bioses.compactMap { bios -> CloudKitRecordViewModel? in
                 guard let recordName = bios.cloudRecordID else { return nil }
-                let recordID = CKRecord.ID(recordName: recordName) // Fix: Create CKRecord.ID from String
-                // Access system via relationship, ensuring PVSystem is correctly linked
-                let systemIdentifier = bios.system?.identifier // Use optional chaining
+                let recordID = CKRecord.ID(recordName: recordName)
+                let systemIdentifier = bios.system?.identifier
                 let systemName = getSystemName(fromIdentifier: systemIdentifier)
-                // Cast Int to Int64
-                let fileSize = formatBytes(Int64(bios.fileSize)) // PVBIOS stores fileSize directly
+                let fileSizeBytes = Int64(bios.fileSize)
+                let fileSizeFormatted = formatBytes(fileSizeBytes)
+                let modificationDate = Date() // BIOS doesn't have date field, use current date
 
                 return CloudKitRecordViewModel(
                     recordID: recordID,
                     recordType: recordType.rawValue,
                     title: bios.descriptionText.isEmpty ? bios.expectedFilename : bios.descriptionText,
-                    subtitle: "\(systemName) • \(fileSize)",
+                    subtitle: "\(systemName) • \(fileSizeFormatted)",
+                    modificationDate: modificationDate,
+                    fileSize: fileSizeBytes,
                     isDownloaded: bios.isDownloaded,
-                    isDownloading: false // Default
+                    isDownloading: false
                 )
             }
 
@@ -450,9 +462,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                 throw CloudSyncError.invalidData
             }
 
-            let syncManager = CloudSyncManager.shared
-            let realm = try await Realm(actor: MainActor.shared)
-            let database = CKContainer.default().privateCloudDatabase // Get database for direct operation
+            let database = CKContainer.default().privateCloudDatabase
 
             switch recordType {
             case .rom:
@@ -557,17 +567,23 @@ final class CloudKitOnDemandViewModel: ObservableObject {
 
     struct CloudKitOnDemandView: View {
         @StateObject private var viewModel = CloudKitOnDemandViewModel()
-        @State private var showingFilterSheet = false
         @State private var selectedFilter: RecordTypeFilter = .all
-        @State private var sortOrder: [KeyPathComparator<CloudKitRecordViewModel>] = [
-            .init(\.title, order: .forward) // Default sort by title
-        ]
         @State private var searchText = ""
 
         // Computed property for filtered and sorted records
         private var filteredAndSortedRecords: [CloudKitRecordViewModel] {
-            viewModel.filteredRecords(filter: selectedFilter, searchText: searchText)
-                .sorted(using: sortOrder)
+            let filtered = viewModel.filteredRecords(filter: selectedFilter, searchText: searchText)
+
+            switch viewModel.sortOrder {
+            case .title:
+                return filtered.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+            case .date:
+                return filtered.sorted { $0.modificationDate > $1.modificationDate } // Newest first
+            case .type:
+                return filtered.sorted { $0.recordType < $1.recordType }
+            case .size:
+                return filtered.sorted { $0.fileSize > $1.fileSize } // Largest first
+            }
         }
 
         // MARK: - Body
@@ -644,7 +660,10 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             .task(id: viewModel.selectedScope) { // Re-run task when scope changes
                 await viewModel.refreshMetadata()
             }
-            .alert("Error", isPresented: .constant(viewModel.error != nil), actions: {
+            .alert("Error", isPresented: Binding(
+                get: { viewModel.error != nil },
+                set: { if !$0 { viewModel.error = nil } }
+            ), actions: {
                 Button("OK") { viewModel.error = nil }
             }, message: {
                 Text(viewModel.error ?? "An unknown error occurred.")
@@ -684,8 +703,9 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                 Spacer()
 
                 // Status Indicator
-                let cloudRecordID = record.recordID
-                let isDownloadable = CloudKitSchema.RecordType(rawValue: record.recordType) == .rom || CloudKitSchema.RecordType(rawValue: record.recordType) == .saveState
+                let isDownloadable = CloudKitSchema.RecordType(rawValue: record.recordType) == .rom ||
+                                     CloudKitSchema.RecordType(rawValue: record.recordType) == .saveState ||
+                                     CloudKitSchema.RecordType(rawValue: record.recordType) == .bios
 
                 if viewModel.activeOperations[record.recordID.recordName] == true || record.isDownloading {
                     ProgressView()

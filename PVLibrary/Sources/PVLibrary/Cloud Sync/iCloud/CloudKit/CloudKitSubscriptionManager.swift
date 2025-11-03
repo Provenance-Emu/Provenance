@@ -321,7 +321,7 @@ public class CloudKitSubscriptionManager {
                     WLOG("Roms Syncer is not CloudKitRomsSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
                 }
 
-            case "save-state-changes":
+            case "savestate-changes":
                 // Handle Save State changes
                 // Ensure the syncer is the CloudKit specific one (or its base class) before calling its method
                 if let cloudKitSyncer = CloudSyncManager.shared.saveStatesSyncer as? CloudKitSyncer {
@@ -334,8 +334,7 @@ public class CloudKitSubscriptionManager {
                         DLOG("Processed SaveState notification via CloudKitSyncer for \(recordID.recordName)")
                     } catch {
                         ELOG("Error fetching or processing SaveState notification for \(recordID.recordName): \(error)")
-                        // Optionally, inform the syncer's error handler
-                        // await cloudKitSyncer.errorHandler.handle(error: error)
+                        await CloudSyncManager.shared.errorHandler.handle(error: error)
                     }
                 } else {
                     WLOG("SaveStates Syncer is not CloudKitSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")

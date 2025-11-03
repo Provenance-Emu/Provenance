@@ -64,7 +64,9 @@ public struct CloudSyncSettingsView: View {
                 // Tab content
                 TabView(selection: $selectedTab) {
                     cloudKitTab.tag(0)
+                    #if !os(tvOS)
                     iCloudDriveTab.tag(1)
+                    #endif
                     settingsTab.tag(2)
                     moreSettingsTab.tag(3)
                 }
@@ -100,15 +102,10 @@ public struct CloudSyncSettingsView: View {
     /// It appears at the top of the view and provides immediate feedback about the sync state.
 
     private var statusHeader: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             Text("Cloud Sync")
                 .font(.title)
                 .foregroundColor(.retroPink)
-                .padding(.top)
-
-            Text("Cloud sync is currently under development. UI is not final. Not all features work yet. Use at your own risk.")
-                .font(.subheadline)
-                .foregroundColor(.retroBlue)
                 .padding(.top)
 
             HStack(spacing: 12) {
@@ -118,9 +115,18 @@ public struct CloudSyncSettingsView: View {
                     .frame(width: 12, height: 12)
 
                 // Status text
-                Text(viewModel.syncStatus)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(viewModel.syncStatus)
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+
+                    // Show sync mode if enabled
+                    if iCloudSyncEnabled && viewModel.iCloudAvailable {
+                        Text("Mode: \(currentiCloudSyncMode.description)")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
 
                 Spacer()
 
@@ -149,9 +155,11 @@ public struct CloudSyncSettingsView: View {
     private var tabSelector: some View {
         HStack(spacing: 0) {
             tabButton(title: "CloudKit", systemImage: "icloud.fill", tag: 0)
+            #if !os(tvOS)
             tabButton(title: "iCloud Drive", systemImage: "folder.fill.badge.person.crop", tag: 1)
+            #endif
             tabButton(title: "Settings", systemImage: "gear", tag: 2)
-            tabButton(title: "Sync Settings", systemImage: "person.icloud", tag: 3)
+            tabButton(title: "Advanced", systemImage: "slider.horizontal.3", tag: 3)
         }
         .padding(.horizontal)
         .padding(.bottom, 8)
@@ -192,6 +200,12 @@ public struct CloudSyncSettingsView: View {
     private var cloudKitTab: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 16) {
+                // Account status warning if needed
+                if !viewModel.iCloudAvailable {
+                    accountStatusWarning
+                        .padding(.horizontal)
+                }
+
                 // CloudKit Analytics
                 CloudKitSyncAnalyticsView()
                     .padding(.horizontal)
@@ -235,6 +249,31 @@ public struct CloudSyncSettingsView: View {
             HapticFeedbackService.shared.playSelection(style: .light)
 #endif
         }
+    }
+
+    /// Account status warning banner
+    private var accountStatusWarning: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(.orange)
+
+                Text("iCloud Account Issue")
+                    .font(.headline)
+                    .foregroundColor(.white)
+            }
+
+            Text("CloudKit sync requires a valid iCloud account. Please check your iCloud settings in System Settings.")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+        }
+        .padding()
+        .background(Color.orange.opacity(0.2))
+        .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.orange.opacity(0.5), lineWidth: 1)
+        )
     }
 
     /// Sync log section with expandable detailed log viewer

@@ -21,7 +21,7 @@ public enum DateRange: String, CaseIterable, Identifiable {
     case lastWeek = "Last 7 Days"
     case lastMonth = "Last 30 Days"
     case custom = "Custom Range"
-    
+
     public var id: String { rawValue }
 }
 
@@ -29,22 +29,22 @@ public enum DateRange: String, CaseIterable, Identifiable {
 public struct SyncLogEntry: Identifiable, Equatable {
     /// The unique identifier for the log entry
     public let id = UUID()
-    
+
     /// The timestamp of the log entry
     public let timestamp: Date
-    
+
     /// The message of the log entry
     public let message: String
-    
+
     /// The type of the log entry
     public let type: LogType
-    
+
     /// The file associated with the log entry, if any
     public let file: String?
-    
+
     /// The operation associated with the log entry
     public let operation: SyncOperation
-    
+
     /// The log entry type
     public enum LogType: String, CaseIterable {
         case info
@@ -52,7 +52,7 @@ public struct SyncLogEntry: Identifiable, Equatable {
         case error
         case debug
         case verbose
-        
+
         /// The color associated with the log type
         public var color: Color {
             switch self {
@@ -69,7 +69,7 @@ public struct SyncLogEntry: Identifiable, Equatable {
             }
         }
     }
-    
+
     /// The sync operation type
     public enum SyncOperation: String, CaseIterable {
         case upload
@@ -78,7 +78,7 @@ public struct SyncLogEntry: Identifiable, Equatable {
         case conflict
         case metadata
         case other
-        
+
         /// The icon associated with the operation
         public var icon: String {
             switch self {
@@ -97,7 +97,7 @@ public struct SyncLogEntry: Identifiable, Equatable {
             }
         }
     }
-    
+
     /// Initialize a new SyncLogEntry
     /// - Parameters:
     ///   - timestamp: The timestamp of the log entry
@@ -126,86 +126,98 @@ public class SyncLogViewModel: ObservableObject {
     private var subscribers = Set<AnyCancellable>()
     /// The log entries
     @Published private(set) var logEntries: [SyncLogEntry] = []
-    
+
     /// The filtered log entries
     @Published private(set) var filteredEntries: [SyncLogEntry] = []
-    
+
     /// The selected log types
     @Published var selectedLogTypes: Set<SyncLogEntry.LogType> = Set(SyncLogEntry.LogType.allCases)
-    
+
     /// The selected operations
     @Published var selectedOperations: Set<SyncLogEntry.SyncOperation> = Set(SyncLogEntry.SyncOperation.allCases)
-    
+
     /// Whether to show the filter panel
     @Published var showFilterPanel = false
-    
+
     /// The date range for filtering
     @Published var dateRange: DateRange = .all
-    
+
     /// The custom date range start
     @Published var customStartDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
-    
+
     /// The custom date range end
     @Published var customEndDate = Date()
-    
+
     /// The search text
     @Published var searchText = ""
-    
+
     /// Whether logs are currently being loaded
     @Published var isLoading = false
-    
+
     /// Initialize a new SyncLogViewModel
     public init() {
         // Subscribe to real-time log events
         subscribeToLogEvents()
-        
+
+        // Set up filter bindings
+        setupBindings()
+
         // Initial load of logs
         loadSyncLogs()
     }
-    
+
     /// Subscribe to real-time log events from CloudSyncLogManager
     private func subscribeToLogEvents() {
         CloudSyncLogManager.shared.syncEventPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] entry in
                 guard let self = self else { return }
-                
+
                 // Convert to view model's SyncLogEntry type
                 let viewEntry = self.convertToViewEntry(from: entry)
-                
+
                 // Add to log entries
                 self.logEntries.insert(viewEntry, at: 0)
-                
+
                 // Apply filters
                 self.applyFilters()
             }
             .store(in: &subscribers)
     }
-    
+
     /// Set up the bindings
     private func setupBindings() {
+        // Observe filter changes and apply filters automatically
         Publishers.CombineLatest4(
             $selectedLogTypes,
             $selectedOperations,
-            $searchText,
-            $dateRange
+            $searchText.debounce(for: .milliseconds(300), scheduler: RunLoop.main),
+            Publishers.CombineLatest3($dateRange, $customStartDate, $customEndDate)
         )
-        .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-        .sink { [weak self] newDateRange in
-            self?.applyFilters(
-                logTypes: Array(self?.selectedLogTypes ?? []),
-                operations: Array(self?.selectedOperations ?? []),
-                searchText: self?.searchText ?? "",
-                dateRange: self?.getDateRangeForFilter() ?? nil
+        .sink { [weak self] logTypes, operations, searchText, dateRangeInfo in
+            guard let self = self else { return }
+            let (dateRange, customStart, customEnd) = dateRangeInfo
+
+            // Update custom dates if needed
+            if dateRange == .custom {
+                self.customStartDate = customStart
+                self.customEndDate = customEnd
+            }
+
+            self.applyFilters(
+                logTypes: Array(logTypes),
+                operations: Array(operations),
+                searchText: searchText,
+                dateRange: self.getDateRangeForFilter()
             )
         }
         .store(in: &subscribers)
     }
-    
+
     /// Apply the filters
     /// - Parameters:
-    ///   - logTypes: The log types to include
-    ///   - operations: The operations to include
+    ///   - logTypes: The log types to include (empty means all)
+    ///   - operations: The operations to include (empty means all)
     ///   - searchText: The search text
     ///   - dateRange: The date range
     private func applyFilters(
@@ -214,28 +226,35 @@ public class SyncLogViewModel: ObservableObject {
         searchText: String = "",
         dateRange: ClosedRange<Date>? = nil
     ) {
+        // Use selected filters if arrays are empty (for manual calls)
+        let typesToFilter = logTypes.isEmpty ? Array(selectedLogTypes) : logTypes
+        let opsToFilter = operations.isEmpty ? Array(selectedOperations) : operations
+
         filteredEntries = logEntries.filter { entry in
             // Filter by log type
-            guard logTypes.contains(entry.type) else { return false }
-            
+            guard typesToFilter.contains(entry.type) else { return false }
+
             // Filter by operation
-            guard operations.contains(entry.operation) else { return false }
-            
+            guard opsToFilter.contains(entry.operation) else { return false }
+
             // Filter by search text
             let searchMatch = searchText.isEmpty ||
                 entry.message.localizedCaseInsensitiveContains(searchText) ||
                 (entry.file?.localizedCaseInsensitiveContains(searchText) ?? false)
             guard searchMatch else { return false }
-            
+
             // Filter by date range
             if let dateRange = dateRange {
                 guard dateRange.contains(entry.timestamp) else { return false }
             }
-            
+
             return true
         }
+
+        // Sort by timestamp (newest first)
+        filteredEntries.sort { $0.timestamp > $1.timestamp }
     }
-    
+
     /// Add a log entry
     /// - Parameter entry: The entry to add
     public func addLogEntry(_ entry: SyncLogEntry) {
@@ -247,12 +266,12 @@ public class SyncLogViewModel: ObservableObject {
             dateRange: getDateRangeForFilter()
         )
     }
-    
+
     /// Clear all log entries
     public func clearLogs() {
         logEntries.removeAll()
         filteredEntries.removeAll()
-        
+
         // Also clear logs in the manager
         Task {
             do {
@@ -262,12 +281,12 @@ public class SyncLogViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// Helper method to convert DateRange enum to actual date range
     private func getDateRangeForFilter() -> ClosedRange<Date>? {
         let calendar = Calendar.current
         let now = Date()
-        
+
         switch dateRange {
         case .all:
             return nil
@@ -288,24 +307,24 @@ public class SyncLogViewModel: ObservableObject {
             return customStartDate...customEndDate
         }
     }
-    
+
     /// Load sync logs from CloudSyncLogManager
     private func loadSyncLogs() {
         isLoading = true
-        
+
         Task { @MainActor in
             do {
                 // Fetch logs from CloudSyncLogManager
                 let syncLogs = try await CloudSyncLogManager.shared.getSyncLogs(maxEntries: 200)
-                
+
                 // Convert log entries to our view model format
                 let entries = syncLogs.map { self.convertToViewEntry(from: $0) }
-                
+
                 self.logEntries = entries
-                
+
                 // Apply filters
                 self.applyFilters()
-                
+
                 // If no entries were found, show a placeholder entry
                 if entries.isEmpty {
                     let placeholderEntry = SyncLogEntry(
@@ -329,11 +348,11 @@ public class SyncLogViewModel: ObservableObject {
                 self.logEntries = [errorEntry]
                 self.filteredEntries = [errorEntry]
             }
-            
+
             isLoading = false
         }
     }
-    
+
     /// Convert CloudSyncLogEntry to view model's SyncLogEntry
     private func convertToViewEntry(from entry: CloudSyncLogEntry) -> SyncLogEntry {
         // Convert log level to view model's log type
@@ -350,7 +369,7 @@ public class SyncLogViewModel: ObservableObject {
         case .verbose:
             type = .verbose
         }
-        
+
         // Convert operation type
         let operation: SyncLogEntry.SyncOperation
         switch entry.operation {
@@ -367,13 +386,26 @@ public class SyncLogViewModel: ObservableObject {
         case .error:
             operation = .metadata // Map error to metadata in the view model
         }
-        
+
         // Extract filename from filePath if available
-        let file: String? = entry.filePath.flatMap { URL(fileURLWithPath: $0).lastPathComponent }
-        
+        let file: String? = entry.filePath.flatMap { path in
+            // Handle both full paths and just filenames
+            if path.contains("/") {
+                return URL(fileURLWithPath: path).lastPathComponent
+            } else {
+                return path
+            }
+        }
+
+        // Enhance message with provider info if not already present
+        var enhancedMessage = entry.message
+        if !enhancedMessage.localizedCaseInsensitiveContains(entry.provider.rawValue) {
+            enhancedMessage = "[\(entry.provider.rawValue.uppercased())] \(enhancedMessage)"
+        }
+
         return SyncLogEntry(
             timestamp: entry.timestamp,
-            message: entry.message,
+            message: enhancedMessage,
             type: type,
             file: file,
             operation: operation
@@ -385,25 +417,25 @@ public class SyncLogViewModel: ObservableObject {
 public struct SyncLogViewer: View {
     /// The view model
     @StateObject private var viewModel = SyncLogViewModel()
-    
+
     /// The number of items per page
     @State private var itemsPerPage = 20
-    
+
     /// The current page
     @State private var currentPage = 0
-    
+
     /// Whether the filter panel is expanded
     @State private var isFilterExpanded = false
-    
+
     /// Whether to show the date range picker
     @State private var showDateRangePicker = false
-    
+
     /// The start date for filtering
     @State private var startDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
-    
+
     /// The end date for filtering
     @State private var endDate = Date()
-    
+
     /// The date formatter
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -411,7 +443,7 @@ public struct SyncLogViewer: View {
         formatter.timeStyle = .medium
         return formatter
     }()
-    
+
     /// The time formatter
     private let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -419,7 +451,7 @@ public struct SyncLogViewer: View {
         formatter.timeStyle = .medium
         return formatter
     }()
-    
+
     /// The date formatter for the date range
     private let dateOnlyFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -427,20 +459,20 @@ public struct SyncLogViewer: View {
         formatter.timeStyle = .none
         return formatter
     }()
-    
+
     public var body: some View {
         VStack(spacing: 0) {
             // Search and filter bar
             searchAndFilterBar
-            
+
             // Filter panel (expandable)
             if isFilterExpanded {
                 filterPanel
             }
-            
+
             // Log entries
             logEntriesList
-            
+
             // Pagination controls
             paginationControls
         }
@@ -451,7 +483,7 @@ public struct SyncLogViewer: View {
             viewModel.customEndDate = endDate
         }
     }
-    
+
     /// The search and filter bar
     private var searchAndFilterBar: some View {
         HStack {
@@ -459,10 +491,10 @@ public struct SyncLogViewer: View {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
-                
+
                 TextField("Search logs...", text: $viewModel.searchText)
                     .textFieldStyle(PlainTextFieldStyle())
-                
+
                 if !viewModel.searchText.isEmpty {
                     Button(action: {
                         viewModel.searchText = ""
@@ -475,7 +507,7 @@ public struct SyncLogViewer: View {
             .padding(8)
             .background(Color.retroBlack.opacity(0.3))
             .cornerRadius(8)
-            
+
             // Filter toggle
             Button(action: {
                 withAnimation(.spring()) {
@@ -488,7 +520,7 @@ public struct SyncLogViewer: View {
                 Label("Filter", systemImage: "line.3.horizontal.decrease.circle\(isFilterExpanded ? ".fill" : "")")
             }
             .retroButton(colors: [.retroPurple])
-            
+
             // Clear logs
             Button(action: {
                 viewModel.clearLogs()
@@ -502,7 +534,7 @@ public struct SyncLogViewer: View {
         }
         .padding()
     }
-    
+
     /// The filter panel
     private var filterPanel: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -510,12 +542,12 @@ public struct SyncLogViewer: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Log Types")
                     .retroSectionHeader()
-                
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(SyncLogEntry.LogType.allCases, id: \.self) { logType in
                             let isSelected = viewModel.selectedLogTypes.contains(logType)
-                            
+
                             Button(action: {
                                 if isSelected {
                                     viewModel.selectedLogTypes.remove(logType)
@@ -540,17 +572,17 @@ public struct SyncLogViewer: View {
                     .padding(.horizontal, 4)
                 }
             }
-            
+
             // Operation filters
             VStack(alignment: .leading, spacing: 8) {
                 Text("Operations")
                     .retroSectionHeader()
-                
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(SyncLogEntry.SyncOperation.allCases, id: \.self) { operation in
                             let isSelected = viewModel.selectedOperations.contains(operation)
-                            
+
                             Button(action: {
                                 if isSelected {
                                     viewModel.selectedOperations.remove(operation)
@@ -578,12 +610,12 @@ public struct SyncLogViewer: View {
                     .padding(.horizontal, 4)
                 }
             }
-            
+
             // Date range filter
             VStack(alignment: .leading, spacing: 8) {
                 Text("Date Range")
                     .retroSectionHeader()
-                
+
                 HStack {
                     Button(action: {
                         withAnimation {
@@ -603,9 +635,9 @@ public struct SyncLogViewer: View {
                         .cornerRadius(8)
                         .foregroundColor(.white)
                     }
-                    
+
                     Spacer()
-                    
+
                     Button(action: {
                         // Reset to last 7 days
                         startDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
@@ -632,7 +664,7 @@ public struct SyncLogViewer: View {
                             .onChange(of: startDate) { _ in
                                 viewModel.customStartDate = startDate
                             }
-                        
+
                         DatePicker("End Date", selection: $endDate, displayedComponents: [.date])
                             .datePickerStyle(CompactDatePickerStyle())
                             .onChange(of: endDate) { _ in
@@ -651,18 +683,18 @@ public struct SyncLogViewer: View {
         .background(Color.retroBlack.opacity(0.2))
         .transition(.move(edge: .top).combined(with: .opacity))
     }
-    
+
     /// The log entries list
     private var logEntriesList: some View {
         let paginatedEntries = getPaginatedEntries()
-        
+
         return ScrollView {
             LazyVStack(spacing: 8) {
                 ForEach(paginatedEntries) { entry in
                     logEntryRow(entry)
                         .transition(.opacity)
                 }
-                
+
                 if paginatedEntries.isEmpty {
                     Text("No logs match the current filters")
                         .foregroundColor(.gray)
@@ -672,20 +704,20 @@ public struct SyncLogViewer: View {
             .padding()
         }
     }
-    
+
     /// Get the paginated entries
     /// - Returns: The paginated entries
     private func getPaginatedEntries() -> [SyncLogEntry] {
         let startIndex = currentPage * itemsPerPage
         let endIndex = min(startIndex + itemsPerPage, viewModel.filteredEntries.count)
-        
+
         guard startIndex < viewModel.filteredEntries.count else {
             return []
         }
-        
+
         return Array(viewModel.filteredEntries[startIndex..<endIndex])
     }
-    
+
     /// Create a log entry row
     /// - Parameter entry: The log entry
     /// - Returns: A view
@@ -696,30 +728,30 @@ public struct SyncLogViewer: View {
                 Text(dateFormatter.string(from: entry.timestamp))
                     .font(.caption)
                     .foregroundColor(.gray)
-                
+
                 Spacer()
-                
+
                 // Log type badge
                 Text(entry.type.rawValue.uppercased())
                     .retroBadge(color: entry.type.color)
-                
+
                 // Operation icon
                 Image(systemName: entry.operation.icon)
                     .foregroundColor(entry.type.color)
             }
-            
+
             // Message
             Text(entry.message)
                 .font(.body)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             // File if available
             if let file = entry.file {
                 HStack {
                     Image(systemName: "doc")
                         .foregroundColor(.gray)
-                    
+
                     Text(file)
                         .font(.caption)
                         .foregroundColor(.gray)
@@ -731,7 +763,7 @@ public struct SyncLogViewer: View {
         .cornerRadius(8)
         .retroGlowingBorder(color: entry.type.color.opacity(0.5), lineWidth: 1)
     }
-    
+
     /// The pagination controls
     private var paginationControls: some View {
         HStack {
@@ -748,16 +780,16 @@ public struct SyncLogViewer: View {
                     .foregroundColor(currentPage > 0 ? .white : .gray)
             }
             .disabled(currentPage <= 0)
-            
+
             Spacer()
-            
+
             // Page info
             Text("Page \(currentPage + 1) of \(max(1, (viewModel.filteredEntries.count + itemsPerPage - 1) / itemsPerPage))")
                 .font(.caption)
                 .foregroundColor(.gray)
-            
+
             Spacer()
-            
+
             // Items per page selector
             if #available(tvOS 17.0, *) {
                 Menu {
@@ -770,7 +802,7 @@ public struct SyncLogViewer: View {
                         Text("\(itemsPerPage) per page")
                             .font(.caption)
                             .foregroundColor(.gray)
-                        
+
                         Image(systemName: "chevron.down")
                             .font(.caption)
                             .foregroundColor(.gray)
@@ -779,9 +811,9 @@ public struct SyncLogViewer: View {
             } else {
                 // Fallback on earlier versions
             }
-            
+
             Spacer()
-            
+
             // Next page
             Button(action: {
                 withAnimation {

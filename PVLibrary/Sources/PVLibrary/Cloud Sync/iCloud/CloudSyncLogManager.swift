@@ -362,14 +362,23 @@ public class CloudSyncLogManager {
         // Format: [LEVEL] [TIMESTAMP] [PROVIDER] [OPERATION] MESSAGE
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         let timestamp = dateFormatter.string(from: entry.timestamp)
 
-        let logLine = "[\(entry.level.rawValue.uppercased())] [\(timestamp)] [\(entry.provider.rawValue)] [\(entry.operation.rawValue)] \(entry.message)\n"
+        // Escape newlines in message to keep log format consistent
+        let sanitizedMessage = entry.message.replacingOccurrences(of: "\n", with: "\\n")
+        let logLine = "[\(entry.level.rawValue.uppercased())] [\(timestamp)] [\(entry.provider.rawValue.uppercased())] [\(entry.operation.rawValue.uppercased())] \(sanitizedMessage)\n"
 
-        if let data = logLine.data(using: String.Encoding.utf8) {
+        guard let data = logLine.data(using: String.Encoding.utf8) else { return }
+
+        // Use a serial queue for file writes to prevent race conditions
+        logEntriesQueue.async { [weak self] in
+            guard let self = self else { return }
+
             do {
                 // Use a new file handle for each write to avoid issues with concurrent access
-                let fileHandle = try FileHandle(forWritingTo: syncLogFileURL)
+                let fileHandle = try FileHandle(forWritingTo: self.syncLogFileURL)
                 defer {
                     try? fileHandle.close()
                 }
@@ -377,14 +386,18 @@ public class CloudSyncLogManager {
                 // Seek to end and append
                 fileHandle.seekToEndOfFile()
                 fileHandle.write(data)
+                try? fileHandle.synchronize()
             } catch {
                 ELOG("Error writing to sync log file: \(error.localizedDescription)")
 
                 // Try the fallback approach of just writing the file directly
-                if let existingData = try? Data(contentsOf: syncLogFileURL) {
+                if let existingData = try? Data(contentsOf: self.syncLogFileURL) {
                     var newData = existingData
                     newData.append(data)
-                    try? newData.write(to: syncLogFileURL, options: .atomic)
+                    try? newData.write(to: self.syncLogFileURL, options: .atomic)
+                } else {
+                    // File doesn't exist, create it
+                    try? data.write(to: self.syncLogFileURL, options: .atomic)
                 }
             }
         }
@@ -504,41 +517,61 @@ public class CloudSyncLogManager {
         // Parse each line into a log entry
         return lines.compactMap { line -> CloudSyncLogEntry? in
             // Skip empty lines
-            guard !line.isEmpty else { return nil }
+            guard !line.isEmpty, line.trimmingCharacters(in: .whitespaces).count > 0 else { return nil }
 
             // Parse the log entry
             // Format: [LEVEL] [TIMESTAMP] [PROVIDER] [OPERATION] MESSAGE
-            let components = line.components(separatedBy: "] ")
-            guard components.count >= 4 else { return nil }
+            // Use regex for more robust parsing
+            let pattern = "^\\[(\\w+)\\]\\s+\\[(.+?)\\]\\s+\\[(.+?)\\]\\s+\\[(.+?)\\]\\s+(.+)$"
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: []),
+                  let match = regex.firstMatch(in: line, options: [], range: NSRange(location: 0, length: line.utf16.count)) else {
+                // Try fallback parsing for malformed entries
+                return parseMalformedLogEntry(line)
+            }
 
-            // Extract the log level
-            let levelString = components[0].trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-            guard let level = CloudLogLevel(rawValue: levelString.lowercased()) else { return nil }
+            // Extract components using regex groups
+            guard match.numberOfRanges >= 6 else { return nil }
 
-            // Extract the timestamp
-            let timestampString = components[1].trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+            let levelRange = Range(match.range(at: 1), in: line)!
+            let timestampRange = Range(match.range(at: 2), in: line)!
+            let providerRange = Range(match.range(at: 3), in: line)!
+            let operationRange = Range(match.range(at: 4), in: line)!
+            let messageRange = Range(match.range(at: 5), in: line)!
+
+            let levelString = String(line[levelRange]).lowercased()
+            guard let level = CloudLogLevel(rawValue: levelString) else { return nil }
+
+            let timestampString = String(line[timestampRange]).trimmingCharacters(in: .whitespaces)
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+            dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+            dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
             guard let timestamp = dateFormatter.date(from: timestampString) else { return nil }
 
-            // Extract provider
-            let providerString = components[2].trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-            let provider = CloudSyncLogEntry.SyncProviderType(rawValue: providerString.lowercased()) ?? .unknown
+            let providerString = String(line[providerRange]).lowercased()
+            let provider = CloudSyncLogEntry.SyncProviderType(rawValue: providerString) ?? .unknown
 
-            // Extract operation
-            let operationString = components[3].trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-            let operation = CloudSyncLogEntry.SyncOperationType(rawValue: operationString.lowercased()) ?? .unknown
+            let operationString = String(line[operationRange]).lowercased()
+            let operation = CloudSyncLogEntry.SyncOperationType(rawValue: operationString) ?? .unknown
 
-            // Extract the message
-            let message = components.dropFirst(4).joined(separator: "] ")
+            let message = String(line[messageRange]).trimmingCharacters(in: .whitespaces)
 
-            // Extract file path if present in the message
+            // Extract file path more accurately from message
             var filePath: String? = nil
-            if let filePathMatch = message.range(of: "file: ([^\\s]+)", options: .regularExpression) {
-                // Extract the file path from the match
-                let start = filePathMatch.lowerBound
-                let end = filePathMatch.upperBound
-                filePath = String(message[start..<end])
+            // Look for common file path patterns in the message
+            if let fileMatch = message.range(of: #"file:\s*([^\s]+)"#, options: .regularExpression) {
+                let afterColon = message[fileMatch.upperBound...]
+                if let spaceIndex = afterColon.firstIndex(of: " ") {
+                    filePath = String(afterColon[..<spaceIndex])
+                } else {
+                    filePath = String(afterColon)
+                }
+            } else if message.contains("/") {
+                // If message contains a path-like string, try to extract it
+                let pathPattern = #"([/][^\s]+)"#
+                if let pathMatch = message.range(of: pathPattern, options: .regularExpression) {
+                    filePath = String(message[pathMatch])
+                }
             }
 
             return CloudSyncLogEntry(
@@ -550,6 +583,44 @@ public class CloudSyncLogManager {
                 provider: provider
             )
         }
+    }
+
+    /// Fallback parser for malformed log entries
+    private func parseMalformedLogEntry(_ line: String) -> CloudSyncLogEntry? {
+        // Try to extract at least timestamp and message
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+
+        // Look for timestamp pattern anywhere in the line
+        if let timestampMatch = line.range(of: #"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}"#, options: .regularExpression),
+           let timestamp = dateFormatter.date(from: String(line[timestampMatch])) {
+
+            // Extract message (everything after last bracket or after timestamp)
+            let messageStart = timestampMatch.upperBound
+            let message = String(line[messageStart...]).trimmingCharacters(in: .whitespaces)
+
+            // Try to infer level from message content
+            let level: CloudLogLevel
+            if message.localizedCaseInsensitiveContains("error") || message.localizedCaseInsensitiveContains("failed") {
+                level = .error
+            } else if message.localizedCaseInsensitiveContains("warning") || message.localizedCaseInsensitiveContains("warn") {
+                level = .warning
+            } else {
+                level = .info
+            }
+
+            return CloudSyncLogEntry(
+                timestamp: timestamp,
+                message: message.isEmpty ? line : message,
+                level: level,
+                operation: .unknown,
+                filePath: nil,
+                provider: .unknown
+            )
+        }
+
+        return nil
     }
 }
 

@@ -782,7 +782,17 @@ public class CloudSyncManager {
 
     /// Initialize sync providers
     private func initializeSyncProviders() {
-        let syncMode = Defaults[.iCloudSyncMode]
+        var syncMode = Defaults[.iCloudSyncMode]
+
+        // Ensure tvOS always uses CloudKit
+        #if os(tvOS)
+        if !syncMode.isCloudKit {
+            WLOG("tvOS does not support iCloud Drive. Switching to CloudKit mode.")
+            syncMode = .cloudKit
+            Defaults[.iCloudSyncMode] = .cloudKit
+        }
+        #endif
+
         DLOG("Initializing sync providers for mode: \(syncMode.description)...")
         updateSyncStatus(.initializing)
 
@@ -1001,26 +1011,44 @@ public class CloudSyncManager {
         do {
             let accountStatus = try await container.accountStatus()
 
+            // Log account status for debugging
+            ILOG("CloudKit account status: \(accountStatus.rawValue)")
+
             switch accountStatus {
             case .available:
                 ILOG("CloudKit account is available. Proceeding with sync setup.")
+                // Verify container identifier is configured
+                guard container.containerIdentifier != nil else {
+                    ELOG("CloudKit container identifier is nil. Check Info.plist configuration.")
+                    updateSyncStatus(.error(CloudSyncError.missingDependency))
+                    return
+                }
+
                 // Account is good, proceed with sync
                 await startSync()
 
             case .noAccount:
-                ELOG("No iCloud account configured. CloudKit sync disabled.")
+                WLOG("No iCloud account configured. CloudKit sync will be disabled.")
                 updateSyncStatus(.error(CloudSyncError.noAccount))
+                // Post notification for UI to show helpful message
+                NotificationCenter.default.post(name: .iCloudSyncAccountNotAvailable, object: nil)
 
             case .restricted:
-                ELOG("iCloud account is restricted. CloudKit sync disabled.")
+                WLOG("iCloud account is restricted (e.g., parental controls). CloudKit sync will be disabled.")
                 updateSyncStatus(.error(CloudSyncError.accountRestricted))
+                NotificationCenter.default.post(name: .iCloudSyncAccountRestricted, object: nil)
 
             case .couldNotDetermine:
-                ELOG("Could not determine iCloud account status. CloudKit sync disabled.")
+                WLOG("Could not determine iCloud account status. This may be temporary.")
                 updateSyncStatus(.error(CloudSyncError.accountStatusUnknown))
+                // Retry after a short delay
+                Task {
+                    try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
+                    await checkAccountStatusAndSetupIfNeeded()
+                }
 
             case .temporarilyUnavailable:
-                WLOG("iCloud account temporarily unavailable. Will retry later.")
+                WLOG("iCloud account temporarily unavailable. Will retry in 30 seconds.")
                 updateSyncStatus(.error(CloudSyncError.accountTemporarilyUnavailable))
 
                 // Schedule a retry after a delay
@@ -1030,13 +1058,32 @@ public class CloudSyncManager {
                 }
 
             @unknown default:
-                ELOG("Unknown iCloud account status: \(accountStatus). CloudKit sync disabled.")
+                WLOG("Unknown iCloud account status: \(accountStatus.rawValue). CloudKit sync disabled.")
                 updateSyncStatus(.error(CloudSyncError.accountStatusUnknown))
             }
 
         } catch {
             ELOG("Failed to check CloudKit account status: \(error.localizedDescription)")
-            updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+
+            // Provide more specific error handling
+            if let ckError = error as? CKError {
+                switch ckError.code {
+                case .networkUnavailable, .networkFailure:
+                    WLOG("Network unavailable while checking CloudKit account status.")
+                    updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+                case .serviceUnavailable:
+                    WLOG("CloudKit service unavailable. Will retry later.")
+                    updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+                    Task {
+                        try await Task.sleep(nanoseconds: 30_000_000_000)
+                        await checkAccountStatusAndSetupIfNeeded()
+                    }
+                default:
+                    updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+                }
+            } else {
+                updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+            }
         }
     }
 
