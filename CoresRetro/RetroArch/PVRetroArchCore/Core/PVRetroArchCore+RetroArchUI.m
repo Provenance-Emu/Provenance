@@ -213,6 +213,47 @@ int argc =  1;
 	@autoreleasepool {
         _current=self;
         firstLoad=true;
+
+        /// Ensure any existing RetroArch state is properly cleaned up before starting
+        /// This prevents crashes when trying to destroy Vulkan contexts from previous failed loads
+        if (_isInitialized) {
+            ILOG(@"RetroArch: Cleaning up existing state before starting new game");
+            self.shouldStop = YES;
+            if (iterate_observer) {
+                CFRunLoopObserverInvalidate(iterate_observer);
+                CFRelease(iterate_observer);
+                iterate_observer = NULL;
+            }
+            /// Properly shut down RetroArch before starting fresh
+            /// This ensures Vulkan contexts are cleaned up in the correct order
+            /// Must be on main thread for RetroArch cleanup
+            if ([NSThread isMainThread]) {
+                @try {
+                    /// Use main_exit to properly clean up RetroArch state
+                    /// This matches the cleanup in stopEmulation and ensures proper teardown
+                    retroarch_config_init();
+                    task_queue_init(true, (void (*)(struct retro_task *, const char *, unsigned int, unsigned int, bool)) main_msg_queue_push);
+                    main_exit(NULL);
+                    task_queue_deinit();
+                } @catch (NSException *e) {
+                    WLOG(@"RetroArch: Exception during cleanup: %@", e);
+                }
+            } else {
+                /// If not on main thread, dispatch cleanup synchronously
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    @try {
+                        retroarch_config_init();
+                        task_queue_init(true, (void (*)(struct retro_task *, const char *, unsigned int, unsigned int, bool)) main_msg_queue_push);
+                        main_exit(NULL);
+                        task_queue_deinit();
+                    } @catch (NSException *e) {
+                        WLOG(@"RetroArch: Exception during cleanup: %@", e);
+                    }
+                });
+            }
+            _isInitialized = false;
+        }
+
 		self.skipEmulationLoop = true;
 		[self setupEmulation];
 		[self setOptionValues];
