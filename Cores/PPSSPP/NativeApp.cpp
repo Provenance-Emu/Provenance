@@ -80,6 +80,11 @@ inline const char *removePath(const char *str) {
 KeyInput input_state;
 OnScreenMessages osm;
 
+static float g_safeInsetLeft = 0.0f;
+static float g_safeInsetRight = 0.0f;
+static float g_safeInsetTop = 0.0f;
+static float g_safeInsetBottom = 0.0f;
+
 //namespace OpenEmuCoreThread {
 //    OpenEmuGLContext *ctx;
 //
@@ -262,13 +267,13 @@ void NativeInit(int argc, const char *argv[], const char *savegame_directory, co
 {
     VFSRegister("", new DirectoryAssetReader(Path("assets/")));
     VFSRegister("", new DirectoryAssetReader(Path(external_directory)));
-    
+
     g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 
     if (host == nullptr) {
         host = new NativeHost();
     }
-    
+
 //    logger = new AndroidLogger();
 
     LogManager *logman = LogManager::GetInstance();
@@ -295,16 +300,16 @@ bool NativeInitGraphics(GraphicsContext *graphicsContext)
 {
     //Set the Core Thread graphics Context
 //    OpenEmuCoreThread::ctx = static_cast<OpenEmuGLContext*>(graphicsContext);
-    
+
     // Save framebuffer and set ppsspp default graphics framebuffer object
 //    glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &framebuffer);
 //    OpenEmuCoreThread::ctx->SetRenderFBO(framebuffer);
 //
 //    Core_SetGraphicsContext(OpenEmuCoreThread::ctx);
-    
+
     if (gpu)
         gpu->DeviceRestore();
-    
+
     return true;
 }
 
@@ -414,10 +419,13 @@ float System_GetPropertyFloat(SystemProperty prop) {
     case SYSPROP_DISPLAY_REFRESH_RATE:
             return 59.94f;
     case SYSPROP_DISPLAY_SAFE_INSET_LEFT:
+        return g_safeInsetLeft;
     case SYSPROP_DISPLAY_SAFE_INSET_RIGHT:
+        return g_safeInsetRight;
     case SYSPROP_DISPLAY_SAFE_INSET_TOP:
+        return g_safeInsetTop;
     case SYSPROP_DISPLAY_SAFE_INSET_BOTTOM:
-        return 0.0f;
+        return g_safeInsetBottom;
     default:
         return -1;
     }
@@ -439,5 +447,13 @@ bool System_GetPropertyBool(SystemProperty prop) {
 }
 
 void System_SendMessage(const char *command, const char *parameter) {
-    return;
+    if (!strcmp(command, "safe_insets")) {
+        float left, right, top, bottom;
+        if (4 == sscanf(parameter, "%f:%f:%f:%f", &left, &right, &top, &bottom)) {
+            g_safeInsetLeft = left;
+            g_safeInsetRight = right;
+            g_safeInsetTop = top;
+            g_safeInsetBottom = bottom;
+        }
+    }
 }

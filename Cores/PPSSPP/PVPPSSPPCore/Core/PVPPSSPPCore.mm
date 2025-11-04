@@ -107,16 +107,32 @@
 	NSString *_romPath;
 }
 
+@synthesize videoWidth = videoWidth;
+@synthesize videoHeight = videoHeight;
+@synthesize videoBitDepth = videoBitDepth;
+@synthesize gsPreference = gsPreference;
+@synthesize resFactor = resFactor;
+@synthesize cpuType = cpuType;
+@synthesize taOption = taOption;
+@synthesize tuOption = tuOption;
+@synthesize tutypeOption = tutypeOption;
+@synthesize tfOption = tfOption;
+@synthesize volume = volume;
+@synthesize stretchOption = stretchOption;
+@synthesize msaa = msaa;
+@synthesize fastMemory = fastMemory;
+@synthesize isPaused = isPaused;
+
 - (instancetype)init {
 	if (self = [super init]) {
         self.alwaysUseMetal = true;
         self.skipLayout = true;
 		if (IS_IPHONE()) {
-			_videoWidth  = 480;
-			_videoHeight = 272;
+            videoWidth  = 480;
+			videoHeight = 272;
 		} else {
-			_videoWidth  = 640;
-			_videoHeight = 480;
+			videoWidth  = 640;
+			videoHeight = 480;
 		}
         isPaused = true;
         sampleRate = 44100;
@@ -219,7 +235,7 @@
 	g_Config.iGPUBackend = self.gsPreference;
 	g_Config.bDisplayStretch = self.stretchOption;
     g_Config.iButtonPreference = self.buttonPref;
-    
+
 	// Internal Options
 	g_Config.bEnableCheats = true;
 	g_Config.bEnableNetworkChat = false;
@@ -266,6 +282,7 @@
 }
 
 -(void) prepareAudio {
+    // TOOO: Why the fuck is this here?
     NSError *error = nil;
     [[AVAudioSession sharedInstance]
      setCategory:AVAudioSessionCategoryAmbient

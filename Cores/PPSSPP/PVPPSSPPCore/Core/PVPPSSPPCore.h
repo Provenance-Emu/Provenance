@@ -20,12 +20,13 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @protocol ObjCBridgedCoreBridge;
 @protocol PVPSPSystemResponderClient;
+@protocol EmulatorCoreViewportPositioning;
 typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-@interface PVPPSSPPCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVPSPSystemResponderClient> {
+@interface PVPPSSPPCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVPSPSystemResponderClient, EmulatorCoreViewportPositioning> {
 #pragma clang diagnostic pop
 	uint8_t padData[4][22]; // PVPSPButtonCount
 	int8_t xAxis[4];
@@ -42,7 +43,7 @@ typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 	int8_t tfOption;
 	int8_t tutypeOption;
 	int8_t msaa;
-    int8_t volume;
+    int volume;
     BOOL stretchOption;
 	BOOL fastMemory;
 	float sampleRate;
@@ -81,6 +82,7 @@ typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 - (void) setupEmulation;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
+- (void) applyRenderViewFrameInTouchView:(CGRect)frame;
 - (void) setupControllers;
 - (void) pollControllers;
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;

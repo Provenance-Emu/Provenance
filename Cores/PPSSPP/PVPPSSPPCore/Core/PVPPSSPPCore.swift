@@ -23,9 +23,9 @@ import PVCoreObjCBridge
 @objc
 @objcMembers
 final class PVPPSSPPCore: PVEmulatorCore, @unchecked Sendable {
-    
-    public override var supportsSkins: Bool { false }
-    
+
+    public override var supportsSkins: Bool { true }
+
     // PVEmulatorCoreBridged
     public lazy var _bridge: PVPPSSPPCoreBridge = .init()
 
@@ -49,7 +49,7 @@ final class PVPPSSPPCore: PVEmulatorCore, @unchecked Sendable {
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
         _bridge.parseOptions()
     }
-    
+
     public override func executeFrame() {
         bridge.executeFrame()
     }
@@ -59,16 +59,16 @@ extension PVPPSSPPCore: PVPSPSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVPSPButton, forPlayer player: Int) {
         (bridge as! PVPSPSystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PVPSPButton, forPlayer player: Int) {
         (bridge as! PVPSPSystemResponderClient).didRelease(button, forPlayer: player)
 
     }
-    
+
     public func didMoveJoystick(_ button: PVCoreBridge.PVPSPButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
         (bridge as! PVPSPSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
-    
+
     public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
         (bridge as! PVPSPSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
