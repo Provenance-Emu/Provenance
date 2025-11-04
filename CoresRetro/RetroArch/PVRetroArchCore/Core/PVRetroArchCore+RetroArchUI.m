@@ -130,10 +130,19 @@ int argc =  1;
 @implementation PVRetroArchCoreBridge (CustomLayout)
 
 - (void)setUseCustomRenderViewLayout:(BOOL)enabled {
+    DLOG(@"[RA] setUseCustomRenderViewLayout called with enabled=%d, _renderView=%@", enabled, _renderView ? @"exists" : @"nil");
     objc_setAssociatedObject(self, @selector(useCustomRenderViewLayout), @(enabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    if (!_renderView) { return; }
+
+    // If _renderView doesn't exist yet, store the flag and apply when view is created
+    if (!_renderView) {
+        DLOG(@"[RA] _renderView nil, will apply custom layout when view is created");
+        return;
+    }
     UIView *rootView = [CocoaView get].view;
-    if (!rootView) { return; }
+    if (!rootView) {
+        ELOG(@"[RA] rootView nil, exiting");
+        return;
+    }
     // Remove any constraints tying renderView to root
     NSMutableArray<NSLayoutConstraint *> *toDeactivate = [NSMutableArray array];
     for (NSLayoutConstraint *c in rootView.constraints) {
@@ -646,7 +655,12 @@ void extract_bundles();
     UIView *rootView = [CocoaView get].view;
     [rootView addSubview:_renderView];
 
-    if (!self.useCustomRenderViewLayout) {
+    // Apply custom layout if it was requested before _renderView was created
+    if (self.useCustomRenderViewLayout) {
+        DLOG(@"[RA] Applying custom layout in setViewType (view was created)");
+        // Re-apply custom layout setup now that _renderView exists
+        [self setUseCustomRenderViewLayout:YES];
+    } else {
         // Default: pin to full-screen
         [[_renderView.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
         [[_renderView.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
@@ -658,18 +672,58 @@ void extract_bundles();
 //
 // Custom Viewport Positioning methods
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame {
-//    if (!self.touchViewController) {
-//        WLOG(@"self.touchViewController nil, exiting.");
-//        return;
-//    }
     if (!_renderView) {
         WLOG(@"_renderView nil, exiting.");
         return;
     }
-    UIView *parent = self.touchViewController.view;
+
+    /// Determine the correct parent view to use
+    /// Try touchViewController first, then renderDelegate, then _renderView's current superview
+    UIView *parent = nil;
+    if (self.touchViewController && self.touchViewController.view) {
+        parent = self.touchViewController.view;
+    } else if (self.renderDelegate) {
+        /// renderDelegate is expected to be a UIViewController conforming to PVRenderDelegate
+        /// This matches the pattern in setupWindow where it's assigned to UIViewController *
+        UIViewController *renderVC = (UIViewController *)self.renderDelegate;
+        if (renderVC.view) {
+            parent = renderVC.view;
+        }
+    }
+
+    /// If still no parent, try fallbacks
+    if (!parent) {
+        if (_renderView.superview) {
+            /// Use current superview if it exists
+            parent = _renderView.superview;
+        } else {
+            /// Last resort: use CocoaView's root view
+            UIView *rootView = [CocoaView get].view;
+            if (rootView) {
+                parent = rootView;
+            }
+        }
+    }
+
+    if (!parent) {
+        WLOG(@"[RA] Parent view nil, exiting.");
+        return;
+    }
     if (_renderView.superview != parent) {
         [parent addSubview:_renderView];
     }
+
+    // Validate frame is reasonable before applying
+    CGRect parentBounds = parent.bounds;
+    if (frame.size.width <= 0 || frame.size.height <= 0 ||
+        frame.size.width > parentBounds.size.width * 2 ||
+        frame.size.height > parentBounds.size.height * 2 ||
+        isnan(frame.origin.x) || isnan(frame.origin.y) ||
+        isnan(frame.size.width) || isnan(frame.size.height)) {
+        WLOG(@"[RA] Invalid frame received: %@ (parent bounds: %@), skipping", NSStringFromCGRect(frame), NSStringFromCGRect(parentBounds));
+        return;
+    }
+
     _renderView.translatesAutoresizingMaskIntoConstraints = YES;
     _renderView.autoresizingMask = UIViewAutoresizingNone;
     // Pixel-align the frame to avoid subpixel blurring
@@ -680,6 +734,13 @@ void extract_bundles();
         .size.width = floor(frame.size.width * scale) / scale,
         .size.height = floor(frame.size.height * scale) / scale
     };
+
+    // Ensure aligned frame is still valid and doesn't exceed parent bounds excessively
+    if (aligned.size.width <= 0 || aligned.size.height <= 0) {
+        WLOG(@"[RA] Aligned frame has invalid size: %@", NSStringFromCGRect(aligned));
+        return;
+    }
+
     _renderView.frame = aligned;
     // Keep it under overlays
     [parent sendSubviewToBack:_renderView];
@@ -688,6 +749,10 @@ void extract_bundles();
     // Ensure backing layer matches the new pixel size (Metal)
     _renderView.contentScaleFactor = scale;
     CGSize pixelSize = CGSizeMake(aligned.size.width * scale, aligned.size.height * scale);
+
+    DLOG(@"[RA] Frame setup - aligned frame: %@, scale: %.2f, pixelSize: %.0fx%.0f, parent.bounds: %@",
+         NSStringFromCGRect(aligned), scale, pixelSize.width, pixelSize.height, NSStringFromCGRect(parentBounds));
+
     if ([_renderView respondsToSelector:@selector(setDrawableSize:)]) {
         // Prefer setting via view API (e.g., MetalView/MTKView)
         [(id)_renderView setDrawableSize:pixelSize];
