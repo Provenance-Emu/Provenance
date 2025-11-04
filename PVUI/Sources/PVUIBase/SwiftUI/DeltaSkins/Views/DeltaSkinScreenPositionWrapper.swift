@@ -306,10 +306,12 @@ struct DeltaSkinScreenPositionWrapper: View {
     var body: some View {
         Color.clear
             .onAppear {
+                ILOG("🎮 SKIN: DeltaSkinScreenPositionWrapper.onAppear - size=\(size), layout=\(String(describing: layout))")
                 lastSize = size
                 lastLayout = layout
                 // Calculate immediately on appear - no debounce needed
-                _ = calculateScreenFrame()
+                let frame = calculateScreenFrame()
+                ILOG("🎮 SKIN: DeltaSkinScreenPositionWrapper.onAppear - calculated frame=\(String(describing: frame))")
             }
             .onChange(of: size) { newSize in
                 // Only recalculate if size actually changed significantly (more than 1 point)

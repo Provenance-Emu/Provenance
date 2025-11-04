@@ -48,6 +48,8 @@ extension PVEmulatorViewController {
 
     /// Handle frame update notification from skin
     @objc private func handleFrameUpdated(_ notification: Notification) {
+        ILOG("🎮 SKIN: handleFrameUpdated called")
+
         // Skip handling for dual screen systems - let handleSkinFrameUpdated handle it
         if core.supportsDualScreens {
             DLOG("🎮 SKIN: Dual screen system detected, delegating to dual screen handler")
@@ -62,7 +64,10 @@ extension PVEmulatorViewController {
             return
         }
 
-        guard let frameValue = notification.userInfo?["frame"] as? NSValue else { return }
+        guard let frameValue = notification.userInfo?["frame"] as? NSValue else {
+            ELOG("🎮 SKIN: No frame in notification")
+            return
+        }
 
         let frame = frameValue.cgRectValue
 
@@ -123,14 +128,17 @@ extension PVEmulatorViewController {
     /// Apply viewport from current skin
     /// Synchronous like RetroArch cores - no async, no delays
     internal func applyViewportFromCurrentSkin() {
+        ILOG("🎮 SKIN: applyViewportFromCurrentSkin called - view.bounds=\(view.bounds)")
+
         guard Thread.isMainThread else {
+            ILOG("🎮 SKIN: Not on main thread, dispatching sync")
             DispatchQueue.main.sync { [weak self] in self?.applyViewportFromCurrentSkin() }
             return
         }
 
         // Prevent re-entrant calls that cause layout loops
         guard !isApplyingViewport else {
-            DLOG("🎮 SKIN: Already applying viewport, skipping to prevent loop")
+            ILOG("🎮 SKIN: Already applying viewport, skipping to prevent loop")
             return
         }
 
@@ -140,26 +148,33 @@ extension PVEmulatorViewController {
         // Skip if view bounds are invalid - will retry on next frame update
         // Don't force layout here - it causes call loops with viewDidLayoutSubviews
         guard view.bounds.width > 0 && view.bounds.height > 0 else {
-            DLOG("🎮 SKIN: View bounds invalid: \(view.bounds), skipping (will retry)")
+            ILOG("🎮 SKIN: View bounds invalid: \(view.bounds), skipping (will retry)")
             return
         }
+
+        ILOG("🎮 SKIN: View bounds valid, continuing - core.supportsDualScreens=\(core.supportsDualScreens)")
 
         // Z-order will be ensured after frame application to avoid redundant layout passes
 
         if core.supportsDualScreens {
+            ILOG("🎮 SKIN: Dual screen system, calling applyDualScreenViewport")
             applyDualScreenViewport()
             return
         }
 
         // Use notification frame if available (most accurate)
+        ILOG("🎮 SKIN: Checking currentTargetFrame: \(String(describing: currentTargetFrame))")
         if let frame = currentTargetFrame, isValidFrame(frame) {
-            DLOG("🎮 SKIN: Using notification frame: \(frame)")
+            ILOG("🎮 SKIN: Using notification frame: \(frame)")
             applyFrameToGPUView(frame)
             return
+        } else {
+            ILOG("🎮 SKIN: No valid notification frame, will calculate")
         }
 
         // Calculate frame - works the same for RetroArch and non-RetroArch cores
         // Load skin from cache synchronously if available, otherwise proceed without skin
+        ILOG("🎮 SKIN: currentSkin: \(String(describing: currentSkin?.name))")
         if currentSkin == nil, let systemId = game.system?.systemIdentifier {
             let manager = DeltaSkinManager.shared
             if manager.skinsAreLoaded {
@@ -178,12 +193,13 @@ extension PVEmulatorViewController {
         }
 
         // Try to calculate frame if we have a skin, otherwise use default positioning
+        ILOG("🎮 SKIN: Attempting to calculate frame from skin")
         if let frame = currentSkinViewportFrame(), isValidFrame(frame) {
-            DLOG("🎮 SKIN: Using calculated frame: \(frame)")
+            ILOG("🎮 SKIN: Using calculated frame: \(frame)")
             currentTargetFrame = frame
             applyFrameToGPUView(frame)
         } else {
-            DLOG("🎮 SKIN: No valid frame available (skin: \(currentSkin?.name ?? "nil")), using default positioning")
+            ILOG("🎮 SKIN: No valid frame available (skin: \(currentSkin?.name ?? "nil")), using default positioning")
             resetGPUViewPosition()
         }
     }
@@ -262,7 +278,14 @@ extension PVEmulatorViewController {
 
     /// Apply frame to GPU view (internal for dual screen support)
     internal func applyFrameToGPUView(_ frame: CGRect) {
-        guard let gameScreenView = gpuViewController.view else { return }
+        guard let gameScreenView = gpuViewController.view else {
+            ELOG("🎮 SKIN: applyFrameToGPUView - gpuViewController.view is nil")
+            return
+        }
+
+        ILOG("🎮 SKIN: applyFrameToGPUView called with frame=\(frame)")
+        ILOG("🎮 SKIN:   gameScreenView=\(gameScreenView), frame=\(gameScreenView.frame)")
+        ILOG("🎮 SKIN:   core.bridge is EmulatorCoreViewportPositioning? \(core.bridge is EmulatorCoreViewportPositioning)")
 
         // CRITICAL: Validate frame before applying
         guard isValidFrame(frame) else {
@@ -289,13 +312,20 @@ extension PVEmulatorViewController {
 
         // Handle cores that support viewport positioning (RetroArch, PPSSPP, etc.)
         if let viewport = core.bridge as? EmulatorCoreViewportPositioning {
-            DLOG("🎮 SKIN: Found EmulatorCoreViewportPositioning bridge")
+            ILOG("🎮 SKIN: Found EmulatorCoreViewportPositioning bridge - calling applyRenderViewFrameInTouchView with frame: \(frame)")
 
             /// Determine the correct parent view to use
-            /// Try touchViewController first, then renderDelegate, matching the Objective-C fallback logic
+            /// Priority: 1) touchViewController.view, 2) gpuViewController.mtlView (for Metal/PPSSPP), 3) gpuViewController.view, 4) renderDelegate.view
             let parent: UIView?
             if let touchView = core.touchViewController?.view {
                 parent = touchView
+            } else if let metalVC = gpuViewController as? PVMetalViewController,
+                      let mtlView = metalVC.mtlView {
+                /// For PPSSPP with Metal, m_view is added to mtlView
+                parent = mtlView
+            } else if let gpuView = gpuViewController.view {
+                /// For PPSSPP, gpuViewController.view is reliable since it's always available
+                parent = gpuView
             } else if let renderDelegate = core.renderDelegate as? UIViewController {
                 /// renderDelegate is expected to be a UIViewController conforming to PVRenderDelegate
                 parent = renderDelegate.view
@@ -304,8 +334,16 @@ extension PVEmulatorViewController {
             }
 
             guard let parent = parent else {
-                /// If we can't find a parent, still call the method - it will handle fallbacks internally
-                DLOG("🎮 SKIN: No parent view found in Swift, delegating to Objective-C fallback logic")
+                /// For PPSSPP: if view hierarchy isn't ready, the Objective-C code will store the frame
+                /// in pendingCustomFrame and apply it when setupView completes. We still call it so
+                /// PPSSPP can handle the deferred application.
+                /// For other cores (RetroArch), we should have a parent view by this point.
+                let coreType = type(of: core).description()
+                if coreType.contains("PPSSPP") {
+                    DLOG("🎮 SKIN: PPSSPP view hierarchy not ready, delegating to Objective-C pendingCustomFrame mechanism")
+                } else {
+                    DLOG("🎮 SKIN: No parent view found, delegating to Objective-C fallback logic")
+                }
                 viewport.setUseCustomRenderViewLayout(true)
                 viewport.applyRenderViewFrameInTouchView(frame)
                 return
@@ -353,9 +391,11 @@ extension PVEmulatorViewController {
                 return
             }
 
-            // For RetroArch, preserve the calculated frame size and position
+            // For RetroArch/PPSSPP, preserve the calculated frame size and position
             // Only apply minimal clamping if frame extends beyond parent bounds
             var finalRect = rectInParent
+
+            ILOG("🎮 SKIN: PPSSPP/RetroArch - rectInParent: \(rectInParent), parent.bounds: \(parent.bounds)")
 
             // Check if frame needs adjustment - only clamp if extending beyond bounds
             let needsClampX = rectInParent.minX < 0 || rectInParent.maxX > parent.bounds.width
@@ -394,7 +434,10 @@ extension PVEmulatorViewController {
                 return
             }
 
+            ILOG("🎮 SKIN: Calling viewport.applyRenderViewFrameInTouchView with finalRect: \(finalRect)")
+            viewport.setUseCustomRenderViewLayout(true)
             viewport.applyRenderViewFrameInTouchView(finalRect)
+            ILOG("🎮 SKIN: Finished calling applyRenderViewFrameInTouchView")
 
             // Ensure GPU view is visible and below skin
             ensureGPUViewVisibilityAndZOrder()

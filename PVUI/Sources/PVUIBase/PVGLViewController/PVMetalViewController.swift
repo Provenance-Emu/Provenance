@@ -211,9 +211,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         super.init(nibName: nil, bundle: nil)
 
-        if emulatorCore.rendersToOpenGL {
-            emulatorCore.renderDelegate = self
-        }
+        // Always set renderDelegate so cores (including PPSSPP) can query their parent view
+        emulatorCore.renderDelegate = self
 
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
@@ -1418,6 +1417,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     @inlinable
     func draw(in view: MTKView) {
         guard let emulatorCore = emulatorCore, !isPaused else {
+            return
+        }
+
+        // PPSSPP provides and renders to its own MTKView (managed by the core).
+        // Avoid running our texture update/draw path to prevent conflicts and useless errors.
+        if let coreId = emulatorCore.coreIdentifier?.lowercased(), coreId.contains("ppsspp") {
             return
         }
 
