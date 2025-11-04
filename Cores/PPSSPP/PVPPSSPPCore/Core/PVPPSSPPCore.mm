@@ -121,6 +121,13 @@
 @synthesize stretchOption = stretchOption;
 @synthesize msaa = msaa;
 @synthesize fastMemory = fastMemory;
+@synthesize hardwareTransform = hardwareTransform;
+@synthesize softwareSkinning = softwareSkinning;
+@synthesize vertexCache = vertexCache;
+@synthesize lazyTextureCaching = lazyTextureCaching;
+@synthesize separateSASThread = separateSASThread;
+@synthesize preloadFunctions = preloadFunctions;
+@synthesize cacheFullIsoInRam = cacheFullIsoInRam;
 @synthesize isPaused = isPaused;
 
 - (instancetype)init {
@@ -137,6 +144,13 @@
         isPaused = true;
         sampleRate = 44100;
 		isNTSC = YES;
+		hardwareTransform = true;
+		softwareSkinning = false;
+		vertexCache = true;
+		lazyTextureCaching = false;
+		separateSASThread = true;
+		preloadFunctions = true;
+		cacheFullIsoInRam = false;
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.PPSSPP.CallbackHandlerQueue", queueAttributes);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
@@ -235,6 +249,14 @@
 	g_Config.iGPUBackend = self.gsPreference;
 	g_Config.bDisplayStretch = self.stretchOption;
     g_Config.iButtonPreference = self.buttonPref;
+	g_Config.bHardwareTransform = self.hardwareTransform;
+	// Note: Buffered rendering is always enabled and not configurable in PPSSPP
+	g_Config.bSoftwareSkinning = self.softwareSkinning;
+	g_Config.bVertexCache = self.vertexCache;
+	g_Config.bTextureBackoffCache = self.lazyTextureCaching;
+	g_Config.bSeparateSASThread = self.separateSASThread;
+	g_Config.bPreloadFunctions = self.preloadFunctions;
+	g_Config.bCacheFullIsoInRam = self.cacheFullIsoInRam;
 
 	// Internal Options
 	g_Config.bEnableCheats = true;
@@ -245,10 +267,7 @@
 	g_Config.bIgnoreBadMemAccess = true;
 	g_Config.iScreenRotation = ROTATION_LOCKED_HORIZONTAL;
 	g_Config.iInternalScreenRotation = ROTATION_LOCKED_HORIZONTAL;
-	g_Config.bSeparateSASThread = true;
 	g_Config.bPauseOnLostFocus = true;
-	g_Config.bCacheFullIsoInRam = false;
-	g_Config.bPreloadFunctions = true;
     g_Config.bEnableSound = true;
 
 	// Core Options

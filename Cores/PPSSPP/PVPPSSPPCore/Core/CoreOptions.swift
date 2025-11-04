@@ -28,7 +28,7 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
                      ],
                      defaultValue: 2)
     }()
-    
+
     static var gsOption: CoreOption = {
         .enumeration(.init(title: "Graphics Handler",
                            description: "(Requires Restart)",
@@ -39,7 +39,7 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
                      ],
                      defaultValue: 3)
     }()
-    
+
     static var textureAnisotropicOption: CoreOption = {
         .enumeration(.init(title: "Texture Anisotropic Filtering",
                            description: "(Requires Restart)",
@@ -53,7 +53,7 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
                      ],
                      defaultValue: 4)
     }()
-    
+
     static var textureFilterOption: CoreOption = {
         .enumeration(.init(title: "Texture Filtering",
                            description: "(Requires Restart)",
@@ -66,7 +66,7 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
                      ],
                      defaultValue: 1)
     }()
-    
+
     static var textureUpscaleTypeOption: CoreOption = {
         .enumeration(.init(title: "Texture Upscaling Type",
                            description: "(Requires Restart)",
@@ -104,7 +104,7 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
                      ],
                      defaultValue: 1)
     }()
-    
+
     static var fastMemoryOption: CoreOption = {
         .bool(.init(
             title: "Fast Memory (Requires Large Memory)",
@@ -112,7 +112,7 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
             requiresRestart: true),
               defaultValue: true)
     }()
-    
+
     static var cpuOption: CoreOption = {
         .enumeration(.init(title: "CPU Type",
                            description: "(Requires Restart)",
@@ -161,19 +161,78 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
                      defaultValue: 1)
     }()
 
+    static var hardwareTransformOption: CoreOption = {
+        .bool(.init(
+            title: "Hardware Transform",
+            description: "Use hardware transform for better performance. Disable for compatibility.",
+            requiresRestart: true),
+              defaultValue: true)
+    }()
+
+    static var softwareSkinningOption: CoreOption = {
+        .bool(.init(
+            title: "Software Skinning",
+            description: "Use software skinning for compatibility. May reduce performance.",
+            requiresRestart: true),
+              defaultValue: false)
+    }()
+
+    static var vertexCacheOption: CoreOption = {
+        .bool(.init(
+            title: "Vertex Cache",
+            description: "Enable vertex cache for better performance.",
+            requiresRestart: true),
+              defaultValue: true)
+    }()
+
+    static var lazyTextureCachingOption: CoreOption = {
+        .bool(.init(
+            title: "Lazy Texture Caching",
+            description: "Cache textures lazily to save memory. May cause minor slowdowns.",
+            requiresRestart: true),
+              defaultValue: false)
+    }()
+
+    static var separateSASThreadOption: CoreOption = {
+        .bool(.init(
+            title: "Separate SAS Thread",
+            description: "Use separate thread for audio. Improves performance.",
+            requiresRestart: true),
+              defaultValue: true)
+    }()
+
+    static var preloadFunctionsOption: CoreOption = {
+        .bool(.init(
+            title: "Preload Functions",
+            description: "Preload functions for faster startup. May cause compatibility issues.",
+            requiresRestart: true),
+              defaultValue: true)
+    }()
+
+    static var cacheFullIsoInRamOption: CoreOption = {
+        .bool(.init(
+            title: "Cache Full ISO in RAM",
+            description: "Load entire ISO into RAM for faster access. Requires significant memory.",
+            requiresRestart: true),
+              defaultValue: false)
+    }()
+
     public static var options: [CoreOption] {
         var options = [CoreOption]()
         let coreOptions: [CoreOption] = [
             resolutionOption, gsOption, textureAnisotropicOption,
             textureUpscaleTypeOption, textureUpscaleOption, textureFilterOption,
             msaaOption, fastMemoryOption, cpuOption,
-            stretchDisplayOption, volumeOption, buttonPrefOption]
+            stretchDisplayOption, volumeOption, buttonPrefOption,
+            hardwareTransformOption, softwareSkinningOption,
+            vertexCacheOption, lazyTextureCachingOption, separateSASThreadOption,
+            preloadFunctionsOption, cacheFullIsoInRamOption]
         let coreGroup:CoreOption = .group(.init(title: "PPSSPP! Core",
                                                 description: "Global options for PPSSPP!"),
                                           subOptions: coreOptions)
         options.append(contentsOf: [coreGroup])
         return options
-    }    
+    }
 }
 
 @objc public extension PVPPSSPPCoreOptions {
@@ -210,6 +269,27 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
     @objc var buttonPrefOption: Int{
         PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.buttonPrefOption).asInt ?? 0
     }
+    @objc static var hardwareTransform: Bool {
+        PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.hardwareTransformOption).asBool
+    }
+    @objc static var softwareSkinning: Bool {
+        PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.softwareSkinningOption).asBool
+    }
+    @objc static var vertexCache: Bool {
+        PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.vertexCacheOption).asBool
+    }
+    @objc static var lazyTextureCaching: Bool {
+        PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.lazyTextureCachingOption).asBool
+    }
+    @objc static var separateSASThread: Bool {
+        PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.separateSASThreadOption).asBool
+    }
+    @objc static var preloadFunctions: Bool {
+        PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.preloadFunctionsOption).asBool
+    }
+    @objc static var cacheFullIsoInRam: Bool {
+        PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.cacheFullIsoInRamOption).asBool
+    }
 }
 
 extension PVPPSSPPCoreBridge {
@@ -226,6 +306,13 @@ extension PVPPSSPPCoreBridge {
         self.stretchOption = PVPPSSPPCoreOptions.stretch
         self.volume = NSNumber(value: PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.volumeOption).asInt ?? 0).int32Value
         self.buttonPref = NSNumber(value: PVPPSSPPCore.valueForOption(PVPPSSPPCoreOptions.buttonPrefOption).asInt ?? 0).int8Value
+        self.hardwareTransform = PVPPSSPPCoreOptions.hardwareTransform
+        self.softwareSkinning = PVPPSSPPCoreOptions.softwareSkinning
+        self.vertexCache = PVPPSSPPCoreOptions.vertexCache
+        self.lazyTextureCaching = PVPPSSPPCoreOptions.lazyTextureCaching
+        self.separateSASThread = PVPPSSPPCoreOptions.separateSASThread
+        self.preloadFunctions = PVPPSSPPCoreOptions.preloadFunctions
+        self.cacheFullIsoInRam = PVPPSSPPCoreOptions.cacheFullIsoInRam
     }
 }
 
@@ -259,4 +346,3 @@ extension PVPPSSPPCoreBridge: GameWithCheat {
 		];
 	}
 }
-
