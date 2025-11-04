@@ -16,7 +16,8 @@
 // Turn on PRESENT_WAIT_IDLE to wait for all operations to complete before presenting.
 // This helps avoid timing issues with Metal's command buffer scheduling
 // Set to 1 to enable, 0 to disable @JoeMatt
-#define PRESENT_WAIT_IDLE 1
+// Disabled by default for better performance - async presentation handles synchronization
+#define PRESENT_WAIT_IDLE 0
 
 MICROPROFILE_DEFINE(Vulkan_Acquire, "Vulkan", "Swapchain Acquire", MP_RGB(185, 66, 245));
 MICROPROFILE_DEFINE(Vulkan_Present, "Vulkan", "Swapchain Present", MP_RGB(66, 185, 245));
@@ -134,7 +135,10 @@ void Swapchain::Present() {
 #if defined(__APPLE__) && PRESENT_WAIT_IDLE
         // On MoltenVK, make sure we wait for all operations to complete before presenting
         // This helps avoid timing issues with Metal's command buffer scheduling
-        instance.GetPresentQueue().waitIdle();
+        // Only do this if async presentation is disabled, otherwise it defeats the purpose
+        if (!Settings::values.async_presentation.GetValue()) {
+            instance.GetPresentQueue().waitIdle();
+        }
 #endif
         [[maybe_unused]] vk::Result result = instance.GetPresentQueue().presentKHR(present_info);
     } catch (vk::OutOfDateKHRError&) {

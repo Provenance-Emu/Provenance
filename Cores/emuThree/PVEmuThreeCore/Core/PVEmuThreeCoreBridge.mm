@@ -81,15 +81,15 @@ static bool _isOff = false;
                                                     error:NULL];
     _romPath = [path copy];
     _emuThreeCoreModule = @"3DS";
-    _frameInterval = 120;
+    _frameInterval = 60;
     _emuThreeCoreAspect = CGSizeMake(16,9);
     _emuThreeCoreScreen = CGSizeMake(640, 480);
     _videoWidth = 640;
     _videoHeight = 480;
     _isInitialized = false;
-    
+
     [self parseOptions];
-    
+
     if ([path.pathExtension.lowercaseString isEqualToString:@"nds"]) {
         _emuThreeCoreModule = @"NDS";
     } else if ([path.pathExtension.lowercaseString isEqualToString:@"cia"]) {
@@ -335,7 +335,7 @@ static bool _isOff = false;
             self.portraitType = [value integerValue];
             [CitraWrapper.sharedInstance layout:self.portraitType];
         },
-        
+
         @"Shader Acceleration / Graphic Accuracy":
         ^{
             [self setOptionValues];

@@ -3,7 +3,7 @@ import PVSupport
 import PVCoreBridge
 
 @objc public final class PVEmuThreeCoreOptions: NSObject, CoreOptions {
-    
+
     static var resolutionOption: CoreOption {
         .enumeration(.init(title: "Resolution Upscaling",
                            description: nil,
@@ -22,7 +22,7 @@ import PVCoreBridge
                      ],
                      defaultValue: 1)
     }
-    
+
     static var enableHLEOption: CoreOption {
         .bool(.init(
             title: "Enable High Level Emulation",
@@ -30,7 +30,7 @@ import PVCoreBridge
             requiresRestart: true),
               defaultValue: true)
     }
-    
+
     static var cpuClockOption: CoreOption {
         .enumeration(.init(title: "CPU Clock Speed",
                            description: "Underclocking can increase performance but may cause the game to freeze or increase load times. Overclocking may reduce in game lag but also might cause freezes",
@@ -55,9 +55,9 @@ import PVCoreBridge
                         .init(title: "300%", description: "300%", value: 300),
                         .init(title: "400%", description: "400%", value: 400),
                      ],
-                     defaultValue: 100)
+                     defaultValue: 0)
     }
-    
+
     static var enableJITOption: CoreOption {
         .bool(.init(
             title: "Enable Just in Time",
@@ -65,7 +65,7 @@ import PVCoreBridge
             requiresRestart: true),
               defaultValue: false)
     }
-    
+
     static var enableLoggingOption: CoreOption {
         .bool(.init(
             title: "Enable Logging",
@@ -73,7 +73,7 @@ import PVCoreBridge
             requiresRestart: true),
               defaultValue: false)
     }
-    
+
     static var enableNew3DSOption: CoreOption {
         .bool(.init(
             title: "Enable New 3DS",
@@ -81,7 +81,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: true)
     }
-    
+
     static var gsOption: CoreOption {
         .enumeration(.init(title: "Graphics Handler",
                            description: "(Requires Restart)",
@@ -91,15 +91,15 @@ import PVCoreBridge
                      ],
                      defaultValue: 0)
     }
-    
+
     static var enableAsyncShaderOption: CoreOption {
         .bool(.init(
             title: "Enable Async Shader Compilation",
             description: nil,
             requiresRestart: false),
-              defaultValue: false)
+              defaultValue: true)
     }
-    
+
     static var enableAsyncPresentOption: CoreOption {
         .bool(.init(
             title: "Enable Async Presentation",
@@ -107,7 +107,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: true)
     }
-    
+
     static var shaderTypeOption: CoreOption {
         .enumeration(.init(title: "Shader Acceleration / Graphic Accuracy",
                            description: nil,
@@ -120,7 +120,7 @@ import PVCoreBridge
                      ],
                      defaultValue: 2)
     }
-    
+
     // # The system region that Citra will use during emulation
     // # -1: Auto-select (default), 0: Japan, 1: USA, 2: Europe, 3: Australia, 4: China, 5: Korea, 6: Taiwan
 
@@ -141,7 +141,7 @@ import PVCoreBridge
                      ],
                      defaultValue: -1)
     }
-    
+
     // # The system language that Citra will use during emulation
     // # 0: Japanese, 1: English (default), 2: French, 3: German, 4: Italian, 5: Spanish,
     // # 6: Simplified Chinese, 7: Korean, 8: Dutch, 9: Portuguese, 10: Russian, 11: Traditional Chinese
@@ -184,7 +184,7 @@ import PVCoreBridge
                      ],
                      defaultValue: -1)
     }
-    
+
     static var enableVSyncOption: CoreOption {
         .bool(.init(
             title: "Enable VSync",
@@ -192,7 +192,7 @@ import PVCoreBridge
             requiresRestart: true),
               defaultValue: true)
     }
-    
+
     static var realtimeAudioOption: CoreOption {
         .bool(.init(
             title: "Realtime Audio",
@@ -200,7 +200,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: false)
     }
-    
+
     static var enableShaderAccurateMulOption: CoreOption {
         .bool(.init(
             title: "Enable Shader Accurate Mul",
@@ -208,7 +208,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: true)
     }
-    
+
     static var enableShaderJITOption: CoreOption {
         .bool(.init(
             title: "Enable Shader Just in Time",
@@ -216,7 +216,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: true)
     }
-    
+
     static var portraitTypeOption: CoreOption {
         .enumeration(.init(title: "Portrait Layout",
                            description: "",
@@ -231,7 +231,7 @@ import PVCoreBridge
                      ],
                      defaultValue: 5)
     }
-    
+
     static var landscapeTypeOption: CoreOption {
         .enumeration(.init(title: "Landscape Layout",
                            description: "",
@@ -246,7 +246,7 @@ import PVCoreBridge
                      ],
                      defaultValue: 5)
     }
-    
+
     static var stretchAudioOption: CoreOption {
         .bool(.init(
             title: "Stretch Audio",
@@ -254,7 +254,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: true)
     }
-    
+
     static var volumeOption: CoreOption {
         .enumeration(.init(title: "Audio Volume",
                            description: "",
@@ -274,7 +274,7 @@ import PVCoreBridge
                      ],
                      defaultValue: 100)
     }
-    
+
     static var swapScreenOption: CoreOption {
         .bool(.init(
             title: "Swap Screen",
@@ -282,7 +282,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: false)
     }
-    
+
     static var uprightScreenOption: CoreOption {
         .bool(.init(
             title: "Upright Screen",
@@ -290,7 +290,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: false)
     }
-    
+
     static var customTexturesOption: CoreOption {
         .bool(.init(
             title: "Use Custom Textures",
@@ -298,7 +298,7 @@ import PVCoreBridge
             requiresRestart: false),
               defaultValue: false)
     }
-    
+
     static var preloadTextuesOption: CoreOption {
         .bool(.init(
             title: "Preload Textures",
@@ -320,7 +320,7 @@ import PVCoreBridge
                      ],
                      defaultValue: 0)
     }
-    
+
     /*
      Auto = 0,
      Null = 1,
@@ -400,7 +400,7 @@ extension PVEmuThreeCoreOptions {
 }
 
 @objc public extension PVEmuThreeCoreBridge {
-    
+
     func parseOptions() {
         self.gsPreference = NSNumber(value: PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.gsOption).asInt ?? 0).int8Value
         self.resFactor = NSNumber(value: PVEmuThreeCoreOptions.valueForOption(PVEmuThreeCoreOptions.resolutionOption).asInt ?? 1).int8Value

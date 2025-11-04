@@ -22,9 +22,26 @@ typedef NS_ENUM(NSUInteger, KeyboardButtonConfig) {
     KeyboardButtonConfigNone
 };
 
+typedef NS_ENUM(NSUInteger, KeyboardAcceptMode) {
+    KeyboardAcceptModeAnything,
+    KeyboardAcceptModeNotEmpty,
+    KeyboardAcceptModeNotEmptyAndNotBlank,
+    KeyboardAcceptModeNotBlank,
+    KeyboardAcceptModeFixedLength
+};
+
 @interface KeyboardConfig : NSObject
 @property (nonatomic, strong) NSString * _Nullable hintText;
 @property (nonatomic, assign) KeyboardButtonConfig buttonConfig;
+@property (nonatomic, assign) KeyboardAcceptMode acceptMode;
+@property (nonatomic, assign) BOOL multilineMode;
+@property (nonatomic, assign) NSUInteger maxTextLength;
+@property (nonatomic, assign) NSUInteger maxDigits;
+@property (nonatomic, assign) BOOL preventDigit;
+@property (nonatomic, assign) BOOL preventAt;
+@property (nonatomic, assign) BOOL preventPercent;
+@property (nonatomic, assign) BOOL preventBackslash;
+@property (nonatomic, strong) NSArray<NSString *> * _Nullable buttonText;
 
 -(KeyboardConfig *) initWithHintText:(NSString * _Nullable)hintText buttonConfig:(KeyboardButtonConfig)buttonConfig;
 @end
@@ -32,10 +49,10 @@ typedef NS_ENUM(NSUInteger, KeyboardButtonConfig) {
 @interface CitraWrapper : NSObject {
     CAMetalLayer *_metalLayer;
     NSString *_path;
-    
+
     NSThread *_thread;
     uint64_t _title_id;
-    
+
     NSString *_savefile;
     bool shouldSave;
     bool shouldLoad;

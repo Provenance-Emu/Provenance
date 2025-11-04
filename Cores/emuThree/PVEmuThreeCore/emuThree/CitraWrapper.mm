@@ -69,18 +69,19 @@ namespace SoftwareKeyboard {
 class Keyboard final : public Frontend::SoftwareKeyboard {
 public:
     ~Keyboard();
-    
+
     void Execute(const Frontend::KeyboardConfig& config) override;
     void ShowError(const std::string& error) override;
-    
-    void KeyboardText(std::condition_variable& cv);
+
+    void KeyboardText(std::condition_variable* cv, std::mutex* mutex);
     std::pair<std::string, uint8_t> GetKeyboardText(const Frontend::KeyboardConfig& config);
-    
+
 private:
     __block NSString *_Nullable keyboardText = @"";
     __block uint8_t buttonPressed = 0;
-    
+
     __block BOOL isReady = FALSE;
+    id _Nullable observerToken = nil;
 };
 
 } // namespace SoftwareKeyboard
@@ -90,55 +91,130 @@ private:
     if (self = [super init]) {
         self.hintText = hintText;
         self.buttonConfig = buttonConfig;
+        self.acceptMode = KeyboardAcceptModeAnything;
+        self.multilineMode = NO;
+        self.maxTextLength = 0;
+        self.maxDigits = 0;
+        self.preventDigit = NO;
+        self.preventAt = NO;
+        self.preventPercent = NO;
+        self.preventBackslash = NO;
+        self.buttonText = nil;
     } return self;
 }
 @end
 
 namespace SoftwareKeyboard {
 
-Keyboard::~Keyboard() = default;
+Keyboard::~Keyboard() {
+    if (observerToken != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:observerToken];
+        observerToken = nil;
+    }
+}
 
 void Keyboard::Execute(const Frontend::KeyboardConfig& config) {
     SoftwareKeyboard::Execute(config);
-    
+
     std::pair<std::string, uint8_t> it = this->GetKeyboardText(config);
     if (this->config.button_config != Frontend::ButtonConfig::None)
         it.second = static_cast<uint8_t>(this->config.button_config);
-    
+
     Finalize(it.first, it.second);
 }
 
 void Keyboard::ShowError(const std::string& error) {
-    printf("error = %s\n", error.c_str());
+    NSString *errorMsg = [NSString stringWithCString:error.c_str() encoding:NSUTF8StringEncoding];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Keyboard Error"
+                                                                       message:errorMsg
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        UIViewController *topVC = [UIApplication sharedApplication].keyWindow.rootViewController;
+        while (topVC.presentedViewController) {
+            topVC = topVC.presentedViewController;
+        }
+        [topVC presentViewController:alert animated:YES completion:nil];
+    });
 }
 
-void Keyboard::KeyboardText(std::condition_variable& cv) {
-    [[NSNotificationCenter defaultCenter] addObserverForName:@"closeKeyboard" object:NULL queue:[NSOperationQueue mainQueue]
-                                                  usingBlock:^(NSNotification *notification) {
-        this->buttonPressed = (NSUInteger)notification.userInfo[@"buttonPressed"];
-        
-        NSString *_Nullable text = notification.userInfo[@"keyboardText"];
-        if (text != NULL)
-            this->keyboardText = text;
-        
-        isReady = TRUE;
-        cv.notify_all();
-    }];
+void Keyboard::KeyboardText(std::condition_variable* cv, std::mutex* mutex) {
+    @autoreleasepool {
+        if (observerToken != nil) {
+            [[NSNotificationCenter defaultCenter] removeObserver:observerToken];
+        }
+
+        std::condition_variable* cvPtr = cv;
+        std::mutex* mutexPtr = mutex;
+
+        observerToken = [[NSNotificationCenter defaultCenter] addObserverForName:@"closeKeyboard" object:NULL queue:[NSOperationQueue mainQueue]
+                                                      usingBlock:^(NSNotification *notification) {
+            std::unique_lock<std::mutex> lock(*mutexPtr);
+            this->buttonPressed = (NSUInteger)[notification.userInfo[@"buttonPressed"] unsignedIntegerValue];
+
+            NSString *_Nullable text = notification.userInfo[@"keyboardText"];
+            if (text != NULL)
+                this->keyboardText = text;
+
+            isReady = TRUE;
+            cvPtr->notify_all();
+        }];
+    }
 }
 
 std::pair<std::string, uint8_t> Keyboard::GetKeyboardText(const Frontend::KeyboardConfig& config) {
-    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"openKeyboard"
-                                                                                         object:[[KeyboardConfig alloc] initWithHintText:[NSString stringWithCString:config.hint_text.c_str() encoding:NSUTF8StringEncoding] buttonConfig:(KeyboardButtonConfig)config.button_config]]];
-    
+    KeyboardConfig *keyboardConfig = [[KeyboardConfig alloc] initWithHintText:[NSString stringWithCString:config.hint_text.c_str() encoding:NSUTF8StringEncoding]
+                                                                  buttonConfig:(KeyboardButtonConfig)config.button_config];
+
+    keyboardConfig.acceptMode = (KeyboardAcceptMode)static_cast<u32>(config.accept_mode);
+    keyboardConfig.multilineMode = config.multiline_mode;
+    keyboardConfig.maxTextLength = config.max_text_length;
+    keyboardConfig.maxDigits = config.max_digits;
+    keyboardConfig.preventDigit = config.filters.prevent_digit;
+    keyboardConfig.preventAt = config.filters.prevent_at;
+    keyboardConfig.preventPercent = config.filters.prevent_percent;
+    keyboardConfig.preventBackslash = config.filters.prevent_backslash;
+
+    if (!config.button_text.empty()) {
+        NSMutableArray<NSString *> *buttonTextArray = [NSMutableArray array];
+        for (const auto& text : config.button_text) {
+            [buttonTextArray addObject:[NSString stringWithCString:text.c_str() encoding:NSUTF8StringEncoding]];
+        }
+        keyboardConfig.buttonText = buttonTextArray;
+    }
+
+    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"openKeyboard" object:keyboardConfig]];
+
     std::condition_variable cv;
     std::mutex mutex;
-    auto t1 = std::async(&Keyboard::KeyboardText, this, std::ref(cv));
     std::unique_lock<std::mutex> lock(mutex);
-    while (!isReady)
-        cv.wait(lock);
-    
+
+    /// Set up notification observer (runs synchronously to register observer)
+    KeyboardText(&cv, &mutex);
+
+    /// Add timeout mechanism to prevent deadlock
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::minutes(5);
+    while (!isReady) {
+        if (cv.wait_until(lock, timeout) == std::cv_status::timeout) {
+            /// Timeout - send empty response
+            isReady = TRUE;
+            keyboardText = @"";
+            buttonPressed = 0;
+            if (observerToken != nil) {
+                [[NSNotificationCenter defaultCenter] removeObserver:observerToken];
+                observerToken = nil;
+            }
+            break;
+        }
+    }
+
     isReady = FALSE;
-    
+
+    if (observerToken != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:observerToken];
+        observerToken = nil;
+    }
+
     return std::make_pair([this->keyboardText UTF8String], this->buttonPressed);
 }
 }
@@ -280,7 +356,7 @@ static void InitializeLogging() {
     Settings::values.use_cpu_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Just in Time"]);
     Settings::values.cpu_clock_percentage.SetValue([[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.CPU Clock Speed"]] unsignedIntValue]);
     Settings::values.is_new_3ds.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable New 3DS"]);
-    
+
 
     BOOL enabledLogging = [[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Logging"];
     if (enabledLogging) {
@@ -292,7 +368,7 @@ static void InitializeLogging() {
     } else {
         Settings::values.log_filter.SetValue("*:Critical");
     }
-    
+
     Settings::values.use_vsync_new.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable VSync"]);
     Settings::values.shaders_accurate_mul.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Shader Accurate Mul"]);
     Settings::values.use_shader_jit.SetValue([[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable Shader Just in Time"]);
@@ -310,11 +386,11 @@ static void InitializeLogging() {
 
     [self prepareAudioSession];
     Settings::values.isReloading.SetValue(false);
-    
+
     // Stretch Audio
     shouldStretchAudio=[[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Stretch Audio"];
     Settings::values.enable_audio_stretching.SetValue(shouldStretchAudio);
-    
+
     // Realtime audio
     BOOL enable_realtime_audio = [[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Realtime Audio"];
     Settings::values.enable_realtime_audio.SetValue(enable_realtime_audio);
@@ -322,7 +398,7 @@ static void InitializeLogging() {
     // Volume
     int volume = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Audio Volume"]] unsignedIntValue];
     Settings::values.volume.SetValue((float)volume / 100.0);
-    
+
     // Microphone
     int inputType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.Microphone Input"]] unsignedIntValue];
     Settings::values.input_type.SetValue((AudioCore::InputType) inputType);
@@ -330,15 +406,15 @@ static void InitializeLogging() {
     // Region
     int retionType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.System Region"]] intValue];
     Settings::values.region_value.SetValue(retionType);
-    
+
     if (resetButtons)
         [CitraWrapper.sharedInstance setButtons];
     for (const auto& service_module : Service::service_module_map) {
         Settings::values.lle_modules.emplace(service_module.name, ![[NSUserDefaults standardUserDefaults] boolForKey:@"PVEmuThreeCore.Enable High Level Emulation"]);
     }
-    
+
 //    Settings::values.lle_applets.SetValue([defaults boolForKey:@"cytrus.lleApplets"]);
-    
+
     [self getModelType];
     Settings::Apply();
 }
@@ -508,6 +584,11 @@ static void InitializeLogging() {
 
 -(void) start {
     // Start Loop
+    // Note: Frame limiting is handled internally by the core's FrameLimiter
+    // which is called from EndFrame() when SwapBuffers() is called during VBlank
+    uint32_t consecutive_fast_calls = 0;
+    const uint32_t max_fast_calls = 1000; // Allow many RunLoop calls but yield periodically
+
     while (CitraWrapper.sharedInstance.isRunning) {
         if (!CitraWrapper.sharedInstance.isPaused) {
             Core::System::ResultStatus result = core.RunLoop();
@@ -520,8 +601,18 @@ static void InitializeLogging() {
                 default:
                     break;
             }
+
+            // Prevent excessive CPU spinning: yield periodically if RunLoop returns quickly
+            // This allows the internal frame limiter to work while preventing 100% CPU usage
+            consecutive_fast_calls++;
+            if (consecutive_fast_calls > max_fast_calls) {
+                usleep(100); // Small yield to prevent excessive CPU usage
+                consecutive_fast_calls = 0;
+            }
         } else {
             emu_window->PollEvents();
+            usleep(16667); // ~60 FPS sleep when paused
+            consecutive_fast_calls = 0;
         }
         if (shouldShutdown) {
             CitraWrapper.sharedInstance.isRunning=false;
@@ -532,9 +623,11 @@ static void InitializeLogging() {
         } else if (shouldSave) {
             [CitraWrapper.sharedInstance SaveState:_savefile];
             shouldSave=false;
+            consecutive_fast_calls = 0;
         } else if (shouldLoad) {
             [CitraWrapper.sharedInstance LoadState:_savefile];
             shouldLoad=false;
+            consecutive_fast_calls = 0;
         }
     }
     NSLog(@"Finished Run Loop");

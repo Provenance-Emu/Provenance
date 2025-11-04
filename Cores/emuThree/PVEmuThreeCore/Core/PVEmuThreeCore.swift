@@ -18,15 +18,17 @@ import GameController
 @objc
 @objcMembers
 public final class PVEmuThreeCore: PVEmulatorCore {
-    
-    public override var supportsSkins: Bool { false }
+
+    public override var supportsSkins: Bool { true }
+
+    public override var supportsDualScreens: Bool { true }
 
     let _bridge: PVEmuThreeCoreBridge = .init()
-    
+
     // MARK: Audio
 
     // MARK: Queues
-   
+
     // MARK: Controls
 
     // MARK: Videe
@@ -43,15 +45,15 @@ extension PVEmuThreeCore: PV3DSSystemResponderClient {
     public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
         (_bridge as! PV3DSSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
-    
+
     public func didMoveJoystick(_ button: PVCoreBridge.PV3DSButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
         (_bridge as! PV3DSSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
-    
+
     public func didPush(_ button: PVCoreBridge.PV3DSButton, forPlayer player: Int) {
         (_bridge as! PV3DSSystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PV3DSButton, forPlayer player: Int) {
         (_bridge as! PV3DSSystemResponderClient).didRelease(button, forPlayer: player)
     }

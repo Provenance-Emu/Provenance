@@ -5,11 +5,18 @@ import Foundation
 import UIKit
 import MetalKit
 import os
+import PVEmulatorCore
 
-@objc public class EmuThreeVulkanViewController: UIViewController {
+@objc public class EmuThreeVulkanViewController: UIViewController, CustomPositioningSupport {
 	private var core: PVEmuThreeCoreBridge!
 	private var metalView: MTKView!
 	private var dev: MTLDevice!
+
+	/// Flag to indicate that custom positioning is being used (for DeltaSkin support)
+	@objc public var useCustomPositioning: Bool = false
+
+	/// Custom frame to use when useCustomPositioning is true (for DeltaSkin support)
+	@objc public var customFrame: CGRect = .zero
 
     @objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVEmuThreeCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
@@ -21,7 +28,7 @@ import os
 		metalView.colorPixelFormat = .bgra8Unorm;
 		metalView.depthStencilPixelFormat = .depth32Float
 		metalView.translatesAutoresizingMaskIntoConstraints = false
-        metalView.preferredFramesPerSecond = 120
+        metalView.preferredFramesPerSecond = 60
 	}
 	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -34,59 +41,183 @@ import os
 		self.view=metalView;
         NSLog("VulkanViewController: Starting VM\n")
         core.startVM(self.view)
-        
+
         // Keyboard
-        NotificationCenter.default.addObserver(forName: .init("openKeyboard"), object: nil, queue: .main) { notification in
-            guard let config = notification.object as? KeyboardConfig else {
+        NotificationCenter.default.addObserver(forName: .init("openKeyboard"), object: nil, queue: .main) { [weak self] notification in
+            guard let self = self,
+                  let config = notification.object as? KeyboardConfig else {
                 return
             }
-            
-            let alertController = TVAlertController(title: nil, message: nil, preferredStyle: .alert)
-            alertController.preferredContentSize = CGSize(width: 300, height: 300)
 
-            let cancelAction: UIAlertAction = .init(title: "Cancel", style: .cancel) { _ in
+            /// Check if already presenting something to prevent crashes
+            if self.presentedViewController != nil {
+                /// Dismiss existing presentation or wait
+                self.presentedViewController?.dismiss(animated: false) {
+                    self.showKeyboard(with: config)
+                }
+                return
+            }
+
+            self.showKeyboard(with: config)
+        }
+    }
+
+    private func showKeyboard(with config: KeyboardConfig) {
+        let alertController = TVAlertController(title: config.hintText, message: nil, preferredStyle: .alert)
+        alertController.preferredContentSize = CGSize(width: 300, height: 300)
+
+        /// Configure button text from config if available
+        let okayTitle = config.buttonText?.first ?? "OK"
+        let cancelTitle = config.buttonText?.count ?? 0 > 1 ? config.buttonText?[1] : "Cancel"
+
+        let cancelAction: UIAlertAction = .init(title: cancelTitle, style: .cancel) { _ in
+            NotificationCenter.default.post(name: .init("closeKeyboard"), object: nil, userInfo: [
+                "buttonPressed" : 1,
+                "keyboardText" : ""
+            ])
+        }
+
+        let okayButton: UIAlertAction = .init(title: okayTitle, style: .default) { _ in
+            guard let textFields = alertController.textFields, let textField = textFields.first else {
                 NotificationCenter.default.post(name: .init("closeKeyboard"), object: nil, userInfo: [
                     "buttonPressed" : 0,
                     "keyboardText" : ""
                 ])
+                return
             }
-            
-            let okayButton: UIAlertAction = .init(title: "OK", style: .default) { _ in
-                guard let textFields = alertController.textFields, let textField = textFields.first else {
-                    return
-                }
-                
+
+            let text = textField.text ?? ""
+
+            /// Validate input based on accept mode
+            var isValid = true
+            switch config.acceptMode {
+            case .notEmpty:
+                isValid = !text.isEmpty
+            case .notEmptyAndNotBlank:
+                isValid = !text.isEmpty && text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+            case .notBlank:
+                isValid = text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+            case .fixedLength:
+                isValid = text.count == config.maxTextLength
+            default:
+                isValid = true
+            }
+
+            if !isValid {
+                /// Show error and keep keyboard open
+                let errorAlert = UIAlertController(title: "Invalid Input", message: "Please check your input.", preferredStyle: .alert)
+                errorAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(errorAlert, animated: true)
+                return
+            }
+
+            NotificationCenter.default.post(name: .init("closeKeyboard"), object: nil, userInfo: [
+                "buttonPressed" : 0,
+                "keyboardText" : text
+            ])
+        }
+
+        alertController.addTextField { [weak self] textField in
+            textField.placeholder = config.hintText
+            textField.text = ""
+
+            /// Configure keyboard type and constraints
+            if config.preventDigit {
+                textField.keyboardType = .default
+            } else if config.maxDigits > 0 {
+                textField.keyboardType = .numberPad
+            } else {
+                textField.keyboardType = .default
+            }
+
+            if config.multilineMode {
+                textField.contentVerticalAlignment = .top
+            }
+
+            /// Set max length if specified using text field delegate
+            if config.maxTextLength > 0 {
+                let maxLength = config.maxTextLength
+                textField.addTarget(self, action: #selector(self?.textFieldDidChange(_:)), for: .editingChanged)
+                /// Store max length in tag as a workaround
+                textField.tag = Int(maxLength)
+            }
+
+            /// Make text field first responder to show keyboard immediately
+            DispatchQueue.main.async {
+                textField.becomeFirstResponder()
+            }
+        }
+
+        switch config.buttonConfig {
+        case .single:
+            alertController.addAction(okayButton)
+            alertController.preferredAction = okayButton
+        case .dual:
+            alertController.addAction(cancelAction)
+            alertController.addAction(okayButton)
+            alertController.preferredAction = okayButton
+        case .triple:
+            let forgotTitle = config.buttonText?.count ?? 0 > 2 ? config.buttonText?[2] : "I Forgot"
+            let forgotAction = UIAlertAction(title: forgotTitle, style: .default) { _ in
                 NotificationCenter.default.post(name: .init("closeKeyboard"), object: nil, userInfo: [
-                    "buttonPressed" : 0,
-                    "keyboardText" : textField.text ?? ""
+                    "buttonPressed" : 2,
+                    "keyboardText" : ""
                 ])
             }
-            
-            alertController.addTextField()
-            
-            switch config.buttonConfig {
-            case .single:
-                alertController.addAction(okayButton)
-            case .dual:
-                alertController.addAction(okayButton)
-                alertController.addAction(cancelAction)
-            case .triple:
-                alertController.addAction(okayButton)
-                alertController.addAction(cancelAction)
-                break
-            case .none:
-                break
-            @unknown default:
-                break
-            }
-            
-            
-            self.present(alertController, animated: true)
+            alertController.addAction(cancelAction)
+            alertController.addAction(forgotAction)
+            alertController.addAction(okayButton)
+            alertController.preferredAction = okayButton
+        case .none:
+            break
+        @unknown default:
+            break
         }
-	}
+
+        self.present(alertController, animated: true)
+    }
+
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        /// Enforce max length using tag value
+        let maxLength = textField.tag
+        if maxLength > 0,
+           let text = textField.text,
+           text.count > maxLength {
+            textField.text = String(text.prefix(maxLength))
+        }
+    }
 	@objc public override func viewDidLayoutSubviews() {
-        NSLog("View Size Changed\n")
-        core.refreshScreenSize()
+		/// Respect custom positioning from DeltaSkin
+		if useCustomPositioning && !customFrame.isEmpty {
+			/// CRITICAL: Ensure views use frame-based layout, not Auto Layout
+			view.translatesAutoresizingMaskIntoConstraints = true
+			metalView?.translatesAutoresizingMaskIntoConstraints = true
+			view.autoresizingMask = []
+			metalView?.autoresizingMask = []
+
+			/// Remove any existing constraints that might interfere
+			if let superview = view.superview {
+				let constraintsToRemove = superview.constraints.filter { constraint in
+					constraint.firstItem === view || constraint.secondItem === view
+				}
+				if !constraintsToRemove.isEmpty {
+					NSLayoutConstraint.deactivate(constraintsToRemove)
+				}
+			}
+
+			/// Apply frames directly (frame-based layout)
+			view.frame = customFrame
+			metalView?.frame = view.bounds
+			NSLog("EmuThree Vulkan: Using custom positioning frame: \(customFrame)")
+
+			/// CRITICAL: Still call refreshScreenSize so emuThree knows the view size
+			NSLog("View Size Changed (custom positioning)\n")
+			core.refreshScreenSize()
+			return
+		}
+
+		NSLog("View Size Changed\n")
+		core.refreshScreenSize()
 	}
 }
 
@@ -186,29 +317,37 @@ import os
 			self.layer.rasterizationScale = scale;
 			self.contentScaleFactor = scale;
 		}
-		let screenBounds=UIScreen.main.bounds
-		// Resize masks
-		self.layer.anchorPoint=CGPoint(x: 0, y: 0)
+
+		/// Reset anchor point to center (default) to avoid positioning issues
+		/// This ensures transforms are applied from the center of the view
+		self.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+
 		let gameFrameSize = CGRect(x: 0,
 								   y: 0,
 								   width: (CGFloat)(gameScreenSize.width * CGFloat(resolutionFactor)),
 								   height: (CGFloat)(gameScreenSize.height * CGFloat(resolutionFactor)))
-		self.layer.frame = gameFrameSize
-		self.drawableSize=CGSize(width: gameFrameSize.width, height: gameFrameSize.height)
+
+		/// Set drawable size based on game frame size
+		self.drawableSize = CGSize(width: gameFrameSize.width, height: gameFrameSize.height)
 
 		self.autoResizeDrawable = true
-		self.autoresizingMask  = [.flexibleHeight, .flexibleWidth,
-								  .flexibleRightMargin,
-								  .flexibleLeftMargin]
-		// Adjust to Resolution Upscaled Vulkan Render
-		let xScale = screenBounds.width / (CGFloat)(gameScreenSize.width * CGFloat(resolutionFactor)) ;
-		let yScale = screenBounds.height / (CGFloat)(gameScreenSize.height * CGFloat(resolutionFactor)) ;
-		self.layer.setAffineTransform(
-			CGAffineTransform(scaleX: xScale,
-							  y: yScale)
-		)
+		/// Use flexible sizing to work with Auto Layout constraints
+		self.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+
+		/// Clear any existing transform - Auto Layout will handle positioning
+		/// The transform will be recalculated in viewDidLayoutSubviews when bounds are known
+		self.layer.setAffineTransform(CGAffineTransform.identity)
+
 		self.autoresizesSubviews = true
-		self.contentMode = .scaleToFill
+		self.contentMode = .scaleAspectFit
+
+		/// If view is already laid out, recalculate transform now
+		if self.bounds.width > 0 && self.bounds.height > 0 {
+			let xScale = self.bounds.width / gameFrameSize.width
+			let yScale = self.bounds.height / gameFrameSize.height
+			let scaleToFit = min(xScale, yScale)
+			self.layer.setAffineTransform(CGAffineTransform(scaleX: scaleToFit, y: scaleToFit))
+		}
 	}
 
 	var buffer: [UInt32] = [UInt32]() {
@@ -1018,7 +1157,7 @@ internal extension GCController {
     var isRemote: Bool {
         return self.extendedGamepad == nil && self.microGamepad != nil
     }
-    
+
     var isKeyboard: Bool {
         if #available(iOS 14.0, tvOS 14.0, *) {
             return isSnapshot && vendorName?.contains("Keyboard") == true
