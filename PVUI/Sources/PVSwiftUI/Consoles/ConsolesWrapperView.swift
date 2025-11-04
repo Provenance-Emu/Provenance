@@ -351,16 +351,31 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
 
         #if canImport(UIKit)
+        guard let source = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) else {
+            return nil
+        }
+
         // Derive a conservative size based on tab bar metrics to prevent page style from upscaling
         let defaultPointSize: CGFloat = 12
         let font = UIFont.systemFont(ofSize: defaultPointSize, weight: .regular)
         let metrics = UIFontMetrics(forTextStyle: .footnote)
         let clamped = metrics.scaledValue(for: font.pointSize)
-        let side = max(36, min(42, clamped))
-        let targetSize = CGSize(width: side, height: side)
-        guard let source = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) else {
-            return nil
+        let maxSide = max(36, min(42, clamped))
+
+        // Preserve aspect ratio of original image
+        let sourceSize = source.size
+        let aspectRatio = sourceSize.width / sourceSize.height
+
+        // Calculate target size maintaining aspect ratio
+        let targetSize: CGSize
+        if aspectRatio > 1.0 {
+            // Wider than tall - constrain by width
+            targetSize = CGSize(width: maxSide, height: maxSide / aspectRatio)
+        } else {
+            // Taller than wide or square - constrain by height
+            targetSize = CGSize(width: maxSide * aspectRatio, height: maxSide)
         }
+
         let renderer = UIGraphicsImageRenderer(size: targetSize)
         let scaled = renderer.image { _ in
             source.draw(in: CGRect(origin: .zero, size: targetSize))
