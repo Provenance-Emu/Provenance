@@ -550,16 +550,10 @@ public struct SystemSkinSelectionView: View {
             loadingProgress = 1.0
         }
 
-        do {
-            // Use cached skins - this will filter from already-loaded skins without rescanning
-            let skins = try await skinManager.skins(for: system)
-            await processSkins(skins)
-        } catch {
-            await MainActor.run {
-                errorMessage = error.localizedDescription
-                isLoading = false
-            }
-        }
+        // Use loadedSkins directly and filter by system compatibility
+        let allSkins = skinManager.loadedSkins
+        let filteredSkins = filterSkinsForSystem(allSkins)
+        await processSkins(filteredSkins)
     }
 
     /// Process skins and update UI state
@@ -635,9 +629,11 @@ public struct SystemSkinSelectionView: View {
             }
 
             do {
-                // Load all skins for this system (will use cache if available)
-                let skins = try await skinManager.skins(for: system)
-                await processSkins(skins)
+                // Load all available skins (will use cache if available)
+                let allSkins = try await skinManager.availableSkins()
+                // Filter skins for this system using flexible matching
+                let filteredSkins = filterSkinsForSystem(allSkins)
+                await processSkins(filteredSkins)
             } catch {
                 await MainActor.run {
                     self.errorMessage = error.localizedDescription
@@ -651,6 +647,32 @@ public struct SystemSkinSelectionView: View {
                     }
                 }
             }
+        }
+    }
+
+    /// Filter skins for the current system using flexible matching
+    private func filterSkinsForSystem(_ skins: [any DeltaSkinProtocol]) -> [any DeltaSkinProtocol] {
+        // Convert system to gameType for matching
+        let targetGameType = DeltaSkinGameType(systemIdentifier: system)
+
+        return skins.filter { skin in
+            // Primary check: exact gameType match (handles most cases)
+            if let targetGameType = targetGameType, skin.gameType == targetGameType {
+                return true
+            }
+
+            // Secondary check: verify via systemIdentifier mapping
+            // This catches edge cases where gameType might match but we want to double-check
+            if let skinSystemId = skin.gameType.systemIdentifier, skinSystemId == system {
+                return true
+            }
+
+            // Special case: GB systems can use GBC skins
+            if system == .GB && skin.gameType == .gbc {
+                return true
+            }
+
+            return false
         }
     }
 
