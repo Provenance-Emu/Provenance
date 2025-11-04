@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didReleasePSPButton:(NSInteger)button forPlayer:(NSInteger)player;
 - (void)didMovePSPJoystickDirection:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 - (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+- (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player;
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player;
 @end

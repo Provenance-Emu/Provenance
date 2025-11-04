@@ -276,6 +276,13 @@ extern bool _isInitialized;
 	[self didMovePSPJoystickDirection:(PVPSPButton)button withValue:value forPlayer:player];
 }
 
+/// Generic JoystickResponder protocol method - maps generic button values to PSP-specific buttons
+- (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+	// Map generic button values: 0 = left stick, 1 = right stick (PSP only has left analog)
+	PVPSPButton pspButton = (button == 0) ? PVPSPButtonLeftAnalog : PVPSPButtonLeftAnalog;
+	[self didMovePSPJoystickDirection:pspButton withXValue:xValue withYValue:yValue forPlayer:player];
+}
+
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
 	[self didPushPSPButton:(PVPSPButton)button forPlayer:player];
 }
@@ -340,4 +347,3 @@ extern bool _isInitialized;
 	}
 }
 @end
-
