@@ -157,7 +157,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             isVisible = true
 
             // Initialize cached sorted consoles
-            cachedSortedConsoles = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
+            updateCachedSortedConsoles()
 
             Task(priority: .userInitiated) {
                 // Preload artwork for visible console only (lazy loading)
@@ -167,12 +167,10 @@ struct ConsolesWrapperView: SwiftUI.View {
             }
         }
         .onChange(of: viewModel.sortConsolesAscending) { _ in
-            // Invalidate cache when sort order changes
-            cachedSortedConsoles = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
+            updateCachedSortedConsoles()
         }
         .onChange(of: consoles.count) { _ in
-            // Invalidate cache when consoles change
-            cachedSortedConsoles = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
+            updateCachedSortedConsoles()
         }
         .onDisappear {
             isVisible = false
@@ -187,14 +185,13 @@ struct ConsolesWrapperView: SwiftUI.View {
         gameInfoState = GameInfoState(id: gameId)
     }
 
+    /// Update the cached sorted consoles
+    private func updateCachedSortedConsoles() {
+        cachedSortedConsoles = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
+    }
+
     /// Optimized sorted consoles with caching
     private func sortedConsoles() -> [PVSystem] {
-        let sorted = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
-        // Only update cache if consoles actually changed
-        if cachedSortedConsoles.count != sorted.count ||
-           cachedSortedConsoles.map(\.identifier) != sorted.map(\.identifier) {
-            cachedSortedConsoles = sorted
-        }
         return cachedSortedConsoles
     }
 

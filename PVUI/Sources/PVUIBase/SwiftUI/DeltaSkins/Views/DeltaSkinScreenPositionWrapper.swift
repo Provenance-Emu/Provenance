@@ -30,12 +30,16 @@ struct DeltaSkinScreenPositionWrapper: View {
             DLOG("🎮 SKIN:   outputFrame: \(outputFrame)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
 
-            // Validate outputFrame is normalized (should be 0-1)
-            // Use conservative threshold (> 10.0) to detect absolute pixels vs small normalized values
-            if outputFrame.width > 10.0 || outputFrame.height > 10.0 {
-                ELOG("🎮 SKIN: WARNING - outputFrame appears to be absolute pixels, not normalized!")
-                ELOG("🎮 SKIN:   outputFrame: \(outputFrame)")
-                ELOG("🎮 SKIN:   mappingSize: \(mappingSize)")
+            // Validate outputFrame - check if it's normalized (0-1) or absolute pixels (> 1.0)
+            // Use threshold (> 1.0) to detect - values > 1.0 are likely absolute pixels
+            // But be careful - some normalized values might be > 1.0 if they represent more than 100% of space
+            // So use a more conservative check: if values are > mappingSize, they're definitely absolute
+            let isAbsolutePixels = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
+                                   (outputFrame.width > 1.0 && outputFrame.height > 1.0 &&
+                                    outputFrame.width < mappingSize.width && outputFrame.height < mappingSize.height)
+
+            if isAbsolutePixels || (outputFrame.width > 10.0 || outputFrame.height > 10.0) {
+                DLOG("🎮 SKIN: Detected absolute pixels in outputFrame: \(outputFrame), mappingSize: \(mappingSize)")
 
                 // Normalize - ensure we don't divide by zero
                 guard mappingSize.width > 0 && mappingSize.height > 0 else {
@@ -75,12 +79,14 @@ struct DeltaSkinScreenPositionWrapper: View {
                 DLOG("🎮 SKIN:   layout.xOffset: \(layout.xOffset), layout.yOffset: \(layout.yOffset)")
             } else {
                 // outputFrame is normalized (0-1), scale by layout dimensions
+                DLOG("🎮 SKIN: Treating outputFrame as normalized: \(outputFrame)")
                 screenFrame = CGRect(
                     x: outputFrame.minX * layout.width,
                     y: outputFrame.minY * layout.height,
                     width: outputFrame.width * layout.width,
                     height: outputFrame.height * layout.height
                 )
+                DLOG("🎮 SKIN:   Calculated screenFrame (normalized): \(screenFrame)")
             }
         }
         // Try screen groups
@@ -92,12 +98,13 @@ struct DeltaSkinScreenPositionWrapper: View {
             DLOG("🎮 SKIN:   outputFrame: \(outputFrame)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
 
-            // Validate outputFrame is normalized (should be 0-1)
-            // Use conservative threshold (> 10.0) to detect absolute pixels vs small normalized values
-            if outputFrame.width > 10.0 || outputFrame.height > 10.0 {
-                ELOG("🎮 SKIN: WARNING - outputFrame appears to be absolute pixels, not normalized!")
-                ELOG("🎮 SKIN:   outputFrame: \(outputFrame)")
-                ELOG("🎮 SKIN:   mappingSize: \(mappingSize)")
+            // Check if outputFrame is absolute pixels or normalized
+            let isAbsolutePixels = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
+                                   (outputFrame.width > 1.0 && outputFrame.height > 1.0 &&
+                                    outputFrame.width < mappingSize.width && outputFrame.height < mappingSize.height)
+
+            if isAbsolutePixels || (outputFrame.width > 10.0 || outputFrame.height > 10.0) {
+                DLOG("🎮 SKIN: Detected absolute pixels in outputFrame (screenGroups): \(outputFrame), mappingSize: \(mappingSize)")
 
                 // Normalize first if needed
                 let normalizedX = outputFrame.minX / mappingSize.width

@@ -214,12 +214,15 @@ extension PVEmulatorViewController {
             let layoutWidth = scaledWidth
             let layoutHeight = scaledHeight
 
-            // outputFrame from DeltaSkinScreen should typically be normalized (0-1)
-            // However, some skins might provide absolute pixel coordinates
-            // Use a conservative threshold (> 10.0) to detect absolute pixels vs normalized
+            // outputFrame from DeltaSkinScreen could be normalized (0-1) or absolute pixels
+            // Check if values exceed mappingSize or are clearly absolute (> 1.0 and < mappingSize)
             let normalizedFrame: CGRect
-            if outputFrame.width > 10.0 || outputFrame.height > 10.0 {
-                // Values are large, likely absolute pixels - normalize by mappingSize
+            let isAbsolutePixels = outputFrame.width > mappingSize.width || outputFrame.height > mappingSize.height ||
+                                   (outputFrame.width > 1.0 && outputFrame.height > 1.0 &&
+                                    outputFrame.width < mappingSize.width && outputFrame.height < mappingSize.height)
+
+            if isAbsolutePixels || (outputFrame.width > 10.0 || outputFrame.height > 10.0) {
+                // Values are absolute pixels - normalize by mappingSize
                 if mappingSize.width > 0 && mappingSize.height > 0 {
                     normalizedFrame = CGRect(
                         x: outputFrame.minX / mappingSize.width,
@@ -227,29 +230,27 @@ extension PVEmulatorViewController {
                         width: outputFrame.width / mappingSize.width,
                         height: outputFrame.height / mappingSize.height
                     )
-                    DLOG("🎮 SKIN: Normalized outputFrame from pixels: \(outputFrame) -> \(normalizedFrame)")
+                    DLOG("🎮 SKIN: Normalized outputFrame from pixels: \(outputFrame) -> \(normalizedFrame), mappingSize: \(mappingSize)")
                 } else {
                     DLOG("🎮 SKIN: Invalid mappingSize, treating outputFrame as normalized")
                     normalizedFrame = outputFrame
                 }
             } else {
-                // Values are small, assume already normalized (0-1) - use as-is
+                // Values are normalized (0-1) - use as-is
                 normalizedFrame = outputFrame
+                DLOG("🎮 SKIN: Using outputFrame as normalized: \(outputFrame)")
             }
 
             // Scale normalized frame by layout dimensions and add offset
-            var finalFrame = CGRect(
+            let finalFrame = CGRect(
                 x: xOffset + (normalizedFrame.minX * layoutWidth),
                 y: yOffset + (normalizedFrame.minY * layoutHeight),
                 width: normalizedFrame.width * layoutWidth,
                 height: normalizedFrame.height * layoutHeight
             )
 
-            // Clamp frame to viewport bounds to prevent extending outside
-            finalFrame.origin.x = max(0, min(finalFrame.origin.x, viewSize.width - finalFrame.width))
-            finalFrame.origin.y = max(0, min(finalFrame.origin.y, viewSize.height - finalFrame.height))
-            finalFrame.size.width = min(finalFrame.width, viewSize.width)
-            finalFrame.size.height = min(finalFrame.height, viewSize.height)
+            // Don't clamp here - let RetroArch coordinate conversion handle it
+            // Clamping at this stage can cause incorrect sizing for RetroArch cores
 
             DLOG("🎮 SKIN: Calculated frame from screens - outputFrame: \(outputFrame), normalized: \(normalizedFrame), layout: \(scaledWidth)x\(scaledHeight), final: \(finalFrame)")
             return finalFrame
@@ -287,8 +288,29 @@ extension PVEmulatorViewController {
         }
 
         // Handle cores that support viewport positioning (RetroArch, PPSSPP, etc.)
-        if let viewport = core.bridge as? EmulatorCoreViewportPositioning,
-           let parent = core.touchViewController?.view {
+        if let viewport = core.bridge as? EmulatorCoreViewportPositioning {
+            DLOG("🎮 SKIN: Found EmulatorCoreViewportPositioning bridge")
+
+            /// Determine the correct parent view to use
+            /// Try touchViewController first, then renderDelegate, matching the Objective-C fallback logic
+            let parent: UIView?
+            if let touchView = core.touchViewController?.view {
+                parent = touchView
+            } else if let renderDelegate = core.renderDelegate as? UIViewController {
+                /// renderDelegate is expected to be a UIViewController conforming to PVRenderDelegate
+                parent = renderDelegate.view
+            } else {
+                parent = nil
+            }
+
+            guard let parent = parent else {
+                /// If we can't find a parent, still call the method - it will handle fallbacks internally
+                DLOG("🎮 SKIN: No parent view found in Swift, delegating to Objective-C fallback logic")
+                viewport.setUseCustomRenderViewLayout(true)
+                viewport.applyRenderViewFrameInTouchView(frame)
+                return
+            }
+
             // Ensure parent has valid bounds
             // Don't force layout - it causes call loops
             guard parent.bounds.width > 0 && parent.bounds.height > 0 else {
@@ -296,46 +318,83 @@ extension PVEmulatorViewController {
                 return
             }
 
+            DLOG("🎮 SKIN: Calling setUseCustomRenderViewLayout(true) for RetroArch")
             viewport.setUseCustomRenderViewLayout(true)
 
-            // Convert coordinates from self.view to parent coordinate system
-            // Don't force layout here - it causes call loops
-            // Layout will happen naturally when frame is applied
-            let rectInParent = view.convert(frame, to: parent)
+            // For RetroArch cores, convert coordinates from self.view to parent coordinate system
+            // The frame is calculated in self.view coordinates based on skin layout
+            // RetroArch expects coordinates relative to the touchViewController's view
+            let rectInParent: CGRect
+            if view == parent {
+                // Same view, no conversion needed - use frame directly
+                rectInParent = frame
+                DLOG("🎮 SKIN: view == parent, using frame directly: \(frame)")
+            } else {
+                // Convert between different coordinate spaces
+                // Use convert(_:to:) which preserves size correctly
+                let originInParent = view.convert(frame.origin, to: parent)
+                // Convert the width/height separately to account for different scales
+                // The size should remain the same in points, only position changes
+                let size = frame.size
+
+                rectInParent = CGRect(
+                    origin: originInParent,
+                    size: size
+                )
+
+                // Debug conversion details for troubleshooting
+                let viewOrigin = view.convert(CGPoint.zero, to: parent)
+                DLOG("🎮 SKIN: RetroArch conversion - original frame: \(frame), originInParent: \(originInParent), size: \(size), rectInParent: \(rectInParent), parent.bounds: \(parent.bounds), view.bounds: \(view.bounds)")
+            }
 
             // Validate converted rect
             guard isValidFrame(rectInParent) else {
-                ELOG("🎮 SKIN: Invalid converted rect: \(rectInParent) from frame: \(frame)")
+                ELOG("🎮 SKIN: Invalid converted rect: \(rectInParent) from frame: \(frame), parent.bounds: \(parent.bounds), view.bounds: \(view.bounds)")
                 return
             }
 
-            // Clamp to parent bounds for both portrait and landscape
+            // For RetroArch, preserve the calculated frame size and position
+            // Only apply minimal clamping if frame extends beyond parent bounds
+            var finalRect = rectInParent
+
+            // Check if frame needs adjustment - only clamp if extending beyond bounds
+            let needsClampX = rectInParent.minX < 0 || rectInParent.maxX > parent.bounds.width
+            let needsClampY = rectInParent.minY < 0 || rectInParent.maxY > parent.bounds.height
+
+            if needsClampX || needsClampY {
+                // Preserve aspect ratio and size, just adjust position
+                // Only scale down if absolutely necessary to fit
+                let aspectRatio = rectInParent.width / rectInParent.height
+                var adjustedWidth = rectInParent.width
+                var adjustedHeight = rectInParent.height
+
+                // Scale down only if exceeds bounds, maintaining aspect ratio
+                if adjustedWidth > parent.bounds.width {
+                    adjustedWidth = parent.bounds.width
+                    adjustedHeight = adjustedWidth / aspectRatio
+                }
+                if adjustedHeight > parent.bounds.height {
+                    adjustedHeight = parent.bounds.height
+                    adjustedWidth = adjustedHeight * aspectRatio
+                }
+
+                // Center the adjusted frame if needed, or clamp to bounds
+                let clampedX = needsClampX ? max(0, min(rectInParent.origin.x, parent.bounds.width - adjustedWidth)) : rectInParent.origin.x
+                let clampedY = needsClampY ? max(0, min(rectInParent.origin.y, parent.bounds.height - adjustedHeight)) : rectInParent.origin.y
+
+                finalRect = CGRect(x: clampedX, y: clampedY, width: adjustedWidth, height: adjustedHeight)
+            }
+
             let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+            DLOG("🎮 SKIN: RetroArch viewport (\(orientation == .landscape ? "landscape" : "portrait")): frame=\(frame), rectInParent=\(rectInParent), finalRect=\(finalRect), parent.bounds=\(parent.bounds), view.bounds=\(view.bounds)")
 
-            // Clamp to parent bounds - ensure frame stays within valid bounds
-            // For portrait mode, the frame calculation should already account for skin positioning
-            // but we need to ensure the converted coordinates are correct
-            let clampedRect = CGRect(
-                x: max(0, min(rectInParent.origin.x, parent.bounds.width - rectInParent.width)),
-                y: max(0, min(rectInParent.origin.y, parent.bounds.height - rectInParent.height)),
-                width: min(rectInParent.width, parent.bounds.width),
-                height: min(rectInParent.height, parent.bounds.height)
-            )
-
-            // Debug logging for portrait mode to help diagnose positioning issues
-            if orientation == .portrait {
-                let parentOrigin = view.convert(CGRect.zero, to: parent)
-                DLOG("🎮 SKIN: Portrait conversion - frame: \(frame), rectInParent: \(rectInParent), parentOrigin: \(parentOrigin), parent.bounds: \(parent.bounds), clamped: \(clampedRect)")
-            }
-
-            // Validate clamped rect
-            guard isValidFrame(clampedRect) else {
-                ELOG("🎮 SKIN: Invalid clamped rect: \(clampedRect)")
+            // Validate final rect
+            guard isValidFrame(finalRect) else {
+                ELOG("🎮 SKIN: Invalid final rect: \(finalRect)")
                 return
             }
 
-            DLOG("🎮 SKIN: RetroArch viewport (\(orientation == .landscape ? "landscape" : "portrait")): original=\(rectInParent), clamped=\(clampedRect), parent.bounds=\(parent.bounds), view.bounds=\(view.bounds)")
-            viewport.applyRenderViewFrameInTouchView(clampedRect)
+            viewport.applyRenderViewFrameInTouchView(finalRect)
 
             // Ensure GPU view is visible and below skin
             ensureGPUViewVisibilityAndZOrder()
