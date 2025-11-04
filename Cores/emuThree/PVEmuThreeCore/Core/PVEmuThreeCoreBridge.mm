@@ -42,6 +42,8 @@ static bool _isOff = false;
     NSString *_romPath;
 }
 
+@synthesize valueChangedHandler;
+
 - (instancetype)init {
     if (self = [super init]) {
         self.alwaysUseMetal = true;

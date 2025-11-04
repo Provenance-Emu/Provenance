@@ -20,28 +20,6 @@ typedef enum PV3DSButton: NSInteger PV3DSButton;
 @interface PVEmuThreeCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PV3DSSystemResponderClient>
 #pragma clang diagnostic pop
 {
-    int videoWidth;
-    int videoHeight;
-    int videoBitDepth;
-    int8_t resFactor;
-    int8_t gsPreference;
-    BOOL enableHLE;
-    int8_t cpuOClock;
-    BOOL enableJIT;
-    BOOL useNew3DS;
-    BOOL enableLogging;
-    BOOL asyncShader;
-    BOOL asyncPresent;
-    int8_t shaderType;
-    BOOL enableVSync;
-    BOOL enableShaderAccurate;
-    BOOL enableShaderJIT;
-    int8_t portraitType;
-    int8_t landscapeType;
-    BOOL swapScreen;
-    BOOL uprightScreen;
-    BOOL customTextures;
-    BOOL preloadTextures;
     UIView *m_view;
     UIViewController *m_view_controller;
     CAMetalLayer* m_metal_layer;
