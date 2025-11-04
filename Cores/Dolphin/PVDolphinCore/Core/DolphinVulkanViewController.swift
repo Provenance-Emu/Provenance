@@ -9,21 +9,23 @@
 import Foundation
 import UIKit
 import MetalKit
+import QuartzCore
 import os
 import PVLogging
 
 @objc public class DolphinVulkanViewController: UIViewController {
-	private var core: PVDolphinCoreBridge!
-	private var metalView: MTKView!
-	private var dev: MTLDevice!
+    private var core: PVDolphinCoreBridge!
+    private var metalView: UIView!
+    private var dev: MTLDevice!
+    private var isResuming: Bool = false
 
 	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVDolphinCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
-		
+
 		// Use shared Metal device to avoid conflicts
 		self.dev = MTLCreateSystemDefaultDevice()!
-		
+
 		// Disable Metal validation to test if rendering works despite buffer size warnings
 		// This helps determine if it's a validation issue or actual rendering problem
 		if let device = self.dev {
@@ -31,30 +33,40 @@ import PVLogging
 			// For now, we'll proceed with validation enabled but log the issue
 			ILOG("Metal device created: \(device.name)")
 		}
-		
-		metalView = MTKView(frame: UIScreen.main.bounds, device: dev)
-		
-		// Configure MTKView for Vulkan/Metal interop
-		metalView.isUserInteractionEnabled = false
-		metalView.contentMode = .scaleToFill
-		metalView.colorPixelFormat = .bgra8Unorm
-		metalView.depthStencilPixelFormat = .depth32Float
-		metalView.translatesAutoresizingMaskIntoConstraints = false
-		metalView.preferredFramesPerSecond = 60  // Reduced from 120 to prevent GPU overload
-		
-		// Critical: Prevent MTKView from interfering with Vulkan rendering
-		metalView.isPaused = true
-		metalView.enableSetNeedsDisplay = false
-		metalView.autoResizeDrawable = false  // Let Vulkan control drawable size
-		metalView.framebufferOnly = true      // Optimize for rendering only
-		metalView.delegate = nil              // No MTKView delegate to avoid conflicts
-		
-		// Ensure Metal layer is properly configured for Vulkan
-		if let metalLayer = metalView.layer as? CAMetalLayer {
-			metalLayer.framebufferOnly = true
-			metalLayer.allowsNextDrawableTimeout = false
-			metalLayer.maximumDrawableCount = 3  // Triple buffering
-		}
+
+        metalView = CAMetalHostingView(frame: UIScreen.main.bounds, device: dev)
+
+        // Configure hosting view/layer for Vulkan/Metal interop
+        metalView.isUserInteractionEnabled = false
+        metalView.contentMode = .scaleToFill
+        metalView.translatesAutoresizingMaskIntoConstraints = false
+        if let metalLayer = metalView.layer as? CAMetalLayer {
+            metalLayer.framebufferOnly = true
+            metalLayer.allowsNextDrawableTimeout = false
+            metalLayer.isOpaque = true
+            metalLayer.presentsWithTransaction = false
+            metalLayer.maximumDrawableCount = 3  // Triple buffering
+            metalLayer.pixelFormat = .bgra8Unorm
+            metalLayer.colorspace = CGColorSpaceCreateDeviceRGB()
+            metalLayer.contentsScale = UIScreen.main.scale
+            let scale = UIScreen.main.scale
+            metalLayer.drawableSize = CGSize(width: metalView.bounds.width * scale,
+                                             height: metalView.bounds.height * scale)
+        }
+
+		/// Add observers for app lifecycle to handle pause/resume more reliably
+		NotificationCenter.default.addObserver(
+			self,
+			selector: #selector(appWillResignActive),
+			name: UIApplication.willResignActiveNotification,
+			object: nil
+		)
+		NotificationCenter.default.addObserver(
+			self,
+			selector: #selector(appDidBecomeActive),
+			name: UIApplication.didBecomeActiveNotification,
+			object: nil
+		)
 	}
 	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -62,25 +74,23 @@ import PVLogging
 	required init?(coder: NSCoder) {
 		super.init(coder:coder)
 	}
-	
+
 	deinit {
 		// Critical: Clean up Metal resources to prevent GPU memory leaks
 		ILOG("DolphinVulkanViewController deinit - cleaning up Metal resources")
-		
-		if let metalView = self.metalView {
-			// Stop any ongoing rendering
-			metalView.isPaused = true
-			metalView.delegate = nil
-			
-			// Remove from superview to break retain cycles
-			metalView.removeFromSuperview()
-			self.metalView = nil
-		}
-		
+
+		NotificationCenter.default.removeObserver(self)
+
+        if let metalView = self.metalView {
+            // Remove from superview to break retain cycles
+            metalView.removeFromSuperview()
+            self.metalView = nil
+        }
+
 		// Clear Metal device reference
 		self.dev = nil
 		self.core = nil
-		
+
 		ILOG("DolphinVulkanViewController deinit complete")
 	}
 	@objc public override func viewDidLoad() {
@@ -88,11 +98,199 @@ import PVLogging
 		self.view=metalView;
         ILOG("Starting VM\n")
 		core.startVM(self.view)
+
+		/// Observe window visibility changes to handle cases where sheets appear
+		/// without triggering view lifecycle methods
+		NotificationCenter.default.addObserver(
+			self,
+			selector: #selector(windowDidBecomeKey),
+			name: UIWindow.didBecomeKeyNotification,
+			object: nil
+		)
+		NotificationCenter.default.addObserver(
+			self,
+			selector: #selector(windowDidResignKey),
+			name: UIWindow.didResignKeyNotification,
+			object: nil
+		)
 	}
+
+	@objc private func windowDidBecomeKey(_ notification: Notification) {
+		/// Only handle if this is our window
+		guard let window = notification.object as? UIWindow,
+			  window == self.view.window else {
+			return
+		}
+		ILOG("DolphinVulkanViewController windowDidBecomeKey - resuming rendering")
+		resumeRendering()
+	}
+
+	@objc private func windowDidResignKey(_ notification: Notification) {
+		/// Only handle if this is our window
+		guard let window = notification.object as? UIWindow,
+			  window == self.view.window else {
+			return
+		}
+		ILOG("DolphinVulkanViewController windowDidResignKey")
+	}
+
+	@objc public override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		resumeRendering()
+	}
+
+	@objc public override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		ILOG("DolphinVulkanViewController viewDidAppear")
+
+		/// Additional check when view becomes fully visible
+		/// This helps catch cases where viewWillAppear didn't properly synchronize
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+			guard let self = self, self.view.window != nil else { return }
+			/// Only resume if view is actually visible
+			if self.view.window?.isKeyWindow == true {
+				self.resumeRendering()
+			}
+		}
+	}
+
+	@objc public override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		ILOG("DolphinVulkanViewController viewWillDisappear - pausing rendering")
+	}
+
+	@objc private func appWillResignActive() {
+		ILOG("DolphinVulkanViewController appWillResignActive")
+	}
+
+	@objc private func appDidBecomeActive() {
+		ILOG("DolphinVulkanViewController appDidBecomeActive - resuming rendering")
+		resumeRendering()
+	}
+
+	private func resumeRendering() {
+		/// Prevent multiple simultaneous resume operations
+		guard !isResuming else {
+			ILOG("DolphinVulkanViewController resumeRendering - already resuming, skipping")
+			return
+		}
+
+		isResuming = true
+		ILOG("DolphinVulkanViewController resumeRendering - forcing complete swapchain recreation")
+
+		/// Pause emulation briefly to avoid presenting mid-recreation
+		core.setPauseEmulation(true)
+
+        /// Get current state before manipulation
+        var originalDrawableSize = CGSize.zero
+        if let metalLayer = metalView.layer as? CAMetalLayer {
+            originalDrawableSize = metalLayer.drawableSize
+        }
+		var wasHidden = false
+
+		guard originalDrawableSize.width > 0 && originalDrawableSize.height > 0 else {
+			ILOG("DolphinVulkanViewController resumeRendering - invalid drawable size, skipping")
+			isResuming = false
+			return
+		}
+
+		if let metalLayer = metalView.layer as? CAMetalLayer {
+			metalLayer.removeAllAnimations()
+			wasHidden = metalLayer.isHidden
+
+			/// Hide layer immediately to prevent any flickering
+			metalLayer.isHidden = true
+
+			/// Drastically change drawable size to force complete swapchain destruction
+			/// This mimics what happens during reset - forces Vulkan to completely destroy old swapchain
+			metalLayer.drawableSize = CGSize(width: 1, height: 1)
+		}
+
+		/// Force immediate swapchain destruction
+		core.refreshScreenSize()
+
+		/// Wait longer to ensure swapchain is completely destroyed
+		/// Multiple frame delays ensure Vulkan has processed the destruction
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+			guard let self = self else { return }
+
+			/// Restore correct drawable size - this triggers new swapchain creation
+			if let metalLayer = self.metalView.layer as? CAMetalLayer {
+				metalLayer.drawableSize = originalDrawableSize
+			}
+
+			/// Trigger swapchain recreation
+			self.core.refreshScreenSize()
+
+			/// Wait longer for swapchain to be fully recreated (similar to reset timing)
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+				guard let self = self else { return }
+
+				/// Multiple refreshes to ensure swapchain is fully synchronized
+				self.core.refreshScreenSize()
+
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+					guard let self = self else { return }
+
+					self.core.refreshScreenSize()
+
+					/// Now restore layer visibility after swapchain is fully recreated
+					if let metalLayer = self.metalView.layer as? CAMetalLayer {
+						metalLayer.isHidden = wasHidden
+					}
+
+					/// Final synchronization pass
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+						guard let self = self else { return }
+						self.core.refreshScreenSize()
+						self.isResuming = false
+						/// Resume emulation now that the swapchain is synchronized
+						self.core.setPauseEmulation(false)
+						ILOG("DolphinVulkanViewController resumeRendering - complete swapchain recreation finished")
+					}
+				}
+			}
+		}
+	}
+
 	@objc public override func viewDidLayoutSubviews() {
         ILOG("View Size Changed\n")
+		if let metalLayer = metalView.layer as? CAMetalLayer {
+			let scale = UIScreen.main.scale
+			metalLayer.contentsScale = scale
+			metalLayer.drawableSize = CGSize(width: metalView.bounds.width * scale,
+											height: metalView.bounds.height * scale)
+		}
 		core.refreshScreenSize()
 	}
+}
+
+@available(iOS 13.0, tvOS 13.0, *)
+@objc public final class CAMetalHostingView: UIView {
+    private let deviceRef: MTLDevice
+    override public class var layerClass: AnyClass { CAMetalLayer.self }
+
+    init(frame: CGRect, device: MTLDevice) {
+        self.deviceRef = device
+        super.init(frame: frame)
+        guard let metalLayer = self.layer as? CAMetalLayer else { return }
+        metalLayer.device = deviceRef
+        metalLayer.pixelFormat = .bgra8Unorm
+        metalLayer.isOpaque = true
+        metalLayer.framebufferOnly = true
+        metalLayer.presentsWithTransaction = false
+        metalLayer.allowsNextDrawableTimeout = false
+        metalLayer.maximumDrawableCount = 3
+        metalLayer.colorspace = CGColorSpaceCreateDeviceRGB()
+        let scale = UIScreen.main.scale
+        contentScaleFactor = scale
+        metalLayer.contentsScale = scale
+        metalLayer.drawableSize = CGSize(width: bounds.width * scale, height: bounds.height * scale)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 @available(iOS 13.0, tvOS 13.0, *)

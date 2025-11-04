@@ -535,7 +535,7 @@ static void ResetDolphinStaticState() {
     Config::SetBase(Config::MAIN_WII_SD_CARD, true);
     Config::SetBase(Config::MAIN_ALLOW_SD_WRITES, true);
 
-    
+
 
     // CPU High Level / Low Level Emulation
     Config::SetBase(Config::MAIN_DSP_HLE, true);
@@ -695,14 +695,10 @@ static void ResetDolphinStaticState() {
     wsi.type = WindowSystemType::iOS;
     wsi.display_connection = nullptr;
     dispatch_sync(dispatch_get_main_queue(), ^{
-        // Use Provenance's Metal view layer as the render surface
-        if (self.renderDelegate && self.renderDelegate.mtlView) {
-            wsi.render_surface = (__bridge void*)self.renderDelegate.mtlView.layer;
-            NSLog(@"🐬 [DEBUG] Using Metal view layer for rendering");
-        } else {
-            wsi.render_surface = (__bridge void*)m_view.layer;
-            NSLog(@"🐬 [WARNING] Fallback to regular view layer - may not render properly");
-        }
+        // Always use the core-managed view layer as the render surface to avoid
+        // lifecycle interference from host MTKView instances
+        wsi.render_surface = (__bridge void*)m_view.layer;
+        NSLog(@"🐬 [DEBUG] Using core-managed view layer for rendering");
     });
     wsi.render_surface_scale = [UIScreen mainScreen].scale;
     NSLog(@"🐬 [DEBUG] WindowSystemInfo configured for iOS");
