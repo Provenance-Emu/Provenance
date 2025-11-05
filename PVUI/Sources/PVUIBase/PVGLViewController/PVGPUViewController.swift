@@ -12,6 +12,9 @@ import PVSettings
 #if canImport(UIKit)
 import UIKit
 #endif
+#if canImport(QuartzCore)
+import QuartzCore
+#endif
 import Metal
 import CoreGraphics
 #if canImport(OpenGL)
@@ -50,6 +53,13 @@ public class PVGPUViewController: BaseViewController {
     public var isPaused: Bool = false
     public var framesPerSecond: Double = 0
     public var timeSinceLastDraw: TimeInterval = 0
+    #else
+    /// Frame timing for iOS - tracks last frame timestamp for FPS calculation
+    private var lastFrameTimestamp: CFTimeInterval = 0
+    private var frameTimestamps: [CFTimeInterval] = []
+    private let maxFrameTimestamps = 60
+    /// Thread-safe access to frame timestamps
+    private let frameTimestampsLock = NSLock()
     #endif
 
     #if os(iOS)
@@ -68,5 +78,87 @@ public class PVGPUViewController: BaseViewController {
         setNeedsUpdateOfHomeIndicatorAutoHidden()
         setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
     }
+
+    /// Track frame presentation for FPS calculation on iOS
+    @objc func trackFramePresentation() {
+        let currentTime = CACurrentMediaTime()
+        frameTimestampsLock.lock()
+        defer { frameTimestampsLock.unlock() }
+
+        if lastFrameTimestamp > 0 {
+            let frameTime = currentTime - lastFrameTimestamp
+            frameTimestamps.append(frameTime)
+            /// Use efficient removal - only resize when necessary
+            if frameTimestamps.count > maxFrameTimestamps {
+                frameTimestamps.removeFirst()
+            }
+        }
+        lastFrameTimestamp = currentTime
+    }
+    #endif
+
+    /// Calculate rendering FPS from tracked frame timestamps
+    /// Note: For GLKViewController, this extends the base property
+    #if os(iOS)
+    #if !USE_METAL
+    /// Override GLKViewController's timeSinceLastDraw property
+    public override var timeSinceLastDraw: TimeInterval {
+        get {
+            frameTimestampsLock.lock()
+            defer { frameTimestampsLock.unlock() }
+
+            guard !frameTimestamps.isEmpty else { return super.timeSinceLastDraw }
+            /// Use efficient sum calculation
+            let sum = frameTimestamps.reduce(0, +)
+            return sum / Double(frameTimestamps.count)
+        }
+    }
+    #else
+    /// Provide timeSinceLastDraw for Metal view controllers
+    @objc public var timeSinceLastDraw: TimeInterval {
+        get {
+            frameTimestampsLock.lock()
+            defer { frameTimestampsLock.unlock() }
+
+            guard !frameTimestamps.isEmpty else { return 0 }
+            /// Use efficient sum calculation
+            let sum = frameTimestamps.reduce(0, +)
+            return sum / Double(frameTimestamps.count)
+        }
+    }
+    #endif
+    #endif
+
+    /// Calculate average FPS from tracked frame timestamps
+    /// Note: For GLKViewController, framesPerSecond is Int, so we provide a Double version
+    #if os(iOS)
+    #if !USE_METAL
+    /// GLKViewController has framesPerSecond as Int, so we can't override it
+    /// Instead, provide a computed property that calculates from timestamps
+    @objc public var calculatedFramesPerSecond: Double {
+        get {
+            frameTimestampsLock.lock()
+            defer { frameTimestampsLock.unlock() }
+
+            guard !frameTimestamps.isEmpty else { return Double(super.framesPerSecond) }
+            let sum = frameTimestamps.reduce(0, +)
+            let avgFrameTime = sum / Double(frameTimestamps.count)
+            return avgFrameTime > 0 ? 1.0 / avgFrameTime : Double(super.framesPerSecond)
+        }
+    }
+    #else
+    /// Provide framesPerSecond for Metal view controllers
+    @objc public var framesPerSecond: Double {
+        get {
+            frameTimestampsLock.lock()
+            defer { frameTimestampsLock.unlock() }
+
+            guard !frameTimestamps.isEmpty else { return 0 }
+            let sum = frameTimestamps.reduce(0, +)
+            let avgFrameTime = sum / Double(frameTimestamps.count)
+            return avgFrameTime > 0 ? 1.0 / avgFrameTime : 0
+        }
+    }
+    #endif
     #endif
 }

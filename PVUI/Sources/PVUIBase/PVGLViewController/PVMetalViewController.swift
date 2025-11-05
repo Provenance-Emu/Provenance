@@ -199,6 +199,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     // Add a property to store shader constants
     private var shaderConstants = MTLFunctionConstantValues()
 
+    /// Cached flipY buffer to avoid per-frame allocation
+    private var cachedFlipYBuffer: MTLBuffer?
+    private var cachedFlipYValue: Bool = false
+
     // MARK: Methods
 
     required init?(coder: NSCoder) {
@@ -245,6 +249,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if let backingIOSurface = backingIOSurface {
             IOSurfaceDecrementUseCount(backingIOSurface)
         }
+
+        // Clean up cached resources
+        cachedFlipYBuffer = nil
+        renderPassDescriptor = nil
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -288,6 +296,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         device = MTLCreateSystemDefaultDevice()
 
         // Load VSync setting from user defaults
+        // Note: On iOS, VSync is always enabled at the system level.
+        // This setting only affects frame rate hints, not actual VSync behavior.
         vsyncEnabled = Defaults[.vsyncEnabled]
 
         if device == nil {
@@ -501,12 +511,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 #endif
 
     func updatePreferredFPS() {
-        let preferredFPS: Int = Int(emulatorCore?.frameInterval ?? 0)
+        // frameInterval is in seconds per frame (e.g., 1/60.0 for 60fps)
+        // Convert to FPS: 1.0 / frameInterval
+        let frameInterval = emulatorCore?.frameInterval ?? (1.0 / 60.0)
+        let preferredFPS: Int = frameInterval > 0 ? Int(1.0 / frameInterval) : 60
 
         // Determine the actual FPS to set
+        // Always ensure we have a valid FPS (never 0) to prevent blank video
         let fpsToSet: Int
-        if preferredFPS < 10 {
-            WLOG("Cores frame interval (\(preferredFPS)) too low. Setting to 60")
+        if preferredFPS < 10 || preferredFPS > 240 {
+            WLOG("Core frame rate (\(preferredFPS) fps) out of valid range. Setting to 60")
             fpsToSet = 60
         } else {
             fpsToSet = preferredFPS
@@ -518,7 +532,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        ILOG("updatePreferredFPS (\(preferredFPS) -> \(fpsToSet))")
+        ILOG("updatePreferredFPS (frameInterval: \(frameInterval) -> \(preferredFPS) fps -> \(fpsToSet) fps)")
 
         mtlView.preferredFramesPerSecond = fpsToSet
         lastPreferredFPS = fpsToSet
@@ -2300,12 +2314,20 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // Create a render pass descriptor
-        let renderPassDescriptor = MTLRenderPassDescriptor()
-        renderPassDescriptor.colorAttachments[0].texture = drawable.texture
-        renderPassDescriptor.colorAttachments[0].loadAction = .clear
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        // Reuse render pass descriptor if available, otherwise create new one
+        let renderPassDescriptor: MTLRenderPassDescriptor
+        if let existing = self.renderPassDescriptor {
+            renderPassDescriptor = existing
+            // Update texture reference for current drawable
+            renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+        } else {
+            renderPassDescriptor = MTLRenderPassDescriptor()
+            renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+            renderPassDescriptor.colorAttachments[0].loadAction = .clear
+            renderPassDescriptor.colorAttachments[0].storeAction = .store
+            renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+            self.renderPassDescriptor = renderPassDescriptor
+        }
 
         // Create a render command encoder
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
@@ -2326,7 +2348,22 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderEncoder.setViewport(viewport)
 
         // Get the flipY parameter - set to true for non-OpenGL cores, false for OpenGL cores
-        var flipY: Bool = !emulatorCore.rendersToOpenGL
+        let flipY: Bool = !emulatorCore.rendersToOpenGL
+
+        // Use cached flipY buffer if value hasn't changed, otherwise create new one
+        let flipYBuffer: MTLBuffer
+        if let cached = cachedFlipYBuffer, cachedFlipYValue == flipY {
+            flipYBuffer = cached
+        } else {
+            var flipYValue = flipY
+            guard let newBuffer = device.makeBuffer(bytes: &flipYValue, length: MemoryLayout<Bool>.size, options: .storageModeShared) else {
+                ELOG("Failed to create flipY buffer")
+                return
+            }
+            flipYBuffer = newBuffer
+            cachedFlipYBuffer = flipYBuffer
+            cachedFlipYValue = flipY
+        }
 
         // Use the custom pipeline if available, otherwise fall back to the blit pipeline
         if let customPipeline = customPipeline {
@@ -2336,7 +2373,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             renderEncoder.setFragmentTexture(inputTexture, index: 0)
 
             // Pass the flipY parameter to the vertex shader
-            let flipYBuffer = device.makeBuffer(bytes: &flipY, length: MemoryLayout<Bool>.size, options: .storageModeShared)
             renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
 
             // Draw the primitives
@@ -2349,7 +2385,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             renderEncoder.setFragmentTexture(inputTexture, index: 0)
 
             // Pass the flipY parameter to the vertex shader
-            let flipYBuffer = device.makeBuffer(bytes: &flipY, length: MemoryLayout<Bool>.size, options: .storageModeShared)
             renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
 
             // Set the sampler state - use the appropriate sampler based on smoothing setting
@@ -2362,6 +2397,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         } else {
             ELOG("No pipeline available")
+            return
         }
 
         // End encoding
@@ -2386,6 +2422,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Increment frame count
         frameCount += 1
+
+        // Track frame presentation for FPS calculation on iOS
+        #if os(iOS)
+        trackFramePresentation()
+        #endif
     }
 
     // Helper method to update texture from core's buffer
@@ -2763,27 +2804,24 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     /// Updates the VSync settings for the Metal renderer
+    /// Note: On iOS, VSync is always enabled at the system level. We can only hint the preferred frame rate.
+    /// Setting preferredFramesPerSecond to 0 will stop the render loop, causing blank video.
     private func updateVsyncSettings() {
         guard let mtlView = mtlView else { return }
 
-        // In Metal, VSync is controlled through the displaySyncEnabled property
+        // In Metal, VSync is controlled through the preferredFramesPerSecond property
         mtlView.isPaused = false
 
         // Reset lastPreferredFPS to force update when VSync changes
         lastPreferredFPS = 0
 
         #if os(iOS) || os(tvOS)
-        if #available(iOS 16.0, tvOS 16.0, *) {
-            // On iOS/tvOS 16+, we can directly control display sync
-            let fps = vsyncEnabled ? Int(emulatorCore?.frameInterval ?? 60) : 0
-            mtlView.preferredFramesPerSecond = fps
-            lastPreferredFPS = fps
-            ILOG("Setting VSync to \(vsyncEnabled ? "enabled" : "disabled")")
-        } else {
-            // On older iOS versions, we can only provide hints through preferredFramesPerSecond
-            updatePreferredFPS()
-            ILOG("VSync control limited on older iOS versions")
-        }
+        // On iOS/tvOS, VSync is always enabled at the system level - we can't truly disable it.
+        // Setting preferredFramesPerSecond to 0 stops the render loop entirely, causing blank video.
+        // Instead, always use updatePreferredFPS which calculates a valid frame rate.
+        // When "VSync disabled", we just render at the maximum display refresh rate.
+        updatePreferredFPS()
+        ILOG("VSync setting updated (iOS always uses system VSync, preference affects frame rate hint)")
         #else
         // For other platforms, update preferred FPS
         updatePreferredFPS()

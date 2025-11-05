@@ -247,6 +247,11 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 #if USE_DISPLAY_LINK
     @objc func render() {
         emulatorCore?.executeFrame()
+
+        // Track frame presentation for FPS calculation on iOS
+        #if os(iOS)
+        trackFramePresentation()
+        #endif
     }
 #endif
 
@@ -431,7 +436,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             ELOG("Emulator core is nil")
             return
         }
-        
+
         // IMPORTANT: If custom positioning is being used, respect it and don't override
         if useCustomPositioning && !customFrame.isEmpty {
             DLOG("Using custom positioning: \(customFrame)")
