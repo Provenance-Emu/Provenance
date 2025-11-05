@@ -533,23 +533,23 @@ struct ConsoleGamesView: SwiftUI.View {
                     message: "Select artwork from your photo library or search online sources",
                     isPresented: $gamesViewModel.showArtworkSourceAlert,
                     buttons: {
-                        UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                            Task {
-                                await gamesViewModel.handleSelectFromPhotos()
-                                // After alert is dismissed by ViewModel, trigger the sheet
-                                gamesViewModel.showImagePicker = true
-                            }
-                        }
                         UIAlertAction(title: "Search Online", style: .default) { _ in
-                            Task {
+                            Task { @MainActor in
                                 // gameForArtworkUpdate is already set in gamesViewModel via prepareArtworkSourceAlert
                                 await gamesViewModel.handleSearchOnline()
                                 // After alert is dismissed by ViewModel, trigger the sheet
                                 gamesViewModel.showArtworkSearch = true
                             }
                         }
+                        UIAlertAction(title: "Select from Photos", style: .default) { _ in
+                            Task { @MainActor in
+                                await gamesViewModel.handleSelectFromPhotos()
+                                // After alert is dismissed by ViewModel, trigger the sheet
+                                gamesViewModel.showImagePicker = true
+                            }
+                        }
                         UIAlertAction(title:  NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                            Task {
+                            Task { @MainActor in
                                 await gamesViewModel.cancelArtworkSourceAlert()
                             }
                         }
@@ -568,7 +568,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
                                 UIAlertAction(title: disc.fileName, style: .default) { _ in
                                     gamesViewModel.discSelectionAlert = nil
-                                    Task {
+                                    Task { @MainActor in
                                         await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
                                     }
                                 }
