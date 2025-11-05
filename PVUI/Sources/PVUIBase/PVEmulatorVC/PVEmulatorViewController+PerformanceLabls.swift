@@ -9,7 +9,7 @@
 // MARK: Performance Metrics
 
 extension PVEmulatorViewController {
-    
+
     internal func initFPSLabel() {
         gpuViewController.view.addSubview(fpsLabel)
         view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .topMargin, relatedBy: .equal, toItem: gpuViewController.view, attribute: .top, multiplier: 1.0, constant: -10))
@@ -18,40 +18,53 @@ extension PVEmulatorViewController {
         fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true, block: { [weak self] (_: Timer) -> Void in
             guard let `self` = self else { return }
 
-            let coreSpeed = self.core.renderFPS / self.core.frameInterval * 100
-            let drawTime =  self.gpuViewController.timeSinceLastDraw * 1000
-            let fps = 1000 / drawTime
-            let mem = self.memoryUsage()
+            /// Use core.emulationFPS as primary FPS metric (most accurate for emulation)
+            /// This is especially important for 3D accelerated cores like RetroArch
+            let emulationFPS = self.core.emulationFPS
 
+            /// Calculate core speed based on emulation FPS vs target frame interval
+            let targetFPS = 1.0 / self.core.frameInterval
+            let coreSpeed = targetFPS > 0 ? (emulationFPS / targetFPS) * 100 : 0
+
+            /// Calculate rendering FPS from GPU view controller frame timing
+            let drawTime = self.gpuViewController.timeSinceLastDraw * 1000
+            let renderFPS: Double
+            if drawTime > 0 {
+                renderFPS = 1000.0 / drawTime
+            } else {
+                /// Fallback to core.renderFPS if available, otherwise use emulationFPS
+                renderFPS = self.core.renderFPS > 0 ? self.core.renderFPS : emulationFPS
+            }
+
+            /// Use emulationFPS for display (what users care about - actual game speed)
+            let displayFPS = emulationFPS > 0 ? emulationFPS : renderFPS
+
+            let mem = self.memoryUsage()
             let cpu = self.cpuUsage()
             let cpuFormatted = String.init(format: "%03.01f", cpu)
-            //            let cpuAttributed = NSAttributedString(string: cpuFormatted,
-            //                                                   attributes: red)
-            //
             let memFormatted: String = NSString.localizedStringWithFormat("%i", (mem.used/1024/1024)) as String
-            let memTotalFormatted: String = NSString.localizedStringWithFormat("%i", (mem.total/1024/1024)) as
-            String
+            let memTotalFormatted: String = NSString.localizedStringWithFormat("%i", (mem.total/1024/1024)) as String
 
-            //            let memUsedAttributed = NSAttributedString(string: memFormatted,
-            //                                                       attributes: green)
-            //            let memTotalAttributed = NSAttributedString(string: memTotalFormatted,
-            //                                                        attributes: green)
-            //
-            //            let label = NSMutableAttributedString()
-            //
-            //            let top = NSAttributedString(format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f\n", coreSpeed, drawTime, fps);
-            //
-            //            label.append(top)
-
-            self.fpsLabel.text = String(format: "Core speed %03.02f%%\nDraw time %02.02f%ms\nFPS %03.02f\nCPU %@%%\nMem %@/%@(MB)", coreSpeed, drawTime, fps, cpuFormatted, memFormatted, memTotalFormatted)
+            self.fpsLabel.text = String(format: "Core speed %03.02f%%\nDraw time %02.02f%ms\nFPS %03.02f\nCPU %@%%\nMem %@/%@(MB)", coreSpeed, drawTime, displayFPS, cpuFormatted, memFormatted, memTotalFormatted)
         })
     }
 
     @objc func updateFPSLabel() {
-        VLOG("FPS: \(gpuViewController.framesPerSecond)")
+        #if os(iOS) && !USE_METAL
+        if let glVC = gpuViewController as? PVGLViewController {
+            let fps = glVC.calculatedFramesPerSecond
+            VLOG("FPS: \(fps)")
+        } else if let metalVC = gpuViewController as? PVMetalViewController {
+            VLOG("FPS: \(metalVC.framesPerSecond)")
+        }
+        #else
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            VLOG("FPS: \(metalVC.framesPerSecond)")
+        }
+        #endif
         fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
     }
-    
+
     typealias MemoryUsage = (used: UInt64, total: UInt64)
     func memoryUsage() -> MemoryUsage {
         var taskInfo = task_vm_info_data_t()
