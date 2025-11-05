@@ -220,8 +220,9 @@ struct ProvenanceApp: App {
                     appState.sendEventWasSwizzled = true
                 }
 
-                // Check if we need to open the emulator scene based on app open action
-                if appState.bootupState == .completed {
+                // Only check for app open action if there's no current game
+                // This prevents reopening games when returning from emulator
+                if appState.bootupState == .completed, appState.emulationUIState.currentGame == nil {
                     openEmulatorSceneIfNeeded()
                 }
 
@@ -279,6 +280,12 @@ extension UIApplication {
 extension ProvenanceApp {
     // Helper method to open the emulator scene if needed based on app open action
     private func openEmulatorSceneIfNeeded() {
+        // Don't reopen if there's already a game loaded
+        guard appState.emulationUIState.currentGame == nil else {
+            DLOG("Skipping emulator scene open - game already loaded: \(appState.emulationUIState.currentGame?.title ?? "unknown")")
+            return
+        }
+
         if appState.appOpenAction.requiresEmulatorScene {
             ILOG("Opening emulator scene for action: \(appState.appOpenAction)")
             sceneCoordinator.openEmulatorScene()

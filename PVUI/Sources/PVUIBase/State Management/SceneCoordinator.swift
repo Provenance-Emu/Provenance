@@ -224,15 +224,15 @@ public class SceneCoordinator: ObservableObject {
     public func closeEmulator() {
         ILOG("SceneCoordinator: closeEmulator() called")
 
+        // Reset the app open action FIRST to prevent any reopening attempts
+        AppState.shared.appOpenAction = .none
+        ILOG("SceneCoordinator: Reset appOpenAction to .none when closing emulator")
+
         // Clear the emulation state
         AppState.shared.emulationUIState.core = nil
         AppState.shared.emulationUIState.emulator = nil
         AppState.shared.emulationUIState.currentGame = nil
         ILOG("SceneCoordinator: Cleared emulation state")
-
-        // Reset the app open action to prevent reopening the same game
-        AppState.shared.appOpenAction = .none
-        ILOG("SceneCoordinator: Reset appOpenAction to .none when closing emulator")
 
         // Return to the main scene
         ILOG("SceneCoordinator: Calling openMainScene()")
