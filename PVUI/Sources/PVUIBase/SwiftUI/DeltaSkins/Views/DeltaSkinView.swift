@@ -837,64 +837,77 @@ public struct DeltaSkinView: View {
     }
 
     /// Check if a touch location is within a D-pad direction's hit area
-    /// Uses larger hit areas that extend from the D-pad center in each direction
-    /// Creates a + shape with extended arms for easier tapping near the center
+    /// Calculates bounding box from all four direction hit boxes and treats center as valid
+    /// No dead zone - center touches resolve to nearest direction
     private func isLocationInDPadDirection(_ location: CGPoint, button: DeltaSkinButton, buttonScaleX: CGFloat, buttonScaleY: CGFloat, xOffset: CGFloat, yOffset: CGFloat) -> Bool {
-        let buttonCenterX = button.frame.midX * buttonScaleX + xOffset
-        let buttonCenterY = button.frame.midY * buttonScaleY + yOffset
-
         // Calculate scaled button dimensions
         let scaledButtonWidth = button.frame.width * buttonScaleX
         let scaledButtonHeight = button.frame.height * buttonScaleY
 
-        // Use a modest hit area multiplier for D-pad (small extension beyond frame)
-        // Keep generous center handling via nearest-direction fallback elsewhere
-        let hitAreaMultiplier: CGFloat = 0.1 // Extend hit area to 10% of button size beyond the frame
-        let centerDeadZone: CGFloat = 0.02 // Tiny dead zone to avoid jitter but effectively no dead area
+        // Calculate the bounding box for each direction (matching dpadMapping layout)
+        // Each direction is 0.33 width/height of the button
+        let dirSizeW = scaledButtonWidth * 0.33
+        let dirSizeH = scaledButtonHeight * 0.33
 
-        // Calculate relative position from button center
-        let relativeX = location.x - buttonCenterX
-        let relativeY = location.y - buttonCenterY
+        // Button frame in view coordinates (the actual button.frame scaled and positioned)
+        let buttonFrame = CGRect(
+            x: button.frame.minX * buttonScaleX + xOffset,
+            y: button.frame.minY * buttonScaleY + yOffset,
+            width: scaledButtonWidth,
+            height: scaledButtonHeight
+        )
 
-        // First, restrict to a bounding box around the D-pad with a small view-space padding
-        let outerPad: CGFloat = 12 // points
-        let halfW = scaledButtonWidth * 0.5
-        let halfH = scaledButtonHeight * 0.5
-        if abs(relativeX) > halfW + outerPad || abs(relativeY) > halfH + outerPad {
-            return false
-        }
+        // Calculate bounding boxes for each direction (matching dpadMapping .position() calls)
+        // Up: center x, y = frame.height * 0.16 (relative to frame origin)
+        let upRect = CGRect(
+            x: buttonFrame.midX - dirSizeW / 2,
+            y: buttonFrame.minY + buttonFrame.height * 0.16 - dirSizeH / 2,
+            width: dirSizeW,
+            height: dirSizeH
+        )
 
-        // Calculate maximum extent for hit areas (within the bounded region)
-        let maxHorizontalExtent = scaledButtonWidth * (0.5 + hitAreaMultiplier)
-        let maxVerticalExtent = scaledButtonHeight * (0.5 + hitAreaMultiplier)
+        // Down: center x, y = frame.height * 0.84
+        let downRect = CGRect(
+            x: buttonFrame.midX - dirSizeW / 2,
+            y: buttonFrame.minY + buttonFrame.height * 0.84 - dirSizeH / 2,
+            width: dirSizeW,
+            height: dirSizeH
+        )
 
-        // Dead zone radius (center area where no direction is detected)
-        let deadZoneRadius = min(scaledButtonWidth, scaledButtonHeight) * centerDeadZone
+        // Left: x = frame.width * 0.16, center y
+        let leftRect = CGRect(
+            x: buttonFrame.minX + buttonFrame.width * 0.16 - dirSizeW / 2,
+            y: buttonFrame.midY - dirSizeH / 2,
+            width: dirSizeW,
+            height: dirSizeH
+        )
 
-        // Check if touch is within dead zone
-        let distanceFromCenter = sqrt(relativeX * relativeX + relativeY * relativeY)
-        if distanceFromCenter < deadZoneRadius {
-            return true // Treat center as inside the D-pad to avoid a dead zone
-        }
+        // Right: x = frame.width * 0.84, center y
+        let rightRect = CGRect(
+            x: buttonFrame.minX + buttonFrame.width * 0.84 - dirSizeW / 2,
+            y: buttonFrame.midY - dirSizeH / 2,
+            width: dirSizeW,
+            height: dirSizeH
+        )
 
-        // Calculate thresholds for each direction (smaller threshold = larger hit area)
-        let thresholdX = scaledButtonWidth * 0.35 // 35% threshold for horizontal directions
-        let thresholdY = scaledButtonHeight * 0.35 // 35% threshold for vertical directions
+        // Calculate overall bounding box that contains all four direction boxes
+        let minX = min(upRect.minX, downRect.minX, leftRect.minX, rightRect.minX)
+        let maxX = max(upRect.maxX, downRect.maxX, leftRect.maxX, rightRect.maxX)
+        let minY = min(upRect.minY, downRect.minY, leftRect.minY, rightRect.minY)
+        let maxY = max(upRect.maxY, downRect.maxY, leftRect.maxY, rightRect.maxY)
 
-        // Check if location is within any direction's hit area
-        // Up: extends upward with generous width
-        let isInUp = relativeY < -thresholdY && abs(relativeX) < maxHorizontalExtent
+        // Add small padding to the bounding box (12pt in view space)
+        let padding: CGFloat = 12
+        let boundingBox = CGRect(
+            x: minX - padding,
+            y: minY - padding,
+            width: (maxX - minX) + (padding * 2),
+            height: (maxY - minY) + (padding * 2)
+        )
 
-        // Down: extends downward with generous width
-        let isInDown = relativeY > thresholdY && abs(relativeX) < maxHorizontalExtent
-
-        // Left: extends leftward with generous height
-        let isInLeft = relativeX < -thresholdX && abs(relativeY) < maxVerticalExtent
-
-        // Right: extends rightward with generous height
-        let isInRight = relativeX > thresholdX && abs(relativeY) < maxVerticalExtent
-
-        return isInUp || isInDown || isInLeft || isInRight
+        // If touch is within the overall D-pad bounding box, it's a D-pad hit
+        // No dead zone - center will be resolved to nearest direction in handleDPadInput
+        return boundingBox.contains(location)
     }
 
     /// Handle a touch at the given location
@@ -1359,10 +1372,20 @@ public struct DeltaSkinView: View {
                 let otherThresholdY = otherButtonHeight * 0.3
 
                 // Add directions from this other touch
-                if otherRelativeY < -otherThresholdY { allResolvedDirections.insert("up") }
-                if otherRelativeY > otherThresholdY { allResolvedDirections.insert("down") }
-                if otherRelativeX > otherThresholdX { allResolvedDirections.insert("right") }
-                if otherRelativeX < -otherThresholdX { allResolvedDirections.insert("left") }
+                var addedFromThisTouch = false
+                if otherRelativeY < -otherThresholdY { allResolvedDirections.insert("up"); addedFromThisTouch = true }
+                if otherRelativeY > otherThresholdY { allResolvedDirections.insert("down"); addedFromThisTouch = true }
+                if otherRelativeX > otherThresholdX { allResolvedDirections.insert("right"); addedFromThisTouch = true }
+                if otherRelativeX < -otherThresholdX { allResolvedDirections.insert("left"); addedFromThisTouch = true }
+
+                // If nothing crossed thresholds (center touch), resolve to nearest direction for this touch
+                if !addedFromThisTouch {
+                    if abs(otherRelativeX) >= abs(otherRelativeY) {
+                        allResolvedDirections.insert(otherRelativeX >= 0 ? "right" : "left")
+                    } else {
+                        allResolvedDirections.insert(otherRelativeY >= 0 ? "down" : "up")
+                    }
+                }
             }
         }
 
