@@ -400,6 +400,12 @@ public struct SystemSkinBrowserView: View {
         for skin in allSkins {
             if let system = skin.gameType.systemIdentifier {
                 counts[system, default: 0] += 1
+
+                // PSX skins can also be used for PS2 and PS3 (same controls)
+                if system == .PSX {
+                    counts[.PS2, default: 0] += 1
+                    counts[.PS3, default: 0] += 1
+                }
             }
         }
 

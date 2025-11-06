@@ -8,7 +8,7 @@ struct SystemSkinPreviewRow: View {
     let system: SystemIdentifier
 
     @StateObject private var skinManager = DeltaSkinManager.shared
-    @StateObject private var preferences = DeltaSkinPreferences.shared
+    @StateObject private var selectionManager = DeltaSkinSelectionManager.shared
 
     @State private var portraitSkin: (any DeltaSkinProtocol)? = nil
     @State private var landscapeSkin: (any DeltaSkinProtocol)? = nil
@@ -160,9 +160,9 @@ struct SystemSkinPreviewRow: View {
             try? await Task.sleep(nanoseconds: 300_000_000)
 
             do {
-                // Get selected skin IDs
-                let portraitSkinId = preferences.selectedSkinIdentifier(for: system, orientation: .portrait)
-                let landscapeSkinId = preferences.selectedSkinIdentifier(for: system, orientation: .landscape)
+                // Get selected skin IDs using centralized manager (includes session overrides)
+                let portraitSkinId = selectionManager.effectiveSkinIdentifier(for: system, gameId: nil, orientation: .portrait)
+                let landscapeSkinId = selectionManager.effectiveSkinIdentifier(for: system, gameId: nil, orientation: .landscape)
 
                 // Load all skins once and reuse (use cached loadedSkins if available)
                 let allSkins = skinManager.loadedSkins.isEmpty

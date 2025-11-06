@@ -19,6 +19,8 @@ struct EmulatorWithSkinView: View {
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
+    /// Optional override to force a specific skin for this session (identifier)
+    let preselectedSkinIdentifier: String?
 
     @EnvironmentObject internal var inputHandler: DeltaSkinInputHandler
     @StateObject private var skinLoader = DeltaSkinLoader()
@@ -51,7 +53,7 @@ struct EmulatorWithSkinView: View {
     @State private var hasUserSelectedFilter = false
 
     // Initialize with a game, extracting the necessary properties
-    init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void) {
+    init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void, preselectedSkinIdentifier: String? = nil) {
         self.gameTitle = game.title
         self.systemName = game.system?.name
 
@@ -64,6 +66,7 @@ struct EmulatorWithSkinView: View {
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
         self.onRefreshRequested = onRefreshRequested
+        self.preselectedSkinIdentifier = preselectedSkinIdentifier
     }
 
     var body: some View {
@@ -186,9 +189,12 @@ struct EmulatorWithSkinView: View {
 
                 // Listen for filter changes from pause menu
                 setupFilterNotificationObserver()
+
+                // Listen for skin selection changes to refresh view dynamically
+                setupSkinChangeNotificationObserver()
             }
             .onDisappear {
-                // Clean up notification
+                // Clean up notifications
                 NotificationCenter.default.removeObserver(self)
             }
             .onChange(of: selectedFilterName) { _ in
@@ -722,7 +728,32 @@ struct EmulatorWithSkinView: View {
         }
     }
 
-    /// Set up notification observer for filter changes from pause menu
+    /// Set up notification observer for skin selection changes
+    /// Reloads skin when selection changes to ensure view updates immediately
+    private func setupSkinChangeNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            forName: DeltaSkinSelectionManager.selectionChangedNotification,
+            object: nil,
+            queue: .main
+        ) { notification in
+            // Check if this notification is for our system/game
+            guard let systemId = self.systemId,
+                  let userInfo = notification.userInfo,
+                  let notificationSystemId = userInfo["systemId"] as? String,
+                  notificationSystemId == systemId.rawValue else {
+                // Not for us, ignore
+                return
+            }
+
+            DLOG("🎮 EmulatorWithSkinView: Received skin selection change notification, reloading skin")
+
+            // Reload skin to pick up the new effective skin identifier
+            Task { @MainActor in
+                self.loadSkinSafely()
+            }
+        }
+    }
+
     private func setupFilterNotificationObserver() {
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name("ApplyScreenFilter"),
@@ -754,6 +785,7 @@ struct EmulatorWithSkinView: View {
 
     /// Load the skin safely without Realm threading issues
     /// Completely non-blocking: sets isLoading=false immediately, loads skin in background
+    /// Now checks effective skin identifier (session > game > system preferences) dynamically
     @MainActor
     private func loadSkinSafely() {
         DLOG("🎮 EmulatorWithSkinView: Starting to load skin safely")
@@ -772,27 +804,76 @@ struct EmulatorWithSkinView: View {
 
         // Load skin in background without blocking
         Task.detached(priority: .utility) {
-            // Fast path: check cache synchronously first
             let manager = DeltaSkinManager.shared
             var foundSkin: (any DeltaSkinProtocol)? = nil
 
-            if manager.skinsAreLoaded {
-                if let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: systemId),
-                   let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
+            // Determine current orientation for effective skin lookup
+            #if !os(tvOS)
+            let currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+            #else
+            let currentOrientation: SkinOrientation = .landscape
+            #endif
+
+            // PRIORITY 1: If a specific skin has been requested for this session (preselectedSkinIdentifier), honor it immediately
+            if let overrideId = preselectedSkinIdentifier {
+                if manager.skinsAreLoaded, let skin = manager.loadedSkins.first(where: { $0.identifier == overrideId }) {
                     foundSkin = skin
-                    DLOG("🎮 EmulatorWithSkinView: Found skin in cache: \(skin.name)")
-                } else if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
-                          let skin = manager.loadedSkins.first(where: {
-                              $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
-                          }) {
-                    foundSkin = skin
-                    DLOG("🎮 EmulatorWithSkinView: Found default skin in cache: \(skin.name)")
+                    DLOG("🎮 EmulatorWithSkinView: Using preselected skin from cache: \(skin.name)")
+                } else {
+                    // Attempt to resolve skin by identifier even if not in cache yet
+                    if let resolved = try? await manager.skin(withIdentifier: overrideId) {
+                        foundSkin = resolved
+                        DLOG("🎮 EmulatorWithSkinView: Resolved preselected skin by identifier: \(resolved.name)")
+                    }
                 }
             }
 
-            // If not in cache, load async
+            // PRIORITY 2: Check effective skin identifier using centralized selection manager
             if foundSkin == nil {
-                foundSkin = try? await DeltaSkinManager.shared.skinToUse(for: systemId)
+                let effectiveId: String?
+                if let gameId = self.gameId, !gameId.isEmpty {
+                    // Use centralized selection manager for game-specific lookup
+                    effectiveId = await MainActor.run {
+                        DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(
+                            for: systemId,
+                            gameId: gameId,
+                            orientation: currentOrientation
+                        )
+                    }
+                } else {
+                    // Use centralized selection manager for system-level lookup
+                    effectiveId = await MainActor.run {
+                        DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                            for: systemId,
+                            gameId: nil,
+                            orientation: currentOrientation
+                        )
+                    }
+                }
+
+                if let effectiveId = effectiveId {
+                    if manager.skinsAreLoaded, let skin = manager.loadedSkins.first(where: { $0.identifier == effectiveId }) {
+                        foundSkin = skin
+                        DLOG("🎮 EmulatorWithSkinView: Found effective skin: \(skin.name) (id: \(effectiveId))")
+                    } else if let resolved = try? await manager.skin(withIdentifier: effectiveId) {
+                        foundSkin = resolved
+                        DLOG("🎮 EmulatorWithSkinView: Resolved effective skin: \(resolved.name)")
+                    }
+                }
+            }
+
+            // PRIORITY 3: Fallback to default skin if nothing found
+            if foundSkin == nil {
+                if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
+                   manager.skinsAreLoaded,
+                   let defaultSkin = manager.loadedSkins.first(where: {
+                       $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                   }) {
+                    foundSkin = defaultSkin
+                    DLOG("🎮 EmulatorWithSkinView: Using default skin: \(defaultSkin.name)")
+                } else {
+                    foundSkin = try? await DeltaSkinManager.shared.skinToUse(for: systemId)
+                }
             }
 
             // Update UI with skin if found
@@ -801,6 +882,8 @@ struct EmulatorWithSkinView: View {
                     self.skinLoader.selectedSkin = skin
                 }
                 DLOG("🎮 EmulatorWithSkinView: Updated UI with skin: \(skin.name)")
+            } else {
+                DLOG("🎮 EmulatorWithSkinView: No skin found, will use default controller")
             }
         }
     }

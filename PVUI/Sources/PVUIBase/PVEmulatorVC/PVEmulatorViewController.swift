@@ -1367,6 +1367,7 @@ extension PVEmulatorViewController {
 //                    metalVC.safelyRefreshGPUView()
                 }
             },
+            preselectedSkinIdentifier: skin.identifier,
             inputHandler: inputHandler
         )
 

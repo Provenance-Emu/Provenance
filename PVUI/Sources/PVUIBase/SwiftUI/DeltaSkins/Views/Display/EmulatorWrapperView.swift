@@ -8,6 +8,8 @@ struct EmulatorWrapperView: View {
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
+    /// Optional override of the skin identifier to display immediately for this session
+    let preselectedSkinIdentifier: String?
 
     @ObservedObject var inputHandler: DeltaSkinInputHandler
 
@@ -16,7 +18,8 @@ struct EmulatorWrapperView: View {
             game: game,
             coreInstance: coreInstance,
             onSkinLoaded: onSkinLoaded,
-            onRefreshRequested: onRefreshRequested
+            onRefreshRequested: onRefreshRequested,
+            preselectedSkinIdentifier: preselectedSkinIdentifier
         )
         .environmentObject(inputHandler)
         .ignoresSafeArea(.all)

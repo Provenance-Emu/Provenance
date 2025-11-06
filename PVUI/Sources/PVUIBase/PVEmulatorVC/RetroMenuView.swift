@@ -15,6 +15,7 @@ import GameController
 import PVSupport
 import PVLibrary
 import PVFeatureFlags
+import UniformTypeIdentifiers
 
 // MARK: - SwiftUI Menu Views
 
@@ -67,6 +68,8 @@ struct RetroMenuView: View {
                 switch selectedCategory {
                 case .main:
                     mainMenuButtons
+                case .core:
+                    coreMenuButtons
                 case .states:
                     stateMenuButtons
                 case .options:
@@ -85,9 +88,10 @@ struct RetroMenuView: View {
     private func menuContentHeight(for category: MenuCategory) -> CGFloat {
         // Define base heights for each category
         let baseHeights: [MenuCategory: CGFloat] = [
-            .main: isLandscape ? 180 : 220,     // Main menu (4 items)
+            .main: isLandscape ? 180 : 220,     // Main menu (4-5 items)
+            .core: isLandscape ? 200 : 240,     // Core menu (core actions, options)
             .states: isLandscape ? 200 : 240,   // States menu (3-4 items)
-            .options: isLandscape ? 230 : 280,  // Options menu (more items)
+            .options: isLandscape ? 200 : 240,  // Options menu (game speed, cheats, controls)
             .skins: isLandscape ? 320 : 380     // Skins menu (most complex UI)
         ]
 
@@ -188,10 +192,14 @@ struct RetroMenuView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 20) {
                     categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: { selectedCategory = .main })
+                    // Show CORE tab if core has actions or options
+                    if hasCoreFeatures {
+                        categoryButton(title: "CORE", isSelected: selectedCategory == .core, action: { selectedCategory = .core })
+                    }
                     categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: { selectedCategory = .states })
                     categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: { selectedCategory = .options })
                     // Only show skins category if core supports skins and the feature flag is enabled
-                    if emulatorVC.core.supportsSkins && showSkinsCategoryButton { // Use the new @State variable
+                    if emulatorVC.core.supportsSkins && showSkinsCategoryButton {
                         categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
                     }
                 }
@@ -222,30 +230,43 @@ struct RetroMenuView: View {
             let previousOrientation = self.orientation
             self.orientation = UIDevice.current.orientation
 
-            // Only handle actual orientation changes (not face up/down or unknown)
-            if previousOrientation.isLandscape != self.orientation.isLandscape &&
-               (self.orientation.isLandscape || self.orientation.isPortrait) {
-                // Update the current orientation for skin management
-                self.currentOrientation = self.orientation.isLandscape ? .landscape : .portrait
+                // Only handle actual orientation changes (not face up/down or unknown)
+                if previousOrientation.isLandscape != self.orientation.isLandscape &&
+                   (self.orientation.isLandscape || self.orientation.isPortrait) {
+                    // Update the current orientation for skin management
+                    let newOrientation = self.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                    self.currentOrientation = newOrientation
 
-                // Reapply session skin if we have one stored
-                if skinScope == .session, let skinId = sessionSkinIdentifier {
+                    // Reapply session skin if we have one stored for the new orientation
                     Task {
-                        await reapplySessionSkin(skinId: skinId)
+                        let skinId = newOrientation == .portrait ? sessionPortraitSkinIdentifier : sessionLandscapeSkinIdentifier
+                        if let skinId = skinId {
+                            await reapplySessionSkin(skinId: skinId, orientation: newOrientation)
+                        } else {
+                            // No session skin for this orientation, check preferences
+                            await applySkinForCurrentOrientation()
+                        }
                     }
                 }
-            }
         }
         #endif
         // Initial orientation detection
 #if !os(tvOS)
         .onAppear {
             self.orientation = UIDevice.current.orientation
+            // Initialize current orientation to match device
+            currentOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
         }
 #endif
     }
 
-    // Main menu buttons
+    /// Check if core has features that warrant a CORE tab
+    private var hasCoreFeatures: Bool {
+        emulatorVC.core is CoreOptional ||
+        (emulatorVC.core as? CoreActions)?.coreActions != nil
+    }
+
+    // Main menu buttons - essential game controls only
     private var mainMenuButtons: some View {
         // Calculate if we should show the save & quit option
         let shouldSave: Bool = {
@@ -313,6 +334,47 @@ struct RetroMenuView: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 
+    // Core-specific menu buttons - core actions and options
+    private var coreMenuButtons: some View {
+        VStack(spacing: menuSpacing) {
+            // Core action buttons (if available) - show first for prominence
+            if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
+                ForEach(actions) { coreAction in
+                    menuButton(title: coreAction.title, icon: "bolt", color: .retroOrange) {
+                        dismissAction()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            actionableCore.selected(action: coreAction)
+                            self.emulatorVC.core.setPauseEmulation(false)
+                            if coreAction.requiresReset {
+                                self.emulatorVC.core.resetEmulation()
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Core options button (if available)
+            if emulatorVC.core is CoreOptional {
+                menuButton(title: "CORE OPTIONS", icon: "gearshape", color: .retroPurple) {
+                    dismissAction()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        emulatorVC.showCoreOptions()
+                    }
+                }
+            }
+
+            // If no core features available, show message
+            if !hasCoreFeatures {
+                Text("No core-specific features available")
+                    .foregroundColor(.gray)
+                    .padding()
+            }
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
+    }
+
     // Save state related buttons
     private var stateMenuButtons: some View {
         VStack(spacing: menuSpacing) {
@@ -364,7 +426,7 @@ struct RetroMenuView: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 
-    // Options related buttons
+    // Options related buttons - game settings and enhancements
     private var optionsMenuButtons: some View {
         VStack(spacing: menuSpacing) {
             // Game speed button
@@ -372,23 +434,6 @@ struct RetroMenuView: View {
                 dismissAction()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     emulatorVC.showSpeedMenu()
-                }
-            }
-
-            #if os(iOS)
-            // Audio visualizer button (iOS 16+ only, if supported by core)
-            if emulatorVC.core.supportsAudioVisualizer {
-                AudioVisualizerButton(emulatorVC: emulatorVC, dismissAction: dismissAction)
-            }
-            #endif
-
-            // Core options button (if available)
-            if emulatorVC.core is CoreOptional {
-                menuButton(title: "CORE OPTIONS", icon: "gearshape", color: .retroPurple) {
-                    dismissAction()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        emulatorVC.showCoreOptions()
-                    }
                 }
             }
 
@@ -402,8 +447,16 @@ struct RetroMenuView: View {
                 }
             }
 
+            #if os(iOS)
+            // Audio visualizer button (iOS 16+ only, if supported by core)
+            if emulatorVC.core.supportsAudioVisualizer {
+                AudioVisualizerButton(emulatorVC: emulatorVC, dismissAction: dismissAction)
+            }
+            #endif
+
             let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(emulatorVC.game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
 
+            // P1 controls (if available)
             if let player1 = PVControllerManager.shared.player1 {
 #if os(iOS)
                 if Defaults[.missingButtonsAlwaysOn] || (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
@@ -420,9 +473,7 @@ struct RetroMenuView: View {
                     }
                 }
 #endif
-
             }
-
 
             // P2 controls (if available)
             if let player2 = PVControllerManager.shared.player2 {
@@ -434,22 +485,6 @@ struct RetroMenuView: View {
                 }
             }
 
-            // Core action buttons (if available)
-            if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
-                ForEach(actions) { coreAction in
-                    menuButton(title: coreAction.title, icon: "bolt", color: .retroOrange) {
-                        dismissAction()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            actionableCore.selected(action: coreAction)
-                            self.emulatorVC.core.setPauseEmulation(false)
-                            if coreAction.requiresReset {
-                                self.emulatorVC.core.resetEmulation()
-                            }
-                        }
-                    }
-                }
-            }
-
             Spacer(minLength: 0)
         }
         .frame(maxHeight: .infinity, alignment: .top)
@@ -457,12 +492,16 @@ struct RetroMenuView: View {
 
     // Skins and filters related buttons
     @State private var selectedSkin: String = "Default"
+    @State private var selectedPortraitSkin: String = "Default"
+    @State private var selectedLandscapeSkin: String = "Default"
     @State private var selectedFilter: String = "None"
     @State private var availableSkins: [String] = ["Default"]
     @State private var availableSkinObjects: [DeltaSkinProtocol] = []
     @State private var showingSkinPicker = false
     @State private var showingFilterPicker = false
-    @State private var skinScope: SkinScope = .session
+    @State private var showingSkinScopeAlert = false
+    @State private var showingDocumentPicker = false
+    @State private var pendingSkinSelection: (name: String, identifier: String, orientation: SkinOrientation)? = nil
     #if os(iOS)
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
     #else
@@ -473,6 +512,8 @@ struct RetroMenuView: View {
 
     // Store the session skin identifier to preserve it during orientation changes
     @State private var sessionSkinIdentifier: String? = nil
+    @State private var sessionPortraitSkinIdentifier: String? = nil
+    @State private var sessionLandscapeSkinIdentifier: String? = nil
 
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
@@ -486,20 +527,35 @@ struct RetroMenuView: View {
 
     private var skinsMenuButtons: some View {
         VStack(spacing: menuSpacing) {
-            // Current skin selection
-            VStack(alignment: .leading, spacing: 4) {
-                Text("CURRENT SKIN")
+            // Current skin selection - simplified UI
+            VStack(alignment: .leading, spacing: 8) {
+                Text("SKIN SELECTION")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.gray)
 
+                // Current skin button - shows current orientation's skin
                 Button(action: {
-                    // Show skin picker
+                    // Use current device orientation for skin selection
+                    #if !os(tvOS)
+                    currentOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+                    #else
+                    currentOrientation = .landscape
+                    #endif
                     showingSkinPicker = true
                 }) {
                     HStack {
-                        Text(selectedSkin)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 4) {
+                                Image(systemName: currentOrientation == .portrait ? "rectangle.portrait" : "rectangle.landscape")
+                                    .font(.system(size: 10))
+                                Text(currentOrientation == .portrait ? "PORTRAIT SKIN" : "LANDSCAPE SKIN")
+                                    .font(.system(size: 10, weight: .bold))
+                            }
+                            .foregroundColor(.gray)
+                            Text(currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white)
+                        }
 
                         Spacer()
 
@@ -526,20 +582,82 @@ struct RetroMenuView: View {
                     skinPickerView
                 }
 
-                // Skin scope selector
-                Picker("Scope", selection: $skinScope) {
-                    ForEach(SkinScope.allCases) { scope in
-                        Text(scope.rawValue).tag(scope)
+                // Import skin button
+                Button(action: {
+                    showingDocumentPicker = true
+                }) {
+                    HStack {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.system(size: 14, weight: .medium))
+                        Text("IMPORT SKIN")
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .foregroundColor(.retroPurple)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.retroBlack.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.retroPurple, lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .sheet(isPresented: $showingDocumentPicker) {
+                    SkinDocumentPicker { urls in
+                        Task {
+                            await importSkins(from: urls)
+                        }
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.top, 8)
-
-                // Scope description
-                Text(skinScope.description)
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
-                    .padding(.top, 4)
+                .alert("Save Skin Selection", isPresented: $showingSkinScopeAlert) {
+                    Button("Session Only") {
+                        ILOG("skins: Alert - Session Only selected")
+                        if let pending = pendingSkinSelection {
+                            ILOG("skins: Alert - Applying session skin: \(pending.name)")
+                            Task {
+                                await applySkinSelection(skinName: pending.name, identifier: pending.identifier, orientation: pending.orientation, scope: .session)
+                            }
+                        } else {
+                            ELOG("skins: Alert - Session Only selected but pendingSkinSelection is nil")
+                        }
+                        pendingSkinSelection = nil
+                    }
+                    Button("This Game") {
+                        ILOG("skins: Alert - This Game selected")
+                        if let pending = pendingSkinSelection {
+                            ILOG("skins: Alert - Applying game skin: \(pending.name)")
+                            Task {
+                                await applySkinSelection(skinName: pending.name, identifier: pending.identifier, orientation: pending.orientation, scope: .game)
+                            }
+                        } else {
+                            ELOG("skins: Alert - This Game selected but pendingSkinSelection is nil")
+                        }
+                        pendingSkinSelection = nil
+                    }
+                    Button("This System") {
+                        ILOG("skins: Alert - This System selected")
+                        if let pending = pendingSkinSelection {
+                            ILOG("skins: Alert - Applying system skin: \(pending.name)")
+                            Task {
+                                await applySkinSelection(skinName: pending.name, identifier: pending.identifier, orientation: pending.orientation, scope: .system)
+                            }
+                        } else {
+                            ELOG("skins: Alert - This System selected but pendingSkinSelection is nil")
+                        }
+                        pendingSkinSelection = nil
+                    }
+                    Button("Cancel", role: .cancel) {
+                        ILOG("skins: Alert - Cancel selected")
+                        pendingSkinSelection = nil
+                    }
+                } message: {
+                    if let pending = pendingSkinSelection {
+                        Text("How would you like to save '\(pending.name)' for \(pending.orientation == .portrait ? "portrait" : "landscape") orientation?")
+                    }
+                }
             }
 
             // Screen filter selection
@@ -650,10 +768,10 @@ struct RetroMenuView: View {
                 }
             }
 
-            // Apply button
-            menuButton(title: "APPLY CHANGES", icon: "checkmark.circle", color: .retroBlue) {
+            // Apply button - applies both skin and filter changes after dismissing menu
+            menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: .retroBlue) {
                 dismissAction()
-                // Apply the selected skin and filter
+                // Apply skin and filter changes after menu is dismissed
                 Task {
                     await applySkinAndFilterChanges()
                 }
@@ -677,13 +795,33 @@ struct RetroMenuView: View {
 
                 // Main content with loading state handling
                 VStack {
-                    // Header
-                    Text("SELECT SKIN")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(RetroTheme.retroPink)
-                        .padding(.top, 20)
-                        .padding(.bottom, 10)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+                    // Header with orientation indicator
+                    VStack(spacing: 8) {
+                        Text("SELECT SKIN")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(RetroTheme.retroPink)
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+
+                        HStack(spacing: 8) {
+                            Image(systemName: currentOrientation == .portrait ? "rectangle.portrait" : "rectangle.landscape")
+                                .font(.system(size: 14, weight: .semibold))
+                            Text(currentOrientation == .portrait ? "PORTRAIT" : "LANDSCAPE")
+                                .font(.system(size: 14, weight: .bold))
+                        }
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            Capsule()
+                                .fill(Color.black.opacity(0.5))
+                                .overlay(
+                                    Capsule()
+                                        .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                                )
+                        )
+                    }
+                    .padding(.top, 20)
+                    .padding(.bottom, 10)
 
                     // Loading indicator or content
                     if isLoadingSkins {
@@ -716,19 +854,32 @@ struct RetroMenuView: View {
                             VStack(spacing: 16) {
                                 // Default skin option
                                 if !availableSkins.contains(where: { $0 == "Default" }) {
-                                    skinItemView(name: "Default", preview: nil, isSelected: selectedSkin == "Default")
+                                    skinItemView(
+                                        name: "Default",
+                                        preview: nil,
+                                        isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == "Default",
+                                        skinId: nil,
+                                        onSelect: {
+                                            showingSkinPicker = false
+                                            // Show scope selection alert
+                                            pendingSkinSelection = (name: "Default", identifier: "", orientation: currentOrientation)
+                                            showingSkinScopeAlert = true
+                                        }
+                                    )
                                 }
 
                                 // Custom skins with previews
                                 ForEach(availableSkinObjects, id: \.identifier) { skin in
                                     SkinPreviewItemView(
                                         skin: skin,
-                                        isSelected: selectedSkin == skin.name,
+                                        isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == skin.name,
                                         glowOpacity: glowOpacity,
                                         isHovered: isHoveredSkinId == skin.identifier,
                                         onSelect: {
-                                            selectedSkin = skin.name
                                             showingSkinPicker = false
+                                            // Show scope selection alert
+                                            pendingSkinSelection = (name: skin.name, identifier: skin.identifier, orientation: currentOrientation)
+                                            showingSkinScopeAlert = true
                                         }
                                     )
                                 }
@@ -764,17 +915,29 @@ struct RetroMenuView: View {
                 }
             }
             #endif
-            .onAppear {
+                .onAppear {
                 // Start animations
                 withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     glowOpacity = 1.0
                 }
 
-                // Load available skins only if not already loaded
-                if !didLoadSkins {
-                    Task {
-                        await loadAvailableSkins()
+                // Ensure picker orientation matches what's displayed
+                // The picker orientation should already be set when the button is tapped,
+                // but ensure it's correct here as well
+                #if !os(tvOS)
+                let currentDeviceOrientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+                #else
+                let currentDeviceOrientation = SkinOrientation.landscape
+                #endif
+
+                // Always reload to ensure we have the latest selection
+                ILOG("skins: skinPickerView onAppear - reloading skins, didLoadSkins: \(didLoadSkins)")
+                Task {
+                    // Reset didLoadSkins to force reload to get latest preferences
+                    await MainActor.run {
+                        didLoadSkins = false
                     }
+                    await loadAvailableSkins()
                 }
             }
         }
@@ -782,12 +945,9 @@ struct RetroMenuView: View {
     }
 
     // Custom skin item view for Default option
-    private func skinItemView(name: String, preview: UIImage?, isSelected: Bool, skinId: String? = nil) -> some View {
+    private func skinItemView(name: String, preview: UIImage?, isSelected: Bool, skinId: String? = nil, onSelect: @escaping () -> Void) -> some View {
         GeometryReader { geometry in
-            Button(action: {
-                selectedSkin = name
-                showingSkinPicker = false
-            }) {
+            Button(action: onSelect) {
                 HStack(spacing: geometry.size.width < 350 ? 8 : 16) {
                     // Preview image or placeholder
                     ZStack {
@@ -1207,18 +1367,6 @@ struct RetroMenuView: View {
                 // Convert to array and sort
                 self.availableSkins = Array(uniqueSkinNames).sorted()
 
-                // Set current selection if not already set
-                if self.selectedSkin == "Default" && !skins.isEmpty {
-                    // Try to find the currently selected skin
-                    Task {
-                        if let selectedSkin = try? await DeltaSkinManager.shared.selectedSkin(for: systemId) {
-                            await MainActor.run {
-                                self.selectedSkin = selectedSkin.name
-                            }
-                        }
-                    }
-                }
-
                 // Start animations for retrowave effects
                 withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     self.glowOpacity = 1.0
@@ -1227,6 +1375,75 @@ struct RetroMenuView: View {
                 // Mark as loaded and reset loading flag
                 self.didLoadSkins = true
                 self.isLoadingSkins = false
+            }
+
+            // Set current selection for both orientations - use centralized selection manager
+            let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+
+            // Load portrait selection - use centralized selection manager
+            let portraitSkinId: String?
+            if !gameId.isEmpty {
+                portraitSkinId = await MainActor.run {
+                    DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(
+                        for: systemId,
+                        gameId: gameId,
+                        orientation: .portrait
+                    )
+                }
+                ILOG("skins: loadAvailableSkins - portrait effectiveGameSkinIdentifier for gameId \(gameId): \(portraitSkinId ?? "nil")")
+            } else {
+                portraitSkinId = await MainActor.run {
+                    DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                        for: systemId,
+                        gameId: nil,
+                        orientation: .portrait
+                    )
+                }
+                ILOG("skins: loadAvailableSkins - portrait effectiveSkinIdentifier: \(portraitSkinId ?? "nil")")
+            }
+
+            await MainActor.run {
+                if let portraitSkinId = portraitSkinId,
+                   let portraitSkin = skins.first(where: { $0.identifier == portraitSkinId }) {
+                    self.selectedPortraitSkin = portraitSkin.name
+                    ILOG("skins: loadAvailableSkins - set portrait skin to: \(portraitSkin.name)")
+                } else {
+                    self.selectedPortraitSkin = "Default"
+                    ILOG("skins: loadAvailableSkins - set portrait skin to: Default")
+                }
+            }
+
+                    // Load landscape selection - use centralized selection manager
+                    let landscapeSkinId: String?
+                    if !gameId.isEmpty {
+                        landscapeSkinId = await MainActor.run {
+                            DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(
+                                for: systemId,
+                                gameId: gameId,
+                                orientation: .landscape
+                            )
+                        }
+                        ILOG("skins: loadAvailableSkins - landscape effectiveGameSkinIdentifier for gameId \(gameId): \(landscapeSkinId ?? "nil")")
+                    } else {
+                        landscapeSkinId = await MainActor.run {
+                            DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                                for: systemId,
+                                gameId: nil,
+                                orientation: .landscape
+                            )
+                        }
+                        ILOG("skins: loadAvailableSkins - landscape effectiveSkinIdentifier: \(landscapeSkinId ?? "nil")")
+                    }
+
+            await MainActor.run {
+                if let landscapeSkinId = landscapeSkinId,
+                   let landscapeSkin = skins.first(where: { $0.identifier == landscapeSkinId }) {
+                    self.selectedLandscapeSkin = landscapeSkin.name
+                    ILOG("skins: loadAvailableSkins - set landscape skin to: \(landscapeSkin.name)")
+                } else {
+                    self.selectedLandscapeSkin = "Default"
+                    ILOG("skins: loadAvailableSkins - set landscape skin to: Default")
+                }
             }
         } catch {
             print("Error loading skins: \(error)")
@@ -1238,25 +1455,285 @@ struct RetroMenuView: View {
         }
     }
 
-    /// Skin scope for preferences
-    enum SkinScope: String, CaseIterable, Identifiable {
-        case session = "Session"
-        case game = "Game"
-        case system = "System"
 
-        var id: String { rawValue }
 
-        var description: String {
-            switch self {
-            case .session: return "Apply for this session only"
-            case .game: return "Save as default for this game"
-            case .system: return "Save as default for all games on this system"
+    /// Check if a skin supports a given orientation for the current device
+    private func skinSupportsOrientation(_ skin: DeltaSkinProtocol, orientation: SkinOrientation) -> Bool {
+        #if os(tvOS)
+        let device: DeltaSkinDevice = .tv
+        #else
+        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #endif
+        // Try multiple display types and devices to robustly detect support
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        for display in displayTypes {
+            let traits = DeltaSkinTraits(
+                device: device,
+                displayType: display,
+                orientation: orientation.deltaSkinOrientation
+            )
+            if skin.supports(traits) { return true }
+        }
+
+        // Fallback: try the alternate device category (many skins declare only iPhone or iPad)
+        #if os(tvOS)
+        return false
+        #else
+        let altDevice: DeltaSkinDevice = (device == .ipad) ? .iphone : .ipad
+        for display in displayTypes {
+            let altTraits = DeltaSkinTraits(
+                device: altDevice,
+                displayType: display,
+                orientation: orientation.deltaSkinOrientation
+            )
+            if skin.supports(altTraits) { return true }
+        }
+        return false
+        #endif
+    }
+
+    /// Import skins from URLs
+    private func importSkins(from urls: [URL]) async {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+
+        for url in urls {
+            do {
+                // Import the skin
+                try await DeltaSkinManager.shared.importSkin(from: url)
+
+                // Reload skins to include the new one
+                await DeltaSkinManager.shared.reloadSkins()
+
+                // Reload available skins in the picker
+                await MainActor.run {
+                    didLoadSkins = false
+                }
+
+                // Show success message
+                await MainActor.run {
+                    // Optionally show a success notification
+                }
+            } catch {
+                ELOG("Failed to import skin from \(url.lastPathComponent): \(error)")
+            }
+        }
+
+        // After importing, prompt user to use the new skin
+        if let skins = try? await DeltaSkinManager.shared.skins(for: systemId),
+           let lastImported = skins.last {
+            await MainActor.run {
+                pendingSkinSelection = (name: lastImported.name, identifier: lastImported.identifier, orientation: currentOrientation)
+                showingSkinScopeAlert = true
             }
         }
     }
 
-    // Apply skin and filter changes
+    /// Apply skin selection with specified scope
+    /// Uses centralized DeltaSkinSelectionManager for all logic
+    private func applySkinSelection(skinName: String, identifier: String? = nil, orientation: SkinOrientation, scope: SkinScope) async {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else {
+            ELOG("skins: applySkinSelection failed - no systemId")
+            return
+        }
+
+        let gameId: String? = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+        ILOG("skins: applySkinSelection called - skin: \(skinName), identifier: \(identifier ?? "nil"), orientation: \(orientation.rawValue), scope: \(scope.rawValue), systemId: \(systemId.rawValue), gameId: \(gameId ?? "nil")")
+
+        do {
+            let skinIdentifier: String?
+
+            if skinName != "Default" {
+                // Find the skin by identifier if provided, otherwise by name
+                let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+                let skin: DeltaSkinProtocol?
+                if let identifier = identifier, !identifier.isEmpty {
+                    skin = skins.first(where: { $0.identifier == identifier })
+                } else {
+                    skin = skins.first(where: { $0.name == skinName })
+                }
+
+                guard let skin = skin,
+                      let emulatorVC = emulatorVC as? PVEmulatorViewController else {
+                    return
+                }
+
+                // Check if skin supports the selected orientation
+                let supportsSelectedOrientation = skinSupportsOrientation(skin, orientation: orientation)
+
+                if !supportsSelectedOrientation {
+                    // Skin doesn't support the selected orientation
+                    await MainActor.run {
+                        if orientation == .portrait {
+                            selectedPortraitSkin = "Default"
+                        } else {
+                            selectedLandscapeSkin = "Default"
+                        }
+                    }
+                    return
+                }
+
+                skinIdentifier = skin.identifier
+
+                // Use centralized selection manager - handles all scope logic including session updates
+                await MainActor.run {
+                    DeltaSkinSelectionManager.shared.setSkin(
+                        skinIdentifier,
+                        for: systemId,
+                        gameId: gameId,
+                        orientation: orientation,
+                        scope: scope
+                    )
+
+                    // Update local session tracking for UI
+                    if orientation == .portrait {
+                        sessionPortraitSkinIdentifier = skinIdentifier
+                    } else {
+                        sessionLandscapeSkinIdentifier = skinIdentifier
+                    }
+
+                    // Update UI display immediately
+                    if orientation == .portrait {
+                        selectedPortraitSkin = skin.name
+                    } else {
+                        selectedLandscapeSkin = skin.name
+                    }
+                    // Force reload on next open
+                    didLoadSkins = false
+                }
+
+                // Don't apply skin immediately - wait for apply button to be clicked
+                ILOG("skins: Skin preference saved, will be applied when Apply button is clicked")
+            } else {
+                // User selected "Default" skin - clear selection
+                skinIdentifier = nil
+
+                guard let emulatorVC = emulatorVC as? PVEmulatorViewController else {
+                    return
+                }
+
+                // Use centralized selection manager to clear
+                await MainActor.run {
+                    DeltaSkinSelectionManager.shared.setSkin(
+                        nil,
+                        for: systemId,
+                        gameId: gameId,
+                        orientation: orientation,
+                        scope: scope
+                    )
+
+                    // Update local session tracking
+                    if orientation == .portrait {
+                        sessionPortraitSkinIdentifier = nil
+                    } else {
+                        sessionLandscapeSkinIdentifier = nil
+                    }
+
+                    // Update UI display immediately
+                    if orientation == .portrait {
+                        selectedPortraitSkin = "Default"
+                    } else {
+                        selectedLandscapeSkin = "Default"
+                    }
+                    // Force reload on next open
+                    didLoadSkins = false
+                }
+
+                // Don't reset skin immediately - wait for apply button to be clicked
+                ILOG("skins: Default skin preference saved, will be applied when Apply button is clicked")
+            }
+        } catch {
+            ELOG("Error applying skin selection: \(error)")
+        }
+    }
+
+    /// Apply skin and filter changes after menu is dismissed
+    /// This ensures the game doesn't unpause while the menu is still open
     private func applySkinAndFilterChanges() async {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier,
+              let emulatorVC = emulatorVC as? PVEmulatorViewController else {
+            return
+        }
+
+        let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+
+        // Apply filter changes
+        if selectedFilter != "None" {
+            // Post notification to apply the filter
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ApplyScreenFilter"),
+                object: nil,
+                userInfo: ["filterName": selectedFilter]
+            )
+
+            // Store filter preference - save to game if available, otherwise system
+            if !gameId.isEmpty {
+                UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_Game_\(gameId)")
+            } else {
+                UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_System_\(systemId.rawValue)")
+            }
+        } else {
+            // Clear filter
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ApplyScreenFilter"),
+                object: nil,
+                userInfo: ["filterName": "None"]
+            )
+
+            // Clear filter preferences - clear game if available, otherwise system
+            if !gameId.isEmpty {
+                UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "ScreenFilter_System_\(systemId.rawValue)")
+            }
+        }
+
+        // Apply skin for current orientation using effective skin identifier
+        #if !os(tvOS)
+        let currentOrientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+        #else
+        let currentOrientation = SkinOrientation.landscape
+        #endif
+
+        do {
+            // Get effective skin identifier for current orientation
+            let skinId: String? = await MainActor.run {
+                if !gameId.isEmpty {
+                    return DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(
+                        for: systemId,
+                        gameId: gameId,
+                        orientation: currentOrientation
+                    )
+                } else {
+                    return DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                        for: systemId,
+                        gameId: nil,
+                        orientation: currentOrientation
+                    )
+                }
+            }
+
+            if let skinId = skinId {
+                // Find and apply the skin
+                let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+                if let skin = skins.first(where: { $0.identifier == skinId }) {
+                    ILOG("skins: Applying skin '\(skin.name)' for current orientation (\(currentOrientation.rawValue))")
+                    try await emulatorVC.applySkin(skin)
+                } else {
+                    ILOG("skins: Skin with identifier '\(skinId)' not found, resetting to default")
+                    try await emulatorVC.resetToDefaultSkin()
+                }
+            } else {
+                // No skin preference, reset to default
+                ILOG("skins: No skin preference for current orientation, resetting to default")
+                try await emulatorVC.resetToDefaultSkin()
+            }
+        } catch {
+            ELOG("Error applying skin and filter changes: \(error)")
+        }
+    }
+
+    // Apply skin and filter changes (legacy - kept for compatibility, not used)
+    private func applySkinAndFilterChangesLegacy() async {
         guard let systemId = emulatorVC.game.system?.systemIdentifier else {
             return
         }
@@ -1274,10 +1751,10 @@ struct RetroMenuView: View {
                     userInfo: ["filterName": selectedFilter]
                 )
 
-                // Store filter preference based on scope
-                if skinScope == .game, let gameId = gameId {
+                // Store filter preference - save to game if available, otherwise system
+                if let gameId = gameId, !gameId.isEmpty {
                     UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_Game_\(gameId)")
-                } else if skinScope == .system {
+                } else {
                     UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_System_\(systemId.rawValue)")
                 }
             } else {
@@ -1288,10 +1765,10 @@ struct RetroMenuView: View {
                     userInfo: ["filterName": "None"]
                 )
 
-                // Clear filter preferences based on scope
-                if skinScope == .game, let gameId = gameId {
+                // Clear filter preferences - clear game if available, otherwise system
+                if let gameId = gameId, !gameId.isEmpty {
                     UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
-                } else if skinScope == .system {
+                } else {
                     UserDefaults.standard.removeObject(forKey: "ScreenFilter_System_\(systemId.rawValue)")
                 }
             }
@@ -1323,17 +1800,12 @@ struct RetroMenuView: View {
                         DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, gameId: gameId, orientation: oppositeOrientation)
                     }
 
-                    // Set the new preference based on scope using DeltaSkinPreferences
-                    if skinScope == .game, let gameId = gameId {
-                        // Set for specific game
-                        await DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: gameId, orientation: currentOrientation)
-                    } else if skinScope == .system {
-                        // Set for entire system
-                        await DeltaSkinPreferences.shared.setSelectedSkin(skin.identifier, for: systemId, orientation: currentOrientation)
-                    } else {
-                        // Session scope - store in the session skin identifier
-                        sessionSkinIdentifier = skin.identifier
-                        DeltaSkinManager.shared.setSessionSkin(skin.identifier, for: systemId, orientation: currentOrientation)
+                    // Legacy function - this shouldn't be called anymore, but if it is, default to session
+                    // Session scope - store in the session skin identifier
+                    sessionSkinIdentifier = skin.identifier
+                    DeltaSkinManager.shared.setSessionSkin(skin.identifier, for: systemId, orientation: currentOrientation)
+                    if let gameId = gameId {
+                        DeltaSkinManager.shared.setSessionSkin(skin.identifier, for: systemId, gameId: gameId, orientation: currentOrientation)
                     }
 
                     // Apply the skin
@@ -1361,14 +1833,8 @@ struct RetroMenuView: View {
                         DeltaSkinManager.shared.setSessionSkin(nil, for: systemId, gameId: gameId, orientation: oppositeOrientation)
                     }
 
-                    // Clear preferences based on scope using DeltaSkinPreferences
-                    if skinScope == .game, let gameId = gameId {
-                        // Clear for specific game
-                        await DeltaSkinPreferences.shared.setSelectedSkin(nil, for: gameId, orientation: currentOrientation)
-                    } else if skinScope == .system {
-                        // Clear for entire system
-                        await DeltaSkinPreferences.shared.setSelectedSkin(nil, for: systemId, orientation: currentOrientation)
-                    }
+                    // Legacy function - clear session skins only
+                    // Preferences are managed through the new applySkinSelection function
 
                     // Also clear session skin identifier
                     sessionSkinIdentifier = nil
@@ -1382,8 +1848,8 @@ struct RetroMenuView: View {
         }
     }
 
-    // Helper to reapply a session skin after orientation change
-    private func reapplySessionSkin(skinId: String) async {
+    /// Reapply a session skin after orientation change
+    private func reapplySessionSkin(skinId: String, orientation: SkinOrientation) async {
         guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
 
         do {
@@ -1394,22 +1860,89 @@ struct RetroMenuView: View {
             if let skin = skins.first(where: { $0.identifier == skinId }) {
                 // Update the selected skin name to match
                 await MainActor.run {
-                    selectedSkin = skin.name
+                    if orientation == .portrait {
+                        selectedPortraitSkin = skin.name
+                    } else {
+                        selectedLandscapeSkin = skin.name
+                    }
                 }
 
                 // Update the session skin in DeltaSkinManager for the new orientation
-                #if !os(tvOS)
-                let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
-                #else
-                let orientation = SkinOrientation.landscape
-                #endif
                 DeltaSkinManager.shared.setSessionSkin(skinId, for: systemId, orientation: orientation)
 
+                let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+                DeltaSkinManager.shared.setSessionSkin(skinId, for: systemId, gameId: gameId, orientation: orientation)
+
                 // Apply the skin directly without changing preferences
-                applySkinToEmulator(skin: skin, systemId: systemId)
+                if let emulatorVC = emulatorVC as? PVEmulatorViewController {
+                    try await emulatorVC.applySkin(skin)
+                }
             }
         } catch {
             ELOG("Error reapplying session skin: \(error)")
+        }
+    }
+
+    /// Apply skin for current orientation using centralized selection manager
+    private func applySkinForCurrentOrientation() async {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+
+        #if !os(tvOS)
+        let orientation = UIDevice.current.orientation.isLandscape ? SkinOrientation.landscape : .portrait
+        #else
+        let orientation = SkinOrientation.landscape
+        #endif
+
+        do {
+            let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+
+            // Use centralized selection manager for effective skin lookup
+            let skinId: String? = await MainActor.run {
+                if !gameId.isEmpty {
+                    return DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(
+                        for: systemId,
+                        gameId: gameId,
+                        orientation: orientation
+                    )
+                } else {
+                    return DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                        for: systemId,
+                        gameId: nil,
+                        orientation: orientation
+                    )
+                }
+            }
+
+            if let skinId = skinId {
+                let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+                if let skin = skins.first(where: { $0.identifier == skinId }),
+                   let emulatorVC = emulatorVC as? PVEmulatorViewController {
+                    // Update UI
+                    await MainActor.run {
+                        if orientation == .portrait {
+                            selectedPortraitSkin = skin.name
+                        } else {
+                            selectedLandscapeSkin = skin.name
+                        }
+                    }
+                    // Apply skin
+                    try await emulatorVC.applySkin(skin)
+                }
+            } else {
+                // No preference, reset to default
+                if let emulatorVC = emulatorVC as? PVEmulatorViewController {
+                    try await emulatorVC.resetToDefaultSkin()
+                }
+                await MainActor.run {
+                    if orientation == .portrait {
+                        selectedPortraitSkin = "Default"
+                    } else {
+                        selectedLandscapeSkin = "Default"
+                    }
+                }
+            }
+        } catch {
+            ELOG("Error applying skin for current orientation: \(error)")
         }
     }
 
@@ -1502,3 +2035,74 @@ struct RetroMenuView: View {
         .buttonStyle(PlainButtonStyle())
     }
 }
+
+/// Document picker specifically for skin files (.deltaskin, .manicskin)
+#if !os(tvOS)
+private struct SkinDocumentPicker: UIViewControllerRepresentable {
+    let onImport: ([URL]) -> Void
+
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        // Support both .deltaskin and .manicskin in file and package forms
+        var skinTypes: [UTType] = []
+
+        // Prefer explicit identifiers if the system recognizes them
+        skinTypes.append(UTType.deltaSkin)
+        skinTypes.append(UTType.manicSkin)
+
+        // Accept files with these extensions (generic data)
+        if let deltaskinData = UTType(filenameExtension: "deltaskin", conformingTo: .data) {
+            skinTypes.append(deltaskinData)
+        }
+        if let manicData = UTType(filenameExtension: "manicskin", conformingTo: .data) {
+            skinTypes.append(manicData)
+        }
+
+        // Accept package (directory bundle) variants (some providers surface bundles)
+        if let deltaskinPackage = UTType(filenameExtension: "deltaskin", conformingTo: .package) {
+            skinTypes.append(deltaskinPackage)
+        }
+        if let manicPackage = UTType(filenameExtension: "manicskin", conformingTo: .package) {
+            skinTypes.append(manicPackage)
+        }
+
+        // IMPORTANT: Accept archive-conforming variants (these are actually ZIPs with custom extensions)
+        if let deltaskinArchive = UTType(filenameExtension: "deltaskin", conformingTo: .archive) {
+            skinTypes.append(deltaskinArchive)
+        }
+        if let manicArchive = UTType(filenameExtension: "manicskin", conformingTo: .archive) {
+            skinTypes.append(manicArchive)
+        }
+
+        // Also allow generic archives (some skins are zipped variants)
+        skinTypes.append(.archive)
+
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: skinTypes, asCopy: true)
+        picker.allowsMultipleSelection = false
+        picker.delegate = context.coordinator
+        picker.modalPresentationStyle = .fullScreen
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onImport: onImport)
+    }
+
+    class Coordinator: NSObject, UIDocumentPickerDelegate {
+        let onImport: ([URL]) -> Void
+
+        init(onImport: @escaping ([URL]) -> Void) {
+            self.onImport = onImport
+        }
+
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            onImport(urls)
+        }
+
+        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+            // User cancelled, do nothing
+        }
+    }
+}
+#endif

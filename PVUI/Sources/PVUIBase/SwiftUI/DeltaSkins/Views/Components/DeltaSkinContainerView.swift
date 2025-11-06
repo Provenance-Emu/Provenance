@@ -12,7 +12,7 @@ class DeltaSkinContainerView: UIView {
         let containerView = DeltaSkinContainerView(frame: .zero)
 
         // CRITICAL: Configure view for transparency
-        containerView.backgroundColor = .clear
+        containerView.backgroundColor = UIColor.clear
         containerView.isOpaque = false
 
         // Create the wrapper view
@@ -21,6 +21,7 @@ class DeltaSkinContainerView: UIView {
             coreInstance: core,
             onSkinLoaded: onSkinLoaded,
             onRefreshRequested: onRefreshRequested,
+            preselectedSkinIdentifier: nil,
             inputHandler: inputHandler
         )
 
@@ -29,8 +30,8 @@ class DeltaSkinContainerView: UIView {
 
         // Configure the hosting controller's view
         hostingController.view.frame = containerView.bounds
-        hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        hostingController.view.backgroundColor = .clear
+        hostingController.view.autoresizingMask = [UIView.AutoresizingMask.flexibleWidth, UIView.AutoresizingMask.flexibleHeight]
+        hostingController.view.backgroundColor = UIColor.clear
         hostingController.view.isOpaque = false
 
         // Add the hosting controller's view as a subview
@@ -52,11 +53,11 @@ class DeltaSkinContainerView: UIView {
         super.didMoveToSuperview()
 
         // Ensure transparency is maintained after move
-        self.backgroundColor = .clear
+        self.backgroundColor = UIColor.clear
         self.isOpaque = false
 
         if let hostView = hostingController?.view {
-            hostView.backgroundColor = .clear
+            hostView.backgroundColor = UIColor.clear
             hostView.isOpaque = false
         }
     }

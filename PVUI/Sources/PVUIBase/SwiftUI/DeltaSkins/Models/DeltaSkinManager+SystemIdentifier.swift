@@ -41,8 +41,13 @@ public extension DeltaSkinManager {
     /// - Returns: The selected skin, or nil if none selected
     func selectedSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
         ILOG("skins: selectedSkin(for: \(system.rawValue)) called")
-        // Get the selected skin identifier from preferences
-        guard let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: system) else {
+        // Get the selected skin identifier from centralized manager (includes session overrides)
+        let orientation: SkinOrientation = .portrait // Default to portrait, could be made dynamic
+        guard let selectedIdentifier = DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+            for: system,
+            gameId: nil,
+            orientation: orientation
+        ) else {
             ILOG("skins: No selected skin identifier found for system \(system.rawValue)")
             return nil
         }

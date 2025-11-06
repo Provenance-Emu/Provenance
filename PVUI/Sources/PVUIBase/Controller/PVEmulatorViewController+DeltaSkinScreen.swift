@@ -94,8 +94,12 @@ extension PVEmulatorViewController {
         if currentSkin == nil, let systemId = game.system?.systemIdentifier {
             let manager = DeltaSkinManager.shared
             if manager.skinsAreLoaded {
-                if let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: systemId),
-                   let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
+                let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+                if let selectedIdentifier = DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                    for: systemId,
+                    gameId: game.id,
+                    orientation: orientation
+                ), let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
                     currentSkin = skin
                     DLOG("🎮 SKIN: Found skin in cache for frame update: \(skin.name)")
                 } else if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
@@ -178,8 +182,12 @@ extension PVEmulatorViewController {
         if currentSkin == nil, let systemId = game.system?.systemIdentifier {
             let manager = DeltaSkinManager.shared
             if manager.skinsAreLoaded {
-                if let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: systemId),
-                   let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
+                let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+                if let selectedIdentifier = DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                    for: systemId,
+                    gameId: game.id,
+                    orientation: orientation
+                ), let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
                     currentSkin = skin
                     DLOG("🎮 SKIN: Found skin in cache: \(skin.name)")
                 } else if let gameType = DeltaSkinGameType(systemIdentifier: systemId),

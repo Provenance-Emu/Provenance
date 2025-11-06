@@ -239,14 +239,10 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         let landscapeOrientation: SkinOrientation = .landscape
         #endif
 
-        // Clear session skin for both orientations
-        skinManager.setSessionSkin(nil, for: systemId, gameId: game.id, orientation: portraitOrientation)
-        skinManager.setSessionSkin(nil, for: systemId, gameId: game.id, orientation: landscapeOrientation)
-
-        // Clear preferences for both orientations
+        // Clear skin preferences for both orientations using centralized manager
         Task { @MainActor in
-            DeltaSkinPreferences.shared.setSelectedSkin(nil, for: game.id, orientation: portraitOrientation)
-            DeltaSkinPreferences.shared.setSelectedSkin(nil, for: game.id, orientation: landscapeOrientation)
+            DeltaSkinSelectionManager.shared.setSkin(nil, for: systemId, gameId: game.id, orientation: portraitOrientation, scope: .game)
+            DeltaSkinSelectionManager.shared.setSkin(nil, for: systemId, gameId: game.id, orientation: landscapeOrientation, scope: .game)
         }
 
         rootDelegate?.showMessage("Skin preference reset for \(game.title)", title: "Skin Reset")

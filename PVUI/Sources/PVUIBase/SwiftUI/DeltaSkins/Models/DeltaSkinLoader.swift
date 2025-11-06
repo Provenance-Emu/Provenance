@@ -45,8 +45,13 @@ class DeltaSkinLoader: ObservableObject {
                     if manager.skinsAreLoaded {
                         ILOG("skins: Skins already loaded, using fast path lookup")
                         // Fast path: use synchronous lookup from already-loaded skins
-                        if let selectedIdentifier = DeltaSkinPreferences.shared.selectedSkinIdentifier(for: systemId),
-                           let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
+                        // Use effectiveSkinIdentifier to get session-aware selection
+                        let orientation: SkinOrientation = .portrait // Default to portrait, could be made dynamic
+                        if let selectedIdentifier = DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                            for: systemId,
+                            gameId: nil,
+                            orientation: orientation
+                        ), let skin = manager.loadedSkins.first(where: { $0.identifier == selectedIdentifier }) {
                             // Update UI state immediately but don't await - return skin right away
                             Task { @MainActor in
                                 self.selectedSkin = skin

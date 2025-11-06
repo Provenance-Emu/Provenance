@@ -827,6 +827,76 @@ public struct DeltaSkinView: View {
         ButtonSoundGenerator.shared.playButtonPressSound(pan: panPosition, volume: normalizedSize)
     }
 
+    /// Calculate distance from a point to the center of a button
+    private func distanceToButtonCenter(_ location: CGPoint, button: DeltaSkinButton, buttonScaleX: CGFloat, buttonScaleY: CGFloat, xOffset: CGFloat, yOffset: CGFloat) -> CGFloat {
+        let buttonCenterX = button.frame.midX * buttonScaleX + xOffset
+        let buttonCenterY = button.frame.midY * buttonScaleY + yOffset
+        let dx = location.x - buttonCenterX
+        let dy = location.y - buttonCenterY
+        return sqrt(dx * dx + dy * dy)
+    }
+
+    /// Check if a touch location is within a D-pad direction's hit area
+    /// Uses larger hit areas that extend from the D-pad center in each direction
+    /// Creates a + shape with extended arms for easier tapping near the center
+    private func isLocationInDPadDirection(_ location: CGPoint, button: DeltaSkinButton, buttonScaleX: CGFloat, buttonScaleY: CGFloat, xOffset: CGFloat, yOffset: CGFloat) -> Bool {
+        let buttonCenterX = button.frame.midX * buttonScaleX + xOffset
+        let buttonCenterY = button.frame.midY * buttonScaleY + yOffset
+
+        // Calculate scaled button dimensions
+        let scaledButtonWidth = button.frame.width * buttonScaleX
+        let scaledButtonHeight = button.frame.height * buttonScaleY
+
+        // Use a modest hit area multiplier for D-pad (small extension beyond frame)
+        // Keep generous center handling via nearest-direction fallback elsewhere
+        let hitAreaMultiplier: CGFloat = 0.1 // Extend hit area to 10% of button size beyond the frame
+        let centerDeadZone: CGFloat = 0.02 // Tiny dead zone to avoid jitter but effectively no dead area
+
+        // Calculate relative position from button center
+        let relativeX = location.x - buttonCenterX
+        let relativeY = location.y - buttonCenterY
+
+        // First, restrict to a bounding box around the D-pad with a small view-space padding
+        let outerPad: CGFloat = 12 // points
+        let halfW = scaledButtonWidth * 0.5
+        let halfH = scaledButtonHeight * 0.5
+        if abs(relativeX) > halfW + outerPad || abs(relativeY) > halfH + outerPad {
+            return false
+        }
+
+        // Calculate maximum extent for hit areas (within the bounded region)
+        let maxHorizontalExtent = scaledButtonWidth * (0.5 + hitAreaMultiplier)
+        let maxVerticalExtent = scaledButtonHeight * (0.5 + hitAreaMultiplier)
+
+        // Dead zone radius (center area where no direction is detected)
+        let deadZoneRadius = min(scaledButtonWidth, scaledButtonHeight) * centerDeadZone
+
+        // Check if touch is within dead zone
+        let distanceFromCenter = sqrt(relativeX * relativeX + relativeY * relativeY)
+        if distanceFromCenter < deadZoneRadius {
+            return true // Treat center as inside the D-pad to avoid a dead zone
+        }
+
+        // Calculate thresholds for each direction (smaller threshold = larger hit area)
+        let thresholdX = scaledButtonWidth * 0.35 // 35% threshold for horizontal directions
+        let thresholdY = scaledButtonHeight * 0.35 // 35% threshold for vertical directions
+
+        // Check if location is within any direction's hit area
+        // Up: extends upward with generous width
+        let isInUp = relativeY < -thresholdY && abs(relativeX) < maxHorizontalExtent
+
+        // Down: extends downward with generous width
+        let isInDown = relativeY > thresholdY && abs(relativeX) < maxHorizontalExtent
+
+        // Left: extends leftward with generous height
+        let isInLeft = relativeX < -thresholdX && abs(relativeY) < maxVerticalExtent
+
+        // Right: extends rightward with generous height
+        let isInRight = relativeX > thresholdX && abs(relativeY) < maxVerticalExtent
+
+        return isInUp || isInDown || isInLeft || isInRight
+    }
+
     /// Handle a touch at the given location
     private func handleTouchAtLocation(_ location: CGPoint, in size: CGSize, touchId: ObjectIdentifier) {
         DLOG("handleTouchAtLocation: location=\(location), touchId=\(touchId)")
@@ -839,37 +909,49 @@ public struct DeltaSkinView: View {
         // Use the same transformation logic as transformFrame
         let (buttonScaleX, buttonScaleY, xOffset, yOffset) = calculateButtonTransform(in: size, mappingSize: mappingSize)
 
-        // Find the button being touched
-        var touchedButton: DeltaSkinButton?
-        var isDPadButton = false
-
         // First check if we're already pressing a D-pad button and still within its extended hit area
         if let currentButton = currentlyPressedButton, case .directional = currentButton.input {
-            // For D-pad, use a larger hit area to allow sliding between directions
-            let extendedHitFrame = currentButton.frame.insetBy(dx: -40, dy: -40) // Larger hit area for D-pad
-            let scaledFrame = CGRect(
-                x: extendedHitFrame.minX * buttonScaleX + xOffset,
-                y: yOffset + (extendedHitFrame.minY * buttonScaleY),
-                width: extendedHitFrame.width * buttonScaleX,
-                height: extendedHitFrame.height * buttonScaleY
-            )
-
-            if scaledFrame.contains(location) {
-                touchedButton = currentButton
-                isDPadButton = true
-                DLOG("Still within D-pad extended hit area")
+            // Use the new D-pad direction hit area check
+            if isLocationInDPadDirection(location, button: currentButton, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
+                // Still within D-pad hit area, update D-pad input
+                touchToDPadMap[touchId] = currentButton
+                handleDPadInput(currentButton, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
+                return
             } else {
                 // We've moved outside the D-pad hit area, release the current direction
-                let inputCommand = extractInputCommand(from: currentButton)
-                DLOG("Moved outside D-pad area - releasing direction: \(inputCommand)")
-                inputHandler.buttonReleased(inputCommand)
+                DLOG("Moved outside D-pad area - releasing directions")
+                releaseDPadDirectionsForTouch(touchId)
                 currentlyPressedButton = nil
             }
         }
 
-        // If we're not continuing with a D-pad press, check all buttons normally
-        if !isDPadButton {
-            for button in buttons {
+        // Find all candidate buttons (both D-pad and regular) that the touch might be hitting
+        struct ButtonCandidate {
+            let button: DeltaSkinButton
+            let distance: CGFloat
+            let isDPad: Bool
+        }
+
+        var candidates: [ButtonCandidate] = []
+
+        for button in buttons {
+            // Check if button is a D-pad by examining its input type
+            let isDPad: Bool
+            switch button.input {
+            case .directional:
+                isDPad = true
+            default:
+                isDPad = false
+            }
+
+            if isDPad {
+                // For D-pad, check if location is in any direction's hit area
+                if isLocationInDPadDirection(location, button: button, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
+                    let distance = distanceToButtonCenter(location, button: button, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
+                    candidates.append(ButtonCandidate(button: button, distance: distance, isDPad: true))
+                }
+            } else {
+                // For regular buttons, use standard hit area with extension
                 let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
                 let scaledFrame = CGRect(
                     x: hitFrame.minX * buttonScaleX + xOffset,
@@ -879,11 +961,36 @@ public struct DeltaSkinView: View {
                 )
 
                 if scaledFrame.contains(location) {
-                    touchedButton = button
-                    break
+                    let distance = distanceToButtonCenter(location, button: button, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
+                    candidates.append(ButtonCandidate(button: button, distance: distance, isDPad: false))
                 }
             }
         }
+
+        // Sort candidates by priority: distance-based with D-pad preference
+        // If a D-pad is detected, prioritize it unless a regular button is significantly closer
+        candidates.sort { candidate1, candidate2 in
+            // If both are D-pad or both are regular, prefer closer one
+            if candidate1.isDPad == candidate2.isDPad {
+                return candidate1.distance < candidate2.distance
+            }
+
+            // Mixed types: prefer D-pad unless regular button is much closer
+            // Use a threshold: if regular button is 2x closer, prioritize it
+            if candidate1.isDPad && !candidate2.isDPad {
+                // candidate1 is D-pad, candidate2 is regular
+                // Prefer D-pad unless regular is significantly closer
+                return candidate2.distance > candidate1.distance * 2.0
+            } else {
+                // candidate1 is regular, candidate2 is D-pad
+                // Prefer D-pad unless regular is significantly closer
+                return candidate1.distance < candidate2.distance * 2.0
+            }
+        }
+
+        // Get the best candidate based on distance and type priority
+        let touchedButton = candidates.first?.button
+        let isDPadButton = candidates.first?.isDPad ?? false
 
         // Handle button state changes
         if let button = touchedButton {
@@ -894,7 +1001,7 @@ public struct DeltaSkinView: View {
                         activeThumbsticks.append((frame: button.frame, image: image, size: size))
                     }
                 }
-            } else if case .directional = button.input {
+            } else if isDPadButton, case .directional = button.input {
                 // Special handling for D-pad buttons to allow direction changes
                 // Track this touch as being on the D-pad
                 touchToDPadMap[touchId] = button
@@ -1077,10 +1184,20 @@ public struct DeltaSkinView: View {
                 let thresholdY = buttonHeight * 0.3
 
                 // Add directions from this remaining touch
-                if relativeY < -thresholdY { remainingDirections.insert("up") }
-                if relativeY > thresholdY { remainingDirections.insert("down") }
-                if relativeX > thresholdX { remainingDirections.insert("right") }
-                if relativeX < -thresholdX { remainingDirections.insert("left") }
+                var addedFromThisTouch = false
+                if relativeY < -thresholdY { remainingDirections.insert("up"); addedFromThisTouch = true }
+                if relativeY > thresholdY { remainingDirections.insert("down"); addedFromThisTouch = true }
+                if relativeX > thresholdX { remainingDirections.insert("right"); addedFromThisTouch = true }
+                if relativeX < -thresholdX { remainingDirections.insert("left"); addedFromThisTouch = true }
+
+                // If nothing crossed thresholds, resolve to nearest direction for this touch
+                if !addedFromThisTouch {
+                    if abs(relativeX) >= abs(relativeY) {
+                        remainingDirections.insert(relativeX >= 0 ? "right" : "left")
+                    } else {
+                        remainingDirections.insert(relativeY >= 0 ? "down" : "up")
+                    }
+                }
             }
         }
 
@@ -1120,10 +1237,10 @@ public struct DeltaSkinView: View {
         let relativeX = touchLocation.x - buttonCenterX
         let relativeY = touchLocation.y - buttonCenterY
 
-        // Define the center dead zone (15% of button size - smaller dead zone)
+        // Define the center dead zone (very small to avoid a noticeable dead area)
         let buttonWidth = button.frame.width * buttonScaleXActual
         let buttonHeight = button.frame.height * buttonScaleYActual
-        let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
+        let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.02
 
         // Add debug logging to help diagnose direction issues
         DLOG("D-pad highlight: relativeX=\(relativeX), relativeY=\(relativeY)")
@@ -1133,8 +1250,8 @@ public struct DeltaSkinView: View {
 
         // Determine which directions to activate based on touch position
         if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
-            // In dead zone, no directions are active
-            DLOG("skins: D-pad highlight: In dead zone")
+            // Near center; we'll resolve to nearest direction via fallback below
+            DLOG("skins: D-pad highlight: Near center - using nearest-direction fallback")
         } else {
             // Use threshold-based detection instead of angle to properly support diagonals
             // Calculate thresholds as a percentage of button size
@@ -1192,6 +1309,16 @@ public struct DeltaSkinView: View {
                     activeDirections.remove("right")
                 }
             }
+        }
+
+        // If no direction was activated (near center or below thresholds), resolve to the nearest single direction
+        if activeDirections.isEmpty {
+            if abs(relativeX) >= abs(relativeY) {
+                activeDirections.insert(relativeX >= 0 ? "right" : "left")
+            } else {
+                activeDirections.insert(relativeY >= 0 ? "down" : "up")
+            }
+            ILOG("skins: D-pad fallback to nearest direction: \(activeDirections)")
         }
 
         // Support multiple directions simultaneously instead of resolving to diagonal tokens
@@ -1755,17 +1882,20 @@ public struct DeltaSkinView: View {
                 // Add debug logging to help diagnose direction issues
                 DLOG("D-pad: relativeX=\(relativeX), relativeY=\(relativeY)")
 
-                // Define the center dead zone (15% of button size - smaller dead zone)
+                // Define the center dead zone (very small to avoid a noticeable dead area)
                 let buttonWidth = button.frame.width * buttonScaleX
                 let buttonHeight = button.frame.height * buttonScaleY
-                let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.15
+                let deadZoneRadius = min(buttonWidth, buttonHeight) * 0.02
 
-                // Check if touch is in the dead zone
+                // Check if touch is near the center and resolve to nearest direction
                 if sqrt(relativeX * relativeX + relativeY * relativeY) < deadZoneRadius {
-                    // In dead zone, return a special "center" command or nothing
-                    DLOG("D-pad: In dead zone")
-                    // Don't send any command when in the dead zone
-                    return "none"
+                    if abs(relativeX) >= abs(relativeY) {
+                        DLOG("D-pad: Near center - resolving to \(relativeX >= 0 ? "RIGHT" : "LEFT")")
+                        return relativeX >= 0 ? (commands["right"] ?? "right") : (commands["left"] ?? "left")
+                    } else {
+                        DLOG("D-pad: Near center - resolving to \(relativeY >= 0 ? "DOWN" : "UP")")
+                        return relativeY >= 0 ? (commands["down"] ?? "down") : (commands["up"] ?? "up")
+                    }
                 }
 
                 // Determine which direction is being pressed based on the touch position
