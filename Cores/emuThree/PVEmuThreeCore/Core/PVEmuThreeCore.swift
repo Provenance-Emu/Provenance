@@ -19,7 +19,7 @@ import GameController
 @objcMembers
 public final class PVEmuThreeCore: PVEmulatorCore {
 
-    public override var supportsSkins: Bool { true }
+    public override var supportsSkins: Bool { false }
 
     public override var supportsDualScreens: Bool { true }
 
