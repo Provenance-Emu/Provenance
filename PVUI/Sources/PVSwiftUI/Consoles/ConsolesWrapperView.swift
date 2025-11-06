@@ -294,19 +294,6 @@ struct ConsolesWrapperView: SwiftUI.View {
                 // Set the new tab immediately (main thread operation)
                 delegate.setTab(newTab)
 
-                // Defer haptic feedback slightly to avoid blocking tab switch animation
-                #if !os(tvOS)
-                if isVisible && oldTab != newTab {
-                    Task.detached(priority: .userInitiated) {
-                        // Small delay to let tab switch animation start first
-                        try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
-                        await MainActor.run {
-                            Haptics.impact(style: .soft)
-                        }
-                    }
-                }
-                #endif
-
                 // Preload artwork off main thread to avoid blocking tab switch
                 Task.detached(priority: .utility) {
                     let selectedConsole = await MainActor.run {
