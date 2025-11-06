@@ -156,21 +156,37 @@ struct ConsolesWrapperView: SwiftUI.View {
         .onAppear {
             isVisible = true
 
-            // Initialize cached sorted consoles
-            updateCachedSortedConsoles()
+            // Defer non-critical operations to background
+            Task.detached(priority: .utility) {
+                // Initialize cached sorted consoles off main thread
+                await MainActor.run {
+                    self.updateCachedSortedConsoles()
+                }
 
-            Task(priority: .userInitiated) {
-                // Preload artwork for visible console only (lazy loading)
-                if let selectedConsole = consoles.first(where: { $0.identifier == delegate.selectedTab }) {
-                    preloadArtworkForConsole(selectedConsole)
+                // Preload artwork for visible console off main thread (lazy loading)
+                let selectedConsole = await MainActor.run {
+                    self.consoles.first(where: { $0.identifier == self.delegate.selectedTab })
+                }
+                if let console = selectedConsole {
+                    await self.preloadArtworkForConsole(console)
                 }
             }
         }
         .onChange(of: viewModel.sortConsolesAscending) { _ in
-            updateCachedSortedConsoles()
+            // Update cache off main thread
+            Task.detached(priority: .utility) {
+                await MainActor.run {
+                    self.updateCachedSortedConsoles()
+                }
+            }
         }
         .onChange(of: consoles.count) { _ in
-            updateCachedSortedConsoles()
+            // Update cache off main thread
+            Task.detached(priority: .utility) {
+                await MainActor.run {
+                    self.updateCachedSortedConsoles()
+                }
+            }
         }
         .onDisappear {
             isVisible = false
@@ -185,9 +201,11 @@ struct ConsolesWrapperView: SwiftUI.View {
         gameInfoState = GameInfoState(id: gameId)
     }
 
-    /// Update the cached sorted consoles
+    /// Update the cached sorted consoles (thread-safe)
     private func updateCachedSortedConsoles() {
-        cachedSortedConsoles = viewModel.sortConsolesAscending ? Array(consoles) : Array(consoles.reversed())
+        let ascending = viewModel.sortConsolesAscending
+        let consolesArray = Array(consoles)
+        cachedSortedConsoles = ascending ? consolesArray : consolesArray.reversed()
     }
 
     /// Optimized sorted consoles with caching
@@ -206,16 +224,18 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
     }
 
-    /// Optimized artwork preloading - only loads visible games first
-    private func preloadArtworkForConsole(_ console: PVSystem) {
-        Task(priority: .utility) {
-            // Only preload first 10 games initially for faster tab switching
-            // Remaining artwork will load lazily as user scrolls
-            let games = Array(console.games.prefix(10))
+    /// Optimized artwork preloading - only loads visible games first (non-blocking)
+    private func preloadArtworkForConsole(_ console: PVSystem) async {
+        // Only preload first 10 games initially for faster tab switching
+        // Remaining artwork will load lazily as user scrolls
+        let games = await MainActor.run {
+            Array(console.games.prefix(10))
+        }
 
-            if !games.isEmpty {
-                ArtworkLoader.shared.preloadArtwork(for: games)
-            }
+        if !games.isEmpty {
+            // ArtworkLoader.preloadArtwork already spawns a Task internally, so we don't need to await
+            // Just call it off main thread - it will handle its own async work
+            ArtworkLoader.shared.preloadArtwork(for: games, priority: .utility)
         }
     }
 
@@ -264,7 +284,7 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     @ViewBuilder
     var consolesTabView: some View {
-        let binding = Binding(
+        let binding = Binding<String>(
             get: { delegate.selectedTab },
             set: { newTab in
                 // Store the previous tab before changing
@@ -274,18 +294,26 @@ struct ConsolesWrapperView: SwiftUI.View {
                 // Set the new tab immediately (main thread operation)
                 delegate.setTab(newTab)
 
-                // Combine operations into a single Task to reduce overhead
-                Task { @MainActor in
-                    // Trigger haptic feedback for user-initiated tab changes
-                    #if !os(tvOS)
-                    if isVisible && oldTab != newTab {
-                        Haptics.impact(style: .soft)
+                // Defer haptic feedback slightly to avoid blocking tab switch animation
+                #if !os(tvOS)
+                if isVisible && oldTab != newTab {
+                    Task.detached(priority: .userInitiated) {
+                        // Small delay to let tab switch animation start first
+                        try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
+                        await MainActor.run {
+                            Haptics.impact(style: .soft)
+                        }
                     }
-                    #endif
+                }
+                #endif
 
-                    // Preload artwork for the selected console (deferred to avoid blocking)
-                    if let selectedConsole = consoles.first(where: { $0.identifier == newTab }) {
-                        preloadArtworkForConsole(selectedConsole)
+                // Preload artwork off main thread to avoid blocking tab switch
+                Task.detached(priority: .utility) {
+                    let selectedConsole = await MainActor.run {
+                        self.consoles.first(where: { $0.identifier == newTab })
+                    }
+                    if let console = selectedConsole {
+                        await self.preloadArtworkForConsole(console)
                     }
                 }
             }

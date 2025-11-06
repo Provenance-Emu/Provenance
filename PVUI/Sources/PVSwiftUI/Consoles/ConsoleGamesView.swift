@@ -137,9 +137,12 @@ struct ConsoleGamesView: SwiftUI.View {
         )
     }
 
+    @State private var shouldShowImportProgress = false
+
     @ViewBuilder
     var importProgressView: some View {
-        if let libraryUpdatesController = AppState.shared.libraryUpdatesController {
+        // Defer ImportProgressView creation to avoid synchronous ViewModel initialization blocking main thread
+        if shouldShowImportProgress, let libraryUpdatesController = AppState.shared.libraryUpdatesController {
             ImportProgressView(
                 gameImporter: AppState.shared.gameImporter ?? GameImporter.shared,
                 updatesController: libraryUpdatesController,
@@ -208,7 +211,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         .padding(.horizontal, 10)
                 }
                 /// Add padding at bottom to account for BiosesView if needed
-                .padding(.bottom, !console.bioses.isEmpty ? 120 : 44)
+                .padding(.bottom, gamesViewModel.hasBioses ? 120 : 44)
                 .onChange(of: gamesViewModel.focusedSection) { newSection in
                     if let section = newSection {
                         withAnimation {
@@ -234,7 +237,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @ViewBuilder
     var biosesView: some View {
-        if !console.bioses.isEmpty {
+        if gamesViewModel.hasBioses {
             BiosesView(console: console)
                 .padding(.horizontal, 8)
                 .padding(.bottom, 66) // Account for tab bar height
@@ -585,23 +588,44 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 )
 
-                .task {
-                    // Rescan specific system directory
+                .task(priority: .background) {
+                    // Defer BIOS rescan significantly to avoid blocking tab switches
+                    // Wait 500ms after view appears before scanning
+                    try? await Task.sleep(nanoseconds: 500_000_000) // 500ms delay
                     let systemPath = Paths.biosesPath.appendingPathComponent(console.identifier)
                     await BIOSWatcher.shared.rescanDirectory(systemPath)
                 }
-                .onAppear {
-                    self.recentGamesForBinding = Array(recentlyPlayedGames)
+                .task(priority: .utility) {
+                    // Convert array with low priority to avoid blocking initial render
+                    // Realm Results access must be on main thread
+                    let games = await MainActor.run {
+                        Array(recentlyPlayedGames)
+                    }
+                    await MainActor.run {
+                        self.recentGamesForBinding = games
+                    }
+                }
+                .task(priority: .utility) {
+                    // Defer ImportProgressView initialization to avoid blocking initial render
+                    // Wait 300ms after view appears before creating ViewModel
+                    // ViewModel itself will defer subscription setup by another 100ms
+                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+                    await MainActor.run {
+                        self.shouldShowImportProgress = true
+                    }
                 }
                 .onChange(of: recentlyPlayedGames) { newValue in
-                    self.recentGamesForBinding = Array(newValue)
+                    // Convert array off main thread with low priority
+                    Task.detached(priority: .utility) {
+                        // Access Realm Results on background thread, convert to array
+                        let games = await MainActor.run {
+                            Array(newValue)
+                        }
+                        await MainActor.run {
+                            self.recentGamesForBinding = games
+                        }
+                    }
                 }
-            }
-            .onAppear {
-                print("➡️ ConsoleGamesView for \(console.name) (\(console.identifier)): APPEARED. ViewModel ID: \(ObjectIdentifier(gamesViewModel))")
-            }
-            .onDisappear {
-                print("⬅️ ConsoleGamesView for \(console.name) (\(console.identifier)): DISAPPEARED.")
             }
             .modifier(ConditionalSearchModifier(
                 isEnabled: games.count > 8,
@@ -609,17 +633,6 @@ struct ConsoleGamesView: SwiftUI.View {
             ))
             .ignoresSafeArea(.all)
         }
-        .onAppear {
-            print("➡️ ConsoleGamesView for \(console.name) (\(console.identifier)): APPEARED. ViewModel ID: \(ObjectIdentifier(gamesViewModel))")
-        }
-        .onDisappear {
-            print("⬅️ ConsoleGamesView for \(console.name) (\(console.identifier)): DISAPPEARED.")
-        }
-        .modifier(ConditionalSearchModifier(
-            isEnabled: games.count > 8,
-            searchText: $gamesViewModel.searchText
-        ))
-        .ignoresSafeArea(.all)
     }
 
     private var sectionHeight: CGFloat {

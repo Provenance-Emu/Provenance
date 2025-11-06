@@ -86,6 +86,11 @@ class ConsoleGamesViewModel: ObservableObject {
     /// Timer for debouncing search
     private var searchDebounceTimer: Timer?
 
+    /// Cached BIOS check to avoid repeated Realm queries
+    lazy var hasBioses: Bool = {
+        return !console.bioses.isEmpty
+    }()
+
     /// Initialize the view model with a console
     init(console: PVSystem) {
         self.console = console
