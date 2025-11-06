@@ -72,7 +72,7 @@ public class ImportProgressViewModel: ObservableObject {
     /// iCloud File recovery state (newer feature)
     @Published public var fileRecoveryState: PVPrimitives.FileRecoveryState = .idle
     @Published public var fileRecoveryProgress: ProgressInfo?
-    
+
     /// File copy operations progress (newer feature)
     @Published public var fileCopyOperations: [FileCopyProgressTracker.FileCopyOperation] = []
     @Published public var isFileCopying: Bool = false
@@ -120,12 +120,21 @@ public class ImportProgressViewModel: ObservableObject {
 
     // MARK: - Initialization
 
+    private var hasSetUpSubscriptions = false
+
     public init(gameImporter: any GameImporting = GameImporter.shared, updatesController: PVGameLibraryUpdatesController) {
         self.gameImporter = gameImporter
         self.updatesController = updatesController // Store it
 
-        // Consolidated setup call
-        setupPrimarySubscriptions()
+        // Defer subscription setup to avoid blocking main thread during view initialization
+        // Setup will happen lazily when view appears or subscriptions are first accessed
+        Task.detached(priority: .utility) { [weak self] in
+            // Small delay to allow view initialization to complete
+            try? await Task.sleep(nanoseconds: 100_000_000) // 100ms delay
+            await MainActor.run {
+                self?.setupPrimarySubscriptions()
+            }
+        }
 
         // Observe changes to iCloudSyncEnabledSetting to re-setup CloudKit subscriptions if necessary
         settingsCancellable = Defaults.publisher(.iCloudSync) // Publishes KeyChange<Bool>
@@ -151,10 +160,10 @@ public class ImportProgressViewModel: ObservableObject {
     /// Add a log message (newer feature)
     public func addLogMessage(_ message: String, type: StatusMessageManager.StatusMessage.MessageType = .info) {
         let statusMessage = StatusMessageManager.StatusMessage(message: message, type: type)
-        
+
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            
+
             // Prevent duplicate messages if message content and type are identical to the last one, and very recent.
             // This is a simple heuristic.
             if let lastLog = self.logMessages.first, lastLog.message == statusMessage.message, lastLog.type == statusMessage.type {
@@ -243,6 +252,10 @@ public class ImportProgressViewModel: ObservableObject {
     // MARK: - Private Subscription Setup Methods
 
     private func setupPrimarySubscriptions() {
+        // Prevent duplicate setup calls
+        guard !hasSetUpSubscriptions else { return }
+        hasSetUpSubscriptions = true
+
         ILOG("ImportProgressViewModel: Setting up primary subscriptions.")
         setupGameImporterSubscription()
         setupCloudKitSubscriptions()
@@ -307,7 +320,7 @@ public class ImportProgressViewModel: ObservableObject {
                     statusCounts[item.status.description, default: 0] += 1 // Use description as key
                 }
                 ILOG("Import queue received via Task. Count: \(queue.count). Statuses: \(statusCounts.map { "\($0.key): \($0.value)" }.joined(separator: ", "))")
-                
+
                 self.importQueueItems = queue
                 let activeImports = !queue.isEmpty && !queue.allSatisfy { $0.status == .success || $0.status.isFailure } // Use .isFailure
                 if self.isImporting != activeImports {
@@ -337,7 +350,7 @@ public class ImportProgressViewModel: ObservableObject {
                 ILOG("CloudSyncManager status received: \(libraryStatus)")
                 self.syncStatus = libraryStatus // Direct assignment
                 self.isSyncing = self.syncStatus == .syncing || self.syncStatus == .initialSync || self.syncStatus == .uploading || self.syncStatus == .downloading || self.syncStatus == .initializing
-                
+
                 // If CloudSyncManager reports initialSync, we might want to show its progress
                 // This part needs to align with how CloudKitInitialSyncer and CloudSyncManager report combined progress.
                 if libraryStatus == .initialSync {
@@ -478,7 +491,7 @@ public class ImportProgressViewModel: ObservableObject {
                 WLOG("Received CloudKitRecordTransferCompleted notification with missing user info.")
                 return
             }
-            
+
             if success {
                 ILOG("CloudKit Transfer Completed for \(recordType).")
                 // Example: self.cloudKitTransferProgresses.removeValue(forKey: recordType)
@@ -491,23 +504,23 @@ public class ImportProgressViewModel: ObservableObject {
             self.updateShouldShow()
         }
     }
-    
+
     private func setupFileCopyProgressSubscription() {
         ILOG("ImportProgressViewModel: Setting up file copy progress subscription.")
-        
+
         FileCopyProgressTracker.shared.progressPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] operations in
                 guard let self = self else { return }
-                
+
                 self.fileCopyOperations = operations
-                self.isFileCopying = !operations.filter { 
-                    $0.status == .downloading || $0.status == .copying 
+                self.isFileCopying = !operations.filter {
+                    $0.status == .downloading || $0.status == .copying
                 }.isEmpty
-                
+
                 // Update shouldShow to include file copy operations
                 self.updateShouldShow()
-                
+
                 // Log file copy status changes
                 if self.isFileCopying {
                     let activeCount = operations.filter { $0.status == .downloading || $0.status == .copying }.count
