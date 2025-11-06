@@ -188,22 +188,95 @@ struct RetroMenuView: View {
                 }
             }
 
-            // Scrollable buttons
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 20) {
-                    categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: { selectedCategory = .main })
-                    // Show CORE tab if core has actions or options
-                    if hasCoreFeatures {
-                        categoryButton(title: "CORE", isSelected: selectedCategory == .core, action: { selectedCategory = .core })
+            // Scrollable buttons with fade edges
+            ZStack {
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 20) {
+                            categoryButton(title: "MAIN", isSelected: selectedCategory == .main, action: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedCategory = .main
+                                }
+                            })
+                            .id("main")
+                            // Show CORE tab if core has actions or options
+                            if hasCoreFeatures {
+                                categoryButton(title: "CORE", isSelected: selectedCategory == .core, action: {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedCategory = .core
+                                    }
+                                })
+                                .id("core")
+                            }
+                            categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedCategory = .states
+                                }
+                            })
+                            .id("states")
+                            categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedCategory = .options
+                                }
+                            })
+                            .id("options")
+                            // Always show skins category - display message if not supported
+                            if showSkinsCategoryButton {
+                                categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedCategory = .skins
+                                    }
+                                })
+                                .id("skins")
+                            }
+                        }
+                        .padding(.horizontal, 20)
                     }
-                    categoryButton(title: "STATES", isSelected: selectedCategory == .states, action: { selectedCategory = .states })
-                    categoryButton(title: "OPTIONS", isSelected: selectedCategory == .options, action: { selectedCategory = .options })
-                    // Only show skins category if core supports skins and the feature flag is enabled
-                    if emulatorVC.core.supportsSkins && showSkinsCategoryButton {
-                        categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: { selectedCategory = .skins })
+                    .onChange(of: selectedCategory) { newCategory in
+                        // Scroll to selected category
+                        let categoryId: String
+                        switch newCategory {
+                        case .main: categoryId = "main"
+                        case .core: categoryId = "core"
+                        case .states: categoryId = "states"
+                        case .options: categoryId = "options"
+                        case .skins: categoryId = "skins"
+                        }
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            proxy.scrollTo(categoryId, anchor: .center)
+                        }
                     }
                 }
-                .padding(.horizontal, 20)
+
+                // Left fade edge indicator - shows more content to the left
+                HStack {
+                    LinearGradient(
+                        gradient: Gradient(stops: [
+                            .init(color: Color.retroBlack.opacity(0.95), location: 0),
+                            .init(color: Color.clear, location: 1)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(width: 30)
+                    .allowsHitTesting(false)
+                    Spacer()
+                }
+
+                // Right fade edge indicator - shows more content to the right
+                HStack {
+                    Spacer()
+                    LinearGradient(
+                        gradient: Gradient(stops: [
+                            .init(color: Color.clear, location: 0),
+                            .init(color: Color.retroBlack.opacity(0.95), location: 1)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(width: 30)
+                    .allowsHitTesting(false)
+                }
             }
         }
         .frame(height: 50)
@@ -527,11 +600,43 @@ struct RetroMenuView: View {
 
     private var skinsMenuButtons: some View {
         VStack(spacing: menuSpacing) {
-            // Current skin selection - simplified UI
-            VStack(alignment: .leading, spacing: 8) {
-                Text("SKIN SELECTION")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.gray)
+            // Show message if skins are not supported
+            if !emulatorVC.core.supportsSkins {
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.retroOrange)
+                        .padding(.bottom, 8)
+
+                    Text("SKINS UNDER DEVELOPMENT")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.retroOrange)
+
+                    Text("Skins are not yet supported for this core, but development is in progress.")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 20)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.retroBlack.opacity(0.7))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .strokeBorder(Color.retroOrange.opacity(0.5), lineWidth: 1)
+                        )
+                )
+                .padding(.horizontal, 8)
+
+                Spacer(minLength: 0)
+            } else {
+                // Current skin selection - simplified UI
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("SKIN SELECTION")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.gray)
 
                 // Current skin button - shows current orientation's skin
                 Button(action: {
@@ -660,124 +765,125 @@ struct RetroMenuView: View {
                 }
             }
 
-            // Screen filter selection
-            VStack(alignment: .leading, spacing: 4) {
-                Text("SCREEN FILTER")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.gray)
+                // Screen filter selection
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("SCREEN FILTER")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.gray)
 
-                Button(action: {
-                    // Show filter picker
-                    showingFilterPicker = true
-                }) {
-                    HStack {
-                        Text(selectedFilter)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
+                    Button(action: {
+                        // Show filter picker
+                        showingFilterPicker = true
+                    }) {
+                        HStack {
+                            Text(selectedFilter)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white)
 
-                        Spacer()
+                            Spacer()
 
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.retroPink)
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.retroPink)
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.retroBlack.opacity(0.6))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(Color.retroPink, lineWidth: 1)
+                                )
+                        )
                     }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.retroBlack.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(Color.retroPink, lineWidth: 1)
-                            )
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-                .sheet(isPresented: $showingFilterPicker) {
-                    filterPickerView
-                }
-            }
-
-            // Button Effect Selection
-            VStack(alignment: .leading, spacing: 4) {
-                Text("BUTTON EFFECT")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.gray)
-
-                Button(action: {
-                    // Show button effect picker
-                    showingButtonEffectPicker = true
-                }) {
-                    HStack {
-                        Text(buttonPressEffect.description)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.retroPurple)
+                    .buttonStyle(PlainButtonStyle())
+                    .sheet(isPresented: $showingFilterPicker) {
+                        filterPickerView
                     }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.retroBlack.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(Color.retroPurple, lineWidth: 1)
-                            )
-                    )
                 }
-                .buttonStyle(PlainButtonStyle())
-                .sheet(isPresented: $showingButtonEffectPicker) {
-                    buttonEffectPickerView
-                }
-            }
 
-            // Button Sound Selection
-            VStack(alignment: .leading, spacing: 4) {
-                Text("BUTTON SOUND")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.gray)
+                // Button Effect Selection
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("BUTTON EFFECT")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.gray)
 
-                Button(action: {
-                    // Show button sound picker
-                    showingButtonSoundPicker = true
-                }) {
-                    HStack {
-                        Text(buttonSound.description)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
+                    Button(action: {
+                        // Show button effect picker
+                        showingButtonEffectPicker = true
+                    }) {
+                        HStack {
+                            Text(buttonPressEffect.description)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white)
 
-                        Spacer()
+                            Spacer()
 
-                        Image(systemName: "speaker.wave.2")
-                            .foregroundColor(.retroBlue)
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.retroPurple)
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.retroBlack.opacity(0.6))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(Color.retroPurple, lineWidth: 1)
+                                )
+                        )
                     }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.retroBlack.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(Color.retroBlue, lineWidth: 1)
-                            )
-                    )
+                    .buttonStyle(PlainButtonStyle())
+                    .sheet(isPresented: $showingButtonEffectPicker) {
+                        buttonEffectPickerView
+                    }
                 }
-                .buttonStyle(PlainButtonStyle())
-                .sheet(isPresented: $showingButtonSoundPicker) {
-                    buttonSoundPickerView
-                }
-            }
 
-            // Apply button - applies both skin and filter changes after dismissing menu
-            menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: .retroBlue) {
-                dismissAction()
-                // Apply skin and filter changes after menu is dismissed
-                Task {
-                    await applySkinAndFilterChanges()
-                }
-            }
+                // Button Sound Selection
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("BUTTON SOUND")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.gray)
 
-            Spacer(minLength: 0)
+                    Button(action: {
+                        // Show button sound picker
+                        showingButtonSoundPicker = true
+                    }) {
+                        HStack {
+                            Text(buttonSound.description)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white)
+
+                            Spacer()
+
+                            Image(systemName: "speaker.wave.2")
+                                .foregroundColor(.retroBlue)
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.retroBlack.opacity(0.6))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(Color.retroBlue, lineWidth: 1)
+                                )
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .sheet(isPresented: $showingButtonSoundPicker) {
+                        buttonSoundPickerView
+                    }
+                }
+
+                // Apply button - applies both skin and filter changes after dismissing menu
+                menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: .retroBlue) {
+                    dismissAction()
+                    // Apply skin and filter changes after menu is dismissed
+                    Task {
+                        await applySkinAndFilterChanges()
+                    }
+                }
+
+                Spacer(minLength: 0)
+            }
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }
