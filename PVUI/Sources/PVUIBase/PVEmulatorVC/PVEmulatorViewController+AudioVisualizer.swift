@@ -26,11 +26,44 @@ extension PVEmulatorViewController {
         }
     }
 
+    /// Check if device is iPhone (not iPad)
+    private var isiPhone: Bool {
+        UIDevice.current.userInterfaceIdiom == .phone
+    }
+
+    /// Check if device is currently in portrait orientation
+    private var isPortraitOrientation: Bool {
+        let orientation = UIDevice.current.orientation
+
+        // If orientation is unknown (e.g., app just launched), check interface orientation
+        if orientation == .unknown {
+            if let windowScene = view.window?.windowScene {
+                let interfaceOrientation = windowScene.interfaceOrientation
+                return interfaceOrientation == .portrait || interfaceOrientation == .portraitUpsideDown
+            }
+            // Default to portrait if we can't determine
+            return true
+        }
+
+        return orientation == .portrait || orientation == .portraitUpsideDown
+    }
+
+    /// Check if visualizer should be shown (iPhone + portrait mode)
+    private var shouldShowVisualizer: Bool {
+        isiPhone && isPortraitOrientation
+    }
+
     /// Set up the audio visualizer if the device and core support it
     @objc public func setupAudioVisualizer() {
         // Only proceed if we're on iOS 16 or later
         guard #available(iOS 16.0, *) else {
             DLOG("Audio visualizer requires iOS 16 or later")
+            return
+        }
+
+        // Audio visualizer is only supported on iPhone in portrait mode
+        guard shouldShowVisualizer else {
+            DLOG("Audio visualizer only supported on iPhone in portrait mode (current: iPhone=\(isiPhone), Portrait=\(isPortraitOrientation))")
             return
         }
 
@@ -193,6 +226,12 @@ extension PVEmulatorViewController {
 extension PVEmulatorViewController {
     /// Show the audio visualizer
     @objc public func showAudioVisualizer() {
+        // Only show on iPhone in portrait mode
+        guard shouldShowVisualizer else {
+            DLOG("Audio visualizer only shown on iPhone in portrait mode")
+            return
+        }
+
         if core.coreIdentifier?.contains("libretro") == true,
            let objcCore = core as? (any ObjCBridgedCore),
            let provider = objcCore.bridge as? (any EmulatorCoreWaveformProvider) {
@@ -244,37 +283,67 @@ extension PVEmulatorViewController {
             if mode == .off {
                 hideAudioVisualizer()
             } else {
-                // Remove existing visualizer if any
-                removeAudioVisualizer()
-                // Set up new visualizer with the selected mode
-                setupAudioVisualizer()
-                // Ensure it's on top
-                ensureVisualizerOnTop()
+                // Only set up visualizer if on iPhone in portrait mode
+                if shouldShowVisualizer {
+                    // Remove existing visualizer if any
+                    removeAudioVisualizer()
+                    // Set up new visualizer with the selected mode
+                    setupAudioVisualizer()
+                    // Ensure it's on top
+                    ensureVisualizerOnTop()
+                } else {
+                    DLOG("Cannot set visualizer mode - only supported on iPhone in portrait mode")
+                }
             }
         }
     }
 
     /// Handle orientation changes
     @objc private func orientationDidChange() {
-        // The SwiftUI visualizer will automatically reposition itself
-        // using the DynamicIslandPositioner
+        // Audio visualizer is only shown on iPhone in portrait mode
+        guard isiPhone else {
+            // Hide visualizer on iPad regardless of orientation
+            if audioVisualizerHostingController != nil {
+                removeAudioVisualizer()
+            }
+            return
+        }
 
-        // Just update the frame size to match the current screen width
-        if let hostingController = audioVisualizerHostingController {
-            let screenWidth = UIScreen.main.bounds.width
-            let visualizerWidth = min(screenWidth, 400) // Limit width
-            hostingController.view.frame = CGRect(x: 0, y: 0, width: visualizerWidth, height: 80)
+        if isPortraitOrientation {
+            // Show visualizer when rotating to portrait
+            if visualizerMode != .off && audioVisualizerHostingController == nil {
+                setupAudioVisualizer()
+            } else if let hostingController = audioVisualizerHostingController {
+                // Update frame size to match the current screen width
+                let screenWidth = UIScreen.main.bounds.width
+                let visualizerWidth = min(screenWidth, 400) // Limit width
+                hostingController.view.frame = CGRect(x: 0, y: 0, width: visualizerWidth, height: 80)
 
-            // Ensure visualizer stays on top after rotation
-            ensureVisualizerOnTop()
+                // Ensure visualizer stays on top after rotation
+                ensureVisualizerOnTop()
 
-            // Force layout update
-            view.layoutIfNeeded()
+                // Force layout update
+                view.layoutIfNeeded()
+            }
+        } else {
+            // Hide visualizer when rotating to landscape
+            if audioVisualizerHostingController != nil {
+                audioVisualizerHostingController?.view.isHidden = true
+                DLOG("Hiding audio visualizer due to landscape orientation")
+            }
         }
     }
 
     /// Ensure the visualizer stays on top of all other views
     internal func ensureVisualizerOnTop() {
+        guard isiPhone && isPortraitOrientation else {
+            // Don't show visualizer if not iPhone or not in portrait
+            if let hostingController = audioVisualizerHostingController {
+                hostingController.view.isHidden = true
+            }
+            return
+        }
+
         if let hostingController = audioVisualizerHostingController {
             // First, make sure the view is in the view hierarchy
             if hostingController.view.superview == nil {
@@ -284,7 +353,7 @@ extension PVEmulatorViewController {
             // Then bring it to the front
             view.bringSubviewToFront(hostingController.view)
 
-            // Make sure it's visible
+            // Make sure it's visible (only in portrait on iPhone)
             hostingController.view.isHidden = false
             hostingController.view.alpha = 1.0
 
