@@ -341,21 +341,33 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Determine which stick this is
         let isLeftStick = stickId.lowercased().contains("left")
 
-        // Try different methods that might be available
+        // Use generic JoystickResponder protocol (all cores that support joysticks implement this)
+        // The protocol-agnostic approach: use 0 for left stick, 1 for right stick
+        // Each core's implementation will map these values to their specific button enums internally
+        if let joystickResponder = core as? JoystickResponder {
+            let buttonValue = isLeftStick ? 0 : 1
+            joystickResponder.didMoveJoystick(buttonValue, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+            DLOG("Forwarded joystick event via JoystickResponder: button=\(buttonValue), x=\(x), y=\(y)")
+            return
+        }
+
+        // Fallback for cores that might use different protocols
         if let responder = core as? PVAnalogResponder {
             if isLeftStick {
                 responder.controllerMovedLeftAnalogStick(x: x, y: y, forPlayer: 0)
             } else {
                 responder.controllerMovedRightAnalogStick(x: x, y: y, forPlayer: 0)
             }
-        } else {
-            // Fallback to a more generic approach
-            NotificationCenter.default.post(
-                name: NSNotification.Name("AnalogStickMoved"),
-                object: nil,
-                userInfo: ["stick": isLeftStick ? "left" : "right", "x": x, "y": y, "player": 0]
-            )
+            return
         }
+
+        // Last resort: post notification
+        DLOG("No joystick responder found, posting notification")
+        NotificationCenter.default.post(
+            name: NSNotification.Name("AnalogStickMoved"),
+            object: nil,
+            userInfo: ["stick": isLeftStick ? "left" : "right", "x": x, "y": y, "player": 0]
+        )
     }
 
     // MARK: - Private Methods
