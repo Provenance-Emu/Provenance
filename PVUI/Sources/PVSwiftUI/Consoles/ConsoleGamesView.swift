@@ -298,12 +298,9 @@ struct ConsoleGamesView: SwiftUI.View {
     var body: some SwiftUI.View {
         GeometryReader { geometry in
             ZStack {
-                // RetroWave background
-                RetroTheme.retroBackground
-
-                // Grid overlay
-                RetroGrid(lineColor: themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                    .opacity(0.2)
+                // Theme-aware RetroWave background (includes grid overlay)
+                RetroTheme.RetroBackgroundView()
+                    .environmentObject(themeManager)
 
                 VStack(spacing: 4) {
 
@@ -975,7 +972,11 @@ extension ConsoleGamesView {
         .padding(.horizontal, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.7))
+                .fill(
+                    themeManager.currentPalette.dark
+                        ? Color.black.opacity(0.7)
+                        : Color.white.opacity(0.9)
+                )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
@@ -1098,7 +1099,11 @@ extension ConsoleGamesView {
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.retroPurple.opacity(0.3))
+                .background(
+                    themeManager.currentPalette.dark
+                        ? Color.retroPurple.opacity(0.3)
+                        : Color.retroPurple.opacity(0.2)
+                )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(Color.retroBlue, lineWidth: 1)
@@ -1110,7 +1115,11 @@ extension ConsoleGamesView {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.retroBlack.opacity(0.7))
+                .fill(
+                    themeManager.currentPalette.dark
+                        ? Color.retroBlack.opacity(0.7)
+                        : Color.white.opacity(0.9)
+                )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(

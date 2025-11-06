@@ -56,14 +56,17 @@ struct BiosesView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.7), value: isExpanded)
             }
             .background(
-                // Retrowave-style background
+                // Theme-aware retrowave-style background
                 ZStack {
-                    // Dark background
-                    Color.black.opacity(0.8)
-                    
+                    // Background adapts to theme
+                    Color(themeManager.currentPalette.dark
+                        ? UIColor.black.withAlphaComponent(0.8)
+                        : UIColor.white.withAlphaComponent(0.9)
+                    )
+
                     // Grid overlay for retrowave effect
                     RetroTheme.RetroGridView()
-                        .opacity(0.15)
+                        .opacity(themeManager.currentPalette.dark ? 0.15 : 0.1)
                 }
             )
             // Neon border with gradient
@@ -142,7 +145,7 @@ struct BiosesView: View {
                         )
                     )
                     .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.7), radius: 2)
-                
+
                 // Retrowave-styled text
                 Text("BIOSes (\(console.bioses.count))")
                     .font(.system(size: 12, weight: .bold))
@@ -170,12 +173,12 @@ struct BiosesView: View {
         VStack(spacing: 0) {
             // Retrowave-styled divider
             RetroDividerView()
-            
+
             ForEach(console.bioses, id: \.expectedFilename) { bios in
                 BiosRowView(biosFilename: bios.expectedFilename)
                     // Add hover effect for each row
                     .modifier(HoverEffect())
-                
+
                 RetroDividerView()
             }
         }

@@ -1,5 +1,6 @@
 import SwiftUI
 import PVUIBase
+import PVThemes
 
 /// RetroTheme provides retrowave styling elements for the Settings UI
 public struct RetroTheme {
@@ -38,6 +39,31 @@ public struct RetroTheme {
     }
 
     // MARK: - Background Styles
+    /// Theme-aware retro background that adapts to light/dark themes
+    public struct RetroBackgroundView: View {
+        @EnvironmentObject var themeManager: ThemeManager
+
+        public init() {}
+
+        public var body: some View {
+            ZStack {
+                /// Background color from palette (white for light theme, black for dark theme)
+                Color(themeManager.currentPalette.gameLibraryBackground)
+                    .edgesIgnoringSafeArea(.all)
+
+                /// Grid overlay with theme-appropriate colors
+                /// Dark theme: lighter grid lines, Light theme: darker grid lines
+                RetroGrid(
+                    lineColor: themeManager.currentPalette.dark
+                        ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3)
+                        : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.2)
+                )
+                .opacity(0.2)
+            }
+        }
+    }
+
+    /// Legacy static background (always dark) - kept for backward compatibility
     public static var retroBackground: some View {
         ZStack {
             // Dark background
