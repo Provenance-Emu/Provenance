@@ -872,10 +872,17 @@ extension PVEmulatorViewController {
 #endif
         // Get FPS if available
         var fpsInfo = "FPS: N/A"
+        #if USE_METAL
         if let metalVC = gpuViewController as? PVMetalViewController {
             let fps = metalVC.framesPerSecond
             fpsInfo = "FPS: \(Int(fps))"
         }
+        #else
+        if let glVC = gpuViewController as? PVGLViewController {
+            let fps = glVC.calculatedFramesPerSecond
+            fpsInfo = "FPS: \(Int(fps))"
+        }
+        #endif
 
         // Combine all info
         let infoText = """
