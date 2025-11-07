@@ -29,7 +29,7 @@ class ContinuesSectionViewModel: ObservableObject {
     @Published var selectedItemId: String?
     @Published var hasFocus: Bool = false
     @Published var isControllerConnected: Bool = GamepadManager.shared.isControllerConnected
-    
+
     // Reduce @Published properties to minimize re-renders
     var currentSaveState: PVSaveState?
     var totalSaveStatesCount: Int = 0
@@ -173,7 +173,7 @@ private struct ContinuesFooterView: View {
                                     )
                                 )
                         }
-                        
+
                         // Retrowave-styled game title
                         Text(continueState.game?.isInvalidated == true ? "Deleted" : (continueState.game?.title ?? "Deleted"))
                             .font(.system(size: 13, weight: .medium))
@@ -218,15 +218,18 @@ private struct ContinuesFooterView: View {
             }
             .frame(height: Constants.overlayHeight)
             .background(
-                // Retrowave-style background with blur and grid
+                // Theme-aware retrowave-style background with blur and grid
                 ZStack {
-                    // Blurred background
-                    Color.black.opacity(0.7)
-                        .blur(radius: 3)
-                    
+                    // Blurred background adapts to theme
+                    Color(themeManager.currentPalette.dark
+                        ? UIColor.black.withAlphaComponent(0.7)
+                        : UIColor.white.withAlphaComponent(0.9)
+                    )
+                    .blur(radius: 3)
+
                     // Grid overlay for retrowave effect (subtle)
                     RetroTheme.RetroGridView()
-                        .opacity(0.1)
+                        .opacity(themeManager.currentPalette.dark ? 0.1 : 0.05)
                 }
             )
             .overlay(
@@ -297,9 +300,9 @@ private struct CustomPageIndicator: View {
                                     height: Constants.indicatorHeight
                                 )
                                 // Add glow effect to selected indicator
-                                .shadow(color: currentPage == index ? 
-                                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.8) : 
-                                        Color.clear, 
+                                .shadow(color: currentPage == index ?
+                                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.8) :
+                                        Color.clear,
                                         radius: 3)
                                 .id(index)
                                 .animation(.spring(response: 0.3), value: currentPage)
@@ -489,16 +492,19 @@ struct HomeContinueSection: SwiftUI.View {
                     }
                 }
             }
-            // Retrowave-style border with gradient and glow
+            // Theme-aware retrowave-style border with gradient and glow
             .background(
-                // Retrowave-style background
+                // Theme-aware retrowave-style background
                 ZStack {
-                    // Dark background
-                    Color.black.opacity(0.8)
-                    
+                    // Background adapts to theme
+                    Color(themeManager.currentPalette.dark
+                        ? UIColor.black.withAlphaComponent(0.8)
+                        : UIColor.white.withAlphaComponent(0.9)
+                    )
+
                     // Grid overlay for retrowave effect
                     RetroTheme.RetroGridView()
-                        .opacity(0.15)
+                        .opacity(themeManager.currentPalette.dark ? 0.15 : 0.1)
                 }
             )
             // Neon border with gradient

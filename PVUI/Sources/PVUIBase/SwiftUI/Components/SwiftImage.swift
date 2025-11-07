@@ -46,8 +46,9 @@ public class MissingArtworkCacheManager {
     }
 
     /// Generate a cache key for missing artwork images
-    private func cacheKey(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat) -> String {
-        return "\(gameTitle)_\(ratio)_\(pattern.rawValue)_\(minFontSize)"
+    private func cacheKey(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat, isDarkTheme: Bool) -> String {
+        let themeSuffix = isDarkTheme ? "dark" : "light"
+        return "\(gameTitle)_\(ratio)_\(pattern.rawValue)_\(minFontSize)_\(themeSuffix)"
     }
 
     /// Get the disk URL for a cache key
@@ -60,8 +61,8 @@ public class MissingArtworkCacheManager {
     }
 
     /// Get an image from cache (memory or disk)
-    public func getImage(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat) -> SwiftImage? {
-        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize) as NSString
+    public func getImage(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat, isDarkTheme: Bool) -> SwiftImage? {
+        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize, isDarkTheme: isDarkTheme) as NSString
 
         // Check memory cache first
         if let cachedImage = memoryCache.object(forKey: key) {
@@ -82,8 +83,8 @@ public class MissingArtworkCacheManager {
     }
 
     /// Store an image in both memory and disk cache
-    public func storeImage(_ image: SwiftImage, gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat) {
-        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize) as NSString
+    public func storeImage(_ image: SwiftImage, gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat, isDarkTheme: Bool) {
+        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize, isDarkTheme: isDarkTheme) as NSString
 
         // Store in memory cache
         memoryCache.setObject(image, forKey: key)
@@ -311,12 +312,16 @@ extension SwiftImage {
         pattern: RetroTestPattern = Defaults[.missingArtworkStyle],
         minFontSize: CGFloat = RetroStyle.defaultMinFontSize
     ) -> SwiftImage {
+        // Get current theme to determine if we should use light or dark colors
+        let isDarkTheme = ThemeManager.shared.currentPalette.dark
+
         // Try to get the image from the cache manager first
         if let cachedImage = MissingArtworkCacheManager.shared.getImage(
             gameTitle: gameTitle,
             ratio: ratio,
             pattern: pattern,
-            minFontSize: minFontSize
+            minFontSize: minFontSize,
+            isDarkTheme: isDarkTheme
         ) {
             return cachedImage
         }
@@ -351,15 +356,32 @@ extension SwiftImage {
                             width: size.width,
                             height: containerHeight)
 
-        // Draw darkened background first
-        context.setFillColor(UIColor.black.withAlphaComponent(0.4).cgColor)
+        // Choose colors based on theme
+        let backgroundColor: UIColor
+        let textColor: UIColor
+        let shadowColor: UIColor
+
+        if isDarkTheme {
+            // Dark theme: dark background with white text
+            backgroundColor = UIColor.black
+            textColor = UIColor.white
+            shadowColor = UIColor.black
+        } else {
+            // Light theme: light background with dark text
+            backgroundColor = UIColor.white
+            textColor = UIColor.black
+            shadowColor = UIColor.white
+        }
+
+        // Draw background first
+        context.setFillColor(backgroundColor.withAlphaComponent(0.4).cgColor)
         context.fill(textRect)
 
         // Create gradient for faded edges with more opacity
         let gradientColors = [
             UIColor.clear.cgColor,
-            UIColor.black.withAlphaComponent(RetroStyle.textBackgroundOpacity).cgColor,
-            UIColor.black.withAlphaComponent(RetroStyle.textBackgroundOpacity).cgColor,
+            backgroundColor.withAlphaComponent(RetroStyle.textBackgroundOpacity).cgColor,
+            backgroundColor.withAlphaComponent(RetroStyle.textBackgroundOpacity).cgColor,
             UIColor.clear.cgColor
         ]
 
@@ -401,14 +423,14 @@ extension SwiftImage {
         // Draw text with shadow
         let titleAttributes: [NSAttributedString.Key: Any] = [
             .font: font,
-            .foregroundColor: UIColor.white,
-            .strokeColor: UIColor.black,
+            .foregroundColor: textColor,
+            .strokeColor: isDarkTheme ? UIColor.black : UIColor.white,
             .strokeWidth: -2.0,
             .paragraphStyle: paragraphStyle
         ]
 
         let shadowAttributes = titleAttributes.merging([
-            .foregroundColor: UIColor.black.withAlphaComponent(0.5)
+            .foregroundColor: shadowColor.withAlphaComponent(0.5)
         ]) { $1 }
 
         let attributedTitle = NSAttributedString(string: gameTitle, attributes: titleAttributes)
@@ -452,7 +474,8 @@ extension SwiftImage {
                 gameTitle: gameTitle,
                 ratio: ratio,
                 pattern: pattern,
-                minFontSize: minFontSize
+                minFontSize: minFontSize,
+                isDarkTheme: isDarkTheme
             )
             return finalImage
         }

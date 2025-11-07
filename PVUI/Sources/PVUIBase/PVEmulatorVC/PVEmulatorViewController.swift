@@ -1724,6 +1724,15 @@ extension PVEmulatorViewController {
         #if os(iOS)
         if let visualizerView = audioVisualizerHostingController?.view {
             view.bringSubviewToFront(visualizerView)
+            // Ensure visualizer is visible if we're in portrait mode on iPhone
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                let orientation = UIDevice.current.orientation
+                let isPortrait = orientation == .portrait || orientation == .portraitUpsideDown || orientation == .unknown
+                if isPortrait && visualizerMode != .off {
+                    visualizerView.isHidden = false
+                    visualizerView.alpha = 1.0
+                }
+            }
         }
         #endif
 

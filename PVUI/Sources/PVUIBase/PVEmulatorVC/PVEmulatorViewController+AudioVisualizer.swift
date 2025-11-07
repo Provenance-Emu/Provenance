@@ -314,6 +314,10 @@ extension PVEmulatorViewController {
             if visualizerMode != .off && audioVisualizerHostingController == nil {
                 setupAudioVisualizer()
             } else if let hostingController = audioVisualizerHostingController {
+                // Explicitly make sure it's visible when rotating back to portrait
+                hostingController.view.isHidden = false
+                hostingController.view.alpha = 1.0
+
                 // Update frame size to match the current screen width
                 let screenWidth = UIScreen.main.bounds.width
                 let visualizerWidth = min(screenWidth, 400) // Limit width
@@ -324,11 +328,13 @@ extension PVEmulatorViewController {
 
                 // Force layout update
                 view.layoutIfNeeded()
+
+                DLOG("Showing audio visualizer after rotation to portrait")
             }
         } else {
             // Hide visualizer when rotating to landscape
-            if audioVisualizerHostingController != nil {
-                audioVisualizerHostingController?.view.isHidden = true
+            if let hostingController = audioVisualizerHostingController {
+                hostingController.view.isHidden = true
                 DLOG("Hiding audio visualizer due to landscape orientation")
             }
         }
@@ -336,8 +342,23 @@ extension PVEmulatorViewController {
 
     /// Ensure the visualizer stays on top of all other views
     internal func ensureVisualizerOnTop() {
-        guard isiPhone && isPortraitOrientation else {
-            // Don't show visualizer if not iPhone or not in portrait
+        guard isiPhone else {
+            // Don't show visualizer on iPad
+            if let hostingController = audioVisualizerHostingController {
+                hostingController.view.isHidden = true
+            }
+            return
+        }
+
+        // Check orientation - use both device orientation and interface orientation for accuracy
+        let deviceOrientation = UIDevice.current.orientation
+        let isPortrait = isPortraitOrientation ||
+                        (deviceOrientation == .unknown &&
+                         (view.window?.windowScene?.interfaceOrientation == .portrait ||
+                          view.window?.windowScene?.interfaceOrientation == .portraitUpsideDown))
+
+        guard isPortrait && visualizerMode != .off else {
+            // Don't show visualizer if not in portrait or mode is off
             if let hostingController = audioVisualizerHostingController {
                 hostingController.view.isHidden = true
             }
@@ -357,7 +378,7 @@ extension PVEmulatorViewController {
             hostingController.view.isHidden = false
             hostingController.view.alpha = 1.0
 
-            DLOG("Ensured visualizer is on top")
+            DLOG("Ensured visualizer is on top (portrait: \(isPortrait), mode: \(visualizerMode))")
         }
     }
 

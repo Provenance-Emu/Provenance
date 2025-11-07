@@ -15,7 +15,7 @@ public class SearchBar: NSObject, ObservableObject {
 
     @Published public var text: String = ""
     let searchController: UISearchController
-    
+
     #if os(tvOS)
     // Cannot be nil on tvOS,
     public required init(searchResultsController: UIViewController) {
@@ -29,20 +29,23 @@ public class SearchBar: NSObject, ObservableObject {
     #else
     public required init(searchResultsController: UIViewController? = nil) {
         searchController = UISearchController(searchResultsController: searchResultsController)
-        
+
         // Apply retrowave styling to UIKit search bar
         let searchBar = searchController.searchBar
-        searchBar.searchTextField.textColor = UIColor(RetroTheme.retroBlue)
-        searchBar.searchTextField.tintColor = UIColor(RetroTheme.retroPink)
-        
-        // Style the search text field
+        let palette = ThemeManager.shared.currentPalette
+        searchBar.searchTextField.textColor = palette.gameLibraryText
+        searchBar.searchTextField.tintColor = palette.defaultTintColor
+
+        // Style the search text field with theme-aware background
         if let textField = searchBar.value(forKey: "searchField") as? UITextField {
-            textField.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+            textField.backgroundColor = palette.dark
+                ? UIColor.black.withAlphaComponent(0.7)
+                : UIColor.white.withAlphaComponent(0.9)
             textField.layer.cornerRadius = 10
             textField.layer.borderWidth = 1.5
-            
+
             // Create gradient border - note this is simplified as UIKit doesn't support gradients as easily
-            textField.layer.borderColor = UIColor(RetroTheme.retroPurple).cgColor
+            textField.layer.borderColor = palette.defaultTintColor.cgColor
         }
 
         super.init()
@@ -68,7 +71,7 @@ extension SearchBar: UISearchResultsUpdating {
 public struct SearchBarModifier: ViewModifier {
 
     public let searchBar: SearchBar
-    
+
     public init(searchBar: SearchBar) {
         self.searchBar = searchBar
     }
@@ -98,42 +101,50 @@ public struct PVSearchBar: View {
     @Binding public var text: String
     @State private var isSearching: Bool = false
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     public init(text: Binding<String>) {
         _text = text
     }
-    
+
     public var body: some View {
         HStack {
             HStack {
                 // Magnifying glass icon with animation
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(isSearching ? RetroTheme.retroPink : Color.gray)
+                    .foregroundColor(
+                        isSearching
+                            ? themeManager.currentPalette.defaultTintColor.swiftUIColor
+                            : (themeManager.currentPalette.dark ? Color.gray : Color.gray.opacity(0.7))
+                    )
                     .animation(.easeInOut(duration: 0.2), value: isSearching)
-                
+
                 // Search text field
                 TextField("SEARCH", text: $text, onEditingChanged: { editing in
                     withAnimation {
                         isSearching = editing
                     }
                 })
-                .foregroundColor(RetroTheme.retroBlue)
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .font(.system(size: 14, weight: .medium))
-                
+
                 // Clear button
                 if !text.isEmpty {
                     Button(action: {
                         text = ""
                     }) {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.8))
                     }
                 }
             }
             .padding(10)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.retroBlack.opacity(0.7))
+                    .fill(
+                        themeManager.currentPalette.dark
+                            ? Color.retroBlack.opacity(0.7)
+                            : Color.white.opacity(0.9)
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .strokeBorder(
