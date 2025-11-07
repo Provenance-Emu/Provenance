@@ -1,6 +1,6 @@
 //
-//  PVJaguarGameCore.swift
-//  PVVirtualJaguar
+//  PVRetroArchCoreCore.swift
+//  PVRetroArchCore
 //
 //  Created by Joseph Mattiello on 5/21/24.
 //  Copyright © 2024 Provenance EMU. All rights reserved.
@@ -465,5 +465,16 @@ extension PVRetroArchCoreCore: PVSaturnSystemResponderClient {
     }
     public func didPush(_ button: PVCoreBridge.PVSaturnButton, forPlayer player: Int) {
         (_bridge as! PVSaturnSystemResponderClient).didPush(button, forPlayer: player)
+    }
+}
+
+// Nintendo VirtualBoy
+extension PVRetroArchCoreCore: PVVirtualBoySystemResponderClient {
+    public func didRelease(_ button: PVCoreBridge.PVVBButton, forPlayer player: Int) {
+        (_bridge as! PVVirtualBoySystemResponderClient).didRelease(button, forPlayer: player)
+
+    }
+    public func didPush(_ button: PVCoreBridge.PVVBButton, forPlayer player: Int) {
+        (_bridge as! PVVirtualBoySystemResponderClient).didPush(button, forPlayer: player)
     }
 }
