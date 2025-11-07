@@ -85,10 +85,15 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
     }
 }
 
-/// Custom toggle style for selection with retrowave styling
+/// Custom toggle style for selection with theme-aware styling
 private struct SelectionToggleStyle: ToggleStyle {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var glowOpacity: Double = 0.7
-    
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
         Button(action: {
@@ -96,10 +101,10 @@ private struct SelectionToggleStyle: ToggleStyle {
         }) {
             Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 22))
-                .foregroundColor(configuration.isOn ? RetroTheme.retroPink : RetroTheme.retroBlue.opacity(0.7))
-                .shadow(color: configuration.isOn ? RetroTheme.retroPink.opacity(glowOpacity) : RetroTheme.retroBlue.opacity(0.3), 
-                        radius: configuration.isOn ? 5 : 3, 
-                        x: 0, 
+                .foregroundColor(configuration.isOn ? accentColor : accentColor.opacity(0.7))
+                .shadow(color: configuration.isOn ? accentColor.opacity(glowOpacity) : accentColor.opacity(0.3),
+                        radius: configuration.isOn ? 5 : 3,
+                        x: 0,
                         y: 0)
                 .animation(.easeInOut, value: configuration.isOn)
         }
@@ -275,6 +280,7 @@ extension View {
 
 public struct SaveStateRowView: View {
     @ObservedObject var viewModel: SaveStateRowViewModel
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var showingEditDialog = false
     @State private var showingLoadAlert = false
     @State private var tempDescription: String? = nil
@@ -288,20 +294,38 @@ public struct SaveStateRowView: View {
 
     @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
-    
+
+    /// Theme-aware color helpers
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var rowBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.7)
+            : Color.white.opacity(0.9)
+    }
+
     public var body: some View {
         ZStack {
-            // Background with retrowave styling
+            // Background with theme-aware styling
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.7))
+                .fill(rowBackgroundColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    viewModel.isSelected ? RetroTheme.retroPink : RetroTheme.retroDarkBlue.opacity(0.5),
-                                    viewModel.isFavorite ? RetroTheme.retroPink.opacity(0.8) : RetroTheme.retroPurple.opacity(0.5),
-                                    viewModel.isPinned ? RetroTheme.retroBlue.opacity(0.8) : RetroTheme.retroBlue.opacity(0.3)
+                                    viewModel.isSelected ? accentColor : accentColor.opacity(0.5),
+                                    viewModel.isFavorite ? accentColor.opacity(0.8) : accentColor.opacity(0.5),
+                                    viewModel.isPinned ? accentColor.opacity(0.8) : accentColor.opacity(0.3)
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -309,11 +333,11 @@ public struct SaveStateRowView: View {
                             lineWidth: viewModel.isSelected || isHovered ? 1.5 : 0.8
                         )
                 )
-                .shadow(color: (viewModel.isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity * (viewModel.isSelected ? 0.8 : 0.3)), 
-                        radius: viewModel.isSelected ? 8 : 4, 
-                        x: 0, 
+                .shadow(color: accentColor.opacity(glowOpacity * (viewModel.isSelected ? 0.8 : 0.3)),
+                        radius: viewModel.isSelected ? 8 : 4,
+                        x: 0,
                         y: 0)
-            
+
             HStack(spacing: 0) {
                 /// Selection button when in edit mode
                 if viewModel.isEditing {
@@ -324,7 +348,7 @@ public struct SaveStateRowView: View {
 
                 /// Main row content
                 HStack(spacing: 20) {
-                    /// Thumbnail image with neon border
+                    /// Thumbnail image with theme-aware border
                     ZStack {
                         // Glow effect for thumbnail
                         RoundedRectangle(cornerRadius: 9)
@@ -334,7 +358,7 @@ public struct SaveStateRowView: View {
                                 RoundedRectangle(cornerRadius: 9)
                                     .strokeBorder(
                                         LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
+                                            gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
                                         ),
@@ -343,7 +367,7 @@ public struct SaveStateRowView: View {
                                     .blur(radius: 1.5)
                                     .opacity(glowOpacity)
                             )
-                        
+
                         // Actual thumbnail
                         viewModel.thumbnailImage
                             .resizable()
@@ -356,37 +380,37 @@ public struct SaveStateRowView: View {
                         showingLoadAlert = true
                     }
 
-                    /// Labels with retrowave styling
+                    /// Labels with theme-aware styling
                     VStack(alignment: .leading, spacing: 6) {
                         Button {
                             showingEditDialog = true
                         } label: {
                             Text(displayTitle)
                                 .font(.system(size: 16, weight: .bold, design: .monospaced))
-                                .foregroundColor(.white)
-                                .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
+                                .foregroundColor(primaryTextColor)
+                                .shadow(color: accentColor.opacity(0.6), radius: 2, x: 0, y: 0)
                                 .multilineTextAlignment(.leading)
                         }
 
                         HStack(spacing: 6) {
-                            // Date with retrowave color
+                            // Date with theme-aware color
                             Text(viewModel.saveDate.formatted(date: .abbreviated, time: .shortened))
                                 .font(.system(size: 12))
-                                .foregroundColor(RetroTheme.retroBlue)
+                                .foregroundColor(accentColor.opacity(0.8))
 
-                            /// Auto-save indicator with retrowave styling
+                            /// Auto-save indicator with theme-aware styling
                             if viewModel.isAutoSave {
                                 Image(systemName: "clock.badge.checkmark")
                                     .font(.system(size: 12))
-                                    .foregroundColor(RetroTheme.retroPurple)
-                                    .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                                    .foregroundColor(accentColor)
+                                    .shadow(color: accentColor.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                             }
                         }
                     }
 
                     Spacer()
 
-                    /// Right-side icons with retrowave styling
+                    /// Right-side icons with theme-aware styling
                     HStack(spacing: 16.0) {
                         /// Pin indicator
                         Button {
@@ -398,15 +422,15 @@ public struct SaveStateRowView: View {
                                 Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
                                     .rotationEffect(viewModel.isPinned ? .degrees(0.0) : .degrees(45))
                                     .font(.system(size: 16))
-                                    .foregroundColor(viewModel.isPinned ? RetroTheme.retroBlue : RetroTheme.retroBlue.opacity(0.7))
-                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: viewModel.isPinned ? 3 : 1, x: 0, y: 0)
+                                    .foregroundColor(viewModel.isPinned ? accentColor : accentColor.opacity(0.7))
+                                    .shadow(color: accentColor.opacity(glowOpacity), radius: viewModel.isPinned ? 3 : 1, x: 0, y: 0)
                                     .symbolEffect(.bounce, value: viewModel.isPinned)
                             } else {
                                 Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
                                     .rotationEffect(viewModel.isPinned ? .degrees(0.0) : .degrees(45))
                                     .font(.system(size: 16))
-                                    .foregroundColor(viewModel.isPinned ? RetroTheme.retroBlue : RetroTheme.retroBlue.opacity(0.7))
-                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: viewModel.isPinned ? 3 : 1, x: 0, y: 0)
+                                    .foregroundColor(viewModel.isPinned ? accentColor : accentColor.opacity(0.7))
+                                    .shadow(color: accentColor.opacity(glowOpacity), radius: viewModel.isPinned ? 3 : 1, x: 0, y: 0)
                             }
                         }
 
@@ -420,15 +444,15 @@ public struct SaveStateRowView: View {
                                 Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
                                     .resizable()
                                     .frame(width: 20, height: 18)
-                                    .foregroundColor(viewModel.isFavorite ? RetroTheme.retroPink : RetroTheme.retroPink.opacity(0.7))
-                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: viewModel.isFavorite ? 3 : 1, x: 0, y: 0)
+                                    .foregroundColor(viewModel.isFavorite ? accentColor : accentColor.opacity(0.7))
+                                    .shadow(color: accentColor.opacity(glowOpacity), radius: viewModel.isFavorite ? 3 : 1, x: 0, y: 0)
                                     .symbolEffect(.bounce, value: viewModel.isFavorite)
                             } else {
                                 Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
                                     .resizable()
                                     .frame(width: 20, height: 18)
-                                    .foregroundColor(viewModel.isFavorite ? RetroTheme.retroPink : RetroTheme.retroPink.opacity(0.7))
-                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: viewModel.isFavorite ? 3 : 1, x: 0, y: 0)
+                                    .foregroundColor(viewModel.isFavorite ? accentColor : accentColor.opacity(0.7))
+                                    .shadow(color: accentColor.opacity(glowOpacity), radius: viewModel.isFavorite ? 3 : 1, x: 0, y: 0)
                             }
                         }
                     }

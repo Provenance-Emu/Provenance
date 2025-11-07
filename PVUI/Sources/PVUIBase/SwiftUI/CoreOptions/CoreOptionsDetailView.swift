@@ -29,12 +29,13 @@ public struct CoreOptionsDetailView: View {
     let title: String
     @StateObject private var viewModel = CoreOptionsViewModel()
     @StateObject private var state = CoreOptionsState()
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     // Animation states for retrowave effects
     @State private var isAnimating = false
     @State private var glowOpacity = 0.0
     @State private var scrollOffset: CGFloat = 0
-    
+
     public init(coreClass: CoreOptional.Type, title: String) {
         self.coreClass = coreClass
         self.title = title
@@ -92,31 +93,43 @@ public struct CoreOptionsDetailView: View {
     }
 
     // MARK: - Background View
-    
-    /// RetroWave background with grid
+
+    /// Theme-aware background with grid
     private var backgroundView: some View {
-        RetroTheme.retroBackground
+        ZStack {
+            Color(themeManager.currentPalette.gameLibraryBackground)
+                .edgesIgnoringSafeArea(.all)
+
+            RetroGrid(
+                lineSpacing: 20,
+                lineColor: themeManager.currentPalette.dark
+                    ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.07)
+                    : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.05)
+            )
+            .edgesIgnoringSafeArea(.all)
+            .opacity(themeManager.currentPalette.dark ? 0.3 : 0.2)
+        }
     }
-    
+
     // MARK: - Title View
-    
+
     /// Animated title for the core options
     private var titleView: some View {
         Text(title.uppercased())
             .font(.system(size: 28, weight: .bold, design: .rounded))
-            .foregroundStyle(RetroTheme.retroHorizontalGradient)
+            .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
             .padding(.top, 20)
-            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 10, x: 0, y: 0)
+            .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 10, x: 0, y: 0)
             .onAppear {
                 withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 0.7
+                    glowOpacity = themeManager.currentPalette.dark ? 0.7 : 0.4
                     isAnimating = true
                 }
             }
     }
-    
+
     // MARK: - Options List View
-    
+
     /// The main content view showing the list of options
     private var optionsListView: some View {
         ScrollViewWithOffset(axes: .vertical, offsetChanged: { offset in
@@ -125,17 +138,17 @@ public struct CoreOptionsDetailView: View {
             VStack(spacing: 32) { // Increased spacing between sections
                 // Title
                 titleView
-                
+
                 // Option groups
                 ForEach(groupedOptions) { group in
                     VStack(alignment: .leading, spacing: 16) {
                         // Group title with glow effect
                         Text(group.title)
                             .font(.system(size: 20, weight: .bold, design: .rounded)) // Increased font size
-                            .foregroundColor(RetroTheme.retroBlue)
+                            .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
                             .padding(.horizontal)
-                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.5), radius: 4, x: 0, y: 0) // Apply glow only to section titles
-                        
+                            .shadow(color: (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.5), radius: 4, x: 0, y: 0) // Apply glow only to section titles
+
                         // Options in this group
                         VStack(spacing: 16) { // Increased spacing between options
                             ForEach(group.options) { identifiableOption in
@@ -146,46 +159,58 @@ public struct CoreOptionsDetailView: View {
                         .padding(.vertical, 16) // Increased vertical padding
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.black.opacity(0.6))
+                                .fill(
+                                    (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
+                                        .opacity(themeManager.currentPalette.dark ? 0.6 : 0.9)
+                                )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .strokeBorder(
                                             LinearGradient(
-                                                gradient: Gradient(colors: [RetroTheme.retroPurple.opacity(0.7), RetroTheme.retroBlue.opacity(0.7)]),
+                                                gradient: Gradient(colors: [
+                                                    (themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(themeManager.currentPalette.dark ? 0.7 : 0.5),
+                                                    (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(themeManager.currentPalette.dark ? 0.7 : 0.5)
+                                                ]),
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing
                                             ),
                                             lineWidth: 1.5
                                         )
-                                        .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.3), radius: 6, x: 0, y: 0) // Apply glow only to borders
+                                        .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(glowOpacity * 0.3), radius: 6, x: 0, y: 0) // Apply glow only to borders
                                 )
                         )
                     }
                     .padding(.horizontal, 16) // Increased horizontal padding
                 }
-                
+
                 // Reset button
                 Button(action: {
                     state.showResetConfirmation = true
                 }) {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(.white)
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         Text("RESET ALL OPTIONS")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     }
                     .padding(.vertical, 12)
                     .padding(.horizontal, 30)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.7))
+                            .fill(
+                                (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
+                                    .opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
+                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
                                     .strokeBorder(
                                         LinearGradient(
-                                            gradient: Gradient(colors: [Color.red.opacity(0.7), RetroTheme.retroPink]),
+                                            gradient: Gradient(colors: [
+                                                Color.red.opacity(themeManager.currentPalette.dark ? 0.7 : 0.5),
+                                                themeManager.currentPalette.defaultTintColor.swiftUIColor
+                                            ]),
                                             startPoint: .leading,
                                             endPoint: .trailing
                                         ),
@@ -193,7 +218,7 @@ public struct CoreOptionsDetailView: View {
                                     )
                             )
                     )
-                    .shadow(color: RetroTheme.retroPink.opacity(0.3), radius: 5)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 5)
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.vertical, 20)
@@ -202,18 +227,17 @@ public struct CoreOptionsDetailView: View {
             .padding(.bottom, 30)
         }
     }
-    
+
     // MARK: - Main View
-    
+
     public var body: some View {
         ZStack {
             // Background
             backgroundView
-            
+
             // Content
             optionsListView
         }
-        .preferredColorScheme(.dark) // Force dark mode for retrowave aesthetic
         .navigationTitle(title)
         .onAppear {
             loadOptionValues()
@@ -314,21 +338,21 @@ public struct CoreOptionsDetailView: View {
                 // Title and description with consistent width
                 VStack(alignment: .leading, spacing: 4) {
                     Text(display.title)
-                        .foregroundColor(.white)
+                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         .font(.system(size: 16, weight: .medium))
                         .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                    
+
                     if let description = display.description {
                         Text(description)
                             .font(.caption)
-                            .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                            .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
                             .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
                     }
                 }
                 .frame(minWidth: 150, maxWidth: .infinity, alignment: .leading) // Use flexible width with minimum
-                
+
                 Spacer()
-                
+
                 // Use ThemedToggle component
                 ThemedToggle(isOn: Binding(
                     get: { state.optionValues[option.key] as? Bool ?? defaultValue },
@@ -336,13 +360,13 @@ public struct CoreOptionsDetailView: View {
                 )) {
                     EmptyView()
                 }
-                
+
                 #if !os(tvOS)
                 Button(action: {
                     resetOption(option)
                 }) {
                     Image(systemName: "arrow.counterclockwise")
-                        .foregroundColor(RetroTheme.retroPink)
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                         .font(.system(size: 14))
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -377,28 +401,28 @@ public struct CoreOptionsDetailView: View {
                         // Title and description with consistent width
                         VStack(alignment: .leading, spacing: 4) {
                             Text(display.title)
-                                .foregroundColor(.white)
+                                .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                                 .font(.system(size: 16, weight: .medium))
                                 .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                            
+
                             if let description = display.description {
                                 Text(description)
                                     .font(.caption)
-                                    .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                                    .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
                                     .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
                             }
-                            
+
                             Text(values.first { $0.value == selection.wrappedValue }?.title ?? "")
-                                .foregroundColor(RetroTheme.retroPurple)
+                                .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                                 .font(.system(size: 14))
                                 .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
                         }
                         .frame(minWidth: 120, alignment: .leading) // Ensure consistent minimum width
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: "chevron.right")
-                            .foregroundColor(RetroTheme.retroPink)
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                             .font(.system(size: 14, weight: .bold))
                     }
                     .padding(.vertical, 4)
@@ -410,7 +434,7 @@ public struct CoreOptionsDetailView: View {
                     resetOption(option)
                 }) {
                     Image(systemName: "arrow.counterclockwise")
-                        .foregroundColor(RetroTheme.retroPink)
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                         .font(.system(size: 14))
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -425,31 +449,31 @@ public struct CoreOptionsDetailView: View {
                     // Title and description with consistent width
                     VStack(alignment: .leading, spacing: 4) {
                         Text(display.title)
-                            .foregroundColor(.white)
+                            .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                             .font(.system(size: 16, weight: .medium))
                             .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                        
+
                         if let description = display.description {
                             Text(description)
                                 .font(.caption)
-                                .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                                .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
                                 .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
                         }
                     }
                     .frame(minWidth: 180, alignment: .leading) // Ensure consistent minimum width
-                    
+
                     Spacer()
-                    
+
                     Text("\(state.optionValues[option.key] as? Int ?? defaultValue)")
                         .font(.headline)
-                        .foregroundColor(RetroTheme.retroPink)
-                    
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+
                     #if !os(tvOS)
                     Button(action: {
                         resetOption(option)
                     }) {
                         Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(RetroTheme.retroPink)
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                             .font(.system(size: 14))
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -467,18 +491,18 @@ public struct CoreOptionsDetailView: View {
                     in: Double(range.min)...Double(range.max),
                     step: 1.0
                 )
-                
+
                 // Min and max labels
                 HStack {
                     Text("\(range.min)")
                         .font(.caption)
-                        .foregroundColor(RetroTheme.retroBlue)
-                    
+                        .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
+
                     Spacer()
-                    
+
                     Text("\(range.max)")
                         .font(.caption)
-                        .foregroundColor(RetroTheme.retroBlue)
+                        .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
                 }
                 #endif
             }
@@ -490,31 +514,31 @@ public struct CoreOptionsDetailView: View {
                     // Title and description with consistent width
                     VStack(alignment: .leading, spacing: 4) {
                         Text(display.title)
-                            .foregroundColor(.white)
+                            .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                             .font(.system(size: 16, weight: .medium))
                             .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                        
+
                         if let description = display.description {
                             Text(description)
                                 .font(.caption)
-                                .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
+                                .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
                                 .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
                         }
                     }
                     .frame(minWidth: 120, alignment: .leading) // Ensure consistent minimum width
-                    
+
                     Spacer()
-                    
+
                     Text(String(format: "%.1f", state.optionValues[option.key] as? Float ?? defaultValue))
                         .font(.headline)
-                        .foregroundColor(RetroTheme.retroPink)
-                    
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+
                     #if !os(tvOS)
                     Button(action: {
                         resetOption(option)
                     }) {
                         Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(RetroTheme.retroPink)
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                             .font(.system(size: 14))
                     }
                     .buttonStyle(PlainButtonStyle())
@@ -532,18 +556,18 @@ public struct CoreOptionsDetailView: View {
                     in: Double(range.min)...Double(range.max),
                     step: 0.1
                 )
-                
+
                 // Min and max labels
                 HStack {
                     Text(String(format: "%.1f", range.min))
                         .font(.caption)
-                        .foregroundColor(RetroTheme.retroBlue)
-                    
+                        .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
+
                     Spacer()
-                    
+
                     Text(String(format: "%.1f", range.max))
                         .font(.caption)
-                        .foregroundColor(RetroTheme.retroBlue)
+                        .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
                 }
                 #endif
             }
@@ -570,13 +594,14 @@ public struct CoreOptionsDetailView: View {
                 } label: {
                     VStack(alignment: .leading) {
                         Text(display.title)
+                            .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         if let description = display.description {
                             Text(description)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
                         }
                         Text(selection.wrappedValue)
-                            .foregroundColor(.secondary)
+                            .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
                     }
                 }
 
@@ -587,7 +612,7 @@ public struct CoreOptionsDetailView: View {
                     resetOption(option)
                 }) {
                     Image(systemName: "arrow.counterclockwise")
-                        .foregroundColor(.blue)
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                 }
                 .buttonStyle(.borderless)
                 #endif
@@ -598,10 +623,11 @@ public struct CoreOptionsDetailView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(display.title)
+                            .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                         if let description = display.description {
                             Text(description)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
                         }
                     }
 
@@ -612,7 +638,7 @@ public struct CoreOptionsDetailView: View {
                         resetOption(option)
                     }) {
                         Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(.blue)
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                     }
                     .buttonStyle(.borderless)
                     #endif

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVLibrary
+import PVThemes
 #if canImport(SafariServices)
 import SafariServices
 #endif
@@ -330,6 +331,7 @@ class GameMoreInfoViewModel: ObservableObject {
 // MARK: - Game Info View
 struct GameMoreInfoView: View {
     @ObservedObject var viewModel: GameMoreInfoViewModel
+    @ObservedObject private var themeManager = ThemeManager.shared
     @Environment(\.dismiss) private var dismiss
     /// Tracks if the rating has been modified but not saved
     @State private var hasUnsavedRating: Bool = false
@@ -364,14 +366,59 @@ struct GameMoreInfoView: View {
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
 
+    /// Theme-aware color helpers
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var cellBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.7)
+            : Color.white.opacity(0.9)
+    }
+
+    private var sectionBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.6 : 0.8)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.6)
+            : Color.white.opacity(0.8)
+    }
+
+    private func accentGradient(_ colors: [Color]? = nil) -> LinearGradient {
+        let gradientColors = colors ?? [
+            accentColor,
+            accentColor.opacity(0.7),
+            accentColor.opacity(0.5)
+        ]
+        return LinearGradient(
+            gradient: Gradient(colors: gradientColors),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
     var body: some View {
         ZStack {
-            // RetroWave background
-            RetroTheme.retroBackground
+            // Theme-aware background
+            RetroTheme.RetroBackgroundView()
+                .environmentObject(themeManager)
 
-            // Grid overlay
-            RetroGrid()
-                .opacity(0.3)
+            // Grid overlay with theme-aware colors
+            RetroGrid(
+                lineColor: themeManager.currentPalette.dark
+                    ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.1)
+                    : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.05)
+            )
+            .opacity(0.3)
 
             ScrollView {
                 VStack(spacing: 24) {
@@ -461,13 +508,13 @@ struct GameMoreInfoView: View {
     /// Game information section component
     private var gameInfoSection: some View {
         VStack(spacing: 16) {
-            // Add instruction text at the top with retrowave styling
+            // Add instruction text at the top with theme-aware styling
             Text("TAP ANY FIELD WITH A PENCIL ICON TO EDIT")
                 .font(.system(size: 12, weight: .bold))
-                .foregroundColor(RetroTheme.retroBlue)
+                .foregroundColor(accentColor)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 8)
-                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
 
             // Game info rows
             LabelRowView(
@@ -475,42 +522,30 @@ struct GameMoreInfoView: View {
                 value: viewModel.name,
                 onLongPress: { editField(.name, initialValue: viewModel.name) },
                 isEditable: true,
-                labelColor: RetroTheme.retroPink,
-                valueColor: .white,
-                backgroundColor: Color.black.opacity(0.7),
-                borderGradient: LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                labelColor: accentColor,
+                valueColor: primaryTextColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
             )
 
             LabelRowView(
                 label: "FILENAME",
                 value: viewModel.filename,
                 isEditable: false,
-                labelColor: RetroTheme.retroBlue,
-                valueColor: .white,
-                backgroundColor: Color.black.opacity(0.7),
-                borderGradient: LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroDarkBlue]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                labelColor: accentColor,
+                valueColor: primaryTextColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
             )
 
             LabelRowView(
                 label: "SYSTEM",
                 value: viewModel.system,
                 isEditable: false,
-                labelColor: RetroTheme.retroPurple,
-                valueColor: .white,
-                backgroundColor: Color.black.opacity(0.7),
-                borderGradient: LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                labelColor: accentColor,
+                valueColor: primaryTextColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
             )
 
             LabelRowView(
@@ -518,14 +553,10 @@ struct GameMoreInfoView: View {
                 value: viewModel.developer,
                 onLongPress: { editField(.developer, initialValue: viewModel.developer) },
                 isEditable: true,
-                labelColor: RetroTheme.retroPink,
-                valueColor: .white,
-                backgroundColor: Color.black.opacity(0.7),
-                borderGradient: LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                labelColor: accentColor,
+                valueColor: primaryTextColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
             )
 
             LabelRowView(
@@ -533,14 +564,10 @@ struct GameMoreInfoView: View {
                 value: viewModel.publishDate,
                 onLongPress: { editField(.publishDate, initialValue: viewModel.publishDate) },
                 isEditable: true,
-                labelColor: RetroTheme.retroBlue,
-                valueColor: .white,
-                backgroundColor: Color.black.opacity(0.7),
-                borderGradient: LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                labelColor: accentColor,
+                valueColor: primaryTextColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
             )
 
             LabelRowView(
@@ -548,14 +575,10 @@ struct GameMoreInfoView: View {
                 value: viewModel.genres,
                 onLongPress: { editField(.genres, initialValue: viewModel.genres) },
                 isEditable: true,
-                labelColor: RetroTheme.retroPurple,
-                valueColor: .white,
-                backgroundColor: Color.black.opacity(0.7),
-                borderGradient: LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                labelColor: accentColor,
+                valueColor: primaryTextColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
             )
 
             LabelRowView(
@@ -564,14 +587,10 @@ struct GameMoreInfoView: View {
                 onLongPress: {
                     editField(.region, initialValue: viewModel.region)
                 },
-                labelColor: RetroTheme.retroPink,
-                valueColor: .white,
-                backgroundColor: Color.black.opacity(0.7),
-                borderGradient: LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                labelColor: accentColor,
+                valueColor: primaryTextColor,
+                backgroundColor: cellBackgroundColor,
+                borderGradient: accentGradient()
             )
 
             if let timeSpent = viewModel.timeSpent {
@@ -579,14 +598,10 @@ struct GameMoreInfoView: View {
                     label: "TIME SPENT",
                     value: formatPlayTime(timeSpent),
                     isEditable: false,
-                    labelColor: RetroTheme.retroBlue,
-                    valueColor: .white,
-                    backgroundColor: Color.black.opacity(0.7),
-                    borderGradient: LinearGradient(
-                        gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
+                    labelColor: accentColor,
+                    valueColor: primaryTextColor,
+                    backgroundColor: cellBackgroundColor,
+                    borderGradient: accentGradient()
                 )
             }
 
@@ -600,15 +615,15 @@ struct GameMoreInfoView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.6))
+                .fill(sectionBackgroundColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroBlue]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
+                            accentGradient([
+                                accentColor,
+                                accentColor.opacity(0.7),
+                                accentColor.opacity(0.5)
+                            ]),
                             lineWidth: 1.5
                         )
                         .blur(radius: 1)
@@ -622,8 +637,8 @@ struct GameMoreInfoView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("RATING")
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(RetroTheme.retroPurple)
-                .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                .foregroundColor(accentColor)
+                .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
 
             HStack {
                 StarRatingView(
@@ -638,7 +653,7 @@ struct GameMoreInfoView: View {
 #endif
                         viewModel.rating = newRating
                     },
-                    color: RetroTheme.retroPink
+                    color: accentColor
                 )
 
                 Spacer()
@@ -672,12 +687,12 @@ struct GameMoreInfoView: View {
                     }) {
                         Text("Save")
                             .bold()
-                            .foregroundColor(RetroTheme.retroPink)
+                            .foregroundColor(accentColor)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
+                                    .stroke(accentColor.opacity(0.7), lineWidth: 1)
                             )
                     }
                 }
@@ -687,25 +702,21 @@ struct GameMoreInfoView: View {
         .padding(.vertical, 4)
     }
 
-    /// Reset stats button with retrowave styling
+    /// Reset stats button with theme-aware styling
     private var resetStatsButton: some View {
         Button(action: {
             viewModel.resetStats()
         }) {
             Text("RESET STATS")
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(RetroTheme.retroPink)
+                .foregroundColor(accentColor)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(LinearGradient(
-                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ), lineWidth: 1.5)
+                        .stroke(accentGradient(), lineWidth: 1.5)
                 )
-                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+                .shadow(color: accentColor.opacity(glowOpacity), radius: 5, x: 0, y: 0)
         }
         .padding(.top)
     }
@@ -715,13 +726,13 @@ struct GameMoreInfoView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("DESCRIPTION")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(RetroTheme.retroPurple)
-                .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                .foregroundColor(accentColor)
+                .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
 
             ScrollView {
                 Text(description)
                     .font(.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(primaryTextColor)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(maxHeight: 200)
@@ -729,15 +740,14 @@ struct GameMoreInfoView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.6))
+                .fill(sectionBackgroundColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
+                            accentGradient([
+                                accentColor,
+                                accentColor.opacity(0.7)
+                            ]),
                             lineWidth: 1.5
                         )
                         .blur(radius: 1)
@@ -760,22 +770,21 @@ struct GameMoreInfoView: View {
                 label: {
                     Text("DEBUG INFORMATION")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                        .foregroundColor(accentColor)
+                        .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 }
             )
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.7))
+                    .fill(sectionBackgroundColor)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroDarkBlue]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
+                                accentGradient([
+                                    accentColor,
+                                    accentColor.opacity(0.6)
+                                ]),
                                 lineWidth: 1.5
                             )
                     )
@@ -882,6 +891,7 @@ private struct LazyView<Content: View>: View {
 // MARK: - Paged Game Info View
 public struct PagedGameMoreInfoView: View {
     @StateObject var viewModel: PagedGameMoreInfoViewModel
+    @ObservedObject private var themeManager = ThemeManager.shared
     @Environment(\.dismiss) private var dismiss
 
     /// State for handling image picker and artwork search
@@ -895,6 +905,23 @@ public struct PagedGameMoreInfoView: View {
 
     /// Reference to the coordinator
     @State private var coordinatorRef: Coordinator?
+
+    /// Theme-aware accent color
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    /// Theme-aware accent gradient
+    private func accentGradient() -> LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                accentColor,
+                accentColor.opacity(0.7)
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
 
     public init(viewModel: PagedGameMoreInfoViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -1085,17 +1112,13 @@ public struct PagedGameMoreInfoView: View {
             } label: {
                 Image(systemName: "book")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(RetroTheme.retroPink)
+                    .foregroundColor(accentColor)
                     .padding(8)
                     .background(
                         Circle()
-                            .stroke(LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ), lineWidth: 1.5)
+                            .stroke(accentGradient(), lineWidth: 1.5)
                     )
-                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 3, x: 0, y: 0)
+                    .shadow(color: accentColor.opacity(0.7), radius: 3, x: 0, y: 0)
             }
             .sheet(isPresented: $viewModel.showingWebView) {
                 GameReferenceWebView(url: url)
@@ -1122,17 +1145,13 @@ public struct PagedGameMoreInfoView: View {
             } label: {
                 Image(systemName: "play.fill")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(RetroTheme.retroBlue)
+                    .foregroundColor(accentColor)
                     .padding(8)
                     .background(
                         Circle()
-                            .stroke(LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ), lineWidth: 1.5)
+                            .stroke(accentGradient(), lineWidth: 1.5)
                     )
-                    .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
+                    .shadow(color: accentColor.opacity(0.7), radius: 3, x: 0, y: 0)
             }
         } else {
             EmptyView()
@@ -1218,18 +1237,14 @@ public struct PagedGameMoreInfoView: View {
                 }) {
                     Text("DONE")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(RetroTheme.retroPurple)
+                        .foregroundColor(accentColor)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ), lineWidth: 1.5)
+                                .stroke(accentGradient(), lineWidth: 1.5)
                         )
-                        .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
+                        .shadow(color: accentColor.opacity(0.7), radius: 3, x: 0, y: 0)
                 }
             }
 

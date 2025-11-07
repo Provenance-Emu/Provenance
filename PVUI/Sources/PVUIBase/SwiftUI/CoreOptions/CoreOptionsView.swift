@@ -19,6 +19,7 @@ import PVThemes
 /// Options are automatically persisted between app launches, and can be reset to their
 /// default values either individually or all at once.
 public struct CoreOptionsView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     /// Initialize a new CoreOptionsView
     public init() {}
@@ -26,18 +27,23 @@ public struct CoreOptionsView: View {
     /// The body of the view
     public var body: some View {
         ZStack {
-            // RetroWave background with grid
-            RetroTheme.retroBlack.edgesIgnoringSafeArea(.all)
-            
-            // Grid overlay with retrowave styling
-            RetroGrid(lineSpacing: 20, lineColor: .white.opacity(0.07))
+            /// Theme-aware background
+            Color(themeManager.currentPalette.gameLibraryBackground)
                 .edgesIgnoringSafeArea(.all)
-                .opacity(0.3)
-            
-            // Core options list with RetroWave styling
+
+            /// Grid overlay with theme-appropriate styling
+            RetroGrid(
+                lineSpacing: 20,
+                lineColor: themeManager.currentPalette.dark
+                    ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.07)
+                    : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.05)
+            )
+            .edgesIgnoringSafeArea(.all)
+            .opacity(themeManager.currentPalette.dark ? 0.3 : 0.2)
+
+            /// Core options list with theme-aware styling
             CoreOptionsListView()
         }
-        .preferredColorScheme(.dark) // Force dark mode for retrowave aesthetic
         .navigationTitle("Core Options")
     }
 }

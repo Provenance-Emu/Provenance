@@ -17,13 +17,13 @@ public  struct SystemDisplayData: Identifiable {
     public let name: String
     /// The icon name of the system
     public let iconName: String
-    
+
     public init(system: PVSystem) {
         self.id = system.identifier
         self.name = system.shortName
         self.iconName = system.iconName
     }
-    
+
     public init(id: String, name: String, iconName: String) {
         self.id = id
         self.name = name
@@ -109,43 +109,48 @@ public struct CoreListItem: Identifiable {
 public struct RetroWaveCoreListItemView: View {
     let item: CoreListItem
     @State private var isExpanded = false
-    
+
     // Calculate the number of columns based on screen width
     private var columns: [GridItem] {
         let screenWidth = UIScreen.main.bounds.width
         let itemWidth: CGFloat = 70 // Width of each system icon + name
         let maxColumns = Int(screenWidth / itemWidth) - 1 // Leave space for padding
         let numColumns = min(4, maxColumns) // Cap at 4 columns max
-        
+
         return Array(repeating: GridItem(.flexible(), spacing: 8), count: numColumns)
     }
-    
+
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Core name and option count with glow effect
             HStack {
                 Text(item.name)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.white)
-                    .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 2, x: 0, y: 0)
-                
+                    .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.5), radius: 2, x: 0, y: 0)
+
                 Spacer()
-                
+
                 Text("\(item.optionCount) options")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(RetroTheme.retroBlue)
+                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(
                         Capsule()
-                            .fill(Color.black.opacity(0.6))
+                            .fill(
+                                (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
+                                    .opacity(themeManager.currentPalette.dark ? 0.6 : 0.9)
+                            )
                             .overlay(
                                 Capsule()
-                                    .strokeBorder(RetroTheme.retroBlue.opacity(0.7), lineWidth: 1)
+                                    .strokeBorder((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(themeManager.currentPalette.dark ? 0.7 : 0.5), lineWidth: 1)
                             )
                     )
             }
-            
+
             // Systems supported
             if !item.systems.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
@@ -153,10 +158,10 @@ public struct RetroWaveCoreListItemView: View {
                     HStack {
                         Text("Supported Systems:")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(RetroTheme.retroPurple)
-                        
+                            .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+
                         Spacer()
-                        
+
                         if item.systems.count > 4 {
                             Button(action: {
                                 withAnimation(.spring()) {
@@ -166,20 +171,20 @@ public struct RetroWaveCoreListItemView: View {
                                 HStack(spacing: 4) {
                                     Text(isExpanded ? "Collapse" : "Show All")
                                         .font(.system(size: 12))
-                                        .foregroundColor(RetroTheme.retroPink)
-                                    
+                                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+
                                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                                         .font(.system(size: 10))
-                                        .foregroundColor(RetroTheme.retroPink)
+                                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                                 }
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    
+
                     // System icons in a grid layout
                     let displaySystems = isExpanded ? item.systems : Array(item.systems.prefix(min(8, item.systems.count)))
-                    
+
                     LazyVGrid(columns: columns, spacing: 12) {
                         ForEach(displaySystems) { system in
                             VStack(spacing: 4) {
@@ -188,12 +193,12 @@ public struct RetroWaveCoreListItemView: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 36, height: 36)
-                                    .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 4)
-                                
+                                    .shadow(color: (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.5), radius: 4)
+
                                 // System name with truncation
                                 Text(system.name)
                                     .font(.system(size: 10))
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .foregroundColor((themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor).opacity(0.8))
                                     .lineLimit(1)
                                     .truncationMode(.tail)
                                     .frame(width: 60)
@@ -201,12 +206,12 @@ public struct RetroWaveCoreListItemView: View {
                             }
                         }
                     }
-                    
+
                     // Show count of additional systems if not expanded
                     if !isExpanded && item.systems.count > 8 {
                         Text("+ \(item.systems.count - 8) more systems")
                             .font(.system(size: 12))
-                            .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
+                            .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
                             .padding(.top, 4)
                     }
                 }
@@ -216,12 +221,18 @@ public struct RetroWaveCoreListItemView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.6))
+                .fill(
+                    (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
+                        .opacity(themeManager.currentPalette.dark ? 0.6 : 0.9)
+                )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
                             LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                                gradient: Gradient(colors: [
+                                    themeManager.currentPalette.defaultTintColor.swiftUIColor,
+                                    (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                                ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
@@ -229,7 +240,7 @@ public struct RetroWaveCoreListItemView: View {
                         )
                 )
         )
-        .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 8)
+        .shadow(color: (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.3), radius: 8)
     }
 }
 
@@ -239,25 +250,26 @@ public struct RetroWaveCoreListItemView: View {
 struct RetroWaveCoreSearchBar: View {
     @Binding var text: String
     @Binding var isSearching: Bool
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         HStack {
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(text.isEmpty ? .gray : RetroTheme.retroPink)
-                
+                    .foregroundColor(text.isEmpty ? .gray : themeManager.currentPalette.defaultTintColor.swiftUIColor)
+
                 TextField("Search cores", text: $text)
-                    .foregroundColor(.white)
+                    .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .onTapGesture {
                         isSearching = true
                     }
-                
+
                 if !text.isEmpty {
                     Button(action: {
                         text = ""
                     }) {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(RetroTheme.retroPink)
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -265,13 +277,16 @@ struct RetroWaveCoreSearchBar: View {
             .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.black.opacity(0.8))
+                    .fill(
+                        (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
+                            .opacity(themeManager.currentPalette.dark ? 0.8 : 0.9)
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(RetroTheme.retroBlue.opacity(0.7), lineWidth: 1)
+                            .strokeBorder((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(themeManager.currentPalette.dark ? 0.7 : 0.5), lineWidth: 1)
                     )
             )
-            
+
             if isSearching {
                 Button(action: {
                     text = ""
@@ -279,7 +294,7 @@ struct RetroWaveCoreSearchBar: View {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }) {
                     Text("Cancel")
-                        .foregroundColor(RetroTheme.retroPink)
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                 }
                 .buttonStyle(PlainButtonStyle())
                 .transition(.move(edge: .trailing))
@@ -298,31 +313,35 @@ struct RetroWaveCoreHeaderView: View {
     @Binding var searchText: String
     @Binding var isSearching: Bool
     let hasAppeared: Bool
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         VStack(spacing: 8) {
             // RetroArch note
             VStack(alignment: .leading, spacing: 4) {
                 Text("Note about RetroArch Cores")
                     .font(.headline)
-                    .foregroundColor(RetroTheme.retroPink)
-                
+                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+
                 Text("RetroArch cores may show additional options in the in-game core options menu that aren't available here due to RetroArch limitations.")
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor((themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor).opacity(0.8))
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.black.opacity(0.7))
+                    .fill(
+                        (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
+                            .opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(RetroTheme.retroBlue.opacity(0.5), lineWidth: 1)
+                            .strokeBorder((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(themeManager.currentPalette.dark ? 0.5 : 0.3), lineWidth: 1)
                     )
             )
             .padding(.horizontal)
-            
+
             // Search bar
             if hasAppeared {
                 RetroWaveCoreSearchBar(text: $searchText, isSearching: $isSearching)
@@ -332,7 +351,10 @@ struct RetroWaveCoreHeaderView: View {
         .padding(.top, 8)
         .frame(height: isVisible ? height : 0)
         .opacity(isVisible ? 1 : 0)
-        .background(Color.black.opacity(0.5))
+        .background(
+            (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
+                .opacity(themeManager.currentPalette.dark ? 0.5 : 0.7)
+        )
     }
 }
 
@@ -366,7 +388,7 @@ struct CoreOptionsListView: View {
     private let collapsedHeaderHeight: CGFloat = 0
 
     // MARK: - Content Views
-    
+
     /// The main content view showing the list of cores
     private var contentView: some View {
         ScrollViewWithOffset(
@@ -399,10 +421,10 @@ struct CoreOptionsListView: View {
                     // Title with glow effect
                     Text("CORE OPTIONS")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                         .padding(.top, 20)
-                        .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 10)
-                    
+                        .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.5), radius: 10)
+
                     // Core list items
                     ForEach(filteredCoreItems) { item in
                         NavigationLink {
@@ -421,7 +443,7 @@ struct CoreOptionsListView: View {
         }
         .id("coreOptionsScrollView") // Add stable ID to ScrollView
     }
-    
+
     /// The header view with RetroArch note and search bar
     private var headerView: some View {
         RetroWaveCoreHeaderView(
@@ -432,13 +454,13 @@ struct CoreOptionsListView: View {
             hasAppeared: hasAppeared
         )
     }
-    
+
     /// The body of the view
     var body: some View {
         ZStack(alignment: .top) {
             // Main content
             contentView
-            
+
             // Header
             headerView
             .animation(.easeInOut(duration: 0.3), value: isHeaderVisible)

@@ -19,13 +19,13 @@ extension Publishers {
     where A.Failure == B.Failure, B.Failure == C.Failure, C.Failure == D.Failure, D.Failure == E.Failure {
         typealias Output = (A.Output, B.Output, C.Output, D.Output, E.Output)
         typealias Failure = A.Failure
-        
+
         private let a: A
         private let b: B
         private let c: C
         private let d: D
         private let e: E
-        
+
         init(_ a: A, _ b: B, _ c: C, _ d: D, _ e: E) {
             self.a = a
             self.b = b
@@ -33,7 +33,7 @@ extension Publishers {
             self.d = d
             self.e = e
         }
-        
+
         func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
             Publishers.CombineLatest(
                 Publishers.CombineLatest4(a, b, c, d),
@@ -64,30 +64,30 @@ public class ContinuesMagementViewModel: ObservableObject {
     /// Controls view model
     @Published var controlsViewModel: ContinuesManagementListControlsViewModel
     @Published private(set) var saveStates: [SaveStateRowViewModel] = []
-    
+
     /// Game image that can be updated
     @Published public var gameUIImage: UIImage? {
         didSet {
             headerViewModel.gameUIImage = gameUIImage
         }
     }
-    
+
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
-    
+
     private let driver: any SaveStateDriver
     private var cancellables = Set<AnyCancellable>()
-    
+
     /// Search text for filtering saves
     @Published var searchText: String = ""
-    
+
     /// Computed property for filtered and sorted states
     @Published private(set) var filteredAndSortedSaveStates: [SaveStateRowViewModel] = [] {
         didSet {
             headerViewModel.numberOfSaves = filteredAndSortedSaveStates.count
         }
     }
-    
+
     private func setupObservers() {
         /// Observe editing state changes
         controlsViewModel.$isEditing
@@ -99,7 +99,7 @@ public class ContinuesMagementViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-        
+
         // Set up the driver's save states publisher
         driver.saveStatesPublisher
             .receive(on: DispatchQueue.main)
@@ -125,7 +125,7 @@ public class ContinuesMagementViewModel: ObservableObject {
                 self.refilterStates()
             }
             .store(in: &cancellables)
-        
+
         /// Create a publisher that combines all filter criteria
 #if !os(tvOS)
         let filterPublisher = Publishers.CombineLatest5(
@@ -143,7 +143,7 @@ public class ContinuesMagementViewModel: ObservableObject {
             $searchText
         )
 #endif
-        
+
         /// Combine save states with filter criteria
         Publishers.CombineLatest(
             $saveStates,
@@ -153,7 +153,7 @@ public class ContinuesMagementViewModel: ObservableObject {
         .map { [weak self] states, filterCriteria in
             let (favoritesOnly, autoSavesEnabled, dateRange, sortAscending, searchText) = filterCriteria
             var filtered = states
-            
+
             // Apply search filter
             if !searchText.isEmpty {
                 filtered = filtered.filter {
@@ -161,7 +161,7 @@ public class ContinuesMagementViewModel: ObservableObject {
                     return description.localizedCaseInsensitiveContains(searchText)
                 }
             }
-            
+
             // Apply other filters
             return self?.applyFilters(
                 to: filtered,
@@ -175,7 +175,7 @@ public class ContinuesMagementViewModel: ObservableObject {
         .map { [weak self] states, filterCriteria in
             let (favoritesOnly, autoSavesEnabled, sortAscending, searchText) = filterCriteria
             var filtered = states
-            
+
             // Apply search filter
             if !searchText.isEmpty {
                 filtered = filtered.filter {
@@ -183,7 +183,7 @@ public class ContinuesMagementViewModel: ObservableObject {
                     return description.localizedCaseInsensitiveContains(searchText)
                 }
             }
-            
+
             // Apply other filters
             return self?.applyFilters(
                 to: filtered,
@@ -195,7 +195,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 #endif
         .receive(on: DispatchQueue.main)
         .assign(to: &$filteredAndSortedSaveStates)
-        
+
         // Observe save states size
         driver.savesSizePublisher
             .receive(on: DispatchQueue.main)
@@ -203,14 +203,14 @@ public class ContinuesMagementViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .assign(to: \.savesTotalSize, on: headerViewModel)
             .store(in: &cancellables)
-        
+
         // Observe number of saves
         driver.numberOfSavesPublisher
             .receive(on: DispatchQueue.main)
             .assign(to: \.numberOfSaves, on: headerViewModel)
             .store(in: &cancellables)
     }
-    
+
 #if !os(tvOS)
     private func applyFilters(
         to states: [SaveStateRowViewModel],
@@ -227,13 +227,13 @@ public class ContinuesMagementViewModel: ObservableObject {
                     let isBeforeEnd = dateRange.end.map { state.saveDate <= $0 } ?? true
                     if !isAfterStart || !isBeforeEnd { return false }
                 }
-                
+
                 /// Apply favorites filter
                 if favoritesOnly && !state.isFavorite { return false }
-                
+
                 /// Apply auto-save filter
                 if !autoSavesEnabled && state.isAutoSave { return false }
-                
+
                 return true
             }
             .sorted { first, second in
@@ -256,10 +256,10 @@ public class ContinuesMagementViewModel: ObservableObject {
             .filter { state in
                 /// Apply favorites filter
                 if favoritesOnly && !state.isFavorite { return false }
-                
+
                 /// Apply auto-save filter
                 if !autoSavesEnabled && state.isAutoSave { return false }
-                
+
                 return true
             }
             .sorted { first, second in
@@ -282,7 +282,7 @@ public class ContinuesMagementViewModel: ObservableObject {
                 //                self?.refilterStates()
             }
             .store(in: &cancellables)
-        
+
         /// Observe favorite changes
         viewModel.$isFavorite
             .dropFirst()
@@ -292,7 +292,7 @@ public class ContinuesMagementViewModel: ObservableObject {
                 //                self?.refilterStates()
             }
             .store(in: &cancellables)
-        
+
         /// Observe description changes
         viewModel.$description
             .dropFirst()
@@ -302,17 +302,17 @@ public class ContinuesMagementViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     @MainActor
     private func refilterStates() {
         objectWillChange.send()
         let states = saveStates
         saveStates = states // Trigger filter update
     }
-    
+
     /// Optional callback when a save state is selected to be loaded
     var onLoadSave: ((String) -> Void)?
-    
+
     public init(
         driver: any SaveStateDriver,
         gameTitle: String,
@@ -324,7 +324,7 @@ public class ContinuesMagementViewModel: ObservableObject {
         self.driver = driver
         self.gameUIImage = gameUIImage
         self.onLoadSave = onLoadSave
-        
+
         // Initialize header with initial values
         self.headerViewModel = ContinuesManagementHeaderViewModel(
             gameTitle: gameTitle,
@@ -333,10 +333,10 @@ public class ContinuesMagementViewModel: ObservableObject {
             savesTotalSize: 0, // Will be updated by publisher
             gameUIImage: gameUIImage
         )
-        
+
         self.controlsViewModel = ContinuesManagementListControlsViewModel()
-        
-        
+
+
         self.controlsViewModel = ContinuesManagementListControlsViewModel(
             onDeleteSelected: { [weak self] in
                 self?.deleteSelectedSaveStates()
@@ -348,51 +348,51 @@ public class ContinuesMagementViewModel: ObservableObject {
                 self?.clearAllSelections()
             }
         )
-        
+
         setupObservers()
     }
-    
+
     /// Select all save states
     private func selectAllSaveStates() {
         saveStates.forEach { $0.isSelected = true }
     }
-    
+
     /// Clear all selections
     private func clearAllSelections() {
         saveStates.forEach { $0.isSelected = false }
     }
-    
+
     /// Select a save state
     private func selectSaveState(id: String) {
         if let index = saveStates.firstIndex(where: { $0.id == id }) {
             saveStates[index].isSelected = true
         }
     }
-    
+
     /// Deselect a save state
     private func deselectSaveState(id: String) {
         if let index = saveStates.firstIndex(where: { $0.id == id }) {
             saveStates[index].isSelected = false
         }
     }
-    
+
     /// Delete a single save state
     private func deleteSaveState(_ saveState: SaveStateRowViewModel) {
         driver.delete(saveStates: [saveState])
     }
-    
+
     /// Delete selected save states
     private func deleteSelectedSaveStates() {
         let selectedStates = saveStates.filter { $0.isSelected }
         driver.delete(saveStates: selectedStates)
     }
-    
+
     /// Update a save state with new values
     public func updateSaveState(_ saveState: SaveStateRowViewModel) {
         /// Forward the update to the driver
         driver.update(saveState: saveState)
     }
-    
+
     /// Subscribe to driver's save states publisher
     func subscribeToDriverPublisher() {
         // This method is now deprecated as its functionality has been moved to setupObservers
@@ -403,7 +403,7 @@ public class ContinuesMagementViewModel: ObservableObject {
 // Add an EditField enum similar to GameMoreInfoView
 public enum SaveStateEditField: Identifiable {
     case description
-    
+
     public var id: String {
         switch self {
         case .description:
@@ -415,49 +415,85 @@ public enum SaveStateEditField: Identifiable {
 public struct ContinuesManagementView: View {
     /// Main view model
     @StateObject private var viewModel: ContinuesMagementViewModel
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     /// State for editing fields
     @State private var editingField: SaveStateEditField?
     @State private var editText: String = ""
     @State private var editingSaveState: SaveStateRowViewModel?
-    
+
+    /// Theme-aware color helpers
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var headerBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.8 : 0.9)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.9)
+            : Color.white.opacity(0.95)
+    }
+
+    private var contentBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.8 : 0.9)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.8)
+            : Color.white.opacity(0.9)
+    }
+
     public init(viewModel: ContinuesMagementViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
     /// Function to show edit field alert
     private func editField(_ field: SaveStateEditField, saveState: SaveStateRowViewModel, initialValue: String?) {
         editingField = field
         editText = initialValue ?? ""
         editingSaveState = saveState
     }
-    
+
     public var body: some View {
         ZStack {
-            // RetroWave background
-            RetroTheme.retroBackground
-            
-            // Grid overlay
-            RetroGrid()
-//                .opacity(0.3)
-            
+            // Theme-aware background
+            RetroTheme.RetroBackgroundView()
+                .environmentObject(themeManager)
+
+            // Grid overlay with theme-aware colors
+            RetroGrid(
+                lineColor: themeManager.currentPalette.dark
+                    ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.1)
+                    : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.05)
+            )
+
             // Main content
             VStack(spacing: 0) {
                 /// Header view
                 ZStack {
-                    // Background gradient
+                    // Background gradient with theme-aware colors
                     LinearGradient(
-                        gradient: Gradient(colors: [RetroTheme.retroDarkBlue.opacity(0.8), Color.black.opacity(0.9)]),
+                        gradient: Gradient(colors: [
+                            accentColor.opacity(themeManager.currentPalette.dark ? 0.8 : 0.3),
+                            headerBackgroundColor
+                        ]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
                     .overlay(
-                        // Horizontal neon line
+                        // Horizontal accent line
                         VStack {
                             Spacer()
                             Rectangle()
                                 .fill(LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroPink.opacity(0.0), RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroPink.opacity(0.0)]),
+                                    gradient: Gradient(colors: [
+                                        accentColor.opacity(0.0),
+                                        accentColor,
+                                        accentColor.opacity(0.7),
+                                        accentColor.opacity(0.0)
+                                    ]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ))
@@ -466,40 +502,48 @@ public struct ContinuesManagementView: View {
                                 .padding(.bottom, 1)
                         }
                     )
-                    
+
                     // Header content
                     ContinuesManagementHeaderView(viewModel: viewModel.headerViewModel)
                 }
                 .frame(height: 180)
                 .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
-                .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 10, x: 0, y: 5)
+                .shadow(color: accentColor.opacity(0.5), radius: 10, x: 0, y: 5)
                 .padding(.bottom, 10)
-                
+
                 /// List view
                 ZStack {
-                    // Content background
-                    Color.black.opacity(0.8)
+                    // Content background with theme-aware colors
+                    contentBackgroundColor
                         .overlay(
-                            // Grid lines
-                            RetroGrid()
-                                .opacity(0.15)
+                            // Grid lines with theme-aware colors
+                            RetroGrid(
+                                lineColor: themeManager.currentPalette.dark
+                                    ? accentColor.opacity(0.15)
+                                    : accentColor.opacity(0.08)
+                            )
                         )
-                    
-                    // Top edge neon line
+
+                    // Top edge accent line
                     VStack {
                         Rectangle()
                             .fill(LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroBlue.opacity(0.0), RetroTheme.retroBlue, RetroTheme.retroPurple, RetroTheme.retroBlue.opacity(0.0)]),
+                                gradient: Gradient(colors: [
+                                    accentColor.opacity(0.0),
+                                    accentColor,
+                                    accentColor.opacity(0.7),
+                                    accentColor.opacity(0.0)
+                                ]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             ))
                             .frame(height: 2)
                             .blur(radius: 2)
                             .padding(.top, 1)
-                        
+
                         Spacer()
                     }
-                    
+
                     // Content
                     if viewModel.saveStates.isEmpty {
                         EmptyStateView()
@@ -508,15 +552,21 @@ public struct ContinuesManagementView: View {
                     }
                 }
                 .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
-                .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 10, x: 0, y: -5)
+                .shadow(color: accentColor.opacity(0.5), radius: 10, x: 0, y: -5)
             }
             .clipShape(RoundedCorners(radius: 20, corners: [.allCorners]))
             .overlay(
-                // Neon border
+                // Theme-aware border
                 RoundedRectangle(cornerRadius: 20)
                     .strokeBorder(
                         LinearGradient(
-                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroBlue, RetroTheme.retroPurple, RetroTheme.retroPink]),
+                            gradient: Gradient(colors: [
+                                accentColor,
+                                accentColor.opacity(0.7),
+                                accentColor.opacity(0.5),
+                                accentColor.opacity(0.7),
+                                accentColor
+                            ]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
@@ -553,7 +603,7 @@ public struct ContinuesManagementView: View {
 struct RoundedCorners: Shape {
     var radius: CGFloat
     var corners: UIRectCorner
-    
+
     func path(in rect: CGRect) -> Path {
         let path = UIBezierPath(
             roundedRect: rect,
@@ -565,45 +615,59 @@ struct RoundedCorners: Shape {
 }
 
 internal struct EmptyStateView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var glowOpacity: Double = 0.6
     @State private var pulseScale: CGFloat = 1.0
-    
+
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
     var body: some View {
         VStack(spacing: 24) {
             // Icon with glow effect
             ZStack {
                 // Glow effect
                 Circle()
-                    .fill(RetroTheme.retroPink)
+                    .fill(accentColor)
                     .frame(width: 80, height: 80)
                     .blur(radius: 20)
                     .opacity(glowOpacity)
                     .scaleEffect(pulseScale)
-                
+
                 // Icon
                 Image(systemName: "tray.fill")
                     .font(.system(size: 48))
-                    .foregroundColor(RetroTheme.retroPink)
+                    .foregroundColor(accentColor)
             }
-            
-            // Title with neon effect
+
+            // Title with theme-aware effect
             Text("NO SAVE STATES")
                 .font(.system(size: 28, weight: .bold))
-                .foregroundColor(.white)
-                .shadow(color: RetroTheme.retroPink, radius: 5, x: 0, y: 0)
-            
-            // Subtitle with gradient
+                .foregroundColor(primaryTextColor)
+                .shadow(color: accentColor, radius: 5, x: 0, y: 0)
+
+            // Subtitle with theme-aware color
             Text("Save states for this game will appear here")
                 .font(.system(size: 16))
-                .foregroundColor(RetroTheme.retroBlue)
+                .foregroundColor(accentColor.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 20)
-                .shadow(color: RetroTheme.retroBlue.opacity(0.8), radius: 3, x: 0, y: 0)
-            
+                .shadow(color: accentColor.opacity(0.8), radius: 3, x: 0, y: 0)
+
             // Decorative element
             Rectangle()
                 .fill(LinearGradient(
-                    gradient: Gradient(colors: [RetroTheme.retroPink.opacity(0.0), RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroPink.opacity(0.0)]),
+                    gradient: Gradient(colors: [
+                        accentColor.opacity(0.0),
+                        accentColor,
+                        accentColor.opacity(0.7),
+                        accentColor.opacity(0.0)
+                    ]),
                     startPoint: .leading,
                     endPoint: .trailing
                 ))
@@ -629,7 +693,7 @@ internal struct EmptyStateView: View {
 #Preview("Continues Management") {
     /// Create mock driver with sample data
     let mockDriver = MockSaveStateDriver(mockData: true)
-    
+
     /// Create view model with mock driver
     let viewModel = ContinuesMagementViewModel(
         driver: mockDriver,
@@ -641,12 +705,12 @@ internal struct EmptyStateView: View {
             print("load save \(id)")
         }
     )
-    
+
     ContinuesManagementView(viewModel: viewModel)
         .onAppear {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
-            
+
             /// Initial states will be set through the publisher
             mockDriver.saveStatesSubject.send(mockDriver.getAllSaveStates())
         }
@@ -656,10 +720,10 @@ internal struct EmptyStateView: View {
     /// Create in-memory test realm and driver
     let testRealm = try! RealmSaveStateTestFactory.createInMemoryRealm()
     let driver = try! RealmSaveStateDriver(realm: testRealm)
-    
+
     /// Get the first game from realm for the view model
     let game = testRealm.objects(PVGame.self).first!
-    
+
     /// Create view model with game data
     let viewModel = ContinuesMagementViewModel(
         driver: driver,
@@ -671,12 +735,12 @@ internal struct EmptyStateView: View {
             print("load save \(id)")
         }
     )
-    
+
     ContinuesManagementView(viewModel: viewModel)
         .onAppear {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
-            
+
             /// Load states through the publisher
             driver.loadSaveStates(forGameId: game.id)
         }
@@ -686,7 +750,7 @@ internal struct EmptyStateView: View {
 #Preview("Continues Management with Mock Driver") {
     /// Create mock driver with sample data
     let mockDriver = MockSaveStateDriver(mockData: true)
-    
+
     /// Create view model using mock driver's metadata
     let viewModel = ContinuesMagementViewModel(
         driver: mockDriver,
@@ -698,12 +762,12 @@ internal struct EmptyStateView: View {
             print("load save \(id)")
         }
     )
-    
+
     ContinuesManagementView(viewModel: viewModel)
         .onAppear {
             let theme = CGAThemes.purple
             ThemeManager.shared.setCurrentPalette(theme.palette)
-            
+
             /// Set the save states from the mock driver
             mockDriver.saveStatesSubject.send(mockDriver.getAllSaveStates())
         }

@@ -40,6 +40,20 @@ public struct ContinuesManagementHeaderView: View {
     /// View model containing the header data
     @ObservedObject var viewModel: ContinuesManagementHeaderViewModel
 
+    /// Theme-aware color helpers
+    private var primaryTextColor: Color {
+        viewModel.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var secondaryTextColor: Color {
+        if let detailText = viewModel.currentPalette.settingsCellTextDetail {
+            return detailText.swiftUIColor
+        }
+        return viewModel.currentPalette.dark
+            ? Color.grey.gEEE
+            : Color.gray
+    }
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 20) {
@@ -53,13 +67,15 @@ public struct ContinuesManagementHeaderView: View {
                     Text(viewModel.gameTitle)
                         .font(.system(.title, design: .monospaced))
                         .fontWeight(.bold)
+                        .foregroundColor(primaryTextColor)
 
                     Text(viewModel.systemTitle)
                         .font(.subheadline)
-                        .foregroundColor(.white)
+                        .foregroundColor(primaryTextColor.opacity(0.8))
 
-                    Text("\(viewModel.numberOfSaves) Save States - \(String(format: "%.2f", Float(viewModel.savesTotalSize) / 1024.0 / 1024.0)) MB") .font(.subheadline)
-                        .foregroundColor(.grey.gEEE)
+                    Text("\(viewModel.numberOfSaves) Save States - \(String(format: "%.2f", Float(viewModel.savesTotalSize) / 1024.0 / 1024.0)) MB")
+                        .font(.subheadline)
+                        .foregroundColor(secondaryTextColor)
                 }
             }
             .padding(.horizontal, 20)

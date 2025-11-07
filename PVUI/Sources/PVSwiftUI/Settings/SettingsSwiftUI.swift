@@ -92,13 +92,14 @@ public struct PVSettingsView: View {
     public var body: some View {
         NavigationView {
             ZStack {
-                // Retrowave background
-                Color.black.edgesIgnoringSafeArea(.all)
+                // Background using theme palette
+                Color(themeManager.currentPalette.gameLibraryBackground)
+                    .edgesIgnoringSafeArea(.all)
 
                 // Grid background
                 RetroGridForSettings()
                     .edgesIgnoringSafeArea(.all)
-                    .opacity(0.5)
+                    .opacity(themeManager.currentPalette.dark ? 0.5 : 0.2)
 
                 // Main content
                 ScrollView {
@@ -204,12 +205,12 @@ public struct PVSettingsView: View {
                             Button(action: { dismissAction() }) {
                                 Text("DONE")
                                     .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
                                     .background(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.black.opacity(0.6))
+                                            .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 8)
                                                     .strokeBorder(
@@ -230,12 +231,12 @@ public struct PVSettingsView: View {
                             Button(action: { viewModel.showHelp() }) {
                                 Text("HELP")
                                     .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
                                     .background(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.black.opacity(0.6))
+                                            .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 8)
                                                     .strokeBorder(
@@ -278,6 +279,7 @@ struct SettingsRow: View {
     var icon: SettingsIcon? = nil
 
     @State private var isHovered = false
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
         HStack(spacing: 12) {
@@ -285,7 +287,7 @@ struct SettingsRow: View {
             if let icon = icon {
                 ZStack {
                     Circle()
-                        .fill(Color.black.opacity(0.6))
+                        .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
                         .frame(width: 36, height: 36)
                         .overlay(
                             Circle()
@@ -318,12 +320,12 @@ struct SettingsRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
 
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(.caption)
-                        .foregroundColor(Color.gray.opacity(0.8))
+                        .foregroundColor(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.8))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                 }
@@ -346,7 +348,7 @@ struct SettingsRow: View {
                     .padding(.vertical, 4)
                     .background(
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.black.opacity(0.4))
+                            .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.4))
                     )
             }
         }
@@ -354,7 +356,7 @@ struct SettingsRow: View {
         .padding(.horizontal, 4)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.3))
+                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.3))
                 .opacity(isHovered ? 1.0 : 0.0)
         )
 #if !os(tvOS)
@@ -1076,7 +1078,7 @@ private struct DeltaSkinsSection: View {
                     .font(.system(.headline, design: .monospaced))
                     .foregroundColor(.retroBlue)
                     .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
-                
+
                 Picker("Select skin mode", selection: $skinMode) {
                     ForEach(SkinMode.allCases, id: \.self) { theme in
                         Text(theme.rawValue.uppercased()).tag(theme)
@@ -1101,15 +1103,15 @@ private struct DeltaSkinsSection: View {
                 )
                 .background(Color.retroBlack.opacity(0.5))
                 .cornerRadius(8)
-                
+
                 Text(skinMode.subtitle)
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundColor(.retroBlue)
                     .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
             }
             .frame(maxWidth: .infinity)
-            
-            
+
+
             // Button to select skins (premium locked)
             NavigationLink {
                 SystemSkinBrowserView()
@@ -1118,7 +1120,7 @@ private struct DeltaSkinsSection: View {
                             subtitle: "Choose controller skins for each system and orientation.",
                             icon: .sfSymbol("gamecontroller.fill"))
             }
-            
+
             // Button to manage skins (premium locked)
             NavigationLink {
                 DeltaSkinListView(manager: DeltaSkinManager.shared)
@@ -1127,9 +1129,9 @@ private struct DeltaSkinsSection: View {
                             subtitle: "View, import, and delete controller skins.",
                             icon: .sfSymbol("folder.badge.gearshape"))
             }
-            
+
             buttonSoundEFfect
-            
+
             buttonTouchFeedback
         }
     }

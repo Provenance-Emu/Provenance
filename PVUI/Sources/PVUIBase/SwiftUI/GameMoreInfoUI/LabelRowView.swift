@@ -13,7 +13,7 @@ struct LabelRowView: View {
     let value: String?
     var onLongPress: (() -> Void)?
     var isEditable: Bool = true
-    
+
     // RetroWave styling properties
     var labelColor: Color = .secondary
     var valueColor: Color = .primary
@@ -23,7 +23,7 @@ struct LabelRowView: View {
     var backgroundColor: Color = Color(.systemBackground)
     #endif
     var borderGradient: LinearGradient? = nil
-    
+
     // Animation states
     @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
@@ -42,7 +42,7 @@ struct LabelRowView: View {
     /// Computed property to determine text color
     private var textColor: Color {
         if value == nil || value?.isEmpty == true {
-            return isEditable ? RetroTheme.retroBlue.opacity(0.7) : .gray
+            return isEditable ? labelColor.opacity(0.7) : .gray
         } else {
             return valueColor
         }
@@ -56,17 +56,17 @@ struct LabelRowView: View {
             RoundedRectangle(cornerRadius: 8)
                 .fill(backgroundColor)
             #endif
-            
+
             // Optional border with gradient
             if let gradient = borderGradient {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(gradient, lineWidth: isHovered || isEditable ? 1.5 : 1.0)
-                    .shadow(color: labelColor.opacity(glowOpacity * (isHovered ? 0.8 : 0.4)), 
-                            radius: isHovered ? 5 : 3, 
-                            x: 0, 
+                    .shadow(color: labelColor.opacity(glowOpacity * (isHovered ? 0.8 : 0.4)),
+                            radius: isHovered ? 5 : 3,
+                            x: 0,
                             y: 0)
             }
-            
+
             // Content
             HStack {
                 // Label side - right aligned with retrowave styling
@@ -85,8 +85,8 @@ struct LabelRowView: View {
                     if isEditable {
                         Image(systemName: "pencil")
                             .font(.caption)
-                            .foregroundColor(RetroTheme.retroPink)
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                            .foregroundColor(labelColor)
+                            .shadow(color: labelColor.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                     }
                 }
                 .contentShape(Rectangle()) // Make entire area tappable

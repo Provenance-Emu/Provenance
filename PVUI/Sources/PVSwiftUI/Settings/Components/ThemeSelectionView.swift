@@ -15,14 +15,15 @@ import PVUIBase
 struct ThemeButtonStyle: ButtonStyle {
     let isSelected: Bool
     let accentColor: Color
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(.vertical, 10)
             .padding(.horizontal, 20)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.black.opacity(0.6))
+                    .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(
@@ -41,7 +42,8 @@ struct ThemeButtonStyle: ButtonStyle {
 /// A small preview of theme colors
 struct ThemeColorSwatch: View {
     let colors: [Color]
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         HStack(spacing: 2) {
             ForEach(0..<min(colors.count, 3), id: \.self) { i in
@@ -52,7 +54,7 @@ struct ThemeColorSwatch: View {
             }
         }
         .padding(4)
-        .background(Color.black.opacity(0.3))
+        .background(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.3))
         .cornerRadius(4)
     }
 }
@@ -65,12 +67,13 @@ struct StandardThemeRow: View {
     let isSelected: Bool
     let colorScheme: ColorScheme
     let action: () -> Void
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         Button(action: action) {
             HStack {
                 Text(modeLabel)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                 Spacer()
                 if isSelected {
                     Image(systemName: "checkmark")
@@ -81,7 +84,7 @@ struct StandardThemeRow: View {
         .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: RetroTheme.retroBlue))
         .padding(.horizontal)
     }
-    
+
     private var modeLabel: String {
         let systemMode = colorScheme == .dark ? "Dark" : "Light"
         return option == .auto ? option.description + " (\(systemMode))" : option.description
@@ -95,7 +98,8 @@ struct CGAThemeRow: View {
     let cgaTheme: CGAThemes
     let isSelected: Bool
     let action: () -> Void
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         Button(action: action) {
             HStack {
@@ -103,13 +107,13 @@ struct CGAThemeRow: View {
                 HStack(spacing: 10) {
                     // Color swatch preview based on the CGA theme
                     cgaThemeColorSwatch
-                    
+
                     Text(cgaTheme.palette.name)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                 }
-                
+
                 Spacer()
-                
+
                 if isSelected {
                     Image(systemName: "checkmark")
                         .foregroundColor(RetroTheme.retroPink)
@@ -119,11 +123,11 @@ struct CGAThemeRow: View {
         .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: RetroTheme.retroPurple))
         .padding(.horizontal)
     }
-    
+
     // Generate color swatches based on the CGA theme
     private var cgaThemeColorSwatch: some View {
         let colors: [Color] = cgaThemeColors
-        
+
         return HStack(spacing: 2) {
             ForEach(0..<min(colors.count, 3), id: \.self) { i in
                 Rectangle()
@@ -133,10 +137,10 @@ struct CGAThemeRow: View {
             }
         }
         .padding(4)
-        .background(Color.black.opacity(0.3))
+        .background(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.3))
         .cornerRadius(4)
     }
-    
+
     // Get appropriate colors for each CGA theme
     private var cgaThemeColors: [Color] {
         switch cgaTheme {
@@ -166,7 +170,8 @@ struct CGAThemeRow: View {
 struct RetroWaveThemeRow: View {
     let isSelected: Bool
     let action: () -> Void
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         Button(action: action) {
             HStack {
@@ -180,16 +185,16 @@ struct RetroWaveThemeRow: View {
                     )
                     .frame(width: 50, height: 16)
                     .cornerRadius(4)
-                    .overlay(RetroGrid(lineSpacing: 4, lineColor: .white.opacity(0.3)))
+                    .overlay(RetroGrid(lineSpacing: 4, lineColor: Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.3)))
                     .mask(RoundedRectangle(cornerRadius: 4))
-                    
+
                     Text("Retrowave")
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                         .fontWeight(.medium)
                 }
-                
+
                 Spacer()
-                
+
                 if isSelected {
                     Image(systemName: "checkmark")
                         .foregroundColor(RetroTheme.retroPink)
@@ -199,7 +204,7 @@ struct RetroWaveThemeRow: View {
         .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: Color.clear))
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.6))
+                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(
@@ -220,20 +225,20 @@ struct ThemeSection<Content: View>: View {
     let title: String
     let titleColor: Color
     let content: Content
-    
+
     init(title: String, titleColor: Color, @ViewBuilder content: () -> Content) {
         self.title = title
         self.titleColor = titleColor
         self.content = content()
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.system(size: 18, weight: .bold, design: .rounded))
                 .foregroundColor(titleColor)
                 .padding(.horizontal)
-            
+
             content
         }
         .padding(.bottom, 20)
@@ -247,7 +252,7 @@ struct ThemeSection<Content: View>: View {
 struct ThemeSelectionTitleView: View {
     @Binding var glowOpacity: Double
     @Binding var isAnimating: Bool
-    
+
     var body: some View {
         Text("THEME SELECTION")
             .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -268,17 +273,18 @@ struct ThemeSelectionTitleView: View {
 /// The back button for the theme selection view
 struct ThemeSelectionBackButton: View {
     let action: () -> Void
-    
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         Button(action: action) {
             Text("BACK")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                 .padding(.vertical, 12)
                 .padding(.horizontal, 30)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.black.opacity(0.7))
+                        .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.7))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
                                 .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
@@ -301,34 +307,35 @@ struct ThemeSelectionView: View {
     @Environment(\.dismiss) private var dismiss
     /// Current system color scheme (light/dark)
     @Environment(\.colorScheme) private var colorScheme
-    
+
     // Animation states for retrowave effects
     @State private var isAnimating = false
     @State private var glowOpacity = 0.0
-    
+
     // MARK: - Background Components
-    
+
     /// Background view with retrowave grid
     private var backgroundView: some View {
         ZStack {
-            // RetroTheme background
-            RetroTheme.retroBlack.edgesIgnoringSafeArea(.all)
-            
-            // Grid overlay with retrowave styling
-            RetroGrid(lineSpacing: 20, lineColor: Color.white.opacity(0.07))
+            // Background using theme palette
+            Color(themeManager.currentPalette.gameLibraryBackground)
                 .edgesIgnoringSafeArea(.all)
-                .opacity(0.3)
+
+            // Grid overlay with retrowave styling
+            RetroGrid(lineSpacing: 20, lineColor: Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.07))
+                .edgesIgnoringSafeArea(.all)
+                .opacity(themeManager.currentPalette.dark ? 0.3 : 0.1)
         }
     }
-    
+
     // MARK: - Standard Themes Section
-    
+
     /// Standard themes section
     private var standardThemesSection: some View {
         ThemeSection(title: "STANDARD THEMES", titleColor: RetroTheme.retroBlue) {
             ForEach(ThemeOptionsStandard.allCases, id: \.self) { option in
                 let isSelected = (currentTheme == .standard(option))
-                
+
                 StandardThemeRow(
                     option: option,
                     isSelected: isSelected,
@@ -339,15 +346,15 @@ struct ThemeSelectionView: View {
             }
         }
     }
-    
+
     // MARK: - CGA Themes Section
-    
+
     /// CGA themes section
     private var cgaThemesSection: some View {
         ThemeSection(title: "CGA THEMES", titleColor: RetroTheme.retroPink) {
             ForEach(CGAThemes.allCases, id: \.self) { cgaTheme in
                 let isSelected = (currentTheme == .cga(ThemeOptionsCGA(rawValue: cgaTheme.rawValue) ?? .blue))
-                
+
                 CGAThemeRow(
                     cgaTheme: cgaTheme,
                     isSelected: isSelected
@@ -357,37 +364,37 @@ struct ThemeSelectionView: View {
             }
         }
     }
-    
+
     // MARK: - RetroWave Theme Section
-    
+
     /// RetroWave theme section
     private var retroWaveThemeSection: some View {
         ThemeSection(title: "RETROWAVE THEME", titleColor: RetroTheme.retroPurple) {
             // Check if current theme is retrowave (using standard dark as fallback)
             let isRetrowaveSelected = (currentTheme == .standard(.dark))
-            
+
             RetroWaveThemeRow(isSelected: isRetrowaveSelected) {
                 applyRetroWaveTheme()
             }
         }
     }
-    
+
     // MARK: - Main Content
-    
+
     /// Main content container
     private var contentView: some View {
         VStack(spacing: 20) {
             // Title
             ThemeSelectionTitleView(glowOpacity: $glowOpacity, isAnimating: $isAnimating)
-            
+
             // Theme sections
             standardThemesSection
             cgaThemesSection
             retroWaveThemeSection
-            
+
             RetroPalettePreview(palette: themeManager.currentPalette)
                 .frame(maxWidth: .infinity)
-            
+
             // Back button
             ThemeSelectionBackButton {
                 dismiss()
@@ -395,34 +402,33 @@ struct ThemeSelectionView: View {
         }
         .padding()
     }
-    
+
     var body: some View {
         ZStack {
             backgroundView
-            
+
             ScrollView {
                 contentView
             }
         }
-        .preferredColorScheme(.dark) // Force dark mode for retrowave aesthetic
         .navigationTitle("Select Theme")
     }
-    
+
     // MARK: - Theme Application Methods
-    
+
     /// Apply a standard theme
     private func applyStandardTheme(_ option: ThemeOptionsStandard) {
         // Determine if dark theme should be applied
         let darkTheme = (option == .auto && colorScheme == .dark) || option == .dark
         let newPalette = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
-        
+
         // Apply the selected theme
         ThemeManager.shared.setCurrentPalette(newPalette)
         currentTheme = .standard(option)
         ThemeManager.applySavedTheme()
         dismiss()
     }
-    
+
     /// Apply a CGA theme
     private func applyCGATheme(_ cgaTheme: CGAThemes) {
         // Apply selected CGA theme
@@ -433,7 +439,7 @@ struct ThemeSelectionView: View {
         ThemeManager.applySavedTheme()
         dismiss()
     }
-    
+
     /// Apply the RetroWave theme
     private func applyRetroWaveTheme() {
         // Apply the official RetroWave theme

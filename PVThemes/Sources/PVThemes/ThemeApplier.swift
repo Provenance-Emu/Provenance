@@ -51,7 +51,7 @@ public extension ThemeManager {
         DLOG("Setting palette: \(palette)")
 
         // Apply theme to various UIKit components
-   
+
         configureActionSheets(palette)
         configureActivityIndicator(palette)
         configureBarButtonItems(palette)
@@ -86,7 +86,7 @@ public extension ThemeManager {
         }
         #endif
     }
-    
+
     /// Status Bar
     /// - Parameter theme: current iOSTheme
     @MainActor
@@ -99,7 +99,7 @@ public extension ThemeManager {
         }
         #endif
     }
-    
+
     /// UINavigation Bar
     /// - Parameter theme: current iOSTheme
     @MainActor
@@ -107,12 +107,12 @@ public extension ThemeManager {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = palette.navigationBarBackgroundColor
-        
+
         if let navigationBarTitleColor = palette.navigationBarTitleColor {
             appearance.titleTextAttributes = [.foregroundColor: palette.navigationBarTitleColor]
             appearance.largeTitleTextAttributes = [.foregroundColor: palette.navigationBarTitleColor]
         }
-        
+
         if #available(iOS 17.0, tvOS 17.0, *) {
             UINavigationBar.appearance().standardAppearance = appearance
             UINavigationBar.appearance().compactAppearance = appearance
@@ -123,8 +123,63 @@ public extension ThemeManager {
                 UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
             }
             UINavigationBar.appearance().tintColor = palette.barButtonItemTint
+
+            /// Update all existing navigation bars immediately
+            updateAllNavigationBars(with: appearance, palette: palette)
         }
         DLOG("Navigation bar - tintColor: \(palette.barButtonItemTint?.debugDescription ?? "nil"), backgroundColor: \(palette.navigationBarBackgroundColor?.debugDescription ?? "nil")")
+    }
+
+    /// Update all existing navigation bars in the app
+    @MainActor
+    private class func updateAllNavigationBars(with appearance: UINavigationBarAppearance, palette: any UXThemePalette) {
+        guard #available(iOS 17.0, tvOS 17.0, *) else { return }
+
+        /// Find all navigation controllers in the app and update their navigation bars
+        for window in UIApplication.shared.windows {
+            updateNavigationBar(in: window.rootViewController, with: appearance, palette: palette)
+        }
+
+        /// Also check connected scenes (for iOS 13+)
+        if #available(iOS 13.0, *) {
+            for scene in UIApplication.shared.connectedScenes {
+                if let windowScene = scene as? UIWindowScene {
+                    for window in windowScene.windows {
+                        updateNavigationBar(in: window.rootViewController, with: appearance, palette: palette)
+                    }
+                }
+            }
+        }
+    }
+
+    /// Recursively update navigation bars in view controller hierarchy
+    @MainActor
+    private class func updateNavigationBar(in viewController: UIViewController?, with appearance: UINavigationBarAppearance, palette: any UXThemePalette) {
+        guard #available(iOS 17.0, tvOS 17.0, *) else { return }
+        guard let viewController = viewController else { return }
+
+        /// Update navigation bar if this is a navigation controller
+        if let navController = viewController as? UINavigationController {
+            navController.navigationBar.standardAppearance = appearance
+            navController.navigationBar.compactAppearance = appearance
+            #if !os(tvOS)
+            navController.navigationBar.scrollEdgeAppearance = appearance
+            #endif
+            if #available(iOS 15.0, *) {
+                navController.navigationBar.compactScrollEdgeAppearance = appearance
+            }
+            navController.navigationBar.tintColor = palette.barButtonItemTint
+        }
+
+        /// Recursively check child view controllers
+        for child in viewController.children {
+            updateNavigationBar(in: child, with: appearance, palette: palette)
+        }
+
+        /// Check presented view controllers
+        if let presented = viewController.presentedViewController {
+            updateNavigationBar(in: presented, with: appearance, palette: palette)
+        }
     }
 
     // MARK: - UIKit Component Theming
@@ -136,7 +191,7 @@ public extension ThemeManager {
 //        UIView.appearance().backgroundColor = palette.uiviewBackground
         DLOG("UIView appearance - tintColor: \(palette.defaultTintColor.debugDescription), backgroundColor: \(palette.uiviewBackground?.debugDescription ?? "nil")")
     }
-    
+
     @MainActor
     private class func configureUIWindow(_ palette: any UXThemePalette) {
         // Apply general UIWindow appearance
@@ -186,13 +241,13 @@ public extension ThemeManager {
     private class func configureTextInputs(_ palette: any UXThemePalette) {
         UITextField.appearance().keyboardAppearance = palette.keyboardAppearance
         UISearchBar.appearance().keyboardAppearance = palette.keyboardAppearance
-        
+
 //        UITextField.appearance().backgroundColor = palette.gameLibraryBackground
 //        UITextField.appearance().textColor = palette.gameLibraryText
-        
+
         DLOG("Text inputs - keyboardAppearance: \(palette.keyboardAppearance)")
     }
-    
+
     @MainActor
     private class func configureUISearchBar(_ palette: any UXThemePalette) {
         UISearchBar.appearance().backgroundColor = palette.menuBackground
@@ -204,7 +259,7 @@ public extension ThemeManager {
         UISearchTextField.appearance().tintColor = palette.menuIconTint
         UISearchTextField.appearance().textColor = palette.menuText
         #endif
-        
+
         DLOG("UISearchBar - backgroundColor: \(palette.settingsCellBackground?.debugDescription ?? "nil"), tintColor: \(palette.gameLibraryText.debugDescription)")
     }
 
@@ -239,7 +294,7 @@ public extension ThemeManager {
         UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: palette.settingsCellBackground ?? .white], for: .selected)
         DLOG("Segmented control - selectedSegmentTintColor: \(palette.defaultTintColor.debugDescription), normalTextColor: \(palette.gameLibraryText.debugDescription), selectedTextColor: \(palette.settingsCellBackground?.debugDescription ?? "nil")")
     }
-    
+
     @MainActor
     private class func configurePageControl(_ palette: any UXThemePalette) {
         UIPageControl.appearance().currentPageIndicatorTintColor = palette.switchON?.saturation(0.8)

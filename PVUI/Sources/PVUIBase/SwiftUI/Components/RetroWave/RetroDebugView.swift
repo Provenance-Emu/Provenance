@@ -72,6 +72,33 @@ public struct RetroDebugView: View {
     @State private var scanlineOffset: CGFloat = 0
     @State private var glowOpacity: Double = 0.7
 
+    /// Theme-aware color helpers
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var cellBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.7)
+            : Color.white.opacity(0.9)
+    }
+
+    private var sectionBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.6 : 0.8)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.6)
+            : Color.white.opacity(0.8)
+    }
+
     public init() { }
 
     public var body: some View {
@@ -550,6 +577,7 @@ public struct RetroDebugView: View {
 
 struct DatabaseStatsView: View {
     @Environment(\.presentationMode) var presentationMode
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     // Database stats
     @State private var gameCount = 0
@@ -563,32 +591,54 @@ struct DatabaseStatsView: View {
     @State private var isLoading = true
     @State private var pulseOpacity = 0.0
 
+    /// Theme-aware color helpers
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var sectionBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.7 : 0.8)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.7)
+            : Color.white.opacity(0.8)
+    }
+
     var body: some View {
         ZStack {
-            // Retrowave background
-            RetroTheme.retroBackground
+            // Theme-aware background
+            RetroTheme.RetroBackgroundView()
+                .environmentObject(themeManager)
 
-            // Grid overlay
-            RetroGrid()
-            //                .opacity(0.3)
+            // Grid overlay with theme-aware colors
+            RetroGrid(
+                lineColor: themeManager.currentPalette.dark
+                    ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.1)
+                    : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.05)
+            )
 
             // Content
             VStack(spacing: 20) {
                 // Header
                 Text("DATABASE STATS")
                     .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(RetroTheme.retroPink)
+                    .foregroundColor(accentColor)
                     .padding(.top, 20)
-                    .shadow(color: RetroTheme.retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
+                    .shadow(color: accentColor.opacity(0.8), radius: 10, x: 0, y: 0)
 
                 // Stats cards
                 VStack(spacing: 16) {
                     // Main stats grid
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        RetroStatCard(title: "GAMES", value: "\(gameCount)", icon: "gamecontroller.fill", color: RetroTheme.retroPink)
-                        RetroStatCard(title: "SYSTEMS", value: "\(systemCount)", icon: "cpu.fill", color: RetroTheme.retroPurple)
-                        RetroStatCard(title: "CORES", value: "\(coreCount)", icon: "memorychip.fill", color: RetroTheme.retroBlue)
-                        RetroStatCard(title: "SAVE STATES", value: "\(saveStateCount)", icon: "square.and.arrow.down.fill", color: RetroTheme.retroPink)
+                        RetroStatCard(title: "GAMES", value: "\(gameCount)", icon: "gamecontroller.fill", color: accentColor)
+                        RetroStatCard(title: "SYSTEMS", value: "\(systemCount)", icon: "cpu.fill", color: accentColor.opacity(0.8))
+                        RetroStatCard(title: "CORES", value: "\(coreCount)", icon: "memorychip.fill", color: accentColor.opacity(0.9))
+                        RetroStatCard(title: "SAVE STATES", value: "\(saveStateCount)", icon: "square.and.arrow.down.fill", color: accentColor)
                     }
 
                     // Navigation button
@@ -596,10 +646,10 @@ struct DatabaseStatsView: View {
                         NavigationLink(destination: GamesBySystemView()) {
                             HStack {
                                 Image(systemName: "list.bullet")
-                                    .foregroundColor(RetroTheme.retroBlue)
+                                    .foregroundColor(accentColor)
                                 Text("VIEW BY SYSTEM")
                                     .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(primaryTextColor)
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -607,29 +657,29 @@ struct DatabaseStatsView: View {
                                 RoundedRectangle(cornerRadius: 8)
                                     .strokeBorder(
                                         LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
+                                            gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
                                             startPoint: .leading,
                                             endPoint: .trailing
                                         ),
                                         lineWidth: 2
                                     )
-                                    .background(Color.black.opacity(0.7))
-                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 8, x: 0, y: 0)
+                                    .background(sectionBackgroundColor)
+                                    .shadow(color: accentColor.opacity(glowOpacity), radius: 8, x: 0, y: 0)
                             )
                         }
                     } else {
                         Text("NO GAMES IN DATABASE")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(RetroTheme.retroPink)
+                            .foregroundColor(accentColor)
                             .padding()
                             .frame(maxWidth: .infinity)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
                                     .strokeBorder(
-                                        RetroTheme.retroPink.opacity(0.8),
+                                        accentColor.opacity(0.8),
                                         lineWidth: 1
                                     )
-                                    .background(Color.black.opacity(0.7))
+                                    .background(sectionBackgroundColor)
                             )
                             .opacity(pulseOpacity)
                             .onAppear {
@@ -645,31 +695,31 @@ struct DatabaseStatsView: View {
                     }) {
                         Text("DONE")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(primaryTextColor)
                             .padding()
                             .frame(maxWidth: .infinity)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(
                                         LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                            gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
                                             startPoint: .leading,
                                             endPoint: .trailing
                                         )
                                     )
-                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 8, x: 0, y: 0)
+                                    .shadow(color: accentColor.opacity(glowOpacity), radius: 8, x: 0, y: 0)
                             )
                     }
                 }
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.black.opacity(0.7))
+                        .fill(sectionBackgroundColor)
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .strokeBorder(
                                     LinearGradient(
-                                        gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                        gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7), accentColor.opacity(0.5)]),
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     ),
@@ -691,22 +741,22 @@ struct DatabaseStatsView: View {
                     VStack {
                         Text("SCANNING DATABASE")
                             .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(RetroTheme.retroPink)
+                            .foregroundColor(accentColor)
 
                         ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
+                            .progressViewStyle(CircularProgressViewStyle(tint: accentColor))
                             .scaleEffect(1.5)
                             .padding()
                     }
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.black.opacity(0.8))
+                            .fill(sectionBackgroundColor)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
                                     .strokeBorder(
                                         LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
+                                            gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
                                         ),
@@ -758,7 +808,21 @@ struct RetroStatCard: View {
     let icon: String
     let color: Color
 
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var glowOpacity = 0.7
+
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var cardBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.6 : 0.8)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.6)
+            : Color.white.opacity(0.8)
+    }
 
     var body: some View {
         VStack(spacing: 8) {
@@ -769,7 +833,7 @@ struct RetroStatCard: View {
 
                 Text(title)
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(primaryTextColor)
             }
 
             Text(value)
@@ -781,7 +845,7 @@ struct RetroStatCard: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.6))
+                .fill(cardBackgroundColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(
@@ -800,15 +864,37 @@ struct RetroStatCard: View {
 
 struct GamesBySystemView: View {
     @ObservedResults(PVSystem.self) var systems
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var cellBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.6 : 0.8)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.6)
+            : Color.white.opacity(0.8)
+    }
 
     var body: some View {
         ZStack {
-            // Retrowave background
-            RetroTheme.retroBackground
+            // Theme-aware background
+            RetroTheme.RetroBackgroundView()
+                .environmentObject(themeManager)
 
-            // Grid overlay
-            RetroGrid()
-            //                .opacity(0.3)
+            // Grid overlay with theme-aware colors
+            RetroGrid(
+                lineColor: themeManager.currentPalette.dark
+                    ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.1)
+                    : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.05)
+            )
 
             ScrollView {
                 VStack(spacing: 16) {
@@ -821,7 +907,7 @@ struct GamesBySystemView: View {
                                 Circle()
                                     .fill(
                                         LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                            gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
                                         )
@@ -830,33 +916,33 @@ struct GamesBySystemView: View {
 
                                 Text(String(system.name.prefix(1)))
                                     .font(.system(size: 18, weight: .bold))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(primaryTextColor)
                             }
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(system.name)
                                     .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(primaryTextColor)
 
                                 Text("\(gameCount) \(gameCount == 1 ? "game" : "games")")
                                     .font(.system(size: 14))
-                                    .foregroundColor(RetroTheme.retroPink)
+                                    .foregroundColor(accentColor)
                             }
 
                             Spacer()
 
                             Image(systemName: "chevron.right")
-                                .foregroundColor(RetroTheme.retroBlue)
+                                .foregroundColor(accentColor)
                         }
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.black.opacity(0.6))
+                                .fill(cellBackgroundColor)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .strokeBorder(
                                             LinearGradient(
-                                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                                gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
                                                 startPoint: .leading,
                                                 endPoint: .trailing
                                             ),
@@ -882,6 +968,7 @@ struct GamesBySystemView: View {
 
 struct DatabaseBrowserView: View {
     @ObservedResults(PVGame.self) var games
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     // Animation states
     @State private var selectedGame: PVGame?
@@ -890,6 +977,23 @@ struct DatabaseBrowserView: View {
     @State private var isSearching = false
     @State private var glowOpacity = 0.7
     @State private var scanlineOffset: CGFloat = 0
+
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var cellBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.6 : 0.8)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.6)
+            : Color.white.opacity(0.8)
+    }
 
     var filteredGames: Results<PVGame> {
         if searchText.isEmpty {
@@ -901,21 +1005,25 @@ struct DatabaseBrowserView: View {
 
     var body: some View {
         ZStack {
-            // Retrowave background
-            RetroTheme.retroBackground
+            // Theme-aware background
+            RetroTheme.RetroBackgroundView()
+                .environmentObject(themeManager)
 
-            // Grid overlay
-            RetroGrid()
-            //                .opacity(0.3)
+            // Grid overlay with theme-aware colors
+            RetroGrid(
+                lineColor: themeManager.currentPalette.dark
+                    ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.1)
+                    : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.05)
+            )
 
             VStack(spacing: 0) {
                 // Search bar
                 HStack {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(isSearching ? RetroTheme.retroPink : .gray)
+                        .foregroundColor(isSearching ? accentColor : .gray)
 
                     TextField("SEARCH GAMES", text: $searchText)
-                        .foregroundColor(.white)
+                        .foregroundColor(primaryTextColor)
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
                         .onTapGesture {
@@ -927,19 +1035,19 @@ struct DatabaseBrowserView: View {
                             searchText = ""
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(RetroTheme.retroBlue)
+                                .foregroundColor(accentColor)
                         }
                     }
                 }
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.black.opacity(0.6))
+                        .fill(cellBackgroundColor)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
                                 .strokeBorder(
                                     LinearGradient(
-                                        gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                                        gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     ),
@@ -953,7 +1061,7 @@ struct DatabaseBrowserView: View {
                 // Game count
                 Text("FOUND \(filteredGames.count) GAMES")
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(RetroTheme.retroPink)
+                    .foregroundColor(accentColor)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
                     .padding(.top, 8)
@@ -1000,7 +1108,34 @@ struct RetroGameCard: View {
     let game: PVGame
     let isSelected: Bool
 
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var glowOpacity = 0.7
+
+    private var primaryTextColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var cardBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.7)
+            : Color.white.opacity(0.9)
+    }
+
+    private var expandedBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.8 : 0.95)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.8)
+            : Color.white.opacity(0.95)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -1008,23 +1143,26 @@ struct RetroGameCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(game.title)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(primaryTextColor)
                     .lineLimit(1)
 
                 HStack {
                     Image(systemName: "cpu")
-                        .foregroundColor(RetroTheme.retroPurple)
+                        .foregroundColor(accentColor)
 
                     Text(game.system?.name ?? "Unknown System")
                         .font(.system(size: 14))
-                        .foregroundColor(RetroTheme.retroPurple)
+                        .foregroundColor(accentColor)
                 }
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.black.opacity(0.7), Color.black.opacity(0.5)]),
+                    gradient: Gradient(colors: [
+                        cardBackgroundColor,
+                        cardBackgroundColor.opacity(0.7)
+                    ]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -1035,37 +1173,37 @@ struct RetroGameCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "doc.text")
-                            .foregroundColor(RetroTheme.retroBlue)
+                            .foregroundColor(accentColor)
 
                         Text("ROM Path:")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(RetroTheme.retroBlue)
+                            .foregroundColor(accentColor)
                     }
 
                     Text(game.romPath)
                         .font(.system(size: 12))
-                        .foregroundColor(.white)
+                        .foregroundColor(primaryTextColor)
                         .lineLimit(2)
 
                     let md5 = game.md5Hash
                     HStack {
                         Image(systemName: "checkmark.shield")
-                            .foregroundColor(RetroTheme.retroPink)
+                            .foregroundColor(accentColor)
 
                         Text("MD5: \(md5)")
                             .font(.system(size: 12))
-                            .foregroundColor(.white)
+                            .foregroundColor(primaryTextColor)
                             .lineLimit(1)
                     }
 
                     if let lastPlayed = game.lastPlayed {
                         HStack {
                             Image(systemName: "clock")
-                                .foregroundColor(RetroTheme.retroPink)
+                                .foregroundColor(accentColor)
 
                             Text("Last Played: \(formattedDate(lastPlayed))")
                                 .font(.system(size: 12))
-                                .foregroundColor(.white)
+                                .foregroundColor(primaryTextColor)
                         }
                     }
 
@@ -1080,32 +1218,32 @@ struct RetroGameCard: View {
                                 Text("PLAY")
                             }
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(primaryTextColor)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .fill(RetroTheme.retroPink)
-                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 4, x: 0, y: 0)
+                                    .fill(accentColor)
+                                    .shadow(color: accentColor.opacity(glowOpacity), radius: 4, x: 0, y: 0)
                             )
                         }
                     }
                 }
                 .padding()
-                .background(Color.black.opacity(0.8))
+                .background(expandedBackgroundColor)
                 .transition(.opacity)
             }
         }
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.6))
+                .fill(cardBackgroundColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    isSelected ? RetroTheme.retroPink : RetroTheme.retroPurple,
-                                    RetroTheme.retroBlue
+                                    isSelected ? accentColor : accentColor.opacity(0.7),
+                                    accentColor.opacity(0.5)
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -1114,7 +1252,7 @@ struct RetroGameCard: View {
                         )
                 )
                 .shadow(
-                    color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity * (isSelected ? 1.0 : 0.5)),
+                    color: accentColor.opacity(glowOpacity * (isSelected ? 1.0 : 0.5)),
                     radius: isSelected ? 8 : 4,
                     x: 0,
                     y: 0
@@ -1203,7 +1341,21 @@ struct ColorRow: View {
 struct RetroSectionView<Content: View>: View {
     let title: String
     let content: Content
+    @ObservedObject private var themeManager = ThemeManager.shared
     @State private var glowOpacity: Double = 0.7
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var sectionBackgroundColor: Color {
+        if let cellBg = themeManager.currentPalette.settingsCellBackground {
+            return cellBg.swiftUIColor.opacity(themeManager.currentPalette.dark ? 0.7 : 0.8)
+        }
+        return themeManager.currentPalette.dark
+            ? Color.black.opacity(0.7)
+            : Color.white.opacity(0.8)
+    }
 
     init(title: String, @ViewBuilder content: () -> Content) {
         self.title = title
@@ -1216,8 +1368,8 @@ struct RetroSectionView<Content: View>: View {
             Text(title)
                 .font(.system(.title2, design: .monospaced))
                 .fontWeight(.bold)
-                .foregroundColor(.retroPink)
-                .shadow(color: .retroBlue.opacity(0.8), radius: 2, x: 2, y: 2)
+                .foregroundColor(accentColor)
+                .shadow(color: accentColor.opacity(0.8), radius: 2, x: 2, y: 2)
                 .padding(.bottom, 4)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -1229,10 +1381,15 @@ struct RetroSectionView<Content: View>: View {
         .background(
             ZStack {
                 // Base background
-                Color.retroBlack.opacity(0.7)
+                sectionBackgroundColor
 
-                // Grid overlay
-                RetroGrid(lineSpacing: 15, lineColor: Color.white.opacity(0.07))
+                // Grid overlay with theme-aware colors
+                RetroGrid(
+                    lineSpacing: 15,
+                    lineColor: themeManager.currentPalette.dark
+                        ? accentColor.opacity(0.07)
+                        : accentColor.opacity(0.05)
+                )
             }
         )
         .cornerRadius(12)
@@ -1240,14 +1397,14 @@ struct RetroSectionView<Content: View>: View {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(
                     LinearGradient(
-                        gradient: Gradient(colors: [.retroBlue, .retroPink]),
+                        gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
                     lineWidth: 2
                 )
         )
-        .shadow(color: .retroPink.opacity(glowOpacity * 0.3), radius: 10, x: 0, y: 0)
+        .shadow(color: accentColor.opacity(glowOpacity * 0.3), radius: 10, x: 0, y: 0)
         .onAppear {
             withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
