@@ -16,6 +16,7 @@ import PVSupport
 import PVLibrary
 import PVFeatureFlags
 import UniformTypeIdentifiers
+import PVThemes
 
 // MARK: - SwiftUI Menu Views
 
@@ -24,9 +25,12 @@ struct RetroMenuView: View {
     let emulatorVC: PVEmulatorViewController
     let dismissAction: () -> Void
     @StateObject private var advancedSkinFeaturesFlag = PVFeatureFlagsManager.shared.flag(.advancedSkinFeatures)
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var selectedCategory: MenuCategory = .main
     @State private var showSkinsCategoryButton: Bool = false // Add new @State variable
+
+    private var palette: UXThemePalette { themeManager.currentPalette }
 
     /// Environment value to detect screen size
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -141,10 +145,13 @@ struct RetroMenuView: View {
                 }
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.retroBlack.opacity(0.9))
+                        .fill(
+                            (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                .opacity(palette.dark ? 0.9 : 0.95)
+                        )
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
-                                .strokeBorder(Color.retroNeon, lineWidth: 2)
+                                .strokeBorder(palette.defaultTintColor.swiftUIColor, lineWidth: 2)
                         )
                 )
                 .frame(width: menuWidth)
@@ -162,10 +169,10 @@ struct RetroMenuView: View {
     private var title: some View {
         Text("GAME OPTIONS")
             .font(.system(size: 32, weight: .bold, design: .rounded))
-            .foregroundColor(.retroPink)
+            .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
             .padding(.top, 24)
             .padding(.bottom, 16)
-            .shadow(color: .retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
+            .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.8 : 0.5), radius: 10, x: 0, y: 0)
     }
 
     // Retrowave scrollable category selector
@@ -173,7 +180,11 @@ struct RetroMenuView: View {
         ZStack {
             // Gradient background for scrollable area
             LinearGradient(
-                gradient: Gradient(colors: [Color.clear, Color.retroPurple.opacity(0.2), Color.clear]),
+                gradient: Gradient(colors: [
+                    Color.clear,
+                    (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(palette.dark ? 0.2 : 0.1),
+                    Color.clear
+                ]),
                 startPoint: .leading,
                 endPoint: .trailing
             )
@@ -184,7 +195,7 @@ struct RetroMenuView: View {
                 ForEach(0..<10) { _ in
                     Rectangle()
                         .frame(width: 1)
-                        .foregroundColor(Color.retroPink.opacity(0.3))
+                        .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.3 : 0.15))
                 }
             }
 
@@ -252,7 +263,7 @@ struct RetroMenuView: View {
                 HStack {
                     LinearGradient(
                         gradient: Gradient(stops: [
-                            .init(color: Color.retroBlack.opacity(0.95), location: 0),
+                            .init(color: (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.95 : 0.98), location: 0),
                             .init(color: Color.clear, location: 1)
                         ]),
                         startPoint: .leading,
@@ -269,7 +280,7 @@ struct RetroMenuView: View {
                     LinearGradient(
                         gradient: Gradient(stops: [
                             .init(color: Color.clear, location: 0),
-                            .init(color: Color.retroBlack.opacity(0.95), location: 1)
+                            .init(color: (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.95 : 0.98), location: 1)
                         ]),
                         startPoint: .leading,
                         endPoint: .trailing
@@ -359,18 +370,18 @@ struct RetroMenuView: View {
 
         return VStack(spacing: menuSpacing) {
             // Resume game button
-            menuButton(title: "RESUME GAME", icon: "play.fill", color: .retroBlue) {
+            menuButton(title: "RESUME GAME", icon: "play.fill", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
                 dismissAction()
             }
 
             // Reset game button
-            menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: .retroOrange) {
+            menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: palette.defaultTintColor.swiftUIColor) {
                 dismissAction()
                 emulatorVC.core.resetEmulation()
             }
 
             // Game info button
-            menuButton(title: "GAME INFO", icon: "info.circle", color: .retroPurple) {
+            menuButton(title: "GAME INFO", icon: "info.circle", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
                 dismissAction()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     emulatorVC.showMoreInfo()
@@ -378,7 +389,7 @@ struct RetroMenuView: View {
             }
 
             // Quit game button - show different title if save option is available
-            menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: .retroPink) {
+            menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: palette.defaultTintColor.swiftUIColor) {
                 dismissAction()
                 Task {
                     await emulatorVC.quit(optionallySave: false)
@@ -387,7 +398,7 @@ struct RetroMenuView: View {
 
             // Save & Quit button - only show if save option is available
             if shouldSave {
-                menuButton(title: "SAVE & QUIT", icon: "square.and.arrow.down", color: .retroPink) {
+                menuButton(title: "SAVE & QUIT", icon: "square.and.arrow.down", color: palette.defaultTintColor.swiftUIColor) {
                     dismissAction()
                     let image = emulatorVC.captureScreenshot()
 
@@ -413,7 +424,7 @@ struct RetroMenuView: View {
             // Core action buttons (if available) - show first for prominence
             if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
                 ForEach(actions) { coreAction in
-                    menuButton(title: coreAction.title, icon: "bolt", color: .retroOrange) {
+                    menuButton(title: coreAction.title, icon: "bolt", color: palette.defaultTintColor.swiftUIColor) {
                         dismissAction()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             actionableCore.selected(action: coreAction)
@@ -428,7 +439,7 @@ struct RetroMenuView: View {
 
             // Core options button (if available)
             if emulatorVC.core is CoreOptional {
-                menuButton(title: "CORE OPTIONS", icon: "gearshape", color: .retroPurple) {
+                menuButton(title: "CORE OPTIONS", icon: "gearshape", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
                     dismissAction()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         emulatorVC.showCoreOptions()
@@ -453,7 +464,7 @@ struct RetroMenuView: View {
         VStack(spacing: menuSpacing) {
             if emulatorVC.core.supportsSaveStates {
                 // Save state button
-                menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: .retroBlue) {
+                menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
                     dismissAction()
                     Task {
                         let screenshot = emulatorVC.captureScreenshot()
@@ -466,7 +477,7 @@ struct RetroMenuView: View {
                 }
 
                 // Load state button
-                menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: .retroPurple) {
+                menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
                     dismissAction()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         emulatorVC.showSaveStateMenu()
@@ -474,7 +485,7 @@ struct RetroMenuView: View {
                 }
 
                 // Save states menu button
-                menuButton(title: "SAVE STATES", icon: "list.bullet", color: .retroYellow) {
+                menuButton(title: "SAVE STATES", icon: "list.bullet", color: palette.defaultTintColor.swiftUIColor) {
                     dismissAction()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         emulatorVC.showSaveStateMenu()
@@ -482,13 +493,13 @@ struct RetroMenuView: View {
                 }
             } else {
                 Text("Save states not supported")
-                    .foregroundColor(.gray)
+                    .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
                     .padding()
             }
 
             // Screenshot button
 #if os(iOS) || targetEnvironment(macCatalyst)
-            menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: .retroOrange) {
+            menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: palette.defaultTintColor.swiftUIColor) {
                 dismissAction()
                 emulatorVC.takeScreenshot()
             }
@@ -503,7 +514,7 @@ struct RetroMenuView: View {
     private var optionsMenuButtons: some View {
         VStack(spacing: menuSpacing) {
             // Game speed button
-            menuButton(title: "GAME SPEED", icon: "speedometer", color: .retroBlue) {
+            menuButton(title: "GAME SPEED", icon: "speedometer", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
                 dismissAction()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     emulatorVC.showSpeedMenu()
@@ -512,7 +523,7 @@ struct RetroMenuView: View {
 
             // Cheat codes button (if supported)
             if let gameWithCheat = emulatorVC.core as? GameWithCheat, gameWithCheat.supportsCheatCode {
-                menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: .retroPink) {
+                menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: palette.defaultTintColor.swiftUIColor) {
                     dismissAction()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         emulatorVC.showCheatsMenu()
@@ -533,14 +544,14 @@ struct RetroMenuView: View {
             if let player1 = PVControllerManager.shared.player1 {
 #if os(iOS)
                 if Defaults[.missingButtonsAlwaysOn] || (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
-                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: .retroYellow) {
+                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
                         // Show P1 controls submenu
                         dismissAction()
                     }
                 }
 #else
                 if player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: .retroYellow) {
+                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
                         // Show P1 controls submenu
                         dismissAction()
                     }
@@ -551,7 +562,7 @@ struct RetroMenuView: View {
             // P2 controls (if available)
             if let player2 = PVControllerManager.shared.player2 {
                 if player2.extendedGamepad != nil || wantsStartSelectInMenu {
-                    menuButton(title: "P2 CONTROLS", icon: "gamecontroller", color: .retroYellow) {
+                    menuButton(title: "P2 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
                         // Show P2 controls submenu
                         dismissAction()
                     }
@@ -605,16 +616,16 @@ struct RetroMenuView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.system(size: 40))
-                        .foregroundColor(.retroOrange)
+                        .foregroundColor(palette.defaultTintColor.swiftUIColor)
                         .padding(.bottom, 8)
 
                     Text("SKINS UNDER DEVELOPMENT")
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.retroOrange)
+                        .foregroundColor(palette.defaultTintColor.swiftUIColor)
 
                     Text("Skins are not yet supported for this core, but development is in progress.")
                         .font(.system(size: 14))
-                        .foregroundColor(.gray)
+                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
                 }
@@ -622,10 +633,13 @@ struct RetroMenuView: View {
                 .padding(.vertical, 24)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.retroBlack.opacity(0.7))
+                        .fill(
+                            (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                .opacity(palette.dark ? 0.7 : 0.9)
+                        )
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .strokeBorder(Color.retroOrange.opacity(0.5), lineWidth: 1)
+                                .strokeBorder(palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.5 : 0.3), lineWidth: 1)
                         )
                 )
                 .padding(.horizontal, 8)
@@ -636,7 +650,7 @@ struct RetroMenuView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("SKIN SELECTION")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.gray)
+                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
 
                 // Current skin button - shows current orientation's skin
                 Button(action: {
@@ -656,24 +670,27 @@ struct RetroMenuView: View {
                                 Text(currentOrientation == .portrait ? "PORTRAIT SKIN" : "LANDSCAPE SKIN")
                                     .font(.system(size: 10, weight: .bold))
                             }
-                            .foregroundColor(.gray)
+                            .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
                             Text(currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin)
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.white)
+                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
                         }
 
                         Spacer()
 
                         Image(systemName: "chevron.right")
-                            .foregroundColor(.retroBlue)
+                            .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                     }
                     .padding(12)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.retroBlack.opacity(0.6))
+                            .fill(
+                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                    .opacity(palette.dark ? 0.6 : 0.9)
+                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(Color.retroBlue, lineWidth: 1)
+                                    .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
                             )
                     )
                 }
@@ -697,15 +714,18 @@ struct RetroMenuView: View {
                         Text("IMPORT SKIN")
                             .font(.system(size: 14, weight: .medium))
                     }
-                    .foregroundColor(.retroPurple)
+                    .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.retroBlack.opacity(0.6))
+                            .fill(
+                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                    .opacity(palette.dark ? 0.6 : 0.9)
+                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(Color.retroPurple, lineWidth: 1)
+                                    .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
                             )
                     )
                 }
@@ -769,7 +789,7 @@ struct RetroMenuView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("SCREEN FILTER")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.gray)
+                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
 
                     Button(action: {
                         // Show filter picker
@@ -778,20 +798,23 @@ struct RetroMenuView: View {
                         HStack {
                             Text(selectedFilter)
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.white)
+                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
 
                             Spacer()
 
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.retroPink)
+                                .foregroundColor(palette.defaultTintColor.swiftUIColor)
                         }
                         .padding(12)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.retroBlack.opacity(0.6))
+                                .fill(
+                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                        .opacity(palette.dark ? 0.6 : 0.9)
+                                )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(Color.retroPink, lineWidth: 1)
+                                        .strokeBorder(palette.defaultTintColor.swiftUIColor, lineWidth: 1)
                                 )
                         )
                     }
@@ -805,7 +828,7 @@ struct RetroMenuView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("BUTTON EFFECT")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.gray)
+                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
 
                     Button(action: {
                         // Show button effect picker
@@ -814,20 +837,23 @@ struct RetroMenuView: View {
                         HStack {
                             Text(buttonPressEffect.description)
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.white)
+                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
 
                             Spacer()
 
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.retroPurple)
+                                .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                         }
                         .padding(12)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.retroBlack.opacity(0.6))
+                                .fill(
+                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                        .opacity(palette.dark ? 0.6 : 0.9)
+                                )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(Color.retroPurple, lineWidth: 1)
+                                        .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
                                 )
                         )
                     }
@@ -841,7 +867,7 @@ struct RetroMenuView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("BUTTON SOUND")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.gray)
+                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
 
                     Button(action: {
                         // Show button sound picker
@@ -850,20 +876,23 @@ struct RetroMenuView: View {
                         HStack {
                             Text(buttonSound.description)
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.white)
+                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
 
                             Spacer()
 
                             Image(systemName: "speaker.wave.2")
-                                .foregroundColor(.retroBlue)
+                                .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                         }
                         .padding(12)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.retroBlack.opacity(0.6))
+                                .fill(
+                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                        .opacity(palette.dark ? 0.6 : 0.9)
+                                )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(Color.retroBlue, lineWidth: 1)
+                                        .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
                                 )
                         )
                     }
@@ -874,7 +903,7 @@ struct RetroMenuView: View {
                 }
 
                 // Apply button - applies both skin and filter changes after dismissing menu
-                menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: .retroBlue) {
+                menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
                     dismissAction()
                     // Apply skin and filter changes after menu is dismissed
                     Task {
@@ -892,12 +921,16 @@ struct RetroMenuView: View {
     private var skinPickerView: some View {
         NavigationView {
             ZStack {
-                // RetroWave background
-                RetroTheme.retroBackground
+                // Theme-aware background
+                Color(palette.gameLibraryBackground)
+                    .edgesIgnoringSafeArea(.all)
 
                 // Grid overlay
-                RetroGrid()
-                    .opacity(0.3)
+                RetroGrid(
+                    lineSpacing: 20,
+                    lineColor: palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.07 : 0.05)
+                )
+                .opacity(palette.dark ? 0.3 : 0.2)
 
                 // Main content with loading state handling
                 VStack {
@@ -905,8 +938,8 @@ struct RetroMenuView: View {
                     VStack(spacing: 8) {
                         Text("SELECT SKIN")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(RetroTheme.retroPink)
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+                            .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
+                            .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 5, x: 0, y: 0)
 
                         HStack(spacing: 8) {
                             Image(systemName: currentOrientation == .portrait ? "rectangle.portrait" : "rectangle.landscape")
@@ -914,15 +947,18 @@ struct RetroMenuView: View {
                             Text(currentOrientation == .portrait ? "PORTRAIT" : "LANDSCAPE")
                                 .font(.system(size: 14, weight: .bold))
                         }
-                        .foregroundColor(RetroTheme.retroBlue)
+                        .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(
                             Capsule()
-                                .fill(Color.black.opacity(0.5))
+                                .fill(
+                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                        .opacity(palette.dark ? 0.5 : 0.8)
+                                )
                                 .overlay(
                                     Capsule()
-                                        .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                                        .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
                                 )
                         )
                     }
@@ -936,21 +972,31 @@ struct RetroMenuView: View {
                             ZStack {
                                 Circle()
                                     .stroke(lineWidth: 4)
-                                    .foregroundColor(RetroTheme.retroDarkBlue)
+                                    .foregroundColor((palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(0.5))
                                     .frame(width: 50, height: 50)
 
                                 Circle()
                                     .trim(from: 0, to: 0.75)
-                                    .stroke(RetroTheme.retroGradient, lineWidth: 4)
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                palette.defaultTintColor.swiftUIColor,
+                                                (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
+                                            ]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 4
+                                    )
                                     .frame(width: 50, height: 50)
                                     .rotationEffect(Angle(degrees: glowOpacity * 360))
                             }
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5)
+                            .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 5)
 
                             Text("LOADING SKINS...")
                                 .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(RetroTheme.retroPink)
-                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3)
+                                .foregroundColor(palette.defaultTintColor.swiftUIColor)
+                                .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 3)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(.bottom, 50) // Offset to center visually
@@ -1005,18 +1051,21 @@ struct RetroMenuView: View {
                     }) {
                         Text("DONE")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(RetroTheme.retroPurple)
+                            .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
                                     .stroke(LinearGradient(
-                                        gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                        gradient: Gradient(colors: [
+                                            (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor),
+                                            palette.defaultTintColor.swiftUIColor
+                                        ]),
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     ), lineWidth: 1.5)
                             )
-                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                            .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity), radius: 3, x: 0, y: 0)
                     }
                 }
             }
@@ -1047,7 +1096,6 @@ struct RetroMenuView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     // Custom skin item view for Default option
@@ -1067,7 +1115,10 @@ struct RetroMenuView: View {
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(
                                             LinearGradient(
-                                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                gradient: Gradient(colors: [
+                                                    palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                                                    palette.defaultTintColor.swiftUIColor
+                                                ]),
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing
                                             ),
@@ -1076,13 +1127,19 @@ struct RetroMenuView: View {
                                 )
                         } else {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.black.opacity(0.5))
+                                .fill(
+                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                        .opacity(palette.dark ? 0.5 : 0.7)
+                                )
                                 .frame(width: geometry.size.width < 350 ? 60 : 80, height: geometry.size.width < 350 ? 60 : 80)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .stroke(
                                             LinearGradient(
-                                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                gradient: Gradient(colors: [
+                                                    palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                                                    palette.defaultTintColor.swiftUIColor
+                                                ]),
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing
                                             ),
@@ -1091,9 +1148,9 @@ struct RetroMenuView: View {
                                 )
                                 .overlay(
                                     Image(systemName: "gamecontroller.fill")
-                                        .foregroundColor(RetroTheme.retroBlue)
+                                        .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                                         .font(.system(size: geometry.size.width < 350 ? 24 : 30))
-                                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                        .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                 )
                         }
                     }
@@ -1102,20 +1159,20 @@ struct RetroMenuView: View {
                     VStack(alignment: .leading, spacing: geometry.size.width < 350 ? 4 : 8) {
                         Text(name)
                             .font(.system(size: geometry.size.width < 350 ? 16 : 18, weight: .bold))
-                            .foregroundColor(.white)
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
+                            .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                            .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                             .lineLimit(1)
 
                         if name != "Default" {
                             Text("Custom Skin")
                                 .font(.system(size: geometry.size.width < 350 ? 12 : 14))
-                                .foregroundColor(RetroTheme.retroPurple)
-                                .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                                .foregroundColor((palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor))
+                                .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         } else {
                             Text("System Default")
                                 .font(.system(size: geometry.size.width < 350 ? 12 : 14))
-                                .foregroundColor(RetroTheme.retroBlue)
-                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                                .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
+                                .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         }
                     }
 
@@ -1124,30 +1181,33 @@ struct RetroMenuView: View {
                     // Selection indicator
                     if isSelected {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(RetroTheme.retroBlue)
+                            .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                             .font(.system(size: geometry.size.width < 350 ? 20 : 24))
-                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                            .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity), radius: 3, x: 0, y: 0)
                     }
                 }
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.black.opacity(0.7))
+                        .fill(
+                            (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                .opacity(palette.dark ? 0.7 : 0.9)
+                        )
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .strokeBorder(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
-                                            isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue,
-                                            RetroTheme.retroPurple
+                                            isSelected ? palette.defaultTintColor.swiftUIColor : (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor),
+                                            (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                                         ]),
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     ),
                                     lineWidth: isHoveredSkinId == skinId || isSelected ? 2.0 : 1.5
                                 )
-                                .shadow(color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity),
+                                .shadow(color: (isSelected ? palette.defaultTintColor.swiftUIColor : (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)).opacity(glowOpacity),
                                         radius: isHoveredSkinId == skinId || isSelected ? 5 : 3,
                                         x: 0,
                                         y: 0)
@@ -1178,6 +1238,9 @@ struct RetroMenuView: View {
         let onSelect: () -> Void
 
         @State private var previewImage: UIImage? = nil
+        @ObservedObject private var themeManager = ThemeManager.shared
+
+        private var palette: UXThemePalette { themeManager.currentPalette }
 
         var body: some View {
             GeometryReader { geometry in
@@ -1195,7 +1258,10 @@ struct RetroMenuView: View {
                                         RoundedRectangle(cornerRadius: 8)
                                             .stroke(
                                                 LinearGradient(
-                                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                    gradient: Gradient(colors: [
+                                                        palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                                                        palette.defaultTintColor.swiftUIColor
+                                                    ]),
                                                     startPoint: .topLeading,
                                                     endPoint: .bottomTrailing
                                                 ),
@@ -1204,13 +1270,19 @@ struct RetroMenuView: View {
                                     )
                             } else {
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.black.opacity(0.5))
+                                    .fill(
+                                        (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                            .opacity(palette.dark ? 0.5 : 0.7)
+                                    )
                                     .frame(width: geometry.size.width < 350 ? 60 : 80, height: geometry.size.width < 350 ? 60 : 80)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 8)
                                             .stroke(
                                                 LinearGradient(
-                                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                                    gradient: Gradient(colors: [
+                                                        palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                                                        palette.defaultTintColor.swiftUIColor
+                                                    ]),
                                                     startPoint: .topLeading,
                                                     endPoint: .bottomTrailing
                                                 ),
@@ -1219,9 +1291,9 @@ struct RetroMenuView: View {
                                     )
                                     .overlay(
                                         Image(systemName: "gamecontroller.fill")
-                                            .foregroundColor(RetroTheme.retroBlue)
+                                            .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                                             .font(.system(size: geometry.size.width < 350 ? 24 : 30))
-                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                            .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                     )
                             }
                         }
@@ -1230,14 +1302,14 @@ struct RetroMenuView: View {
                         VStack(alignment: .leading, spacing: geometry.size.width < 350 ? 4 : 8) {
                             Text(skin.name)
                                 .font(.system(size: geometry.size.width < 350 ? 16 : 18, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
+                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                                .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                                 .lineLimit(1)
 
                             Text("Custom Skin")
                                 .font(.system(size: geometry.size.width < 350 ? 12 : 14))
-                                .foregroundColor(RetroTheme.retroPurple)
-                                .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                                .foregroundColor((palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor))
+                                .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         }
 
                         Spacer()
@@ -1245,30 +1317,33 @@ struct RetroMenuView: View {
                         // Selection indicator
                         if isSelected {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(RetroTheme.retroBlue)
+                                .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                                 .font(.system(size: geometry.size.width < 350 ? 20 : 24))
-                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                                .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity), radius: 3, x: 0, y: 0)
                         }
                     }
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.black.opacity(0.7))
+                            .fill(
+                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                    .opacity(palette.dark ? 0.7 : 0.9)
+                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
                                     .strokeBorder(
                                         LinearGradient(
                                             gradient: Gradient(colors: [
-                                                isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue,
-                                                RetroTheme.retroPurple
+                                                isSelected ? palette.defaultTintColor.swiftUIColor : (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor),
+                                                (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
                                             ]),
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
                                         ),
                                         lineWidth: isHovered || isSelected ? 2.0 : 1.5
                                     )
-                                    .shadow(color: (isSelected ? RetroTheme.retroPink : RetroTheme.retroBlue).opacity(glowOpacity),
+                                    .shadow(color: (isSelected ? palette.defaultTintColor.swiftUIColor : (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)).opacity(glowOpacity),
                                             radius: isHovered || isSelected ? 5 : 3,
                                             x: 0,
                                             y: 0)
@@ -1294,54 +1369,26 @@ struct RetroMenuView: View {
     private var filterPickerView: some View {
         GeometryReader { geometry in
             ZStack {
-                // Retrowave background
-                VStack(spacing: 0) {
-                    // Gradient sky
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.black,
-                            Color(red: 0.1, green: 0.0, blue: 0.3),
-                            Color(red: 0.5, green: 0.0, blue: 0.5)
-                        ]),
-                        startPoint: .bottom,
-                        endPoint: .top
-                    )
-                    .frame(height: 200)
+                // Theme-aware background
+                Color(palette.gameLibraryBackground)
+                    .edgesIgnoringSafeArea(.all)
 
-                    // Grid floor
-                    ZStack {
-                        // Horizontal grid lines
-                        VStack(spacing: 10) {
-                            ForEach(0..<10) { _ in
-                                Rectangle()
-                                    .frame(height: 1)
-                                    .foregroundColor(Color.retroPink.opacity(0.5))
-                            }
-                            Spacer()
-                        }
-
-                        // Vertical grid lines
-                        HStack(spacing: 20) {
-                            ForEach(0..<10) { _ in
-                                Rectangle()
-                                    .frame(width: 1)
-                                    .foregroundColor(Color.retroPink.opacity(0.5))
-                            }
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
-                    .background(Color.black)
-                }
+                // Grid overlay
+                RetroGrid(
+                    lineSpacing: 20,
+                    lineColor: palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.1 : 0.05)
+                )
+                .opacity(palette.dark ? 0.3 : 0.2)
 
                 // Content
                 VStack(spacing: 0) {
                     // Header
                     Text("SCREEN FILTERS")
                         .font(.system(size: geometry.size.width < 400 ? 24 : 28, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
                         .padding(.top, 30)
                         .padding(.bottom, 20)
-                        .shadow(color: Color.retroPink.opacity(0.8), radius: 10, x: 0, y: 0)
+                        .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.8 : 0.5), radius: 10, x: 0, y: 0)
 
                     // Filter options
                     VStack(spacing: isLandscape ? 8 : 12) {
@@ -1353,29 +1400,35 @@ struct RetroMenuView: View {
                                 HStack {
                                     Text(filter)
                                         .font(.system(size: geometry.size.width < 400 ? 16 : 18, weight: .bold))
-                                        .foregroundColor(filter == selectedFilter ? .white : .white.opacity(0.7))
+                                        .foregroundColor(
+                                            filter == selectedFilter
+                                                ? (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                                                : (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7)
+                                        )
 
                                     Spacer()
 
                                     if filter == selectedFilter {
                                         Image(systemName: "checkmark.circle.fill")
                                             .font(.system(size: 20))
-                                            .foregroundColor(.retroPink)
+                                            .foregroundColor(palette.defaultTintColor.swiftUIColor)
                                     }
                                 }
                                 .padding(.vertical, isLandscape ? 8 : 12)
                                 .padding(.horizontal, 20)
                                 .background(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .fill(filter == selectedFilter ?
-                                              Color.retroPurple.opacity(0.4) :
-                                                Color.black.opacity(0.6))
+                                        .fill(
+                                            filter == selectedFilter
+                                                ? (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.4 : 0.6)
+                                                : (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.6 : 0.8)
+                                        )
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 8)
                                                 .strokeBorder(
-                                                    filter == selectedFilter ?
-                                                    Color.retroPink :
-                                                        Color.retroPink.opacity(0.3),
+                                                    filter == selectedFilter
+                                                        ? palette.defaultTintColor.swiftUIColor
+                                                        : palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.3 : 0.2),
                                                     lineWidth: filter == selectedFilter ? 2 : 1
                                                 )
                                         )
@@ -1394,22 +1447,25 @@ struct RetroMenuView: View {
                     }) {
                         Text("DONE")
                             .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(LinearGradient(
-                                        gradient: Gradient(colors: [Color.retroBlue, Color.retroPurple]),
+                                        gradient: Gradient(colors: [
+                                            palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                                            palette.defaultTintColor.swiftUIColor
+                                        ]),
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     ))
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(Color.white.opacity(0.5), lineWidth: 1)
+                                    .strokeBorder((palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.5), lineWidth: 1)
                             )
-                            .shadow(color: Color.retroBlue.opacity(0.5), radius: 8, x: 0, y: 0)
+                            .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(0.5), radius: 8, x: 0, y: 0)
                     }
                     .buttonStyle(PlainButtonStyle())
                     .padding(.horizontal, 16)
@@ -1419,9 +1475,12 @@ struct RetroMenuView: View {
                     width: isLandscape ? min(400, geometry.size.width * 0.8) : min(500, geometry.size.width * 0.9),
                     height: isLandscape ? geometry.size.height * 0.9 : min(600, geometry.size.height * 0.8)
                 )
-                .background(Color.black.opacity(0.7))
+                .background(
+                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                        .opacity(palette.dark ? 0.7 : 0.95)
+                )
                 .cornerRadius(20)
-                .shadow(color: Color.retroPink.opacity(0.3), radius: 20)
+                .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 20)
                 .position(
                     x: geometry.size.width / 2,
                     y: geometry.size.height / 2
@@ -1429,7 +1488,6 @@ struct RetroMenuView: View {
             }
         }
         .edgesIgnoringSafeArea(.all)
-        .preferredColorScheme(.dark)
     }
 
     // Load available skins for the current system
@@ -2078,12 +2136,16 @@ struct RetroMenuView: View {
             VStack(spacing: 4) {
                 Text(title)
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(isSelected ? .white : .white.opacity(0.6))
+                    .foregroundColor(
+                        isSelected
+                            ? (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                            : (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.6)
+                    )
 
                 // Indicator line
                 Rectangle()
                     .frame(height: 2)
-                    .foregroundColor(isSelected ? .retroPink : .clear)
+                    .foregroundColor(isSelected ? palette.defaultTintColor.swiftUIColor : .clear)
             }
             .frame(height: 40)
             .padding(.horizontal, 8)
@@ -2091,7 +2153,10 @@ struct RetroMenuView: View {
                 Group {
                     if isSelected {
                         LinearGradient(
-                            gradient: Gradient(colors: [Color.retroPurple.opacity(0.2), Color.retroPurple.opacity(0.5)]),
+                            gradient: Gradient(colors: [
+                                (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(palette.dark ? 0.2 : 0.1),
+                                (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(palette.dark ? 0.5 : 0.3)
+                            ]),
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -2116,7 +2181,7 @@ struct RetroMenuView: View {
 
                 Text(title)
                     .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
 
@@ -2124,19 +2189,22 @@ struct RetroMenuView: View {
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: isLandscape ? 12 : 14))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor((palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.5))
             }
             .padding(.vertical, isLandscape ? 10 : 14)
             .padding(.horizontal, 16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.retroBlack.opacity(0.7))
+                    .fill(
+                        (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                            .opacity(palette.dark ? 0.7 : 0.9)
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .strokeBorder(color, lineWidth: 2)
                     )
             )
-            .shadow(color: color.opacity(0.5), radius: 5, x: 0, y: 0)
+            .shadow(color: color.opacity(palette.dark ? 0.5 : 0.3), radius: 5, x: 0, y: 0)
         }
         .buttonStyle(PlainButtonStyle())
     }
