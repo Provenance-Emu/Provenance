@@ -31,10 +31,10 @@
             case "leftDown", "down": self = .leftDown
             case "leftLeft", "left": self = .leftLeft
             case "leftRight", "right": self = .leftRight
-            case "rightUp": self = .rightUp
-            case "rightDown": self = .rightDown
-            case "rightLeft": self = .rightLeft
-            case "rightRight": self = .rightRight
+            case "rightUp", "rightDpadUp": self = .rightUp
+            case "rightDown", "rightDpadDown": self = .rightDown
+            case "rightLeft", "rightDpadLeft": self = .rightLeft
+            case "rightRight", "rightDpadRight": self = .rightRight
             case "l": self = .l
             case "r": self = .r
             case "a": self = .a
