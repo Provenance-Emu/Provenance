@@ -531,9 +531,17 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         let cores: [PVCore] = system.cores.filter {
             (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
-        }.sorted(by: {
-            !$0.projectName.localizedCaseInsensitiveContains("retroarch") && $0.projectName.localizedCaseInsensitiveContains("retroarch")
-            || $0.projectName < $1.projectName
+        }.sorted(by: { core1, core2 in
+            let core1IsRetroArch = core1.projectName.localizedCaseInsensitiveContains("retroarch")
+            let core2IsRetroArch = core2.projectName.localizedCaseInsensitiveContains("retroarch")
+
+            // If both are RetroArch or both are not RetroArch, sort alphabetically
+            if core1IsRetroArch == core2IsRetroArch {
+                return core1.projectName.localizedCaseInsensitiveCompare(core2.projectName) == .orderedAscending
+            }
+
+            // If one is RetroArch and one isn't, non-RetroArch comes first
+            return !core1IsRetroArch
         })
 
         let coreChoiceAlert = UIAlertController(title: "Multiple cores found",
