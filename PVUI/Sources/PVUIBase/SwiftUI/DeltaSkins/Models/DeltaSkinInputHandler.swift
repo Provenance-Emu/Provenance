@@ -478,9 +478,10 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
         case .VirtualBoy:
             if let r = core as? PVVirtualBoySystemResponderClient {
-                // VirtualBoy uses leftUp, leftDown, etc.
-                let vbId = id == "up" ? "leftUp" : id == "down" ? "leftDown" : id == "left" ? "leftLeft" : id == "right" ? "leftRight" : id
-                let b = PVVBButton(vbId)
+                /// VirtualBoy button ID is already normalized by normalizeSkinButtonId above
+                /// (converts "up" -> "leftUp", "down" -> "leftDown", etc.)
+                let b = PVVBButton(id)
+                DLOG("VirtualBoy D-pad button: original=\(buttonId), normalized=\(id), PVVBButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
         default:
@@ -829,15 +830,26 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     /// Forward button press to the emulator core
     private func forwardButtonPress(_ buttonId: String, isPressed: Bool) {
-        guard let core = emulatorCore else { return }
+        guard let core = emulatorCore else {
+            ELOG("Cannot forward button press - emulatorCore is nil")
+            return
+        }
 
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
 
+        // Log system info for debugging
+        if let systemId = core.systemIdentifier {
+            DLOG("Forwarding button \(isPressed ? "press" : "release"): \(buttonId) (normalized: \(normalizedId)) for system: \(systemId)")
+        }
+
         // Prefer direct system-specific responder path (works best for RA and native cores)
         if trySystemResponderCall(normalizedId, isPressed: isPressed, core: core) {
+            DLOG("Button handled via system-specific responder")
             return
         }
+
+        DLOG("System-specific responder did not handle button, trying fallback methods")
 
         // Use system-specific button handling if we have a controller VC
         if let controllerVC = controllerVC {
@@ -921,9 +933,13 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Returns true if the call was handled.
     private func trySystemResponderCall(_ buttonId: String, isPressed: Bool, core: PVEmulatorCore) -> Bool {
         guard let systemIdentifier = core.systemIdentifier, let systemId = SystemIdentifier(rawValue: systemIdentifier) else {
+            DLOG("Cannot determine system identifier for core")
             return false
         }
+
+        DLOG("trySystemResponderCall: buttonId=\(buttonId), systemId=\(systemId)")
         let id = normalizeSkinButtonId(buttonId, for: systemId)
+        DLOG("Normalized button ID: \(buttonId) -> \(id) for system \(systemId)")
 
         switch systemId {
         case .PSX:
@@ -1060,7 +1076,11 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
         case .VirtualBoy:
             if let r = core as? PVVirtualBoySystemResponderClient {
+                /// VirtualBoy requires specific button names: leftUp, leftDown, leftLeft, leftRight for D-pad
+                /// The normalizeSkinButtonId should have already converted "up" -> "leftUp", etc.
+                /// But PVVBButton.init also accepts "up", "down", etc. as aliases, so both should work
                 let b = PVVBButton(id)
+                DLOG("VirtualBoy button: original=\(buttonId), normalized=\(id), PVVBButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
@@ -1088,14 +1108,17 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["○", "cir", "circle", "a"].contains(s) { return "circle" }
             if ["✕", "cro", "cross", "b"].contains(s) { return "cross" }
         case .VirtualBoy:
-            // VirtualBoy has unique D-pad buttons (leftUp, leftDown, etc.)
+            /// VirtualBoy has unique D-pad buttons (leftUp, leftDown, etc.)
+            /// Convert standard D-pad directions to VirtualBoy-specific names
             if ["up", "leftup"].contains(s) { return "leftUp" }
             if ["down", "leftdown"].contains(s) { return "leftDown" }
             if ["left", "leftleft"].contains(s) { return "leftLeft" }
             if ["right", "leftright"].contains(s) { return "leftRight" }
-            // VirtualBoy uses "l" and "r" directly (not "l1"/"r1")
-            if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l" }
-            if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r" }
+            /// VirtualBoy uses "l" and "r" directly (not "l1"/"r1")
+            /// Handle shoulder button variations
+            if ["l", "l1", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l" }
+            if ["r", "r1", "rb", "rshoulder", "shoulderright"].contains(s) { return "r" }
+            /// Regular buttons use standard names
             if ["a", "b", "start", "select"].contains(s) { return s }
         case .SNES:
             if ["a", "b", "x", "y"].contains(s) { return s }
@@ -1121,8 +1144,11 @@ public class DeltaSkinInputHandler: ObservableObject {
         if ["run", "play"].contains(s) { return "start" }
         // 32X uses "mode" directly, so don't convert it to "select" for 32X
         if system != .Sega32X && ["mode", "option"].contains(s) { return "select" }
-        if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
-        if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
+        /// VirtualBoy uses "l" and "r" directly, so don't convert them to "l1"/"r1"
+        if system != .VirtualBoy {
+            if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
+            if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
+        }
         if ["lt", "ltrigger", "ltrigger1", "triggerleft"].contains(s) { return "l1" }
         if ["rt", "rtrigger", "rtrigger1", "triggerright"].contains(s) { return "r1" }
         if ["lt2", "l2", "ltrigger2", "trigger2", "lefttrigger2"].contains(s) { return "l2" }
