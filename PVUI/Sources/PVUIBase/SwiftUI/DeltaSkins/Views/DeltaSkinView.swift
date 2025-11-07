@@ -56,6 +56,9 @@ public struct DeltaSkinView: View {
     // Map touch IDs to their locations for D-pad input calculation
     @State private var touchLocationsMap: [ObjectIdentifier: CGPoint] = [:]
 
+    // Track which touches have been processed (to avoid re-processing in .moved)
+    @State private var processedTouches: Set<ObjectIdentifier> = []
+
     // Track the current preview size
     @State private var previewSize: CGSize = .zero
 
@@ -609,11 +612,11 @@ public struct DeltaSkinView: View {
                         DLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
 
                         switch touchPhase {
-                        case .began, .moved:
-                            // Process each active touch
+                        case .began:
+                            // Process each new touch
                             for touch in touches {
                                 let location = touch.location
-                                DLOG("Processing touch: \(touch.id) at \(location)")
+                                DLOG("Processing NEW touch: \(touch.id) at \(location)")
 
                                 // Store this touch point for visualization
                                 touchLocations.insert(location)
@@ -621,13 +624,55 @@ public struct DeltaSkinView: View {
                                 // Store the mapping between touch ID and location for D-pad tracking
                                 touchLocationsMap[touch.id] = location
 
-                                // Store the mapping between touch ID and location
-                                touchToButtonMap[touch.id] = nil
+                                // Mark this touch as processed
+                                processedTouches.insert(touch.id)
 
                                 // Handle this touch location
                                 handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
                             }
                             DLOG("Current touch points: \(touchLocations.count)")
+
+                        case .moved:
+                            // Only process touches that have actually moved significantly OR are on D-pad
+                            // D-pad touches need continuous processing for direction updates
+                            // Regular button touches should only process if moved significantly
+                            for touch in touches {
+                                let location = touch.location
+                                let previousLocation = touchLocationsMap[touch.id]
+
+                                // Check if this touch is associated with a D-pad (needs continuous processing)
+                                let isDPadTouch = touchToDPadMap[touch.id] != nil
+
+                                // Check if touch has moved significantly (more than 1 point)
+                                let hasMoved: Bool
+                                if let prev = previousLocation {
+                                    let dx = location.x - prev.x
+                                    let dy = location.y - prev.y
+                                    let distance = sqrt(dx * dx + dy * dy)
+                                    hasMoved = distance > 1.0
+                                } else {
+                                    // New touch that wasn't tracked (shouldn't happen, but handle it)
+                                    hasMoved = true
+                                }
+
+                                // Process if: D-pad touch (always needs updates) OR has moved significantly
+                                if isDPadTouch || hasMoved {
+                                    if isDPadTouch {
+                                        DLOG("Processing D-PAD touch: \(touch.id) at \(location)")
+                                    } else {
+                                        DLOG("Processing MOVED touch: \(touch.id) at \(location) (was at \(previousLocation ?? .zero))")
+                                    }
+
+                                    // Update touch location
+                                    touchLocations.insert(location)
+                                    touchLocationsMap[touch.id] = location
+
+                                    // Handle this touch location
+                                    handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
+                                } else {
+                                    DLOG("Skipping touch \(touch.id) - hasn't moved significantly and not D-pad")
+                                }
+                            }
 
                         case .ended, .cancelled:
                             // Process ended touches
@@ -640,11 +685,15 @@ public struct DeltaSkinView: View {
                                 // Remove touch location mapping
                                 touchLocationsMap.removeValue(forKey: touch.id)
 
+                                // Remove from processed touches
+                                processedTouches.remove(touch.id)
+
                                 // Release any button associated with this touch
+                                // Remove from map FIRST, then check if button should be released
                                 if let buttonId = touchToButtonMap[touch.id] {
                                     DLOG("Releasing button \(buttonId) for touch \(touch.id)")
-                                    handleButtonRelease(buttonId)
                                     touchToButtonMap.removeValue(forKey: touch.id)
+                                    handleButtonRelease(buttonId)
                                 }
 
                                 // Release D-pad directions if this touch was on the D-pad
@@ -656,7 +705,7 @@ public struct DeltaSkinView: View {
                             }
 
                             // If all touches are gone, ensure everything is reset
-                            if touchToButtonMap.isEmpty {
+                            if touchToButtonMap.isEmpty && touchToDPadMap.isEmpty {
                                 DLOG("All touches ended, cleaning up")
 
                                 // Clear active buttons to ensure visual feedback is removed
@@ -664,6 +713,7 @@ public struct DeltaSkinView: View {
 
                                 // Reset state
                                 touchLocations.removeAll()
+                                processedTouches.removeAll()
                                 currentlyPressedButton = nil
 
                                 // Double-check that all D-pad buttons are released
@@ -922,20 +972,56 @@ public struct DeltaSkinView: View {
         // Use the same transformation logic as transformFrame
         let (buttonScaleX, buttonScaleY, xOffset, yOffset) = calculateButtonTransform(in: size, mappingSize: mappingSize)
 
-        // First check if we're already pressing a D-pad button and still within its extended hit area
-        if let currentButton = currentlyPressedButton, case .directional = currentButton.input {
-            // Use the new D-pad direction hit area check
-            if isLocationInDPadDirection(location, button: currentButton, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
-                // Still within D-pad hit area, update D-pad input
-                touchToDPadMap[touchId] = currentButton
-                handleDPadInput(currentButton, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
+        // Check if THIS specific touch is already associated with a D-pad button
+        // Only check and update if this touch was previously on a D-pad
+        if let existingDPadButton = touchToDPadMap[touchId], case .directional = existingDPadButton.input {
+            // This touch is already on a D-pad - check if it's still within the hit area
+            if isLocationInDPadDirection(location, button: existingDPadButton, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
+                // Still within D-pad hit area, update D-pad input for this touch
+                handleDPadInput(existingDPadButton, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
                 return
             } else {
-                // We've moved outside the D-pad hit area, release the current direction
-                DLOG("Moved outside D-pad area - releasing directions")
+                // This touch moved outside the D-pad hit area, release directions for THIS touch only
+                DLOG("Touch \(touchId) moved outside D-pad area - releasing directions for this touch")
                 releaseDPadDirectionsForTouch(touchId)
-                currentlyPressedButton = nil
+                touchToDPadMap.removeValue(forKey: touchId)
+                // Continue to check if touch is now on another button
             }
+        }
+
+        // Check if THIS specific touch is already associated with a regular button
+        // If it is and still on that button, don't re-process
+        if let existingButtonId = touchToButtonMap[touchId] {
+            // Check if touch is still on the same button
+            if let buttons = skin.buttons(for: traits) {
+                let existingButton = buttons.first { button in
+                    let inputCommand = extractInputCommand(from: button)
+                    return inputCommand == existingButtonId
+                }
+
+                if let button = existingButton {
+                    let hitFrame = button.frame.insetBy(dx: -20, dy: -20)
+                    let scaledFrame = CGRect(
+                        x: hitFrame.minX * buttonScaleX + xOffset,
+                        y: yOffset + (hitFrame.minY * buttonScaleY),
+                        width: hitFrame.width * buttonScaleX,
+                        height: hitFrame.height * buttonScaleY
+                    )
+
+                    if scaledFrame.contains(location) {
+                        // Still on the same button, no need to re-process
+                        DLOG("Touch \(touchId) still on button \(existingButtonId), skipping re-processing")
+                        return
+                    }
+                }
+            }
+
+            // Touch moved off the button it was associated with
+            // Remove this touch's association FIRST, then check if button should be released
+            DLOG("Touch \(touchId) moved off button \(existingButtonId), releasing")
+            touchToButtonMap.removeValue(forKey: touchId)
+            // Now check if any other touches are still holding this button
+            handleButtonRelease(existingButtonId)
         }
 
         // Find all candidate buttons (both D-pad and regular) that the touch might be hitting
@@ -1033,19 +1119,18 @@ public struct DeltaSkinView: View {
                 let inputCommand = extractInputCommand(from: button)
 
                 // Use our enhanced button press handling that supports multiple buttons
+                // Only press if not already pressed (supports multiple touches on same button)
                 if !pressedButtons.contains(inputCommand) {
                     handleButtonPress(inputCommand)
-
-                    // Associate this touch with this button
-                    touchToButtonMap[touchId] = inputCommand
-                    DLOG("Associated touch \(touchId) with button \(inputCommand)")
+                    DLOG("Pressed button \(inputCommand) via touch \(touchId)")
                 }
 
-                // Don't update currentlyPressedButton for non-D-pad buttons when D-pad is active
-                // This prevents releasing D-pad when tapping other buttons
-                if touchToDPadMap.isEmpty {
-                    currentlyPressedButton = button
-                }
+                // Associate this touch with this button (update mapping even if already pressed)
+                touchToButtonMap[touchId] = inputCommand
+                DLOG("Associated touch \(touchId) with button \(inputCommand)")
+
+                // Don't update currentlyPressedButton - it's legacy and causes issues with multi-touch
+                // Each touch is tracked independently via touchToButtonMap and touchToDPadMap
 
                 // Add visual feedback
                 let highlightButtonId = button.id
@@ -1066,21 +1151,21 @@ public struct DeltaSkinView: View {
 
         } else {
             // Touch is not on any button
-            // Only release D-pad if this specific touch was on the D-pad
+            // Only release if this specific touch was associated with a button/D-pad
             if let dpadButton = touchToDPadMap[touchId] {
-                // This touch was on D-pad but moved off, release D-pad directions for this touch
+                // This touch was on D-pad but moved off, release D-pad directions for this touch only
+                DLOG("Touch \(touchId) moved off D-pad, releasing directions for this touch")
                 releaseDPadDirectionsForTouch(touchId)
                 touchToDPadMap.removeValue(forKey: touchId)
             } else if let buttonId = touchToButtonMap[touchId] {
-                // This touch was on a non-D-pad button, release it
-                handleButtonRelease(buttonId)
+                // This touch was on a non-D-pad button but moved off, release it
+                // Remove this touch's association FIRST, then check if button should be released
+                DLOG("Touch \(touchId) moved off button \(buttonId), releasing")
                 touchToButtonMap.removeValue(forKey: touchId)
+                // Now check if any other touches are still holding this button
+                handleButtonRelease(buttonId)
             }
-
-            // Only clear currentlyPressedButton if no D-pad touches are active
-            if touchToDPadMap.isEmpty {
-                currentlyPressedButton = nil
-            }
+            // Note: Don't clear currentlyPressedButton here - it's managed per-touch now
         }
     }
 
@@ -1869,6 +1954,25 @@ public struct DeltaSkinView: View {
             DLOG("⚠️ Button \(buttonId) not pressed, skipping release event")
             return
         }
+
+        // Check if any other touches are still holding this button
+        // Only release if no other touches are associated with this button
+        let otherTouchesHoldingButton = touchToButtonMap.values.contains(buttonId)
+
+        // For D-pad buttons, check if any other D-pad touches would still activate this direction
+        // This is a safety check - releaseDPadDirectionsForTouch should handle D-pad logic correctly
+        let dpadButtons = ["up", "down", "left", "right"]
+        let isDPadButton = dpadButtons.contains(buttonId)
+
+        if otherTouchesHoldingButton {
+            DLOG("⚠️ Other touches still holding button \(buttonId), skipping release")
+            return
+        }
+
+        // For D-pad buttons, if there are other D-pad touches active,
+        // releaseDPadDirectionsForTouch should have already calculated if this direction should remain
+        // So we allow the release to proceed - the caller (releaseDPadDirectionsForTouch) is responsible
+        // for ensuring correct D-pad state
 
         // Remove from the set of currently pressed buttons
         pressedButtons.remove(buttonId)
