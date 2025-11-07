@@ -1,7 +1,7 @@
 /*
  Copyright (c) 2013, OpenEmu Team
- 
- 
+
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  * Neither the name of the OpenEmu Team nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -63,6 +63,7 @@ __weak PVPicoDriveBridge *_current;
     NSString *romName;
     double sampleRate;
     NSTimeInterval frameInterval;
+    NSMutableDictionary<NSString *, NSString *> *_variableCache;
 }
 
 @end
@@ -97,14 +98,14 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     strongCurrent->videoWidth  = width;
     strongCurrent->videoHeight = height;
 
-    
+
     static dispatch_queue_t memory_queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
         memory_queue = dispatch_queue_create("com.provenance.video", queueAttributes);
     });
-        
+
     dispatch_apply(height, memory_queue, ^(size_t y){
         const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
         uint16_t *dst = strongCurrent->videoBuffer + y * 320;
@@ -116,13 +117,13 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 
 static void input_poll_callback(void)
 {
-    
+
 }
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
     __strong PVPicoDriveBridge *strongCurrent = _current;
-    
+
     int16_t value = 0;
 
     if (port == 0 & device == RETRO_DEVICE_JOYPAD)
@@ -149,9 +150,9 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
             value = strongCurrent->_pad[1][_id];
         }
     }
-    
+
     strongCurrent = nil;
-    
+
     return value;
 }
 
@@ -165,6 +166,109 @@ static bool environment_callback(unsigned cmd, void *data)
         {
             break;
         }
+        case RETRO_ENVIRONMENT_GET_VARIABLE:
+        {
+            struct retro_variable *var = (struct retro_variable *)data;
+            NSString *optionKey = [NSString stringWithUTF8String:var->key];
+            NSString *userDefaultsKey = [NSString stringWithFormat:@"PVPicoDrive.%@", optionKey];
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+            if ([optionKey isEqualToString:@"picodrive_input1"]) {
+                NSInteger value = [defaults integerForKey:userDefaultsKey];
+                NSString *stringValue;
+                switch (value) {
+                    case 0: stringValue = @"3 button pad"; break;
+                    case 1: stringValue = @"6 button pad"; break;
+                    case 2: stringValue = @"None"; break;
+                    default: stringValue = @"3 button pad"; break;
+                }
+                strongCurrent->_variableCache[optionKey] = stringValue;
+                var->value = [stringValue UTF8String];
+                return true;
+            }
+            else if ([optionKey isEqualToString:@"picodrive_input2"]) {
+                NSInteger value = [defaults integerForKey:userDefaultsKey];
+                NSString *stringValue;
+                switch (value) {
+                    case 0: stringValue = @"3 button pad"; break;
+                    case 1: stringValue = @"6 button pad"; break;
+                    case 2: stringValue = @"None"; break;
+                    default: stringValue = @"3 button pad"; break;
+                }
+                strongCurrent->_variableCache[optionKey] = stringValue;
+                var->value = [stringValue UTF8String];
+                return true;
+            }
+            else if ([optionKey isEqualToString:@"picodrive_sprlim"]) {
+                BOOL value = [defaults boolForKey:userDefaultsKey];
+                NSString *stringValue = value ? @"enabled" : @"disabled";
+                strongCurrent->_variableCache[optionKey] = stringValue;
+                var->value = [stringValue UTF8String];
+                return true;
+            }
+            else if ([optionKey isEqualToString:@"picodrive_ramcart"]) {
+                BOOL value = [defaults boolForKey:userDefaultsKey];
+                NSString *stringValue = value ? @"enabled" : @"disabled";
+                strongCurrent->_variableCache[optionKey] = stringValue;
+                var->value = [stringValue UTF8String];
+                return true;
+            }
+            else if ([optionKey isEqualToString:@"picodrive_region"]) {
+                NSInteger value = [defaults integerForKey:userDefaultsKey];
+                NSString *stringValue;
+                switch (value) {
+                    case 0: stringValue = @"Auto"; break;
+                    case 1: stringValue = @"Japan NTSC"; break;
+                    case 2: stringValue = @"Japan PAL"; break;
+                    case 3: stringValue = @"US"; break;
+                    case 4: stringValue = @"Europe"; break;
+                    default: stringValue = @"Auto"; break;
+                }
+                strongCurrent->_variableCache[optionKey] = stringValue;
+                var->value = [stringValue UTF8String];
+                return true;
+            }
+            else if ([optionKey isEqualToString:@"picodrive_aspect"]) {
+                NSInteger value = [defaults integerForKey:userDefaultsKey];
+                NSString *stringValue;
+                switch (value) {
+                    case 0: stringValue = @"PAR"; break;
+                    case 1: stringValue = @"4/3"; break;
+                    case 2: stringValue = @"CRT"; break;
+                    default: stringValue = @"PAR"; break;
+                }
+                strongCurrent->_variableCache[optionKey] = stringValue;
+                var->value = [stringValue UTF8String];
+                return true;
+            }
+            else if ([optionKey isEqualToString:@"picodrive_overscan"]) {
+                BOOL value = [defaults boolForKey:userDefaultsKey];
+                NSString *stringValue = value ? @"enabled" : @"disabled";
+                strongCurrent->_variableCache[optionKey] = stringValue;
+                var->value = [stringValue UTF8String];
+                return true;
+            }
+            else if ([optionKey isEqualToString:@"picodrive_overclk68k"]) {
+                NSInteger value = [defaults integerForKey:userDefaultsKey];
+                NSString *stringValue;
+                switch (value) {
+                    case 0: stringValue = @"disabled"; break;
+                    case 1: stringValue = @"+25%"; break;
+                    case 2: stringValue = @"+50%"; break;
+                    case 3: stringValue = @"+75%"; break;
+                    case 4: stringValue = @"+100%"; break;
+                    case 5: stringValue = @"+200%"; break;
+                    case 6: stringValue = @"+400%"; break;
+                    default: stringValue = @"disabled"; break;
+                }
+                strongCurrent->_variableCache[optionKey] = stringValue;
+                var->value = [stringValue UTF8String];
+                return true;
+            }
+
+            WLOG(@"Unhandled variable: %s", var->key);
+            return false;
+        }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT :
         {
             enum retro_pixel_format pix_fmt = *(const enum retro_pixel_format*)data;
@@ -173,15 +277,15 @@ static bool environment_callback(unsigned cmd, void *data)
                 case RETRO_PIXEL_FORMAT_0RGB1555:
                     NSLog(@"Environ SET_PIXEL_FORMAT: 0RGB1555");
                     break;
-                
+
                 case RETRO_PIXEL_FORMAT_RGB565:
                     NSLog(@"Environ SET_PIXEL_FORMAT: RGB565");
                     break;
-                    
+
                 case RETRO_PIXEL_FORMAT_XRGB8888:
                     NSLog(@"Environ SET_PIXEL_FORMAT: XRGB8888");
                     break;
-                    
+
                 default:
                     return false;
             }
@@ -191,7 +295,7 @@ static bool environment_callback(unsigned cmd, void *data)
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
         {
             NSString *appSupportPath = [strongCurrent BIOSPath];
-            
+
             *(const char **)data = [appSupportPath UTF8String];
             NSLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
@@ -215,29 +319,29 @@ static bool environment_callback(unsigned cmd, void *data)
             NSLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
     }
-    
+
     return true;
 }
 
 static void loadSaveFile(const char* path, int type)
 {
     FILE *file;
-    
+
     file = fopen(path, "rb");
     if ( !file )
     {
         return;
     }
-    
+
     size_t size = retro_get_memory_size(type);
     void *data = retro_get_memory_data(type);
-    
+
     if (size == 0 || !data)
     {
         fclose(file);
         return;
     }
-    
+
     size_t rc = fread(data, sizeof(uint8_t), size, file);
     if ( rc != size ) {
         ELOG(@"Couldn't load save file.");
@@ -252,7 +356,7 @@ static void writeSaveFile(const char* path, int type)
 {
     size_t size = retro_get_memory_size(type);
     void *data = retro_get_memory_data(type);
-    
+
     if ( data && size > 0 )
     {
         FILE *file = fopen(path, "wb");
@@ -277,10 +381,11 @@ static void writeSaveFile(const char* path, int type)
 
 //        _pad = (int16_t *)malloc(24 * sizeof(int16_t));
         memset((void*)_pad, 0, sizeof(int16_t) * 24);
+        _variableCache = [NSMutableDictionary dictionary];
     }
-    
+
 	_current = self;
-    
+
 	return self;
 }
 
@@ -301,10 +406,10 @@ static void writeSaveFile(const char* path, int type)
     size = [dataObj length];
     data = (uint8_t*)[dataObj bytes];
     const char *meta = NULL;
-    
+
     retro_set_environment(environment_callback);
 	retro_init();
-    
+
     if (self->videoBufferA) {
         free(self->videoBufferA);
     }
@@ -316,7 +421,7 @@ static void writeSaveFile(const char* path, int type)
     self->videoBufferB = NULL;
 
     self->videoBuffer = NULL;
-    
+
     self->videoBufferA = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
     self->videoBufferB = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
 
@@ -327,40 +432,40 @@ static void writeSaveFile(const char* path, int type)
     retro_set_video_refresh(video_callback);
     retro_set_input_poll(input_poll_callback);
     retro_set_input_state(input_state_callback);
-        
+
     const char *fullPath = [path UTF8String];
-    
+
     struct retro_game_info info = {NULL};
     info.path = fullPath;
     info.data = data;
     info.size = size;
     info.meta = meta;
-    
+
     if(retro_load_game(&info)) {
         NSString *path = self.romName;
         NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-        
+
         NSString *batterySavesDirectory = [self batterySavesPath];
-        
+
         if([batterySavesDirectory length] != 0)
         {
             [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-            
+
             NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-            
+
             loadSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
         }
-        
+
         struct retro_system_av_info info;
         retro_get_system_av_info(&info);
-        
+
         self->frameInterval = info.timing.fps;
         self->_sampleRate = info.timing.sample_rate;
 
         retro_get_region();
-        
+
         retro_run();
-        
+
         return YES;
     }
 
@@ -370,39 +475,39 @@ static void writeSaveFile(const char* path, int type)
                                    NSLocalizedFailureReasonErrorKey: @"PicoDrive failed to load ROM.",
                                    NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format PicoDrive supports."
                                    };
-        
+
         NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                 code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                             userInfo:userInfo];
-        
+
         *error = newError;
     }
     return NO;
-    
+
 }
 
 - (void)loadSaveFile:(NSString *)path forType:(int)type {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
-    
+
     if (size == 0 || !ramData)
     {
         return;
     }
-    
+
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (!data || ![data length])
     {
         NSLog(@"Couldn't load save file.");
     }
-    
+
     [data getBytes:ramData length:size];
 }
 
 - (BOOL)writeSaveFile:(NSString *)path forType:(int)type {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
-    
+
     if (ramData && (size > 0))
     {
         retro_serialize(ramData, size);
@@ -425,17 +530,17 @@ static void writeSaveFile(const char* path, int type)
 - (void)stopEmulation {
     NSString *path = romName;
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-    
+
     NSString *batterySavesDirectory = [self batterySavesPath];
-    
+
     if([batterySavesDirectory length] != 0) {
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-            
+
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-        
+
         writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
     }
-    
+
     retro_unload_game();
     retro_deinit();
     [super stopEmulation];
@@ -513,7 +618,7 @@ static void writeSaveFile(const char* path, int type)
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         // TODO: Read this from Swift Defaults pacakge somehow? @JoeMatt
-        
+
         BOOL use8BitdoM30 = PVSettingsWrapper.use8BitdoM30;
 //        BOOL use8BitdoM30 = [NSUserDefaults.standardUserDefaults boolForKey:@"use8BitdoM30"];
         if (use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
@@ -616,7 +721,7 @@ static void writeSaveFile(const char* path, int type)
 - (NSData *)serializeStateWithError:(NSError *__autoreleasing *)outError {
     size_t length = retro_serialize_size();
     void *bytes = malloc(length);
-    
+
     if(retro_serialize(bytes, length))
         return [NSData dataWithBytesNoCopy:bytes length:length];
 
@@ -642,7 +747,7 @@ static void writeSaveFile(const char* path, int type)
 
         return NO;
     }
-    
+
     if(retro_unserialize([state bytes], [state length]))
         return YES;
 
@@ -651,7 +756,7 @@ static void writeSaveFile(const char* path, int type)
             NSLocalizedDescriptionKey : @"The save state data could not be read"
         }];
     }
-    
+
     return NO;
 }
 
@@ -677,7 +782,7 @@ static void writeSaveFile(const char* path, int type)
 
     BOOL success = [stateData writeToFile:fileName options:NSDataWritingAtomic error:error];
 //    block(success, success ? nil : error);
-	
+
     return success;
 }
 
@@ -730,7 +835,7 @@ static void writeSaveFile(const char* path, int type)
         }
         return NO;
     }
-    
+
 //    block(YES, nil);
     return YES;
 }
