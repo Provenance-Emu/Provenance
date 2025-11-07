@@ -205,6 +205,8 @@ struct DefaultControllerSkinView: View {
                     dynamicLandscapeControllerSkin
                         .onAppear {
                             loadControlLayoutData()
+                            // Ensure input handler has the core set
+                            inputHandler.setEmulatorCore(coreInstance)
                         }
                         .edgesIgnoringSafeArea([]) // Respect safe areas for notch
                 } else {
@@ -215,10 +217,16 @@ struct DefaultControllerSkinView: View {
                         dynamicControllerSkin
                             .onAppear {
                                 loadControlLayoutData()
+                                // Ensure input handler has the core set
+                                inputHandler.setEmulatorCore(coreInstance)
                             }
                     }
                 }
             }
+        }
+        .onAppear {
+            // Ensure input handler has the core set when view appears
+            inputHandler.setEmulatorCore(coreInstance)
         }
     }
 

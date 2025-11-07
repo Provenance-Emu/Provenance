@@ -845,26 +845,31 @@ public class DeltaSkinInputHandler: ObservableObject {
 
         // Prefer direct system-specific responder path (works best for RA and native cores)
         if trySystemResponderCall(normalizedId, isPressed: isPressed, core: core) {
-            DLOG("Button handled via system-specific responder")
+            DLOG("✅ Button handled via system-specific responder: \(normalizedId)")
             return
         }
 
-        DLOG("System-specific responder did not handle button, trying fallback methods")
+        DLOG("⚠️ System-specific responder did not handle button, trying fallback methods: \(normalizedId)")
 
         // Use system-specific button handling if we have a controller VC
         if let controllerVC = controllerVC {
+            DLOG("Using controller VC for button mapping: \(normalizedId)")
             // Forward to the controller VC which knows how to map buttons for specific systems
             forwardButtonPressToSystemSpecificCore(normalizedId, isPressed: isPressed, core: core, controllerVC: controllerVC)
         } else {
             // Fallback to generic mapping if we don't have a controller VC
+            DLOG("No controller VC available, using generic mapping: \(normalizedId)")
             let buttonIndex = mapButtonToIndex(normalizedId)
+            DLOG("Mapped button \(normalizedId) to index \(buttonIndex)")
 
             if isPressed {
                 DLOG("Pressing button (generic mapping): \(normalizedId) (index: \(buttonIndex))")
                 // Try different methods that might be available
                 if let responder = core as? PVControllerResponder {
+                    DLOG("Core conforms to PVControllerResponder, calling controllerPressedButton")
                     responder.controllerPressedButton(buttonIndex, forPlayer: 0)
                 } else {
+                    DLOG("Core does not conform to PVControllerResponder, posting notification")
                     // Fallback to a more generic approach
                     NotificationCenter.default.post(
                         name: NSNotification.Name("ButtonPressed"),
@@ -876,8 +881,10 @@ public class DeltaSkinInputHandler: ObservableObject {
                 DLOG("Releasing button (generic mapping): \(normalizedId) (index: \(buttonIndex))")
                 // Try different methods that might be available
                 if let responder = core as? PVControllerResponder {
+                    DLOG("Core conforms to PVControllerResponder, calling controllerReleasedButton")
                     responder.controllerReleasedButton(buttonIndex, forPlayer: 0)
                 } else {
+                    DLOG("Core does not conform to PVControllerResponder, posting notification")
                     // Fallback to a more generic approach
                     NotificationCenter.default.post(
                         name: NSNotification.Name("ButtonReleased"),
