@@ -162,10 +162,17 @@ public:
 	void Resize() override {
 		NSLog(@"VulkanGraphicsContext: Resize begin (oldsize: %dx%d)", g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
 		draw_->HandleEvent(Draw::Event::LOST_BACKBUFFER, g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
+		// Ensure no in-flight work is referencing old framebuffers before tearing down the swapchain.
+		// This prevents Metal validation errors due to mismatched render target vs attachment sizes.
+		g_Vulkan->WaitUntilQueueIdle();
+		// Process any deferred resource destruction prior to swapchain teardown.
+		g_Vulkan->PerformPendingDeletes();
 		g_Vulkan->DestroySwapchain();
 		g_Vulkan->DestroySurface();
 		g_Vulkan->UpdateFlags(this->flags);
 		g_Vulkan->ReinitSurface();
+		// Ensure surface is fully recreated before initializing a new swapchain.
+		g_Vulkan->WaitUntilQueueIdle();
 		g_Vulkan->InitSwapchain();
 		draw_->HandleEvent(Draw::Event::GOT_BACKBUFFER, g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
 		NSLog(@"VulkanGraphicsContext: Resize end (final size: %dx%d)", g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
@@ -181,7 +188,7 @@ public:
 	bool Initialized() {
 		return draw_ != nullptr;
 	}
-    
+
     bool VulkanLoad(const char* path) {
         void *lib = dlopen(path, RTLD_NOW | RTLD_LOCAL);
         if (lib) {

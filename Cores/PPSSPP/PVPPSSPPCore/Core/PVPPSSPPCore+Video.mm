@@ -15,6 +15,7 @@
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <QuartzCore/QuartzCore.h>
 
 /* PPSSPP Includes */
 #ifdef __cplusplus
@@ -125,6 +126,7 @@ static bool threadStopped = false;
 @interface PVPPSSPPCoreBridge (CustomLayout)
 @property (nonatomic, assign) BOOL useCustomRenderViewLayout;
 @property (nonatomic, assign) CGRect pendingCustomFrame;
+@property (nonatomic, assign) BOOL resizingSwapchain;
 @end
 
 @implementation PVPPSSPPCoreBridge (CustomLayout)
@@ -157,6 +159,15 @@ static bool threadStopped = false;
     return frameValue ? frameValue.CGRectValue : CGRectZero;
 }
 
+- (void)setResizingSwapchain:(BOOL)flag {
+    objc_setAssociatedObject(self, @selector(resizingSwapchain), @(flag), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)resizingSwapchain {
+    NSNumber *val = objc_getAssociatedObject(self, @selector(resizingSwapchain));
+    return val ? val.boolValue : NO;
+}
+
 @end
 
 @implementation PVPPSSPPCoreBridge (Video)
@@ -182,6 +193,11 @@ static bool threadStopped = false;
     UIScreen *screen=[UIScreen mainScreen];
     if (!_isInitialized || !m_view)
         return;
+    if (self.resizingSwapchain) {
+        ILOG(@"PPSSPP: refreshScreenSize skipped - resize already in progress");
+        return;
+    }
+    self.resizingSwapchain = YES;
 
     /// Check if custom layout is enabled (DeltaSkin)
     BOOL hasCustomLayout = self.useCustomRenderViewLayout;
@@ -274,10 +290,97 @@ static bool threadStopped = false;
     g_display.pixel_in_dps_x = (float)g_display.pixel_xres / (float)g_display.dp_xres;
     g_display.pixel_in_dps_y = (float)g_display.pixel_yres / (float)g_display.dp_yres;
     [m_view setContentScaleFactor:scale];
+
+    /// Update Metal layer drawableSize to match calculated pixel size BEFORE triggering Vulkan resize
+    /// This ensures Vulkan swapchain matches Metal layer size, preventing validation errors
+    /// Use m_metal_layer directly (the layer Vulkan was initialized with) and commit changes synchronously
+    CGSize pixelSize = CGSizeMake(g_display.pixel_xres, g_display.pixel_yres);
+    CAMetalLayer *targetLayer = nil;
+    if (m_metal_layer) {
+        targetLayer = m_metal_layer;
+    } else if ([m_view.layer isKindOfClass:[CAMetalLayer class]]) {
+        targetLayer = (CAMetalLayer *)m_view.layer;
+    }
+
+    if (targetLayer) {
+        /// Ensure we're on the main thread for Metal layer updates
+        if (![NSThread isMainThread]) {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [CATransaction begin];
+                [CATransaction setDisableActions:YES];
+                targetLayer.contentsScale = scale;
+                targetLayer.drawableSize = pixelSize;
+                [CATransaction commit];
+            });
+        } else {
+            /// Use CATransaction to ensure Metal layer changes are committed synchronously before Vulkan reads them
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
+            targetLayer.contentsScale = scale;
+            targetLayer.drawableSize = pixelSize;
+            [CATransaction commit];
+        }
+
+        /// Verify the update took effect (read property to ensure it's committed)
+        CGSize verifySize = targetLayer.drawableSize;
+        ILOG(@"PPSSPP: Updated Metal layer.drawableSize: set=%.0fx%.0f, actual=%.0fx%.0f",
+             pixelSize.width, pixelSize.height, verifySize.width, verifySize.height);
+
+        /// If verification shows mismatch, log warning but proceed (Vulkan will handle resize)
+        if (verifySize.width != pixelSize.width || verifySize.height != pixelSize.height) {
+            ILOG(@"PPSSPP: WARNING - Metal layer.drawableSize mismatch detected! Vulkan may read incorrect size.");
+        }
+    }
+
     // PSP native resize
     PSP_CoreParameter().pixelWidth = g_display.pixel_xres;
     PSP_CoreParameter().pixelHeight = g_display.pixel_yres;
-    NativeResized();
+
+    /// Only trigger resize if Vulkan is already initialized (prevents issues during initial setup)
+    /// Also verify Metal layer size matches before triggering resize to prevent validation errors
+    if (_isInitialized && graphicsContext) {
+        BOOL wasPaused = self->isPaused;
+        if (!wasPaused) {
+            [self setPauseEmulation:true];
+        }
+        BOOL shouldResize = YES;
+        if (targetLayer) {
+            CGSize currentLayerSize = targetLayer.drawableSize;
+            if (currentLayerSize.width != pixelSize.width || currentLayerSize.height != pixelSize.height) {
+                ILOG(@"PPSSPP: Delaying resize - Metal layer size mismatch (layer: %.0fx%.0f, expected: %.0fx%.0f)",
+                     currentLayerSize.width, currentLayerSize.height, pixelSize.width, pixelSize.height);
+                /// Retry after a brief delay to allow Metal layer update to propagate
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.016 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    if (_isInitialized && graphicsContext) {
+                        CGSize retrySize = targetLayer.drawableSize;
+                        if (retrySize.width == pixelSize.width && retrySize.height == pixelSize.height) {
+                            ILOG(@"PPSSPP: Metal layer size now matches, triggering resize");
+                            NativeResized();
+                        } else {
+                            ILOG(@"PPSSPP: Metal layer size still mismatched after delay, proceeding anyway");
+                            NativeResized();
+                        }
+                        if (!wasPaused) {
+                            [self setPauseEmulation:false];
+                        }
+                        self.resizingSwapchain = NO;
+                    }
+                });
+                shouldResize = NO;
+            }
+        }
+        if (shouldResize) {
+            NativeResized();
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.016 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                if (!wasPaused) {
+                    [self setPauseEmulation:false];
+                }
+                self.resizingSwapchain = NO;
+            });
+        }
+    } else {
+        self.resizingSwapchain = NO;
+    }
     ILOG(@"Updated display resolution: (%d, %d) @%.1fx", g_display.pixel_xres, g_display.pixel_yres, scale);
 }
 
@@ -453,12 +556,25 @@ static bool threadStopped = false;
     m_view.contentScaleFactor = scale;
 
     /// Update Metal layer drawable size - CRITICAL for Vulkan swapchain sizing
+    /// Use m_metal_layer directly (the layer Vulkan was initialized with) and commit changes synchronously
     CGSize pixelSize = CGSizeMake(aligned.size.width * scale, aligned.size.height * scale);
-    if ([m_view.layer isKindOfClass:[CAMetalLayer class]]) {
+    if (m_metal_layer) {
+        /// Use CATransaction to ensure Metal layer changes are committed synchronously before Vulkan reads them
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        m_metal_layer.contentsScale = scale;
+        m_metal_layer.drawableSize = pixelSize;
+        [CATransaction commit];
+        ILOG(@"PPSSPP: Updated m_metal_layer.drawableSize to: %.0fx%.0f", pixelSize.width, pixelSize.height);
+    } else if ([m_view.layer isKindOfClass:[CAMetalLayer class]]) {
+        /// Fallback to m_view.layer if m_metal_layer not set
         CAMetalLayer *ml = (CAMetalLayer *)m_view.layer;
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
         ml.contentsScale = scale;
         ml.drawableSize = pixelSize;
-        ILOG(@"PPSSPP: Updated Metal layer drawableSize to: %.0fx%.0f", pixelSize.width, pixelSize.height);
+        [CATransaction commit];
+        ILOG(@"PPSSPP: Updated m_view.layer.drawableSize to: %.0fx%.0f", pixelSize.width, pixelSize.height);
     }
 
     /// Force layout update to ensure Vulkan swapchain resizes
