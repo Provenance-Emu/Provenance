@@ -163,6 +163,9 @@ struct DefaultControllerSkinView: View {
     // State for num pad popover
     @State private var showNumPadPopover = false
 
+    // D-pad state - must be StateObject to persist across renders
+    @StateObject private var dpadState = DPadState()
+
     init(useJoystick: Bool, inputHandler: DeltaSkinInputHandler, systemId: SystemIdentifier?, coreInstance: PVEmulatorCore) {
         self._useJoystickInternal = State(initialValue: useJoystick)
         self.inputHandler = inputHandler
@@ -498,9 +501,6 @@ struct DefaultControllerSkinView: View {
     }
 
     private func dPadView() -> some View {
-        // Create a state object to track active directions
-        let dpadState = DPadState()
-
         return ZStack {
             // D-pad background with neon glow using octagon shape
             RoundedOctagon(cornerRadius: 15)
@@ -1388,6 +1388,7 @@ struct DefaultControllerSkinView: View {
 
         @State private var isShowingOverlay = false
         @State private var touchPosition: CGPoint = CGPoint(x: 30, y: 30)
+        @State private var wasPressed = false
 
         func makeBody(configuration: Configuration) -> some View {
             ZStack {
@@ -1405,15 +1406,20 @@ struct DefaultControllerSkinView: View {
                     )
             }
             .onChange(of: configuration.isPressed) { isPressed in
-                if isPressed {
+                // Only trigger actions on state changes to avoid duplicate calls
+                if isPressed && !wasPressed {
+                    wasPressed = true
                     withAnimation(.easeIn(duration: 0.1)) {
                         isShowingOverlay = true
                     }
+                    // Call press action immediately
                     pressAction()
-                } else {
+                } else if !isPressed && wasPressed {
+                    wasPressed = false
                     withAnimation(.easeOut(duration: 0.2)) {
                         isShowingOverlay = false
                     }
+                    // Call release action immediately
                     releaseAction()
                 }
             }
