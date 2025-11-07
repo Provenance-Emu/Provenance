@@ -39,9 +39,9 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "triangle", "a", "▵": self = .triangle
-            case "circle", "b", "○": self = .circle
-            case "cross", "x", "✕": self = .cross
+            case "triangle", "x", "▵": self = .triangle
+            case "circle", "a", "○": self = .circle
+            case "cross", "b", "✕": self = .cross
             case "square", "y", "□": self = .square
             case "l1", "l", "lb": self = .l1
             case "l2", "l2", "lb": self = .l2
