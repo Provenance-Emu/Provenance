@@ -23,71 +23,174 @@ NSString *autoLoadStatefileName;
 }
 #pragma mark - Methods
 
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
+	if (!_isInitialized) {
+		if (error) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to save state.",
+				NSLocalizedFailureReasonErrorKey: @"Core is not initialized.",
+				NSLocalizedRecoverySuggestionErrorKey: @"Wait for the core to finish loading before saving."
+			};
+			*error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+										  code:PVEmulatorCoreErrorCodeCouldNotSaveState
+									  userInfo:userInfo];
+		}
+		return NO;
+	}
+
+	if (!core_info_current_supports_savestate()) {
+		if (error) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to save state.",
+				NSLocalizedFailureReasonErrorKey: @"This core does not support save states.",
+				NSLocalizedRecoverySuggestionErrorKey: @""
+			};
+			*error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+										  code:PVEmulatorCoreErrorCodeDoesNotSupportSaveStates
+									  userInfo:userInfo];
+		}
+		return NO;
+	}
+
+	bool queued = content_save_state(fileName.UTF8String, true);
+	if (!queued) {
+		if (error) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to save state.",
+				NSLocalizedFailureReasonErrorKey: @"Failed to queue save state task.",
+				NSLocalizedRecoverySuggestionErrorKey: @""
+			};
+			*error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+										  code:PVEmulatorCoreErrorCodeCouldNotSaveState
+									  userInfo:userInfo];
+		}
+		return NO;
+	}
+
+	content_wait_for_save_state_task();
+
+	if (![[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
+		if (error) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to save state.",
+				NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Save state file was not created at path: %@", fileName],
+				NSLocalizedRecoverySuggestionErrorKey: @"Check file permissions and available disk space."
+			};
+			*error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+										  code:PVEmulatorCoreErrorCodeCouldNotSaveState
+									  userInfo:userInfo];
+		}
+		return NO;
+	}
+
+	return YES;
+}
+
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-	return content_save_state(fileName.UTF8String, true);
+	NSError *error = nil;
+	return [self saveStateToFileAtPath:fileName error:&error];
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
-	bool success=false;
-	if (_isInitialized) {
-		content_save_state(fileName.UTF8String, true);
-		success=true;
-	}
-    if (!success) {
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to save state.",
-                                   NSLocalizedFailureReasonErrorKey: @"This core either doesn't support save states or failed to create one.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @""
-                                   };
-
-        NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotSaveState
-                                            userInfo:userInfo];
-        block(newError);
-    } else {
-        block(nil);
-    }
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		NSError *error = nil;
+		BOOL success = [self saveStateToFileAtPath:fileName error:&error];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			block(success ? nil : error);
+		});
+	});
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-    BOOL success = NO;
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError **)error {
 	if (!_isInitialized) {
 		autoLoadStatefileName = fileName;
 		[NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
-	} else {
-        success = content_load_state(fileName.UTF8String, false, true);
+		if (error) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Loading state queued.",
+				NSLocalizedFailureReasonErrorKey: @"Core is not initialized, state will load after initialization.",
+				NSLocalizedRecoverySuggestionErrorKey: @""
+			};
+			*error = nil;
+		}
+		return YES;
 	}
-    return success;
+
+	if (!core_info_current_supports_savestate()) {
+		if (error) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to load state.",
+				NSLocalizedFailureReasonErrorKey: @"This core does not support save states.",
+				NSLocalizedRecoverySuggestionErrorKey: @""
+			};
+			*error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+										  code:PVEmulatorCoreErrorCodeDoesNotSupportSaveStates
+									  userInfo:userInfo];
+		}
+		return NO;
+	}
+
+	if (![[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
+		if (error) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to load state.",
+				NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Save state file not found at path: %@", fileName],
+				NSLocalizedRecoverySuggestionErrorKey: @"Make sure the save state file exists."
+			};
+			*error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+										  code:PVEmulatorCoreErrorCodeCouldNotLoadState
+									  userInfo:userInfo];
+		}
+		return NO;
+	}
+
+	bool queued = NO;
+	if (firstLoad && [self.coreIdentifier containsString:@"opera"]) {
+		autoLoadStatefileName = fileName;
+		queued = content_load_state(autoLoadStatefileName.UTF8String, true, true);
+		[NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
+	} else {
+		queued = content_load_state(fileName.UTF8String, false, true);
+	}
+
+	if (!queued) {
+		if (error) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to load state.",
+				NSLocalizedFailureReasonErrorKey: @"Failed to queue load state task.",
+				NSLocalizedRecoverySuggestionErrorKey: @""
+			};
+			*error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+										  code:PVEmulatorCoreErrorCodeCouldNotLoadState
+									  userInfo:userInfo];
+		}
+		return NO;
+	}
+
+	content_wait_for_load_state_task();
+
+	return YES;
+}
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+	NSError *error = nil;
+	return [self loadStateFromFileAtPath:fileName error:&error];
 }
 
 #define LOAD_WAIT_INTERVAL 1
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
-    NSLog(@"Loading State: Loading...\n");
-    bool success = false;
-    while (!_isInitialized)
-        sleep(LOAD_WAIT_INTERVAL);
-    if (firstLoad && [self.coreIdentifier containsString:@"opera"]) {
-        autoLoadStatefileName = fileName;
-        success = content_load_state(autoLoadStatefileName.UTF8String, true, true);
-        [NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
-    } else {
-        success = content_load_state(fileName.UTF8String, false, true);
-    }
-    
-    if (!success) {
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to save state.",
-                                   NSLocalizedFailureReasonErrorKey: @"This core either doesn't support save states or failed to create one.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @""
-                                   };
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		ILOG(@"Loading State: Loading...\n");
+		while (!_isInitialized) {
+			sleep(LOAD_WAIT_INTERVAL);
+		}
 
-        NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotSaveState
-                                            userInfo:userInfo];
-        block(newError);
-    } else {
-        block(nil);
-    }
+		NSError *error = nil;
+		BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			block(success ? nil : error);
+		});
+	});
 }
 
 // Opera needs around 15 second lead time to fill memory the 1st time it loads
@@ -106,7 +209,9 @@ NSString *autoLoadStatefileName;
         }
         if (self.isRunning) {
             ILOG(@"Loading State: Waited while loading\n");
-            content_load_state(autoLoadStatefileName.UTF8String, false, true);
+            if (content_load_state(autoLoadStatefileName.UTF8String, false, true)) {
+                content_wait_for_load_state_task();
+            }
             firstLoad = false;
         }
 	}
