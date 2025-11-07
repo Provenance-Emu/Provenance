@@ -25,6 +25,9 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Callback for menu button presses
     var menuButtonHandler: (() -> Void)?
 
+    /// Track previous joystick state for D-pad conversion
+    private var previousJoystickState: (x: Float, y: Float)? = nil
+
     /// Initialize with an emulator core and optional controller view controller
     public init(emulatorCore: PVEmulatorCore? = nil, controllerVC: (any ControllerVC)? = nil, emulatorController: (any PVEmualatorControllerProtocol)? = nil) {
         self.emulatorCore = emulatorCore
@@ -341,6 +344,23 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Determine which stick this is
         let isLeftStick = stickId.lowercased().contains("left")
 
+        // Check if this system only had D-pad (not joystick)
+        // Even if the core conforms to JoystickResponder (like RetroArch cores),
+        // we should convert joystick to D-pad for these systems
+        let systemIdentifier = core.systemIdentifier
+        let systemId = systemIdentifier.flatMap { SystemIdentifier(rawValue: $0) }
+        let systemsWithDPadOnly: Set<SystemIdentifier> = [
+            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy
+        ]
+
+        // Convert joystick to D-pad for systems that only had D-pad
+        // Only convert left stick (right stick is typically not used for D-pad conversion)
+        if isLeftStick, let systemId = systemId, systemsWithDPadOnly.contains(systemId) {
+            DLOG("System \(systemId) only had D-pad, converting joystick to D-pad")
+            convertJoystickToDPad(x: x, y: y, core: core)
+            return
+        }
+
         // Use generic JoystickResponder protocol (all cores that support joysticks implement this)
         // The protocol-agnostic approach: use 0 for left stick, 1 for right stick
         // Each core's implementation will map these values to their specific button enums internally
@@ -368,6 +388,106 @@ public class DeltaSkinInputHandler: ObservableObject {
             object: nil,
             userInfo: ["stick": isLeftStick ? "left" : "right", "x": x, "y": y, "player": 0]
         )
+    }
+
+    /// Convert joystick movement to D-pad button presses for systems that don't support joysticks
+    private func convertJoystickToDPad(x: Float, y: Float, core: PVEmulatorCore) {
+        guard let systemIdentifier = core.systemIdentifier, let systemId = SystemIdentifier(rawValue: systemIdentifier) else {
+            return
+        }
+
+        // Threshold for detecting D-pad direction (0.3 = 30% of stick movement)
+        let threshold: Float = 0.3
+
+        // Determine which directions are active
+        let up = y < -threshold
+        let down = y > threshold
+        let left = x < -threshold
+        let right = x > threshold
+
+        // Check if joystick is centered (released)
+        let isCentered = abs(x) < threshold && abs(y) < threshold
+
+        // Get previous state
+        let prevX = previousJoystickState?.x ?? 0
+        let prevY = previousJoystickState?.y ?? 0
+        let prevUp = prevY < -threshold
+        let prevDown = prevY > threshold
+        let prevLeft = prevX < -threshold
+        let prevRight = prevX > threshold
+
+        // Update previous state
+        previousJoystickState = (x: x, y: y)
+
+        // If joystick is centered, release all buttons
+        if isCentered {
+            if prevUp { sendDPadButton("up", isPressed: false, systemId: systemId, core: core) }
+            if prevDown { sendDPadButton("down", isPressed: false, systemId: systemId, core: core) }
+            if prevLeft { sendDPadButton("left", isPressed: false, systemId: systemId, core: core) }
+            if prevRight { sendDPadButton("right", isPressed: false, systemId: systemId, core: core) }
+            return
+        }
+
+        // Release buttons that are no longer active
+        if prevUp && !up { sendDPadButton("up", isPressed: false, systemId: systemId, core: core) }
+        if prevDown && !down { sendDPadButton("down", isPressed: false, systemId: systemId, core: core) }
+        if prevLeft && !left { sendDPadButton("left", isPressed: false, systemId: systemId, core: core) }
+        if prevRight && !right { sendDPadButton("right", isPressed: false, systemId: systemId, core: core) }
+
+        // Press buttons that are newly active
+        if up && !prevUp { sendDPadButton("up", isPressed: true, systemId: systemId, core: core) }
+        if down && !prevDown { sendDPadButton("down", isPressed: true, systemId: systemId, core: core) }
+        if left && !prevLeft { sendDPadButton("left", isPressed: true, systemId: systemId, core: core) }
+        if right && !prevRight { sendDPadButton("right", isPressed: true, systemId: systemId, core: core) }
+    }
+
+    /// Send D-pad button press/release using system-specific responder
+    private func sendDPadButton(_ buttonId: String, isPressed: Bool, systemId: SystemIdentifier, core: PVEmulatorCore) {
+        let id = normalizeSkinButtonId(buttonId, for: systemId)
+
+        switch systemId {
+        case .Sega32X:
+            if let r = core as? PVSega32XSystemResponderClient {
+                let b = PVSega32XButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .Genesis, .SegaCD:
+            if let r = core as? PVGenesisSystemResponderClient {
+                let b = PVGenesisButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .SNES:
+            if let r = core as? PVSNESSystemResponderClient {
+                let b = PVSNESButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .NES, .FDS:
+            if let r = core as? PVNESSystemResponderClient {
+                let b = PVNESButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .GBA:
+            if let r = core as? PVGBASystemResponderClient {
+                let b = PVGBAButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .GB, .GBC:
+            if let r = core as? PVGBSystemResponderClient {
+                let b = PVGBButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .VirtualBoy:
+            if let r = core as? PVVirtualBoySystemResponderClient {
+                // VirtualBoy uses leftUp, leftDown, etc.
+                let vbId = id == "up" ? "leftUp" : id == "down" ? "leftDown" : id == "left" ? "leftLeft" : id == "right" ? "leftRight" : id
+                let b = PVVBButton(vbId)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        default:
+            // For other systems, try generic approach
+            DLOG("No specific D-pad handler for system \(systemId), attempting generic")
+            break
+        }
     }
 
     // MARK: - Private Methods
@@ -818,6 +938,12 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
+        case .Sega32X:
+            if let r = core as? PVSega32XSystemResponderClient {
+                let b = PVSega32XButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
         case .SNES:
             if let r = core as? PVSNESSystemResponderClient {
                 let b = PVSNESButton(id)
@@ -932,6 +1058,12 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
+        case .VirtualBoy:
+            if let r = core as? PVVirtualBoySystemResponderClient {
+                let b = PVVBButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
         default:
             break
         }
@@ -942,33 +1074,37 @@ public class DeltaSkinInputHandler: ObservableObject {
     private func normalizeSkinButtonId(_ id: String, for system: SystemIdentifier) -> String {
         let s = id.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
-        // Common
-        if ["run", "play"].contains(s) { return "start" }
-        if ["mode", "option"].contains(s) { return "select" }
-        if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
-        if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
-        if ["lt", "ltrigger", "ltrigger1", "triggerleft"].contains(s) { return "l1" }
-        if ["rt", "rtrigger", "rtrigger1", "triggerright"].contains(s) { return "r1" }
-        if ["lt2", "l2", "ltrigger2", "trigger2", "lefttrigger2"].contains(s) { return "l2" }
-        if ["rt2", "r2", "rtrigger2", "trigger2", "righttrigger2"].contains(s) { return "r2" }
-        if ["l3", "stickpressleft", "lstick"].contains(s) { return "l3" }
-        if ["r3", "stickpressright", "rstick"].contains(s) { return "r3" }
-
         switch system {
         case .PSX, .PS2, .PSP:
-            // Prefer PS shape names/symbols; treat plain "x" as Cross by default
-            if ["△", "tri", "triangle"].contains(s) { return "triangle" }
-            if ["□", "sq", "square"].contains(s) { return "square" }
-            if ["○", "o", "circle"].contains(s) { return "circle" }
-            if ["✕", "cross", "x"].contains(s) { return "cross" }
-            // Accept common A/B/Y labels for PS layouts
-            if s == "a" { return "cross" }
-            if s == "b" { return "circle" }
-            if s == "y" { return "triangle" }
+            // Prefer PS shape names/symbols
+            /*
+             case "triangle", "x", "▵": self = .triangle
+             case "circle", "a", "○": self = .circle
+             case "cross", "b", "✕": self = .cross
+             case "square", "y", "□": self = .square
+             */
+            if ["△", "tri", "triangle", "▵", "x"].contains(s) { return "triangle" }
+            if ["□", "sq", "square", "y"].contains(s) { return "square" }
+            if ["○", "cir", "circle", "a"].contains(s) { return "circle" }
+            if ["✕", "cro", "cross", "b"].contains(s) { return "cross" }
+        case .VirtualBoy:
+            // VirtualBoy has unique D-pad buttons (leftUp, leftDown, etc.)
+            if ["up", "leftup"].contains(s) { return "leftUp" }
+            if ["down", "leftdown"].contains(s) { return "leftDown" }
+            if ["left", "leftleft"].contains(s) { return "leftLeft" }
+            if ["right", "leftright"].contains(s) { return "leftRight" }
+            // VirtualBoy uses "l" and "r" directly (not "l1"/"r1")
+            if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l" }
+            if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r" }
+            if ["a", "b", "start", "select"].contains(s) { return s }
         case .SNES:
             if ["a", "b", "x", "y"].contains(s) { return s }
         case .Genesis, .SegaCD:
             if ["a", "b", "c", "x", "y", "z"].contains(s) { return s }
+        case .Sega32X:
+            // 32X uses "mode" instead of "select"
+            if s == "select" { return "mode" }
+            if ["a", "b", "c", "x", "y", "z", "start", "mode"].contains(s) { return s }
         case ._3DS:
             // 3DS uses standard button names
             if ["a", "b", "x", "y", "l", "r", "zl", "zr", "start", "select", "up", "down", "left", "right"].contains(s) { return s }
@@ -980,6 +1116,20 @@ public class DeltaSkinInputHandler: ObservableObject {
         default:
             break
         }
+
+        // Common
+        if ["run", "play"].contains(s) { return "start" }
+        // 32X uses "mode" directly, so don't convert it to "select" for 32X
+        if system != .Sega32X && ["mode", "option"].contains(s) { return "select" }
+        if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
+        if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
+        if ["lt", "ltrigger", "ltrigger1", "triggerleft"].contains(s) { return "l1" }
+        if ["rt", "rtrigger", "rtrigger1", "triggerright"].contains(s) { return "r1" }
+        if ["lt2", "l2", "ltrigger2", "trigger2", "lefttrigger2"].contains(s) { return "l2" }
+        if ["rt2", "r2", "rtrigger2", "trigger2", "righttrigger2"].contains(s) { return "r2" }
+        if ["l3", "stickpressleft", "lstick"].contains(s) { return "l3" }
+        if ["r3", "stickpressright", "rstick"].contains(s) { return "r3" }
+
         return s
     }
 
