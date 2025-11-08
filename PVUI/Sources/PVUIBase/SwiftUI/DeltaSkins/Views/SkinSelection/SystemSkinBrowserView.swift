@@ -109,7 +109,7 @@ public struct SystemSkinBrowserView: View {
         #if !os(tvOS)
         .fileImporter(
             isPresented: $showingDocumentPicker,
-            allowedContentTypes: [UTType.deltaSkin],
+            allowedContentTypes: supportedSkinTypes,
             allowsMultipleSelection: true
         ) { result in
             Task {
@@ -345,6 +345,45 @@ public struct SystemSkinBrowserView: View {
     }
 
     // MARK: - Data Handling
+
+    /// Comprehensive list of UTTypes for skin file imports
+    /// Supports both .deltaskin and .manicskin in file, package, and archive forms
+    private var supportedSkinTypes: [UTType] {
+        var skinTypes: [UTType] = []
+
+        // Prefer explicit identifiers if the system recognizes them
+        skinTypes.append(UTType.deltaSkin)
+        skinTypes.append(UTType.manicSkin)
+
+        // Accept files with these extensions (generic data)
+        if let deltaskinData = UTType(filenameExtension: "deltaskin", conformingTo: .data) {
+            skinTypes.append(deltaskinData)
+        }
+        if let manicData = UTType(filenameExtension: "manicskin", conformingTo: .data) {
+            skinTypes.append(manicData)
+        }
+
+        // Accept package (directory bundle) variants (some providers surface bundles)
+        if let deltaskinPackage = UTType(filenameExtension: "deltaskin", conformingTo: .package) {
+            skinTypes.append(deltaskinPackage)
+        }
+        if let manicPackage = UTType(filenameExtension: "manicskin", conformingTo: .package) {
+            skinTypes.append(manicPackage)
+        }
+
+        // Accept archive-conforming variants (these are actually ZIPs with custom extensions)
+        if let deltaskinArchive = UTType(filenameExtension: "deltaskin", conformingTo: .archive) {
+            skinTypes.append(deltaskinArchive)
+        }
+        if let manicArchive = UTType(filenameExtension: "manicskin", conformingTo: .archive) {
+            skinTypes.append(manicArchive)
+        }
+
+        // Also allow generic archives (some skins are zipped variants)
+        skinTypes.append(.archive)
+
+        return skinTypes
+    }
 
     private var supportedSystems: [SystemIdentifier] {
         systemSkinCounts.filter { $0.value > 0 }.keys.sorted()
