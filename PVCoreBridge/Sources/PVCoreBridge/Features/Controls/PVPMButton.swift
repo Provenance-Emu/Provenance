@@ -22,7 +22,7 @@
 
     public init(_ value: String) {
         switch value.lowercased() {
-            case "menu": self = .menu
+            case "menu", "select": self = .menu
             case "a": self = .a
             case "b": self = .b
             case "c": self = .c
@@ -30,8 +30,8 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "power": self = .power
-            case "shake": self = .shake
+            case "power", "start": self = .power
+            case "shake", "l", "l1": self = .shake
             default: self = .menu
         }
     }

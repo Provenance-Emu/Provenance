@@ -34,11 +34,11 @@
             case "b": self = .b
             case "x": self = .x
             case "y": self = .y
-            case "l": self = .l
-            case "r": self = .r
+            case "l", "l1": self = .l
+            case "r", "r1": self = .r
             case "start": self = .start
             case "select": self = .select
-            case "screenSwap", "ss", "swap": self = .screenSwap
+            case "screenswap", "ss", "swap": self = .screenSwap
             case "rotate": self = .rotate
             case "count": self = .count
             default: self = .up

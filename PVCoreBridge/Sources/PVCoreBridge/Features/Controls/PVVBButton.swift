@@ -27,16 +27,16 @@
 
     public init(_ value: String) {
         switch value.lowercased() {
-            case "leftUp", "up": self = .leftUp
-            case "leftDown", "down": self = .leftDown
-            case "leftLeft", "left": self = .leftLeft
-            case "leftRight", "right": self = .leftRight
-            case "rightUp", "rightDpadUp": self = .rightUp
-            case "rightDown", "rightDpadDown": self = .rightDown
-            case "rightLeft", "rightDpadLeft": self = .rightLeft
-            case "rightRight", "rightDpadRight": self = .rightRight
-            case "l": self = .l
-            case "r": self = .r
+            case "leftup", "up": self = .leftUp
+            case "leftdown", "down": self = .leftDown
+            case "leftleft", "left": self = .leftLeft
+            case "leftright", "right": self = .leftRight
+            case "rightup", "rightdpadup": self = .rightUp
+            case "rightdown", "rightdpaddown": self = .rightDown
+            case "rightleft", "rightdpadleft": self = .rightLeft
+            case "rightright", "rightdpadright": self = .rightRight
+            case "l", "l1": self = .l
+            case "r", "r1": self = .r
             case "a": self = .a
             case "b": self = .b
             case "start": self = .start

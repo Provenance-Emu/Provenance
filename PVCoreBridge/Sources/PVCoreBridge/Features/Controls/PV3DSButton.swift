@@ -49,10 +49,10 @@
             case "b": self = .b
             case "x": self = .x
             case "y": self = .y
-            case "l": self = .l
-            case "r": self = .r
-            case "zl": self = .zl
-            case "zr": self = .zr
+            case "l", "l1": self = .l
+            case "r", "r1": self = .r
+            case "zl", "l2": self = .zl
+            case "zr", "r2": self = .zr
             case "start": self = .start
             case "select": self = .select
             case "rightanalogup": self = .rightAnalogUp
@@ -65,8 +65,8 @@
             case "leftanalogleft": self = .leftAnalogLeft
             case "leftanalogright": self = .leftAnalogRight
             case "leftanalog": self = .leftAnalog
-            case "swap": self = .swap
-            case "rotate": self = .rotate
+            case "swap", "l3": self = .swap
+            case "rotate", "r3": self = .rotate
             case "analogMode": self = .analogMode
             case "home": self = .home
             case "count": self = .count

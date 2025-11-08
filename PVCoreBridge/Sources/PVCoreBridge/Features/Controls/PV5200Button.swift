@@ -41,7 +41,7 @@
             case "fire1", "a": self = .fire1
             case "fire2", "b": self = .fire2
             case "start", "s": self = .start
-            case "pause", "p": self = .pause
+            case "pause", "p", "select": self = .pause
             case "reset", "r": self = .reset
             case "number1", "1": self = .number1
             case "number2", "2": self = .number2

@@ -20,7 +20,7 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "fire": self = .fire
+            case "fire", "a", "b", "x", "y": self = .fire
             case "count": self = .count
             default: self = .up
         }

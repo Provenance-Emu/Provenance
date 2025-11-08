@@ -209,18 +209,18 @@
             case "b": self = .b
             case "x": self = .x
             case "y": self = .y
-            case "l": self = .l
-            case "r": self = .r
-            case "z": self = .z
+            case "l", "l1": self = .l
+            case "r", "r1": self = .r
+            case "z", "select", "l2": self = .z
             case "start": self = .start
             case "digitall", "dl": self = .digitalL
             case "digitalr", "dr": self = .digitalR
             case "count": self = .count
-            case "c▲": self = .cUp
-            case "c▼": self = .cDown
-            case "c◀": self = .cLeft
-            case "c▶": self = .cRight
-            default: self = .up
+            case "c▲", "cup", "c-up": self = .cUp
+            case "c▼", "cdown", "c-down": self = .cDown
+            case "c◀", "cleft", "c-left": self = .cLeft
+            case "c▶", "cright", "c-right": self = .cRight
+            default: self = .a
         }
     }
 
@@ -279,7 +279,7 @@
             case .cLeft:
                 return "c◀"
             case .cRight:
-                return "cRight"
+                return "c▶"
             case .leftAnalog:
                 return "leftAnalog"
             case .rightAnalog:

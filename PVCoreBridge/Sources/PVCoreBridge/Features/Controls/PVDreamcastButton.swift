@@ -38,14 +38,14 @@
             case "b": self = .b
             case "x": self = .x
             case "y": self = .y
-            case "l": self = .l
-            case "r": self = .r
+            case "l", "l1": self = .l
+            case "r", "r1": self = .r
             case "start": self = .start
-            case "analogup": self = .analogUp
-            case "analogdown": self = .analogDown
-            case "analogleft": self = .analogLeft
-            case "analogright": self = .analogRight
-            case "leftanalog": self = .leftAnalog
+            case "analogup", "analog-up": self = .analogUp
+            case "analogdown", "analog-down": self = .analogDown
+            case "analogleft", "analog-left": self = .analogLeft
+            case "analogright", "analog-right": self = .analogRight
+            case "leftanalog", "left-analog": self = .leftAnalog
             case "count": self = .count
             default: self = .up
         }

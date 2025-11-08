@@ -28,16 +28,16 @@
         switch value.lowercased() {
             case "b": self = .b
             case "a": self = .a
-            case "mode": self = .mode
+            case "mode", "select": self = .mode
             case "start": self = .start
             case "up": self = .up
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "c": self = .c
+            case "c", "l", "l1": self = .c
             case "y": self = .y
             case "x": self = .x
-            case "z": self = .z
+            case "z", "r", "r1": self = .z
             case "count": self = .count
             default: self = .b
         }

@@ -29,18 +29,18 @@
 
     public init(_ value: String) {
         switch value.lowercased() {
-            case "x1": self = .x1
+            case "x1", "x": self = .x1
             case "x3": self = .x3
             case "x4": self = .x4
             case "x2": self = .x2
-            case "y1": self = .y1
+            case "y1", "y": self = .y1
             case "y3": self = .y3
             case "y4": self = .y4
             case "y2": self = .y2
             case "a": self = .a
             case "b": self = .b
             case "start": self = .start
-            case "sound": self = .sound
+            case "sound", "select": self = .sound
             case "count": self = .count
             default: self = .x1
         }

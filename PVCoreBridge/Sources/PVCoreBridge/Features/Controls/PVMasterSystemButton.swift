@@ -20,8 +20,8 @@
 
     public init(_ value: String) {
         switch value.lowercased() {
-            case "b": self = .b
-            case "c": self = .c
+            case "b", "a": self = .b
+            case "c", "x", "y": self = .c
             case "start": self = .start
             case "up": self = .up
             case "down": self = .down

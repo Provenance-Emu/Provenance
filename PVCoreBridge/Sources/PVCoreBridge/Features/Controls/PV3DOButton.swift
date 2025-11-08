@@ -31,8 +31,8 @@
             case "a": self = .a
             case "b": self = .b
             case "c": self = .c
-            case "l": self = .L
-            case "r": self = .R
+            case "l", "l1": self = .L
+            case "r", "r1": self = .R
             case "p": self = .P
             case "x": self = .X
             case "count": self = .count

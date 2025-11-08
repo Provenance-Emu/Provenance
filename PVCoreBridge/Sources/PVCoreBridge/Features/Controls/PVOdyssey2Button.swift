@@ -22,7 +22,7 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "action", "a", "i", "1": self = .action
+            case "action", "a", "i", "1", "b", "x", "y": self = .action
             case "count": self = .count
             default: self = .up
         }

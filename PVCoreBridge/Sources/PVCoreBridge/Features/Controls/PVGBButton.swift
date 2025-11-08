@@ -25,8 +25,8 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "a": self = .a
-            case "b": self = .b
+            case "a", "x": self = .a
+            case "b", "y": self = .b
             case "start": self = .start
             case "select": self = .select
             case "count": self = .count

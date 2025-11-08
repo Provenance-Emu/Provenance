@@ -28,8 +28,8 @@
             case "right": self = .right
             case "a": self = .a
             case "b": self = .b
-            case "l": self = .l
-            case "r": self = .r
+            case "l", "l1": self = .l
+            case "r", "r1": self = .r
             case "start": self = .start
             case "select": self = .select
             case "count": self = .count

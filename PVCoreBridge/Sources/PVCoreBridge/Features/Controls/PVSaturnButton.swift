@@ -40,7 +40,7 @@
             case "l": self = .l
             case "r": self = .r
             case "start": self = .start
-            case "leftAnalog": self = .leftAnalog
+            case "leftanalog": self = .leftAnalog
             case "count": self = .count
             default: self = .up
         }

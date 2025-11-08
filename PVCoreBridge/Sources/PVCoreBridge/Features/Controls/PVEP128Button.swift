@@ -26,13 +26,13 @@
 			case "down": self = .down
 			case "left": self = .left
 			case "right": self = .right
-			case "fire1", "1", "i": self = .fire1
-			case "fire2", "2", "ii": self = .fire2
+			case "fire1", "1", "i", "a": self = .fire1
+			case "fire2", "2", "ii", "b": self = .fire2
 			case "select", "s": self = .select
-			case "pause", "p": self = .pause
-			case "reset", "r": self = .reset
-			case "leftDiff", "l": self = .leftDiff
-			case "rightDiff": self = .rightDiff
+			case "pause", "p", "start": self = .pause
+			case "reset", "r", "x", "y": self = .reset
+			case "leftdiff", "l": self = .leftDiff
+			case "rightdiff": self = .rightDiff
 			case "count": self = .count
 			default: self = .up
 		}

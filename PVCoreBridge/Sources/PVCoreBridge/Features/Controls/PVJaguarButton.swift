@@ -59,11 +59,11 @@
         case "0", "button0" : self = .button0
         case "*", "asterisk" : self = .asterisk
         case "#", "pound" : self = .pound
-        case "pause"  : self = .pause
-        case "option" : self = .option
+        case "pause", "start"  : self = .pause
+        case "option", "select" : self = .option
         case "a"      : self = .a
         case "b"      : self = .b
-        case "c"      : self = .c
+        case "c", "x" : self = .c
         default       : self = .count
         }
     }

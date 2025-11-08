@@ -33,10 +33,10 @@
             case "down": self = .analogDown
             case "left": self = .analogLeft
             case "right": self = .analogRight
-            case "button1", "1", "i": self = .button1
-            case "button2", "2", "ii": self = .button2
-            case "button3", "3", "iii": self = .button3
-            case "button4", "4", "iv": self = .button4
+            case "button1", "1", "i", "a": self = .button1
+            case "button2", "2", "ii", "b": self = .button2
+            case "button3", "3", "iii", "x": self = .button3
+            case "button4", "4", "iv", "y": self = .button4
             case "count": self = .count
             default: self = .analogUp
         }

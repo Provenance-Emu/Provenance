@@ -30,10 +30,10 @@
             case "fire1", "a": self = .fire1
             case "fire2", "b": self = .fire2
             case "select", "s": self = .select
-            case "pause", "p": self = .pause
+            case "pause", "p", "start": self = .pause
             case "reset", "r": self = .reset
-            case "leftDiff", "l": self = .leftDiff
-            case "rightDiff", "r": self = .rightDiff
+            case "leftdiff", "l", "l1": self = .leftDiff
+            case "rightdiff", "r", "r1": self = .rightDiff
             case "count": self = .count
             default: self = .up
         }

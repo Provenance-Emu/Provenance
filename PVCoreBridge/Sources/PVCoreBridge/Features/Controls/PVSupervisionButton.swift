@@ -47,8 +47,8 @@
             case "left": self = .left
             case "right": self = .right
             case "topAction", "a": self = .topAction
-            case "bottomLeftAction", "b": self = .bottomLeftAction
-            case "bottomRightAction", "c": self = .bottomRightAction
+            case "bottomleftaction", "b": self = .bottomLeftAction
+            case "bottomrightaction", "c": self = .bottomRightAction
             case "button1", "1": self = .button1
             case "button2", "2": self = .button2
             case "button3", "3": self = .button3
@@ -59,8 +59,8 @@
             case "button8", "8": self = .button8
             case "button9", "9": self = .button9
             case "button0", "0": self = .button0
-            case "clear": self = .clear
-            case "enter": self = .enter
+            case "clear", "select": self = .clear
+            case "enter", "start": self = .enter
             case "count": self = .count
             default: self = .up
         }

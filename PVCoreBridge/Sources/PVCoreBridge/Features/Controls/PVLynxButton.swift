@@ -27,10 +27,10 @@
             case "right": self = .right
             case "a": self = .a
             case "b": self = .b
-            case "option1", "o1": self = .option1
-            case "option2", "o2": self = .option2
+            case "option1", "o1", "x": self = .option1
+            case "option2", "o2", "y": self = .option2
             case "count": self = .count
-            case "pause": self = .pause
+            case "pause", "start": self = .pause
             default: self = .up
         }
     }

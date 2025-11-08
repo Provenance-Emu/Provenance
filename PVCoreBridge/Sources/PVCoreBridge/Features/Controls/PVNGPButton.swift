@@ -26,7 +26,7 @@
             case "right": self = .right
             case "a", "i", "1": self = .a
             case "b", "ii", "2": self = .b
-            case "option": self = .option
+            case "option", "select": self = .option
             case "count": self = .count
             default: self = .up
         }

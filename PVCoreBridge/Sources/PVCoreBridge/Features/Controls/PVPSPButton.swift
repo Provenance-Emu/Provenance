@@ -52,10 +52,10 @@
             case "start": self = .start
             case "select": self = .select
             case "analogMode": self = .analogMode
-            case "leftAnalogUp": self = .leftAnalogUp
-            case "leftAnalogDown": self = .leftAnalogDown
-            case "leftAnalogLeft": self = .leftAnalogLeft
-            case "leftAnalogRight": self = .leftAnalogRight
+            case "leftanalogup": self = .leftAnalogUp
+            case "leftanalogdown": self = .leftAnalogDown
+            case "leftanalogleft": self = .leftAnalogLeft
+            case "leftanalogright": self = .leftAnalogRight
             case "leftAnalog": self = .leftAnalog
             case "count": self = .count
             default: self = .up

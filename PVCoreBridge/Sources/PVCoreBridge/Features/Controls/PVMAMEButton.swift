@@ -55,16 +55,16 @@
             case "start", "mode": self = .start
             case "select", "back", "cbdc": self = .select
             case "analogMode": self = .analogMode
-            case "leftAnalogUp": self = .leftAnalogUp
-            case "leftAnalogDown": self = .leftAnalogDown
-            case "leftAnalogLeft": self = .leftAnalogLeft
-            case "leftAnalogRight": self = .leftAnalogRight
-            case "rightAnalogUp": self = .rightAnalogUp
-            case "rightAnalogDown": self = .rightAnalogDown
-            case "rightAnalogLeft": self = .rightAnalogLeft
-            case "rightAnalogRight": self = .rightAnalogRight
-            case "leftAnalog": self = .leftAnalog
-            case "rightAnalog": self = .rightAnalog
+            case "leftanalogup": self = .leftAnalogUp
+            case "leftanalogdown": self = .leftAnalogDown
+            case "leftanalogleft": self = .leftAnalogLeft
+            case "leftanalogright": self = .leftAnalogRight
+            case "rightanalogup": self = .rightAnalogUp
+            case "rightanalogdown": self = .rightAnalogDown
+            case "rightanalogleft": self = .rightAnalogLeft
+            case "rightanalogright": self = .rightAnalogRight
+            case "leftanalog": self = .leftAnalog
+            case "rightanalog": self = .rightAnalog
             case "count": self = .count
             default: self = .up
         }
