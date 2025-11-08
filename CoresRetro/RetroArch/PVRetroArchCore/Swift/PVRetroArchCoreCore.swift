@@ -29,12 +29,14 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     public override var isDoubleBuffered: Bool { true }
     public override var supportsSkins: Bool {
         let unsupportedCores = [
-//            "com.provenance.n64"
             "com.provenance.ds",
             "com.provenance.dos",
             "com.provenance.mame",
             "com.provenance.arcade",
-            "com.provenance.palmos"
+            "com.provenance.palmos",
+            "com.provenance.cps1",
+            "com.provenance.cps2",
+            "com.provenance.cps3"
         ]
         DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
@@ -47,8 +49,8 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
         super.setPauseEmulation(flag)
     }
     public override var supportsSaveStates: Bool {
-        let unsupportedCores = [
-            "com.provenance.dreamcast"
+        let unsupportedCores: [String] = [
+            // "com.provenance.dreamcast"
         ]
         DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
