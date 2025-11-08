@@ -578,7 +578,7 @@ public extension Defaults.Keys {
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
 
-    static let skinMode = Key<SkinMode>("skinMOde", default: .off)
+    static let skinMode = Key<SkinMode>("skinMOde", default: .selectedOnly)
 }
 
 // MARK: Video Options
