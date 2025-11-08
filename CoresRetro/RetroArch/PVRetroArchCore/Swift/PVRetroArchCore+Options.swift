@@ -651,6 +651,12 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
             }
         }
         if let coreIdentifier = self.coreIdentifier {
+            if (coreIdentifier.contains("vecx")) {
+                // Hardware mode broken, force software mode
+                optionValues += "vecx_use_hw = \"Software\"\n"
+                optionValuesFile = "VecX/VecX.opt"
+                optionOverwrite = true
+            }
             if (coreIdentifier.contains("melonds")) {
                 optionValues += "melonds_touch_mode = \"Touch\"\n"
                 optionValuesFile = "melonDS/melonDS.opt"
