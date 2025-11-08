@@ -36,11 +36,11 @@ extern GCController *touch_controller;
 @implementation PVRetroArchCoreBridge (_2600Controls)
 #pragma mark - Control
 
-- (void)didPush2600Button:(PV2600Button)button forPlayer:(NSInteger)player {
+- (void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSInteger)player {
     [self handle2600Button:button forPlayer:player pressed:true value:1];
 }
 
-- (void)didRelease3DOButton:(PV2600Button)button forPlayer:(NSInteger)player {
+- (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSInteger)player {
     [self handle2600Button:button forPlayer:player pressed:false value:0];
 }
 
