@@ -60,8 +60,8 @@ struct EmulatorWithSkinView: View {
         // Convert string system identifier to enum
         self.systemId = game.system?.systemIdentifier
 
-        // Get game ID for filter preferences (md5Hash or crc)
-        self.gameId = game.md5Hash ?? game.crc
+        // Get game ID for skin preferences (must match game.id used in skin selection)
+        self.gameId = game.id
 
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
