@@ -24,11 +24,9 @@ import PVThemes
 struct RetroMenuView: View {
     let emulatorVC: PVEmulatorViewController
     let dismissAction: () -> Void
-    @StateObject private var advancedSkinFeaturesFlag = PVFeatureFlagsManager.shared.flag(.advancedSkinFeatures)
     @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var selectedCategory: MenuCategory = .main
-    @State private var showSkinsCategoryButton: Bool = false // Add new @State variable
 
     private var palette: UXThemePalette { themeManager.currentPalette }
 
@@ -232,14 +230,12 @@ struct RetroMenuView: View {
                             })
                             .id("options")
                             // Always show skins category - display message if not supported
-                            if showSkinsCategoryButton {
-                                categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        selectedCategory = .skins
-                                    }
-                                })
-                                .id("skins")
-                            }
+                            categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedCategory = .skins
+                                }
+                            })
+                            .id("skins")
                         }
                         .padding(.horizontal, 20)
                     }
@@ -292,12 +288,6 @@ struct RetroMenuView: View {
         }
         .frame(height: 50)
         .padding(.bottom, 16)
-        .onAppear { // Update the @State var on appear
-            self.showSkinsCategoryButton = advancedSkinFeaturesFlag.value
-        }
-        .onChange(of: advancedSkinFeaturesFlag.value) { newValue in // And on change
-            self.showSkinsCategoryButton = newValue
-        }
     }
 
     var body: some View {
