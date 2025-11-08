@@ -28,7 +28,7 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "fire1", "a", "b", "x", "y": self = .fire1
+            case "fire", "fire1", "a", "b", "x", "y": self = .fire1
             case "leftdiffa": self = .leftDiffA
             case "leftdiffb": self = .leftDiffB
             case "rightdiffa": self = .rightDiffA
@@ -36,7 +36,7 @@
             case "reset", "start": self = .reset
             case "select": self = .select
             case "count": self = .count
-            default: self = .up
+            default: self = .fire1
         }
     }
 

@@ -4881,7 +4881,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string></string>
+						<string>Fire</string>
 						<key>PVControlFrame</key>
 						<string>{{76,84},{60,60}}</string>
 						<key>PVControlTint</key>
