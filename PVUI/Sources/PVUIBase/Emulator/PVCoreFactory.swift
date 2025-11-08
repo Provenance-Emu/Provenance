@@ -127,13 +127,13 @@ public final class PVCoreFactory: NSObject {
             }
             break;
         case .Atari8bit:
-            if let core = core as? PV5200SystemResponderClient {
-                return PVAtari5200ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            if let core = core as? PVA8SystemResponderClient {
+                return PVA8SystemResponderClient(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
-                fatalError("Core doesn't implement PV5200SystemResponderClient")
+                fatalError("Core doesn't implement PVA8SystemResponderClient")
             }
             break;
-        case .Atari7800:
+        case .Atari7800, .AtariST:
             if let core = core as? PV7800SystemResponderClient {
                 return PVAtari7800ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
@@ -356,7 +356,7 @@ public final class PVCoreFactory: NSObject {
                 assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
             }
             break;
-        case .AtariST, .C64, .Macintosh:
+        case .C64, .Macintosh:
             if let core = core as? PVRetroArchCoreResponderClient {
                 return PVRetroArchControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
