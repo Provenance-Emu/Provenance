@@ -1091,6 +1091,13 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
+        case .Atari2600:
+            if let r = core as? PV2600SystemResponderClient {
+                let b = PV2600Button(id)
+                DLOG("Atari2600 button: original=\(buttonId), normalized=\(id), PV2600Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
         default:
             break
         }
@@ -1135,6 +1142,18 @@ public class DeltaSkinInputHandler: ObservableObject {
             // 32X uses "mode" instead of "select"
             if s == "select" { return "mode" }
             if ["a", "b", "c", "x", "y", "z", "start", "mode"].contains(s) { return s }
+        case .Atari2600:
+            // Atari 2600 button normalization
+            // D-pad directions
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            // Fire button (maps to fire1)
+            if ["fire", "fire1", "a", "b", "x", "y"].contains(s) { return "fire1" }
+            // Reset (start button on Atari 2600)
+            if ["reset", "start", "run", "play"].contains(s) { return "reset" }
+            // Select
+            if s == "select" { return "select" }
+            // Difficulty switches
+            if ["leftdiffa", "leftdiffb", "rightdiffa", "rightdiffb"].contains(s) { return s }
         case ._3DS:
             // 3DS uses standard button names
             if ["a", "b", "x", "y", "l", "r", "zl", "zr", "start", "select", "up", "down", "left", "right"].contains(s) { return s }
