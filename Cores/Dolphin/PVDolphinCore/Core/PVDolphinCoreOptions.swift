@@ -180,7 +180,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "Immediate XFB",
             description: "Presents XFB copies immediately. May improve performance but can cause issues.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var skipDuplicateXFBsOption: CoreOption = {
@@ -236,7 +236,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "VI Skip",
             description: "Skips VI updates for performance. May cause issues in some games.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     // MARK: - Shader Settings

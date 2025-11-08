@@ -401,6 +401,15 @@ static void ResetDolphinStaticState() {
     // Wait for Shaders
     Config::SetBase(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING, self.waitForShaders);
 
+    // Shader compiler threads (enforce safe limits matching DolphiniOS defaults)
+    const int hw = (int)[[NSProcessInfo processInfo] processorCount];
+    const int threads = std::max(1, std::min(2, hw - 1));
+    Config::SetBase(Config::GFX_SHADER_COMPILER_THREADS, threads);
+    Config::SetBase(Config::GFX_SHADER_PRECOMPILER_THREADS, threads);
+
+    // Async Present (enabled for performance on iOS, matching DolphiniOS defaults)
+    Config::SetBase(Config::GFX_ASYNC_PRESENT, true);
+
     // === ANTI-ALIASING ===
 
     // MSAA
@@ -491,8 +500,11 @@ static void ResetDolphinStaticState() {
     // If you later add a UI or option for this in Provenance, wire it here instead of hardcoding.
     Config::SetBase(Config::MAIN_FAST_DISC_SPEED, true);
 
-    // Write-Back Cache
+    // Write-Back Cache (inverted: enableWriteBackCache=true means accurate NANs=true, which is slower)
     Config::SetBase(Config::MAIN_ACCURATE_NANS, self.enableWriteBackCache);
+
+    // GPU Sync (disabled for performance, matching DolphiniOS defaults)
+    Config::SetBase(Config::MAIN_SYNC_GPU, false);
 
     // Speed Limit
     if (self.speedLimit == 0) {
