@@ -30,7 +30,8 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     public override var supportsSkins: Bool {
         let unsupportedCores = [
 //            "com.provenance.n64"
-            "com.provenance.ds"
+            "com.provenance.ds",
+            "com.provenance.dos"
         ]
         DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
