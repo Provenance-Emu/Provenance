@@ -269,10 +269,11 @@ void CDAccess_CHD::parse_toc_from_metadata()
     track_map[trackno].pregap = pregap_fixed;
     track_map[trackno].pregap_dv = pregap_dv;
     track_map[trackno].postgap = postgap;
-    // Default: no swap; enable only if subtype hints MSB/BE explicitly.
+    // libchdr handles audio endianness conversion during decompression,
+    // so audio_msb_first is not used but kept for potential future use
     bool is_audio = (strcasecmp(type, "AUDIO") == 0);
-    bool msb_hint = (strcasestr(subtype, "MSB") != nullptr) || (strcasestr(subtype, "BE") != nullptr);
-    track_map[trackno].audio_msb_first = (is_audio && msb_hint);
+    bool lsb_hint = (strcasestr(subtype, "LSB") != nullptr) || (strcasestr(subtype, "LE") != nullptr);
+    track_map[trackno].audio_msb_first = (is_audio && !lsb_hint);
     track_map[trackno].di_format = (is_audio ? 0 : 1);
 
     toc.tracks[trackno].lba = plba;
@@ -416,9 +417,13 @@ void CDAccess_CHD::Read_Raw_Sector(uint8* buf, int32 lba)
 //                src[0], src[1], src[2], src[3], src[4], src[5], src[6], src[7], src[8], src[9], src[10], src[11]);
 //  }
 
-  // Swap audio endianness if needed
-  if (tm.di_format == 0 && tm.audio_msb_first)
+  // Handle audio endianness: libchdr's CD FLAC codec always swaps on little-endian platforms,
+  // but some CHD files may have audio that's already in the correct endianness.
+  // For audio tracks, we need to swap to ensure correct playback (CD audio is typically big-endian in CHD).
+  if (tm.di_format == 0) // Audio track
+  {
     Endian_A16_Swap(buf, 588 * 2);
+  }
 
   // For data tracks, ensure sector is in the expected descrambled format.
   if (tm.di_format != 0)
