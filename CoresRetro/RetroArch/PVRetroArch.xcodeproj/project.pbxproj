@@ -162,6 +162,7 @@
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
 		B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
 		B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
+		B3A6C0EB2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A6C0EA2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m */; };
 		B3B377A12E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3779E2E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m */; };
 		B3B377A22E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3779D2E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m */; };
 		B3B377A42E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3779F2E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m */; };
@@ -458,6 +459,7 @@
 		B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsLoader.swift; sourceTree = "<group>"; };
 		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = ../../Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
+		B3A6C0EA2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+VB.m"; sourceTree = "<group>"; };
 		B3B3779D2E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+5200.m"; sourceTree = "<group>"; };
 		B3B3779E2E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+7800.m"; sourceTree = "<group>"; };
 		B3B3779F2E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Atari8Bit.m"; sourceTree = "<group>"; };
@@ -877,6 +879,7 @@
 				93C3726E2A8B80090007671D /* PVRetroArchCore+Controls+Saturn.m */,
 				9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */,
 				B32111B42CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m */,
+				B3A6C0EA2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m */,
 				93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */,
 				B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */,
 				B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */,
@@ -1361,6 +1364,7 @@
 				93654F7B298F4A2D0046503F /* PVRetroArchCore+Controls+DS.m in Sources */,
 				93C3726D2A8B68000007671D /* PVRetroArchCore+Controls+NES.m in Sources */,
 				93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */,
+				B3A6C0EB2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m in Sources */,
 				93B66BA02967DB7600A621DD /* Shaders.metal in Sources */,
 				93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */,
 				93814F902AAA9E9900DEB9B9 /* PVRetroArchCore+Archive+AppleII.m in Sources */,
