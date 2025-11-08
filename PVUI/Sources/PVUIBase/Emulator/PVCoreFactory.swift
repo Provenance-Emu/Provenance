@@ -224,7 +224,7 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PVNeoGeoSystemResponderClient")
             }
             break;
-        case .MAME:
+        case .MAME, .CPS1, .CPS2, .CPS3:
             if let core = core as? PVMAMESystemResponderClient {
                 return PVMAMEControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
