@@ -31,7 +31,10 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
         let unsupportedCores = [
 //            "com.provenance.n64"
             "com.provenance.ds",
-            "com.provenance.dos"
+            "com.provenance.dos",
+            "com.provenance.mame",
+            "com.provenance.arcade",
+            "com.provenance.palmos"
         ]
         DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
