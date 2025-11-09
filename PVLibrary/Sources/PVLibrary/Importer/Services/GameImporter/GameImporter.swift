@@ -2187,9 +2187,75 @@ public final class GameImporter: GameImporting, ObservableObject {
             throw GameImporterError.unsupportedFile
         }
 
-        // Determine archive type
-        guard let archiveType = ArchiveType(rawValue: fileExtension) else {
-            ELOG("Unsupported archive type: \(fileExtension)")
+        // Ensure file is fully written and not locked before attempting extraction
+        // Add a small delay to ensure file system has finished writing
+        try? await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
+
+        // Try to verify file is readable and not locked
+        // Attempt to open the file multiple times if needed
+        var fileReadable = false
+        for attempt in 1...5 {
+            // Try to read file attributes first (less intrusive than opening a handle)
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: archiveURL.path),
+               let fileSize = attributes[.size] as? Int64,
+               fileSize > 0 {
+                // File exists and has size, try to open it
+                if let fileHandle = try? FileHandle(forReadingFrom: archiveURL) {
+                    fileHandle.closeFile()
+                    // Small delay after closing to ensure file handle is fully released
+                    try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
+                    fileReadable = true
+                    break
+                } else {
+                    ILOG("Archive file appears locked (attempt \(attempt)/5), waiting...")
+                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+                }
+            } else {
+                ILOG("Archive file has no size or invalid attributes (attempt \(attempt)/5), waiting...")
+                try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+            }
+        }
+
+        guard fileReadable else {
+            let error = ArchiveError.extractionFailed("Archive file is locked or not readable: \(archiveURL.lastPathComponent). Please ensure the file is not being accessed by another process.")
+            ELOG(error.localizedDescription)
+            throw error
+        }
+
+        // Detect actual archive type from file signature (not just extension)
+        // This handles cases where files have wrong extensions (e.g., .zip file that's actually 7z)
+        let detectedArchiveType: ArchiveType?
+        if let fileHandle = try? FileHandle(forReadingFrom: archiveURL) {
+            let signature = fileHandle.readData(ofLength: 4)
+            fileHandle.closeFile()
+
+            // Detect archive type from signature
+            if signature.count >= 2 {
+                if signature[0] == 0x50 && signature[1] == 0x4B {
+                    // ZIP signature: PK (0x50 0x4B)
+                    detectedArchiveType = .zip
+                    ILOG("Detected ZIP archive from signature: \(archiveURL.lastPathComponent)")
+                } else if signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A && signature[2] == 0xBC && signature[3] == 0xAF {
+                    // 7z signature: 37 7A BC AF
+                    detectedArchiveType = .sevenZip
+                    ILOG("Detected 7z archive from signature (file has .\(fileExtension) extension): \(archiveURL.lastPathComponent)")
+                } else {
+                    // Try extension-based detection as fallback
+                    detectedArchiveType = ArchiveType(rawValue: fileExtension)
+                    if detectedArchiveType != nil {
+                        ILOG("Using extension-based detection for \(archiveURL.lastPathComponent): \(detectedArchiveType!.rawValue)")
+                    }
+                }
+            } else {
+                detectedArchiveType = ArchiveType(rawValue: fileExtension)
+            }
+        } else {
+            // Fallback to extension-based detection if we can't read the file
+            detectedArchiveType = ArchiveType(rawValue: fileExtension)
+        }
+
+        guard let archiveType = detectedArchiveType else {
+            ELOG("Unsupported archive type: \(fileExtension) - \(archiveURL.lastPathComponent)")
             throw GameImporterError.unsupportedFile
         }
 
@@ -2339,11 +2405,15 @@ public final class GameImporter: GameImporting, ObservableObject {
             // Check file size for 7z files (might be too large)
             if archiveType == .sevenZip {
                 if let fileSize = try? FileManager.default.attributesOfItem(atPath: archiveURL.path)[.size] as? Int64 {
-                    ELOG("7z file size: \(fileSize) bytes (\(fileSize / 1_000_000) MB)")
-                    // Conservative limit: 256MB to avoid memory pressure (matches SevenZipExtractor)
-                    if fileSize > 256_000_000 {
-                        let sizeMB = fileSize / 1_000_000
-                        throw ArchiveError.extractionFailed("7z file is too large (\(sizeMB) MB). Maximum supported size is 256 MB. Please extract manually or use ZIP format for larger archives.")
+                    let sizeMB = fileSize / 1_000_000
+                    ELOG("7z file size: \(fileSize) bytes (\(sizeMB) MB)")
+                    // Increased limit: 1GB to support larger archives
+                    let maxSize: Int64 = 1_000_000_000 // 1GB
+                    if fileSize > maxSize {
+                        let maxMB = maxSize / 1_000_000
+                        throw ArchiveError.extractionFailed("7z file is too large (\(sizeMB) MB). Maximum supported size is \(maxMB) MB. Please extract manually or use ZIP format for larger archives.")
+                    } else if fileSize > 500_000_000 { // 500MB
+                        WLOG("7z file \(archiveURL.lastPathComponent) is large (\(sizeMB) MB). Extraction may use significant memory.")
                     }
                 }
             }

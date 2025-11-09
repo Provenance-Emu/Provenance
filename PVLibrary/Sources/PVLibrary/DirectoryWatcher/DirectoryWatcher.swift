@@ -244,47 +244,146 @@ public final class DirectoryWatcher: ObservableObject {
             return
         }
 
-        // Try to open the file to ensure it's not locked
-        // If we can't read it, wait a bit and try again
+        // Try to verify file is readable and not locked
+        // Attempt to open the file multiple times if needed
         var fileReadable = false
+        var fileSize: Int64 = 0
         for attempt in 1...5 {
-            if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
-                fileHandle.closeFile()
-                fileReadable = true
-                break
+            // Try to read file attributes first (less intrusive than opening a handle)
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
+               let size = attributes[.size] as? Int64,
+               size > 0 {
+                fileSize = size
+                ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes (attempt \(attempt))")
+
+                // File exists and has size, try to open it
+                if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
+                    // Verify file is readable by checking signature
+                    let signature = fileHandle.readData(ofLength: 4)
+                    fileHandle.closeFile()
+
+                    // Check if it's a known archive format
+                    let isValidArchive = (signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B) || // ZIP
+                                        (signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A && signature[2] == 0xBC && signature[3] == 0xAF) // 7z
+
+                    if isValidArchive {
+                        let format = (signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B) ? "ZIP" : "7z"
+                        ILOG("Archive file \(filePath.lastPathComponent) has valid \(format) signature")
+                        // Small delay after closing to ensure file handle is fully released
+                        try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
+                        fileReadable = true
+                        break
+                    } else {
+                        let hexSignature = signature.prefix(4).map { String(format: "%02X", $0) }.joined(separator: " ")
+                        WLOG("Archive file \(filePath.lastPathComponent) does not have valid archive signature (got: \(hexSignature)), attempt \(attempt)/5")
+                        try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+                    }
+                } else {
+                    ILOG("Archive file appears locked (attempt \(attempt)/5), waiting...")
+                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+                }
             } else {
-                ILOG("Archive file appears locked (attempt \(attempt)/5), waiting...")
+                ILOG("Archive file has no size or invalid attributes (attempt \(attempt)/5), waiting...")
                 try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
             }
         }
 
         guard fileReadable else {
-            let error = NSError(domain: "DirectoryWatcher", code: -1, userInfo: [NSLocalizedDescriptionKey: "Archive file is locked or not readable: \(filePath.lastPathComponent)"])
+            let error = NSError(domain: "DirectoryWatcher", code: -1, userInfo: [NSLocalizedDescriptionKey: "Archive file is locked or not readable: \(filePath.lastPathComponent) (size: \(fileSize) bytes)"])
+            ELOG("Failed to verify archive file readiness: \(filePath.path)")
             throw error
         }
+
+        ILOG("Archive file \(filePath.lastPathComponent) verified as readable, proceeding with extraction")
 
         guard !filePath.path.contains("MACOSX") else {
             ILOG("Skipping MACOSX file: \(filePath.path)")
             return
         }
 
-        // Check if archive should be kept as-is (for systems that support archives directly)
-        let zipChecker = ArchiveZipSupportChecker.shared
-        let (shouldKeepAsIs, systemID) = await zipChecker.shouldKeepArchiveAsIs(filePath)
+        // Detect actual archive type from file signature (not just extension)
+        // This handles cases where files have wrong extensions (e.g., .zip file that's actually 7z)
+        let detectedArchiveType: ArchiveType?
+        if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
+            let signature = fileHandle.readData(ofLength: 4)
+            fileHandle.closeFile()
 
-        if shouldKeepAsIs, let systemID = systemID {
-            ILOG("Archive \(filePath.lastPathComponent) supports zip-as-ROM for system \(systemID.rawValue) - moving directly to system folder")
-            try await handleZipAsROM(filePath: filePath, systemID: systemID)
+            // Detect archive type from signature
+            if signature.count >= 2 {
+                if signature[0] == 0x50 && signature[1] == 0x4B {
+                    // ZIP signature: PK (0x50 0x4B)
+                    detectedArchiveType = .zip
+                    ILOG("Detected ZIP archive from signature: \(filePath.lastPathComponent)")
+                } else if signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A && signature[2] == 0xBC && signature[3] == 0xAF {
+                    // 7z signature: 37 7A BC AF
+                    detectedArchiveType = .sevenZip
+                    ILOG("Detected 7z archive from signature (file has .\(filePath.pathExtension) extension): \(filePath.lastPathComponent)")
+                } else {
+                    // Try extension-based detection as fallback
+                    detectedArchiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased())
+                    if detectedArchiveType != nil {
+                        ILOG("Using extension-based detection for \(filePath.lastPathComponent): \(detectedArchiveType!.rawValue)")
+                    }
+                }
+            } else {
+                detectedArchiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased())
+            }
+        } else {
+            // Fallback to extension-based detection if we can't read the file
+            detectedArchiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased())
+        }
+
+        guard let archiveType = detectedArchiveType else {
+            ILOG("Unsupported archive type for: \(filePath.pathExtension) - \(filePath.lastPathComponent)")
             return
         }
 
-        guard let archiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased()),
-              let extractor = extractors[archiveType] else {
-            ILOG("Unsupported archive type or no extractor available for: \(filePath.pathExtension)")
+        guard let extractor = extractors[archiveType] else {
+            ILOG("No extractor available for archive type: \(archiveType.rawValue) - \(filePath.lastPathComponent)")
             return
+        }
+
+        // Check file size for 7z files before attempting extraction
+        // This provides a clearer error message than waiting for the extractor to fail
+        if archiveType == .sevenZip {
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
+               let fileSize = attributes[.size] as? Int64 {
+                let maxSize: Int64 = 1_000_000_000 // 1GB
+                if fileSize > maxSize {
+                    let sizeMB = fileSize / 1_000_000
+                    let maxMB = maxSize / 1_000_000
+                    let error = ArchiveError.extractionFailed("7z file is too large (\(sizeMB) MB). Maximum supported size is \(maxMB) MB. Please extract manually or use ZIP format for larger archives.")
+                    ELOG("Cannot extract 7z file \(filePath.lastPathComponent): \(error.localizedDescription)")
+                    updateExtractionStatus(.failed(error: error))
+                    throw error
+                } else if fileSize > 500_000_000 { // 500MB
+                    let sizeMB = fileSize / 1_000_000
+                    WLOG("7z file \(filePath.lastPathComponent) is large (\(sizeMB) MB). Extraction may use significant memory.")
+                }
+            }
+        }
+
+        // Check if archive should be kept as-is (for systems that support archives directly)
+        // Only check for ZIP files (7z files should always be extracted)
+        if archiveType == .zip {
+            let zipChecker = ArchiveZipSupportChecker.shared
+            let (shouldKeepAsIs, systemID) = await zipChecker.shouldKeepArchiveAsIs(filePath)
+
+            if shouldKeepAsIs, let systemID = systemID {
+                ILOG("Archive \(filePath.lastPathComponent) supports zip-as-ROM for system \(systemID.rawValue) - moving directly to system folder")
+                try await handleZipAsROM(filePath: filePath, systemID: systemID)
+                return
+            }
         }
 
         do {
+            // Log file size before starting extraction
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
+               let fileSize = attributes[.size] as? Int64 {
+                let sizeMB = fileSize / 1_000_000
+                ILOG("Starting extraction of \(archiveType.rawValue) archive: \(filePath.lastPathComponent) (size: \(sizeMB) MB)")
+            }
+
             updateExtractionStatus(.startedArchive(path: filePath))
 
             // Post notification that extraction has started
@@ -364,7 +463,29 @@ public final class DirectoryWatcher: ObservableObject {
             // Clean up temporary directory
             try await FileManager.default.removeItem(at: tempExtractionDir)
         } catch {
-            ELOG("Error during archive extraction: \(error.localizedDescription)")
+            // Log detailed error information
+            let errorDescription = error.localizedDescription
+            ELOG("Error during archive extraction of \(filePath.lastPathComponent): \(errorDescription)")
+
+            // If it's an ArchiveError, log additional details
+            if let archiveError = error as? ArchiveError {
+                switch archiveError {
+                case .extractionFailed(let message):
+                    ELOG("ArchiveError.extractionFailed: \(message)")
+                case .fileTooLarge:
+                    ELOG("ArchiveError.fileTooLarge")
+                case .invalidArchive:
+                    ELOG("ArchiveError.invalidArchive")
+                }
+            }
+
+            // Log file size if available
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
+               let fileSize = attributes[.size] as? Int64 {
+                let sizeMB = fileSize / 1_000_000
+                ELOG("Failed archive file size: \(sizeMB) MB")
+            }
+
             updateExtractionStatus(.failed(error: error))
 
             // Post notification that extraction has failed

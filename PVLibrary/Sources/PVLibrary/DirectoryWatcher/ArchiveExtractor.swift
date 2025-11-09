@@ -13,6 +13,9 @@ import SWCompression
 #if canImport(ZipArchive)
 @_exported import ZipArchive
 #endif
+#if canImport(PLzmaSDK)
+import PLzmaSDK
+#endif
 import Combine
 
 
@@ -30,6 +33,16 @@ public enum ArchiveType: String, CaseIterable {
     case gzip = "gz"
     case rar
 }
+
+/// Backend selection for 7z archive extraction
+public enum SevenZipBackend {
+    case swCompression
+    case plzmaSDK
+}
+
+/// Global variable controlling which backend to use for 7z extraction
+/// Defaults to PLzmaSDK for better large file support with streaming
+public var sevenZipExtractionBackend: SevenZipBackend = .plzmaSDK
 
 protocol ArchiveExtractor {
     func extract(at path: URL, to destination: URL, progress: @escaping (Double) -> Void) -> AsyncThrowingStream<URL, Error>
@@ -64,6 +77,25 @@ class ZipExtractor: BaseExtractor {
         AsyncThrowingStream { continuation in
             Task {
                 do {
+                    // Verify file exists and is readable before attempting extraction
+                    guard FileManager.default.fileExists(atPath: path.path) else {
+                        throw ArchiveError.extractionFailed("ZIP file does not exist: \(path.path)")
+                    }
+
+                    // Verify file size
+                    if let attributes = try? FileManager.default.attributesOfItem(atPath: path.path),
+                       let fileSize = attributes[.size] as? Int64 {
+                        if fileSize == 0 {
+                            throw ArchiveError.extractionFailed("ZIP file is empty: \(path.lastPathComponent)")
+                        }
+                        ILOG("Attempting to extract ZIP file: \(path.lastPathComponent) (size: \(fileSize) bytes)")
+                    }
+
+                    // Verify destination directory exists
+                    try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true, attributes: nil)
+
+                    ILOG("Calling SSZipArchive.unzipFile with path: \(path.path), destination: \(destination.path)")
+
                     try await withCheckedThrowingContinuation { innerContinuation in
                         SSZipArchive.unzipFile(atPath: path.path,
                                                toDestination: destination.path,
@@ -76,18 +108,24 @@ class ZipExtractor: BaseExtractor {
                             }
                             progress(Double(entryNumber) / Double(total))
                         },
-                                               completionHandler: { _, succeeded, error in
+                                               completionHandler: { archivePath, succeeded, error in
                             if succeeded {
+                                ILOG("SSZipArchive.unzipFile succeeded for: \(archivePath ?? path.path)")
                                 innerContinuation.resume()
                             } else if let error = error {
+                                let errorMsg = "SSZipArchive.unzipFile failed for \(archivePath ?? path.path): \(error.localizedDescription)"
+                                ELOG(errorMsg)
                                 innerContinuation.resume(throwing: error)
                             } else {
-                                innerContinuation.resume(throwing: ArchiveError.extractionFailed("Unknown error during ZIP extraction"))
+                                let errorMsg = "SSZipArchive.unzipFile failed for \(archivePath ?? path.path): Unknown error"
+                                ELOG(errorMsg)
+                                innerContinuation.resume(throwing: ArchiveError.extractionFailed(errorMsg))
                             }
                         })
                     }
                     continuation.finish()
                 } catch {
+                    ELOG("ZipExtractor error: \(error.localizedDescription)")
                     continuation.finish(throwing: error)
                 }
             }
@@ -110,25 +148,114 @@ class ZipExtractor: BaseExtractor {
 #endif
 }
 
+/// Extracts 7z archives using either SWCompression or PLzmaSDK based on backend selection
+/// PLzmaSDK supports streaming extraction and can handle larger files without memory issues
 class SevenZipExtractor: BaseExtractor {
     override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
+        switch sevenZipExtractionBackend {
+        case .plzmaSDK:
+            do {
+                try await performPLzmaSDKExtraction(from: path, to: destination, yieldPath: yieldPath, progress: progress)
+            } catch {
+                WLOG("PLzmaSDK extraction failed: \(error.localizedDescription). Falling back to SWCompression.")
+                try await performSWCompressionExtraction(from: path, to: destination, yieldPath: yieldPath, progress: progress)
+            }
+        case .swCompression:
+            try await performSWCompressionExtraction(from: path, to: destination, yieldPath: yieldPath, progress: progress)
+        }
+    }
+
+    /// Extraction using PLzmaSDK with streaming support for large files
+    private func performPLzmaSDKExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
+        #if canImport(PLzmaSDK)
         try autoreleasepool {
-            // Check file size before loading into memory
+            guard FileManager.default.fileExists(atPath: path.path) else {
+                throw ArchiveError.extractionFailed("7z file does not exist: \(path.path)")
+            }
+
+            try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true, attributes: nil)
+
+            let archivePath = try Path(path.path)
+            let archiveInStream = try InStream(path: archivePath)
+            let decoder = try Decoder(stream: archiveInStream, fileType: .sevenZ)
+
+            guard try decoder.open() else {
+                throw ArchiveError.extractionFailed("Failed to open archive")
+            }
+
+            let totalItems = try decoder.count()
+            guard totalItems > 0 else {
+                throw ArchiveError.extractionFailed("Archive is empty")
+            }
+
+            ILOG("Extracting 7z archive using PLzmaSDK: \(path.lastPathComponent) (\(totalItems) items)")
+
+            var fileCount = 0
+            var extractedCount = 0
+
+            for itemIndex in 0..<totalItems {
+                let item = try decoder.item(at: itemIndex)
+
+                if item.isDir {
+                    let itemPath = try item.path()
+                    let itemPathString = itemPath.description
+                    let fullPath = destination.appendingPathComponent(itemPathString)
+                    try FileManager.default.createDirectory(at: fullPath, withIntermediateDirectories: true, attributes: nil)
+                } else {
+                    fileCount += 1
+                }
+            }
+
+            for itemIndex in 0..<totalItems {
+                let item = try decoder.item(at: itemIndex)
+
+                guard !item.isDir else { continue }
+
+                let itemPath = try item.path()
+                let itemPathString = itemPath.description
+                let fullPath = destination.appendingPathComponent(itemPathString)
+                let parentDir = fullPath.deletingLastPathComponent()
+
+                try FileManager.default.createDirectory(at: parentDir, withIntermediateDirectories: true, attributes: nil)
+
+                let itemsToStreams = try ItemOutStreamArray()
+                let outputPath = try Path(fullPath.path)
+                let outStream = try OutStream(path: outputPath)
+                try itemsToStreams.add(item: item, stream: outStream)
+
+                guard try decoder.extract(itemsToStreams: itemsToStreams) else {
+                    throw ArchiveError.extractionFailed("Failed to extract item: \(itemPathString)")
+                }
+
+                yieldPath(fullPath)
+                extractedCount += 1
+                progress(Double(extractedCount) / Double(fileCount))
+            }
+        }
+        #else
+        throw ArchiveError.extractionFailed("PLzmaSDK is not available. Falling back to SWCompression.")
+        #endif
+    }
+
+    /// Extraction using SWCompression (legacy method, loads entire archive into memory)
+    private func performSWCompressionExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
+        try autoreleasepool {
             let fileAttributes = try FileManager.default.attributesOfItem(atPath: path.path)
             let fileSize = fileAttributes[.size] as? Int64 ?? 0
 
-            // Conservative limit: 256MB to avoid memory pressure on iOS devices
-            // Loading entire archive into memory can cause crashes for larger files
-            // The SWCompression library requires the entire file in memory, so we must limit size
-            // For files larger than this, users should extract manually or use ZIP format
-            guard fileSize <= 256_000_000 else {
+            let maxSize: Int64 = 1_000_000_000 // 1GB
+            guard fileSize <= maxSize else {
                 let sizeMB = fileSize / 1_000_000
-                throw ArchiveError.extractionFailed("7z file is too large (\(sizeMB) MB). Maximum supported size is 256 MB. Please extract manually or use ZIP format for larger archives.")
+                let maxMB = maxSize / 1_000_000
+                throw ArchiveError.extractionFailed("7z file is too large (\(sizeMB) MB). Maximum supported size is \(maxMB) MB. Please use PLzmaSDK backend for larger archives.")
+            }
+
+            if fileSize > 500_000_000 { // 500MB
+                let sizeMB = fileSize / 1_000_000
+                WLOG("Extracting large 7z file (\(sizeMB) MB) using SWCompression. This may use significant memory.")
             }
 
             let container = try Data(contentsOf: path)
-
-            // TODO: Large 7-zips are crashing here, can we use another 7zip?
             guard !container.isEmpty else { return }
 
             let entries = try SevenZipContainer.open(container: container)
