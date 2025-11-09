@@ -174,6 +174,9 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             throw GameImporterError.noSystemMatched
         }
 
+        // Extract system identifier immediately to avoid Realm thread issues
+        let systemIdentifierString = system.identifier
+
         let file = PVFile(withURL: destinationUrl) //, relativeRoot: .iCloud)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
@@ -234,10 +237,41 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         // Queue game for enhanced artwork search if it doesn't have artwork
         // This runs at lower priority after primary import completes
-        if game.originalArtworkFile == nil && game.originalArtworkURL.isEmpty {
-            Task {
-                await ArtworkSearchQueue.shared.queueGameForArtworkSearch(game.id)
-            }
+        // Extract all Realm property values BEFORE await to avoid thread issues
+        let needsArtwork = game.originalArtworkFile == nil && game.originalArtworkURL.isEmpty
+        let gameID = game.id
+        let gameTitle = game.title ?? "Unknown"
+        let gameRomPath = game.romPath
+        let gameMd5Hash = game.md5Hash
+        // Use the system identifier we extracted earlier (before any await calls)
+        let systemIdentifier = systemIdentifierString
+
+        if needsArtwork {
+            // Extract filename from romPath (format: "systemID/filename" or just "filename")
+            let filename: String = {
+                if !gameRomPath.isEmpty {
+                    let components = gameRomPath.components(separatedBy: "/")
+                    let rawFilename = components.count > 1 ? (components.last ?? gameRomPath) : gameRomPath
+                    // Remove file extension (artwork databases don't store extensions)
+                    return (rawFilename as NSString).deletingPathExtension
+                }
+                return ""
+            }()
+
+            let systemID = SystemIdentifier(rawValue: systemIdentifier)
+            let md5Hash = gameMd5Hash.uppercased()
+
+            ILOG("GameImporterDatabaseService: Queuing artwork search for game \(gameTitle) (ID: \(gameID))")
+            // Queue with all metadata - no Realm lookup needed, all values extracted before await
+            await ArtworkSearchQueue.shared.queueGameForArtworkSearch(
+                gameID: gameID,
+                title: gameTitle,
+                filename: filename,
+                systemID: systemID,
+                md5Hash: md5Hash
+            )
+        } else {
+            VLOG("GameImporterDatabaseService: Skipping artwork queue for \(gameTitle) - already has artwork")
         }
 
         DLOG("Successfully completed database import for: \(partialPath)")
@@ -262,24 +296,74 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
 
         var game:PVGame = game
+
+        /// Defer slow metadata lookup to background task - don't block import
         if game.requiresSync {
-            DLOG("finishUpdateOrImport: About to call getUpdatedGameInfo for: \(game.romPath)")
-            let gameInfoStartTime = Date()
-            game = try await getUpdatedGameInfo(for: game, forceRefresh: true)
-            let gameInfoDuration = Date().timeIntervalSince(gameInfoStartTime)
-            DLOG("finishUpdateOrImport: Completed getUpdatedGameInfo for: \(game.romPath) in \(String(format: "%.2f", gameInfoDuration))s")
+            DLOG("finishUpdateOrImport: Deferring getUpdatedGameInfo to background task for: \(game.romPath)")
+            let gameID = game.id
+            let lookupService = self.lookup
+            Task.detached(priority: .utility) {
+                do {
+                    let realm = RomDatabase.sharedInstance.realm
+                    guard let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
+                        DLOG("finishUpdateOrImport: Game \(gameID) not found for deferred metadata update")
+                        return
+                    }
+                    // Create a temporary service instance for the lookup
+                    let tempService = GameImporterDatabaseService(lookup: lookupService, gameImporterFileService: GameImporterFileService())
+                    let updatedGame = try await tempService.getUpdatedGameInfo(for: gameToUpdate, forceRefresh: true)
+
+                    // If metadata lookup found artwork URL, download it
+                    var finalGame = updatedGame
+                    if !updatedGame.originalArtworkURL.isEmpty && updatedGame.originalArtworkFile == nil {
+                        DLOG("finishUpdateOrImport: Metadata update found artwork URL, downloading for: \(updatedGame.romPath)")
+                        finalGame = await tempService.getArtwork(forGame: updatedGame)
+                    }
+
+                    try realm.write {
+                        realm.add(finalGame, update: .modified)
+                    }
+                    DLOG("finishUpdateOrImport: Completed deferred getUpdatedGameInfo for: \(finalGame.romPath)")
+                } catch {
+                    WLOG("finishUpdateOrImport: Failed deferred metadata update: \(error.localizedDescription)")
+                }
+            }
         } else {
             DLOG("finishUpdateOrImport: Skipping getUpdatedGameInfo (requiresSync = false)")
         }
 
-        if game.originalArtworkFile == nil {
-            DLOG("finishUpdateOrImport: About to call getArtwork for: \(game.romPath)")
-            let artworkStartTime = Date()
-            game = await getArtwork(forGame: game)
-            let artworkDuration = Date().timeIntervalSince(artworkStartTime)
-            DLOG("finishUpdateOrImport: Completed getArtwork for: \(game.romPath) in \(String(format: "%.2f", artworkDuration))s")
+        /// Handle artwork: download if URL exists (async, non-blocking), or queue for search if not
+        if !game.originalArtworkURL.isEmpty {
+            /// Game has artwork URL (from OpenVGDB) - download it asynchronously in background
+            let gameID = game.id
+            let artworkURL = game.originalArtworkURL
+            DLOG("finishUpdateOrImport: Game has artwork URL, scheduling async download for: \(game.romPath)")
+            Task.detached(priority: .utility) {
+                do {
+                    let realm = RomDatabase.sharedInstance.realm
+                    guard let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
+                        DLOG("finishUpdateOrImport: Game \(gameID) not found for artwork download")
+                        return
+                    }
+                    // Verify it still needs artwork download
+                    guard gameToUpdate.originalArtworkFile == nil,
+                          gameToUpdate.originalArtworkURL == artworkURL else {
+                        DLOG("finishUpdateOrImport: Game \(gameID) already has artwork or URL changed")
+                        return
+                    }
+                    let tempService = GameImporterDatabaseService(lookup: PVLookup.shared, gameImporterFileService: GameImporterFileService())
+                    let updatedGame = await tempService.getArtwork(forGame: gameToUpdate)
+                    try realm.write {
+                        realm.add(updatedGame, update: .modified)
+                    }
+                    DLOG("finishUpdateOrImport: Completed async artwork download for: \(updatedGame.romPath)")
+                } catch {
+                    WLOG("finishUpdateOrImport: Failed async artwork download: \(error.localizedDescription)")
+                }
+            }
         } else {
-            DLOG("finishUpdateOrImport: Skipping getArtwork (originalArtworkFile already exists)")
+            /// Game has no artwork URL - will be handled by ArtworkSearchQueue after import completes
+            DLOG("finishUpdateOrImport: Game has no artwork URL, will be queued for enhanced artwork search")
         }
 
         DLOG("finishUpdateOrImport: About to save game to database: \(game.romPath)")
@@ -312,8 +396,60 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         // Continue with original artwork handling
         var url = game.originalArtworkURL
+
+        // If no artwork URL, try searching PVLookup for artwork
         if url.isEmpty {
-            return game
+            ILOG("GameImporterDatabaseService: No artwork URL, searching PVLookup for artwork")
+            do {
+                // Try searching by game title and system
+                let gameTitle = game.title
+                if !gameTitle.isEmpty {
+                    let systemID = SystemIdentifier(rawValue: game.systemIdentifier)
+                    ILOG("GameImporterDatabaseService: Searching artwork for game: \(gameTitle), system: \(systemID?.rawValue ?? "nil")")
+
+                    if let artworkResults = try await lookup.searchArtwork(
+                        byGameName: gameTitle,
+                        systemID: systemID,
+                        artworkTypes: .defaults
+                    ), let firstArtwork = artworkResults.first {
+                        url = firstArtwork.url.absoluteString
+                        ILOG("GameImporterDatabaseService: Found artwork URL from PVLookup search: \(url)")
+                        game.originalArtworkURL = url
+                    } else {
+                        // Try without system constraint as fallback
+                        ILOG("GameImporterDatabaseService: No artwork found with system constraint, trying without system")
+                        if let fallbackResults = try await lookup.searchArtwork(
+                            byGameName: gameTitle,
+                            systemID: nil,
+                            artworkTypes: .defaults
+                        ), let firstArtwork = fallbackResults.first {
+                            url = firstArtwork.url.absoluteString
+                            ILOG("GameImporterDatabaseService: Found artwork URL from fallback search: \(url)")
+                            game.originalArtworkURL = url
+                        }
+                    }
+                }
+
+                // If still no URL, try using ROM metadata if we have MD5
+                if url.isEmpty, !game.md5Hash.isEmpty {
+                    ILOG("GameImporterDatabaseService: Trying artwork search using ROM metadata from MD5")
+                    if let romMetadata = try? await lookup.searchROM(byMD5: game.md5Hash),
+                       let artworkURLs = try? await lookup.getArtworkURLs(forRom: romMetadata),
+                       !artworkURLs.isEmpty {
+                        url = artworkURLs.first!.absoluteString
+                        ILOG("GameImporterDatabaseService: Found artwork URL from ROM metadata: \(url)")
+                        game.originalArtworkURL = url
+                    }
+                }
+            } catch {
+                WLOG("GameImporterDatabaseService: Error searching PVLookup for artwork: \(error.localizedDescription)")
+            }
+
+            // If still no URL found, return early
+            if url.isEmpty {
+                ILOG("GameImporterDatabaseService: No artwork URL found after PVLookup search")
+                return game
+            }
         }
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
@@ -477,18 +613,28 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
             var chosenResult: ROMMetadata?
 
-            // Try to find USA version first (Region ID 21)
+            // Prioritize results with artwork URLs, then try to find USA version
+            // First, try to find USA version with artwork URL (Region ID 21)
             chosenResult = results.first { metadata in
-                return metadata.regionID == 21 // USA region ID
+                return metadata.regionID == 21 && metadata.boxImageURL != nil && !metadata.boxImageURL!.isEmpty
             } ?? results.first { metadata in
-                // Fallback: try matching by region string containing "USA"
+                // Fallback: USA version by region string with artwork URL
+                return (metadata.region?.uppercased().contains("USA") ?? false) && metadata.boxImageURL != nil && !metadata.boxImageURL!.isEmpty
+            } ?? results.first { metadata in
+                // Fallback: Any result with artwork URL (prioritize artwork over region)
+                return metadata.boxImageURL != nil && !metadata.boxImageURL!.isEmpty
+            } ?? results.first { metadata in
+                // Fallback: USA version without artwork requirement
+                return metadata.regionID == 21
+            } ?? results.first { metadata in
+                // Fallback: USA version by region string
                 return metadata.region?.uppercased().contains("USA") ?? false
             }
 
-            // If no USA version found, use the first result
+            // If still no result chosen, use the first result
             if chosenResult == nil {
                 if results.count > 1 {
-                    ILOG("Query returned \(results.count) possible matches. Failed to match USA version. Using first result.")
+                    ILOG("Query returned \(results.count) possible matches. Using first result.")
                 }
                 chosenResult = results.first
             }
@@ -499,7 +645,42 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 return game
             }
 
-            return updateGameFields(game, metadata: metadata, forceRefresh: forceRefresh)
+            // Search for artwork URLs using PVLookup if metadata doesn't have artwork URL
+            var updatedGame = updateGameFields(game, metadata: metadata, forceRefresh: forceRefresh)
+
+            // If no artwork URL from metadata, try PVLookup's artwork search
+            if updatedGame.originalArtworkURL.isEmpty || (forceRefresh && metadata.boxImageURL == nil) {
+                ILOG("GameImporterDatabaseService: No artwork URL in metadata, searching PVLookup for artwork URLs")
+                do {
+                    // Try to get artwork URLs from PVLookup using the ROM metadata
+                    if let artworkURLs = try await lookup.getArtworkURLs(forRom: metadata), !artworkURLs.isEmpty {
+                        // Use the first artwork URL found
+                        let artworkURL = artworkURLs.first!.absoluteString
+                        ILOG("GameImporterDatabaseService: Found artwork URL from PVLookup: \(artworkURL)")
+                        updatedGame.originalArtworkURL = artworkURL
+                    } else {
+                        // Fallback: Try searching by game name if we have a title
+                        let gameTitle = metadata.gameTitle.isEmpty ? game.title : metadata.gameTitle
+                        if !gameTitle.isEmpty {
+                            let systemID = SystemIdentifier(rawValue: game.systemIdentifier)
+                            ILOG("GameImporterDatabaseService: Trying artwork search by game name: \(gameTitle)")
+                            if let artworkResults = try? await lookup.searchArtwork(
+                                byGameName: gameTitle,
+                                systemID: systemID,
+                                artworkTypes: .defaults
+                            ), let firstArtwork = artworkResults.first {
+                                let artworkURL = firstArtwork.url.absoluteString
+                                ILOG("GameImporterDatabaseService: Found artwork URL from name search: \(artworkURL)")
+                                updatedGame.originalArtworkURL = artworkURL
+                            }
+                        }
+                    }
+                } catch {
+                    WLOG("GameImporterDatabaseService: Error searching for artwork URLs: \(error.localizedDescription)")
+                }
+            }
+
+            return updatedGame
         } catch {
             WLOG("Error looking up game metadata: \(error.localizedDescription)")
             game.requiresSync = false  // Mark as synced so we don't try again

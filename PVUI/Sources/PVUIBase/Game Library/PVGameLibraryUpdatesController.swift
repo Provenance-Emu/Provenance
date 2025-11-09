@@ -662,9 +662,17 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     private func processCompletedFiles(_ files: [URL]) async {
         DLOG("Processing \(files.count) completed files")
 
+        // Filter out files that no longer exist (they may have been moved during import)
+        let existingFiles = files.filter { FileManager.default.fileExists(atPath: $0.path) }
+
+        if existingFiles.count < files.count {
+            let skippedCount = files.count - existingFiles.count
+            DLOG("Skipped \(skippedCount) file(s) that no longer exist (likely moved during import)")
+        }
+
         // Process files in batches, prioritizing .m3u and .cue files
-        let priorityFiles = files.filter { ["m3u", "cue"].contains($0.pathExtension.lowercased()) }
-        let otherFiles = files.filter { !["m3u", "cue"].contains($0.pathExtension.lowercased()) }
+        let priorityFiles = existingFiles.filter { ["m3u", "cue"].contains($0.pathExtension.lowercased()) }
+        let otherFiles = existingFiles.filter { !["m3u", "cue"].contains($0.pathExtension.lowercased()) }
 
         DLOG("Found \(priorityFiles.count) priority files and \(otherFiles.count) other files")
 

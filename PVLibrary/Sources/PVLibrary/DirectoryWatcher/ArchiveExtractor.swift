@@ -52,7 +52,7 @@ class BaseExtractor: ArchiveExtractor {
             }
         }
     }
-    
+
     func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
         fatalError("Subclasses must implement this method")
     }
@@ -97,7 +97,7 @@ class ZipExtractor: BaseExtractor {
     override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
         let container = try Data(contentsOf: path)
         let entries = try ZipContainer.open(container: container)
-        
+
         for (index, item) in entries.enumerated() where item.info.type != .directory {
             let fullPath = destination.appendingPathComponent(item.info.name)
             if let data = item.data {
@@ -113,24 +113,31 @@ class ZipExtractor: BaseExtractor {
 class SevenZipExtractor: BaseExtractor {
     override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
         try autoreleasepool {
+            // Check file size before loading into memory
+            let fileAttributes = try FileManager.default.attributesOfItem(atPath: path.path)
+            let fileSize = fileAttributes[.size] as? Int64 ?? 0
+
+            // Conservative limit: 256MB to avoid memory pressure on iOS devices
+            // Loading entire archive into memory can cause crashes for larger files
+            // The SWCompression library requires the entire file in memory, so we must limit size
+            // For files larger than this, users should extract manually or use ZIP format
+            guard fileSize <= 256_000_000 else {
+                let sizeMB = fileSize / 1_000_000
+                throw ArchiveError.extractionFailed("7z file is too large (\(sizeMB) MB). Maximum supported size is 256 MB. Please extract manually or use ZIP format for larger archives.")
+            }
+
             let container = try Data(contentsOf: path)
-            
+
             // TODO: Large 7-zips are crashing here, can we use another 7zip?
             guard !container.isEmpty else { return }
-            
-            // 128mb?
-            guard container.count <= 128_000_000 else {
-                throw ArchiveError.fileTooLarge
-            }
+
             let entries = try SevenZipContainer.open(container: container)
-            
+
             for (index, item) in entries.enumerated() where item.info.type != .directory {
-                autoreleasepool {
+                try autoreleasepool {
                     let fullPath = destination.appendingPathComponent(item.info.name)
-                    Task {
-                        if let data = item.data {
-                            try data.write(to: fullPath, options: [.atomic, .noFileProtection])
-                        }
+                    if let data = item.data {
+                        try data.write(to: fullPath, options: [.atomic, .noFileProtection])
                     }
                     yieldPath(fullPath)
                     progress(Double(index + 1) / Double(entries.count))
@@ -159,10 +166,10 @@ class GZipExtractor: BaseExtractor {
 class TarExtractor: BaseExtractor {
     override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
         try autoreleasepool {
-            
+
             let container = try Data(contentsOf: path)
             let entries = try TarContainer.open(container: container)
-            
+
             for (index, item) in entries.enumerated() where item.info.type != .directory {
                 autoreleasepool {
                     let fullPath = destination.appendingPathComponent(item.info.name)

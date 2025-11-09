@@ -45,39 +45,84 @@ public actor ArchiveZipSupportChecker {
             return (false, nil)
         }
 
-        // Check if any system supports zip directly
-        guard let systems = try? await determineSystemsForArchive(archiveURL),
-              !systems.isEmpty else {
+        // Determine potential systems for this archive
+        let systems: [SystemIdentifier]
+        do {
+            systems = try await determineSystemsForArchive(archiveURL)
+        } catch {
+            WLOG("Failed to determine systems for archive \(archiveURL.lastPathComponent): \(error.localizedDescription)")
             return (false, nil)
         }
 
-        // Collect all systems that support zip and have a database match
-        var matchingSystems: [(systemID: SystemIdentifier, priority: Int)] = []
-
-        for systemID in systems {
-            // Find PVSystem from PVSystem.all by matching identifier
+        // Optimize: If we have a known system from path/extension, check it directly
+        // Otherwise, do a single unfiltered query and filter results
+        if systems.count == 1, let systemID = systems.first {
+            // Single system known - check it directly
             if let pvSystem = PVSystem.all.first(where: { $0.identifier == systemID.rawValue }),
-               pvSystem.supportedExtensions.contains("zip") {
+               pvSystem.supportedExtensions.contains("zip"),
+               await checkLibretroDatabaseMatch(archiveURL: archiveURL, systemID: systemID) {
+                ILOG("Archive \(archiveURL.lastPathComponent) matches known system \(systemID.rawValue) that supports zip directly")
+                return (true, systemID)
+            }
+        } else if systems.isEmpty || systems.count > 3 {
+            // No known systems OR too many systems - do single unfiltered query (much faster)
+            let filename = archiveURL.lastPathComponent.lowercased()
+            let searchName = filename // Keep extension for zip files
 
-                // Try to find match in libretro database
-                if await checkLibretroDatabaseMatch(archiveURL: archiveURL, systemID: systemID) {
+            do {
+                // Single unfiltered query (no systemID) - much faster than N queries
+                if let results = try await lookup.searchDatabase(usingFilename: searchName, systemID: nil),
+                   !results.isEmpty {
+                    // Filter results to only systems that support zip
+                    let zipSupportingSystems = Set(PVSystem.all
+                        .filter { $0.supportedExtensions.contains("zip") }
+                        .compactMap { SystemIdentifier(rawValue: $0.identifier) })
+
+                    // Find matching systems from results
+                    var matchingSystems: [(systemID: SystemIdentifier, priority: Int)] = []
+                    for result in results {
+                        let resultSystemID = result.systemID
+                        if zipSupportingSystems.contains(resultSystemID) {
+                            let priority = systemPriority(for: resultSystemID)
+                            matchingSystems.append((systemID: resultSystemID, priority: priority))
+                        }
+                    }
+
+                    if !matchingSystems.isEmpty {
+                        // Sort by priority and return best match
+                        matchingSystems.sort { $0.priority < $1.priority }
+                        let bestMatch = matchingSystems.first!
+                        ILOG("Archive \(archiveURL.lastPathComponent) matches system \(bestMatch.systemID.rawValue) via unfiltered query (checked \(results.count) results)")
+                        return (true, bestMatch.systemID)
+                    }
+                }
+            } catch {
+                WLOG("Failed unfiltered database query for archive \(archiveURL.lastPathComponent): \(error.localizedDescription)")
+            }
+        }
+
+        // Fallback: Check each system individually (only if we have a small number of known systems)
+        if !systems.isEmpty && systems.count <= 3 {
+            var matchingSystems: [(systemID: SystemIdentifier, priority: Int)] = []
+
+            for systemID in systems {
+                if let pvSystem = PVSystem.all.first(where: { $0.identifier == systemID.rawValue }),
+                   pvSystem.supportedExtensions.contains("zip"),
+                   await checkLibretroDatabaseMatch(archiveURL: archiveURL, systemID: systemID) {
                     let priority = systemPriority(for: systemID)
                     matchingSystems.append((systemID: systemID, priority: priority))
                 }
             }
+
+            if !matchingSystems.isEmpty {
+                matchingSystems.sort { $0.priority < $1.priority }
+                let bestMatch = matchingSystems.first!
+                ILOG("Archive \(archiveURL.lastPathComponent) matches system \(bestMatch.systemID.rawValue) via individual checks")
+                return (true, bestMatch.systemID)
+            }
         }
 
-        // If no matches found, return false
-        guard !matchingSystems.isEmpty else {
-            return (false, nil)
-        }
-
-        // Sort by priority (lower number = higher priority) and return the best match
-        matchingSystems.sort { $0.priority < $1.priority }
-        let bestMatch = matchingSystems.first!
-
-        ILOG("Archive \(archiveURL.lastPathComponent) matches system \(bestMatch.systemID.rawValue) that supports zip directly - keeping as-is (checked \(matchingSystems.count) matching systems)")
-        return (true, bestMatch.systemID)
+        return (false, nil)
     }
 
     /// Returns priority for system matching (lower number = higher priority)

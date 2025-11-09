@@ -17,19 +17,19 @@ protocol GameImporterFileServicing {
 }
 
 class GameImporterFileService : GameImporterFileServicing {
-    
+
     init() {
-        
+
     }
-    
+
     //    @MainActor
     package func moveImportItem(toAppropriateSubfolder queueItem: ImportQueueItem) async throws {
         switch (queueItem.fileType) {
-            
+
         case .bios:
             _ = try await handleBIOSItem(queueItem)
         case .skin:
-            
+
             // Nothing to do, skin manager handles this
             return
         case .artwork:
@@ -41,9 +41,9 @@ class GameImporterFileService : GameImporterFileServicing {
             throw GameImporterError.unsupportedFile
         }
     }
-    
+
     // MARK: - BIOS
-    
+
     /// Ensures a BIOS file is copied to appropriate file destinations and notifies BIOSWatcher.
     /// Sets queueItem.destinationUrl to the first successful new path for logging/legacy purposes.
     private func handleBIOSItem(_ queueItem: ImportQueueItem) async throws {
@@ -111,7 +111,7 @@ class GameImporterFileService : GameImporterFileServicing {
                 do {
                     attemptedAnyCopy = true
                     try FileManager.default.createDirectory(at: systemBiosPath, withIntermediateDirectories: true)
-                    
+
                     // Check if file already exists at destination, potentially from a previous partial import or manual copy
                     if FileManager.default.fileExists(atPath: destinationURL.path) {
                         // If it's the same file (e.g. by comparing MD5 if available, or just assume if name matches here),
@@ -161,7 +161,7 @@ class GameImporterFileService : GameImporterFileServicing {
                     let expectedFilenameForSystem = biosEntry.expectedFilename.components(separatedBy: "|").first ?? filename
                     let systemBiosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
                     let expectedDestinationURL = systemBiosPath.appendingPathComponent(expectedFilenameForSystem)
-                    
+
                     // If the originalURL is indeed the expected final resting place for this BIOS entry for this system
                     if originalURL.standardizedFileURL == expectedDestinationURL.standardizedFileURL {
                         if !notifiedForThisPath { // Post notification only once for the given originalURL
@@ -190,7 +190,7 @@ class GameImporterFileService : GameImporterFileServicing {
         } else if !isFromImportsFolder && !originalURL.path.contains(Paths.biosesPath.path) {
              // If it wasn't from imports and not in a BIOS path, but was type .bios, it's an issue.
         }
-        
+
         // The caller (GameImporterDatabaseService) will set the final item status.
         // This function primarily handles file operations and notifications.
         // If successfullyProcessed is true, it implies the operation specific to this function was done.
@@ -202,62 +202,81 @@ class GameImporterFileService : GameImporterFileServicing {
             ILOG("BIOS file \(filename) could not be successfully processed according to PVBIOS definitions or placed correctly.")
         }
     }
-    
+
     //MARK: - Normal ROMs and CDROMs
-    
+
     /// Moves an ImportQueueItem to the appropriate subfolder
     //    @MainActor
     internal func processQueueItem(_ queueItem: ImportQueueItem) async throws {
         guard queueItem.fileType == .game || queueItem.fileType == .cdRom else {
             throw GameImporterError.unsupportedFile
         }
-        
+
         //this might not be needed...
         guard await !queueItem.systems.isEmpty else {
             throw GameImporterError.noSystemMatched
         }
-        
+
         guard let targetSystem = await queueItem.targetSystem() else {
             throw GameImporterError.systemNotDetermined
         }
-        
+
         let destinationFolder = targetSystem.romsDirectory
-        
+
         // Check if the file is already in the correct system directory
         let currentDirectory = queueItem.url.deletingLastPathComponent()
         let fileName = queueItem.url.lastPathComponent
         let expectedPath = destinationFolder.appendingPathComponent(fileName)
-        
+
         // If the file is already in the correct location, just set the destination URL and return
         if currentDirectory.path == destinationFolder.path {
             ILOG("ROM file \(fileName) is already in the correct location for system \(targetSystem.rawValue), skipping move")
             queueItem.destinationUrl = queueItem.url
-            
+
             // Check if there are child items that need to be processed
             if !queueItem.childQueueItems.isEmpty {
                 try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
             }
             return
         }
-        
+
         // If the file already exists at the destination, handle it specially
         if FileManager.default.fileExists(atPath: expectedPath.path) {
             ILOG("ROM file \(fileName) already exists at destination, skipping move and using existing file")
             queueItem.destinationUrl = expectedPath
-            
+
             // If the file is in the imports directory, delete it to avoid duplicates
             if queueItem.url.path.contains("/Imports/") {
-                try await FileManager.default.removeItem(at: queueItem.url)
-                ILOG("Deleted duplicate file from imports directory: \(queueItem.url.path)")
+                // Check if file still exists before trying to delete
+                // It may have already been deleted by DirectoryWatcher or another process
+                if FileManager.default.fileExists(atPath: queueItem.url.path) {
+                    do {
+                        // Add a small delay to ensure DirectoryWatcher has stopped watching
+                        try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+                        try await FileManager.default.removeItem(at: queueItem.url)
+                        ILOG("Deleted duplicate file from imports directory: \(queueItem.url.path)")
+                    } catch {
+                        // If deletion fails, check if file still exists
+                        // If it doesn't exist, that's fine - it was already deleted
+                        if FileManager.default.fileExists(atPath: queueItem.url.path) {
+                            WLOG("Failed to delete file from imports directory (may be locked by DirectoryWatcher): \(queueItem.url.path). Error: \(error.localizedDescription)")
+                            // Don't throw - the import was successful, file just couldn't be cleaned up
+                        } else {
+                            ILOG("File already deleted from imports directory: \(queueItem.url.path)")
+                        }
+                    }
+                } else {
+                    ILOG("File no longer exists in imports directory (already deleted): \(queueItem.url.path)")
+                }
             }
-            
+
             // Process child items if needed
             if !queueItem.childQueueItems.isEmpty {
                 try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
             }
             return
         }
-        
+
         // If we get here, we need to move the file
         do {
             queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationFolder)
@@ -266,17 +285,17 @@ class GameImporterFileService : GameImporterFileServicing {
             throw GameImporterError.failedToMoveROM(error)
         }
     }
-    
+
     // MARK: - Utility
-    
+
     internal func moveChildImports(forQueueItem queueItem: ImportQueueItem, to destinationFolder: URL) async throws {
         guard !queueItem.childQueueItems.isEmpty else {
             return
         }
-        
+
         for childQueueItem in queueItem.childQueueItems {
             let fileName = childQueueItem.url.lastPathComponent
-            
+
             do {
                 childQueueItem.destinationUrl = try await moveFile(childQueueItem.url, to: destinationFolder)
                 //call recursively to keep moving child items to the target directory as a unit
@@ -286,8 +305,8 @@ class GameImporterFileService : GameImporterFileServicing {
             }
         }
     }
-    
-    
+
+
     /// Moves a file to the conflicts directory
     internal func moveToConflictsFolder(_ queueItem: ImportQueueItem, conflictsPath: URL) async throws {
         let destination = conflictsPath.appendingPathComponent(queueItem.url.lastPathComponent)
@@ -298,12 +317,12 @@ class GameImporterFileService : GameImporterFileServicing {
             try await moveToConflictsFolder(childQueueItem, conflictsPath: conflictsPath)
         }
     }
-    
+
     /// Move a `URL` to a destination, creating the destination directory if needed
     private func moveFile(_ file: URL, to destinationDirectory: URL) async throws -> URL {
         try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
         let destPath = destinationDirectory.appendingPathComponent(file.lastPathComponent)
-        
+
         if file.standardizedFileURL == destPath.standardizedFileURL {
             // We don't need to move the file, probably a re-import
             return destPath
@@ -313,15 +332,15 @@ class GameImporterFileService : GameImporterFileServicing {
             return destPath
         }
     }
-    
+
     /// Move a `URL` to a destination, creating the destination directory if needed
     private func moveFile(_ file: URL, toExplicitDestination destination: URL) async throws -> URL {
         let destinationDirectory = destination.deletingLastPathComponent()
         let fileManager = FileManager.default
-        
+
         // Create destination directory if it doesn't exist
         try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
-        
+
         do {
             // Try to move the file
             try fileManager.moveItem(at: file, to: destination)
@@ -331,13 +350,13 @@ class GameImporterFileService : GameImporterFileServicing {
             // Check if the error is because a file with the same name already exists
             if fileManager.fileExists(atPath: destination.path) {
                 WLOG("File already exists at destination: \(destination.path). Deleting source file.")
-                
+
                 // If the file is in the imports directory, delete it
                 if file.path.contains("/Imports/") {
                     try await fileManager.removeItem(at: file)
                     ILOG("Deleted duplicate file from imports directory: \(file.path)")
                 }
-                
+
                 // Return the destination since the file already exists there
                 return destination
             } else {
@@ -346,30 +365,30 @@ class GameImporterFileService : GameImporterFileServicing {
             }
         }
     }
-    
+
     func removeImportItemFile(_ importItem: ImportQueueItem) throws {
         let fileManager = FileManager.default
-        
+
         // If file exists at destination, remove it first
         if fileManager.fileExists(atPath: importItem.url.path) {
             try fileManager.removeItem(at: importItem.url)
         }
-        
+
         //recursively call this on any children
         for item in importItem.childQueueItems {
             try removeImportItemFile(item)
         }
     }
-    
+
     /// Moves a file and overwrites if it already exists at the destination
     public func moveAndOverWrite(sourcePath: URL, destinationPath: URL) throws -> URL  {
         let fileManager = FileManager.default
-        
+
         // If file exists at destination, remove it first
         if fileManager.fileExists(atPath: destinationPath.path) {
             try fileManager.removeItem(at: destinationPath)
         }
-        
+
         // Now move the file
         try fileManager.moveItem(at: sourcePath, to: destinationPath)
         return destinationPath

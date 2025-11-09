@@ -952,7 +952,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     #else
                     if record[CloudKitSchema.ROMFields.fileData] is CKAsset {
                         VLOG("Local game \(md5) is not marked as downloaded. Triggering download...")
-                        Task { try? await downloadGame(md5: md5) }
+                        Task.detached { [self] in try? await downloadGame(md5: md5) }
                     } else {
                         WLOG("Local game \(md5) needs download, but remote record has no asset. Skipping download trigger.")
                     }

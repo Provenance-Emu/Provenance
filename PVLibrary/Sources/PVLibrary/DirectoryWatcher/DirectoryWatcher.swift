@@ -98,6 +98,9 @@ public final class DirectoryWatcher: ObservableObject {
     /// The dispatch source for the file system object
     private var dispatchSource: DispatchSourceFileSystemObject?
     /// The serial queue for the extractor
+    /// Track files currently being extracted to prevent concurrent extraction attempts
+    private var extractingFiles: Set<URL> = []
+    private let extractingFilesLock = NSLock()
     private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     /// The extractors for the supported archive types
@@ -198,7 +201,7 @@ public final class DirectoryWatcher: ObservableObject {
 
     public func isWatchingFile(at path: URL) async -> Bool {
         let isWatching = await watcherManager.isWatching(path)
-        ILOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
+        VLOG("Checked if watching file: \(path.lastPathComponent), result: \(isWatching)")
         return isWatching
     }
 
@@ -208,12 +211,60 @@ public final class DirectoryWatcher: ObservableObject {
 
     /// Extract an archive from a file path
     public func extractArchive(at filePath: URL) async throws {
+        // Check if this file is already being extracted
+        extractingFilesLock.lock()
+        let isAlreadyExtracting = extractingFiles.contains(filePath)
+        if !isAlreadyExtracting {
+            extractingFiles.insert(filePath)
+        }
+        extractingFilesLock.unlock()
+
+        guard !isAlreadyExtracting else {
+            ILOG("Archive \(filePath.lastPathComponent) is already being extracted, skipping duplicate attempt")
+            return
+        }
+
+        defer {
+            // Remove from extracting set when done
+            extractingFilesLock.lock()
+            extractingFiles.remove(filePath)
+            extractingFilesLock.unlock()
+        }
+
         ILOG("Starting archive extraction for file: \(filePath.path)")
         stopWatchingFile(at: filePath)
 
-        guard !filePath.path.contains("MACOSX"),
-              FileManager.default.fileExists(atPath: filePath.path) else {
-            ILOG("Invalid file path or file doesn't exist: \(filePath.path)")
+        // Ensure file is fully written and not locked before attempting extraction
+        // Add a small delay to ensure file system has finished writing
+        try? await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
+
+        // Verify file still exists and is readable
+        guard FileManager.default.fileExists(atPath: filePath.path) else {
+            ILOG("Archive file no longer exists: \(filePath.path)")
+            return
+        }
+
+        // Try to open the file to ensure it's not locked
+        // If we can't read it, wait a bit and try again
+        var fileReadable = false
+        for attempt in 1...5 {
+            if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
+                fileHandle.closeFile()
+                fileReadable = true
+                break
+            } else {
+                ILOG("Archive file appears locked (attempt \(attempt)/5), waiting...")
+                try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+            }
+        }
+
+        guard fileReadable else {
+            let error = NSError(domain: "DirectoryWatcher", code: -1, userInfo: [NSLocalizedDescriptionKey: "Archive file is locked or not readable: \(filePath.lastPathComponent)"])
+            throw error
+        }
+
+        guard !filePath.path.contains("MACOSX") else {
+            ILOG("Skipping MACOSX file: \(filePath.path)")
             return
         }
 
@@ -464,11 +515,47 @@ public final class DirectoryWatcher: ObservableObject {
 
     private func processNonArchive(at url: URL) {
         ILOG("Processing non-archive file: \(url.lastPathComponent)")
+
+        // Verify file still exists before yielding (it may have been moved during import)
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            ILOG("File \(url.lastPathComponent) no longer exists (likely moved during import), skipping")
+            Task {
+                await watcherManager.removeWatcher(for: url)
+            }
+            return
+        }
+
         completedFilesContinuation?.yield([url])
     }
 
     private func processFile(at url: URL) {
         ILOG("Processing file: \(url.path)")
+
+        // Safety check: ensure this is actually a file, not a directory
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+              !isDirectory.boolValue else {
+            WLOG("Skipping directory or non-existent file: \(url.lastPathComponent)")
+            // Stop watching if file doesn't exist or is a directory
+            Task {
+                await watcherManager.removeWatcher(for: url)
+            }
+            return
+        }
+
+        // Check if file is still in Imports folder (it may have been moved during import)
+        let isInImportsFolder = url.path.contains("/Imports/")
+        if isInImportsFolder {
+            // Verify file still exists in Imports folder before processing
+            // This prevents processing files that have already been moved by GameImporter
+            guard FileManager.default.fileExists(atPath: url.path) else {
+                ILOG("File \(url.lastPathComponent) no longer exists in Imports folder (likely moved during import), skipping processing")
+                Task {
+                    await watcherManager.removeWatcher(for: url)
+                }
+                return
+            }
+        }
 
         // Handle archives and other files
         if isArchive(url) {
@@ -491,7 +578,7 @@ public extension DirectoryWatcher {
         let result = extractors.keys.contains { archiveType in
             url.pathExtension.lowercased() == archiveType.rawValue
         }
-        ILOG("Checked if file is archive: \(url.lastPathComponent), result: \(result)")
+        VLOG("Checked if file is archive: \(url.lastPathComponent), result: \(result)")
         return result
     }
 }
@@ -513,20 +600,40 @@ fileprivate extension DirectoryWatcher {
         }
     }
 
-    /// Process existing archives
+    /// Process existing archives and non-archive files
     func processExistingArchives() {
-        ILOG("Starting to process existing archives")
-        Task.detached {
+        ILOG("Starting to process existing files")
+        Task.detached { [self] in
             do {
-                let contents = try FileManager.default.contentsOfDirectory(at: self.watchedDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+                let contents = try FileManager.default.contentsOfDirectory(at: self.watchedDirectory, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles])
                 ILOG("Found \(contents.count) items in directory: \(self.watchedDirectory)")
-                for file in contents where Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
+
+                // Filter to only actual files (not directories)
+                var filesOnly: [URL] = []
+                for item in contents {
+                    var isDirectory: ObjCBool = false
+                    if FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory),
+                       !isDirectory.boolValue {
+                        filesOnly.append(item)
+                    }
+                }
+
+                // Process archives
+                for file in filesOnly where Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
                     ILOG("Processing existing archive: \(file.lastPathComponent)")
                     try await self.extractArchive(at: file)
                 }
-                ILOG("Finished processing existing archives")
+
+                // Process non-archive files (add to import queue immediately)
+                for file in filesOnly where !Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) && isValidFile(file) {
+                    ILOG("Processing existing non-archive file: \(file.lastPathComponent)")
+                    // Add directly to import queue instead of waiting for file watcher
+                    await GameImporter.shared.addImports(forPaths: [file])
+                }
+
+                ILOG("Finished processing existing files")
             } catch {
-                ELOG("Error processing existing archives: \(error.localizedDescription)")
+                ELOG("Error processing existing files: \(error.localizedDescription)")
             }
         }
     }
@@ -544,10 +651,45 @@ fileprivate extension DirectoryWatcher {
                 ]
             )
             ILOG("Found \(contents.count) items in directory after file system event (including subdirectories: \(options.includeSubdirectories))")
-            await contents.filter(isValidFile).asyncForEach { file in
+
+            let isImportsFolder = watchedDirectory.path.contains("/Imports/")
+
+            // Filter to only actual files (not directories)
+            let filesOnly = contents.filter { item in
+                guard isValidFile(item) else { return false }
+                var isDirectory: ObjCBool = false
+                return FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory) && !isDirectory.boolValue
+            }
+
+            for file in filesOnly {
                 if await !isWatchingFile(at: file) {
                     ILOG("Starting to watch new file: \(file.lastPathComponent)")
-                    watchFile(at: file)
+
+                    // For files in Imports folder, check immediately if they're already stable
+                    // This handles cases where files are copied via file browser and are already complete
+                    if isImportsFolder {
+                        // Small delay to ensure file system has settled
+                        try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+
+                        // Check if file is stable (size hasn't changed)
+                        if let attributes = try? FileManager.default.attributesOfItem(atPath: file.path),
+                           let size = attributes[.size] as? Int64, size > 0 {
+                            // Check if size is stable by comparing with a second check after a short delay
+                            try? await Task.sleep(nanoseconds: 50_000_000) // 50ms
+                            if let attributes2 = try? FileManager.default.attributesOfItem(atPath: file.path),
+                               let size2 = attributes2[.size] as? Int64, size2 == size {
+                                // File exists, has content, and size is stable - process immediately
+                                ILOG("File \(file.lastPathComponent) appears stable in Imports folder, processing immediately")
+                                processFile(at: file)
+                                continue
+                            }
+                        }
+
+                        // If not stable yet, start watching
+                        watchFile(at: file)
+                    } else {
+                        watchFile(at: file)
+                    }
                 }
             }
             cleanupNonexistentFileWatchers()
@@ -561,7 +703,7 @@ fileprivate extension DirectoryWatcher {
     func isValidFile(_ url: URL) -> Bool {
         let filename = url.lastPathComponent
         let isValid = !filename.starts(with: ".") && !url.path.contains("_MACOSX") && filename != "0"
-        ILOG("Checked if file is valid: \(filename), result: \(isValid)")
+        VLOG("Checked if file is valid: \(filename), result: \(isValid)")
         return isValid
     }
 
@@ -620,19 +762,40 @@ fileprivate extension DirectoryWatcher {
 
     private func monitorFileChanges(for path: URL) async {
         ILOG("Starting file change monitoring for: \(path.lastPathComponent)")
-        var checkCount = 0
 
-        while checkCount < 30 { // Check for up to 1 minute (30 * 2 seconds)
+        /// Check immediately if file appears stable (for files already complete in Imports folder)
+        let isInImportsFolder = path.path.contains("/Imports/")
+        if isInImportsFolder {
+            /// For files in Imports folder, check immediately - they're typically already complete
+            await checkFileStatus(at: path)
+
+            /// If file was processed, exit early
+            if await !watcherManager.isWatching(path) {
+                ILOG("File change monitoring ended early (file processed): \(path.lastPathComponent)")
+                return
+            }
+        }
+
+        var checkCount = 0
+        let maxChecks = isInImportsFolder ? 5 : 30 /// Reduced checks for Imports folder (10 seconds vs 1 minute)
+
+        while checkCount < maxChecks {
             do {
                 try await Task.sleep(for: .seconds(2))
 
-                // Check if we're still watching this file
+                /// Check if we're still watching this file
                 guard await watcherManager.isWatching(path) else {
                     ILOG("File watcher removed for: \(path.lastPathComponent)")
                     break
                 }
 
                 await checkFileStatus(at: path)
+
+                /// If file was processed, exit early
+                if await !watcherManager.isWatching(path) {
+                    break
+                }
+
                 checkCount += 1
 
             } catch is CancellationError {
@@ -673,14 +836,40 @@ fileprivate extension DirectoryWatcher {
             return
         }
 
+        // Check if file still exists before checking status
+        // Files in Imports folder may have been moved by GameImporter
+        guard FileManager.default.fileExists(atPath: path.path) else {
+            ILOG("File \(path.lastPathComponent) no longer exists (likely moved during import), stopping watch")
+            await watcherManager.removeWatcher(for: path)
+            return
+        }
+
         let attributes = try? FileManager.default.attributesOfItem(atPath: path.path)
         let currentSize = attributes?[.size] as? Int64 ?? 0
+        let currentModDate = attributes?[.modificationDate] as? Date ?? Date()
 
-        // If file size hasn't changed for a while, process it
+        /// If file size hasn't changed, check if it's stable
+        let isInImportsFolder = path.path.contains("/Imports/")
+
         if currentSize > 0 && currentSize == status.size {
-            ILOG("File appears complete, starting processing: \(path.lastPathComponent)")
-            processFile(at: path)
-            await watcherManager.removeWatcher(for: path)
+            /// For files in Imports folder, be more aggressive - process if size matches and file is readable
+            /// For other files, process immediately when size matches (original behavior)
+            let shouldProcess: Bool
+            if isInImportsFolder {
+                /// For Imports folder: process if size matches and modification date is stable (within 0.5s)
+                /// This handles files copied via file browser that may have slight timestamp differences
+                let timeDiff = abs(currentModDate.timeIntervalSince(status.modificationDate))
+                shouldProcess = timeDiff < 0.5 || timeDiff > 3600 // Also handle files older than 1 hour (definitely stable)
+            } else {
+                /// Original behavior: process immediately when size matches
+                shouldProcess = true
+            }
+
+            if shouldProcess {
+                ILOG("File appears complete, starting processing: \(path.lastPathComponent)")
+                processFile(at: path)
+                await watcherManager.removeWatcher(for: path)
+            }
         }
     }
 
@@ -715,9 +904,9 @@ extension DirectoryWatcher {
                 try FileManager.default.moveItem(at: newURL, to: destinationURL)
 
                 Task {
-                    // Delay starting the extraction to allow the file system to settle
+                    /// Minimal delay to allow file system to settle (reduced from 1.5s to 0.5s)
                     ILOG("Scheduling delayed extraction for file: \(destinationURL.lastPathComponent)")
-                    try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 second delay
+                    try await Task.sleep(nanoseconds: 500_000_000) // 0.5 second delay
                     try await self.extractArchive(at: destinationURL)
                 }
             } catch {

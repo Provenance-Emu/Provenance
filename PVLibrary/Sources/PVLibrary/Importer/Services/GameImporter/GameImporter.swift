@@ -151,6 +151,34 @@ public actor ImportQueueActor {
     }
 
     func addImport(_ item: ImportQueueItem) {
+        // Check for duplicates before adding to prevent race conditions
+        // This is especially important when DirectoryWatcher and extractAndImportArchive both try to add the same file
+        let isDuplicate = queue.contains { existing in
+            // Check if the URL is the same
+            if existing.url == item.url {
+                return true
+            }
+            // Check if the filename is the same and in the same directory
+            if existing.url.lastPathComponent == item.url.lastPathComponent &&
+                existing.url.deletingLastPathComponent() == item.url.deletingLastPathComponent() {
+                return true
+            }
+            // Check MD5 if available
+            if let existingMd5 = existing.md5?.uppercased(),
+               let itemMd5 = item.md5?.uppercased(),
+               existingMd5 == itemMd5 {
+                return true
+            }
+            return false
+        }
+
+        if isDuplicate {
+            // Don't add duplicate items - this prevents race conditions when both
+            // extractAndImportArchive and DirectoryWatcher try to add the same file
+            VLOG("ImportQueueActor: Skipping duplicate item \(item.url.lastPathComponent) (already in queue)")
+            return
+        }
+
         queue.append(item)
     }
 
@@ -602,21 +630,69 @@ public final class GameImporter: GameImporting, ObservableObject {
             newItems.append(item)
         }
 
-        /// Batch check for existing games before adding to queue (more efficient)
-        let existingURLs = await batchCheckExistingGames(newItems)
-        let itemsToAdd = newItems.filter { !existingURLs.contains($0.url) }
+        // Check for duplicates in queue first (applies to all files, including imports folder)
+        // This prevents re-adding files that are already being processed
+        var itemsToAdd: [ImportQueueItem] = []
+        let currentQueue = await importQueueActor.getQueue()
 
-        if existingURLs.count > 0 {
-            let fileNames = existingURLs.map { $0.lastPathComponent }.prefix(3).joined(separator: ", ")
-            let moreFiles = existingURLs.count > 3 ? " and \(existingURLs.count - 3) more" : ""
-            ILOG("Skipping \(existingURLs.count) file(s) that already exist in library: \(fileNames)\(moreFiles)")
-            await MainActor.run {
-                self.updateImporterStatus("Skipped \(existingURLs.count) duplicate file(s)")
+        for item in newItems {
+            let isDuplicateInQueue = currentQueue.contains { existing in
+                // Check if URL matches
+                if existing.url == item.url {
+                    return true
+                }
+                // Check if filename and directory match
+                if existing.url.lastPathComponent == item.url.lastPathComponent &&
+                    existing.url.deletingLastPathComponent() == item.url.deletingLastPathComponent() {
+                    return true
+                }
+                // Check MD5 if available
+                if let existingMd5 = existing.md5?.uppercased(),
+                   let itemMd5 = item.md5?.uppercased(),
+                   existingMd5 == itemMd5 {
+                    return true
+                }
+                return false
+            }
+
+            if !isDuplicateInQueue {
+                itemsToAdd.append(item)
             }
         }
 
-        // Add filtered items to queue
-        for item in itemsToAdd {
+        if itemsToAdd.count < newItems.count {
+            let skippedCount = newItems.count - itemsToAdd.count
+            ILOG("GameImporter: Skipped \(skippedCount) file(s) already in import queue")
+        }
+
+        // Fast-path: Check if all remaining files are in imports folder (new files, skip expensive batch check)
+        let allInImports = itemsToAdd.allSatisfy { $0.url.path.contains("/Imports/") }
+
+        if allInImports {
+            // Files in imports folder are new, skip expensive batch duplicate check
+            // Individual thorough checks will happen in addImportItemToQueue
+            ILOG("GameImporter: All \(itemsToAdd.count) files are in imports folder, skipping batch duplicate check")
+            newItems = itemsToAdd
+        } else {
+            // Batch check for existing games before adding to queue (more efficient for ROMs folder scans)
+            let existingURLs = await batchCheckExistingGames(itemsToAdd)
+            let finalItemsToAdd = itemsToAdd.filter { !existingURLs.contains($0.url) }
+
+            if existingURLs.count > 0 {
+                let fileNames = existingURLs.map { $0.lastPathComponent }.prefix(3).joined(separator: ", ")
+                let moreFiles = existingURLs.count > 3 ? " and \(existingURLs.count - 3) more" : ""
+                ILOG("Skipping \(existingURLs.count) file(s) that already exist in library: \(fileNames)\(moreFiles)")
+                await MainActor.run {
+                    self.updateImporterStatus("Skipped \(existingURLs.count) duplicate file(s)")
+                }
+            }
+
+            // Update newItems to only include items to add
+            newItems = finalItemsToAdd
+        }
+
+        // Add items to queue (will do quick checks for imports folder files)
+        for item in newItems {
             await self.addImportItemToQueue(item)
         }
 
@@ -634,9 +710,44 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         ILOG("GameImporter: addImports called with \(paths.count) paths for system \(targetSystem.rawValue)")
 
+        // Check for duplicates in queue first (applies to all files)
+        // This prevents re-adding files that are already being processed
+        var itemsToCheck: [ImportQueueItem] = []
+        let currentQueue = await importQueueActor.getQueue()
+
+        for item in newItems {
+            let isDuplicateInQueue = currentQueue.contains { existing in
+                // Check if URL matches
+                if existing.url == item.url {
+                    return true
+                }
+                // Check if filename and directory match
+                if existing.url.lastPathComponent == item.url.lastPathComponent &&
+                    existing.url.deletingLastPathComponent() == item.url.deletingLastPathComponent() {
+                    return true
+                }
+                // Check MD5 if available
+                if let existingMd5 = existing.md5?.uppercased(),
+                   let itemMd5 = item.md5?.uppercased(),
+                   existingMd5 == itemMd5 {
+                    return true
+                }
+                return false
+            }
+
+            if !isDuplicateInQueue {
+                itemsToCheck.append(item)
+            }
+        }
+
+        if itemsToCheck.count < newItems.count {
+            let skippedCount = newItems.count - itemsToCheck.count
+            ILOG("GameImporter: Skipped \(skippedCount) file(s) already in import queue (target system: \(targetSystem.rawValue))")
+        }
+
         /// Batch check for existing games before adding to queue (more efficient)
-        let existingURLs = await batchCheckExistingGames(newItems)
-        let itemsToAdd = newItems.filter { !existingURLs.contains($0.url) }
+        let existingURLs = await batchCheckExistingGames(itemsToCheck)
+        let itemsToAdd = itemsToCheck.filter { !existingURLs.contains($0.url) }
 
         if existingURLs.count > 0 {
             let fileNames = existingURLs.map { $0.lastPathComponent }.prefix(3).joined(separator: ", ")
@@ -714,28 +825,33 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        // Use lock to prevent concurrent task creation
-        processingTaskLock.lock()
-        defer { processingTaskLock.unlock() }
+        // Use lock ONLY for checking/setting task reference - release before async operations
+        let shouldStart: Bool = {
+            processingTaskLock.lock()
+            defer { processingTaskLock.unlock() }
 
-        // Double-check we don't already have a processing task
-        if currentProcessingTask != nil {
-            VLOG("GameImporter: Skipping start processing - task already running")
-            return
-        }
+            // Double-check we don't already have a processing task
+            guard currentProcessingTask == nil else {
+                VLOG("GameImporter: Skipping start processing - task already running")
+                return false
+            }
+            return true
+        }()
+
+        guard shouldStart else { return }
 
         ILOG("GameImporter: Starting processing safely")
 
-        // Set state to processing on main actor
+        // Set state to processing on main actor (lock released, safe to await)
         await MainActor.run {
             self.processingState = .processing
         }
 
-        // Record processing start time
-        processingStartTime = Date()
+        // Record processing start time and create tasks (lock released, safe to do async work)
+        let startTime = Date()
 
         // Create and store the processing task
-        currentProcessingTask = Task.detached { [weak self] in
+        let processingTask = Task.detached { [weak self] in
             guard let self = self else { return }
 
             defer {
@@ -753,7 +869,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         // Create timeout task to detect hung processing
-        currentTimeoutTask = Task.detached { [weak self] in
+        let timeoutTask = Task.detached { [weak self] in
             guard let self = self else { return }
 
             // Wait for timeout duration
@@ -767,6 +883,13 @@ public final class GameImporter: GameImporting, ObservableObject {
             // Check if processing task is still running
             await self.handleProcessingTimeout()
         }
+
+        // Store task references while holding lock (minimal lock scope)
+        processingTaskLock.lock()
+        currentProcessingTask = processingTask
+        currentTimeoutTask = timeoutTask
+        processingStartTime = startTime
+        processingTaskLock.unlock()
     }
 
     /// Handles timeout recovery when processing task hangs
@@ -1609,7 +1732,10 @@ public final class GameImporter: GameImporting, ObservableObject {
                     self.processingState = .idle
 
                     // Process enhanced artwork search queue after imports complete (lower priority)
+                    // Games are queued individually with debounce, but trigger a final check here too
                     Task.detached(priority: .utility) {
+                        // Longer delay to ensure all queuing tasks complete
+                        try? await Task.sleep(for: .seconds(3))
                         await ArtworkSearchQueue.shared.processPendingSearches()
                     }
                 } else {
@@ -1987,6 +2113,349 @@ public final class GameImporter: GameImporting, ObservableObject {
         return .unknown
     }
 
+    /// Checks if an archive matches by filename or MD5 in PVLookup databases
+    /// Returns the matching system identifier if found, nil otherwise
+    private func checkArchiveMatch(_ item: ImportQueueItem) async -> SystemIdentifier? {
+        let fileExtension = item.url.pathExtension.lowercased()
+
+        // Only check zip, 7z, and rar archives
+        guard Extensions.archiveExtensions.contains(fileExtension) else {
+            return nil
+        }
+
+        let filename = item.url.lastPathComponent.lowercased()
+        let lookup = PVLookup.shared
+
+        // First, try filename search (especially important for libretrodb which stores zip filenames)
+        do {
+            // Search without system constraint first (faster for libretrodb)
+            if let results = try await lookup.searchDatabase(usingFilename: filename, systemID: nil),
+               !results.isEmpty {
+                // Filter to systems that support archives
+                let zipSupportingSystems = Set(PVSystem.all
+                    .filter { $0.supportedExtensions.contains(fileExtension) }
+                    .compactMap { SystemIdentifier(rawValue: $0.identifier) })
+
+                // Find matching systems from results
+                for result in results {
+                    if zipSupportingSystems.contains(result.systemID) {
+                        ILOG("Archive \(item.url.lastPathComponent) matches system \(result.systemID.rawValue) by filename")
+                        return result.systemID
+                    }
+                }
+            }
+        } catch {
+            VLOG("Failed filename search for archive \(item.url.lastPathComponent): \(error.localizedDescription)")
+        }
+
+        // Second, try MD5 search if available
+        if let md5 = item.md5?.uppercased() {
+            do {
+                if let results = try await lookup.searchDatabase(usingMD5: md5, systemID: nil),
+                   !results.isEmpty {
+                    // Filter to systems that support archives
+                    let zipSupportingSystems = Set(PVSystem.all
+                        .filter { $0.supportedExtensions.contains(fileExtension) }
+                        .compactMap { SystemIdentifier(rawValue: $0.identifier) })
+
+                    // Find matching systems from results
+                    for result in results {
+                        if zipSupportingSystems.contains(result.systemID) {
+                            ILOG("Archive \(item.url.lastPathComponent) matches system \(result.systemID.rawValue) by MD5")
+                            return result.systemID
+                        }
+                    }
+                }
+            } catch {
+                VLOG("Failed MD5 search for archive \(item.url.lastPathComponent): \(error.localizedDescription)")
+            }
+        }
+
+        return nil
+    }
+
+    /// Extracts an archive flatly and imports its contents
+    private func extractAndImportArchive(_ item: ImportQueueItem) async throws {
+        let archiveURL = item.url
+        let fileExtension = archiveURL.pathExtension.lowercased()
+
+        ILOG("Extracting archive \(archiveURL.lastPathComponent) for import")
+
+        // Verify file exists and is readable
+        guard FileManager.default.fileExists(atPath: archiveURL.path) else {
+            ELOG("Archive file does not exist: \(archiveURL.path)")
+            throw GameImporterError.unsupportedFile
+        }
+
+        // Determine archive type
+        guard let archiveType = ArchiveType(rawValue: fileExtension) else {
+            ELOG("Unsupported archive type: \(fileExtension)")
+            throw GameImporterError.unsupportedFile
+        }
+
+        // Check if RAR is requested (not currently supported)
+        if archiveType == .rar {
+            ELOG("RAR extraction is not currently supported. Please extract manually or convert to ZIP/7Z.")
+            throw ArchiveError.extractionFailed("RAR extraction is not supported. Please extract manually or convert to ZIP/7Z.")
+        }
+
+        // Create extractors (these are internal classes in PVLibrary module)
+        let extractors: [ArchiveType: ArchiveExtractor] = [
+            .zip: ZipExtractor(),
+            .sevenZip: SevenZipExtractor(),
+            .tar: TarExtractor(),
+            .bzip2: BZip2Extractor(),
+            .gzip: GZipExtractor()
+        ]
+
+        guard let extractor = extractors[archiveType] else {
+            ELOG("No extractor available for archive type: \(archiveType.rawValue)")
+            throw ArchiveError.extractionFailed("No extractor available for archive type: \(archiveType.rawValue)")
+        }
+
+        // Extract to temp directory
+        let tempExtractionDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ArchiveExtraction")
+            .appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempExtractionDir, withIntermediateDirectories: true, attributes: nil)
+
+        defer {
+            // Clean up temp directory
+            try? FileManager.default.removeItem(at: tempExtractionDir)
+        }
+
+        // Extract files flatly (preserve only filenames, flatten directory structure)
+        var extractedFiles: [URL] = []
+        var extractionError: Error?
+
+        do {
+            // For 7z files, add a small delay after extraction to ensure async writes complete
+            // This is a workaround for SevenZipExtractor's async Task issue
+            let is7z = archiveType == .sevenZip
+
+            ILOG("Starting extraction stream for \(archiveType.rawValue) archive")
+            var fileCount = 0
+
+            for try await extractedFile in extractor.extract(at: archiveURL, to: tempExtractionDir, progress: { progress in
+                VLOG("Extraction progress: \(Int(progress * 100))%")
+            }) {
+                fileCount += 1
+                VLOG("Received extracted file #\(fileCount): \(extractedFile.path)")
+
+                // For 7z files, wait a bit to ensure file writes complete (workaround for async Task bug)
+                if is7z {
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 100ms delay per file
+                }
+
+                // Verify extracted file exists
+                var fileExists = FileManager.default.fileExists(atPath: extractedFile.path)
+                if !fileExists {
+                    WLOG("Extracted file does not exist: \(extractedFile.path)")
+                    // For 7z, wait longer and retry once
+                    if is7z {
+                        try? await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
+                        fileExists = FileManager.default.fileExists(atPath: extractedFile.path)
+                        if fileExists {
+                            VLOG("File appeared after delay: \(extractedFile.path)")
+                        } else {
+                            continue
+                        }
+                    } else {
+                        continue
+                    }
+                }
+
+                guard fileExists else {
+                    continue
+                }
+
+                // Skip directories
+                var isDirectory: ObjCBool = false
+                guard FileManager.default.fileExists(atPath: extractedFile.path, isDirectory: &isDirectory),
+                      !isDirectory.boolValue else {
+                    VLOG("Skipping directory: \(extractedFile.path)")
+                    continue
+                }
+
+                // Flatten: only use filename, ignore directory structure
+                let fileName = extractedFile.lastPathComponent
+                let flatDestination = tempExtractionDir.appendingPathComponent(fileName)
+
+                // If file is in a subdirectory, move it to the root
+                if extractedFile.deletingLastPathComponent() != tempExtractionDir {
+                    // Handle filename conflicts
+                    var finalFlatURL = flatDestination
+                    var counter = 1
+                    while FileManager.default.fileExists(atPath: finalFlatURL.path) {
+                        let nameWithoutExt = flatDestination.deletingPathExtension().lastPathComponent
+                        let ext = flatDestination.pathExtension
+                        finalFlatURL = tempExtractionDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                        counter += 1
+                    }
+
+                    if extractedFile != finalFlatURL {
+                        try FileManager.default.moveItem(at: extractedFile, to: finalFlatURL)
+                    }
+                    extractedFiles.append(finalFlatURL)
+                } else {
+                    extractedFiles.append(extractedFile)
+                }
+            }
+
+            ILOG("Extraction stream completed. Processed \(fileCount) files, \(extractedFiles.count) valid files")
+
+            // For 7z files, add additional delay at end to ensure all async writes complete
+            if is7z {
+                ILOG("Waiting for 7z async writes to complete...")
+                try? await Task.sleep(nanoseconds: 500_000_000) // 500ms delay
+                // Re-verify files exist after delay and scan directory for any missed files
+                let existingFiles = extractedFiles.filter { FileManager.default.fileExists(atPath: $0.path) }
+                if existingFiles.count != extractedFiles.count {
+                    WLOG("Some 7z files disappeared after delay. Original: \(extractedFiles.count), After delay: \(existingFiles.count)")
+                    // Try to find files in the temp directory
+                    if let dirContents = try? FileManager.default.contentsOfDirectory(at: tempExtractionDir, includingPropertiesForKeys: nil) {
+                        let foundFiles = dirContents.filter { url in
+                            var isDir: ObjCBool = false
+                            return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && !isDir.boolValue
+                        }
+                        ILOG("Found \(foundFiles.count) files in temp directory after delay")
+                        extractedFiles = foundFiles
+                    } else {
+                        extractedFiles = existingFiles
+                    }
+                } else {
+                    extractedFiles = existingFiles
+                }
+            }
+        } catch {
+            extractionError = error
+            ELOG("Failed to extract archive \(archiveURL.lastPathComponent): \(error.localizedDescription)")
+            if let nsError = error as NSError? {
+                ELOG("Error domain: \(nsError.domain), code: \(nsError.code), userInfo: \(nsError.userInfo)")
+            }
+            if let archiveError = error as? ArchiveError {
+                ELOG("ArchiveError details: \(archiveError)")
+            }
+            // Check file size for 7z files (might be too large)
+            if archiveType == .sevenZip {
+                if let fileSize = try? FileManager.default.attributesOfItem(atPath: archiveURL.path)[.size] as? Int64 {
+                    ELOG("7z file size: \(fileSize) bytes (\(fileSize / 1_000_000) MB)")
+                    // Conservative limit: 256MB to avoid memory pressure (matches SevenZipExtractor)
+                    if fileSize > 256_000_000 {
+                        let sizeMB = fileSize / 1_000_000
+                        throw ArchiveError.extractionFailed("7z file is too large (\(sizeMB) MB). Maximum supported size is 256 MB. Please extract manually or use ZIP format for larger archives.")
+                    }
+                }
+            }
+        }
+
+        // If extraction failed, throw the error
+        if let error = extractionError {
+            if let archiveError = error as? ArchiveError {
+                throw archiveError
+            } else {
+                throw ArchiveError.extractionFailed("Failed to extract \(archiveType.rawValue) archive: \(error.localizedDescription)")
+            }
+        }
+
+        // Check if we got any files, with fallback for 7z async issue
+        if extractedFiles.isEmpty {
+            ELOG("No files were extracted from archive \(archiveURL.lastPathComponent)")
+            // For 7z, this might be due to async write issue - check directory contents
+            if archiveType == .sevenZip {
+                if let dirContents = try? FileManager.default.contentsOfDirectory(at: tempExtractionDir, includingPropertiesForKeys: nil) {
+                    let files = dirContents.filter { url in
+                        var isDir: ObjCBool = false
+                        return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && !isDir.boolValue
+                    }
+                    if !files.isEmpty {
+                        ILOG("Found \(files.count) files in temp directory despite empty extraction list")
+                        extractedFiles = files
+                    }
+                }
+            }
+
+            guard !extractedFiles.isEmpty else {
+                throw ArchiveError.extractionFailed("No files were extracted from archive. The archive may be corrupted or in an unsupported format.")
+            }
+        }
+
+        ILOG("Extracted \(extractedFiles.count) files from archive \(archiveURL.lastPathComponent)")
+
+        // Move extracted files to imports directory for processing
+        let importsPath = self.importsPath
+        var filesToImport: [URL] = []
+
+        for extractedFile in extractedFiles {
+            let fileName = extractedFile.lastPathComponent
+            let destinationURL = importsPath.appendingPathComponent(fileName)
+
+            // Handle filename conflicts
+            var finalDestinationURL = destinationURL
+            var counter = 1
+            while FileManager.default.fileExists(atPath: finalDestinationURL.path) {
+                let nameWithoutExt = destinationURL.deletingPathExtension().lastPathComponent
+                let ext = destinationURL.pathExtension
+                finalDestinationURL = importsPath.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                counter += 1
+            }
+
+            try FileManager.default.moveItem(at: extractedFile, to: finalDestinationURL)
+            filesToImport.append(finalDestinationURL)
+        }
+
+        // Clean up metadata files that won't match any system
+        let metadataExtensions: Set<String> = ["txt", "md", "url", "nfo", "dat", "xml", "json", "html", "htm"]
+        var cleanedCount = 0
+
+        for fileURL in filesToImport {
+            let fileName = fileURL.lastPathComponent.lowercased()
+            let ext = fileURL.pathExtension.lowercased()
+
+            // Check if it's a metadata file by extension or filename pattern
+            let isMetadataFile = metadataExtensions.contains(ext) ||
+                                fileName.hasPrefix("readme") ||
+                                fileName == "license" ||
+                                fileName.hasSuffix(".txt") && (fileName.contains("readme") || fileName.contains("license") || fileName.contains("info"))
+
+            if isMetadataFile {
+                // Check if this file could be a ROM by checking if it matches any system
+                let testItem = ImportQueueItem(url: fileURL, fileType: .unknown)
+                do {
+                    let systems = try await gameImporterSystemsService.determineSystems(for: testItem)
+                    if systems.isEmpty {
+                        // No system matches, delete metadata file
+                        try await FileManager.default.removeItem(at: fileURL)
+                        cleanedCount += 1
+                        ILOG("Deleted metadata file: \(fileURL.lastPathComponent)")
+                    }
+                } catch {
+                    // If we can't determine systems, assume it's metadata and delete
+                    try? await FileManager.default.removeItem(at: fileURL)
+                    cleanedCount += 1
+                    ILOG("Deleted metadata file (error determining systems): \(fileURL.lastPathComponent)")
+                }
+            }
+        }
+
+        if cleanedCount > 0 {
+            ILOG("Cleaned up \(cleanedCount) metadata files after extraction")
+        }
+
+        // Remove cleaned files from import list
+        filesToImport = filesToImport.filter { FileManager.default.fileExists(atPath: $0.path) }
+
+        // Add extracted files to import queue
+        if !filesToImport.isEmpty {
+            await addImports(forPaths: filesToImport)
+            ILOG("Added \(filesToImport.count) extracted files to import queue")
+        }
+
+        // Delete original archive after successful extraction
+        try await FileManager.default.removeItem(at: archiveURL)
+        ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
+    }
+
     private func performImport(for item: ImportQueueItem) async throws {
         let fileName = item.url.lastPathComponent
         ILOG("Starting import for file: \(fileName)")
@@ -1997,6 +2466,36 @@ public final class GameImporter: GameImporting, ObservableObject {
         item.fileType = try determineImportType(item)
         let typeDuration = Date().timeIntervalSince(typeStartTime)
         ILOG("Determined file type: \(item.fileType) for \(fileName) in \(String(format: "%.2f", typeDuration))s")
+
+        // Handle archive files - check if they match by filename or MD5 first
+        if item.fileType == .zip {
+            // Check if archive matches in database (should be kept as-is)
+            // Note: checkArchiveMatch handles all archive extensions, not just zip
+            if let matchingSystem = await checkArchiveMatch(item) {
+                ILOG("Archive \(fileName) matches system \(matchingSystem.rawValue) in database - keeping as-is")
+                // Update file type to game/cdRom based on system
+                if let pvSystem = PVSystem.all.first(where: { $0.identifier == matchingSystem.rawValue }) {
+                    // Check if system supports CD-ROM formats
+                    let cdRomExtensions: Set<String> = ["cue", "bin", "iso", "chd", "m3u"]
+                    let hasCDRomSupport = pvSystem.supportedExtensions.contains(where: { cdRomExtensions.contains($0.lowercased()) })
+                    item.fileType = hasCDRomSupport ? .cdRom : .game
+                } else {
+                    item.fileType = .game
+                }
+                // Set the system so it can be processed normally
+                item.systems = [matchingSystem]
+                // Continue with normal import flow
+            } else {
+                // Archive doesn't match - extract and import contents
+                ILOG("Archive \(fileName) doesn't match in database - extracting and importing contents")
+                try await extractAndImportArchive(item)
+                // Mark as success since extraction and queuing is complete
+                await MainActor.run {
+                    item.status = .success
+                }
+                return
+            }
+        }
 
         if item.fileType == .skin {
             ILOG("Processing as Skin file")
@@ -2119,10 +2618,28 @@ public final class GameImporter: GameImporting, ObservableObject {
             let moveDuration = Date().timeIntervalSince(moveStartTime)
             ILOG("Successfully moved \(fileName) to destination in \(String(format: "%.2f", moveDuration))s")
         } catch {
-            ELOG("Failed to move import item \(item.url.lastPathComponent): \(error.localizedDescription)")
-            // Clean up any partial file moves
-            await cleanupFailedImportFile(item.url)
-            throw error
+            // Check if the error is about file deletion failure
+            // If the file was successfully moved/imported but deletion failed, don't fail the import
+            let errorDescription = error.localizedDescription.lowercased()
+            if errorDescription.contains("couldn't be removed") || errorDescription.contains("couldn't be deleted") {
+                // File was likely successfully imported but couldn't be deleted from Imports
+                // Check if file was actually moved by checking destinationUrl or if source file no longer exists
+                let wasMoved = item.destinationUrl != nil || !FileManager.default.fileExists(atPath: item.url.path)
+                if wasMoved {
+                    WLOG("File \(item.url.lastPathComponent) was successfully imported but couldn't be deleted from Imports folder. This is non-fatal - continuing with import.")
+                    // Continue with import - the file cleanup can happen later or DirectoryWatcher will handle it
+                } else {
+                    // File wasn't moved, this is a real error
+                    ELOG("Failed to move import item \(item.url.lastPathComponent): \(error.localizedDescription)")
+                    await cleanupFailedImportFile(item.url)
+                    throw error
+                }
+            } else {
+                // Other errors are real failures
+                ELOG("Failed to move import item \(item.url.lastPathComponent): \(error.localizedDescription)")
+                await cleanupFailedImportFile(item.url)
+                throw error
+            }
         }
 
         // Import into database with proper error handling
@@ -2266,15 +2783,110 @@ public final class GameImporter: GameImporting, ObservableObject {
                 ILOG("GameImportQueue - Skipping BIOS file that already exists in database: \(item.url.lastPathComponent)")
                 return
             }
+            // Add BIOS file to queue
+            await importQueueActor.addImport(item)
+            ILOG("GameImportQueue - Added BIOS file to import queue: \(item.url.lastPathComponent)")
+            return
+        } else if fileType == .artwork {
+            // For artwork files, always add to queue (they may update artwork for existing games)
+            // No duplicate check needed - artwork files should always be processed
+            await importQueueActor.addImport(item)
+            ILOG("GameImportQueue - Added artwork file to import queue: \(item.url.lastPathComponent)")
+            return
         } else if fileType == .game || fileType == .cdRom {
+            // Check for duplicates in the current queue FIRST (before database checks)
+            // This prevents adding files that are already being processed
+            // We check twice: once here and once right before adding to ensure atomicity
+            let isDuplicateInQueue = await importQueueActor.containsDuplicate(ofItem: item) { [weak self] existing, newItem in
+                guard let self = self else { return false }
+
+                // Check if the URL is the same
+                if existing.url == newItem.url {
+                    return true
+                }
+
+                // Check if the filename is the same and in the same directory
+                if existing.url.lastPathComponent == newItem.url.lastPathComponent &&
+                    existing.url.deletingLastPathComponent() == newItem.url.deletingLastPathComponent() {
+                    return true
+                }
+
+                // Check MD5 if available
+                if let existingMd5 = existing.md5?.uppercased(),
+                   let newMd5 = newItem.md5?.uppercased(),
+                   existingMd5 == newMd5 {
+                    return true
+                }
+
+                // Recursively check child items
+                if !existing.childQueueItems.isEmpty {
+                    return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: newItem)
+                }
+
+                return false
+            }
+
+            if isDuplicateInQueue {
+                WLOG("GameImportQueue - Skipping ROM file already in queue: \(item.url.lastPathComponent)")
+                return
+            }
+
+            // Check again right before adding to ensure atomicity (prevents race conditions with DirectoryWatcher)
+            // This is critical for files extracted from archives that DirectoryWatcher might also detect
+            let isDuplicateBeforeAdd = await importQueueActor.containsDuplicate(ofItem: item) { [weak self] existing, newItem in
+                guard let self = self else { return false }
+
+                // Check if the URL is the same
+                if existing.url == newItem.url {
+                    return true
+                }
+
+                // Check if the filename is the same and in the same directory
+                if existing.url.lastPathComponent == newItem.url.lastPathComponent &&
+                    existing.url.deletingLastPathComponent() == newItem.url.deletingLastPathComponent() {
+                    return true
+                }
+
+                // Check MD5 if available
+                if let existingMd5 = existing.md5?.uppercased(),
+                   let newMd5 = newItem.md5?.uppercased(),
+                   existingMd5 == newMd5 {
+                    return true
+                }
+
+                // Recursively check child items
+                if !existing.childQueueItems.isEmpty {
+                    return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: newItem)
+                }
+
+                return false
+            }
+
+            if isDuplicateBeforeAdd {
+                WLOG("GameImportQueue - Skipping ROM file already in queue (duplicate detected right before add): \(item.url.lastPathComponent)")
+                return
+            }
+
             // For ROM files, check if we already have a matching game entry in the database
-            // Skip this check if userChosenSystem is set (meaning it came from scan and was already batch-checked)
-            // Only do individual check if this is a manual import
+            // Skip expensive check if userChosenSystem is set (meaning it came from scan and was already batch-checked)
             if item.userChosenSystem == nil {
-                let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
-                if isROMAlreadyImported {
-                    ILOG("GameImportQueue - Skipping ROM file that already exists in database: \(item.url.lastPathComponent)")
-                    return
+                let isInImportsFolder = item.url.path.contains("/Imports/")
+
+                if isInImportsFolder {
+                    // For files in imports folder, do a thorough check to catch files that were already imported
+                    // This handles cases where files were extracted, imported, and then extracted again
+                    let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
+                    if isROMAlreadyImported {
+                        ILOG("GameImportQueue - Skipping ROM file in imports folder (already exists in database): \(item.url.lastPathComponent)")
+                        return
+                    }
+                } else {
+                    // Full check for files not in imports folder (e.g., re-scanning ROMs folder)
+                    let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
+                    if isROMAlreadyImported {
+                        ILOG("GameImportQueue - Skipping ROM file that already exists in database: \(item.url.lastPathComponent)")
+                        return
+                    }
                 }
             } else {
                 VLOG("GameImportQueue - Skipping duplicate check for \(item.url.lastPathComponent) (already batch-checked with userChosenSystem)")
@@ -2282,12 +2894,17 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             // Check if this is a late-arriving file that belongs to an already processed M3U or CUE
             // Only check for CD-ROM related files to avoid expensive queue iteration for regular ROMs
-            if fileType == .cdRom || item.url.pathExtension.lowercased() == Extensions.bin.rawValue {
+            // Skip this check for files in Imports folder (they're new files, not late arrivals)
+            let isInImportsFolder = item.url.path.contains("/Imports/")
+            if !isInImportsFolder && (fileType == .cdRom || item.url.pathExtension.lowercased() == Extensions.bin.rawValue) {
                 let currentQueue = await importQueueActor.getQueue()
                 let successfulItems = currentQueue.filter { $0.status == .success }
 
+                // Limit check to recent successful items to avoid expensive iteration
+                let recentSuccessfulItems = Array(successfulItems.suffix(50)) // Only check last 50 successful items
+
                 // First check for completed items that might be expecting this file
-                for completedItem in successfulItems where completedItem.fileType == .cdRom {
+                for completedItem in recentSuccessfulItems where completedItem.fileType == .cdRom {
                     // Check if this file is in the expected associated files list of any completed item
                     if let expectedFiles = completedItem.expectedAssociatedFileNames,
                        expectedFiles.contains(where: { $0.lowercased() == item.url.lastPathComponent.lowercased() }) {
@@ -2343,43 +2960,34 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
             }
 
-            // Check for duplicates in the current queue
-            let isDuplicate = await importQueueActor.containsDuplicate(ofItem: item) { [weak self] existing, newItem in
-                guard let self = self else { return false }
-
-                // Check if the URL is the same
-                if existing.url == newItem.url {
-                    return true
-                }
-
-                // Check if the filename is the same and in the same directory
-                if existing.url.lastPathComponent == newItem.url.lastPathComponent &&
-                    existing.url.deletingLastPathComponent() == newItem.url.deletingLastPathComponent() {
-                    return true
-                }
-
-                // Check MD5 if available
-                if let existingMd5 = existing.md5?.uppercased(),
-                   let newMd5 = newItem.md5?.uppercased(),
-                   existingMd5 == newMd5 {
-                    return true
-                }
-
-                // Recursively check child items
-                if !existing.childQueueItems.isEmpty {
-                    return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: newItem)
-                }
-
-                return false
-            }
-
-            guard !isDuplicate else {
-                WLOG("GameImportQueue - Trying to add duplicate ImportItem to import queue with url: \(item.url.lastPathComponent) and id: \(item.id)")
-                return
-            }
+            // Duplicate check already done above, no need to check again
 
             await importQueueActor.addImport(item)
             ILOG("GameImportQueue - Added ImportItem to import queue: \(item.url.lastPathComponent) (id: \(item.id))")
+        } else {
+            // Handle other file types (zip, unknown, etc.) - add them to queue for processing
+            // Skip duplicate check for unknown/zip files in imports folder (they're new)
+            let isInImportsFolder = item.url.path.contains("/Imports/")
+            if isInImportsFolder {
+                // For files in imports folder, skip expensive checks and add directly
+                await importQueueActor.addImport(item)
+                ILOG("GameImportQueue - Added \(fileType) file to import queue: \(item.url.lastPathComponent)")
+            } else {
+                // For files not in imports folder, check for duplicates first
+                let isDuplicate = await importQueueActor.containsDuplicate(ofItem: item) { existing, newItem in
+                    return existing.url == newItem.url ||
+                           (existing.url.lastPathComponent == newItem.url.lastPathComponent &&
+                            existing.url.deletingLastPathComponent() == newItem.url.deletingLastPathComponent())
+                }
+
+                guard !isDuplicate else {
+                    WLOG("GameImportQueue - Skipping duplicate \(fileType) file: \(item.url.lastPathComponent)")
+                    return
+                }
+
+                await importQueueActor.addImport(item)
+                ILOG("GameImportQueue - Added \(fileType) file to import queue: \(item.url.lastPathComponent)")
+            }
         }
     }
 
@@ -2732,6 +3340,26 @@ public final class GameImporter: GameImporting, ObservableObject {
             self.importStatus = message
         }
         ILOG("Importer status: \(message)")
+    }
+
+    /// Fast filename-based duplicate check for files in imports folder
+    /// Only checks if a game with the same filename already exists (no expensive MD5 calculation)
+    private func quickFilenameDuplicateCheck(_ filename: String) async -> Bool {
+        let realm = RomDatabase.sharedInstance.realm
+
+        // Quick check: See if any game has this filename in its romPath
+        // This is much faster than MD5 calculation and full path checking
+        let gamesWithMatchingFile = realm.objects(PVGame.self)
+            .filter("romPath ENDSWITH %@", filename)
+
+        // Only check first match to avoid expensive iteration
+        if let matchingGame = gamesWithMatchingFile.first,
+           matchingGame.file != nil {
+            VLOG("Quick filename check found existing game: \(matchingGame.title ?? "Unknown")")
+            return true
+        }
+
+        return false
     }
 
     /// Safely cleans up failed import files with proper error handling
