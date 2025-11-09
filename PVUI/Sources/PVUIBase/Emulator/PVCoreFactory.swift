@@ -128,7 +128,7 @@ public final class PVCoreFactory: NSObject {
             break;
         case .Atari8bit:
             if let core = core as? PVA8SystemResponderClient {
-                return PVA8SystemResponderClient(controlLayout: controllerLayout, system: system, responder: core)
+                return PVAtari8BitControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
                 fatalError("Core doesn't implement PVA8SystemResponderClient")
             }
