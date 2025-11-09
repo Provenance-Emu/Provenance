@@ -25,7 +25,7 @@ public struct DeltaSkinView: View {
     @State private var skinImage: UIImage?
     @State private var thumbstickImage: UIImage?
 
-    @State private var activeThumbsticks: [(frame: CGRect, image: UIImage, size: CGSize)] = []
+    @State private var activeThumbsticks: [(frame: CGRect, image: UIImage, size: CGSize, buttonId: String)] = []
 
     // Add feedback generator
     #if !os(tvOS)
@@ -521,7 +521,9 @@ public struct DeltaSkinView: View {
                                 frame: thumbstick.frame,
                                 thumbstickImage: thumbstick.image,
                                 thumbstickSize: thumbstick.size,
-                                mappingSize: skin.mappingSize(for: traits) ?? .zero
+                                mappingSize: skin.mappingSize(for: traits) ?? .zero,
+                                buttonId: thumbstick.buttonId,
+                                inputHandler: inputHandler
                             )
                             .zIndex(4)
                         }
@@ -1097,7 +1099,9 @@ public struct DeltaSkinView: View {
                 // Handle thumbstick
                 Task {
                     if let (image, size) = await loadThumbstickImage(for: button) {
-                        activeThumbsticks.append((frame: button.frame, image: image, size: size))
+                        // Determine stick ID based on button ID (check for "left" or "right" in button ID)
+                        let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
+                        activeThumbsticks.append((frame: button.frame, image: image, size: size, buttonId: stickId))
                     }
                 }
             } else if isDPadButton, case .directional = button.input {
@@ -1569,7 +1573,9 @@ public struct DeltaSkinView: View {
         for button in buttons {
             if isThumbstick(button),
                let (image, size) = await loadThumbstickImage(for: button) {
-                activeThumbsticks.append((frame: button.frame, image: image, size: size))
+                // Determine stick ID based on button ID (check for "right" or "right" in button ID)
+                let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
+                activeThumbsticks.append((frame: button.frame, image: image, size: size, buttonId: stickId))
             }
         }
     }

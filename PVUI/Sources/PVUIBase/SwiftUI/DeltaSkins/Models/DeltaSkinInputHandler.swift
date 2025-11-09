@@ -334,6 +334,8 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     /// Handle analog stick movement
     func analogStickMoved(_ stickId: String, x: Float, y: Float) {
+        ILOG("🔵 analogStickMoved called: stickId=\(stickId), x=\(x), y=\(y)")
+
         guard let core = emulatorCore else {
             ELOG("No emulator core available for analog stick: \(stickId)")
             return
@@ -342,7 +344,10 @@ public class DeltaSkinInputHandler: ObservableObject {
         DLOG("Analog stick moved: \(stickId), x: \(x), y: \(y)")
 
         // Determine which stick this is
-        let isLeftStick = stickId.lowercased().contains("left")
+        // Check for "left" or "right" in stickId (e.g., "leftAnalog", "rightAnalog", "analog_left", "analog_right")
+        // Default to left if neither is specified
+        let lowercasedId = stickId.lowercased()
+        let isLeftStick = lowercasedId.contains("left") || (!lowercasedId.contains("right"))
 
         // Check if this system only had D-pad (not joystick)
         // Even if the core conforms to JoystickResponder (like RetroArch cores),
@@ -350,7 +355,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         let systemIdentifier = core.systemIdentifier
         let systemId = systemIdentifier.flatMap { SystemIdentifier(rawValue: $0) }
         let systemsWithDPadOnly: Set<SystemIdentifier> = [
-            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy
+            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST
         ]
 
         // Convert joystick to D-pad for systems that only had D-pad
@@ -359,6 +364,81 @@ public class DeltaSkinInputHandler: ObservableObject {
             DLOG("System \(systemId) only had D-pad, converting joystick to D-pad")
             convertJoystickToDPad(x: x, y: y, core: core)
             return
+        }
+
+        // Handle systems that require system-specific button enums instead of Int
+        // These systems have their own joystick responder protocols that take enum values
+        if let systemId = systemId {
+            ILOG("🔵 System detected: \(systemId), isLeftStick: \(isLeftStick)")
+            switch systemId {
+            case .N64:
+                // N64 only has a left analog stick
+                ILOG("🔵 N64 case matched, isLeftStick: \(isLeftStick)")
+                if isLeftStick {
+                    ILOG("🔵 Checking if core conforms to PVN64SystemResponderClient...")
+                    if let responder = core as? PVN64SystemResponderClient {
+                        ILOG("✅ Core conforms! Calling didMoveJoystick with .leftAnalog, x=\(x), y=\(y)")
+                        responder.didMoveJoystick(.leftAnalog, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                        DLOG("Forwarded joystick event via PVN64SystemResponderClient: button=leftAnalog, x=\(x), y=\(y)")
+                        return
+                    } else {
+                        ELOG("❌ Core does NOT conform to PVN64SystemResponderClient")
+                    }
+                } else {
+                    ILOG("⚠️ N64 only supports left stick, but isLeftStick is false")
+                }
+            case .PSP:
+                // PSP only has a left analog stick
+                if isLeftStick, let responder = core as? PVPSPSystemResponderClient {
+                    responder.didMoveJoystick(.leftAnalog, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PVPSPSystemResponderClient: button=leftAnalog, x=\(x), y=\(y)")
+                    return
+                }
+            case .PSX:
+                // PSX has both left and right analog sticks
+                if let responder = core as? PVPSXSystemResponderClient {
+                    let button: PVPSXButton = isLeftStick ? .leftAnalog : .rightAnalog
+                    responder.didMoveJoystick(button, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PVPSXSystemResponderClient: button=\(button.stringValue), x=\(x), y=\(y)")
+                    return
+                }
+            case .PS2, .PS3:
+                // PS2/PS3 have both left and right analog sticks
+                if let responder = core as? PVPS2SystemResponderClient {
+                    let button: PVPS2Button = isLeftStick ? .leftAnalog : .rightAnalog
+                    responder.didMoveJoystick(button, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PVPS2SystemResponderClient: button=\(button.stringValue), x=\(x), y=\(y)")
+                    return
+                }
+            case .Dreamcast:
+                // Dreamcast has a left analog stick
+                if isLeftStick, let responder = core as? PVDreamcastSystemResponderClient {
+                    responder.didMoveJoystick(.leftAnalog, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PVDreamcastSystemResponderClient: button=leftAnalog, x=\(x), y=\(y)")
+                    return
+                }
+            case .Saturn:
+                // Saturn doesn't have analog sticks, skip
+                break
+            case .MAME:
+                // MAME has both left and right analog sticks
+                if let responder = core as? PVMAMESystemResponderClient {
+                    let button: PVMAMEButton = isLeftStick ? .leftAnalog : .rightAnalog
+                    responder.didMoveJoystick(button, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PVMAMESystemResponderClient: button=\(button.stringValue), x=\(x), y=\(y)")
+                    return
+                }
+            case ._3DS:
+                // 3DS has a left analog stick (Circle Pad) and C-Stick (right)
+                if let responder = core as? PV3DSSystemResponderClient {
+                    let button: PV3DSButton = isLeftStick ? .leftAnalog : .rightAnalog
+                    responder.didMoveJoystick(button, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PV3DSSystemResponderClient: button=\(button.stringValue), x=\(x), y=\(y)")
+                    return
+                }
+            default:
+                break
+            }
         }
 
         // Use generic JoystickResponder protocol (all cores that support joysticks implement this)
@@ -482,6 +562,25 @@ public class DeltaSkinInputHandler: ObservableObject {
                 /// (converts "up" -> "leftUp", "down" -> "leftDown", etc.)
                 let b = PVVBButton(id)
                 DLOG("VirtualBoy D-pad button: original=\(buttonId), normalized=\(id), PVVBButton=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .Vectrex:
+            if let r = core as? PVVectrexSystemResponderClient {
+                let b = PVVectrexButton(id)
+                DLOG("Vectrex D-pad button: original=\(buttonId), normalized=\(id), PVVectrexButton=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .Atari8bit:
+            if let r = core as? PVA8SystemResponderClient {
+                let b = PVA8Button(id)
+                DLOG("Atari8bit D-pad button: original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .AtariST:
+            /// AtariST uses PVA8Button but goes through RetroArch responder
+            if let r = core as? PVA8SystemResponderClient {
+                let b = PVA8Button(id)
+                DLOG("AtariST D-pad button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
         default:
@@ -1098,6 +1197,29 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
+        case .Vectrex:
+            if let r = core as? PVVectrexSystemResponderClient {
+                let b = PVVectrexButton(id)
+                DLOG("Vectrex button: original=\(buttonId), normalized=\(id), PVVectrexButton=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Atari8bit:
+            if let r = core as? PVA8SystemResponderClient {
+                let b = PVA8Button(id)
+                DLOG("Atari8bit button: original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .AtariST:
+            /// AtariST uses PVA8Button but goes through RetroArch responder
+            /// Try PVA8SystemResponderClient first, then fall back to RetroArch
+            if let r = core as? PVA8SystemResponderClient {
+                let b = PVA8Button(id)
+                DLOG("AtariST button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
         default:
             break
         }
@@ -1154,6 +1276,27 @@ public class DeltaSkinInputHandler: ObservableObject {
             if s == "select" { return "select" }
             // Difficulty switches
             if ["leftdiffa", "leftdiffb", "rightdiffa", "rightdiffb"].contains(s) { return s }
+        case .Vectrex:
+            /// Vectrex uses analog directions and numbered buttons
+            /// D-pad directions map to analog directions
+            if ["up", "analogup"].contains(s) { return "up" }
+            if ["down", "analogdown"].contains(s) { return "down" }
+            if ["left", "analogleft"].contains(s) { return "left" }
+            if ["right", "analogright"].contains(s) { return "right" }
+            /// Buttons map to button1-4
+            if ["button1", "1", "i", "a"].contains(s) { return "button1" }
+            if ["button2", "2", "ii", "b"].contains(s) { return "button2" }
+            if ["button3", "3", "iii", "x"].contains(s) { return "button3" }
+            if ["button4", "4", "iv", "y"].contains(s) { return "button4" }
+        case .Atari8bit:
+            /// Atari 8-bit uses D-pad directions and fire button
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            /// Fire button maps to fire
+            if ["fire", "fire1", "a", "b", "x", "y"].contains(s) { return "fire" }
+        case .AtariST:
+            /// AtariST uses same button mapping as Atari 8-bit (PVA8Button)
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["fire", "fire1", "a", "b", "x", "y"].contains(s) { return "fire" }
         case ._3DS:
             // 3DS uses standard button names
             if ["a", "b", "x", "y", "l", "r", "zl", "zr", "start", "select", "up", "down", "left", "right"].contains(s) { return s }

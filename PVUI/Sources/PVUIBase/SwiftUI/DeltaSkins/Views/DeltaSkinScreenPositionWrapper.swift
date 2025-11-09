@@ -1,5 +1,8 @@
 import SwiftUI
 import PVLogging
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Calculates and broadcasts screen position for skins
 struct DeltaSkinScreenPositionWrapper: View {
@@ -18,6 +21,10 @@ struct DeltaSkinScreenPositionWrapper: View {
               let mappingSize = skin.mappingSize(for: traits) else {
             return nil
         }
+
+        // Check if this is a simple skin (no screens or screenGroups)
+        // Simple skins should use button-based calculation even if gameScreenFrame exists
+        let isSimpleSkin = skin.screens(for: traits) == nil && skin.screenGroups(for: traits) == nil
 
         // Get screen frame from skin (supports multiple formats)
         let screenFrame: CGRect?
@@ -131,9 +138,11 @@ struct DeltaSkinScreenPositionWrapper: View {
                 )
             }
         }
-        // Try gameScreenFrame dictionary
-        else if let gameScreenFrame = getGameScreenFrame(traits: traits) {
-            DLOG("🎮 SKIN: Found gameScreenFrame: \(gameScreenFrame)")
+        // For simple skins, prioritize button-based calculation over gameScreenFrame
+        // This ensures simple skins scale from bottom center with screen above buttons
+        // Try gameScreenFrame dictionary (only for complex skins or if no buttons available)
+        else if !isSimpleSkin, let gameScreenFrame = getGameScreenFrame(traits: traits) {
+            DLOG("🎮 SKIN: Found gameScreenFrame (complex skin): \(gameScreenFrame)")
             DLOG("🎮 SKIN:   mappingSize: \(mappingSize)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
             DLOG("🎮 SKIN:   layout.scale: \(layout.scale)")
@@ -175,27 +184,71 @@ struct DeltaSkinScreenPositionWrapper: View {
                 DLOG("🎮 SKIN:   Calculated screenFrame: \(screenFrame)")
             }
         }
-        // Default: calculate from buttons - use reasonable screen size based on available space
+        // Default: calculate from buttons - for simple skins, use area above topmost button
         else if let buttons = skin.buttons(for: traits),
                   let topButton = buttons.min(by: { $0.frame.minY < $1.frame.minY }) {
+            DLOG("🎮 SKIN: Using button-based calculation (simple skin: \(isSimpleSkin))")
             let aspectRatio = screenAspectRatio ?? (4.0/3.0)
 
-            // Calculate screen size based on available space, not entire skin width
-            // Use the space above the top button as the maximum height
-            let maxScreenHeight = max(layout.yOffset, size.height * 0.6)
-            let screenHeight = min(maxScreenHeight, size.height * 0.8)
+            // Convert top button's frame from mapping coordinates to screen coordinates
+            // Button frames can be normalized (0-1) or absolute pixels relative to mappingSize
+            let buttonFrame = topButton.frame
+            let isNormalized = buttonFrame.width <= 1.0 && buttonFrame.height <= 1.0
+
+            let normalizedButtonY: CGFloat
+            if isNormalized {
+                // Already normalized
+                normalizedButtonY = buttonFrame.minY
+            } else {
+                // Absolute pixels - normalize by mappingSize
+                normalizedButtonY = buttonFrame.minY / mappingSize.height
+            }
+
+            // Calculate button's top edge in layout coordinates (before adding layout offset)
+            // This is relative to the layout's coordinate system
+            let buttonTopInLayout = normalizedButtonY * layout.height
+
+            // Get safe area top inset
+            #if os(iOS)
+            let safeAreaTop: CGFloat = {
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let window = windowScene.windows.first {
+                    return window.safeAreaInsets.top
+                }
+                return 0
+            }()
+            #else
+            let safeAreaTop: CGFloat = 0
+            #endif
+
+            // Calculate available height: from safe area top to button top (in view coordinates)
+            // buttonTopInLayout is relative to layout, layout.yOffset positions the layout in the view
+            let buttonTopInView = layout.yOffset + buttonTopInLayout
+            let availableHeight = max(0, buttonTopInView - safeAreaTop)
+
+            // Calculate screen dimensions maintaining aspect ratio
+            let screenHeight = min(availableHeight, size.height * 0.8)
             let screenWidth = screenHeight * aspectRatio
 
             // Ensure screen fits within available width
             let constrainedWidth = min(screenWidth, size.width * 0.9)
             let constrainedHeight = constrainedWidth / aspectRatio
 
+            // Center horizontally, position at top (respecting safe area)
+            // Calculate relative to view, not layout (will be converted later)
+            let screenX = (size.width - constrainedWidth) / 2
+            let screenY = safeAreaTop + max(0, (availableHeight - constrainedHeight) / 2)
+
+            // Calculate screenFrame relative to layout (will have layout offset added later)
+            // Convert from view coordinates to layout coordinates
             screenFrame = CGRect(
-                x: (size.width - constrainedWidth) / 2,
-                y: max(0, (layout.yOffset - constrainedHeight) / 2),
+                x: screenX - layout.xOffset,
+                y: screenY - layout.yOffset,
                 width: constrainedWidth,
                 height: constrainedHeight
             )
+
+            DLOG("🎮 SKIN: Calculated screen frame from top button - buttonTopInLayout: \(buttonTopInLayout), buttonTopInView: \(buttonTopInView), safeAreaTop: \(safeAreaTop), availableHeight: \(availableHeight), screenFrame (layout coords): \(screenFrame)")
         } else {
             return nil
         }

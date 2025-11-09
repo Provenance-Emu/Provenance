@@ -6,6 +6,8 @@ struct DeltaSkinThumbstick: View {
     let thumbstickImage: UIImage
     let thumbstickSize: CGSize
     let mappingSize: CGSize
+    let buttonId: String
+    let inputHandler: DeltaSkinInputHandler
 
     @State private var dragOffset: CGSize = .zero
     @GestureState private var isDragging = false
@@ -15,7 +17,7 @@ struct DeltaSkinThumbstick: View {
     private let impactGenerator = UIImpactFeedbackGenerator(style: .soft)
     private let edgeGenerator = UIImpactFeedbackGenerator(style: .medium)
     #endif
-    
+
     private let maxDistance: CGFloat = 20  // Maximum distance thumbstick can move
 
     @State private var lastHapticDistance: CGFloat = 0
@@ -93,6 +95,13 @@ struct DeltaSkinThumbstick: View {
                                     dragOffset = delta
                                     generateHapticFeedback(distance: distance)
                                 }
+
+                                // Calculate normalized joystick values (-1 to 1)
+                                let normalizedX = Float(dragOffset.width / maxDistance)
+                                let normalizedY = Float(-dragOffset.height / maxDistance) // Invert Y for screen coordinates
+
+                                // Forward to input handler
+                                inputHandler.analogStickMoved(buttonId, x: normalizedX, y: normalizedY)
                             }
                             .onEnded { _ in
                                 withAnimation(.spring()) {
@@ -102,6 +111,9 @@ struct DeltaSkinThumbstick: View {
                                 if let releaseSound = DeltaSkinView.buttonSounds["thumbstick_release"] {
                                     AudioEngine.shared.playSound(buffer: releaseSound, pan: 0)
                                 }
+
+                                // Reset joystick to center
+                                inputHandler.analogStickMoved(buttonId, x: 0, y: 0)
                             }
                     )
                 #endif

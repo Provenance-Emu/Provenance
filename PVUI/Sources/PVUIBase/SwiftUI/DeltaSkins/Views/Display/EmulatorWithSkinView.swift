@@ -458,6 +458,33 @@ struct EmulatorWithSkinView: View {
         // Get overlay effects with proper priority (user filter > skin filter > metalFilterMode)
         let effects = overlayEffects(for: skin)
 
+        // Calculate aspect ratio from core's aspectSize or bufferSize/screenRect
+        let aspectRatio: CGFloat? = {
+            let aspectSize = coreInstance.aspectSize
+            let bufferSize = coreInstance.bufferSize
+            let screenRect = coreInstance.screenRect
+
+            DLOG("🎮 SKIN: Calculating aspect ratio - aspectSize: \(aspectSize), bufferSize: \(bufferSize), screenRect: \(screenRect)")
+
+            if aspectSize.width > 0 && aspectSize.height > 0 {
+                let ratio = aspectSize.width / aspectSize.height
+                DLOG("🎮 SKIN: Using aspectSize for aspect ratio: \(ratio)")
+                return ratio
+            }
+            // Fallback to bufferSize/screenRect if aspectSize is invalid
+            if screenRect.width > 0 && screenRect.height > 0 {
+                let ratio = screenRect.width / screenRect.height
+                DLOG("🎮 SKIN: Using screenRect for aspect ratio: \(ratio)")
+                return ratio
+            } else if bufferSize.width > 0 && bufferSize.height > 0 {
+                let ratio = bufferSize.width / bufferSize.height
+                DLOG("🎮 SKIN: Using bufferSize for aspect ratio: \(ratio)")
+                return ratio
+            }
+            DLOG("🎮 SKIN: No valid aspect ratio found, will use default 4:3")
+            return nil
+        }()
+
         return Group {
             if let deltaSkin = skin as? DeltaSkin {
                 // If we have a DeltaSkin, use the specialized view
@@ -467,6 +494,7 @@ struct EmulatorWithSkinView: View {
                     filters: effects,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: false,
+                    screenAspectRatio: aspectRatio,
                     isInEmulator: true,
                     inputHandler: inputHandler
                 )
@@ -478,6 +506,7 @@ struct EmulatorWithSkinView: View {
                     filters: effects,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: false,
+                    screenAspectRatio: aspectRatio,
                     isInEmulator: true,
                     inputHandler: inputHandler
                 )
