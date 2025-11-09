@@ -80,27 +80,27 @@ public extension SystemIdentifier {
         case .GameCube:
             return PVGameCubeSystemResponderClient.self
         case ._3DO:
-            return PVRetroArchCoreResponderClient.self
+            return PV3DOSystemResponderClient.self
         case ._3DS:
             return PV3DSSystemResponderClient.self
         case .AppleII:
             return PVRetroArchCoreResponderClient.self
         case .AtariST:
-            return PVRetroArchCoreResponderClient.self
+            return PV7800SystemResponderClient.self
         case .C64:
             return PVRetroArchCoreResponderClient.self
         case .CDi:
             return PVRetroArchCoreResponderClient.self
         case .CPS1:
-            return PVRetroArchCoreResponderClient.self
+            return PVMAMESystemResponderClient.self
         case .CPS2:
-            return PVRetroArchCoreResponderClient.self
+            return PVMAMESystemResponderClient.self
         case .CPS3:
-            return PVRetroArchCoreResponderClient.self
+            return PVMAMESystemResponderClient.self
         case .DOOM:
             return PVRetroArchCoreResponderClient.self
         case .DOS:
-            return PVRetroArchCoreResponderClient.self
+            return PVDOSSystemResponderClient.self
         case .EP128:
             return PVEP128SystemResponderClient.self
         case .FDS:
