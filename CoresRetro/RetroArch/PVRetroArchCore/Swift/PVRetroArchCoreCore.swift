@@ -36,7 +36,9 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
             "com.provenance.palmos",
             "com.provenance.cps1",
             "com.provenance.cps2",
-            "com.provenance.cps3"
+            "com.provenance.cps3",
+            "com.provenance.msx",
+            "com.provenance.msx2"
         ]
         DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
