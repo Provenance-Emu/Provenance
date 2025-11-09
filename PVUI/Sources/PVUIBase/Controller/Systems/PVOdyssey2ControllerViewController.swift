@@ -26,8 +26,31 @@ final class PVOdyssey2ControllerViewController: PVControllerViewController<PVOdy
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title.lowercased() == "action" {
+            switch title.lowercased() {
+            case "action":
                 button.buttonTag = .action
+            case "0":
+                button.buttonTag = .key0
+            case "1":
+                button.buttonTag = .key1
+            case "2":
+                button.buttonTag = .key2
+            case "3":
+                button.buttonTag = .key3
+            case "4":
+                button.buttonTag = .key4
+            case "5":
+                button.buttonTag = .key5
+            case "6":
+                button.buttonTag = .key6
+            case "7":
+                button.buttonTag = .key7
+            case "8":
+                button.buttonTag = .key8
+            case "9":
+                button.buttonTag = .key9
+            default:
+                break
             }
         }
 
