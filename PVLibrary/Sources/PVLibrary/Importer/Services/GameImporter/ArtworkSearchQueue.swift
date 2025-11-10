@@ -442,7 +442,7 @@ public actor ArtworkSearchQueue {
         let realm = RomDatabase.sharedInstance.realm
         // Find games with artwork URLs but no artwork files
         let gamesNeedingDownload = realm.objects(PVGame.self)
-            .filter("originalArtworkURL != '' AND originalArtworkFile == nil AND customArtworkURL == ''")
+            .filter("originalArtworkURL != '' AND originalArtworkFile == nil AND customArtworkURL == ''").toArray()
 
         guard !gamesNeedingDownload.isEmpty else {
             VLOG("ArtworkSearchQueue: No games need artwork download retry")
