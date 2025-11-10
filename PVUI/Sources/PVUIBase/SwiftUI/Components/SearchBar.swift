@@ -81,6 +81,11 @@ public struct SearchBarModifier: ViewModifier {
             .overlay(
                 ViewControllerResolver { viewController in
                     #if !os(tvOS)
+                        if let navController = viewController.navigationController {
+                            navController.navigationBar.prefersLargeTitles = false
+                        }
+                        viewController.navigationItem.hidesSearchBarWhenScrolling = false
+                        self.searchBar.searchController.hidesNavigationBarDuringPresentation = false
                         viewController.navigationItem.searchController = self.searchBar.searchController
                     #else
                     // TODO: something here?

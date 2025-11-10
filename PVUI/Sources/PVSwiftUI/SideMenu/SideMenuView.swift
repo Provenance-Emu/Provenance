@@ -275,19 +275,19 @@ SideMenuView: SwiftUI.View {
                 MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
                     viewModel.sortConsolesAscending.toggle()
                 }
-                
+
                 Divider()
                     .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
 
                 // Home first
-                
+
                 MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home") {
                     delegate.didTapHome()
                 }
                 .focusableIfAvailable()
                 .focused($focusedItem, equals: "home")
                 .id("home")
-                
+
                 ForEach(sortedConsoles(), id: \.self) { console in
                     Divider()
                         .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
@@ -342,33 +342,44 @@ SideMenuView: SwiftUI.View {
     // MARK: - Body
     public var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack {
-                        LazyVStack(alignment: .leading, spacing: 0) {
-                            headerItems()
-                            addGamesSection()
-                            importQueueSection()
+            GeometryReader { geometry in
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            LazyVStack(alignment: .leading, spacing: 0) {
+                                headerItems()
+                                addGamesSection()
+                                importQueueSection()
 
-                            #if canImport(FreemiumKit)
-                            Divider()
-                                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                            PaidStatusView(style: .plain)
-                                .listRowBackground(Color.accentColor)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 10)
-                            #endif
+                                #if canImport(FreemiumKit)
+                                Divider()
+                                    .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                                PaidStatusView(style: .plain)
+                                    .listRowBackground(Color.accentColor)
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 10)
+                                #endif
 
-                            consolesSection()
-                            footerSection()
+                                consolesSection()
+                                footerSection()
+                            }
+                        }
+                        .padding(.top, {
+                            let basePadding = geometry.safeAreaInsets.top
+                            if #available(iOS 26.0, *) {
+                                return basePadding + 44
+                            } else {
+                                return basePadding
+                            }
+                        }())
+                        .onChange(of: focusedItem) { newValue in
+                            handleFocusChange(newValue, proxy: proxy)
                         }
                     }
-                    .onChange(of: focusedItem) { newValue in
-                        handleFocusChange(newValue, proxy: proxy)
+                    .scrollContentBackground(.hidden)
+                    .onAppear {
+                        setupGamepadHandling(proxy: proxy)
                     }
-                }
-                .onAppear {
-                    setupGamepadHandling(proxy: proxy)
                 }
             }
         }
@@ -386,6 +397,7 @@ SideMenuView: SwiftUI.View {
                 navController.navigationBar.scrollEdgeAppearance = appearance
                 navController.navigationBar.compactAppearance = appearance
                 navController.navigationBar.tintColor = themeManager.currentPalette.menuIconTint
+                navController.navigationBar.prefersLargeTitles = false
             }
 #endif
 
@@ -403,6 +415,7 @@ SideMenuView: SwiftUI.View {
             vc.navigationItem.leftBarButtonItem = provenanceLogo
             vc.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
             vc.navigationController?.navigationBar.tintColor = menuIconTint
+
         })
         .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
 #endif
