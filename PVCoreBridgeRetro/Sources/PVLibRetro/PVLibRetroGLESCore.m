@@ -434,6 +434,13 @@ static bool video_driver_cached_frame(void)
     // Setup the appropriate hardware context
     [self setupHardwareContext:current_context_type];
 
+    // If context was successfully set up, call context_reset to initialize it
+    // This allows the core to set up its OpenGL state
+    if (hardware_context_active && hw_render_callback && hw_render_callback->context_reset) {
+        ILOG(@"Calling context_reset callback to initialize hardware context");
+        hw_render_callback->context_reset();
+    }
+
     return YES;
 }
 
