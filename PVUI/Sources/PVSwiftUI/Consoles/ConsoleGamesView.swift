@@ -139,6 +139,25 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @State private var shouldShowImportProgress = false
 
+    /// Safely access games as an Array to avoid Realm observation issues during bad states
+    private var safeGames: [PVGame] {
+        // Access games property wrapper value safely
+        // This converts Results to Array immediately to avoid Realm enumeration issues
+        let gamesArray: [PVGame]
+        do {
+            // Try to access games and convert to array
+            // This will trigger @ObservedResults observation, but converting to Array
+            // immediately avoids enumeration crashes during bad Realm states
+            gamesArray = games.toArray()
+        } catch {
+            DLOG("Error accessing games: \(error.localizedDescription)")
+            return []
+        }
+
+        // Filter out invalidated objects
+        return gamesArray.filter { !$0.isInvalidated }
+    }
+
     @ViewBuilder
     var importProgressView: some View {
         // Defer ImportProgressView creation to avoid synchronous ViewModel initialization blocking main thread
@@ -188,7 +207,7 @@ struct ConsoleGamesView: SwiftUI.View {
             ScrollViewReader { proxy in
                 LazyVStack(spacing: 0) {
                     // Add search bar with visibility control
-                    if games.count > 8 && showSearchbar {
+                    if safeGames.count > 8 && showSearchbar {
                         PVSearchBar(text: $gamesViewModel.searchText)
                             .opacity(gamesViewModel.isSearchBarVisible ? 1 : 0)
                             .frame(height: gamesViewModel.isSearchBarVisible ? nil : 0)
@@ -625,7 +644,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
             .modifier(ConditionalSearchModifier(
-                isEnabled: games.count > 8,
+                isEnabled: safeGames.count > 8,
                 searchText: $gamesViewModel.searchText
             ))
             .ignoresSafeArea(.all)
@@ -667,7 +686,7 @@ struct ConsoleGamesView: SwiftUI.View {
             // TODO: Fill space on iOS or certain layouts only, or a max width?
             let fillSpace = false
             if fillSpace {
-                count = min(max(1, roundedScale), games.count)
+                count = min(max(1, roundedScale), safeGames.count)
             } else {
                 count = max(1, roundedScale)
             }
@@ -711,7 +730,7 @@ struct ConsoleGamesView: SwiftUI.View {
         ScrollViewReader { proxy in
             LazyVGrid(columns: columns, spacing: 10) {
                 // Custom styling for grid items
-                ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
+                ForEach(games.toArray().filter{!$0.isInvalidated}, id: \.self) { game in
                     GameItemView(
                         game: game,
                         constrainHeight: false,
@@ -786,7 +805,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ViewBuilder
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
-            ForEach(games, id: \.self) { game in
+            ForEach(games.toArray().filter{!$0.isInvalidated}, id: \.self) { game in
                 GameItemView(
                     game: game,
                     constrainHeight: false,
@@ -1045,7 +1064,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func gamesSection() -> some View {
         Group {
-            if games.filter{!$0.isInvalidated}.isEmpty && AppState.shared.isSimulator {
+            if safeGames.isEmpty && AppState.shared.isSimulator {
                 let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                 if viewModel.viewGamesAsGrid {
                     showGamesGrid(fakeGames)
@@ -1058,9 +1077,9 @@ extension ConsoleGamesView {
                     titleBar()
 
                     if viewModel.viewGamesAsGrid {
-                        showGamesGrid(games)
+                        showGamesGrid(safeGames)
                     } else {
-                        showGamesList(games)
+                        showGamesList(safeGames)
                     }
                 }
             }
