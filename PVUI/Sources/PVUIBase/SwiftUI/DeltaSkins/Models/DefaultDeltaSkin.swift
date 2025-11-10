@@ -246,16 +246,100 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
     }
 
     public func screens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen]? {
-        // Create a default screen that takes up most of the display
-        // Account for controller area at the bottom - reserve approximately 35% of height for controller in portrait
+        // Calculate screen frame based on actual button positions
+        // This ensures the screen area is properly positioned above the controls
+        guard let buttons = self.buttons(for: traits) else {
+            // Fallback if no buttons available
+            let screenFrame: CGRect
+            if traits.orientation == .portrait {
+                screenFrame = CGRect(x: 0.1, y: 0.05, width: 0.8, height: 0.60)
+            } else {
+                screenFrame = CGRect(x: 0.1, y: 0.1, width: 0.8, height: 0.8)
+            }
+            return [DeltaSkinScreen(
+                id: "main",
+                inputFrame: nil,
+                outputFrame: screenFrame,
+                placement: .app,
+                filters: nil
+            )]
+        }
+
+        // Find the topmost button to determine where controls start
+        let topmostButton = buttons.min(by: { $0.frame.minY < $1.frame.minY })
+        guard let topButton = topmostButton else {
+            // Fallback if button calculation fails
+            let screenFrame: CGRect
+            if traits.orientation == .portrait {
+                screenFrame = CGRect(x: 0.1, y: 0.05, width: 0.8, height: 0.60)
+            } else {
+                screenFrame = CGRect(x: 0.1, y: 0.1, width: 0.8, height: 0.8)
+            }
+            return [DeltaSkinScreen(
+                id: "main",
+                inputFrame: nil,
+                outputFrame: screenFrame,
+                placement: .app,
+                filters: nil
+            )]
+        }
+
+        // Calculate screen frame based on button positions
         let screenFrame: CGRect
         if traits.orientation == .portrait {
-            // In portrait, controller is at bottom, so screen should be in upper portion
-            // Position screen at top, leaving bottom 35% for controller
-            screenFrame = CGRect(x: 0.1, y: 0.05, width: 0.8, height: 0.60)
+            // Portrait: screen goes from top (with safe area margin) to just above main control area
+            // Find the main control area (dpad/action buttons) which is typically around y ~0.55
+            // Shoulder buttons at top (y ~0.05) don't affect screen area as much
+            let mainControlAreaY = buttons
+                .filter { $0.id.contains("dpad") || $0.id.contains("button_a") || $0.id.contains("button_b") }
+                .map { $0.frame.minY }
+                .min() ?? topButton.frame.minY
+
+            // Use the main control area Y, but ensure we account for shoulder buttons at top
+            let controlAreaTop = min(mainControlAreaY, 0.55)
+
+            // Reserve space at top for safe area and shoulder buttons (typically ~0.05-0.08)
+            let topMargin: CGFloat = 0.05
+            // Reserve some space above main controls
+            let bottomMargin: CGFloat = 0.03
+
+            // Screen height is from top margin to control area top minus bottom margin
+            let screenHeight = max(0.4, controlAreaTop - topMargin - bottomMargin)
+
+            // Center horizontally with margins
+            let horizontalMargin: CGFloat = 0.1
+            let screenWidth = 1.0 - (horizontalMargin * 2)
+
+            screenFrame = CGRect(
+                x: horizontalMargin,
+                y: topMargin,
+                width: screenWidth,
+                height: screenHeight
+            )
         } else {
-            // In landscape, controller is at edges, so screen can use more vertical space
-            screenFrame = CGRect(x: 0.1, y: 0.1, width: 0.8, height: 0.8)
+            // Landscape: screen is centered, avoiding edge controls
+            // Controls are at edges, so screen can use center area
+            // Account for shoulder buttons at top (y ~0.05) and start/select at bottom (y ~0.90)
+            let topMargin: CGFloat = 0.08  // Space for shoulder buttons
+            let bottomMargin: CGFloat = 0.10  // Space for start/select buttons
+
+            // Find bottommost button for better calculation
+            let bottommostButton = buttons.max(by: { $0.frame.maxY < $1.frame.maxY })
+            let controlAreaBottom = bottommostButton?.frame.maxY ?? 0.90
+
+            // Screen height is from top margin to control area bottom minus bottom margin
+            let screenHeight = max(0.6, controlAreaBottom - topMargin - bottomMargin)
+
+            // Center horizontally, accounting for edge controls
+            let horizontalMargin: CGFloat = 0.15  // More margin for edge controls
+            let screenWidth = 1.0 - (horizontalMargin * 2)
+
+            screenFrame = CGRect(
+                x: horizontalMargin,
+                y: topMargin,
+                width: screenWidth,
+                height: screenHeight
+            )
         }
 
         let screen = DeltaSkinScreen(
@@ -539,23 +623,42 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
 
     public func screenGroups(for traits: DeltaSkinTraits) -> [DeltaSkinScreenGroup]? {
         // For the default skin, we just have one screen group that contains the main screen
-        if let screens = self.screens(for: traits) {
-            let group = DeltaSkinScreenGroup(id: "main_group", screens: [.init(id: "main_screen", inputFrame: screenPosition, outputFrame: screenPosition, placement: .app, filters: nil)], extendedEdges: nil, translucent: nil, gameScreenFrame: nil)
-            return [group]
+        // Use the calculated screens from screens(for:) instead of the fixed screenPosition
+        guard let screens = self.screens(for: traits),
+              let mainScreen = screens.first else {
+            return nil
         }
-        return nil
+
+        // Use the calculated outputFrame from the screen
+        let gameScreenFrame = mainScreen.outputFrame
+
+        let group = DeltaSkinScreenGroup(
+            id: "main_group",
+            screens: screens,
+            extendedEdges: nil,
+            translucent: true,
+            gameScreenFrame: gameScreenFrame
+        )
+        return [group]
     }
 
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
+        // Get the calculated screen frame for gameScreenFrame
+        let gameScreenFrame = self.screens(for: traits)?.first?.outputFrame
+
+        // Get proper mapping size based on device
+        let mappingSize = self.mappingSize(for: traits) ?? CGSize(width: 750, height: 1334)
+
         // Create a basic representation for the default skin with retrowave styling
+        // Include gameScreenFrame to help with screen positioning
         return DeltaSkin.RepresentationInfo(
             assets: .init(resizable: nil, small: nil, medium: nil, large: nil),
-            mappingSize: .init(width: 400, height: 300),
+            mappingSize: mappingSize,
             translucent: true,  // Make the controller translucent
-            screens: nil,
-            items: nil,
+            screens: nil,  // Screens are provided via screens(for:) method
+            items: nil,   // Items are provided via buttons(for:) method
             extendedEdges: nil,
-            gameScreenFrame: nil
+            gameScreenFrame: gameScreenFrame
         )
     }
 }

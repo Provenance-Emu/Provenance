@@ -160,8 +160,8 @@ struct DefaultControllerSkinView: View {
     // State for control layout data
     @State private var controlLayout: [ControlLayoutEntry]? = nil
 
-    // State for num pad popover
-    @State private var showNumPadPopover = false
+    // State for num pad flip view
+    @State private var showNumPad = false
 
     // D-pad state - must be StateObject to persist across renders
     @StateObject private var dpadState = DPadState()
@@ -180,23 +180,34 @@ struct DefaultControllerSkinView: View {
 
             ZStack {
                 // Only show background in portrait mode with a gradual fade
+                // Background should only appear in the controller area (bottom ~35%)
                 if !isLandscape {
-                    // Portrait mode - show background with a gradual fade from top to bottom
-                    ZStack {
-                        // Retrowave background
-                        RetrowaveBackground()
-                        // Apply a gradient mask for smooth fade from transparent to visible
-                            .mask(
-                                LinearGradient(
-                                    gradient: Gradient(stops: [
-                                        .init(color: .clear, location: 0.0),   // Fully transparent at top
-                                        .init(color: .clear, location: 0.3),   // Still transparent at 30%
-                                        .init(color: .white, location: 0.7)    // Fully visible at 70%
-                                    ]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
+                    // Portrait mode - show background only in bottom controller area
+                    VStack(spacing: 0) {
+                        // Spacer for screen area (top ~65%) - no background here
+                        Spacer()
+                            .frame(maxHeight: geometry.size.height * 0.65)
+
+                        // Controller area background with gradual fade
+                        ZStack {
+                            // Retrowave background
+                            RetrowaveBackground()
+                            // Apply a gradient mask for smooth fade from transparent to visible
+                            // Start fade at the top of controller area (screen edge)
+                                .mask(
+                                    LinearGradient(
+                                        gradient: Gradient(stops: [
+                                            .init(color: .clear, location: 0.0),   // Fully transparent at top (screen edge)
+                                            .init(color: .clear, location: 0.2),   // Still transparent at 20%
+                                            .init(color: .white, location: 0.5)    // Fully visible at 50% of controller area
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
                                 )
-                            )
+                        }
+                        .frame(maxHeight: geometry.size.height * 0.35)
+                        .clipped()
                     }
                 }
 
@@ -210,11 +221,17 @@ struct DefaultControllerSkinView: View {
                         }
                         .edgesIgnoringSafeArea([]) // Respect safe areas for notch
                 } else {
-                    // Portrait layout - controls at bottom
-                    VStack {
-                        Spacer() // Push the controller to the bottom of the screen
+                    // Portrait layout - controls constrained to bottom area
+                    // Screen area is typically top ~65%, controller area is bottom ~35%
+                    VStack(spacing: 0) {
+                        // Spacer to push controller to bottom area (top ~65% is screen area)
+                        Spacer()
+                            .frame(maxHeight: geometry.size.height * 0.65)
 
+                        // Controller area - constrained to bottom portion
                         dynamicControllerSkin
+                            .frame(maxHeight: geometry.size.height * 0.35)
+                            .clipped()
                             .onAppear {
                                 loadControlLayoutData()
                                 // Ensure input handler has the core set
@@ -1040,33 +1057,78 @@ struct DefaultControllerSkinView: View {
                             }
                         }
 
-                        // Show number pad popover button if we have number pad groups
+                        // Flip card container for standard buttons and number pad
                         if !numPadGroups.isEmpty {
-                            Button(action: {
-                                showNumPadPopover = true
-                            }) {
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.blue.opacity(0.7))
-                                        .frame(width: 60, height: 60)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color.white, lineWidth: 2)
-                                        )
+                            // Flip card view with smooth animation
+                            ZStack {
+                                // Standard buttons (back face when flipped)
+                                if !standardGroups.isEmpty {
+                                    VStack(spacing: 15) {
+                                        ForEach(0..<standardGroups.count, id: \.self) { index in
+                                            if let groupedButtons = standardGroups[index].PVGroupedButtons {
+                                                createButtonGroup(from: groupedButtons)
+                                                    .id("buttonGroup_landscape_\(index)")
+                                            }
+                                        }
+                                    }
+                                    .opacity(showNumPad ? 0 : 1)
+                                    .scaleEffect(showNumPad ? 0.8 : 1.0)
+                                    .rotation3DEffect(
+                                        .degrees(showNumPad ? 90 : 0),
+                                        axis: (x: 0, y: 1, z: 0),
+                                        perspective: 0.3
+                                    )
+                                }
 
-                                    Image(systemName: "number.circle.fill")
-                                        .font(.system(size: 28))
-                                        .foregroundColor(.white)
+                                // Number pad (front face when flipped)
+                                VStack(spacing: 8) {
+                                    ForEach(Array(numPadGroups.enumerated()), id: \.offset) { index, entry in
+                                        if let groupedButtons = entry.PVGroupedButtons {
+                                            createNumPadGrid(from: groupedButtons)
+                                                .id("numPadGroup_landscape_\(index)")
+                                        }
+                                    }
+                                }
+                                .opacity(showNumPad ? 1 : 0)
+                                .scaleEffect(showNumPad ? 1.0 : 0.8)
+                                .rotation3DEffect(
+                                    .degrees(showNumPad ? 0 : -90),
+                                    axis: (x: 0, y: 1, z: 0),
+                                    perspective: 0.3
+                                )
+
+                                // Flip toggle button overlay - positioned at top right
+                                VStack {
+                                    HStack {
+                                        Spacer()
+                                        Button(action: {
+                                            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                                                showNumPad.toggle()
+                                            }
+                                        }) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.blue.opacity(0.9))
+                                                    .frame(width: 44, height: 44)
+                                                    .overlay(
+                                                        Circle()
+                                                            .stroke(Color.white, lineWidth: 2)
+                                                    )
+                                                    .shadow(color: Color.blue.opacity(0.5), radius: 4)
+
+                                                Image(systemName: showNumPad ? "arrow.uturn.backward" : "number.circle.fill")
+                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                            }
+                                        }
+                                        .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
+                                        .padding(.trailing, 4)
+                                        .padding(.top, 4)
+                                    }
+                                    Spacer()
                                 }
                             }
-                            .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
-                            .popover(isPresented: $showNumPadPopover) {
-                                NumPadPopoverView(
-                                    buttonGroups: numPadGroups,
-                                    createButton: createButton,
-                                    inputHandler: inputHandler
-                                )
-                            }
+                            .frame(minHeight: 200)
                         }
                     } else {
                         // Fallback to generic ABXY layout with reduced spacing
@@ -1093,9 +1155,10 @@ struct DefaultControllerSkinView: View {
     // Build a dynamic skin based on the system's control layout data
     @ViewBuilder
     private func buildDynamicSkin(from layout: [ControlLayoutEntry]) -> some View {
-        VStack(spacing: 15) {
+        // Compact layout for portrait mode - constrained to bottom area
+        VStack(spacing: 8) {
             // Top row - utility buttons and system-specific shoulder buttons
-            HStack(spacing: 15) {
+            HStack(spacing: 10) {
                 // L buttons
                 VStack(spacing: 5) {
                     HStack(spacing: 5) {
@@ -1144,11 +1207,11 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 12)
+            .padding(.top, -2)  // Moved up 6px from 4px
 
-            Spacer().frame(height: 20) // Add space to raise D-pad position
-
-            HStack(spacing: 20) { // Reduced spacing to prevent off-screen issues
+            // Main control area - D-pad and action buttons
+            HStack(spacing: 15) {
                 // Left side - D-Pad or Joystick
                 VStack(spacing: 8) {
                     // Show either D-pad or joystick based on toggle and system support
@@ -1175,7 +1238,7 @@ struct DefaultControllerSkinView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                // Right side - Action buttons (constrained to prevent off-screen)
+                // Right side - Action buttons with flip animation for number pad
                 VStack(spacing: 10) {
                     // Find all button groups in the layout
                     let buttonGroups = layout.filter { $0.PVControlType == "PVButtonGroup" }
@@ -1184,8 +1247,80 @@ struct DefaultControllerSkinView: View {
                         // Separate number pad groups from standard button groups
                         let (numPadGroups, standardGroups) = separateButtonGroups(buttonGroups)
 
-                        // Show standard button groups always
-                        if !standardGroups.isEmpty {
+                        // Flip card container for standard buttons and number pad
+                        if !numPadGroups.isEmpty {
+                            // Flip card view with smooth animation
+                            ZStack {
+                                // Standard buttons (back face when flipped)
+                                if !standardGroups.isEmpty {
+                                    VStack(spacing: 15) {
+                                        ForEach(0..<standardGroups.count, id: \.self) { index in
+                                            if let groupedButtons = standardGroups[index].PVGroupedButtons {
+                                                createButtonGroup(from: groupedButtons)
+                                                    .id("buttonGroup_\(index)")
+                                            }
+                                        }
+                                    }
+                                    .opacity(showNumPad ? 0 : 1)
+                                    .scaleEffect(showNumPad ? 0.8 : 1.0)
+                                    .rotation3DEffect(
+                                        .degrees(showNumPad ? 90 : 0),
+                                        axis: (x: 0, y: 1, z: 0),
+                                        perspective: 0.3
+                                    )
+                                }
+
+                                // Number pad (front face when flipped)
+                                VStack(spacing: 8) {
+                                    ForEach(Array(numPadGroups.enumerated()), id: \.offset) { index, entry in
+                                        if let groupedButtons = entry.PVGroupedButtons {
+                                            createNumPadGrid(from: groupedButtons)
+                                                .id("numPadGroup_\(index)")
+                                        }
+                                    }
+                                }
+                                .opacity(showNumPad ? 1 : 0)
+                                .scaleEffect(showNumPad ? 1.0 : 0.8)
+                                .rotation3DEffect(
+                                    .degrees(showNumPad ? 0 : -90),
+                                    axis: (x: 0, y: 1, z: 0),
+                                    perspective: 0.3
+                                )
+
+                                // Flip toggle button overlay - positioned at top right
+                                VStack {
+                                    HStack {
+                                        Spacer()
+                                        Button(action: {
+                                            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                                                showNumPad.toggle()
+                                            }
+                                        }) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.blue.opacity(0.9))
+                                                    .frame(width: 44, height: 44)
+                                                    .overlay(
+                                                        Circle()
+                                                            .stroke(Color.white, lineWidth: 2)
+                                                    )
+                                                    .shadow(color: Color.blue.opacity(0.5), radius: 4)
+
+                                                Image(systemName: showNumPad ? "arrow.uturn.backward" : "number.circle.fill")
+                                                    .font(.system(size: 18, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                            }
+                                        }
+                                        .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
+                                        .padding(.trailing, 4)
+                                        .padding(.top, -8)  // Moved up 12px from 4px
+                                    }
+                                    Spacer()
+                                }
+                            }
+                            .frame(minHeight: 200)
+                        } else if !standardGroups.isEmpty {
+                            // No number pad, just show standard buttons
                             VStack(spacing: 15) {
                                 ForEach(0..<standardGroups.count, id: \.self) { index in
                                     if let groupedButtons = standardGroups[index].PVGroupedButtons {
@@ -1193,35 +1328,6 @@ struct DefaultControllerSkinView: View {
                                             .id("buttonGroup_\(index)")
                                     }
                                 }
-                            }
-                        }
-
-                        // Show number pad popover button if we have number pad groups
-                        if !numPadGroups.isEmpty {
-                            Button(action: {
-                                showNumPadPopover = true
-                            }) {
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.blue.opacity(0.7))
-                                        .frame(width: 60, height: 60)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color.white, lineWidth: 2)
-                                        )
-
-                                    Image(systemName: "number.circle.fill")
-                                        .font(.system(size: 28))
-                                        .foregroundColor(.white)
-                                }
-                            }
-                            .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
-                            .popover(isPresented: $showNumPadPopover) {
-                                NumPadPopoverView(
-                                    buttonGroups: numPadGroups,
-                                    createButton: createButton,
-                                    inputHandler: inputHandler
-                                )
                             }
                         }
                     } else {
@@ -1242,12 +1348,10 @@ struct DefaultControllerSkinView: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
 
-            Spacer().frame(height: 15) // Reduced space before Start/Select buttons to move them up
-
             // Start/Select buttons centered at the bottom
             HStack {
-                Spacer() // Center the buttons
-                HStack(spacing: 30) { // Increased spacing between buttons
+                Spacer()
+                HStack(spacing: 20) {
                     if hasControl(type: "PVSelectButton", in: layout) {
                         pillButton(label: "SELECT", color: .black)
                     }
@@ -1255,99 +1359,175 @@ struct DefaultControllerSkinView: View {
                         pillButton(label: "START", color: .black)
                     }
                 }
-                Spacer() // Center the buttons
+                Spacer()
             }
+            .padding(.bottom, 14)  // Added 6px spacing (was 8px, now 14px)
         }
-        .padding()
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
     }
 
     // Create a button group based on the system's button layout
+    @ViewBuilder
     private func createButtonGroup(from buttons: [ControlGroupButton]) -> some View {
         // Determine the best layout based on button count
         if buttons.count == 4 {
             // Standard 2x2 grid for 4 buttons
-            return AnyView(
-                VStack(spacing: 10) {
-                    HStack(spacing: 10) {
-                        createButton(from: buttons[0])
-                            .id("button_group_0_\(buttons[0].PVControlTitle ?? "unknown")")
-                        createButton(from: buttons[1])
-                            .id("button_group_0_\(buttons[1].PVControlTitle ?? "unknown")")
-                    }
-                    HStack(spacing: 10) {
-                        createButton(from: buttons[2])
-                            .id("button_group_0_\(buttons[2].PVControlTitle ?? "unknown")")
-                        createButton(from: buttons[3])
-                            .id("button_group_0_\(buttons[3].PVControlTitle ?? "unknown")")
-                    }
+            VStack(spacing: 10) {
+                HStack(spacing: 10) {
+                    createButton(from: buttons[0])
+                        .id("button_group_0_\(buttons[0].PVControlTitle ?? "unknown")")
+                    createButton(from: buttons[1])
+                        .id("button_group_0_\(buttons[1].PVControlTitle ?? "unknown")")
                 }
-            )
+                HStack(spacing: 10) {
+                    createButton(from: buttons[2])
+                        .id("button_group_0_\(buttons[2].PVControlTitle ?? "unknown")")
+                    createButton(from: buttons[3])
+                        .id("button_group_0_\(buttons[3].PVControlTitle ?? "unknown")")
+                }
+            }
         } else if buttons.count == 3 {
             // Triangle arrangement for 3 buttons (like Jaguar ABC)
-            return AnyView(
-                VStack(spacing: 10) {
-                    HStack(spacing: 10) {
-                        createButton(from: buttons[0])
-                            .id("button_group_1_\(buttons[0].PVControlTitle ?? "unknown")")
-                    }
-                    HStack(spacing: 10) {
-                        createButton(from: buttons[1])
-                            .id("button_group_1_\(buttons[1].PVControlTitle ?? "unknown")")
-                        createButton(from: buttons[2])
-                            .id("button_group_1_\(buttons[2].PVControlTitle ?? "unknown")")
-                    }
+            VStack(spacing: 10) {
+                HStack(spacing: 10) {
+                    createButton(from: buttons[0])
+                        .id("button_group_1_\(buttons[0].PVControlTitle ?? "unknown")")
                 }
-            )
+                HStack(spacing: 10) {
+                    createButton(from: buttons[1])
+                        .id("button_group_1_\(buttons[1].PVControlTitle ?? "unknown")")
+                    createButton(from: buttons[2])
+                        .id("button_group_1_\(buttons[2].PVControlTitle ?? "unknown")")
+                }
+            }
         } else if buttons.count >= 9 && buttons.count <= 12 {
             // Number pad layout (3x4 grid for 9-12 buttons)
-            return AnyView(
-                VStack(spacing: 10) {
-                    // First row
-                    HStack(spacing: 10) {
-                        ForEach(0..<min(3, buttons.count), id: \.self) { index in
-                            createButton(from: buttons[index])
-                        }
-                    }
-                    // Second row
-                    if buttons.count > 3 {
-                        HStack(spacing: 10) {
-                            ForEach(3..<min(6, buttons.count), id: \.self) { index in
-                                createButton(from: buttons[index])
-                            }
-                        }
-                    }
-                    // Third row
-                    if buttons.count > 6 {
-                        HStack(spacing: 10) {
-                            ForEach(6..<min(9, buttons.count), id: \.self) { index in
-                                createButton(from: buttons[index])
-                            }
-                        }
-                    }
-                    // Fourth row
-                    if buttons.count > 9 {
-                        HStack(spacing: 10) {
-                            ForEach(9..<min(12, buttons.count), id: \.self) { index in
-                                createButton(from: buttons[index])
-                            }
-                        }
-                    }
-                }
-            )
-        } else {
-            // Fallback for other button counts
-            return AnyView(
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 10) {
-                    ForEach(0..<buttons.count, id: \.self) { index in
+            VStack(spacing: 10) {
+                // First row
+                HStack(spacing: 10) {
+                    ForEach(0..<min(3, buttons.count), id: \.self) { index in
                         createButton(from: buttons[index])
                     }
                 }
-            )
+                // Second row
+                if buttons.count > 3 {
+                    HStack(spacing: 10) {
+                        ForEach(3..<min(6, buttons.count), id: \.self) { index in
+                            createButton(from: buttons[index])
+                        }
+                    }
+                }
+                // Third row
+                if buttons.count > 6 {
+                    HStack(spacing: 10) {
+                        ForEach(6..<min(9, buttons.count), id: \.self) { index in
+                            createButton(from: buttons[index])
+                        }
+                    }
+                }
+                // Fourth row
+                if buttons.count > 9 {
+                    HStack(spacing: 10) {
+                        ForEach(9..<min(12, buttons.count), id: \.self) { index in
+                            createButton(from: buttons[index])
+                        }
+                    }
+                }
+            }
+        } else {
+            // Fallback for other button counts
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 10) {
+                ForEach(0..<buttons.count, id: \.self) { index in
+                    createButton(from: buttons[index])
+                }
+            }
         }
     }
 
+    // Create a compact number pad grid layout
+    private func createNumPadGrid(from buttons: [ControlGroupButton]) -> some View {
+        // Create a compact 3x4 grid for number pad buttons
+        // Use smaller buttons to fit in the available space
+        let buttonSize: CGFloat = 50  // Smaller buttons for compact layout
+        let spacing: CGFloat = 6
+
+        return VStack(spacing: spacing) {
+            // Row 1: 1, 2, 3
+            if buttons.count > 0 {
+                HStack(spacing: spacing) {
+                    ForEach(0..<min(3, buttons.count), id: \.self) { index in
+                        createCompactButton(from: buttons[index], size: buttonSize)
+                    }
+                }
+            }
+
+            // Row 2: 4, 5, 6
+            if buttons.count > 3 {
+                HStack(spacing: spacing) {
+                    ForEach(3..<min(6, buttons.count), id: \.self) { index in
+                        createCompactButton(from: buttons[index], size: buttonSize)
+                    }
+                }
+            }
+
+            // Row 3: 7, 8, 9
+            if buttons.count > 6 {
+                HStack(spacing: spacing) {
+                    ForEach(6..<min(9, buttons.count), id: \.self) { index in
+                        createCompactButton(from: buttons[index], size: buttonSize)
+                    }
+                }
+            }
+
+            // Row 4: 0, *, #, or remaining buttons
+            if buttons.count > 9 {
+                HStack(spacing: spacing) {
+                    ForEach(9..<min(12, buttons.count), id: \.self) { index in
+                        createCompactButton(from: buttons[index], size: buttonSize)
+                    }
+                }
+            }
+        }
+    }
+
+    // Create a compact button for number pad (smaller size)
+    private func createCompactButton(from button: ControlGroupButton, size: CGFloat) -> some View {
+        let displayLabel = button.PVControlTitle ?? "Button"
+        let actionIdentifier = button.PVControlTitle ?? displayLabel
+        let color = colorFromString(button.PVControlTint) ?? .gray
+
+        return Button(action: {}) {
+            ZStack {
+                // Outer glow
+                Circle()
+                    .fill(Color.clear)
+                    .frame(width: size, height: size)
+                    .overlay(
+                        Circle()
+                            .stroke(color, lineWidth: 1.5)
+                            .blur(radius: 2)
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white, lineWidth: 0.5)
+                    )
+
+                // Button label with neon effect
+                NeonText(displayLabel, color: color, fontSize: 14)
+            }
+            .frame(width: size, height: size)
+        }
+        .buttonStyle(GameButtonStyle(pressAction: {
+            inputHandler.buttonPressed(actionIdentifier)
+        }, releaseAction: {
+            inputHandler.buttonReleased(actionIdentifier)
+        }))
+    }
+
     // Create a button from a ControlGroupButton
-    private func createButton(from button: ControlGroupButton) -> AnyView {
+    @ViewBuilder
+    private func createButton(from button: ControlGroupButton) -> some View {
         let displayLabel = button.PVControlTitle ?? "Button"
 
         // Map special PlayStation symbols to their proper identifiers
@@ -1377,16 +1557,11 @@ struct DefaultControllerSkinView: View {
             .frame(width: 60, height: 60)
         }
         .buttonStyle(GameButtonStyle(pressAction: {
-            // Log button press for debugging
-            print("Button pressed: \(actionIdentifier)")
             inputHandler.buttonPressed(actionIdentifier)
         }, releaseAction: {
-            // Log button release for debugging
-            print("Button released: \(actionIdentifier)")
             inputHandler.buttonReleased(actionIdentifier)
         }))
-        .id("button_\(actionIdentifier)_\(UUID().uuidString)") // Ensure each button has a unique ID
-        .eraseToAnyView()
+        .id("button_\(actionIdentifier)")
     }
 
     // Custom button style that handles press and release events
@@ -1493,118 +1668,5 @@ struct DefaultControllerSkinView: View {
         }
 
         return (numPadGroups, standardGroups)
-    }
-}
-
-/// Popover view for num pad buttons
-struct NumPadPopoverView: View {
-    let buttonGroups: [ControlLayoutEntry]
-    let createButton: (ControlGroupButton) -> AnyView
-    let inputHandler: DeltaSkinInputHandler
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 15) {
-                ForEach(Array(buttonGroups.enumerated()), id: \.offset) { index, entry in
-                    if let groupedButtons = entry.PVGroupedButtons {
-                        NumPadButtonGroupView(
-                            groupedButtons: groupedButtons,
-                            createButton: createButton
-                        )
-                    }
-                }
-            }
-            .padding()
-        }
-        .frame(width: 300, height: 400)
-        .background(Color.black.opacity(0.9))
-    }
-}
-
-/// Helper view for a single button group
-private struct NumPadButtonGroupView: View {
-    let groupedButtons: [ControlGroupButton]
-    let createButton: (ControlGroupButton) -> AnyView
-
-    var body: some View {
-        if groupedButtons.count >= 9 {
-            NumberPadLayoutView(
-                groupedButtons: groupedButtons,
-                createButton: createButton
-            )
-        } else {
-            GridLayoutView(
-                groupedButtons: groupedButtons,
-                createButton: createButton
-            )
-        }
-    }
-}
-
-/// Number pad layout (3x4 grid) for 9+ buttons
-private struct NumberPadLayoutView: View {
-    let groupedButtons: [ControlGroupButton]
-    let createButton: (ControlGroupButton) -> AnyView
-
-    var body: some View {
-        VStack(spacing: 8) {
-            // Row 1: 1, 2, 3
-            ButtonRowView(
-                buttons: Array(groupedButtons.prefix(3)),
-                createButton: createButton
-            )
-
-            // Row 2: 4, 5, 6
-            if groupedButtons.count > 3 {
-                ButtonRowView(
-                    buttons: Array(groupedButtons[3..<min(6, groupedButtons.count)]),
-                    createButton: createButton
-                )
-            }
-
-            // Row 3: 7, 8, 9
-            if groupedButtons.count > 6 {
-                ButtonRowView(
-                    buttons: Array(groupedButtons[6..<min(9, groupedButtons.count)]),
-                    createButton: createButton
-                )
-            }
-
-            // Row 4: 0, A, B, C (or whatever remains)
-            if groupedButtons.count > 9 {
-                ButtonRowView(
-                    buttons: Array(groupedButtons[9..<groupedButtons.count]),
-                    createButton: createButton
-                )
-            }
-        }
-    }
-}
-
-/// Single row of buttons
-private struct ButtonRowView: View {
-    let buttons: [ControlGroupButton]
-    let createButton: (ControlGroupButton) -> AnyView
-
-    var body: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<buttons.count, id: \.self) { i in
-                createButton(buttons[i])
-            }
-        }
-    }
-}
-
-/// Grid layout for smaller button groups
-private struct GridLayoutView: View {
-    let groupedButtons: [ControlGroupButton]
-    let createButton: (ControlGroupButton) -> AnyView
-
-    var body: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 10) {
-            ForEach(0..<groupedButtons.count, id: \.self) { i in
-                createButton(groupedButtons[i])
-            }
-        }
     }
 }
