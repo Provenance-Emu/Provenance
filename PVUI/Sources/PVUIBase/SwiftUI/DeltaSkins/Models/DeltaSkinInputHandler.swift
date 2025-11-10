@@ -355,7 +355,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         let systemIdentifier = core.systemIdentifier
         let systemId = systemIdentifier.flatMap { SystemIdentifier(rawValue: $0) }
         let systemsWithDPadOnly: Set<SystemIdentifier> = [
-            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST
+            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST, ._3DO
         ]
 
         // Convert joystick to D-pad for systems that only had D-pad
@@ -581,6 +581,12 @@ public class DeltaSkinInputHandler: ObservableObject {
             if let r = core as? PVA8SystemResponderClient {
                 let b = PVA8Button(id)
                 DLOG("AtariST D-pad button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case ._3DO:
+            if let r = core as? PV3DOSystemResponderClient {
+                let b = PV3DOButton(id)
+                DLOG("3DO D-pad button: original=\(buttonId), normalized=\(id), PV3DOButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
         default:
@@ -1174,6 +1180,12 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
+        case ._3DO:
+            if let r = core as? PV3DOSystemResponderClient {
+                let b = PV3DOButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
         case .WonderSwan, .WonderSwanColor:
             if let r = core as? PVWonderSwanSystemResponderClient {
                 let b = PVWSButton(id)
@@ -1223,6 +1235,50 @@ public class DeltaSkinInputHandler: ObservableObject {
         default:
             break
         }
+
+        /// Fallback for systems that use PVRetroArchCoreResponderClient
+        /// These systems don't have specific responder protocols but use ButtonResponder/JoystickResponder
+        /// Check if this system's responderClientType is PVRetroArchCoreResponderClient or if core conforms to it
+        let usesRetroArchResponder = String(describing: systemId.responderClientType).contains("PVRetroArchCoreResponderClient") || core is PVRetroArchCoreResponderClient
+        if usesRetroArchResponder {
+            DLOG("System uses PVRetroArchCoreResponderClient, using controllerType fallback: \(systemId)")
+
+            /// Use the system's controllerType to get the appropriate button enum
+            let buttonType = systemId.controllerType
+            let button = buttonType.init(id)
+            let buttonIndex = button.rawValue
+
+            DLOG("RetroArch button: original=\(buttonId), normalized=\(id), buttonIndex=\(buttonIndex)")
+
+            /// Use PVControllerResponder to send button press/release
+            if let responder = core as? PVControllerResponder {
+                if isPressed {
+                    responder.controllerPressedButton(buttonIndex, forPlayer: 0)
+                } else {
+                    responder.controllerReleasedButton(buttonIndex, forPlayer: 0)
+                }
+                return true
+            } else {
+                /// If PVControllerResponder is not available, try JoystickResponder for D-pad
+                /// or fall back to notifications
+                DLOG("Core does not conform to PVControllerResponder, trying JoystickResponder or notifications")
+                if isPressed {
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("ButtonPressed"),
+                        object: nil,
+                        userInfo: ["button": buttonIndex, "player": 0]
+                    )
+                } else {
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("ButtonReleased"),
+                        object: nil,
+                        userInfo: ["button": buttonIndex, "player": 0]
+                    )
+                }
+                return true
+            }
+        }
+
         return false
     }
 
@@ -1305,6 +1361,17 @@ public class DeltaSkinInputHandler: ObservableObject {
             if s == "r1" { return "r" }
             if s == "l2" { return "zl" }
             if s == "r2" { return "zr" }
+        case ._3DO:
+            // 3DO button normalization
+            // D-pad directions
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            // Action buttons
+            if ["a", "b", "c"].contains(s) { return s }
+            // Shoulder buttons (PV3DOButton handles "l"/"l1" -> L and "r"/"r1" -> R)
+            if ["l", "l1"].contains(s) { return "l" }
+            if ["r", "r1"].contains(s) { return "r" }
+            // Special buttons
+            if ["p", "x"].contains(s) { return s }
         default:
             break
         }
@@ -1313,8 +1380,8 @@ public class DeltaSkinInputHandler: ObservableObject {
         if ["run", "play"].contains(s) { return "start" }
         // 32X uses "mode" directly, so don't convert it to "select" for 32X
         if system != .Sega32X && ["mode", "option"].contains(s) { return "select" }
-        /// VirtualBoy uses "l" and "r" directly, so don't convert them to "l1"/"r1"
-        if system != .VirtualBoy {
+        /// VirtualBoy and 3DO use "l" and "r" directly, so don't convert them to "l1"/"r1"
+        if system != .VirtualBoy && system != ._3DO {
             if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
             if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
         }
