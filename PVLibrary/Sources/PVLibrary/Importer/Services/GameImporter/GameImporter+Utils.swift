@@ -12,13 +12,13 @@ extension GameImporter {
     internal func isSkin(_ queueItem: ImportQueueItem) -> Bool {
         return isSkin(queueItem.url)
     }
-    
+
     /// Checks if a given path is a Skin file by extension
     internal func isSkin(_ path: URL) -> Bool {
         let fileExtension = path.pathExtension.lowercased()
         return Extensions.skinExtensions.contains(fileExtension)
     }
-    
+
     /// Checks if a given ROM file is a CD-ROM
     internal func isCDROM(_ queueItem: ImportQueueItem) -> Bool {
         return isCDROM(queueItem.url)
@@ -65,19 +65,20 @@ extension GameImporter {
             }
         }
 
-        // 2. If not in /BIOS/ dir handled above, or needs further checking,
-        //    iterate over all PVBIOS entries to match by expected filename or MD5.
-        for biosEntry in PVEmulatorConfiguration.biosArray {
-            // A. Check expected filename (case-insensitive)
-            if biosEntry.expectedFilename.lowercased() == filenameLowercased {
-                VLOG("BIOS match by expected filename: \(filenameLowercased)")
-                return true
-            }
+        // 2. Fast-path: Check BIOS filenames cache first (case-insensitive Set lookup)
+        //    This is much faster than iterating through biosArray and uses the cache loaded at bootup
+        if RomDatabase.biosFilenamesCache.contains(filenameLowercased) {
+            VLOG("BIOS match by filename cache: \(filenameLowercased)")
+            return true
+        }
 
-            // B. Check expected MD5 (if item's MD5 is available and BIOS entry has an expected MD5)
-            if let itemMD5 = md5Upper, !biosEntry.expectedMD5.isEmpty, biosEntry.expectedMD5.lowercased() == itemMD5.lowercased() {
-                VLOG("BIOS match by MD5: \(itemMD5) for file: \(filenameLowercased)")
-                return true
+        // 3. Check MD5 against BIOS entries if available (slower, but needed for files with different names)
+        if let itemMD5 = md5Upper {
+            for biosEntry in PVEmulatorConfiguration.biosArray {
+                if !biosEntry.expectedMD5.isEmpty, biosEntry.expectedMD5.uppercased() == itemMD5 {
+                    VLOG("BIOS match by MD5: \(itemMD5) for file: \(filenameLowercased)")
+                    return true
+                }
             }
         }
 

@@ -2537,6 +2537,26 @@ public final class GameImporter: GameImporting, ObservableObject {
         let typeDuration = Date().timeIntervalSince(typeStartTime)
         ILOG("Determined file type: \(item.fileType) for \(fileName) in \(String(format: "%.2f", typeDuration))s")
 
+        // Handle BIOS files first - BIOS files should never be extracted as archives
+        // This check ensures BIOS files are detected even if they have .zip extension
+        if item.fileType == .bios {
+            ILOG("Processing as BIOS file (detected before archive handling)")
+            do {
+                try await gameImporterDatabaseService.importBIOSIntoDatabase(queueItem: item)
+                await MainActor.run {
+                    item.status = .success
+                }
+                ILOG("Successfully imported BIOS file: \(item.url.lastPathComponent)")
+                return
+            } catch {
+                ELOG("Failed to import BIOS file: \(error.localizedDescription)")
+                await MainActor.run {
+                    item.status = .failure(error: error)
+                }
+                throw error
+            }
+        }
+
         // Handle archive files - check if they match by filename or MD5 first
         if item.fileType == .zip {
             // Check if archive matches in database (should be kept as-is)

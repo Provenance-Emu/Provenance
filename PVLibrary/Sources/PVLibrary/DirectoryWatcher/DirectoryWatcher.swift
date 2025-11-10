@@ -628,10 +628,26 @@ public final class DirectoryWatcher: ObservableObject {
     }
 
     private func processArchive(at url: URL) {
-        ILOG("Processing archive: \(url.lastPathComponent)")
-        Task {
-            try? await extractArchive(at: url)
+        ILOG("Processing archive: \(url.lastPathComponent) - passing to GameImporter for BIOS detection and extraction")
+
+        // Archive extraction is now handled by GameImporter, which will:
+        // 1. Check if the archive is a BIOS file first
+        // 2. If BIOS, move it to BIOS folder as-is
+        // 3. If not BIOS, extract and import contents
+        // This ensures BIOS files are never incorrectly extracted
+
+        // Verify file still exists before yielding (it may have been moved during import)
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            ILOG("Archive \(url.lastPathComponent) no longer exists (likely moved during import), skipping")
+            Task {
+                await watcherManager.removeWatcher(for: url)
+            }
+            return
         }
+
+        // Pass archive to GameImporter like any other file
+        // GameImporter will handle BIOS detection and extraction
+        completedFilesContinuation?.yield([url])
     }
 
     private func processNonArchive(at url: URL) {
@@ -739,16 +755,16 @@ fileprivate extension DirectoryWatcher {
                     }
                 }
 
-                // Process archives
-                for file in filesOnly where Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
-                    ILOG("Processing existing archive: \(file.lastPathComponent)")
-                    try await self.extractArchive(at: file)
-                }
-
-                // Process non-archive files (add to import queue immediately)
-                for file in filesOnly where !Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) && isValidFile(file) {
-                    ILOG("Processing existing non-archive file: \(file.lastPathComponent)")
-                    // Add directly to import queue instead of waiting for file watcher
+                // Process all files (archives and non-archives) - pass to GameImporter
+                // GameImporter will handle BIOS detection and archive extraction
+                for file in filesOnly where isValidFile(file) {
+                    let isArchive = Extensions.archiveExtensions.contains(file.pathExtension.lowercased())
+                    if isArchive {
+                        ILOG("Processing existing archive: \(file.lastPathComponent) - passing to GameImporter for BIOS detection and extraction")
+                    } else {
+                        ILOG("Processing existing non-archive file: \(file.lastPathComponent)")
+                    }
+                    // Add to import queue - GameImporter will handle BIOS detection and extraction
                     await GameImporter.shared.addImports(forPaths: [file])
                 }
 
@@ -1026,9 +1042,11 @@ extension DirectoryWatcher {
 
                 Task {
                     /// Minimal delay to allow file system to settle (reduced from 1.5s to 0.5s)
-                    ILOG("Scheduling delayed extraction for file: \(destinationURL.lastPathComponent)")
+                    ILOG("Scheduling import for file: \(destinationURL.lastPathComponent)")
                     try await Task.sleep(nanoseconds: 500_000_000) // 0.5 second delay
-                    try await self.extractArchive(at: destinationURL)
+                    // Pass to GameImporter instead of extracting directly
+                    // GameImporter will handle BIOS detection and archive extraction
+                    await GameImporter.shared.addImports(forPaths: [destinationURL])
                 }
             } catch {
                 ELOG("Error handling imported file: \(error.localizedDescription)")
