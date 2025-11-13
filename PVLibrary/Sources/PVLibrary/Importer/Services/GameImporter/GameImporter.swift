@@ -88,6 +88,8 @@ public class SkinImporterInjector: SkinImporterServicing {
 /// Import Coodinator
 internal actor ImportCoordinator {
     private var activeImports: Set<String> = []
+    /// Tracks archive files being extracted by their URL path to prevent re-adding during extraction
+    private var extractingArchives: Set<String> = []
 
     func checkAndRegisterImport(md5: String) -> Bool {
         guard !activeImports.contains(md5) else { return false }
@@ -97,6 +99,21 @@ internal actor ImportCoordinator {
 
     func completeImport(md5: String) {
         activeImports.remove(md5)
+    }
+
+    /// Registers an archive file as being extracted to prevent DirectoryWatcher from re-adding it
+    func registerExtractingArchive(url: URL) {
+        extractingArchives.insert(url.path)
+    }
+
+    /// Unregisters an archive file after extraction completes
+    func unregisterExtractingArchive(url: URL) {
+        extractingArchives.remove(url.path)
+    }
+
+    /// Checks if an archive is currently being extracted
+    func isExtractingArchive(url: URL) -> Bool {
+        return extractingArchives.contains(url.path)
     }
 }
 
@@ -188,6 +205,16 @@ public actor ImportQueueActor {
 
     func removeImports(at offsets: IndexSet) {
         queue.remove(atOffsets: offsets)
+    }
+
+    /// Removes an item from the queue by matching its URL
+    func removeImport(byURL url: URL) {
+        queue.removeAll { $0.url == url }
+    }
+
+    /// Removes an item from the queue by matching its ID
+    func removeImport(byID id: UUID) {
+        queue.removeAll { $0.id == id }
     }
 
     func clearCompleted() {
@@ -2578,12 +2605,27 @@ public final class GameImporter: GameImporting, ObservableObject {
             } else {
                 // Archive doesn't match - extract and import contents
                 ILOG("Archive \(fileName) doesn't match in database - extracting and importing contents")
-                try await extractAndImportArchive(item)
-                // Mark as success since extraction and queuing is complete
-                await MainActor.run {
-                    item.status = .success
+
+                // Register archive as being extracted to prevent DirectoryWatcher from re-adding it
+                await importCoordinator.registerExtractingArchive(url: item.url)
+
+                do {
+                    try await extractAndImportArchive(item)
+
+                    // Remove the ZIP item from the queue after successful extraction
+                    await importQueueActor.removeImport(byID: item.id)
+                    ILOG("Removed ZIP archive item from queue after successful extraction: \(fileName)")
+
+                    // Unregister archive from extraction tracking
+                    await importCoordinator.unregisterExtractingArchive(url: item.url)
+
+                    // Don't set status or return - item is removed from queue
+                    return
+                } catch {
+                    // Unregister on error so it can be retried
+                    await importCoordinator.unregisterExtractingArchive(url: item.url)
+                    throw error
                 }
-                return
             }
         }
 
@@ -2862,6 +2904,13 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     private func addImportItemToQueue(_ item: ImportQueueItem) async {
+        // Check if this archive is currently being extracted (prevents DirectoryWatcher from re-adding it)
+        let isExtracting = await importCoordinator.isExtractingArchive(url: item.url)
+        if isExtracting {
+            ILOG("GameImportQueue - Skipping archive file that is currently being extracted: \(item.url.lastPathComponent)")
+            return
+        }
+
         // First, check if this is a BIOS file
         let fileType = determineImportType(item)
         item.fileType = fileType // <--- SET THE FILE TYPE HERE
