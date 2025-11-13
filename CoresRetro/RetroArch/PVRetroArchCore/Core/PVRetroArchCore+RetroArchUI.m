@@ -46,6 +46,10 @@
 
 #ifdef HAVE_MENU
 #include "../../menu/menu_setting.h"
+#include "../../menu/menu_driver.h"
+#include "../../menu/menu_cbs.h"
+#include "../../menu/menu_entries.h"
+#include "../../msg_hash.h"
 #endif
 #import <AVFoundation/AVFoundation.h>
 #import <PVLogging/PVLoggingObjC.h>
@@ -125,6 +129,7 @@ int argc =  1;
 
 @interface PVRetroArchCoreBridge (CustomLayout)
 @property (nonatomic, assign) BOOL useCustomRenderViewLayout;
+@property (nonatomic, assign) BOOL shouldTriggerRetroArchUpdates;
 @end
 
 @implementation PVRetroArchCoreBridge (CustomLayout)
@@ -178,6 +183,15 @@ int argc =  1;
     return val.boolValue;
 }
 
+- (void)setShouldTriggerRetroArchUpdates:(BOOL)enabled {
+    objc_setAssociatedObject(self, @selector(shouldTriggerRetroArchUpdates), @(enabled), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)shouldTriggerRetroArchUpdates {
+    NSNumber *val = objc_getAssociatedObject(self, @selector(shouldTriggerRetroArchUpdates));
+    return val.boolValue;
+}
+
 @end
 
 @interface PVRetroArchCoreBridge ()
@@ -203,6 +217,12 @@ int argc =  1;
         config_set_defaults(global_get_ptr());
         frontend_darwin_get_env(argc, argv, NULL, NULL);
         dir_check_defaults(NULL);
+    }
+    /// Enable savestate bypass to allow save states for all cores
+    /// This bypasses the core info database check which may not be properly initialized
+    settings = config_get_ptr();
+    if (settings) {
+        settings->bools.core_info_savestate_bypass = true;
     }
     [self writeConfigFile];
     /// Sync BIOS resources, but exclude tos.img as it's handled specially in writeConfigFile
@@ -443,6 +463,14 @@ void extract_bundles();
     if (shouldUpdateOverlays) {
         ILOG(@"Overlays need updating, starting download...");
         [self downloadAndExtractOverlays];
+    }
+
+    // Check if we need to trigger RetroArch updates (first run or version update)
+    BOOL shouldTriggerUpdates = !configFileExists || !versionFileExists;
+    if (shouldTriggerUpdates) {
+        ILOG(@"First run or version update detected - will trigger RetroArch resource updates after initialization");
+        // Store flag to trigger updates after RetroArch is initialized
+        self.shouldTriggerRetroArchUpdates = YES;
     }
     // Additional Override Settings
     NSString* content = @"video_driver = \"vulkan\"\n";
@@ -1352,6 +1380,20 @@ void extract_bundles();
 		command_event(CMD_EVENT_AUDIO_START, NULL);
         command_event(CMD_EVENT_UNPAUSE, NULL);
         [self useRetroArchController:self.retroArchControls];
+
+        // Trigger RetroArch resource updates if needed
+        if (self.shouldTriggerRetroArchUpdates) {
+            // Only trigger updates when core is paused to avoid interfering with active emulation
+            // Pause the core before triggering updates to ensure safe state
+            command_event(CMD_EVENT_PAUSE, NULL);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [self triggerRetroArchResourceUpdates];
+                // Resume after updates are triggered (they run in background)
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                    command_event(CMD_EVENT_UNPAUSE, NULL);
+                });
+            });
+        }
 	});
 }
 
@@ -1371,6 +1413,105 @@ void extract_bundles();
       RARCH_LOG("AudioSession Interruption Ended\n");
       audio_driver_start(false);
    }
+}
+
+#ifdef HAVE_MENU
+/// C helper function to trigger RetroArch update actions
+/// Uses menu callback system to trigger the update downloads
+/// NOTE: Should only be called when RetroArch is paused or not running
+static void trigger_retroarch_update_action(enum msg_hash_enums enum_idx) {
+    // Check if menu system is initialized
+    struct menu_state *menu_st = menu_state_get_ptr();
+    if (!menu_st || !menu_st->driver_ctx) {
+        RARCH_LOG("Menu system not initialized, skipping update for enum_idx %d\n", enum_idx);
+        return;
+    }
+
+    // Get the label string for this enum_idx
+    const char *label = msg_hash_to_str(enum_idx);
+    if (!label) {
+        RARCH_LOG("Could not get label for enum_idx %d\n", enum_idx);
+        return;
+    }
+
+    // Initialize the callback binding for this menu entry
+    // This will set up the action_ok callback based on the label
+    menu_file_list_cbs_t cbs;
+    memset(&cbs, 0, sizeof(menu_file_list_cbs_t));
+
+    // Bind the OK action callback using the label
+    // This looks up the appropriate action handler from the menu callback system
+    menu_cbs_init_bind_ok(&cbs, "", label, strlen(label), MENU_SETTING_ACTION, 0, label, strlen(label));
+
+    // Now call the action_ok callback if it was set
+    if (cbs.action_ok) {
+        cbs.action_ok("", label, MENU_SETTING_ACTION, 0, 0);
+    } else {
+        RARCH_LOG("No action_ok callback found for enum_idx %d (label: %s)\n", enum_idx, label);
+    }
+}
+#endif
+
+/// Trigger all RetroArch resource updates (core info, assets, controller profiles, cheats, databases, overlays, shaders)
+/// NOTE: Should only be called when RetroArch is paused or not running
+- (void)triggerRetroArchResourceUpdates {
+#ifdef HAVE_MENU
+    // Verify menu system is ready
+    struct menu_state *menu_st = menu_state_get_ptr();
+    if (!menu_st || !menu_st->driver_ctx) {
+        WLOG(@"Menu system not ready - skipping RetroArch resource updates");
+        return;
+    }
+
+    ILOG(@"Triggering RetroArch resource updates...");
+
+    // Trigger updates with delays between them to avoid overwhelming the network/system
+    // Core Info Files
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        ILOG(@"Updating RetroArch core info files...");
+        trigger_retroarch_update_action(MENU_ENUM_LABEL_UPDATE_CORE_INFO_FILES);
+    });
+
+    // Assets
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        ILOG(@"Updating RetroArch assets...");
+        trigger_retroarch_update_action(MENU_ENUM_LABEL_UPDATE_ASSETS);
+    });
+
+    // Controller Profiles (Autoconfig)
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        ILOG(@"Updating RetroArch controller profiles...");
+        trigger_retroarch_update_action(MENU_ENUM_LABEL_UPDATE_AUTOCONFIG_PROFILES);
+    });
+
+    // Databases
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        ILOG(@"Updating RetroArch databases...");
+        trigger_retroarch_update_action(MENU_ENUM_LABEL_UPDATE_DATABASES);
+    });
+
+    // Cheats
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        ILOG(@"Updating RetroArch cheats...");
+        trigger_retroarch_update_action(MENU_ENUM_LABEL_UPDATE_CHEATS);
+    });
+
+    // Overlays (if not already handled)
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        ILOG(@"Updating RetroArch overlays...");
+        trigger_retroarch_update_action(MENU_ENUM_LABEL_UPDATE_OVERLAYS);
+    });
+
+    // Slang Shaders
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        ILOG(@"Updating RetroArch slang shaders...");
+        trigger_retroarch_update_action(MENU_ENUM_LABEL_UPDATE_SLANG_SHADERS);
+    });
+
+    ILOG(@"All RetroArch resource updates triggered");
+#else
+    WLOG(@"RetroArch menu system not available - cannot trigger updates");
+#endif
 }
 
 #pragma mark - ApplePlatform
