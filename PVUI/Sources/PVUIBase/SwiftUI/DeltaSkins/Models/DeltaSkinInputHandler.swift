@@ -1372,6 +1372,30 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["r", "r1"].contains(s) { return "r" }
             // Special buttons
             if ["p", "x"].contains(s) { return s }
+        case .N64:
+            // N64 button normalization
+            // D-pad directions
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            // C-buttons (handle various formats)
+            if ["c▲", "cup", "c-up", "c up"].contains(s) { return "c▲" }
+            if ["c▼", "cdown", "c-down", "c down"].contains(s) { return "c▼" }
+            if ["c◀", "cleft", "c-left", "c left"].contains(s) { return "c◀" }
+            if ["c▶", "cright", "c-right", "c right"].contains(s) { return "c▶" }
+            // Action buttons
+            if ["a", "b"].contains(s) { return s }
+            // Z button: both "x" and "z" map to "z" for N64
+            if ["z", "x"].contains(s) { return "z" }
+            // Shoulder buttons: N64 uses "l" and "r" directly (not "l1"/"r1")
+            if ["l", "l1", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l" }
+            if ["r", "r1", "rb", "rshoulder", "shoulderright"].contains(s) { return "r" }
+            // Start button
+            if ["start"].contains(s) { return s }
+            // Analog stick directions
+            if ["analog-up", "analogup"].contains(s) { return "analog-up" }
+            if ["analog-down", "analogdown"].contains(s) { return "analog-down" }
+            if ["analog-left", "analogleft"].contains(s) { return "analog-left" }
+            if ["analog-right", "analogright"].contains(s) { return "analog-right" }
+            if ["left-analog", "leftanalog"].contains(s) { return "left-analog" }
         default:
             break
         }
@@ -1380,8 +1404,8 @@ public class DeltaSkinInputHandler: ObservableObject {
         if ["run", "play"].contains(s) { return "start" }
         // 32X uses "mode" directly, so don't convert it to "select" for 32X
         if system != .Sega32X && ["mode", "option"].contains(s) { return "select" }
-        /// VirtualBoy and 3DO use "l" and "r" directly, so don't convert them to "l1"/"r1"
-        if system != .VirtualBoy && system != ._3DO {
+        /// VirtualBoy, 3DO, and N64 use "l" and "r" directly, so don't convert them to "l1"/"r1"
+        if system != .VirtualBoy && system != ._3DO && system != .N64 {
             if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
             if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
         }
