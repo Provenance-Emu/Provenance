@@ -720,6 +720,13 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
                 .id(game.id)
                 .focusableIfAvailable()
+                .contextMenu {
+                    GameContextMenu(
+                        game: game,
+                        rootDelegate: rootDelegate,
+                        contextMenuDelegate: self
+                    )
+                }
             }
         }
         .padding(.horizontal, 10)
@@ -797,6 +804,13 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
                 .id(game.id)
                 .focusableIfAvailable()
+                .contextMenu {
+                    GameContextMenu(
+                        game: game,
+                        rootDelegate: rootDelegate,
+                        contextMenuDelegate: self
+                    )
+                }
                 GamesDividerView()
             }
         }
