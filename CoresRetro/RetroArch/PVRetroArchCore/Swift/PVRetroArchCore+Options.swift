@@ -650,7 +650,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 self.extractArchive = false;
             }
         }
-        if let coreIdentifier = self.coreIdentifier {
+        if let coreIdentifier = self.coreIdentifier?.lowercased() {
             if (coreIdentifier.contains("vecx")) {
                 // Hardware mode broken, force software mode
                 optionValues += "vecx_use_hw = \"Software\"\n"
