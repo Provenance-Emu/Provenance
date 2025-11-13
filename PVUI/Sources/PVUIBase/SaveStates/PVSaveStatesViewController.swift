@@ -266,15 +266,27 @@ final class PVSaveStatesViewController: UICollectionViewController {
                     self.presentError("Error creating save state: Uknown reason", source: self.view)
                 }
             } catch {
+                let nsError = error as NSError
                 let errorMsg = error.localizedDescription
-                let reason = (error as NSError).localizedFailureReason ?? ""
+                let reason = nsError.localizedFailureReason ?? ""
+                let recoverySuggestion = nsError.localizedRecoverySuggestion ?? ""
+
                 let userMessage: String
                 if errorMsg.contains("space") || errorMsg.contains("storage") || reason.contains("space") {
                     userMessage = "Failed to create save state. Your device may be out of storage space. Try freeing up space and try again."
-                } else if errorMsg.contains("permission") || errorMsg.contains("access") {
+                } else if errorMsg.contains("permission") || errorMsg.contains("access") || reason.contains("permission") || reason.contains("access") {
                     userMessage = "Could not create save state. Check file permissions or try restarting the app."
+                } else if reason.contains("not initialized") || reason.contains("Core is not initialized") {
+                    userMessage = "Failed to create save state. The emulator core is not ready. Please wait a moment and try again."
+                } else if reason.contains("does not support save states") || reason.contains("does not support savestate") {
+                    userMessage = "This core does not support save states."
+                } else if reason.contains("Failed to queue") || reason.contains("queue") {
+                    userMessage = "Failed to create save state. The save operation could not be started. Please try again."
+                } else if reason.contains("was not created") || reason.contains("not found") || reason.contains("file not found") {
+                    userMessage = "Failed to create save state. The save state file could not be written. \(recoverySuggestion.isEmpty ? "Check available disk space and file permissions." : recoverySuggestion)"
                 } else {
-                    userMessage = "Failed to create save state: \(errorMsg). The save state directory may be corrupted or inaccessible."
+                    let fullError = [errorMsg, reason, recoverySuggestion].filter { !$0.isEmpty }.joined(separator: " ")
+                    userMessage = "Failed to create save state: \(fullError.isEmpty ? errorMsg : fullError)."
                 }
                 self.presentError(userMessage, source: self.view)
             }
@@ -304,10 +316,28 @@ final class PVSaveStatesViewController: UICollectionViewController {
                     }
                 } catch {
                     ELOG("Error overwriting save state: \(error.localizedDescription)")
+                    let nsError = error as NSError
                     let errorMsg = error.localizedDescription
-                    let userMessage = errorMsg.contains("space") || errorMsg.contains("storage")
-                        ? "Failed to save state. Your device may be out of storage space. Try freeing up space and try again."
-                        : "Failed to overwrite save state: \(errorMsg). The save state file may be corrupted or in use."
+                    let reason = nsError.localizedFailureReason ?? ""
+                    let recoverySuggestion = nsError.localizedRecoverySuggestion ?? ""
+
+                    let userMessage: String
+                    if errorMsg.contains("space") || errorMsg.contains("storage") || reason.contains("space") {
+                        userMessage = "Failed to save state. Your device may be out of storage space. Try freeing up space and try again."
+                    } else if errorMsg.contains("permission") || errorMsg.contains("access") || reason.contains("permission") || reason.contains("access") {
+                        userMessage = "Could not overwrite save state. Check file permissions or try restarting the app."
+                    } else if reason.contains("not initialized") || reason.contains("Core is not initialized") {
+                        userMessage = "Failed to overwrite save state. The emulator core is not ready. Please wait a moment and try again."
+                    } else if reason.contains("does not support save states") || reason.contains("does not support savestate") {
+                        userMessage = "This core does not support save states."
+                    } else if reason.contains("Failed to queue") || reason.contains("queue") {
+                        userMessage = "Failed to overwrite save state. The save operation could not be started. Please try again."
+                    } else if reason.contains("was not created") || reason.contains("not found") || reason.contains("file not found") {
+                        userMessage = "Failed to overwrite save state. The save state file could not be written. \(recoverySuggestion.isEmpty ? "Check available disk space and file permissions." : recoverySuggestion)"
+                    } else {
+                        let fullError = [errorMsg, reason, recoverySuggestion].filter { !$0.isEmpty }.joined(separator: " ")
+                        userMessage = "Failed to overwrite save state: \(fullError.isEmpty ? errorMsg : fullError)."
+                    }
                     self.presentError(userMessage, source: self.view)
                 }
             }
