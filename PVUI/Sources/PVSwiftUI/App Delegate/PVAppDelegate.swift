@@ -30,8 +30,8 @@ import PVFeatureFlags
 import BackgroundTasks
 import PVWebServer
 
-#if canImport(FirebaseCore)
-import FirebaseCore
+#if canImport(Firebase)
+import Firebase
 import FirebaseCrashlyticsSwift
 import FirebaseAnalytics
 #endif
@@ -344,7 +344,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     private var autoLockTask: Task<Void, Never>?
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        #if canImport(FirebaseCore)
+        #if canImport(Firebase)
         FirebaseApp.configure()
         #endif
 
