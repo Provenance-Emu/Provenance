@@ -19,7 +19,9 @@ NSString *autoLoadStatefileName;
 @implementation PVRetroArchCoreBridge (Saves)
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {
-	return core_info_current_supports_savestate();
+    BOOL supportsSaveStates = core_info_current_supports_savestate();
+    DLOG(@"%@ supportsSaveStates: %@", self.coreIdentifier, supportsSaveStates ? @"Yes" : @"No");
+    return supportsSaveStates;
 }
 #pragma mark - Methods
 
