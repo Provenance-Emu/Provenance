@@ -27,7 +27,7 @@
 #include        "../cart.h"
 #include	"ppu.h"
 #include        "palette.h"
-#include        "../input.h"  
+#include        "../input.h"
 #include	"../ntsc/nes_ntsc.h"
 #include	<trio/trio.h>
 #include	<math.h>
@@ -72,7 +72,7 @@ static void makeppulut(void)
  for(x=0;x<256;x++)
  {
   ppulut1[x]=0;
-  for(y=0;y<8;y++) 
+  for(y=0;y<8;y++)
   {
    ppulut1[x] |= ((x>>(7 - y))&0x1) << (y*4);
   }
@@ -100,8 +100,8 @@ static void makeppulut(void)
   }
 
  }
-} 
-  
+}
+
 static int ppudead;
 static int kook;
 int fceuindbg=0;
@@ -112,15 +112,15 @@ uint32 MMC5HackVROMMask;
 uint8 *MMC5HackExNTARAMPtr;
 uint8 *MMC5HackVROMPTR;
 uint8 MMC5HackCHRMode=0;
-uint8 MMC5HackSPMode;   
-uint8 MMC5HackSPScroll; 
-uint8 MMC5HackSPPage;   
+uint8 MMC5HackSPMode;
+uint8 MMC5HackSPScroll;
+uint8 MMC5HackSPPage;
 
 
 static uint8 VRAMBuffer,PPUGenLatch;
 uint8 *vnapage[4];
-uint8 PPUNTARAM;  
-uint8 PPUCHRRAM;  
+uint8 PPUNTARAM;
+uint8 PPUCHRRAM;
 
 void (*GameHBIRQHook)(void), (*GameHBIRQHook2)(void);
 void (MDFN_FASTCALL *PPU_hook)(uint32 A);
@@ -128,14 +128,14 @@ void (MDFN_FASTCALL *PPU_hook)(uint32 A);
 static uint8 vtoggle;
 static uint8 XOffset;
 static uint32 TempAddr, RefreshAddr;
-  
-static int maxsprites; 
-    
+
+static int maxsprites;
+
 /* scanline is equal to the current visible scanline we're on. */
-     
+
 int scanline;
 static uint32 scanlines_per_frame;
-    
+
 #define V_FLIP  0x80
 #define H_FLIP  0x40
 #define SP_BACK 0x20
@@ -248,7 +248,7 @@ void MDFNNES_SetPixelFormat(const MDFN_PixelFormat &pixel_format)
 }
 
 #define MMC5SPRVRAMADR(V)      &MMC5SPRVPage[(V)>>10][(V)]
-#define MMC5BGVRAMADR(V)      &MMC5BGVPage[(V)>>10][(V)]  
+#define MMC5BGVRAMADR(V)      &MMC5BGVPage[(V)>>10][(V)]
 #define VRAMADR(V)      &VPage[(V)>>10][(V)]
 
 
@@ -258,7 +258,7 @@ static uint8 sphitdata;
 static DECLFR(A2002)
 {
 	uint8 ret;
-        
+
 	if(!fceuindbg)
  	 if(sphitx != 0x100)
  	  MDFNPPU_LineUpdate();
@@ -390,7 +390,7 @@ static DECLFW(B2001)
 		PPU[1]=V;
 		RedoRenderCache();
 }
- 
+
 static DECLFW(B2002)
 {
 	PPUGenLatch=V;
@@ -409,14 +409,14 @@ static DECLFW(B2004)
         SPRAM[PPU[3]]=V;
         PPU[3]++;
 }
- 
+
 static DECLFW(B2005)
 {
 	uint32 tmp = TempAddr;
 
 	MDFNPPU_LineUpdate();
 	PPUGenLatch = V;
-	
+
 	if(!vtoggle)
 	{
 	 tmp &= 0xFFE0;
@@ -430,7 +430,7 @@ static DECLFW(B2005)
          tmp|=(V&7)<<12;
         }
         TempAddr=tmp;
-        vtoggle^=1;  
+        vtoggle^=1;
 }
 
 static uint8 poopoo(void)
@@ -445,13 +445,13 @@ static DECLFW(B2006)
 {
 		MDFNPPU_LineUpdate();
                 PPUGenLatch=V;
-                if(!vtoggle)  
+                if(!vtoggle)
                 {
                  TempAddr&=0x00FF;
                  TempAddr|=(V&0x3f)<<8;
                 }
                 else
-                {   
+                {
                  TempAddr&=0xFF00;
                  TempAddr|=V;
 
@@ -463,7 +463,7 @@ static DECLFW(B2006)
                 }
                 vtoggle^=1;
 }
- 
+
 static DECLFW(B2007)
 {
                         uint32 tmp=RefreshAddr&0x3FFF;
@@ -480,7 +480,7 @@ static DECLFW(B2007)
                         {
                           if(PPUCHRRAM&(1<<(tmp>>10)))
                             VPage[tmp>>10][tmp]=V;
-                        }   
+                        }
                         else
                         {
                          if(PPUNTARAM&(1<<((tmp&0xF00)>>10)))
@@ -489,7 +489,7 @@ static DECLFW(B2007)
 			AB2007Inc();
                         if(PPU_hook) PPU_hook(RefreshAddr&0x3fff);
 }
- 
+
 static DECLFW(B4014)
 {
         uint32 t=V<<8;
@@ -501,7 +501,7 @@ static DECLFW(B4014)
 
 static void ResetRL(uint8 *target)
 {
- Pline=target; 
+ Pline=target;
  firstpixel = 0;
 
  linestartts=timestamp*48+X.count;
@@ -534,7 +534,7 @@ static void EndRL(void)
  RefreshLine(341);
  Pline=0;
 }
- 
+
 
 static uint8 NT_TMP = 0;
 static uint8 MMC5NT_TMP;
@@ -567,7 +567,7 @@ static INLINE void FetchAT(int MMC5Ex)
 {
 	uint8 cc, zz;
 	uint8 *C;
-	
+
 	C = vnapage[(RefreshAddr >> 10) & 3];
 	zz = RefreshAddr & 0x1f;
 
@@ -672,7 +672,7 @@ static INLINE void FetchCD2(int MMC5Ex)
 static int spork=0;     /* spork the world.  Any sprites on this line?
                            Then this will be set to 1.
                         */
-                          
+
 static INLINE void Fixit2(void)
 {
         uint32 rad=RefreshAddr;
@@ -913,7 +913,7 @@ static void DoLine(MDFN_Surface *surface, int skip)
 
   if(NTSCBlitter)
   {
-   if(!skip)
+   if(!skip && surface && surface->pixels)
    {
     // TODO:  Factor this out/make it more elegant.
     switch(surface->format.opp)
@@ -939,7 +939,7 @@ static void DoLine(MDFN_Surface *surface, int skip)
   }
   else
   {
-   if(!skip) 
+   if(!skip && surface && surface->pixels)
    {
     switch(surface->format.opp)
     {
@@ -949,7 +949,11 @@ static void DoLine(MDFN_Surface *surface, int skip)
          uint32 *real_target = surface->pixels + scanline * surface->pitchinpix;
 
          for(int x = 0; x < 256; x++)
-          real_target[x] = CM.PALRAMLUTCache[(target[x] & 0x3F) | (emphlinebuf[x] << 6)];
+         {
+          int idx = (target[x] & 0x3F) | ((emphlinebuf[x] & 0x7) << 6);
+          if(idx < 0x200)
+           real_target[x] = CM.PALRAMLUTCache[idx];
+         }
 	}
 	break;
 
@@ -958,7 +962,11 @@ static void DoLine(MDFN_Surface *surface, int skip)
 	 uint16 *real_target16 = surface->pixels16 + scanline * surface->pitchinpix;
 
          for(int x = 0; x < 256; x++)
-          real_target16[x] = CM.PALRAMLUTCache[(target[x] & 0x3F) | (emphlinebuf[x] << 6)];
+         {
+          int idx = (target[x] & 0x3F) | ((emphlinebuf[x] & 0x7) << 6);
+          if(idx < 0x200)
+           real_target16[x] = CM.PALRAMLUTCache[idx];
+         }
 	}
 	break;
 
@@ -967,7 +975,11 @@ static void DoLine(MDFN_Surface *surface, int skip)
 	 uint8 *real_target8 = surface->pixels8 + scanline * surface->pitchinpix;
 
          for(int x = 0; x < 256; x++)
-          real_target8[x] = CM.PALRAMLUTCache8[(target[x] & 0x3F) | (emphlinebuf[x] << 6)];
+         {
+          int idx = (target[x] & 0x3F) | ((emphlinebuf[x] & 0x7) << 6);
+          if(idx < 0x200)
+           real_target8[x] = CM.PALRAMLUTCache8[idx];
+         }
 	}
 	break;
     }
@@ -1140,7 +1152,7 @@ static void RefreshSprites(void)
 	 int x = spr->x;
          uint8 *C;
          uint8 *VB;
-                
+
          pixdata=ppulut1[spr->ca[0]]|ppulut2[spr->ca[1]];
          J=spr->ca[0]|spr->ca[1];
          atr=spr->atr;
@@ -1159,7 +1171,7 @@ static void RefreshSprites(void)
                                         ((J>>1)&0x08) |
                                         ((J>>3)&0x04) |
                                         ((J>>5)&0x02) |
-                                        ((J>>7)&0x01);                                          
+                                        ((J>>7)&0x01);
                         }
 
          C = sprlinebuf+x;
@@ -1205,7 +1217,7 @@ static void RefreshSprites(void)
      SpriteBlurp=0;
      spork=1;
 
-     if(rendis & 2) 
+     if(rendis & 2)
       MDFN_FastArraySet(sprlinebuf, 0x80, 256);
 }
 
@@ -1225,8 +1237,8 @@ void MDFNPPU_Reset(void)
 void MDFNPPU_Power(void)
 {
         memset(NTARAM, 0x00, 0x800);
-        memset(PALRAM, 0x00, 0x20); 
-        memset(SPRAM, 0x00, 0x100); 
+        memset(PALRAM, 0x00, 0x20);
+        memset(SPRAM, 0x00, 0x100);
 	BurstPhase = 0;
         MDFNPPU_Reset();
 }
@@ -1237,12 +1249,12 @@ int MDFNPPU_Loop(EmulateSpecStruct *espec)
  MDFN_Surface* surface = espec->surface;
  int skip = espec->skip;
 
-  if(!skip && surface->palette)
+  if(!skip && surface && surface->palette)
    memcpy(surface->palette, CM.NESPalette8BPP, sizeof(CM.NESPalette8BPP));
 
   if(ppudead) /* Needed for Knight Rider, Time Lord, possibly others. */
   {
-   if(!skip)
+   if(!skip && surface)
    {
     surface->Fill(0, 0, 0, 0);
     for(int y = 0; y < 240; y++)
@@ -1260,7 +1272,7 @@ int MDFNPPU_Loop(EmulateSpecStruct *espec)
                                   off, though.  NOTE:  Not having this here
                                   breaks a Super Donkey Kong game. */
                                 /* I need to figure out the true nature and length
-                                   of this delay. 
+                                   of this delay.
                                 */
    X6502_Run(12);
 
@@ -1484,7 +1496,7 @@ static void RedoRL(void)
  MDFNGameInfo->lcm_width = PPUDisplayRect.w;
  MDFNGameInfo->lcm_height = MDFNGameInfo->nominal_height;
 
- MDFNGameInfo->fb_width = (NTSCBlitter ? 768 : 256); 
+ MDFNGameInfo->fb_width = (NTSCBlitter ? 768 : 256);
 }
 
 void MDFNPPU_Close(void)
@@ -1496,7 +1508,7 @@ void MDFNPPU_Close(void)
  }
 }
 
-void MDFNPPU_Init(void) 
+void MDFNPPU_Init(void)
 {
  makeppulut();
  rendis = 0;
@@ -1556,7 +1568,7 @@ void MDFNPPU_Init(void)
   {
    double accum[3] = { 0 };
    double accum_e[3] = { 0 };
- 
+
    for(int i = 0; i < 64; i++)
    {
     double weights[3] = { 0 };
@@ -1577,7 +1589,7 @@ void MDFNPPU_Init(void)
       weights[j] = 1.0;
      }
      else
-     { 
+     {
       weights[j] = n / d;
      }
     }
