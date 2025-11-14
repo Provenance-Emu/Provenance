@@ -1312,8 +1312,25 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["r", "r1", "rb", "rshoulder", "shoulderright"].contains(s) { return "r" }
             /// Regular buttons use standard names
             if ["a", "b", "start", "select"].contains(s) { return s }
+        case .NES, .FDS:
+            /// NES button normalization - only supports: up, down, left, right, a, b, start, select
+            /// Filter out invalid buttons (NES doesn't have L/R, X/Y, etc.)
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a", "b"].contains(s) { return s }
+            if ["start", "select"].contains(s) { return s }
+            /// NES doesn't support these buttons, so return original to let PVNESButton handle it
+            /// (it will default to .up for unknown values, but at least we tried)
+            return s
         case .SNES:
+            /// SNES button normalization - supports: up, down, left, right, a, b, x, y, l, r, start, select
+            /// PVSNESButton.init handles L/R variations (l, l1, lb, etc.) internally
+            if ["up", "down", "left", "right"].contains(s) { return s }
             if ["a", "b", "x", "y"].contains(s) { return s }
+            /// L/R buttons - PVSNESButton handles variations like "l", "l1", "lb", "triggerleft", etc.
+            if ["l", "l1", "lb", "leftshoulder", "shoulderleft", "triggerleft"].contains(s) { return "l" }
+            if ["r", "r1", "rb", "rightshoulder", "shoulderright", "triggerright"].contains(s) { return "r" }
+            if ["start", "select"].contains(s) { return s }
+            return s
         case .Genesis, .SegaCD:
             if ["a", "b", "c", "x", "y", "z"].contains(s) { return s }
         case .Sega32X:
@@ -1396,6 +1413,282 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["analog-left", "analogleft"].contains(s) { return "analog-left" }
             if ["analog-right", "analogright"].contains(s) { return "analog-right" }
             if ["left-analog", "leftanalog"].contains(s) { return "left-analog" }
+        case .GBA:
+            /// GBA button normalization - supports: up, down, left, right, a, b, l, r, start, select
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a", "b"].contains(s) { return s }
+            if ["l", "l1"].contains(s) { return "l" }
+            if ["r", "r1"].contains(s) { return "r" }
+            if ["start", "select"].contains(s) { return s }
+            return s
+        case .GB, .GBC:
+            /// GB/GBC button normalization - supports: up, down, left, right, a, b, start, select
+            /// PVGBButton maps x->a and y->b
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a", "x"].contains(s) { return "a" }
+            if ["b", "y"].contains(s) { return "b" }
+            if ["start", "select"].contains(s) { return s }
+            return s
+        case .Saturn:
+            /// Saturn button normalization - supports: up, down, left, right, a, b, c, x, y, z, l, r, start
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a", "b", "c", "x", "y", "z"].contains(s) { return s }
+            if ["l", "l1"].contains(s) { return "l" }
+            if ["r", "r1"].contains(s) { return "r" }
+            if ["start"].contains(s) { return s }
+            return s
+        case .Dreamcast:
+            /// Dreamcast button normalization - supports: up, down, left, right, a, b, x, y, l, r, start
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a", "b", "x", "y"].contains(s) { return s }
+            if ["l", "l1"].contains(s) { return "l" }
+            if ["r", "r1"].contains(s) { return "r" }
+            if ["start"].contains(s) { return s }
+            return s
+        case .PCE, .PCECD:
+            /// PCE/PCECD button normalization - supports: up, down, left, right, button1-6, run, select, mode
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["button1", "1", "i", "a"].contains(s) { return "button1" }
+            if ["button2", "2", "ii", "b"].contains(s) { return "button2" }
+            if ["button3", "3", "iii", "x"].contains(s) { return "button3" }
+            if ["button4", "4", "iv", "y"].contains(s) { return "button4" }
+            if ["button5", "5", "v"].contains(s) { return "button5" }
+            if ["button6", "6", "vi"].contains(s) { return "button6" }
+            if ["run", "start"].contains(s) { return "run" }
+            if ["select"].contains(s) { return "select" }
+            if ["mode"].contains(s) { return "mode" }
+            return s
+        case .MasterSystem:
+            /// MasterSystem button normalization - supports: up, down, left, right, b, c, start
+            /// PVMasterSystemButton maps a->b and x/y->c
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["b", "a"].contains(s) { return "b" }
+            if ["c", "x", "y"].contains(s) { return "c" }
+            if ["start"].contains(s) { return s }
+            return s
+        case .AtariJaguar, .AtariJaguarCD:
+            /// Jaguar button normalization - supports: up, down, left, right, a, b, c, pause, option, button1-9, 0, *, #
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a"].contains(s) { return "a" }
+            if ["b"].contains(s) { return "b" }
+            if ["c", "x"].contains(s) { return "c" }
+            if ["pause", "start"].contains(s) { return "pause" }
+            if ["option", "select"].contains(s) { return "option" }
+            if ["button1", "1"].contains(s) { return "button1" }
+            if ["button2", "2"].contains(s) { return "button2" }
+            if ["button3", "3"].contains(s) { return "button3" }
+            if ["button4", "4"].contains(s) { return "button4" }
+            if ["button5", "5"].contains(s) { return "button5" }
+            if ["button6", "6"].contains(s) { return "button6" }
+            if ["button7", "7"].contains(s) { return "button7" }
+            if ["button8", "8"].contains(s) { return "button8" }
+            if ["button9", "9"].contains(s) { return "button9" }
+            if ["button0", "0"].contains(s) { return "button0" }
+            if ["asterisk", "*"].contains(s) { return "asterisk" }
+            if ["pound", "#"].contains(s) { return "pound" }
+            return s
+        case .NeoGeo:
+            /// NeoGeo button normalization - uses PS-style buttons (triangle, circle, cross, square) and L/R
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["triangle", "a", "▵"].contains(s) { return "triangle" }
+            if ["circle", "b", "○"].contains(s) { return "circle" }
+            if ["cross", "x", "✕"].contains(s) { return "cross" }
+            if ["square", "y", "□"].contains(s) { return "square" }
+            if ["l1", "l"].contains(s) { return "l1" }
+            if ["l2", "lt"].contains(s) { return "l2" }
+            if ["l3"].contains(s) { return "l3" }
+            if ["r1", "r"].contains(s) { return "r1" }
+            if ["r2", "rt"].contains(s) { return "r2" }
+            if ["r3"].contains(s) { return "r3" }
+            if ["start", "mode"].contains(s) { return "start" }
+            if ["select", "back"].contains(s) { return "select" }
+            return s
+        case .MAME:
+            /// MAME button normalization - uses PS-style buttons and L/R
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["triangle", "a", "▵"].contains(s) { return "triangle" }
+            if ["circle", "b", "○"].contains(s) { return "circle" }
+            if ["cross", "x", "✕"].contains(s) { return "cross" }
+            if ["square", "y", "□"].contains(s) { return "square" }
+            if ["l1", "l"].contains(s) { return "l1" }
+            if ["l2", "lt"].contains(s) { return "l2" }
+            if ["l3"].contains(s) { return "l3" }
+            if ["r1", "r"].contains(s) { return "r1" }
+            if ["r2", "rt"].contains(s) { return "r2" }
+            if ["r3"].contains(s) { return "r3" }
+            if ["start", "mode"].contains(s) { return "start" }
+            if ["select", "back", "cbdc"].contains(s) { return "select" }
+            return s
+        case .DS:
+            /// DS button normalization - supports: up, down, left, right, a, b, x, y, l, r, start, select
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a", "b", "x", "y"].contains(s) { return s }
+            if ["l", "l1"].contains(s) { return "l" }
+            if ["r", "r1"].contains(s) { return "r" }
+            if ["start", "select"].contains(s) { return s }
+            if ["screenswap", "ss", "swap"].contains(s) { return "screenswap" }
+            if ["rotate"].contains(s) { return "rotate" }
+            return s
+        case .WonderSwan, .WonderSwanColor:
+            /// WonderSwan button normalization - supports: x1-x4, y1-y4, a, b, start, sound
+            if ["x1", "x"].contains(s) { return "x1" }
+            if ["x3"].contains(s) { return "x3" }
+            if ["x4"].contains(s) { return "x4" }
+            if ["x2"].contains(s) { return "x2" }
+            if ["y1", "y"].contains(s) { return "y1" }
+            if ["y3"].contains(s) { return "y3" }
+            if ["y4"].contains(s) { return "y4" }
+            if ["y2"].contains(s) { return "y2" }
+            if ["a", "b"].contains(s) { return s }
+            if ["start"].contains(s) { return s }
+            if ["sound", "select"].contains(s) { return "sound" }
+            return s
+        case .PCFX:
+            /// PCFX button normalization - same as PCE/PCECD
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["button1", "1", "i", "a"].contains(s) { return "button1" }
+            if ["button2", "2", "ii", "b"].contains(s) { return "button2" }
+            if ["button3", "3", "iii", "x"].contains(s) { return "button3" }
+            if ["button4", "4", "iv", "y"].contains(s) { return "button4" }
+            if ["button5", "5", "v"].contains(s) { return "button5" }
+            if ["button6", "6", "vi"].contains(s) { return "button6" }
+            if ["run"].contains(s) { return "run" }
+            if ["select"].contains(s) { return "select" }
+            if ["mode"].contains(s) { return "mode" }
+            return s
+        case .SG1000:
+            /// SG1000 button normalization - supports: up, down, left, right, b, c, start
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["b"].contains(s) { return "b" }
+            if ["c"].contains(s) { return "c" }
+            if ["start"].contains(s) { return s }
+            return s
+        case .Lynx:
+            /// Lynx button normalization - supports: up, down, left, right, a, b, option1, option2, pause
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a", "b"].contains(s) { return s }
+            if ["option1", "o1", "x"].contains(s) { return "option1" }
+            if ["option2", "o2", "y"].contains(s) { return "option2" }
+            if ["pause", "start"].contains(s) { return "pause" }
+            return s
+        case .ColecoVision:
+            /// ColecoVision button normalization - supports: up, down, left, right, leftAction, rightAction, button1-9, 0, *, #
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["leftaction"].contains(s) { return "leftAction" }
+            if ["rightaction"].contains(s) { return "rightAction" }
+            if ["button1", "1", "a"].contains(s) { return "button1" }
+            if ["button2", "2", "b"].contains(s) { return "button2" }
+            if ["button3", "3", "x"].contains(s) { return "button3" }
+            if ["button4", "4", "y"].contains(s) { return "button4" }
+            if ["button5", "5"].contains(s) { return "button5" }
+            if ["button6", "6"].contains(s) { return "button6" }
+            if ["button7", "7"].contains(s) { return "button7" }
+            if ["button8", "8"].contains(s) { return "button8" }
+            if ["button9", "9"].contains(s) { return "button9" }
+            if ["button0", "0"].contains(s) { return "button0" }
+            if ["asterisk", "*"].contains(s) { return "asterisk" }
+            if ["pound", "#"].contains(s) { return "pound" }
+            return s
+        case .Intellivision:
+            /// Intellivision button normalization - supports: up, down, left, right, topAction, bottomLeftAction, bottomRightAction, button1-9, 0, clear, enter
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["topaction"].contains(s) { return "topAction" }
+            if ["bottomleftaction"].contains(s) { return "bottomLeftAction" }
+            if ["bottomrightaction"].contains(s) { return "bottomRightAction" }
+            if ["button1", "1", "a"].contains(s) { return "button1" }
+            if ["button2", "2", "b"].contains(s) { return "button2" }
+            if ["button3", "3", "x"].contains(s) { return "button3" }
+            if ["button4", "4", "y"].contains(s) { return "button4" }
+            if ["button5", "5", "l", "l1"].contains(s) { return "button5" }
+            if ["button6", "6", "r", "r1"].contains(s) { return "button6" }
+            if ["button7", "7", "l2"].contains(s) { return "button7" }
+            if ["button8", "8", "r2"].contains(s) { return "button8" }
+            if ["button9", "9", "l3"].contains(s) { return "button9" }
+            if ["button0", "0", "r3"].contains(s) { return "button0" }
+            if ["clear", "select"].contains(s) { return "clear" }
+            if ["enter", "start"].contains(s) { return "enter" }
+            return s
+        case .Supervision:
+            /// Supervision button normalization - similar to Intellivision
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["topaction", "a"].contains(s) { return "topAction" }
+            if ["bottomleftaction", "b"].contains(s) { return "bottomLeftAction" }
+            if ["bottomrightaction", "c"].contains(s) { return "bottomRightAction" }
+            if ["button1", "1"].contains(s) { return "button1" }
+            if ["button2", "2"].contains(s) { return "button2" }
+            if ["button3", "3"].contains(s) { return "button3" }
+            if ["button4", "4"].contains(s) { return "button4" }
+            if ["button5", "5"].contains(s) { return "button5" }
+            if ["button6", "6"].contains(s) { return "button6" }
+            if ["button7", "7"].contains(s) { return "button7" }
+            if ["button8", "8"].contains(s) { return "button8" }
+            if ["button9", "9"].contains(s) { return "button9" }
+            if ["button0", "0"].contains(s) { return "button0" }
+            if ["clear", "select"].contains(s) { return "clear" }
+            if ["enter", "start"].contains(s) { return "enter" }
+            return s
+        case .Odyssey2:
+            /// Odyssey2 button normalization - supports: up, down, left, right, action, key0-9
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["action", "a", "i", "b", "x", "y"].contains(s) { return "action" }
+            if ["key0", "0"].contains(s) { return "key0" }
+            if ["key1", "1"].contains(s) { return "key1" }
+            if ["key2", "2"].contains(s) { return "key2" }
+            if ["key3", "3"].contains(s) { return "key3" }
+            if ["key4", "4"].contains(s) { return "key4" }
+            if ["key5", "5"].contains(s) { return "key5" }
+            if ["key6", "6"].contains(s) { return "key6" }
+            if ["key7", "7"].contains(s) { return "key7" }
+            if ["key8", "8"].contains(s) { return "key8" }
+            if ["key9", "9"].contains(s) { return "key9" }
+            return s
+        case .PokemonMini:
+            /// Pokemon Mini button normalization - supports: menu, a, b, c, up, down, left, right, power, shake
+            if ["menu", "select"].contains(s) { return "menu" }
+            if ["a", "b", "c"].contains(s) { return s }
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["power", "start"].contains(s) { return "power" }
+            if ["shake", "l", "l1"].contains(s) { return "shake" }
+            return s
+        case .NGP, .NGPC:
+            /// NeoGeo Pocket button normalization - supports: up, down, left, right, a, b, option
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["a", "i", "1"].contains(s) { return "a" }
+            if ["b", "ii", "2"].contains(s) { return "b" }
+            if ["option", "select"].contains(s) { return "option" }
+            return s
+        case .Atari5200:
+            /// Atari 5200 button normalization - supports: up, down, left, right, fire1, fire2, start, pause, reset, number1-9, 0, *, #
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["fire1", "a"].contains(s) { return "fire1" }
+            if ["fire2", "b"].contains(s) { return "fire2" }
+            if ["start", "s"].contains(s) { return "start" }
+            if ["pause", "p", "select"].contains(s) { return "pause" }
+            if ["reset", "r"].contains(s) { return "reset" }
+            if ["number1", "1"].contains(s) { return "number1" }
+            if ["number2", "2"].contains(s) { return "number2" }
+            if ["number3", "3"].contains(s) { return "number3" }
+            if ["number4", "4"].contains(s) { return "number4" }
+            if ["number5", "5"].contains(s) { return "number5" }
+            if ["number6", "6"].contains(s) { return "number6" }
+            if ["number7", "7"].contains(s) { return "number7" }
+            if ["number8", "8"].contains(s) { return "number8" }
+            if ["number9", "9"].contains(s) { return "number9" }
+            if ["number0", "0"].contains(s) { return "number0" }
+            if ["asterisk", "*"].contains(s) { return "asterisk" }
+            if ["pound", "#"].contains(s) { return "pound" }
+            return s
+        case .Atari7800:
+            /// Atari 7800 button normalization - supports: up, down, left, right, fire1, fire2, select, pause, reset, leftDiff, rightDiff
+            if ["up", "down", "left", "right"].contains(s) { return s }
+            if ["fire1", "a"].contains(s) { return "fire1" }
+            if ["fire2", "b"].contains(s) { return "fire2" }
+            if ["select", "s"].contains(s) { return "select" }
+            if ["pause", "p", "start"].contains(s) { return "pause" }
+            if ["reset", "r"].contains(s) { return "reset" }
+            if ["leftdiff", "l", "l1"].contains(s) { return "leftDiff" }
+            if ["rightdiff", "r", "r1"].contains(s) { return "rightDiff" }
+            return s
         default:
             break
         }
@@ -1404,8 +1697,10 @@ public class DeltaSkinInputHandler: ObservableObject {
         if ["run", "play"].contains(s) { return "start" }
         // 32X uses "mode" directly, so don't convert it to "select" for 32X
         if system != .Sega32X && ["mode", "option"].contains(s) { return "select" }
-        /// VirtualBoy, 3DO, and N64 use "l" and "r" directly, so don't convert them to "l1"/"r1"
-        if system != .VirtualBoy && system != ._3DO && system != .N64 {
+        /// Systems that use "l" and "r" directly (not "l1"/"r1"): VirtualBoy, 3DO, N64, Saturn, Dreamcast, GBA, DS, SNES
+        /// Don't convert them to "l1"/"r1" in common handling
+        if system != .VirtualBoy && system != ._3DO && system != .N64 && system != .Saturn &&
+           system != .Dreamcast && system != .GBA && system != .DS && system != .SNES {
             if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
             if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
         }
