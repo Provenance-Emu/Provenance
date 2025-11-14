@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Foundation
 import PVEmulatorCore
 import PVSystems
 import PVRealm
@@ -14,6 +15,7 @@ import RealmSwift
 import PVLibrary
 import PVPlists
 import PVThemes
+import PVLogging
 
 // MARK: - Retrowave Styling Components
 
@@ -153,6 +155,8 @@ struct DefaultControllerSkinView: View {
     let inputHandler: DeltaSkinInputHandler
     let systemId: SystemIdentifier?
     let coreInstance: PVEmulatorCore
+    @State private var lastBroadcastedViewport: CGRect?
+    @State private var currentSafeInsets: EdgeInsets = EdgeInsets()
 
     // Access theme manager for colors
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -240,10 +244,30 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             }
-        }
-        .onAppear {
-            // Ensure input handler has the core set when view appears
-            inputHandler.setEmulatorCore(coreInstance)
+            .onAppear {
+                // Ensure input handler has the core set when view appears
+                inputHandler.setEmulatorCore(coreInstance)
+                // Store safe area insets
+                currentSafeInsets = geometry.safeAreaInsets
+                // Emit default viewport on appear
+                emitDefaultViewportIfNeeded(
+                    size: geometry.size,
+                    safeInsets: geometry.safeAreaInsets,
+                    isLandscape: isLandscape
+                )
+            }
+            .background(ViewportUpdater(
+                size: geometry.size,
+                safeInsets: geometry.safeAreaInsets,
+                onUpdate: { size, insets, isLandscape in
+                    currentSafeInsets = insets
+                    emitDefaultViewportIfNeeded(
+                        size: size,
+                        safeInsets: insets,
+                        isLandscape: isLandscape
+                    )
+                }
+            ))
         }
     }
 
@@ -336,6 +360,91 @@ struct DefaultControllerSkinView: View {
     private func getScreenSize() -> CGSize {
         // Use the core's aspectSize property
         return coreInstance.aspectSize
+    }
+
+    /// Broadcast a deterministic viewport for the default skin
+    private func emitDefaultViewportIfNeeded(size: CGSize, safeInsets: EdgeInsets, isLandscape: Bool) {
+        let frame = calculateDefaultViewport(size: size, safeInsets: safeInsets, isLandscape: isLandscape)
+        guard frame.width > 0,
+              frame.height > 0,
+              frame.width.isFinite,
+              frame.height.isFinite,
+              frame.origin.x.isFinite,
+              frame.origin.y.isFinite else {
+            return
+        }
+
+        if let last = lastBroadcastedViewport,
+           framesAreApproximatelyEqual(last, frame) {
+            return
+        }
+
+        lastBroadcastedViewport = frame
+        NotificationCenter.default.post(
+            name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"),
+            object: nil,
+            userInfo: ["frame": NSValue(cgRect: frame)]
+        )
+        ILOG("🎮 SKIN: Default skin broadcasting frame: \(frame)")
+    }
+
+    /// Calculate viewport used when no explicit skin is available
+    private func calculateDefaultViewport(size: CGSize, safeInsets: EdgeInsets, isLandscape: Bool) -> CGRect {
+        let aspectSize = coreInstance.aspectSize
+        let aspectWidth = aspectSize.width > 0 ? aspectSize.width : 4.0
+        let aspectHeight = aspectSize.height > 0 ? aspectSize.height : 3.0
+        let aspectRatio = aspectWidth / max(0.01, aspectHeight)
+
+        let horizontalSafe = safeInsets.leading + safeInsets.trailing
+        let verticalSafe = safeInsets.top + safeInsets.bottom
+        let safeWidth = max(0, size.width - horizontalSafe)
+        let safeHeight = max(0, size.height - verticalSafe)
+
+        guard safeWidth > 0, safeHeight > 0 else {
+            ILOG("🎮 SKIN: Default viewport calculation failed - invalid safe area: size=\(size), safeInsets=\(safeInsets)")
+            return .zero
+        }
+
+        let frame: CGRect
+        if isLandscape {
+            /// Reserve space for controls on each edge
+            let sideReserve = max(180, min(240, safeWidth * 0.25))
+            let availableWidth = max(0, safeWidth - (sideReserve * 2) - 20)
+            var width = availableWidth
+            var height = width / aspectRatio
+            if height > safeHeight {
+                height = safeHeight
+                width = height * aspectRatio
+            }
+            let originX = (size.width - width) / 2
+            let originY = safeInsets.top + (safeHeight - height) / 2
+            frame = CGRect(x: originX, y: originY, width: width, height: height)
+            ILOG("🎮 SKIN: Default viewport (landscape): size=\(size), aspectRatio=\(aspectRatio), frame=\(frame)")
+        } else {
+            /// Keep the screen in the upper portion, leaving room for controls
+            let controllerHeight = safeHeight * 0.35
+            let availableHeight = max(0, safeHeight - controllerHeight - 16)
+            var width = min(safeWidth * 0.95, availableHeight * aspectRatio)
+            var height = width / aspectRatio
+            if height > availableHeight {
+                height = availableHeight
+                width = height * aspectRatio
+            }
+            let originX = (size.width - width) / 2
+            let originY = safeInsets.top + 12
+            frame = CGRect(x: originX, y: originY, width: width, height: height)
+            ILOG("🎮 SKIN: Default viewport (portrait): size=\(size), aspectRatio=\(aspectRatio), controllerHeight=\(controllerHeight), availableHeight=\(availableHeight), frame=\(frame)")
+        }
+
+        return frame
+    }
+
+    /// Compare frames with a tolerance to avoid unnecessary broadcasts
+    private func framesAreApproximatelyEqual(_ lhs: CGRect, _ rhs: CGRect) -> Bool {
+        abs(lhs.origin.x - rhs.origin.x) < 0.5 &&
+        abs(lhs.origin.y - rhs.origin.y) < 0.5 &&
+        abs(lhs.size.width - rhs.size.width) < 0.5 &&
+        abs(lhs.size.height - rhs.size.height) < 0.5
     }
 
     // Load control layout data from the system
@@ -1051,7 +1160,8 @@ struct DefaultControllerSkinView: View {
                             VStack(spacing: 15) {
                                 ForEach(0..<standardGroups.count, id: \.self) { index in
                                     if let groupedButtons = standardGroups[index].PVGroupedButtons {
-                                        createButtonGroup(from: groupedButtons)
+                                        let groupSize = parseCGSize(from: standardGroups[index].PVControlSize)
+                                        createButtonGroup(from: groupedButtons, groupSize: groupSize)
                                     }
                                 }
                             }
@@ -1066,7 +1176,8 @@ struct DefaultControllerSkinView: View {
                                     VStack(spacing: 15) {
                                         ForEach(0..<standardGroups.count, id: \.self) { index in
                                             if let groupedButtons = standardGroups[index].PVGroupedButtons {
-                                                createButtonGroup(from: groupedButtons)
+                                                let groupSize = parseCGSize(from: standardGroups[index].PVControlSize)
+                                                createButtonGroup(from: groupedButtons, groupSize: groupSize)
                                                     .id("buttonGroup_landscape_\(index)")
                                             }
                                         }
@@ -1256,7 +1367,8 @@ struct DefaultControllerSkinView: View {
                                     VStack(spacing: 15) {
                                         ForEach(0..<standardGroups.count, id: \.self) { index in
                                             if let groupedButtons = standardGroups[index].PVGroupedButtons {
-                                                createButtonGroup(from: groupedButtons)
+                                                let groupSize = parseCGSize(from: standardGroups[index].PVControlSize)
+                                                createButtonGroup(from: groupedButtons, groupSize: groupSize)
                                                     .id("buttonGroup_\(index)")
                                             }
                                         }
@@ -1324,7 +1436,8 @@ struct DefaultControllerSkinView: View {
                             VStack(spacing: 15) {
                                 ForEach(0..<standardGroups.count, id: \.self) { index in
                                     if let groupedButtons = standardGroups[index].PVGroupedButtons {
-                                        createButtonGroup(from: groupedButtons)
+                                        let groupSize = parseCGSize(from: standardGroups[index].PVControlSize)
+                                        createButtonGroup(from: groupedButtons, groupSize: groupSize)
                                             .id("buttonGroup_\(index)")
                                     }
                                 }
@@ -1367,9 +1480,62 @@ struct DefaultControllerSkinView: View {
         .padding(.vertical, 8)
     }
 
+    /// Parse CGRect from string format like "{{162,4},{60,60}}"
+    private func parseCGRect(from string: String) -> CGRect? {
+        return NSCoder.cgRect(for: string)
+    }
+
+    /// Parse CGSize from string format like "{264, 380}"
+    private func parseCGSize(from string: String) -> CGSize? {
+        return NSCoder.cgSize(for: string)
+    }
+
+    /// Check if buttons have valid frame data for absolute positioning
+    private func hasValidFrames(_ buttons: [ControlGroupButton]) -> Bool {
+        return buttons.allSatisfy { button in
+            let frame = parseCGRect(from: button.PVControlFrame)
+            return frame != nil && frame != .zero
+        }
+    }
+
     // Create a button group based on the system's button layout
     @ViewBuilder
-    private func createButtonGroup(from buttons: [ControlGroupButton]) -> some View {
+    private func createButtonGroup(from buttons: [ControlGroupButton], groupSize: CGSize? = nil) -> some View {
+        // Check if buttons have valid frame data for absolute positioning
+        if hasValidFrames(buttons), let groupSize = groupSize {
+            // Use absolute positioning based on PVControlFrame data
+            GeometryReader { geometry in
+                ZStack {
+                    ForEach(Array(buttons.enumerated()), id: \.offset) { index, button in
+                        if let frame = parseCGRect(from: button.PVControlFrame) {
+                            // Normalize frame coordinates to the available geometry
+                            // The frames are relative to the groupSize from systems.plist
+                            let scaleX = geometry.size.width / groupSize.width
+                            let scaleY = geometry.size.height / groupSize.height
+                            let scale = min(scaleX, scaleY) // Maintain aspect ratio
+
+                            // Calculate normalized position (frames are absolute within groupSize)
+                            let normalizedX = frame.midX * scale
+                            let normalizedY = frame.midY * scale
+
+                            // Center the group in available space
+                            let offsetX = (geometry.size.width - groupSize.width * scale) / 2
+                            let offsetY = (geometry.size.height - groupSize.height * scale) / 2
+
+                            // Scale button size proportionally with minimum size constraint
+                            let scaledSize = min(frame.width, frame.height) * scale
+                            let buttonSize = max(scaledSize, 55) // Minimum 55pt to ensure buttons are usable
+
+                            createButton(from: button, size: buttonSize)
+                                .position(x: normalizedX + offsetX, y: normalizedY + offsetY)
+                                .id("button_group_frame_\(index)_\(button.PVControlTitle)")
+                        }
+                    }
+                }
+            }
+            .frame(minWidth: 250, minHeight: 300)
+        } else {
+            // Fallback to grid layout when frames aren't available
         // Determine the best layout based on button count
         if buttons.count == 4 {
             // Standard 2x2 grid for 4 buttons
@@ -1440,6 +1606,7 @@ struct DefaultControllerSkinView: View {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 10) {
                 ForEach(0..<buttons.count, id: \.self) { index in
                     createButton(from: buttons[index])
+                    }
                 }
             }
         }
@@ -1527,34 +1694,36 @@ struct DefaultControllerSkinView: View {
 
     // Create a button from a ControlGroupButton
     @ViewBuilder
-    private func createButton(from button: ControlGroupButton) -> some View {
+    private func createButton(from button: ControlGroupButton, size: CGFloat? = nil) -> some View {
         let displayLabel = button.PVControlTitle ?? "Button"
 
         // Map special PlayStation symbols to their proper identifiers
         let actionIdentifier = button.PVControlTitle ?? displayLabel
 
         let color = colorFromString(button.PVControlTint) ?? .gray
+        let buttonSize = size ?? 60
+        let fontSize = size != nil ? max(12, buttonSize * 0.33) : 20
 
         return Button(action: {}) {
             ZStack {
                 // Outer glow
                 Circle()
                     .fill(Color.clear)
-                    .frame(width: 60, height: 60)
+                    .frame(width: buttonSize, height: buttonSize)
                     .overlay(
                         Circle()
-                            .stroke(color, lineWidth: 2)
-                            .blur(radius: 4)
+                            .stroke(color, lineWidth: max(1, buttonSize / 30))
+                            .blur(radius: max(2, buttonSize / 15))
                     )
                     .overlay(
                         Circle()
-                            .stroke(Color.white, lineWidth: 1)
+                            .stroke(Color.white, lineWidth: max(0.5, buttonSize / 60))
                     )
 
                 // Button label with neon effect
-                NeonText(displayLabel, color: color, fontSize: 20)
+                NeonText(displayLabel, color: color, fontSize: fontSize)
             }
-            .frame(width: 60, height: 60)
+            .frame(width: buttonSize, height: buttonSize)
         }
         .buttonStyle(GameButtonStyle(pressAction: {
             inputHandler.buttonPressed(actionIdentifier)
@@ -1668,5 +1837,30 @@ struct DefaultControllerSkinView: View {
         }
 
         return (numPadGroups, standardGroups)
+    }
+}
+
+/// Helper view to track geometry changes and update viewport
+private struct ViewportUpdater: View {
+    let size: CGSize
+    let safeInsets: EdgeInsets
+    let onUpdate: (CGSize, EdgeInsets, Bool) -> Void
+
+    var body: some View {
+        Color.clear
+            .onAppear {
+                let isLandscape = size.width > size.height
+                onUpdate(size, safeInsets, isLandscape)
+            }
+            .onChange(of: size) { newSize in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    let isLandscape = newSize.width > newSize.height
+                    onUpdate(newSize, safeInsets, isLandscape)
+                }
+            }
+            .onChange(of: safeInsets) { newInsets in
+                let isLandscape = size.width > size.height
+                onUpdate(size, newInsets, isLandscape)
+            }
     }
 }
