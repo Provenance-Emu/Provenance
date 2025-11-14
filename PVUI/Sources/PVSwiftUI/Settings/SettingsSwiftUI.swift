@@ -80,6 +80,9 @@ public struct PVSettingsView: View {
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController
 
     @State public var showsDoneButton: Bool = true
+    #if !os(tvOS)
+    @State private var selectedTab: Int = 0
+    #endif
 
     // Update initializer to take dismissAction
     public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, showsDoneButton: Bool = true, dismissAction: @escaping () -> Void) {
@@ -101,10 +104,92 @@ public struct PVSettingsView: View {
                     .edgesIgnoringSafeArea(.all)
                     .opacity(themeManager.currentPalette.dark ? 0.5 : 0.2)
 
-                // Main content
+                #if !os(tvOS)
+                // Tabbed interface for iOS
+                RetroTabView(
+                    selection: $selectedTab,
+                    content: {
+                        Group {
+                            switch selectedTab {
+                            case 0:
+                                generalTabContent
+                            case 1:
+                                emulationTabContent
+                            case 2:
+                                controllerTabContent
+                            case 3:
+                                aboutTabContent
+                            default:
+                                generalTabContent
+                            }
+                        }
+                    },
+                    tabItems: tabItems
+                )
+                .overlay(
+                    // Custom navigation bar overlay
+                    VStack {
+                        HStack {
+                            if showsDoneButton {
+                                Button(action: { dismissAction() }) {
+                                    Text("DONE")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 8)
+                                                        .strokeBorder(
+                                                            LinearGradient(
+                                                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                                                startPoint: .leading,
+                                                                endPoint: .trailing
+                                                            ),
+                                                            lineWidth: 1.5
+                                                        )
+                                                )
+                                        )
+                                }
+
+                                Spacer()
+
+                                Button(action: { viewModel.showHelp() }) {
+                                    Text("HELP")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 8)
+                                                        .strokeBorder(
+                                                            LinearGradient(
+                                                                gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                                                startPoint: .leading,
+                                                                endPoint: .trailing
+                                                            ),
+                                                            lineWidth: 1.5
+                                                        )
+                                                )
+                                        )
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 10)
+
+                        Spacer()
+                    }
+                )
+                #else
+                // Scroll view for tvOS (better for remote navigation)
                 ScrollView {
                     VStack(spacing: 16) {
-                        // Title with retrowave styling
                         Text("SETTINGS")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
                             .foregroundStyle(
@@ -118,7 +203,6 @@ public struct PVSettingsView: View {
                             .padding(.bottom, 10)
                             .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
-                        // Sections
                         VStack(spacing: 16) {
                             CollapsibleSection(title: "App") {
                                 AppSection(viewModel: viewModel)
@@ -150,12 +234,6 @@ public struct PVSettingsView: View {
                                     .environmentObject(viewModel)
                             }
 
-                            #if !os(tvOS)
-                            CollapsibleSection(title: "Delta Skins") {
-                                DeltaSkinsSection()
-                            }
-                            #endif
-
                             CollapsibleSection(title: "Library") {
                                 LibrarySection(viewModel: viewModel)
                                     .environmentObject(viewModel)
@@ -170,16 +248,6 @@ public struct PVSettingsView: View {
                                 AdvancedSection()
                             }
 
-                            #if !os(tvOS)
-                            CollapsibleSection(title: "Social Links") {
-                                SocialLinksSection()
-                            }
-
-                            CollapsibleSection(title: "Documentation") {
-                                DocumentationSection()
-                            }
-                            #endif
-
                             CollapsibleSection(title: "Build") {
                                 BuildSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
@@ -193,82 +261,173 @@ public struct PVSettingsView: View {
                     }
                     .padding(.bottom, 20)
                 }
+                #endif
             }
-            #if os(iOS)
-            .navigationBarHidden(true) // Hide default navigation bar
-            .overlay(
-                // Custom navigation bar
-                VStack {
-                    HStack {
-                        if showsDoneButton {
-                            // Done button with retrowave styling
-                            Button(action: { dismissAction() }) {
-                                Text("DONE")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .strokeBorder(
-                                                        LinearGradient(
-                                                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                                            startPoint: .leading,
-                                                            endPoint: .trailing
-                                                        ),
-                                                        lineWidth: 1.5
-                                                    )
-                                            )
-                                    )
-                            }
-
-                            Spacer()
-
-                            // Help button with retrowave styling
-                            Button(action: { viewModel.showHelp() }) {
-                                Text("HELP")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .strokeBorder(
-                                                        LinearGradient(
-                                                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                                            startPoint: .leading,
-                                                            endPoint: .trailing
-                                                        ),
-                                                        lineWidth: 1.5
-                                                    )
-                                            )
-                                    )
-                            }
-
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-
-                    Spacer()
-                }
-            )
-            #endif
         }
         .navigationViewStyle(StackNavigationViewStyle())
         #if os(tvOS)
         .onExitCommand {
             // Handle the Menu button press on tvOS to go back in navigation
-            // This will be handled by individual views that need custom back behavior
         }
         #endif
     }
+
+    #if !os(tvOS)
+    private var tabItems: [RetroTabItem] {
+        [
+            RetroTabItem(title: "General", systemImage: "gearshape.fill"),
+            RetroTabItem(title: "Emulation", systemImage: "gamecontroller.fill"),
+            RetroTabItem(title: "Controller", systemImage: "hand.raised.fill"),
+            RetroTabItem(title: "About", systemImage: "info.circle.fill")
+        ]
+    }
+
+    private var generalTabContent: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text("SETTINGS")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.top, 20)
+                    .padding(.bottom, 10)
+                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+
+                VStack(spacing: 16) {
+                    CollapsibleSection(title: "App") {
+                        AppSection(viewModel: viewModel)
+                            .environmentObject(viewModel)
+                    }
+                    CollapsibleSection(title: "Library") {
+                        LibrarySection(viewModel: viewModel)
+                            .environmentObject(viewModel)
+                    }
+                    CollapsibleSection(title: "Library Management") {
+                        LibrarySection2(viewModel: viewModel)
+                            .environmentObject(viewModel)
+                    }
+                }
+                .padding(.horizontal)
+            }
+            .padding(.bottom, 100)
+        }
+    }
+
+    private var emulationTabContent: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text("SETTINGS")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.top, 20)
+                    .padding(.bottom, 10)
+                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+
+                VStack(spacing: 16) {
+                    CollapsibleSection(title: "Core Options") {
+                        CoreOptionsSection()
+                    }
+                    CollapsibleSection(title: "Saves") {
+                        SavesSection()
+                    }
+                    CollapsibleSection(title: "Audio") {
+                        AudioSection()
+                    }
+                    CollapsibleSection(title: "Video") {
+                        VideoSection()
+                    }
+                }
+                .padding(.horizontal)
+            }
+            .padding(.bottom, 100)
+        }
+    }
+
+    private var controllerTabContent: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text("SETTINGS")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.top, 20)
+                    .padding(.bottom, 10)
+                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+
+                VStack(spacing: 16) {
+                    CollapsibleSection(title: "Controller") {
+                        ControllerSection()
+                    }
+                    CollapsibleSection(title: "Delta Skins") {
+                        DeltaSkinsSection()
+                    }
+                    CollapsibleSection(title: "RetroAchievements") {
+                        RetroAchievementsSection(viewModel: viewModel)
+                            .environmentObject(viewModel)
+                    }
+                }
+                .padding(.horizontal)
+            }
+            .padding(.bottom, 100)
+        }
+    }
+
+    private var aboutTabContent: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text("SETTINGS")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.top, 20)
+                    .padding(.bottom, 10)
+                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+
+                VStack(spacing: 16) {
+                    CollapsibleSection(title: "Social Links") {
+                        SocialLinksSection()
+                    }
+                    CollapsibleSection(title: "Documentation") {
+                        DocumentationSection()
+                    }
+                    CollapsibleSection(title: "Build") {
+                        BuildSection(viewModel: viewModel)
+                            .environmentObject(viewModel)
+                    }
+                    CollapsibleSection(title: "Extra Info") {
+                        ExtraInfoSection()
+                    }
+                    CollapsibleSection(title: "Advanced") {
+                        AdvancedSection()
+                    }
+                }
+                .padding(.horizontal)
+            }
+            .padding(.bottom, 100)
+        }
+    }
+    #endif
 }
 
 /// Row View for Settings with retrowave styling
