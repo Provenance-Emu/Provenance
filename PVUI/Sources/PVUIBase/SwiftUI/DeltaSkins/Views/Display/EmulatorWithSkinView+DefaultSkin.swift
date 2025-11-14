@@ -1522,9 +1522,8 @@ struct DefaultControllerSkinView: View {
                             let offsetX = (geometry.size.width - groupSize.width * scale) / 2
                             let offsetY = (geometry.size.height - groupSize.height * scale) / 2
 
-                            // Scale button size proportionally with minimum size constraint
-                            let scaledSize = min(frame.width, frame.height) * scale
-                            let buttonSize = max(scaledSize, 55) // Minimum 55pt to ensure buttons are usable
+                            // Scale button size proportionally
+                            let buttonSize = min(frame.width, frame.height) * scale
 
                             createButton(from: button, size: buttonSize)
                                 .position(x: normalizedX + offsetX, y: normalizedY + offsetY)
@@ -1533,7 +1532,11 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             }
-            .frame(minWidth: 250, minHeight: 300)
+            .aspectRatio(groupSize.width / groupSize.height, contentMode: .fit)
+            .frame(
+                minWidth: max(200, groupSize.width * 0.75),
+                minHeight: max(200, groupSize.height * 0.75)
+            )
         } else {
             // Fallback to grid layout when frames aren't available
         // Determine the best layout based on button count
