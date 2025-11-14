@@ -206,6 +206,25 @@
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
+			<string>dolphin.libretro.framework</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArch.PVRetroArchCoreCore</string>
+			<key>PVProjectName</key>
+			<string>Dolphin (RetroArch)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.gamecube</string>
+				<string>com.provenance.wii</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/dolphin</string>
+			<key>PVProjectVersion</key>
+			<string>2025.11.13</string>
+			<key>PVAppStoreDisabled</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
 			<string>minivmac.libretro.framework</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>

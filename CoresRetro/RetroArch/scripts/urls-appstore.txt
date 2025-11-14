@@ -16,6 +16,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/cap32_libretro_ios.
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/desmume_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dice_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dinothawr_libretro_ios.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dolphin_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dosbox_pure_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbalpha2012_cps1_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbalpha2012_cps2_libretro_ios.dylib.zip
