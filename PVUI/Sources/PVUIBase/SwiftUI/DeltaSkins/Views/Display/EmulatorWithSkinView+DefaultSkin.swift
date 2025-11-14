@@ -424,16 +424,23 @@ struct DefaultControllerSkinView: View {
             /// Keep the screen in the upper portion, leaving room for controls
             let controllerHeight = safeHeight * 0.35
             let availableHeight = max(0, safeHeight - controllerHeight - 16)
-            var width = min(safeWidth * 0.95, availableHeight * aspectRatio)
+            let maxWidth = safeWidth * 0.95
+
+            /// Fit game to available space while maintaining aspect ratio
+            /// Try fitting to width first
+            var width = maxWidth
             var height = width / aspectRatio
+
+            /// If height exceeds available space, fit to height instead
             if height > availableHeight {
                 height = availableHeight
                 width = height * aspectRatio
             }
+
             let originX = (size.width - width) / 2
             let originY = safeInsets.top + 12
             frame = CGRect(x: originX, y: originY, width: width, height: height)
-            ILOG("🎮 SKIN: Default viewport (portrait): size=\(size), aspectRatio=\(aspectRatio), controllerHeight=\(controllerHeight), availableHeight=\(availableHeight), frame=\(frame)")
+            ILOG("🎮 SKIN: Default viewport (portrait): size=\(size), aspectRatio=\(aspectRatio), controllerHeight=\(controllerHeight), availableHeight=\(availableHeight), maxWidth=\(maxWidth), frame=\(frame)")
         }
 
         return frame
@@ -1370,6 +1377,7 @@ struct DefaultControllerSkinView: View {
                                                 let groupSize = parseCGSize(from: standardGroups[index].PVControlSize)
                                                 createButtonGroup(from: groupedButtons, groupSize: groupSize)
                                                     .id("buttonGroup_\(index)")
+                                                    .frame(maxHeight: .infinity)
                                             }
                                         }
                                     }
@@ -1439,6 +1447,7 @@ struct DefaultControllerSkinView: View {
                                         let groupSize = parseCGSize(from: standardGroups[index].PVControlSize)
                                         createButtonGroup(from: groupedButtons, groupSize: groupSize)
                                             .id("buttonGroup_\(index)")
+                                            .frame(maxHeight: .infinity)
                                     }
                                 }
                             }
@@ -1498,6 +1507,33 @@ struct DefaultControllerSkinView: View {
         }
     }
 
+    /// Calculate the bounding box including button sizes to ensure all buttons fit
+    private func calculateBoundingBoxWithPadding(for buttons: [ControlGroupButton], groupSize: CGSize, padding: CGFloat = 10) -> CGRect {
+        var minX: CGFloat = .greatestFiniteMagnitude
+        var minY: CGFloat = .greatestFiniteMagnitude
+        var maxX: CGFloat = 0
+        var maxY: CGFloat = 0
+
+        for button in buttons {
+            guard let frame = parseCGRect(from: button.PVControlFrame) else { continue }
+            let buttonSize = min(frame.width, frame.height)
+            let halfSize = buttonSize / 2
+
+            minX = min(minX, frame.midX - halfSize)
+            minY = min(minY, frame.midY - halfSize)
+            maxX = max(maxX, frame.midX + halfSize)
+            maxY = max(maxY, frame.midY + halfSize)
+        }
+
+        // Add padding
+        return CGRect(
+            x: minX - padding,
+            y: minY - padding,
+            width: (maxX - minX) + (padding * 2),
+            height: (maxY - minY) + (padding * 2)
+        )
+    }
+
     // Create a button group based on the system's button layout
     @ViewBuilder
     private func createButtonGroup(from buttons: [ControlGroupButton], groupSize: CGSize? = nil) -> some View {
@@ -1505,38 +1541,39 @@ struct DefaultControllerSkinView: View {
         if hasValidFrames(buttons), let groupSize = groupSize {
             // Use absolute positioning based on PVControlFrame data
             GeometryReader { geometry in
+                let boundingBox = calculateBoundingBoxWithPadding(for: buttons, groupSize: groupSize, padding: 5)
+
                 ZStack {
                     ForEach(Array(buttons.enumerated()), id: \.offset) { index, button in
                         if let frame = parseCGRect(from: button.PVControlFrame) {
-                            // Normalize frame coordinates to the available geometry
-                            // The frames are relative to the groupSize from systems.plist
-                            let scaleX = geometry.size.width / groupSize.width
-                            let scaleY = geometry.size.height / groupSize.height
+                            // Calculate scale based on available space and bounding box
+                            // Account for button sizes to ensure they fit within bounds
+                            let scaleX = geometry.size.width / boundingBox.width
+                            let scaleY = geometry.size.height / boundingBox.height
                             let scale = min(scaleX, scaleY) // Maintain aspect ratio
-
-                            // Calculate normalized position (frames are absolute within groupSize)
-                            let normalizedX = frame.midX * scale
-                            let normalizedY = frame.midY * scale
-
-                            // Center the group in available space
-                            let offsetX = (geometry.size.width - groupSize.width * scale) / 2
-                            let offsetY = (geometry.size.height - groupSize.height * scale) / 2
 
                             // Scale button size proportionally
                             let buttonSize = min(frame.width, frame.height) * scale
 
+                            // Calculate position relative to bounding box, then scale
+                            let relativeX = frame.midX - boundingBox.minX
+                            let relativeY = frame.midY - boundingBox.minY
+
+                            // Position button ensuring it stays within bounds
+                            let positionX = relativeX * scale
+                            let positionY = relativeY * scale
+
                             createButton(from: button, size: buttonSize)
-                                .position(x: normalizedX + offsetX, y: normalizedY + offsetY)
+                                .position(x: positionX, y: positionY)
                                 .id("button_group_frame_\(index)_\(button.PVControlTitle)")
                         }
                     }
                 }
+                .clipped() // Ensure buttons don't extend beyond bounds
             }
             .aspectRatio(groupSize.width / groupSize.height, contentMode: .fit)
-            .frame(
-                minWidth: max(200, groupSize.width * 0.75),
-                minHeight: max(200, groupSize.height * 0.75)
-            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .layoutPriority(1) // Allow it to shrink if needed
         } else {
             // Fallback to grid layout when frames aren't available
         // Determine the best layout based on button count
