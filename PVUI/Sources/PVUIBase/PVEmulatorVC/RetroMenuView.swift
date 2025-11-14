@@ -27,6 +27,7 @@ struct RetroMenuView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var selectedCategory: MenuCategory = .main
+    @State private var isDraggingCategoryBar: Bool = false
 
     private var palette: UXThemePalette { themeManager.currentPalette }
 
@@ -239,7 +240,24 @@ struct RetroMenuView: View {
                         }
                         .padding(.horizontal, 20)
                     }
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 5)
+                            .onChanged { _ in
+                                if !isDraggingCategoryBar {
+                                    isDraggingCategoryBar = true
+                                }
+                            }
+                            .onEnded { _ in
+                                // Delay resetting drag state to allow scroll to settle
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                    isDraggingCategoryBar = false
+                                }
+                            }
+                    )
                     .onChange(of: selectedCategory) { newCategory in
+                        // Only programmatically scroll if user is not actively dragging
+                        guard !isDraggingCategoryBar else { return }
+
                         // Scroll to selected category
                         let categoryId: String
                         switch newCategory {
