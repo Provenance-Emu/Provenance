@@ -118,6 +118,8 @@ public struct PVSettingsView: View {
                             case 2:
                                 controllerTabContent
                             case 3:
+                                advancedTabContent
+                            case 4:
                                 aboutTabContent
                             default:
                                 generalTabContent
@@ -278,7 +280,8 @@ public struct PVSettingsView: View {
             RetroTabItem(title: "General", systemImage: "gearshape.fill"),
             RetroTabItem(title: "Emulation", systemImage: "gamecontroller.fill"),
             RetroTabItem(title: "Controller", systemImage: "hand.raised.fill"),
-            RetroTabItem(title: "About", systemImage: "info.circle.fill")
+            RetroTabItem(title: "About", systemImage: "info.circle.fill"),
+            RetroTabItem(title: "Advanced", systemImage: "gearshape.2.fill")
         ]
     }
 
@@ -418,6 +421,30 @@ public struct PVSettingsView: View {
                     CollapsibleSection(title: "Extra Info") {
                         ExtraInfoSection()
                     }
+                }
+                .padding(.horizontal)
+            }
+            .padding(.bottom, 100)
+        }
+    }
+
+    private var advancedTabContent: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text("SETTINGS")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.top, 20)
+                    .padding(.bottom, 10)
+                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+
+                VStack(spacing: 16) {
                     CollapsibleSection(title: "Advanced") {
                         AdvancedSection()
                     }
