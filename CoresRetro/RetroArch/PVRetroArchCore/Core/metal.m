@@ -1403,17 +1403,32 @@ typedef struct MTLALIGN(16)
 
 - (void)setFrame:(CGRect)frame
 {
-   if (CGRectEqualToRect(_frame, frame))
+   // CRITICAL FIX: Compare by size only, not origin
+   // After rotation, the size changes but origin might be similar, causing vertices not to update
+   // Always use origin (0,0) for vertex positioning to prevent double offset
+   BOOL frameChanged = !(CGSizeEqualToSize(_frame.size, frame.size) && CGPointEqualToPoint(_frame.origin, frame.origin));
+
+   ILOG(@"[RA MetalView] setFrame called: frame=%@, _frame=%@, changed=%d",
+        NSStringFromCGRect(frame), NSStringFromCGRect(_frame), frameChanged);
+
+   if (!frameChanged) {
+      ILOG(@"[RA MetalView] Frame unchanged, skipping vertex update");
       return;
+   }
 
    /* update vertices */
-   CGPoint o   = frame.origin;
+   // Always use origin (0,0) for vertex positioning
+   // The frame origin is used for UIView positioning, but rendering should
+   // always start at (0,0) within the view to prevent double offset
    CGSize  s   = frame.size;
 
-   CGFloat l   = o.x;
-   CGFloat t   = o.y;
-   CGFloat r   = o.x + s.width;
-   CGFloat b   = o.y + s.height;
+   CGFloat l   = 0.0f;  // Always start at 0, not frame.origin.x
+   CGFloat t   = 0.0f;  // Always start at 0, not frame.origin.y
+   CGFloat r   = s.width;
+   CGFloat b   = s.height;
+
+   ILOG(@"[RA MetalView] Setting vertices: l=%.1f t=%.1f r=%.1f b=%.1f (frame origin was: %.1f,%.1f)",
+        l, t, r, b, frame.origin.x, frame.origin.y);
 
    Vertex v[4] = {
       {simd_make_float3(l, b, 0), simd_make_float2(0, 1)},
@@ -1424,6 +1439,8 @@ typedef struct MTLALIGN(16)
 
    _frame      = frame;
    memcpy(_v, v, sizeof(_v));
+
+   ILOG(@"[RA MetalView] Vertices updated, _frame now: %@", NSStringFromCGRect(_frame));
 }
 
 - (CGRect)frame { return _frame; }

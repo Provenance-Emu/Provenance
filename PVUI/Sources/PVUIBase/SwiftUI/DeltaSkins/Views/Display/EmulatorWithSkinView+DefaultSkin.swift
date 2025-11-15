@@ -391,9 +391,39 @@ struct DefaultControllerSkinView: View {
     /// Calculate viewport used when no explicit skin is available
     private func calculateDefaultViewport(size: CGSize, safeInsets: EdgeInsets, isLandscape: Bool) -> CGRect {
         let aspectSize = coreInstance.aspectSize
-        let aspectWidth = aspectSize.width > 0 ? aspectSize.width : 4.0
-        let aspectHeight = aspectSize.height > 0 ? aspectSize.height : 3.0
-        let aspectRatio = aspectWidth / max(0.01, aspectHeight)
+        var aspectWidth = aspectSize.width > 0 ? aspectSize.width : 4.0
+        var aspectHeight = aspectSize.height > 0 ? aspectSize.height : 3.0
+
+        ILOG("🎮 SKIN: Raw aspectSize from core: width=\(aspectWidth), height=\(aspectHeight)")
+
+        /// Calculate aspect ratio - ensure it's reasonable (most games are 4:3 or 16:9)
+        var aspectRatio = aspectWidth / max(0.01, aspectHeight)
+
+        /// Check if aspectSize looks like screen dimensions instead of game aspect ratio
+        /// Screen dimensions are typically much larger (e.g., 440x956), while aspect ratios are small numbers (e.g., 4:3)
+        let looksLikeScreenSize = aspectWidth > 100 || aspectHeight > 100
+
+        /// Most games have aspect ratios between 1.0 (square) and 2.0 (ultrawide)
+        /// If aspect ratio is outside reasonable bounds OR looks like screen dimensions, fix it
+        if looksLikeScreenSize || aspectRatio < 0.5 || aspectRatio > 2.0 {
+            if looksLikeScreenSize {
+                ILOG("🎮 SKIN: aspectSize looks like screen dimensions (\(aspectWidth)x\(aspectHeight)), using default 4:3 aspect ratio")
+                /// If aspectSize is returning screen dimensions, we can't derive the game's aspect ratio from it
+                /// Default to 4:3 for most retro games (N64, SNES, etc.)
+                aspectRatio = 4.0 / 3.0
+            } else {
+                /// Try inverted: swap width and height
+                let invertedRatio = aspectHeight / max(0.01, aspectWidth)
+                if invertedRatio >= 0.5 && invertedRatio <= 2.0 {
+                    aspectRatio = invertedRatio
+                    ILOG("🎮 SKIN: Aspect ratio was inverted, using corrected ratio: \(aspectRatio) (was \(aspectWidth)/\(aspectHeight) = \(aspectWidth / max(0.01, aspectHeight)))")
+                } else {
+                    /// Fallback to 4:3 if both are unreasonable
+                    aspectRatio = 4.0 / 3.0
+                    ILOG("🎮 SKIN: Aspect ratio out of bounds, using default 4:3 (was \(aspectWidth)/\(aspectHeight) = \(aspectWidth / max(0.01, aspectHeight)))")
+                }
+            }
+        }
 
         let horizontalSafe = safeInsets.leading + safeInsets.trailing
         let verticalSafe = safeInsets.top + safeInsets.bottom
@@ -409,22 +439,33 @@ struct DefaultControllerSkinView: View {
         if isLandscape {
             /// Reserve space for controls on each edge
             let sideReserve = max(180, min(240, safeWidth * 0.25))
-            let availableWidth = max(0, safeWidth - (sideReserve * 2) - 20)
+            let availableWidth = max(0, safeWidth - (sideReserve * 2))
             var width = availableWidth
             var height = width / aspectRatio
+
+            /// If height exceeds available space, fit to height instead
             if height > safeHeight {
                 height = safeHeight
                 width = height * aspectRatio
             }
-            let originX = (size.width - width) / 2
+
+            /// Center horizontally and vertically
+            let originX = safeInsets.leading + (safeWidth - width) / 2
             let originY = safeInsets.top + (safeHeight - height) / 2
             frame = CGRect(x: originX, y: originY, width: width, height: height)
-            ILOG("🎮 SKIN: Default viewport (landscape): size=\(size), aspectRatio=\(aspectRatio), frame=\(frame)")
+            ILOG("🎮 SKIN: Default viewport (landscape): size=\(size), aspectRatio=\(aspectRatio), safeWidth=\(safeWidth), safeHeight=\(safeHeight), availableWidth=\(availableWidth), frame=\(frame)")
         } else {
             /// Keep the screen in the upper portion, leaving room for controls
+            /// Reserve 35% for controller area, with some margin
             let controllerHeight = safeHeight * 0.35
-            let availableHeight = max(0, safeHeight - controllerHeight - 16)
-            let maxWidth = safeWidth * 0.95
+            /// Ensure minimum top safe area to avoid notch (at least 44pt for status bar/notch area)
+            let minTopSafeArea: CGFloat = 44
+            let effectiveTopSafeArea = max(safeInsets.top, minTopSafeArea)
+            let topMargin: CGFloat = 12
+            let bottomMargin: CGFloat = 8
+            let availableHeight = max(0, safeHeight - controllerHeight - topMargin - bottomMargin)
+            let horizontalMargin: CGFloat = 12
+            let maxWidth = safeWidth - (horizontalMargin * 2)
 
             /// Fit game to available space while maintaining aspect ratio
             /// Try fitting to width first
@@ -437,10 +478,24 @@ struct DefaultControllerSkinView: View {
                 width = height * aspectRatio
             }
 
-            let originX = (size.width - width) / 2
-            let originY = safeInsets.top + 12
+            /// Calculate the game screen area bounds
+            /// Use effectiveTopSafeArea to ensure we don't go under the notch
+            let gameAreaTop = effectiveTopSafeArea + topMargin
+            let gameAreaBottom = safeInsets.top + safeHeight - controllerHeight - bottomMargin
+            let gameAreaHeight = gameAreaBottom - gameAreaTop
+
+            /// Ensure frame fits within game area
+            if height > gameAreaHeight {
+                height = gameAreaHeight
+                width = height * aspectRatio
+            }
+
+            /// Center horizontally and vertically in the game screen area
+            let originX = safeInsets.leading + (safeWidth - width) / 2
+            let originY = gameAreaTop + (gameAreaHeight - height) / 2
+
             frame = CGRect(x: originX, y: originY, width: width, height: height)
-            ILOG("🎮 SKIN: Default viewport (portrait): size=\(size), aspectRatio=\(aspectRatio), controllerHeight=\(controllerHeight), availableHeight=\(availableHeight), maxWidth=\(maxWidth), frame=\(frame)")
+            ILOG("🎮 SKIN: Default viewport (portrait): size=\(size), aspectRatio=\(aspectRatio), safeInsets.top=\(safeInsets.top), effectiveTopSafeArea=\(effectiveTopSafeArea), controllerHeight=\(controllerHeight), gameAreaTop=\(gameAreaTop), gameAreaBottom=\(gameAreaBottom), gameAreaHeight=\(gameAreaHeight), frame=\(frame)")
         }
 
         return frame
@@ -1886,21 +1941,38 @@ private struct ViewportUpdater: View {
     let safeInsets: EdgeInsets
     let onUpdate: (CGSize, EdgeInsets, Bool) -> Void
 
+    @State private var lastSize: CGSize = .zero
+    @State private var lastSafeInsets: EdgeInsets = EdgeInsets()
+
     var body: some View {
         Color.clear
             .onAppear {
                 let isLandscape = size.width > size.height
+                lastSize = size
+                lastSafeInsets = safeInsets
                 onUpdate(size, safeInsets, isLandscape)
             }
             .onChange(of: size) { newSize in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                // Only update if size actually changed significantly (avoid duplicate updates during rotation)
+                let sizeChanged = abs(newSize.width - lastSize.width) > 1.0 || abs(newSize.height - lastSize.height) > 1.0
+                if sizeChanged {
                     let isLandscape = newSize.width > newSize.height
+                    lastSize = newSize
+                    // Use immediate update, no delay - same code path as initial boot
                     onUpdate(newSize, safeInsets, isLandscape)
                 }
             }
             .onChange(of: safeInsets) { newInsets in
-                let isLandscape = size.width > size.height
-                onUpdate(size, newInsets, isLandscape)
+                // Only update if safe insets actually changed
+                let insetsChanged = abs(newInsets.top - lastSafeInsets.top) > 0.5 ||
+                                   abs(newInsets.bottom - lastSafeInsets.bottom) > 0.5 ||
+                                   abs(newInsets.leading - lastSafeInsets.leading) > 0.5 ||
+                                   abs(newInsets.trailing - lastSafeInsets.trailing) > 0.5
+                if insetsChanged {
+                    let isLandscape = size.width > size.height
+                    lastSafeInsets = newInsets
+                    onUpdate(size, newInsets, isLandscape)
+                }
             }
     }
 }

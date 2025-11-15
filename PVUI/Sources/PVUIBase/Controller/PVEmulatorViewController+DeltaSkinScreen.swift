@@ -167,22 +167,80 @@ extension PVEmulatorViewController {
         }
 
         // Use notification frame if available (most accurate)
+        // For default skin, always prefer notification frame to avoid double adjustment during rotation
         ILOG("🎮 SKIN: Checking currentTargetFrame: \(String(describing: currentTargetFrame))")
         if let frame = currentTargetFrame, isValidFrame(frame) {
             ILOG("🎮 SKIN: Using notification frame: \(frame)")
             applyFrameToGPUView(frame)
             return
-        } else {
-            ILOG("🎮 SKIN: No valid notification frame, will calculate")
         }
+
+        // If using default skin (no explicit skin), wait briefly for notification frame
+        // This ensures rotation uses the same code path as initial boot (notification-based)
+        let isDefaultSkin = currentSkin == nil || (currentSkin?.identifier == "default" || currentSkin?.name.lowercased().contains("default") == true)
+        if isDefaultSkin {
+            ILOG("🎮 SKIN: Default skin detected, waiting briefly for notification frame")
+            // Give the ViewportUpdater a chance to send the notification (it fires immediately now)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
+                guard let self = self else { return }
+                // Check again for notification frame
+                if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
+                    ILOG("🎮 SKIN: Using notification frame after brief wait: \(frame)")
+                    self.applyFrameToGPUView(frame)
+                    return
+                }
+                // If still no notification frame, proceed with calculation
+                self.continueViewportCalculation()
+            }
+            return
+        }
+
+        ILOG("🎮 SKIN: No valid notification frame, will calculate")
+        continueViewportCalculation()
+    }
+
+    /// Continue viewport calculation (extracted to avoid duplication)
+    private func continueViewportCalculation() {
 
         // Calculate frame - works the same for RetroArch and non-RetroArch cores
         // Load skin from cache synchronously if available, otherwise proceed without skin
         ILOG("🎮 SKIN: currentSkin: \(String(describing: currentSkin?.name))")
+
+        // Ensure view has been laid out before calculating viewport
+        // This is critical on initial load when bounds might be incorrect
+        view.layoutIfNeeded()
+
+        // Validate view bounds before using them
+        guard view.bounds.width > 0 && view.bounds.height > 0 else {
+            ILOG("🎮 SKIN: View bounds invalid (\(view.bounds)), deferring viewport calculation")
+            // Schedule retry after layout
+            DispatchQueue.main.async { [weak self] in
+                self?.applyViewportFromCurrentSkin()
+            }
+            return
+        }
+
+        // During rotation, use view bounds to determine orientation instead of currentOrientation
+        // currentOrientation may be stale during rotation transitions
+        let boundsIsLandscape = view.bounds.width > view.bounds.height
+        let boundsIsPortrait = view.bounds.height > view.bounds.width
+
+        // Only defer if bounds are clearly invalid (both dimensions equal or zero)
+        // During rotation, bounds will update before currentOrientation, so use bounds directly
+        guard boundsIsLandscape || boundsIsPortrait else {
+            ILOG("🎮 SKIN: View bounds invalid during rotation - bounds: \(view.bounds), deferring")
+            DispatchQueue.main.async { [weak self] in
+                self?.applyViewportFromCurrentSkin()
+            }
+            return
+        }
+
         if currentSkin == nil, let systemId = game.system?.systemIdentifier {
             let manager = DeltaSkinManager.shared
             if manager.skinsAreLoaded {
-                let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+                // Use view bounds to determine orientation (more reliable during rotation)
+                let boundsIsLandscape = view.bounds.width > view.bounds.height
+                let orientation: SkinOrientation = boundsIsLandscape ? .landscape : .portrait
                 if let selectedIdentifier = DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
                     for: systemId,
                     gameId: game.id,
@@ -197,6 +255,10 @@ extension PVEmulatorViewController {
                     currentSkin = skin
                     DLOG("🎮 SKIN: Found default skin in cache: \(skin.name)")
                 }
+            } else {
+                // Skin manager not loaded yet - defer viewport calculation until skin loads
+                ILOG("🎮 SKIN: Skin manager not loaded yet, deferring viewport calculation")
+                return
             }
         }
 
@@ -216,8 +278,16 @@ extension PVEmulatorViewController {
     internal func currentSkinViewportFrame() -> CGRect? {
         guard let skin = currentSkin else { return nil }
 
+        // Ensure view has valid bounds before calculating viewport
+        guard view.bounds.width > 0 && view.bounds.height > 0 else {
+            DLOG("🎮 SKIN: View bounds invalid (\(view.bounds)) in currentSkinViewportFrame, returning nil")
+            return nil
+        }
+
         let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        let orientation: DeltaSkinOrientation = (currentOrientation == .landscape) ? .landscape : .portrait
+        // Use view bounds to determine orientation during rotation (more reliable than currentOrientation)
+        let boundsIsLandscape = view.bounds.width > view.bounds.height
+        let orientation: DeltaSkinOrientation = boundsIsLandscape ? .landscape : .portrait
         let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
 
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
@@ -320,25 +390,37 @@ extension PVEmulatorViewController {
 
         // Handle cores that support viewport positioning (RetroArch, PPSSPP, etc.)
         if let viewport = core.bridge as? EmulatorCoreViewportPositioning {
-            ILOG("🎮 SKIN: Found EmulatorCoreViewportPositioning bridge - calling applyRenderViewFrameInTouchView with frame: \(frame)")
+            ILOG("🎮 SKIN: ========== applyFrameToGPUView START (EmulatorCoreViewportPositioning) ==========")
+            ILOG("🎮 SKIN: Input frame (in self.view coords): \(frame)")
+            ILOG("🎮 SKIN: self.view: \(view), frame: \(view.frame), bounds: \(view.bounds)")
+            ILOG("🎮 SKIN: gameScreenView: \(gameScreenView), frame: \(gameScreenView.frame), bounds: \(gameScreenView.bounds)")
+            ILOG("🎮 SKIN: gameScreenView.superview: \(gameScreenView.superview?.description ?? "nil")")
+            if let superview = gameScreenView.superview {
+                ILOG("🎮 SKIN: gameScreenView.superview.frame: \(superview.frame), bounds: \(superview.bounds)")
+            }
 
             /// Determine the correct parent view to use
             /// Priority: 1) touchViewController.view, 2) gpuViewController.mtlView (for Metal/PPSSPP), 3) gpuViewController.view, 4) renderDelegate.view
             let parent: UIView?
             if let touchView = core.touchViewController?.view {
                 parent = touchView
+                ILOG("🎮 SKIN: Using touchViewController.view as parent: \(touchView), frame: \(touchView.frame), bounds: \(touchView.bounds)")
             } else if let metalVC = gpuViewController as? PVMetalViewController,
                       let mtlView = metalVC.mtlView {
                 /// For PPSSPP with Metal, m_view is added to mtlView
                 parent = mtlView
+                ILOG("🎮 SKIN: Using gpuViewController.mtlView as parent: \(mtlView), frame: \(mtlView.frame), bounds: \(mtlView.bounds)")
             } else if let gpuView = gpuViewController.view {
                 /// For PPSSPP, gpuViewController.view is reliable since it's always available
                 parent = gpuView
+                ILOG("🎮 SKIN: Using gpuViewController.view as parent: \(gpuView), frame: \(gpuView.frame), bounds: \(gpuView.bounds)")
             } else if let renderDelegate = core.renderDelegate as? UIViewController {
                 /// renderDelegate is expected to be a UIViewController conforming to PVRenderDelegate
                 parent = renderDelegate.view
+                ILOG("🎮 SKIN: Using renderDelegate.view as parent: \(renderDelegate.view), frame: \(renderDelegate.view.frame), bounds: \(renderDelegate.view.bounds)")
             } else {
                 parent = nil
+                ILOG("🎮 SKIN: No parent view found")
             }
 
             guard let parent = parent else {
@@ -357,6 +439,18 @@ extension PVEmulatorViewController {
                 return
             }
 
+            ILOG("🎮 SKIN: Parent view hierarchy:")
+            ILOG("🎮 SKIN:   parent: \(parent), frame: \(parent.frame), bounds: \(parent.bounds)")
+            ILOG("🎮 SKIN:   parent.superview: \(parent.superview?.description ?? "nil")")
+            if let parentSuperview = parent.superview {
+                ILOG("🎮 SKIN:   parent.superview.frame: \(parentSuperview.frame), bounds: \(parentSuperview.bounds)")
+            }
+            ILOG("🎮 SKIN:   view == parent? \(view == parent)")
+            if view != parent {
+                let viewOriginInParent = view.convert(CGPoint.zero, to: parent)
+                ILOG("🎮 SKIN:   view origin in parent coords: \(viewOriginInParent)")
+            }
+
             // Ensure parent has valid bounds
             // Don't force layout - it causes call loops
             guard parent.bounds.width > 0 && parent.bounds.height > 0 else {
@@ -367,85 +461,24 @@ extension PVEmulatorViewController {
             DLOG("🎮 SKIN: Calling setUseCustomRenderViewLayout(true) for RetroArch")
             viewport.setUseCustomRenderViewLayout(true)
 
-            // For RetroArch cores, convert coordinates from self.view to parent coordinate system
-            // The frame is calculated in self.view coordinates based on skin layout
-            // RetroArch expects coordinates relative to the touchViewController's view
-            let rectInParent: CGRect
-            if view == parent {
-                // Same view, no conversion needed - use frame directly
-                rectInParent = frame
-                DLOG("🎮 SKIN: view == parent, using frame directly: \(frame)")
-            } else {
-                // Convert between different coordinate spaces
-                // Use convert(_:to:) which preserves size correctly
-                let originInParent = view.convert(frame.origin, to: parent)
-                // Convert the width/height separately to account for different scales
-                // The size should remain the same in points, only position changes
-                let size = frame.size
+            // For RetroArch/PPSSPP: Pass frame as-is in self.view coordinates
+            // The core will handle coordinate conversion internally
+            // This matches how other cores work and prevents double conversion
+            let finalRect = frame
 
-                rectInParent = CGRect(
-                    origin: originInParent,
-                    size: size
-                )
-
-                // Debug conversion details for troubleshooting
-                let viewOrigin = view.convert(CGPoint.zero, to: parent)
-                DLOG("🎮 SKIN: RetroArch conversion - original frame: \(frame), originInParent: \(originInParent), size: \(size), rectInParent: \(rectInParent), parent.bounds: \(parent.bounds), view.bounds: \(view.bounds)")
-            }
-
-            // Validate converted rect
-            guard isValidFrame(rectInParent) else {
-                ELOG("🎮 SKIN: Invalid converted rect: \(rectInParent) from frame: \(frame), parent.bounds: \(parent.bounds), view.bounds: \(view.bounds)")
-                return
-            }
-
-            // For RetroArch/PPSSPP, preserve the calculated frame size and position
-            // Only apply minimal clamping if frame extends beyond parent bounds
-            var finalRect = rectInParent
-
-            ILOG("🎮 SKIN: PPSSPP/RetroArch - rectInParent: \(rectInParent), parent.bounds: \(parent.bounds)")
-
-            // Check if frame needs adjustment - only clamp if extending beyond bounds
-            let needsClampX = rectInParent.minX < 0 || rectInParent.maxX > parent.bounds.width
-            let needsClampY = rectInParent.minY < 0 || rectInParent.maxY > parent.bounds.height
-
-            if needsClampX || needsClampY {
-                // Preserve aspect ratio and size, just adjust position
-                // Only scale down if absolutely necessary to fit
-                let aspectRatio = rectInParent.width / rectInParent.height
-                var adjustedWidth = rectInParent.width
-                var adjustedHeight = rectInParent.height
-
-                // Scale down only if exceeds bounds, maintaining aspect ratio
-                if adjustedWidth > parent.bounds.width {
-                    adjustedWidth = parent.bounds.width
-                    adjustedHeight = adjustedWidth / aspectRatio
-                }
-                if adjustedHeight > parent.bounds.height {
-                    adjustedHeight = parent.bounds.height
-                    adjustedWidth = adjustedHeight * aspectRatio
-                }
-
-                // Center the adjusted frame if needed, or clamp to bounds
-                let clampedX = needsClampX ? max(0, min(rectInParent.origin.x, parent.bounds.width - adjustedWidth)) : rectInParent.origin.x
-                let clampedY = needsClampY ? max(0, min(rectInParent.origin.y, parent.bounds.height - adjustedHeight)) : rectInParent.origin.y
-
-                finalRect = CGRect(x: clampedX, y: clampedY, width: adjustedWidth, height: adjustedHeight)
-            }
-
-            let orientation: SkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
-            DLOG("🎮 SKIN: RetroArch viewport (\(orientation == .landscape ? "landscape" : "portrait")): frame=\(frame), rectInParent=\(rectInParent), finalRect=\(finalRect), parent.bounds=\(parent.bounds), view.bounds=\(view.bounds)")
-
-            // Validate final rect
+            // Validate frame
             guard isValidFrame(finalRect) else {
-                ELOG("🎮 SKIN: Invalid final rect: \(finalRect)")
+                ELOG("🎮 SKIN: Invalid frame: \(finalRect)")
                 return
             }
 
-            ILOG("🎮 SKIN: Calling viewport.applyRenderViewFrameInTouchView with finalRect: \(finalRect)")
+            ILOG("🎮 SKIN: Calling viewport.applyRenderViewFrameInTouchView with frame: \(finalRect)")
+            ILOG("🎮 SKIN:   Frame is in self.view coordinates: \(view)")
+            ILOG("🎮 SKIN:   Parent view: \(parent)")
             viewport.setUseCustomRenderViewLayout(true)
             viewport.applyRenderViewFrameInTouchView(finalRect)
             ILOG("🎮 SKIN: Finished calling applyRenderViewFrameInTouchView")
+            ILOG("🎮 SKIN: ========== applyFrameToGPUView END ==========")
 
             // Ensure GPU view is visible and below skin
             ensureGPUViewVisibilityAndZOrder()
@@ -566,6 +599,16 @@ extension PVEmulatorViewController {
     /// Reset GPU view to default position
     internal func resetGPUViewPosition() {
         guard let gameScreenView = gpuViewController.view else { return }
+
+        // Ensure view has valid bounds before resetting
+        view.layoutIfNeeded()
+        guard view.bounds.width > 0 && view.bounds.height > 0 else {
+            ILOG("🎮 SKIN: View bounds invalid (\(view.bounds)) in resetGPUViewPosition, deferring")
+            DispatchQueue.main.async { [weak self] in
+                self?.resetGPUViewPosition()
+            }
+            return
+        }
 
         UIView.performWithoutAnimation {
             gameScreenView.frame = view.bounds
