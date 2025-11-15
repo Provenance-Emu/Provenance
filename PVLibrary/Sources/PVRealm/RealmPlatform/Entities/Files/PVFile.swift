@@ -128,6 +128,38 @@ public extension PVFile {
         fixPartialPath(remove: URL.iCloudDocumentsDirectory, &mutatingPartialPath)
         fixPartialPath(remove: URL.iCloudContainerDirectory, &mutatingPartialPath)
 
+        // Check if this looks like an absolute path from a different app bundle
+        // (e.g., /var/mobile/Containers/Data/Application/.../Documents/...)
+        // Check for app bundle paths with or without leading slash, and anywhere in the string
+        let containsAppBundlePath = mutatingPartialPath.contains("/var/mobile/") ||
+                                   mutatingPartialPath.contains("var/mobile/") ||
+                                   mutatingPartialPath.contains("/private/var/mobile/") ||
+                                   mutatingPartialPath.contains("private/var/mobile/") ||
+                                   mutatingPartialPath.contains("/Containers/Data/Application/") ||
+                                   mutatingPartialPath.contains("Containers/Data/Application/")
+
+        if containsAppBundlePath {
+            // Try to extract relative path by finding common directory patterns
+            let pathComponents = (mutatingPartialPath as NSString).pathComponents
+
+            // Extract relative path starting from "Documents" or "Caches" to preserve "Save States" folder
+            // This ensures paths like "Documents/Save States/Game/file.svs" are preserved correctly
+            if let documentsIndex = pathComponents.firstIndex(where: {
+                $0 == "Documents" || $0 == "Caches"
+            }) {
+                // Extract everything after "Documents" or "Caches" (includes "Save States" if present)
+                let relativeComponents = Array(pathComponents[(documentsIndex + 1)...])
+                mutatingPartialPath = relativeComponents.joined(separator: "/")
+            } else if pathComponents.count >= 2 {
+                // If we can't find a pattern, take the last two components (directory + filename)
+                let relativeComponents = Array(pathComponents.suffix(2))
+                mutatingPartialPath = relativeComponents.joined(separator: "/")
+            } else {
+                // Fallback: just the filename
+                mutatingPartialPath = pathComponents.last ?? mutatingPartialPath
+            }
+        }
+
         // Fix any remaining issues with the path
         if mutatingPartialPath.hasPrefix("/") {
             mutatingPartialPath = String(mutatingPartialPath.dropFirst())
@@ -236,7 +268,7 @@ public extension PVFile {
         get {
             let isPartialPathFixed = _actualPartialPath != nil
             let ogPartialPath = partialPath
-            let fixedPartialPath = actualPartialPath
+            var fixedPartialPath = actualPartialPath
             var returnUrl: URL
             var failedToFixPartialPath = false
 
@@ -248,6 +280,34 @@ public extension PVFile {
                     url generated: \(returnUrl)
                     relativeRoot: \(relativeRoot)
                     """)
+                }
+            }
+
+            // Detect and trim erroneous app bundle paths (e.g., /var/mobile/Containers/Data/Application/.../Documents/...)
+            // This handles cases where an absolute path was incorrectly stored as partialPath
+            // Check for app bundle paths with or without leading slash, and anywhere in the string
+            let containsAppBundlePath = fixedPartialPath.contains("/var/mobile/") ||
+                                       fixedPartialPath.contains("var/mobile/") ||
+                                       fixedPartialPath.contains("/private/var/mobile/") ||
+                                       fixedPartialPath.contains("private/var/mobile/") ||
+                                       fixedPartialPath.contains("/Containers/Data/Application/") ||
+                                       fixedPartialPath.contains("Containers/Data/Application/")
+
+            if containsAppBundlePath {
+                let pathComponents = (fixedPartialPath as NSString).pathComponents
+
+                // Extract relative path starting from "Documents" or "Caches" to preserve "Save States" folder
+                // This ensures paths like "Documents/Save States/Game/file.svs" are preserved correctly
+                if let documentsIndex = pathComponents.firstIndex(where: { $0 == "Documents" || $0 == "Caches" }) {
+                    // Extract everything after "Documents" or "Caches" (includes "Save States" if present)
+                    let relativeComponents = Array(pathComponents[(documentsIndex + 1)...])
+                    fixedPartialPath = relativeComponents.joined(separator: "/")
+                    DLOG("Trimmed app bundle path from partialPath. Original: \(ogPartialPath), Fixed: \(fixedPartialPath)")
+                } else if pathComponents.count >= 2 {
+                    // Fallback: take the last two components (directory + filename)
+                    let relativeComponents = Array(pathComponents.suffix(2))
+                    fixedPartialPath = relativeComponents.joined(separator: "/")
+                    DLOG("Trimmed app bundle path from partialPath (fallback). Original: \(ogPartialPath), Fixed: \(fixedPartialPath)")
                 }
             }
 
@@ -289,8 +349,40 @@ public extension PVFile {
                 }
             }
 
-            // Use the realPath property which handles sync mode differences
-            returnUrl = realPath
+            // Use the trimmed fixedPartialPath to construct the URL (handles sync mode differences)
+            // This ensures we use the corrected path even if it was trimmed from an app bundle path
+            let syncMode = Defaults[.iCloudSyncMode]
+
+            // If we're using CloudKit, use the local documents directory
+            if syncMode.isCloudKit {
+                #if os(tvOS)
+                returnUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
+                #else
+                returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+                #endif
+            } else {
+                // For iCloud Drive, use the iCloud container if available
+                if let iCloudContainer = URL.iCloudContainerDirectory {
+                    let possibleCloudPath = iCloudContainer.appendingPathComponent(fixedPartialPath)
+                    if FileManager.default.fileExists(atPath: possibleCloudPath.path) {
+                        returnUrl = possibleCloudPath
+                    } else {
+                        // Fallback to the local documents directory
+                        #if os(tvOS)
+                        returnUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
+                        #else
+                        returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+                        #endif
+                    }
+                } else {
+                    // Fallback to the local documents directory
+                    #if os(tvOS)
+                    returnUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
+                    #else
+                    returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+                    #endif
+                }
+            }
             /*if !isPartialPathFixed {
                 DLOG("""
                 valid partial path: \(fixedPartialPath)
