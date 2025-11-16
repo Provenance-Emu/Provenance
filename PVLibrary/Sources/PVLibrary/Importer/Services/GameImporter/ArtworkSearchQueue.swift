@@ -30,6 +30,13 @@ private struct ArtworkSearchMetadata: Sendable {
     let md5Hash: String
 }
 
+/// Metadata for retrying artwork downloads (no Realm objects required)
+private struct ArtworkRetryMetadata: Sendable {
+    let md5Hash: String
+    let artworkURL: String
+    let title: String?
+}
+
 /// Manages a lower-priority queue for enhanced artwork searching
 /// Uses PVLookup's multi-source search (TheGamesDB, LibretroDB) instead of just OpenVGDB
 public actor ArtworkSearchQueue {
@@ -464,13 +471,20 @@ public actor ArtworkSearchQueue {
         guard ENABLE_ENHANCED_ARTWORK_SEARCH else { return }
 
         // Find games with artwork URLs but no artwork files
-        // Create Realm in detached task to avoid actor isolation issues
-        let gamesNeedingDownload = await Task.detached(priority: .utility) { () -> [PVGame] in
+        // Extract values from Realm objects inside detached task to avoid cross-thread access
+        let gamesNeedingDownload = await Task.detached(priority: .utility) { () -> [ArtworkRetryMetadata] in
             guard let realm = try? Realm() else {
                 return []
             }
             return realm.objects(PVGame.self)
-                .filter("originalArtworkURL != '' AND originalArtworkFile == nil AND customArtworkURL == ''").toArray()
+                .filter("originalArtworkURL != '' AND originalArtworkFile == nil AND customArtworkURL == ''")
+                .map { game in
+                    ArtworkRetryMetadata(
+                        md5Hash: game.md5Hash.uppercased(),
+                        artworkURL: game.originalArtworkURL,
+                        title: game.title
+                    )
+                }
         }.value
 
         guard !gamesNeedingDownload.isEmpty else {
@@ -484,14 +498,13 @@ public actor ArtworkSearchQueue {
         let batchSize = 5
         var processed = 0
 
-        for game in gamesNeedingDownload {
+        for gameMetadata in gamesNeedingDownload {
             guard processed < 20 else { break } // Limit to 20 retries per call
 
-            let md5Hash = game.md5Hash.uppercased()
-            let artworkURLString = game.originalArtworkURL
+            let md5Hash = gameMetadata.md5Hash
+            let artworkURLString = gameMetadata.artworkURL
             guard let artworkURL = URL(string: artworkURLString) else {
-                let gameTitle = game.title
-                WLOG("ArtworkSearchQueue: Invalid artwork URL for game \(gameTitle ?? "Unknown"): \(artworkURLString)")
+                WLOG("ArtworkSearchQueue: Invalid artwork URL for game \(gameMetadata.title ?? "Unknown"): \(artworkURLString)")
                 continue
             }
 
@@ -519,8 +532,7 @@ public actor ArtworkSearchQueue {
 
             if let data = downloadResult.0 {
                 // Successfully downloaded - save it
-                // Extract game title before detached task (frozen Realm object)
-                let gameTitle = game.title
+                let gameTitle = gameMetadata.title
                 #if os(macOS)
                 if let artwork = NSImage(data: data) {
                     do {
@@ -565,7 +577,7 @@ public actor ArtworkSearchQueue {
                 }
                 #endif
             } else if let error = downloadResult.1 {
-                let gameTitle = game.title
+                let gameTitle = gameMetadata.title
                 VLOG("ArtworkSearchQueue: Retry download failed for \(gameTitle ?? "Unknown"): \(error.localizedDescription)")
             }
 
