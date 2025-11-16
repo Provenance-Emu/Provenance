@@ -52,6 +52,10 @@ struct EmulatorWithSkinView: View {
     // Track if we have a user-selected filter
     @State private var hasUserSelectedFilter = false
 
+    // Cache the validated aspect ratio to prevent incorrect recalculation after rotation
+    @State private var cachedAspectRatio: CGFloat?
+    @State private var lastAspectSize: CGSize = .zero
+
     // Initialize with a game, extracting the necessary properties
     init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void, preselectedSkinIdentifier: String? = nil) {
         self.gameTitle = game.title
@@ -459,28 +463,79 @@ struct EmulatorWithSkinView: View {
         let effects = overlayEffects(for: skin)
 
         // Calculate aspect ratio from core's aspectSize or bufferSize/screenRect
+        // Use cached aspect ratio to prevent incorrect recalculation after rotation
         let aspectRatio: CGFloat? = {
             let aspectSize = coreInstance.aspectSize
             let bufferSize = coreInstance.bufferSize
             let screenRect = coreInstance.screenRect
 
+            // Check if aspectSize has changed significantly (more than 10% difference)
+            // This prevents recalculation due to minor floating point differences after rotation
+            let sizeChanged = cachedAspectRatio == nil ||
+                             (lastAspectSize.width > 0 && lastAspectSize.height > 0 &&
+                              (abs(aspectSize.width - lastAspectSize.width) > lastAspectSize.width * 0.1 ||
+                               abs(aspectSize.height - lastAspectSize.height) > lastAspectSize.height * 0.1))
+
+            // If we have a cached ratio and size hasn't changed significantly, reuse it
+            if let cached = cachedAspectRatio, !sizeChanged {
+                DLOG("🎮 SKIN: Using cached aspect ratio: \(cached)")
+                return cached
+            }
+
             DLOG("🎮 SKIN: Calculating aspect ratio - aspectSize: \(aspectSize), bufferSize: \(bufferSize), screenRect: \(screenRect)")
 
+            var calculatedRatio: CGFloat?
+
             if aspectSize.width > 0 && aspectSize.height > 0 {
-                let ratio = aspectSize.width / aspectSize.height
+                var ratio = aspectSize.width / aspectSize.height
+
+                // Validate aspect ratio - ensure it's reasonable (most games are 4:3 or 16:9)
+                // Check if aspectSize looks like screen dimensions instead of game aspect ratio
+                let looksLikeScreenSize = aspectSize.width > 100 || aspectSize.height > 100
+
+                // Most games have aspect ratios between 1.0 (square) and 2.0 (ultrawide)
+                if looksLikeScreenSize || ratio < 0.5 || ratio > 2.0 {
+                    if looksLikeScreenSize {
+                        DLOG("🎮 SKIN: aspectSize looks like screen dimensions, using default 4:3")
+                        ratio = 4.0 / 3.0
+                    } else {
+                        // Try inverted: swap width and height
+                        let invertedRatio = aspectSize.height / aspectSize.width
+                        if invertedRatio >= 0.5 && invertedRatio <= 2.0 {
+                            ratio = invertedRatio
+                            DLOG("🎮 SKIN: Aspect ratio was inverted, using corrected ratio: \(ratio)")
+                        } else {
+                            ratio = 4.0 / 3.0
+                            DLOG("🎮 SKIN: Aspect ratio out of bounds, using default 4:3")
+                        }
+                    }
+                }
+
+                calculatedRatio = ratio
                 DLOG("🎮 SKIN: Using aspectSize for aspect ratio: \(ratio)")
-                return ratio
             }
+
             // Fallback to bufferSize/screenRect if aspectSize is invalid
-            if screenRect.width > 0 && screenRect.height > 0 {
-                let ratio = screenRect.width / screenRect.height
-                DLOG("🎮 SKIN: Using screenRect for aspect ratio: \(ratio)")
-                return ratio
-            } else if bufferSize.width > 0 && bufferSize.height > 0 {
-                let ratio = bufferSize.width / bufferSize.height
-                DLOG("🎮 SKIN: Using bufferSize for aspect ratio: \(ratio)")
+            if calculatedRatio == nil {
+                if screenRect.width > 0 && screenRect.height > 0 {
+                    let ratio = screenRect.width / screenRect.height
+                    calculatedRatio = ratio
+                    DLOG("🎮 SKIN: Using screenRect for aspect ratio: \(ratio)")
+                } else if bufferSize.width > 0 && bufferSize.height > 0 {
+                    let ratio = bufferSize.width / bufferSize.height
+                    calculatedRatio = ratio
+                    DLOG("🎮 SKIN: Using bufferSize for aspect ratio: \(ratio)")
+                }
+            }
+
+            // Cache the validated aspect ratio
+            if let ratio = calculatedRatio {
+                cachedAspectRatio = ratio
+                lastAspectSize = aspectSize
+                DLOG("🎮 SKIN: Cached aspect ratio: \(ratio) (from aspectSize: \(aspectSize))")
                 return ratio
             }
+
             DLOG("🎮 SKIN: No valid aspect ratio found, will use default 4:3")
             return nil
         }()

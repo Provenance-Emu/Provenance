@@ -1927,28 +1927,19 @@ public struct DeltaSkinView: View {
         DLOG("Current pressed buttons: \(pressedButtons)")
 
         // Play button sound
-        if let button = skin.buttons(for: traits)?.first(where: { $0.id == buttonId }),
-           let mappingSize = skin.mappingSize(for: traits) {
-            // Use position calculations for audio
-            let panPosition = Float((button.frame.midX / mappingSize.width) * 2 - 1)
-            let area = button.frame.width * button.frame.height
-            let maxArea = mappingSize.width * mappingSize.height
-            let normalizedSize = Float((area / maxArea) * 0.5 + 0.5)
-
-            // Play sound
-            ButtonSoundGenerator.shared.playButtonPressSound(
-                pan: panPosition,
-                volume: normalizedSize
-            )
-
+        if let button = skin.buttons(for: traits)?.first(where: { $0.id == buttonId }) {
             // Haptic feedback
             #if !os(tvOS) && os(iOS)
             if !ProcessInfo.processInfo.isiOSAppOnMac {
                 impactGenerator.impactOccurred()
             }
             #endif
-        }
 
+            // Play sound with current position (only once)
+            playClickSound(for: button)
+
+        }
+            
         // Pass to the input handler
         inputHandler.buttonPressed(buttonId)
     }

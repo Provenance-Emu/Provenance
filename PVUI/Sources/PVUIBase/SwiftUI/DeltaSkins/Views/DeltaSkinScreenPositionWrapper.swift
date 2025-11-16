@@ -22,6 +22,18 @@ struct DeltaSkinScreenPositionWrapper: View {
             return nil
         }
 
+        // For default skins, don't calculate here - let calculateDefaultViewport handle it
+        // Default skins are identified by "default" identifier prefix or name containing "default"
+        // Also check if it's a DefaultDeltaSkin instance
+        let isDefaultSkin = skin.identifier.hasPrefix("default-") ||
+                           skin.identifier == "default" ||
+                           skin.name.lowercased() == "default" ||
+                           String(describing: type(of: skin)).contains("DefaultDeltaSkin")
+        if isDefaultSkin {
+            DLOG("🎮 SKIN: DeltaSkinScreenPositionWrapper - skipping calculation for default skin (\(skin.identifier)), use calculateDefaultViewport instead")
+            return nil
+        }
+
         // Check if this is a simple skin (no screens or screenGroups)
         // Simple skins should use button-based calculation even if gameScreenFrame exists
         let isSimpleSkin = skin.screens(for: traits) == nil && skin.screenGroups(for: traits) == nil
@@ -331,6 +343,16 @@ struct DeltaSkinScreenPositionWrapper: View {
     private func broadcastFrame(_ frame: CGRect) {
         guard isInEmulator else { return }
 
+        // Never broadcast frames for default skins - they use calculateDefaultViewport instead
+        let isDefaultSkin = skin.identifier.hasPrefix("default-") ||
+                           skin.identifier == "default" ||
+                           skin.name.lowercased() == "default" ||
+                           String(describing: type(of: skin)).contains("DefaultDeltaSkin")
+        if isDefaultSkin {
+            DLOG("🎮 SKIN: DeltaSkinScreenPositionWrapper - skipping broadcast for default skin (\(skin.identifier)), use calculateDefaultViewport instead")
+            return
+        }
+
         // Prevent duplicate broadcasts - only broadcast if frame actually changed
         if let lastFrame = lastBroadcastFrame,
            abs(lastFrame.origin.x - frame.origin.x) < 0.5 &&
@@ -353,7 +375,6 @@ struct DeltaSkinScreenPositionWrapper: View {
 
     @State private var lastSize: CGSize = .zero
     @State private var lastLayout: DeltaSkinView.SkinLayout?
-    @State private var calculationTask: Task<Void, Never>?
     @State private var lastBroadcastFrame: CGRect?
 
     var body: some View {
@@ -362,61 +383,41 @@ struct DeltaSkinScreenPositionWrapper: View {
                 ILOG("🎮 SKIN: DeltaSkinScreenPositionWrapper.onAppear - size=\(size), layout=\(String(describing: layout))")
                 lastSize = size
                 lastLayout = layout
-                // Calculate immediately on appear - no debounce needed
-                let frame = calculateScreenFrame()
-                ILOG("🎮 SKIN: DeltaSkinScreenPositionWrapper.onAppear - calculated frame=\(String(describing: frame))")
+                // Calculate immediately on appear - use same code path as initial startup
+                calculateScreenFrameImmediate()
             }
             .onChange(of: size) { newSize in
                 // Only recalculate if size actually changed significantly (more than 1 point)
                 guard abs(newSize.width - lastSize.width) > 1.0 || abs(newSize.height - lastSize.height) > 1.0 else { return }
                 lastSize = newSize
 
-                // Cancel any pending calculations
-                calculationTask?.cancel()
-
-                // For size changes, debounce slightly to avoid intermediate rotation states
-                calculationTask = Task {
-                    try? await Task.sleep(nanoseconds: 50_000_000) // 50ms debounce (reduced from 150ms)
-                    guard !Task.isCancelled else { return }
-                    _ = await MainActor.run {
-                        calculateScreenFrame()
-                    }
-                }
+                // Use same immediate calculation path as startup - no debouncing
+                // This ensures consistent frame calculation after rotation
+                calculateScreenFrameImmediate()
             }
             .onChange(of: layout) { newLayout in
                 // Only recalculate if layout actually changed (using Equatable check)
                 guard newLayout != lastLayout else { return }
                 lastLayout = newLayout
 
-                // Cancel any pending calculations
-                calculationTask?.cancel()
-
-                // For layout changes, calculate immediately if layout is valid
-                // Layout changes happen after size stabilizes, so we can calculate right away
+                // Use same immediate calculation path as startup
+                // Only calculate if layout is valid (same check as onAppear)
                 if (layout?.width ?? 0) > 0 && (layout?.height ?? 0) > 0 && size.width > 0 && size.height > 0 {
-                    calculateScreenFrame()
-                } else {
-                    // If layout is invalid, wait a bit for it to stabilize
-                    calculationTask = Task {
-                        try? await Task.sleep(nanoseconds: 100_000_000) // 100ms debounce
-                        guard !Task.isCancelled else { return }
-                        _ = await MainActor.run {
-                            calculateScreenFrame()
-                        }
-                    }
+                    calculateScreenFrameImmediate()
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("DeltaSkinForceRecalculate"))) { _ in
-                // Force recalculation when requested (e.g., after rotation completes)
-                calculationTask?.cancel()
-                calculationTask = Task {
-                    try? await Task.sleep(nanoseconds: 200_000_000) // 200ms delay for rotation to complete
-                    guard !Task.isCancelled else { return }
-                    _ = await MainActor.run {
-                        DLOG("🎮 SKIN: Forcing frame recalculation after rotation")
-                        calculateScreenFrame()
-                    }
-                }
+                // Force recalculation when requested - use same immediate path
+                DLOG("🎮 SKIN: Forcing frame recalculation after rotation")
+                calculateScreenFrameImmediate()
             }
+    }
+
+    /// Calculate screen frame using the same immediate logic as initial startup
+    /// This ensures consistent behavior after rotation - same code path, no debouncing
+    private func calculateScreenFrameImmediate() {
+        // Use the same calculation logic as onAppear - immediate, no debouncing
+        // This is the single, consistent calculation path for all skins
+        _ = calculateScreenFrame()
     }
 }
