@@ -402,3 +402,46 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         #endif
     }
 }
+
+#if DEBUG
+@available(iOS 14, tvOS 14, *)
+struct GamesDisplayOptionsView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            PreviewWrapper()
+                .previewDisplayName("Home Context")
+
+            PreviewWrapper(context: .console(PVSystem(identifier: "com.provenance.test", name: "Test System", shortName: "TEST", manufacturer: "Test")))
+                .previewDisplayName("Console Context")
+        }
+        .previewLayout(.sizeThatFits)
+        .padding()
+    }
+
+    struct PreviewWrapper: View {
+        @StateObject private var viewModel = PVRootViewModel()
+        @State private var showImportStatusView = false
+        let context: SettingsContext
+
+        init(context: SettingsContext = .home) {
+            self.context = context
+        }
+
+        var body: some View {
+            GamesDisplayOptionsView(
+                viewModel: viewModel,
+                showImportStatusView: $showImportStatusView,
+                importStatusAction: { print("Import status tapped") },
+                logViewerAction: { print("Log viewer tapped") },
+                systemStatusAction: { print("System status tapped") },
+                settingsAction: { print("Settings tapped") },
+                skinSelectionAction: { print("Skin selection tapped") },
+                settingsContext: context,
+                toggleFilterAction: { print("Filter toggled") },
+                toggleSortAction: { viewModel.sortGamesAscending.toggle() },
+                toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
+            )
+        }
+    }
+}
+#endif
