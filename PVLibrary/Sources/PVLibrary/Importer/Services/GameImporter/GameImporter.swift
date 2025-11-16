@@ -2108,9 +2108,12 @@ public final class GameImporter: GameImporting, ObservableObject {
     // This is the version of determineImportType called internally for quick checks, non-throwing.
     // Relies on the simpler helpers above.
     private func determineImportType(_ item: ImportQueueItem) -> ImportQueueItem.FileType {
-        if isBIOS(item) { return .bios }
+        // Check skins first - trivial extension/directory check, no expensive operations needed
         if isSkin(item) { return .skin }
+        // Check artwork next - also trivial extension check
         if isArtwork(item) { return .artwork }
+        // BIOS check is expensive (database lookups, MD5 checks), so do it after cheap checks
+        if isBIOS(item) { return .bios }
         if isCDROM(item) { return .cdRom } // Covers .cue, .m3u, .iso, .chd etc.
 
         // Check for zip files - if in a system directory that supports zip-as-ROM, treat as game
@@ -2320,6 +2323,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Extract files flatly (preserve only filenames, flatten directory structure)
         var extractedFiles: [URL] = []
         var extractionError: Error?
+        // Track processed filenames to detect legitimate conflicts (multiple files with same name in archive)
+        var processedFilenames = Set<String>()
 
         do {
             // For 7z files, add a small delay after extraction to ensure async writes complete
@@ -2376,22 +2381,45 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                 // If file is in a subdirectory, move it to the root
                 if extractedFile.deletingLastPathComponent() != tempExtractionDir {
-                    // Handle filename conflicts
+                    // Only rename if we've already processed a file with this name in this extraction session
+                    // This prevents false positives from file system checks
                     var finalFlatURL = flatDestination
-                    var counter = 1
-                    while FileManager.default.fileExists(atPath: finalFlatURL.path) {
+                    if processedFilenames.contains(fileName.lowercased()) {
+                        // Legitimate conflict: multiple files with same name in archive
+                        var counter = 1
                         let nameWithoutExt = flatDestination.deletingPathExtension().lastPathComponent
                         let ext = flatDestination.pathExtension
-                        finalFlatURL = tempExtractionDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
-                        counter += 1
+                        repeat {
+                            finalFlatURL = tempExtractionDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                            counter += 1
+                        } while processedFilenames.contains(finalFlatURL.lastPathComponent.lowercased())
                     }
 
                     if extractedFile != finalFlatURL {
                         try FileManager.default.moveItem(at: extractedFile, to: finalFlatURL)
                     }
                     extractedFiles.append(finalFlatURL)
+                    processedFilenames.insert(finalFlatURL.lastPathComponent.lowercased())
                 } else {
-                    extractedFiles.append(extractedFile)
+                    // File is already in root - check if we've seen this filename before
+                    if processedFilenames.contains(fileName.lowercased()) {
+                        // Legitimate conflict: rename it
+                        var counter = 1
+                        let nameWithoutExt = flatDestination.deletingPathExtension().lastPathComponent
+                        let ext = flatDestination.pathExtension
+                        var finalFlatURL = flatDestination
+                        repeat {
+                            finalFlatURL = tempExtractionDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                            counter += 1
+                        } while FileManager.default.fileExists(atPath: finalFlatURL.path) || processedFilenames.contains(finalFlatURL.lastPathComponent.lowercased())
+
+                        try FileManager.default.moveItem(at: extractedFile, to: finalFlatURL)
+                        extractedFiles.append(finalFlatURL)
+                        processedFilenames.insert(finalFlatURL.lastPathComponent.lowercased())
+                    } else {
+                        extractedFiles.append(extractedFile)
+                        processedFilenames.insert(fileName.lowercased())
+                    }
                 }
             }
 

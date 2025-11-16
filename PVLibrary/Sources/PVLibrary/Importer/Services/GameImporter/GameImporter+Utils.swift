@@ -13,10 +13,28 @@ extension GameImporter {
         return isSkin(queueItem.url)
     }
 
-    /// Checks if a given path is a Skin file by extension
+    /// Checks if a given path is a Skin file or directory
+    /// Supports both .deltaskin/.manicskin files and directories
     internal func isSkin(_ path: URL) -> Bool {
         let fileExtension = path.pathExtension.lowercased()
-        return Extensions.skinExtensions.contains(fileExtension)
+        let fileName = path.lastPathComponent.lowercased()
+
+        // Check if it's a skin file by extension
+        if Extensions.skinExtensions.contains(fileExtension) {
+            return true
+        }
+
+        // Check if it's a skin directory (folders can have .deltaskin or .manicskin suffix)
+        if fileName.hasSuffix(".deltaskin") || fileName.hasSuffix(".manicskin") {
+            // Verify it's actually a directory
+            var isDirectory: ObjCBool = false
+            if FileManager.default.fileExists(atPath: path.path, isDirectory: &isDirectory),
+               isDirectory.boolValue {
+                return true
+            }
+        }
+
+        return false
     }
 
     /// Checks if a given ROM file is a CD-ROM
