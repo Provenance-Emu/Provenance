@@ -69,6 +69,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     let font: Font = .system(.footnote, design: .default)
     let spacing: CGFloat = 12
     let padding: CGFloat = 10
+    let iconSize: CGFloat = 22
 
     var canZoomIn: Bool {
         gameLibraryScale > 1
@@ -88,7 +89,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             // Core controls (kept separate as requested)
             coreControlsGroup
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: iconSize)
         .clipped() // Prevent overflow
     }
 
@@ -136,9 +137,13 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             }
         }
         label: {
-            Image(systemName: "line.3.horizontal.decrease.circle")
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                .font(font)
+            ZStack {
+                Color.clear.frame(width: iconSize, height: iconSize)
+                Image(systemName: "line.3.horizontal.decrease.circle")
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    .font(font)
+            }
+            .contentShape(Rectangle())
         }
 #else
         if #available(tvOS 17.0, *) {
@@ -163,9 +168,13 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
             }
             label: {
-                Image(systemName: "line.3.horizontal.decrease.circle")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
+                ZStack {
+                    Color.clear.frame(width: iconSize, height: iconSize)
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
+                .contentShape(Rectangle())
             }
         }
 #endif
@@ -185,9 +194,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 #endif
                 toggleSortAction()
             }) {
-                Image(systemName: viewModel.sortGamesAscending ? "chevron.down.dotted.2" :"chevron.up.dotted.2")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font.weight(.light))
+                ZStack {
+                    Color.clear.frame(width: iconSize, height: iconSize)
+                    Image(systemName: viewModel.sortGamesAscending ? "chevron.down.dotted.2" :"chevron.up.dotted.2")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font.weight(.light))
+                }
             }
             .contentShape(Rectangle())
 
@@ -198,9 +210,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 #endif
                 toggleViewTypeAction()
             }) {
-                Image(systemName: viewModel.viewGamesAsGrid ? "square.grid.3x3" : "rectangle.grid.1x2")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
+                ZStack {
+                    Color.clear.frame(width: iconSize, height: iconSize)
+                    Image(systemName: viewModel.viewGamesAsGrid ? "square.grid.3x3" : "rectangle.grid.1x2")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
             }
             .contentShape(Rectangle())
 
@@ -214,9 +229,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 #endif
                 zoomOut()
             }) {
-                Image(systemName: "minus.magnifyingglass")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
+                ZStack {
+                    Color.clear.frame(width: iconSize, height: iconSize)
+                    Image(systemName: "minus.magnifyingglass")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
             }
             .disabled(!canZoomOut)
             .contentShape(Rectangle())
@@ -228,9 +246,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 #endif
                 zoomIn()
             }) {
-                Image(systemName: "plus.magnifyingglass")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
+                ZStack {
+                    Color.clear.frame(width: iconSize, height: iconSize)
+                    Image(systemName: "plus.magnifyingglass")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
             }
             .disabled(!canZoomIn)
             .contentShape(Rectangle())
@@ -292,9 +313,13 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
             }
             label: {
-                Image(systemName: "ellipsis.circle")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
+                ZStack {
+                    Color.clear.frame(width: iconSize, height: iconSize)
+                    Image(systemName: "ellipsis.circle")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(font)
+                }
+                .contentShape(Rectangle())
             }
         } else {
             // TODO: Fallback version
