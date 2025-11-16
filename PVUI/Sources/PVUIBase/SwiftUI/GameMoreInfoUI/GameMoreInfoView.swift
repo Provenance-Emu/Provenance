@@ -436,6 +436,7 @@ struct GameMoreInfoView: View {
 
                 }
                 .padding()
+                .padding(.top, 8)
 
                 // Game description section
                 if let description = viewModel.gameDescription,

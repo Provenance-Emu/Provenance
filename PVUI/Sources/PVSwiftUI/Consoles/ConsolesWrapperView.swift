@@ -143,12 +143,16 @@ struct ConsolesWrapperView: SwiftUI.View {
             } else {
                 consolesTabView
                     .sheet(item: $gameInfoState) { state in
-                        NavigationView {
+                        NavigationStack {
                             makeGameMoreInfoView(for: state)
                             #if !os(tvOS)
                                 .navigationBarTitleDisplayMode(.inline)
                             #endif
                         }
+                        #if !os(tvOS)
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
+                        #endif
                     }
             }
         }

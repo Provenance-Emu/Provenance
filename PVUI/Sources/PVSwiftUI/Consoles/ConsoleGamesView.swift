@@ -343,27 +343,33 @@ struct ConsoleGamesView: SwiftUI.View {
                 .sheet(isPresented: $gamesViewModel.showingGameInfo, onDismiss: {
                     gamesViewModel.dismissGameInfo()
                 }) {
-                    if let game = gamesViewModel.selectedGameForInfo?.warmUp() {
-                        if let driver = try? RealmGameLibraryDriver() {
-                            let infoVM = PagedGameMoreInfoViewModel(
-                                driver: driver,
-                                initialGameId: game.md5Hash,
-                                playGameCallback: { [weak rootDelegate] md5 in
-                                    DLOG("Play game requested for MD5: \(md5) from PagedGameMoreInfoView")
-                                    Task {
-                                        await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                    NavigationStack {
+                        if let game = gamesViewModel.selectedGameForInfo?.warmUp() {
+                            if let driver = try? RealmGameLibraryDriver() {
+                                let infoVM = PagedGameMoreInfoViewModel(
+                                    driver: driver,
+                                    initialGameId: game.md5Hash,
+                                    playGameCallback: { [weak rootDelegate] md5 in
+                                        DLOG("Play game requested for MD5: \(md5) from PagedGameMoreInfoView")
+                                        Task {
+                                            await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                                        }
                                     }
-                                }
-                            )
-                            PagedGameMoreInfoView(viewModel: infoVM)
-                                .environmentObject(AppState.shared)
-                                .environmentObject(themeManager)
+                                )
+                                PagedGameMoreInfoView(viewModel: infoVM)
+                                    .environmentObject(AppState.shared)
+                                    .environmentObject(themeManager)
+                            } else {
+                                Text("Unable to initialise driver")
+                            }
                         } else {
-                            Text("Unable to initialise driver")
+                            Text("No game selected")
                         }
-                    } else {
-                        Text("No game selected")
                     }
+                    #if !os(tvOS)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                    #endif
                 }
                 .sheet(item: $gamesViewModel.systemMoveState) { state in
                     SystemPickerView(
