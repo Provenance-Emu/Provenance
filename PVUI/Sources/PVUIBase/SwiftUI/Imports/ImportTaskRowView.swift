@@ -25,6 +25,8 @@ func iconNameForStatus(_ status: ImportQueueItem.ImportStatus) -> String {
         return "exclamationmark.triangle.fill"
     case .partial:
         return "display.trianglebadge.exclamationmark"
+    case .extracting:
+        return "shippingbox.and.arrow.backward.fill"
     }
 }
 
@@ -51,6 +53,7 @@ struct ImportTaskRowView: View {
         case .failure: return Color.red
         case .conflict: return RetroTheme.retroPink
         case .partial: return Color.orange
+        case .extracting: return RetroTheme.retroGreen
         }
     }
     
@@ -60,6 +63,7 @@ struct ImportTaskRowView: View {
         case .success: return RetroTheme.retroBlue
         case .failure, .conflict: return RetroTheme.retroPink
         case .partial: return RetroTheme.retroBlue
+        case .extracting: return RetroTheme.retroDarkBlue
         }
     }
     

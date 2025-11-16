@@ -32,6 +32,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
 
         case partial(expectedFiles: [String]) //indicates the item is waiting for associated files before it could be processed
         case processing
+        case extracting  // Indicates archive is being extracted/unarchived
 
         case queued
 
@@ -43,6 +44,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
             switch self {
                 case .queued: return "Queued"
                 case .processing: return "Processing"
+                case .extracting: return "Extracting"
                 case .success: return "Completed"
                 case .failure(let error): return "Failed: \(error.localizedDescription)"
                 case .conflict: return "Conflict"
@@ -54,6 +56,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
             switch self {
                 case .queued: return .gray
                 case .processing: return .blue
+                case .extracting: return .orange
                 case .success: return .green
                 case .failure: return .red
                 case .conflict: return .yellow
@@ -67,28 +70,28 @@ public class ImportQueueItem: Identifiable, ObservableObject {
             }
             return false
         }
-        
+
         public var isSuccess: Bool {
             if case .success = self {
                 return true
             }
             return false
         }
-        
+
         public var isPartial: Bool {
             if case .partial = self {
                 return true
             }
             return false
         }
-        
+
         public var isIdle: Bool {
             switch self {
-            case .queued, .processing, .success, .conflict, .partial: return true
+            case .queued, .processing, .extracting, .success, .conflict, .partial: return true
             default: return false
             }
         }
-        
+
         public var canBeRequeued: Bool {
             switch self {
             case .failure, .conflict, .partial: return true
@@ -142,7 +145,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
             }
         }
     }
-    
+
     public func requeue() -> ImportQueueItem {
         self.status = .queued
         return self
@@ -246,6 +249,8 @@ extension ImportQueueItem.ImportStatus: Equatable {
         case (.partial, .partial):
             return true
         case (.processing, .processing):
+            return true
+        case (.extracting, .extracting):
             return true
         case (.queued, .queued):
             return true

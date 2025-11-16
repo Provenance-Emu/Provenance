@@ -2339,8 +2339,12 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("Starting extraction stream for \(archiveType.rawValue) archive")
             var fileCount = 0
 
-            for try await extractedFile in extractor.extract(at: archiveURL, to: tempExtractionDir, progress: { progress in
-                VLOG("Extraction progress: \(Int(progress * 100))%")
+            for try await extractedFile in extractor.extract(at: archiveURL, to: tempExtractionDir, progress: { [weak self] progress in
+                let progressPercent = Int(progress * 100)
+                VLOG("Extraction progress: \(progressPercent)%")
+                Task { @MainActor in
+                    self?.updateImporterStatus("Extracting \(archiveURL.lastPathComponent): \(progressPercent)%")
+                }
             }) {
                 fileCount += 1
                 VLOG("Received extracted file #\(fileCount): \(extractedFile.path)")
@@ -2577,6 +2581,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         // Add extracted files to import queue
         if !filesToImport.isEmpty {
+            await MainActor.run {
+                updateImporterStatus("Importing \(filesToImport.count) extracted file(s) from \(archiveURL.lastPathComponent)")
+            }
             await addImports(forPaths: filesToImport)
             ILOG("Added \(filesToImport.count) extracted files to import queue")
         }
@@ -2639,6 +2646,12 @@ public final class GameImporter: GameImporting, ObservableObject {
                 // Archive doesn't match - extract and import contents
                 ILOG("Archive \(fileName) doesn't match in database - extracting and importing contents")
 
+                // Set status to extracting before starting extraction
+                await MainActor.run {
+                    item.status = .extracting
+                    updateImporterStatus("Extracting \(fileName)")
+                }
+
                 // Register archive as being extracted to prevent DirectoryWatcher from re-adding it
                 await importCoordinator.registerExtractingArchive(url: item.url)
 
@@ -2657,6 +2670,12 @@ public final class GameImporter: GameImporting, ObservableObject {
                 } catch {
                     // Unregister on error so it can be retried
                     await importCoordinator.unregisterExtractingArchive(url: item.url)
+
+                    // Set failure status on error
+                    await MainActor.run {
+                        item.status = .failure(error: error)
+                        updateImporterStatus("Failed to extract \(fileName): \(error.localizedDescription)")
+                    }
                     throw error
                 }
             }
