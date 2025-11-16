@@ -15,21 +15,35 @@ extension GameImporter {
 
     /// Checks if a given path is a Skin file or directory
     /// Supports both .deltaskin/.manicskin files and directories
+    /// This function is designed to be fast and reliable, avoiding file system checks that might fail under race conditions
     internal func isSkin(_ path: URL) -> Bool {
         let fileExtension = path.pathExtension.lowercased()
         let fileName = path.lastPathComponent.lowercased()
 
-        // Check if it's a skin file by extension
+        // Primary check: extension-based detection (fastest and most reliable)
+        // This catches .deltaskin and .manicskin files immediately
         if Extensions.skinExtensions.contains(fileExtension) {
             return true
         }
 
-        // Check if it's a skin directory (folders can have .deltaskin or .manicskin suffix)
+        // Secondary check: filename suffix for directories
+        // Only check if filename suggests it might be a skin directory
         if fileName.hasSuffix(".deltaskin") || fileName.hasSuffix(".manicskin") {
-            // Verify it's actually a directory
+            // For directories, verify it's actually a directory
+            // Use a more robust check that handles race conditions better
             var isDirectory: ObjCBool = false
-            if FileManager.default.fileExists(atPath: path.path, isDirectory: &isDirectory),
-               isDirectory.boolValue {
+            let exists = FileManager.default.fileExists(atPath: path.path, isDirectory: &isDirectory)
+
+            // If file doesn't exist yet (race condition), assume it's a skin based on naming
+            // This prevents false negatives when files are being written
+            if !exists {
+                // If the path suggests a skin directory but doesn't exist yet, still treat as skin
+                // This handles the case where DirectoryWatcher detects files before they're fully written
+                return true
+            }
+
+            // If it exists and is a directory, it's a skin
+            if isDirectory.boolValue {
                 return true
             }
         }

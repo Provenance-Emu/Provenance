@@ -984,12 +984,17 @@ public final class GameImporter: GameImporting, ObservableObject {
         var workQueue = await importQueueActor.getQueue()
 
         // Process each item to determine its type
+        // Skip re-determining file type for items that are already correctly typed (prevents race conditions)
         for i in 0..<workQueue.count {
-            do {
-                workQueue[i].fileType = try determineImportType(workQueue[i])
-            } catch {
-                ELOG("Caught error trying to assign file type \(error.localizedDescription)")
+            // Preserve file types that are easy to detect and shouldn't change (skin, artwork, bios)
+            // These are detected early and reliably, so don't re-determine them
+            let currentType = workQueue[i].fileType
+            if currentType == .skin || currentType == .artwork || currentType == .bios {
+                continue // Skip re-determination for these types
             }
+
+            // Determine file type (non-throwing function, so no try/catch needed)
+            workQueue[i].fileType = determineImportType(workQueue[i])
         }
 
         // Sort the queue to make sure m3us go first
