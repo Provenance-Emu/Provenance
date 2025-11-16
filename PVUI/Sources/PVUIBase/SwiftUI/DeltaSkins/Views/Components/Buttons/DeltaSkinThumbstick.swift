@@ -1,5 +1,6 @@
 import SwiftUI
 import AudioToolbox
+import PVSettings
 
 struct DeltaSkinThumbstick: View {
     let frame: CGRect
@@ -107,8 +108,9 @@ struct DeltaSkinThumbstick: View {
                                 withAnimation(.spring()) {
                                     dragOffset = .zero
                                 }
-                                // Play springy release sound with centered pan
-                                if let releaseSound = DeltaSkinView.buttonSounds["thumbstick_release"] {
+                                // Play springy release sound with centered pan if button sound is enabled
+                                let buttonSound = Defaults[.buttonSound]
+                                if buttonSound != .none, let releaseSound = DeltaSkinView.buttonSounds["thumbstick_release"] {
                                     AudioEngine.shared.playSound(buffer: releaseSound, pan: 0)
                                 }
 
