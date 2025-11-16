@@ -198,6 +198,28 @@ struct ProvenanceApp: App {
 
                         // CRITICAL: Now that bootup is complete, handle any pending emulator scene requests
                         openEmulatorSceneIfNeeded()
+
+                        // Also check for pending shortcuts
+                        #if !os(tvOS)
+                        if let pendingShortcut = appDelegate.pendingShortcutItem {
+                            ILOG("ProvenanceApp: Processing pending shortcut after bootup: \(pendingShortcut.type)")
+                            if let md5Value = pendingShortcut.userInfo?["PVGameHash"] as? String {
+                                ILOG("ProvenanceApp: Found MD5 in pending shortcut: \(md5Value)")
+                                appState.appOpenAction = .openMD5(md5Value)
+                                openEmulatorSceneIfNeeded()
+                            }
+                            appDelegate.pendingShortcutItem = nil
+                        }
+                        #endif
+                    }
+                }
+                // Observe appOpenAction changes to handle shortcuts
+                .onReceive(appState.$appOpenAction) { action in
+                    if case .openMD5(let md5) = action {
+                        ILOG("ProvenanceApp: Detected appOpenAction change to .openMD5(\(md5))")
+                        if appState.bootupState == .completed {
+                            openEmulatorSceneIfNeeded()
+                        }
                     }
                 }
         }

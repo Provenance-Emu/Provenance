@@ -112,7 +112,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     /// Track pending shortcut item for handling when app becomes active
     #if os(iOS) || os(macOS)
-    @MainActor var pendingShortcutItem: UIApplicationShortcutItem? = nil
+    @MainActor public var pendingShortcutItem: UIApplicationShortcutItem? = nil
     #endif
 
     private var cancellables = Set<AnyCancellable>()
@@ -611,10 +611,13 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         /// Check for pending shortcut when app becomes active
         /// This handles shortcuts when app is already running
         if let shortcut = pendingShortcutItem {
-            ILOG("PVAppDelegate: Processing pending shortcut when app became active")
+            ILOG("PVAppDelegate: Processing pending shortcut when app became active: \(shortcut.type)")
+            ILOG("PVAppDelegate: Shortcut userInfo: \(shortcut.userInfo ?? [:])")
             /// Handle using the scene delegate's method
             handleShortcut(shortcut)
             pendingShortcutItem = nil
+        } else {
+            ILOG("PVAppDelegate: No pending shortcut when app became active")
         }
         #endif
     }
