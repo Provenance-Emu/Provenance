@@ -30,6 +30,7 @@ let package = Package(
         .package(path: "../PVEmulatorCore"),
         .package(path: "../PVLibrary"),
         .package(path: "../PVLogging"),
+        .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
         .package(path: "../PVThemes"),
         .package(path: "../PVWebServer"),
