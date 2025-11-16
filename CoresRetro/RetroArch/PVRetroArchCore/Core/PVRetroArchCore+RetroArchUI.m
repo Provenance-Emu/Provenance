@@ -1365,13 +1365,20 @@ void extract_bundles();
    [[UIApplication sharedApplication] setIdleTimerDisabled:true];
 #endif
 
-    // Disable RetroArch overlay when host UI provides controls (DeltaSkins or ControllerViewController)
-    BOOL hostProvidesControls = YES; // Provenance always supplies skin/controls in-app
-    if (hostProvidesControls) {
+    /// Check if skins are being used (Delta or Manic skin)
+    BOOL usingSkins = self.useCustomRenderViewLayout;
+
+    /// When using skins, always disable RetroArch overlay
+    /// Otherwise, respect the retroArchControls setting
+    if (usingSkins) {
         settings_t *settings = config_get_ptr();
         settings->bools.input_overlay_enable = false;
         command_event(CMD_EVENT_OVERLAY_INIT, NULL);
-        ILOG(@"[RA] Disabled RA overlay due to host-provided controls");
+        ILOG(@"[RA] Disabled RA overlay due to skin usage");
+    } else {
+        /// Not using skins - respect retroArchControls setting
+        /// The overlay state will be set by useRetroArchController: which is called later
+        ILOG(@"[RA] Not using skins - overlay state will respect retroArchControls setting");
     }
 
     [self setupWindow];
