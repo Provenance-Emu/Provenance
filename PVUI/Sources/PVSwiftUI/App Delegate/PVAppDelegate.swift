@@ -413,18 +413,17 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         #endif
 
         // Register intent handler for Siri shortcuts
-#if false
         #if os(iOS)
         if #available(iOS 14.0, *) {
             registerIntentHandler()
         }
         #endif
-#endif
     }
 
     public func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
         // Note: Shortcuts are handled via scene delegate methods in SwiftUI apps
         // This is kept for backwards compatibility but shortcuts should come through scene delegate
+        DLOG("configureApplication launchOptions: \(launchOptions?.debugDescription ?? "nil")")
 
         // Store weak reference to application
         weak var weakApplication = application

@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello
 //  Copyright © 2025 Provenance Emu. All rights reserved.
 //
-#if false
+
 import Foundation
 import Intents
 import PVLogging
@@ -88,21 +88,42 @@ extension PVAppDelegate {
     /// Update the application(_:continue:restorationHandler:) method to handle intents from user activities
     public func handleIntentUserActivity(_ userActivity: NSUserActivity) -> Bool {
         ILOG("PVAppDelegate: Handling user activity for intent: \(userActivity.activityType)")
+        ILOG("PVAppDelegate: User activity userInfo: \(userActivity.userInfo ?? [:])")
 
         // Check if this is an intent-based user activity
-        if userActivity.activityType == "com.provenance.open-game",
-           let md5 = userActivity.userInfo?["md5"] as? String {
-            ILOG("PVAppDelegate: Processing open-game activity with MD5: \(md5)")
+        // Handle both activity types: the custom one and the intent definition one
+        let isIntentActivity = userActivity.activityType == "com.provenance.open-game" ||
+                               userActivity.activityType == "PVOpenIntent" ||
+                               userActivity.activityType == "org.provenance-emu.game.play"
 
-            if let matchedGame = fetchGame(byMD5: md5) {
-                ILOG("PVAppDelegate: Found game for MD5 \(md5), opening")
-                AppState.shared.appOpenAction = .openGame(matchedGame)
-                return true
+        if isIntentActivity {
+            // Try to get MD5 from userInfo
+            if let md5 = userActivity.userInfo?["md5"] as? String {
+                ILOG("PVAppDelegate: Processing intent activity with MD5: \(md5)")
+
+                if let matchedGame = fetchGame(byMD5: md5) {
+                    ILOG("PVAppDelegate: Found game for MD5 \(md5), opening")
+                    AppState.shared.appOpenAction = .openGame(matchedGame)
+                    return true
+                } else {
+                    WLOG("PVAppDelegate: No game found for MD5 \(md5)")
+                    // Still set the MD5 action in case the game is found later
+                    AppState.shared.appOpenAction = .openMD5(md5)
+                    return true
+                }
             } else {
-                WLOG("PVAppDelegate: No game found for MD5 \(md5)")
-                // Still set the MD5 action in case the game is found later
-                AppState.shared.appOpenAction = .openMD5(md5)
-                return true
+                // Check if intent has parameters directly
+                if let intent = userActivity.interaction?.intent as? PVOpenIntent {
+                    ILOG("PVAppDelegate: Found PVOpenIntent in user activity")
+                    // Handle the intent through the handler
+                    let intentHandler = PVIntentHandler()
+                    intentHandler.handle(intent: intent) { response in
+                        ILOG("PVAppDelegate: Intent handled with response code: \(response.code)")
+                    }
+                    return true
+                } else {
+                    WLOG("PVAppDelegate: Intent activity found but no MD5 or intent in userInfo")
+                }
             }
         }
 
@@ -125,5 +146,4 @@ extension PVAppDelegate {
         return nil
     }
 }
-#endif
 #endif

@@ -129,6 +129,14 @@ struct ProvenanceApp: App {
                 .onContinueUserActivity(CSSearchableItemActionType) { userActivity in
                     handleSpotlightActivity(userActivity)
                 }
+                .onContinueUserActivity("PVOpenIntent") { userActivity in
+                    ILOG("ProvenanceApp: Handling PVOpenIntent user activity")
+                    handleIntentUserActivity(userActivity)
+                }
+                .onContinueUserActivity("com.provenance.open-game") { userActivity in
+                    ILOG("ProvenanceApp: Handling com.provenance.open-game user activity")
+                    handleIntentUserActivity(userActivity)
+                }
             #endif
                 .onOpenURL { url in
                     // Handle the URL
@@ -620,6 +628,24 @@ extension ProvenanceApp {
 //                }
 //            }
 //        }
+    }
+
+    /// Handle an intent user activity (from Siri shortcuts/App Intents)
+    func handleIntentUserActivity(_ userActivity: NSUserActivity) {
+        ILOG("ProvenanceApp: Handling intent user activity: \(userActivity.activityType)")
+
+        #if os(iOS)
+        if #available(iOS 14.0, *) {
+            // Delegate to app delegate's intent handler
+            if appDelegate.handleIntentUserActivity(userActivity) {
+                ILOG("ProvenanceApp: Intent user activity handled successfully")
+                // The app delegate sets appOpenAction, so we just need to wait for bootup
+                openEmulatorSceneWhenReady()
+            } else {
+                WLOG("ProvenanceApp: Intent user activity was not handled")
+            }
+        }
+        #endif
     }
 
     /// Handle a Spotlight search result activation

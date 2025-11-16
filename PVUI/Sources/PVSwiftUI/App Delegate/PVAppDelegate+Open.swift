@@ -169,14 +169,12 @@ public extension PVAppDelegate {
         ILOG("PVAppDelegate: Continuing user activity: \(userActivity.activityType)")
 
         // Check if this is an intent-based user activity
-        #if false
         #if os(iOS)
         if #available(iOS 14.0, *) {
             if handleIntentUserActivity(userActivity) {
                 return true
             }
         }
-        #endif
         #endif
         // Spotlight search click-through
 #if os(iOS) || os(macOS)
