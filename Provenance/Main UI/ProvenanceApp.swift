@@ -280,12 +280,14 @@ extension UIApplication {
 extension ProvenanceApp {
     // Helper method to open the emulator scene if needed based on app open action
     private func openEmulatorSceneIfNeeded() {
-        // Don't reopen if there's already a game loaded
-        guard appState.emulationUIState.currentGame == nil else {
-            DLOG("Skipping emulator scene open - game already loaded: \(appState.emulationUIState.currentGame?.title ?? "unknown")")
+        // If a game is already set, open the emulator scene
+        if let game = appState.emulationUIState.currentGame {
+            ILOG("Opening emulator scene for game already set: \(game.title)")
+            sceneCoordinator.openEmulatorScene()
             return
         }
 
+        // Otherwise check if appOpenAction requires emulator scene
         if appState.appOpenAction.requiresEmulatorScene {
             ILOG("Opening emulator scene for action: \(appState.appOpenAction)")
             sceneCoordinator.openEmulatorScene()

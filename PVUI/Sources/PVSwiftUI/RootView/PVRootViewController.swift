@@ -89,7 +89,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         hud.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         hud.alpha = 0 // Start hidden
         view.addSubview(hud)
-        
+
         // Add tap gesture recognizer to dismiss HUD when tapped
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hudTapped(_:)))
         hud.addGestureRecognizer(tapGesture)
@@ -98,7 +98,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         // Listen for bootup state changes
         setupBootupStateObserver()
-        
+
         // Listen for settings notification from HomeView
         NotificationCenter.default.addObserver(
             self,
@@ -411,7 +411,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             break
         }
     }
-    
+
     private func setupBootupStateObserver() {
         Task { @MainActor in
             for await _ in await AppState.shared.bootupStateManager.$currentState.values {
@@ -428,10 +428,18 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                         if case .none = currentAction {
                             DLOG("PVRootViewController: No app open action to handle after bootup")
                         } else {
-                            await handleAppOpenEvents(currentAction)
+                            // Check if this action requires the emulator scene
+                            if currentAction.requiresEmulatorScene {
+                                ILOG("PVRootViewController: Action requires emulator scene, preparing game and opening scene")
+                                prepareGameForEmulatorScene(currentAction)
+                                // Open the emulator scene - SceneCoordinator will handle it
+                                SceneCoordinator.shared.openEmulatorScene()
+                            } else {
+                                await handleAppOpenEvents(currentAction)
+                            }
                         }
                     }
-                    
+
                     updatesController.resume()
 
                     // Break the loop since we only need to handle this once
@@ -440,7 +448,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             }
         }
     }
-    
+
     @MainActor
     public func root_showContinuesManagement(_ game: PVGame? = nil) {
         DLOG("Showing continues management for game: \(game?.title ?? "All Games")")
@@ -531,7 +539,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         // Load all save states for the specified system
         driver.loadAllSaveStates(forSystemID: systemID)
-        
+
         // Create and present the view
         let continuesView = ContinuesManagementView(viewModel: viewModel)
             .onAppear {
@@ -570,12 +578,12 @@ extension PVRootViewController {
             await AppState.shared.hudCoordinator.updateHUD(.hidden)
         }
     }
-    
+
     @objc private func handleShowSettings() {
         // Handle the PVShowSettings notification by calling didTapSettings
         didTapSettings()
     }
-    
+
     private func setupHUDObserver(hud: RetroProgressHUD) {
         Task { @MainActor in
             for try await state in await AppState.shared.hudCoordinator.$hudState.values {
@@ -591,20 +599,20 @@ extension PVRootViewController {
             // Set the text with subtitle if available
             let displayText = subtitle != nil ? "\(title)\n\(subtitle!)" : title
             hud.setText(displayText)
-            
+
             // Reset progress to show indeterminate spinner
             hud.setProgress(0, animated: false)
-            
+
             // Show the HUD
             hud.show(animated: true)
         case .titleAndProgress(let title, let subtitle, let progress):
             // Set the text with subtitle if available (don't include percentage in text)
             let displayText = subtitle != nil ? "\(title)\n\(subtitle!)" : title
             hud.setText(displayText)
-            
+
             // Set the progress value to show the progress bar
             hud.setProgress(progress, animated: true)
-            
+
             // Show the HUD
             hud.show(animated: true)
         }
