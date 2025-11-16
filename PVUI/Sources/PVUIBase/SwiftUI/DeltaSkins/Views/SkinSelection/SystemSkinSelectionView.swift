@@ -552,10 +552,16 @@ public struct SystemSkinSelectionView: View {
             loadingProgress = 1.0
         }
 
-        // Use loadedSkins directly and filter by system compatibility
-        let allSkins = skinManager.loadedSkins
-        let filteredSkins = filterSkinsForSystem(allSkins)
-        await processSkins(filteredSkins)
+        // Use the same method as RetroMenuView to ensure consistent filtering
+        do {
+            let filteredSkins = try await skinManager.skins(for: system)
+            await processSkins(filteredSkins)
+        } catch {
+            await MainActor.run {
+                self.errorMessage = error.localizedDescription
+                self.isLoading = false
+            }
+        }
     }
 
     /// Process skins and update UI state
@@ -631,10 +637,8 @@ public struct SystemSkinSelectionView: View {
             }
 
             do {
-                // Load all available skins (will use cache if available)
-                let allSkins = try await skinManager.availableSkins()
-                // Filter skins for this system using flexible matching
-                let filteredSkins = filterSkinsForSystem(allSkins)
+                // Use the same method as RetroMenuView to ensure consistent filtering
+                let filteredSkins = try await skinManager.skins(for: system)
                 await processSkins(filteredSkins)
             } catch {
                 await MainActor.run {
@@ -652,34 +656,6 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
-    /// Filter skins for the current system using flexible matching
-    private func filterSkinsForSystem(_ skins: [any DeltaSkinProtocol]) -> [any DeltaSkinProtocol] {
-        return skins.filter { skin in
-            // Primary check: use systemIdentifier mapping (matches SystemSkinBrowserView approach)
-            // This is the most reliable as it works directly with the skin's gameType
-            if let skinSystemId = skin.gameType.systemIdentifier, skinSystemId == system {
-                return true
-            }
-
-            // Secondary check: exact gameType match (for skins that might not have systemIdentifier set)
-            if let targetGameType = DeltaSkinGameType(systemIdentifier: system),
-               skin.gameType == targetGameType {
-                return true
-            }
-
-            // Special case: GB systems can use GBC skins
-            if system == .GB && skin.gameType == .gbc {
-                return true
-            }
-
-            // Special case: PS2 and PS3 systems can use PSX skins (same controls)
-            if (system == .PS2 || system == .PS3) && skin.gameType == .psx {
-                return true
-            }
-
-            return false
-        }
-    }
 
     private func selectSkin(_ identifier: String?) {
         Task {
