@@ -28,3 +28,4 @@ protocol PVOpenIntentHandling: NSObjectProtocol {
     func resolveSystemName(for intent: PVOpenIntent, with completion: @escaping (INStringResolutionResult) -> Void)
 }
 #endif
+
