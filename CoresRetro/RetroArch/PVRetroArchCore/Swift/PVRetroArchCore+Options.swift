@@ -575,9 +575,11 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.secondScreenOption).asBool
     }
     @objc func parseOptions() {
+        
         var optionValues:String = ""
         var optionValuesFile: String = ""
         var optionOverwrite: Bool = false
+        
         self.gsPreference = NSNumber(value: gs).int8Value
         self.volume = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.volumeOption).asInt ?? 100).int32Value
         self.ffSpeed = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.ffOption).asInt ?? 300).int32Value
@@ -585,12 +587,14 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         self.bindAnalogKeys = PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.analogKeyControllerOption).asBool
         self.bindAnalogDpad = PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.analogDpadControllerOption).asBool
         self.bindNumKeys = false
-        self.retroArchControls = true
+        self.retroArchControls = retroControl
         self.hasTouchControls=false
         self.extractArchive=true
+        
         if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
             self.hasSecondScreen = secondScreen;
         }
+      
         if let systemIdentifier = self.systemIdentifier?.lowercased() {
             if (systemIdentifier.contains("psp")) {
                 self.gsPreference = 2; // Use Vulkan PSP
