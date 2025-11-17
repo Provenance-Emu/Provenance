@@ -1908,10 +1908,28 @@ extension PVEmulatorViewController {
 
         // For RetroArch, re-apply internal render view frame to keep it visible
         // Wait a bit for viewport to be recalculated
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
             guard let self = self else { return }
 
-            // For non-RetroArch cores, ensure we have a frame
+            // Check if this is a default skin - default skins use their own calculation system
+            let isDefaultSkin = skin.identifier.hasPrefix("default-") ||
+                               skin.identifier == "default" ||
+                               skin.name.lowercased() == "default"
+
+            // For default skins, don't use fallback - they broadcast frames via protocol
+            // The protocol callback should have arrived by now (0.4 seconds)
+            if isDefaultSkin {
+                if let frame = self.currentTargetFrame {
+                    // Frame received via protocol - apply it
+                    self.applyFrameToGPUView(frame)
+                } else {
+                    DLOG("🎮 SKIN: Default skin - no frame received after rotation, protocol callback may be delayed")
+                    // Don't use fallback for default skins - let the protocol system handle it
+                }
+                return
+            }
+
+            // For non-default skins and non-RetroArch cores, ensure we have a frame
             if self.core.coreIdentifier?.contains("libretro") != true {
                 // If we still don't have a frame, calculate one manually
                 if self.currentTargetFrame == nil {

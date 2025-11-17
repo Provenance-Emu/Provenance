@@ -114,8 +114,12 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             ILOG("🎮 SKIN: Stored initial correct frame: \(frame)")
         }
 
-        // Skip if unchanged
+        // Skip if unchanged - but always store after rotation to ensure frame is available
+        // Check if we're in the middle of a rotation (currentTargetFrame was recently cleared)
+        let isAfterRotation = currentTargetFrame == nil
+
         if let current = currentTargetFrame,
+           !isAfterRotation,
            abs(current.origin.x - frame.origin.x) < 0.5 &&
            abs(current.origin.y - frame.origin.y) < 0.5 &&
            abs(current.width - frame.width) < 0.5 &&
