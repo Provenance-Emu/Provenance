@@ -486,3 +486,19 @@ extension PVRetroArchCoreCore: PVVirtualBoySystemResponderClient {
         (_bridge as! PVVirtualBoySystemResponderClient).didPush(button, forPlayer: player)
     }
 }
+
+
+// Vectrex
+extension PVRetroArchCoreCore: PVVectrexSystemResponderClient {
+    public func didMoveJoystick(_ button: PVCoreBridge.PVVectrexButton, withValue value: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVVectrexSystemResponderClient).didMoveJoystick(button, withValue: value, forPlayer: player)
+    }
+    
+    public func didRelease(_ button: PVCoreBridge.PVVectrexButton, forPlayer player: Int) {
+        (_bridge as! PVVectrexSystemResponderClient).didRelease(button, forPlayer: player)
+
+    }
+    public func didPush(_ button: PVCoreBridge.PVVectrexButton, forPlayer player: Int) {
+        (_bridge as! PVVectrexSystemResponderClient).didPush(button, forPlayer: player)
+    }
+}

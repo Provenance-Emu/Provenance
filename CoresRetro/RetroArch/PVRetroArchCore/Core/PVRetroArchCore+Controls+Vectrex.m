@@ -36,6 +36,24 @@ extern GCController *touch_controller;
 
 @implementation PVRetroArchCoreBridge (VectrexControls)
 #pragma mark - Control
+- (void)didMoveVectrexJoystickDirection:(enum PVVectrexButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    // TODO: Finish me
+//    switch (button) {
+//        case(PVVectrexAnalogUp):
+//            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
+//            break;
+//        case(PVVectrexAnalogDown):
+//            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
+//            break;
+//        case(PVVectrexAnalogLeft):
+//            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
+//            break;
+//        case(PVVectrexAnalogRight):
+//            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
+//            break;
+//    }
+}
+
 - (void)didPushVectrexButton:(PVVectrexButton)button forPlayer:(NSInteger)player {
     [self handleVextrexButton:button forPlayer:player pressed:true];
 }
