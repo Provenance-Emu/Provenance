@@ -401,7 +401,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             ILOG("skins: Skin import completed successfully")
 
             // Scan to reload all skins
-            // try self.scanForSkins()
+            try self.scanForSkins()
         }
     }
 
@@ -432,6 +432,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             Task { @MainActor in
                 self.loadedSkins.removeAll { $0.identifier == identifier }
                 self.objectWillChange.send()
+                
+                // Scan to reload all skins
+                try self.scanForSkins()
             }
         }
     }
