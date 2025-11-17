@@ -594,7 +594,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
         // Do not show legacy controller overlay when DeltaSkins are enabled
-        if Defaults[.skinMode] == .off || !core.supportsSkins {
+        if !isDeltaSkinEnabled {
             addControllerOverlay()
         }
         initMenuButton()
