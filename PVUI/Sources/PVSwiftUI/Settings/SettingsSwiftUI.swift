@@ -280,15 +280,15 @@ public struct PVSettingsView: View {
             RetroTabItem(title: "General", systemImage: "gearshape.fill"),
             RetroTabItem(title: "Emulation", systemImage: "gamecontroller.fill"),
             RetroTabItem(title: "Controller", systemImage: "hand.raised.fill"),
-            RetroTabItem(title: "About", systemImage: "info.circle.fill"),
-            RetroTabItem(title: "Advanced", systemImage: "gearshape.2.fill")
+            RetroTabItem(title: "Advanced", systemImage: "gearshape.2.fill"),
+            RetroTabItem(title: "About", systemImage: "info.circle.fill")
         ]
     }
 
     private var generalTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("SETTINGS")
+                Text("GENERAL")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -324,7 +324,7 @@ public struct PVSettingsView: View {
     private var emulationTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("SETTINGS")
+                Text("EMULATION")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -360,7 +360,7 @@ public struct PVSettingsView: View {
     private var controllerTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("SETTINGS")
+                Text("CONTROLLER")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -394,7 +394,7 @@ public struct PVSettingsView: View {
     private var aboutTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("SETTINGS")
+                Text("ABOUT")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -431,7 +431,7 @@ public struct PVSettingsView: View {
     private var advancedTabContent: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("SETTINGS")
+                Text("ADVANCED")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -1298,7 +1298,7 @@ private struct DeltaSkinsSection: View {
             .frame(maxWidth: .infinity)
 
 
-            // Button to select skins (premium locked)
+            // Button to select skins
             NavigationLink {
                 SystemSkinBrowserView()
             } label: {
@@ -1307,7 +1307,7 @@ private struct DeltaSkinsSection: View {
                             icon: .sfSymbol("gamecontroller.fill"))
             }
 
-            // Button to manage skins (premium locked)
+            // Button to manage skins
             NavigationLink {
                 DeltaSkinListView(manager: DeltaSkinManager.shared)
             } label: {
