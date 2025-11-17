@@ -1410,6 +1410,17 @@ extension PVEmulatorViewController {
             return
         }
 
+        // If DeltaSkin is enabled, let the DeltaSkin viewport system handle positioning
+        // Don't override with this legacy method
+        if isDeltaSkinEnabled {
+            DLOG("DeltaSkin enabled - skipping repositionGameScreen, using DeltaSkin viewport system")
+            // Just ensure we apply any pending frame from DeltaSkin system
+            if let targetFrame = currentTargetFrame {
+                applyFrameToGPUView(targetFrame)
+            }
+            return
+        }
+
         // Log core dimensions before repositioning
         ILOG("""
          Core dimensions before repositioning game screen:
@@ -1606,6 +1617,7 @@ extension PVEmulatorViewController {
 
     /// Perform a radical cleanup of the entire view hierarchy
     private func radicalCleanup() {
+        return
         DLOG("Performing RADICAL cleanup of view hierarchy")
 
         // 1. Save reference to essential views we need to keep
@@ -1858,6 +1870,12 @@ extension PVEmulatorViewController {
         self.currentSkin = skin
         self.currentOrientation = orientation
 
+        // Preserve the last frame and custom positioning to prevent viewDidLayoutSubviews from recalculating
+        // The new frame will arrive via protocol/notification shortly
+        let lastFrame = self.currentTargetFrame
+        let lastUseCustomPositioning = (gpuViewController as? PVGPUViewController)?.useCustomPositioning ?? false
+        let lastCustomFrame = (gpuViewController as? PVGPUViewController)?.customFrame ?? .zero
+
         // Clear cached frame to force recalculation for new orientation
         // The color bars notification will provide the new frame
         self.currentTargetFrame = nil
@@ -1865,6 +1883,24 @@ extension PVEmulatorViewController {
 
         // Use the new viewport system to recalculate position
         self.applyViewportFromCurrentSkin()
+
+        // If no frame arrives quickly, restore the last frame to prevent incorrect auto-calculation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self else { return }
+            // If still no frame and we had one before, temporarily restore it
+            // This prevents viewDidLayoutSubviews from calculating wrong frame
+            if self.currentTargetFrame == nil, let frame = lastFrame {
+                self.currentTargetFrame = frame
+                // Re-apply to ensure useCustomPositioning is set
+                self.applyFrameToGPUView(frame)
+            } else if self.currentTargetFrame == nil && lastUseCustomPositioning && !lastCustomFrame.isEmpty {
+                // Also restore custom positioning if it was set
+                if let gpuVC = self.gpuViewController as? PVGPUViewController {
+                    gpuVC.useCustomPositioning = true
+                    gpuVC.customFrame = lastCustomFrame
+                }
+            }
+        }
 
         if let skinView = self.skinContainerView {
             skinView.frame = self.view.bounds

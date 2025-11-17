@@ -7,7 +7,7 @@ import PVCoreBridge
 import PVUIBase
 import ObjectiveC
 
-extension PVEmulatorViewController {
+extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     // MARK: - Setup
 
@@ -15,6 +15,10 @@ extension PVEmulatorViewController {
     func updateGPUViewPositionForDeltaSkin() {
         guard gpuViewController.view != nil else { return }
 
+        // Set self as delegate to receive viewport updates via protocol
+        core.viewportLayoutDelegate = self
+
+        // Keep notification observers for backward compatibility during migration
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleFrameUpdated), name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"), object: nil)
 
@@ -28,6 +32,22 @@ extension PVEmulatorViewController {
         } else {
             resetGPUViewPosition()
         }
+    }
+
+    // MARK: - PVViewportLayoutDelegate
+
+    /// Receive viewport frame updates via protocol (replaces notification system)
+    @objc public func viewportFrameDidUpdate(_ frame: CGRect) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in
+                self?.viewportFrameDidUpdate(frame)
+            }
+            return
+        }
+
+        // Validate and apply frame using existing validation logic
+        guard validateAndStoreFrame(frame) else { return }
+        applyFrameToGPUView(frame)
     }
 
     /// Handle skin loaded notification
@@ -127,23 +147,46 @@ extension PVEmulatorViewController {
             return
         }
 
-        // Use notification frame if available (preferred - most accurate)
-        if let frame = currentTargetFrame, isValidFrame(frame) {
-            applyFrameToGPUView(frame)
-            return
-        }
-
-        // For default skins, wait for notification frame
+        // For default skins, use notification frame if already received
+        // Only wait for fresh notification if we don't have a valid frame yet
         if isDefaultSkin {
-            currentTargetFrame = nil
+            // If we already have a valid frame from notification, use it immediately
+            if let frame = currentTargetFrame, isValidFrame(frame) {
+                // Check if frame is already correctly applied to avoid unnecessary work
+                if let gameScreenView = gpuViewController.view,
+                   abs(gameScreenView.frame.origin.x - frame.origin.x) < 0.5 &&
+                   abs(gameScreenView.frame.origin.y - frame.origin.y) < 0.5 &&
+                   abs(gameScreenView.frame.width - frame.width) < 0.5 &&
+                   abs(gameScreenView.frame.height - frame.height) < 0.5 {
+                    // Frame already correctly applied, no need to re-apply
+                    return
+                }
+                applyFrameToGPUView(frame)
+                return
+            }
+
+            // No valid frame yet - wait for notification with fresh frame calculation
+            // This handles cases like rotation where we need a fresh calculation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
                 guard let self = self else { return }
                 if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
                     self.applyFrameToGPUView(frame)
                 } else {
-                    self.resetGPUViewPosition()
+                    // Only reset if we truly don't have a frame (e.g., during initial boot)
+                    // Don't reset if frame was already applied successfully
+                    if let gameScreenView = self.gpuViewController.view,
+                       gameScreenView.frame == self.view.bounds {
+                        // Only reset if currently at full screen (not already positioned)
+                        self.resetGPUViewPosition()
+                    }
                 }
             }
+            return
+        }
+
+        // For non-default skins, use notification frame if available (preferred - most accurate)
+        if let frame = currentTargetFrame, isValidFrame(frame) {
+            applyFrameToGPUView(frame)
             return
         }
 
@@ -181,6 +224,7 @@ extension PVEmulatorViewController {
     }
 
     /// Calculate frame from skin - single, clear calculation path
+    /// Uses same calculation for bootup and rotation - accounts for safe areas
     private func calculateFrameFromSkin() -> CGRect? {
         guard let skin = currentSkin else { return nil }
         guard view.bounds.width > 0 && view.bounds.height > 0 else { return nil }
@@ -191,15 +235,28 @@ extension PVEmulatorViewController {
 
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
 
-        // Calculate layout (same as DeltaSkinView)
+        // Calculate layout accounting for safe areas
+        let safeInsets = view.safeAreaInsets
         let viewSize = view.bounds.size
-        let scale = calculateScale(for: traits, viewSize: viewSize, mappingSize: mappingSize)
+        let safeWidth = max(0, viewSize.width - safeInsets.left - safeInsets.right)
+        let safeHeight = max(0, viewSize.height - safeInsets.top - safeInsets.bottom)
+        let safeSize = CGSize(width: safeWidth, height: safeHeight)
+
+        // Calculate scale using safe area dimensions - consistent for all orientations
+        let scale = calculateScale(viewSize: safeSize, mappingSize: mappingSize)
         let scaledSize = CGSize(width: mappingSize.width * scale, height: mappingSize.height * scale)
-        let offset = calculateOffset(for: traits, viewSize: viewSize, scaledSize: scaledSize)
+
+        // Calculate offset accounting for safe areas
+        let offset = calculateOffset(for: traits,
+                                    viewSize: viewSize,
+                                    safeInsets: safeInsets,
+                                    scaledSize: scaledSize)
 
         // Get screen frame from skin
         if let screenFrame = getScreenFrame(from: skin, traits: traits, mappingSize: mappingSize) {
             // Convert normalized screen frame to view coordinates
+            // screenFrame is normalized (0-1) relative to mappingSize
+            // Position is relative to where the scaled skin is positioned (offset)
             return CGRect(
                 x: offset.x + screenFrame.minX * scaledSize.width,
                 y: offset.y + screenFrame.minY * scaledSize.height,
@@ -213,20 +270,31 @@ extension PVEmulatorViewController {
     }
 
     /// Calculate scale for skin layout
-    private func calculateScale(for traits: DeltaSkinTraits, viewSize: CGSize, mappingSize: CGSize) -> CGFloat {
-        if traits.device == .iphone && traits.orientation == .portrait {
-            let scale = viewSize.width / mappingSize.width
-            let scaledHeight = mappingSize.height * scale
-            return scaledHeight > viewSize.height ? min(scale, viewSize.height / mappingSize.height) : scale
-        }
-        return min(viewSize.width / mappingSize.width, viewSize.height / mappingSize.height)
+    /// Uses same calculation for bootup and rotation - consistent for all orientations
+    /// Scales to fit within available space while maintaining aspect ratio
+    private func calculateScale(viewSize: CGSize, mappingSize: CGSize) -> CGFloat {
+        // Always use the same calculation: scale to fit within available space
+        // This ensures consistent sizing regardless of orientation or device type
+        guard mappingSize.width > 0 && mappingSize.height > 0 else { return 1.0 }
+        let scaleX = viewSize.width / mappingSize.width
+        let scaleY = viewSize.height / mappingSize.height
+        return min(scaleX, scaleY)
     }
 
     /// Calculate offset for skin layout
-    private func calculateOffset(for traits: DeltaSkinTraits, viewSize: CGSize, scaledSize: CGSize) -> CGPoint {
-        let x = (viewSize.width - scaledSize.width) / 2
-        let y = (traits.device == .iphone && traits.orientation == .portrait) ?
-            (viewSize.height - scaledSize.height) : ((viewSize.height - scaledSize.height) / 2)
+    /// Accounts for safe areas - uses same calculation for bootup and rotation
+    /// Centers the skin in the safe area for all orientations
+    private func calculateOffset(for traits: DeltaSkinTraits, viewSize: CGSize, safeInsets: UIEdgeInsets, scaledSize: CGSize) -> CGPoint {
+        let safeWidth = max(0, viewSize.width - safeInsets.left - safeInsets.right)
+        let safeHeight = max(0, viewSize.height - safeInsets.top - safeInsets.bottom)
+
+        // Center horizontally accounting for safe areas
+        let x = safeInsets.left + (safeWidth - scaledSize.width) / 2
+
+        // Center vertically in safe area for all orientations
+        // Screen frame position within skin will be handled by screenFrame.minY
+        let y = safeInsets.top + (safeHeight - scaledSize.height) / 2
+
         return CGPoint(x: x, y: y)
     }
 
@@ -342,8 +410,13 @@ extension PVEmulatorViewController {
 
     /// Apply frame to Metal core
     private func applyFrameToMetal(_ frame: CGRect, metalVC: PVMetalViewController) {
+        ILOG("🎮 SKIN: Applying frame to Metal: \(frame)")
+
+        // CRITICAL: Set custom positioning BEFORE setting frames
+        // This ensures viewDidLayoutSubviews respects the custom frame
         (metalVC as PVGPUViewController).useCustomPositioning = true
         (metalVC as PVGPUViewController).customFrame = frame
+
         metalVC.view.autoresizingMask = []
         metalVC.mtlView.autoresizingMask = []
 
@@ -360,6 +433,8 @@ extension PVEmulatorViewController {
         metalVC.mtlView.contentScaleFactor = scale
         metalVC.view.isHidden = false
         metalVC.mtlView.isHidden = false
+
+        ILOG("🎮 SKIN: Metal frame applied - useCustomPositioning: \(metalVC.useCustomPositioning), customFrame: \(metalVC.customFrame)")
 
         ensureGPUViewVisibilityAndZOrder()
     }

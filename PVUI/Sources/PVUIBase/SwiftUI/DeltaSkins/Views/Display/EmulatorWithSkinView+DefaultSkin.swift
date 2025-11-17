@@ -16,6 +16,7 @@ import PVLibrary
 import PVPlists
 import PVThemes
 import PVLogging
+import PVUIBase
 
 // MARK: - Retrowave Styling Components
 
@@ -170,10 +171,12 @@ struct DefaultControllerSkinView: View {
     // D-pad state - must be StateObject to persist across renders
     @StateObject private var dpadState = DPadState()
 
-    // Cache the validated aspect ratio to prevent incorrect recalculation after rotation
+    // Cache the validated aspect ratio - cleared when needed to ensure fresh calculation
     @State private var cachedAspectRatio: CGFloat?
     @State private var lastAspectSize: CGSize = .zero
-    @State private var lastOrientation: Bool? = nil // Track orientation to clear cache on change
+
+    // Bridge to protocol system (replaces notification system)
+    @State private var viewportBridge: ViewportLayoutProviderBridge?
 
     init(useJoystick: Bool, inputHandler: DeltaSkinInputHandler, systemId: SystemIdentifier?, coreInstance: PVEmulatorCore) {
         self._useJoystickInternal = State(initialValue: useJoystick)
@@ -254,12 +257,21 @@ struct DefaultControllerSkinView: View {
                 inputHandler.setEmulatorCore(coreInstance)
                 // Store safe area insets
                 currentSafeInsets = geometry.safeAreaInsets
+
+                // Set up protocol bridge for viewport layout
+                setupViewportBridge()
+
                 // Emit default viewport on appear
                 emitDefaultViewportIfNeeded(
                     size: geometry.size,
                     safeInsets: geometry.safeAreaInsets,
                     isLandscape: isLandscape
                 )
+            }
+            .onDisappear {
+                // Clean up bridge when view disappears
+                viewportBridge = nil
+                coreInstance.viewportLayoutProvider = nil
             }
             .background(ViewportUpdater(
                 size: geometry.size,
@@ -369,19 +381,36 @@ struct DefaultControllerSkinView: View {
         return coreInstance.aspectSize
     }
 
+    /// Set up the viewport layout bridge to use protocol instead of notifications
+    private func setupViewportBridge() {
+        guard viewportBridge == nil else { return }
+
+        viewportBridge = ViewportLayoutProviderBridge(
+            core: coreInstance,
+            calculateFrame: { size, insets, isLandscape in
+                // Convert UIEdgeInsets to EdgeInsets
+                let edgeInsets = EdgeInsets(
+                    top: insets.top,
+                    leading: insets.left,
+                    bottom: insets.bottom,
+                    trailing: insets.right
+                )
+                return self.calculateDefaultViewport(size: size, safeInsets: edgeInsets, isLandscape: isLandscape)
+            },
+            requestRecalculation: {
+                // Recalculation will be triggered by ViewportUpdater
+            }
+        )
+    }
+
     /// Broadcast a deterministic viewport for the default skin
     /// Single, consistent calculation path - always calculates and broadcasts immediately
+    /// Uses same code path for bootup and rotation - no special handling
+    /// Now uses protocol instead of notifications
     private func emitDefaultViewportIfNeeded(size: CGSize, safeInsets: EdgeInsets, isLandscape: Bool) {
-        // Clear cached viewport if orientation changed - ensures fresh calculation after rotation
-        let orientationChanged = lastOrientation != nil && lastOrientation != isLandscape
-        if orientationChanged {
-            lastBroadcastedViewport = nil
-            ILOG("🎮 SKIN: Orientation changed, clearing cached viewport")
-        }
-        lastOrientation = isLandscape
-
         // Always calculate frame using current size, safeInsets, and orientation
         // This is the single source of truth for default skin frame calculation
+        // No caching or special rotation handling - same as bootup
         let frame = calculateDefaultViewport(size: size, safeInsets: safeInsets, isLandscape: isLandscape)
         guard frame.width > 0,
               frame.height > 0,
@@ -393,36 +422,38 @@ struct DefaultControllerSkinView: View {
             return
         }
 
-        // Skip broadcast only if frame is approximately equal AND orientation hasn't changed
-        if !orientationChanged,
-           let last = lastBroadcastedViewport,
-           framesAreApproximatelyEqual(last, frame) {
-            ILOG("🎮 SKIN: Frame unchanged, skipping broadcast")
-            return
-        }
-
-        // Broadcast frame - this is the single source of truth
+        // Always broadcast - don't skip based on previous frame
+        // This ensures fresh frame on every calculation (bootup and rotation)
         lastBroadcastedViewport = frame
-        NotificationCenter.default.post(
-            name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"),
-            object: nil,
-            userInfo: ["frame": NSValue(cgRect: frame)]
-        )
-        ILOG("🎮 SKIN: Default skin broadcasting frame: \(frame)")
+
+        // Use protocol bridge if available (preferred), fallback to notification for compatibility
+        if let bridge = viewportBridge {
+            bridge.notifyFrameUpdated(frame)
+            ILOG("🎮 SKIN: Default skin broadcasting frame via protocol: \(frame)")
+        } else {
+            // Fallback to notification for backward compatibility
+            NotificationCenter.default.post(
+                name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"),
+                object: nil,
+                userInfo: ["frame": NSValue(cgRect: frame)]
+            )
+            ILOG("🎮 SKIN: Default skin broadcasting frame via notification: \(frame)")
+        }
     }
 
-    /// Calculate and validate aspect ratio from core, caching it to prevent incorrect recalculation after rotation
+    /// Calculate and validate aspect ratio from core
+    /// Always calculates fresh - aspect ratio is a property of the game/core, not device orientation
     private func getValidatedAspectRatio() -> CGFloat {
         let aspectSize = coreInstance.aspectSize
 
         // Check if aspectSize has changed significantly (more than 10% difference)
-        // This prevents recalculation due to minor floating point differences after rotation
+        // Only reuse cache if aspectSize hasn't changed
         let sizeChanged = cachedAspectRatio == nil ||
                          (lastAspectSize.width > 0 && lastAspectSize.height > 0 &&
                           (abs(aspectSize.width - lastAspectSize.width) > lastAspectSize.width * 0.1 ||
                            abs(aspectSize.height - lastAspectSize.height) > lastAspectSize.height * 0.1))
 
-        // If we have a cached ratio and size hasn't changed significantly, reuse it
+        // If we have a cached ratio and size hasn't changed, reuse it
         if let cached = cachedAspectRatio, !sizeChanged {
             return cached
         }
@@ -472,8 +503,9 @@ struct DefaultControllerSkinView: View {
     }
 
     /// Calculate viewport used when no explicit skin is available
+    /// Same calculation for bootup and rotation - no special handling
     private func calculateDefaultViewport(size: CGSize, safeInsets: EdgeInsets, isLandscape: Bool) -> CGRect {
-        // Use cached validated aspect ratio to prevent incorrect recalculation after rotation
+        // Get aspect ratio (cached if aspectSize hasn't changed, otherwise recalculated)
         let aspectRatio = getValidatedAspectRatio()
 
         let horizontalSafe = safeInsets.leading + safeInsets.trailing
@@ -1987,7 +2019,7 @@ struct DefaultControllerSkinView: View {
 }
 
 /// Helper view to track geometry changes and update viewport
-/// Uses same immediate calculation path as initial startup to ensure consistency after rotation
+/// Uses same immediate calculation path as initial startup - no special rotation handling
 private struct ViewportUpdater: View {
     let size: CGSize
     let safeInsets: EdgeInsets
@@ -1995,6 +2027,7 @@ private struct ViewportUpdater: View {
 
     @State private var lastSize: CGSize = .zero
     @State private var lastSafeInsets: EdgeInsets = EdgeInsets()
+    @State private var lastIsLandscape: Bool?
 
     var body: some View {
         Color.clear
@@ -2003,22 +2036,27 @@ private struct ViewportUpdater: View {
                 let isLandscape = size.width > size.height
                 lastSize = size
                 lastSafeInsets = safeInsets
+                lastIsLandscape = isLandscape
                 onUpdate(size, safeInsets, isLandscape)
             }
             .onChange(of: size) { newSize in
                 // Use same immediate calculation path as onAppear
-                // Only update if size actually changed significantly (avoid duplicate updates during rotation)
+                // Always recalculate on size change - same as bootup
+                let isLandscape = newSize.width > newSize.height
+                let orientationChanged = lastIsLandscape != nil && lastIsLandscape != isLandscape
                 let sizeChanged = abs(newSize.width - lastSize.width) > 1.0 || abs(newSize.height - lastSize.height) > 1.0
-                if sizeChanged {
-                    let isLandscape = newSize.width > newSize.height
+
+                // Update if size changed OR orientation changed
+                if sizeChanged || orientationChanged {
                     lastSize = newSize
+                    lastIsLandscape = isLandscape
                     // Immediate update - same code path as initial startup
                     onUpdate(newSize, safeInsets, isLandscape)
                 }
             }
             .onChange(of: safeInsets) { newInsets in
                 // Use same immediate calculation path as onAppear
-                // Only update if safe insets actually changed
+                // Always recalculate on safe inset change - same as bootup
                 let insetsChanged = abs(newInsets.top - lastSafeInsets.top) > 0.5 ||
                                    abs(newInsets.bottom - lastSafeInsets.bottom) > 0.5 ||
                                    abs(newInsets.leading - lastSafeInsets.leading) > 0.5 ||

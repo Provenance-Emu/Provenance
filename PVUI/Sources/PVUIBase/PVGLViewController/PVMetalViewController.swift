@@ -15,6 +15,7 @@ import PVEmulatorCore
 import PVLogging
 import PVSettings
 import PVUIObjC
+import PVUIBase
 
 #if os(macOS) || targetEnvironment(macCatalyst)
 import OpenGL
@@ -578,10 +579,38 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 
         // IMPORTANT: If custom positioning is being used, respect it and don't override
-        if useCustomPositioning && !customFrame.isEmpty {
+        // Validate the custom frame is reasonable (not empty, has valid dimensions)
+        let isValidCustomFrame = useCustomPositioning &&
+                                 !customFrame.isEmpty &&
+                                 customFrame.width > 100 &&
+                                 customFrame.height > 100 &&
+                                 customFrame.width < 10000 &&
+                                 customFrame.height < 10000
+
+        if isValidCustomFrame {
             DLOG("Using custom positioning: \(customFrame)")
             mtlView.frame = customFrame
             view.frame = customFrame
+            updatePreferredFPS()
+            return
+        }
+
+        // If DeltaSkin is enabled, don't auto-calculate frame - wait for skin system
+        // Check via parent view controller if it has DeltaSkin enabled
+        // This prevents incorrect frame calculations during rotation
+        let isDeltaSkinEnabled = (parent as? PVEmulatorViewController)?.isDeltaSkinEnabled ?? false
+
+        if isDeltaSkinEnabled {
+            DLOG("DeltaSkin enabled - skipping auto frame calculation, waiting for skin frame")
+            // If we have a valid custom frame set, use it; otherwise keep current frame
+            if isValidCustomFrame {
+                mtlView.frame = customFrame
+                view.frame = customFrame
+            } else {
+                // Keep current frame - don't recalculate
+                DLOG("Keeping current frame until DeltaSkin provides new one: \(mtlView.frame)")
+            }
+            // Don't calculate new frame - wait for DeltaSkin system to provide it
             updatePreferredFPS()
             return
         }
