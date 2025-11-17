@@ -22,11 +22,27 @@ extension CocoaView {
 		helperVC.didMove(toParent: self)
 		helperBarView = helperVC.view
 		helperBarView.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(helperBarView)
-		helperBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-		helperBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-		helperBarView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-		helperBarView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+		helperBarView.isUserInteractionEnabled = true
+		helperBarView.layer.zPosition = 1000
+
+		/// Add to mtkView (superview) if available, so it's a sibling of Metal container
+		/// Otherwise add to rootView (self.view)
+		if let mtkView = view.superview {
+			helperBarView.removeFromSuperview()
+			mtkView.addSubview(helperBarView)
+			helperBarView.leadingAnchor.constraint(equalTo: mtkView.leadingAnchor).isActive = true
+			helperBarView.trailingAnchor.constraint(equalTo: mtkView.trailingAnchor).isActive = true
+			helperBarView.topAnchor.constraint(equalTo: mtkView.safeAreaLayoutGuide.topAnchor).isActive = true
+			helperBarView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+			mtkView.bringSubviewToFront(helperBarView)
+		} else {
+			view.addSubview(helperBarView)
+			helperBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+			helperBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+			helperBarView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+			helperBarView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+			view.bringSubviewToFront(helperBarView)
+		}
 	}
 }
 
@@ -55,7 +71,7 @@ extension CocoaView: HelperBarActionDelegate {
     func settingsButtonTapped() {
         menuToggle();
     }
-    
+
 	func helpButtonTapped() {
 	}
 
@@ -83,9 +99,34 @@ extension CocoaView: HelperBarActionDelegate {
 		override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 			let hitView = super.hitTest(point, with: event)
 			if hitView == self {
+				if let keyboardController = self.findViewController() as? EmulatorKeyboardController,
+				   let cocoaView = keyboardController.parent as? CocoaView,
+				   let helperBarView = cocoaView.helperBarView,
+				   helperBarView.superview != nil,
+				   !helperBarView.isHidden,
+				   helperBarView.alpha > 0.01 {
+					let pointInSuperview = self.convert(point, to: helperBarView.superview)
+					if helperBarView.frame.contains(pointInSuperview) {
+						let pointInHelperBar = helperBarView.convert(pointInSuperview, from: helperBarView.superview)
+						if let helperHitView = helperBarView.hitTest(pointInHelperBar, with: event) {
+							return helperHitView
+						}
+					}
+				}
 				return nil
 			}
 			return hitView
+		}
+
+		private func findViewController() -> UIViewController? {
+			var responder: UIResponder? = self
+			while responder != nil {
+				if let viewController = responder as? UIViewController {
+					return viewController
+				}
+				responder = responder?.next
+			}
+			return nil
 		}
 	}
 
@@ -221,7 +262,7 @@ extension CocoaView {
 #if !os(tvOS)
 		view.isMultipleTouchEnabled = true;
         mouseHandler = EmulatorTouchMouseHandler(view: view, delegate: self as? EmulatorTouchMouseHandlerDelegate)
-        
+
 //        let pointerInterction = UIPointerInteraction(delegate: self)
 //        view.addInteraction(pointerInterction)
 #endif
@@ -770,24 +811,24 @@ struct KeyPosition {
     var alternateKeys: [[KeyCoded]]?
     var numKeys: [[KeyCoded]]?
     var modifiers: [Int16: KeyCoded]?
-    
+
     var isDraggable = true
-    
+
     @objc weak var delegate: EmulatorKeyboardKeyPressedDelegate?
     @objc weak var modifierDelegate: EmulatorKeyboardModifierPressedDelegate?
-    
+
     init(keys: [[KeyCoded]], alternateKeys: [[KeyCoded]]? = nil, numKeys: [[KeyCoded]]? = nil) {
         self.keys = keys
         self.alternateKeys = alternateKeys
         self.numKeys = numKeys
     }
-    
+
     func createView() -> EmulatorKeyboardView {
         let view = EmulatorKeyboardView()
         view.viewModel = self
         return view
     }
-    
+
     func keyForPositionAt(_ position: KeyPosition) -> KeyCoded? {
         guard position.row < keys.count else {
             return nil
@@ -798,11 +839,11 @@ struct KeyPosition {
         }
         return row[position.column]
     }
-    
+
     func modifierKeyToggleStateForKey(_ key: KeyCoded) -> Bool {
         return key.isModifier && (modifierDelegate?.isModifierEnabled(key: key) ?? false)
     }
-    
+
     func keyPressed(_ key: KeyCoded) {
         if key.isModifier {
             let isPressed = modifierDelegate?.isModifierEnabled(key: key) ?? false
@@ -811,14 +852,14 @@ struct KeyPosition {
         }
         delegate?.keyDown(key)
     }
-    
+
     func keyReleased(_ key: KeyCoded) {
         if key.isModifier {
             return
         }
         delegate?.keyUp(key)
     }
-    
+
     // KeyCoded can support a shifted key label
     // view can update with shifted key labels?
     // cluster can support alternate keys and view can swap them out?
@@ -852,7 +893,7 @@ protocol EmulatorKeyboardViewDelegate: AnyObject {
 }
 
 class EmulatorKeyboardView: UIView {
-   
+
     #if os(tvOS)
     static var keyboardBackgroundColor = UIColor.systemGray.withAlphaComponent(0.5)
     #else
@@ -860,16 +901,16 @@ class EmulatorKeyboardView: UIView {
     #endif
     static var keyboardCornerRadius = 6.0
    static var keyboardDragColor = UIColor.systemGray
-   
+
    static var keyCornerRadius = 6.0
    static var keyBorderWidth = 1.0
-   
+
    static var rowSpacing = 12.0
    static var keySpacing = 8.0
-   
+
    static var keyNormalFont = UIFont.systemFont(ofSize: 12)
    static var keyPressedFont = UIFont.boldSystemFont(ofSize: 24)
-   
+
 #if os(tvOS)
     static var keyNormalBackgroundColor = UIColor.systemGray.withAlphaComponent(0.5)
 #else
@@ -877,7 +918,7 @@ class EmulatorKeyboardView: UIView {
 #endif
    static var keyNormalBorderColor = keyNormalBackgroundColor
    static var keyNormalTextColor = UIColor.label
-   
+
 
 #if os(tvOS)
     static var keyPressedBackgroundColor = UIColor.systemGray
@@ -886,7 +927,7 @@ class EmulatorKeyboardView: UIView {
 #endif
    static var keyPressedBorderColor = keyPressedBackgroundColor
    static var keyPressedTextColor = UIColor.label
-   
+
 
 #if os(tvOS)
     static var keySelectedBackgroundColor = UIColor.systemGray.withAlphaComponent(0.8)
@@ -895,16 +936,16 @@ class EmulatorKeyboardView: UIView {
 #endif
    static var keySelectedBorderColor = keySelectedBackgroundColor
    static var keySelectedTextColor = UIColor.label
-   
+
     var viewModel = EmulatorKeyboardViewModel(keys: [[KeyCoded]]()) {
         didSet {
             setupWithModel(viewModel)
         }
     }
     var modifierButtons = Set<EmulatorKeyboardButton>()
-    
+
     weak var delegate: EmulatorKeyboardViewDelegate?
-    
+
     private lazy var keyRowsStackView: UIStackView = {
        let stackView = UIStackView()
        stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -913,7 +954,7 @@ class EmulatorKeyboardView: UIView {
        stackView.spacing = Self.rowSpacing
        return stackView
     }()
-    
+
     private lazy var alternateKeyRowsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -923,7 +964,7 @@ class EmulatorKeyboardView: UIView {
         stackView.isHidden = true
         return stackView
     }()
-    
+
     private lazy var numKeyRowsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -933,7 +974,7 @@ class EmulatorKeyboardView: UIView {
         stackView.isHidden = true
         return stackView
     }()
-    
+
     let dragMeView: UIView = {
       let view = UIView(frame: .zero)
       view.backgroundColor = EmulatorKeyboardView.keyboardDragColor
@@ -950,9 +991,9 @@ class EmulatorKeyboardView: UIView {
       outerView.widthAnchor.constraint(equalToConstant: 100).isActive = true
       return outerView
     }()
-    
+
     private var pressedKeyViews = [UIControl: UIView]()
-    
+
     convenience init() {
         self.init(frame: CGRect.zero)
     }
@@ -988,8 +1029,8 @@ class EmulatorKeyboardView: UIView {
         dragMeView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         dragMeView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
-    
-    
+
+
     @objc private func keyPressed(_ sender: EmulatorKeyboardButton) {
         if sender.key.keyCode == 9000 { // hack for now
             return
@@ -1005,13 +1046,13 @@ class EmulatorKeyboardView: UIView {
            view.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
            view.frame = sender.convert(sender.bounds, to: self)
            addSubview(view)
-           
+
            var tx = 0.0
            let ty = sender.bounds.height * -1.20
-           
+
            if let window = self.window {
                let rect = sender.convert(sender.bounds, to:window)
-               
+
                if rect.maxX > window.bounds.width * 0.9 {
                    tx = sender.bounds.width * -0.5
                }
@@ -1022,12 +1063,12 @@ class EmulatorKeyboardView: UIView {
 
            sender.superview!.bringSubviewToFront(sender)
            sender.transform = CGAffineTransform(translationX:tx, y:ty).scaledBy(x:2, y:2)
-           
+
            pressedKeyViews[sender] = view
         }
         viewModel.keyPressed(sender.key)
     }
-    
+
     @objc private func keyCancelled(_ sender: EmulatorKeyboardButton) {
        sender.transform = .identity
        if let view = pressedKeyViews[sender] {
@@ -1035,7 +1076,7 @@ class EmulatorKeyboardView: UIView {
           pressedKeyViews.removeValue(forKey: sender)
        }
     }
-    
+
     @objc private func keyReleased(_ sender: EmulatorKeyboardButton) {
        sender.transform = .identity
        if sender.key.keyCode == 9000 {
@@ -1054,7 +1095,7 @@ class EmulatorKeyboardView: UIView {
        viewModel.keyReleased(sender.key)
        self.delegate?.refreshModifierStates()
     }
-    
+
     func setupWithModel(_ model: EmulatorKeyboardViewModel) {
         for row in model.keys {
             let keysInRow = createKeyRow(keys: row)
@@ -1076,7 +1117,7 @@ class EmulatorKeyboardView: UIView {
             dragMeView.isHidden = true
         }
     }
-    
+
     func toggleKeysStackView() {
         if viewModel.keys != nil {
             keyRowsStackView.isHidden = false;
@@ -1085,7 +1126,7 @@ class EmulatorKeyboardView: UIView {
             refreshModifierStates()
         }
     }
-    
+
     func toggleAltStackView() {
         if viewModel.alternateKeys != nil {
             if (alternateKeyRowsStackView.isHidden) {
@@ -1100,7 +1141,7 @@ class EmulatorKeyboardView: UIView {
             refreshModifierStates()
         }
     }
-    
+
     func toggleNumStackView() {
         if viewModel.numKeys != nil {
             if (numKeyRowsStackView.isHidden) {
@@ -1120,7 +1161,7 @@ class EmulatorKeyboardView: UIView {
           button.isSelected = viewModel.modifierKeyToggleStateForKey(button.key)
        }
     }
-    
+
     private func createKey(_ keyCoded: KeyCoded) -> UIButton {
        let key = EmulatorKeyboardButton(key: keyCoded)
        if let imageName = keyCoded.keyImageName {
@@ -1137,7 +1178,7 @@ class EmulatorKeyboardView: UIView {
           key.setTitleColor(EmulatorKeyboardView.keySelectedTextColor, for: .selected)
           key.setTitleColor(EmulatorKeyboardView.keyPressedTextColor, for: .highlighted)
        }
-       
+
        key.translatesAutoresizingMaskIntoConstraints = false
        key.widthAnchor.constraint(equalToConstant: (25 * CGFloat(keyCoded.keySize.rawValue))).isActive = true
        key.heightAnchor.constraint(equalToConstant: 35).isActive = true
@@ -1209,15 +1250,15 @@ struct KeyboardBarItem: HelperBarItem {
    let shortDescription = Strings.shortDescription
    let longDescription: String? = Strings.longDescription
    weak var actionDelegate: HelperBarActionDelegate?
-   
+
    init(actionDelegate: HelperBarActionDelegate?) {
       self.actionDelegate = actionDelegate
    }
-   
+
    func action() {
       actionDelegate?.keyboardButtonTapped()
    }
-   
+
    struct Strings {
       static let shortDescription = NSLocalizedString("An on-screen keyboard", comment: "Description for on-screen keyboard item on helper bar")
       static let longDescription = NSLocalizedString("An on-screen keyboard for cores that require keyboard input.", comment: "Description for on-screen keyboard item on helper bar")
@@ -1278,24 +1319,24 @@ class HelperBarViewModel {
    @Published var didInteractWithBar = false
    private var cancellable: AnyCancellable?
    private var timer: DispatchSourceTimer?
-   
+
    weak var delegate: HelperBarViewModelDelegate?
    weak var actionDelegate: HelperBarActionDelegate?
-   
+
    lazy var barItems: [HelperBarItem] = [
       SettingsBarItem(actionDelegate: actionDelegate),
       KeyboardBarItem(actionDelegate: actionDelegate),
       MouseBarItem(actionDelegate: actionDelegate)
    ]
-   
+
    var barItemMapping = [UIBarButtonItem: HelperBarItem]()
-   
+
    init(delegate: HelperBarViewModelDelegate? = nil, actionDelegate: HelperBarActionDelegate? = nil) {
       self.delegate = delegate
       self.actionDelegate = actionDelegate
       setupSubscription()
    }
-   
+
    // Create a timer that will hide the navigation bar after 3 seconds if it's not interacted with
    private func setupTimer() {
       timer = DispatchSource.makeTimerSource()
@@ -1326,7 +1367,7 @@ class HelperBarViewModel {
             }
       })
    }
-   
+
    func createBarButtonItems() -> [UIBarButtonItem] {
       barItemMapping.removeAll()
       return barItems.map{ [weak self] item in
@@ -1335,7 +1376,7 @@ class HelperBarViewModel {
          return barButtonItem
       }
    }
-   
+
    @objc private func didTapBarItem(_ sender: UIBarButtonItem) {
       guard let item = barItemMapping[sender] else { return }
       item.action()
@@ -1376,7 +1417,7 @@ protocol KeyRowsDataSource {
     let keyCode: Int
     let keySize: KeySize
     let isModifier: Bool
-    
+
     override var description: String {
         return String(format: "\(keyLabel) (%02X)", keyCode)
     }
@@ -1410,7 +1451,7 @@ class SliderKey: KeyCoded {
    let keyImageName: String? = nil
    let keyImageNameHighlighted: String? = nil
    weak var keyboardView: EmulatorKeyboardView?
-   
+
    init(keySize: KeySize = .standard) {
       self.keySize = keySize
    }
@@ -1459,7 +1500,7 @@ import UIKit
 class EmulatorKeyboardButton: UIButton {
     let key: KeyCoded
     var toggleState = false
-    
+
     // MARK: - Functions
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let newArea = CGRect(
@@ -1477,19 +1518,19 @@ class EmulatorKeyboardButton: UIButton {
         titleLabel?.textColor = isHighlighted ? EmulatorKeyboardView.keyPressedTextColor : isSelected ? EmulatorKeyboardView.keySelectedTextColor : EmulatorKeyboardView.keyNormalTextColor
         titleLabel?.tintColor = titleLabel?.textColor
     }
-   
+
     override open var isHighlighted: Bool {
         didSet {
            updateColors()
         }
     }
-    
+
     override open var isSelected: Bool {
         didSet {
            updateColors()
         }
     }
-    
+
     required init(key: KeyCoded) {
        self.key = key
        super.init(frame: .zero)
@@ -1515,7 +1556,7 @@ class EmulatorKeyboardButton: UIButton {
  - Left click: Tap with one finger
  - Right click: Tap with two fingers (or hold with one finger and tap with another)
  - Click-and-drag: Double tap and hold for 1 second, then pan finger around screen to drag mouse
- 
+
  Code adapted from iDOS/dospad: https://github.com/litchie/dospad
  */
 
@@ -1537,7 +1578,7 @@ import UIKit
       var isRightClick = false
       var isPressed = false
    }
-   
+
    struct TouchInfo {
       let touch: UITouch
       let origin: CGPoint
@@ -1549,32 +1590,32 @@ import UIKit
             print("EmulatorTouchMouseHandler `enabled` \(enabled ? "Yes" : "No")")
         }
     }
-   
+
    let view: UIView
    weak var delegate: EmulatorTouchMouseHandlerDelegate?
-   
+
    private let positionChangeThreshold: CGFloat = 20.0
    private let mouseHoldInterval: TimeInterval = 1.0
-   
+
    private var pendingMouseEvents = [MouseClick]()
    private var mouseEventPublisher: AnyPublisher<MouseClick, Never> {
       mouseEventSubject.eraseToAnyPublisher()
    }
    private let mouseEventSubject = PassthroughSubject<MouseClick, Never>()
    private var subscription: AnyCancellable?
-   
+
    private var primaryTouch: TouchInfo?
    private var secondaryTouch: TouchInfo?
-   
+
    private let mediumHaptic = UIImpactFeedbackGenerator(style: .medium)
-   
+
    public init(view: UIView, delegate: EmulatorTouchMouseHandlerDelegate? = nil) {
       self.view = view
       self.delegate = delegate
       super.init()
       setup()
    }
-   
+
    private func setup() {
       subscription = mouseEventPublisher
          .sink(receiveValue: {[weak self] value in
@@ -1588,7 +1629,7 @@ import UIKit
          self.view.isUserInteractionEnabled = true
       }
    }
-   
+
    private func processMouseEvents() {
       guard let event = pendingMouseEvents.first else {
          return
@@ -1602,7 +1643,7 @@ import UIKit
       pendingMouseEvents.removeFirst()
       processMouseEvents()
    }
-   
+
    @objc private func beginHold() {
       guard let primaryTouch = primaryTouch, primaryTouch.holdState == .wait else {
          return
@@ -1611,7 +1652,7 @@ import UIKit
       mediumHaptic.impactOccurred()
       delegate?.handleMouseClick(isLeftClick: true, isPressed: true)
    }
-   
+
    private func endHold() {
       guard let primaryTouch = primaryTouch else { return }
       if primaryTouch.holdState == .notHeld {
@@ -1624,7 +1665,7 @@ import UIKit
       }
       self.primaryTouch = TouchInfo(touch: primaryTouch.touch, origin: primaryTouch.origin, holdState: .notHeld)
    }
-   
+
    public func touchesBegan(touches: Set<UITouch>, event: UIEvent?) {
       guard enabled, let touch = touches.first else {
          if #available(iOS 13.4, *), let _ = touches.first {
@@ -1642,7 +1683,7 @@ import UIKit
          secondaryTouch = TouchInfo(touch: touch, origin: touch.location(in: view), holdState: .notHeld)
       }
    }
-   
+
    public func touchesEnded(touches: Set<UITouch>, event: UIEvent?) {
       guard enabled else {
          if #available(iOS 13.4, *) {
@@ -1673,10 +1714,10 @@ import UIKit
       }
       delegate?.handleMouseMove(x: 0, y: 0)
    }
-    
+
 //    public func pressesMoved(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
 //        guard let press = presses.first else { return }
-//        
+//
 //        if #available(iOS 13.4, *) {
 //            if press.type == .pageDown || press.type == .pageUp {
 //                // Handle mouse movement
@@ -1686,7 +1727,7 @@ import UIKit
 //            }
 //        }
 //    }
-   
+
    public func touchesMoved(touches: Set<UITouch>) {
       guard enabled else { return }
       for touch in touches {
@@ -1700,7 +1741,7 @@ import UIKit
          }
       }
    }
-   
+
    public func touchesCancelled(touches: Set<UITouch>, event: UIEvent?) {
       guard enabled else {
          if #available(iOS 13.4, *) {
@@ -1717,7 +1758,7 @@ import UIKit
       primaryTouch = nil
       secondaryTouch = nil
    }
-   
+
    func distanceBetween(pointA: CGPoint, pointB: CGPoint) -> CGFloat {
       let dx = pointA.x - pointB.x
       let dy = pointA.y - pointB.y
@@ -1736,7 +1777,7 @@ import UIKit
 //        return defaultRegion
          return nil // Prevent snapbacks?
    }
-    
+
     @available(iOS 13.4, *)
     public func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
         let cursorPath = UIBezierPath()
@@ -1754,7 +1795,7 @@ import UIKit
 
         // Close the path
         cursorPath.close()
-        
+
         // let oval: UIBezierPath = .init(ovalIn: .init(origin: .zero, size: .init(width: 20, height: 20)))
 
         let shape: UIPointerShape = .path(cursorPath)

@@ -194,7 +194,7 @@ void cocoa_file_load_with_detect_core(const char *filename);
     */
    self.controllerUserInteractionEnabled = YES;
 #endif
-  
+
 #if TARGET_OS_IOS
   self.shouldLockCurrentInterfaceOrientation = NO;
 #endif
@@ -518,7 +518,7 @@ void cocoa_file_load_with_detect_core(const char *filename);
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender { [self setNeedsDisplay: YES]; }
 
-#elif TARGET_OS_IOS 
+#elif TARGET_OS_IOS
 -(void) showNativeMenu
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -619,7 +619,15 @@ void cocoa_file_load_with_detect_core(const char *filename);
    [self.view bringSubviewToFront:self.keyboardController.view];
 #endif
 #if HAVE_IOS_SWIFT
-    [self.view bringSubviewToFront:self.helperBarView];
+    if (self.helperBarView) {
+        self.helperBarView.layer.zPosition = 1000;
+        /// Bring to front in its superview (either mtkView or self.view)
+        if (self.helperBarView.superview) {
+            [self.helperBarView.superview bringSubviewToFront:self.helperBarView];
+        } else {
+            [self.view bringSubviewToFront:self.helperBarView];
+        }
+    }
 #endif
 }
 
@@ -800,7 +808,7 @@ void cocoa_file_load_with_detect_core(const char *filename);
    cocoa_input_data_t *apple = (cocoa_input_data_t*) input_state_get_ptr()->current_data;
    if (!apple)
       return;
-    
+
 //    BOOL mouseGrabbed = apple->mouse_grabbed;
 //    NSLog(@"handlePointerMoveWithX: %f, Y: %f, MouseGrabbed: %i", x, y, mouseGrabbed);
 //   apple->mouse_rel_x = (int16_t)x;

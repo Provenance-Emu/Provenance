@@ -91,6 +91,34 @@ int argc =  1;
 #ifdef HAVE_COCOA_METAL
 // TODO: Use me in Vulkan mode and change the code I edited in the past
 // to workaround this not being the layer @JoeMatt
+@interface RenderContainerView : UIView
+@end
+
+@implementation RenderContainerView
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+#if HAVE_IOS_SWIFT
+    /// First check if point is in helperBarView area - pass through to it
+    CocoaView *cocoaView = [CocoaView get];
+    if (cocoaView && cocoaView.helperBarView && cocoaView.helperBarView.superview) {
+        CGPoint pointInSuperview = [self convertPoint:point toView:cocoaView.helperBarView.superview];
+        if (CGRectContainsPoint(cocoaView.helperBarView.frame, pointInSuperview)) {
+            CGPoint pointInHelperBar = [cocoaView.helperBarView.superview convertPoint:pointInSuperview toView:cocoaView.helperBarView];
+            UIView *helperHitView = [cocoaView.helperBarView hitTest:pointInHelperBar withEvent:event];
+            if (helperHitView) {
+                return helperHitView;
+            }
+        }
+    }
+#endif
+
+    /// Container doesn't handle touches (userInteractionEnabled = NO), so return nil
+    /// This allows touches to pass through to views behind
+    return nil;
+}
+
+@end
+
 @implementation MetalLayerView
 
 + (Class)layerClass {
@@ -189,7 +217,7 @@ int argc =  1;
         /// Ensure render container exists in MTKView
         if (!_renderContainerView || _renderContainerView.superview != mtkView) {
             [_renderContainerView removeFromSuperview];
-            _renderContainerView = [[UIView alloc] initWithFrame:CGRectZero];
+            _renderContainerView = [[RenderContainerView alloc] initWithFrame:CGRectZero];
             _renderContainerView.backgroundColor = [UIColor clearColor];
             _renderContainerView.userInteractionEnabled = NO;
             _renderContainerView.translatesAutoresizingMaskIntoConstraints = YES;
@@ -237,7 +265,7 @@ int argc =  1;
 - (UIView *)_ensureRenderContainerInMTKView:(UIView *)mtkView {
     if (!_renderContainerView || _renderContainerView.superview != mtkView) {
         [_renderContainerView removeFromSuperview];
-        _renderContainerView = [[UIView alloc] initWithFrame:CGRectZero];
+        _renderContainerView = [[RenderContainerView alloc] initWithFrame:CGRectZero];
         _renderContainerView.backgroundColor = [UIColor clearColor];
         _renderContainerView.userInteractionEnabled = NO;
         _renderContainerView.translatesAutoresizingMaskIntoConstraints = YES;
@@ -1046,8 +1074,8 @@ void extract_bundles();
     UIView *rootView = [CocoaView get].view;
     [rootView addSubview:_renderView];
 
-    _renderView.backgroundColor = [UIColor greenColor];
-    rootView.backgroundColor = [UIColor redColor];
+//    _renderView.backgroundColor = [UIColor greenColor];
+//    rootView.backgroundColor = [UIColor redColor];
 
     // Apply custom layout if it was requested before _renderView was created
     if (self.useCustomRenderViewLayout) {
@@ -1055,6 +1083,7 @@ void extract_bundles();
         // Re-apply custom layout setup now that _renderView exists
         [self setUseCustomRenderViewLayout:YES];
     } else {
+        DLOG(@"[RA] Default: pin to full-screen");
         // Default: pin to full-screen
         [[_renderView.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
         [[_renderView.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
@@ -1071,181 +1100,108 @@ void extract_bundles();
         return;
     }
 
-    ILOG(@"[RA] ========== applyRenderViewFrameInTouchView START ==========");
-    ILOG(@"[RA] Input frame (from Swift): %@", NSStringFromCGRect(frame));
-
-    /// Get rootView (CocoaView root) and its parent (MTKView/gameScreenView)
+    /// Get MTKView where container will be positioned
     UIView *rootView = [CocoaView get].view;
     if (!rootView) {
-        WLOG(@"[RA] CocoaView root view nil, exiting.");
+        WLOG(@"[RA] CocoaView root view nil");
         return;
     }
-
-    UIView *mtkView = rootView.superview; // MTKView/gameScreenView
+    UIView *mtkView = rootView.superview;
     if (!mtkView) {
-        WLOG(@"[RA] rootView has no superview (MTKView), exiting.");
+        WLOG(@"[RA] No MTKView superview");
         return;
     }
 
-    /// Find source view (touchViewController.view) - frame is in this coordinate system
-    UIView *sourceView = self.touchViewController.view;
-    if (!sourceView && mtkView.superview) {
-        sourceView = mtkView.superview; // Fallback to MTKView's parent
-    }
-    if (!sourceView) {
-        WLOG(@"[RA] Cannot find source view for coordinate conversion, exiting.");
-        return;
-    }
-
-    /// Convert frame from sourceView to MTKView coordinates
-    /// Use MTKView bounds directly (always (0,0) to (width,height)) to avoid stale frame issues during rotation
+    /// Frame is already in MTKView coordinates (converted in Swift)
+    /// Just validate and clamp to bounds
     CGRect mtkBounds = mtkView.bounds;
 
-    /// Convert frame from sourceView to MTKView's superview first
-    CGRect frameInSuperview = [sourceView convertRect:frame toView:mtkView.superview];
-
-    /// Calculate position in MTKView bounds coordinate system
-    /// MTKView bounds are always (0,0) relative to itself, so we need to subtract MTKView's frame origin
-    /// But during rotation, MTKView.frame might be stale, so we use a more robust calculation
-    CGRect convertedFrame;
-
-    /// Use the frame size from Swift (it's always correct)
-    convertedFrame.size = frame.size;
-
-    /// Calculate position: frame position in MTKView bounds = frame position in superview - MTKView position in superview
-    /// If MTKView.frame is stale (e.g., during rotation), we detect this and handle it
-    BOOL mtkViewFrameStale = NO;
-
-    /// Check if MTKView frame origin suggests it's stale (e.g., still has old orientation dimensions)
-    /// If MTKView bounds don't match its frame size, the frame is likely stale
-    if (fabs(mtkView.frame.size.width - mtkBounds.size.width) > 1.0 ||
-        fabs(mtkView.frame.size.height - mtkBounds.size.height) > 1.0) {
-        mtkViewFrameStale = YES;
-        ILOG(@"[RA] MTKView frame appears stale: frame.size=%@, bounds.size=%@",
-             NSStringFromCGSize(mtkView.frame.size), NSStringFromCGSize(mtkBounds.size));
+    /// Ensure MTKView has valid bounds
+    if (mtkBounds.size.width <= 0 || mtkBounds.size.height <= 0) {
+        WLOG(@"[RA] MTKView bounds invalid: %@, forcing layout", NSStringFromCGRect(mtkBounds));
+        [mtkView setNeedsLayout];
+        [mtkView layoutIfNeeded];
+        mtkBounds = mtkView.bounds;
     }
 
-    if (mtkViewFrameStale || (fabs(mtkView.frame.origin.x) < 1.0 && fabs(mtkView.frame.origin.y) < 1.0)) {
-        /// MTKView frame is stale or at origin - use frame position directly in bounds
-        /// Since bounds are (0,0), the position in bounds equals the position in superview
-        convertedFrame.origin.x = frameInSuperview.origin.x;
-        convertedFrame.origin.y = frameInSuperview.origin.y;
-    } else {
-        /// MTKView frame is valid - calculate relative position
-        convertedFrame.origin.x = frameInSuperview.origin.x - mtkView.frame.origin.x;
-        convertedFrame.origin.y = frameInSuperview.origin.y - mtkView.frame.origin.y;
-
-        /// If result is negative or way outside bounds, MTKView frame was stale after all
-        if (convertedFrame.origin.x < -10 || convertedFrame.origin.y < -10 ||
-            convertedFrame.origin.x > mtkBounds.size.width + 10 ||
-            convertedFrame.origin.y > mtkBounds.size.height + 10) {
-            ILOG(@"[RA] Calculated position out of bounds, using direct conversion: %@", NSStringFromCGPoint(convertedFrame.origin));
-            convertedFrame.origin.x = frameInSuperview.origin.x;
-            convertedFrame.origin.y = frameInSuperview.origin.y;
-        }
-    }
-
-    /// Clamp to MTKView bounds
-    if (convertedFrame.origin.x < 0) convertedFrame.origin.x = 0;
-    if (convertedFrame.origin.y < 0) convertedFrame.origin.y = 0;
-
-    /// Clamp size to fit within bounds
-    if (convertedFrame.size.width > mtkBounds.size.width) {
-        convertedFrame.size.width = mtkBounds.size.width;
-        convertedFrame.origin.x = 0; /// Center if needed
-    }
-    if (convertedFrame.size.height > mtkBounds.size.height) {
-        convertedFrame.size.height = mtkBounds.size.height;
-        convertedFrame.origin.y = 0; /// Center if needed
-    }
-
-    /// Validate frame
-    if (convertedFrame.size.width <= 0 || convertedFrame.size.height <= 0 ||
-        isnan(convertedFrame.size.width) || isnan(convertedFrame.size.height)) {
-        WLOG(@"[RA] Invalid converted frame: %@", NSStringFromCGRect(convertedFrame));
+    /// Validate input frame
+    if (frame.size.width <= 0 || frame.size.height <= 0 ||
+        isnan(frame.size.width) || isnan(frame.size.height)) {
+        WLOG(@"[RA] Invalid input frame: %@", NSStringFromCGRect(frame));
         return;
     }
 
-    ILOG(@"[RA] Frame conversion: source=%@, superview=%@, mtkView.frame=%@, mtkView.bounds=%@, converted=%@",
-         NSStringFromCGRect(frame), NSStringFromCGRect(frameInSuperview),
-         NSStringFromCGRect(mtkView.frame), NSStringFromCGRect(mtkBounds), NSStringFromCGRect(convertedFrame));
+    /// Clamp to bounds
+    CGRect clamped = frame;
+    clamped.origin.x = MAX(0, MIN(clamped.origin.x, mtkBounds.size.width - clamped.size.width));
+    clamped.origin.y = MAX(0, MIN(clamped.origin.y, mtkBounds.size.height - clamped.size.height));
+    clamped.size.width = MIN(clamped.size.width, mtkBounds.size.width);
+    clamped.size.height = MIN(clamped.size.height, mtkBounds.size.height);
 
-    /// Pixel-align the frame
+    /// Pixel-align
     CGFloat scale = UIScreen.mainScreen.scale;
-    CGRect aligned = (CGRect){
-        .origin.x = floor(convertedFrame.origin.x * scale) / scale,
-        .origin.y = floor(convertedFrame.origin.y * scale) / scale,
-        .size.width = floor(convertedFrame.size.width * scale) / scale,
-        .size.height = floor(convertedFrame.size.height * scale) / scale
-    };
+    CGRect aligned = CGRectMake(
+        floor(clamped.origin.x * scale) / scale,
+        floor(clamped.origin.y * scale) / scale,
+        floor(clamped.size.width * scale) / scale,
+        floor(clamped.size.height * scale) / scale
+    );
 
-    /// Ensure we have a dedicated container inside the MTKView
+    ILOG(@"[RA] Frame: %@ -> %@ (mtkBounds=%@)", NSStringFromCGRect(frame), NSStringFromCGRect(aligned), NSStringFromCGRect(mtkBounds));
+
+    /// Get or create container view
     UIView *containerView = [self _ensureRenderContainerInMTKView:mtkView];
 
-    /// Remove any existing constraints on _renderView to use auto-resizing instead
-    NSMutableArray<NSLayoutConstraint *> *constraintsToRemove = [NSMutableArray array];
-    for (NSLayoutConstraint *constraint in containerView.constraints) {
-        if (constraint.firstItem == _renderView || constraint.secondItem == _renderView) {
-            [constraintsToRemove addObject:constraint];
-        }
+    /// Remove all existing constraints - start fresh
+    NSMutableArray<NSLayoutConstraint *> *toRemove = [NSMutableArray array];
+    for (NSLayoutConstraint *c in mtkView.constraints) {
+        if (c.firstItem == containerView || c.secondItem == containerView) [toRemove addObject:c];
     }
-    for (NSLayoutConstraint *constraint in _renderView.constraints) {
-        [constraintsToRemove addObject:constraint];
+    for (NSLayoutConstraint *c in containerView.constraints) {
+        [toRemove addObject:c];
     }
-    if (constraintsToRemove.count > 0) {
-        [NSLayoutConstraint deactivateConstraints:constraintsToRemove];
-        DLOG(@"[RA] Removed %lu constraints from _renderView", (unsigned long)constraintsToRemove.count);
+    for (NSLayoutConstraint *c in _renderView.constraints) {
+        [toRemove addObject:c];
     }
+    [NSLayoutConstraint deactivateConstraints:toRemove];
 
-    /// Ensure container is visible and positioned correctly
-    containerView.hidden = NO;
-    containerView.alpha = 1.0;
-    [mtkView bringSubviewToFront:containerView];
-
-    /// Apply frame directly to containerView (already in MTKView coordinates)
+    /// Setup container: frame-based layout, positioned at converted frame
     containerView.translatesAutoresizingMaskIntoConstraints = YES;
     containerView.autoresizingMask = UIViewAutoresizingNone;
     containerView.clipsToBounds = YES;
+    containerView.hidden = NO;
+    containerView.alpha = 1.0;
+    containerView.userInteractionEnabled = NO;
     containerView.frame = aligned;
+    [mtkView bringSubviewToFront:containerView];
 
-    /// Apply bounds to _renderView so it fills the container
-    _renderView.translatesAutoresizingMaskIntoConstraints = YES;
-    _renderView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+#if HAVE_IOS_SWIFT
+    CocoaView *cocoaView = [CocoaView get];
+    if (cocoaView && cocoaView.helperBarView && cocoaView.helperBarView.superview) {
+        cocoaView.helperBarView.layer.zPosition = 1000;
+        [cocoaView.helperBarView.superview bringSubviewToFront:cocoaView.helperBarView];
+    }
+#endif
+
+    /// Setup render view: simple constraints to fill container (always centered, always fills)
+    if (_renderView.superview != containerView) {
+        [_renderView removeFromSuperview];
+        [containerView addSubview:_renderView];
+    }
+    _renderView.translatesAutoresizingMaskIntoConstraints = NO;
     _renderView.clipsToBounds = YES;
-    _renderView.frame = containerView.bounds;
 
-    [containerView sendSubviewToBack:_renderView];
+    /// Use simple, consistent constraints: center and fill container
+    [NSLayoutConstraint activateConstraints:@[
+        [_renderView.centerXAnchor constraintEqualToAnchor:containerView.centerXAnchor],
+        [_renderView.centerYAnchor constraintEqualToAnchor:containerView.centerYAnchor],
+        [_renderView.widthAnchor constraintEqualToAnchor:containerView.widthAnchor],
+        [_renderView.heightAnchor constraintEqualToAnchor:containerView.heightAnchor]
+    ]];
 
-    ILOG(@"[RA] Applied render frame: %@ (container bounds: %@, mtkView.bounds: %@)",
-         NSStringFromCGRect(aligned), NSStringFromCGRect(containerView.bounds), NSStringFromCGRect(mtkView.bounds));
-
-    /// Force layout update to ensure frame is applied
-    [containerView setNeedsLayout];
-    [containerView layoutIfNeeded];
-    [mtkView setNeedsLayout];
-    [mtkView layoutIfNeeded];
-
-    /// Force display refresh
-    [containerView setNeedsDisplay];
-    [mtkView setNeedsDisplay];
-
-    /// Log containerView position after layout
-    ILOG(@"[RA] containerView after layout - frame: %@, bounds: %@, hidden: %d, alpha: %.2f, superview: %@",
-         NSStringFromCGRect(containerView.frame), NSStringFromCGRect(containerView.bounds),
-         containerView.hidden, containerView.alpha, containerView.superview);
-
-    /// Schedule another frame update after a brief delay to catch any late initialization
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        containerView.frame = aligned;
-        [containerView setNeedsLayout];
-        [containerView layoutIfNeeded];
-        ILOG(@"[RA] Delayed frame refresh - containerView.frame: %@", NSStringFromCGRect(containerView.frame));
-    });
-
-    /// Update Metal layer size based on actual container bounds (which _renderView will fill)
+    /// Update Metal layer size to match container
+    CGSize pixelSize = CGSizeMake(aligned.size.width * scale, aligned.size.height * scale);
     _renderView.contentScaleFactor = scale;
-    CGSize actualSize = containerView.bounds.size;
-    CGSize pixelSize = CGSizeMake(actualSize.width * scale, actualSize.height * scale);
 
     if ([_renderView respondsToSelector:@selector(setDrawableSize:)]) {
         [(id)_renderView setDrawableSize:pixelSize];
@@ -1256,17 +1212,14 @@ void extract_bundles();
         ml.drawableSize = pixelSize;
     }
 
-    /// Configure RetroArch viewport
+    /// Update RetroArch viewport to match container size
     settings_t *settings = config_get_ptr();
     if (settings) {
-        /// Use core-provided aspect ratio to maintain correct game aspect ratio
-        /// This will add letterboxing/pillarboxing as needed within our viewport
         settings->bools.video_scale_integer = false;
         settings->bools.video_force_aspect = false;
         settings->uints.video_aspect_ratio_idx = ASPECT_RATIO_CORE;
         command_event(CMD_EVENT_VIDEO_SET_ASPECT_RATIO, NULL);
 
-        /// Set window size and viewport to match our render view
         unsigned int w = (unsigned)lrintf(pixelSize.width);
         unsigned int h = (unsigned)lrintf(pixelSize.height);
         video_driver_set_size(w, h);
@@ -1278,25 +1231,17 @@ void extract_bundles();
 
         struct video_viewport vp = {0, 0, w, h, w, h};
         video_driver_update_viewport(&vp, true, false);
-
-        /// Force immediate viewport refresh
         command_event(CMD_EVENT_VIDEO_SET_ASPECT_RATIO, NULL);
 
-        ILOG(@"[RA] Set viewport: %ux%u pixels (using core aspect ratio)", w, h);
-
-        /// Schedule a delayed viewport refresh to ensure RetroArch has processed the change
-        /// This is needed because RetroArch might not be fully initialized on first call
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if (settings) {
-                struct video_viewport vp2 = {0, 0, w, h, w, h};
-                video_driver_update_viewport(&vp2, true, false);
-                command_event(CMD_EVENT_VIDEO_SET_ASPECT_RATIO, NULL);
-                ILOG(@"[RA] Delayed viewport refresh: %ux%u pixels", w, h);
-            }
-        });
+        ILOG(@"[RA] Viewport: %ux%u pixels", w, h);
     }
 
-    ILOG(@"[RA] ========== applyRenderViewFrameInTouchView END ==========");
+    /// Force immediate layout
+    [containerView setNeedsLayout];
+    [containerView layoutIfNeeded];
+
+    ILOG(@"[RA] Applied: container.frame=%@, renderView.frame=%@",
+         NSStringFromCGRect(containerView.frame), NSStringFromCGRect(_renderView.frame));
 }
 
 - (void)setupView {
