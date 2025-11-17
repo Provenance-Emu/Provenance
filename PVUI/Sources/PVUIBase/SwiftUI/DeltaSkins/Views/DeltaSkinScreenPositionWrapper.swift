@@ -197,10 +197,12 @@ struct DeltaSkinScreenPositionWrapper: View {
             }
         }
         // Default: calculate from buttons - for simple skins, use area above topmost button
+        // For landscape, use center area with reasonable size instead of tiny area above buttons
         else if let buttons = skin.buttons(for: traits),
                   let topButton = buttons.min(by: { $0.frame.minY < $1.frame.minY }) {
             DLOG("🎮 SKIN: Using button-based calculation (simple skin: \(isSimpleSkin))")
             let aspectRatio = screenAspectRatio ?? (4.0/3.0)
+            let isLandscape = traits.orientation == .landscape
 
             // Convert top button's frame from mapping coordinates to screen coordinates
             // Button frames can be normalized (0-1) or absolute pixels relative to mappingSize
@@ -238,29 +240,60 @@ struct DeltaSkinScreenPositionWrapper: View {
             let buttonTopInView = layout.yOffset + buttonTopInLayout
             let availableHeight = max(0, buttonTopInView - safeAreaTop)
 
-            // Calculate screen dimensions maintaining aspect ratio
-            let screenHeight = min(availableHeight, size.height * 0.8)
-            let screenWidth = screenHeight * aspectRatio
+            // For landscape, if available height is too small (buttons near top), use center area instead
+            // Minimum reasonable screen height: at least 20% of view height, or 100 pixels
+            let minScreenHeight = max(size.height * 0.2, 100.0)
+            let useCenterArea = isLandscape && availableHeight < minScreenHeight
 
-            // Ensure screen fits within available width
-            let constrainedWidth = min(screenWidth, size.width * 0.9)
-            let constrainedHeight = constrainedWidth / aspectRatio
+            let constrainedWidth: CGFloat
+            let constrainedHeight: CGFloat
+            let finalScreenX: CGFloat
+            let finalScreenY: CGFloat
 
-            // Center horizontally, position at top (respecting safe area)
-            // Calculate relative to view, not layout (will be converted later)
-            let screenX = (size.width - constrainedWidth) / 2
-            let screenY = safeAreaTop + max(0, (availableHeight - constrainedHeight) / 2)
+            if useCenterArea {
+                // For landscape with buttons near top, use center area with reasonable size
+                // Calculate based on width first (landscape is wider), then constrain by height
+                let preferredWidth = size.width * 0.8
+                let preferredHeight = preferredWidth / aspectRatio
+
+                // Ensure it fits in height (70% of available height)
+                let maxHeight = (size.height - safeAreaTop) * 0.7
+                if preferredHeight > maxHeight {
+                    constrainedHeight = maxHeight
+                    constrainedWidth = maxHeight * aspectRatio
+                } else {
+                    constrainedWidth = preferredWidth
+                    constrainedHeight = preferredHeight
+                }
+
+                // Center both horizontally and vertically
+                finalScreenX = (size.width - constrainedWidth) / 2
+                finalScreenY = safeAreaTop + (size.height - safeAreaTop) / 2 - constrainedHeight / 2
+                DLOG("🎮 SKIN: Landscape with buttons near top - using center area, width: \(constrainedWidth), height: \(constrainedHeight)")
+            } else {
+                // Portrait or landscape with buttons lower - use area above buttons
+                let screenHeight = min(availableHeight, size.height * 0.8)
+                let screenWidth = screenHeight * aspectRatio
+
+                // Ensure screen fits within available width
+                constrainedWidth = min(screenWidth, size.width * 0.9)
+                constrainedHeight = constrainedWidth / aspectRatio
+
+                // Center horizontally, position above buttons
+                finalScreenX = (size.width - constrainedWidth) / 2
+                finalScreenY = safeAreaTop + max(0, (availableHeight - constrainedHeight) / 2)
+            }
 
             // Calculate screenFrame relative to layout (will have layout offset added later)
             // Convert from view coordinates to layout coordinates
             screenFrame = CGRect(
-                x: screenX - layout.xOffset,
-                y: screenY - layout.yOffset,
+                x: finalScreenX - layout.xOffset,
+                y: finalScreenY - layout.yOffset,
                 width: constrainedWidth,
                 height: constrainedHeight
             )
 
-            DLOG("🎮 SKIN: Calculated screen frame from top button - buttonTopInLayout: \(buttonTopInLayout), buttonTopInView: \(buttonTopInView), safeAreaTop: \(safeAreaTop), availableHeight: \(availableHeight), screenFrame (layout coords): \(screenFrame)")
+            DLOG("🎮 SKIN: Calculated screen frame from top button - buttonTopInLayout: \(buttonTopInLayout), buttonTopInView: \(buttonTopInView), safeAreaTop: \(safeAreaTop), availableHeight: \(availableHeight), useCenterArea: \(useCenterArea), screenFrame (layout coords): \(screenFrame)")
         } else {
             return nil
         }
