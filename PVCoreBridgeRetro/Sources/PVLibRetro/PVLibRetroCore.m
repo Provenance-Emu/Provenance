@@ -2146,15 +2146,13 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
 
         DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
     });
-    // 512
-    uint16_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
+
     dispatch_apply(height, serialQueue, ^(size_t y){
-        size_t shifted_pitch = pitch >> pitch_shift;              //pitch is in bytes not pixels
-        size_t offset = y * shifted_pitch;
-        const uint32_t *src = (uint16_t*)data + offset;
+        const uint8_t *src_row = (const uint8_t*)data + (y * pitch);
+        const uint32_t *src = (const uint32_t*)src_row;
         uint32_t *dst = strongCurrent->videoBuffer + y * width;
 
-        memcpy(dst, src, sizeof(uint32_t)*width);
+        memcpy(dst, src, sizeof(uint32_t) * width);
     });
 
     strongCurrent = nil;
@@ -2253,12 +2251,12 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
     current->core->retro_set_audio_sample(audio_callback);
     current->core->retro_set_audio_sample_batch(audio_batch_callback);
-    
+
     // DEBUG: Confirm video callback registration
     NSLog(@"🎬 REGISTERING video_callback function: %p", video_callback);
     current->core->retro_set_video_refresh(video_callback);
     NSLog(@"🎬 VIDEO CALLBACK REGISTERED SUCCESSFULLY");
-    
+
     current->core->retro_set_input_poll(input_poll_callback);
     current->core->retro_set_input_state(input_state_callback);
 }
