@@ -562,6 +562,10 @@ static void mednafen_init(MednafenGameCoreBridge* current)
 static void emulation_run(BOOL skipFrame) {
     GET_CURRENT_OR_RETURN();
 
+    if(game == NULL) {
+        return;
+    }
+
     static int16_t sound_buf[0x10000];
 //    int32 rects[game->fb_height];
     int32 *rects = new int32[game->fb_height];
@@ -1193,7 +1197,7 @@ static void emulation_run(BOOL skipFrame) {
         [self pollControllers];
     }
 
-    if(self.isRunning){
+    if(self.isRunning && game != NULL){
         emulation_run(skip);
     }
 }
@@ -1207,6 +1211,9 @@ static void emulation_run(BOOL skipFrame) {
 }
 
 - (void)stopEmulation {
+    // Stop emulation loop first to prevent race conditions during shutdown
+    [super stopEmulation];
+
     // Close any loaded content and kill Mednafen to reset global/static state
     Mednafen::MDFNI_CloseGame();
     Mednafen::MDFNI_Kill();
@@ -1216,7 +1223,6 @@ static void emulation_run(BOOL skipFrame) {
     if (frontBufferSurf) { delete frontBufferSurf; frontBufferSurf = NULL; }
     game = NULL;
     s_mednafenInitialized = false;
-    [super stopEmulation];
 }
 
 - (NSTimeInterval)frameInterval {

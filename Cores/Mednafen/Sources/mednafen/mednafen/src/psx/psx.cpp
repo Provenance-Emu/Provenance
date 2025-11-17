@@ -166,7 +166,7 @@ struct MDFN_PseudoRNG	// Based off(but not the same as) public-domain "JKISS" PR
   {
    tmp = RandU32() & range_mask;
   } while(tmp > range_m1);
- 
+
   return(mina + tmp);
  }
 
@@ -262,7 +262,7 @@ static const struct
  { "4.3J", 'C', REGION_JP, false, "b29b4b5fcddef369bd6640acacda0865e0366fcf7ea54e40b2f1a8178004f89a"_sha256},
 
  { "4.4E", 'C', REGION_EU, false, "5c0166da24e27deaa82246de8ff0108267fe4bb59f6df0fdec50e05e62448ca4"_sha256 },
- 
+
  { "4.5A", 'C', REGION_NA, false, "aca9cbfa974b933646baad6556a867eca9b81ce65d8af343a7843f7775b9ffc8"_sha256 },
  { "4.5E", 'C', REGION_EU, false, "42244b0c650821519751b7e77ad1d3222a0125e75586df2b4e84ba693b9809dc"_sha256 },
 };
@@ -306,7 +306,7 @@ static struct
    uint32 Unknown0;	// 0x1f801004	// BIOS Init: 0x1f802000, Writeable bits: 0x00ffffff, FixedOR = 0x1f000000
    uint32 Unknown1;	// 0x1f801008	// BIOS Init: 0x0013243f, ????
    uint32 Unknown2;	// 0x1f80100c	// BIOS Init: 0x00003022, Writeable bits: 0x2f1fffff, FixedOR = 0x00000000
-   
+
    uint32 BIOS_Mapping;	// 0x1f801010	// BIOS Init: 0x0013243f, ????
    uint32 SPU_Delay;	// 0x1f801014	// BIOS Init: 0x200931e1, Writeable bits: 0x2f1fffff, FixedOR = 0x00000000 - Affects bus timing on access to SPU
    uint32 CDC_Delay;	// 0x1f801018	// BIOS Init: 0x00020843, Writeable bits: 0x2f1fffff, FixedOR = 0x00000000
@@ -379,7 +379,8 @@ static void RebaseTS(const pscpu_timestamp_t timestamp)
   events[i].event_time -= timestamp;
  }
 
- CPU->SetEventNT(events[PSX_EVENT__SYNFIRST].next->event_time);
+ if(CPU)
+  CPU->SetEventNT(events[PSX_EVENT__SYNFIRST].next->event_time);
 }
 
 void PSX_SetEventNT(const int type, const pscpu_timestamp_t next_timestamp)
@@ -430,14 +431,16 @@ void PSX_SetEventNT(const int type, const pscpu_timestamp_t next_timestamp)
   e->event_time = next_timestamp;
  }
 
- CPU->SetEventNT(events[PSX_EVENT__SYNFIRST].next->event_time & Running);
+ if(CPU)
+  CPU->SetEventNT(events[PSX_EVENT__SYNFIRST].next->event_time & Running);
 }
 
 // Called from debug.cpp too.
 void ForceEventUpdates(const pscpu_timestamp_t timestamp)
 {
  PSX_SetEventNT(PSX_EVENT_GPU, GPU_Update(timestamp));
- PSX_SetEventNT(PSX_EVENT_CDC, CDC->Update(timestamp));
+ if(CDC)
+  PSX_SetEventNT(PSX_EVENT_CDC, CDC->Update(timestamp));
 
  PSX_SetEventNT(PSX_EVENT_TIMER, TIMER_Update(timestamp));
 
@@ -445,7 +448,8 @@ void ForceEventUpdates(const pscpu_timestamp_t timestamp)
 
  PSX_SetEventNT(PSX_EVENT_FIO, FIO->Update(timestamp));
 
- CPU->SetEventNT(events[PSX_EVENT__SYNFIRST].next->event_time);
+ if(CPU)
+  CPU->SetEventNT(events[PSX_EVENT__SYNFIRST].next->event_time);
 }
 
 bool MDFN_FASTCALL PSX_EventHandler(const pscpu_timestamp_t timestamp)
@@ -466,7 +470,10 @@ bool MDFN_FASTCALL PSX_EventHandler(const pscpu_timestamp_t timestamp)
 	break;
 
    case PSX_EVENT_CDC:
-	nt = CDC->Update(e->event_time);
+	if(CDC)
+	 nt = CDC->Update(e->event_time);
+	else
+	 nt = e->event_time + 0x7FFFFFFF;
 	break;
 
    case PSX_EVENT_TIMER:
@@ -624,7 +631,7 @@ template<typename T, bool IsWrite, bool Access24> static INLINE void MemRW(pscpu
   // CDC: TODO - 8-bit access.
   if(A >= 0x1f801800 && A <= 0x1f80180F)
   {
-   if(!IsWrite) 
+   if(!IsWrite)
    {
     timestamp += 6 * sizeof(T); //24;
    }
@@ -1298,7 +1305,7 @@ static bool CalcRegion_By_SYSTEMCNF(CDInterface *c, unsigned *rr)
       bootpos++;
       while(*bootpos == ' ' || *bootpos == '\t') bootpos++;
       if(!MDFN_strazicmp(bootpos, "cdrom:", 6))
-      { 
+      {
        char* tmp;
 
        bootpos += 6;
@@ -1407,19 +1414,19 @@ static bool ConstrainRegion_By_SA(const uint8 buf[2048 * 8], unsigned* region)
   if(*region == REGION_JP)
   {
     static const char tv[2][0x41] = {
-			      { 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 76, 105, 99, 101, 110, 115, 
-			        101, 100, 32, 32, 98, 121, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 
-			         83, 111, 110, 121, 32, 67, 111, 109, 112, 117, 116, 101, 114, 32, 69, 110, 
-			        116, 101, 114, 116, 97, 105, 110, 109, 101, 110, 116, 32, 73, 110, 99, 46, 
+			      { 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 76, 105, 99, 101, 110, 115,
+			        101, 100, 32, 32, 98, 121, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+			         83, 111, 110, 121, 32, 67, 111, 109, 112, 117, 116, 101, 114, 32, 69, 110,
+			        116, 101, 114, 116, 97, 105, 110, 109, 101, 110, 116, 32, 73, 110, 99, 46,
 			        0
 			      },
-			      { 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 76, 105, 99, 101, 110, 115, 
-			        101, 100, 32, 32, 98, 121, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 
-			         83, 111, 110, 121, 32, 67, 111, 109, 112, 117, 116, 101, 114, 32, 69, 110, 
-			        116, 101, 114, 116, 97, 105, 110, 109, 101, 110, 116, 32, 73, 110, 99, 46, 
+			      { 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 76, 105, 99, 101, 110, 115,
+			        101, 100, 32, 32, 98, 121, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+			         83, 111, 110, 121, 32, 67, 111, 109, 112, 117, 116, 101, 114, 32, 69, 110,
+			        116, 101, 114, 116, 97, 105, 110, 109, 101, 110, 116, 32, 73, 110, 99, 46,
 			        10
 			      },
-			    };  
+			    };
     bool jp_incompatible = false;
 
     if(memcmp(&buf[0], &tv[0][0], 0x41) && memcmp(&buf[0], &tv[1][0], 0x41))
@@ -1542,7 +1549,7 @@ static unsigned CalcDiscSCEx(void)
 
   //
   // Determine what sort of PS1 to emulate based on the first PS1 disc in the set.
-  // 
+  //
   if(!found_ps1_disc)
    ret_region = region;
 
@@ -1952,7 +1959,7 @@ static MDFN_COLD void LoadEXE(Stream* fp, bool ignore_pcsp = false)
  //
  // Loop begin
  //
- 
+
  MDFN_en32lsb(po, (0x24 << 26) | (8 << 21) | (1 << 16));	// LBU to r1
  po += 4;
 
@@ -2199,7 +2206,7 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
  {
   sha256_digest sr_dig = BIOS_SHA256;
 
-  SFORMAT SRDStateRegs[] = 
+  SFORMAT SRDStateRegs[] =
   {
    SFPTR8(sr_dig.data(), sr_dig.size(), SFORMAT::FORM::CONFIG_VALIDATE),
    SFEND
