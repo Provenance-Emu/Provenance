@@ -123,7 +123,9 @@ public struct CloudKitDownloadProgressView: View {
                     }
                     .buttonStyle(.borderedProminent)
 
-                    Button("Cancel") {
+                    Button("Exit") {
+                        // Cancel any active download and exit emulator scene
+                        CloudKitDownloadQueue.shared.cancelDownload(md5: gameMD5)
                         onCancel()
                     }
                     .buttonStyle(.bordered)
