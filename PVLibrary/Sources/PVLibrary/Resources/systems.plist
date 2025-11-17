@@ -7152,6 +7152,15 @@
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{320,350}</string>
+				<key>PVGroupedButtons</key>
+				<array>
 					<dict>
 						<key>PVControlType</key>
 						<string>PVButton</string>
