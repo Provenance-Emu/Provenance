@@ -1,6 +1,7 @@
 import SwiftUI
 import PVPrimitives
 import PVLibrary
+import UniformTypeIdentifiers
 
 /// View for selecting a skin for a specific system with retrowave styling
 public struct SystemSkinSelectionView: View {
@@ -25,6 +26,9 @@ public struct SystemSkinSelectionView: View {
     @State private var isLoading = true
     @State private var errorMessage: String?
     @State private var loadingProgress: Double = 0
+    @State private var showingDocumentPicker = false
+    @State private var showingImportError = false
+    @State private var importError: Error?
 
     // Animation properties
     @State private var glowIntensity: CGFloat = 0.5
@@ -333,11 +337,7 @@ public struct SystemSkinSelectionView: View {
                 .padding(.horizontal)
 
             Button {
-                // Show skin import UI - would be implemented in future
-                // For now, just reload to check again
-                withAnimation {
-                    loadSkins()
-                }
+                showingDocumentPicker = true
             } label: {
                 Text("IMPORT SKIN")
                     .font(.system(size: 16, weight: .bold, design: .rounded))
@@ -368,6 +368,28 @@ public struct SystemSkinSelectionView: View {
                 )
                 .padding(.horizontal)
         )
+        #if !os(tvOS)
+        .fileImporter(
+            isPresented: $showingDocumentPicker,
+            allowedContentTypes: supportedSkinTypes,
+            allowsMultipleSelection: true
+        ) { result in
+            Task {
+                do {
+                    let urls = try result.get()
+                    try await importSkins(from: urls)
+                } catch {
+                    importError = error
+                    showingImportError = true
+                }
+            }
+        }
+        .retroAlert("Import Error",
+                    message: importError?.localizedDescription ?? "Failed to import skin",
+                    isPresented: $showingImportError) {
+            Button("OK", role: .cancel) { }
+        }
+        #endif
     }
 
     private var skinGridView: some View {
@@ -543,6 +565,68 @@ public struct SystemSkinSelectionView: View {
     }
 
     // MARK: - Data Handling
+
+    /// Comprehensive list of UTTypes for skin file imports
+    /// Supports both .deltaskin and .manicskin in file, package, and archive forms
+    private var supportedSkinTypes: [UTType] {
+        var skinTypes: [UTType] = []
+
+        // Prefer explicit identifiers if the system recognizes them
+        skinTypes.append(UTType.deltaSkin)
+        skinTypes.append(UTType.manicSkin)
+
+        // Accept files with these extensions (generic data)
+        if let deltaskinData = UTType(filenameExtension: "deltaskin", conformingTo: .data) {
+            skinTypes.append(deltaskinData)
+        }
+        if let manicData = UTType(filenameExtension: "manicskin", conformingTo: .data) {
+            skinTypes.append(manicData)
+        }
+
+        // Accept package (directory bundle) variants (some providers surface bundles)
+        if let deltaskinPackage = UTType(filenameExtension: "deltaskin", conformingTo: .package) {
+            skinTypes.append(deltaskinPackage)
+        }
+        if let manicPackage = UTType(filenameExtension: "manicskin", conformingTo: .package) {
+            skinTypes.append(manicPackage)
+        }
+
+        // Accept archive-conforming variants (these are actually ZIPs with custom extensions)
+        if let deltaskinArchive = UTType(filenameExtension: "deltaskin", conformingTo: .archive) {
+            skinTypes.append(deltaskinArchive)
+        }
+        if let manicArchive = UTType(filenameExtension: "manicskin", conformingTo: .archive) {
+            skinTypes.append(manicArchive)
+        }
+
+        // Also allow generic archives (some skins are zipped variants)
+        skinTypes.append(.archive)
+
+        return skinTypes
+    }
+
+    /// Import skins from URLs
+    private func importSkins(from urls: [URL]) async throws {
+        for url in urls {
+            // Start accessing the security-scoped resource
+            guard url.startAccessingSecurityScopedResource() else {
+                throw DeltaSkinError.accessDenied
+            }
+
+            defer {
+                url.stopAccessingSecurityScopedResource()
+            }
+
+            // Import the skin
+            try await skinManager.importSkin(from: url)
+        }
+
+        // Reload skins after import
+        await skinManager.reloadSkins()
+
+        // Reload the view's skins
+        await loadSkinsFromCache()
+    }
 
     /// Load skins from cache (fast path when skins are already loaded)
     private func loadSkinsFromCache() async {
@@ -769,7 +853,8 @@ struct SkinSelectionPreviewCell: View {
                     showHitTestOverlay: false,
                     screenAspectRatio: nil,
                     isInEmulator: false,
-                    inputHandler: .init(emulatorCore: nil)
+                    inputHandler: .init(emulatorCore: nil),
+                    core: nil
                 )
                 .allowsHitTesting(false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
