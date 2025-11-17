@@ -355,7 +355,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         let systemIdentifier = core.systemIdentifier
         let systemId = systemIdentifier.flatMap { SystemIdentifier(rawValue: $0) }
         let systemsWithDPadOnly: Set<SystemIdentifier> = [
-            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST, ._3DO
+            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST, ._3DO, .Music
         ]
 
         // Convert joystick to D-pad for systems that only had D-pad
@@ -541,7 +541,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 let b = PVSNESButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .NES, .FDS:
+        case .NES, .FDS, .Music:
             if let r = core as? PVNESSystemResponderClient {
                 let b = PVNESButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -1312,7 +1312,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["r", "r1", "rb", "rshoulder", "shoulderright"].contains(s) { return "r" }
             /// Regular buttons use standard names
             if ["a", "b", "start", "select"].contains(s) { return s }
-        case .NES, .FDS:
+        case .NES, .FDS, .Music:
             /// NES button normalization - only supports: up, down, left, right, a, b, start, select
             /// Filter out invalid buttons (NES doesn't have L/R, X/Y, etc.)
             if ["up", "down", "left", "right"].contains(s) { return s }
