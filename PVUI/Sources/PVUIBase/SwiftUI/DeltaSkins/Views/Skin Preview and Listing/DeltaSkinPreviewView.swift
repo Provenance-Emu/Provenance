@@ -55,10 +55,13 @@ struct DeltaSkinPreviewView: View {
                     DeltaSkinView(
                         skin: initialSkin,
                         traits: makeTraits(orientation: .portrait),
+                        filters: [],
                         showDebugOverlay: false,
                         showHitTestOverlay: false,
+                        screenAspectRatio: nil,
                         isInEmulator: false,
-                        inputHandler: DeltaSkinInputHandler()
+                        inputHandler: DeltaSkinInputHandler(),
+                        core: nil
                     )
                     .frame(height: 400)
                 }
@@ -72,10 +75,13 @@ struct DeltaSkinPreviewView: View {
                     DeltaSkinView(
                         skin: initialSkin,
                         traits: makeTraits(orientation: .landscape),
+                        filters: [],
                         showDebugOverlay: false,
                         showHitTestOverlay: false,
+                        screenAspectRatio: nil,
                         isInEmulator: false,
-                        inputHandler: DeltaSkinInputHandler()
+                        inputHandler: DeltaSkinInputHandler(),
+                        core: nil
                     )
                     .frame(height: 600)
                     .rotationEffect(.degrees(90))

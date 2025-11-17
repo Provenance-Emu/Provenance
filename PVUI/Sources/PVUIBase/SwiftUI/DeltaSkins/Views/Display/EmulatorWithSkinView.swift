@@ -551,7 +551,8 @@ struct EmulatorWithSkinView: View {
                     showHitTestOverlay: false,
                     screenAspectRatio: aspectRatio,
                     isInEmulator: true,
-                    inputHandler: inputHandler
+                    inputHandler: inputHandler,
+                    core: coreInstance
                 )
             } else {
                 // For other skin types
@@ -563,7 +564,8 @@ struct EmulatorWithSkinView: View {
                     showHitTestOverlay: false,
                     screenAspectRatio: aspectRatio,
                     isInEmulator: true,
-                    inputHandler: inputHandler
+                    inputHandler: inputHandler,
+                    core: coreInstance
                 )
             }
         }

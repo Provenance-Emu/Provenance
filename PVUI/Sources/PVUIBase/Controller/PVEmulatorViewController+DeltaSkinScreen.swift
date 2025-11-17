@@ -190,7 +190,38 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        // For non-default skins, calculate frame if no notification available
+        // Calculate traits for checking screen area definitions
+        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
+
+        // Check if skin has defined screen areas (screens, screenGroups, or gameScreenFrame)
+        // For these skins, wait for protocol delegate callback instead of using fallback calculation
+        let hasDefinedScreenArea = currentSkin?.screens(for: traits) != nil ||
+                                  currentSkin?.screenGroups(for: traits) != nil ||
+                                  hasGameScreenFrame(currentSkin, traits: traits)
+
+        if hasDefinedScreenArea {
+            // Wait for protocol delegate callback - don't use fallback calculation
+            // The protocol delegate (viewportFrameDidUpdate) will be called shortly after rotation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                guard let self = self else { return }
+                if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
+                    self.applyFrameToGPUView(frame)
+                } else {
+                    // If still no frame after waiting, use fallback
+                    if let frame = self.calculateFrameFromSkin(), self.isValidFrame(frame) {
+                        self.currentTargetFrame = frame
+                        self.applyFrameToGPUView(frame)
+                    } else {
+                        self.resetGPUViewPosition()
+                    }
+                }
+            }
+            return
+        }
+
+        // For simple skins without defined screen areas, calculate frame if no protocol delegate callback available
         if let frame = calculateFrameFromSkin(), isValidFrame(frame) {
             currentTargetFrame = frame
             applyFrameToGPUView(frame)
@@ -296,6 +327,20 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         let y = safeInsets.top + (safeHeight - scaledSize.height) / 2
 
         return CGPoint(x: x, y: y)
+    }
+
+    /// Check if skin has gameScreenFrame defined in JSON
+    private func hasGameScreenFrame(_ skin: DeltaSkinProtocol?, traits: DeltaSkinTraits) -> Bool {
+        guard let skin = skin else { return false }
+        guard let representations = skin.jsonRepresentation["representations"] as? [String: Any],
+              let deviceRep = representations[traits.device.rawValue] as? [String: Any],
+              let displayRep = deviceRep[traits.displayType.rawValue] as? [String: Any],
+              let orientationRep = displayRep[traits.orientation.rawValue] as? [String: Any],
+              let frameDict = orientationRep["gameScreenFrame"] as? [String: Any] else {
+            return false
+        }
+        return frameDict["x"] != nil && frameDict["y"] != nil &&
+               frameDict["width"] != nil && frameDict["height"] != nil
     }
 
     /// Get normalized screen frame from skin (0-1 coordinates)

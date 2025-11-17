@@ -14,6 +14,7 @@ public struct DeltaSkinView: View {
     let screenAspectRatio: CGFloat?  // Optional aspect ratio
     let isInEmulator: Bool
     let inputHandler: DeltaSkinInputHandler
+    let core: PVEmulatorCore?  // Core for protocol-based viewport updates
 
     /// State for touch and button interactions
     @State private var touchLocations: Set<CGPoint> = []
@@ -192,7 +193,8 @@ public struct DeltaSkinView: View {
         showHitTestOverlay: Bool = false,
         screenAspectRatio: CGFloat? = nil,
         isInEmulator: Bool = false,
-        inputHandler: DeltaSkinInputHandler
+        inputHandler: DeltaSkinInputHandler,
+        core: PVEmulatorCore? = nil
     ) {
         self.skin = skin
         self.traits = traits
@@ -200,6 +202,7 @@ public struct DeltaSkinView: View {
         self.showDebugOverlay = showDebugOverlay
         self.showHitTestOverlay = showHitTestOverlay
         self.screenAspectRatio = screenAspectRatio
+        self.core = core
         self.isInEmulator = isInEmulator
         self.inputHandler = inputHandler
     }
@@ -415,7 +418,8 @@ public struct DeltaSkinView: View {
                             filters: filters,
                             size: geometry.size,
                             screenAspectRatio: screenAspectRatio,
-                            isInEmulator: isInEmulator
+                            isInEmulator: isInEmulator,
+                            core: core
                         )
                         .zIndex(0)
 
@@ -1939,7 +1943,7 @@ public struct DeltaSkinView: View {
             playClickSound(for: button)
 
         }
-            
+
         // Pass to the input handler
         inputHandler.buttonPressed(buttonId)
     }

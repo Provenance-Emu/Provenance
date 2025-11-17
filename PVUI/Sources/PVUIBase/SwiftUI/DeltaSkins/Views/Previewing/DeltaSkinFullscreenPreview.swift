@@ -80,8 +80,10 @@ struct DeltaSkinFullscreenPreview: View {
                 filters: filters,
                 showDebugOverlay: showDebugOverlay,
                 showHitTestOverlay: showHitTestOverlay,
+                screenAspectRatio: nil,
                 isInEmulator: false,
-                inputHandler: DeltaSkinInputHandler()
+                inputHandler: DeltaSkinInputHandler(),
+                core: nil
             )
 
             // Overlay controls

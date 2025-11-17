@@ -1884,21 +1884,16 @@ extension PVEmulatorViewController {
         // Use the new viewport system to recalculate position
         self.applyViewportFromCurrentSkin()
 
-        // If no frame arrives quickly, restore the last frame to prevent incorrect auto-calculation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+        // Don't restore last frame after rotation - it's from the wrong orientation
+        // The protocol delegate callback (viewportFrameDidUpdate) will arrive shortly with the correct frame for the new orientation
+        // Only wait and check if frame arrived, don't restore old frame
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
             guard let self = self else { return }
-            // If still no frame and we had one before, temporarily restore it
-            // This prevents viewDidLayoutSubviews from calculating wrong frame
-            if self.currentTargetFrame == nil, let frame = lastFrame {
-                self.currentTargetFrame = frame
-                // Re-apply to ensure useCustomPositioning is set
-                self.applyFrameToGPUView(frame)
-            } else if self.currentTargetFrame == nil && lastUseCustomPositioning && !lastCustomFrame.isEmpty {
-                // Also restore custom positioning if it was set
-                if let gpuVC = self.gpuViewController as? PVGPUViewController {
-                    gpuVC.useCustomPositioning = true
-                    gpuVC.customFrame = lastCustomFrame
-                }
+            // If still no frame after waiting, the protocol delegate should have provided one
+            // Don't restore the old frame as it's from the wrong orientation
+            if self.currentTargetFrame == nil {
+                DLOG("🎮 SKIN: No frame received after rotation - protocol delegate callback may be delayed")
+                // Let applyViewportFromCurrentSkin handle fallback if needed
             }
         }
 

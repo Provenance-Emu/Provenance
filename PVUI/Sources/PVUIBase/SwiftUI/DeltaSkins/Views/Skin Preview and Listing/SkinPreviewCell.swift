@@ -135,7 +135,7 @@ struct SkinPreviewCell: View {
         VStack(alignment: .leading, spacing: 8) {
             // Preview
             PreviewContainer {
-                DeltaSkinView(skin: skin, traits: previewTraits, inputHandler: .init(emulatorCore: nil))
+                DeltaSkinView(skin: skin, traits: previewTraits, filters: [], showDebugOverlay: false, showHitTestOverlay: false, screenAspectRatio: nil, isInEmulator: false, inputHandler: .init(emulatorCore: nil), core: nil)
                     .allowsHitTesting(false)
                     .aspectRatio(orientation == .portrait ? 0.5 : 2.0, contentMode: .fit)
             }

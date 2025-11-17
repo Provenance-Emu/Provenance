@@ -1,5 +1,6 @@
 import SwiftUI
 import PVLogging
+import PVEmulatorCore
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -12,6 +13,7 @@ struct DeltaSkinScreenPositionWrapper: View {
     let size: CGSize
     let screenAspectRatio: CGFloat?
     let isInEmulator: Bool
+    let core: PVEmulatorCore?
 
     @Environment(\.skinLayout) var layout
 
@@ -372,7 +374,7 @@ struct DeltaSkinScreenPositionWrapper: View {
         return true
     }
 
-    /// Broadcast frame to emulator controller
+    /// Broadcast frame to emulator controller via protocol (replaces notification system)
     private func broadcastFrame(_ frame: CGRect) {
         guard isInEmulator else { return }
 
@@ -397,13 +399,10 @@ struct DeltaSkinScreenPositionWrapper: View {
         }
 
         lastBroadcastFrame = frame
-        DLOG("🎮 SKIN: Broadcasting frame: \(frame)")
+        DLOG("🎮 SKIN: Broadcasting frame via protocol: \(frame)")
 
-        NotificationCenter.default.post(
-            name: NSNotification.Name("DeltaSkinColorBarsFrameUpdated"),
-            object: nil,
-            userInfo: ["frame": NSValue(cgRect: frame)]
-        )
+        // Use protocol-based system instead of notifications
+        core?.viewportLayoutDelegate?.viewportFrameDidUpdate(frame)
     }
 
     @State private var lastSize: CGSize = .zero
@@ -422,6 +421,10 @@ struct DeltaSkinScreenPositionWrapper: View {
             .onChange(of: size) { newSize in
                 // Only recalculate if size actually changed significantly (more than 1 point)
                 guard abs(newSize.width - lastSize.width) > 1.0 || abs(newSize.height - lastSize.height) > 1.0 else { return }
+
+                // Clear last broadcast frame when size changes (orientation change)
+                // This ensures the frame is broadcast even if it has the same value
+                lastBroadcastFrame = nil
                 lastSize = newSize
 
                 // Use same immediate calculation path as startup - no debouncing
@@ -431,6 +434,10 @@ struct DeltaSkinScreenPositionWrapper: View {
             .onChange(of: layout) { newLayout in
                 // Only recalculate if layout actually changed (using Equatable check)
                 guard newLayout != lastLayout else { return }
+
+                // Clear last broadcast frame when layout changes (orientation change)
+                // This ensures the frame is broadcast even if it has the same value
+                lastBroadcastFrame = nil
                 lastLayout = newLayout
 
                 // Use same immediate calculation path as startup
@@ -442,6 +449,8 @@ struct DeltaSkinScreenPositionWrapper: View {
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("DeltaSkinForceRecalculate"))) { _ in
                 // Force recalculation when requested - use same immediate path
                 DLOG("🎮 SKIN: Forcing frame recalculation after rotation")
+                // Clear last broadcast frame to ensure frame is broadcast even if value is same
+                lastBroadcastFrame = nil
                 calculateScreenFrameImmediate()
             }
     }

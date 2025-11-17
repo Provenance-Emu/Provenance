@@ -141,8 +141,10 @@ public struct DeltaSkinFullscreenPagerView: View {
                     filters: selectedFilters,
                     showDebugOverlay: showDebugOverlay,
                     showHitTestOverlay: showHitTestOverlay,
+                    screenAspectRatio: nil,
                     isInEmulator: false,
-                    inputHandler: DeltaSkinInputHandler()
+                    inputHandler: DeltaSkinInputHandler(),
+                    core: nil
                 )
                 .id("\(index)-\(currentTraits.orientation)")
                 .frame(width: geometry.size.width)
