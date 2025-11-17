@@ -355,7 +355,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         let systemIdentifier = core.systemIdentifier
         let systemId = systemIdentifier.flatMap { SystemIdentifier(rawValue: $0) }
         let systemsWithDPadOnly: Set<SystemIdentifier> = [
-            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST, ._3DO, .Music
+            .Sega32X, .Genesis, .SegaCD, .SNES, .NES, .FDS, .GBA, .GB, .GBC, .VirtualBoy, .Atari8bit, .AtariST, ._3DO, .Music, .ColecoVision
         ]
 
         // Convert joystick to D-pad for systems that only had D-pad
@@ -1054,6 +1054,12 @@ public class DeltaSkinInputHandler: ObservableObject {
         DLOG("Normalized button ID: \(buttonId) -> \(id) for system \(systemId)")
 
         switch systemId {
+        case .ColecoVision:
+            if let r = core as? PVColecoVisionSystemResponderClient {
+                let b = PVColecoVisionButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
         case .PSX:
             if let r = core as? PVPSXSystemResponderClient {
                 let b = PVPSXButton(id)
@@ -1209,6 +1215,20 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
+        case .Atari5200:
+            if let r = core as? PV5200SystemResponderClient {
+                let b = PV5200Button(id)
+                DLOG("PV5200Button button: original=\(buttonId), normalized=\(id), PV2600Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Atari7800:
+            if let r = core as? PV7800SystemResponderClient {
+                let b = PV7800Button(id)
+                DLOG("PV7800Button button: original=\(buttonId), normalized=\(id), PV2600Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
         case .Vectrex:
             if let r = core as? PVVectrexSystemResponderClient {
                 let b = PVVectrexButton(id)
@@ -1229,6 +1249,86 @@ public class DeltaSkinInputHandler: ObservableObject {
             if let r = core as? PVA8SystemResponderClient {
                 let b = PVA8Button(id)
                 DLOG("AtariST button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .PCFX, .SGFX:
+            if let r = core as? PVPCFXSystemResponderClient {
+                let b = PVPCFXButton(id)
+                DLOG("PVPFXButton button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .MSX, .MSX2:
+            if let r = core as? PVMSXSystemResponderClient {
+                let b = PVMSXButton(id)
+                DLOG("PVMSXButton button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .NGP, .NGPC:
+            if let r = core as? PVNeoGeoPocketSystemResponderClient {
+                let b = PVNGPButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Lynx:
+            if let r = core as? PVLynxSystemResponderClient {
+                let b = PVLynxButton(id)
+                isPressed ? r.didPush(LynxButton: b, forPlayer: 0) : r.didRelease(LynxButton: b, forPlayer: 0)
+                return true
+            }
+        case .Intellivision:
+            if let r = core as? PVIntellivisionSystemResponderClient {
+                let b = PVIntellivisionButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Odyssey2:
+            if let r = core as? PVOdyssey2SystemResponderClient {
+                let b = PVOdyssey2Button(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .PokemonMini:
+            if let r = core as? PVPokeMiniSystemResponderClient {
+                let b = PVPMButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .SG1000:
+            if let r = core as? PVSG1000SystemResponderClient {
+                let b = PVSG1000Button(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Supervision:
+            if let r = core as? PVSupervisionSystemResponderClient {
+                let b = PVSupervisionButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Wii:
+            if let r = core as? PVWiiSystemResponderClient {
+                let b = PVWiiMoteButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .GameCube:
+            if let r = core as? PVGameCubeSystemResponderClient {
+                let b = PVGCButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .EP128:
+            if let r = core as? PVEP128SystemResponderClient {
+                let b = PVEP128Button(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .DOS:
+            if let r = core as? PVDOSSystemResponderClient {
+                let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
