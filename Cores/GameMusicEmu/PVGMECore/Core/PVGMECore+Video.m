@@ -49,18 +49,18 @@
 
 # pragma mark - Properties
 
-- (CGSize)bufferSize {
-    CGSize size = CGSizeMake(av_info.geometry.max_width, av_info.geometry.max_height);
-    DLOG(@"<%i, %i>", size.width, size.height);
-    return size;
-}
+//- (CGSize)bufferSize {
+//    CGSize size = CGSizeMake(av_info.geometry.max_width, av_info.geometry.max_height);
+//    DLOG(@"<%i, %i>", size.width, size.height);
+//    return size;
+//}
 
 // 320,240
-- (CGRect)screenRect {
-    CGRect rect = CGRectMake(0, 0, av_info.geometry.base_width, av_info.geometry.base_height);
-    DLOG(@"<%i, %i>", rect.size.width, rect.size.height);
-    return rect;
-}
+//- (CGRect)screenRect {
+//    CGRect rect = CGRectMake(0, 0, av_info.geometry.base_width, av_info.geometry.base_height);
+//    DLOG(@"<%i, %i>", rect.size.width, rect.size.height);
+//    return rect;
+//}
 //
 //- (CGSize)aspectSize {
 //    CGSize size = CGSizeMake(1, av_info.geometry.aspect_ratio);
@@ -80,18 +80,18 @@
 //    return NULL;
 //}
 
-- (GLenum)pixelFormat {
-    return GL_RGB565;
-}
+//- (GLenum)pixelFormat {
+//    return GL_RGB565;
+//}
 
 // 565, 2 bytes per pixel
-- (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT; // GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_5_6_5
-}
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_SHORT; // GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_5_6_5
+//}
 
-- (GLenum)internalPixelFormat {
-    return GL_RGB565; // GL_RGB565
-}
+//- (GLenum)internalPixelFormat {
+//    return GL_RGB565; // GL_RGB565
+//}
 
 //
 //- (GLenum)depthFormat {
