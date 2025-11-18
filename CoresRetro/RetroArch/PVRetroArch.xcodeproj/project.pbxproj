@@ -172,6 +172,7 @@
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */; };
+		B3DD7A6D2ECBFA220022FF70 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3DD7A6C2ECBFA220022FF70 /* PVSettings */; };
 		B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA6A2CB65E9A00E2636D /* PVLogging */; };
 		B3EEF0702D66AF440080CA51 /* PVRetroArchCoreBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEF06F2D66AF400080CA51 /* PVRetroArchCoreBridge.swift */; };
 		B3EEF5E02D66B0850080CA51 /* LzhArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3EEF5DF2D66B0850080CA51 /* LzhArchive */; };
@@ -630,6 +631,7 @@
 				B3FD968C2D613FD600397643 /* libavformat.xcframework in Frameworks */,
 				B3EEF5E32D66B0D00080CA51 /* ZipArchive in Frameworks */,
 				B3FD96922D613FD700397643 /* libswscale.xcframework in Frameworks */,
+				B3DD7A6D2ECBFA220022FF70 /* PVSettings in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
 				B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */,
 				B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */,
@@ -1168,6 +1170,7 @@
 				B3EEF5E22D66B0D00080CA51 /* ZipArchive */,
 				B3EEFB622D66BA3F0080CA51 /* Unrar */,
 				B3EEFB672D66C3250080CA51 /* PVCoreBridge */,
+				B3DD7A6C2ECBFA220022FF70 /* PVSettings */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -1232,6 +1235,7 @@
 				B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */,
 				B3EEF5E12D66B0D00080CA51 /* XCLocalSwiftPackageReference "../../Dependencies/ZipArchive" */,
 				B3EEFBA92D66E05F0080CA51 /* XCLocalSwiftPackageReference "../../PVWebServer" */,
+				B3DD7A6B2ECBFA220022FF70 /* XCLocalSwiftPackageReference "../../PVSettings" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2295,6 +2299,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../MoltenVK;
 		};
+		B3DD7A6B2ECBFA220022FF70 /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
 		B3EEF5E12D66B0D00080CA51 /* XCLocalSwiftPackageReference "../../Dependencies/ZipArchive" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Dependencies/ZipArchive;
@@ -2344,6 +2352,10 @@
 		B3C439522BF442920021B9C3 /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;
+		};
+		B3DD7A6C2ECBFA220022FF70 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
 		};
 		B3E2AA6A2CB65E9A00E2636D /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
