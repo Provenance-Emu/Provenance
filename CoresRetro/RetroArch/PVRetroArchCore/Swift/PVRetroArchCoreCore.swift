@@ -53,7 +53,7 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
     public override var supportsSaveStates: Bool {
         let unsupportedCores: [String] = [
             // "com.provenance.dreamcast"
-            "com.provenance.dos"
+//            "com.provenance.dos"
         ]
         DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
