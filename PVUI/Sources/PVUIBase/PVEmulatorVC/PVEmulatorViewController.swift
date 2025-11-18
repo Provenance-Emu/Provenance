@@ -443,8 +443,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     private func setupGPUView() {
         // For RetroArch cores with skipLayout and no skins, RetroArch manages its own view hierarchy
-        // The GPU view controller should be hidden so it doesn't cover CocoaView
+        // Don't create/attach GPU view controller at all to avoid competing Metal layers
         let isRetroArchSkipLayout = core.coreIdentifier?.contains("libretro") == true && core.skipLayout
+
+        if isRetroArchSkipLayout && currentSkin == nil {
+            ILOG("[RA] skipLayout + no skin: not attaching PVMetalViewController - RetroArch manages its own rendering")
+            return
+        }
 
         // Attach gpuViewController as child once; update frame if already added
         if gpuViewController.parent !== self {
@@ -453,23 +458,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             view.addSubview(gpuViewController.view)
             gpuViewController.didMove(toParent: self)
-
-            // For RetroArch skipLayout without skins, hide the GPU view and send it to back
-            // RetroArch's CocoaView manages its own rendering
-            if isRetroArchSkipLayout && currentSkin == nil {
-                gpuViewController.view.isHidden = true
-                view.sendSubviewToBack(gpuViewController.view)
-                ILOG("[RA] Hiding GPU view controller for RetroArch skipLayout mode - CocoaView manages rendering")
-            }
         } else {
             gpuViewController.view.frame = view.bounds
             gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-            // Update visibility state if needed
-            if isRetroArchSkipLayout && currentSkin == nil {
-                gpuViewController.view.isHidden = true
-                view.sendSubviewToBack(gpuViewController.view)
-            }
         }
     }
 
@@ -576,9 +567,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             }
             secondaryWindow?.isHidden = false
         } else {
+            // For RetroArch cores with skipLayout and no skins, GPU view controller is not attached
+            // RetroArch manages its own view hierarchy (CocoaView + Metal/GL surfaces)
+            let isRetroArchSkipLayout = core.coreIdentifier?.contains("libretro") == true && core.skipLayout
+
             #if os(tvOS)
-            if core.skipLayout {
-                // Special handling for RetroArch cores on tvOS
+            if core.skipLayout && !(isRetroArchSkipLayout && currentSkin == nil) {
+                // Special handling for RetroArch cores on tvOS (only if using skins)
                 addChild(gpuViewController)
                 if let gpuView = gpuViewController.view {
                     gpuView.frame = view.bounds
@@ -586,7 +581,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     view.addSubview(gpuView)
                 }
                 gpuViewController.didMove(toParent: self)
-            } else {
+            } else if !core.skipLayout {
                 // Keep existing behavior for non-skipLayout cores
                 gpuViewController.willMove(toParent: self)
                 addChild(gpuViewController)
@@ -610,6 +605,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     gpuViewController.view.frame = view.bounds
                 }
             }
+            // For RetroArch skipLayout without skins, GPU view controller is not attached
+            // (handled in setupGPUView which is called from viewDidLoad)
             #endif
         }
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
@@ -1161,15 +1158,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         // If using a DeltaSkin, ensure game screen view is visible and positioned properly
-        if let skinContainerView = view.viewWithTag(9876) {
+        if let skinContainerView = view.viewWithTag(9876), let gpuView = gpuViewController.view {
             // Make sure the GPU view is visible on top of the proper layer
-            gpuViewController.view.alpha = 1.0
-            gpuViewController.view.isHidden = false
+            gpuView.alpha = 1.0
+            gpuView.isHidden = false
 
             // If we have a stored target frame, ensure the GPU view is positioned there
             if let targetFrame = currentTargetFrame {
                 UIView.animate(withDuration: 0.2) {
-                    self.gpuViewController.view.frame = targetFrame
+                    gpuView.frame = targetFrame
                 }
             }
         }
@@ -1211,7 +1208,13 @@ extension PVEmulatorViewController {
         // Store the current skin for rotation handling
         currentSkin = skin
 
-        // When applying a skin, ensure GPU view is visible (it's used by the skin system)
+        // When applying a skin, ensure GPU view controller exists and is visible (it's used by the skin system)
+        // If it wasn't created before (e.g., RetroArch skipLayout without skin), create it now
+        if gpuViewController.parent === nil {
+            ILOG("[RA] Creating GPU view controller for skin application")
+            setupGPUView()
+        }
+
         if let gpuView = gpuViewController.view {
             gpuView.isHidden = false
             gpuView.alpha = 1.0
@@ -1602,8 +1605,8 @@ extension PVEmulatorViewController {
 
         // Reset the game screen position to its original position
         await MainActor.run {
-            if let originalFrame = originalCalculatedFrame {
-                gpuViewController.view.frame = originalFrame
+            if let originalFrame = originalCalculatedFrame, let gpuView = gpuViewController.view {
+                gpuView.frame = originalFrame
             }
         }
 
@@ -1835,8 +1838,8 @@ extension PVEmulatorViewController {
         let animateBlock = {
             if self.isDeltaSkinEnabled, let skin = previousSkin {
                 self.repositionGameScreen(for: skin, orientation: newOrientation, forceRecalculation: true)
-            } else {
-                self.gpuViewController.view.frame = self.view.bounds
+            } else if let gpuView = self.gpuViewController.view {
+                gpuView.frame = self.view.bounds
                 self.ensureProperZOrder()
             }
         }
@@ -1877,8 +1880,10 @@ extension PVEmulatorViewController {
                     }
                 }
             } else {
-                self.gpuViewController.view.frame = self.view.bounds
-                self.ensureProperZOrder()
+                if let gpuView = self.gpuViewController.view {
+                    gpuView.frame = self.view.bounds
+                    self.ensureProperZOrder()
+                }
                 completion()
             }
         }
