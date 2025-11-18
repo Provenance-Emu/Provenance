@@ -12,7 +12,7 @@ import Perception
 
 func iconNameForStatus(_ status: ImportQueueItem.ImportStatus) -> String {
     switch status {
-        
+
     case .queued:
         return "play"
     case .processing:
@@ -36,14 +36,14 @@ struct ImportTaskRowView: View {
     @State private var isNavigatingToSystemSelection = false
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
-    
+
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
-    
+
     // Replace delegate with callback
     var onSystemSelected: ((SystemIdentifier, ImportQueueItem) -> Void)?
-    
+
     // Retrowave colors
     var primaryColor: Color {
         switch item.status {
@@ -56,7 +56,7 @@ struct ImportTaskRowView: View {
         case .extracting: return RetroTheme.retroGreen
         }
     }
-    
+
     var secondaryColor: Color {
         switch item.status {
         case .queued, .processing: return RetroTheme.retroPurple
@@ -66,7 +66,7 @@ struct ImportTaskRowView: View {
         case .extracting: return RetroTheme.retroDarkBlue
         }
     }
-    
+
     var background: some View {
         // Background with retrowave styling
         RoundedRectangle(cornerRadius: 12)
@@ -83,9 +83,9 @@ struct ImportTaskRowView: View {
                     )
                     .shadow(color: primaryColor.opacity(glowOpacity), radius: isHovered ? 5 : 3, x: 0, y: 0)
             )
-        
+
     }
-    
+
     var content: some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
@@ -94,7 +94,7 @@ struct ImportTaskRowView: View {
                     .foregroundColor(.white)
                     .shadow(color: primaryColor.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                     .lineLimit(1)
-                
+
                 if item.fileType == .bios {
                     Text("BIOS")
                         .font(.system(size: 14, weight: .semibold))
@@ -103,6 +103,11 @@ struct ImportTaskRowView: View {
                 } else if let chosenSystem = item.userChosenSystem {
                     // Show the selected system when one is chosen
                     Text("\(chosenSystem.fullName)")
+                        .font(.system(size: 14))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                } else if let resolvedSystem = item.resolvedSystem {
+                    Text("\(resolvedSystem.fullName)")
                         .font(.system(size: 14))
                         .foregroundColor(RetroTheme.retroBlue)
                         .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
@@ -119,7 +124,7 @@ struct ImportTaskRowView: View {
                             .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                     }
                 }
-                
+
                 if let errorText = item.errorValue {
                     Text("Error: \(errorText)")
                         .font(.system(size: 12))
@@ -129,9 +134,9 @@ struct ImportTaskRowView: View {
                 }
             }
             .padding(.leading, 10)
-            
+
             Spacer()
-            
+
             VStack(alignment: .trailing, spacing: 6) {
                 if item.status == .processing {
                     ProgressView()
@@ -144,7 +149,7 @@ struct ImportTaskRowView: View {
                         .foregroundColor(primaryColor)
                         .shadow(color: primaryColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 }
-                
+
                 if (item.childQueueItems.count > 0) {
                     Text("+\(item.childQueueItems.count) files")
                         .font(.system(size: 12, weight: .medium))
@@ -163,7 +168,7 @@ struct ImportTaskRowView: View {
             .padding(.horizontal, 16)
         }
     }
-    
+
     var mainView: some View {
         ZStack {
             // Background with retrowave styling
@@ -214,7 +219,7 @@ struct ImportTaskRowView: View {
                 .hidden()
         )
     }
-    
+
     var body: some View {
         WithPerceptionTracking {
             mainView

@@ -61,7 +61,13 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
 
         /// Step 2: Extension-based filtering (cheapest - no DB queries)
         let systems = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtension) ?? []
-        let systemIdentifiers = systems.compactMap { $0.systemIdentifier }
+        var systemIdentifiers: [SystemIdentifier] = []
+        for system in systems {
+            let identifier = system.systemIdentifier
+            if !systemIdentifiers.contains(identifier) {
+                systemIdentifiers.append(identifier)
+            }
+        }
         DLOG("- Found \(systemIdentifiers.count) compatible systems by extension")
 
         let hasKnownExtension = !fileExtension.isEmpty && !systemIdentifiers.isEmpty

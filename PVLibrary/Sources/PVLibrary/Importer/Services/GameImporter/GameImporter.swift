@@ -125,10 +125,8 @@ public actor ImportQueueActor {
     /// The current queue of import items
     private(set) var queue: [ImportQueueItem] = [] {
         didSet {
-            // Schedule auto-start if there are queued items OR items with a user-chosen system
-            if queue.contains(where: {
-                $0.status == .queued || $0.userChosenSystem != nil
-            }) {
+            // Schedule auto-start whenever there are items queued for processing
+            if queue.contains(where: { $0.status == .queued }) {
                 autoStartCallback()
             }
 
@@ -1745,19 +1743,10 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     // Processes items in the queue in parallel with controlled concurrency
     private func processQueue() async {
-        ILOG("GameImportQueue - processQueue Start Import Processing")
-        NotificationCenter.default.post(name: .GameImporterDidStart, object: nil)
-
-        // Ensure we're in processing state
-        await MainActor.run {
-            if self.processingState != .processing {
-                WLOG("GameImporter: processQueue called but state is \(self.processingState), setting to processing")
-                self.processingState = .processing
-            }
-        }
-
+        var didStartProcessing = false
         defer {
-            Task { @MainActor in
+            if didStartProcessing {
+                Task { @MainActor in
                 // Only change to idle if we're not paused
                 if self.processingState != .paused {
                     ILOG("GameImporter: processQueue finished, setting state to idle")
@@ -1775,14 +1764,31 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
                 NotificationCenter.default.post(name: .GameImporterDidFinish, object: nil)
             }
+            }
         }
-        // Check for items that are either queued or have a user-chosen system
-        let itemsToProcess = await importQueue.filter {
-            $0.status == .queued || $0.userChosenSystem != nil
-        }
+        // Check for items that are queued for processing
+        let itemsToProcess = await importQueue.filter { $0.status == .queued }
 
         guard !itemsToProcess.isEmpty else {
+            await MainActor.run {
+                if self.processingState == .processing {
+                    self.processingState = .idle
+                }
+            }
             return
+        }
+
+        didStartProcessing = true
+
+        ILOG("GameImportQueue - processQueue Start Import Processing")
+        NotificationCenter.default.post(name: .GameImporterDidStart, object: nil)
+
+        // Ensure we're in processing state
+        await MainActor.run {
+            if self.processingState != .processing {
+                WLOG("GameImporter: processQueue called but state is \(self.processingState), setting to processing")
+                self.processingState = .processing
+            }
         }
 
         ILOG("GameImportQueue - processQueue beginning Import Processing with \(itemsToProcess.count) items")
@@ -1826,10 +1832,6 @@ public final class GameImporter: GameImporting, ObservableObject {
                 // Add a new task for this group
                 group.addTask {
                     for item in fileGroup {
-                        // If there's a user-chosen system, ensure the item is queued
-                        if item.userChosenSystem != nil {
-                            item.status = .queued
-                        }
                         await self.processItem(item)
                     }
                 }
@@ -1867,7 +1869,11 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             // Set success status and post notification on main actor
             await MainActor.run {
+                if let finalSystem = item.userChosenSystem ?? item.resolvedSystem ?? item.targetSystem() {
+                    item.resolvedSystem = finalSystem
+                }
                 item.status = .success
+                item.userChosenSystem = nil
                 let userInfo = [
                     PVNotificationUserInfoKeys.fileNameKey: itemName,
                     PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),

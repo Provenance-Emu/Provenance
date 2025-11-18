@@ -104,6 +104,9 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     public var url: URL
     public var fileType: FileType
     public var systems: [SystemIdentifier] = [] // Can be set to the specific system type
+    /// Last system selected by the user, persisted for display even after import completes
+    public var resolvedSystem: SystemIdentifier?
+
     public var userChosenSystem: (SystemIdentifier)? = nil {
         didSet {
             if userChosenSystem != nil {
@@ -119,6 +122,10 @@ public class ImportQueueItem: Identifiable, ObservableObject {
                         // Do nothing for other statuses like .success, .queued, .partial, .processing
                         break
                     }
+                }
+
+                if let selectedSystem = userChosenSystem {
+                    resolvedSystem = selectedSystem
                 }
             }
         }
@@ -163,6 +170,7 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         self.url = url
         self.fileType = fileType
         self.childQueueItems = []
+        self.resolvedSystem = nil
         self.md5Provider = md5Provider
         self.expectedAssociatedFileNames = nil // Explicitly set, though default would work
         self.resolvedAssociatedFileURLs = []   // Explicitly set, though default would work
