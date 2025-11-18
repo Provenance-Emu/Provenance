@@ -7,24 +7,24 @@ public struct RetroTabView<Content: View>: View {
     @Binding private var selection: Int
     private let content: Content
     private let tabItems: [RetroTabItem]
-    
+
     @State private var localSelection: Int
     @State private var itemFrames: [CGRect] = []
     @State private var tabBarHeight: CGFloat = 60
     @State private var bottomSafeAreaInset: CGFloat = 0
-    
+
     // Focus management for tvOS
     @State private var contentHasFocus: Bool = true
     @FocusState private var tabBarFocused: Bool
     @State private var focusedTabIndex: Int = 0
-    
+
     public init(selection: Binding<Int>, @ViewBuilder content: () -> Content, tabItems: [RetroTabItem]) {
         self._selection = selection
         self.content = content()
         self.tabItems = tabItems
         self._localSelection = State(initialValue: selection.wrappedValue)
     }
-    
+
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
@@ -43,7 +43,7 @@ public struct RetroTabView<Content: View>: View {
                         }
                     }
 #endif
-                
+
                 // Custom tab bar
                 retroTabBar
                     .frame(height: tabBarHeight + bottomSafeAreaInset)
@@ -66,11 +66,11 @@ public struct RetroTabView<Content: View>: View {
             .ignoresSafeArea(edges: .bottom)
         }
     }
-    
+
     @State private var borderGlowIntensity: CGFloat = 0.5
     @State private var borderGlowRadius: CGFloat = 0.5
     @State private var borderColorShift: CGFloat = 0
-    
+
     private var retroTabBar: some View {
         ZStack(alignment: .bottom) {
             // Tab bar background with retrowave styling
@@ -105,7 +105,7 @@ public struct RetroTabView<Content: View>: View {
                     alignment: .top
                 )
                 .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 10, x: 0, y: -5)
-            
+
             // Tab items
             HStack(spacing: 0) {
                 ForEach(0..<tabItems.count, id: \.self) { index in
@@ -132,7 +132,7 @@ public struct RetroTabView<Content: View>: View {
                     }
                 }
             }
-            
+
             // Selection indicator
             if !itemFrames.isEmpty && localSelection < itemFrames.count {
                 selectionIndicator
@@ -157,11 +157,11 @@ public struct RetroTabView<Content: View>: View {
             }
         }
     }
-    
+
     private func tabButton(for index: Int) -> some View {
         let item = tabItems[index]
         let isSelected = localSelection == index
-        
+
         return Button(action: {
             localSelection = index
 #if os(tvOS)
@@ -187,7 +187,7 @@ public struct RetroTabView<Content: View>: View {
                         }
                     }
                 }
-                
+
                 // Label
                 Group {
                     if isSelected {
@@ -220,7 +220,7 @@ public struct RetroTabView<Content: View>: View {
         .buttonStyle(PlainButtonStyle())
 #endif
     }
-    
+
     private var selectionIndicator: some View {
         RoundedRectangle(cornerRadius: 2)
             .fill(RetroTheme.retroHorizontalGradient)
@@ -234,19 +234,19 @@ public struct RetroTabView<Content: View>: View {
                     .offset(y: -1)
             )
     }
-    
+
     private func animateBorderOnTabChange() {
         // Animate border glow intensity
         withAnimation(.easeOut(duration: 0.3)) {
             borderGlowIntensity = 1.0
             borderGlowRadius = 2.0
         }
-        
+
         // Animate color shift
         withAnimation(.easeInOut(duration: 0.5)) {
             borderColorShift = borderColorShift == 0 ? 0.5 : 0
         }
-        
+
         // Return to normal state after animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation(.easeInOut(duration: 0.5)) {
@@ -255,22 +255,22 @@ public struct RetroTabView<Content: View>: View {
             }
         }
     }
-    
+
     private var tabBarWidth: CGFloat {
         guard let firstFrame = itemFrames.first, let lastFrame = itemFrames.last else {
             return UIScreen.main.bounds.width
         }
         return lastFrame.maxX - firstFrame.minX
     }
-    
+
     private var indicatorOffset: CGFloat {
         guard !itemFrames.isEmpty, localSelection < itemFrames.count else {
             return 0
         }
-        
+
         let selectedFrame = itemFrames[localSelection]
         let firstFrame = itemFrames.first ?? .zero
-        
+
         // Simple calculation to center the indicator under the selected tab
         // Just use the midX of the selected frame relative to the first frame
         return selectedFrame.midX - firstFrame.minX - (tabBarWidth / CGFloat(tabItems.count) / 2)
@@ -281,7 +281,7 @@ public struct RetroTabView<Content: View>: View {
 public struct RetroTabItem {
     let title: String
     let systemImage: String?
-    
+
     public init(title: String, systemImage: String? = nil) {
         self.title = title
         self.systemImage = systemImage
@@ -299,7 +299,7 @@ struct TabItemPreference: Equatable {
 /// Preference key to collect tab item frames
 struct TabItemPreferenceKey: PreferenceKey {
     static var defaultValue: [TabItemPreference] = []
-    
+
     static func reduce(value: inout [TabItemPreference], nextValue: () -> [TabItemPreference]) {
         value.append(contentsOf: nextValue())
     }
@@ -310,10 +310,10 @@ struct RetroTabView_Previews: PreviewProvider {
     static var previews: some View {
         RetroTabViewDemo()
     }
-    
+
     struct RetroTabViewDemo: View {
         @State private var selectedTab = 0
-        
+
         var body: some View {
             RetroTabView(
                 selection: $selectedTab,
