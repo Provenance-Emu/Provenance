@@ -442,6 +442,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     private func setupGPUView() {
+        // For RetroArch cores with skipLayout and no skins, RetroArch manages its own view hierarchy
+        // The GPU view controller should be hidden so it doesn't cover CocoaView
+        let isRetroArchSkipLayout = core.coreIdentifier?.contains("libretro") == true && core.skipLayout
+
         // Attach gpuViewController as child once; update frame if already added
         if gpuViewController.parent !== self {
             addChild(gpuViewController)
@@ -449,9 +453,23 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             view.addSubview(gpuViewController.view)
             gpuViewController.didMove(toParent: self)
+
+            // For RetroArch skipLayout without skins, hide the GPU view and send it to back
+            // RetroArch's CocoaView manages its own rendering
+            if isRetroArchSkipLayout && currentSkin == nil {
+                gpuViewController.view.isHidden = true
+                view.sendSubviewToBack(gpuViewController.view)
+                ILOG("[RA] Hiding GPU view controller for RetroArch skipLayout mode - CocoaView manages rendering")
+            }
         } else {
             gpuViewController.view.frame = view.bounds
             gpuViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+            // Update visibility state if needed
+            if isRetroArchSkipLayout && currentSkin == nil {
+                gpuViewController.view.isHidden = true
+                view.sendSubviewToBack(gpuViewController.view)
+            }
         }
     }
 
@@ -1192,6 +1210,12 @@ extension PVEmulatorViewController {
 
         // Store the current skin for rotation handling
         currentSkin = skin
+
+        // When applying a skin, ensure GPU view is visible (it's used by the skin system)
+        if let gpuView = gpuViewController.view {
+            gpuView.isHidden = false
+            gpuView.alpha = 1.0
+        }
 
         // Clear dual screen frame cache when skin changes
         clearReceivedScreenFrames()

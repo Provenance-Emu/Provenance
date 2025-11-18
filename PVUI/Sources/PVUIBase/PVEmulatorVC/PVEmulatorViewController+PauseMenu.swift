@@ -25,27 +25,27 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             WLOG("Core isn't on, ignoring showMenu.")
             return;
         }
-        
+
         // Check if a menu is already being presented
         if presentedViewController != nil {
             DLOG("A view controller is already being presented, ignoring duplicate request")
             return
         }
-        
+
         // Pause the game and prepare for menu
         enableControllerInput(true)
         // Setting isShowingMenu will handle pausing the emulation
         isShowingMenu = true
-        
+
         // Create a hosting view controller for our custom menu
         let menuVC = UIViewController()
         menuVC.modalPresentationStyle = .overFullScreen
         menuVC.view.backgroundColor = .clear
-        
+
         // Create our custom menu overlay
         let menuOverlay = PVGameMenuOverlay(frame: menuVC.view.bounds, emulatorViewController: self)
         menuVC.view.addSubview(menuOverlay)
-        
+
         // Set up constraints
         menuOverlay.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -54,10 +54,10 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             menuOverlay.trailingAnchor.constraint(equalTo: menuVC.view.trailingAnchor),
             menuOverlay.bottomAnchor.constraint(equalTo: menuVC.view.bottomAnchor)
         ])
-        
+
         // Set the presentation delegate to handle dismissal
         menuVC.presentationController?.delegate = self
-        
+
         // Present the menu view controller
         present(menuVC, animated: true) { [weak self, weak menuVC] in
             DLOG("Presented custom game menu overlay")
@@ -67,7 +67,7 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             }
         }
     }
-    
+
     // MARK: - UIAdaptivePresentationControllerDelegate
 
     /// Also handle the willDismiss phase to ensure we resume even if DidDismiss isn't called in some cases
@@ -80,23 +80,38 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
     public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         // This is called when the user dismisses by clicking outside the menu
         DLOG("Menu dismissed by clicking outside")
-        
+
         // Ensure we properly clean up when the menu is dismissed
         cleanupAfterMenuDismissal()
     }
-    
+
     /// Common cleanup code after menu dismissal
     private func cleanupAfterMenuDismissal() {
         if isShowingMenu && !AppState.shared.emulationUIState.isInBackground {
             DLOG("Cleaning up after menu dismissal")
-            
+
             // First disable controller input
             enableControllerInput(false)
-            
+
             // Reset controller state
             #if !os(tvOS)
             PVControllerManager.shared.controllerUserInteractionEnabled = false
             #endif
+
+            // For RetroArch cores with skipLayout and no skins, ensure GPU view stays hidden
+            // RetroArch's CocoaView manages its own rendering and should be on top
+            if core.coreIdentifier?.contains("libretro") == true,
+               core.skipLayout,
+               currentSkin == nil {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    // Ensure GPU view is hidden and sent to back so CocoaView is visible
+                    self.gpuViewController.view.isHidden = true
+                    self.view.sendSubviewToBack(self.gpuViewController.view)
+                    ILOG("[RA] Ensured GPU view is hidden after menu dismissal - CocoaView should be visible")
+                }
+            }
+
             // Setting isShowingMenu to false will handle resuming the emulation
             isShowingMenu = false
         }
