@@ -488,6 +488,20 @@ extension PVRetroArchCoreCore: PVVirtualBoySystemResponderClient {
     }
 }
 
+// CDi
+
+extension PVRetroArchCoreCore: PVCDiSystemResponderClient {
+//    public func didMoveJoystick(_ button: PVCoreBridge.PVCDiButton, withValue value: CGFloat, forPlayer player: Int) {
+//        (_bridge as! PVCDiSystemResponderClient).didMoveJoystick(button, withValue: value, forPlayer: player)
+//    }
+    public func didRelease(_ button: PVCoreBridge.PVCDiButton, forPlayer player: Int) {
+        (_bridge as! PVCDiSystemResponderClient).didRelease(button, forPlayer: player)
+
+    }
+    public func didPush(_ button: PVCoreBridge.PVCDiButton, forPlayer player: Int) {
+        (_bridge as! PVCDiSystemResponderClient).didPush(button, forPlayer: player)
+    }
+}
 
 // Vectrex
 extension PVRetroArchCoreCore: PVVectrexSystemResponderClient {
