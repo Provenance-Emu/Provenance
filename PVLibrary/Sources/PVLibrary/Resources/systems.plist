@@ -4403,7 +4403,7 @@
 						<key>PVControlTitle</key>
 						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{116,34},{60,60}}</string>
+						<string>{{126,34},{60,60}}</string>
 						<key>PVControlTint</key>
 						<string>#c82522</string>
 					</dict>
@@ -4413,7 +4413,7 @@
 						<key>PVControlTitle</key>
 						<string>B</string>
 						<key>PVControlFrame</key>
-						<string>{{60,4},{60,60}}</string>
+						<string>{{55,4},{60,60}}</string>
 						<key>PVControlTint</key>
 						<string>#07236e</string>
 					</dict>
@@ -7138,7 +7138,7 @@
 						<key>PVControlTitle</key>
 						<string>L</string>
 						<key>PVControlFrame</key>
-						<string>{{8,16},{60,60}}</string>
+						<string>{{55,34},{60,60}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -7148,7 +7148,7 @@
 						<key>PVControlTitle</key>
 						<string>R</string>
 						<key>PVControlFrame</key>
-						<string>{{70,16},{60,60}}</string>
+						<string>{{126,34},{60,60}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -8092,6 +8092,8 @@
 			<dict>
 				<key>Description</key>
 				<string>CD-i Mono 1</string>
+				<key>New item</key>
+				<string></string>
 				<key>MD5</key>
 				<string>5d4f7c4beee83bf535d2b15aa48ea0b0</string>
 				<key>Name</key>
@@ -8126,7 +8128,7 @@
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
-				<string>{180,180}</string>
+				<string>{212,180}</string>
 				<key>PVGroupedButtons</key>
 				<array>
 					<dict>
@@ -8135,7 +8137,7 @@
 						<key>PVControlTitle</key>
 						<string>i</string>
 						<key>PVControlFrame</key>
-						<string>{{10,70},{60,70}}</string>
+						<string>{{8,92},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -8145,7 +8147,7 @@
 						<key>PVControlTitle</key>
 						<string>ii</string>
 						<key>PVControlFrame</key>
-						<string>{{90,70},{60,70}}</string>
+						<string>{{76,84},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -8155,7 +8157,7 @@
 						<key>PVControlTitle</key>
 						<string>iii</string>
 						<key>PVControlFrame</key>
-						<string>{{170,70},{60,70}}</string>
+						<string>{{144,76},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
