@@ -669,18 +669,23 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
     self.retroArchControls=flag;
     bool should_update=false;
     settings_t *settings            = config_get_ptr();
+    if (!settings) {
+        ILOG(@"Option: Settings not available, skipping overlay update\n");
+        return;
+    }
     input_driver_state_t  *input_st = input_state_get_ptr();
-    input_overlay_t       *ol       = input_st->overlay_ptr;
-    input_overlay_state_t *ol_state = &ol->overlay_state;
+    input_overlay_t       *ol       = input_st ? input_st->overlay_ptr : NULL;
+    input_overlay_state_t *ol_state = ol ? &ol->overlay_state : NULL;
 
     /// Check if skins are being used (Delta or Manic skin)
+    /// Skins take priority - if skins are active, RetroArch overlay must be disabled
     BOOL usingSkins = self.useCustomRenderViewLayout;
 
-    NSString *original_overlay = [NSString stringWithUTF8String:settings->paths.path_overlay];
+    NSString *original_overlay = settings->paths.path_overlay ? [NSString stringWithUTF8String:settings->paths.path_overlay] : @"";
 
     /// When using skins, always disable RetroArch overlay regardless of setting
     if (usingSkins) {
-        ILOG(@"Option: Using skins - disabling RetroArch overlay\n");
+        ILOG(@"Option: Using skins - disabling RetroArch overlay (flag was %d)\n", flag);
         settings->bools.input_overlay_enable=false;
         should_update=true;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"ShowTouchControls" object:nil userInfo:nil];
