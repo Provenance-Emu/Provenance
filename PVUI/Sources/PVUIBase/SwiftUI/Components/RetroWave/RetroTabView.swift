@@ -137,7 +137,7 @@ public struct RetroTabView<Content: View>: View {
             if !itemFrames.isEmpty && localSelection < itemFrames.count {
                 selectionIndicator
                     .frame(width: tabBarWidth / CGFloat(tabItems.count) - 20)
-                    .offset(x: indicatorOffset - (tabBarWidth / CGFloat(tabItems.count)), y: -5) // Shift left by one tab width
+                    .offset(x: indicatorOffset, y: -5)
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: localSelection)
                     .padding(.bottom, 15) // Move indicator up slightly
             }
@@ -270,10 +270,11 @@ public struct RetroTabView<Content: View>: View {
 
         let selectedFrame = itemFrames[localSelection]
         let firstFrame = itemFrames.first ?? .zero
+        let lastFrame = itemFrames.last ?? .zero
+        let tabBarCenterX = (firstFrame.minX + lastFrame.maxX) / 2
 
-        // Simple calculation to center the indicator under the selected tab
-        // Just use the midX of the selected frame relative to the first frame
-        return selectedFrame.midX - firstFrame.minX - (tabBarWidth / CGFloat(tabItems.count) / 2)
+        /// Align indicator relative to the tab bar center so it sits beneath the selected tab
+        return selectedFrame.midX - tabBarCenterX
     }
 }
 
