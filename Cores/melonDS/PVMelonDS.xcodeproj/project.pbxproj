@@ -147,6 +147,7 @@
 		B3C8A69028780B9A0037A946 /* diskio.c in Sources */ = {isa = PBXBuildFile; fileRef = B33805A62877B5080009C732 /* diskio.c */; };
 		B3C8A69228780D5C0037A946 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B33806B32877B5090009C732 /* encoding_utf.c */; };
 		B3D1C13D2CB70EEE00F1F46B /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1C13C2CB70EEE00F1F46B /* PVCoreBridgeRetro.framework */; };
+		B3DD7A732ECD364D0022FF70 /* PVMelonDSCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD7A722ECD364D0022FF70 /* PVMelonDSCoreOptions.swift */; };
 		B3E88CC62977B5BE00C90E86 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CC52977B5BE00C90E86 /* PVLogging */; };
 		B3F8E1092CB3CB9D00017D1B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E1082CB3CB9D00017D1B /* PVSettings */; };
 		B3F8E10C2CB3CBD600017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E10B2CB3CBD600017D1B /* PVCoreObjCBridge */; };
@@ -1625,6 +1626,7 @@
 		B3C8A68C28780AE30037A946 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libpthread.tbd; sourceTree = DEVELOPER_DIR; };
 		B3C8A68E28780AEF0037A946 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libpthread.tbd; sourceTree = DEVELOPER_DIR; };
 		B3D1C13C2CB70EEE00F1F46B /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DD7A722ECD364D0022FF70 /* PVMelonDSCoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMelonDSCoreOptions.swift; sourceTree = "<group>"; };
 		B3F8E1132CB3CCEC00017D1B /* PVMelonDSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMelonDSCore.swift; sourceTree = "<group>"; };
 		B3F8E1142CB3CCEC00017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3F8E1152CB3CCEC00017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
@@ -5085,6 +5087,7 @@
 				B3447E96218B809200557ACE /* PVMelonDSCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVMelonDSCore+Controls.mm */,
 				B3F8E1132CB3CCEC00017D1B /* PVMelonDSCore.swift */,
+				B3DD7A722ECD364D0022FF70 /* PVMelonDSCoreOptions.swift */,
 				B3F8E1142CB3CCEC00017D1B /* CorePlist.swift */,
 				B3F8E1152CB3CCEC00017D1B /* CorePlist-Generated.swift */,
 			);
@@ -5502,6 +5505,7 @@
 				B3F8E1172CB3CCEC00017D1B /* PVMelonDSCore.swift in Sources */,
 				B3F8E1182CB3CCEC00017D1B /* CorePlist.swift in Sources */,
 				B3C76226207833DE009950E4 /* PVMelonDSCore.mm in Sources */,
+				B3DD7A732ECD364D0022FF70 /* PVMelonDSCoreOptions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
