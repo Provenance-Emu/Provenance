@@ -638,12 +638,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if !effectiveRect.isEmpty {
             // Use the effective dimensions for aspect ratio calculation
             let effectiveSize = CGSize(width: effectiveRect.width, height: effectiveRect.height)
-            var ratio: CGFloat = 0
-            if effectiveSize.width > effectiveSize.height {
-                ratio = effectiveSize.width / effectiveSize.height
-            } else {
-                ratio = effectiveSize.height / effectiveSize.width
-            }
+            let safeWidth = max(effectiveSize.width, 1)
+            let safeHeight = max(effectiveSize.height, 1)
+            let ratio = safeWidth / safeHeight
 
             /// Get parent size in points (not scaled)
             var parentSize = parent?.view.bounds.size ?? CGSize.zero
