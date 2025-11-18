@@ -1863,12 +1863,14 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
 {
    uint32_t runloop_flags;
    int          ret   = runloop_iterate();
-   task_queue_check();
    if (ret == -1) {
 	   command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);
        ILOG(@"exit loop\n");
 	   return;
    }
+    
+    task_queue_check();
+
    runloop_flags = runloop_get_flags();
    if (!(runloop_flags & RUNLOOP_FLAG_IDLE))
 	  CFRunLoopWakeUp(CFRunLoopGetMain());
