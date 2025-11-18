@@ -15,6 +15,10 @@ import PVCoreBridgeRetro
 @objc
 @objcMembers
 public final class PVMelonDSCore: PVEmulatorCore {
+    public override var supportsSkins: Bool { true }
+
+    public override var supportsDualScreens: Bool { true }
+
 
     lazy var _bridge: PVMelonDSCoreBridge = .init()
     
@@ -30,5 +34,11 @@ extension PVMelonDSCore: PVDSSystemResponderClient {
     }
     public func didRelease(_ button: PVCoreBridge.PVDSButton, forPlayer player: Int) {
         (_bridge as! PVDSSystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
+
+extension PVMelonDSCore: CoreOptional {
+    public static var options: [CoreOption] {
+        return MelonDSOptions.options
     }
 }
