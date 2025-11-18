@@ -21,7 +21,7 @@ public extension SystemIdentifier {
         case .AtariJaguarCD: return PVJaguarButton.self
         case .AtariST: return PVA8Button.self   // TODO: Add me
         case .C64: return PVDOSButton.self   // TODO: Add me
-        case .CDi: return PVDOSButton.self                          // TODO: Add me
+        case .CDi: return PVCDiButton.self
         case .CPS1, .CPS2, .CPS3: return PVMAMEButton.self   // TODO: Add me
         case .ColecoVision: return PVColecoVisionButton.self
         case .DOS: return PVDOSButton.self

@@ -287,6 +287,13 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PVColecoVisionSystemResponderClient")
             }
             break;
+        case .CDi:
+            if let core = core as? PVCDiSystemResponderClient {
+                return PVCDiControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PVColecoVisionSystemResponderClient")
+            }
+            break;
         case .Intellivision:
             if let core = core as? PVIntellivisionSystemResponderClient {
                 return PVIntellivisionControllerViewController(controlLayout: controllerLayout, system: system, responder: core)

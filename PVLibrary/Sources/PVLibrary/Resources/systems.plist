@@ -8087,7 +8087,7 @@
 				<key>Size</key>
 				<integer>474881</integer>
 				<key>Optional</key>
-				<true/>
+				<false/>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -8111,7 +8111,7 @@
 				<key>Size</key>
 				<integer>244291</integer>
 				<key>Optional</key>
-				<true/>
+				<false/>
 			</dict>
 		</array>
 		<key>PVSupportedExtensions</key>
@@ -8133,7 +8133,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>1</string>
+						<string>i</string>
 						<key>PVControlFrame</key>
 						<string>{{10,70},{60,70}}</string>
 						<key>PVControlTint</key>
@@ -8143,9 +8143,19 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>2</string>
+						<string>ii</string>
 						<key>PVControlFrame</key>
 						<string>{{90,70},{60,70}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>iii</string>
+						<key>PVControlFrame</key>
+						<string>{{170,70},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>

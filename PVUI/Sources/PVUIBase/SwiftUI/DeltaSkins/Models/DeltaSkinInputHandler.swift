@@ -526,6 +526,11 @@ public class DeltaSkinInputHandler: ObservableObject {
         let id = normalizeSkinButtonId(buttonId, for: systemId)
 
         switch systemId {
+        case .CDi:
+            if let r = core as? PVCDiSystemResponderClient {
+                let b = PVCDiButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
         case .ColecoVision:
             if let r = core as? PVColecoVisionSystemResponderClient {
                 let b = PVColecoVisionButton(id)
@@ -1226,6 +1231,11 @@ public class DeltaSkinInputHandler: ObservableObject {
         DLOG("Normalized button ID: \(buttonId) -> \(id) for system \(systemId)")
 
         switch systemId {
+        case .CDi:
+            if let r = core as? PVCDiSystemResponderClient {
+                let b = PVCDiButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
         case .ColecoVision:
             if let r = core as? PVColecoVisionSystemResponderClient {
                 let b = PVColecoVisionButton(id)

@@ -173,6 +173,7 @@
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3CC2E0C2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */; };
 		B3DD7A6D2ECBFA220022FF70 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3DD7A6C2ECBFA220022FF70 /* PVSettings */; };
+		B3DD7A6F2ECD16F80022FF70 /* PVRetroArchCore+Controls+CDi.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DD7A6E2ECD16F80022FF70 /* PVRetroArchCore+Controls+CDi.m */; };
 		B3E2AA6B2CB65E9A00E2636D /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA6A2CB65E9A00E2636D /* PVLogging */; };
 		B3EEF0702D66AF440080CA51 /* PVRetroArchCoreBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEF06F2D66AF400080CA51 /* PVRetroArchCoreBridge.swift */; };
 		B3EEF5E02D66B0850080CA51 /* LzhArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3EEF5DF2D66B0850080CA51 /* LzhArchive */; };
@@ -477,6 +478,7 @@
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3CC2E0B2CBBFED700D90EB1 /* PVRetroArchCore+Controls+PS2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PS2.m"; sourceTree = "<group>"; };
 		B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
+		B3DD7A6E2ECD16F80022FF70 /* PVRetroArchCore+Controls+CDi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+CDi.m"; sourceTree = "<group>"; };
 		B3EEF06F2D66AF400080CA51 /* PVRetroArchCoreBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCoreBridge.swift; sourceTree = "<group>"; };
 		B3EEFB5E2D66B9ED0080CA51 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EEFB8B2D66C8B00080CA51 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
@@ -863,6 +865,7 @@
 				B3B3779E2E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m */,
 				B3B3779F2E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m */,
 				93C372622A8B68000007671D /* PVRetroArchCore+Controls+3DO.m */,
+				B3DD7A6E2ECD16F80022FF70 /* PVRetroArchCore+Controls+CDi.m */,
 				B36CEE8A2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m */,
 				B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */,
 				93C372612A8B67FF0007671D /* PVRetroArchCore+Controls+Dreamcast.m */,
@@ -1376,6 +1379,7 @@
 				93B66BA02967DB7600A621DD /* Shaders.metal in Sources */,
 				93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */,
 				93814F902AAA9E9900DEB9B9 /* PVRetroArchCore+Archive+AppleII.m in Sources */,
+				B3DD7A6F2ECD16F80022FF70 /* PVRetroArchCore+Controls+CDi.m in Sources */,
 				93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */,
 				93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */,
 				93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */,

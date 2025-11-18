@@ -90,7 +90,7 @@ public extension SystemIdentifier {
         case .C64:
             return PVRetroArchCoreResponderClient.self
         case .CDi:
-            return PVRetroArchCoreResponderClient.self
+            return PVCDiSystemResponderClient.self
         case .CPS1:
             return PVMAMESystemResponderClient.self
         case .CPS2:
