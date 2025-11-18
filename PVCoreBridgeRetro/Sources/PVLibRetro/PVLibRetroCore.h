@@ -37,23 +37,24 @@
 typedef struct retro_core_t retro_core_t;
 
 @protocol ObjCBridgedCoreBridge;
+@protocol TouchPadResponder;
 @class PVLibRetroCoreBridge;
 static __weak PVLibRetroCoreBridge * _Nonnull _current;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 __attribute__((weak_import))
-@interface PVLibRetroCoreBridge: PVCoreObjCBridge  <ObjCBridgedCoreBridge> {
+@interface PVLibRetroCoreBridge: PVCoreObjCBridge  <ObjCBridgedCoreBridge, TouchPadResponder> {
 #pragma clang diagnostic pop
 @public
     unsigned short pitch_shift;
-    
+
     uint32_t *videoBuffer;
     uint32_t *videoBufferA;
     uint32_t *videoBufferB;
-    
+
     int16_t _pad[2][12];
-    
+
     retro_core_t* core;
 
     // MARK: - Retro Structs
@@ -80,6 +81,14 @@ __attribute__((weak_import))
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;
 @property (nonatomic, retain, nullable) NSString * romPath;
+
+#if !TARGET_OS_WATCH
+@property (nonatomic, readonly, nullable) GCControllerButtonTouchedChangedHandler touchedChangedHandler;
+@property (nonatomic, readonly, nullable) GCControllerButtonValueChangedHandler pressedChangedHandler;
+@property (nonatomic, readonly, nullable) GCControllerButtonValueChangedHandler valueChangedHandler;
+#endif
+@property (nonatomic, assign) BOOL touchpadEnabled;
+@property (nonatomic, readonly) BOOL gameSupportsTouchpad;
 
 @end
 

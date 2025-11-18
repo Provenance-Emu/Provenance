@@ -72,6 +72,9 @@
     BOOL rightMousePressed;
 }
 @property (nonatomic, strong) NSData *currentRomData;
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+@property (nonatomic, weak) UITouch *activeStylusTouch;
+#endif
 @end
 
 video_driver_t video_gl;
@@ -2211,6 +2214,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     if((self = [super init])) {
         pitch_shift = PITCH_SHIFT;
         _current = self;
+        _touchpadEnabled = YES;
         NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
         NSAssert(myBundle, @"myBundle was nil");
         const char* path = [myBundle.bundlePath fileSystemRepresentation];
@@ -2512,6 +2516,85 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     return 2;
 }
 
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+- (UIView *)pointerReferenceView {
+    id renderDelegate = self.renderDelegate;
+    if (renderDelegate) {
+        NSArray<NSString *> *selectorNames = @[@"mtlview", @"mtlView"];
+        for (NSString *selectorName in selectorNames) {
+            SEL selector = NSSelectorFromString(selectorName);
+            if ([renderDelegate respondsToSelector:selector]) {
+                IMP imp = [renderDelegate methodForSelector:selector];
+                UIView *(*getter)(id, SEL) = (UIView *(*)(id, SEL))imp;
+                UIView *renderView = getter(renderDelegate, selector);
+                if ([renderView isKindOfClass:[UIView class]]) {
+                    return renderView;
+                }
+            }
+        }
+    }
+
+    if (self.touchViewController && self.touchViewController.view) {
+        return self.touchViewController.view;
+    }
+
+    return nil;
+}
+
+- (BOOL)touch:(UITouch *)touch isInsideReferenceView:(UIView *)referenceView tolerance:(CGFloat)tolerance {
+    if (!referenceView) {
+        return YES;
+    }
+
+    CGPoint location = [touch locationInView:referenceView];
+    CGRect bounds = CGRectInset(referenceView.bounds, -tolerance, -tolerance);
+    return CGRectContainsPoint(bounds, location);
+}
+
+- (UITouch *)preferredStylusTouchFromTouches:(NSSet<UITouch *> *)touches referenceView:(UIView *)referenceView {
+    if (touches.count == 0) {
+        return nil;
+    }
+
+    if (self.activeStylusTouch && [touches containsObject:self.activeStylusTouch]) {
+        return self.activeStylusTouch;
+    }
+
+    if (!referenceView) {
+        UITouch *fallback = touches.anyObject;
+        self.activeStylusTouch = fallback;
+        return fallback;
+    }
+
+    for (UITouch *touch in touches) {
+        if ([self touch:touch isInsideReferenceView:referenceView tolerance:0.0]) {
+            self.activeStylusTouch = touch;
+            return touch;
+        }
+    }
+
+    return nil;
+}
+#endif
+
+#if !TARGET_OS_WATCH
+- (GCControllerButtonTouchedChangedHandler)touchedChangedHandler {
+    return nil;
+}
+
+- (GCControllerButtonValueChangedHandler)pressedChangedHandler {
+    return nil;
+}
+
+- (GCControllerButtonValueChangedHandler)valueChangedHandler {
+    return nil;
+}
+#endif
+
+- (BOOL)gameSupportsTouchpad {
+    return self.touchpadEnabled;
+}
+
 @end
 
 # pragma mark - Options
@@ -2631,6 +2714,19 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 #endif
     }
 }
+
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+- (void)sendEvent:(UIEvent *)event {
+    [super sendEvent:event];
+    if (!self.touchpadEnabled || event == nil) {
+        return;
+    }
+
+    if (event.type == UIEventTypeTouches) {
+        [self handleTouchEvent:event];
+    }
+}
+#endif
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
 {
@@ -2857,28 +2953,41 @@ unsigned retro_api_version(void)
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 - (void)handleTouchEvent:(UIEvent *)event {
-    NSSet *touches = [event allTouches];
-    UITouch *touch = [touches anyObject];
-
-    if (!touch) {
+    if (!self.touchpadEnabled || event == nil) {
         return;
     }
 
-    // Get touch location relative to the view
-    CGPoint location = [touch locationInView:touch.view];
-
-    // Normalize coordinates to 0.0-1.0 range
-    CGSize viewSize = touch.view.bounds.size;
-    if (viewSize.width > 0 && viewSize.height > 0) {
-        currentTouchPosition.x = location.x / viewSize.width;
-        currentTouchPosition.y = location.y / viewSize.height;
-
-        // Clamp to valid range
-        currentTouchPosition.x = MAX(0.0, MIN(1.0, currentTouchPosition.x));
-        currentTouchPosition.y = MAX(0.0, MIN(1.0, currentTouchPosition.y));
+    NSSet<UITouch *> *touches = [event allTouches];
+    if (touches.count == 0) {
+        touchPressed = NO;
+        self.activeStylusTouch = nil;
+        return;
     }
 
-    // Update touch state based on phase
+    UIView *referenceView = [self pointerReferenceView];
+    if (!referenceView) {
+        referenceView = touches.anyObject.view;
+    }
+
+    UITouch *touch = [self preferredStylusTouchFromTouches:touches referenceView:referenceView];
+    if (!touch || !referenceView) {
+        touchPressed = NO;
+        self.activeStylusTouch = nil;
+        return;
+    }
+
+    CGSize viewSize = referenceView.bounds.size;
+    if (viewSize.width <= 0.0 || viewSize.height <= 0.0) {
+        return;
+    }
+
+    CGPoint location = [touch locationInView:referenceView];
+    CGFloat normalizedX = location.x / viewSize.width;
+    CGFloat normalizedY = location.y / viewSize.height;
+
+    currentTouchPosition.x = MAX(0.0, MIN(1.0, normalizedX));
+    currentTouchPosition.y = MAX(0.0, MIN(1.0, normalizedY));
+
     switch (touch.phase) {
         case UITouchPhaseBegan:
         case UITouchPhaseMoved:
@@ -2888,13 +2997,11 @@ unsigned retro_api_version(void)
         case UITouchPhaseEnded:
         case UITouchPhaseCancelled:
             touchPressed = NO;
+            self.activeStylusTouch = nil;
             break;
         default:
             break;
     }
-
-    DLOG(@"Touch event: position (%.3f, %.3f), pressed: %d",
-         currentTouchPosition.x, currentTouchPosition.y, touchPressed);
 }
 #else
 - (void)handleMouseEvent:(NSEvent *)event {
