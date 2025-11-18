@@ -133,6 +133,7 @@
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C76225207833DE009950E4 /* PVDesmume2015Core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDesmume2015Core.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C76226207833DE009950E4 /* PVDesmume2015Core.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDesmume2015Core.mm */; };
+		B3DD7A712ECD29EF0022FF70 /* PVDesmume2015CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD7A702ECD29740022FF70 /* PVDesmume2015CoreOptions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -711,6 +712,7 @@
 		B3C76223207833DE009950E4 /* PVDesmume2015Core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDesmume2015Core.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVDesmume2015Core.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDesmume2015Core.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3DD7A702ECD29740022FF70 /* PVDesmume2015CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDesmume2015CoreOptions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2226,6 +2228,7 @@
 				B3447EAA218BC59D00557ACE /* PVDesmume2015Core+Saves.m */,
 				B3447E96218B809200557ACE /* PVDesmume2015Core+Controls.h */,
 				B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */,
+				B3DD7A702ECD29740022FF70 /* PVDesmume2015CoreOptions.swift */,
 				B30E99C32C6F00C600C1431E /* PVDesmume2015Core.swift */,
 				B377EBE02CB2B10500E9B750 /* CorePlist.swift */,
 				B377EBE12CB2B10500E9B750 /* CorePlist-Generated.swift */,
@@ -2537,6 +2540,7 @@
 				B338055F287583AD0009C732 /* PVDesmume2015Core+Video.m in Sources */,
 				B3C76226207833DE009950E4 /* PVDesmume2015Core.mm in Sources */,
 				B393138628710F9100372EBB /* arm_gen.cpp in Sources */,
+				B3DD7A712ECD29EF0022FF70 /* PVDesmume2015CoreOptions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

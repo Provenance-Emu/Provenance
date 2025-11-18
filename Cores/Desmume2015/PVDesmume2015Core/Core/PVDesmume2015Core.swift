@@ -15,7 +15,10 @@ import PVCoreBridgeRetro
 @objc
 @objcMembers
 open class PVDesmume2015Core: PVEmulatorCore {
+    public override var supportsSkins: Bool { true }
 
+    public override var supportsDualScreens: Bool { true }
+    
     lazy var _bridge: PVDesmume2015CoreBridge = .init()
     
     public required init() {
@@ -33,3 +36,8 @@ extension PVDesmume2015Core: PVDSSystemResponderClient {
     }
 }
 
+extension PVDesmume2015Core: CoreOptional {
+    public static var options: [CoreOption] {
+        return Desmume2015Options.options
+    }
+}
