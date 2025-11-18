@@ -54,6 +54,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <PVLogging/PVLoggingObjC.h>
 #import <objc/runtime.h>
+@import PVSettings;
 
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
@@ -316,6 +317,7 @@ int argc =  1;
     settings = config_get_ptr();
     if (settings) {
         settings->bools.core_info_savestate_bypass = true;
+        settings->bools.video_fps_show = PVSettingsWrapper.showFPS;
     }
     [self writeConfigFile];
     /// Sync BIOS resources, but exclude tos.img as it's handled specially in writeConfigFile

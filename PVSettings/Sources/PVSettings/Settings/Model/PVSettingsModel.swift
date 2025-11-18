@@ -622,6 +622,11 @@ public final class PVSettingsWrapper: NSObject {
     public static var volume: Float {
         get { Defaults[.volume] }
         set { Defaults[.volume] = newValue }}
+    
+    @objc
+    public static var showFPS: Bool {
+        get { Defaults[.showFPSCount] }
+        set { Defaults[.showFPSCount] = newValue }}
 }
 
 public extension Defaults.Keys {
