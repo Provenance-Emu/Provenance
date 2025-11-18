@@ -598,6 +598,12 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         if let systemIdentifier = self.systemIdentifier?.lowercased() {
             if (systemIdentifier.contains("psp")) {
                 self.gsPreference = 2; // Use Vulkan PSP
+
+                optionValues += "ppsspp_ignore_bad_memory_access = \"enabled\"\n";
+                optionValues += "ppsspp_fast_memory = \"enabled\"\n";
+
+                optionValuesFile = "PPSSPP/PPSSPP.opt"
+                optionOverwrite = false
             }
 
             let systemsWithBindNumlock: Set<String> = [
