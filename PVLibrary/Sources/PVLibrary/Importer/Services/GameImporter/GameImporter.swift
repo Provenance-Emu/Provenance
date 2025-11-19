@@ -378,6 +378,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     // Timeout configuration for hung task detection
     private let processingTimeoutDuration: TimeInterval = 600 // 10 minutes
     private var processingStartTime: Date?
+    private var autoRestartAvailableAt: Date?
 
     // Actor to manage the import queue with thread safety
     public let importQueueActor: ImportQueueActor
@@ -492,17 +493,19 @@ public final class GameImporter: GameImporting, ObservableObject {
             await importQueueActor.setAutoStartCallback { [weak self] in
                 guard let self = self else { return }
 
-                // Only auto-start if we're not already processing
-                Task { @MainActor in
-                    guard self.processingState == .idle else {
-                        VLOG("GameImporter: Skipping auto-start - already processing (state: \(self.processingState))")
+                Task {
+                    let normalizedState = await self.normalizedProcessingState(reason: "auto-start")
+                    guard normalizedState == .idle else {
+                        VLOG("GameImporter: Skipping auto-start - already processing (state: \(normalizedState))")
                         return
                     }
 
-                    self.importAutoStartDelayTask?.cancel()
-                    self.importAutoStartDelayTask = Task.detached {
-                        await try? Task.sleep(for: .seconds(1))
-                        await self.startProcessingSafely()
+                    await MainActor.run {
+                        self.importAutoStartDelayTask?.cancel()
+                        self.importAutoStartDelayTask = Task.detached { [weak self] in
+                            await try? Task.sleep(for: .seconds(1))
+                            await self?.startProcessingSafely(trigger: "auto")
+                        }
                     }
                 }
             }
@@ -835,10 +838,72 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    // Thread-safe method to start processing with proper task management
-    private func startProcessingSafely() async {
-        // Check state on main actor
+    private func hasActiveProcessingTask() -> Bool {
+        processingTaskLock.lock()
+        defer { processingTaskLock.unlock() }
+        guard let task = currentProcessingTask else { return false }
+        return !task.isCancelled
+    }
+
+    private func normalizedProcessingState(reason: String) async -> ProcessingState {
+        let state = await MainActor.run { processingState }
+        guard state == .processing else {
+            return state
+        }
+
+        guard hasActiveProcessingTask() else {
+            await MainActor.run {
+                self.processingState = .idle
+                self.updateImporterStatus("Import queue recovered (\(reason))")
+            }
+            ILOG("GameImporter: Reset stale processing state (\(reason)) - no active processing task")
+            return .idle
+        }
+
+        return state
+    }
+
+    private func restartProcessingIfQueueHasPendingWork(context: String) async {
+        let queueSnapshot = await importQueueActor.getQueue()
+        let queuedItems = queueSnapshot.filter { $0.status == .queued }
+        guard !queuedItems.isEmpty else { return }
+
         let currentState = await MainActor.run { processingState }
+        guard currentState == .idle else {
+            VLOG("GameImporter: Skipping auto-restart (\(context)) - state \(currentState)")
+            return
+        }
+
+        var restartDelay: TimeInterval?
+        processingTaskLock.lock()
+        if let nextAvailable = autoRestartAvailableAt {
+            let delta = nextAvailable.timeIntervalSinceNow
+            if delta > 0 {
+                restartDelay = delta
+            } else {
+                autoRestartAvailableAt = nil
+            }
+        }
+        processingTaskLock.unlock()
+
+        if let delay = restartDelay {
+            ILOG("GameImporter: Delaying auto-restart (\(context)) by \(String(format: "%.2f", delay))s")
+            Task.detached { [weak self] in
+                guard let self else { return }
+                try? await Task.sleep(for: .seconds(delay))
+                await self.restartProcessingIfQueueHasPendingWork(context: context)
+            }
+            return
+        }
+
+        ILOG("GameImporter: Auto-restarting processing (\(context)) for \(queuedItems.count) queued item(s)")
+        await startProcessingSafely(trigger: context)
+    }
+
+    // Thread-safe method to start processing with proper task management
+    private func startProcessingSafely(trigger: String = "manual") async {
+        // Check state on main actor, normalizing when needed
+        let currentState = await normalizedProcessingState(reason: trigger)
 
         // Only start processing if it's idle (not processing or paused)
         guard currentState == .idle else {
@@ -846,7 +911,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             if currentState == .paused {
                 await resumeSafely()
             }
-            VLOG("GameImporter: Skipping start processing - current state: \(currentState)")
+            VLOG("GameImporter: Skipping start processing (\(trigger)) - current state: \(currentState)")
             return
         }
 
@@ -865,7 +930,11 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         guard shouldStart else { return }
 
-        ILOG("GameImporter: Starting processing safely")
+        processingTaskLock.lock()
+        autoRestartAvailableAt = nil
+        processingTaskLock.unlock()
+
+        ILOG("GameImporter: Starting processing safely (\(trigger))")
 
         // Set state to processing on main actor (lock released, safe to await)
         await MainActor.run {
@@ -887,6 +956,10 @@ public final class GameImporter: GameImporting, ObservableObject {
                 self.currentTimeoutTask = nil
                 self.processingStartTime = nil
                 self.processingTaskLock.unlock()
+
+                Task { [weak self] in
+                    await self?.restartProcessingIfQueueHasPendingWork(context: "post-run")
+                }
             }
 
             await self.preProcessQueue()
@@ -965,12 +1038,13 @@ public final class GameImporter: GameImporting, ObservableObject {
         let queue = await importQueueActor.getQueue()
         let queuedItemsCount = queue.filter { $0.status == .queued || $0.userChosenSystem != nil }.count
         if queuedItemsCount > 0 {
-            ILOG("GameImporter: Scheduling restart after timeout recovery (\(queuedItemsCount) items in queue)")
+            ILOG("GameImporter: Scheduling delayed restart after timeout recovery (\(queuedItemsCount) items in queue)")
+            processingTaskLock.lock()
+            autoRestartAvailableAt = Date().addingTimeInterval(5)
+            processingTaskLock.unlock()
 
             Task.detached { [weak self] in
-                // Wait a bit before restarting to avoid immediate re-hang
-                try? await Task.sleep(for: .seconds(5))
-                await self?.startProcessingSafely()
+                await self?.restartProcessingIfQueueHasPendingWork(context: "timeout")
             }
         }
     }
