@@ -35,15 +35,15 @@ extern GCController *touch_controller;
 
 @implementation PVRetroArchCoreBridge (PCEControls)
 #pragma mark - Control
-- (void)didPushPCEButton:(PVPCECDButton)button forPlayer:(NSInteger)player {
+- (void)didPushPCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player {
     [self handlePCEButton:button forPlayer:player pressed:true value:1];
 }
 
-- (void)didReleasePCEButton:(PVPCECDButton)button forPlayer:(NSInteger)player {
+- (void)didReleasePCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player {
     [self handlePCEButton:button forPlayer:player pressed:false value:0];
 }
 
-- (void)didMovePCEJoystickDirection:(PVPCECDButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+- (void)didMovePCECDJoystickDirection:(PVPCECDButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
     [self handlePCEButton:button forPlayer:player pressed:(value != 0) value:value];
 }
 - (void)handlePCEButton:(PVPCECDButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
