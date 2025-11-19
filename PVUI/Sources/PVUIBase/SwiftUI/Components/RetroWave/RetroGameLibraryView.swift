@@ -91,6 +91,9 @@ public struct RetroGameLibraryView: View {
     @State private var webServerURL: String?
     @State private var webDavURL: String?
 
+    // Notification observer for web server status changes
+    @State private var webServerStatusObserver: NSObjectProtocol?
+
     // Observed results for all games in the database
     @ObservedResults(
         PVGame.self,
@@ -179,7 +182,9 @@ public struct RetroGameLibraryView: View {
             .retroAlert("Import Result",
                         message: viewModel.importMessage ?? "",
                         isPresented: $viewModel.showingImportMessage) {
-                Button("OK", role: .cancel) {}
+                Button("OK", role: .cancel) {
+                    viewModel.showingImportMessage = false
+                }
             }
             .retroAlert("Select Import Source",
                        message: "Choose how you want to import files",
@@ -214,12 +219,23 @@ public struct RetroGameLibraryView: View {
             // Load expanded sections from AppStorage
             viewModel.loadExpandedSections(from: expandedSectionsData, allSystems: Array(allSystems))
 
-            // Set up web server status monitoring
+            // Set up web server status monitoring (one-time check)
             updateWebServerStatus()
 
-            // Set up a timer to periodically check web server status
-            Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
+            // Listen for web server status changes via notification instead of polling
+            webServerStatusObserver = NotificationCenter.default.addObserver(
+                forName: .webServerStatusChanged,
+                object: nil,
+                queue: .main
+            ) { [weak viewModel] _ in
                 updateWebServerStatus()
+            }
+        }
+        .onDisappear {
+            // Remove notification observer when view disappears
+            if let observer = webServerStatusObserver {
+                NotificationCenter.default.removeObserver(observer)
+                webServerStatusObserver = nil
             }
         }
         .sheet(isPresented: $viewModel.showImagePicker) {
@@ -1177,12 +1193,28 @@ extension RetroGameLibraryView {
     // MARK: - Web Server Status
 
     /// Updates the web server status
+    /// Only fetches IP address when server is running to avoid expensive network interface enumeration
     private func updateWebServerStatus() {
         #if canImport(PVWebServer)
         DispatchQueue.main.async {
-            self.isWebServerRunning = PVWebServer.shared.isWWWUploadServerRunning
-            self.webServerURL = PVWebServer.shared.urlString
-            self.webDavURL = PVWebServer.shared.webDavURLString
+            let webServer = PVWebServer.shared
+            let newRunningState = webServer.isWWWUploadServerRunning
+
+            // Only update URLs (which trigger IP address lookup) if server is running
+            // and status changed or URLs are not cached
+            if newRunningState {
+                // Only fetch URLs if status changed or we don't have them cached
+                if newRunningState != self.isWebServerRunning || self.webServerURL == nil {
+                    self.webServerURL = webServer.urlString
+                    self.webDavURL = webServer.webDavURLString
+                }
+            } else {
+                // Clear URLs when server stops
+                self.webServerURL = nil
+                self.webDavURL = nil
+            }
+
+            self.isWebServerRunning = newRunningState
         }
         #endif
     }
