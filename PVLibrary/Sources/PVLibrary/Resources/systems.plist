@@ -5045,7 +5045,7 @@
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
-				<string>{200,180}</string>
+				<string>{212,180}</string>
 				<key>PVGroupedButtons</key>
 				<array>
 					<dict>
@@ -5054,7 +5054,7 @@
 						<key>PVControlTitle</key>
 						<string>C</string>
 						<key>PVControlFrame</key>
-						<string>{{8,24},{60,60}}</string>
+						<string>{{8,92},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -5064,7 +5064,7 @@
 						<key>PVControlTitle</key>
 						<string>B</string>
 						<key>PVControlFrame</key>
-						<string>{{76,16},{60,60}}</string>
+						<string>{{76,84},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
@@ -5074,7 +5074,7 @@
 						<key>PVControlTitle</key>
 						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{144,8},{60,60}}</string>
+						<string>{{144,76},{60,70}}</string>
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 					</dict>
