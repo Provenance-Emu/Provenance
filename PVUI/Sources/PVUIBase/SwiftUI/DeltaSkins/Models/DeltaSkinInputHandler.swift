@@ -1326,6 +1326,8 @@ public class DeltaSkinInputHandler: ObservableObject {
                 let b = PVPCECDButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
+            } else {
+                ELOG("Core expcted to be `PVPCECDSystemResponderClient` but isn't.")
             }
         case .MasterSystem:
             if let r = core as? PVMasterSystemSystemResponderClient {
