@@ -480,8 +480,9 @@ public class DeltaSkinInputHandler: ObservableObject {
         let threshold: Float = 0.3
 
         // Determine which directions are active
-        let up = y < -threshold
-        let down = y > threshold
+        // Note: Y is already inverted in DeltaSkinThumbstick (positive Y = up, negative Y = down)
+        let up = y > threshold
+        let down = y < -threshold
         let left = x < -threshold
         let right = x > threshold
 
@@ -491,8 +492,8 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Get previous state
         let prevX = previousJoystickState?.x ?? 0
         let prevY = previousJoystickState?.y ?? 0
-        let prevUp = prevY < -threshold
-        let prevDown = prevY > threshold
+        let prevUp = prevY > threshold
+        let prevDown = prevY < -threshold
         let prevLeft = prevX < -threshold
         let prevRight = prevX > threshold
 
