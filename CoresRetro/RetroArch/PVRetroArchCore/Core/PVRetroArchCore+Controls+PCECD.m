@@ -36,37 +36,35 @@ extern GCController *touch_controller;
 @implementation PVRetroArchCoreBridge (PCEControls)
 #pragma mark - Control
 - (void)didPushPCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player {
-    [self handlePCEButton:button forPlayer:player pressed:true value:1];
+    [self handlePCECDButton:button forPlayer:player pressed:true value:1];
 }
 
 - (void)didReleasePCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player {
-    [self handlePCEButton:button forPlayer:player pressed:false value:0];
+    [self handlePCECDButton:button forPlayer:player pressed:false value:0];
 }
 
 - (void)didMovePCECDJoystickDirection:(PVPCECDButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self handlePCEButton:button forPlayer:player pressed:(value != 0) value:value];
+    [self handlePCECDButton:button forPlayer:player pressed:(value != 0) value:value];
 }
-- (void)handlePCEButton:(PVPCECDButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
+- (void)handlePCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
+    static float xAxis=0;
+    static float yAxis=0;
 
     switch (button) {
         case(PVPCECDButtonUp):
-            yAxis = pressed ? 1.0 :0;
-            DLOG(@"Pressed %@ : %@", @"up", pressed ? @"Yes" : @"No");
+            yAxis=pressed?(!xAxis?1.0:0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCECDButtonDown):
-            yAxis = pressed ? -1.0 :0;
-            DLOG(@"Pressed %@ : %@", @"down", pressed ? @"Yes" : @"No");
+            yAxis=pressed?(!xAxis?-1.0:-0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCECDButtonLeft):
-            xAxis = pressed ? -1.0 :0;
-            DLOG(@"Pressed %@ : %@", @"left", pressed ? @"Yes" : @"No");
+            xAxis=pressed?(!yAxis?-1.0:-0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCECDButtonRight):
-            xAxis = pressed ? 1.0 :0;
-            DLOG(@"Pressed %@ : %@", @"right", pressed ? @"Yes" : @"No");
+            xAxis=pressed?(!yAxis?1.0:0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCECDButtonButton1):

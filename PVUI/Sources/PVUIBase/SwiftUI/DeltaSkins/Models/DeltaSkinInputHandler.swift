@@ -1326,7 +1326,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 return true
             } else {
                 ELOG("Core expcted to be `PVPCESystemResponderClient` but isn't.")
-                return false
+                //return false
             }
         case .PCECD:
             if let r = core as? PVPCECDSystemResponderClient {
@@ -1339,7 +1339,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 return true
             } else {
                 ELOG("Core expcted to be `PVPCECDSystemResponderClient` but isn't.")
-                return false
+                //return false
             }
         case .MasterSystem:
             if let r = core as? PVMasterSystemSystemResponderClient {

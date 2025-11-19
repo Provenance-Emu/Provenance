@@ -47,26 +47,24 @@ extern GCController *touch_controller;
     [self handlePCEButton:button forPlayer:player pressed:(value != 0) value:value];
 }
 - (void)handlePCEButton:(PVPCEButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
+    static float xAxis=0;
+    static float yAxis=0;
 
     switch (button) {
         case(PVPCEButtonUp):
-            yAxis = pressed ? 1.0 :0;
-            DLOG(@"Pressed %@ : %@", @"up", pressed ? @"Yes" : @"No");
+            yAxis=pressed?(!xAxis?1.0:0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCEButtonDown):
-            yAxis = pressed ? -1.0 :0;
-            DLOG(@"Pressed %@ : %@", @"down", pressed ? @"Yes" : @"No");
+            yAxis=pressed?(!xAxis?-1.0:-0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCEButtonLeft):
-            xAxis = pressed ? -1.0 :0;
-            DLOG(@"Pressed %@ : %@", @"left", pressed ? @"Yes" : @"No");
+            xAxis=pressed?(!yAxis?-1.0:-0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCEButtonRight):
-            xAxis = pressed ? 1.0 :0;
-            DLOG(@"Pressed %@ : %@", @"right", pressed ? @"Yes" : @"No");
+            xAxis=pressed?(!yAxis?1.0:0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVPCEButtonButton1):

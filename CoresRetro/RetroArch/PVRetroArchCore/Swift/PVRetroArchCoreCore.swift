@@ -421,7 +421,7 @@ extension PVRetroArchCoreCore: PVPCESystemResponderClient {
     }
 
     public func didRelease(_ button: PVCoreBridge.PVPCEButton, forPlayer player: Int) {
-        (_bridge as! PVPCESystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as! PVPCESystemResponderClient).didRelease(button, forPlayer: player)
     }
 }
 
@@ -432,7 +432,7 @@ extension PVRetroArchCoreCore: PVPCECDSystemResponderClient {
     }
 
     public func didRelease(_ button: PVCoreBridge.PVPCECDButton, forPlayer player: Int) {
-        (_bridge as! PVPCECDSystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as! PVPCECDSystemResponderClient).didRelease(button, forPlayer: player)
     }
 }
 
@@ -443,7 +443,7 @@ extension PVRetroArchCoreCore: PVPCFXSystemResponderClient {
     }
 
     public func didRelease(_ button: PVCoreBridge.PVPCFXButton, forPlayer player: Int) {
-        (_bridge as! PVPCFXSystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as! PVPCFXSystemResponderClient).didRelease(button, forPlayer: player)
     }
 }
 
