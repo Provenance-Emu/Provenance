@@ -600,12 +600,23 @@ static void emulation_run(BOOL skipFrame) {
 
     current->videoOffsetX = current->spec.DisplayRect.x;
     current->videoOffsetY = current->spec.DisplayRect.y;
-//    if(game->multires || current.systemType == MednaSystemPSX) {
-//        current->videoWidth = rects[current->spec.DisplayRect.y];
-//    }
-//    else {
+    if(game->multires || current.systemType == MednaSystemPSX) {
+        current->videoWidth = rects[current->spec.DisplayRect.y];
+    }
+    else if(current.systemType == MednaSystemPCE || current.systemType == MednaSystemPCFX) {
+        /// For NEC systems (PCE, PCE CD, PCFX), use the actual rendered width from LineWidths array
+        /// or fall back to fb_width, as DisplayRect.w contains the nominal aspect ratio width (1365)
+        /// which is not the actual pixel width
+        int32_t actualWidth = rects[current->spec.DisplayRect.y];
+        if(actualWidth > 0) {
+            current->videoWidth = actualWidth;
+        } else {
+            current->videoWidth = game->fb_width;
+        }
+    }
+    else {
         current->videoWidth = current->spec.DisplayRect.w ?: rects[current->spec.DisplayRect.y];
-//    }
+    }
     current->videoHeight  = current->spec.DisplayRect.h;
 
     update_audio_batch(current->spec.SoundBuf, current->spec.SoundBufSize);
