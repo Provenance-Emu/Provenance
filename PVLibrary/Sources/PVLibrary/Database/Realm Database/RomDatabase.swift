@@ -927,15 +927,71 @@ public extension RomDatabase {
 
     func deleteRelatedFilesGame(_ game: PVGame) {
         DLOG("\(game.romPath) related files: \(game.relatedFiles)")
-        game.relatedFiles.forEach {
-            self.handlDeletionOfRelatedFile($0.url, game: game)
+
+        /// Delete all files in relatedFiles (including parsing .cue files for referenced files)
+        game.relatedFiles.forEach { relatedFile in
+            /// Delete the related file itself
+            self.handlDeletionOfRelatedFile(relatedFile.url, game: game)
+
+            /// If it's a .cue file, also parse and delete files it references
+            if let relatedFileURL = relatedFile.url {
+                let resolvedCueURL = PVEmulatorConfiguration.path(forGame: game, url: relatedFileURL)
+                if resolvedCueURL.pathExtension.lowercased() == Extensions.cue.rawValue {
+                    deleteCueReferencedFiles(cueFileURL: resolvedCueURL, game: game)
+                }
+            }
         }
 
         guard let gameFileUrl = game.file?.url
         else {
             return
         }
+
+        /// Parse main game file if it's a .cue to find and delete referenced .bin files
+        let resolvedGameFileURL = PVEmulatorConfiguration.path(forGame: game)
+        if let resolvedURL = resolvedGameFileURL,
+           resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
+            deleteCueReferencedFiles(cueFileURL: resolvedURL, game: game)
+        }
+
         deleteFilesWithSimilarTitle(gameFileUrl)
+    }
+
+    /// Deletes all files referenced in a .cue file
+    /// This is a safety net for cases where referenced files might not be in relatedFiles
+    private func deleteCueReferencedFiles(cueFileURL: URL, game: PVGame) {
+        let fileManager = FileManager.default
+        let cdFileHandler = DefaultCDFileHandler()
+
+        guard fileManager.fileExists(atPath: cueFileURL.path) else {
+            DLOG("CUE file does not exist at path: \(cueFileURL.path)")
+            return
+        }
+
+        do {
+            let referencedFileNames = try cdFileHandler.parseCueSheet(cueFileURL: cueFileURL)
+            DLOG("Found \(referencedFileNames.count) files referenced in CUE: \(cueFileURL.lastPathComponent)")
+
+            let cueDirectory = cueFileURL.deletingLastPathComponent()
+
+            for fileName in referencedFileNames {
+                /// Files referenced in .cue are relative to the .cue file's directory
+                let referencedFileURL = cueDirectory.appendingPathComponent(fileName)
+
+                if fileManager.fileExists(atPath: referencedFileURL.path) {
+                    do {
+                        try fileManager.removeItem(at: referencedFileURL)
+                        DLOG("Deleted CUE-referenced file: \(fileName)")
+                    } catch {
+                        ELOG("Failed to delete CUE-referenced file \(fileName): \(error.localizedDescription)")
+                    }
+                } else {
+                    DLOG("CUE-referenced file does not exist: \(fileName)")
+                }
+            }
+        } catch {
+            ELOG("Failed to parse CUE file \(cueFileURL.lastPathComponent): \(error.localizedDescription)")
+        }
     }
 
     func handlDeletionOfRelatedFile(_ relatedFile: URL?, game: PVGame) {

@@ -18,8 +18,10 @@ protocol GameImporterFileServicing {
 
 class GameImporterFileService : GameImporterFileServicing {
 
-    init() {
+    private let cdFileHandler: CDFileHandling
 
+    init() {
+        self.cdFileHandler = DefaultCDFileHandler()
     }
 
     //    @MainActor
@@ -228,9 +230,19 @@ class GameImporterFileService : GameImporterFileServicing {
         let fileName = queueItem.url.lastPathComponent
         let expectedPath = destinationFolder.appendingPathComponent(fileName)
 
-        // If the file is already in the correct location, just set the destination URL and return
+        // If the file is already in the correct location, clean CUE files and return
         if currentDirectory.path == destinationFolder.path {
             ILOG("ROM file \(fileName) is already in the correct location for system \(targetSystem.rawValue), skipping move")
+
+            // Clean CUE files even if already in correct location
+            if queueItem.url.pathExtension.lowercased() == "cue" {
+                do {
+                    try cdFileHandler.cleanCueFile(at: queueItem.url)
+                } catch {
+                    WLOG("Failed to clean CUE file \(fileName): \(error.localizedDescription)")
+                }
+            }
+
             queueItem.destinationUrl = queueItem.url
 
             // Check if there are child items that need to be processed
@@ -243,6 +255,16 @@ class GameImporterFileService : GameImporterFileServicing {
         // If the file already exists at the destination, handle it specially
         if FileManager.default.fileExists(atPath: expectedPath.path) {
             ILOG("ROM file \(fileName) already exists at destination, skipping move and using existing file")
+
+            // Clean CUE file at destination if it exists
+            if expectedPath.pathExtension.lowercased() == "cue" {
+                do {
+                    try cdFileHandler.cleanCueFile(at: expectedPath)
+                } catch {
+                    WLOG("Failed to clean existing CUE file \(fileName): \(error.localizedDescription)")
+                }
+            }
+
             queueItem.destinationUrl = expectedPath
 
             // If the file is in the imports directory, delete it to avoid duplicates
@@ -277,9 +299,30 @@ class GameImporterFileService : GameImporterFileServicing {
             return
         }
 
+        // Clean CUE files before moving to fix encoding and formatting issues
+        if queueItem.url.pathExtension.lowercased() == "cue" {
+            do {
+                try cdFileHandler.cleanCueFile(at: queueItem.url)
+            } catch {
+                WLOG("Failed to clean CUE file \(fileName): \(error.localizedDescription). Continuing with import.")
+                // Don't throw - cleaning is best-effort, continue with import
+            }
+        }
+
         // If we get here, we need to move the file
         do {
             queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationFolder)
+
+            // Clean CUE file again after moving (in case it was already in destination)
+            if let destinationUrl = queueItem.destinationUrl,
+               destinationUrl.pathExtension.lowercased() == "cue" {
+                do {
+                    try cdFileHandler.cleanCueFile(at: destinationUrl)
+                } catch {
+                    WLOG("Failed to clean CUE file after move \(fileName): \(error.localizedDescription)")
+                }
+            }
+
             try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
         } catch {
             throw GameImporterError.failedToMoveROM(error)
