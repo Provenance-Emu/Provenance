@@ -15,19 +15,20 @@ public extension Notification.Name {
     static let PVSaveStateDidChange = Notification.Name("PVSaveStateDidChangeNotification")
     static let PVBIOSDidChange = Notification.Name("PVBIOSDidChangeNotification")
     static let PVConflictDidChange = Notification.Name("PVConflictDidChangeNotification")
-    
+
     // Database Events
     static let DatabaseMigrationStarted = Notification.Name("DatabaseMigrationStarted")
     static let DatabaseMigrationFinished = Notification.Name("DatabaseMigrationFinished")
     static let DatabaseRebuildStarted = Notification.Name("DatabaseRebuildStarted")
     static let DatabaseRebuildFinished = Notification.Name("DatabaseRebuildFinished")
     static let PVGameWillBeDeleted = Notification.Name("PVGameWillBeDeletedNotification") // Added for pre-deletion hook
-    
+
     // Import Events
     static let GameImporterDidStart = Notification.Name("GameImporterDidStart")
     static let GameImporterDidUpdate = Notification.Name("GameImporterDidUpdate")
     static let GameImporterDidFinish = Notification.Name("GameImporterDidFinish")
     static let GameImporterFileDidFail = Notification.Name("GameImporterFileDidFail")
+    static let GameImporterQueueItemRequeued = Notification.Name("GameImporterQueueItemRequeued")
     static let PVGameImported = Notification.Name("PVGameImportedNotification") // Added
     static let saveStatesImported = Notification.Name("SaveStatesImportFinished")
     static let SavesFinishedImporting = Notification.Name("SavesFinishedImporting")
@@ -38,7 +39,7 @@ public extension Notification.Name {
 
     // Save State Events
     static let PVSaveStateSaved = Notification.Name("PVSaveStateSavedNotification") // Added
-    
+
     // CloudKit Sync Events
     static let cloudKitAccountStateDidChange = Notification.Name("CloudKitAccountStateDidChange")
     static let cloudKitSyncDidBegin = Notification.Name("CloudKitSyncDidBegin")

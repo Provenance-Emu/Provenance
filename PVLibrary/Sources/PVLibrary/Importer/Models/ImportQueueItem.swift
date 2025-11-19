@@ -126,14 +126,20 @@ public class ImportQueueItem: Identifiable, ObservableObject {
             if userChosenSystem != nil {
                 // .processing currently has no associated value, so `status != .processing` is fine with Equatable.
                 if status != .processing {
-                    // Reset status to queued if it was in conflict or failure state
-                    // The previous `if case .conflict = status || case .failure = status` might be tricky for macros.
-                    // A switch statement is more explicit.
+                    // Reset status to queued if it was in conflict, failure, or partial state
                     switch status {
                     case .conflict, .failure: // .failure has an associated value, .conflict does not
                         self.status = .queued // Explicit self for clarity within switch
+                    case .partial(let expectedFiles):
+                        // When user selects a system for a partial item, change to queued
+                        // The import process will check if files are resolved and handle accordingly
+                        self.status = .queued
+                        // Trigger processing restart for newly queued item
+                        Task {
+                            NotificationCenter.default.post(name: .GameImporterQueueItemRequeued, object: self)
+                        }
                     default:
-                        // Do nothing for other statuses like .success, .queued, .partial, .processing
+                        // Do nothing for other statuses like .success, .queued, .processing
                         break
                     }
                 }
