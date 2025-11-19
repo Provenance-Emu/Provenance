@@ -287,6 +287,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             emulationUIState.emulator = nil
         }
         core.removeObserver(self, forKeyPath: "isRunning")
+
+        // Resume GameImporter if view controller is deallocated (safety net)
+        GameImporter.shared.resume()
     }
 
     private func initNotificationObservers() {
@@ -628,8 +631,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         try gameAudio.setupAudioGraph(for: core)
         try startAudio()
 
-        // Pause CloudKit when gameplay starts
+        // Pause CloudKit and GameImporter when gameplay starts
         CloudKitDownloadQueue.shared.pauseQueue()
+        GameImporter.shared.pause()
 
         core.startEmulation()
 
@@ -1088,8 +1092,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if audioInited {
             gameAudio.stopAudio()
         }
-        // Resume CloudKit when gameplay stops
+        // Resume CloudKit and GameImporter when gameplay stops
         CloudKitDownloadQueue.shared.resumeQueue()
+        GameImporter.shared.resume()
 
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)
