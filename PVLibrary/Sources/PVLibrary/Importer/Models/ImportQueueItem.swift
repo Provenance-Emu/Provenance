@@ -85,6 +85,16 @@ public class ImportQueueItem: Identifiable, ObservableObject {
             return false
         }
 
+        /// Indicates whether items in this state should block duplicate entries in the queue
+        public var blocksDuplicateProcessing: Bool {
+            switch self {
+            case .queued, .processing, .extracting, .partial:
+                return true
+            case .success, .failure, .conflict:
+                return false
+            }
+        }
+
         public var isIdle: Bool {
             switch self {
             case .queued, .processing, .extracting, .success, .conflict, .partial: return true
@@ -101,7 +111,11 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     }
 
     public let id = UUID()
-    public var url: URL
+    public var url: URL {
+        didSet {
+            cachedFileSize = nil
+        }
+    }
     public var fileType: FileType
     public var systems: [SystemIdentifier] = [] // Can be set to the specific system type
     /// Last system selected by the user, persisted for display even after import completes
@@ -152,6 +166,8 @@ public class ImportQueueItem: Identifiable, ObservableObject {
             }
         }
     }
+
+    private var cachedFileSize: Int64?
 
     public func requeue() -> ImportQueueItem {
         self.status = .queued
@@ -217,6 +233,24 @@ public class ImportQueueItem: Identifiable, ObservableObject {
     }
 
     private var cache = Cache()
+
+    public func fileSize() -> Int64? {
+        if let cachedFileSize {
+            return cachedFileSize
+        }
+
+        if let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
+           let size = attributes[.size] as? Int64 {
+            cachedFileSize = size
+            return size
+        }
+
+        return nil
+    }
+
+    public func invalidateFileSizeCache() {
+        cachedFileSize = nil
+    }
 
     public func getStatusForItem() -> ImportStatus {
         guard self.childQueueItems.count > 0 else {
