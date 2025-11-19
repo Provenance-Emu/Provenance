@@ -4403,7 +4403,7 @@
 						<key>PVControlTitle</key>
 						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{126,34},{60,60}}</string>
+						<string>{{66,30},{60,60}}</string>
 						<key>PVControlTint</key>
 						<string>#c82522</string>
 					</dict>
@@ -4413,7 +4413,7 @@
 						<key>PVControlTitle</key>
 						<string>B</string>
 						<key>PVControlFrame</key>
-						<string>{{55,4},{60,60}}</string>
+						<string>{{5,60},{60,60}}</string>
 						<key>PVControlTint</key>
 						<string>#07236e</string>
 					</dict>
