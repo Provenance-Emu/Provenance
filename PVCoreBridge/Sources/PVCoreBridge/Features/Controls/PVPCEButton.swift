@@ -25,7 +25,22 @@
     case count
 
     public init(_ value: String) {
-        switch value.lowercased() {
+        /// Normalize Unicode Roman numerals to ASCII equivalents
+        let normalized = value
+            .replacingOccurrences(of: "ⅰ", with: "i")
+            .replacingOccurrences(of: "ⅱ", with: "ii")
+            .replacingOccurrences(of: "ⅲ", with: "iii")
+            .replacingOccurrences(of: "ⅳ", with: "iv")
+            .replacingOccurrences(of: "ⅴ", with: "v")
+            .replacingOccurrences(of: "ⅵ", with: "vi")
+            .replacingOccurrences(of: "Ⅰ", with: "i")
+            .replacingOccurrences(of: "Ⅱ", with: "ii")
+            .replacingOccurrences(of: "Ⅲ", with: "iii")
+            .replacingOccurrences(of: "Ⅳ", with: "iv")
+            .replacingOccurrences(of: "Ⅴ", with: "v")
+            .replacingOccurrences(of: "Ⅵ", with: "vi")
+
+        switch normalized.lowercased() {
             case "up": self = .up
             case "down": self = .down
             case "left": self = .left

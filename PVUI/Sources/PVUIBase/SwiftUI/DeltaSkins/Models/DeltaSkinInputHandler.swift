@@ -1228,7 +1228,7 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
 
         DLOG("trySystemResponderCall: buttonId=\(buttonId), systemId=\(systemId)")
-        let id = normalizeSkinButtonId(buttonId, for: systemId)
+        let id = normalizeSkinButtonId(buttonId, for: systemId).trimmingCharacters(in: .whitespacesAndNewlines)
         DLOG("Normalized button ID: \(buttonId) -> \(id) for system \(systemId)")
 
         switch systemId {
@@ -1318,16 +1318,28 @@ public class DeltaSkinInputHandler: ObservableObject {
         case .PCE:
             if let r = core as? PVPCESystemResponderClient {
                 let b = PVPCEButton(id)
+                DLOG("PCE button: original=\(buttonId), normalized=\(id), PVPCEButton=\(b.stringValue), rawValue=\(b.rawValue)")
+                if b == .up && id != "up" && !["up", "down", "left", "right"].contains(id.lowercased()) {
+                    ELOG("⚠️ PCE button '\(id)' defaulted to .up - check normalization!")
+                }
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
+            } else {
+                ELOG("Core expcted to be `PVPCESystemResponderClient` but isn't.")
+                return false
             }
         case .PCECD:
             if let r = core as? PVPCECDSystemResponderClient {
                 let b = PVPCECDButton(id)
+                DLOG("PCECD button: original=\(buttonId), normalized=\(id), PVPCECDButton=\(b.stringValue), rawValue=\(b.rawValue)")
+                if b == .up && id != "up" && !["up", "down", "left", "right"].contains(id.lowercased()) {
+                    ELOG("⚠️ PCECD button '\(id)' defaulted to .up - check normalization!")
+                }
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             } else {
                 ELOG("Core expcted to be `PVPCECDSystemResponderClient` but isn't.")
+                return false
             }
         case .MasterSystem:
             if let r = core as? PVMasterSystemSystemResponderClient {
@@ -1567,6 +1579,24 @@ public class DeltaSkinInputHandler: ObservableObject {
         return false
     }
 
+    /// Convert Unicode Roman numerals to ASCII equivalents
+    /// Handles both uppercase (Ⅰ, Ⅱ, Ⅲ, Ⅳ, Ⅴ, Ⅵ) and lowercase (ⅰ, ⅱ, ⅲ, ⅳ, ⅴ, ⅵ)
+    private func normalizeRomanNumerals(_ input: String) -> String {
+        return input
+            .replacingOccurrences(of: "ⅰ", with: "i")  // U+2170 SMALL ROMAN NUMERAL ONE
+            .replacingOccurrences(of: "ⅱ", with: "ii") // U+2171 SMALL ROMAN NUMERAL TWO
+            .replacingOccurrences(of: "ⅲ", with: "iii") // U+2172 SMALL ROMAN NUMERAL THREE
+            .replacingOccurrences(of: "ⅳ", with: "iv") // U+2173 SMALL ROMAN NUMERAL FOUR
+            .replacingOccurrences(of: "ⅴ", with: "v")  // U+2174 SMALL ROMAN NUMERAL FIVE
+            .replacingOccurrences(of: "ⅵ", with: "vi") // U+2175 SMALL ROMAN NUMERAL SIX
+            .replacingOccurrences(of: "Ⅰ", with: "i")  // U+2160 ROMAN NUMERAL ONE
+            .replacingOccurrences(of: "Ⅱ", with: "ii") // U+2161 ROMAN NUMERAL TWO
+            .replacingOccurrences(of: "Ⅲ", with: "iii") // U+2162 ROMAN NUMERAL THREE
+            .replacingOccurrences(of: "Ⅳ", with: "iv") // U+2163 ROMAN NUMERAL FOUR
+            .replacingOccurrences(of: "Ⅴ", with: "v")  // U+2164 ROMAN NUMERAL FIVE
+            .replacingOccurrences(of: "Ⅵ", with: "vi") // U+2165 ROMAN NUMERAL SIX
+    }
+
     /// Normalize skin button IDs to canonical names per system
     private func normalizeSkinButtonId(_ id: String, for system: SystemIdentifier) -> String {
         let s = id.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1732,17 +1762,19 @@ public class DeltaSkinInputHandler: ObservableObject {
             return s
         case .PCE, .PCECD:
             /// PCE/PCECD button normalization - supports: up, down, left, right, button1-6, run, select, mode
-            if ["up", "down", "left", "right"].contains(s) { return s }
-            if ["button1", "1", "i", "a"].contains(s) { return "button1" }
-            if ["button2", "2", "ii", "b"].contains(s) { return "button2" }
-            if ["button3", "3", "iii", "x"].contains(s) { return "button3" }
-            if ["button4", "4", "iv", "y"].contains(s) { return "button4" }
-            if ["button5", "5", "v"].contains(s) { return "button5" }
-            if ["button6", "6", "vi"].contains(s) { return "button6" }
-            if ["run", "start"].contains(s) { return "run" }
-            if ["select"].contains(s) { return "select" }
-            if ["mode"].contains(s) { return "mode" }
-            return s
+            /// Also handles Unicode Roman numerals (ⅰ, ⅱ, ⅲ, ⅳ, ⅴ, ⅵ and Ⅰ, Ⅱ, Ⅲ, Ⅳ, Ⅴ, Ⅵ)
+            let normalized = normalizeRomanNumerals(s)
+            if ["up", "down", "left", "right"].contains(normalized) { return normalized }
+            if ["button1", "1", "i", "a"].contains(normalized) { return "button1" }
+            if ["button2", "2", "ii", "b"].contains(normalized) { return "button2" }
+            if ["button3", "3", "iii", "x"].contains(normalized) { return "button3" }
+            if ["button4", "4", "iv", "y"].contains(normalized) { return "button4" }
+            if ["button5", "5", "v"].contains(normalized) { return "button5" }
+            if ["button6", "6", "vi"].contains(normalized) { return "button6" }
+            if ["run", "start"].contains(normalized) { return "run" }
+            if ["select"].contains(normalized) { return "select" }
+            if ["mode"].contains(normalized) { return "mode" }
+            return normalized
         case .MasterSystem:
             /// MasterSystem button normalization - supports: up, down, left, right, b, c, start
             /// PVMasterSystemButton maps a->b and x/y->c
