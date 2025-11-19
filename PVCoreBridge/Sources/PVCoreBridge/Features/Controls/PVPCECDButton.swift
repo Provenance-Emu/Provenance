@@ -55,17 +55,17 @@
             case .right:
                 return "right"
             case .button1:
-                return "1"
+                return "i"
             case .button2:
-                return "2"
+                return "ii"
             case .button3:
-                return "3"
+                return "iii"
             case .button4:
-                return "4"
+                return "iv"
             case .button5:
-                return "5"
+                return "v"
             case .button6:
-                return "6"
+                return "vi"
             case .run:
                 return "run"
             case .select:
