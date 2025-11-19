@@ -50,22 +50,38 @@ public final class RetroSystemStatsViewModel: ObservableObject {
     // MARK: - Initialization
 
     public init() {
-        // Initial update
-        updateSystemStats()
-        updateLibraryStats()
+        // Initial update (one-time only)
         updateDeviceInfo()
-
-        // Start timer for system stats updates
-        updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            self?.updateSystemStats()
-        }
     }
 
+    @MainActor
     deinit {
-        updateTimer?.invalidate()
+        stopTimer()
     }
 
     // MARK: - Public Methods
+
+    /// Start the update timer (call when view appears)
+    public func startTimer() {
+        guard updateTimer == nil else { return }
+
+        // Initial stats update
+        updateSystemStats()
+        updateLibraryStats()
+
+        // Start timer for system stats updates on common run loop mode
+        let timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.updateSystemStats()
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        updateTimer = timer
+    }
+
+    /// Stop the update timer (call when view disappears)
+    public func stopTimer() {
+        updateTimer?.invalidate()
+        updateTimer = nil
+    }
 
     /// Update all stats
     public func refreshAllStats() {

@@ -13,24 +13,24 @@ import PVLibrary
 /// A retrowave-styled system stats viewer component
 public struct RetroSystemStatsView: View {
     // MARK: - Properties
-    
+
     /// View model for handling system stats data and logic
     @StateObject private var viewModel = RetroSystemStatsViewModel()
-    
+
     /// Whether to show the refresh button
     private let showRefreshButton: Bool
-    
+
     /// Whether to reduce motion for accessibility
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
     // MARK: - Initialization
-    
+
     public init(showRefreshButton: Bool = true) {
         self.showRefreshButton = showRefreshButton
     }
-    
+
     // MARK: - Body
-    
+
     public var body: some View {
         VStack(spacing: 12) {
             // Header
@@ -39,9 +39,9 @@ public struct RetroSystemStatsView: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(RetroTheme.retroPink)
                     .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
-                
+
                 Spacer()
-                
+
                 if showRefreshButton {
                     Button(action: {
                         viewModel.refreshAllStats()
@@ -54,13 +54,13 @@ public struct RetroSystemStatsView: View {
                     }
                 }
             }
-            
+
             // Device info section
             deviceInfoSection
-            
+
             // System stats section
             systemStatsSection
-            
+
             // Library stats section
             libraryStatsSection
         }
@@ -69,20 +69,20 @@ public struct RetroSystemStatsView: View {
             ZStack {
                 // Dark background with grid overlay
                 Color.black.opacity(0.8)
-                
+
                 // Grid pattern overlay
                 GeometryReader { geometry in
                     Path { path in
                         let width = geometry.size.width
                         let height = geometry.size.height
                         let gridSize: CGFloat = 20
-                        
+
                         // Horizontal lines
                         for i in stride(from: 0, through: height, by: gridSize) {
                             path.move(to: CGPoint(x: 0, y: i))
                             path.addLine(to: CGPoint(x: width, y: i))
                         }
-                        
+
                         // Vertical lines
                         for i in stride(from: 0, through: width, by: gridSize) {
                             path.move(to: CGPoint(x: i, y: 0))
@@ -107,12 +107,15 @@ public struct RetroSystemStatsView: View {
         )
         .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5, x: 0, y: 0)
         .onAppear {
-            viewModel.refreshAllStats()
+            viewModel.startTimer()
+        }
+        .onDisappear {
+            viewModel.stopTimer()
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     /// Device information section (Device Model, CPU, GPU, OS)
     private var deviceInfoSection: some View {
         VStack(spacing: 10) {
@@ -121,7 +124,7 @@ public struct RetroSystemStatsView: View {
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
                 .foregroundColor(RetroTheme.retroPink)
                 .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
-            
+
             // Divider with gradient
             Rectangle()
                 .fill(LinearGradient(
@@ -131,7 +134,7 @@ public struct RetroSystemStatsView: View {
                 ))
                 .frame(height: 1)
                 .padding(.vertical, 2)
-            
+
             // Device model
             HStack {
                 Label {
@@ -143,16 +146,16 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text(viewModel.deviceModel)
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
-            
+
             // CPU model
             HStack {
                 Label {
@@ -164,16 +167,16 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text(viewModel.cpuModel)
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
-            
+
             // CPU cores
             HStack {
                 Label {
@@ -185,14 +188,14 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(viewModel.cpuCoreCount) cores")
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
-            
+
             // GPU model
             HStack {
                 Label {
@@ -204,16 +207,16 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text(viewModel.gpuModel)
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
-            
+
             // OS version
             HStack {
                 Label {
@@ -225,16 +228,16 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text(viewModel.osVersion)
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
         }
     }
-    
+
     /// System stats section (CPU, Memory)
     private var systemStatsSection: some View {
         VStack(spacing: 10) {
@@ -255,14 +258,14 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(String(format: "%.1f", viewModel.cpuUsage))%")
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
-            
+
             // Memory usage
             HStack {
                 Label {
@@ -274,14 +277,14 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(viewModel.formatBytes(viewModel.memoryUsed))/\(viewModel.formatBytes(viewModel.memoryTotal))")
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
-            
+
             // Memory usage bar
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
@@ -289,7 +292,7 @@ public struct RetroSystemStatsView: View {
                     RoundedRectangle(cornerRadius: 2)
                         .fill(Color.gray.opacity(0.3))
                         .frame(height: 4)
-                    
+
                     // Usage bar
                     RoundedRectangle(cornerRadius: 2)
                         .fill(
@@ -305,7 +308,7 @@ public struct RetroSystemStatsView: View {
             .frame(height: 4)
         }
     }
-    
+
     /// Library stats section (Games, Save States, BIOSes)
     private var libraryStatsSection: some View {
         VStack(spacing: 10) {
@@ -316,7 +319,7 @@ public struct RetroSystemStatsView: View {
                 .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 4)
-            
+
             // Divider with gradient
             Rectangle()
                 .fill(LinearGradient(
@@ -326,7 +329,7 @@ public struct RetroSystemStatsView: View {
                 ))
                 .frame(height: 1)
                 .padding(.vertical, 2)
-            
+
             // Games count
             HStack {
                 Label {
@@ -338,14 +341,14 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(viewModel.gameCount)")
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
-            
+
             // Save states count
             HStack {
                 Label {
@@ -357,14 +360,14 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(viewModel.saveStateCount)")
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
-            
+
             // BIOSes count
             HStack {
                 Label {
@@ -376,14 +379,14 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(viewModel.biosCount)")
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
-            
+
             // Storage usage
             HStack {
                 Label {
@@ -395,14 +398,14 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text(viewModel.formatBytes(UInt64(viewModel.storageUsed)))
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
             }
-            
+
             // Total playtime
             HStack {
                 Label {
@@ -414,9 +417,9 @@ public struct RetroSystemStatsView: View {
                         .font(.system(size: 10))
                         .foregroundColor(RetroTheme.retroPink)
                 }
-                
+
                 Spacer()
-                
+
                 Text(viewModel.formatPlaytime(viewModel.totalPlaytime))
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
