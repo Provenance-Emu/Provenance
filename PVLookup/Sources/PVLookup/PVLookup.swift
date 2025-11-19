@@ -53,6 +53,26 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     private var isInitializing = false
     private var initializationTask: Task<Void, Error>?
 
+    private struct CacheEntry<Value> {
+        var value: Value?
+        var lastAccess: TimeInterval
+    }
+
+    private enum CachedLookup<Value> {
+        case hit(Value)
+        case miss
+    }
+
+    private struct FilenameCacheKey: Hashable {
+        let filename: String
+        let systemIdentifier: String?
+    }
+
+    private var md5Cache: [String: CacheEntry<ROMMetadata>] = [:]
+    private let md5CacheLimit = 512
+    private var filenameCache: [FilenameCacheKey: CacheEntry<[ROMMetadata]>] = [:]
+    private let filenameCacheLimit = 256
+
     // MARK: - Databases
 #if canImport(OpenVGDB)
     private var openVGDB: OpenVGDB?
@@ -138,6 +158,66 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         ILOG("Database initialization complete")
     }
 
+    // MARK: - Cache Helpers
+
+    private func cachedMD5Result(for key: String) -> CachedLookup<ROMMetadata>? {
+        guard var entry = md5Cache[key] else { return nil }
+        entry.lastAccess = Date().timeIntervalSinceReferenceDate
+        md5Cache[key] = entry
+        if let value = entry.value {
+            return .hit(value)
+        } else {
+            return .miss
+        }
+    }
+
+    private func cacheMD5Result(_ value: ROMMetadata?, for key: String) {
+        md5Cache[key] = CacheEntry(value: value, lastAccess: Date().timeIntervalSinceReferenceDate)
+        pruneMD5CacheIfNeeded()
+    }
+
+    private func pruneMD5CacheIfNeeded() {
+        guard md5Cache.count > md5CacheLimit else { return }
+        let overflow = md5Cache.count - md5CacheLimit
+        let keysByAge = md5Cache
+            .sorted { $0.value.lastAccess < $1.value.lastAccess }
+            .prefix(overflow)
+            .map { $0.key }
+
+        for key in keysByAge {
+            md5Cache.removeValue(forKey: key)
+        }
+    }
+
+    private func cachedFilenameResult(for key: FilenameCacheKey) -> CachedLookup<[ROMMetadata]>? {
+        guard var entry = filenameCache[key] else { return nil }
+        entry.lastAccess = Date().timeIntervalSinceReferenceDate
+        filenameCache[key] = entry
+        if let value = entry.value {
+            return .hit(value)
+        } else {
+            return .miss
+        }
+    }
+
+    private func cacheFilenameResult(_ value: [ROMMetadata]?, for key: FilenameCacheKey) {
+        filenameCache[key] = CacheEntry(value: value, lastAccess: Date().timeIntervalSinceReferenceDate)
+        pruneFilenameCacheIfNeeded()
+    }
+
+    private func pruneFilenameCacheIfNeeded() {
+        guard filenameCache.count > filenameCacheLimit else { return }
+        let overflow = filenameCache.count - filenameCacheLimit
+        let keysByAge = filenameCache
+            .sorted { $0.value.lastAccess < $1.value.lastAccess }
+            .prefix(overflow)
+            .map { $0.key }
+
+        for key in keysByAge {
+            filenameCache.removeValue(forKey: key)
+        }
+    }
+
     // Helper to ensure databases are initialized
     internal func ensureDatabasesInitialized() async throws {
         if isInitializing {
@@ -207,6 +287,17 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         ILOG("PVLookup: Starting ROM search for MD5: \(md5)")
         let upperMD5 = md5.uppercased()
 
+        if let cached = cachedMD5Result(for: upperMD5) {
+            switch cached {
+            case .hit(let metadata):
+                ILOG("PVLookup: Returning cached ROM metadata for MD5: \(upperMD5)")
+                return metadata
+            case .miss:
+                ILOG("PVLookup: Cached ROM miss for MD5: \(upperMD5)")
+                return nil
+            }
+        }
+
         /// Run OpenVGDB and LibretroDB searches in parallel
         async let openVGDBResult: ROMMetadata? = {
             let startTime = Date()
@@ -238,6 +329,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let (openVGDBMetadata, libretroDBMetadata) = await (openVGDBResult, libretroDBResult)
 
         if let mergedResult = openVGDBMetadata?.merged(with: libretroDBMetadata) ?? libretroDBMetadata?.merged(with: openVGDBMetadata) ?? openVGDBMetadata ?? libretroDBMetadata {
+            cacheMD5Result(mergedResult, for: upperMD5)
             let duration = Date().timeIntervalSince(searchStartTime)
             ILOG("PVLookup: Found result in primary databases (took \(String(format: "%.3f", duration))s)")
             return mergedResult
@@ -253,6 +345,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             }
 
             let shiraGameResult = try? await getShiraGame()?.searchROM(byMD5: md5.lowercased())
+            cacheMD5Result(shiraGameResult, for: upperMD5)
             DLOG("PVLookup: ShiraGame result: \(String(describing: shiraGameResult))")
 
             let totalDuration = Date().timeIntervalSince(searchStartTime)
@@ -260,6 +353,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
             return shiraGameResult
         }
 
+        cacheMD5Result(nil, for: upperMD5)
         let totalDuration = Date().timeIntervalSince(searchStartTime)
         ILOG("PVLookup: No results found (search took \(String(format: "%.3f", totalDuration))s)")
         return nil
@@ -269,6 +363,19 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         /// Start time for overall search
         let searchStartTime = Date()
         ILOG("PVLookup: Starting database search for filename: \(filename), systemID: \(String(describing: systemID))")
+        let normalizedFilename = filename.lowercased()
+        let cacheKey = FilenameCacheKey(filename: normalizedFilename, systemIdentifier: systemID?.rawValue)
+
+        if let cached = cachedFilenameResult(for: cacheKey) {
+            switch cached {
+            case .hit(let metadata):
+                ILOG("PVLookup: Returning cached filename search for \(filename) (\(systemID?.rawValue ?? "any"))")
+                return metadata
+            case .miss:
+                ILOG("PVLookup: Cached filename miss for \(filename) (\(systemID?.rawValue ?? "any"))")
+                return nil
+            }
+        }
 
         /// Check which databases are enabled before starting parallel tasks
         let shouldSearchOpenVGDB = databases.contains(.openVGDB)
@@ -348,6 +455,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let results = allResults.0 + allResults.1 + allResults.2 + allResults.3
 
         let totalDuration = Date().timeIntervalSince(searchStartTime)
+        cacheFilenameResult(results.isEmpty ? nil : results, for: cacheKey)
         if results.isEmpty {
             ILOG("PVLookup: No results found (search took \(String(format: "%.3f", totalDuration))s)")
             return nil
