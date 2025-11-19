@@ -2,6 +2,9 @@ import SwiftUI
 import PVPrimitives
 import PVLogging
 import UniformTypeIdentifiers
+#if canImport(SafariServices)
+import SafariServices
+#endif
 
 /// View for browsing and selecting skins for all systems with retrowave styling
 public struct SystemSkinBrowserView: View {
@@ -52,6 +55,10 @@ public struct SystemSkinBrowserView: View {
                             emptyStateView
                         } else {
                             systemsGridView
+
+                            // DeltaStyles link component
+                            DeltaStylesLinkView()
+                                .padding(.top, 8)
                         }
                     }
                     .padding(.horizontal)
@@ -495,5 +502,92 @@ public struct SystemSkinBrowserView: View {
         await MainActor.run {
             importingFiles = false
         }
+    }
+}
+
+/// View component for linking to DeltaStyles website
+private struct DeltaStylesLinkView: View {
+    @State private var showSafariView = false
+
+    private let deltaStylesURL = URL(string: "https://deltastyles.com")!
+
+    var body: some View {
+        VStack(spacing: 12) {
+            // Info label
+            HStack {
+                Image(systemName: "info.circle.fill")
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+
+                Text("Download more skins from DeltaStyles")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.7))
+
+                Spacer()
+            }
+            .padding(.horizontal, 4)
+
+            // Button to open DeltaStyles
+            #if !os(tvOS)
+            Button {
+                showSafariView = true
+            } label: {
+                HStack {
+                    Image(systemName: "safari.fill")
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+
+                    Text("Visit DeltaStyles.com")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+
+                    Spacer()
+
+                    Image(systemName: "arrow.up.right.square")
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black.opacity(0.4))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5)
+                        )
+                )
+                .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+            }
+            .sheet(isPresented: $showSafariView) {
+                SafariWebView(url: deltaStylesURL)
+            }
+            #else
+            Link(destination: deltaStylesURL) {
+                HStack {
+                    Image(systemName: "safari.fill")
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+
+                    Text("Visit DeltaStyles.com")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+
+                    Spacer()
+
+                    Image(systemName: "arrow.up.right.square")
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black.opacity(0.4))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5)
+                        )
+                )
+                .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+            }
+            #endif
+        }
+        .padding(.vertical, 8)
     }
 }

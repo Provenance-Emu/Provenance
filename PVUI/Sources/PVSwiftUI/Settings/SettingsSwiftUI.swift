@@ -1319,6 +1319,8 @@ private struct DeltaSkinsSection: View {
             buttonSoundEFfect
 
             buttonTouchFeedback
+
+            DeltaStylesLinkView()
         }
     }
 
@@ -1349,6 +1351,166 @@ private struct DeltaSkinsSection: View {
         PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
 }
+
+/// View component for linking to DeltaStyles website
+private struct DeltaStylesLinkView: View {
+    @State private var showSafariView = false
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    private let deltaStylesURL = URL(string: "https://deltastyles.com")!
+
+    var body: some View {
+        VStack(spacing: 12) {
+            // Info label
+            HStack {
+                Image(systemName: "info.circle.fill")
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+
+                Text("Download more skins from DeltaStyles")
+                    .font(.subheadline)
+                    .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
+
+                Spacer()
+            }
+            .padding(.horizontal, 4)
+
+            // Button to open DeltaStyles
+            #if !os(tvOS)
+            Button {
+                showSafariView = true
+            } label: {
+                HStack {
+                    Image(systemName: "safari.fill")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Text("Visit DeltaStyles.com")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Spacer()
+
+                    Image(systemName: "arrow.up.right.square")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                )
+            }
+            .sheet(isPresented: $showSafariView) {
+                SafariWebView(url: deltaStylesURL)
+            }
+            #else
+            Link(destination: deltaStylesURL) {
+                HStack {
+                    Image(systemName: "safari.fill")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Text("Visit DeltaStyles.com")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Spacer()
+
+                    Image(systemName: "arrow.up.right.square")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                )
+            }
+            #endif
+        }
+        .padding(.vertical, 8)
+    }
+}
+
+#if canImport(SafariServices)
+import SafariServices
+
+/// Safari WebView wrapper for presenting SFSafariViewController in SwiftUI
+private struct SafariWebView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let config = SFSafariViewController.Configuration()
+        config.barCollapsingEnabled = true
+        config.entersReaderIfAvailable = true
+        return SFSafariViewController(url: url, configuration: config)
+    }
+
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+}
+#endif
 
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 private struct RetroAchievementsSection: View {

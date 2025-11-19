@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(SafariServices)
+import SafariServices
+#endif
 
 /// Grid view with loading and error states
 struct SkinGridView: View {
@@ -109,6 +112,11 @@ struct SkinGridView: View {
                                 }
                             }
                         }
+
+                        // DeltaStyles link component
+                        DeltaStylesLinkView()
+                            .padding(.horizontal)
+                            .padding(.top, 8)
                     }
                 }
             }
@@ -196,5 +204,146 @@ private struct ErrorView: View {
                 .foregroundStyle(.secondary)
         }
         .padding()
+    }
+}
+
+/// View component for linking to DeltaStyles website
+private struct DeltaStylesLinkView: View {
+    @State private var showSafariView = false
+
+    private let deltaStylesURL = URL(string: "https://deltastyles.com")!
+
+    var body: some View {
+        VStack(spacing: 12) {
+            // Info label
+            HStack {
+                Image(systemName: "info.circle.fill")
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.blue, .purple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+
+                Text("Download more skins from DeltaStyles")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+            }
+            .padding(.horizontal, 4)
+
+            // Button to open DeltaStyles
+            #if !os(tvOS)
+            Button {
+                showSafariView = true
+            } label: {
+                HStack {
+                    Image(systemName: "safari.fill")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.pink, .blue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Text("Visit DeltaStyles.com")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.pink, .blue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Spacer()
+
+                    Image(systemName: "arrow.up.right.square")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.blue, .purple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.secondary.opacity(0.2))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.pink, .blue]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                )
+            }
+            .sheet(isPresented: $showSafariView) {
+                SafariWebView(url: deltaStylesURL)
+            }
+            #else
+            Link(destination: deltaStylesURL) {
+                HStack {
+                    Image(systemName: "safari.fill")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.pink, .blue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Text("Visit DeltaStyles.com")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.pink, .blue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+
+                    Spacer()
+
+                    Image(systemName: "arrow.up.right.square")
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.blue, .purple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.secondary.opacity(0.2))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.pink, .blue]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                )
+            }
+            #endif
+        }
+        .padding(.vertical, 8)
     }
 }
