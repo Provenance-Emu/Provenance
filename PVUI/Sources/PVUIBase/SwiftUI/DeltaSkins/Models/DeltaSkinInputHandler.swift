@@ -761,7 +761,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 let b = PVEP128Button(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .DOS:
+        case .DOS, .DOOM, .Wolf3D, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
             if let r = core as? PVDOSSystemResponderClient {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -1509,7 +1509,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        case .DOS:
+        case .DOS, .DOOM, .Wolf3D, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
             if let r = core as? PVDOSSystemResponderClient {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
