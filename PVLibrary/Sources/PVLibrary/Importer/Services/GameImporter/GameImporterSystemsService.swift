@@ -27,9 +27,74 @@ public protocol GameImporterSystemsServicing {
 
 class GameImporterSystemsService: GameImporterSystemsServicing {
     private let lookup: PVLookup
+    private let cacheLock = NSLock()
+
+    private struct SystemsCacheEntry<Value> {
+        var value: Value?
+        var lastAccess: TimeInterval
+    }
+
+    private enum SystemsCacheResult<Value> {
+        case hit(Value)
+        case miss
+    }
+
+    private struct SystemCacheKey: Hashable {
+        let filename: String
+        let fileExtension: String
+        let parentDirectory: String
+    }
+
+    private var systemsCache: [SystemCacheKey: SystemsCacheEntry<[SystemIdentifier]>] = [:]
+    private let systemsCacheLimit = 1024
 
     init(lookup: PVLookup = .shared) {
         self.lookup = lookup
+    }
+
+    private func cachedSystems(for key: SystemCacheKey) -> SystemsCacheResult<[SystemIdentifier]>? {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
+
+        guard var entry = systemsCache[key] else {
+            return nil
+        }
+
+        entry.lastAccess = Date().timeIntervalSinceReferenceDate
+        systemsCache[key] = entry
+
+        if let value = entry.value {
+            return .hit(value)
+        } else {
+            return .miss
+        }
+    }
+
+    private func cacheSystems(_ value: [SystemIdentifier]?, for key: SystemCacheKey) {
+        cacheLock.lock()
+        systemsCache[key] = SystemsCacheEntry(value: value, lastAccess: Date().timeIntervalSinceReferenceDate)
+        let shouldTrim = systemsCache.count > systemsCacheLimit
+        cacheLock.unlock()
+
+        guard shouldTrim else { return }
+        trimSystemsCache()
+    }
+
+    private func trimSystemsCache() {
+        cacheLock.lock()
+        let overflow = systemsCache.count - systemsCacheLimit
+        guard overflow > 0 else {
+            cacheLock.unlock()
+            return
+        }
+
+        let keysToRemove = systemsCache
+            .sorted { $0.value.lastAccess < $1.value.lastAccess }
+            .prefix(overflow)
+            .map { $0.key }
+
+        keysToRemove.forEach { systemsCache.removeValue(forKey: $0) }
+        cacheLock.unlock()
     }
 
     func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem], romFilename: String) -> [PVGame]? {
@@ -48,6 +113,30 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
     func determineSystems(for item: ImportQueueItem) async throws -> [SystemIdentifier] {
         let filename = item.url.lastPathComponent
         let fileExtension = filename.components(separatedBy: ".").last?.lowercased() ?? ""
+        let normalizedFilename = filename.lowercased()
+        let parentDirectory = item.url.deletingLastPathComponent().lastPathComponent.lowercased()
+        let cacheKey = SystemCacheKey(
+            filename: normalizedFilename,
+            fileExtension: fileExtension,
+            parentDirectory: parentDirectory
+        )
+
+        @inline(__always)
+        func cacheAndReturn(_ systems: [SystemIdentifier]) -> [SystemIdentifier] {
+            cacheSystems(systems.isEmpty ? nil : systems, for: cacheKey)
+            return systems
+        }
+
+        if let cached = cachedSystems(for: cacheKey) {
+            switch cached {
+            case .hit(let systems):
+                DLOG("GameImporter: Using cached system match for \(filename)")
+                return systems
+            case .miss:
+                DLOG("GameImporter: Cached miss for \(filename), returning no systems")
+                return []
+            }
+        }
 
         DLOG("GameImporter: Determining systems for file:")
         DLOG("- Filename: \(filename)")
@@ -56,7 +145,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         /// Step 1: Check if file is already in a system directory (fastest check)
         if let system = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
             DLOG("Found system from path: \(system)")
-            return [system]
+            return cacheAndReturn([system])
         }
 
         /// Step 2: Extension-based filtering (cheapest - no DB queries)
@@ -84,14 +173,14 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                     allowFilenameSearch: true
                 ) {
                     DLOG("Found system by MD5/filename within extension-matched systems: \(systemID)")
-                    return [systemID]
+                    return cacheAndReturn([systemID])
                 }
             } else if hasKnownExtension {
                 /// If no MD5 but extension is known, try filename search within extension-matched systems
                 if let results = try await lookup.searchDatabase(usingFilename: filename, systemIDs: systemIdentifiers),
                    let firstResult = results.first {
                     DLOG("Found system by filename within extension-matched systems: \(firstResult.systemID)")
-                    return [firstResult.systemID]
+                    return cacheAndReturn([firstResult.systemID])
                 }
             }
         }
@@ -99,7 +188,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         /// Step 4: If we have extension matches but no constrained lookup match, return them
         if systemIdentifiers.count == 1 {
             DLOG("Single system match by extension: \(systemIdentifiers.first!.rawValue)")
-            return systemIdentifiers
+            return cacheAndReturn(systemIdentifiers)
         }
 
         /// Step 5: If multiple systems from extension, try filename-based matching to narrow down
@@ -112,7 +201,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                 let intersection = Set(systemIdentifiers).intersection(Set(filenameBasedSystems))
                 if !intersection.isEmpty {
                     DLOG("- Found \(intersection.count) systems matching both extension and filename")
-                    return Array(intersection)
+                    return cacheAndReturn(Array(intersection))
                 }
             }
 
@@ -125,12 +214,12 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                     allowFilenameSearch: false
                 ) {
                     DLOG("Found system by MD5 within extension-matched systems: \(systemID)")
-                    return [systemID]
+                    return cacheAndReturn([systemID])
                 }
             }
 
             /// Return the extension-matched systems (user will need to choose)
-            return systemIdentifiers
+            return cacheAndReturn(systemIdentifiers)
         }
 
         /// Step 6: No extension match - if MD5 available, do wider MD5-only search (no filename)
@@ -143,7 +232,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                 allowFilenameSearch: false
             ) {
                 DLOG("Found system by MD5 (wide search): \(systemID)")
-                return [systemID]
+                return cacheAndReturn([systemID])
             }
         }
 
@@ -152,12 +241,12 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
             let filenameBasedSystems = findSystemsByNameInFilename(filename)
             if !filenameBasedSystems.isEmpty {
                 DLOG("- Found \(filenameBasedSystems.count) systems by name in filename (no extension match)")
-                return filenameBasedSystems
+                return cacheAndReturn(filenameBasedSystems)
             }
         }
 
         /// Step 8: Return whatever we found (may be empty)
-        return systemIdentifiers
+        return cacheAndReturn(systemIdentifiers)
     }
 
     /// Find systems by looking for system names in the filename
