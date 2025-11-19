@@ -575,11 +575,11 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.secondScreenOption).asBool
     }
     @objc func parseOptions() {
-        
+
         var optionValues:String = ""
         var optionValuesFile: String = ""
         var optionOverwrite: Bool = false
-        
+
         self.gsPreference = NSNumber(value: gs).int8Value
         self.volume = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.volumeOption).asInt ?? 100).int32Value
         self.ffSpeed = NSNumber(value: PVRetroArchCoreOptions.valueForOption(PVRetroArchCoreOptions.ffOption).asInt ?? 300).int32Value
@@ -590,11 +590,11 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         self.retroArchControls = retroControl
         self.hasTouchControls=false
         self.extractArchive=true
-        
+
         if (UIScreen.screens.count > 1 && UIDevice.current.userInterfaceIdiom == .pad) {
             self.hasSecondScreen = secondScreen;
         }
-      
+
         if let systemIdentifier = self.systemIdentifier?.lowercased() {
             if (systemIdentifier.contains("psp")) {
                 self.gsPreference = 2; // Use Vulkan PSP
@@ -783,27 +783,109 @@ extension PVRetroArchCoreCore: GameWithCheat {
 
 }
 
+/// User-facing labels for pause-menu quick actions.
+private enum RetroArchActionTitle {
+    static let retroArchMenu = "RetroArch Menu"
+    static let toggleEject = "Toggle Eject"
+    static let toggleTouchKeyboard = "Toggle Touch Keyboard"
+    static let toggleTouchMouse = "Toggle Touch Mouse"
+}
+
 extension PVRetroArchCoreCore: CoreActions {
     public var coreActions: [CoreAction]? {
-        var actions = [CoreAction(title: "RetroArch Menu", options: nil, style:.default)]
+        var actions = [CoreAction(title: RetroArchActionTitle.retroArchMenu, options: nil, style: .default)]
+#if !os(tvOS)
+        if canToggleTouchKeyboard {
+            actions.append(CoreAction(title: RetroArchActionTitle.toggleTouchKeyboard, options: nil, style: .default))
+        }
+        if canToggleTouchMouse {
+            actions.append(CoreAction(title: RetroArchActionTitle.toggleTouchMouse, options: nil, style: .default))
+        }
+#endif
         if _bridge.numberOfDiscs > 1 {
-            actions +=  [CoreAction(title: "Toggle Eject", options: nil, style:.default)]
+            actions.append(CoreAction(title: RetroArchActionTitle.toggleEject, options: nil, style: .default))
         }
         return actions
     }
     public func selected(action: CoreAction) {
         switch action.title {
-            case "RetroArch Menu":
-                menuToggle()
-                break
-            case "Toggle Eject":
-                _bridge.toggleEjectState()
-                break
-            default:
-                WLOG("Unknown action: " + action.title)
+        case RetroArchActionTitle.retroArchMenu:
+            menuToggle()
+        case RetroArchActionTitle.toggleEject:
+            _bridge.toggleEjectState()
+#if !os(tvOS)
+        case RetroArchActionTitle.toggleTouchKeyboard:
+            toggleTouchKeyboard()
+        case RetroArchActionTitle.toggleTouchMouse:
+            toggleTouchMouse()
+#endif
+        default:
+            WLOG("Unknown action: " + action.title)
         }
     }
 }
+
+#if !os(tvOS)
+private extension PVRetroArchCoreCore {
+    /// Returns the active `CocoaView`, synchronizing to the main queue when required.
+    func activeCocoaView() -> CocoaView? {
+        if Thread.isMainThread {
+            return CocoaView.get()
+        }
+        var view: CocoaView?
+        DispatchQueue.main.sync {
+            view = CocoaView.get()
+        }
+        return view
+    }
+
+    /// Indicates whether the custom RetroArch keyboard can be shown.
+    var canToggleTouchKeyboard: Bool {
+        guard let cocoaView = activeCocoaView() else { return false }
+        return cocoaView.keyboardController != nil
+    }
+
+    /// Indicates whether the touch mouse handler is available.
+    var canToggleTouchMouse: Bool {
+        guard let cocoaView = activeCocoaView() else { return false }
+        return cocoaView.mouseHandler != nil
+    }
+
+    /// Toggle the RetroArch custom keyboard and mirror the helper-bar behavior.
+    func toggleTouchKeyboard() {
+        DispatchQueue.main.async {
+            guard let cocoaView = CocoaView.get(), let keyboardController = cocoaView.keyboardController else {
+                return
+            }
+            cocoaView.toggleCustomKeyboard()
+            let keyboardVisible = !keyboardController.view.isHidden
+            let notificationName = keyboardVisible ? Notification.Name("HideTouchControls") : Notification.Name("ShowTouchControls")
+            NotificationCenter.default.post(name: notificationName, object: nil)
+        }
+    }
+
+    /// Toggle the touch mouse handler while surfacing the RetroArch toast.
+    func toggleTouchMouse() {
+        DispatchQueue.main.async {
+            guard let cocoaView = CocoaView.get(), let mouseHandler = cocoaView.mouseHandler else {
+                return
+            }
+            mouseHandler.enabled.toggle()
+            let message = mouseHandler.enabled ? "Touch Mouse Enabled" : "Touch Mouse Disabled"
+            runloop_msg_queue_push(
+                message.cString(using: .utf8)!,
+                message.lengthOfBytes(using: .utf8),
+                1,
+                100,
+                true,
+                nil,
+                MESSAGE_QUEUE_ICON_DEFAULT,
+                MESSAGE_QUEUE_CATEGORY_SUCCESS
+            )
+        }
+    }
+}
+#endif
 
 func storeJSON<T: Encodable>(_ object: T, to url: URL) {
     let encoder = JSONEncoder()
