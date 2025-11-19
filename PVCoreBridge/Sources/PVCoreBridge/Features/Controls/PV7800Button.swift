@@ -27,8 +27,8 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "fire1", "a": self = .fire1
-            case "fire2", "b": self = .fire2
+            case "fire1", "a", "x": self = .fire1
+            case "fire2", "b", "y": self = .fire2
             case "select", "s": self = .select
             case "pause", "p", "start": self = .pause
             case "reset", "r": self = .reset
