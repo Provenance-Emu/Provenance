@@ -3296,6 +3296,12 @@ public final class GameImporter: GameImporting, ObservableObject {
             await importQueueActor.addImport(item)
             ILOG("GameImportQueue - Added artwork file to import queue: \(item.url.lastPathComponent)")
             return
+        } else if fileType == .skin {
+            // For skin files (.deltaskin, .manicskin), always add to queue
+            // No duplicate check needed - skin files should always be processed
+            await importQueueActor.addImport(item)
+            ILOG("GameImportQueue - Added skin file to import queue: \(item.url.lastPathComponent)")
+            return
         } else if fileType == .game || fileType == .cdRom {
             // Check for duplicates in the current queue FIRST (before database checks)
             // This prevents adding files that are already being processed
