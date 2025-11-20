@@ -415,9 +415,8 @@ public struct SystemSkinSelectionView: View {
                     // Default option (system default)
                     defaultSkinCell
 
-                    // Available skins for the selected orientation
-                    let filteredSkins = selectedOrientation == .portrait ? portraitSkins : landscapeSkins
-                    ForEach(filteredSkins, id: \.identifier) { skin in
+                    // Show all available skins (like RetroMenuView does)
+                    ForEach(availableSkins, id: \.identifier) { skin in
                         skinCell(for: skin)
                     }
                 }
@@ -650,23 +649,9 @@ public struct SystemSkinSelectionView: View {
 
     /// Process skins and update UI state
     private func processSkins(_ skins: [DeltaSkinProtocol]) async {
-        // Filter skins by orientation support
-        var portraitCompatible: [DeltaSkinProtocol] = []
-        var landscapeCompatible: [DeltaSkinProtocol] = []
-
-        for skin in skins {
-            // Check portrait support
-            let portraitTraits = DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .portrait)
-            if skin.supports(portraitTraits) {
-                portraitCompatible.append(skin)
-            }
-
-            // Check landscape support
-            let landscapeTraits = DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .landscape)
-            if skin.supports(landscapeTraits) {
-                landscapeCompatible.append(skin)
-            }
-        }
+        // Show all skins for the system (like RetroMenuView does)
+        // Don't filter by orientation support as skins can often work in both orientations
+        // even if they don't explicitly declare support for both
 
         // Get currently selected skins for both orientations using centralized manager
         let portraitSelection: String?
@@ -686,8 +671,9 @@ public struct SystemSkinSelectionView: View {
         await MainActor.run {
             withAnimation(.easeOut(duration: 0.3)) {
                 self.availableSkins = skins
-                self.portraitSkins = portraitCompatible
-                self.landscapeSkins = landscapeCompatible
+                // Store all skins in both lists to show all skins regardless of orientation
+                self.portraitSkins = skins
+                self.landscapeSkins = skins
                 self.selectedPortraitSkinId = portraitSelection
                 self.selectedLandscapeSkinId = landscapeSelection
                 self.isLoading = false
