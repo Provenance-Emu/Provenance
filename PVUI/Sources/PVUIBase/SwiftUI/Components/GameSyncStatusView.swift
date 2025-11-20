@@ -95,11 +95,13 @@ public struct GameSyncStatusView: View {
                 }
             }
             .padding(32)
+#if !os(tvOS)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(.systemGray6))
                     .shadow(radius: 20)
             )
+            #endif
             .padding(40)
         }
     }

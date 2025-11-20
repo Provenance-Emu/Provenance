@@ -131,7 +131,7 @@ public class PVGPUViewController: BaseViewController {
 
     /// Calculate average FPS from tracked frame timestamps
     /// Note: For GLKViewController, framesPerSecond is Int, so we provide a Double version
-    #if os(iOS)
+    #if os(iOS) || os(tvOS)
     #if !USE_METAL
     /// GLKViewController has framesPerSecond as Int, so we can't override it
     /// Instead, provide a computed property that calculates from timestamps

@@ -240,6 +240,7 @@ struct RetroMenuView: View {
                         }
                         .padding(.horizontal, 20)
                     }
+                    #if !os(tvOS)
                     .simultaneousGesture(
                         DragGesture(minimumDistance: 5)
                             .onChanged { _ in
@@ -254,6 +255,7 @@ struct RetroMenuView: View {
                                 }
                             }
                     )
+                    #endif
                     .onChange(of: selectedCategory) { newCategory in
                         // Only programmatically scroll if user is not actively dragging
                         guard !isDraggingCategoryBar else { return }
@@ -738,6 +740,7 @@ struct RetroMenuView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+#if !os(tvOS)
                 .sheet(isPresented: $showingDocumentPicker) {
                     SkinDocumentPicker { urls in
                         Task {
@@ -745,6 +748,7 @@ struct RetroMenuView: View {
                         }
                     }
                 }
+                    #endif
                 .alert("Save Skin Selection", isPresented: $showingSkinScopeAlert) {
                     Button("Session Only") {
                         ILOG("skins: Alert - Session Only selected")

@@ -459,7 +459,9 @@ struct ButtonRemappingView: View {
             }
         }
         .navigationTitle(controller.vendorName ?? "Remap Buttons")
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .onAppear {
             setupRemappableController()
             loadCurrentMappings()

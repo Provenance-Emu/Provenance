@@ -376,7 +376,9 @@ SideMenuView: SwiftUI.View {
                             handleFocusChange(newValue, proxy: proxy)
                         }
                     }
+                    #if !os(tvOS)
                     .scrollContentBackground(.hidden)
+                    #endif
                     .onAppear {
                         setupGamepadHandling(proxy: proxy)
                     }

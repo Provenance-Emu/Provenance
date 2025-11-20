@@ -570,7 +570,11 @@ struct EmulatorWithSkinView: View {
             }
         }
         .environmentObject(inputHandler)
+        #if !os(tvOS)
         .id("\(rotationCount)-\(currentOrientation.rawValue)-\(selectedFilterName ?? "none")") // Update when filter changes
+        #else
+        .id("\(selectedFilterName ?? "none")") // Update when filter changes
+        #endif
     }
 
     // MARK: - Debug Overlay
