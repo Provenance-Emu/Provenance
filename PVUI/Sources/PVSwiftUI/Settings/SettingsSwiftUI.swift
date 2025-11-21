@@ -377,9 +377,11 @@ public struct PVSettingsView: View {
                     CollapsibleSection(title: "Controller") {
                         ControllerSection()
                     }
+                    #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
                     CollapsibleSection(title: "Delta Skins") {
                         DeltaSkinsSection()
                     }
+                    #endif
                     CollapsibleSection(title: "RetroAchievements") {
                         RetroAchievementsSection(viewModel: viewModel)
                             .environmentObject(viewModel)
