@@ -223,7 +223,8 @@ public extension DeltaSkinManager {
     /// Convert a SystemIdentifier to a string identifier for DeltaSkinManager
     private func skinIdentifier(for systemIdentifier: SystemIdentifier) -> String {
         switch systemIdentifier {
-        case .NES:
+        // Nintendo
+        case .NES, .FDS:
             return "nes"
         case .SNES:
             return "snes"
@@ -233,6 +234,20 @@ public extension DeltaSkinManager {
             return "gbc"
         case .GBA:
             return "gba"
+        case .DS:
+            return "nds"
+        case ._3DS:
+            return "3ds"
+        case .VirtualBoy:
+            return "vb"
+        case .PokemonMini:
+            return "pm"
+        case .GameCube:
+            return "gamecube"
+        case .Wii:
+            return "wii"
+
+        // Sega
         case .Genesis:
             return "md"
         case .SegaCD:
@@ -247,12 +262,24 @@ public extension DeltaSkinManager {
             return "ss"
         case .SG1000:
             return "sg1000"
+        case .Dreamcast:
+            return "dc"
+
+        // Sony
         case .PSX, .PS2, .PS3:
             return "ps1"
         case .PSP:
             return "psp"
-        case .DS:
-            return "nds"
+
+        // NEC
+        case .PCE, .PCECD:
+            return "pce"
+        case .PCFX:
+            return "pcfx"
+        case .SGFX:
+            return "sgfx"
+
+        // Atari
         case .Atari2600:
             return "atari2600"
         case .Atari5200:
@@ -263,23 +290,82 @@ public extension DeltaSkinManager {
             return "jaguar"
         case .Lynx:
             return "lynx"
-        case .PCE, .PCECD:
-            return "pce"
-        case .SGFX:
-            return "sgfx"
+        case .Atari8bit:
+            return "atari8bit"
+        case .AtariST:
+            return "atarist"
+
+        // SNK
+        case .NeoGeo:
+            return "neogeo"
+        case .NGP:
+            return "ngp"
+        case .NGPC:
+            return "ngpc"
+
+        // Bandai
         case .WonderSwan, .WonderSwanColor:
             return "ws"
-        case .NGP, .NGPC:
-            return "ngp"
-        case .PokemonMini:
-            return "pm"
-        case .VirtualBoy:
-            return "vb"
-        case .Dreamcast:
-            return "dc"
-        default:
-            // For any other system, return a default identifier
-            return systemIdentifier.rawValue.lowercased()
+
+        // Other
+        case .Vectrex:
+            return "vectrex"
+        case ._3DO:
+            return "3do"
+        case .AppleII:
+            return "appleii"
+        case .C64:
+            return "c64"
+        case .CDi:
+            return "cdi"
+        case .ColecoVision:
+            return "colecovision"
+        case .CPS1:
+            return "cps1"
+        case .CPS2:
+            return "cps2"
+        case .CPS3:
+            return "cps3"
+        case .DOOM:
+            return "doom"
+        case .DOS:
+            return "dos"
+        case .EP128:
+            return "ep128"
+        case .Intellivision:
+            return "intellivision"
+        case .Macintosh:
+            return "macintosh"
+        case .MAME:
+            return "mame"
+        case .MegaDuck:
+            return "megaduck"
+        case .MSX:
+            return "msx"
+        case .MSX2:
+            return "msx2"
+        case .Music:
+            return "music"
+        case .Odyssey2:
+            return "odyssey2"
+        case .PalmOS:
+            return "palmos"
+        case .Quake:
+            return "quake"
+        case .Quake2:
+            return "quake2"
+        case .RetroArch:
+            return "retroarch"
+        case .Supervision:
+            return "supervision"
+        case .TIC80:
+            return "tic80"
+        case .Wolf3D:
+            return "wolf3d"
+        case .ZXSpectrum:
+            return "zxspectrum"
+        case .Unknown:
+            return "unknown"
         }
     }
 }

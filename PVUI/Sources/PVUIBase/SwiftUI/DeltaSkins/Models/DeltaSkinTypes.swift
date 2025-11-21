@@ -338,6 +338,67 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
     case pokemonMini
     case dreamcast
 
+    // NEC
+    case pce
+    case pcecd
+    case pcfx
+    case sgfx
+
+    // Vectrex
+    case vectrex
+
+    // Atari
+    case atari2600
+    case atari5200
+    case atari7800
+    case jaguar
+    case jaguarcd
+    case lynx
+    case atari8bit
+    case atarist
+
+    // SNK
+    case neogeo
+    case ngp
+    case ngpc
+
+    // Bandai
+    case wonderswan
+    case wonderswancolor
+
+    // Nintendo
+    case gamecube
+    case wii
+
+    // Other
+    case _3do
+    case appleII
+    case c64
+    case cdi
+    case colecovision
+    case cps1
+    case cps2
+    case cps3
+    case doom
+    case dos
+    case ep128
+    case intellivision
+    case macintosh
+    case mame
+    case megaduck
+    case msx
+    case msx2
+    case music
+    case odyssey2
+    case palmos
+    case quake
+    case quake2
+    case retroarch
+    case supervision
+    case tic80
+    case wolf3d
+    case zxspectrum
+
     // Implement Comparable
     public static func < (lhs: DeltaSkinGameType, rhs: DeltaSkinGameType) -> Bool {
         // Order by console generation/release date
@@ -352,7 +413,14 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
             .saturn,                // Sega Saturn
             .virtualBoy,            // Nintendo Virtual Boy
             .threeDS,               // Nintendo 3DS
-            .pokemonMini            // Pokemon Mini
+            .pokemonMini,           // Pokemon Mini
+            .pce, .pcecd, .pcfx, .sgfx, // NEC
+            .vectrex,               // Vectrex
+            .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, // Atari
+            .neogeo, .ngp, .ngpc,   // SNK
+            .wonderswan, .wonderswancolor, // Bandai
+            .gamecube, .wii,        // Nintendo
+            ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum // Other
         ]
 
         guard let lhsIndex = order.firstIndex(of: lhs),
@@ -392,12 +460,14 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case "gb": return .gbc
         case "gbc": return .gbc
         case "gba": return .gba
-        case "nes": return .nes
+        case "nes", "fds": return .nes
         case "snes": return .snes
         case "n64", "64dd", "n64dd": return .n64
         case "ds", "nds": return .nds
         case "vb", "virtualboy": return .virtualBoy
         case "3ds", "three3ds", "threeds": return .threeDS
+        case "gamecube", "gc": return .gamecube
+        case "wii": return .wii
 
         // Sega
         case "genesis", "md", "megadrive": return .genesis
@@ -413,8 +483,63 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case "psx", "ps1", "ps2", "ps3": return .psx
         case "psp": return .psp
 
+        // NEC
+        case "pce": return .pce
+        case "pcecd": return .pcecd
+        case "pcfx": return .pcfx
+        case "sgfx", "supergrafx": return .sgfx
+
+        // Vectrex
+        case "vectrex": return .vectrex
+
+        // Atari
+        case "2600", "a2600", "atari2600": return .atari2600
+        case "5200", "a5200", "atari5200": return .atari5200
+        case "7800", "a7800", "atari7800": return .atari7800
+        case "jaguar", "atarijaguar": return .jaguar
+        case "jaguarcd", "atarijaguarcd": return .jaguarcd
+        case "lynx", "atarilynx": return .lynx
+        case "atari8bit", "atari8": return .atari8bit
+        case "atarist", "atariST": return .atarist
+
+        // SNK
+        case "neogeo", "neo", "ng": return .neogeo
+        case "ngp", "neogeopocket": return .ngp
+        case "ngpc", "neogeopocketcolor": return .ngpc
+
+        // Bandai
+        case "ws", "wonderswan": return .wonderswan
+        case "wsc", "wonderswancolor": return .wonderswancolor
+
         // Other
-        case "pm", "pokemonmini", "pokemonmini": return .pokemonMini
+        case "pm", "pokemonmini": return .pokemonMini
+        case "3do": return ._3do
+        case "appleii", "apple2": return .appleII
+        case "c64", "commodore64": return .c64
+        case "cdi", "philipscdi": return .cdi
+        case "colecovision", "coleco": return .colecovision
+        case "cps1", "capcomcps1": return .cps1
+        case "cps2", "capcomcps2": return .cps2
+        case "cps3", "capcomcps3": return .cps3
+        case "doom": return .doom
+        case "dos": return .dos
+        case "ep128", "enterprise128": return .ep128
+        case "intellivision": return .intellivision
+        case "macintosh", "mac": return .macintosh
+        case "mame": return .mame
+        case "megaduck": return .megaduck
+        case "msx": return .msx
+        case "msx2": return .msx2
+        case "music": return .music
+        case "odyssey2", "odyssey": return .odyssey2
+        case "palmos", "palm": return .palmos
+        case "quake": return .quake
+        case "quake2": return .quake2
+        case "retroarch": return .retroarch
+        case "supervision": return .supervision
+        case "tic80": return .tic80
+        case "wolf3d", "wolfenstein3d": return .wolf3d
+        case "zxspectrum", "spectrum": return .zxspectrum
         default:
             // Try to parse known Delta full IDs explicitly
             if lower.hasPrefix("com.rileytestut.delta.game.") {
@@ -474,8 +599,8 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .gamegear: return "com.rileytestut.delta.game.gg"
         case .masterSystem: return "com.rileytestut.delta.game.ms"
         case .psx: return "com.rileytestut.delta.game.psx"
-        // Not present in Delta’s identifiers
-        case .dreamcast, .segaCD, .sega32X, .sg1000, .saturn, .virtualBoy, .psp, .threeDS, .pokemonMini:
+        // Not present in Delta's identifiers
+        case .dreamcast, .segaCD, .sega32X, .sg1000, .saturn, .virtualBoy, .psp, .threeDS, .pokemonMini, .pce, .pcecd, .pcfx, .sgfx, .vectrex, .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, .neogeo, .ngp, .ngpc, .wonderswan, .wonderswancolor, .gamecube, .wii, ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum:
             return nil
         }
     }
@@ -504,6 +629,9 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .threeDS: return prefix + "3ds"
         case .pokemonMini: return prefix + "pm"
         case .dreamcast: return prefix + "dc"
+        // Not present in Manic's identifiers
+        case .pce, .pcecd, .pcfx, .sgfx, .vectrex, .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, .neogeo, .ngp, .ngpc, .wonderswan, .wonderswancolor, .gamecube, .wii, ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum:
+            return nil
         }
     }
 
@@ -531,6 +659,53 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case ._3DS: self = .threeDS
         case .PokemonMini: self = .pokemonMini
         case .Dreamcast: self = .dreamcast
+        case .PCE: self = .pce
+        case .PCECD: self = .pcecd
+        case .PCFX: self = .pcfx
+        case .SGFX: self = .sgfx
+        case .Vectrex: self = .vectrex
+        case .Atari2600: self = .atari2600
+        case .Atari5200: self = .atari5200
+        case .Atari7800: self = .atari7800
+        case .AtariJaguar: self = .jaguar
+        case .AtariJaguarCD: self = .jaguarcd
+        case .Lynx: self = .lynx
+        case .Atari8bit: self = .atari8bit
+        case .AtariST: self = .atarist
+        case .NeoGeo: self = .neogeo
+        case .NGP: self = .ngp
+        case .NGPC: self = .ngpc
+        case .WonderSwan: self = .wonderswan
+        case .WonderSwanColor: self = .wonderswancolor
+        case .GameCube: self = .gamecube
+        case .Wii: self = .wii
+        case ._3DO: self = ._3do
+        case .AppleII: self = .appleII
+        case .C64: self = .c64
+        case .CDi: self = .cdi
+        case .ColecoVision: self = .colecovision
+        case .CPS1: self = .cps1
+        case .CPS2: self = .cps2
+        case .CPS3: self = .cps3
+        case .DOOM: self = .doom
+        case .DOS: self = .dos
+        case .EP128: self = .ep128
+        case .Intellivision: self = .intellivision
+        case .Macintosh: self = .macintosh
+        case .MAME: self = .mame
+        case .MegaDuck: self = .megaduck
+        case .MSX: self = .msx
+        case .MSX2: self = .msx2
+        case .Music: self = .music
+        case .Odyssey2: self = .odyssey2
+        case .PalmOS: self = .palmos
+        case .Quake: self = .quake
+        case .Quake2: self = .quake2
+        case .RetroArch: self = .retroarch
+        case .Supervision: self = .supervision
+        case .TIC80: self = .tic80
+        case .Wolf3D: self = .wolf3d
+        case .ZXSpectrum: self = .zxspectrum
         default : return nil
         }
     }
@@ -557,6 +732,53 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .threeDS: return ._3DS
         case .pokemonMini: return .PokemonMini
         case .dreamcast: return .Dreamcast
+        case .pce: return .PCE
+        case .pcecd: return .PCECD
+        case .pcfx: return .PCFX
+        case .sgfx: return .SGFX
+        case .vectrex: return .Vectrex
+        case .atari2600: return .Atari2600
+        case .atari5200: return .Atari5200
+        case .atari7800: return .Atari7800
+        case .jaguar: return .AtariJaguar
+        case .jaguarcd: return .AtariJaguarCD
+        case .lynx: return .Lynx
+        case .atari8bit: return .Atari8bit
+        case .atarist: return .AtariST
+        case .neogeo: return .NeoGeo
+        case .ngp: return .NGP
+        case .ngpc: return .NGPC
+        case .wonderswan: return .WonderSwan
+        case .wonderswancolor: return .WonderSwanColor
+        case .gamecube: return .GameCube
+        case .wii: return .Wii
+        case ._3do: return ._3DO
+        case .appleII: return .AppleII
+        case .c64: return .C64
+        case .cdi: return .CDi
+        case .colecovision: return .ColecoVision
+        case .cps1: return .CPS1
+        case .cps2: return .CPS2
+        case .cps3: return .CPS3
+        case .doom: return .DOOM
+        case .dos: return .DOS
+        case .ep128: return .EP128
+        case .intellivision: return .Intellivision
+        case .macintosh: return .Macintosh
+        case .mame: return .MAME
+        case .megaduck: return .MegaDuck
+        case .msx: return .MSX
+        case .msx2: return .MSX2
+        case .music: return .Music
+        case .odyssey2: return .Odyssey2
+        case .palmos: return .PalmOS
+        case .quake: return .Quake
+        case .quake2: return .Quake2
+        case .retroarch: return .RetroArch
+        case .supervision: return .Supervision
+        case .tic80: return .TIC80
+        case .wolf3d: return .Wolf3D
+        case .zxspectrum: return .ZXSpectrum
         }
     }
 
@@ -571,12 +793,12 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case (.gb, "gbc"),
              (.gbc, "gbc"),
              (.gba, "gba"),
-             (.nes, "nes"),
+             (.nes, "nes"), (.nes, "fds"),
              (.snes, "snes"),
              (.n64, "n64"),
              (.nds, "nds"), (.nds, "ds"),
              (.virtualBoy, "vb"), (.virtualBoy, "virtualboy"),
-             (.threeDS, "3ds"),
+             (.threeDS, "3ds"), (.threeDS, "three3ds"), (.threeDS, "threeds"),
              (.genesis, "genesis"), (.genesis, "md"), (.genesis, "megadrive"),
              (.gamegear, "gg"), (.gamegear, "gamegear"),
              (.masterSystem, "ms"), (.masterSystem, "mastersystem"),
@@ -585,9 +807,56 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
              (.sg1000, "sg1000"),
              (.saturn, "ss"), (.saturn, "saturn"),
              (.dreamcast, "dc"), (.dreamcast, "dreamcast"),
-             (.psx, "psx"), (.psx, "ps1"),
+             (.psx, "psx"), (.psx, "ps1"), (.psx, "ps2"), (.psx, "ps3"),
              (.psp, "psp"),
-             (.pokemonMini, "pm"), (.pokemonMini, "pokemonmini"):
+             (.pokemonMini, "pm"), (.pokemonMini, "pokemonmini"),
+             (.pce, "pce"),
+             (.pcecd, "pcecd"),
+             (.pcfx, "pcfx"),
+             (.sgfx, "sgfx"), (.sgfx, "supergrafx"),
+             (.vectrex, "vectrex"),
+             (.atari2600, "2600"), (.atari2600, "a2600"), (.atari2600, "atari2600"),
+             (.atari5200, "5200"), (.atari5200, "a5200"), (.atari5200, "atari5200"),
+             (.atari7800, "7800"), (.atari7800, "a7800"), (.atari7800, "atari7800"),
+             (.jaguar, "jaguar"), (.jaguar, "atarijaguar"),
+             (.jaguarcd, "jaguarcd"), (.jaguarcd, "atarijaguarcd"),
+             (.lynx, "lynx"), (.lynx, "atarilynx"),
+             (.atari8bit, "atari8bit"), (.atari8bit, "atari8"),
+             (.atarist, "atarist"),
+             (.neogeo, "neogeo"), (.neogeo, "neo"), (.neogeo, "ng"),
+             (.ngp, "ngp"), (.ngp, "neogeopocket"),
+             (.ngpc, "ngpc"), (.ngpc, "neogeopocketcolor"),
+             (.wonderswan, "ws"), (.wonderswan, "wonderswan"),
+             (.wonderswancolor, "wsc"), (.wonderswancolor, "wonderswancolor"),
+             (.gamecube, "gamecube"), (.gamecube, "gc"),
+             (.wii, "wii"),
+             (._3do, "3do"),
+             (.appleII, "appleii"), (.appleII, "apple2"),
+             (.c64, "c64"), (.c64, "commodore64"),
+             (.cdi, "cdi"), (.cdi, "philipscdi"),
+             (.colecovision, "colecovision"), (.colecovision, "coleco"),
+             (.cps1, "cps1"), (.cps1, "capcomcps1"),
+             (.cps2, "cps2"), (.cps2, "capcomcps2"),
+             (.cps3, "cps3"), (.cps3, "capcomcps3"),
+             (.doom, "doom"),
+             (.dos, "dos"),
+             (.ep128, "ep128"), (.ep128, "enterprise128"),
+             (.intellivision, "intellivision"),
+             (.macintosh, "macintosh"), (.macintosh, "mac"),
+             (.mame, "mame"),
+             (.megaduck, "megaduck"),
+             (.msx, "msx"),
+             (.msx2, "msx2"),
+             (.music, "music"),
+             (.odyssey2, "odyssey2"), (.odyssey2, "odyssey"),
+             (.palmos, "palmos"), (.palmos, "palm"),
+             (.quake, "quake"),
+             (.quake2, "quake2"),
+             (.retroarch, "retroarch"),
+             (.supervision, "supervision"),
+             (.tic80, "tic80"),
+             (.wolf3d, "wolf3d"), (.wolf3d, "wolfenstein3d"),
+             (.zxspectrum, "zxspectrum"), (.zxspectrum, "spectrum"):
             return true
         default:
             return false
