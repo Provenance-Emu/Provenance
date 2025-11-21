@@ -578,7 +578,11 @@ public extension Defaults.Keys {
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
 
+    #if os(tvOS) || os(macOS) || targetEnvironment(macCatalyst)
+    static let skinMode = Key<SkinMode>("skinMOde", default: .off)
+    #else
     static let skinMode = Key<SkinMode>("skinMOde", default: .selectedOnly)
+    #endif
 }
 
 // MARK: Video Options
