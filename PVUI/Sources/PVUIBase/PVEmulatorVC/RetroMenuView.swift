@@ -92,15 +92,16 @@ struct RetroMenuView: View {
     /// Calculate appropriate content height based on category
     private func menuContentHeight(for category: MenuCategory) -> CGFloat {
         // Define base heights for each category
-        let baseHeights: [MenuCategory: CGFloat] = [
+        var baseHeights: [MenuCategory: CGFloat] = [
             .main: isLandscape ? 180 : 220,     // Main menu (4-5 items)
             .core: isLandscape ? 200 : 240,     // Core menu (core actions, options)
             .states: isLandscape ? 200 : 240,   // States menu (3-4 items)
-            .options: isLandscape ? 200 : 240,  // Options menu (game speed, cheats, controls)
-            #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
-            .skins: isLandscape ? 320 : 380     // Skins menu (most complex UI)
-            #endif
+            .options: isLandscape ? 200 : 240  // Options menu (game speed, cheats, controls)
         ]
+
+        #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
+        baseHeights[.skins] = isLandscape ? 320 : 380 // Skins menu (most complex UI)
+        #endif
 
         // Get height for current category with fallback
         return baseHeights[category] ?? 220
@@ -592,7 +593,6 @@ struct RetroMenuView: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 
-    #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
     // Skins and filters related buttons
     @State private var selectedSkin: String = "Default"
     @State private var selectedPortraitSkin: String = "Default"
@@ -2150,7 +2150,6 @@ struct RetroMenuView: View {
             }
         }
     }
-    #endif
 
     // Helper function for category buttons in the header
     private func categoryButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
@@ -2191,8 +2190,6 @@ struct RetroMenuView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-
-    #endif
 
     // Helper function to create menu buttons
     private func menuButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {

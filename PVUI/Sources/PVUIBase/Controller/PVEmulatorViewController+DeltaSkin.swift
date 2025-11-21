@@ -13,7 +13,11 @@ import Combine
 extension PVEmulatorViewController {
 
     var isDeltaSkinEnabled: Bool {
+        #if os(tvOS) || os(macOS) || targetEnvironment(macCatalyst)
+        return false
+        #else
         return Defaults[.skinMode] != .off && core.supportsSkins
+        #endif
 //        return true
     }
 
