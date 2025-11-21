@@ -77,8 +77,10 @@ struct RetroMenuView: View {
                     stateMenuButtons
                 case .options:
                     optionsMenuButtons
+                #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
                 case .skins:
                     skinsMenuButtons
+                #endif
                 }
             }
             .padding(.horizontal, 24)
@@ -95,7 +97,9 @@ struct RetroMenuView: View {
             .core: isLandscape ? 200 : 240,     // Core menu (core actions, options)
             .states: isLandscape ? 200 : 240,   // States menu (3-4 items)
             .options: isLandscape ? 200 : 240,  // Options menu (game speed, cheats, controls)
+            #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
             .skins: isLandscape ? 320 : 380     // Skins menu (most complex UI)
+            #endif
         ]
 
         // Get height for current category with fallback
@@ -230,6 +234,7 @@ struct RetroMenuView: View {
                                 }
                             })
                             .id("options")
+                            #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
                             // Always show skins category - display message if not supported
                             categoryButton(title: "SKINS", isSelected: selectedCategory == .skins, action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -237,6 +242,7 @@ struct RetroMenuView: View {
                                 }
                             })
                             .id("skins")
+                            #endif
                         }
                         .padding(.horizontal, 20)
                     }
@@ -267,7 +273,9 @@ struct RetroMenuView: View {
                         case .core: categoryId = "core"
                         case .states: categoryId = "states"
                         case .options: categoryId = "options"
+                        #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
                         case .skins: categoryId = "skins"
+                        #endif
                         }
                         withAnimation(.easeInOut(duration: 0.3)) {
                             proxy.scrollTo(categoryId, anchor: .center)
@@ -319,7 +327,7 @@ struct RetroMenuView: View {
             menuContainer
         }
         // Listen for orientation changes
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             let previousOrientation = self.orientation
             self.orientation = UIDevice.current.orientation
@@ -584,6 +592,7 @@ struct RetroMenuView: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 
+    #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
     // Skins and filters related buttons
     @State private var selectedSkin: String = "Default"
     @State private var selectedPortraitSkin: String = "Default"
@@ -2141,6 +2150,7 @@ struct RetroMenuView: View {
             }
         }
     }
+    #endif
 
     // Helper function for category buttons in the header
     private func categoryButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
@@ -2181,6 +2191,8 @@ struct RetroMenuView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
+
+    #endif
 
     // Helper function to create menu buttons
     private func menuButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
