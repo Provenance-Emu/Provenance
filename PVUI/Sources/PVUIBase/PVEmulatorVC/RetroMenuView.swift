@@ -484,9 +484,10 @@ struct RetroMenuView: View {
             if emulatorVC.core.supportsSaveStates {
                 // Save state button
                 menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
+                    // Capture screenshot while emulator is still paused
+                    let screenshot = emulatorVC.captureScreenshot()
                     dismissAction()
-                    Task {
-                        let screenshot = emulatorVC.captureScreenshot()
+                    Task { @MainActor in
                         do {
                             try await emulatorVC.createNewSaveState(auto: false, screenshot: screenshot)
                         } catch {
