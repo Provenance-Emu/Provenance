@@ -59,6 +59,23 @@ class DeltaSkinContainerView: UIView {
         if let hostView = hostingController?.view {
             hostView.backgroundColor = UIColor.clear
             hostView.isOpaque = false
+            // CRITICAL: Update hosting controller's view frame when container moves to superview
+            // This ensures the SwiftUI view is properly sized
+            hostView.frame = self.bounds
+            hostView.isHidden = false
+            hostView.alpha = 1.0
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        // CRITICAL: Update hosting controller's view frame whenever container layout changes
+        // This ensures the SwiftUI view stays properly sized, especially on iPad
+        if let hostView = hostingController?.view {
+            hostView.frame = self.bounds
+            hostView.isHidden = false
+            hostView.alpha = 1.0
         }
     }
 }

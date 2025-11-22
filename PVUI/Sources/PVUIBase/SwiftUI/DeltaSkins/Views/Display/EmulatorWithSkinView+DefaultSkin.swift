@@ -188,105 +188,129 @@ struct DefaultControllerSkinView: View {
     var body: some View {
         // Load control layout data when view appears
         GeometryReader { geometry in
-            let isLandscape = geometry.size.width > geometry.size.height
+            // Guard against invalid geometry that could cause the view to disappear
+            let validSize = geometry.size.width > 0 && geometry.size.height > 0
+            let isLandscape = validSize && geometry.size.width > geometry.size.height
 
             ZStack {
-                // Only show background in portrait mode with a gradual fade
-                // Background should only appear in the controller area (bottom ~35%)
-                if !isLandscape {
-                    // Portrait mode - show background only in bottom controller area
-                    VStack(spacing: 0) {
-                        // Spacer for screen area (top ~65%) - no background here
-                        Spacer()
-                            .frame(maxHeight: geometry.size.height * 0.65)
+                // Ensure view always renders even with invalid geometry
+                if validSize {
+                    // Only show background in portrait mode with a gradual fade
+                    // Background should only appear in the controller area (bottom ~35%)
+                    if !isLandscape {
+                        // Portrait mode - show background only in bottom controller area
+                        VStack(spacing: 0) {
+                            // Spacer for screen area (top ~65%) - no background here
+                            Spacer()
+                                .frame(maxHeight: geometry.size.height * 0.65)
 
-                        // Controller area background with gradual fade
-                        ZStack {
-                            // Retrowave background
-                            RetrowaveBackground()
-                            // Apply a gradient mask for smooth fade from transparent to visible
-                            // Start fade at the top of controller area (screen edge)
-                                .mask(
-                                    LinearGradient(
-                                        gradient: Gradient(stops: [
-                                            .init(color: .clear, location: 0.0),   // Fully transparent at top (screen edge)
-                                            .init(color: .clear, location: 0.2),   // Still transparent at 20%
-                                            .init(color: .white, location: 0.5)    // Fully visible at 50% of controller area
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
+                            // Controller area background with gradual fade
+                            ZStack {
+                                // Retrowave background
+                                RetrowaveBackground()
+                                // Apply a gradient mask for smooth fade from transparent to visible
+                                // Start fade at the top of controller area (screen edge)
+                                    .mask(
+                                        LinearGradient(
+                                            gradient: Gradient(stops: [
+                                                .init(color: .clear, location: 0.0),   // Fully transparent at top (screen edge)
+                                                .init(color: .clear, location: 0.2),   // Still transparent at 20%
+                                                .init(color: .white, location: 0.5)    // Fully visible at 50% of controller area
+                                            ]),
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
                                     )
-                                )
-                        }
-                        .frame(maxHeight: geometry.size.height * 0.35)
-                        .clipped()
-                    }
-                }
-
-                if isLandscape {
-                    // Landscape layout - controls positioned at edges with safe area awareness
-                    dynamicLandscapeControllerSkin
-                        .onAppear {
-                            loadControlLayoutData()
-                            // Ensure input handler has the core set
-                            inputHandler.setEmulatorCore(coreInstance)
-                        }
-                        .edgesIgnoringSafeArea([]) // Respect safe areas for notch
-                } else {
-                    // Portrait layout - controls constrained to bottom area
-                    // Screen area is typically top ~65%, controller area is bottom ~35%
-                    VStack(spacing: 0) {
-                        // Spacer to push controller to bottom area (top ~65% is screen area)
-                        Spacer()
-                            .frame(maxHeight: geometry.size.height * 0.65)
-
-                        // Controller area - constrained to bottom portion
-                        dynamicControllerSkin
+                            }
                             .frame(maxHeight: geometry.size.height * 0.35)
                             .clipped()
+                        }
+                    }
+
+                    if isLandscape {
+                        // Landscape layout - controls positioned at edges with safe area awareness
+                        dynamicLandscapeControllerSkin
                             .onAppear {
                                 loadControlLayoutData()
                                 // Ensure input handler has the core set
                                 inputHandler.setEmulatorCore(coreInstance)
                             }
+                            .edgesIgnoringSafeArea([]) // Respect safe areas for notch
+                    } else {
+                        // Portrait layout - controls constrained to bottom area
+                        // Screen area is typically top ~65%, controller area is bottom ~35%
+                        VStack(spacing: 0) {
+                            // Spacer to push controller to bottom area (top ~65% is screen area)
+                            Spacer()
+                                .frame(maxHeight: geometry.size.height * 0.65)
+
+                            // Controller area - constrained to bottom portion
+                            dynamicControllerSkin
+                                .frame(maxHeight: geometry.size.height * 0.35)
+                                .clipped()
+                                .onAppear {
+                                    loadControlLayoutData()
+                                    // Ensure input handler has the core set
+                                    inputHandler.setEmulatorCore(coreInstance)
+                                }
+                        }
                     }
+                } else {
+                    // Fallback: Show a minimal view when geometry is invalid to prevent disappearing
+                    // This ensures the view hierarchy stays intact
+                    Color.clear
+                        .frame(width: 1, height: 1)
                 }
             }
+            .id("DefaultControllerSkinView-\(validSize ? "valid" : "invalid")") // Stable ID to prevent unnecessary recreation
             .onAppear {
                 // Ensure input handler has the core set when view appears
                 inputHandler.setEmulatorCore(coreInstance)
-                // Store safe area insets
-                currentSafeInsets = geometry.safeAreaInsets
+                // Store safe area insets only if geometry is valid
+                if validSize {
+                    currentSafeInsets = geometry.safeAreaInsets
 
-                // Set up protocol bridge for viewport layout
-                setupViewportBridge()
+                    // Set up protocol bridge for viewport layout
+                    setupViewportBridge()
 
-                // Emit default viewport on appear
-                emitDefaultViewportIfNeeded(
-                    size: geometry.size,
-                    safeInsets: geometry.safeAreaInsets,
-                    isLandscape: isLandscape
-                )
+                    // Emit default viewport on appear
+                    emitDefaultViewportIfNeeded(
+                        size: geometry.size,
+                        safeInsets: geometry.safeAreaInsets,
+                        isLandscape: isLandscape
+                    )
+                }
             }
             .onDisappear {
                 // Clean up bridge when view disappears
                 viewportBridge = nil
                 coreInstance.viewportLayoutProvider = nil
             }
-            .background(ViewportUpdater(
-                size: geometry.size,
-                safeInsets: geometry.safeAreaInsets,
-                onUpdate: { size, insets, isLandscape in
-                    // Always update safe insets
-                    currentSafeInsets = insets
-                    // Always emit viewport - ViewportUpdater handles deduplication
-                    emitDefaultViewportIfNeeded(
-                        size: size,
-                        safeInsets: insets,
-                        isLandscape: isLandscape
-                    )
+            .background(
+                Group {
+                    if validSize {
+                        ViewportUpdater(
+                            size: geometry.size,
+                            safeInsets: geometry.safeAreaInsets,
+                            onUpdate: { size, insets, isLandscape in
+                                // Always update safe insets
+                                currentSafeInsets = insets
+                                // Always emit viewport - ViewportUpdater handles deduplication
+                                emitDefaultViewportIfNeeded(
+                                    size: size,
+                                    safeInsets: insets,
+                                    isLandscape: isLandscape
+                                )
+                            }
+                        )
+                        .frame(width: 1, height: 1)
+                        .allowsHitTesting(false)
+                    } else {
+                        Color.clear
+                            .frame(width: 1, height: 1)
+                    }
                 }
-            ))
+            )
         }
     }
 
@@ -2030,8 +2054,15 @@ private struct ViewportUpdater: View {
     @State private var lastIsLandscape: Bool?
 
     var body: some View {
+        // Use a minimal frame to ensure the view doesn't affect layout
+        // but still exists to receive updates
         Color.clear
+            .frame(width: 1, height: 1)
+            .allowsHitTesting(false)
             .onAppear {
+                // Guard against invalid size
+                guard size.width > 0 && size.height > 0 else { return }
+
                 // Initial calculation - immediate, no delays
                 let isLandscape = size.width > size.height
                 lastSize = size
@@ -2040,6 +2071,9 @@ private struct ViewportUpdater: View {
                 onUpdate(size, safeInsets, isLandscape)
             }
             .onChange(of: size) { newSize in
+                // Guard against invalid size
+                guard newSize.width > 0 && newSize.height > 0 else { return }
+
                 // Use same immediate calculation path as onAppear
                 // Always recalculate on size change - same as bootup
                 let isLandscape = newSize.width > newSize.height
@@ -2055,6 +2089,9 @@ private struct ViewportUpdater: View {
                 }
             }
             .onChange(of: safeInsets) { newInsets in
+                // Guard against invalid size
+                guard size.width > 0 && size.height > 0 else { return }
+
                 // Use same immediate calculation path as onAppear
                 // Always recalculate on safe inset change - same as bootup
                 let insetsChanged = abs(newInsets.top - lastSafeInsets.top) > 0.5 ||

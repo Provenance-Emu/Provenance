@@ -1061,6 +1061,23 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if let safeAreaCore = core as? EmulatorCoreSafeAreaSupport {
             safeAreaCore.updateSafeAreaInsets(view.safeAreaInsets)
         }
+
+        /// CRITICAL: Ensure skin container stays visible and on top after layout
+        /// This prevents the GPU view from covering the skin container on iPad
+        if isDeltaSkinEnabled, let skinContainer = skinContainerView {
+            // Ensure skin container frame matches view bounds
+            if skinContainer.frame != view.bounds {
+                skinContainer.frame = view.bounds
+            }
+            // Ensure skin container is visible and on top
+            skinContainer.isHidden = false
+            skinContainer.alpha = 1.0
+            // Ensure correct z-order - skin container must be above GPU view
+            if let gpuView = gpuViewController.view, gpuView.superview == view {
+                view.insertSubview(gpuView, belowSubview: skinContainer)
+            }
+            view.bringSubviewToFront(skinContainer)
+        }
         #endif
     }
 
@@ -1763,9 +1780,13 @@ extension PVEmulatorViewController {
             view.addSubview(skinContainer)
         }
 
-        // We want the game view to be ABOVE the skin container
-        // This ensures the game is visible above any skin background elements
-        view.bringSubviewToFront(gpuView)
+        // CRITICAL: Skin container must be ABOVE the GPU view so controls are visible
+        // The GPU view should be below the skin container
+        // Use insertSubview to ensure correct ordering - skin container on top
+        if gpuView.superview == view && skinContainer.superview == view {
+            view.insertSubview(gpuView, belowSubview: skinContainer)
+        }
+        // Ensure skin container is on top
         view.bringSubviewToFront(skinContainer)
         #if os(iOS)
         if let visualizerView = audioVisualizerHostingController?.view {

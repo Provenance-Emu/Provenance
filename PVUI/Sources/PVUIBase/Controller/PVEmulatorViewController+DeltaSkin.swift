@@ -223,6 +223,25 @@ extension PVEmulatorViewController {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                     guard let self = self else { return }
 
+                    // CRITICAL: Ensure skin container stays visible after delay
+                    // This prevents the container from disappearing on iPad
+                    if let skinContainer = self.skinContainerView {
+                        skinContainer.isHidden = false
+                        skinContainer.alpha = 1.0
+                        skinContainer.frame = self.view.bounds
+                        // Ensure hosting controller's view is also visible
+                        if let hostView = skinContainer.subviews.first {
+                            hostView.isHidden = false
+                            hostView.alpha = 1.0
+                            hostView.frame = skinContainer.bounds
+                        }
+                        // Ensure z-order is correct
+                        if let gpuView = self.gpuViewController.view {
+                            self.view.insertSubview(gpuView, belowSubview: skinContainer)
+                        }
+                        self.view.bringSubviewToFront(skinContainer)
+                    }
+
                     // For non-RetroArch cores, ensure we have a frame even if notification didn't arrive
                     if self.core.coreIdentifier?.contains("libretro") != true {
                         // If no frame received, calculate one as fallback
@@ -295,6 +314,10 @@ extension PVEmulatorViewController {
         self.skinContainerView = containerView
         ILOG("skins: Stored reference to skin container view")
 
+        // CRITICAL: Ensure container view is visible before adding
+        containerView.isHidden = false
+        containerView.alpha = 1.0
+
         // Now add the skin container on top
         view.addSubview(containerView)
         ILOG("skins: Added skin container view to view hierarchy")
@@ -303,6 +326,19 @@ extension PVEmulatorViewController {
         // Use insertSubview instead of bringSubviewToFront for more reliable ordering
         view.insertSubview(gameScreenView, belowSubview: containerView)
         ILOG("skins: Set z-order - GPU view below skin container")
+
+        // CRITICAL: Ensure container stays visible after adding
+        // Force layout to ensure hosting controller's view is properly sized
+        containerView.setNeedsLayout()
+        containerView.layoutIfNeeded()
+
+        // Double-check visibility after layout
+        containerView.isHidden = false
+        containerView.alpha = 1.0
+        if let hostView = (containerView as? DeltaSkinContainerView)?.subviews.first {
+            hostView.isHidden = false
+            hostView.alpha = 1.0
+        }
 
         // Also ensure Metal view is below skin if it exists separately
         if let metalVC = gpuViewController as? PVMetalViewController,
