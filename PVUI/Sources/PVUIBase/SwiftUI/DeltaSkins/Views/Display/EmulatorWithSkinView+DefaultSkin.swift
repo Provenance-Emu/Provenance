@@ -1063,6 +1063,7 @@ struct DefaultControllerSkinView: View {
     /// Joystick view with touch tracking
     private func joystickView() -> some View {
         DeltaJoystickView(inputHandler: inputHandler)
+            .frame(width: 150, height: 150)
     }
 
     /// Circle button view with retrowave styling
