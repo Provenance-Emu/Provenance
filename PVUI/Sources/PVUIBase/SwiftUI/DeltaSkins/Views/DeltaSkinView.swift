@@ -265,45 +265,50 @@ public struct DeltaSkinView: View {
             effectiveImageSize = mappingSize
         }
 
-        // Calculate the scale to fit the skin in the available space
+        // Account for safe area insets when calculating available space for scaling
+        let safeInsets = geometry.safeAreaInsets
+        let availableWidth = geometry.size.width - safeInsets.leading - safeInsets.trailing
+        let availableHeight = geometry.size.height - safeInsets.top - safeInsets.bottom
+
+        // Calculate the scale to fit the skin in the available space (accounting for safe areas)
         var scale: CGFloat
 
         // For portrait mode on iPhone, prioritize filling width while maintaining aspect ratio
         if traits.device == .iphone && traits.orientation == .portrait {
-            // Start with width scale to fill screen
-            scale = geometry.size.width / effectiveImageSize.width
+            // Start with width scale to fill available width
+            scale = availableWidth / effectiveImageSize.width
 
             // Calculate resulting height
             let scaledHeight = effectiveImageSize.height * scale
 
-            // If height exceeds screen, scale down while maintaining aspect ratio
-            if scaledHeight > geometry.size.height {
-                let heightScale = geometry.size.height / effectiveImageSize.height
+            // If height exceeds available height, scale down while maintaining aspect ratio
+            if scaledHeight > availableHeight {
+                let heightScale = availableHeight / effectiveImageSize.height
                 scale = min(scale, heightScale)
             }
         } else {
-            // For landscape, use standard fit scaling
+            // For landscape or iPad, use standard fit scaling within safe area
             scale = min(
-                geometry.size.width / effectiveImageSize.width,
-                geometry.size.height / effectiveImageSize.height
+                availableWidth / effectiveImageSize.width,
+                availableHeight / effectiveImageSize.height
             )
         }
 
         let scaledWidth = effectiveImageSize.width * scale
         let scaledHeight = effectiveImageSize.height * scale
 
-        // Center horizontally
-        let xOffset = (geometry.size.width - scaledWidth) / 2
+        // Center horizontally accounting for safe areas
+        let xOffset = safeInsets.leading + (availableWidth - scaledWidth) / 2
 
         // For portrait mode on iPhone, position at bottom of screen
-        // For landscape or iPad, center vertically
+        // For landscape or iPad, center vertically accounting for safe areas
         let yOffset: CGFloat
         if traits.device == .iphone && traits.orientation == .portrait {
-            // Position at bottom of screen
-            yOffset = geometry.size.height - scaledHeight
+            // Position at bottom of screen, accounting for safe area
+            yOffset = geometry.size.height - scaledHeight - safeInsets.bottom
         } else {
-            // Center vertically
-            yOffset = (geometry.size.height - scaledHeight) / 2
+            // Center vertically in safe area
+            yOffset = safeInsets.top + (availableHeight - scaledHeight) / 2
         }
 
         let layout = SkinLayout(
@@ -559,12 +564,8 @@ public struct DeltaSkinView: View {
                     }
                     .frame(width: layout.width, height: layout.height)
                     .position(
-                        x: (traits.device == .iphone && traits.orientation == .portrait)
-                           ? (layout.xOffset + layout.width / 2)
-                           : (geometry.size.width / 2),
-                        y: (traits.device == .iphone && traits.orientation == .portrait)
-                           ? (layout.yOffset + layout.height / 2)
-                           : (geometry.size.height - layout.height / 2)
+                        x: layout.xOffset + layout.width / 2,
+                        y: layout.yOffset + layout.height / 2
                     )
                     .environment(\.skinLayout, layout)
                     .onAppear {

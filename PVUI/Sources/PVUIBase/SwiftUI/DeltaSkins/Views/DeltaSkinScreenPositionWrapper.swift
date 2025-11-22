@@ -357,12 +357,17 @@ struct DeltaSkinScreenPositionWrapper: View {
             return nil
         }
 
+        // The skin is positioned using .position(), which sets the CENTER point
+        // For all cases, the center is at (layout.xOffset + width/2, layout.yOffset + height/2)
+        // So the top-left corner is at (layout.xOffset, layout.yOffset)
         let finalFrame = CGRect(
             x: layout.xOffset + screenFrame.minX,
             y: layout.yOffset + screenFrame.minY,
             width: screenFrame.width,
             height: screenFrame.height
         )
+
+        DLOG("🎮 SKIN: Frame calculation - layout.yOffset=\(layout.yOffset), screenFrame.minY=\(screenFrame.minY), finalFrame.y=\(finalFrame.minY)")
 
         // Basic validation - only check for positive, finite values
         guard finalFrame.width > 0 && finalFrame.height > 0,

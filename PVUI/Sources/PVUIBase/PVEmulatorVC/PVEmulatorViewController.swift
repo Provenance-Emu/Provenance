@@ -797,7 +797,23 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             if let safeAreaCore = self.core as? EmulatorCoreSafeAreaSupport {
                 safeAreaCore.updateSafeAreaInsets(self.view.safeAreaInsets)
             }
-        }, completion: nil)
+            // Ensure skin container frame is updated during transition (important for fullscreen transitions)
+            if let skinContainer = self.skinContainerView {
+                skinContainer.frame = self.view.bounds
+                if let hostView = skinContainer.subviews.first {
+                    hostView.frame = skinContainer.bounds
+                }
+            }
+        }, completion: { [weak self] _ in
+            // Ensure skin container frame is correct after transition completes
+            guard let self = self else { return }
+            if let skinContainer = self.skinContainerView {
+                skinContainer.frame = self.view.bounds
+                if let hostView = skinContainer.subviews.first {
+                    hostView.frame = skinContainer.bounds
+                }
+            }
+        })
     }
 
     // MARK: - CloudKit Download Handling
@@ -1065,9 +1081,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         /// CRITICAL: Ensure skin container stays visible and on top after layout
         /// This prevents the GPU view from covering the skin container on iPad
         if isDeltaSkinEnabled, let skinContainer = skinContainerView {
-            // Ensure skin container frame matches view bounds
-            if skinContainer.frame != view.bounds {
-                skinContainer.frame = view.bounds
+            // Always update frame to match view bounds (important for fullscreen transitions)
+            skinContainer.frame = view.bounds
+            // Ensure hosting view also fills the container
+            if let hostView = skinContainer.subviews.first {
+                hostView.frame = skinContainer.bounds
             }
             // Ensure skin container is visible and on top
             skinContainer.isHidden = false

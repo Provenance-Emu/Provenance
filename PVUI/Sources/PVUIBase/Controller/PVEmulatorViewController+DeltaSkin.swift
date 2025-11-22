@@ -271,7 +271,10 @@ extension PVEmulatorViewController {
 
         // Configure the container
         containerView.frame = view.bounds
-        containerView.autoresizingMask = [UIView.AutoresizingMask.flexibleWidth, UIView.AutoresizingMask.flexibleHeight]
+        // Use flexible autoresizing to automatically resize with view bounds changes
+        // This ensures the container stays aligned with view.bounds during fullscreen transitions
+        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        containerView.translatesAutoresizingMaskIntoConstraints = true
         containerView.isOpaque = false  // Ensure it's not opaque
         containerView.backgroundColor = UIColor.clear  // Clear background
 

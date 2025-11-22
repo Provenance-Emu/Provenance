@@ -536,19 +536,39 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // CRITICAL: Set custom positioning BEFORE setting frames
         // This ensures viewDidLayoutSubviews respects the custom frame
         (metalVC as PVGPUViewController).useCustomPositioning = true
-        (metalVC as PVGPUViewController).customFrame = frame
+
+        // Convert frame from SwiftUI coordinate system to self.view coordinate system
+        // The frame is calculated relative to the SwiftUI GeometryReader, which is inside the hosting view
+        // The hosting view fills the skin container, which fills self.view
+        // So we need to convert: GeometryReader -> hosting view -> skin container -> self.view
+        let convertedFrame: CGRect
+        if let skinContainer = skinContainerView, let hostingView = skinContainer.subviews.first {
+            // The frame is in GeometryReader coordinates (which matches hosting view if it fills)
+            // Convert through hosting view -> skin container -> self.view
+            let frameInHostingView = frame  // Frame is already relative to hosting view's coordinate system
+            let frameInContainer = hostingView.convert(frameInHostingView, to: skinContainer)
+            convertedFrame = skinContainer.convert(frameInContainer, to: view)
+            DLOG("🎮 SKIN: Converting frame - hostingView.frame=\(hostingView.frame), skinContainer.frame=\(skinContainer.frame), view.bounds=\(view.bounds)")
+            DLOG("🎮 SKIN:   frame=\(frame) -> frameInContainer=\(frameInContainer) -> convertedFrame=\(convertedFrame)")
+        } else {
+            // No skin container or hosting view - frame is already in self.view coordinates
+            convertedFrame = frame
+            DLOG("🎮 SKIN: No skin container/hosting view, using frame as-is: \(frame)")
+        }
+
+        (metalVC as PVGPUViewController).customFrame = convertedFrame
 
         metalVC.view.autoresizingMask = []
         metalVC.mtlView.autoresizingMask = []
 
         UIView.performWithoutAnimation {
-            metalVC.view.frame = frame
+            metalVC.view.frame = convertedFrame
             metalVC.mtlView.frame = metalVC.view.bounds
         }
 
         let scale = metalVC.renderSettings.nativeScaleEnabled ?
             (metalVC.view.window?.screen.scale ?? UIScreen.main.scale) : 1.0
-        let drawableSize = CGSize(width: frame.width * scale, height: frame.height * scale)
+        let drawableSize = CGSize(width: convertedFrame.width * scale, height: convertedFrame.height * scale)
 
         metalVC.mtlView.drawableSize = drawableSize
         metalVC.mtlView.contentScaleFactor = scale
@@ -563,11 +583,21 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// Apply frame to GL core
     private func applyFrameToGL(_ frame: CGRect, gameScreenView: UIView) {
         (gpuViewController as PVGPUViewController).useCustomPositioning = true
-        (gpuViewController as PVGPUViewController).customFrame = frame
+
+        // Convert frame from SwiftUI container coordinate system to self.view coordinate system
+        let convertedFrame: CGRect
+        if let skinContainer = skinContainerView, skinContainer != view {
+            convertedFrame = skinContainer.convert(frame, to: view)
+            DLOG("🎮 SKIN: Converted GL frame from skin container: \(frame) -> \(convertedFrame)")
+        } else {
+            convertedFrame = frame
+        }
+
+        (gpuViewController as PVGPUViewController).customFrame = convertedFrame
         gameScreenView.autoresizingMask = []
 
         UIView.performWithoutAnimation {
-            gameScreenView.frame = frame
+            gameScreenView.frame = convertedFrame
         }
 
         gameScreenView.isHidden = false
