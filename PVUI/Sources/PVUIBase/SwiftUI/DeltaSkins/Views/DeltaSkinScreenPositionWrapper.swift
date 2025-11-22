@@ -14,15 +14,21 @@ struct DeltaSkinScreenPositionWrapper: View {
     let screenAspectRatio: CGFloat?
     let isInEmulator: Bool
     let core: PVEmulatorCore?
+    let layout: DeltaSkinView.SkinLayout?
 
-    @Environment(\.skinLayout) var layout
+    @Environment(\.skinLayout) var environmentLayout
 
     /// Calculate screen frame from skin data
     private func calculateScreenFrame() -> CGRect? {
-        guard let layout = layout,
+        ILOG("skins: calculateScreenFrame() called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
+        // Use passed layout parameter first, fallback to environment
+        let effectiveLayout = layout ?? environmentLayout
+        guard let layout = effectiveLayout,
               let mappingSize = skin.mappingSize(for: traits) else {
+            ELOG("skins: ERROR - calculateScreenFrame() failed: layout or mappingSize is nil. layout param: \(self.layout != nil), environment: \(environmentLayout != nil)")
             return nil
         }
+        ILOG("skins: calculateScreenFrame() - layout: width=\(layout.width), height=\(layout.height), xOffset=\(layout.xOffset), yOffset=\(layout.yOffset), mappingSize=\(mappingSize)")
 
         // For default skins, don't calculate here - let calculateDefaultViewport handle it
         // Default skins are identified by "default" identifier prefix or name containing "default"
@@ -38,15 +44,54 @@ struct DeltaSkinScreenPositionWrapper: View {
 
         // Check if this is a simple skin (no screens or screenGroups)
         // Simple skins should use button-based calculation even if gameScreenFrame exists
-        let isSimpleSkin = skin.screens(for: traits) == nil && skin.screenGroups(for: traits) == nil
+        let screens = skin.screens(for: traits)
+        let screenGroups = skin.screenGroups(for: traits)
+        let isSimpleSkin = screens == nil && screenGroups == nil
+        ILOG("skins: Skin type check - screens: \(screens?.count ?? 0), screenGroups: \(screenGroups?.count ?? 0), isSimpleSkin: \(isSimpleSkin)")
 
         // Get screen frame from skin (supports multiple formats)
         let screenFrame: CGRect?
 
         // Try screens array first
-        if let screens = skin.screens(for: traits),
-           let screen = screens.first,
-           let outputFrame = screen.outputFrame {
+        if let screens = skin.screens(for: traits), !screens.isEmpty {
+            // Log all available screens for debugging
+            ILOG("skins: Found \(screens.count) screens, checking all:")
+            for (index, screen) in screens.enumerated() {
+                if let frame = screen.outputFrame {
+                    let area = frame.width * frame.height
+                    ILOG("skins:   Screen \(index) (\(screen.id)): \(frame), area: \(area)")
+                } else {
+                    ILOG("skins:   Screen \(index) (\(screen.id)): no outputFrame")
+                }
+            }
+
+            // Find the screen with the largest area (most likely the game screen)
+            // Filter out screens that are too small (likely buttons or UI elements)
+            let validScreens = screens.compactMap { screen -> (screen: DeltaSkinScreen, frame: CGRect, area: CGFloat)? in
+                guard let frame = screen.outputFrame else { return nil }
+                let area = frame.width * frame.height
+                // Minimum reasonable screen size: at least 100x100 pixels or normalized equivalent
+                let minSize: CGFloat = 100.0
+                let isAbsolutePixels = frame.width > mappingSize.width || frame.height > mappingSize.height ||
+                                       (frame.width > 1.0 && frame.height > 1.0 &&
+                                        frame.width < mappingSize.width && frame.height < mappingSize.height)
+                let actualMinSize = isAbsolutePixels ? minSize : (minSize / max(mappingSize.width, mappingSize.height))
+
+                if frame.width >= actualMinSize && frame.height >= actualMinSize {
+                    return (screen, frame, area)
+                } else {
+                    ILOG("skins:   Rejecting screen \(screen.id) - too small: \(frame)")
+                    return nil
+                }
+            }
+
+            guard let largestScreen = validScreens.max(by: { $0.area < $1.area }),
+                  let outputFrame = largestScreen.screen.outputFrame else {
+                ELOG("skins: ERROR - No valid screens found after filtering")
+                return nil
+            }
+
+            ILOG("skins: Using screens array path - selected screen: \(largestScreen.screen.id), outputFrame: \(outputFrame), area: \(largestScreen.area), layout: \(layout.width)x\(layout.height)")
             DLOG("🎮 SKIN: Using screens array path")
             DLOG("🎮 SKIN:   outputFrame: \(outputFrame)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
@@ -330,6 +375,7 @@ struct DeltaSkinScreenPositionWrapper: View {
         }
 
         // Always broadcast if basic validation passes - let the receiver handle size validation
+        ILOG("skins: Broadcasting final frame: \(finalFrame) - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
         DLOG("🎮 SKIN: Broadcasting final frame: \(finalFrame)")
         broadcastFrame(finalFrame)
         return finalFrame
@@ -399,6 +445,7 @@ struct DeltaSkinScreenPositionWrapper: View {
         }
 
         lastBroadcastFrame = frame
+        ILOG("skins: Broadcasting frame via protocol: \(frame) - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
         DLOG("🎮 SKIN: Broadcasting frame via protocol: \(frame)")
 
         // Use protocol-based system instead of notifications
@@ -412,9 +459,10 @@ struct DeltaSkinScreenPositionWrapper: View {
     var body: some View {
         Color.clear
             .onAppear {
-                ILOG("🎮 SKIN: DeltaSkinScreenPositionWrapper.onAppear - size=\(size), layout=\(String(describing: layout))")
+                let effectiveLayout = layout ?? environmentLayout
+                ILOG("🎮 SKIN: DeltaSkinScreenPositionWrapper.onAppear - size=\(size), layout param=\(String(describing: layout)), environment=\(String(describing: environmentLayout)), effective=\(String(describing: effectiveLayout))")
                 lastSize = size
-                lastLayout = layout
+                lastLayout = effectiveLayout
                 // Calculate immediately on appear - use same code path as initial startup
                 calculateScreenFrameImmediate()
             }
@@ -442,7 +490,18 @@ struct DeltaSkinScreenPositionWrapper: View {
 
                 // Use same immediate calculation path as startup
                 // Only calculate if layout is valid (same check as onAppear)
-                if (layout?.width ?? 0) > 0 && (layout?.height ?? 0) > 0 && size.width > 0 && size.height > 0 {
+                let effectiveLayout = newLayout ?? environmentLayout
+                if (effectiveLayout?.width ?? 0) > 0 && (effectiveLayout?.height ?? 0) > 0 && size.width > 0 && size.height > 0 {
+                    calculateScreenFrameImmediate()
+                }
+            }
+            .onChange(of: environmentLayout) { newLayout in
+                // Also watch environment layout changes
+                guard newLayout != lastLayout else { return }
+                lastBroadcastFrame = nil
+                lastLayout = newLayout
+                let effectiveLayout = layout ?? newLayout
+                if (effectiveLayout?.width ?? 0) > 0 && (effectiveLayout?.height ?? 0) > 0 && size.width > 0 && size.height > 0 {
                     calculateScreenFrameImmediate()
                 }
             }

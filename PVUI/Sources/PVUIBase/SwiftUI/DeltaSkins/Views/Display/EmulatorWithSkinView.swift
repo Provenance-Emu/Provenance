@@ -904,16 +904,50 @@ struct EmulatorWithSkinView: View {
             let currentOrientation: SkinOrientation = .landscape
             #endif
 
+            // Helper function to check if skin supports current device
+            func skinSupportsCurrentDevice(_ skin: DeltaSkinProtocol) -> Bool {
+                #if os(tvOS)
+                let device: DeltaSkinDevice = .tv
+                #else
+                let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+                #endif
+                let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+                let orientations: [SkinOrientation] = [.portrait, .landscape]
+
+                // Check if skin supports at least one orientation for the current device
+                for orientation in orientations {
+                    for display in displayTypes {
+                        let traits = DeltaSkinTraits(
+                            device: device,
+                            displayType: display,
+                            orientation: orientation.deltaSkinOrientation
+                        )
+                        if skin.supports(traits) { return true }
+                    }
+                }
+                return false
+            }
+
             // PRIORITY 1: If a specific skin has been requested for this session (preselectedSkinIdentifier), honor it immediately
             if let overrideId = preselectedSkinIdentifier {
                 if manager.skinsAreLoaded, let skin = manager.loadedSkins.first(where: { $0.identifier == overrideId }) {
-                    foundSkin = skin
-                    DLOG("🎮 EmulatorWithSkinView: Using preselected skin from cache: \(skin.name)")
+                    // Verify skin supports current device before using it
+                    if skinSupportsCurrentDevice(skin) {
+                        foundSkin = skin
+                        DLOG("🎮 EmulatorWithSkinView: Using preselected skin from cache: \(skin.name)")
+                    } else {
+                        DLOG("🎮 EmulatorWithSkinView: Preselected skin \(skin.name) doesn't support current device, skipping")
+                    }
                 } else {
                     // Attempt to resolve skin by identifier even if not in cache yet
                     if let resolved = try? await manager.skin(withIdentifier: overrideId) {
-                        foundSkin = resolved
-                        DLOG("🎮 EmulatorWithSkinView: Resolved preselected skin by identifier: \(resolved.name)")
+                        // Verify resolved skin supports current device before using it
+                        if skinSupportsCurrentDevice(resolved) {
+                            foundSkin = resolved
+                            DLOG("🎮 EmulatorWithSkinView: Resolved preselected skin by identifier: \(resolved.name)")
+                        } else {
+                            DLOG("🎮 EmulatorWithSkinView: Resolved preselected skin \(resolved.name) doesn't support current device, skipping")
+                        }
                     }
                 }
             }
@@ -943,11 +977,21 @@ struct EmulatorWithSkinView: View {
 
                 if let effectiveId = effectiveId {
                     if manager.skinsAreLoaded, let skin = manager.loadedSkins.first(where: { $0.identifier == effectiveId }) {
-                        foundSkin = skin
-                        DLOG("🎮 EmulatorWithSkinView: Found effective skin: \(skin.name) (id: \(effectiveId))")
+                        // Verify skin supports current device before using it
+                        if skinSupportsCurrentDevice(skin) {
+                            foundSkin = skin
+                            DLOG("🎮 EmulatorWithSkinView: Found effective skin: \(skin.name) (id: \(effectiveId))")
+                        } else {
+                            DLOG("🎮 EmulatorWithSkinView: Effective skin \(skin.name) doesn't support current device, skipping")
+                        }
                     } else if let resolved = try? await manager.skin(withIdentifier: effectiveId) {
-                        foundSkin = resolved
-                        DLOG("🎮 EmulatorWithSkinView: Resolved effective skin: \(resolved.name)")
+                        // Verify resolved skin supports current device before using it
+                        if skinSupportsCurrentDevice(resolved) {
+                            foundSkin = resolved
+                            DLOG("🎮 EmulatorWithSkinView: Resolved effective skin: \(resolved.name)")
+                        } else {
+                            DLOG("🎮 EmulatorWithSkinView: Resolved skin \(resolved.name) doesn't support current device, skipping")
+                        }
                     }
                 }
             }
@@ -957,12 +1001,17 @@ struct EmulatorWithSkinView: View {
                 if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
                    manager.skinsAreLoaded,
                    let defaultSkin = manager.loadedSkins.first(where: {
-                       $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                       let matchesType = $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                       return matchesType && skinSupportsCurrentDevice($0)
                    }) {
                     foundSkin = defaultSkin
                     DLOG("🎮 EmulatorWithSkinView: Using default skin: \(defaultSkin.name)")
                 } else {
-                    foundSkin = try? await DeltaSkinManager.shared.skinToUse(for: systemId)
+                    // Try to get a device-compatible default skin
+                    if let defaultSkin = try? await DeltaSkinManager.shared.skinToUse(for: systemId),
+                       skinSupportsCurrentDevice(defaultSkin) {
+                        foundSkin = defaultSkin
+                    }
                 }
             }
 

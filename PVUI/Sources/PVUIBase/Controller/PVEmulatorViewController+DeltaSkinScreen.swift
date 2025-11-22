@@ -50,6 +50,30 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         applyFrameToGPUView(frame)
     }
 
+    /// Check if skin supports current device
+    private func skinSupportsCurrentDevice(_ skin: DeltaSkinProtocol) -> Bool {
+        #if os(tvOS)
+        let device: DeltaSkinDevice = .tv
+        #else
+        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #endif
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        let orientations: [SkinOrientation] = [.portrait, .landscape]
+
+        // Check if skin supports at least one orientation for the current device
+        for orientation in orientations {
+            for display in displayTypes {
+                let traits = DeltaSkinTraits(
+                    device: device,
+                    displayType: display,
+                    orientation: orientation.deltaSkinOrientation
+                )
+                if skin.supports(traits) { return true }
+            }
+        }
+        return false
+    }
+
     /// Handle skin loaded notification
     @objc private func handleSkinLoaded(_ notification: Notification) {
         guard let skinId = notification.userInfo?["skinId"] as? String else { return }
@@ -57,9 +81,14 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         if currentSkin == nil || currentSkin?.identifier != skinId {
             let manager = DeltaSkinManager.shared
             if manager.skinsAreLoaded, let skin = manager.loadedSkins.first(where: { $0.identifier == skinId }) {
-                currentSkin = skin
-                DLOG("🎮 SKIN: Set currentSkin from notification: \(skin.name)")
-                applyViewportFromCurrentSkin()
+                // Verify skin supports current device before setting it
+                if skinSupportsCurrentDevice(skin) {
+                    currentSkin = skin
+                    DLOG("🎮 SKIN: Set currentSkin from notification: \(skin.name)")
+                    applyViewportFromCurrentSkin()
+                } else {
+                    DLOG("🎮 SKIN: Skin \(skin.name) from notification doesn't support current device, skipping")
+                }
             }
         }
     }
@@ -208,10 +237,28 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         if hasDefinedScreenArea {
             // Wait for protocol delegate callback - don't use fallback calculation
             // The protocol delegate (viewportFrameDidUpdate) will be called shortly after rotation
+            // But also try immediate calculation as fallback for initial load
+            if let immediateFrame = calculateFrameFromSkin(), isValidFrame(immediateFrame) {
+                currentTargetFrame = immediateFrame
+                applyFrameToGPUView(immediateFrame)
+            }
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 guard let self = self else { return }
                 if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
-                    self.applyFrameToGPUView(frame)
+                    // Verify frame is still correct, recalculate if needed
+                    if let recalculatedFrame = self.calculateFrameFromSkin(), self.isValidFrame(recalculatedFrame) {
+                        // Only update if significantly different (more than 10 pixels)
+                        if abs(frame.origin.x - recalculatedFrame.origin.x) > 10 ||
+                           abs(frame.origin.y - recalculatedFrame.origin.y) > 10 ||
+                           abs(frame.width - recalculatedFrame.width) > 10 ||
+                           abs(frame.height - recalculatedFrame.height) > 10 {
+                            self.currentTargetFrame = recalculatedFrame
+                            self.applyFrameToGPUView(recalculatedFrame)
+                        }
+                    } else {
+                        self.applyFrameToGPUView(frame)
+                    }
                 } else {
                     // If still no frame after waiting, use fallback
                     if let frame = self.calculateFrameFromSkin(), self.isValidFrame(frame) {
@@ -225,12 +272,21 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        // For simple skins without defined screen areas, calculate frame if no protocol delegate callback available
+        // For simple skins without defined screen areas, calculate frame immediately
         if let frame = calculateFrameFromSkin(), isValidFrame(frame) {
             currentTargetFrame = frame
             applyFrameToGPUView(frame)
         } else {
-            resetGPUViewPosition()
+            // If calculation fails, try again after a short delay (for initial load timing issues)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                guard let self = self else { return }
+                if let frame = self.calculateFrameFromSkin(), self.isValidFrame(frame) {
+                    self.currentTargetFrame = frame
+                    self.applyFrameToGPUView(frame)
+                } else {
+                    self.resetGPUViewPosition()
+                }
+            }
         }
     }
 
@@ -266,9 +322,25 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
         let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
         let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
-        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
 
-        guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
+        // Try multiple display types to find a supported configuration
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        var mappingSize: CGSize?
+        var traits: DeltaSkinTraits?
+
+        for displayType in displayTypes {
+            let testTraits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
+            if let size = skin.mappingSize(for: testTraits) {
+                mappingSize = size
+                traits = testTraits
+                break
+            }
+        }
+
+        guard let mappingSize = mappingSize, let traits = traits else {
+            DLOG("🎮 SKIN: No mapping size found for device \(device.rawValue), orientation \(orientation.rawValue)")
+            return nil
+        }
 
         // Calculate layout accounting for safe areas
         let safeInsets = view.safeAreaInsets

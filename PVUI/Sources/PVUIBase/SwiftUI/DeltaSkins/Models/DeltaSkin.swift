@@ -75,7 +75,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
     public var isDebugEnabled: Bool { info.debug }
 
     public func supports(_ traits: DeltaSkinTraits) -> Bool {
-        representation(for: traits) != nil
+        let result = representation(for: traits) != nil
+        ILOG("skins: supports() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(result)")
+        return result
     }
 
     public func screens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen]? {
@@ -120,7 +122,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
     }
 
     public func mappingSize(for traits: DeltaSkinTraits) -> CGSize? {
-        representation(for: traits)?.mappingSize
+        let rep = representation(for: traits)
+        let size = rep?.mappingSize
+        if let size = size {
+            ILOG("skins: mappingSize() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(size)")
+        } else {
+            ELOG("skins: ERROR - mappingSize() returned nil for traits: \(traits.description)")
+        }
+        return size
     }
 
     public func buttons(for traits: DeltaSkinTraits) -> [DeltaSkinButton]? {
@@ -175,22 +184,65 @@ public struct DeltaSkin: DeltaSkinProtocol {
     }
 
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
+        ILOG("skins: representation(for:) called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
+        ILOG("skins: Available device representations: \(info.representations.keys.map { $0.rawValue })")
+
         guard let deviceReps = info.representations[traits.device] else {
+            ELOG("skins: ERROR - No representation found for device: \(traits.device.rawValue)")
+            ELOG("skins: Available devices: \(info.representations.keys.map { $0.rawValue }.joined(separator: ", "))")
             return nil
         }
+        ILOG("skins: Found device representation for: \(traits.device.rawValue)")
 
-        let orientationReps: OrientationRepresentations?
+        // Log available display types for debugging
+        var availableDisplayTypes: [String] = []
+        if deviceReps.standard != nil { availableDisplayTypes.append("standard") }
+        if deviceReps.edgeToEdge != nil { availableDisplayTypes.append("edgeToEdge") }
+        if deviceReps.splitView != nil { availableDisplayTypes.append("splitView") }
+        if deviceReps.stageManager != nil { availableDisplayTypes.append("stageManager") }
+        if deviceReps.externalDisplay != nil { availableDisplayTypes.append("externalDisplay") }
+        ILOG("skins: Available display types for \(traits.device.rawValue): \(availableDisplayTypes.joined(separator: ", "))")
+
+        // Try the requested display type first
+        var orientationReps: OrientationRepresentations?
         switch traits.displayType {
         case .standard:
             orientationReps = deviceReps.standard?[traits.orientation.rawValue]
+            ILOG("skins: Looking for standard/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         case .edgeToEdge:
             orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+            ILOG("skins: Looking for edgeToEdge/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         case .splitView:
             orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
+            ILOG("skins: Looking for splitView/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         case .stageManager:
             orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
+            ILOG("skins: Looking for stageManager/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         case .externalDisplay:
             orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
+            ILOG("skins: Looking for externalDisplay/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
+        }
+
+        // If not found and requested display type is edgeToEdge, try standard as fallback
+        if orientationReps == nil && traits.displayType == .edgeToEdge {
+            ILOG("skins: edgeToEdge not found, trying standard as fallback")
+            orientationReps = deviceReps.standard?[traits.orientation.rawValue]
+            if orientationReps != nil {
+                ILOG("skins: Found standard/\(traits.orientation.rawValue) as fallback")
+            }
+        }
+
+        // If still not found and requested display type is standard, try edgeToEdge as fallback
+        if orientationReps == nil && traits.displayType == .standard {
+            ILOG("skins: standard not found, trying edgeToEdge as fallback")
+            orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
+            if orientationReps != nil {
+                ILOG("skins: Found edgeToEdge/\(traits.orientation.rawValue) as fallback")
+            }
+        }
+
+        if orientationReps == nil {
+            ELOG("skins: ERROR - No orientation representation found for displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue), and fallbacks failed")
         }
 
         return orientationReps?.toRepresentationInfo()
@@ -201,21 +253,27 @@ public struct DeltaSkin: DeltaSkinProtocol {
     private static let imageCacheQueue = DispatchQueue(label: "com.provenance.deltaskin.imagecache", attributes: .concurrent)
 
     public func image(for traits: DeltaSkinTraits) async throws -> UIImage {
+        ILOG("skins: image(for:) called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
         // Get the representation for these traits
         guard let rep = representation(for: traits) else {
+            ELOG("skins: ERROR - image(for:) failed: representation returned nil for traits: \(traits.description)")
             throw DeltaSkinError.unsupportedTraits
         }
+        ILOG("skins: Got representation, attempting to load image")
 
         // Try all candidate filenames in order until one loads
         let candidates = rep.assets.candidates()
+        ILOG("skins: Image candidates: \(candidates)")
         var lastError: Error?
         for name in candidates {
             // Check cache first
             let cacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(name)"
             if let cachedImage = Self.imageCacheQueue.sync(execute: { Self.imageCache[cacheKey] }) {
+                ILOG("skins: Found cached image: \(name)")
                 return cachedImage
             }
 
+            ILOG("skins: Attempting to load image asset: \(name)")
             do {
                 let data = try loadAssetData(name)
                 let lower = name.lowercased()
@@ -236,6 +294,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
                 // Cache the decoded image
                 if let imageToCache = decodedImage {
+                    ILOG("skins: Successfully loaded and decoded image: \(name), size: \(imageToCache.size)")
                     Self.imageCacheQueue.async(flags: .barrier) {
                         Self.imageCache[cacheKey] = imageToCache
                         // Limit cache size to ~50MB (approximately 50 images)
@@ -248,11 +307,13 @@ public struct DeltaSkin: DeltaSkinProtocol {
                     return imageToCache
                 }
             } catch {
-                ELOG("Failed to load asset candidate: \(name) — \(error)")
+                ELOG("skins: Failed to load asset candidate: \(name) — \(error)")
                 lastError = error
                 continue
             }
         }
+
+        ELOG("skins: ERROR - Failed to load image after trying all candidates. Last error: \(lastError?.localizedDescription ?? "unknown")")
 
         // Fallback: try the original filename property (legacy behavior)
         let fallbackName = rep.assets.filename

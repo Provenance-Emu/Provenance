@@ -205,6 +205,8 @@ public struct DeltaSkinView: View {
         self.core = core
         self.isInEmulator = isInEmulator
         self.inputHandler = inputHandler
+
+        ILOG("skins: DeltaSkinView init - skin: \(skin.name), device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue), iPadModel: \(traits.iPadModel?.rawValue ?? "nil")")
     }
 
     internal struct SkinLayout: Equatable, Hashable {
@@ -234,7 +236,12 @@ public struct DeltaSkinView: View {
     }
 
     internal func calculateLayout(for geometry: GeometryProxy) -> SkinLayout? {
-        guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
+        ILOG("skins: calculateLayout() called - geometry size: \(geometry.size), device: \(traits.device.rawValue)")
+        guard let mappingSize = skin.mappingSize(for: traits) else {
+            ELOG("skins: ERROR - calculateLayout() failed: no mapping size for traits: \(traits.description)")
+            return nil
+        }
+        ILOG("skins: calculateLayout() - mappingSize: \(mappingSize)")
 
         // For simple image-based skins (no screens array, just background image),
         // use the actual image size for scaling instead of mappingSize
@@ -299,13 +306,15 @@ public struct DeltaSkinView: View {
             yOffset = (geometry.size.height - scaledHeight) / 2
         }
 
-        return SkinLayout(
+        let layout = SkinLayout(
             scale: scale,
             width: scaledWidth,
             height: scaledHeight,
             xOffset: xOffset,
             yOffset: yOffset
         )
+        ILOG("skins: calculateLayout() - calculated layout: scale=\(scale), width=\(scaledWidth), height=\(scaledHeight), xOffset=\(xOffset), yOffset=\(yOffset)")
+        return layout
     }
 
     private func logLayoutInfo(geometry: GeometryProxy, layout: SkinLayout) {
@@ -419,7 +428,8 @@ public struct DeltaSkinView: View {
                             size: geometry.size,
                             screenAspectRatio: screenAspectRatio,
                             isInEmulator: isInEmulator,
-                            core: core
+                            core: core,
+                            layout: layout
                         )
                         .zIndex(0)
 
@@ -470,6 +480,14 @@ public struct DeltaSkinView: View {
                             Rectangle()
                                 .fill(Color.gray.opacity(0.2))
                                 .frame(width: layout.width, height: layout.height)
+                                .overlay(
+                                    Text("No Image")
+                                        .foregroundColor(.red)
+                                        .font(.caption)
+                                )
+                                .onAppear {
+                                    ILOG("skins: WARNING - No skin image loaded, showing placeholder")
+                                }
                         }
 
                         // Screen groups
@@ -550,7 +568,12 @@ public struct DeltaSkinView: View {
                     )
                     .environment(\.skinLayout, layout)
                     .onAppear {
-                        DLOG("DeltaSkinView appeared")
+                        ILOG("skins: DeltaSkinView appeared - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue), iPadModel: \(traits.iPadModel?.rawValue ?? "nil")")
+                        ILOG("skins: DeltaSkinView - skin name: \(skin.name)")
+                        ILOG("skins: Rendering DeltaSkinView with layout - device: \(traits.device.rawValue), layout size: \(layout.width)x\(layout.height)")
+                        if let skinImage = skinImage {
+                            ILOG("skins: Rendering skin image: \(skinImage.size) at layout size: \(layout.width)x\(layout.height)")
+                        }
                         logLayoutInfo(geometry: geometry, layout: layout)
                         loadSkinResources()
                         // Preload thumbstick caps so they render immediately
@@ -597,18 +620,29 @@ public struct DeltaSkinView: View {
                            ? (layout.yOffset + layout.height / 2)
                            : (geometry.size.height - layout.height / 2)
                     )
+                } else {
+                    // Layout calculation failed - show empty view
+                    // Error is already logged in calculateLayout()
+                    Color.clear
+                        .onAppear {
+                            ELOG("skins: ERROR - calculateLayout() returned nil, view will not render")
+                        }
                 }
             }
             .onChange(of: geometry.size) { newSize in
-                DLOG("Container size changed to: \(newSize)")
+                ILOG("skins: Container size changed to: \(newSize)")
                 if let layout = calculateLayout(for: geometry) {
                     logLayoutInfo(geometry: geometry, layout: layout)
+                } else {
+                    ELOG("skins: ERROR - calculateLayout() returned nil after size change")
                 }
             }
             .onChange(of: traits) { newTraits in
-                DLOG("Traits changed to: \(newTraits)")
+                ILOG("skins: Traits changed to: device=\(newTraits.device.rawValue), displayType=\(newTraits.displayType.rawValue), orientation=\(newTraits.orientation.rawValue), iPadModel=\(newTraits.iPadModel?.rawValue ?? "nil")")
                 if let layout = calculateLayout(for: geometry) {
                     logLayoutInfo(geometry: geometry, layout: layout)
+                } else {
+                    ELOG("skins: ERROR - calculateLayout() returned nil after traits change")
                 }
             }
             #if !os(tvOS)
@@ -760,23 +794,41 @@ public struct DeltaSkinView: View {
     }
 
     private func loadSkinResources() {
+        ILOG("skins: loadSkinResources() called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
+        ILOG("skins: Checking if skin supports traits: \(traits.description)")
+
+        let supportsTraits = skin.supports(traits)
+        ILOG("skins: Skin supports traits: \(supportsTraits)")
+
+        if let mappingSize = skin.mappingSize(for: traits) {
+            ILOG("skins: Skin mapping size: \(mappingSize)")
+        } else {
+            ELOG("skins: ERROR - Skin has no mapping size for traits: \(traits.description)")
+        }
+
         Task {
             // Load skin image
+            ILOG("skins: Attempting to load skin image for traits: \(traits.description)")
             do {
                 skinImage = try await skin.image(for: traits)
-                DLOG("Loaded skin image: \(skinImage?.size ?? .zero)")
+                if let image = skinImage {
+                    ILOG("skins: Successfully loaded skin image: \(image.size)")
+                } else {
+                    ELOG("skins: ERROR - Skin image is nil after loading")
+                }
             } catch {
                 loadingError = error
-                ELOG("Error loading skin image: \(error)")
+                ELOG("skins: ERROR loading skin image: \(error)")
+                ELOG("skins: Error details - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
             }
 
             // Load screen groups
             screenGroups = skin.screenGroups(for: traits)
-            DLOG("Loaded screen groups: \(screenGroups?.count ?? 0)")
+            ILOG("skins: Loaded screen groups: \(screenGroups?.count ?? 0)")
 
             // Load button mappings
             buttonMappings = skin.buttonMappings(for: traits)
-            DLOG("Loaded button mappings: \(buttonMappings?.count ?? 0)")
+            ILOG("skins: Loaded button mappings: \(buttonMappings?.count ?? 0)")
 
             // Load per-button asset images (if any)
             await loadButtonAssets()
