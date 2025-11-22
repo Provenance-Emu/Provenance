@@ -120,8 +120,11 @@ public extension GameLaunchingViewController {
 
                     let database = RomDatabase.sharedInstance
                     /// Add the bios to the database
+                    /// Skip if Realm is in write transaction (e.g., GameImporter is importing) to avoid blocking
                     if database.realm.isInWriteTransaction {
-                        database.realm.add(newBIOS)
+                        // If GameImporter is holding a write transaction, skip adding BIOS now
+                        // It will be added on next launch or when import completes
+                        VLOG("Skipping BIOS database add - Realm is in write transaction (likely GameImporter is active)")
                     } else {
                         RomDatabase.refresh()
                         //avoids conflicts if two BIOS share the same name - looking at you jagboot.rom
@@ -147,24 +150,46 @@ public extension GameLaunchingViewController {
             if !biosPathContents.contains(expectedFilename), !currentEntry.optional {
                 // Didn't match by files name, now we generate all the md5's and see if any match, if they do, move the matching file to the correct filename
 
-                // 1 - Lazily generate the hashes of files in the BIOS directory
+                // 1 - Lazily generate the hashes of files in the BIOS directory (async to avoid blocking main thread)
                 if biosPathContentsMD5Cache == nil {
-                    biosPathContentsMD5Cache = biosPathContents.reduce([String: String](), { (hashDictionary, filename) -> [String: String] in
-                        let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
-                        Task {
-                            // TODO: Not sure this works
-                            try await downloadFileIfNeeded(fullBIOSFileURL)
+                    // Calculate MD5s in parallel on background thread to avoid blocking main thread
+                    // This is especially important when GameImporter is actively importing
+                    biosPathContentsMD5Cache = await withTaskGroup(of: (String, String?).self, returning: [String: String].self) { group in
+                        var hashDictionary: [String: String] = [:]
+
+                        for filename in biosPathContents {
+                            group.addTask {
+                                let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
+
+                                // Download file if needed (async)
+                                do {
+                                    try await downloadFileIfNeeded(fullBIOSFileURL)
+                                } catch {
+                                    // Continue even if download fails
+                                }
+
+                                // Calculate MD5 on background thread to avoid blocking
+                                let hash = await Task.detached(priority: .userInitiated) {
+                                    FileManager.default.md5ForFile(at: fullBIOSFileURL, fromOffset: 0)
+                                }.value
+
+                                if let hash = hash, !hash.isEmpty {
+                                    return (hash.uppercased(), filename)
+                                } else {
+                                    return ("", nil)
+                                }
+                            }
                         }
-                        if let hash = FileManager.default.md5ForFile(at: fullBIOSFileURL, fromOffset: 0), !hash.isEmpty {
-                            // Make mutable
-                            var hashDictionary = hashDictionary
-                            hashDictionary[hash] = filename
-                            return hashDictionary
-                        } else {
-                            // Couldn't hash for whatever reason, just pass on the hash dict
-                            return hashDictionary
+
+                        // Collect results
+                        for await (hash, filename) in group {
+                            if let filename = filename, !hash.isEmpty {
+                                hashDictionary[hash] = filename
+                            }
                         }
-                    })
+
+                        return hashDictionary
+                    }
                 }
 
                 // 2 - See if any hashes in the BIOS directory match the current BIOS entry we're investigating.
