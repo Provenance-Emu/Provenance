@@ -318,6 +318,8 @@ int argc =  1;
     if (settings) {
         settings->bools.core_info_savestate_bypass = true;
         settings->bools.video_fps_show = PVSettingsWrapper.showFPS;
+        // Bypass save info, this is mostly for Dreamcast
+        settings->bools.core_info_savestate_bypass = true;
     }
     [self writeConfigFile];
     /// Sync BIOS resources, but exclude tos.img as it's handled specially in writeConfigFile
