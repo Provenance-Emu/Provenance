@@ -120,12 +120,12 @@ public struct CoreOptionsDetailView: View {
             .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
             .padding(.top, 20)
             .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 10, x: 0, y: 0)
-            .onAppear {
-                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = themeManager.currentPalette.dark ? 0.7 : 0.4
-                    isAnimating = true
-                }
-            }
+//            .onAppear {
+//                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+//                    glowOpacity = themeManager.currentPalette.dark ? 0.7 : 0.4
+//                    isAnimating = true
+//                }
+//            }
     }
 
     // MARK: - Options List View
