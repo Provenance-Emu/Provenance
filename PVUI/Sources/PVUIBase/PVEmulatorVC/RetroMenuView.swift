@@ -1533,19 +1533,25 @@ struct RetroMenuView: View {
 
         do {
             // Get skins from DeltaSkinManager
-            let skins = try await DeltaSkinManager.shared.skins(for: systemId)
+            let allSkins = try await DeltaSkinManager.shared.skins(for: systemId)
+
+            // Filter skins to only show those that support the current device (iPad on iPad, iPhone on iPhone)
+            let device = currentDevice
+            let filteredSkins = allSkins.filter { skin in
+                return skinSupportsCurrentDevice(skin)
+            }
 
             // Update the available skins list on the main thread
             await MainActor.run {
-                // Store the actual skin objects for previews
-                self.availableSkinObjects = skins
+                // Store the actual skin objects for previews (filtered by device support)
+                self.availableSkinObjects = filteredSkins
 
                 // Create a set of unique skin names to avoid duplicates
                 var uniqueSkinNames = Set<String>()
                 uniqueSkinNames.insert("Default")
 
                 // Add names of available skins, avoiding duplicates
-                for skin in skins {
+                for skin in filteredSkins {
                     uniqueSkinNames.insert(skin.name)
                 }
 
@@ -1589,7 +1595,7 @@ struct RetroMenuView: View {
 
             await MainActor.run {
                 if let portraitSkinId = portraitSkinId,
-                   let portraitSkin = skins.first(where: { $0.identifier == portraitSkinId }) {
+                   let portraitSkin = filteredSkins.first(where: { $0.identifier == portraitSkinId }) {
                     self.selectedPortraitSkin = portraitSkin.name
                     ILOG("skins: loadAvailableSkins - set portrait skin to: \(portraitSkin.name)")
                 } else {
@@ -1622,7 +1628,7 @@ struct RetroMenuView: View {
 
             await MainActor.run {
                 if let landscapeSkinId = landscapeSkinId,
-                   let landscapeSkin = skins.first(where: { $0.identifier == landscapeSkinId }) {
+                   let landscapeSkin = filteredSkins.first(where: { $0.identifier == landscapeSkinId }) {
                     self.selectedLandscapeSkin = landscapeSkin.name
                     ILOG("skins: loadAvailableSkins - set landscape skin to: \(landscapeSkin.name)")
                 } else {
@@ -1642,13 +1648,39 @@ struct RetroMenuView: View {
 
 
 
+    /// Get the current device type
+    private var currentDevice: DeltaSkinDevice {
+        #if os(tvOS)
+        return .tv
+        #else
+        return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #endif
+    }
+
+    /// Check if a skin supports the current device (iPad on iPad, iPhone on iPhone)
+    /// This is stricter than skinSupportsOrientation - it only checks the current device, no fallback
+    private func skinSupportsCurrentDevice(_ skin: DeltaSkinProtocol) -> Bool {
+        let device = currentDevice
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        let orientations: [SkinOrientation] = [.portrait, .landscape]
+
+        // Check if skin supports at least one orientation for the current device
+        for orientation in orientations {
+            for display in displayTypes {
+                let traits = DeltaSkinTraits(
+                    device: device,
+                    displayType: display,
+                    orientation: orientation.deltaSkinOrientation
+                )
+                if skin.supports(traits) { return true }
+            }
+        }
+        return false
+    }
+
     /// Check if a skin supports a given orientation for the current device
     private func skinSupportsOrientation(_ skin: DeltaSkinProtocol, orientation: SkinOrientation) -> Bool {
-        #if os(tvOS)
-        let device: DeltaSkinDevice = .tv
-        #else
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        #endif
+        let device = currentDevice
         // Try multiple display types and devices to robustly detect support
         let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
         for display in displayTypes {
@@ -1659,22 +1691,7 @@ struct RetroMenuView: View {
             )
             if skin.supports(traits) { return true }
         }
-
-        // Fallback: try the alternate device category (many skins declare only iPhone or iPad)
-        #if os(tvOS)
         return false
-        #else
-        let altDevice: DeltaSkinDevice = (device == .ipad) ? .iphone : .ipad
-        for display in displayTypes {
-            let altTraits = DeltaSkinTraits(
-                device: altDevice,
-                displayType: display,
-                orientation: orientation.deltaSkinOrientation
-            )
-            if skin.supports(altTraits) { return true }
-        }
-        return false
-        #endif
     }
 
     /// Import skins from URLs
