@@ -419,7 +419,11 @@ public class DeltaSkinInputHandler: ObservableObject {
                 }
             case .Saturn:
                 // Saturn doesn't have analog sticks, skip
-                break
+                if isLeftStick, let responder = core as? PVSaturnSystemResponderClient {
+                    responder.didMoveJoystick(.leftAnalog, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PVDreamcastSystemResponderClient: button=leftAnalog, x=\(x), y=\(y)")
+                    return
+                }
             case .MAME:
                 // MAME has both left and right analog sticks
                 if let responder = core as? PVMAMESystemResponderClient {
