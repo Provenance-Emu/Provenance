@@ -1,5 +1,5 @@
 /// Protocol defining core DeltaSkin functionality
-public protocol DeltaSkinProtocol {
+public protocol DeltaSkinProtocol: Identifiable, Equatable {
     /// Unique identifier for the skin
     var identifier: String { get }
 
@@ -37,4 +37,15 @@ public protocol DeltaSkinProtocol {
     var jsonRepresentation: [String: Any] { get }
     
     func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo?
+}
+
+public extension Identifiable where  Self: DeltaSkinProtocol  {
+    var id: String  { identifier }
+}
+
+
+public extension Equatable where  Self: DeltaSkinProtocol  {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.identifier == rhs.identifier
+    }
 }
