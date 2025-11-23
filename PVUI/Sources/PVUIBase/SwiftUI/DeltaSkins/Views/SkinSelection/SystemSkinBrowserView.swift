@@ -557,7 +557,7 @@ private struct DeltaStylesLinkView: View {
                 .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
             }
             .sheet(isPresented: $showSafariView) {
-                SafariWebView(url: deltaStylesURL)
+                SafariWebView(url: deltaStylesURL, entersReaderIfAvailable: false)
             }
             #else
             Link(destination: deltaStylesURL) {

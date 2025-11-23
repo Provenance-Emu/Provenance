@@ -1276,22 +1276,9 @@ struct GameReferenceWebView: View {
     let url: URL
 
     var body: some View {
-        SafariWebView(url: url)
+        SafariWebView(url: url, entersReaderIfAvailable: true)
             .edgesIgnoringSafeArea(.bottom)
     }
-}
-
-struct SafariWebView: UIViewControllerRepresentable {
-    let url: URL
-
-    func makeUIViewController(context: Context) -> SFSafariViewController {
-        let config = SFSafariViewController.Configuration()
-        config.barCollapsingEnabled = true
-        config.entersReaderIfAvailable = true
-        return SFSafariViewController(url: url, configuration: config)
-    }
-
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 }
 #endif
 

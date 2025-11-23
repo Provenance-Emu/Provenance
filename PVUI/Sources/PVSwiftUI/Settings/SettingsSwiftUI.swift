@@ -1437,7 +1437,7 @@ private struct DeltaStylesLinkView: View {
                 )
             }
             .sheet(isPresented: $showSafariView) {
-                SafariWebView(url: deltaStylesURL)
+                SafariWebView(url: deltaStylesURL, entersReaderIfAvailable: false)
             }
             #else
             Link(destination: deltaStylesURL) {
@@ -1495,24 +1495,6 @@ private struct DeltaStylesLinkView: View {
         .padding(.vertical, 8)
     }
 }
-
-#if canImport(SafariServices)
-import SafariServices
-
-/// Safari WebView wrapper for presenting SFSafariViewController in SwiftUI
-private struct SafariWebView: UIViewControllerRepresentable {
-    let url: URL
-
-    func makeUIViewController(context: Context) -> SFSafariViewController {
-        let config = SFSafariViewController.Configuration()
-        config.barCollapsingEnabled = true
-        config.entersReaderIfAvailable = false
-        return SFSafariViewController(url: url, configuration: config)
-    }
-
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
-}
-#endif
 
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 private struct RetroAchievementsSection: View {

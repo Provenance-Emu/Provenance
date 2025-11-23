@@ -346,7 +346,7 @@ private struct DeltaStylesLinkView: View {
                 )
             }
             .sheet(isPresented: $showSafariView) {
-                SafariWebView(url: deltaStylesURL)
+                SafariWebView(url: deltaStylesURL, entersReaderIfAvailable: false)
             }
             #else
             Link(destination: deltaStylesURL) {
