@@ -631,7 +631,11 @@ public extension UTType {
     }
 
     static var manicSkin: UTType {
-        UTType(filenameExtension: "manicskin", conformingTo: .archive)!
+        // Try to use the imported type from plist first, fallback to dynamic type
+        if let importedType = UTType("com.provenance.manicskin") {
+            return importedType
+        }
+        return UTType(filenameExtension: "manicskin", conformingTo: .archive)!
     }
 }
 
