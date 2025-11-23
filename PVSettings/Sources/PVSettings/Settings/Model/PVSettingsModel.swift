@@ -21,9 +21,9 @@ fileprivate var IsAppStore: Bool {
 public
 extension Defaults.Keys {
 #if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
 #else
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
+    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
 #endif
     static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
 
