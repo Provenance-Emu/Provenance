@@ -1014,6 +1014,48 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+        WhatsNew(
+            version: "3.2.1",
+            title: "Skin Fixes & Control Improvements",
+            features: [
+                .init(
+                    image: .init(systemName: "ipad", foregroundColor: .blue),
+                    title: "iPad Skins Fixed",
+                    subtitle: "Resolved skin display issues on iPad devices for better visual experience"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .green),
+                    title: "Joystick Fixed in Landscape",
+                    subtitle: "Fixed joystick controls in default skin when playing in landscape orientation"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller", foregroundColor: .orange),
+                    title: "Atari Lynx Controls Fixed",
+                    subtitle: "Resolved RetroArch control issues for Atari Lynx games"
+                ),
+                .init(
+                    image: .init(systemName: "lock.open.fill", foregroundColor: .purple),
+                    title: "RetroAchievements Login Fixed",
+                    subtitle: "Fixed login issues with RetroAchievements service"
+                ),
+                .init(
+                    image: .init(systemName: "paintpalette.fill", foregroundColor: .pink),
+                    title: "Skin UI Improvements",
+                    subtitle: "Fixed skin selection and import user interfaces for better usability"
+                ),
+                .init(
+                    image: .init(systemName: "arrow.clockwise", foregroundColor: .red),
+                    title: "Skin Rotation Fixed",
+                    subtitle: "Resolved skin rotation issues for proper display in all orientations"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
     }
 }
 #endif
