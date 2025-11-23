@@ -1264,7 +1264,7 @@
 						<key>PVControlTitle</key>
 						<string>Pause</string>
 						<key>PVControlFrame</key>
-						<string>{{90,50},{60,50}}</string>
+						<string>{{160,90},{60,50}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1280,7 +1280,7 @@
 						<key>PVControlTitle</key>
 						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{90,50},{60,50}}</string>
+						<string>{{90,50},{60,70}}</string>
 					</dict>
 				</array>
 			</dict>
