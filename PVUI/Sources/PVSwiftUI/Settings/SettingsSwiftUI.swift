@@ -973,8 +973,8 @@ private struct VideoSection: View {
                             icon: .sfSymbol("square.stack.3d.up"))
             }
             ThemedToggle(isOn: $nativeScaleEnabled) {
-                SettingsRow(title: "Native Scaling",
-                            subtitle: "Use the original console's resolution.",
+                SettingsRow(title: "Native Resolution",
+                            subtitle: nativeScaleEnabled ? "Use the original console's resolution." : "Scale to fit the window.",
                             icon: .sfSymbol("arrow.up.left.and.arrow.down.right"))
             }
             ThemedToggle(isOn: $integerScaleEnabled) {
