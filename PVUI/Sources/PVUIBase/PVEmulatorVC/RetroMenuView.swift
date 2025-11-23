@@ -1026,21 +1026,19 @@ struct RetroMenuView: View {
                         // Skin content when loaded
                         ScrollView {
                             VStack(spacing: 16) {
-                                // Default skin option
-                                if !availableSkins.contains(where: { $0 == "Default" }) {
-                                    skinItemView(
-                                        name: "Default",
-                                        preview: nil,
-                                        isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == "Default",
-                                        skinId: nil,
-                                        onSelect: {
-                                            showingSkinPicker = false
-                                            // Show scope selection alert
-                                            pendingSkinSelection = (name: "Default", identifier: "", orientation: currentOrientation)
-                                            showingSkinScopeAlert = true
-                                        }
-                                    )
-                                }
+                                // Default skin option - always show
+                                skinItemView(
+                                    name: "Default",
+                                    preview: nil,
+                                    isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == "Default",
+                                    skinId: nil,
+                                    onSelect: {
+                                        showingSkinPicker = false
+                                        // Show scope selection alert
+                                        pendingSkinSelection = (name: "Default", identifier: "", orientation: currentOrientation)
+                                        showingSkinScopeAlert = true
+                                    }
+                                )
 
                                 // Custom skins with previews
                                 ForEach(availableSkinObjects, id: \.identifier) { skin in
