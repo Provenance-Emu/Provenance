@@ -455,6 +455,36 @@ extension ProvenanceApp {
 
     func handle(fileURL url: URL) {
         let filename = url.lastPathComponent
+        let fileExtension = url.pathExtension.lowercased()
+
+        // Check if this is a skin file (.deltaskin or .manicskin)
+        if fileExtension == "deltaskin" || fileExtension == "manicskin" {
+            ILOG("ProvenanceApp: Handling skin file: \(filename)")
+            Task {
+                do {
+                    // Import the skin using DeltaSkinManager
+                    try await DeltaSkinManager.shared.importSkin(from: url)
+                    ILOG("ProvenanceApp: Successfully imported skin: \(filename)")
+
+                    // Reload skins to update the UI
+                    await DeltaSkinManager.shared.reloadSkins()
+
+                    // Post notification that a skin was imported
+                    await MainActor.run {
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("DeltaSkinImported"),
+                            object: nil,
+                            userInfo: ["filename": filename]
+                        )
+                    }
+                } catch {
+                    ELOG("ProvenanceApp: Failed to import skin \(filename): \(error.localizedDescription)")
+                }
+            }
+            return
+        }
+
+        // Handle ROM files as before
         let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
         var secureDocument = false
         do {
