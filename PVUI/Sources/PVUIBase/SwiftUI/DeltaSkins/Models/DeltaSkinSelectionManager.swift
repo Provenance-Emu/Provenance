@@ -194,6 +194,90 @@ public final class DeltaSkinSelectionManager: ObservableObject {
     public func systemPreference(for systemId: SystemIdentifier, orientation: SkinOrientation) -> String? {
         return preferences.selectedSkinIdentifier(for: systemId, orientation: orientation)
     }
+
+    // MARK: - Fallback Logic
+
+    /// Get the effective skin identifier with fallback if the selected skin doesn't support the orientation
+    /// - Parameters:
+    ///   - systemId: The system identifier
+    ///   - gameId: Optional game identifier
+    ///   - orientation: The orientation
+    ///   - availableSkins: All available skins for the system (used for fallback lookup)
+    /// - Returns: The effective skin identifier that supports the orientation, or nil for default
+    public func effectiveSkinIdentifierWithFallback(
+        for systemId: SystemIdentifier,
+        gameId: String? = nil,
+        orientation: SkinOrientation,
+        availableSkins: [DeltaSkinProtocol]
+    ) -> String? {
+        // First get the effective skin identifier
+        let effectiveId = effectiveSkinIdentifier(for: systemId, gameId: gameId, orientation: orientation)
+
+        // If no skin is selected, return nil (will use default)
+        guard let skinId = effectiveId else {
+            return nil
+        }
+
+        // Find the skin object
+        guard let skin = availableSkins.first(where: { $0.identifier == skinId }) else {
+            // Skin not found in available skins, return nil (will use default)
+            ILOG("skins: Effective skin '\(skinId)' not found in available skins, falling back to default")
+            return nil
+        }
+
+        // Check if skin supports the current orientation
+        let device: DeltaSkinDevice = {
+            #if os(tvOS)
+            return .tv
+            #else
+            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+            #endif
+        }()
+
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        let deltaOrientation = orientation.deltaSkinOrientation
+
+        // Check if skin supports this orientation
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(
+                device: device,
+                displayType: displayType,
+                orientation: deltaOrientation
+            )
+            if skin.supports(traits) {
+                // Skin supports the orientation, return it
+                return skinId
+            }
+        }
+
+        // Skin doesn't support the orientation, find a fallback
+        ILOG("skins: Effective skin '\(skin.name)' doesn't support \(orientation.rawValue), finding fallback")
+
+        // Try to find first available skin that supports this orientation
+        for fallbackSkin in availableSkins {
+            // Skip the current skin
+            if fallbackSkin.identifier == skinId {
+                continue
+            }
+
+            // Check if fallback skin supports this orientation
+            for displayType in displayTypes {
+                let traits = DeltaSkinTraits(
+                    device: device,
+                    displayType: displayType,
+                    orientation: deltaOrientation
+                )
+                if fallbackSkin.supports(traits) {
+                    ILOG("skins: Found fallback skin '\(fallbackSkin.name)' for \(orientation.rawValue)")
+                    return fallbackSkin.identifier
+                }
+            }
+        }
+
+        // No fallback skin found, return nil (will use default)
+        ILOG("skins: No fallback skin found for \(orientation.rawValue), using default")
+        return nil
+    }
 }
 
 /// Scope for skin selection

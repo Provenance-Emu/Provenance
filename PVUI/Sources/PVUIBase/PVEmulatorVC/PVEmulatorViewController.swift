@@ -1245,8 +1245,7 @@ extension PVEmulatorViewController {
         // Reset the current target frame to force recalculation for the new skin
         currentTargetFrame = nil
 
-        // Store the current skin for rotation handling
-        currentSkin = skin
+        // Store the current skin for rotation handling (will be updated after fallback check)
 
         // When applying a skin, ensure GPU view controller exists and is visible (it's used by the skin system)
         // If it wasn't created before (e.g., RetroArch skipLayout without skin), create it now
@@ -1287,6 +1286,30 @@ extension PVEmulatorViewController {
         // Log the orientation we're using
         DLOG("Using orientation for skin application: \(currentOrientation)")
 
+        // Check if skin supports current orientation, find fallback if not
+        var skinToApply = try await findSkinWithFallback(skin: skin, orientation: currentOrientation)
+
+        // CRITICAL: Validate BEFORE creating view - check if skin can actually render
+        // This catches cases where supports() returns true but representation/mappingSize is missing
+        let canRender = await validateSkinCanRender(skin: skinToApply, orientation: currentOrientation)
+        if !canRender {
+            ILOG("skins: Skin '\(skinToApply.name)' cannot render for \(currentOrientation.rawValue), finding fallback")
+            // Try to find a fallback skin that can actually render
+            if let fallbackSkin = try? await findFallbackSkinForFailedSkin(
+                failedSkin: skinToApply,
+                orientation: currentOrientation
+            ) {
+                ILOG("skins: Found fallback skin '\(fallbackSkin.name)'")
+                skinToApply = fallbackSkin
+            } else {
+                // No fallback found, MUST use default skin
+                ILOG("skins: No fallback found, MUST use default skin")
+                let systemId = game.system?.systemIdentifier ?? SystemIdentifier.RetroArch
+                skinToApply = EmulatorWithSkinView.defaultSkin(for: systemId)
+                ILOG("skins: Using default skin '\(skinToApply.name)' for system \(systemId.rawValue)")
+            }
+        }
+
         // RADICAL APPROACH: Completely rebuild the view hierarchy
         await MainActor.run {
             // 1. Remove ALL views and controllers except the essential ones
@@ -1315,7 +1338,23 @@ extension PVEmulatorViewController {
         // 5. Create and add the skin view
         // Pause emulation while building the skin to avoid glitches
         core.setPauseEmulation(true)
-        let skinView = try await createSkinView(from: skin)
+
+        // Try to create the skin view, with fallback to default if it fails
+        // Note: skinToApply has already been validated and may be a fallback/default skin
+        var skinView: UIView
+        var finalSkin = skinToApply
+        let systemId = game.system?.systemIdentifier ?? SystemIdentifier.RetroArch
+
+        do {
+            skinView = try await createSkinView(from: skinToApply)
+            finalSkin = skinToApply
+        } catch {
+            // If creation fails, MUST use default skin
+            ILOG("skins: Failed to create skin view for '\(skinToApply.name)': \(error), using default skin")
+            finalSkin = EmulatorWithSkinView.defaultSkin(for: systemId)
+            ILOG("skins: Using default skin '\(finalSkin.name)' for system \(systemId.rawValue)")
+            skinView = try await createSkinView(from: finalSkin)
+        }
 
         await MainActor.run {
             // Add the skin view to the container
@@ -1333,8 +1372,8 @@ extension PVEmulatorViewController {
                 WLOG("WARNING: GPU view is nil before repositioning!")
             }
 
-            // Force recalculation of screen position for the new skin
-            repositionGameScreen(for: skin, orientation: currentOrientation, forceRecalculation: true)
+            // Force recalculation of screen position for the new skin (use finalSkin which may be fallback)
+            repositionGameScreen(for: finalSkin, orientation: currentOrientation, forceRecalculation: true)
 
             // Log the GPU view frame after repositioning
             if let gpuView = gpuViewController.view {
@@ -1352,12 +1391,15 @@ extension PVEmulatorViewController {
             DLOG("View hierarchy after applying new skin:")
             printViewHierarchyRecursively(view, level: 0)
 
-            // 8. Post notification that the skin has changed to trigger input handler reconnection
+            // 8. Post notification that the skin has changed to trigger input handler reconnection (use finalSkin)
             NotificationCenter.default.post(
                 name: NSNotification.Name("DeltaSkinChanged"),
                 object: nil,
-                userInfo: ["skinIdentifier": skin.identifier]
+                userInfo: ["skinIdentifier": finalSkin.identifier]
             )
+
+            // Update currentSkin to the final skin that was actually applied
+            currentSkin = finalSkin
 
             // Also post a reconnect notification to ensure proper input handling
             NotificationCenter.default.post(
@@ -1686,7 +1728,6 @@ extension PVEmulatorViewController {
 
     /// Perform a radical cleanup of the entire view hierarchy
     private func radicalCleanup() {
-        return
         DLOG("Performing RADICAL cleanup of view hierarchy")
 
         // 1. Save reference to essential views we need to keep
@@ -1706,10 +1747,27 @@ extension PVEmulatorViewController {
         skinHostingControllers.removeAll()
 
         // 4. Remove ALL subviews from the main view except the GPU view
+        // Also remove any skin containers (tagged with 9876) and DeltaSkinContainerView instances
         for subview in view.subviews {
             if subview !== gpuView {
-                DLOG("Removing view: \(subview)")
-                subview.removeFromSuperview()
+                // Remove skin containers (tagged with 9876) and any DeltaSkinContainerView instances
+                if subview.tag == 9876 || type(of: subview).description().contains("DeltaSkinContainerView") {
+                    DLOG("Removing skin container view: \(subview)")
+                    subview.removeFromSuperview()
+                } else {
+                    DLOG("Removing view: \(subview)")
+                    subview.removeFromSuperview()
+                }
+            }
+        }
+
+        // Also remove any skin containers that might be nested
+        if let gpuView = gpuView {
+            for subview in gpuView.superview?.subviews ?? [] {
+                if subview.tag == 9876 || type(of: subview).description().contains("DeltaSkinContainerView") {
+                    DLOG("Removing nested skin container view: \(subview)")
+                    subview.removeFromSuperview()
+                }
             }
         }
 
@@ -1733,6 +1791,202 @@ extension PVEmulatorViewController {
         // 8. Print the final view hierarchy
         DLOG("View hierarchy after radical cleanup:")
         printViewHierarchyRecursively(view, level: 0)
+    }
+
+    /// Validate that a skin can actually render (has valid layout)
+    /// - Parameters:
+    ///   - skin: The skin to validate
+    ///   - orientation: The current orientation
+    /// - Returns: True if the skin can render, false otherwise
+    private func validateSkinCanRender(skin: DeltaSkinProtocol, orientation: SkinOrientation) async -> Bool {
+        // Check if the skin has a valid mappingSize for the current traits
+        // This is what causes calculateLayout() to return nil
+        let device: DeltaSkinDevice = {
+            #if os(tvOS)
+            return .tv
+            #else
+            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+            #endif
+        }()
+
+        let displayTypes: [DeltaSkinDisplayType] = [.edgeToEdge, .standard]
+        let deltaOrientation = orientation.deltaSkinOrientation
+
+        // Check if skin has a valid mappingSize - this is what calculateLayout() needs
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(
+                device: device,
+                displayType: displayType,
+                orientation: deltaOrientation
+            )
+
+            // Check if skin supports these traits
+            if skin.supports(traits) {
+                // Check if representation exists - this is what actually fails in the error
+                guard let _ = skin.representation(for: traits) else {
+                    ILOG("skins: Skin '\(skin.name)' supports \(orientation.rawValue) but has no representation")
+                    continue
+                }
+                // Also check if mappingSize exists - required for calculateLayout()
+                guard let mappingSize = skin.mappingSize(for: traits), mappingSize.width > 0 && mappingSize.height > 0 else {
+                    ILOG("skins: Skin '\(skin.name)' supports \(orientation.rawValue) but has no valid mappingSize")
+                    continue
+                }
+                ILOG("skins: Skin '\(skin.name)' has valid representation and mappingSize \(mappingSize) for \(orientation.rawValue)")
+                return true
+            }
+        }
+
+        return false
+    }
+
+    /// Find a fallback skin when the requested skin fails to render
+    /// - Parameters:
+    ///   - failedSkin: The skin that failed
+    ///   - orientation: The current orientation
+    /// - Returns: A fallback skin that can render, or nil if none found
+    private func findFallbackSkinForFailedSkin(failedSkin: DeltaSkinProtocol, orientation: SkinOrientation) async throws -> DeltaSkinProtocol? {
+        guard let systemId = game.system?.systemIdentifier else {
+            return nil
+        }
+
+        let availableSkins = try await DeltaSkinManager.shared.skins(for: systemId)
+        let device: DeltaSkinDevice = {
+            #if os(tvOS)
+            return .tv
+            #else
+            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+            #endif
+        }()
+
+        let displayTypes: [DeltaSkinDisplayType] = [.edgeToEdge, .standard]
+        let deltaOrientation = orientation.deltaSkinOrientation
+
+        // Try to find first available skin that can actually render
+        for fallbackSkin in availableSkins {
+            // Skip the failed skin
+            if fallbackSkin.identifier == failedSkin.identifier {
+                continue
+            }
+
+            // Check if fallback skin supports this orientation and can render
+            for displayType in displayTypes {
+                let traits = DeltaSkinTraits(
+                    device: device,
+                    displayType: displayType,
+                    orientation: deltaOrientation
+                )
+                if fallbackSkin.supports(traits) {
+                    // Validate it has a valid representation (what actually fails)
+                    guard let _ = fallbackSkin.representation(for: traits) else {
+                        continue
+                    }
+                    // Also validate mappingSize exists (required for calculateLayout)
+                    guard let mappingSize = fallbackSkin.mappingSize(for: traits), mappingSize.width > 0 && mappingSize.height > 0 else {
+                        continue
+                    }
+                    ILOG("skins: Found fallback skin '\(fallbackSkin.name)' with valid representation and mappingSize \(mappingSize) for \(orientation.rawValue)")
+                    return fallbackSkin
+                }
+            }
+        }
+
+        return nil
+    }
+
+    /// Find a skin with fallback if the requested skin doesn't support the current orientation
+    /// - Parameters:
+    ///   - skin: The requested skin
+    ///   - orientation: The current orientation
+    /// - Returns: A skin that supports the orientation (fallback or default if needed)
+    private func findSkinWithFallback(skin: DeltaSkinProtocol, orientation: SkinOrientation) async throws -> DeltaSkinProtocol {
+        // Check if the requested skin supports the current orientation
+        let device: DeltaSkinDevice = {
+            #if os(tvOS)
+            return .tv
+            #else
+            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+            #endif
+        }()
+
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        let deltaOrientation = orientation.deltaSkinOrientation
+
+        // Check if skin supports this orientation AND has valid mappingSize
+        var supportsOrientation = false
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(
+                device: device,
+                displayType: displayType,
+                orientation: deltaOrientation
+            )
+            if skin.supports(traits) {
+                // Check if representation exists (what actually fails in the error)
+                guard let _ = skin.representation(for: traits) else {
+                    ILOG("skins: Skin '\(skin.name)' supports \(orientation.rawValue) but has no representation")
+                    continue
+                }
+                // Also check for valid mappingSize - required for calculateLayout()
+                guard let mappingSize = skin.mappingSize(for: traits), mappingSize.width > 0 && mappingSize.height > 0 else {
+                    ILOG("skins: Skin '\(skin.name)' supports \(orientation.rawValue) but has no valid mappingSize")
+                    continue
+                }
+                supportsOrientation = true
+                break
+            }
+        }
+
+        if supportsOrientation {
+            ILOG("skins: Skin '\(skin.name)' supports \(orientation.rawValue) orientation with valid mappingSize")
+            return skin
+        }
+
+        // Skin doesn't support orientation, find fallback
+        ILOG("skins: Skin '\(skin.name)' doesn't support \(orientation.rawValue), finding fallback")
+
+        guard let systemId = game.system?.systemIdentifier else {
+            // No system ID, use default skin
+            ILOG("skins: No system ID, using default skin")
+            return EmulatorWithSkinView.defaultSkin(for: SystemIdentifier.RetroArch)
+        }
+
+        // Get all available skins for this system
+        let availableSkins = try await DeltaSkinManager.shared.skins(for: systemId)
+
+        // Try to find first available skin that supports this orientation
+        for fallbackSkin in availableSkins {
+            // Skip the requested skin
+            if fallbackSkin.identifier == skin.identifier {
+                continue
+            }
+
+            // Check if fallback skin supports this orientation AND has valid mappingSize
+            for displayType in displayTypes {
+                let traits = DeltaSkinTraits(
+                    device: device,
+                    displayType: displayType,
+                    orientation: deltaOrientation
+                )
+                if fallbackSkin.supports(traits) {
+                    // Validate it has a valid representation (what actually fails)
+                    guard let _ = fallbackSkin.representation(for: traits) else {
+                        continue
+                    }
+                    // Also validate mappingSize exists (required for calculateLayout)
+                    guard let mappingSize = fallbackSkin.mappingSize(for: traits), mappingSize.width > 0 && mappingSize.height > 0 else {
+                        continue
+                    }
+                    ILOG("skins: Found fallback skin '\(fallbackSkin.name)' with valid representation and mappingSize \(mappingSize) for \(orientation.rawValue)")
+                    return fallbackSkin
+                }
+            }
+        }
+
+        // No fallback skin found, MUST use default skin
+        ILOG("skins: No fallback skin found for \(orientation.rawValue), MUST use default skin")
+        let defaultSkin = EmulatorWithSkinView.defaultSkin(for: systemId)
+        ILOG("skins: Returning default skin '\(defaultSkin.name)' for system \(systemId.rawValue)")
+        return defaultSkin
     }
 
     /// Debug helper to print the view hierarchy

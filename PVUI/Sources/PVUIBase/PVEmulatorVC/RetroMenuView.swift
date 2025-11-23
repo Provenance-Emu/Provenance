@@ -1923,10 +1923,11 @@ struct RetroMenuView: View {
             }
 
             if let skinId = skinId {
-                // Find and apply the skin
+                // Find and apply the skin with fallback support
                 let skins = try await DeltaSkinManager.shared.skins(for: systemId)
                 if let skin = skins.first(where: { $0.identifier == skinId }) {
                     ILOG("skins: Applying skin '\(skin.name)' for current orientation (\(currentOrientation.rawValue))")
+                    // applySkin will automatically handle fallback if skin doesn't support orientation
                     try await emulatorVC.applySkin(skin)
                 } else {
                     ILOG("skins: Skin with identifier '\(skinId)' not found, resetting to default")

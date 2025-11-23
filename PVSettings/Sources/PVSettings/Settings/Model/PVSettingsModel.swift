@@ -30,17 +30,16 @@ extension Defaults.Keys {
     static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
 
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
+   
     static let showGameBadges = Key<Bool>("showGameBadges", default: true)
 
     static let showRecentGames = Key<Bool>("showRecentGames", default: true)
 
     static let showSearchbar = Key<Bool>("showSearchbar", default: true)
 
-
     static let showFPSCount = Key<Bool>("showFPSCount", default: false)
 
     static let vsyncEnabled = Key<Bool>("vsyncEnabled", default: true)
-
 }
 
 public
