@@ -50,13 +50,22 @@ public struct DeltaSkinListView: View {
                 }
             }
             .onAppear {
-                // Use manager's loadedSkins directly if available, otherwise load once
+                // Use manager's loadedSkins directly if available
                 if !manager.loadedSkins.isEmpty {
                     availableSkins = manager.loadedSkins
                 } else {
+                    // Trigger load - SkinGridView will handle the actual loading
+                    // and loadedSkins will be updated asynchronously
                     Task {
                         do {
-                            availableSkins = try await manager.availableSkins(forceRescan: false)
+                            // This will trigger scanForSkins if needed
+                            // The loadedSkins will be updated asynchronously on main thread
+                            _ = try await manager.availableSkins(forceRescan: false)
+                            // Update availableSkins after a brief delay to allow loadedSkins to update
+                            try? await Task.sleep(nanoseconds: 50_000_000) // 0.05 seconds
+                            await MainActor.run {
+                                availableSkins = manager.loadedSkins
+                            }
                         } catch {
                             ELOG("Failed to load skins: \(error)")
                         }
@@ -70,7 +79,7 @@ public struct DeltaSkinListView: View {
         #if !os(tvOS)
             .fileImporter(
                 isPresented: $showingDocumentPicker,
-                allowedContentTypes: [UTType.deltaSkin],
+                allowedContentTypes: supportedSkinTypes,
                 allowsMultipleSelection: true
             ) { result in
                 Task {
@@ -89,6 +98,45 @@ public struct DeltaSkinListView: View {
                         isPresented: $showingImportError) {
                 Button("OK", role: .cancel) { }
             }
+    }
+
+    /// Comprehensive list of UTTypes for skin file imports
+    /// Supports both .deltaskin and .manicskin in file, package, and archive forms
+    private var supportedSkinTypes: [UTType] {
+        var skinTypes: [UTType] = []
+
+        // Prefer explicit identifiers if the system recognizes them
+        skinTypes.append(UTType.deltaSkin)
+        skinTypes.append(UTType.manicSkin)
+
+        // Accept files with these extensions (generic data)
+        if let deltaskinData = UTType(filenameExtension: "deltaskin", conformingTo: .data) {
+            skinTypes.append(deltaskinData)
+        }
+        if let manicData = UTType(filenameExtension: "manicskin", conformingTo: .data) {
+            skinTypes.append(manicData)
+        }
+
+        // Accept package (directory bundle) variants (some providers surface bundles)
+        if let deltaskinPackage = UTType(filenameExtension: "deltaskin", conformingTo: .package) {
+            skinTypes.append(deltaskinPackage)
+        }
+        if let manicPackage = UTType(filenameExtension: "manicskin", conformingTo: .package) {
+            skinTypes.append(manicPackage)
+        }
+
+        // IMPORTANT: Accept archive-conforming variants (these are actually ZIPs with custom extensions)
+        if let deltaskinArchive = UTType(filenameExtension: "deltaskin", conformingTo: .archive) {
+            skinTypes.append(deltaskinArchive)
+        }
+        if let manicArchive = UTType(filenameExtension: "manicskin", conformingTo: .archive) {
+            skinTypes.append(manicArchive)
+        }
+
+        // Also allow generic archives (some skins are zipped variants)
+        skinTypes.append(.archive)
+
+        return skinTypes
     }
 
     private func importSkins(from urls: [URL]) async throws {
