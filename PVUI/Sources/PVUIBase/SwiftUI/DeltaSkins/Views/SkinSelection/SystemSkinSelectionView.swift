@@ -527,6 +527,7 @@ public struct SystemSkinSelectionView: View {
 
                 // Skin preview with correct orientation and retrowave styling
                 SkinSelectionPreviewCell(skin: skin, manager: skinManager, orientation: selectedOrientation.deltaSkinOrientation)
+                    .id("\(skin.identifier)-\(selectedOrientation)")
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .aspectRatio(isLandscape ? 2.0 : 0.5, contentMode: .fit)
@@ -929,6 +930,10 @@ struct SkinSelectionPreviewCell: View {
             }
         }
         .onAppear {
+            loadSkinImage()
+        }
+        .onChange(of: orientation) { _ in
+            isLoading = true
             loadSkinImage()
         }
     }
