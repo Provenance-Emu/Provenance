@@ -17,6 +17,7 @@ import PVPlists
 import PVThemes
 import PVLogging
 import PVUIBase
+import PVSettings
 
 // MARK: - Retrowave Styling Components
 
@@ -532,6 +533,9 @@ struct DefaultControllerSkinView: View {
         // Get aspect ratio (cached if aspectSize hasn't changed, otherwise recalculated)
         let aspectRatio = getValidatedAspectRatio()
 
+        // Check if native scale is enabled
+        let nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+
         let horizontalSafe = safeInsets.leading + safeInsets.trailing
         let verticalSafe = safeInsets.top + safeInsets.bottom
         let safeWidth = max(0, size.width - horizontalSafe)
@@ -544,23 +548,57 @@ struct DefaultControllerSkinView: View {
 
         let frame: CGRect
         if isLandscape {
-            /// Reserve space for controls on each edge
-            let sideReserve = max(180, min(240, safeWidth * 0.25))
-            let availableWidth = max(0, safeWidth - (sideReserve * 2))
-            var width = availableWidth
-            var height = width / aspectRatio
+            if nativeScaleEnabled {
+                /// Native scale: Reserve space for controls on each edge, fit within available space
+                let sideReserve = max(180, min(240, safeWidth * 0.25))
+                let availableWidth = max(0, safeWidth - (sideReserve * 2))
+                var width = availableWidth
+                var height = width / aspectRatio
 
-            /// If height exceeds available space, fit to height instead
-            if height > safeHeight {
-                height = safeHeight
-                width = height * aspectRatio
+                /// If height exceeds available space, fit to height instead
+                if height > safeHeight {
+                    height = safeHeight
+                    width = height * aspectRatio
+                }
+
+                /// Center horizontally and vertically
+                let originX = safeInsets.leading + (safeWidth - width) / 2
+                let originY = safeInsets.top + (safeHeight - height) / 2
+                frame = CGRect(x: originX, y: originY, width: width, height: height)
+                ILOG("🎮 SKIN: Default viewport (landscape, native scale): size=\(size), aspectRatio=\(aspectRatio), safeWidth=\(safeWidth), safeHeight=\(safeHeight), availableWidth=\(availableWidth), frame=\(frame)")
+            } else {
+                /// Fullscreen scale: Use more of the available screen space, minimal control reserve
+                let sideReserve = max(120, min(160, safeWidth * 0.15))
+                let availableWidth = max(0, safeWidth - (sideReserve * 2))
+
+                /// Scale to fill available width/height more aggressively
+                var width = availableWidth
+                var height = width / aspectRatio
+
+                /// If height exceeds available space, fit to height and scale width accordingly
+                if height > safeHeight {
+                    height = safeHeight
+                    width = height * aspectRatio
+                } else {
+                    /// If we have extra height, scale up to use more of it
+                    let maxHeight = safeHeight
+                    if height < maxHeight {
+                        height = maxHeight
+                        width = height * aspectRatio
+                        /// Ensure width doesn't exceed available space
+                        if width > availableWidth {
+                            width = availableWidth
+                            height = width / aspectRatio
+                        }
+                    }
+                }
+
+                /// Center horizontally and vertically
+                let originX = safeInsets.leading + (safeWidth - width) / 2
+                let originY = safeInsets.top + (safeHeight - height) / 2
+                frame = CGRect(x: originX, y: originY, width: width, height: height)
+                ILOG("🎮 SKIN: Default viewport (landscape, fullscreen scale): size=\(size), aspectRatio=\(aspectRatio), safeWidth=\(safeWidth), safeHeight=\(safeHeight), availableWidth=\(availableWidth), frame=\(frame)")
             }
-
-            /// Center horizontally and vertically
-            let originX = safeInsets.leading + (safeWidth - width) / 2
-            let originY = safeInsets.top + (safeHeight - height) / 2
-            frame = CGRect(x: originX, y: originY, width: width, height: height)
-            ILOG("🎮 SKIN: Default viewport (landscape): size=\(size), aspectRatio=\(aspectRatio), safeWidth=\(safeWidth), safeHeight=\(safeHeight), availableWidth=\(availableWidth), frame=\(frame)")
         } else {
             /// Keep the screen in the upper portion, leaving room for controls
             /// Reserve 35% for controller area, with some margin
@@ -571,38 +609,80 @@ struct DefaultControllerSkinView: View {
             let topMargin: CGFloat = 12
             let bottomMargin: CGFloat = 8
             let availableHeight = max(0, safeHeight - controllerHeight - topMargin - bottomMargin)
-            let horizontalMargin: CGFloat = 12
+            let horizontalMargin: CGFloat = nativeScaleEnabled ? 12 : 8
             let maxWidth = safeWidth - (horizontalMargin * 2)
 
-            /// Fit game to available space while maintaining aspect ratio
-            /// Try fitting to width first
-            var width = maxWidth
-            var height = width / aspectRatio
+            if nativeScaleEnabled {
+                /// Native scale: Fit game to available space while maintaining aspect ratio
+                /// Try fitting to width first
+                var width = maxWidth
+                var height = width / aspectRatio
 
-            /// If height exceeds available space, fit to height instead
-            if height > availableHeight {
-                height = availableHeight
-                width = height * aspectRatio
+                /// If height exceeds available space, fit to height instead
+                if height > availableHeight {
+                    height = availableHeight
+                    width = height * aspectRatio
+                }
+
+                /// Calculate the game screen area bounds
+                /// Use effectiveTopSafeArea to ensure we don't go under the notch
+                let gameAreaTop = effectiveTopSafeArea + topMargin
+                let gameAreaBottom = safeInsets.top + safeHeight - controllerHeight - bottomMargin
+                let gameAreaHeight = gameAreaBottom - gameAreaTop
+
+                /// Ensure frame fits within game area
+                if height > gameAreaHeight {
+                    height = gameAreaHeight
+                    width = height * aspectRatio
+                }
+
+                /// Center horizontally and vertically in the game screen area
+                let originX = safeInsets.leading + (safeWidth - width) / 2
+                let originY = gameAreaTop + (gameAreaHeight - height) / 2
+
+                frame = CGRect(x: originX, y: originY, width: width, height: height)
+                ILOG("🎮 SKIN: Default viewport (portrait, native scale): size=\(size), aspectRatio=\(aspectRatio), safeInsets.top=\(safeInsets.top), effectiveTopSafeArea=\(effectiveTopSafeArea), controllerHeight=\(controllerHeight), gameAreaTop=\(gameAreaTop), gameAreaBottom=\(gameAreaBottom), gameAreaHeight=\(gameAreaHeight), frame=\(frame)")
+            } else {
+                /// Fullscreen scale: Scale to fill more of the available screen space
+                /// Use more of the available width and height
+                var width = maxWidth
+                var height = width / aspectRatio
+
+                /// If height exceeds available space, fit to height
+                if height > availableHeight {
+                    height = availableHeight
+                    width = height * aspectRatio
+                } else {
+                    /// Scale up to use more of the available height
+                    if height < availableHeight {
+                        height = availableHeight
+                        width = height * aspectRatio
+                        /// Ensure width doesn't exceed available space
+                        if width > maxWidth {
+                            width = maxWidth
+                            height = width / aspectRatio
+                        }
+                    }
+                }
+
+                /// Calculate the game screen area bounds
+                let gameAreaTop = effectiveTopSafeArea + topMargin
+                let gameAreaBottom = safeInsets.top + safeHeight - controllerHeight - bottomMargin
+                let gameAreaHeight = gameAreaBottom - gameAreaTop
+
+                /// Ensure frame fits within game area
+                if height > gameAreaHeight {
+                    height = gameAreaHeight
+                    width = height * aspectRatio
+                }
+
+                /// Center horizontally and vertically in the game screen area
+                let originX = safeInsets.leading + (safeWidth - width) / 2
+                let originY = gameAreaTop + (gameAreaHeight - height) / 2
+
+                frame = CGRect(x: originX, y: originY, width: width, height: height)
+                ILOG("🎮 SKIN: Default viewport (portrait, fullscreen scale): size=\(size), aspectRatio=\(aspectRatio), safeInsets.top=\(safeInsets.top), effectiveTopSafeArea=\(effectiveTopSafeArea), controllerHeight=\(controllerHeight), gameAreaTop=\(gameAreaTop), gameAreaBottom=\(gameAreaBottom), gameAreaHeight=\(gameAreaHeight), frame=\(frame)")
             }
-
-            /// Calculate the game screen area bounds
-            /// Use effectiveTopSafeArea to ensure we don't go under the notch
-            let gameAreaTop = effectiveTopSafeArea + topMargin
-            let gameAreaBottom = safeInsets.top + safeHeight - controllerHeight - bottomMargin
-            let gameAreaHeight = gameAreaBottom - gameAreaTop
-
-            /// Ensure frame fits within game area
-            if height > gameAreaHeight {
-                height = gameAreaHeight
-                width = height * aspectRatio
-            }
-
-            /// Center horizontally and vertically in the game screen area
-            let originX = safeInsets.leading + (safeWidth - width) / 2
-            let originY = gameAreaTop + (gameAreaHeight - height) / 2
-
-            frame = CGRect(x: originX, y: originY, width: width, height: height)
-            ILOG("🎮 SKIN: Default viewport (portrait): size=\(size), aspectRatio=\(aspectRatio), safeInsets.top=\(safeInsets.top), effectiveTopSafeArea=\(effectiveTopSafeArea), controllerHeight=\(controllerHeight), gameAreaTop=\(gameAreaTop), gameAreaBottom=\(gameAreaBottom), gameAreaHeight=\(gameAreaHeight), frame=\(frame)")
         }
 
         return frame
