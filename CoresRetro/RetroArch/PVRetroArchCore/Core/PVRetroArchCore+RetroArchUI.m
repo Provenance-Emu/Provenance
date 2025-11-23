@@ -316,10 +316,15 @@ int argc =  1;
     /// This bypasses the core info database check which may not be properly initialized
     settings = config_get_ptr();
     if (settings) {
-        settings->bools.core_info_savestate_bypass = true;
+        
+        // TODO: This isn't working?
         settings->bools.video_fps_show = PVSettingsWrapper.showFPS;
+       
         // Bypass save info, this is mostly for Dreamcast
         settings->bools.core_info_savestate_bypass = true;
+        
+        // TODO: We could setup cheevos options from PVCheevos and bridge through swift
+        //settings->bools.cheevos_enable = true;
     }
     [self writeConfigFile];
     /// Sync BIOS resources, but exclude tos.img as it's handled specially in writeConfigFile
@@ -407,6 +412,8 @@ int argc =  1;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
+    [super setPauseEmulation:flag];
+
 //    DLOG(@"RetroArchCoreBridge setPauseEmulation: %i", flag);
 //    if (!EmulationState.shared.isOn) {
 //        WLOG(@"Core isn't set to \"on\", skipping set pause : %i", flag);
@@ -430,8 +437,8 @@ int argc =  1;
 //        runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
 //        [self setSpeed];
 //    }
-    [super setPauseEmulation:flag];
 }
+
 - (void)setSpeed {
     settings_t *settings = config_get_ptr();
     runloop_state_t *runloop_st = runloop_state_get_ptr();
@@ -480,13 +487,15 @@ int argc =  1;
     }
     [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
 }
+
 - (void)setOptionValues {
     [PVRetroArchCoreBridge synchronizeOptionsWithRetroArch];
 	g_gs_preference = self.gsPreference;
 }
 
 void extract_bundles();
--(void) writeConfigFile {
+
+- (void) writeConfigFile {
 
     [PVRetroArchCoreBridge synchronizeOptionsWithRetroArch];
 
@@ -525,35 +534,44 @@ void extract_bundles();
 
 
     if (!configFileExists || !versionFileExists || shouldUpdateAssets) {
-
-        ILOG(@"Writing config file to %@", fileName);
-
+        
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
-        [self syncResource:src to:fileName];
-        [self syncResource:src to:verFile];
 
-        NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory]];
+        if (!configFileExists) {
+            ILOG(@"Writing config file to %@", fileName);
+            [self syncResource:src to:fileName];
+        }
+        
+        if (!versionFileExists) {
+            ILOG(@"Writing config file to %@", verFile);
+            [self syncResource:src to:verFile];
+        }
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/monochrome/png/arrow.png", self.documentsDirectory]];
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/automatic/png/arrow.png", self.documentsDirectory]];
+        if(shouldUpdateAssets) {
+            NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory]];
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/pixel/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/monochrome/png/arrow.png", self.documentsDirectory]];
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/daite/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/automatic/png/arrow.png", self.documentsDirectory]];
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/dot-art/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/pixel/png/arrow.png", self.documentsDirectory]];
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/neoactive/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/daite/png/arrow.png", self.documentsDirectory]];
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retroactive/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/dot-art/png/arrow.png", self.documentsDirectory]];
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retrosystem/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/neoactive/png/arrow.png", self.documentsDirectory]];
 
-        [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/systematic/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retroactive/png/arrow.png", self.documentsDirectory]];
 
-        processing_init=true;
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retrosystem/png/arrow.png", self.documentsDirectory]];
+
+            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/systematic/png/arrow.png", self.documentsDirectory]];
+        }
+
+        processing_init = true;
     }
 
     // Handle overlay updates
