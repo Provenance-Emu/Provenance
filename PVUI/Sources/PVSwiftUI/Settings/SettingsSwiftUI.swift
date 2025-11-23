@@ -350,6 +350,10 @@ public struct PVSettingsView: View {
                     CollapsibleSection(title: "Video") {
                         VideoSection()
                     }
+                    CollapsibleSection(title: "RetroAchievements") {
+                        RetroAchievementsSection(viewModel: viewModel)
+                            .environmentObject(viewModel)
+                    }
                 }
                 .padding(.horizontal)
             }
@@ -382,10 +386,6 @@ public struct PVSettingsView: View {
                         DeltaSkinsSection()
                     }
                     #endif
-                    CollapsibleSection(title: "RetroAchievements") {
-                        RetroAchievementsSection(viewModel: viewModel)
-                            .environmentObject(viewModel)
-                    }
                 }
                 .padding(.horizontal)
             }
@@ -1506,7 +1506,7 @@ private struct SafariWebView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> SFSafariViewController {
         let config = SFSafariViewController.Configuration()
         config.barCollapsingEnabled = true
-        config.entersReaderIfAvailable = true
+        config.entersReaderIfAvailable = false
         return SFSafariViewController(url: url, configuration: config)
     }
 
