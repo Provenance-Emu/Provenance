@@ -166,6 +166,17 @@ extension PVRetroArchCoreCore: PVJaguarSystemResponderClient {
     }
 }
 
+// MARK: Atari Lynx
+extension PVRetroArchCoreCore: PVLynxSystemResponderClient {
+    public func didPush(LynxButton button: PVCoreBridge.PVLynxButton, forPlayer player: Int) {
+        (_bridge as! PVLynxSystemResponderClient).didPush(LynxButton: button, forPlayer: player)
+    }
+
+    public func didRelease(LynxButton button: PVCoreBridge.PVLynxButton, forPlayer player: Int) {
+        (_bridge as! PVLynxSystemResponderClient).didRelease(LynxButton: button, forPlayer: player)
+    }
+}
+
 // MARK: NeoGeo PVNeoGeoSystemResponderClient
 extension PVRetroArchCoreCore: PVNeoGeoSystemResponderClient {
     public func didMoveJoystick(_ button: PVCoreBridge.PVNeoGeoButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
