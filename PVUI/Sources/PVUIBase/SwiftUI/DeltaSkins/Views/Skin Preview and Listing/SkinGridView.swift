@@ -17,6 +17,7 @@ struct SkinGridView: View {
 
     @State private var isLoading = true
     @State private var error: Error?
+    @State private var hasAttemptedLoad = false
 
     /// Stores the expanded state of each console section as a comma-separated list of expanded section names
     @AppStorage("deltaSkinSectionStates") private var expandedSectionsString: String = ""
@@ -45,92 +46,130 @@ struct SkinGridView: View {
         )
     }
 
-    var body: some View {
-        Group {
-            switch (isLoading, error, manager.loadedSkins.isEmpty) {
-            case (true, _, _):
-                ProgressView("Loading skins...")
-                    .backgroundStyle(.blendMode(.darken))
-            case (_, let error?, _):
-                ErrorView(error: error)
-            case (_, _, true):
-                if #available(iOS 17.0, tvOS 17.0, *) {
-                    ContentUnavailableView(
-                        "No Skins Found",
-                        systemImage: "gamecontroller",
-                        description: Text("Add skins to get started")
-                    )
-                } else {
-                    // Fallback on earlier versions
-                    Text("No Skins Found")
-                    Text("Add skins to get started")
+    /// Loading view
+    private var loadingView: some View {
+        ProgressView("Loading skins...")
+            .backgroundStyle(.blendMode(.darken))
+    }
+
+    /// Empty state view
+    @ViewBuilder
+    private var emptyStateView: some View {
+        if #available(iOS 17.0, tvOS 17.0, *) {
+            ContentUnavailableView(
+                "No Skins Found",
+                systemImage: "gamecontroller",
+                description: Text("Add skins to get started")
+            )
+        } else {
+            VStack {
+                Text("No Skins Found")
+                Text("Add skins to get started")
+            }
+        }
+    }
+
+    /// Main content view with skins
+    private var skinsContentView: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                ForEach(groupedSkins, id: \.0) { consoleName, consoleSkins in
+                    skinSectionView(consoleName: consoleName, consoleSkins: consoleSkins)
                 }
-            default:
-                ScrollView {
-                    VStack(spacing: 24) {
-                        ForEach(groupedSkins, id: \.0) { consoleName, consoleSkins in
-                            VStack(alignment: .leading, spacing: 12) {
-                                // Section header with disclosure button
-                                Button {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        toggleSection(consoleName)
-                                    }
-                                } label: {
-                                    HStack {
-                                        Text(consoleName)
-                                            .font(.title2)
-                                            .fontWeight(.bold)
 
-                                        Spacer()
+                // DeltaStyles link component
+                DeltaStylesLinkView()
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+            }
+        }
+    }
 
-                                        Image(systemName: isExpanded(consoleName) ? "chevron.down" : "chevron.right")
-                                            .foregroundStyle(.secondary)
-                                            .font(.headline)
-                                            .rotationEffect(.degrees(isExpanded(consoleName) ? 0 : -90))
-                                            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isExpanded(consoleName))
-                                    }
-                                }
-                                .buttonStyle(.plain)
-                                .padding(.horizontal)
+    /// Individual skin section view
+    @ViewBuilder
+    private func skinSectionView(consoleName: String, consoleSkins: [any DeltaSkinProtocol]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Section header with disclosure button
+            Button {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    toggleSection(consoleName)
+                }
+            } label: {
+                HStack {
+                    Text(consoleName)
+                        .font(.title2)
+                        .fontWeight(.bold)
 
-                                // Grid of skins for this console
-                                if isExpanded(consoleName) {
-                                    LazyVGrid(columns: columns, spacing: 12) {
-                                        ForEach(consoleSkins, id: \.identifier) { skin in
-                                            NavigationLink {
-                                                PagedSkinTestView(
-                                                    skins: orderedSkins,
-                                                    initialIndex: orderedSkins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
-                                                )
-                                            } label: {
-                                                SkinPreviewCell(skin: skin, manager: manager)
-                                            }
-                                        }
-                                    }
-                                    .padding(.horizontal)
-                                    .transition(sectionTransition)
-                                }
-                            }
+                    Spacer()
+
+                    Image(systemName: isExpanded(consoleName) ? "chevron.down" : "chevron.right")
+                        .foregroundStyle(.secondary)
+                        .font(.headline)
+                        .rotationEffect(.degrees(isExpanded(consoleName) ? 0 : -90))
+                        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isExpanded(consoleName))
+                }
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal)
+
+            // Grid of skins for this console
+            if isExpanded(consoleName) {
+                LazyVGrid(columns: columns, spacing: 12) {
+                    ForEach(consoleSkins, id: \.identifier) { skin in
+                        NavigationLink {
+                            PagedSkinTestView(
+                                skins: orderedSkins,
+                                initialIndex: orderedSkins.firstIndex(where: { $0.identifier == skin.identifier }) ?? 0
+                            )
+                        } label: {
+                            SkinPreviewCell(skin: skin, manager: manager)
                         }
-
-                        // DeltaStyles link component
-                        DeltaStylesLinkView()
-                            .padding(.horizontal)
-                            .padding(.top, 8)
                     }
                 }
+                .padding(.horizontal)
+                .transition(sectionTransition)
+            }
+        }
+    }
+
+    var body: some View {
+        Group {
+            if isLoading {
+                loadingView
+            } else if let error = error {
+                ErrorView(error: error)
+            } else if manager.loadedSkins.isEmpty {
+                emptyStateView
+            } else {
+                skinsContentView
             }
         }
         .background(Color.systemGroupedBackground)
         .onAppear {
-            // Only load if skins are empty, otherwise use cached loadedSkins
-            if manager.loadedSkins.isEmpty {
+            // Check if skins are already loaded (from background scan or previous load)
+            if !manager.loadedSkins.isEmpty {
+                // Skins are already loaded, stop loading and initialize sections
+                isLoading = false
+                hasAttemptedLoad = true
+                initializeSectionStates()
+            } else if !hasAttemptedLoad {
+                // Skins are empty and we haven't attempted to load yet
                 Task {
                     await loadSkins()
-                    initializeSectionStates()
                 }
             } else {
-                initializeSectionStates()
+                // We've attempted to load but skins are still empty
+                // This might mean the scan is still in progress or failed
+                // Keep loading state as is (will be updated by onChange)
+            }
+        }
+        .onChange(of: manager.loadedSkins.count) { newCount in
+            // When loadedSkins updates, stop loading and initialize sections
+            if newCount > 0 {
+                isLoading = false
+                if expandedSections.isEmpty {
+                    initializeSectionStates()
+                }
             }
         }
         .onChange(of: expandedSections) { newValue in
@@ -169,18 +208,36 @@ struct SkinGridView: View {
     }
 
     private func loadSkins() async {
+        hasAttemptedLoad = true
+
         // Only show loading if skins haven't been loaded yet
         if manager.loadedSkins.isEmpty {
-            isLoading = true
+            await MainActor.run {
+                isLoading = true
+            }
         }
 
-        defer { isLoading = false }
-
         do {
-            // Only scan if not already scanned (availableSkins will check hasScanned flag)
+            // Load skins - this will trigger scanForSkins if needed
+            // Note: scanForSkins updates loadedSkins asynchronously on main thread,
+            // so we need to wait for that update via onChange(of: manager.loadedSkins)
             _ = try await manager.availableSkins(forceRescan: false)
+
+            // Check if skins were loaded (they might already be loaded from previous scan)
+            // The onChange handler will catch the update if it happens asynchronously
+            await MainActor.run {
+                if !manager.loadedSkins.isEmpty {
+                    isLoading = false
+                    if expandedSections.isEmpty {
+                        initializeSectionStates()
+                    }
+                }
+            }
         } catch {
-            self.error = error
+            await MainActor.run {
+                self.error = error
+                self.isLoading = false
+            }
         }
     }
 
