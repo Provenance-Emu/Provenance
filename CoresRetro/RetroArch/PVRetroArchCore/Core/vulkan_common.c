@@ -1257,10 +1257,15 @@ static void vulkan_destroy_swapchain(gfx_ctx_vulkan_data_t *vk)
    if (vk->swapchain != VK_NULL_HANDLE)
    {
       /* Wait for all GPU operations to complete before destroying resources */
+      /* Skip wait if device is already lost - it will fail */
       result = vkDeviceWaitIdle(vk->context.device);
-      if (result != VK_SUCCESS)
+      if (result != VK_SUCCESS && result != VK_ERROR_DEVICE_LOST)
       {
          RARCH_WARN("[Vulkan]: Failed to wait for device idle before swapchain destruction (error: %d).\n", result);
+      }
+      else if (result == VK_ERROR_DEVICE_LOST)
+      {
+         RARCH_WARN("[Vulkan]: Device lost before swapchain destruction. Proceeding with cleanup.\n");
       }
 
       /* Ensure we're not in the middle of command buffer recording */
@@ -1380,12 +1385,30 @@ static void vulkan_acquire_wait_fences(gfx_ctx_vulkan_data_t *vk)
 #if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
          /* For MoltenVK 1.2.10/1.2.11, use a reasonable timeout value instead of UINT64_MAX */
          uint64_t fence_timeout = 500000000; /* 500ms in nanoseconds */
-         vkWaitForFences(vk->context.device, 1, next_fence, true, fence_timeout);
+         VkResult wait_result = vkWaitForFences(vk->context.device, 1, next_fence, true, fence_timeout);
+         if (wait_result == VK_ERROR_DEVICE_LOST)
+         {
+            RARCH_ERR("[Vulkan]: Device lost while waiting for fence. Marking device as lost.\n");
+            vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+            return;
+         }
 #else
-         vkWaitForFences(vk->context.device, 1, next_fence, true, UINT64_MAX);
+         VkResult wait_result = vkWaitForFences(vk->context.device, 1, next_fence, true, UINT64_MAX);
+         if (wait_result == VK_ERROR_DEVICE_LOST)
+         {
+            RARCH_ERR("[Vulkan]: Device lost while waiting for fence. Marking swapchain invalid.\n");
+            vk->context.flags |= VK_CTX_FLAG_INVALID_SWAPCHAIN;
+            return;
+         }
 #endif
       }
-      vkResetFences(vk->context.device, 1, next_fence);
+      VkResult reset_result = vkResetFences(vk->context.device, 1, next_fence);
+      if (reset_result == VK_ERROR_DEVICE_LOST)
+      {
+         RARCH_ERR("[Vulkan]: Device lost while resetting fence. Marking device as lost.\n");
+         vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+         return;
+      }
    }
    else
    {
@@ -1926,6 +1949,14 @@ void vulkan_acquire_next_image(gfx_ctx_vulkan_data_t *vk)
    uint32_t retry_count           = 0;
    const uint32_t max_retries     = 3; /* Limit retries to avoid infinite loops */
 
+   /* Early return if device is lost - prevents C++ exceptions from being thrown */
+   if (vk->context.flags & VK_CTX_FLAG_DEVICE_LOST)
+   {
+      RARCH_LOG("[Vulkan]: Device lost - skipping acquire to prevent C++ exceptions.\n");
+      vk->context.flags |= VK_CTX_FLAG_INVALID_SWAPCHAIN;
+      return;
+   }
+
    fence_info.sType               = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
    fence_info.pNext               = NULL;
    fence_info.flags               = 0;
@@ -2014,7 +2045,16 @@ retry:
          {
             fence_timeout = fence_timeout / (1 + acquire_retry_count);
          }
-         vkWaitForFences(vk->context.device, 1, &fence, true, fence_timeout);
+         VkResult fence_result = vkWaitForFences(vk->context.device, 1, &fence, true, fence_timeout);
+         if (fence_result == VK_ERROR_DEVICE_LOST)
+         {
+            RARCH_ERR("[Vulkan]: Device lost while waiting for acquire fence. Marking device as lost.\n");
+            vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+            vulkan_acquire_clear_fences(vk);
+            if (fence != VK_NULL_HANDLE)
+               vkDestroyFence(vk->context.device, fence, NULL);
+            return;
+         }
       }
       vk->context.flags |= VK_CTX_FLAG_HAS_ACQUIRED_SWAPCHAIN;
 
@@ -2077,6 +2117,15 @@ retry:
          acquire_retry_count = 0;
 
          goto retry;
+      case VK_ERROR_DEVICE_LOST:
+         /* Device lost - this can happen on iOS/tvOS due to GPU errors or size mismatches */
+         RARCH_ERR("[Vulkan]: Device lost during acquire. Marking device as lost to prevent C++ exceptions.\n");
+         vulkan_destroy_swapchain(vk);
+         /* Mark device as lost to prevent any further Vulkan operations (which would throw C++ exceptions) */
+         vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+         vulkan_acquire_clear_fences(vk);
+         /* Don't increment retry counter for device loss - it's a fatal error that needs recovery */
+         return;
       default:
          if (err != VK_SUCCESS)
          {
@@ -2090,7 +2139,23 @@ retry:
                RARCH_ERR("[Vulkan]: Memory error in MoltenVK. Waiting for device idle.\n");
 
             /* For MoltenVK 1.2.10/1.2.11, ensure we wait for device to be idle on errors */
-            vkDeviceWaitIdle(vk->context.device);
+            /* Skip vkDeviceWaitIdle if device is lost - it will fail */
+            if (err != VK_ERROR_DEVICE_LOST)
+            {
+               VkResult idle_result = vkDeviceWaitIdle(vk->context.device);
+               if (idle_result == VK_ERROR_DEVICE_LOST)
+               {
+                  RARCH_ERR("[Vulkan]: Device lost during wait idle. Marking device as lost.\n");
+                  vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+                  vulkan_acquire_clear_fences(vk);
+                  return;
+               }
+            }
+            else
+            {
+               /* Mark device as lost immediately to prevent C++ exceptions */
+               vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST;
+            }
 
             /* Increment retry counter for MoltenVK error handling */
             acquire_retry_count++;
@@ -2442,6 +2507,25 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    if (swapchain_size.height < surface_properties.minImageExtent.height)
       swapchain_size.height = surface_properties.minImageExtent.height;
 
+   /* For iOS/tvOS, validate swapchain size matches expected dimensions to prevent GPU address faults */
+#if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
+   if (swapchain_size.width != width || swapchain_size.height != height)
+   {
+      RARCH_WARN("[Vulkan]: Swapchain size mismatch on iOS/tvOS. Requested: %ux%u, Got: %ux%u. This may cause GPU errors.\n",
+         width, height, swapchain_size.width, swapchain_size.height);
+      /* Try to use requested size if it's within limits */
+      if (width >= surface_properties.minImageExtent.width &&
+          width <= surface_properties.maxImageExtent.width &&
+          height >= surface_properties.minImageExtent.height &&
+          height <= surface_properties.maxImageExtent.height)
+      {
+         swapchain_size.width = width;
+         swapchain_size.height = height;
+         RARCH_LOG("[Vulkan]: Using requested size %ux%u for swapchain.\n", width, height);
+      }
+   }
+#endif
+
    if (     (swapchain_size.width  == 0)
          && (swapchain_size.height == 0))
    {
@@ -2524,7 +2608,21 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
       vkDestroySwapchainKHR(vk->context.device, old_swapchain, NULL);
 
    /* For MoltenVK 1.2.10/1.2.11, ensure device is idle before creating swapchain */
-   vkDeviceWaitIdle(vk->context.device);
+   /* Skip wait if device is already lost */
+   /* Check if device is already lost before trying to wait */
+   if (vk->context.flags & VK_CTX_FLAG_DEVICE_LOST)
+   {
+      RARCH_ERR("[Vulkan]: Device already lost before swapchain creation. Cannot proceed.\n");
+      return false;
+   }
+
+   VkResult idle_result = vkDeviceWaitIdle(vk->context.device);
+   if (idle_result == VK_ERROR_DEVICE_LOST)
+   {
+      RARCH_ERR("[Vulkan]: Device lost before swapchain creation. Marking device as lost.\n");
+      vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+      return false;
+   }
 
    VkResult swapchain_result = vkCreateSwapchainKHR(vk->context.device, &info, NULL, &vk->swapchain);
    if (swapchain_result != VK_SUCCESS)
@@ -2535,6 +2633,13 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
           swapchain_result == VK_ERROR_OUT_OF_DEVICE_MEMORY)
       {
          RARCH_ERR("[Vulkan]: Memory allocation error in MoltenVK swapchain creation.\n");
+      }
+      else if (swapchain_result == VK_ERROR_DEVICE_LOST)
+      {
+         RARCH_ERR("[Vulkan]: Device lost during swapchain creation. Marking device as lost.\n");
+         vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+         swapchain_create_retry_count = 0;
+         return false;
       }
 
       /* For MoltenVK 1.2.10/1.2.11, implement retry mechanism */
@@ -2840,7 +2945,22 @@ void vulkan_context_destroy(gfx_ctx_vulkan_data_t *vk,
       return;
 
    if (vk->context.device)
-      vkDeviceWaitIdle(vk->context.device);
+   {
+      /* Check if device is already lost before trying to wait - prevents C++ exceptions */
+      if (!(vk->context.flags & VK_CTX_FLAG_DEVICE_LOST))
+      {
+         VkResult idle_result = vkDeviceWaitIdle(vk->context.device);
+         if (idle_result == VK_ERROR_DEVICE_LOST)
+         {
+            RARCH_WARN("[Vulkan]: Device lost during context destroy. Marking as lost.\n");
+            vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST;
+         }
+      }
+      else
+      {
+         RARCH_LOG("[Vulkan]: Device already lost, skipping wait idle.\n");
+      }
+   }
 
    vulkan_destroy_swapchain(vk);
 
@@ -2903,6 +3023,13 @@ void vulkan_present(gfx_ctx_vulkan_data_t *vk, unsigned index)
    VkResult result                 = VK_SUCCESS;
    VkResult err                    = VK_SUCCESS;
 
+   /* Early return if device is lost - prevents C++ exceptions from being thrown */
+   if (vk->context.flags & VK_CTX_FLAG_DEVICE_LOST)
+   {
+      RARCH_LOG("[Vulkan]: Device lost - skipping present to prevent C++ exceptions.\n");
+      return;
+   }
+
    present.sType                   = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
    present.pNext                   = NULL;
    present.waitSemaphoreCount      = 1;
@@ -2920,7 +3047,20 @@ void vulkan_present(gfx_ctx_vulkan_data_t *vk, unsigned index)
 #if defined(HAVE_COCOATOUCH) || defined(TARGET_OS_TV)
    /* For MoltenVK 1.2.10/1.2.11, ensure device is idle before presenting to avoid race conditions */
    /* This is a conservative approach that may impact performance but improves stability */
-   vkDeviceWaitIdle(vk->context.device);
+   /* Skip wait if device is already lost - prevents C++ exceptions */
+   if (!(vk->context.flags & VK_CTX_FLAG_DEVICE_LOST))
+   {
+      VkResult idle_result = vkDeviceWaitIdle(vk->context.device);
+      if (idle_result == VK_ERROR_DEVICE_LOST)
+      {
+         RARCH_ERR("[Vulkan]: Device lost during present wait idle. Marking device as lost.\n");
+         vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+#ifdef HAVE_THREADS
+         slock_unlock(vk->context.queue_lock);
+#endif
+         return;
+      }
+   }
 #endif
 
    err = vkQueuePresentKHR(vk->context.queue, &present);
@@ -2943,7 +3083,17 @@ void vulkan_present(gfx_ctx_vulkan_data_t *vk, unsigned index)
    if (err != VK_SUCCESS || result != VK_SUCCESS)
    {
       RARCH_LOG("[Vulkan]: QueuePresent failed, destroying swapchain.\n");
-      vulkan_destroy_swapchain(vk);
+      /* Handle device lost gracefully - don't try to wait for idle if device is lost */
+      if (err == VK_ERROR_DEVICE_LOST || result == VK_ERROR_DEVICE_LOST)
+      {
+         RARCH_ERR("[Vulkan]: Device lost during present. Marking device as lost.\n");
+         vk->context.flags |= VK_CTX_FLAG_DEVICE_LOST | VK_CTX_FLAG_INVALID_SWAPCHAIN;
+         vulkan_acquire_clear_fences(vk);
+      }
+      else
+      {
+         vulkan_destroy_swapchain(vk);
+      }
    }
 
 #ifdef HAVE_THREADS
