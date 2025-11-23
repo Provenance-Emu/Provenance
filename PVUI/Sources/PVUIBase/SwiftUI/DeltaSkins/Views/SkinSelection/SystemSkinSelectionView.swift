@@ -52,6 +52,37 @@ public struct SystemSkinSelectionView: View {
         game?.id
     }
 
+    /// Get the current device type
+    private var currentDevice: DeltaSkinDevice {
+        #if os(tvOS)
+        return .tv
+        #else
+        return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #endif
+    }
+
+    /// Filter skins to only show those that support the selected orientation for the current device
+    private var filteredSkinsForCurrentOrientation: [DeltaSkinProtocol] {
+        availableSkins.filter { skin in
+            skinSupportsOrientation(skin, orientation: selectedOrientation)
+        }
+    }
+
+    /// Check if a skin supports a given orientation for the current device
+    private func skinSupportsOrientation(_ skin: DeltaSkinProtocol, orientation: SkinOrientation) -> Bool {
+        let device = currentDevice
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+        for display in displayTypes {
+            let traits = DeltaSkinTraits(
+                device: device,
+                displayType: display,
+                orientation: orientation.deltaSkinOrientation
+            )
+            if skin.supports(traits) { return true }
+        }
+        return false
+    }
+
     // MARK: - Body
 
     public var body: some View {
@@ -123,6 +154,12 @@ public struct SystemSkinSelectionView: View {
             // Reload when manager's skins change (e.g., after import)
             Task {
                 await loadSkinsFromCache()
+            }
+        }
+        .onChange(of: selectedOrientation) { newOrientation in
+            // Validate current selection when orientation changes
+            Task {
+                await validateSelectionForOrientation(newOrientation)
             }
         }
     }
@@ -415,8 +452,8 @@ public struct SystemSkinSelectionView: View {
                     // Default option (system default)
                     defaultSkinCell
 
-                    // Show all available skins (like RetroMenuView does)
-                    ForEach(availableSkins, id: \.identifier) { skin in
+                    // Show only skins that support the selected orientation for current device
+                    ForEach(filteredSkinsForCurrentOrientation, id: \.identifier) { skin in
                         skinCell(for: skin)
                     }
                 }
@@ -649,9 +686,26 @@ public struct SystemSkinSelectionView: View {
 
     /// Process skins and update UI state
     private func processSkins(_ skins: [DeltaSkinProtocol]) async {
-        // Show all skins for the system (like RetroMenuView does)
-        // Don't filter by orientation support as skins can often work in both orientations
-        // even if they don't explicitly declare support for both
+        // Filter skins to only include those that support the current device type
+        // This ensures we don't show iPhone-only skins on iPad or vice versa
+        let device = currentDevice
+        let deviceFilteredSkins = skins.filter { skin in
+            let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
+            let orientations: [SkinOrientation] = [.portrait, .landscape]
+
+            // Check if skin supports at least one orientation for the current device
+            for orientation in orientations {
+                for display in displayTypes {
+                    let traits = DeltaSkinTraits(
+                        device: device,
+                        displayType: display,
+                        orientation: orientation.deltaSkinOrientation
+                    )
+                    if skin.supports(traits) { return true }
+                }
+            }
+            return false
+        }
 
         // Get currently selected skins for both orientations using centralized manager
         let portraitSelection: String?
@@ -670,10 +724,10 @@ public struct SystemSkinSelectionView: View {
         // Update UI on main thread
         await MainActor.run {
             withAnimation(.easeOut(duration: 0.3)) {
-                self.availableSkins = skins
-                // Store all skins in both lists to show all skins regardless of orientation
-                self.portraitSkins = skins
-                self.landscapeSkins = skins
+                // Store device-filtered skins - will be further filtered by orientation in filteredSkinsForCurrentOrientation
+                self.availableSkins = deviceFilteredSkins
+                self.portraitSkins = deviceFilteredSkins
+                self.landscapeSkins = deviceFilteredSkins
                 self.selectedPortraitSkinId = portraitSelection
                 self.selectedLandscapeSkinId = landscapeSelection
                 self.isLoading = false
@@ -749,6 +803,39 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
+    /// Validate that the current selection supports the given orientation, clear if not
+    private func validateSelectionForOrientation(_ orientation: SkinOrientation) async {
+        let currentSelectionId = orientation == .portrait ? selectedPortraitSkinId : selectedLandscapeSkinId
+
+        guard let selectionId = currentSelectionId,
+              let selectedSkin = availableSkins.first(where: { $0.identifier == selectionId }) else {
+            // No selection or skin not found, nothing to validate
+            return
+        }
+
+        // Check if the selected skin supports this orientation for the current device
+        if !skinSupportsOrientation(selectedSkin, orientation: orientation) {
+            // Selection doesn't support this orientation, clear it
+            let scope: SkinScope = isPerGameSelection ? .game : .system
+            await selectionManager.setSkin(
+                nil,
+                for: system,
+                gameId: gameId,
+                orientation: orientation,
+                scope: scope
+            )
+
+            // Update UI state
+            await MainActor.run {
+                if orientation == .portrait {
+                    self.selectedPortraitSkinId = nil
+                } else {
+                    self.selectedLandscapeSkinId = nil
+                }
+            }
+        }
+    }
+
     private func deleteSkin(_ skin: DeltaSkinProtocol) {
         Task {
             do {
@@ -782,48 +869,43 @@ struct SkinSelectionPreviewCell: View {
     @State private var image: UIImage?
     @State private var isLoading = true
     @State private var error: Error?
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    /// Get the current device type (matches SystemSkinSelectionView logic)
+    private var currentDevice: DeltaSkinDevice {
+        #if os(tvOS)
+        return .tv
+        #else
+        return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #endif
+    }
 
     private var previewTraits: DeltaSkinTraits {
-        // Try current device first with specified orientation
-        let device: DeltaSkinDevice = horizontalSizeClass == .regular ? .ipad : .iphone
-        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation)
+        // Use current device with specified orientation
+        // Since skins are already filtered to support the current device and orientation,
+        // we should only try the current device, not fall back to alternate devices
+        let device = currentDevice
+        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
 
-        // Return first supported configuration
-        if skin.supports(traits) {
-            return traits
+        // Try standard display type first, then edge to edge
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
+            if skin.supports(traits) {
+                return traits
+            }
         }
 
-        // Try with edge to edge display type
-        let edgeToEdgeTraits = DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: orientation)
-        if skin.supports(edgeToEdgeTraits) {
-            return edgeToEdgeTraits
-        }
-
-        // Try alternate device
-        let altDevice: DeltaSkinDevice = device == .ipad ? .iphone : .ipad
-        let altTraits = DeltaSkinTraits(device: altDevice, displayType: .standard, orientation: orientation)
-
-        if skin.supports(altTraits) {
-            return altTraits
-        }
-
-        // Try alternate device with edge to edge
-        let altEdgeToEdgeTraits = DeltaSkinTraits(device: altDevice, displayType: .edgeToEdge, orientation: orientation)
-        if skin.supports(altEdgeToEdgeTraits) {
-            return altEdgeToEdgeTraits
-        }
-
-        // If the requested orientation isn't supported, try the opposite orientation
+        // If the requested orientation isn't supported for current device, try opposite orientation
+        // (This should rarely happen since we filter skins, but provides a fallback)
         let oppositeOrientation: DeltaSkinOrientation = orientation == .portrait ? .landscape : .portrait
-        let oppositeTraits = DeltaSkinTraits(device: device, displayType: .standard, orientation: oppositeOrientation)
-
-        if skin.supports(oppositeTraits) {
-            return oppositeTraits
+        for displayType in displayTypes {
+            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: oppositeOrientation)
+            if skin.supports(traits) {
+                return traits
+            }
         }
 
-        // Fallback to edge to edge with default orientation
-        return DeltaSkinTraits(device: device, displayType: .edgeToEdge, orientation: .portrait)
+        // Final fallback - should never reach here if filtering works correctly
+        return DeltaSkinTraits(device: device, displayType: .standard, orientation: .portrait)
     }
 
     var body: some View {

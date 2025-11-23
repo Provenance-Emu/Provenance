@@ -1376,9 +1376,16 @@ struct RetroMenuView: View {
             }
             .frame(height: UIScreen.main.bounds.width < 350 ? 84 : 104)
             .task {
-                // Load preview image asynchronously
+                // Load preview image asynchronously with current device type
                 if previewImage == nil {
-                    previewImage = await DeltaSkinManager.shared.previewImage(for: skin)
+                    let device: DeltaSkinDevice = {
+                        #if os(tvOS)
+                        return .tv
+                        #else
+                        return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+                        #endif
+                    }()
+                    previewImage = await DeltaSkinManager.shared.previewImage(for: skin, device: device)
                 }
             }
 #if os(tvOS)
