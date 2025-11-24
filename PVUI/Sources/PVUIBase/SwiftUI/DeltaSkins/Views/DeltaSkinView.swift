@@ -63,6 +63,30 @@ public struct DeltaSkinView: View {
     // Track the current preview size
     @State private var previewSize: CGSize = .zero
 
+    /// Get the smallest screen (the actual game screen) from screens array
+    /// Larger screens are typically effect screens (blurred backgrounds), smaller screens are the game screen
+    private func getSmallestScreen(from screens: [DeltaSkinScreen], mappingSize: CGSize) -> DeltaSkinScreen? {
+        // Filter out screens that are too small (likely buttons or UI elements)
+        let validScreens = screens.compactMap { screen -> (screen: DeltaSkinScreen, frame: CGRect, area: CGFloat)? in
+            guard let frame = screen.outputFrame else { return nil }
+            let area = frame.width * frame.height
+            // Minimum reasonable screen size: at least 100x100 pixels or normalized equivalent
+            let minSize: CGFloat = 100.0
+            let isAbsolutePixels = frame.width > mappingSize.width || frame.height > mappingSize.height ||
+                                   (frame.width > 1.0 && frame.height > 1.0 &&
+                                    frame.width < mappingSize.width && frame.height < mappingSize.height)
+            let actualMinSize = isAbsolutePixels ? minSize : (minSize / max(mappingSize.width, mappingSize.height))
+
+            if frame.width >= actualMinSize && frame.height >= actualMinSize {
+                return (screen, frame, area)
+            }
+            return nil
+        }
+
+        // Return the smallest screen (the actual game screen)
+        return validScreens.min(by: { $0.area < $1.area })?.screen
+    }
+
     /// State for the loaded skin image
     @State private var loadingError: Error?
     @State private var screenGroups: [DeltaSkinScreenGroup]?
@@ -495,10 +519,19 @@ public struct DeltaSkinView: View {
                                 }
                         }
 
-                        // Screen groups
+                        // Screen groups - in preview mode, only show the smallest screen (game screen)
                         if let groups = screenGroups {
                             ForEach(groups, id: \.id) { group in
-                                screenGroup(group, in: geometry, layout: layout)
+                                if isInEmulator {
+                                    // In emulator mode, show all screens
+                                    screenGroup(group, in: geometry, layout: layout)
+                                } else {
+                                    // In preview mode, only show the smallest screen (game screen)
+                                    if let mappingSize = skin.mappingSize(for: traits),
+                                       let smallestScreen = getSmallestScreen(from: group.screens, mappingSize: mappingSize) {
+                                        screenView(smallestScreen, in: geometry, layout: layout)
+                                    }
+                                }
                             }
                         }
 
@@ -587,29 +620,29 @@ public struct DeltaSkinView: View {
                     // Test pattern container
                     ZStack {
                         // Only show in preview mode, not in emulator
-                        if let screens = skin.screens(for: traits) {
-                            ForEach(screens, id: \.id) { screen in
-                                if let outputFrame = screen.outputFrame {
-                                    let scaledFrame = CGRect(
-                                        x: outputFrame.minX * layout.width,
-                                        y: outputFrame.minY * layout.height,
-                                        width: outputFrame.width * layout.width,
-                                        height: outputFrame.height * layout.height
-                                    )
+                        // In preview mode, only show the smallest screen (game screen) to avoid oversized effect screens
+                        if let screens = skin.screens(for: traits),
+                           let mappingSize = skin.mappingSize(for: traits),
+                           let smallestScreen = getSmallestScreen(from: screens, mappingSize: mappingSize),
+                           let outputFrame = smallestScreen.outputFrame {
+                            let scaledFrame = CGRect(
+                                x: outputFrame.minX * layout.width,
+                                y: outputFrame.minY * layout.height,
+                                width: outputFrame.width * layout.width,
+                                height: outputFrame.height * layout.height
+                            )
 
-                                    DeltaSkinTestPatternView(
-                                        frame: CGRect(
-                                            x: 0,
-                                            y: 0,
-                                            width: scaledFrame.width,
-                                            height: scaledFrame.height
-                                        ),
-                                        filters: filters
-                                    )
-                                    .frame(width: scaledFrame.width, height: scaledFrame.height)
-                                    .position(x: scaledFrame.midX, y: scaledFrame.midY)
-                                }
-                            }
+                            DeltaSkinTestPatternView(
+                                frame: CGRect(
+                                    x: 0,
+                                    y: 0,
+                                    width: scaledFrame.width,
+                                    height: scaledFrame.height
+                                ),
+                                filters: filters
+                            )
+                            .frame(width: scaledFrame.width, height: scaledFrame.height)
+                            .position(x: scaledFrame.midX, y: scaledFrame.midY)
                         }
                     }
                     .frame(width: layout.width, height: layout.height)
