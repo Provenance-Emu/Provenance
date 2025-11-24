@@ -65,7 +65,8 @@ struct DeltaSkinScreenPositionWrapper: View {
                 }
             }
 
-            // Find the screen with the largest area (most likely the game screen)
+            // Find the screen with the smallest area (the actual game screen)
+            // Larger screens are typically effect screens (blurred backgrounds), smaller screens are the game screen
             // Filter out screens that are too small (likely buttons or UI elements)
             let validScreens = screens.compactMap { screen -> (screen: DeltaSkinScreen, frame: CGRect, area: CGFloat)? in
                 guard let frame = screen.outputFrame else { return nil }
@@ -85,13 +86,13 @@ struct DeltaSkinScreenPositionWrapper: View {
                 }
             }
 
-            guard let largestScreen = validScreens.max(by: { $0.area < $1.area }),
-                  let outputFrame = largestScreen.screen.outputFrame else {
+            guard let smallestScreen = validScreens.min(by: { $0.area < $1.area }),
+                  let outputFrame = smallestScreen.screen.outputFrame else {
                 ELOG("skins: ERROR - No valid screens found after filtering")
                 return nil
             }
 
-            ILOG("skins: Using screens array path - selected screen: \(largestScreen.screen.id), outputFrame: \(outputFrame), area: \(largestScreen.area), layout: \(layout.width)x\(layout.height)")
+            ILOG("skins: Using screens array path - selected screen: \(smallestScreen.screen.id), outputFrame: \(outputFrame), area: \(smallestScreen.area), layout: \(layout.width)x\(layout.height)")
             DLOG("🎮 SKIN: Using screens array path")
             DLOG("🎮 SKIN:   outputFrame: \(outputFrame)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")

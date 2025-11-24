@@ -421,11 +421,30 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     /// Get normalized screen frame from skin (0-1 coordinates)
     private func getScreenFrame(from skin: any DeltaSkinProtocol, traits: DeltaSkinTraits, mappingSize: CGSize) -> CGRect? {
-        // Try screens array
-        if let screens = skin.screens(for: traits),
-           let screen = screens.first,
-           let outputFrame = screen.outputFrame {
-            return normalizeFrame(outputFrame, mappingSize: mappingSize)
+        // Try screens array - select the smallest screen (the actual game screen)
+        // Larger screens are typically effect screens (blurred backgrounds), smaller screens are the game screen
+        if let screens = skin.screens(for: traits), !screens.isEmpty {
+            // Filter out screens that are too small (likely buttons or UI elements)
+            let validScreens = screens.compactMap { screen -> (screen: DeltaSkinScreen, frame: CGRect, area: CGFloat)? in
+                guard let frame = screen.outputFrame else { return nil }
+                let area = frame.width * frame.height
+                // Minimum reasonable screen size: at least 100x100 pixels or normalized equivalent
+                let minSize: CGFloat = 100.0
+                let isAbsolutePixels = frame.width > mappingSize.width || frame.height > mappingSize.height ||
+                                       (frame.width > 1.0 && frame.height > 1.0 &&
+                                        frame.width < mappingSize.width && frame.height < mappingSize.height)
+                let actualMinSize = isAbsolutePixels ? minSize : (minSize / max(mappingSize.width, mappingSize.height))
+
+                if frame.width >= actualMinSize && frame.height >= actualMinSize {
+                    return (screen, frame, area)
+                }
+                return nil
+            }
+
+            if let smallestScreen = validScreens.min(by: { $0.area < $1.area }),
+               let outputFrame = smallestScreen.screen.outputFrame {
+                return normalizeFrame(outputFrame, mappingSize: mappingSize)
+            }
         }
 
         // Try screen groups
