@@ -12,6 +12,7 @@ import RxSwift
 import RealmSwift
 import Combine
 import Reachability
+import PVShaders
 #if canImport(SafariServices)
 import SafariServices
 #endif
@@ -21,14 +22,14 @@ import PVWebServer
 
 /// View Model for Settings
 class PVSettingsViewModel: ObservableObject {
-    
+
     weak var menuDelegate: PVMenuDelegate!
-    
+
     init(menuDelegate: PVMenuDelegate!, conflictsController: PVGameLibraryUpdatesController) {
         self.menuDelegate = menuDelegate
         self.conflictsController = conflictsController
     }
-    
+
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController {
         didSet {
             setupConflictsObserver()
@@ -37,7 +38,7 @@ class PVSettingsViewModel: ObservableObject {
 
     @Published var numberOfConflicts: Int = 0
     @AppStorage("showFeatureFlagsDebug") internal var showFeatureFlagsDebug = false
-    
+
     private var cancellables = Set<AnyCancellable>()
     private let reachability = try? Reachability()
 

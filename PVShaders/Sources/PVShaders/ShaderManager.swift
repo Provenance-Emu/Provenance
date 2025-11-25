@@ -7,8 +7,9 @@
 //
 
 import Foundation
-import PVSettings
+import PVLogging
 import PVPrimitives
+import PVSettings
 
 @objc
 public enum ShaderType: UInt, Codable {
@@ -35,7 +36,7 @@ public protocol ShaderProvider {
 }
 
 @objc
-public final class MetalShaderManager: NSObject, ShaderProvider {
+public final class MetalShaderManager: NSObject, ShaderProvider, @unchecked Sendable {
 
     @objc(sharedInstance)
     public static let shared: MetalShaderManager = MetalShaderManager()
@@ -57,6 +58,10 @@ public final class MetalShaderManager: NSObject, ShaderProvider {
         ILOG("Registered shaders: \(shaders.map { $0.name })")
         return shaders
     }()
+
+    public var shaderBundle: Bundle {
+        return Bundle.module
+    }
 
     @objc public
     lazy var vertexShaders: [Shader] = {

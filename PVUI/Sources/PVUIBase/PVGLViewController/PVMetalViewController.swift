@@ -14,6 +14,40 @@ import PVSupport
 import PVEmulatorCore
 import PVLogging
 import PVSettings
+import PVShaders
+import simd
+
+private struct SimpleCRTUniforms {
+    var dstRect: SIMD4<Float>
+    var srcRect: SIMD4<Float>
+    var curvVert: Float
+    var curvHoriz: Float
+    var curvStrength: Float
+    var lightBoost: Float
+    var vignStrength: Float
+    var zoomOut: Float
+    var brightness: Float
+}
+
+private struct CRTUniforms {
+    var displayRect: SIMD4<Float>
+    var emulatedImageSize: SIMD2<Float>
+    var finalRes: SIMD2<Float>
+}
+
+private struct LCDFilterUniformsData {
+    var screenRect: SIMD4<Float>
+    var textureSize: SIMD2<Float>
+    var gridDensity: Float
+    var gridBrightness: Float
+    var contrast: Float
+    var saturation: Float
+    var ghosting: Float
+    var scanlineDepth: Float
+    var bloomAmount: Float
+    var colorLow: Float
+    var colorHigh: Float
+}
 import PVUIObjC
 import PVUIBase
 
@@ -203,6 +237,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// Cached flipY buffer to avoid per-frame allocation
     private var cachedFlipYBuffer: MTLBuffer?
     private var cachedFlipYValue: Bool = false
+    private var filterObservationTask: Task<Void, Never>?
 
     // MARK: Methods
 
@@ -224,18 +259,23 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
         renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
 
-        Task {
-            for await value in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
-                renderSettings.metalFilterMode = Defaults[.metalFilterMode]
-                renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
-                renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-                renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+        filterObservationTask = Task { [weak self] in
+            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
+                await MainActor.run {
+                    guard let self else { return }
+                    self.renderSettings.metalFilterMode = Defaults[.metalFilterMode]
+                    self.renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
+                    self.renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
+                    self.renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+                    self.rebuildEffectFilterPipeline(reason: "defaultsUpdate", force: true)
+                }
             }
         }
     }
 
 
     deinit {
+        filterObservationTask?.cancel()
         if alternateThreadDepthRenderbuffer > 0 {
             glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer)
         }
@@ -366,6 +406,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         //        mtlView.layer.borderColor = UIColor.cyan.cgColor
 
         DLOG("Metal view controller view did load")
+        rebuildEffectFilterPipeline(reason: "viewDidLoad", force: true)
     }
 
     @objc private func emulatorCoreDidInitialize() {
@@ -375,6 +416,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         DispatchQueue.main.async {
             do {
                 try self.updateInputTexture()
+                self.rebuildEffectFilterPipeline(reason: "coreDidInitialize", force: true)
 
                 // Force a redraw
                 self.draw(in: self.mtlView)
@@ -1337,51 +1379,133 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         effectFilterShader = filterShader
 
-        let constants = MTLFunctionConstantValues()
-        var flipY = emulatorCore.rendersToOpenGL
-        constants.setConstantValue(&flipY, type: .bool, withName: "FlipY")
-        DLOG("FlipY value: \(flipY)")
-
-        let lib: MTLLibrary
-        do {
-            lib = try device.makeDefaultLibrary(bundle: Bundle.module)
-        } catch {
-            ELOG("Failed to create default library")
-            throw EffectFilterShaderError.failedToCreateDefaultLibrary(error)
-        }
-
-        let desc = MTLRenderPipelineDescriptor()
         guard let fillScreenShader = MetalShaderManager.shared.vertexShaders.first else {
             ELOG("No fill screen shader found")
             throw EffectFilterShaderError.noFillScreenShaderFound
         }
 
-        ILOG("Creating vertex function: \(fillScreenShader.function)")
-        do {
-            desc.vertexFunction = try lib.makeFunction(name: fillScreenShader.function, constantValues: constants)
-        } catch let error {
-            ELOG("Error creating vertex function: \(error)")
-            throw EffectFilterShaderError.errorCreatingVertexShader(error)
-        }
-
-        ILOG("Creating fragment function: \(filterShader.function)")
-        desc.fragmentFunction = lib.makeFunction(name: filterShader.function)
-
-        if let currentDrawable = mtlView.currentDrawable {
-            desc.colorAttachments[0].pixelFormat = currentDrawable.texture.pixelFormat
-            ILOG("Set pixel format: \(currentDrawable.texture.pixelFormat.rawValue)")
-        } else {
-            ELOG("No current drawable available")
-            throw EffectFilterShaderError.noCurrentDrawableAvailable
-        }
+        let targetPixelFormat = mtlView.currentDrawable?.texture.pixelFormat ?? mtlView.colorPixelFormat
+        ILOG("Set pixel format: \(targetPixelFormat.rawValue)")
 
         do {
             ILOG("Creating pipeline state...")
-            effectFilterPipeline = try device.makeRenderPipelineState(descriptor: desc)
+            effectFilterPipeline = try MetalFilterPipelineBuilder.makePipeline(
+                device: device,
+                shader: filterShader,
+                vertexShader: fillScreenShader,
+                pixelFormat: targetPixelFormat,
+                flipY: emulatorCore.rendersToOpenGL
+            )
             ILOG("Successfully created effect filter pipeline state")
         } catch let error {
             ELOG("Error creating render pipeline state: \(error)")
             throw EffectFilterShaderError.errorCreatingPipelineState(error)
+        }
+    }
+
+    private func rebuildEffectFilterPipeline(reason: String, force: Bool = false) {
+        guard device != nil else {
+            DLOG("rebuildEffectFilterPipeline skipped (\(reason)) - device nil")
+            return
+        }
+
+        guard let emulatorCore = emulatorCore else {
+            DLOG("rebuildEffectFilterPipeline skipped (\(reason)) - emulatorCore nil")
+            return
+        }
+
+        guard mtlView != nil else {
+            DLOG("rebuildEffectFilterPipeline skipped (\(reason)) - mtlView nil")
+            return
+        }
+
+        guard renderSettings.metalFilterMode != .none else {
+            if effectFilterPipeline != nil {
+                ILOG("Disabling effect filter pipeline (\(reason))")
+            }
+            effectFilterPipeline = nil
+            effectFilterShader = nil
+            return
+        }
+
+        guard let shader = MetalShaderManager.shared.filterShader(forOption: renderSettings.metalFilterMode,
+                                                                  screenType: emulatorCore.screenType) else {
+            WLOG("No shader available for mode \(renderSettings.metalFilterMode) / screenType \(emulatorCore.screenType) (\(reason))")
+            effectFilterPipeline = nil
+            effectFilterShader = nil
+            return
+        }
+
+        if !force, let current = effectFilterShader, current.name == shader.name, effectFilterPipeline != nil {
+            return
+        }
+
+        do {
+            try setupEffectFilterShader(shader)
+            ILOG("Effect filter '\(shader.name)' ready (\(reason))")
+        } catch {
+            effectFilterPipeline = nil
+            effectFilterShader = nil
+            ELOG("Failed to build effect filter '\(shader.name)' (\(reason)): \(error)")
+        }
+    }
+
+    private func encodeEffectFilterUniforms(_ encoder: MTLRenderCommandEncoder, drawable: CAMetalDrawable) {
+        guard let shaderName = effectFilterShader?.name,
+              let emulatorCore = emulatorCore,
+              let inputTexture = inputTexture else {
+            return
+        }
+
+        let screenRect = emulatorCore.screenRect
+        let screenWidth = Float(max(screenRect.size.width, 1))
+        let screenHeight = Float(max(screenRect.size.height, 1))
+        let textureWidth = Float(inputTexture.width)
+        let textureHeight = Float(inputTexture.height)
+        let drawableWidth = Float(drawable.texture.width)
+        let drawableHeight = Float(drawable.texture.height)
+
+        switch shaderName {
+        case "Simple CRT":
+            var uniforms = SimpleCRTUniforms(
+                dstRect: SIMD4<Float>(textureWidth, textureHeight, drawableWidth, drawableHeight),
+                srcRect: SIMD4<Float>(0, 0, screenWidth, screenHeight),
+                curvVert: 5.0,
+                curvHoriz: 4.0,
+                curvStrength: 0.25,
+                lightBoost: 1.3,
+                vignStrength: 0.05,
+                zoomOut: 1.1,
+                brightness: 1.0
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
+
+        case "CRT", "Complex CRT":
+            var uniforms = CRTUniforms(
+                displayRect: SIMD4<Float>(0, 0, screenWidth, screenHeight),
+                emulatedImageSize: SIMD2<Float>(textureWidth, textureHeight),
+                finalRes: SIMD2<Float>(drawableWidth, drawableHeight)
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
+
+        case "LCD":
+            var uniforms = LCDFilterUniformsData(
+                screenRect: SIMD4<Float>(0, 0, screenWidth, screenHeight),
+                textureSize: SIMD2<Float>(textureWidth, textureHeight),
+                gridDensity: 1.0,
+                gridBrightness: 0.35,
+                contrast: 1.2,
+                saturation: 1.1,
+                ghosting: 0.1,
+                scanlineDepth: 0.25,
+                bloomAmount: 0.15,
+                colorLow: 0.45,
+                colorHigh: 1.0
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
+
+        default:
+            break
         }
     }
 
@@ -1567,9 +1691,10 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     @inlinable
     @inline(__always)
     func _render(_ emulatorCore: PVEmulatorCore, in view: MTKView) {
-        guard let outputTexture = view.currentDrawable?.texture else {
+        guard let currentDrawable = view.currentDrawable else {
             return
         }
+        let outputTexture = currentDrawable.texture
 
         if emulatorCore.rendersToOpenGL {
             emulatorCore.frontBufferLock.lock()
@@ -1635,6 +1760,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Set the render pipeline state
         renderEncoder.setRenderPipelineState(pipelineState)
+        if useEffectFilter {
+            encodeEffectFilterUniforms(renderEncoder, drawable: currentDrawable)
+        }
         DLOG("🔬 Drawing primitives with pipeline state: \(pipelineState)")
 
         // Set the vertex buffer with conditional texture coordinates based on the core type
@@ -1715,7 +1843,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderEncoder.endEncoding()
 
         // Present the drawable
-        commandBuffer.present(view.currentDrawable!)
+        commandBuffer.present(currentDrawable)
 
         // Commit the command buffer
         commandBuffer.commit()
@@ -2391,40 +2519,27 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             cachedFlipYValue = flipY
         }
 
-        // Use the custom pipeline if available, otherwise fall back to the blit pipeline
-        if let customPipeline = customPipeline {
+        let useEffectFilter = effectFilterPipeline != nil && renderSettings.metalFilterMode != .none
+        if useEffectFilter, let effectPipeline = effectFilterPipeline {
+            renderEncoder.setRenderPipelineState(effectPipeline)
+            encodeEffectFilterUniforms(renderEncoder, drawable: drawable)
+        } else if let customPipeline = customPipeline {
             renderEncoder.setRenderPipelineState(customPipeline)
-
-            // Set the texture
-            renderEncoder.setFragmentTexture(inputTexture, index: 0)
-
-            // Pass the flipY parameter to the vertex shader
             renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
-
-            // Draw the primitives
-            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         } else if let blitPipeline = blitPipeline {
-            // Fall back to the blit pipeline
             renderEncoder.setRenderPipelineState(blitPipeline)
-
-            // Set the texture
-            renderEncoder.setFragmentTexture(inputTexture, index: 0)
-
-            // Pass the flipY parameter to the vertex shader
             renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
-
-            // Set the sampler state - use the appropriate sampler based on smoothing setting
             let sampler = renderSettings.smoothingEnabled ? linearSampler : pointSampler
             if let sampler = sampler {
                 renderEncoder.setFragmentSamplerState(sampler, index: 0)
             }
-
-            // Draw the primitives
-            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         } else {
             ELOG("No pipeline available")
             return
         }
+
+        renderEncoder.setFragmentTexture(inputTexture, index: 0)
+        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
 
         // End encoding
         renderEncoder.endEncoding()
