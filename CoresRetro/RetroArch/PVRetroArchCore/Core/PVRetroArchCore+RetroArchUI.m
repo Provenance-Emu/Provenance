@@ -316,13 +316,13 @@ int argc =  1;
     /// This bypasses the core info database check which may not be properly initialized
     settings = config_get_ptr();
     if (settings) {
-        
+
         // TODO: This isn't working?
         settings->bools.video_fps_show = PVSettingsWrapper.showFPS;
-       
+
         // Bypass save info, this is mostly for Dreamcast
         settings->bools.core_info_savestate_bypass = true;
-        
+
         // TODO: We could setup cheevos options from PVCheevos and bridge through swift
         //settings->bools.cheevos_enable = true;
     }
@@ -485,7 +485,7 @@ int argc =  1;
         self.window.rootViewController = nil;
         self.window = nil;
     }
-    [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
+    // [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
 }
 
 - (void)setOptionValues {
@@ -534,14 +534,14 @@ void extract_bundles();
 
 
     if (!configFileExists || !versionFileExists || shouldUpdateAssets) {
-        
+
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
 
         if (!configFileExists) {
             ILOG(@"Writing config file to %@", fileName);
             [self syncResource:src to:fileName];
         }
-        
+
         if (!versionFileExists) {
             ILOG(@"Writing config file to %@", verFile);
             [self syncResource:src to:verFile];
@@ -1888,7 +1888,7 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
        ILOG(@"exit loop\n");
 	   return;
    }
-    
+
     task_queue_check();
 
    runloop_flags = runloop_get_flags();
