@@ -445,9 +445,20 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     private func setupGPUView() {
+        /// Force GPU VC creation so RetroArch always has a valid renderDelegate even if we bail out early
+        _ = gpuViewController
+
         // For RetroArch cores with skipLayout and no skins, RetroArch manages its own view hierarchy
         // Don't create/attach GPU view controller at all to avoid competing Metal layers
         let isRetroArchSkipLayout = core.coreIdentifier?.contains("libretro") == true && core.skipLayout
+
+#if os(tvOS)
+        /// tvOS has no controller overlay/skins, so let RetroArch anchor directly to the emulator VC when it skips layout
+        if isRetroArchSkipLayout && core.touchViewController !== self {
+            core.touchViewController = self
+            DLOG("[RA][tvOS] Using PVEmulatorViewController as touchViewController host")
+        }
+#endif
 
         if isRetroArchSkipLayout && currentSkin == nil {
             ILOG("[RA] skipLayout + no skin: not attaching PVMetalViewController - RetroArch manages its own rendering")
