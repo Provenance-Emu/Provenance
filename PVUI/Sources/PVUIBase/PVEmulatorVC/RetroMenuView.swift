@@ -598,7 +598,8 @@ struct RetroMenuView: View {
     @State private var selectedSkin: String = "Default"
     @State private var selectedPortraitSkin: String = "Default"
     @State private var selectedLandscapeSkin: String = "Default"
-    @State private var selectedFilter: String = "None"
+    @Default(.metalFilterMode) private var metalFilterMode
+    @State private var selectedMetalFilter: MetalFilterSelectionOption = .none
     @State private var availableSkins: [String] = ["Default"]
     @State private var availableSkinObjects: [DeltaSkinProtocol] = []
     @State private var showingSkinPicker = false
@@ -818,7 +819,7 @@ struct RetroMenuView: View {
                         showingFilterPicker = true
                     }) {
                         HStack {
-                            Text(selectedFilter)
+                            Text(selectedMetalFilter == .none ? "None" : selectedMetalFilter.description)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
 
@@ -843,6 +844,12 @@ struct RetroMenuView: View {
                     .buttonStyle(PlainButtonStyle())
                     .sheet(isPresented: $showingFilterPicker) {
                         filterPickerView
+                    }
+                    .onAppear {
+                        syncSelectedFilterFromSettings()
+                    }
+                    .onChange(of: metalFilterMode) { _ in
+                        syncSelectedFilterFromSettings()
                     }
                 }
 
@@ -1419,23 +1426,24 @@ struct RetroMenuView: View {
 
                     // Filter options
                     VStack(spacing: isLandscape ? 8 : 12) {
-                        ForEach(["None", "CRT", "LCD", "Scanlines", "Game Boy", "GBA"], id: \.self) { filter in
+                        ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
                             Button(action: {
-                                selectedFilter = filter
+                                selectedMetalFilter = option
                                 showingFilterPicker = false
                             }) {
                                 HStack {
-                                    Text(filter)
+                                    let label = option == .none ? "None" : option.description
+                                    Text(label)
                                         .font(.system(size: geometry.size.width < 400 ? 16 : 18, weight: .bold))
                                         .foregroundColor(
-                                            filter == selectedFilter
+                                            option == selectedMetalFilter
                                                 ? (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
                                                 : (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7)
                                         )
 
                                     Spacer()
 
-                                    if filter == selectedFilter {
+                                    if option == selectedMetalFilter {
                                         Image(systemName: "checkmark.circle.fill")
                                             .font(.system(size: 20))
                                             .foregroundColor(palette.defaultTintColor.swiftUIColor)
@@ -1446,17 +1454,17 @@ struct RetroMenuView: View {
                                 .background(
                                     RoundedRectangle(cornerRadius: 8)
                                         .fill(
-                                            filter == selectedFilter
+                                            option == selectedMetalFilter
                                                 ? (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.4 : 0.6)
                                                 : (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.6 : 0.8)
                                         )
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 8)
                                                 .strokeBorder(
-                                                    filter == selectedFilter
+                                                    option == selectedMetalFilter
                                                         ? palette.defaultTintColor.swiftUIColor
                                                         : palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.3 : 0.2),
-                                                    lineWidth: filter == selectedFilter ? 2 : 1
+                                                    lineWidth: option == selectedMetalFilter ? 2 : 1
                                                 )
                                         )
                                 )
@@ -1864,30 +1872,35 @@ struct RetroMenuView: View {
 
         let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
 
-        // Apply filter changes
-        if selectedFilter != "None" {
-            // Post notification to apply the filter
+        // Update global Metal filter mode from in-game selection
+        if selectedMetalFilter == .none {
+            metalFilterMode = .none
+        } else {
+            metalFilterMode = .always(filter: selectedMetalFilter)
+        }
+
+        // Apply filter changes for skin overlays via notification and legacy preferences
+        let overlayName = overlayFilterName(for: selectedMetalFilter)
+
+        if selectedMetalFilter != .none {
             NotificationCenter.default.post(
                 name: NSNotification.Name("ApplyScreenFilter"),
                 object: nil,
-                userInfo: ["filterName": selectedFilter]
+                userInfo: ["filterName": overlayName]
             )
 
-            // Store filter preference - save to game if available, otherwise system
             if !gameId.isEmpty {
-                UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_Game_\(gameId)")
+                UserDefaults.standard.set(overlayName, forKey: "ScreenFilter_Game_\(gameId)")
             } else {
-                UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_System_\(systemId.rawValue)")
+                UserDefaults.standard.set(overlayName, forKey: "ScreenFilter_System_\(systemId.rawValue)")
             }
         } else {
-            // Clear filter
             NotificationCenter.default.post(
                 name: NSNotification.Name("ApplyScreenFilter"),
                 object: nil,
                 userInfo: ["filterName": "None"]
             )
 
-            // Clear filter preferences - clear game if available, otherwise system
             if !gameId.isEmpty {
                 UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
             } else {
@@ -1952,29 +1965,27 @@ struct RetroMenuView: View {
         do {
             // Apply filter changes if needed
             // Use notification pattern instead of direct property access
-            if selectedFilter != "None" {
-                // Post notification to apply the filter
+            let overlayName = overlayFilterName(for: selectedMetalFilter)
+
+            if selectedMetalFilter != .none {
                 NotificationCenter.default.post(
                     name: NSNotification.Name("ApplyScreenFilter"),
                     object: nil,
-                    userInfo: ["filterName": selectedFilter]
+                    userInfo: ["filterName": overlayName]
                 )
 
-                // Store filter preference - save to game if available, otherwise system
                 if let gameId = gameId, !gameId.isEmpty {
-                    UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_Game_\(gameId)")
+                    UserDefaults.standard.set(overlayName, forKey: "ScreenFilter_Game_\(gameId)")
                 } else {
-                    UserDefaults.standard.set(selectedFilter, forKey: "ScreenFilter_System_\(systemId.rawValue)")
+                    UserDefaults.standard.set(overlayName, forKey: "ScreenFilter_System_\(systemId.rawValue)")
                 }
             } else {
-                // Clear filter
                 NotificationCenter.default.post(
                     name: NSNotification.Name("ApplyScreenFilter"),
                     object: nil,
                     userInfo: ["filterName": "None"]
                 )
 
-                // Clear filter preferences - clear game if available, otherwise system
                 if let gameId = gameId, !gameId.isEmpty {
                     UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
                 } else {
@@ -2054,6 +2065,38 @@ struct RetroMenuView: View {
             }
         } catch {
             ELOG("Error applying skin and filter changes: \(error)")
+        }
+    }
+
+    /// Map a Metal filter selection to the legacy string name used by skin overlays
+    private func overlayFilterName(for filter: MetalFilterSelectionOption) -> String {
+        switch filter {
+        case .none:
+            return "None"
+        case .lcd:
+            return "LCD"
+        case .gameBoy:
+            return "Game Boy"
+        case .simpleCRT, .complexCRT, .megaTron, .ulTron, .vhs:
+            return "CRT"
+        }
+    }
+
+    /// Keep in-menu filter selection in sync with the global Metal filter mode
+    private func syncSelectedFilterFromSettings() {
+        switch metalFilterMode {
+        case .none:
+            selectedMetalFilter = .none
+        case .always(filter: let filter):
+            selectedMetalFilter = filter
+        case .auto(crt: let crt, lcd: let lcd):
+            if crt != .none {
+                selectedMetalFilter = crt
+            } else if lcd != .none {
+                selectedMetalFilter = lcd
+            } else {
+                selectedMetalFilter = .none
+            }
         }
     }
 

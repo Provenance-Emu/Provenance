@@ -2,6 +2,7 @@ import Foundation
 import Metal
 import simd
 import CoreGraphics
+import QuartzCore
 import PVLogging
 import PVPrimitives
 
@@ -18,6 +19,7 @@ public final class PVMetalFilterRenderer: NSObject {
     private var samplerNearest: MTLSamplerState?
 
     private var cachedScreenType: ScreenTypeObjC = .unknown
+    private var startTime: CFTimeInterval = CACurrentMediaTime()
 
     private let quadVertices: [Float] = [
         -1.0, -1.0, 0.0, 0.0, 0.0,
@@ -36,6 +38,7 @@ public final class PVMetalFilterRenderer: NSObject {
         samplerLinear = nil
         samplerNearest = nil
         cachedScreenType = .unknown
+        startTime = CACurrentMediaTime()
     }
 
     public func encode(with encoder: MTLRenderCommandEncoder,
@@ -82,7 +85,8 @@ public final class PVMetalFilterRenderer: NSObject {
         encodeUniformsIfNeeded(encoder: encoder,
                                drawableSize: drawableSize,
                                sourceSize: sourceSize,
-                               texture: texture)
+                               texture: texture,
+                               screenType: screenType)
 
         encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         return true
@@ -154,7 +158,8 @@ public final class PVMetalFilterRenderer: NSObject {
     private func encodeUniformsIfNeeded(encoder: MTLRenderCommandEncoder,
                                         drawableSize: CGSize,
                                         sourceSize: CGSize,
-                                        texture: MTLTexture) {
+                                        texture: MTLTexture,
+                                        screenType: ScreenTypeObjC) {
         guard let shaderName = activeShader?.name else {
             return
         }
@@ -165,6 +170,15 @@ public final class PVMetalFilterRenderer: NSObject {
         let sourceHeight = Float(sourceSize.height)
         let textureWidth = Float(texture.width)
         let textureHeight = Float(texture.height)
+        let sourceVector = SIMD4<Float>(sourceWidth,
+                                        sourceHeight,
+                                        sourceWidth > 0 ? 1.0 / sourceWidth : 0.0,
+                                        sourceHeight > 0 ? 1.0 / sourceHeight : 0.0)
+        let outputVector = SIMD4<Float>(drawableWidth,
+                                        drawableHeight,
+                                        drawableWidth > 0 ? 1.0 / drawableWidth : 0.0,
+                                        drawableHeight > 0 ? 1.0 / drawableHeight : 0.0)
+        let elapsedTime = Float(CACurrentMediaTime() - startTime)
 
         switch shaderName {
         case "Simple CRT":
@@ -205,6 +219,72 @@ public final class PVMetalFilterRenderer: NSObject {
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LCDFilterUniforms>.stride, index: 0)
 
+        case "Mega Tron":
+            var uniforms = MegaTronUniforms(
+                sourceSize: sourceVector,
+                outputSize: outputVector,
+                mask: 2.0,
+                maskIntensity: 0.35,
+                scanlineThinness: 0.65,
+                scanBlur: -1.35,
+                curvature: 0.25,
+                trinitronCurve: 0.35,
+                corner: 0.03,
+                crtGamma: 2.4
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<MegaTronUniforms>.stride, index: 0)
+
+        case "ulTron":
+            var uniforms = UltronUniforms(
+                sourceSize: sourceVector,
+                outputSize: outputVector,
+                hardScan: 8.0,
+                hardPix: 3.5,
+                warpX: 0.02,
+                warpY: 0.03,
+                maskDark: 0.4,
+                maskLight: 1.4,
+                shadowMask: 1.0,
+                brightBoost: 1.15,
+                hardBloomScan: 2.0,
+                hardBloomPix: 1.5,
+                bloomAmount: 0.2,
+                shape: 2.0
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<UltronUniforms>.stride, index: 0)
+
+        case "VHS":
+            var uniforms = VHSUniforms(
+                sourceSize: sourceVector,
+                outputSize: outputVector,
+                time: elapsedTime,
+                noiseAmount: 0.06,
+                scanlineJitter: 0.0025,
+                colorBleed: 1.5,
+                trackingNoise: 0.2,
+                tapeWobble: 0.0035,
+                ghosting: 0.35,
+                vignette: 0.45
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<VHSUniforms>.stride, index: 0)
+
+        case "Game Boy":
+            let palette = GameBoyPalette.defaultPalette(for: screenType)
+            var uniforms = GameBoyUniforms(
+                sourceSize: sourceVector,
+                outputSize: outputVector,
+                dotMatrix: 0.75,
+                contrast: 1.25,
+                ghost: 0.4,
+                scanlineDepth: 0.25,
+                padding: 0,
+                palette0: palette[0],
+                palette1: palette[1],
+                palette2: palette[2],
+                palette3: palette[3]
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GameBoyUniforms>.stride, index: 0)
+
         default:
             break
         }
@@ -241,4 +321,84 @@ private struct LCDFilterUniforms {
     var bloomAmount: Float
     var colorLow: Float
     var colorHigh: Float
+}
+
+private struct MegaTronUniforms {
+    var sourceSize: SIMD4<Float>
+    var outputSize: SIMD4<Float>
+    var mask: Float
+    var maskIntensity: Float
+    var scanlineThinness: Float
+    var scanBlur: Float
+    var curvature: Float
+    var trinitronCurve: Float
+    var corner: Float
+    var crtGamma: Float
+}
+
+private struct UltronUniforms {
+    var sourceSize: SIMD4<Float>
+    var outputSize: SIMD4<Float>
+    var hardScan: Float
+    var hardPix: Float
+    var warpX: Float
+    var warpY: Float
+    var maskDark: Float
+    var maskLight: Float
+    var shadowMask: Float
+    var brightBoost: Float
+    var hardBloomScan: Float
+    var hardBloomPix: Float
+    var bloomAmount: Float
+    var shape: Float
+}
+
+private struct VHSUniforms {
+    var sourceSize: SIMD4<Float>
+    var outputSize: SIMD4<Float>
+    var time: Float
+    var noiseAmount: Float
+    var scanlineJitter: Float
+    var colorBleed: Float
+    var trackingNoise: Float
+    var tapeWobble: Float
+    var ghosting: Float
+    var vignette: Float
+}
+
+private struct GameBoyUniforms {
+    var sourceSize: SIMD4<Float>
+    var outputSize: SIMD4<Float>
+    var dotMatrix: Float
+    var contrast: Float
+    var ghost: Float
+    var scanlineDepth: Float
+    var padding: Float
+    var palette0: SIMD4<Float>
+    var palette1: SIMD4<Float>
+    var palette2: SIMD4<Float>
+    var palette3: SIMD4<Float>
+}
+
+private enum GameBoyPalette {
+    static func defaultPalette(for screenType: ScreenTypeObjC) -> [SIMD4<Float>] {
+        // Slightly adjust palette for LCD-based systems
+        let base: [SIMD3<Float>]
+        if screenType == .dotMatrix || screenType == .monochromaticLCD {
+            base = [
+                SIMD3<Float>(0.039, 0.133, 0.086),
+                SIMD3<Float>(0.184, 0.325, 0.2),
+                SIMD3<Float>(0.502, 0.659, 0.369),
+                SIMD3<Float>(0.824, 0.898, 0.549)
+            ]
+        } else {
+            base = [
+                SIMD3<Float>(0.05, 0.12, 0.1),
+                SIMD3<Float>(0.25, 0.38, 0.18),
+                SIMD3<Float>(0.55, 0.68, 0.4),
+                SIMD3<Float>(0.86, 0.93, 0.58)
+            ]
+        }
+        return base.map { SIMD4<Float>($0, 1.0) }
+    }
 }
