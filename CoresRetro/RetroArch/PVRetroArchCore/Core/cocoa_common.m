@@ -825,6 +825,8 @@ void cocoa_file_load_with_detect_core(const char *filename);
 
 #pragma mark GCDWebServerDelegate
 - (void)webServerDidCompleteBonjourRegistration:(GCDWebServer*)server {
+    return;
+    
     NSMutableString *servers = [[NSMutableString alloc] init];
     if (server.serverURL != nil)
         [servers appendString:[NSString stringWithFormat:@"%@",server.serverURL]];
