@@ -54,30 +54,30 @@
 /* BCD conversion lookup tables */
 static const uint8 lut_BCD_8[100] =
 {
-  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 
-  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 
-  0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 
-  0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 
-  0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 
-  0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 
-  0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 
-  0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 
-  0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 
-  0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
+  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19,
+  0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29,
+  0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
+  0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+  0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59,
+  0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
+  0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
+  0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89,
+  0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99,
 };
 
 static const uint16 lut_BCD_16[100] =
 {
-  0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 
-  0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107, 0x0108, 0x0109, 
-  0x0200, 0x0201, 0x0202, 0x0203, 0x0204, 0x0205, 0x0206, 0x0207, 0x0208, 0x0209, 
-  0x0300, 0x0301, 0x0302, 0x0303, 0x0304, 0x0305, 0x0306, 0x0307, 0x0308, 0x0309, 
-  0x0400, 0x0401, 0x0402, 0x0403, 0x0404, 0x0405, 0x0406, 0x0407, 0x0408, 0x0409, 
-  0x0500, 0x0501, 0x0502, 0x0503, 0x0504, 0x0505, 0x0506, 0x0507, 0x0508, 0x0509, 
-  0x0600, 0x0601, 0x0602, 0x0603, 0x0604, 0x0605, 0x0606, 0x0607, 0x0608, 0x0609, 
-  0x0700, 0x0701, 0x0702, 0x0703, 0x0704, 0x0705, 0x0706, 0x0707, 0x0708, 0x0709, 
-  0x0800, 0x0801, 0x0802, 0x0803, 0x0804, 0x0805, 0x0806, 0x0807, 0x0808, 0x0809, 
-  0x0900, 0x0901, 0x0902, 0x0903, 0x0904, 0x0905, 0x0906, 0x0907, 0x0908, 0x0909, 
+  0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009,
+  0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107, 0x0108, 0x0109,
+  0x0200, 0x0201, 0x0202, 0x0203, 0x0204, 0x0205, 0x0206, 0x0207, 0x0208, 0x0209,
+  0x0300, 0x0301, 0x0302, 0x0303, 0x0304, 0x0305, 0x0306, 0x0307, 0x0308, 0x0309,
+  0x0400, 0x0401, 0x0402, 0x0403, 0x0404, 0x0405, 0x0406, 0x0407, 0x0408, 0x0409,
+  0x0500, 0x0501, 0x0502, 0x0503, 0x0504, 0x0505, 0x0506, 0x0507, 0x0508, 0x0509,
+  0x0600, 0x0601, 0x0602, 0x0603, 0x0604, 0x0605, 0x0606, 0x0607, 0x0608, 0x0609,
+  0x0700, 0x0701, 0x0702, 0x0703, 0x0704, 0x0705, 0x0706, 0x0707, 0x0708, 0x0709,
+  0x0800, 0x0801, 0x0802, 0x0803, 0x0804, 0x0805, 0x0806, 0x0807, 0x0808, 0x0809,
+  0x0900, 0x0901, 0x0902, 0x0903, 0x0904, 0x0905, 0x0906, 0x0907, 0x0908, 0x0909,
 };
 
 /* pre-build TOC */
@@ -159,7 +159,7 @@ static int seek64_wrap(void *f,ogg_int64_t off,int whence){
 }
 
 static ov_callbacks cb =
-{ 
+{
   (size_t (*)(void *, size_t, size_t, void *))  fread,
   (int (*)(void *, ogg_int64_t, int))           seek64_wrap,
   (int (*)(void *))                             fclose,
@@ -205,7 +205,7 @@ void cdd_reset(void)
 
   /* reset status */
   cdd.status = cdd.loaded ? CD_TOC : NO_DISC;
-  
+
   /* reset CD-DA fader (full volume) */
   cdd.fader[0] = cdd.fader[1] = 0x400;
 
@@ -305,7 +305,7 @@ int cdd_load(char *filename, char *header)
   char line[128];
   char *ptr, *lptr;
     FILE *fd;
-  
+
   /* assume CD image file by default */
   int isCDfile = 1;
 
@@ -318,7 +318,9 @@ int cdd_load(char *filename, char *header)
     return (-1);
 
 #if defined(USE_LIBCHDR)
-  if (!memcmp("chd", &filename[strlen(filename) - 3], 3) || !memcmp("CHD", &filename[strlen(filename) - 3], 3))
+  {
+    int len = strlen(filename);
+    if (len >= 4 && (!strcasecmp(&filename[len - 4], ".chd")))
   {
     int sectors = 0;
     char metadata[256];
@@ -334,7 +336,7 @@ int cdd_load(char *filename, char *header)
 
     /* retrieve CHD header */
     head = chd_get_header(cdd.chd.file);
- 
+
     /* detect invalid hunk size */
     if ((head->hunkbytes == 0) || (head->hunkbytes % CD_FRAME_SIZE))
     {
@@ -433,7 +435,7 @@ int cdd_load(char *filename, char *header)
 
       /* track end LBA (remove included pause from CHD track length) */
       cdd.toc.tracks[cdd.toc.last].end = cdd.toc.tracks[cdd.toc.last].start + frames - pregap;
-   
+
       /* CHD file offset for current track */
       cdd.toc.tracks[cdd.toc.last].offset = (sectors + pregap - cdd.toc.tracks[cdd.toc.last].start) * CD_FRAME_SIZE;
 
@@ -473,6 +475,7 @@ int cdd_load(char *filename, char *header)
     chd_close(cdd.chd.file);
     fclose(fd);
     return -1;
+    }
   }
 #endif
 
@@ -530,7 +533,7 @@ int cdd_load(char *filename, char *header)
       {
         cdd.toc.tracks[0].end = 150;
       }
-        
+
       /* DATA track start LBA (logical block 0) */
       fseek(fd, 0, SEEK_SET);
       cdd.toc.tracks[0].start = 0;
@@ -783,7 +786,7 @@ int cdd_load(char *filename, char *header)
 
 #if defined(USE_LIBTREMOR) || defined(USE_LIBVORBIS)
           if (cdd.toc.tracks[cdd.toc.last].vf.datasource)
-          { 
+          {
             /* convert read offset to PCM sample offset */
             cdd.toc.tracks[cdd.toc.last].offset = cdd.toc.tracks[cdd.toc.last].offset / 4;
 
@@ -832,7 +835,7 @@ int cdd_load(char *filename, char *header)
 
         /* increment track number */
         cdd.toc.last++;
-        
+
         /* max. 99 tracks */
         if (cdd.toc.last == 99) break;
       }
@@ -869,7 +872,7 @@ int cdd_load(char *filename, char *header)
     int i, offset = 1;
 
     /* set pointer at the end of filename */
-    ptr = fname + strlen(fname) - 4; 
+    ptr = fname + strlen(fname) - 4;
 
     /* autodetect audio track file extensions */
     for (i=0; i<SUPPORTED_EXT; i++)
@@ -1412,7 +1415,7 @@ void cdd_read_audio(unsigned int samples)
 #else
         len = ov_read(&cdd.toc.tracks[cdd.index].vf, (char *)(cdc.ram + done), samples - done, 0);
 #endif
-        if (len <= 0) 
+        if (len <= 0)
         {
           done = samples;
           break;
@@ -1535,7 +1538,7 @@ static void cdd_read_subcode(void)
 
   /* update subcode buffer pointer address */
   scd.regs[0x68>>1].byte.l = (scd.regs[0x68>>1].byte.l + 98) & 0x7e;
-  
+
   /* 16-bit register index */
   index = (scd.regs[0x68>>1].byte.l + 0x100) >> 1;
 
@@ -1572,7 +1575,7 @@ static void cdd_read_subcode(void)
 }
 
 void cdd_update(void)
-{  
+{
 #ifdef LOG_CDD
   error("LBA = %d (track %d)(latency=%d)\n", cdd.lba, cdd.index, cdd.latency);
 #endif
@@ -1667,7 +1670,7 @@ void cdd_update(void)
         ov_pcm_seek(&cdd.toc.tracks[cdd.index].vf, (cdd.toc.tracks[cdd.index].start * 588) - cdd.toc.tracks[cdd.index].offset);
       }
       else
-#endif 
+#endif
       if (cdd.toc.tracks[cdd.index].fd)
       {
         fseek(cdd.toc.tracks[cdd.index].fd, (cdd.toc.tracks[cdd.index].start * 2352) - cdd.toc.tracks[cdd.index].offset, SEEK_SET);
@@ -1779,7 +1782,7 @@ void cdd_update(void)
       /* VORBIS AUDIO track */
       ov_pcm_seek(&cdd.toc.tracks[cdd.index].vf, (cdd.lba * 588) - cdd.toc.tracks[cdd.index].offset);
     }
-#endif 
+#endif
     else if (cdd.toc.tracks[cdd.index].fd)
     {
       /* PCM AUDIO track */
@@ -1959,7 +1962,7 @@ void cdd_process(void)
       int index = 0;
 
       /* new LBA position */
-      int lba = ((scd.regs[0x44>>1].byte.h * 10 + scd.regs[0x44>>1].byte.l) * 60 + 
+      int lba = ((scd.regs[0x44>>1].byte.h * 10 + scd.regs[0x44>>1].byte.l) * 60 +
                  (scd.regs[0x46>>1].byte.h * 10 + scd.regs[0x46>>1].byte.l)) * 75 +
                  (scd.regs[0x48>>1].byte.h * 10 + scd.regs[0x48>>1].byte.l) - 150;
 
@@ -1981,7 +1984,7 @@ void cdd_process(void)
       {
         cdd.latency += (((lba - cdd.lba) * 120) / 270000);
       }
-      else 
+      else
       {
         cdd.latency += (((cdd.lba - lba) * 120) / 270000);
       }
@@ -2016,7 +2019,7 @@ void cdd_process(void)
       cdd.index = index;
 
       /* stay within track limits when seeking files */
-      if (lba < cdd.toc.tracks[index].start) 
+      if (lba < cdd.toc.tracks[index].start)
       {
         lba = cdd.toc.tracks[index].start;
       }
@@ -2041,7 +2044,7 @@ void cdd_process(void)
         /* VORBIS AUDIO track */
         ov_pcm_seek(&cdd.toc.tracks[index].vf, (lba * 588) - cdd.toc.tracks[index].offset);
       }
-#endif 
+#endif
       else if (cdd.toc.tracks[index].fd)
       {
         /* PCM AUDIO track */
@@ -2076,7 +2079,7 @@ void cdd_process(void)
       int index = 0;
 
       /* new LBA position */
-      int lba = ((scd.regs[0x44>>1].byte.h * 10 + scd.regs[0x44>>1].byte.l) * 60 + 
+      int lba = ((scd.regs[0x44>>1].byte.h * 10 + scd.regs[0x44>>1].byte.l) * 60 +
                  (scd.regs[0x46>>1].byte.h * 10 + scd.regs[0x46>>1].byte.l)) * 75 +
                  (scd.regs[0x48>>1].byte.h * 10 + scd.regs[0x48>>1].byte.l) - 150;
 
@@ -2123,7 +2126,7 @@ void cdd_process(void)
       cdd.index = index;
 
       /* stay within track limits */
-      if (lba < cdd.toc.tracks[index].start) 
+      if (lba < cdd.toc.tracks[index].start)
       {
         lba = cdd.toc.tracks[index].start;
       }
@@ -2148,7 +2151,7 @@ void cdd_process(void)
         /* VORBIS AUDIO track */
         ov_pcm_seek(&cdd.toc.tracks[index].vf, (lba * 588) - cdd.toc.tracks[index].offset);
       }
-#endif 
+#endif
       else if (cdd.toc.tracks[index].fd)
       {
         /* PCM AUDIO track */

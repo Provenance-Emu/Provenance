@@ -56,7 +56,7 @@
 static inline long int lround(double x) {
 	return (long)(x + _copysign(0.5, x));
 }
-#elif !defined(HAVE_LROUND) && defined(__GNUC__)
+#elif !defined(HAVE_LROUND) && defined(__GNUC__) && !defined(__APPLE__)
 static inline long int lround(double x) {
 	return (long)(x + __builtin_copysign(0.5, x));
 }

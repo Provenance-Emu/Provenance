@@ -51,6 +51,7 @@
 #include "zlib.h"
 #include "LzmaEnc.h"
 #include "LzmaDec.h"
+#include "coretypes.h"
 
 #undef TRUE
 #undef FALSE

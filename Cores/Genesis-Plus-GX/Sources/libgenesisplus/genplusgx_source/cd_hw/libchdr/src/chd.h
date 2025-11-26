@@ -46,6 +46,33 @@
 extern "C" {
 #endif
 
+#ifndef RFILE
+#define RFILE FILE
+#endif
+
+#ifndef rfopen
+#define rfopen fopen
+#endif
+#ifndef rfclose
+#define rfclose fclose
+#endif
+#ifndef rfread
+#define rfread fread
+#endif
+#ifndef rfseek
+#define rfseek fseek
+#endif
+
+#ifndef cdStream
+#define cdStream            FILE
+#define cdStreamOpen(fname) fopen(fname, "rb")
+#define cdStreamClose       fclose
+#define cdStreamRead(buff, size, count, file) fread(buff, size, count, file)
+#define cdStreamSeek(file, offset, whence) fseek(file, offset, whence)
+#define cdStreamTell        ftell
+#define cdStreamGets        fgets
+#endif
+
 #include "coretypes.h"
 
 
@@ -305,9 +332,9 @@ struct _chd_header
 	UINT8		parentmd5[CHD_MD5_BYTES];	/* overall MD5 checksum of parent */
 	UINT8		sha1[CHD_SHA1_BYTES];		/* overall SHA1 checksum */
 	UINT8		rawsha1[CHD_SHA1_BYTES];	/* SHA1 checksum of raw data */
-	UINT8		parentsha1[CHD_SHA1_BYTES];	/* overall SHA1 checksum of parent */	
+	UINT8		parentsha1[CHD_SHA1_BYTES];	/* overall SHA1 checksum of parent */
 	UINT32		unitbytes;					/* TODO V5 */
-	UINT64		unitcount;					/* TODO V5 */	
+	UINT64		unitcount;					/* TODO V5 */
     UINT32      hunkcount;                  /* TODO V5 */
 
     /* map information */

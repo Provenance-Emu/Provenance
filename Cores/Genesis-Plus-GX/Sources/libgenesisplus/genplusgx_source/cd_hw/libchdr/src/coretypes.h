@@ -20,9 +20,32 @@ typedef int16_t INT16;
 typedef int8_t INT8;
 #endif
 
+#ifndef cdStream
+#define cdStream            FILE
+#define cdStreamOpen(fname) fopen(fname, "rb")
+#define cdStreamClose       fclose
+#define cdStreamRead(buff, size, count, file) fread(buff, size, count, file)
+#define cdStreamSeek(file, offset, whence) fseek(file, offset, whence)
+#define cdStreamTell        ftell
+#define cdStreamGets        fgets
+#endif
+
+#ifndef rfopen
+#define rfopen fopen
+#endif
+#ifndef rfclose
+#define rfclose fclose
+#endif
+#ifndef rfread
+#define rfread fread
+#endif
+#ifndef rfseek
+#define rfseek fseek
+#endif
+
 #define core_file                 cdStream
 #define core_fopen                cdStreamOpen
-#define core_fseek                cdStreamSeek
+#define core_fseek(file, offset, whence) cdStreamSeek(file, offset, whence)
 #define core_fread(fc, buff, len) cdStreamRead(buff, 1, len, fc)
 #define core_fclose               cdStreamClose
 #define core_ftell                cdStreamTell
