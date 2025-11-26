@@ -107,7 +107,13 @@ struct GameBoyUniforms: Sendable {
     var OutputSize: SIMD4<Float>      /// x,y = size, z,w = 1/size
     var dotMatrix: Float              /// Dot matrix effect intensity
     var contrast: Float               /// Screen contrast
-    var palette: (SIMD4<Float>, SIMD4<Float>, SIMD4<Float>, SIMD4<Float>)  /// Classic Game Boy palette
+    var ghost: Float                  /// Horizontal ghosting amount
+    var scanlineDepth: Float          /// Scanline strength
+    var padding: Float                /// Alignment padding
+    var palette0: SIMD4<Float>        /// Classic Game Boy palette entry 0
+    var palette1: SIMD4<Float>        /// Classic Game Boy palette entry 1
+    var palette2: SIMD4<Float>        /// Classic Game Boy palette entry 2
+    var palette3: SIMD4<Float>        /// Classic Game Boy palette entry 3
 }
 
 @usableFromInline

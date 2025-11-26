@@ -1464,6 +1464,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let textureHeight = Float(inputTexture.height)
         let drawableWidth = Float(drawable.texture.width)
         let drawableHeight = Float(drawable.texture.height)
+        let sourceVector = SIMD4<Float>(
+            textureWidth,
+            textureHeight,
+            textureWidth > 0 ? 1.0 / textureWidth : 0.0,
+            textureHeight > 0 ? 1.0 / textureHeight : 0.0
+        )
+        let outputVector = SIMD4<Float>(
+            drawableWidth,
+            drawableHeight,
+            drawableWidth > 0 ? 1.0 / drawableWidth : 0.0,
+            drawableHeight > 0 ? 1.0 / drawableHeight : 0.0
+        )
 
         switch shaderName {
         case "Simple CRT":
@@ -1501,6 +1513,72 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 bloomAmount: 0.15,
                 colorLow: 0.45,
                 colorHigh: 1.0
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
+
+        case "VHS":
+            var uniforms = VHSUniforms(
+                SourceSize: sourceVector,
+                OutputSize: outputVector,
+                time: 0.0,
+                noiseAmount: 0.06,
+                scanlineJitter: 0.0025,
+                colorBleed: 1.5,
+                trackingNoise: 0.2,
+                tapeWobble: 0.0035,
+                ghosting: 0.35,
+                vignette: 0.45
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
+
+        case "Mega Tron":
+            var uniforms = MegaTronUniforms(
+                SourceSize: sourceVector,
+                OutputSize: outputVector,
+                MASK: 0.0,
+                MASK_INTENSITY: 0.0,
+                SCANLINE_THINNESS: 0.65,
+                SCAN_BLUR: -1.35,
+                CURVATURE: 0.25,
+                TRINITRON_CURVE: 0.35,
+                CORNER: 0.03,
+                CRT_GAMMA: 2.4
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
+
+        case "ulTron":
+            var uniforms = UlTronUniforms(
+                SourceSize: sourceVector,
+                OutputSize: outputVector,
+                hardScan: 8.0,
+                hardPix: 3.5,
+                warpX: 0.02,
+                warpY: 0.03,
+                maskDark: 1.0,
+                maskLight: 1.0,
+                shadowMask: 0.0,
+                brightBoost: 1.1,
+                hardBloomScan: 2.0,
+                hardBloomPix: 1.5,
+                bloomAmount: 0.2,
+                shape: 2.0
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
+
+        case "Game Boy":
+            let palette = GameBoyPalette.defaultPalette(for: emulatorCore.screenType)
+            var uniforms = GameBoyUniforms(
+                SourceSize: sourceVector,
+                OutputSize: outputVector,
+                dotMatrix: 0.75,
+                contrast: 1.25,
+                ghost: 0.4,
+                scanlineDepth: 0.25,
+                padding: 0,
+                palette0: palette[0],
+                palette1: palette[1],
+                palette2: palette[2],
+                palette3: palette[3]
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
 

@@ -223,8 +223,8 @@ public final class PVMetalFilterRenderer: NSObject {
             var uniforms = MegaTronUniforms(
                 sourceSize: sourceVector,
                 outputSize: outputVector,
-                mask: 2.0,
-                maskIntensity: 0.35,
+                mask: 0.0,
+                maskIntensity: 0.0,
                 scanlineThinness: 0.65,
                 scanBlur: -1.35,
                 curvature: 0.25,
@@ -242,10 +242,10 @@ public final class PVMetalFilterRenderer: NSObject {
                 hardPix: 3.5,
                 warpX: 0.02,
                 warpY: 0.03,
-                maskDark: 0.4,
-                maskLight: 1.4,
-                shadowMask: 1.0,
-                brightBoost: 1.15,
+                maskDark: 1.0,
+                maskLight: 1.0,
+                shadowMask: 0.0,
+                brightBoost: 1.1,
                 hardBloomScan: 2.0,
                 hardBloomPix: 1.5,
                 bloomAmount: 0.2,
@@ -380,8 +380,8 @@ private struct GameBoyUniforms {
     var palette3: SIMD4<Float>
 }
 
-private enum GameBoyPalette {
-    static func defaultPalette(for screenType: ScreenTypeObjC) -> [SIMD4<Float>] {
+public enum GameBoyPalette {
+    public static func defaultPalette(for screenType: ScreenTypeObjC) -> [SIMD4<Float>] {
         // Slightly adjust palette for LCD-based systems
         let base: [SIMD3<Float>]
         if screenType == .dotMatrix || screenType == .monochromaticLCD {

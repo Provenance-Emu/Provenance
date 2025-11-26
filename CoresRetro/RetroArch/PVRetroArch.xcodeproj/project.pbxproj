@@ -163,6 +163,8 @@
 		B36B5BC72D7A95F500BABCA3 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B36B5BC52D7A95F500BABCA3 /* GCDWebDAVServer.m */; };
 		B36CEE8B2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m in Sources */ = {isa = PBXBuildFile; fileRef = B36CEE8A2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
+		B39D853C2ED67EC500896E92 /* PVShaders in Frameworks */ = {isa = PBXBuildFile; productRef = B39D853B2ED67EC500896E92 /* PVShaders */; };
+		B39D855C2ED6801300896E92 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B39D855B2ED6801300896E92 /* Defaults */; };
 		B39FAC3F2D6013EC0065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
 		B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39FAC3E2D6013EC0065B66B /* SDL2.xcframework */; };
 		B3A6C0EB2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A6C0EA2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m */; };
@@ -624,6 +626,7 @@
 				B3EEFB9C2D66C9560080CA51 /* OpenAL.framework in Frameworks */,
 				93B716DD296591EE00F4CDC7 /* CoreAudioKit.framework in Frameworks */,
 				B3EEF5E02D66B0850080CA51 /* LzhArchive in Frameworks */,
+				B39D855C2ED6801300896E92 /* Defaults in Frameworks */,
 				B3EEFB9D2D66C9600080CA51 /* OpenGL.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3F8DFFF2CB3741500017D1B /* PVCoreObjCBridge in Frameworks */,
@@ -646,6 +649,7 @@
 				B3EEFBA22D66C9A80080CA51 /* QuartzCore.framework in Frameworks */,
 				B3FC975E2CB8D44400C6DB31 /* PVPlists in Frameworks */,
 				93B716F2296595F600F4CDC7 /* AppKit.framework in Frameworks */,
+				B39D853C2ED67EC500896E92 /* PVShaders in Frameworks */,
 				B3FD96882D613FD600397643 /* libavdevice.xcframework in Frameworks */,
 				B3C439532BF442920021B9C3 /* PVSupport in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
@@ -1183,6 +1187,8 @@
 				B3EEFB672D66C3250080CA51 /* PVCoreBridge */,
 				B3DD7A6C2ECBFA220022FF70 /* PVSettings */,
 				B33CFF072ED2DEC40029101B /* PVCheevos */,
+				B39D853B2ED67EC500896E92 /* PVShaders */,
+				B39D855B2ED6801300896E92 /* Defaults */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -1249,6 +1255,8 @@
 				B3EEFBA92D66E05F0080CA51 /* XCLocalSwiftPackageReference "../../PVWebServer" */,
 				B3DD7A6B2ECBFA220022FF70 /* XCLocalSwiftPackageReference "../../PVSettings" */,
 				B33CFF062ED2DEC40029101B /* XCLocalSwiftPackageReference "../../PVCheevos" */,
+				B39D853A2ED67EC500896E92 /* XCLocalSwiftPackageReference "../../PVShaders" */,
+				B39D855A2ED6801300896E92 /* XCRemoteSwiftPackageReference "Defaults" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2319,6 +2327,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../MoltenVK;
 		};
+		B39D853A2ED67EC500896E92 /* XCLocalSwiftPackageReference "../../PVShaders" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVShaders;
+		};
 		B3DD7A6B2ECBFA220022FF70 /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSettings;
@@ -2344,6 +2356,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.3.16;
+			};
+		};
+		B39D855A2ED6801300896E92 /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Defaults.git";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		B3EEF5DE2D66B0850080CA51 /* XCRemoteSwiftPackageReference "SwiftSDL2" */ = {
@@ -2372,6 +2392,15 @@
 		B37C00582BFF6A1000FEC6AC /* MoltenVK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MoltenVK;
+		};
+		B39D853B2ED67EC500896E92 /* PVShaders */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVShaders;
+		};
+		B39D855B2ED6801300896E92 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B39D855A2ED6801300896E92 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
 		};
 		B3C439522BF442920021B9C3 /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
