@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVPrimitives
 
 #if canImport(OpenGLES) || canImport(OpenGL)
 @objc public enum GLESVersion: Int {

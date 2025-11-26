@@ -20,7 +20,8 @@ let package = Package(
     dependencies: [
         .package(path: "../PVPrimitives"),
         .package(path: "../PVLogging"),
-        .package(path: "../PVSettings")
+        .package(path: "../PVSettings"),
+        .package(url: "https://github.com/sindresorhus/Defaults.git", branch: "main")
     ],
     targets: [
         .target(
@@ -28,7 +29,8 @@ let package = Package(
             dependencies: [
                 "PVPrimitives",
                 "PVLogging",
-                "PVSettings"
+                "PVSettings",
+                "Defaults"
             ],
             resources: [
                 .process("Resources/Metal")

@@ -10,6 +10,7 @@ import Foundation
 import PVLogging
 import PVPrimitives
 import PVSettings
+import Defaults
 
 @objc
 public enum ShaderType: UInt, Codable {
@@ -101,6 +102,12 @@ public final class MetalShaderManager: NSObject, ShaderProvider, @unchecked Send
                 return nil
             }
         }
+    }
+
+    @objc
+    public func currentFilterShader(for screenType: ScreenTypeObjC) -> Shader? {
+        let mode = Defaults[.metalFilterMode]
+        return filterShader(forOption: mode, screenType: screenType)
     }
 
     private

@@ -52,7 +52,7 @@ let package = Package(
                 "PVObjCUtils",
                 "PVAudio",
                 "PVCoreAudio",
-                "PVSettings"
+                "PVSettings",
             ],
             cSettings: [
                 .unsafeFlags(["-fmodules", "-fcxx-modules"])

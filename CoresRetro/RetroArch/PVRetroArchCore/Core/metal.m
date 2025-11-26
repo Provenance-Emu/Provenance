@@ -20,6 +20,9 @@
 #import <MetalKit/MetalKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <PVRetroArch/PVRetroArch-Swift.h>
+@import PVSettings;
+@import PVShaders;
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -770,6 +773,8 @@ font_renderer_t metal_raster_font = {
 - (instancetype)initWithDescriptor:(ViewDescriptor *)td context:(Context *)context;
 - (void)drawWithContext:(Context *)ctx;
 - (void)drawWithEncoder:(id<MTLRenderCommandEncoder>)rce;
+- (id<MTLTexture>)currentTexture;
+- (CGSize)size;
 
 @end
 
@@ -806,6 +811,9 @@ font_renderer_t metal_raster_font = {
 
    /* other state */
    Uniforms _viewportMVP;
+
+   PVMetalFilterRenderer *_pvFilterRenderer;
+   MTLPixelFormat _currentPixelFormat;
 }
 
 - (instancetype)initWithVideo:(const video_info_t *)video
@@ -819,6 +827,11 @@ font_renderer_t metal_raster_font = {
       view.device                   = _device;
       view.delegate                 = self;
       _layer                        = (CAMetalLayer *)view.layer;
+      _pvFilterRenderer             = [PVMetalFilterRenderer new];
+      _currentPixelFormat           = _layer.pixelFormat;
+      [_pvFilterRenderer configureWithDevice:_device
+                                 pixelFormat:_currentPixelFormat
+                                   flipYAxis:NO];
 
       if (![self _initMetal])
          return nil;
@@ -1096,7 +1109,29 @@ font_renderer_t metal_raster_font = {
    /* draw back buffer */
    [_frameView drawWithContext:_context];
 
-   if ((_frameView.drawState & ViewDrawStateEncoder) != 0)
+   id<MTLTexture> currentTexture = [_frameView currentTexture];
+   if (_pvFilterRenderer && _layer.pixelFormat != _currentPixelFormat)
+   {
+      _currentPixelFormat = _layer.pixelFormat;
+      [_pvFilterRenderer configureWithDevice:_device
+                                 pixelFormat:_currentPixelFormat
+                                   flipYAxis:NO];
+   }
+
+   BOOL filterApplied = NO;
+   if (_pvFilterRenderer && currentTexture)
+   {
+      CGSize drawableSize = _layer.drawableSize;
+      CGSize sourceSize = _frameView.size;
+      filterApplied = [_pvFilterRenderer encodeWith:rce
+                                            texture:currentTexture
+                                       drawableSize:drawableSize
+                                         sourceSize:sourceSize
+                                         screenType:ScreenTypeObjCCrt
+                                   smoothingEnabled:PVSettingsWrapper.imageSmoothing];
+   }
+
+   if (!filterApplied && (_frameView.drawState & ViewDrawStateEncoder) != 0)
    {
       [rce setVertexBytes:_context.uniforms length:sizeof(*_context.uniforms) atIndex:BufferIndexUniforms];
       [rce setRenderPipelineState:_t_pipelineStateNoAlpha];
@@ -1582,6 +1617,11 @@ typedef struct MTLALIGN(16)
       [rce setFragmentTexture:_texture atIndex:TextureIndexColor];
       [rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
    }
+}
+
+- (id<MTLTexture>)currentTexture
+{
+   return _texture;
 }
 
 - (void)drawWithContext:(Context *)ctx

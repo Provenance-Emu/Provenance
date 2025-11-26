@@ -139,8 +139,6 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, copy, nullable) NSString *coreIdentifier;
 @property (nonatomic, copy, nullable) NSString *romMD5;
 @property (nonatomic, copy, nullable) NSString *romSerial;
-//@property (nonatomic, copy, nullable) NSString *screenType;
-
 
 @property (class, retain, nonnull, nonatomic) NSString *systemName;
 @property (class, retain, nonnull, nonatomic) NSString *coreClassName;
