@@ -164,20 +164,22 @@ public final class PVMetalFilterRenderer: NSObject {
             return
         }
 
-        let drawableWidth = Float(drawableSize.width)
-        let drawableHeight = Float(drawableSize.height)
-        let sourceWidth = Float(sourceSize.width)
-        let sourceHeight = Float(sourceSize.height)
-        let textureWidth = Float(texture.width)
-        let textureHeight = Float(texture.height)
+        let drawableWidth = max(Float(drawableSize.width), 1)
+        let drawableHeight = max(Float(drawableSize.height), 1)
+        let textureWidth = max(Float(texture.width), 1)
+        let textureHeight = max(Float(texture.height), 1)
+        let providedSourceWidth = Float(sourceSize.width)
+        let providedSourceHeight = Float(sourceSize.height)
+        let sourceWidth = providedSourceWidth > 0 ? providedSourceWidth : textureWidth
+        let sourceHeight = providedSourceHeight > 0 ? providedSourceHeight : textureHeight
         let sourceVector = SIMD4<Float>(sourceWidth,
                                         sourceHeight,
-                                        sourceWidth > 0 ? 1.0 / sourceWidth : 0.0,
-                                        sourceHeight > 0 ? 1.0 / sourceHeight : 0.0)
+                                        1.0 / sourceWidth,
+                                        1.0 / sourceHeight)
         let outputVector = SIMD4<Float>(drawableWidth,
                                         drawableHeight,
-                                        drawableWidth > 0 ? 1.0 / drawableWidth : 0.0,
-                                        drawableHeight > 0 ? 1.0 / drawableHeight : 0.0)
+                                        1.0 / drawableWidth,
+                                        1.0 / drawableHeight)
         let elapsedTime = Float(CACurrentMediaTime() - startTime)
 
         switch shaderName {
@@ -223,14 +225,14 @@ public final class PVMetalFilterRenderer: NSObject {
             var uniforms = MegaTronUniforms(
                 sourceSize: sourceVector,
                 outputSize: outputVector,
-                mask: 0.0,
-                maskIntensity: 0.0,
-                scanlineThinness: 0.65,
-                scanBlur: -1.35,
-                curvature: 0.25,
-                trinitronCurve: 0.35,
-                corner: 0.03,
-                crtGamma: 2.4
+                mask: 1.0,
+                maskIntensity: 0.25,
+                scanlineThinness: 0.35,
+                scanBlur: -0.45,
+                curvature: 0.08,
+                trinitronCurve: 0.12,
+                corner: 0.012,
+                crtGamma: 2.15
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<MegaTronUniforms>.stride, index: 0)
 
@@ -238,18 +240,18 @@ public final class PVMetalFilterRenderer: NSObject {
             var uniforms = UltronUniforms(
                 sourceSize: sourceVector,
                 outputSize: outputVector,
-                hardScan: 8.0,
-                hardPix: 3.5,
-                warpX: 0.02,
-                warpY: 0.03,
-                maskDark: 1.0,
-                maskLight: 1.0,
-                shadowMask: 0.0,
-                brightBoost: 1.1,
-                hardBloomScan: 2.0,
-                hardBloomPix: 1.5,
-                bloomAmount: 0.2,
-                shape: 2.0
+                hardScan: 3.2,
+                hardPix: 1.6,
+                warpX: 0.008,
+                warpY: 0.012,
+                maskDark: 0.7,
+                maskLight: 1.05,
+                shadowMask: 2.0,
+                brightBoost: 0.95,
+                hardBloomScan: 0.8,
+                hardBloomPix: 0.7,
+                bloomAmount: 0.08,
+                shape: 1.35
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<UltronUniforms>.stride, index: 0)
 

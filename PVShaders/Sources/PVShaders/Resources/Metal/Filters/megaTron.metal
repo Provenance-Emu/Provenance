@@ -80,7 +80,6 @@ float3 FromSrgb(thread const float3& c, constant MegaTronUniforms& params)
 static inline __attribute__((always_inline))
 float3 megaTronFetch(thread float2& uv, constant MegaTronUniforms& params, thread texture2d<float> texture, thread const sampler SourceSmplr)
 {
-    uv *= (float2(params.SourceSize.z, params.SourceSize.w) / params.SourceSize.zw);
     float3 param = texture.sample(SourceSmplr, uv, bias(-16.0)).xyz;
     return FromSrgb(param, params);
 }
@@ -296,13 +295,17 @@ megaTron(Outputs in [[stage_in]],
     float param_2 = 0.5 + (0.5 * params.SCANLINE_THINNESS);
     float param_3 = 1.0 - params.MASK_INTENSITY;
     float4 _767 = megaTronTone(param, param_1, param_2, param_3, params);
-    float2 ipos = in.fTexCoord * params.OutputSize.zw;
-    float2 inputSizeDivOutputSize = params.SourceSize.zw / params.OutputSize.zw;
-    float2 halfInputSize = params.SourceSize.zw * float2(0.5);
-    float2 rcpInputSize = (1.0/params.SourceSize.zw);
-    float2 rcpOutputSize = (1.0/params.OutputSize.zw);
-    float2 twoDivOutputSize = 2.0 / params.OutputSize.zw;
-    float inputHeight = params.SourceSize.w;
+    float2 sourceSize = params.SourceSize.xy;
+    float2 sourceSizeInv = params.SourceSize.zw;
+    float2 outputSize = params.OutputSize.xy;
+    float2 outputSizeInv = params.OutputSize.zw;
+    float2 ipos = in.fTexCoord * outputSize;
+    float2 inputSizeDivOutputSize = sourceSize / outputSize;
+    float2 halfInputSize = sourceSize * float2(0.5);
+    float2 rcpInputSize = sourceSizeInv;
+    float2 rcpOutputSize = outputSizeInv;
+    float2 twoDivOutputSize = 2.0 / outputSize;
+    float inputHeight = sourceSize.y;
     float2 warp = warp_factor;
     float thin = 0.5 + (0.5 * params.SCANLINE_THINNESS);
     float blur = (-1.0) * params.SCAN_BLUR;

@@ -71,7 +71,8 @@ float3 ToLinear(thread const float3& c, constant UlTronUniforms& params)
 static INLINE
 float3 Fetch(thread float2& pos, thread const float2& off, constant UlTronUniforms& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
-    pos = (floor((pos * params.SourceSize.zw) + off) + float2(0.5)) / params.SourceSize.zw;
+    float2 sourceSize = params.SourceSize.xy;
+    pos = (floor((pos * sourceSize) + off) + float2(0.5)) / sourceSize;
     float3 param = Source.sample(SourceSmplr, pos).xyz * params.brightBoost;
     return ToLinear(param, params);
 }
@@ -79,7 +80,7 @@ float3 Fetch(thread float2& pos, thread const float2& off, constant UlTronUnifor
 static INLINE
 float2 Dist(thread float2& pos, constant UlTronUniforms& params)
 {
-    pos *= params.SourceSize.zw;
+    pos *= params.SourceSize.xy;
     return -((pos - floor(pos)) - float2(0.5));
 }
 
@@ -451,7 +452,7 @@ ultron(Outputs in [[stage_in]],
     outColor += (Bloom(param_2, params, Source, SourceSmplr) * params.bloomAmount);
     if (params.shadowMask > 0.0)
     {
-        float2 param_3 = (in.fTexCoord.xy / (1.0/params.OutputSize.zw)) * 1.0;
+        float2 param_3 = in.fTexCoord.xy * params.OutputSize.xy;
         float3 _980 = Mask(param_3, params);
         outColor *= _980;
     }

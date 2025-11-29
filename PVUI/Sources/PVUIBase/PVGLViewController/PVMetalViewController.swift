@@ -1535,14 +1535,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             var uniforms = MegaTronUniforms(
                 SourceSize: sourceVector,
                 OutputSize: outputVector,
-                MASK: 0.0,
-                MASK_INTENSITY: 0.0,
-                SCANLINE_THINNESS: 0.65,
-                SCAN_BLUR: -1.35,
-                CURVATURE: 0.25,
-                TRINITRON_CURVE: 0.35,
-                CORNER: 0.03,
-                CRT_GAMMA: 2.4
+                MASK: 1.0,
+                MASK_INTENSITY: 0.25,
+                SCANLINE_THINNESS: 0.35,
+                SCAN_BLUR: -0.45,
+                CURVATURE: 0.08,
+                TRINITRON_CURVE: 0.12,
+                CORNER: 0.012,
+                CRT_GAMMA: 2.15
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
 
@@ -1550,18 +1550,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             var uniforms = UlTronUniforms(
                 SourceSize: sourceVector,
                 OutputSize: outputVector,
-                hardScan: 8.0,
-                hardPix: 3.5,
-                warpX: 0.02,
-                warpY: 0.03,
-                maskDark: 1.0,
-                maskLight: 1.0,
-                shadowMask: 0.0,
-                brightBoost: 1.1,
-                hardBloomScan: 2.0,
-                hardBloomPix: 1.5,
-                bloomAmount: 0.2,
-                shape: 2.0
+                hardScan: 3.2,
+                hardPix: 1.6,
+                warpX: 0.008,
+                warpY: 0.012,
+                maskDark: 0.7,
+                maskLight: 1.05,
+                shadowMask: 2.0,
+                brightBoost: 0.95,
+                hardBloomScan: 0.8,
+                hardBloomPix: 0.7,
+                bloomAmount: 0.08,
+                shape: 1.35
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout.size(ofValue: uniforms), index: 0)
 
