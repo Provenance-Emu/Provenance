@@ -399,17 +399,22 @@ SideMenuView: SwiftUI.View {
         })
         .introspectViewController(customize: { vc in
             let image = UIImage(named: "provnavicon", in: PVUIBase.BundleLoader.myBundle, with: nil)
-            let menuIconTint = themeManager.currentPalette.menuIconTint
+            if #available(iOS 26.0, *) {
+                let imageView = UIImageView(image: image)
+                vc.navigationItem.titleView = imageView
+                vc.navigationItem.preferredSearchBarPlacement = .stacked
+            } else {
+                let menuIconTint = themeManager.currentPalette.menuIconTint
 
-            if menuIconTint != .clear {
-                    image?.applyTintEffectWithColor(menuIconTint)
+                if menuIconTint != .clear {
+                        image?.applyTintEffectWithColor(menuIconTint)
+                }
+                let provenanceLogo = UIBarButtonItem(image: image)
+                provenanceLogo.tintColor = themeManager.currentPalette.menuIconTint
+                vc.navigationItem.leftBarButtonItem = provenanceLogo
+                vc.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
+                vc.navigationController?.navigationBar.tintColor = menuIconTint
             }
-            let provenanceLogo = UIBarButtonItem(image: image)
-            provenanceLogo.tintColor = themeManager.currentPalette.menuIconTint
-            vc.navigationItem.leftBarButtonItem = provenanceLogo
-            vc.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
-            vc.navigationController?.navigationBar.tintColor = menuIconTint
-
         })
         .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
 #endif
