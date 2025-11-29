@@ -9,32 +9,73 @@
 // MARK: Screenshot
 
 extension PVEmulatorViewController {
-    
+
     @MainActor
     public func captureScreenshot() -> UIImage? {
         fpsLabel.alpha = 0.0
-        if (core.skipLayout && core.touchViewController != nil) {
-            let width: CGFloat = UIScreen.main.bounds.size.width ?? 0.0
-            let height: CGFloat = UIScreen.main.bounds.size.height ?? 0.0
-            /// square size becuase we don't really know the size often
-            /// TODO: Find a better way to do this
-            let squareSize = min(width, height)
-            let size = CGSize(width: squareSize, height: squareSize)
-            UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-            let rec = CGRect(x: 0, y: 0, width: squareSize, height: squareSize)
-            core.touchViewController?.view.drawHierarchy(in: rec, afterScreenUpdates: true)
-        } else {
-            let width: CGFloat? = gpuViewController.view.frame.size.width > 0 ? gpuViewController.view.frame.size.width : UIScreen.main.bounds.width
-            let height: CGFloat? = gpuViewController.view.frame.size.height > 0 ? gpuViewController.view.frame.size.height : UIScreen.main.bounds.height
-            let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
-            UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-            let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
-            gpuViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
-        }
-        let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
+        defer { fpsLabel.alpha = 1.0 }
+
+        guard let targetView = screenshotTargetView() else { return nil }
+
+        targetView.layoutIfNeeded()
+        view.layoutIfNeeded()
+
+        let captureRect = resolvedScreenshotRect(for: targetView)
+        guard captureRect.width > 1, captureRect.height > 1 else { return nil }
+
+        let scale = targetView.window?.screen.scale ?? UIScreen.main.scale
+        UIGraphicsBeginImageContextWithOptions(captureRect.size, false, scale)
+
+        let drawRect = CGRect(
+            origin: CGPoint(x: -captureRect.origin.x, y: -captureRect.origin.y),
+            size: targetView.bounds.size
+        )
+
+        targetView.drawHierarchy(in: drawRect, afterScreenUpdates: true)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        fpsLabel.alpha = 1.0
+
         return image
     }
-    
+
+    private func screenshotTargetView() -> UIView? {
+        if let renderView = (gpuViewController as? PVMetalViewController)?.mtlView {
+            return renderView
+        }
+        return gpuViewController.view ?? view
+    }
+
+    private func resolvedScreenshotRect(for targetView: UIView) -> CGRect {
+        guard let viewportFrame = currentTargetFrame,
+              targetView.isDescendant(of: view) else {
+            return targetView.bounds.standardized
+        }
+
+        var converted = view.convert(viewportFrame, to: targetView)
+        converted = converted.intersection(targetView.bounds)
+
+        if converted.isRenderable {
+            return converted
+        } else {
+            return targetView.bounds.standardized
+        }
+    }
+}
+
+private extension CGRect {
+    var isRenderable: Bool {
+        guard !isNull,
+              !isInfinite,
+              width.isFinite,
+              height.isFinite,
+              origin.x.isFinite,
+              origin.y.isFinite else {
+            return false
+        }
+        return width > 2 && height > 2
+    }
+
+    var isInfinite: Bool {
+        !origin.x.isFinite || !origin.y.isFinite || !width.isFinite || !height.isFinite
+    }
 }
