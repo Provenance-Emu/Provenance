@@ -46,7 +46,8 @@ public final class PVMetalFilterRenderer: NSObject {
                        drawableSize: CGSize,
                        sourceSize: CGSize,
                        screenType: ScreenTypeObjC,
-                       smoothingEnabled: Bool) -> Bool {
+                       smoothingEnabled: Bool,
+                       setViewport: Bool = true) -> Bool {
         guard let device = device else {
             return false
         }
@@ -61,15 +62,17 @@ public final class PVMetalFilterRenderer: NSObject {
 
         ensureSamplersIfNeeded(device: device)
 
-        let viewport = MTLViewport(
-            originX: 0,
-            originY: 0,
-            width: Double(drawableSize.width),
-            height: Double(drawableSize.height),
-            znear: 0.0,
-            zfar: 1.0
-        )
-        encoder.setViewport(viewport)
+        if setViewport {
+            let viewport = MTLViewport(
+                originX: 0,
+                originY: 0,
+                width: Double(drawableSize.width),
+                height: Double(drawableSize.height),
+                znear: 0.0,
+                zfar: 1.0
+            )
+            encoder.setViewport(viewport)
+        }
         encoder.setRenderPipelineState(pipelineState)
         encoder.setVertexBytes(quadVertices,
                                length: quadVertices.count * MemoryLayout<Float>.size,

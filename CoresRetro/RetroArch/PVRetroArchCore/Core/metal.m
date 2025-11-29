@@ -1123,12 +1123,15 @@ font_renderer_t metal_raster_font = {
    {
       CGSize drawableSize = _layer.drawableSize;
       CGSize sourceSize = _frameView.size;
+      // Set fullscreen viewport for filter rendering
+      [_context resetRenderViewport:kFullscreenViewport];
       filterApplied = [_pvFilterRenderer encodeWith:rce
                                             texture:currentTexture
                                        drawableSize:drawableSize
                                          sourceSize:sourceSize
                                          screenType:ScreenTypeObjCCrt
-                                   smoothingEnabled:PVSettingsWrapper.imageSmoothing];
+                                   smoothingEnabled:PVSettingsWrapper.imageSmoothing
+                                        setViewport:NO];
    }
 
    if (!filterApplied && (_frameView.drawState & ViewDrawStateEncoder) != 0)
