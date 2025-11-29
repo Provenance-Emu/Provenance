@@ -113,15 +113,22 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     public var validatedGame: PVGame? { return self.isInvalidated ? nil : self }
 
     public static func mockGenerate(systemID: String? = nil, count: Int = 10) -> [PVGame] {
+        let realm = try! Realm(configuration: .init(inMemoryIdentifier: "MockRealm"))
         let systemIdentifier = systemID ?? "mock.system"
-        return (1...count).map { index in
-            let game = PVGame()
-            game.title = "Mock Game \(index)"
-            game.systemIdentifier = systemIdentifier
-            game.md5Hash = UUID().uuidString // Mock MD5 hash
-            game.publishDate = String("\(1980 + count)")
-            return game
+        
+        var games: [PVGame] = []
+        try! realm.write {
+            for index in 1...count {
+                let game = PVGame()
+                game.title = "Mock Game \(index)"
+                game.systemIdentifier = systemIdentifier
+                game.md5Hash = UUID().uuidString // Mock MD5 hash
+                game.publishDate = "\(1980 + index)"
+                realm.add(game)
+                games.append(game)
+            }
         }
+        return games
     }
 
     public static func contentlessGenerate(core: PVCore, title: String? = nil) -> PVGame {
