@@ -83,7 +83,8 @@ public final class CoreLoader: Sendable {
 //        if #available(iOS 17, *) {
 //            return getCorePlistsFromDyload()
 //        } else {
-            return getCorePlistsFromFileSystem()
+            let plists = getCorePlistsFromFileSystem()
+            return applyRuntimeMetadataOverrides(on: plists)
 //        }
     }
 
@@ -152,6 +153,70 @@ public final class CoreLoader: Sendable {
         return plists
     }
 
+    static private func applyRuntimeMetadataOverrides(on plists: [EmulatorCoreInfoPlist]) -> [EmulatorCoreInfoPlist] {
+        ILOG("RetroArch metadata: Applying runtime metadata overrides to \(plists.count) core plists")
+        var updatedCount = 0
+        var libretroCount = 0
+
+        let result = plists.map { plist -> EmulatorCoreInfoPlist in
+            /// Check if this plist has subCores (like PVRetroArch which contains all libretro cores)
+            if let subCores = plist.subCores, !subCores.isEmpty {
+                ILOG("RetroArch metadata: Processing \(subCores.count) sub-cores for \(plist.identifier)")
+                let updatedSubCores = subCores.map { subCore -> EmulatorCoreInfoPlist in
+                    /// Only process libretro sub-cores that have ".libretro.framework" in their identifier
+                    guard subCore.identifier.contains(".libretro.framework") else {
+                        return subCore
+                    }
+
+                    libretroCount += 1
+
+                    guard let metadata = LibretroMetadataReader.metadata(forIdentifier: subCore.identifier),
+                          !metadata.version.isEmpty else {
+                        DLOG("RetroArch metadata: No runtime metadata for \(subCore.identifier), using plist version: \(subCore.projectVersion)")
+                        return subCore
+                    }
+
+                    if metadata.version == subCore.projectVersion {
+                        DLOG("RetroArch metadata: Version unchanged for \(subCore.identifier): \(metadata.version)")
+                        return subCore
+                    }
+
+                    ILOG("RetroArch metadata: Updating \(subCore.identifier) version '\(subCore.projectVersion)' -> '\(metadata.version)'")
+                    updatedCount += 1
+                    return subCore.updating(projectVersion: metadata.version)
+                }
+
+                /// Return parent plist with updated subCores
+                return plist.updating(subCores: updatedSubCores)
+            }
+
+            /// Also check top-level plists for .libretro.framework pattern (in case they're not nested)
+            guard plist.identifier.contains(".libretro.framework") else {
+                return plist
+            }
+
+            libretroCount += 1
+
+            guard let metadata = LibretroMetadataReader.metadata(forIdentifier: plist.identifier),
+                  !metadata.version.isEmpty else {
+                DLOG("RetroArch metadata: No runtime metadata for \(plist.identifier), using plist version: \(plist.projectVersion)")
+                return plist
+            }
+
+            if metadata.version == plist.projectVersion {
+                DLOG("RetroArch metadata: Version unchanged for \(plist.identifier): \(metadata.version)")
+                return plist
+            }
+
+            ILOG("RetroArch metadata: Updating \(plist.identifier) version '\(plist.projectVersion)' -> '\(metadata.version)'")
+            updatedCount += 1
+            return plist.updating(projectVersion: metadata.version)
+        }
+
+        ILOG("RetroArch metadata: Complete - found \(libretroCount) libretro cores, updated \(updatedCount) versions")
+        return result
+    }
+
     static private func loadCorePlist(from bundlePath: URL) throws -> EmulatorCoreInfoPlist? {
         let plistPath = bundlePath.appendingPathComponent("Core.plist")
 
@@ -180,5 +245,22 @@ public final class CoreLoader: Sendable {
 
     static public func systemsPlist() ->  [[String: Any]] {
         return PlistFiles.items
+    }
+}
+
+private extension EmulatorCoreInfoPlist {
+    func updating(projectVersion: String? = nil, subCores: [EmulatorCoreInfoPlist]? = nil) -> EmulatorCoreInfoPlist {
+        return EmulatorCoreInfoPlist(
+            identifier: identifier,
+            principleClass: principleClass,
+            supportedSystems: supportedSystems,
+            projectName: projectName,
+            projectURL: projectURL,
+            projectVersion: projectVersion ?? self.projectVersion,
+            disabled: disabled,
+            contentless: contentless,
+            appStoreDisabled: appStoreDisabled,
+            subCores: subCores ?? self.subCores
+        )
     }
 }
