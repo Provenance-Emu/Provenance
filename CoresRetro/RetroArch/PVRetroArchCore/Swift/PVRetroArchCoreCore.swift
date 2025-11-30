@@ -528,3 +528,31 @@ extension PVRetroArchCoreCore: PVVectrexSystemResponderClient {
         (_bridge as! PVVectrexSystemResponderClient).didPush(button, forPlayer: player)
     }
 }
+
+// GameCube
+extension PVRetroArchCoreCore: PVGameCubeSystemResponderClient {
+    public func didMoveJoystick(_ button: PVCoreBridge.PVGCButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVGameCubeSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+    }
+    public func didRelease(_ button: PVCoreBridge.PVGCButton, forPlayer player: Int) {
+        (_bridge as! PVGameCubeSystemResponderClient).didRelease(button, forPlayer: player)
+
+    }
+    public func didPush(_ button: PVCoreBridge.PVGCButton, forPlayer player: Int) {
+        (_bridge as! PVGameCubeSystemResponderClient).didPush(button, forPlayer: player)
+    }
+}
+
+// Wii
+extension PVRetroArchCoreCore: PVWiiSystemResponderClient {
+    public func didMoveJoystick(_ button: PVCoreBridge.PVWiiMoteButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
+        (_bridge as! PVWiiSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+    }
+    public func didRelease(_ button: PVCoreBridge.PVWiiMoteButton, forPlayer player: Int) {
+        (_bridge as! PVWiiSystemResponderClient).didRelease(button, forPlayer: player)
+
+    }
+    public func didPush(_ button: PVCoreBridge.PVWiiMoteButton, forPlayer player: Int) {
+        (_bridge as! PVWiiSystemResponderClient).didPush(button, forPlayer: player)
+    }
+}

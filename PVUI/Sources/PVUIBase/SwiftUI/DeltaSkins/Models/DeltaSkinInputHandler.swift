@@ -440,6 +440,20 @@ public class DeltaSkinInputHandler: ObservableObject {
                     DLOG("Forwarded joystick event via PV3DSSystemResponderClient: button=\(button.stringValue), x=\(x), y=\(y)")
                     return
                 }
+            case .GameCube:
+                if let responder = core as? PVGameCubeSystemResponderClient {
+                    let button: PVGCButton = isLeftStick ? .leftAnalog : .rightAnalog
+                    responder.didMoveJoystick(button, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PVGameCubeControllerViewController: button=\(button.stringValue), x=\(x), y=\(y)")
+                    return
+                }
+            case .Wii:
+                if let responder = core as? PVWiiSystemResponderClient {
+                    let button: PVWiiMoteButton = isLeftStick ? .leftAnalog : .rightAnalog
+                    responder.didMoveJoystick(button, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
+                    DLOG("Forwarded joystick event via PVWiiControllerViewController: button=\(button.stringValue), x=\(x), y=\(y)")
+                    return
+                }
             default:
                 break
             }

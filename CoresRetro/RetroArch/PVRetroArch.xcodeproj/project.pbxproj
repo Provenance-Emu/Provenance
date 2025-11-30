@@ -142,6 +142,7 @@
 		B3632A522D15161300041145 /* PVRetroArchCore+Controls+DOS.m in Sources */ = {isa = PBXBuildFile; fileRef = B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */; };
 		B363390E2D6286FA00ECD2ED /* apple_wifi.m in Sources */ = {isa = PBXBuildFile; fileRef = B363390D2D6286FA00ECD2ED /* apple_wifi.m */; platformFilters = (ios, maccatalyst, watchos, ); };
 		B363394D2D63E82B00ECD2ED /* coreaudio_mic.m in Sources */ = {isa = PBXBuildFile; fileRef = B363394C2D63E82B00ECD2ED /* coreaudio_mic.m */; };
+		B364588C2EDBC3080020354E /* PVRetroArchCore+Controls+Gamecube.m in Sources */ = {isa = PBXBuildFile; fileRef = B364588B2EDBC3080020354E /* PVRetroArchCore+Controls+Gamecube.m */; };
 		B36B5B942D7965C800BABCA3 /* command.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B932D7965C800BABCA3 /* command.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5B972D796A7B00BABCA3 /* core_option_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B952D796A7B00BABCA3 /* core_option_manager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36B5B982D796A7B00BABCA3 /* runloop.h in Headers */ = {isa = PBXBuildFile; fileRef = B36B5B962D796A7B00BABCA3 /* runloop.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -446,6 +447,7 @@
 		B3632A512D15161300041145 /* PVRetroArchCore+Controls+DOS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+DOS.m"; sourceTree = "<group>"; };
 		B363390D2D6286FA00ECD2ED /* apple_wifi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = apple_wifi.m; sourceTree = "<group>"; };
 		B363394C2D63E82B00ECD2ED /* coreaudio_mic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = coreaudio_mic.m; sourceTree = "<group>"; };
+		B364588B2EDBC3080020354E /* PVRetroArchCore+Controls+Gamecube.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Gamecube.m"; sourceTree = "<group>"; };
 		B36B5B932D7965C800BABCA3 /* command.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = command.h; path = RetroArch/command.h; sourceTree = SOURCE_ROOT; };
 		B36B5B952D796A7B00BABCA3 /* core_option_manager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = core_option_manager.h; path = RetroArch/core_option_manager.h; sourceTree = SOURCE_ROOT; };
 		B36B5B962D796A7B00BABCA3 /* runloop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = runloop.h; path = RetroArch/runloop.h; sourceTree = SOURCE_ROOT; };
@@ -883,6 +885,7 @@
 				B3B377A52E44373200DBE2E0 /* PVRetroArchCore+Controls+EP128.m */,
 				93C372642A8B68000007671D /* PVRetroArchCore+Controls+GB.m */,
 				93C372652A8B68000007671D /* PVRetroArchCore+Controls+GBA.m */,
+				B364588B2EDBC3080020354E /* PVRetroArchCore+Controls+Gamecube.m */,
 				93C372602A8B67FF0007671D /* PVRetroArchCore+Controls+Genesis.m */,
 				B3EEFBB32D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m */,
 				B33CFF092ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m */,
@@ -1398,6 +1401,7 @@
 				B3A6C0EB2EBEA73E00C3BB23 /* PVRetroArchCore+Controls+VB.m in Sources */,
 				93B66BA02967DB7600A621DD /* Shaders.metal in Sources */,
 				93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */,
+				B364588C2EDBC3080020354E /* PVRetroArchCore+Controls+Gamecube.m in Sources */,
 				93814F902AAA9E9900DEB9B9 /* PVRetroArchCore+Archive+AppleII.m in Sources */,
 				B3DD7A6F2ECD16F80022FF70 /* PVRetroArchCore+Controls+CDi.m in Sources */,
 				93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */,
