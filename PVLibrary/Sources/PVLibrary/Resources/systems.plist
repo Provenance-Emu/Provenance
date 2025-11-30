@@ -982,6 +982,8 @@
 				<string>scph10000.bin</string>
 				<key>Size</key>
 				<integer>4194304</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -992,6 +994,8 @@
 				<string>ps2-0250e-20100415.bin</string>
 				<key>Size</key>
 				<integer>4194304</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -1002,6 +1006,8 @@
 				<string>ps2-0230j-20080220.bin</string>
 				<key>Size</key>
 				<integer>4194304</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -1012,6 +1018,8 @@
 				<string>ps2-0230e-20080220.bin</string>
 				<key>Size</key>
 				<integer>4194304</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -1022,6 +1030,8 @@
 				<string>ps2-0230a-20080220.bin</string>
 				<key>Size</key>
 				<integer>4194304</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -1032,6 +1042,8 @@
 				<string>ps2-0220j-20060905.bin</string>
 				<key>Size</key>
 				<integer>4194304</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -1042,6 +1054,8 @@
 				<string>ps2-0220e-20060905.bin</string>
 				<key>Size</key>
 				<integer>4194304</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -1052,6 +1066,8 @@
 				<string>ps2-0220a-20060905.bin</string>
 				<key>Size</key>
 				<integer>4194304</integer>
+				<key>Optional</key>
+				<true/>
 			</dict>
 		</array>
 		<key>PVRequiresBIOS</key>
