@@ -663,9 +663,20 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         if let coreIdentifier = self.coreIdentifier?.lowercased() {
             if (coreIdentifier.contains("vecx")) {
                 // Hardware mode broken, force software mode
-                optionValues += "vecx_use_hw = \"Software\"\n"
+                optionValues += "vecx_bloom_brightness = \"4\"\n"
+                optionValues += "vecx_bloom_width = \"8x\"\n"
+                optionValues += "vecx_line_brightness = \"4\"\n"
+                optionValues += "vecx_line_color = \"Green\"\n"
+                optionValues += "vecx_line_width = \"4\"\n"
+                optionValues += "vecx_res_hw = \"824x1024\"\n"
+                optionValues += "vecx_res_multi = \"3\"\n"
+//                optionValues += "vecx_scale_x = \"1\"\n"
+//                optionValues += "vecx_scale_y = \"1\"\n"
+//                optionValues += "vecx_shift_x = \"0\"\n"
+//                optionValues += "vecx_shift_y = \"0\"\n"
+                optionValues += "vecx_use_hw = \"Hardware\"\n"
                 optionValuesFile = "VecX/VecX.opt"
-                optionOverwrite = true
+                optionOverwrite = false
             }
             if (coreIdentifier.contains("melonds")) {
                 optionValues += "melonds_touch_mode = \"Touch\"\n"
@@ -680,7 +691,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 //                    optionValues += "mupen64plus-rdp-plugin = \"gliden64\"\n";
 //                }
                 optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
-                optionOverwrite = true
+                optionOverwrite = false
             }
             if (coreIdentifier.contains("ppsspp")) {
                 optionValues += "ppsspp_cpu_core = \"Interpreter\"\n"
