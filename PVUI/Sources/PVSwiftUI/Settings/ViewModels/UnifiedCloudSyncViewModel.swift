@@ -77,12 +77,12 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
     @Published public var iCloudFiles: [String: [URL]] = [:]
     @Published public var syncDifferences: [String] = []
     @Published public var isLoading = true
-    
+
     /// The total count of local files across all directories
     public var localFileCount: Int {
         return localFiles.values.reduce(0) { $0 + $1.count }
     }
-    
+
     /// The total count of iCloud files across all directories
     public var iCloudFileCount: Int {
         return iCloudFiles.values.reduce(0) { $0 + $1.count }
@@ -191,32 +191,32 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
     public func resetCloudSync() {
         // Show status
         syncStatus = "Resetting cloud sync..."
-        
+
         // Post notification to reset sync
         NotificationCenter.default.post(name: Notification.Name("iCloudSyncReset"), object: nil)
-        
+
         // Update UI after a delay to allow reset to start
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.syncStatus = "Cloud sync reset in progress..."
         }
     }
-    
+
     /// Force initial sync of all local content to CloudKit
     public func forceInitialSync() {
         guard !isPerformingInitialSync else {
             DLOG("Initial sync already in progress")
             return
         }
-        
+
         isPerformingInitialSync = true
         syncStatus = "Starting initial sync..."
-        
+
         Task {
             do {
                 // Force initial sync by calling performInitialSync directly with forceSync: true
                 let syncCount = await CloudKitInitialSyncer.shared?.performInitialSync(forceSync: true)
                 DLOG("Force initial sync completed - uploaded \(syncCount) records")
-                
+
                 await MainActor.run {
                     self.syncStatus = "Initial sync completed"
                     self.isPerformingInitialSync = false
@@ -232,25 +232,25 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// Download ROMs from iCloud to local device
     public func downloadRoms() {
         // Show status
         syncStatus = "Starting ROM download..."
-        
+
         // Update UI
         isLoading = true
-        
+
         Task {
             do {
                 // Scan for differences first
                 await scanLocalFiles()
                 await scanICloudFiles()
                 await compareFiles()
-                
+
                 // Find all files that exist in iCloud but not locally
                 let differences = await findFilesToDownload(fileType: .rom)
-                
+
                 // Log the download operation
                 DLOG("Starting download of \(differences.count) ROMs from iCloud")
                 CloudSyncLogManager.shared.logSyncOperation(
@@ -259,14 +259,14 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     operation: .download,
                     provider: .iCloudDrive
                 )
-                
+
                 // Post notification to download files
                 NotificationCenter.default.post(
                     name: .iCloudSyncStarted,
                     object: nil,
                     userInfo: ["operation": "download_roms", "count": differences.count]
                 )
-                
+
                 // Update UI
                 await MainActor.run {
                     syncStatus = "Downloading \(differences.count) ROMs..."
@@ -281,7 +281,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     operation: .download,
                     provider: .iCloudDrive
                 )
-                
+
                 // Update UI
                 await MainActor.run {
                     syncStatus = "Error starting ROM download"
@@ -290,25 +290,25 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// Download save states from iCloud to local device
     public func downloadSaveStates() {
         // Show status
         syncStatus = "Starting save state download..."
-        
+
         // Update UI
         isLoading = true
-        
+
         Task {
             do {
                 // Scan for differences first
                 await scanLocalFiles()
                 await scanICloudFiles()
                 await compareFiles()
-                
+
                 // Find all save states that exist in iCloud but not locally
                 let differences = await findFilesToDownload(fileType: .saveState)
-                
+
                 // Log the download operation
                 DLOG("Starting download of \(differences.count) save states from iCloud")
                 CloudSyncLogManager.shared.logSyncOperation(
@@ -317,14 +317,14 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     operation: .download,
                     provider: .iCloudDrive
                 )
-                
+
                 // Post notification to download files
                 NotificationCenter.default.post(
                     name: .iCloudSyncStarted,
                     object: nil,
                     userInfo: ["operation": "download_save_states", "count": differences.count]
                 )
-                
+
                 // Update UI
                 await MainActor.run {
                     syncStatus = "Downloading \(differences.count) save states..."
@@ -339,7 +339,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     operation: .download,
                     provider: .iCloudDrive
                 )
-                
+
                 // Update UI
                 await MainActor.run {
                     syncStatus = "Error starting save state download"
@@ -348,25 +348,25 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// Download BIOS files from iCloud to local device
     public func downloadBios() {
         // Show status
         syncStatus = "Starting BIOS download..."
-        
+
         // Update UI
         isLoading = true
-        
+
         Task {
             do {
                 // Scan for differences first
                 await scanLocalFiles()
                 await scanICloudFiles()
                 await compareFiles()
-                
+
                 // Find all BIOS files that exist in iCloud but not locally
                 let differences = await findFilesToDownload(fileType: .bios)
-                
+
                 // Log the download operation
                 DLOG("Starting download of \(differences.count) BIOS files from iCloud")
                 CloudSyncLogManager.shared.logSyncOperation(
@@ -375,14 +375,14 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     operation: .download,
                     provider: .iCloudDrive
                 )
-                
+
                 // Post notification to download files
                 NotificationCenter.default.post(
                     name: .iCloudSyncStarted,
                     object: nil,
                     userInfo: ["operation": "download_bios", "count": differences.count]
                 )
-                
+
                 // Update UI
                 await MainActor.run {
                     syncStatus = "Downloading \(differences.count) BIOS files..."
@@ -397,7 +397,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     operation: .download,
                     provider: .iCloudDrive
                 )
-                
+
                 // Update UI
                 await MainActor.run {
                     syncStatus = "Error starting BIOS download"
@@ -406,14 +406,14 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// File types for sync operations
     private enum SyncFileType {
         case rom
         case saveState
         case bios
         case any
-        
+
         func matches(path: String) -> Bool {
             switch self {
             case .rom:
@@ -427,42 +427,42 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                 // Check for BIOS files
                 let biosExtensions = [".bin", ".rom", ".bios"]
                 let biosDirectories = ["/BIOS/", "/System/"]
-                
+
                 // Check if file is in a BIOS directory
                 let isInBiosDirectory = biosDirectories.contains { path.contains($0) }
-                
+
                 // Check if file has a BIOS extension
                 let hasBiosExtension = biosExtensions.contains { path.lowercased().hasSuffix($0) }
-                
+
                 // Check for common BIOS filenames
                 let commonBiosFiles = ["scph", "bios", "firmware", "bootrom", "gba_bios"]
                 let containsCommonBiosName = commonBiosFiles.contains { path.lowercased().contains($0) }
-                
+
                 return isInBiosDirectory || (hasBiosExtension && containsCommonBiosName)
             case .any:
                 return true
             }
         }
     }
-    
+
     /// Find files that need to be downloaded from iCloud
     private func findFilesToDownload(fileType: SyncFileType = .any) async -> [SyncDifference] {
         var filesToDownload: [SyncDifference] = []
-        
+
         // Find files that exist in iCloud but not locally or are newer in iCloud
         for (directory, urls) in localFiles {
             for url in urls where fileType.matches(path: url.path) {
                 // Get the relative path for comparison
                 let relativePath = getRelativePath(for: url)
-                
+
                 // Find matching iCloud file
                 if let iCloudUrls = iCloudFiles[directory],
                    let iCloudUrl = iCloudUrls.first(where: { getRelativePath(for: $0) == relativePath }) {
-                    
+
                     // Get modification dates
                     let localModified = try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
                     let iCloudModified = try? iCloudUrl.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
-                    
+
                     // Check if iCloud version is newer
                     if let localModified = localModified,
                        let iCloudModified = iCloudModified,
@@ -481,18 +481,18 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                 }
             }
         }
-        
+
         // Find files that only exist in iCloud
         for (directory, iCloudUrls) in iCloudFiles {
             for iCloudUrl in iCloudUrls where fileType.matches(path: iCloudUrl.path) {
                 // Get the relative path for comparison
                 let relativePath = getRelativePath(for: iCloudUrl)
-                
+
                 // Check if file exists locally
-                let existsLocally = localFiles[directory]?.contains(where: { 
-                    getRelativePath(for: $0) == relativePath 
+                let existsLocally = localFiles[directory]?.contains(where: {
+                    getRelativePath(for: $0) == relativePath
                 }) ?? false
-                
+
                 if !existsLocally {
                     // File only exists in iCloud
                     filesToDownload.append(SyncDifference(
@@ -506,16 +506,16 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                 }
             }
         }
-        
+
         return filesToDownload
     }
-    
+
     /// Helper method to get the relative path for a URL
     private func getRelativePath(for url: URL) -> String {
         // Extract the relative path from the URL
         // This will be used for comparing local and iCloud files
         let components = url.pathComponents
-        
+
         // Find the last common directory component (e.g., "ROMs", "Save States", "BIOS")
         let commonDirs = ["ROMs", "Save States", "BIOS", "System"]
         if let lastCommonIndex = components.lastIndex(where: { commonDirs.contains($0) }) {
@@ -523,7 +523,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
             let relativePath = components[(lastCommonIndex + 1)...].joined(separator: "/")
             return relativePath
         }
-        
+
         // Fallback to just the filename if no common directory is found
         return url.lastPathComponent
     }
@@ -587,23 +587,49 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    /// Check if iCloud is available
+    /// Check if iCloud/CloudKit is available
     private func checkiCloudAvailability() {
-        // Check if iCloud is available
-        let fileManager = FileManager.default
-        if let ubiquityContainer = fileManager.url(forUbiquityContainerIdentifier: nil) {
-            iCloudAvailable = true
-            DLOG("iCloud is available at: \(ubiquityContainer.path)")
-        } else {
-            iCloudAvailable = false
-            DLOG("iCloud is not available")
+#if os(tvOS)
+        checkCloudKitAccountAvailability()
+#else
+        if Defaults[.iCloudSyncMode].isCloudKit {
+            checkCloudKitAccountAvailability()
+            return
         }
 
-        // Update sync status based on availability
-        if iCloudAvailable {
-            syncStatus = "iCloud is available"
+        let identifier = iCloudConstants.containerIdentifier
+        let fileManager = FileManager.default
+        if let ubiquityContainer = fileManager.url(forUbiquityContainerIdentifier: identifier) {
+            iCloudAvailable = true
+            DLOG("iCloud Drive is available at: \(ubiquityContainer.path)")
+            syncStatus = "iCloud Drive is available"
         } else {
-            syncStatus = "iCloud is not available"
+            iCloudAvailable = false
+            DLOG("iCloud Drive is not available for container \(identifier)")
+            syncStatus = "iCloud Drive is not available"
+        }
+#endif
+    }
+
+    /// Check CloudKit account status and update availability flags
+    private func checkCloudKitAccountAvailability() {
+        Task {
+            let container = iCloudConstants.container
+            do {
+                let status = try await container.accountStatus()
+                await MainActor.run {
+                    self.iCloudAvailable = (status == .available)
+                    self.syncStatus = self.iCloudAvailable
+                        ? "CloudKit is available"
+                        : "CloudKit status: \(self.accountStatusString(status))"
+                }
+            } catch {
+                await MainActor.run {
+                    self.iCloudAvailable = false
+                    self.syncStatus = "Error checking CloudKit: \(error.localizedDescription)"
+                }
+                ELOG("Failed to check CloudKit account status: \(error.localizedDescription)")
+            }
         }
     }
 
@@ -989,7 +1015,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
 
         // Convert SyncDifference objects to formatted strings
         let formattedDifferences = differences.map { formatMessage(for: $0) }
-        
+
         await MainActor.run {
             self.syncDifferences = formattedDifferences
         }
@@ -997,7 +1023,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
 
     private func formatMessage(for difference: SyncDifference) -> String {
         var message = "\(difference.filename) ("
-        
+
         switch difference.status {
         case .localOnly:
             message = message + "Local Only"
@@ -1008,9 +1034,9 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         case .synced:
             message = message + "Synced"
         }
-        
+
         message = message + ")\n"
-        
+
         return message
     }
 
@@ -1147,7 +1173,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         do {
             let status = try await container.accountStatus()
             containerInfo += "  - Account Status: \(String(describing: status))\n"
-            
+
             if #available(iOS 16.0, *) {
                 let status = try await container.requestApplicationPermission(.userDiscoverability)
                 containerInfo += "  - User Discoverability: \(status == .granted ? "Granted" : "Denied")\n"

@@ -43,17 +43,15 @@ public actor GameSyncValidator {
     /// - Parameter game: The game to validate
     /// - Returns: Validation result indicating readiness or what action is needed
     public func validateGameReady(_ game: PVGame) async -> ValidationResult {
-        // 1. Check if file exists locally
-        guard let fileURL = game.file?.url else {
-            return .error("Game file URL is missing")
-        }
-
-        let fileExists = fileManager.fileExists(atPath: fileURL.path)
+        // 1. Check if file exists locally (handling missing PVFile entries)
+        let localURL = game.file?.url
+        let fileExists = localURL.map { fileManager.fileExists(atPath: $0.path) } ?? false
 
         // 2. If file exists, verify it's readable
         if fileExists {
             var isDirectory: ObjCBool = false
-            guard fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDirectory),
+            guard let fileURL = localURL,
+                  fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDirectory),
                   !isDirectory.boolValue else {
                 return .error("Game file path points to a directory")
             }
@@ -102,8 +100,9 @@ public actor GameSyncValidator {
             try await romsSyncer.downloadGame(md5: md5)
 
             // Verify file exists after download
-            guard let fileURL = game.file?.url,
-                  fileManager.fileExists(atPath: fileURL.path) else {
+            let refreshedGame = RomDatabase.sharedInstance.game(withMD5: md5) ?? game
+            guard let refreshedURL = refreshedGame.file?.url,
+                  fileManager.fileExists(atPath: refreshedURL.path) else {
                 return .error("Download completed but file not found at expected location")
             }
 

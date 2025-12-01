@@ -62,6 +62,16 @@ public class CloudKitDownloadQueue: ObservableObject {
                     }
                 }
                 .assign(to: &$isProcessingQueue)
+
+            progressTracker.$databaseSynced
+                .removeDuplicates()
+                .sink { [weak self] synced in
+                    guard let self = self, synced else { return }
+                    Task {
+                        await self.startProcessingQueue()
+                    }
+                }
+                .store(in: &self.cancellables)
         }
 
         ILOG("CloudKit Download Queue initialized with max concurrent downloads: \(maxConcurrentDownloads)")

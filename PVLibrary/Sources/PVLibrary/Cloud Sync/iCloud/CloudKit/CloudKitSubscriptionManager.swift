@@ -322,22 +322,16 @@ public class CloudKitSubscriptionManager {
                 }
 
             case "savestate-changes":
-                // Handle Save State changes
-                // Ensure the syncer is the CloudKit specific one (or its base class) before calling its method
-                if let cloudKitSyncer = CloudSyncManager.shared.saveStatesSyncer as? CloudKitSyncer {
+                if let saveStateSyncer = CloudSyncManager.shared.saveStatesSyncer as? CloudKitSaveStatesSyncer {
                     do {
-                        // Fetch the record using the ID provided by the notification
-                        let record = try await cloudKitSyncer.privateDatabase.record(for: recordID)
-                        DLOG("Fetched SaveState record for notification: \(record.recordID.recordName)")
-                        // Process the fetched record
-                        await cloudKitSyncer.processCloudKitRecord(record)
-                        DLOG("Processed SaveState notification via CloudKitSyncer for \(recordID.recordName)")
+                        try await saveStateSyncer.handleRemoteSaveStateChange(recordID: recordID)
+                        DLOG("Processed SaveState notification via CloudKitSaveStatesSyncer for \(recordID.recordName)")
                     } catch {
-                        ELOG("Error fetching or processing SaveState notification for \(recordID.recordName): \(error)")
+                        ELOG("Error processing SaveState notification for \(recordID.recordName): \(error)")
                         await CloudSyncManager.shared.errorHandler.handle(error: error)
                     }
                 } else {
-                    WLOG("SaveStates Syncer is not CloudKitSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
+                    WLOG("SaveStates Syncer is not CloudKitSaveStatesSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
                 }
 
             case "file-changes", "bios-changes":

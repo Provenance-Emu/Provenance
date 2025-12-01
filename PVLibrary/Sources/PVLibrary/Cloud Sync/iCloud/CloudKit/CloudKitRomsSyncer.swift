@@ -157,6 +157,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
 
             ILOG("✅ Phase 1 complete: \(metadataProcessedCount) games synced, \(gamesNeedingDownload.count) need downloads")
+            await MainActor.run {
+                SyncProgressTracker.shared.setDatabaseSynced(true)
+            }
 
             // PHASE 2: Queue background downloads with intelligent prioritization
             if !gamesNeedingDownload.isEmpty {
@@ -167,6 +170,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
 
             ILOG("🚀 Enhanced two-phase sync completed. UI should be responsive with \(metadataProcessedCount) games visible.")
+#if os(tvOS)
+            await reconcileMissingLocalGames()
+#endif
 
         } catch {
             ELOG("❌ Failed to execute query for loadAllFromCloud: \(error.localizedDescription)")
@@ -241,12 +247,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     // MARK: - CloudKit Operations
 
     /// Fetches a single CKRecord by its ID using the retry strategy.
-    public func fetchRecord(recordID: CKRecord.ID) async throws -> CKRecord? {
+    /// - Parameters:
+    ///   - recordID: The CloudKit record identifier.
+    ///   - includeAssets: When true, also fetches asset fields required for downloads.
+    public func fetchRecord(recordID: CKRecord.ID, includeAssets: Bool = false) async throws -> CKRecord? {
         do {
             let record = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
                 let op = CKFetchRecordsOperation(recordIDs: [recordID])
-                // Metadata-only: exclude asset fields to avoid auto-downloading CKAsset payloads
-                op.desiredKeys = [
+                let metadataKeys = [
                     CloudKitSchema.ROMFields.md5,
                     CloudKitSchema.ROMFields.title,
                     CloudKitSchema.ROMFields.systemIdentifier,
@@ -256,6 +264,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     CloudKitSchema.ROMFields.originalFilename,
                     CloudKitSchema.ROMFields.isDeleted
                 ]
+                if includeAssets {
+                    op.desiredKeys = metadataKeys + [
+                        CloudKitSchema.ROMFields.fileData,
+                        CloudKitSchema.ROMFields.isArchive,
+                        CloudKitSchema.ROMFields.relatedFilenames
+                    ]
+                } else {
+                    // Metadata-only: exclude asset fields to avoid auto-downloading CKAsset payloads
+                    op.desiredKeys = metadataKeys
+                }
                 var fetched: CKRecord?
                 op.perRecordResultBlock = { _, result in
                     if case let .success(r) = result { fetched = r }
@@ -740,11 +758,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         #if os(tvOS)
         // More conservative approach on tvOS
         let spaceBuffer: Int64 = 2_000_000_000 // 2GB buffer for tvOS
-        let maxAllowableSpace = max(0, availableSpace - spaceBuffer)
+        var maxAllowableSpace = max(0, availableSpace - spaceBuffer)
 
         if totalSpaceNeeded > maxAllowableSpace {
             WLOG("⚠️ tvOS: Total download size (\(ByteCountFormatter.string(fromByteCount: totalSpaceNeeded, countStyle: .file))) exceeds available space with buffer. Will queue selectively.")
         }
+        var remainingAutoSyncBudget = maxAllowableSpace
         #endif
 
         for gameInfo in sortedGameInfos {
@@ -758,10 +777,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
 
             #if os(tvOS)
-            // Skip auto-sync queuing of large files on tvOS; user must download on-demand from Library
-            let smallAutoSyncThresholdBytes: Int64 = 5_000_000 // 5 MB
-            if gameInfo.fileSize > smallAutoSyncThresholdBytes {
-                VLOG("tvOS: Skipping auto-sync for large file (>5MB): \(gameInfo.title)")
+            let canAutoSync = remainingAutoSyncBudget > 0 && gameInfo.fileSize <= remainingAutoSyncBudget
+            if !canAutoSync {
+                WLOG("tvOS: Skipping auto-sync for \(gameInfo.title) due to limited space budget (\(ByteCountFormatter.string(fromByteCount: remainingAutoSyncBudget, countStyle: .file)) remaining)")
                 skippedCount += 1
                 continue
             }
@@ -778,6 +796,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     onDemand: false
                 )
                 queuedCount += 1
+                #if os(tvOS)
+                remainingAutoSyncBudget = max(0, remainingAutoSyncBudget - gameInfo.fileSize)
+                #endif
                 VLOG("Queued download: \(gameInfo.title) (\(gameInfo.md5)) - \(ByteCountFormatter.string(fromByteCount: gameInfo.fileSize, countStyle: .file))")
 
             } catch CloudSyncError.insufficientSpace(let required, let available) {
@@ -881,6 +902,63 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
+    #if os(tvOS)
+    /// tvOS-specific helper that re-queues games whose files were evicted from local storage
+    private func reconcileMissingLocalGames() async {
+        do {
+            let realm = try await Realm(queue: nil)
+            let downloadedGames = realm.objects(PVGame.self).filter("isDownloaded == true")
+            guard !downloadedGames.isEmpty else { return }
+
+            let fileManager = FileManager.default
+            for game in downloadedGames {
+                let hasFile = game.file?.url.map { fileManager.fileExists(atPath: $0.path) } ?? false
+                if hasFile {
+                    continue
+                }
+
+                guard let cloudRecordID = game.cloudRecordID, !cloudRecordID.isEmpty else {
+                    continue
+                }
+
+                let md5 = game.md5Hash
+                let alreadyQueued = await MainActor.run {
+                    SyncProgressTracker.shared.alreadyQueued(md5: md5)
+                }
+                if alreadyQueued {
+                    continue
+                }
+
+                do {
+                    try realm.write {
+                        game.isDownloaded = false
+                    }
+                } catch {
+                    ELOG("Failed to flag missing game \(game.title) as not downloaded: \(error.localizedDescription)")
+                    continue
+                }
+
+                let fileSize = game.fileSize > 0 ? Int64(game.fileSize) : 1
+                do {
+                    try await CloudKitDownloadQueue.shared.queueDownload(
+                        md5: md5,
+                        title: game.title,
+                        fileSize: fileSize,
+                        systemIdentifier: game.systemIdentifier,
+                        priority: .normal,
+                        onDemand: false
+                    )
+                    ILOG("tvOS: Re-queued missing game \(game.title) (\(md5)) after storage eviction.")
+                } catch {
+                    ELOG("tvOS: Failed to re-queue \(game.title) (\(md5)): \(error.localizedDescription)")
+                }
+            }
+        } catch {
+            ELOG("Failed to reconcile missing tvOS games: \(error.localizedDescription)")
+        }
+    }
+    #endif
+
     public func handleRemoteGameChange(recordID: CKRecord.ID) async throws {
         VLOG("Handling remote change for record ID: \(recordID.recordName)")
 
@@ -888,7 +966,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Use optional catch as .unknownItem is expected if the record was truly deleted (though less likely with soft delete)
         var fetchedRecord: CKRecord?
         do {
-            fetchedRecord = try await fetchRecord(recordID: recordID)
+            fetchedRecord = try await fetchRecord(recordID: recordID, includeAssets: true)
         } catch let error as CKError where error.code == .unknownItem {
             WLOG("Remote record \(recordID.recordName) not found when handling change. It might have been hard deleted. Skipping.")
             // If truly not found, we might need to delete locally if we have it?
@@ -999,7 +1077,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // 1. Fetch the CloudKit Record
         let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
-        guard let record = try await fetchRecord(recordID: recordID) else {
+        guard let record = try await fetchRecord(recordID: recordID, includeAssets: true) else {
             ELOG("Download failed: Record not found in CloudKit for MD5 \(md5).")
             // Check local state and update if needed
             if let localGame = RomDatabase.sharedInstance.game(withMD5: md5), localGame.isDownloaded {
@@ -1677,24 +1755,19 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private func updateLocalDownloadStatus(md5: String, isDownloaded: Bool, fileURL: URL?, record: CKRecord? = nil) async throws {
         VLOG("Updating download status for \(md5): isDownloaded = \(isDownloaded), fileURL = \(fileURL?.path ?? "nil")")
 
-        // Fetch the game using RomDatabase.shared
-        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
-            WLOG("Cannot update download status: PVGame with MD5 \(md5) not found locally.")
-            return
-        }
-
         // Perform updates within a Realm write transaction via RomDatabase.shared
         try RomDatabase.sharedInstance.writeTransaction {
-            // Ensure we are working with the thread-safe instance inside the transaction
-            // (RealmSwift handles this automatically if `game` was fetched on the right actor/queue)
-            // Or refetch inside transaction if necessary, but usually not required for simple property updates.
+            guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else {
+                WLOG("Cannot update download status: PVGame with MD5 \(md5) not found locally.")
+                return
+            }
 
-            VLOG("Updating game: \(game.title) (MD5: \(md5))")
-            game.isDownloaded = isDownloaded
+            VLOG("Updating game: \(liveGame.title) (MD5: \(md5))")
+            liveGame.isDownloaded = isDownloaded
 
             if isDownloaded, let validFileURL = fileURL {
                 let needsFileUpdate: Bool
-                if let currentFile = game.file {
+                if let currentFile = liveGame.file {
                     needsFileUpdate = currentFile.url != validFileURL
                 } else {
                     needsFileUpdate = true // Needs creation
@@ -1702,7 +1775,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
                 if needsFileUpdate {
                     let newFile = PVFile(withURL: validFileURL, relativeRoot: .documents)
-                    game.file = newFile // Replace or create
+                    liveGame.file = newFile // Replace or create
                     VLOG("Updated/Created PVFile with URL \(validFileURL.path) for game \(md5).")
                 } else {
                     VLOG("PVFile URL already correct for game \(md5).")
@@ -1710,12 +1783,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
                 // Update fileSize from the downloaded file or record if available
                 if let attributes = try? FileManager.default.attributesOfItem(atPath: validFileURL.path), let fileSize = attributes[.size] as? Int64 {
-                    game.fileSize = Int(fileSize) // Corrected file size access
+                    liveGame.fileSize = Int(fileSize) // Corrected file size access
                 } else if let recordAsset = record?[CloudKitSchema.ROMFields.fileData] as? CKAsset,
                           let assetURL = recordAsset.fileURL,
                           let attributes = try? FileManager.default.attributesOfItem(atPath: assetURL.path),
                           let assetSize = attributes[.size] as? Int64  { // Get size via FileManager
-                    game.fileSize = Int(assetSize)
+                    liveGame.fileSize = Int(assetSize)
                     VLOG("Updated fileSize to \(assetSize) from record asset for game \(md5).")
                 }
 
@@ -1726,7 +1799,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     // We assume extraction put files in the correct place relative to the main ROM file.
                     // Update related PVFile entries to reflect they exist locally (set URL, isOffline=false)
                     let gameDirectory = validFileURL.deletingLastPathComponent()
-                    for relatedFile in game.relatedFiles {
+                    for relatedFile in liveGame.relatedFiles {
                         let filename = relatedFile.fileName
                         let expectedLocalURL = gameDirectory.appendingPathComponent(filename)
                         // Check if file actually exists? Maybe not necessary, trust the extraction.
@@ -1745,7 +1818,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 // For now, just setting isDownloaded = false might be enough.
 
                 // If download failed or was deleted, related files remain, but the primary is missing.
-                for relatedFile in game.relatedFiles where relatedFile.url != nil {
+                for relatedFile in liveGame.relatedFiles where relatedFile.url != nil {
                     // No 'isOffline' property on PVFile. Their existence is tracked by PVGame.
                     VLOG("Related file \(relatedFile.fileName) exists for game \(md5) but primary is not downloaded.")
                 }

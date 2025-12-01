@@ -59,6 +59,13 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
     /// Downloads that were requested before databaseSynced and/or before PVGame existed
     @Published public private(set) var deferredDownloads: [QueuedDownload] = []
 
+    /// Mark whether the local Realm database has been hydrated with metadata
+    /// - Parameter synced: Pass true once initial metadata import completes
+    public func setDatabaseSynced(_ synced: Bool) {
+        guard databaseSynced != synced else { return }
+        databaseSynced = synced
+    }
+
     // MARK: - Cancellable subscriptions
     private var cancellables = Set<AnyCancellable>()
 
@@ -400,7 +407,7 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         activeDownloads.contains { $0.md5 == md5 } ||
         failedDownloads.contains { $0.md5 == md5 }
     }
-    
+
     // MARK: - Space Management
 
     /// Check if there's enough space for a download

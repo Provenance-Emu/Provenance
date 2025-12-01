@@ -257,10 +257,8 @@ public class CloudKitNotificationManager {
         case RecordType.saveState:
             // Sync save states metadata
             if let syncer = CloudKitSyncerStore.shared.saveStateSyncers.first as? CloudKitSaveStatesSyncer {
-                // TODO: Implement handleRemoteSaveStateChange in CloudKitSaveStatesSyncer
-                // try await syncer.handleRemoteSaveStateChange(recordID: recordID)
-                WLOG("handleRemoteSaveStateChange not yet implemented in CloudKitSaveStatesSyncer for notification processing.")
-                dataChanged = true // Assume data changed even if method is stubbed for now
+                try await syncer.handleRemoteSaveStateChange(recordID: recordID)
+                dataChanged = true
             } else { WLOG("CloudKitSaveStatesSyncer not found.") }
 
         case RecordType.bios:
