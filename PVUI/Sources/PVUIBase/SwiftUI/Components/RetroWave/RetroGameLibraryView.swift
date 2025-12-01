@@ -1116,7 +1116,7 @@ extension RetroGameLibraryView {
         // Use stable ID to prevent unnecessary redraws
         let gridID = "grid-\(viewModel.debouncedSearchText)-\(games.count)"
 
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
+       LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
             ForEach(games, id: \.self) { game in
                 gameGridItem(game: game)
             }
@@ -1156,7 +1156,7 @@ extension RetroGameLibraryView {
         // Use stable ID to prevent unnecessary redraws
         //        let listID = "list-\(viewModel.debouncedSearchText)-\(games.count)"
 
-        LazyVStack(spacing: 8) {
+        VStack(spacing: 8) {
             ForEach(games, id: \.self) { game in
                 gameListItem(game: game)
             }

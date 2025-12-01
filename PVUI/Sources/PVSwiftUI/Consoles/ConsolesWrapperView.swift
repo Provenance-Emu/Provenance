@@ -72,6 +72,9 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    /// Observe the sync status manager for download progress overlay
+    @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
+
     /// Track if view is currently visible
     @State private var isVisible: Bool = false
 
@@ -133,27 +136,42 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     var body: some View {
-        Group {
-            // Add a glowing border line using glowColor
-            RetroDividerView()
-                .shadow(color: .retroPink, radius: 4, x: 0, y: 1)
+        ZStack {
+            Group {
+                // Add a glowing border line using glowColor
+                RetroDividerView()
+                    .shadow(color: .retroPink, radius: 4, x: 0, y: 1)
 
-            if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
-                noConsolesView
-            } else {
-                consolesTabView
-                    .sheet(item: $gameInfoState) { state in
-                        NavigationStack {
-                            makeGameMoreInfoView(for: state)
+                if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
+                    noConsolesView
+                } else {
+                    consolesTabView
+                        .sheet(item: $gameInfoState) { state in
+                            NavigationStack {
+                                makeGameMoreInfoView(for: state)
+                                #if !os(tvOS)
+                                    .navigationBarTitleDisplayMode(.inline)
+                                #endif
+                            }
                             #if !os(tvOS)
-                                .navigationBarTitleDisplayMode(.inline)
+                            .presentationDetents([.large])
+                            .presentationDragIndicator(.visible)
                             #endif
                         }
-                        #if !os(tvOS)
-                        .presentationDetents([.large])
-                        .presentationDragIndicator(.visible)
-                        #endif
-                    }
+                }
+            }
+
+            // Sync status overlay for cloud downloads
+            if syncStatusManager.isVisible {
+                GameSyncStatusView(
+                    gameTitle: syncStatusManager.gameTitle,
+                    statusMessage: syncStatusManager.statusMessage,
+                    isComplete: syncStatusManager.isComplete,
+                    hasError: syncStatusManager.hasError,
+                    onCancel: syncStatusManager.onCancel
+                )
+                .transition(.opacity)
+                .animation(.easeInOut, value: syncStatusManager.isVisible)
             }
         }
         .environment(\.rootDelegate, rootDelegate)

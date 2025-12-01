@@ -16,18 +16,21 @@ public struct RetroMainView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
-    
+
     // Document picker manager as an environment object
     @StateObject private var documentPickerManager = DocumentPickerManager.shared
-    
+
+    /// Observe the sync status manager directly for proper SwiftUI updates
+    @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
+
     @State private var selectedTab: Int = 0
     @State private var showDynamicIslandEffects: Bool = true
-    
+
     // Timer for occasional special effects
     @State private var effectTimer: AnyCancellable?
-    
+
     public init () { }
-    
+
     // Computed property for tab items that conditionally includes debug tab
     private var tabItems: [RetroTabItem] {
         var items = [
@@ -35,14 +38,14 @@ public struct RetroMainView: View {
             RetroTabItem(title: "Settings", systemImage: "gear"),
             RetroTabItem(title: "Status", systemImage: "info")
         ]
-        
+
         if showFeatureFlagsDebug {
             items.append(RetroTabItem(title: "Debug", systemImage: "ladybug"))
         }
-        
+
         return items
     }
-    
+
     public var body: some View {
         ZStack {
 #if !os(tvOS)
@@ -54,7 +57,7 @@ public struct RetroMainView: View {
                     DocumentPicker(onImport: { urls in
                         // Call the callback if it exists
                         documentPickerManager.documentPickerCompleted(urls: urls)
-                        
+
                         // Explicitly set isShowingDocumentPicker to false to ensure proper state update
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             documentPickerManager.isShowingDocumentPicker = false
@@ -65,7 +68,7 @@ public struct RetroMainView: View {
             // Background that adapts to the theme
             RetroTheme.retroBackground
                 .ignoresSafeArea()
-            
+
 #if !os(tvOS)
             // Dynamic Island retrowave effects
             if showDynamicIslandEffects {
@@ -74,7 +77,7 @@ public struct RetroMainView: View {
                     .ignoresSafeArea()
             }
 #endif
-            
+
             // Custom RetroTabView with retrowave styling
             RetroTabView(
                 selection: $selectedTab,
@@ -83,7 +86,7 @@ public struct RetroMainView: View {
                     ZStack {
                         // Show the appropriate view based on the selected tab
                         if selectedTab == 0 {
-                            
+
                             RetroGameLibraryView()
                                 .padding(.top, 40)
                                 .environmentObject(SceneCoordinator.shared)
@@ -117,26 +120,26 @@ public struct RetroMainView: View {
                 },
                 tabItems: tabItems
             )
-            
-            // Sync status overlay for game launch
-            if SceneCoordinator.shared.syncStatusManager.isVisible {
+
+            // Sync status overlay for game launch and cloud downloads
+            if syncStatusManager.isVisible {
                 GameSyncStatusView(
-                    gameTitle: SceneCoordinator.shared.syncStatusManager.gameTitle,
-                    statusMessage: SceneCoordinator.shared.syncStatusManager.statusMessage,
-                    isComplete: SceneCoordinator.shared.syncStatusManager.isComplete,
-                    hasError: SceneCoordinator.shared.syncStatusManager.hasError,
-                    onCancel: SceneCoordinator.shared.syncStatusManager.onCancel
+                    gameTitle: syncStatusManager.gameTitle,
+                    statusMessage: syncStatusManager.statusMessage,
+                    isComplete: syncStatusManager.isComplete,
+                    hasError: syncStatusManager.hasError,
+                    onCancel: syncStatusManager.onCancel
                 )
                 .transition(.opacity)
-                .animation(.easeInOut, value: SceneCoordinator.shared.syncStatusManager.isVisible)
+                .animation(.easeInOut, value: syncStatusManager.isVisible)
             }
         }
         .onAppear {
             ILOG("MainView: Appeared with RetroTabView")
-            
+
             // Set up a timer to occasionally trigger special effects around the Dynamic Island
             setupEffectTimer()
-            
+
             // Force home indicator update on view appearance
             setHomeIndicatorAutoHidden()
         }
@@ -148,9 +151,9 @@ public struct RetroMainView: View {
         .ignoresSafeArea(.all) // Ensure the view extends edge-to-edge
         .hideHomeIndicator() // Hide the home indicator for immersive experience
     }
-    
+
     // MARK: - Dynamic Island Effects
-    
+
     /// Sets up a timer to occasionally trigger special effects around the Dynamic Island
     private func setupEffectTimer() {
         // Create a timer that fires every 30 seconds
@@ -163,12 +166,12 @@ public struct RetroMainView: View {
                 }
             }
     }
-    
+
     /// Triggers a special effect around the Dynamic Island
     private func triggerDynamicIslandEffect() {
         // First ensure effects are shown
         showDynamicIslandEffects = true
-        
+
         // After a few seconds, we can optionally hide the effects again
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             // Randomly decide whether to hide the effects
@@ -179,29 +182,29 @@ public struct RetroMainView: View {
             }
         }
     }
-    
+
     /// Configures the UITabBar appearance to match the current theme
     private func configureTabBarAppearance() {
         let isDarkMode = themeManager.currentPalette.dark
-        
+
         // Create a new appearance object
         let tabBarAppearance = UITabBarAppearance()
-        
+
         // Configure the appearance for the current theme
         if isDarkMode {
             // Dark mode configuration
             tabBarAppearance.configureWithDefaultBackground()
             tabBarAppearance.backgroundColor = themeManager.currentPalette.gameLibraryBackground.withAlphaComponent(0.95)
-            
+
             // Configure normal and selected item colors
             let normalAttributes: [NSAttributedString.Key: Any] = [
                 .foregroundColor: UIColor.lightGray
             ]
-            
+
             let selectedAttributes: [NSAttributedString.Key: Any] = [
                 .foregroundColor: themeManager.currentPalette.defaultTintColor
             ]
-            
+
             tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = normalAttributes
             tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = selectedAttributes
             tabBarAppearance.stackedLayoutAppearance.normal.iconColor = .lightGray
@@ -210,29 +213,29 @@ public struct RetroMainView: View {
             // Light mode configuration
             tabBarAppearance.configureWithDefaultBackground()
             tabBarAppearance.backgroundColor = themeManager.currentPalette.gameLibraryBackground.withAlphaComponent(0.95)
-            
+
             // Configure normal and selected item colors
             let normalAttributes: [NSAttributedString.Key: Any] = [
                 .foregroundColor: UIColor.darkGray
             ]
-            
+
             let selectedAttributes: [NSAttributedString.Key: Any] = [
                 .foregroundColor: themeManager.currentPalette.defaultTintColor
             ]
-            
+
             tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = normalAttributes
             tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = selectedAttributes
             tabBarAppearance.stackedLayoutAppearance.normal.iconColor = .darkGray
             tabBarAppearance.stackedLayoutAppearance.selected.iconColor = themeManager.currentPalette.defaultTintColor
         }
-        
+
         // Apply the appearance to both standard and scrolling edge appearances
         UITabBar.appearance().standardAppearance = tabBarAppearance
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
     }
-    
+
     /// Force update of home indicator state through UIKit
     private func setHomeIndicatorAutoHidden() {
         // Find the hosting controller and trigger update

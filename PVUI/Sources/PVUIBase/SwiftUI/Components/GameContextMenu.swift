@@ -13,7 +13,6 @@ import RealmSwift
 import PVUIBase
 import PVRealm
 import PVLogging
-import PVUIBase
 
 /// A SwiftUI context menu for game-related actions
 public struct GameContextMenu: View {
@@ -250,42 +249,99 @@ extension GameContextMenu {
             }
         }
     }
-    /// Download a game from CloudKit
+    /// Download a game from CloudKit with progress tracking UI
     func downloadGameFromCloud() {
         guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
 
-        DLOG("Downloading game from CloudKit: \(game.title) (\(recordID))")
+        let gameTitle = game.title
+        let gameMD5 = game.md5Hash
 
-        // Show loading indicator
-        rootDelegate?.showMessage("Downloading \(game.title)...", title: "Downloading")
+        DLOG("Downloading game from CloudKit: \(gameTitle) (\(recordID))")
 
-        Task {
-            do {
-                // Find the appropriate syncer
-                guard let syncer = CloudKitSyncerStore.shared.getSyncer() else {
-                    ELOG("No CloudKit syncer available")
-                    await MainActor.run {
-                        rootDelegate?.showMessage("Failed to download: No CloudKit syncer available", title: "Error")
+        Task { @MainActor in
+            // Show sync status overlay with cancel support
+            let syncStatusManager = SceneCoordinator.shared.syncStatusManager
+            var downloadTask: Task<Void, Error>?
+            var progressObserver: Task<Void, Never>?
+
+            syncStatusManager.show(
+                gameTitle: gameTitle,
+                statusMessage: "Connecting to iCloud...",
+                onCancel: {
+                    DLOG("User cancelled download for: \(gameTitle)")
+                    downloadTask?.cancel()
+                    progressObserver?.cancel()
+                    CloudKitDownloadQueue.shared.cancelDownload(md5: gameMD5)
+                    syncStatusManager.hide()
+                }
+            )
+
+            // Start progress observation
+            progressObserver = Task { @MainActor in
+                let progressTracker = SyncProgressTracker.shared
+                var lastProgress: Double = 0
+
+                while !Task.isCancelled {
+                    // Check if this game is being downloaded
+                    if let activeDownload = progressTracker.activeDownloads.first(where: { $0.md5 == gameMD5 }) {
+                        let progress = activeDownload.progress
+                        if progress != lastProgress {
+                            let percentage = Int(progress * 100)
+                            let bytesStr = ByteCountFormatter.string(fromByteCount: activeDownload.bytesDownloaded, countStyle: .file)
+                            let totalStr = ByteCountFormatter.string(fromByteCount: activeDownload.fileSize, countStyle: .file)
+                            syncStatusManager.update(statusMessage: "Downloading... \(percentage)% (\(bytesStr) / \(totalStr))")
+                            lastProgress = progress
+                        }
+                    } else if progressTracker.queuedDownloads.contains(where: { $0.md5 == gameMD5 }) {
+                        syncStatusManager.update(statusMessage: "Queued for download...")
                     }
-                    return
-                }
 
-                // Download the file
-                let fileURL = try await syncer.downloadFileOnDemand(recordName: recordID)
-                DLOG("Downloaded file to: \(fileURL.path)")
-
-                // Update the game's download status in the database
-                try await updateGameDownloadStatus(recordID: recordID, isDownloaded: true)
-
-                await MainActor.run {
-                    rootDelegate?.showMessage("\(game.title) has been downloaded successfully", title: "Download Complete")
-                }
-            } catch {
-                ELOG("Error downloading file: \(error.localizedDescription)")
-                await MainActor.run {
-                    rootDelegate?.showMessage("Failed to download: \(error.localizedDescription)", title: "Error")
+                    try? await Task.sleep(nanoseconds: 500_000_000) // Update every 0.5 seconds
                 }
             }
+
+            // Execute the download
+            downloadTask = Task {
+                do {
+                    guard let syncer = CloudKitSyncerStore.shared.getSyncer() else {
+                        throw NSError(domain: "GameContextMenu", code: 1, userInfo: [NSLocalizedDescriptionKey: "No CloudKit syncer available"])
+                    }
+
+                    await MainActor.run {
+                        syncStatusManager.update(statusMessage: "Starting download...")
+                    }
+
+                    let fileURL = try await syncer.downloadFileOnDemand(recordName: recordID)
+                    DLOG("Downloaded file to: \(fileURL.path)")
+
+                    try await updateGameDownloadStatus(recordID: recordID, isDownloaded: true)
+
+                    await MainActor.run {
+                        progressObserver?.cancel()
+                        syncStatusManager.complete()
+                        DLOG("Download complete for: \(gameTitle)")
+                    }
+                } catch {
+                    if Task.isCancelled {
+                        DLOG("Download was cancelled for: \(gameTitle)")
+                        return
+                    }
+                    ELOG("Error downloading file: \(error.localizedDescription)")
+                    await MainActor.run {
+                        progressObserver?.cancel()
+                        syncStatusManager.error("Download failed: \(error.localizedDescription)")
+                        // Auto-hide error after delay
+                        Task {
+                            try? await Task.sleep(nanoseconds: 3_000_000_000)
+                            syncStatusManager.hide()
+                        }
+                    }
+                    throw error
+                }
+            }
+
+            // Wait for completion (but don't block UI)
+            _ = try? await downloadTask?.value
         }
     }
 

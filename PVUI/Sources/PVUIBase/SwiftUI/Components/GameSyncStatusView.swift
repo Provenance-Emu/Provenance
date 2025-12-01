@@ -16,6 +16,10 @@ public struct GameSyncStatusView: View {
     let hasError: Bool
     let onCancel: (() -> Void)?
 
+    #if os(tvOS)
+    @FocusState private var cancelButtonFocused: Bool
+    #endif
+
     public init(
         gameTitle: String,
         statusMessage: String,
@@ -82,6 +86,17 @@ public struct GameSyncStatusView: View {
 
                 // Cancel button (only show if not complete and not error)
                 if !isComplete && !hasError, let cancel = onCancel {
+                    #if os(tvOS)
+                    TVOSCancelButton(isFocused: cancelButtonFocused, action: cancel)
+                        .focused($cancelButtonFocused)
+                        .onAppear {
+                            // Auto-focus the cancel button when it appears
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                cancelButtonFocused = true
+                            }
+                        }
+                        .padding(.top, 16)
+                    #else
                     Button(action: cancel) {
                         Text("Cancel")
                             .font(.headline)
@@ -92,6 +107,7 @@ public struct GameSyncStatusView: View {
                             .cornerRadius(8)
                     }
                     .padding(.top, 8)
+                    #endif
                 }
             }
             .padding(32)
@@ -106,6 +122,33 @@ public struct GameSyncStatusView: View {
         }
     }
 }
+
+#if os(tvOS)
+/// tvOS-specific cancel button with proper focus handling
+struct TVOSCancelButton: View {
+    let isFocused: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text("Cancel")
+                .font(.headline)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .padding(.horizontal, 48)
+                .padding(.vertical, 18)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(isFocused ? Color.red : Color.red.opacity(0.5))
+                        .shadow(color: isFocused ? Color.red.opacity(0.6) : Color.clear, radius: 10)
+                )
+                .scaleEffect(isFocused ? 1.1 : 1.0)
+                .animation(.easeInOut(duration: 0.15), value: isFocused)
+        }
+        .buttonStyle(.plain)
+    }
+}
+#endif
 
 /// Observable object for managing sync status during game launch
 @MainActor

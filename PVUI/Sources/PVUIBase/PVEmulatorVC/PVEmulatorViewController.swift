@@ -931,32 +931,60 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
-    /// Show download progress UI with cancel option
+    /// Show download progress UI with cancel option using SceneCoordinator's syncStatusManager
     /// - Parameter game: The game being downloaded
     private func showDownloadProgress(for game: PVGame) async throws {
-        await MainActor.run {
-            let progressView = CloudKitDownloadProgressView(
-                gameMD5: game.md5Hash ?? "",
-                gameTitle: game.title,
-                onCancel: { [weak self] in
-                    // User cancelled - go back to library and stop emulator creation
-                    ILOG("User cancelled download for: \(game.title)")
-                    Task { @MainActor in
-                        self?.dismiss(animated: true)
+        let gameMD5 = game.md5Hash ?? ""
+        let gameTitle = game.title
+
+        // Use the unified syncStatusManager for consistent UI
+        let syncStatusManager = SceneCoordinator.shared.syncStatusManager
+
+        // Only show UI if not already visible (avoids duplicate overlays)
+        let shouldShowUI = await MainActor.run { !syncStatusManager.isVisible }
+
+        if shouldShowUI {
+            await MainActor.run {
+                syncStatusManager.show(
+                    gameTitle: gameTitle,
+                    statusMessage: "Downloading from iCloud...",
+                    onCancel: { [weak self] in
+                        ILOG("User cancelled download for: \(gameTitle)")
+                        CloudKitDownloadQueue.shared.cancelDownload(md5: gameMD5)
+                        syncStatusManager.hide()
+                        Task { @MainActor in
+                            self?.dismiss(animated: true)
+                        }
                     }
-                },
-                onComplete: { [weak self] in
-                    // Download completed – dismiss progress UI and allow calling flow to continue
-                    ILOG("Download UI dismissed for: \(game.title)")
-                    self?.dismiss(animated: true)
+                )
+            }
+        }
+
+        // Start progress monitoring task
+        let progressTask = Task { @MainActor in
+            let progressTracker = SyncProgressTracker.shared
+            var lastProgress: Double = 0
+
+            while !Task.isCancelled {
+                if let activeDownload = progressTracker.activeDownloads.first(where: { $0.md5 == gameMD5 }) {
+                    let progress = activeDownload.progress
+                    if progress != lastProgress {
+                        let percentage = Int(progress * 100)
+                        let bytesStr = ByteCountFormatter.string(fromByteCount: activeDownload.bytesDownloaded, countStyle: .file)
+                        let totalStr = ByteCountFormatter.string(fromByteCount: activeDownload.fileSize, countStyle: .file)
+                        syncStatusManager.update(statusMessage: "Downloading... \(percentage)% (\(bytesStr) / \(totalStr))")
+                        lastProgress = progress
+                    }
+                } else if progressTracker.queuedDownloads.contains(where: { $0.md5 == gameMD5 }) {
+                    syncStatusManager.update(statusMessage: "Queued for download...")
                 }
-            )
 
-            let hostingController = UIHostingController(rootView: progressView)
-            hostingController.modalPresentationStyle = .fullScreen
-            hostingController.modalTransitionStyle = .crossDissolve
+                try? await Task.sleep(nanoseconds: 500_000_000) // Update every 0.5 seconds
+            }
+        }
 
-            self.present(hostingController, animated: true)
+        defer {
+            progressTask.cancel()
         }
 
         /// Wait for download to start and then complete (or fail)
@@ -964,27 +992,36 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             let progressTracker = SyncProgressTracker.shared
             var cancellables = Set<AnyCancellable>()
             var hasStarted = false
+            var hasResumed = false
 
             Publishers.CombineLatest3(
                 progressTracker.$queuedDownloads,
                 progressTracker.$activeDownloads,
                 progressTracker.$failedDownloads
             )
+            .receive(on: DispatchQueue.main)
             .sink { queued, active, failed in
-                let md5 = game.md5Hash ?? ""
-                let inQueued = queued.contains { $0.md5 == md5 }
-                let inActive = active.contains { $0.md5 == md5 }
-                let hasFailed = failed.contains { $0.md5 == md5 }
+                guard !hasResumed else { return }
+
+                let inQueued = queued.contains { $0.md5 == gameMD5 }
+                let inActive = active.contains { $0.md5 == gameMD5 }
+                let hasFailed = failed.contains { $0.md5 == gameMD5 }
 
                 if inQueued || inActive { hasStarted = true }
 
                 if hasFailed {
+                    hasResumed = true
                     cancellables.removeAll()
-                    if let failure = failed.first(where: { $0.md5 == md5 }) {
-                        ELOG("Download failed for \(game.title): \(failure.error)")
+                    syncStatusManager.error("Download failed")
+                    Task {
+                        try? await Task.sleep(nanoseconds: 2_000_000_000)
+                        await MainActor.run { syncStatusManager.hide() }
+                    }
+                    if let failure = failed.first(where: { $0.md5 == gameMD5 }) {
+                        ELOG("Download failed for \(gameTitle): \(failure.error)")
                         continuation.resume(throwing: failure.error)
                     } else {
-                        ELOG("Download failed for \(game.title): Unknown error")
+                        ELOG("Download failed for \(gameTitle): Unknown error")
                         continuation.resume(throwing: CloudSyncError.unknown)
                     }
                     return
@@ -993,17 +1030,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 // Check if download was cancelled (removed from queue without being in failed)
                 let inQueuedOrActive = inQueued || inActive
                 if hasStarted && !inQueuedOrActive && !hasFailed {
-                    // Download was cancelled
+                    hasResumed = true
                     cancellables.removeAll()
-                    ELOG("Download cancelled for \(game.title)")
-                    continuation.resume(throwing: CloudSyncError.downloadCancelled)
-                    return
-                }
 
-                if hasStarted && !inQueued && !inActive {
-                    // Completed successfully
-                    cancellables.removeAll()
-                    continuation.resume()
+                    // Check if the file now exists (successful download) vs cancelled
+                    let fileExists = FileManager.default.fileExists(atPath: game.file?.url?.path ?? "")
+                    if fileExists {
+                        // Completed successfully
+                        syncStatusManager.complete()
+                        continuation.resume()
+                    } else {
+                        // Download was cancelled
+                        syncStatusManager.hide()
+                        ELOG("Download cancelled for \(gameTitle)")
+                        continuation.resume(throwing: CloudSyncError.downloadCancelled)
+                    }
+                    return
                 }
             }
             .store(in: &cancellables)
