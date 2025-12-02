@@ -551,6 +551,52 @@ struct RetroMenuView: View {
                 }
             }
 
+                            // Screen filter selection
+            VStack(alignment: .leading, spacing: 4) {
+                Text("SCREEN FILTER")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
+
+                Button(action: {
+                    // Show filter picker
+                    showingFilterPicker = true
+                }) {
+                    HStack {
+                        Text(selectedMetalFilter == .none ? "None" : selectedMetalFilter.description)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(palette.defaultTintColor.swiftUIColor)
+                    }
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(
+                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                    .opacity(palette.dark ? 0.6 : 0.9)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(palette.defaultTintColor.swiftUIColor, lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .sheet(isPresented: $showingFilterPicker) {
+                    filterPickerView
+                }
+                .onAppear {
+                    syncSelectedFilterFromSettings()
+                }
+                .onChange(of: metalFilterMode) { _ in
+                    syncSelectedFilterFromSettings()
+                }
+            }
+
+
             #if os(iOS)
             // Audio visualizer button (iOS 16+ only, if supported by core)
             if emulatorVC.core.supportsAudioVisualizer {
@@ -807,51 +853,6 @@ struct RetroMenuView: View {
                     }
                 }
             }
-
-                // Screen filter selection
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("SCREEN FILTER")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
-
-                    Button(action: {
-                        // Show filter picker
-                        showingFilterPicker = true
-                    }) {
-                        HStack {
-                            Text(selectedMetalFilter == .none ? "None" : selectedMetalFilter.description)
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(palette.defaultTintColor.swiftUIColor)
-                        }
-                        .padding(12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(
-                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                                        .opacity(palette.dark ? 0.6 : 0.9)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(palette.defaultTintColor.swiftUIColor, lineWidth: 1)
-                                )
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .sheet(isPresented: $showingFilterPicker) {
-                        filterPickerView
-                    }
-                    .onAppear {
-                        syncSelectedFilterFromSettings()
-                    }
-                    .onChange(of: metalFilterMode) { _ in
-                        syncSelectedFilterFromSettings()
-                    }
-                }
 
                 // Button Effect Selection
                 VStack(alignment: .leading, spacing: 4) {
@@ -1429,6 +1430,7 @@ struct RetroMenuView: View {
                         ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
                             Button(action: {
                                 selectedMetalFilter = option
+                                applyFilterImmediately(option)
                                 showingFilterPicker = false
                             }) {
                                 HStack {
@@ -1869,44 +1871,11 @@ struct RetroMenuView: View {
               let emulatorVC = emulatorVC as? PVEmulatorViewController else {
             return
         }
-
+        
         let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
 
-        // Update global Metal filter mode from in-game selection
-        if selectedMetalFilter == .none {
-            metalFilterMode = .none
-        } else {
-            metalFilterMode = .always(filter: selectedMetalFilter)
-        }
-
-        // Apply filter changes for skin overlays via notification and legacy preferences
-        let overlayName = overlayFilterName(for: selectedMetalFilter)
-
-        if selectedMetalFilter != .none {
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ApplyScreenFilter"),
-                object: nil,
-                userInfo: ["filterName": overlayName]
-            )
-
-            if !gameId.isEmpty {
-                UserDefaults.standard.set(overlayName, forKey: "ScreenFilter_Game_\(gameId)")
-            } else {
-                UserDefaults.standard.set(overlayName, forKey: "ScreenFilter_System_\(systemId.rawValue)")
-            }
-        } else {
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ApplyScreenFilter"),
-                object: nil,
-                userInfo: ["filterName": "None"]
-            )
-
-            if !gameId.isEmpty {
-                UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
-            } else {
-                UserDefaults.standard.removeObject(forKey: "ScreenFilter_System_\(systemId.rawValue)")
-            }
-        }
+        // Apply filter changes immediately
+        applyFilterImmediately(selectedMetalFilter)
 
         // Apply skin for current orientation using effective skin identifier
         #if !os(tvOS)
@@ -2065,6 +2034,49 @@ struct RetroMenuView: View {
             }
         } catch {
             ELOG("Error applying skin and filter changes: \(error)")
+        }
+    }
+
+    /// Apply filter immediately when selected
+    private func applyFilterImmediately(_ filter: MetalFilterSelectionOption) {
+        guard let systemId = emulatorVC.game.system?.systemIdentifier else { return }
+
+        let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+
+        // Update global Metal filter mode
+        if filter == .none {
+            metalFilterMode = .none
+        } else {
+            metalFilterMode = .always(filter: filter)
+        }
+
+        // Apply filter changes for skin overlays via notification and legacy preferences
+        let overlayName = overlayFilterName(for: filter)
+
+        if filter != .none {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ApplyScreenFilter"),
+                object: nil,
+                userInfo: ["filterName": overlayName]
+            )
+
+            if !gameId.isEmpty {
+                UserDefaults.standard.set(overlayName, forKey: "ScreenFilter_Game_\(gameId)")
+            } else {
+                UserDefaults.standard.set(overlayName, forKey: "ScreenFilter_System_\(systemId.rawValue)")
+            }
+        } else {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ApplyScreenFilter"),
+                object: nil,
+                userInfo: ["filterName": "None"]
+            )
+
+            if !gameId.isEmpty {
+                UserDefaults.standard.removeObject(forKey: "ScreenFilter_Game_\(gameId)")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "ScreenFilter_System_\(systemId.rawValue)")
+            }
         }
     }
 
