@@ -17,6 +17,9 @@ public struct RetroTabView<Content: View>: View {
     @State private var contentHasFocus: Bool = true
     @FocusState private var tabBarFocused: Bool
     @State private var focusedTabIndex: Int = 0
+#if os(tvOS)
+    @StateObject private var navigationState = RetroTabNavigationState()
+#endif
 
     public init(selection: Binding<Int>, @ViewBuilder content: () -> Content, tabItems: [RetroTabItem]) {
         self._selection = selection
@@ -29,19 +32,12 @@ public struct RetroTabView<Content: View>: View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
                 // Main content area
+#if os(tvOS)
+                tvOSContent
+#else
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.bottom, tabBarHeight + bottomSafeAreaInset)
-#if os(tvOS)
-                    // Handle tvOS back button to focus tab bar instead of exiting app
-                    .onExitCommand {
-                        if contentHasFocus {
-                            // When back button is pressed, focus the tab bar instead of exiting
-                            contentHasFocus = false
-                            tabBarFocused = true
-                            focusedTabIndex = localSelection
-                        }
-                    }
 #endif
 
                 // Custom tab bar
@@ -288,6 +284,73 @@ public struct RetroTabItem {
         self.systemImage = systemImage
     }
 }
+
+// MARK: - tvOS Exit Behavior Control
+
+public enum RetroTabExitBehavior: Equatable {
+    case focusTabBar
+    case honorContentNavigation
+}
+
+/// No-op modifier kept for API compatibility
+public extension View {
+    func retroTabExitBehavior(_ behavior: RetroTabExitBehavior) -> some View {
+        self
+    }
+}
+
+// MARK: - Environment key for tab bar focus action
+
+#if os(tvOS)
+private struct FocusRetroTabBarKey: EnvironmentKey {
+    static let defaultValue: (() -> Void)? = nil
+}
+
+public extension EnvironmentValues {
+    var focusRetroTabBar: (() -> Void)? {
+        get { self[FocusRetroTabBarKey.self] }
+        set { self[FocusRetroTabBarKey.self] = newValue }
+    }
+}
+
+/// Shared state to track if a navigation pop just occurred, preventing tab bar focus
+public final class RetroTabNavigationState: ObservableObject {
+    @Published public var suppressTabBarFocus: Bool = false
+    public init() {}
+}
+
+private struct RetroTabNavigationStateKey: EnvironmentKey {
+    static let defaultValue: RetroTabNavigationState? = nil
+}
+
+public extension EnvironmentValues {
+    var retroTabNavigationState: RetroTabNavigationState? {
+        get { self[RetroTabNavigationStateKey.self] }
+        set { self[RetroTabNavigationStateKey.self] = newValue }
+    }
+}
+#endif
+
+#if os(tvOS)
+extension RetroTabView {
+    @ViewBuilder
+    private var tvOSContent: some View {
+        content
+            .environment(\.focusRetroTabBar, focusTabBarAction)
+            .environment(\.retroTabNavigationState, navigationState)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.bottom, tabBarHeight + bottomSafeAreaInset)
+    }
+
+    private var focusTabBarAction: () -> Void {
+        {
+            self.contentHasFocus = false
+            self.tabBarFocused = true
+            self.focusedTabIndex = self.localSelection
+        }
+    }
+}
+#endif
 
 // MARK: - Preference Key for Tab Item Frames
 

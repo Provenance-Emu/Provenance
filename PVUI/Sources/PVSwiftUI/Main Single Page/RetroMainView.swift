@@ -12,6 +12,20 @@ import PVLogging
 import Combine
 import UniformTypeIdentifiers
 
+#if os(tvOS)
+/// Modifier that focuses the tab bar when Menu/Back is pressed on tvOS
+struct FocusTabBarOnExitModifier: ViewModifier {
+    @Environment(\.focusRetroTabBar) private var focusRetroTabBar
+
+    func body(content: Content) -> some View {
+        content
+            .onExitCommand {
+                focusRetroTabBar?()
+            }
+    }
+}
+#endif
+
 public struct RetroMainView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
@@ -86,11 +100,13 @@ public struct RetroMainView: View {
                     ZStack {
                         // Show the appropriate view based on the selected tab
                         if selectedTab == 0 {
-
                             RetroGameLibraryView()
                                 .padding(.top, 40)
                                 .environmentObject(SceneCoordinator.shared)
                                 .environmentObject(documentPickerManager)
+#if os(tvOS)
+                                .modifier(FocusTabBarOnExitModifier())
+#endif
                         } else if selectedTab == 1 {
                             SettingsWrapperView()
                         } else if selectedTab == 2 {
@@ -100,6 +116,7 @@ public struct RetroMainView: View {
                                 RetroStatusControlView()
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 6)
+                                    .modifier(FocusTabBarOnExitModifier())
 #else
                                 ScrollView {
                                     RetroStatusControlView()
@@ -115,6 +132,9 @@ public struct RetroMainView: View {
                             .ignoresSafeArea(.all, edges: .bottom)
                         } else if selectedTab == 3 && showFeatureFlagsDebug {
                             RetroDebugView()
+#if os(tvOS)
+                                .modifier(FocusTabBarOnExitModifier())
+#endif
                         }
                     }
                 },

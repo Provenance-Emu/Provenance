@@ -40,6 +40,9 @@ import PVWebServer
 struct TVOSNavigationSupport: ViewModifier {
     let title: String
     @Environment(\.dismiss) private var dismiss
+#if os(tvOS)
+    @Environment(\.retroTabNavigationState) private var navigationState
+#endif
 
     func body(content: Content) -> some View {
         content
@@ -52,6 +55,10 @@ struct TVOSNavigationSupport: ViewModifier {
                     }
                     .foregroundColor(.retroBlue)
                 }
+            }
+            .onExitCommand {
+                navigationState?.suppressTabBarFocus = true
+                dismiss()
             }
         #endif
     }
@@ -267,12 +274,16 @@ public struct PVSettingsView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        #if os(tvOS)
+#if os(tvOS)
         .onExitCommand {
-            // Handle the Menu button press on tvOS to go back in navigation
+            focusRetroTabBar?()
         }
-        #endif
+#endif
     }
+
+#if os(tvOS)
+    @Environment(\.focusRetroTabBar) private var focusRetroTabBar
+#endif
 
     #if !os(tvOS)
     private var tabItems: [RetroTabItem] {
