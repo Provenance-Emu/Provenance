@@ -244,6 +244,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         return []
     }
 
+    private func recordDeclaresAssetPresence(_ record: CKRecord) -> Bool {
+        guard record.allKeys().contains(CloudKitSchema.ROMFields.fileData) else {
+            // Metadata-only reads omit the asset field entirely; treat as true until proven otherwise
+            return true
+        }
+        return record[CloudKitSchema.ROMFields.fileData] is CKAsset
+    }
+
     // MARK: - CloudKit Operations
 
     /// Fetches a single CKRecord by its ID using the retry strategy.
@@ -342,12 +350,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     public func uploadGame(_ md5: String) async throws {
-        // Create a new Realm instance for background thread usage
-        // This avoids the need for @MainActor while preventing crashes
-        let realm = try! Realm.init(queue: nil)
-        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())?.freeze() else {
+        //try await RealmProvider.ensureInitialized()
+        let realm = RomDatabase.sharedInstance.realm
+        guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
             throw CloudSyncError.invalidData
         }
+        guard !liveGame.contentless else {
+            VLOG("Skipping CloudKit upload for contentless placeholder game: \(liveGame.title)")
+            return
+        }
+        let game = liveGame.freeze()
 
         let md5 = game.md5Hash
         guard !md5.isEmpty else {
@@ -659,8 +671,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             // Check if download will be needed (but don't trigger it yet)
             if let game = updatedOrCreatedGame, !game.isDownloaded {
-                // Verify the record has an asset before marking for download
-                if record[CloudKitSchema.ROMFields.fileData] is CKAsset {
+                // Verify the record declares an asset before marking for download
+                if recordDeclaresAssetPresence(record) {
                     VLOG("Local game \(md5) marked for background download")
                     return (md5: md5, title: title, fileSize: fileSize, systemIdentifier: systemIdentifier)
                 } else {
@@ -906,7 +918,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// tvOS-specific helper that re-queues games whose files were evicted from local storage
     private func reconcileMissingLocalGames() async {
         do {
-            let realm = try await Realm(queue: nil)
+            //try await RealmProvider.ensureInitialized()
+            let realm = RomDatabase.sharedInstance.realm
             let downloadedGames = realm.objects(PVGame.self).filter("isDownloaded == true")
             guard !downloadedGames.isEmpty else { return }
 
@@ -1028,7 +1041,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     #if os(tvOS)
                     VLOG("tvOS: Skipping auto-download for \(md5). On-demand only.")
                     #else
-                    if record[CloudKitSchema.ROMFields.fileData] is CKAsset {
+                    if recordDeclaresAssetPresence(record) {
                         VLOG("Local game \(md5) is not marked as downloaded. Triggering download...")
                         Task.detached { [self] in try? await downloadGame(md5: md5) }
                     } else {
@@ -1402,6 +1415,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         // Perform updates within a Realm write transaction via RomDatabase.shared
+        let recordHasAsset = recordDeclaresAssetPresence(record)
+
         try RomDatabase.sharedInstance.writeTransaction {
             // Update fields based on CloudKit record
             localGame.title = record[CloudKitSchema.ROMFields.title] as? String ?? localGame.title
@@ -1433,6 +1448,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 let expectedLocalURL = self.localURL(for: localGame)
                 let hasLocalFile = expectedLocalURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
                 localGame.isDownloaded = hasLocalFile
+                localGame.hasCloudAssets = true
                 ILOG("🔍 Updated game \(localGame.title): hasLocalFile=\(hasLocalFile), expectedPath=\(expectedLocalURL?.path ?? "nil"), isDownloaded=\(localGame.isDownloaded)")
                 // Get fileSize using FileManager
                 if let url = asset.fileURL, let attributes = try? FileManager.default.attributesOfItem(atPath: url.path), let fileSize = attributes[.size] as? Int64 {
@@ -1457,6 +1473,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 // Mark as not downloaded
                 ILOG("📤 Marking game \(localGame.title) as not downloaded (no CloudKit asset)")
                 localGame.isDownloaded = false
+                localGame.hasCloudAssets = false
 
                 // Optionally clear PVFile URL or mark as offline?
                 // localGame.file?.url = nil // Or keep url but mark PVFile as offline?
@@ -1520,6 +1537,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // Set other properties from the record
         newGame.isDownloaded = false // Mark as not downloaded initially, download happens separately
+        newGame.hasCloudAssets = recordDeclaresAssetPresence(record)
         newGame.playCount = record[CloudKitSchema.ROMFields.playCount] as? Int ?? 0
         newGame.lastPlayed = record[CloudKitSchema.ROMFields.lastPlayed] as? Date
         newGame.timeSpentInGame = record[CloudKitSchema.ROMFields.timeSpentInGame] as? Int ?? 0
@@ -1577,7 +1595,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     @MainActor
     private func getUpdatedGameInfo(forMD5 md5: String) async {
         do {
-            let realm = try await Realm(queue: nil)
+            let realm = RomDatabase.sharedInstance.realm
             // Fetch a fresh game instance on this thread
             guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
                 WLOG("Game with MD5 \(md5) not found for metadata lookup")
@@ -1613,7 +1631,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // If no results found, just return the original game
             guard let results = resultsMaybe, !results.isEmpty else {
                 ILOG("No metadata found for game: \(game.title)")
-                try RomDatabase.sharedInstance.writeTransaction {
+                try realm.write {
                     game.requiresSync = false  // Mark as synced so we don't try again
                 }
                 return
@@ -1641,7 +1659,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             if let result = chosenResult {
                 ILOG("Found metadata for \(game.title): \(result.gameTitle ?? "Unknown")")
 
-                try RomDatabase.sharedInstance.writeTransaction {
+                try realm.write {
                     // Update game with metadata
                     if let gameDescription = result.gameDescription {
                         game.gameDescription = gameDescription
@@ -1764,6 +1782,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             VLOG("Updating game: \(liveGame.title) (MD5: \(md5))")
             liveGame.isDownloaded = isDownloaded
+            if let record {
+                let declaresAsset = recordDeclaresAssetPresence(record)
+                if declaresAsset {
+                    liveGame.hasCloudAssets = true
+                } else if !isDownloaded {
+                    liveGame.hasCloudAssets = false
+                }
+            } else if isDownloaded {
+                liveGame.hasCloudAssets = true
+            }
 
             if isDownloaded, let validFileURL = fileURL {
                 let needsFileUpdate: Bool
@@ -1937,6 +1965,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     if let modificationDate = record.modificationDate {
                         liveGame.lastCloudSyncDate = modificationDate
                     }
+                    liveGame.hasCloudAssets = recordDeclaresAssetPresence(record)
 
                     VLOG("Successfully updated local game \(md5) with CloudKit record ID post-upload.")
                 }
@@ -2255,6 +2284,55 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return "Unknown error"
         default:
             return error.localizedDescription
+        }
+    }
+
+    /// Periodically verify that ROMs marked as synced still have CloudKit assets.
+    public func auditCloudAssets(batchSize: Int = 40) async {
+        do {
+            //try await RealmProvider.ensureInitialized()
+            let realm = RomDatabase.sharedInstance.realm
+            let candidates = realm.objects(PVGame.self).filter("cloudRecordID != nil")
+            guard !candidates.isEmpty else { return }
+
+            let sample = Array(candidates.prefix(batchSize)).map { $0.freeze() }
+
+            for frozenGame in sample {
+                if Task.isCancelled { break }
+                guard let recordName = frozenGame.cloudRecordID else { continue }
+                let recordID = CKRecord.ID(recordName: recordName)
+
+                do {
+                    let record = try await fetchRecord(recordID: recordID, includeAssets: true)
+                    let hasAsset = record?[CloudKitSchema.ROMFields.fileData] is CKAsset
+                    await persistAuditResult(for: frozenGame, hasAsset: hasAsset, recordMissing: record == nil)
+                } catch let error as CKError where error.code == .unknownItem {
+                    await persistAuditResult(for: frozenGame, hasAsset: false, recordMissing: true)
+                } catch {
+                    WLOG("CloudKit audit failed for \(recordName): \(error.localizedDescription)")
+                }
+            }
+        } catch {
+            ELOG("Failed to audit CloudKit assets: \(error.localizedDescription)")
+        }
+    }
+
+    private func persistAuditResult(for frozenGame: PVGame, hasAsset: Bool, recordMissing: Bool) async {
+        do {
+            //try await RealmProvider.ensureInitialized()
+            let realm = RomDatabase.sharedInstance.realm
+            try realm.write {
+                guard let liveGame = frozenGame.thaw() else { return }
+                liveGame.hasCloudAssets = hasAsset
+                if recordMissing {
+                    liveGame.cloudRecordID = nil
+                }
+                if recordMissing || !hasAsset {
+                    liveGame.requiresSync = true
+                }
+            }
+        } catch {
+            ELOG("Failed to persist audit result for \(frozenGame.md5Hash): \(error.localizedDescription)")
         }
     }
 }

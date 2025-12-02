@@ -52,9 +52,9 @@ struct GameItemViewCell: View, Equatable {
         let uniqueFiles = Set(allFiles.compactMap { $0.url?.path })
         return uniqueFiles.count
     }
-    
+
     private var shouldShowCloudIndicator: Bool {
-        iCloudSyncEnabled && game.cloudRecordID != nil
+        iCloudSyncEnabled && game.hasCloudAssets
     }
 
     private var glowColor: Color {
@@ -79,7 +79,7 @@ struct GameItemViewCell: View, Equatable {
                         if shouldShowCloudIndicator {
                             CloudSyncIndicatorView(
                                 isDownloaded: game.isDownloaded,
-                                hasCloudRecord: game.cloudRecordID != nil,
+                                    hasCloudAssets: game.hasCloudAssets,
                                 isDownloading: isDownloading,
                                 size: 24
                             )
@@ -240,7 +240,7 @@ private extension GameItemViewCell {
                     .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 1)
             )
     }
-    
+
     /// Check if the game file needs to be synced to iCloud
     func checkSyncStatus() {
         // Check if the game has a file that needs syncing

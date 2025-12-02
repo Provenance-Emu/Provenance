@@ -57,7 +57,8 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
     /// - Parameter game: The game to upload
     /// - Throws: CloudSyncError on failure
     public func uploadGame(_ md5: String) async throws {
-        let realm = try await Realm(queue: nil)
+        //try await RealmProvider.ensureInitialized()
+        let realm = RomDatabase.sharedInstance.realm
         guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
             throw CloudSyncError.invalidData
         }

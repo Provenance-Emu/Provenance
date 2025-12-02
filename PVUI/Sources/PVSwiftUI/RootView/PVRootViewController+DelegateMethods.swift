@@ -12,6 +12,7 @@ import PVPrimitives
 import PVUIBase
 import PVUIKit
 import PVRealm
+import RealmSwift
 import PVLogging
 
 #if canImport(SwiftUI)
@@ -36,12 +37,72 @@ extension PVRootViewController: PVRootDelegate {
         }
     }
 
+    /// Ensure a save state is downloaded locally before attempting to load it
+    private func ensureSaveStateReady(_ saveState: PVSaveState, for game: PVGame) async -> Bool {
+        let fileManager = FileManager.default
+        if let localURL = saveState.file?.url, fileManager.fileExists(atPath: localURL.path) {
+            return true
+        }
+
+        guard let recordID = saveState.cloudRecordID else {
+            ELOG("Save state \(saveState.id) missing cloudRecordID and not present locally.")
+            SceneCoordinator.shared.syncStatusManager.error("Save state not available.")
+            return false
+        }
+
+        let frozenSaveState = saveState.freeze()
+
+        SceneCoordinator.shared.syncStatusManager.show(
+            gameTitle: game.title,
+            statusMessage: "Downloading save state...",
+            onCancel: {
+                SceneCoordinator.shared.syncStatusManager.hide()
+            }
+        )
+
+        do {
+            try await CloudSyncManager.shared.downloadSaveState(for: frozenSaveState)
+
+            SceneCoordinator.shared.syncStatusManager.complete()
+            return true
+        } catch {
+            SceneCoordinator.shared.syncStatusManager.error("Save state download failed.")
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                SceneCoordinator.shared.syncStatusManager.hide()
+            }
+            ELOG("Failed to download save state \(recordID): \(error)")
+            return false
+        }
+    }
+
     public func root_canLoad(_ game: PVGame) async throws {
         try await self.canLoad(game.warmUp())
     }
 
     public func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
-        await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
+        let warmedGame = game.warmUp()
+
+        // Use the SceneCoordinator pipeline for standard launches so we get the sync HUD
+        if core == nil && saveState == nil {
+            await SceneCoordinator.shared.launchGame(warmedGame)
+            return
+        }
+
+        var preparedSaveState = saveState
+        if let saveState = saveState {
+            let saveStateReady = await ensureSaveStateReady(saveState, for: warmedGame)
+            guard saveStateReady else { return }
+
+            // Fetch a fresh copy from Realm to ensure file references are up to date
+            do {
+                preparedSaveState = try await fetchFreshSaveState(withID: saveState.id)
+            } catch {
+                ELOG("Failed to refresh save state \(saveState.id): \(error)")
+            }
+        }
+
+        await self.load(warmedGame, sender: sender, core: core?.warmUp(), saveState: preparedSaveState?.warmUp())
     }
 
     public func root_loadPath(_ path: String, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
@@ -67,8 +128,28 @@ extension PVRootViewController: PVRootDelegate {
                 ELOG("nil game")
                 return
             }
-            await self.load(game.warmUp(), sender: nil, core: nil, saveState: saveState.warmUp())
+            let warmedGame = game.warmUp()
+            var preparedSaveState: PVSaveState? = saveState
+
+            let saveStateReady = await ensureSaveStateReady(saveState, for: warmedGame)
+            guard saveStateReady else {
+                return
+            }
+
+            do {
+                preparedSaveState = try await fetchFreshSaveState(withID: saveState.id)
+            } catch {
+                ELOG("Failed to refresh save state \(saveState.id): \(error)")
+            }
+
+            await self.load(warmedGame, sender: nil, core: nil, saveState: preparedSaveState?.warmUp())
         }
+    }
+
+    private func fetchFreshSaveState(withID id: String) async throws -> PVSaveState? {
+        //try await RealmProvider.ensureInitialized()
+        let realm = RomDatabase.sharedInstance.realm
+        return realm.object(ofType: PVSaveState.self, forPrimaryKey: id)?.freeze()
     }
 
     public func root_updateRecentGames(_ game: PVGame) {

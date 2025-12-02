@@ -30,13 +30,32 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     ///   - directories: Directories to manage
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public override init(container: CKContainer, directories: Set<String> = [
-        "Battery States",
-        "Screenshots",
-//        "RetroArch",
-        "DeltaSkins"
-    ], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+    public override init(
+        container: CKContainer,
+        directories: Set<String> = CloudKitNonDatabaseSyncer.defaultDirectories(),
+        notificationCenter: NotificationCenter = .default,
+        errorHandler: CloudSyncErrorHandler
+    ) {
+        let resolvedDirectories = CloudKitNonDatabaseSyncer.resolveDirectories(directories)
+        super.init(container: container, directories: resolvedDirectories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+    }
+
+    public static func defaultDirectories() -> Set<String> {
+        var defaults: Set<String> = [
+            "Battery States",
+            "Screenshots"
+//            "RetroArch"
+        ]
+        if DeltaSkinSyncSupport.isEnabled {
+            defaults.insert(DeltaSkinSyncSupport.directoryName)
+        }
+        return defaults
+    }
+
+    private static func resolveDirectories(_ directories: Set<String>) -> Set<String> {
+        guard !directories.isEmpty else { return directories }
+        guard !DeltaSkinSyncSupport.isEnabled else { return directories }
+        return Set(directories.filter { $0 != DeltaSkinSyncSupport.directoryName })
     }
 
     /// Get all CloudKit records for files
@@ -102,6 +121,10 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Parameter directory: The directory to get files from
     /// - Returns: Array of file URLs
     public func getAllFiles(in directory: String) async -> [URL] {
+        if directory == DeltaSkinSyncSupport.directoryName && !DeltaSkinSyncSupport.isEnabled {
+            DLOG("DeltaSkin sync is disabled on this platform. Skipping directory scan.")
+            return []
+        }
         DLOG("Getting all files in directory: \(directory)")
         var allFiles: [URL] = []
 
@@ -120,6 +143,12 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                         // Check if it's a regular file (not a directory)
                         var isDirectory: ObjCBool = false
                         if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory), !isDirectory.boolValue {
+                            if directory == DeltaSkinSyncSupport.directoryName {
+                                let ext = fileURL.pathExtension.lowercased()
+                                guard DeltaSkinSyncSupport.allowedExtensions.contains(ext) else {
+                                    continue
+                                }
+                            }
                             DLOG("Found file: \(fileURL.path)")
                             allFiles.append(fileURL)
                         }
@@ -196,6 +225,9 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     ///   - directory: The directory to check in
     /// - Returns: True if the file is downloaded locally
     public func isFileDownloaded(filename: String, in directory: String) async -> Bool {
+        if directory == DeltaSkinSyncSupport.directoryName && !DeltaSkinSyncSupport.isEnabled {
+            return false
+        }
         // Get the documents directory
         let documentsURL = URL.documentsPath
         let directoryURL = documentsURL.appendingPathComponent(directory)
@@ -233,6 +265,11 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Returns: Completable that completes when the sync is done
     public func forceSyncFiles(in directory: String) -> Completable {
         return Completable.create { [weak self] observer in
+            if directory == DeltaSkinSyncSupport.directoryName && !DeltaSkinSyncSupport.isEnabled {
+                DLOG("DeltaSkin sync disabled. Completing without action.")
+                observer(.completed)
+                return Disposables.create()
+            }
             Task {
                 guard let self = self else {
                     observer(.completed)

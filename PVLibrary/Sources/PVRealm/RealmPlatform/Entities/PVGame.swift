@@ -43,6 +43,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     // CloudKit sync properties
     @Persisted public var cloudRecordID: String? // CloudKit record ID for on-demand downloads
     @Persisted public var isDownloaded: Bool = true // Whether the file is downloaded locally
+    @Persisted public var hasCloudAssets: Bool = false // Whether CloudKit has a verified asset
     @Persisted public var fileSize: Int = 0 // File size in bytes
     // CloudKit last sync Date
     @Persisted public var lastCloudSyncDate: Date? = nil

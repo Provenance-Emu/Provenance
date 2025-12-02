@@ -43,8 +43,18 @@ public actor GameSyncValidator {
     /// - Parameter game: The game to validate
     /// - Returns: Validation result indicating readiness or what action is needed
     public func validateGameReady(_ game: PVGame) async -> ValidationResult {
+        let safeGame: PVGame = await MainActor.run {
+            if game.isFrozen {
+                return game
+            } else if game.realm != nil {
+                return game.freeze()
+            } else {
+                return game
+            }
+        }
+
         // 1. Check if file exists locally (handling missing PVFile entries)
-        let localURL = game.file?.url
+        let localURL = safeGame.file?.url
         let fileExists = localURL.map { fileManager.fileExists(atPath: $0.path) } ?? false
 
         // 2. If file exists, verify it's readable
@@ -66,13 +76,13 @@ public actor GameSyncValidator {
         }
 
         // 4. Check if game has cloud record
-        let md5 = game.md5Hash
+        let md5 = safeGame.md5Hash
         guard !md5.isEmpty else {
             return .error("Game missing MD5 hash - cannot sync")
         }
 
         // 5. Try to download the game
-        return await downloadAndValidateGame(game: game, md5: md5)
+        return await downloadAndValidateGame(game: safeGame, md5: md5)
     }
 
     /// Downloads a game and validates it's ready
@@ -82,7 +92,7 @@ public actor GameSyncValidator {
         }
 
         // Check if record exists in cloud
-        let hasCloudRecord = await checkCloudRecordExists(md5: md5, syncer: romsSyncer)
+        let hasCloudRecord = await checkCloudRecordExists(game: game, syncer: romsSyncer)
 
         if !hasCloudRecord {
             // No cloud record - check if we should upload local file (if it was moved/deleted)
@@ -115,13 +125,17 @@ public actor GameSyncValidator {
     }
 
     /// Checks if a cloud record exists for the game
-    private func checkCloudRecordExists(md5: String, syncer: RomsSyncing) async -> Bool {
+    private func checkCloudRecordExists(game: PVGame, syncer: RomsSyncing) async -> Bool {
         guard let cloudKitSyncer = syncer as? CloudKitRomsSyncer else {
             // For non-CloudKit syncers, assume record exists if sync is enabled
             return Defaults[.iCloudSync]
         }
 
-        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
+        if !game.hasCloudAssets {
+            return false
+        }
+
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: game.md5Hash)
         do {
             let record = try await cloudKitSyncer.fetchRecord(recordID: recordID)
             return record != nil
@@ -168,7 +182,8 @@ public actor GameSyncValidator {
             progressCallback?("Uploading to iCloud...")
             // Try to upload if possible
             do {
-                try await cloudSyncManager.uploadROM(for: game)
+                let liveGame = game.thaw() ?? game
+                try await cloudSyncManager.uploadROM(for: liveGame)
                 // Verify file exists after upload attempt
                 return await validateGameReady(game) == .ready
             } catch {

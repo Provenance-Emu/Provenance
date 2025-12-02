@@ -154,7 +154,7 @@ public struct CloudKitDownloadProgressView: View {
         // Monitor active downloads for progress updates
         progressTracker.$activeDownloads
             .map { downloads in
-                downloads.first { $0.md5 == gameMD5 }?.progress ?? 0.0
+                downloads.first { $0.matchesROM(md5: gameMD5) }?.progress ?? 0.0
             }
             .receive(on: DispatchQueue.main)
             .sink { progress in
@@ -165,15 +165,15 @@ public struct CloudKitDownloadProgressView: View {
         // Monitor for completion
         progressTracker.$activeDownloads
             .map { downloads in
-                !downloads.contains { $0.md5 == gameMD5 }
+                !downloads.contains(where: { $0.matchesROM(md5: gameMD5) })
             }
             .filter { $0 } // Only when true (download no longer active)
             .delay(for: 0.5, scheduler: DispatchQueue.main) // Small delay to allow UI update
             .sink { _ in
                 // Check if it completed successfully or failed
-                if progressTracker.failedDownloads.contains(where: { $0.md5 == gameMD5 }) {
+                if progressTracker.failedDownloads.contains(where: { $0.matchesROM(md5: gameMD5) }) {
                     // Failed - show error and call onCancel to dismiss emulator
-                    if let failedDownload = progressTracker.failedDownloads.first(where: { $0.md5 == gameMD5 }) {
+                    if let failedDownload = progressTracker.failedDownloads.first(where: { $0.matchesROM(md5: gameMD5) }) {
                         hasError = true
                         errorMessage = "\(failedDownload.error)"
                         // Don't auto-dismiss on error - let user choose to retry or cancel
@@ -193,9 +193,9 @@ public struct CloudKitDownloadProgressView: View {
             .combineLatest(progressTracker.$activeDownloads)
             .map { queued, active in
                 // Download is cancelled if it's not in queued or active lists and not failed
-                !queued.contains { $0.md5 == gameMD5 } &&
-                !active.contains { $0.md5 == gameMD5 } &&
-                !progressTracker.failedDownloads.contains { $0.md5 == gameMD5 }
+                !queued.contains(where: { $0.matchesROM(md5: gameMD5) }) &&
+                !active.contains(where: { $0.matchesROM(md5: gameMD5) }) &&
+                !progressTracker.failedDownloads.contains(where: { $0.matchesROM(md5: gameMD5) })
             }
             .filter { $0 } // Only when true (cancelled)
             .sink { _ in

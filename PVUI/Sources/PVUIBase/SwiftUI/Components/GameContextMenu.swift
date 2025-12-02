@@ -283,7 +283,7 @@ extension GameContextMenu {
 
                 while !Task.isCancelled {
                     // Check if this game is being downloaded
-                    if let activeDownload = progressTracker.activeDownloads.first(where: { $0.md5 == gameMD5 }) {
+                    if let activeDownload = progressTracker.activeDownloads.first(where: { $0.matchesROM(md5: gameMD5) }) {
                         let progress = activeDownload.progress
                         if progress != lastProgress {
                             let percentage = Int(progress * 100)
@@ -292,7 +292,7 @@ extension GameContextMenu {
                             syncStatusManager.update(statusMessage: "Downloading... \(percentage)% (\(bytesStr) / \(totalStr))")
                             lastProgress = progress
                         }
-                    } else if progressTracker.queuedDownloads.contains(where: { $0.md5 == gameMD5 }) {
+                    } else if progressTracker.queuedDownloads.contains(where: { $0.matchesROM(md5: gameMD5) }) {
                         syncStatusManager.update(statusMessage: "Queued for download...")
                     }
 

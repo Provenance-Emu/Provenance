@@ -20,37 +20,37 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
         lhs.hoverScale == rhs.hoverScale &&
         lhs.glowIntensity == rhs.glowIntensity
     }
-    
+
     @ObservedRealmObject var game: PVGame
     @Default(.showGameTitles) private var showGameTitles
     @Default(.iCloudSync) private var iCloudSyncEnabled
-    
+
     var artwork: SwiftImage?
     var constrainHeight: Bool = false
     var viewType: GameItemViewType
-    
+
     @State private var textMaxWidth: CGFloat = PVRowHeight
     @State private var hoverScale: CGFloat = 1.0
     @State private var glowIntensity: CGFloat = 0.0
     @State private var isVisible: Bool = false
     @State private var isDownloading: Bool = false
-    
+
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     private var discCount: Int {
         let allFiles = game.relatedFiles.toArray()
         let uniqueFiles = Set(allFiles.compactMap { $0.url?.path })
         return uniqueFiles.count
     }
-    
+
     private var shouldShowDiscIndicator: Bool {
         discCount > 1
     }
-    
+
     private var shouldShowCloudIndicator: Bool {
-        iCloudSyncEnabled && game.cloudRecordID != nil
+        iCloudSyncEnabled && game.hasCloudAssets
     }
-    
+
 //    private var textColor: Color {
 //        Color.retroPink
 //    }
@@ -58,15 +58,15 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
         let backgroundColor = themeManager.currentPalette.gameLibraryBackground.swiftUIColor
         return backgroundColor.isDarkColor() ? .white : .black
     }
-    
+
     private var glowColor: Color {
         Color.retroPurple
     }
-    
+
     private var secondaryColor: Color {
         Color.retroBlue
     }
-    
+
     var body: some SwiftUI.View {
         if !game.isInvalidated {
             HStack(alignment: .center, spacing: 16) {
@@ -81,7 +81,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                             .opacity(glowIntensity * 0.3)
                             .frame(width: 60, height: 60)
                     }
-                    
+
                     // Main artwork
                     GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
                         .frame(width: 60, height: 60)
@@ -90,7 +90,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                             if shouldShowCloudIndicator {
                                 CloudSyncIndicatorView(
                                     isDownloaded: game.isDownloaded,
-                                    hasCloudRecord: game.cloudRecordID != nil,
+                                    hasCloudAssets: game.hasCloudAssets,
                                     isDownloading: isDownloading,
                                     size: 20
                                 )
@@ -124,7 +124,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                             .scaleEffect(0.8)
                     }
                 }
-                
+
                 // Game details
                 VStack(alignment: .leading, spacing: 4) {
                     // Title with marquee effect for long titles
@@ -136,7 +136,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                         .foregroundColor(textColor)
                         .shadow(color: glowColor.opacity(0.7), radius: 2, x: 1, y: 1)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     // Game metadata row
                     HStack(spacing: 12) {
                         // System name
@@ -146,7 +146,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                                 .foregroundColor(secondaryColor)
                                 .shadow(color: glowColor.opacity(0.5), radius: 1, x: 0, y: 0)
                         }
-                        
+
                         // Release date
                         if let publishDate = game.publishDate {
                             Text(publishDate)
@@ -154,9 +154,9 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                                 .foregroundColor(Color.retroCyan)
                                 .shadow(color: glowColor.opacity(0.3), radius: 1, x: 0, y: 0)
                         }
-                        
+
                         Spacer()
-                        
+
                         // Rating stars
                         if game.rating > 0 {
                             Text(String(repeating: "⭐️", count: game.rating))
@@ -164,7 +164,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                                 .lineLimit(1)
                         }
                     }
-                    
+
                     // Additional game info row
                     HStack {
                         // Last played date
@@ -174,9 +174,9 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                                 .foregroundColor(Color.retroCyan.opacity(0.8))
                                 .shadow(color: glowColor.opacity(0.3), radius: 1, x: 0, y: 0)
                         }
-                        
+
                         Spacer()
-                        
+
                         // Play count
                         if game.playCount > 0 {
                             Text("\(game.playCount)x")
@@ -194,7 +194,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.retroBlack.opacity(0.6))
-                    
+
                     // Border gradient
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(

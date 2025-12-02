@@ -358,15 +358,21 @@ extension GameLaunchingViewController where Self: UIViewController {
             return
         }
 
-        if saveState != nil {
-            let path = saveState!.file!.url!.path
-            ILOG("Opening with save state at path: \(path)")
+        if let localSaveState = saveState {
+            guard let fileURL = localSaveState.file?.url else {
+                displayAndLogError(
+                    withTitle: "Cannot open save state",
+                    message: "Save state file is missing. Please re-sync or re-create the save state.",
+                    customActions: nil
+                )
+                saveState = nil
+                return
+            }
+            ILOG("Opening with save state at path: \(fileURL.path)")
             do {
-                // TODO: Not sure this works
-                try await downloadFileIfNeeded(saveState!.file!.url!)
+                try await downloadFileIfNeeded(fileURL)
             } catch {
-                ELOG("Save state was not downloaded")
-                // TODO: Re-throw
+                ELOG("Save state was not downloaded: \(error.localizedDescription)")
                 saveState = nil
             }
         }
@@ -435,12 +441,10 @@ extension GameLaunchingViewController where Self: UIViewController {
 
             // If a core is passed in and it's valid for this system, use it.
             if let saveState = saveState {
-                if cores.contains(saveState.core) {
-                    selectedCore = saveState.core
+                if let saveStateCore = saveState.core, cores.contains(saveStateCore) {
+                    selectedCore = saveStateCore
                 } else {
-                    ELOG("Core doesn't match save state system")
-                    displayAndLogError(withTitle: "Cannot open game", message: "Available cores does not match core used to save state.")
-                    return
+                    WLOG("Save state core missing or not available. Falling back to default core.")
                 }
             }
 

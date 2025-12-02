@@ -23,7 +23,7 @@ import PVLogging
 public enum CloudKitSchema {
     /// Flag to track if schema has been initialized
     private static var isSchemaInitialized = false
-    
+
     /// Record types used in the public CloudKit database.
     public enum RecordType: String, CaseIterable {
         case rom = "ROM" // Changed from Game to ROM for clarity, or keep Game if preferred?
@@ -33,11 +33,11 @@ public enum CloudKitSchema {
         case metadata = "Metadata" // For general sync metadata, like last sync tokens
         // Note: Screenshots and other non-DB files use the generic "File" record type with directory filtering
     }
-    
+
     /// Field keys for the ROM record type.
     public struct ROMFields {
         public static let recordType = RecordType.rom.rawValue
-        
+
         // Core Identifiers & File Info
         public static let md5 = "md5" // String, Indexed
         public static let systemIdentifier = "systemIdentifier" // String
@@ -75,46 +75,48 @@ public enum CloudKitSchema {
         public static let originalArtworkURL = "originalArtworkURL" // String? (Remote URL - just sync the value)
         public static let customArtworkURL = "customArtworkURL" // String? (PVMediaCache key)
         public static let customArtworkAsset = "customArtworkAsset" // CKAsset? (The actual cached artwork file)
-        
+
         // Sync Metadata
         public static let lastModifiedDevice = "lastModifiedDevice" // String? (Identifier for device)
         // CloudKit system fields like creationDate, modificationDate are implicit
     }
-    
+
     /// Field keys for the SaveState record type.
     public struct SaveStateFields {
         public static let recordType = RecordType.saveState.rawValue
-        
+
         // Core Fields
         public static let filename = "filename" // String
         public static let directory = "directory" // String (e.g., "BIOS", "Saves", "Cheats")
         public static let systemIdentifier = "systemIdentifier" // String? (Optional, e.g., for BIOS)
         public static let gameID = "gameID" // String (Foreign key to PVGame)
+        public static let coreIdentifier = "coreIdentifier" // String (PVCore.identifier)
+        public static let coreVersion = "coreVersion" // String (Core build/version string)
         public static let fileData = "fileData" // CKAsset (The .svs save state file)
         public static let fileSize = "fileSize" // Int64
-        
+
         // Dates and Sync Metadata
 //        public static let creationDate = "creationDate" // Date
         public static let lastUploadedDate = "lastUploadedDate" // Date?
         public static let lastModifiedDevice = "lastModifiedDevice" // String? (Identifier for device)
-        
+
         // Artwork Fields
         public static let imageAsset = "imageAsset" // CKAsset? (Save state screenshot/artwork)
-        
+
         // Metadata Fields for Orphaned Save State Re-import
         public static let metadataJSON = "metadataJSON" // String? (Serialized SavePackage metadata for re-import)
     }
-    
+
     // Note: Screenshots and other non-database files are handled using the generic "File" record type
     // with directory-based filtering. This approach is simpler and avoids schema complexity.
-    
+
     /// Field keys for the Metadata record type (e.g., for sync tokens).
     public struct MetadataFields {
         public static let recordType = RecordType.metadata.rawValue
-        
+
         // Add relevant fields for metadata if needed
     }
-    
+
     /// Field keys for the BIOS record type.
     public struct BIOSAttributes {
         /// System identifier
@@ -126,31 +128,31 @@ public enum CloudKitSchema {
         /// All BIOS-specific attributes
         public static let all = [systemIdentifier, md5Hash, description]
     }
-    
+
     /// CloudKit indexes to create
     public enum Indexes {
         /// File record indexes
         public enum File {
             /// Directory index
             public static let directory = "directory"
-            
+
             /// System index
             public static let system = "system"
-            
+
             /// Filename index
             public static let filename = "filename"
-            
+
             /// Game ID index
             public static let gameID = "gameID"
-            
+
             /// Save state ID index
             public static let saveStateID = "saveStateID"
-            
+
             /// MD5 hash index
             public static let md5 = "md5"
         }
     }
-    
+
     /// Initialize the CloudKit schema programmatically
     /// This creates the necessary record types and indexes in CloudKit
     /// - Parameter database: The CloudKit database to initialize (usually privateDatabase)
@@ -162,16 +164,16 @@ public enum CloudKitSchema {
             DLOG("CloudKit schema already initialized, skipping")
             return true
         }
-        
+
         do {
             DLOG("Initializing CloudKit schema...")
-            
+
             // Create record types
             try await createRecordTypes(in: database)
-            
+
             // Mark as initialized
             isSchemaInitialized = true
-            
+
             DLOG("CloudKit schema initialized successfully")
             return true
         } catch {
@@ -179,7 +181,7 @@ public enum CloudKitSchema {
             return false
         }
     }
-    
+
     /// Create record types in CloudKit
     /// - Parameter database: The CloudKit database to create record types in
     private static func createRecordTypes(in database: CKDatabase) async throws {
@@ -188,25 +190,25 @@ public enum CloudKitSchema {
             try await createRecordType(recordType.rawValue, in: database)
         }
     }
-    
+
     /// Create a single record type in CloudKit
     /// - Parameters:
     ///   - recordType: The record type to create
     ///   - database: The CloudKit database to create the record type in
     private static func createRecordType(_ recordType: String, in database: CKDatabase) async throws {
         DLOG("Creating/updating record type: \(recordType)")
-        
+
         // Note: CloudKit schema is automatically created when records are saved
         // We don't need to explicitly create test records anymore
         // The schema will be properly initialized when real records are saved
-        
+
         // Just log that we're initializing this record type
         DLOG("Initialized record type: \(recordType)")
-        
+
         // No need to create and delete test records, which can cause clutter
         // CloudKit will create the schema when actual records are saved
     }
-    
+
     /// Centralized record ID generation for consistency across all record types
     public enum RecordIDGenerator {
         /// Generate a record ID for a ROM based on its MD5 hash
@@ -215,7 +217,7 @@ public enum CloudKitSchema {
         public static func romRecordID(md5: String) -> CKRecord.ID {
             return CKRecord.ID(recordName: "rom_\(md5)")
         }
-        
+
         /// Generate a record ID for a save state
         /// - Parameters:
         ///   - gameID: The game ID this save state belongs to
@@ -226,7 +228,7 @@ public enum CloudKitSchema {
             let sanitizedFilename = filename.replacingOccurrences(of: ".", with: "_")
             return CKRecord.ID(recordName: "savestate_\(gameID)_\(sanitizedFilename)")
         }
-        
+
         /// Generate a record ID for a BIOS file
         /// - Parameters:
         ///   - systemID: The system identifier
@@ -235,10 +237,10 @@ public enum CloudKitSchema {
         public static func biosRecordID(systemID: String, md5: String) -> CKRecord.ID {
             return CKRecord.ID(recordName: "bios_\(systemID)_\(md5)")
         }
-        
+
         // Note: Screenshots and other non-database files use the generic fileRecordID method
         // since they are handled as File records with directory filtering
-        
+
         /// Generate a record ID for a generic file
         /// - Parameters:
         ///   - directory: The directory name
@@ -248,7 +250,7 @@ public enum CloudKitSchema {
         public static func fileRecordID(directory: String, filename: String, uniqueID: String) -> CKRecord.ID {
             return CKRecord.ID(recordName: "file_\(directory)_\(uniqueID)")
         }
-        
+
         /// Extract MD5 from a ROM record ID
         /// - Parameter recordID: The CKRecord.ID to extract from
         /// - Returns: The MD5 hash if the record ID is valid, nil otherwise
@@ -257,17 +259,17 @@ public enum CloudKitSchema {
             guard recordName.starts(with: "rom_") else { return nil }
             return String(recordName.dropFirst(4)) // Remove "rom_" prefix
         }
-        
+
         /// Extract game ID and filename from a save state record ID
         /// - Parameter recordID: The CKRecord.ID to extract from
         /// - Returns: A tuple of (gameID, filename) if valid, nil otherwise
         public static func extractFromSaveStateRecordID(_ recordID: CKRecord.ID) -> (gameID: String, filename: String)? {
             let recordName = recordID.recordName
             guard recordName.starts(with: "savestate_") else { return nil }
-            
+
             let components = recordName.dropFirst(10).components(separatedBy: "_") // Remove "savestate_" prefix
             guard components.count >= 2 else { return nil }
-            
+
             let gameID = components[0]
             let filename = components.dropFirst().joined(separator: "_").replacingOccurrences(of: "_", with: ".")
             return (gameID: gameID, filename: filename)

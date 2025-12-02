@@ -10,6 +10,8 @@ import CloudKit
 import Combine
 import PVLogging
 import PVSupport
+import RealmSwift
+import PVRealm
 
 /// Actor-based upload queue for CloudKit ROM uploads to prevent blocking sync operations
 @globalActor
@@ -18,12 +20,11 @@ public actor CloudKitUploadQueueActor {
 
     // MARK: - Types
 
-    /// Upload task representing a ROM upload operation
+    /// Upload task representing a CloudKit upload operation
     public struct UploadTask {
         let id: UUID
-        let md5: String
-        let gameTitle: String
-        let filePath: URL
+        let kind: UploadKind
+        let title: String
         let priority: Priority
         let createdAt: Date
 
@@ -34,6 +35,20 @@ public actor CloudKitUploadQueueActor {
 
             public static func < (lhs: Priority, rhs: Priority) -> Bool {
                 return lhs.rawValue < rhs.rawValue
+            }
+        }
+    }
+
+    public enum UploadKind {
+        case rom(md5: String, filePath: URL)
+        case saveState(id: String)
+
+        var identifier: String {
+            switch self {
+            case .rom(let md5, _):
+                return "rom:\(md5)"
+            case .saveState(let id):
+                return "savestate:\(id)"
             }
         }
     }
@@ -90,9 +105,8 @@ public actor CloudKitUploadQueueActor {
     public func enqueueUpload(md5: String, gameTitle: String, filePath: URL, priority: UploadTask.Priority = .normal) -> UUID {
         let task = UploadTask(
             id: UUID(),
-            md5: md5,
-            gameTitle: gameTitle,
-            filePath: filePath,
+            kind: .rom(md5: md5, filePath: filePath),
+            title: gameTitle,
             priority: priority,
             createdAt: Date()
         )
@@ -116,6 +130,32 @@ public actor CloudKitUploadQueueActor {
         return task.id
     }
 
+    /// Queue a save-state upload with elevated priority.
+    public func enqueueSaveStateUpload(saveStateID: String, gameTitle: String, priority: UploadTask.Priority = .high) -> UUID {
+        let task = UploadTask(
+            id: UUID(),
+            kind: .saveState(id: saveStateID),
+            title: gameTitle,
+            priority: priority,
+            createdAt: Date()
+        )
+
+        uploadQueue.append(task)
+        uploadStatuses[task.id] = .queued
+
+        uploadQueue.sort { task1, task2 in
+            if task1.priority != task2.priority {
+                return task1.priority > task2.priority
+            }
+            return task1.createdAt < task2.createdAt
+        }
+
+        ILOG("📤 Queued save-state upload: \(gameTitle) (ID: \(saveStateID), Priority: \(priority))")
+        updateProgress()
+        startProcessingIfNeeded()
+        return task.id
+    }
+
     /// Get current upload status for a task
     /// - Parameter taskId: Task ID
     /// - Returns: Current upload status
@@ -132,7 +172,7 @@ public actor CloudKitUploadQueueActor {
             activeTask.cancel()
             activeUploads.removeValue(forKey: taskId)
             uploadStatuses[taskId] = .failed(CancellationError())
-            ILOG("🚫 Cancelled active ROM upload: \(taskId)")
+            ILOG("🚫 Cancelled active upload: \(taskId)")
             updateProgress()
             return true
         }
@@ -141,7 +181,7 @@ public actor CloudKitUploadQueueActor {
         if let index = uploadQueue.firstIndex(where: { $0.id == taskId }) {
             let task = uploadQueue.remove(at: index)
             uploadStatuses.removeValue(forKey: taskId)
-            ILOG("🚫 Cancelled queued ROM upload: \(task.gameTitle)")
+            ILOG("🚫 Cancelled queued upload: \(task.title)")
             updateProgress()
             return true
         }
@@ -204,7 +244,12 @@ public actor CloudKitUploadQueueActor {
             uploadStatuses[task.id] = .uploading
             updateProgress()
 
-            ILOG("🚀 Starting ROM upload: \(task.gameTitle) (MD5: \(task.md5))")
+            switch task.kind {
+            case .rom(let md5, _):
+                ILOG("🚀 Starting ROM upload: \(task.title) (MD5: \(md5))")
+            case .saveState(let id):
+                ILOG("🚀 Starting save-state upload: \(task.title) (ID: \(id))")
+            }
 
             let uploadTask = Task {
                 await performUpload(task: task)
@@ -221,19 +266,26 @@ public actor CloudKitUploadQueueActor {
 
     private func performUpload(task: UploadTask) async {
         do {
-            // Get the ROM syncer instance
-            guard let romSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer else {
-                throw CloudSyncError.syncerNotAvailable
+            switch task.kind {
+            case .rom(let md5, let filePath):
+                guard let romSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer else {
+                    throw CloudSyncError.syncerNotAvailable
+                }
+                try await romSyncer.uploadGameFile(md5: md5, filePath: filePath)
+                ILOG("✅ ROM upload completed: \(task.title) (MD5: \(md5))")
+            case .saveState(let saveStateID):
+                //try await RealmProvider.ensureInitialized()
+                let realm = RomDatabase.sharedInstance.realm
+                guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID)?.freeze() else {
+                    throw CloudSyncError.gameNotFound("Save state \(saveStateID) not found locally")
+                }
+                try await CloudSyncManager.shared.uploadSaveState(for: saveState)
+                ILOG("✅ Save-state upload completed: \(task.title) (ID: \(saveStateID))")
             }
-
-            // Perform the actual upload
-            try await romSyncer.uploadGameFile(md5: task.md5, filePath: task.filePath)
 
             // Mark as completed
             uploadStatuses[task.id] = .completed
             activeUploads.removeValue(forKey: task.id)
-
-            ILOG("✅ ROM upload completed: \(task.gameTitle) (MD5: \(task.md5))")
 
         } catch {
             // Mark as failed
@@ -242,7 +294,14 @@ public actor CloudKitUploadQueueActor {
 
             // Log detailed error information
             let errorDetails = formatDetailedError(error)
-            ELOG("❌ ROM upload failed: \(task.gameTitle) (MD5: \(task.md5))")
+            let identifier: String
+            switch task.kind {
+            case .rom(let md5, _):
+                identifier = "MD5: \(md5)"
+            case .saveState(let id):
+                identifier = "ID: \(id)"
+            }
+            ELOG("❌ Upload failed: \(task.title) (\(identifier))")
             ELOG("   Error details: \(errorDetails)")
         }
 

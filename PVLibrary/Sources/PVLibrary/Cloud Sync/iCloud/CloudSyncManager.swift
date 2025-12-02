@@ -107,6 +107,8 @@ public class CloudSyncManager {
 
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
+    private var integrityAuditTask: Task<Void, Never>?
+    private var metadataBootstrapTask: Task<Void, Never>?
 
     /// CloudKit Container
     private let container: CKContainer
@@ -124,6 +126,7 @@ public class CloudSyncManager {
         // Initialize sync providers if iCloud sync is enabled
         if Defaults[.iCloudSync] {
             initializeSyncProviders()
+            startMetadataBootstrap(reason: "startup")
         }
     }
 
@@ -364,6 +367,8 @@ public class CloudSyncManager {
             return
         }
 
+        startMetadataBootstrap(reason: "start-sync")
+
         // Kick off remote changes fetch IMMEDIATELY to populate Realm with PVGame metadata on fresh installs
         updateSyncStatus(.downloading)
         Task.detached { [weak self] in
@@ -457,6 +462,11 @@ public class CloudSyncManager {
             return
         }
 
+        if game.contentless {
+            VLOG("Skipping CloudKit ROM upload for contentless placeholder game: \(game.title)")
+            return
+        }
+
         let md5 = game.md5Hash
 
         // Check file size if it exists
@@ -485,6 +495,7 @@ public class CloudSyncManager {
                 }
 
                 updateSyncStatus(.idle)
+                scheduleIntegrityAudit(reason: "post-rom-upload", delay: 1.0)
                 return
             } catch let error as CloudSyncError {
                 retryCount += 1
@@ -712,6 +723,84 @@ public class CloudSyncManager {
         }
     }
 
+    /// Schedule a background audit to verify CloudKit asset state
+    private func scheduleIntegrityAudit(reason: String, delay: TimeInterval = 2.0) {
+        guard integrityAuditTask == nil else { return }
+        guard Defaults[.iCloudSync],
+              let romSyncer = romsSyncer as? CloudKitRomsSyncer else {
+            return
+        }
+
+        integrityAuditTask = Task.detached(priority: .background) { [weak self] in
+            if delay > 0 {
+                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            }
+            await romSyncer.auditCloudAssets()
+            await MainActor.run {
+                self?.integrityAuditTask = nil
+            }
+        }
+
+        VLOG("Scheduled CloudKit integrity audit (\(reason))")
+    }
+
+    /// Kick off a fast metadata-only bootstrap for ROMs and save states
+    private func startMetadataBootstrap(reason: String) {
+        Task { @MainActor in
+            guard Defaults[.iCloudSync] else { return }
+            guard metadataBootstrapTask == nil else {
+                VLOG("Metadata bootstrap already in progress, skipping (\(reason)).")
+                return
+            }
+
+            metadataBootstrapTask = Task { [weak self] in
+                await self?.performMetadataBootstrap(reason: reason)
+            }
+        }
+    }
+
+    private func performMetadataBootstrap(reason: String) async {
+        defer {
+            Task { @MainActor in
+                self.metadataBootstrapTask = nil
+            }
+        }
+
+        guard Defaults[.iCloudSync] else { return }
+
+        // Capture current syncers
+        let romSyncer = self.romsSyncer as? CloudKitRomsSyncer
+        let saveStatesSyncer = self.saveStatesSyncer as? CloudKitSaveStatesSyncer
+
+        guard romSyncer != nil || saveStatesSyncer != nil else {
+            VLOG("Metadata bootstrap skipped (\(reason)) - no CloudKit syncers available.")
+            return
+        }
+
+        ILOG("Starting CloudKit metadata bootstrap (\(reason))")
+
+        var totalProcessed = 0
+        await withTaskGroup(of: Int.self) { group in
+            if let romSyncer = romSyncer {
+                group.addTask {
+                    await romSyncer.syncMetadataOnly()
+                }
+            }
+
+            if let saveStatesSyncer = saveStatesSyncer {
+                group.addTask {
+                    await saveStatesSyncer.syncMetadataOnly()
+                }
+            }
+
+            for await count in group {
+                totalProcessed += count
+            }
+        }
+
+        ILOG("Metadata bootstrap finished (\(reason)) - processed \(totalProcessed) records.")
+    }
+
     // MARK: - Private Methods
 
     /// Fetch remote changes from CloudKit
@@ -823,13 +912,15 @@ public class CloudSyncManager {
         // Note: We don't store this directly but it's available through the factory
 
         // 4. Initialize Non-Database Syncer (CloudKit only for now)
-        let nonDBSyncDirectories: Set<String> = [
+        var nonDBSyncDirectories: Set<String> = [
             "BIOS",
             "Battery States",
-            "Screenshots",
-//            "RetroArch",
-            "DeltaSkins"
+            "Screenshots"
+//            "RetroArch"
         ]
+        if DeltaSkinSyncSupport.isEnabled {
+            nonDBSyncDirectories.insert(DeltaSkinSyncSupport.directoryName)
+        }
         self.nonDatabaseSyncer = SyncProviderFactory.createNonDatabaseSyncProvider(
             container: container,
             for: nonDBSyncDirectories,
@@ -860,6 +951,8 @@ public class CloudSyncManager {
 
             // Don't immediately set to idle, let startSync manage state
             // updateSyncStatus(.idle)
+
+            startMetadataBootstrap(reason: "providers-initialized")
         }
     }
 
@@ -916,6 +1009,12 @@ public class CloudSyncManager {
                 }
             }
         )
+
+        notificationTokens.append(
+            NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
+                self?.scheduleIntegrityAudit(reason: "app background")
+            }
+        )
     }
 
     /// Set up RxRealm observer for new PVSaveState creation
@@ -953,16 +1052,13 @@ public class CloudSyncManager {
 
                     for saveState in newSaveStates {
                         ILOG("New save state detected: \(saveState.file?.fileName ?? "unknown") for game \(saveState.game.title)")
-
-                        // Upload asynchronously
+                        let frozenSaveState = saveState.freeze()
                         Task {
-                            do {
-                                try await self.uploadSaveState(for: saveState)
-                                ILOG("Successfully uploaded new save state: \(saveState.file?.fileName ?? "unknown")")
-                            } catch {
-                                ELOG("Failed to upload new save state \(saveState.file?.fileName ?? "unknown"): \(error.localizedDescription)")
-                                await self.errorHandler.handle(error: error)
-                            }
+                            await CloudKitUploadQueueActor.shared.enqueueSaveStateUpload(
+                                saveStateID: frozenSaveState.id,
+                                gameTitle: frozenSaveState.game.title,
+                                priority: .high
+                            )
                         }
                     }
                 }, onError: { [weak self] error in
@@ -989,6 +1085,7 @@ public class CloudSyncManager {
             if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {
                 initializeSyncProviders()
             }
+            startMetadataBootstrap(reason: "settings-toggle")
             // Perform account check and potentially start initial sync
             Task { // Wrap async call in Task
                 await self.checkAccountStatusAndSetupIfNeeded() // Add self.
@@ -1106,45 +1203,34 @@ public class CloudSyncManager {
 
         ILOG("Game imported: \(fileName ?? "nil") \(md5 ?? "nil"). Uploading to CloudKit...")
 
-        Task {
-            do {
-                // Find the game by filename (since we don't have MD5 in the notification)
-                // This is a bit inefficient but necessary given the current notification structure
-                let realm = try await Realm(queue: nil)
-
-                if let md5 = md5 {
-                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())  else {
-                        ELOG("Game with MD5 \(md5) not found for upload")
-                        return
-                    }
-
-                    ILOG("Found imported game: \(game.title) (MD5: \(game.md5Hash ?? "N/A")). Uploading to CloudKit...")
-
-
-                    // Upload the game using the existing upload method
-                    try await uploadROM(for: game.freeze())
-
-                    ILOG("Successfully uploaded newly imported game: \(game.title)")
-                } else if let fileName = fileName {
-                    guard let game = realm.objects(PVGame.self).filter("romPath CONTAINS[c] %@", fileName).first else {
-                        ELOG("Game with filename \(fileName) not found for upload")
-                        return
-                    }
-
-                    ILOG("Found imported game: \(game.title) (MD5: \(game.md5Hash ?? "N/A")). Uploading to CloudKit...")
-
-                    // Upload the game using the existing upload method
-                    try await uploadROM(for: game.freeze())
-
-                    ILOG("Successfully uploaded newly imported game: \(game.title)")
+        Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            guard let game = await self.resolveImportedGame(md5: md5, fileName: fileName) else {
+                if let md5 {
+                    ELOG("Game with MD5 \(md5) not found for upload (after waiting)")
+                } else if let fileName {
+                    ELOG("Game with filename \(fileName) not found for upload (after waiting)")
                 } else {
                     ELOG("Missing fileName or md5 in gameAdded notification")
-                    return
                 }
+                return
+            }
+
+            if game.contentless {
+                ILOG("Skipping CloudKit upload for contentless placeholder game: \(game.title)")
+                return
+            }
+
+            let frozenGame = game.freeze()
+            ILOG("Found imported game: \(frozenGame.title) (MD5: \(frozenGame.md5Hash)). Uploading to CloudKit...")
+
+            do {
+                try await self.uploadROM(for: frozenGame)
+                ILOG("Successfully uploaded newly imported game: \(frozenGame.title)")
             } catch {
-                ELOG("Failed to upload newly imported game \(fileName): \(error.localizedDescription)")
-                await errorHandler.handle(error: error)
-                updateSyncStatus(.error(error))
+                ELOG("Failed to upload newly imported game \(frozenGame.title): \(error.localizedDescription)")
+                await self.errorHandler.handle(error: error)
+                self.updateSyncStatus(.error(error))
             }
         }
     }
@@ -1339,6 +1425,78 @@ public class CloudSyncManager {
             ILOG("Marked game \(game.title) (MD5: \(game.md5Hash ?? "N/A")) as needing sync (isDownloaded=false, requiresSync=true)")
         } catch {
             ELOG("Failed to mark game \(game.title) as needing sync: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Imported Game Resolution Helpers
+
+    @MainActor
+    private func resolveImportedGame(md5: String?, fileName: String?, timeout: TimeInterval = 5) async -> PVGame? {
+        if let md5 = md5?.uppercased() {
+            let predicate = NSPredicate(format: "md5Hash == %@", md5)
+            if let game = await waitForGame(matching: predicate, timeout: timeout) {
+                return game
+            }
+        }
+
+        if let fileName = fileName {
+            let predicate = NSPredicate(format: "romPath CONTAINS[c] %@", fileName)
+            if let game = await waitForGame(matching: predicate, timeout: timeout) {
+                return game
+            }
+        }
+
+        return nil
+    }
+
+    @MainActor
+    private func waitForGame(matching predicate: NSPredicate, timeout: TimeInterval) async -> PVGame? {
+        do {
+            //try await RealmProvider.ensureInitialized()
+        } catch {
+            ELOG("Failed to ensure Realm initialization while waiting for game: \(error.localizedDescription)")
+            return nil
+        }
+
+        let realm = RomDatabase.sharedInstance.realm
+        let results = realm.objects(PVGame.self).filter(predicate)
+
+        if let existing = results.first {
+            return existing
+        }
+
+        return await withCheckedContinuation { continuation in
+            var token: NotificationToken?
+            var hasResumed = false
+
+            func finish(with game: PVGame?) {
+                guard !hasResumed else { return }
+                hasResumed = true
+                token?.invalidate()
+                continuation.resume(returning: game)
+            }
+
+            token = results.observe { change in
+                switch change {
+                case .initial(let collection), .update(let collection, _, _, _):
+                    if let game = collection.first {
+                        finish(with: game)
+                    }
+                case .error(let error):
+                    ELOG("Realm observation error while waiting for game: \(error.localizedDescription)")
+                    finish(with: nil)
+                }
+            }
+
+            Task.detached {
+                try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                await MainActor.run {
+                    if !hasResumed {
+                        WLOG("Timed out waiting for ROM to appear in Realm (predicate: \(predicate.predicateFormat))")
+                        finish(with: nil)
+                    }
+                }
+            }
         }
     }
 }

@@ -1048,6 +1048,8 @@ public class CloudKitSyncer: SyncProvider {
         let systemId = systemIdentifier(fromDirectory: system) ?? .Unknown
         let systemIdentifier = systemId.rawValue
 
+        let recordHasAsset = recordHasAssetFlag(record, assetKey: CloudKitSyncer.FileAttributes.fileData)
+
         do {
             // Get the Realm instance
             let realm: Realm = RomDatabase.sharedInstance.realm
@@ -1089,6 +1091,7 @@ public class CloudKitSyncer: SyncProvider {
 
                     // Set download status
                     newGame.isDownloaded = isDownloaded
+                    newGame.hasCloudAssets = recordHasAsset
 
                     // Set the system if we can find it
                     if let systemObj = realm.objects(PVSystem.self).filter("identifier == %@", systemIdentifier).first {
@@ -1109,6 +1112,7 @@ public class CloudKitSyncer: SyncProvider {
                     existingGame.fileSize = Int(fileSize)
                     existingGame.cloudRecordID = recordID
                     existingGame.isDownloaded = isDownloaded
+                    existingGame.hasCloudAssets = recordHasAsset
 
                     // Update ROM path if it's missing or invalid
                     if existingGame.romPath.isEmpty || !existingGame.romPath.contains(systemIdentifier) {
@@ -1621,36 +1625,43 @@ public class CloudKitSyncer: SyncProvider {
     ///   - directory: The base directory name (e.g., "Saves", "BIOS", "com.provenance.snes")
     /// - Returns: The relative path string, or nil if calculation fails
     private func calculateRelativePath(for file: URL, in directory: String) -> String? {
-        // Get the documents directory URL
-        guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            ELOG("Could not get Documents directory URL")
-            return nil
-        }
-
-        // Construct the full path to the directory within Documents
-        let directoryURL = documentsURL.appendingPathComponent(directory)
-
-        // Get the path components for both the directory and the file
-        let directoryComponents = directoryURL.standardized.pathComponents
-        let fileComponents = file.standardized.pathComponents
-
-        // Ensure the file path starts with the directory path
-        guard fileComponents.count > directoryComponents.count,
-              Array(fileComponents.prefix(directoryComponents.count)) == directoryComponents else {
-            WLOG("File path does not start with the expected directory path. File: \(file.path), Directory: \(directoryURL.path)")
-            // Fallback: just return the filename if it's directly inside the directory
-            if file.deletingLastPathComponent().standardized == directoryURL.standardized {
-                 return file.lastPathComponent
+        let candidateRoots: [URL] = {
+            var roots: [URL] = [URL.documentsPath]
+            if URL.cachesPath != URL.documentsPath {
+                roots.append(URL.cachesPath)
             }
-            return nil
+            return roots
+        }()
+
+        let fileComponents = file.standardizedFileURL.pathComponents
+
+        for root in candidateRoots {
+            let directoryURL = root.appendingPathComponent(directory)
+            let directoryComponents = directoryURL.standardizedFileURL.pathComponents
+
+            guard fileComponents.count > directoryComponents.count else {
+                continue
+            }
+
+            if Array(fileComponents.prefix(directoryComponents.count)) == directoryComponents {
+                let relativeComponents = fileComponents.suffix(from: directoryComponents.count)
+                let relativePath = relativeComponents.joined(separator: "/")
+                DLOG("Calculated relative path: \(relativePath) for file: \(file.path) in directory: \(directory) using root \(root.path)")
+                return relativePath
+            }
         }
 
-        // Get the components relative to the directory
-        let relativeComponents = fileComponents.suffix(from: directoryComponents.count)
-        let relativePath = relativeComponents.joined(separator: "/")
+        WLOG("File path does not start with an expected directory path. File: \(file.path), Directory Component: \(directory)")
 
-        DLOG("Calculated relative path: \(relativePath) for file: \(file.path) in directory: \(directory)")
-        return relativePath
+        // Fallback: if the file lives directly inside any candidate directory, just return the filename
+        for root in candidateRoots {
+            let directoryURL = root.appendingPathComponent(directory)
+            if file.deletingLastPathComponent().standardizedFileURL == directoryURL.standardizedFileURL {
+                return file.lastPathComponent
+            }
+        }
+
+        return nil
     }
 
     /// Find a CloudKit record for a local file
@@ -1813,5 +1824,13 @@ public class CloudKitSyncer: SyncProvider {
             // Add the operation to the database
             privateDatabase.add(operation)
         }
+    }
+
+    private func recordHasAssetFlag(_ record: CKRecord, assetKey: String) -> Bool {
+        guard record.allKeys().contains(assetKey) else {
+            // Metadata-only fetches omit the asset key entirely; treat as unknown/assumed true
+            return true
+        }
+        return (record[assetKey] as? CKAsset) != nil
     }
 }

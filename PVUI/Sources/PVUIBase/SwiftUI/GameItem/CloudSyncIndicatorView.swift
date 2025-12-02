@@ -11,21 +11,21 @@ import PVThemes
 
 /// A view that displays the cloud sync status of a game
 public struct CloudSyncIndicatorView: View {
-    
+
     enum CloudStatus {
         case available
         case downloading
         case downloaded
         case none
     }
-    
+
     private let status: CloudStatus
     private let size: CGFloat
-    
+
     @ObservedObject private var themeManager = ThemeManager.shared
-    
-    public init(isDownloaded: Bool, hasCloudRecord: Bool, isDownloading: Bool = false, size: CGFloat = 20) {
-        if !hasCloudRecord {
+
+    public init(isDownloaded: Bool, hasCloudAssets: Bool, isDownloading: Bool = false, size: CGFloat = 20) {
+        if !hasCloudAssets {
             self.status = .none
         } else if isDownloading {
             self.status = .downloading
@@ -34,10 +34,10 @@ public struct CloudSyncIndicatorView: View {
         } else {
             self.status = .available
         }
-        
+
         self.size = size
     }
-    
+
     public var body: some View {
         switch status {
         case .available:
@@ -45,7 +45,7 @@ public struct CloudSyncIndicatorView: View {
                 Circle()
                     .fill(Color.black.opacity(0.7))
                     .frame(width: size, height: size)
-                
+
                 Image(systemName: "icloud.and.arrow.down")
                     .font(.system(size: size * 0.6))
                     .foregroundColor(.retroBlue)
@@ -55,7 +55,7 @@ public struct CloudSyncIndicatorView: View {
                 Circle()
                     .fill(Color.black.opacity(0.7))
                     .frame(width: size, height: size)
-                
+
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .retroPink))
                     .scaleEffect(0.7)
@@ -65,7 +65,7 @@ public struct CloudSyncIndicatorView: View {
                 Circle()
                     .fill(Color.black.opacity(0.7))
                     .frame(width: size, height: size)
-                
+
                 Image(systemName: "checkmark")
                     .font(.system(size: size * 0.6))
                     .foregroundColor(.green)
@@ -78,16 +78,16 @@ public struct CloudSyncIndicatorView: View {
 
 #Preview {
     VStack(spacing: 20) {
-        CloudSyncIndicatorView(isDownloaded: false, hasCloudRecord: true)
+        CloudSyncIndicatorView(isDownloaded: false, hasCloudAssets: true)
             .previewDisplayName("Available")
-        
-        CloudSyncIndicatorView(isDownloaded: false, hasCloudRecord: true, isDownloading: true)
+
+        CloudSyncIndicatorView(isDownloaded: false, hasCloudAssets: true, isDownloading: true)
             .previewDisplayName("Downloading")
-        
-        CloudSyncIndicatorView(isDownloaded: true, hasCloudRecord: true)
+
+        CloudSyncIndicatorView(isDownloaded: true, hasCloudAssets: true)
             .previewDisplayName("Downloaded")
-        
-        CloudSyncIndicatorView(isDownloaded: true, hasCloudRecord: false)
+
+        CloudSyncIndicatorView(isDownloaded: true, hasCloudAssets: false)
             .previewDisplayName("No Cloud Record")
     }
     .padding()

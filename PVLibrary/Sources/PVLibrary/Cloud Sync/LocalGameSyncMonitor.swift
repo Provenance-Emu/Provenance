@@ -49,7 +49,7 @@ public final class LocalGameSyncMonitor {
             let realmInstance = try Realm()
             self.realm = realmInstance // Store the instance
 
-            gamesResults = realmInstance.objects(PVGame.self)
+            gamesResults = realmInstance.objects(PVGame.self).filter("contentless == false")
 
             notificationToken = gamesResults?.observe { [weak self] (changes: RealmCollectionChange) in
                 guard let self = self else { return }
@@ -99,6 +99,10 @@ public final class LocalGameSyncMonitor {
                         continue
                     }
                     let insertedGame = currentResults[index]
+                    if insertedGame.contentless {
+                        VLOG("Skipping CloudKit upload for contentless placeholder game insert: \(insertedGame.title)")
+                        continue
+                    }
                     let md5 = insertedGame.md5Hash.uppercased()
                     Task {
                         do {
@@ -122,6 +126,10 @@ public final class LocalGameSyncMonitor {
                         continue
                     }
                     let modifiedGame = currentResults[index]
+                    if modifiedGame.contentless {
+                        VLOG("Skipping CloudKit upload for contentless placeholder game modification: \(modifiedGame.title)")
+                        continue
+                    }
                     let md5 = modifiedGame.md5Hash
 
                     // Skip if game is marked as not downloaded (likely downloading/syncing)

@@ -966,7 +966,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             var lastProgress: Double = 0
 
             while !Task.isCancelled {
-                if let activeDownload = progressTracker.activeDownloads.first(where: { $0.md5 == gameMD5 }) {
+                if let activeDownload = progressTracker.activeDownloads.first(where: { $0.matchesROM(md5: gameMD5) }) {
                     let progress = activeDownload.progress
                     if progress != lastProgress {
                         let percentage = Int(progress * 100)
@@ -975,7 +975,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                         syncStatusManager.update(statusMessage: "Downloading... \(percentage)% (\(bytesStr) / \(totalStr))")
                         lastProgress = progress
                     }
-                } else if progressTracker.queuedDownloads.contains(where: { $0.md5 == gameMD5 }) {
+                } else if progressTracker.queuedDownloads.contains(where: { $0.matchesROM(md5: gameMD5) }) {
                     syncStatusManager.update(statusMessage: "Queued for download...")
                 }
 
@@ -1003,9 +1003,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             .sink { queued, active, failed in
                 guard !hasResumed else { return }
 
-                let inQueued = queued.contains { $0.md5 == gameMD5 }
-                let inActive = active.contains { $0.md5 == gameMD5 }
-                let hasFailed = failed.contains { $0.md5 == gameMD5 }
+                let inQueued = queued.contains { $0.matchesROM(md5: gameMD5) }
+                let inActive = active.contains { $0.matchesROM(md5: gameMD5) }
+                let hasFailed = failed.contains { $0.matchesROM(md5: gameMD5) }
 
                 if inQueued || inActive { hasStarted = true }
 
@@ -1017,7 +1017,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                         try? await Task.sleep(nanoseconds: 2_000_000_000)
                         await MainActor.run { syncStatusManager.hide() }
                     }
-                    if let failure = failed.first(where: { $0.md5 == gameMD5 }) {
+                    if let failure = failed.first(where: { $0.matchesROM(md5: gameMD5) }) {
                         ELOG("Download failed for \(gameTitle): \(failure.error)")
                         continuation.resume(throwing: failure.error)
                     } else {

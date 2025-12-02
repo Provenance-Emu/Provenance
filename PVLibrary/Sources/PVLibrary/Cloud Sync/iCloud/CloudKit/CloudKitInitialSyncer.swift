@@ -135,7 +135,7 @@ public actor CloudKitInitialSyncer {
     public func isInitialSyncNeeded() async -> Bool {
         DLOG("🔄 [isInitialSyncNeeded] Always allowing initial sync to run - individual sync types will decide if they need to sync")
         return true
-        
+
         // DISABLED: Previous flawed logic that prevented save state sync when other record types existed
         /*
         do {
@@ -223,7 +223,7 @@ public actor CloudKitInitialSyncer {
     @discardableResult
     public func performInitialSync(forceSync: Bool = false) async -> Int {
         DLOG("🚀 [performInitialSync] Starting initial sync (forceSync: \(forceSync))")
-        
+
         // Check if sync is already in progress
         guard !isInitialSyncInProgress else {
             ILOG("⏸️ [performInitialSync] Initial sync already in progress")
@@ -304,12 +304,12 @@ public actor CloudKitInitialSyncer {
                 DLOG("🔄 syncAllSaveStates completed with result: \(result)")
                 return result
             }
-            
+
             DLOG("🔄 Awaiting save state sync task with timeout...")
             saveStateCount = try await withTimeout(seconds: 300) { // 5-minute timeout
                 await saveStateSyncTask.value
             }
-            
+
             progress.saveStatesTotal = saveStateCount
             DLOG("✅ Successfully synced \(saveStateCount) save states")
             totalCount += saveStateCount
@@ -367,7 +367,7 @@ public actor CloudKitInitialSyncer {
             // Extract individual counts for logging
             let batteryStateCount = nonDatabaseFileCounts["Battery States"] ?? 0
             let screenshotCount = nonDatabaseFileCounts["Screenshots"] ?? 0
-            let deltaSkinCount = nonDatabaseFileCounts["DeltaSkins"] ?? 0
+            let deltaSkinCount = DeltaSkinSyncSupport.isEnabled ? (nonDatabaseFileCounts[DeltaSkinSyncSupport.directoryName] ?? 0) : 0
 
             DLOG("Successfully synced \(batteryStateCount) battery states, \(screenshotCount) screenshots, and \(deltaSkinCount) Delta skins")
             totalCount += batteryStateCount + screenshotCount + deltaSkinCount
@@ -398,9 +398,9 @@ public actor CloudKitInitialSyncer {
             // Extract individual counts for logging
             let batteryStateCount = nonDatabaseFileCounts["Battery States"] ?? 0
             let screenshotCount = nonDatabaseFileCounts["Screenshots"] ?? 0
-            let deltaSkinCount = nonDatabaseFileCounts["DeltaSkins"] ?? 0
+            let deltaSkinCount = DeltaSkinSyncSupport.isEnabled ? (nonDatabaseFileCounts[DeltaSkinSyncSupport.directoryName] ?? 0) : 0
 
-            DLOG("""
+            var statusMessage = """
                  Initial CloudKit sync completed successfully.
                  Synced \(totalCount) total records:
                  - \(romCount) ROMs
@@ -408,8 +408,11 @@ public actor CloudKitInitialSyncer {
                  - \(biosCount) BIOS files
                  - \(batteryStateCount) battery state files
                  - \(screenshotCount) screenshot files
-                 - \(deltaSkinCount) Delta skin files
-                 """)
+                 """
+            if DeltaSkinSyncSupport.isEnabled {
+                statusMessage += "\n                 - \(deltaSkinCount) Delta skin files"
+            }
+            DLOG("\(statusMessage)\n                 ")
             await CloudKitSyncAnalytics.shared.recordSuccessfulSync()
         } else {
             // Record partial success
@@ -465,7 +468,8 @@ public actor CloudKitInitialSyncer {
                     // Queue the retry upload instead of blocking
                     if let romSyncer = romsSyncer as? CloudKitRomsSyncer {
                         // Find the game to get file path and title
-                        let realm = try await Realm(queue: nil)
+                        //try await RealmProvider.ensureInitialized()
+                        let realm = RomDatabase.sharedInstance.realm
                         if let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5.uppercased()).first,
                            let romURL = game.file?.url {
                             let taskId = await romSyncer.queueROMUpload(
@@ -485,7 +489,8 @@ public actor CloudKitInitialSyncer {
                     completedRetries.append(index)
 
                 case .saveState(let id):
-                    let realm = try await Realm(queue: nil)
+                    //try await RealmProvider.ensureInitialized()
+                    let realm = RomDatabase.sharedInstance.realm
                     if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: id) {
                         try await saveStatesSyncer.uploadSaveState(for: saveState).toAsync()
                         ILOG("Successfully retried save state upload: \(id)")
@@ -543,9 +548,9 @@ public actor CloudKitInitialSyncer {
         DLOG("Syncing all ROMs to CloudKit...")
 
         do {
-            // Get all ROMs from Realm and convert to array to avoid Realm threading issues
-            let realm = try! await Realm()
-            let realmGames = realm.objects(PVGame.self)
+            //try await RealmProvider.ensureInitialized()
+            let realm = RomDatabase.sharedInstance.realm
+            let realmGames = realm.objects(PVGame.self).filter("contentless == false")
             let unsortedGames = Array(realmGames) // Convert to array to avoid Realm invalidation issues
 
             // Sort games by file size (smallest first) for better reliability
@@ -662,8 +667,8 @@ public actor CloudKitInitialSyncer {
         DLOG("💾 [syncAllSaveStates] saveStatesSyncer type: \(type(of: saveStatesSyncer))")
 
         do {
-            // Get all save states from Realm
-            let realm = try! await Realm()
+            //try await RealmProvider.ensureInitialized()
+            let realm = RomDatabase.sharedInstance.realm
             let saveStates = Array(realm.objects(PVSaveState.self)) // Convert to array to avoid invalidation
 
             DLOG("Found \(saveStates.count) save states in Realm")
@@ -741,7 +746,7 @@ public actor CloudKitInitialSyncer {
 
         do {
             // Get all BIOS files from Realm
-            let realm = try! await Realm()
+            let realm = RomDatabase.sharedInstance.realm
             let biosFiles = Array(realm.objects(PVBIOS.self))
 
             DLOG("Found \(biosFiles.count) BIOS files in Realm")
@@ -776,8 +781,8 @@ public actor CloudKitInitialSyncer {
                 }
 
                 // Get BIOS file path
-                guard let fileName = bios.file?.fileName else {
-                    WLOG("BIOS file has no filename")
+                guard let fileURL = bios.file?.url else {
+                    WLOG("BIOS \(bios.expectedFilename) missing PVFile reference; skipping")
                     continue
                 }
 
@@ -785,13 +790,9 @@ public actor CloudKitInitialSyncer {
                     ELOG("BIOS file has no system")
                     continue
                 }
-                let biosDirectory = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system.identifier)
-
-                let fileURL = biosDirectory.appendingPathComponent(fileName)
-
                 // Check if file exists
                 guard FileManager.default.fileExists(atPath: fileURL.path) else {
-                    WLOG("BIOS file does not exist: \(fileURL.path)")
+                    WLOG("BIOS file does not exist at PVFile URL: \(fileURL.path)")
                     continue
                 }
 
@@ -847,7 +848,7 @@ public actor CloudKitInitialSyncer {
             var progress = await MainActor.run { syncProgressSubject.value }
 
             // Process Battery States
-      
+
             if let batteryStateFiles = allFiles["Battery States"]?.filter({ url in
                 !url.pathDecoded.contains("DolphinData") &&
                 !url.pathDecoded.contains("SaveStates")
@@ -869,9 +870,10 @@ public actor CloudKitInitialSyncer {
             }
 
             // Process DeltaSkins
-            if let deltaSkinFiles = allFiles["DeltaSkins"] {
+            if DeltaSkinSyncSupport.isEnabled,
+               let deltaSkinFiles = allFiles[DeltaSkinSyncSupport.directoryName] {
                 progress.deltaSkinsTotal = deltaSkinFiles.count
-                syncCounts["DeltaSkins"] = await syncFiles(deltaSkinFiles, using: nonDatabaseSyncer, progressUpdater: { completedCount in
+                syncCounts[DeltaSkinSyncSupport.directoryName] = await syncFiles(deltaSkinFiles, using: nonDatabaseSyncer, progressUpdater: { completedCount in
                     progress.deltaSkinsCompleted = completedCount
                     return progress
                 })

@@ -96,28 +96,54 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         }
     }
 
+    /// Represents the source object for a download
+    public enum DownloadKind: Equatable {
+        case rom(md5: String)
+        case saveState(recordID: String)
+
+        public var identifier: String {
+            switch self {
+            case .rom(let md5):
+                return "rom:\(md5)"
+            case .saveState(let recordID):
+                return "savestate:\(recordID)"
+            }
+        }
+
+        public var description: String {
+            switch self {
+            case .rom(let md5):
+                return "ROM (\(md5))"
+            case .saveState(let recordID):
+                return "SaveState (\(recordID))"
+            }
+        }
+    }
+
     /// A queued download waiting to start
     public struct QueuedDownload: Identifiable, Equatable {
         public let id = UUID()
-        public let md5: String
+        public let kind: DownloadKind
         public let title: String
         public let fileSize: Int64
         public let priority: DownloadPriority
         public let systemIdentifier: String
+        public var identifier: String { kind.identifier }
 
         public static func == (lhs: QueuedDownload, rhs: QueuedDownload) -> Bool {
-            lhs.md5 == rhs.md5
+            lhs.kind == rhs.kind
         }
     }
 
     /// An actively downloading item
     public struct ActiveDownload: Identifiable, Equatable {
         public let id = UUID()
-        public let md5: String
+        public let kind: DownloadKind
         public let title: String
         public let fileSize: Int64
         public let systemIdentifier: String
         public var bytesDownloaded: Int64 = 0
+        public var identifier: String { kind.identifier }
         public var progress: Double {
             guard fileSize > 0 else { return 0 }
             return Double(bytesDownloaded) / Double(fileSize)
@@ -125,23 +151,24 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         public let startTime: Date = Date()
 
         public static func == (lhs: ActiveDownload, rhs: ActiveDownload) -> Bool {
-            lhs.md5 == rhs.md5
+            lhs.kind == rhs.kind
         }
     }
 
     /// A failed download that can be retried
     public struct FailedDownload: Identifiable, Equatable {
         public let id = UUID()
-        public let md5: String
+        public let kind: DownloadKind
         public let title: String
         public let fileSize: Int64
         public let systemIdentifier: String
         public let error: CloudSyncError
         public let failureTime: Date = Date()
         public var retryCount: Int = 0
+        public var identifier: String { kind.identifier }
 
         public static func == (lhs: FailedDownload, rhs: FailedDownload) -> Bool {
-            lhs.md5 == rhs.md5
+            lhs.kind == rhs.kind
         }
     }
 
@@ -235,12 +262,12 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
     // MARK: - New: Download Queue Management Methods
 
     /// Add a download to the queue
-    public func queueDownload(md5: String, title: String, fileSize: Int64, systemIdentifier: String, priority: DownloadPriority = .normal) throws {
+    public func queueDownload(kind: DownloadKind, title: String, fileSize: Int64, systemIdentifier: String, priority: DownloadPriority = .normal) throws {
         // Check if already queued, active, or failed
-        guard !queuedDownloads.contains(where: { $0.md5 == md5 }),
-              !activeDownloads.contains(where: { $0.md5 == md5 }),
-              !failedDownloads.contains(where: { $0.md5 == md5 }) else {
-            VLOG("Download for \(md5) already in queue/active/failed")
+        guard !queuedDownloads.contains(where: { $0.kind == kind }),
+              !activeDownloads.contains(where: { $0.kind == kind }),
+              !failedDownloads.contains(where: { $0.kind == kind }) else {
+            VLOG("Download for \(kind.description) already in queue/active/failed")
             return
         }
 
@@ -248,7 +275,7 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         try checkSpaceForDownload(fileSize: fileSize)
 
         let download = QueuedDownload(
-            md5: md5,
+            kind: kind,
             title: title,
             fileSize: fileSize,
             priority: priority,
@@ -263,19 +290,29 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         }
 
         updateSpaceRequirements()
-        ILOG("Queued download: \(title) (\(md5)) - \(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))")
+        ILOG("Queued download: \(title) [\(kind.description)] - \(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))")
+    }
+
+    /// Convenience wrapper for ROM downloads
+    public func queueDownload(md5: String, title: String, fileSize: Int64, systemIdentifier: String, priority: DownloadPriority = .normal) throws {
+        try queueDownload(kind: .rom(md5: md5), title: title, fileSize: fileSize, systemIdentifier: systemIdentifier, priority: priority)
+    }
+
+    /// Convenience wrapper for save-state downloads
+    public func queueSaveStateDownload(recordID: String, title: String, fileSize: Int64, systemIdentifier: String, priority: DownloadPriority = .normal) throws {
+        try queueDownload(kind: .saveState(recordID: recordID), title: title, fileSize: fileSize, systemIdentifier: systemIdentifier, priority: priority)
     }
 
     /// Move a download from queue to active
-    public func startDownload(md5: String) -> QueuedDownload? {
-        guard let index = queuedDownloads.firstIndex(where: { $0.md5 == md5 }) else {
-            WLOG("Cannot start download - \(md5) not found in queue")
+    public func startDownload(kind: DownloadKind) -> QueuedDownload? {
+        guard let index = queuedDownloads.firstIndex(where: { $0.kind == kind }) else {
+            WLOG("Cannot start download - \(kind.description) not found in queue")
             return nil
         }
 
         let queuedDownload = queuedDownloads.remove(at: index)
         let activeDownload = ActiveDownload(
-            md5: queuedDownload.md5,
+            kind: queuedDownload.kind,
             title: queuedDownload.title,
             fileSize: queuedDownload.fileSize,
             systemIdentifier: queuedDownload.systemIdentifier
@@ -285,13 +322,17 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         downloadQueueStatus = .downloading
         updateSpaceRequirements()
 
-        ILOG("Started download: \(queuedDownload.title) (\(md5))")
+        ILOG("Started download: \(queuedDownload.title) [\(kind.description)]")
         return queuedDownload
     }
 
+    public func startDownload(md5: String) -> QueuedDownload? {
+        startDownload(kind: .rom(md5: md5))
+    }
+
     /// Update progress for an active download
-    public func updateDownloadProgress(md5: String, bytesDownloaded: Int64) {
-        guard let index = activeDownloads.firstIndex(where: { $0.md5 == md5 }) else {
+    public func updateDownloadProgress(kind: DownloadKind, bytesDownloaded: Int64) {
+        guard let index = activeDownloads.firstIndex(where: { $0.kind == kind }) else {
             return
         }
 
@@ -309,10 +350,14 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         }
     }
 
+    public func updateDownloadProgress(md5: String, bytesDownloaded: Int64) {
+        updateDownloadProgress(kind: .rom(md5: md5), bytesDownloaded: bytesDownloaded)
+    }
+
     /// Complete a download (success)
-    public func completeDownload(md5: String) {
-        guard let index = activeDownloads.firstIndex(where: { $0.md5 == md5 }) else {
-            WLOG("Cannot complete download - \(md5) not found in active downloads")
+    public func completeDownload(kind: DownloadKind) {
+        guard let index = activeDownloads.firstIndex(where: { $0.kind == kind }) else {
+            WLOG("Cannot complete download - \(kind.description) not found in active downloads")
             return
         }
 
@@ -326,19 +371,23 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
             ILOG("All downloads completed")
         }
 
-        ILOG("Completed download: \(completedDownload.title) (\(md5))")
+        ILOG("Completed download: \(completedDownload.title) [\(kind.description)]")
+    }
+
+    public func completeDownload(md5: String) {
+        completeDownload(kind: .rom(md5: md5))
     }
 
     /// Fail a download
-    public func failDownload(md5: String, error: CloudSyncError) {
-        guard let index = activeDownloads.firstIndex(where: { $0.md5 == md5 }) else {
-            WLOG("Cannot fail download - \(md5) not found in active downloads")
+    public func failDownload(kind: DownloadKind, error: CloudSyncError) {
+        guard let index = activeDownloads.firstIndex(where: { $0.kind == kind }) else {
+            WLOG("Cannot fail download - \(kind.description) not found in active downloads")
             return
         }
 
         let activeDownload = activeDownloads.remove(at: index)
         let failedDownload = FailedDownload(
-            md5: activeDownload.md5,
+            kind: activeDownload.kind,
             title: activeDownload.title,
             fileSize: activeDownload.fileSize,
             systemIdentifier: activeDownload.systemIdentifier,
@@ -353,13 +402,17 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
             downloadQueueStatus = queuedDownloads.isEmpty ? .idle : .error(error)
         }
 
-        ELOG("Failed download: \(activeDownload.title) (\(md5)) - \(error)")
+        ELOG("Failed download: \(activeDownload.title) [\(kind.description)] - \(error)")
+    }
+
+    public func failDownload(md5: String, error: CloudSyncError) {
+        failDownload(kind: .rom(md5: md5), error: error)
     }
 
     /// Retry a failed download
-    public func retryFailedDownload(md5: String) {
-        guard let index = failedDownloads.firstIndex(where: { $0.md5 == md5 }) else {
-            WLOG("Cannot retry download - \(md5) not found in failed downloads")
+    public func retryFailedDownload(kind: DownloadKind) {
+        guard let index = failedDownloads.firstIndex(where: { $0.kind == kind }) else {
+            WLOG("Cannot retry download - \(kind.description) not found in failed downloads")
             return
         }
 
@@ -368,7 +421,7 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
 
         // Add back to queue with high priority for retry
         let queuedDownload = QueuedDownload(
-            md5: failedDownload.md5,
+            kind: failedDownload.kind,
             title: failedDownload.title,
             fileSize: failedDownload.fileSize,
             priority: .high,
@@ -378,7 +431,11 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         queuedDownloads.insert(queuedDownload, at: 0) // High priority goes first
         updateSpaceRequirements()
 
-        ILOG("Retrying download: \(failedDownload.title) (\(md5)) - Attempt \(failedDownload.retryCount)")
+        ILOG("Retrying download: \(failedDownload.title) [\(kind.description)] - Attempt \(failedDownload.retryCount)")
+    }
+
+    public func retryFailedDownload(md5: String) {
+        retryFailedDownload(kind: .rom(md5: md5))
     }
 
     /// Cancel all downloads
@@ -402,10 +459,18 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         ILOG("Resumed download queue")
     }
 
+    public func alreadyQueued(kind: DownloadKind) -> Bool {
+        queuedDownloads.contains { $0.kind == kind } ||
+        activeDownloads.contains { $0.kind == kind } ||
+        failedDownloads.contains { $0.kind == kind }
+    }
+
     public func alreadyQueued(md5: String) -> Bool {
-        queuedDownloads.contains { $0.md5 == md5 } ||
-        activeDownloads.contains { $0.md5 == md5 } ||
-        failedDownloads.contains { $0.md5 == md5 }
+        alreadyQueued(kind: .rom(md5: md5))
+    }
+
+    public func alreadyQueued(saveStateRecordID: String) -> Bool {
+        alreadyQueued(kind: .saveState(recordID: saveStateRecordID))
     }
 
     // MARK: - Space Management
@@ -470,7 +535,7 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
 
     // MARK: - Deferred handling
     public func deferDownload(_ item: QueuedDownload) {
-        if !deferredDownloads.contains(where: { $0.md5 == item.md5 }) {
+        if !deferredDownloads.contains(where: { $0.kind == item.kind }) {
             deferredDownloads.append(item)
         }
     }
@@ -479,5 +544,34 @@ public final class SyncProgressTracker: ObservableObject, Sendable {
         let items = deferredDownloads
         deferredDownloads.removeAll()
         return items
+    }
+}
+
+// MARK: - Download Kind Helpers
+
+public extension SyncProgressTracker.DownloadKind {
+    func matchesROM(md5: String) -> Bool {
+        if case let .rom(candidate) = self {
+            return candidate == md5
+        }
+        return false
+    }
+}
+
+public extension SyncProgressTracker.QueuedDownload {
+    func matchesROM(md5: String) -> Bool {
+        kind.matchesROM(md5: md5)
+    }
+}
+
+public extension SyncProgressTracker.ActiveDownload {
+    func matchesROM(md5: String) -> Bool {
+        kind.matchesROM(md5: md5)
+    }
+}
+
+public extension SyncProgressTracker.FailedDownload {
+    func matchesROM(md5: String) -> Bool {
+        kind.matchesROM(md5: md5)
     }
 }

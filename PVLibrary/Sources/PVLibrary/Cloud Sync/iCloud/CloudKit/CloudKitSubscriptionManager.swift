@@ -307,6 +307,19 @@ public class CloudKitSubscriptionManager {
 
         Task { // Perform async operations in a Task
             switch subscriptionID {
+            case "savestate-changes":
+                if let saveStateSyncer = CloudSyncManager.shared.saveStatesSyncer as? CloudKitSaveStatesSyncer {
+                    do {
+                        try await saveStateSyncer.handleRemoteSaveStateChange(recordID: recordID)
+                        DLOG("Processed SaveState notification via CloudKitSaveStatesSyncer for \(recordID.recordName)")
+                    } catch {
+                        ELOG("Error processing SaveState notification for \(recordID.recordName): \(error)")
+                        await CloudSyncManager.shared.errorHandler.handle(error: error)
+                    }
+                } else {
+                    WLOG("SaveStates Syncer is not CloudKitSaveStatesSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
+                }
+
             case "rom-changes":
                 // Handle ROM changes (using romsSyncer)
                 // Ensure the syncer is the CloudKit specific one before calling its method
@@ -319,19 +332,6 @@ public class CloudKitSubscriptionManager {
                     }
                 } else {
                     WLOG("Roms Syncer is not CloudKitRomsSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
-                }
-
-            case "savestate-changes":
-                if let saveStateSyncer = CloudSyncManager.shared.saveStatesSyncer as? CloudKitSaveStatesSyncer {
-                    do {
-                        try await saveStateSyncer.handleRemoteSaveStateChange(recordID: recordID)
-                        DLOG("Processed SaveState notification via CloudKitSaveStatesSyncer for \(recordID.recordName)")
-                    } catch {
-                        ELOG("Error processing SaveState notification for \(recordID.recordName): \(error)")
-                        await CloudSyncManager.shared.errorHandler.handle(error: error)
-                    }
-                } else {
-                    WLOG("SaveStates Syncer is not CloudKitSaveStatesSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
                 }
 
             case "file-changes", "bios-changes":
