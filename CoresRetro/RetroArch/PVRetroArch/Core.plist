@@ -480,6 +480,7 @@
 				<string>com.provenance.genesis</string>
 				<string>com.provenance.sg1000</string>
 				<string>com.provenance.mastersystem</string>
+				<string>com.provenance.gamegear</string>
 			</array>
 			<key>PVProjectName</key>
 			<string>Genesis Plus GX (Wide) (RetroArch)</string>
