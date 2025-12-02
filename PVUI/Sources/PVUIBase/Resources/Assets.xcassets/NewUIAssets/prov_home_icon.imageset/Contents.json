@@ -7,6 +7,10 @@
     {
       "filename" : "prov_home_icon~iphone.png",
       "idiom" : "iphone"
+    },
+    {
+      "filename" : "prov_home_icon 1.png",
+      "idiom" : "ipad"
     }
   ],
   "info" : {
