@@ -174,6 +174,7 @@ public class AppState: ObservableObject {
     public var sendEventWasSwizzled = false
 
     private let disposeBag = DisposeBag()
+    private let bootWorker = BootWorker()
 
     /// Task for observing changes to mainUIMode
     private var mainUIModeObservationTask: Task<Void, Never>?
@@ -347,7 +348,7 @@ public class AppState: ObservableObject {
         bootupStateManager.transition(to: .initializingDatabase)
         do {
             ILOG("AppState: Calling RomDatabase.initDefaultDatabase()")
-            try await RomDatabase.initDefaultDatabase()
+            try await bootWorker.initializeDatabase()
             ILOG("AppState: Database initialization completed successfully")
             bootupStateManager.transition(to: .databaseInitialized)
             await initializeLibrary()
@@ -361,7 +362,7 @@ public class AppState: ObservableObject {
     private func initializeLibrary() async {
         ILOG("AppState: Initializing library")
         ILOG("AppState: Starting GameImporter.shared.initSystems()")
-        await GameImporter.shared.initSystems()
+        await bootWorker.initializeImporter()
         ILOG("AppState: GameImporter.shared.initSystems() completed")
 
         // Initialize gameLibrary
@@ -379,7 +380,7 @@ public class AppState: ObservableObject {
         ILOG("AppState: LibraryUpdatesController initialized")
 
         ILOG("AppState: Reloading RomDatabase cache")
-        await RomDatabase.reloadCache()
+        await bootWorker.reloadRomCache()
         ILOG("AppState: RomDatabase cache reloaded")
 
         await finalizeBootup()
@@ -416,13 +417,14 @@ public class AppState: ObservableObject {
         }
         #endif
 
-        if PVFeatureFlagsManager.shared.featureStates[.contentlessCores] ?? false {
+        let contentlessEnabled = PVFeatureFlagsManager.shared.featureStates[.contentlessCores] ?? false
+        if contentlessEnabled {
             ILOG("AppState: RomDatabase Loading dummy cores...")
-            try? await RomDatabase.addContentlessCores(overwrite: true)
+            try? await bootWorker.addContentlessCores()
             ILOG("AppState: RomDatabase dummy cores loaded.")
         } else {
             ILOG("AppState: RomDatabase Clearing dummy cores...")
-            try? await RomDatabase.clearContentlessCores()
+            try? await bootWorker.clearContentlessCores()
             ILOG("AppState: RomDatabase dummy cores cleared.")
         }
 
@@ -528,10 +530,33 @@ public class AppState: ObservableObject {
             WLOG("AppState: Unknown scene phase: \(scenePhase)")
         }
     }
+
 }
 
 struct TimeoutError: Error {
     let seconds: TimeInterval
+}
+
+actor BootWorker {
+    func initializeDatabase() async throws {
+        try await RomDatabase.initDefaultDatabase()
+    }
+
+    func initializeImporter() async {
+        await GameImporter.shared.initSystems()
+    }
+
+    func reloadRomCache() async {
+        await RomDatabase.reloadCache()
+    }
+
+    func addContentlessCores() async throws {
+        try await RomDatabase.addContentlessCores(overwrite: true)
+    }
+
+    func clearContentlessCores() async throws {
+        try await RomDatabase.clearContentlessCores()
+    }
 }
 
 #if os(iOS) || os(macOS)

@@ -89,17 +89,31 @@ public final class RealmConfiguration {
             realmURL = appGroupPath.appendingPathComponent(realmFilename, isDirectory: false)
 
             let fm = FileManager.default
-            if fm.fileExists(atPath: nonGroupPath.path) {
+            let groupPathExists = fm.fileExists(atPath: realmURL.path)
+            let nonGroupPathExists = fm.fileExists(atPath: nonGroupPath.path)
+
+            if nonGroupPathExists && !groupPathExists {
+                // Only move non-group database if group path doesn't have one
                 do {
-                    ILOG("Found realm database at non-group path location. Will attempt to move to group path location")
-                    if fm.fileExists(atPath: realmURL.path) {
-                        try fm.removeItem(at: realmURL)
-                    }
+                    ILOG("Found realm database at non-group path location. Moving to group path location.")
                     try fm.moveItem(at: nonGroupPath, to: realmURL)
                     ILOG("Moved old database to group path location.")
                 } catch {
                     ELOG("Failed to move old database to new group path: \(error.localizedDescription)")
                 }
+            } else if nonGroupPathExists && groupPathExists {
+                // Both exist - keep the group path database (it's the real one), delete the non-group one
+                WLOG("Found realm database at BOTH locations. Keeping group path database, removing non-group copy.")
+                do {
+                    try fm.removeItem(at: nonGroupPath)
+                    ILOG("Removed stale non-group database.")
+                } catch {
+                    ELOG("Failed to remove stale non-group database: \(error.localizedDescription)")
+                }
+            } else if groupPathExists {
+                ILOG("Using existing realm database at group path location.")
+            } else {
+                ILOG("No existing realm database found. Will create new one at group path.")
             }
         } else {
             ILOG("AppGroups: Not Supported")
@@ -407,7 +421,6 @@ public final class RomDatabase {
         return _artFileNameToMD5Cache
     }
 
-    @MainActor
     public class func initDefaultDatabase() async throws {
         if !databaseInitialized {
             ILOG("Setting default Realm configuration")
@@ -429,13 +442,14 @@ public final class RomDatabase {
 
             ILOG("Database initialization completed")
             databaseInitialized = true
-            NotificationCenter.default.post(name: .RomDatabaseInitialized, object: nil)
+            await MainActor.run {
+                NotificationCenter.default.post(name: .RomDatabaseInitialized, object: nil)
+            }
         } else {
             ILOG("Database already initialized")
         }
     }
 
-    @MainActor
     private static func createInitialLocalLibrary() async throws {
         ILOG("Creating initial local library")
         let newLibrary = PVLibrary()
@@ -510,10 +524,12 @@ public final class RomDatabase {
         return try RomDatabase()
     }
 
-    public private(set) var realm: Realm
+    public var realm: Realm {
+        try! Realm()
+    }
 
-    private init() throws {
-        realm = try Realm()
+    private init() {
+//        realm = try Realm()
     }
 }
 
@@ -630,7 +646,8 @@ public extension RomDatabase {
     @objc
     func writeTransaction(_ block: () -> Void) throws {
         try autoreleasepool {
-            let realm = Thread.isMainThread ? self.realm : try Realm()
+            // Always use properly configured Realm
+            let realm = Thread.isMainThread ? self.realm : try Realm(configuration: RealmConfiguration.realmConfig)
             if realm.isInWriteTransaction {
                 block()
             } else {
@@ -644,7 +661,7 @@ public extension RomDatabase {
     @objc
     func asyncWriteTransaction(_ block: @escaping () -> Void) {
         //        DispatchQueue.global(qos: .utility).async {
-        guard let realm = Thread.current.realm?.realm ?? (try? Realm()) else {
+        guard let realm = Thread.current.realm?.realm ?? (try? Realm(configuration: RealmConfiguration.realmConfig)) else {
             ELOG("Could not get or create Realm instance")
             return
         }
@@ -722,14 +739,14 @@ public extension RomDatabase {
     }
     func deleteAll() throws {
         Realm.Configuration.defaultConfiguration.deleteRealmIfMigrationNeeded = true
-        let realm = Thread.isMainThread ? self.realm : try Realm()
+        let realm = Thread.isMainThread ? self.realm : try Realm(configuration: RealmConfiguration.realmConfig)
         try realm.write {
             realm.deleteAll()
         }
     }
     func deleteAllData() throws {
         WLOG("!!!deleteAllData Called!!!")
-        let realm = try! Realm()
+        let realm = try Realm(configuration: RealmConfiguration.realmConfig)
         let games = realm.objects(PVGame.self)
         let system = realm.objects(PVSystem.self)
         let core = realm.objects(PVCore.self)
@@ -801,7 +818,7 @@ public extension RomDatabase {
                 try FileManager.default.removeItem(at: biosURL)
                 ILOG("Deleted BIOS \(bios.expectedFilename)\n\(biosURL.path)")
                 // Remove the PVFile from the PVBios
-                let realm = try Realm()
+                let realm = try! Realm()
                 let bios = bios.warmUp()
                 try realm.write {
                     bios.file = nil

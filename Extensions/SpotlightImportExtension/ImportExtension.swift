@@ -125,7 +125,7 @@ class ImportExtension: CSImportExtension {
             
             // Create a new Realm instance directly
 //            let realm = try Realm(configuration: config)
-            let realm = try RomDatabase.sharedInstance.realm
+            let realm = try Realm()
 
             let predicate = NSPredicate(format: "md5Hash == %@", md5Hash)
             let game = realm.objects(PVGame.self).filter(predicate).first
@@ -176,7 +176,7 @@ class ImportExtension: CSImportExtension {
                 
                 // Create a new Realm instance directly
 //                let realm = try Realm(configuration: config)
-                let realm = RomDatabase.sharedInstance.realm
+                let realm = try! Realm()
 
                 let predicate = NSPredicate(format: "md5Hash == %@", potentialMD5)
                 let game = realm.objects(PVGame.self).filter(predicate).first

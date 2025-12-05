@@ -638,51 +638,26 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         isLoadingCloudKitRecords = true
 
         Task {
-            // Create CloudKit container
-            let container = CKContainer.default()
-            let privateDB = container.privateCloudDatabase
-
-            // Get ROM records
-            let romQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
-            let saveStateQuery = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
-            let biosQuery = CKQuery(recordType: CloudKitSchema.RecordType.bios.rawValue, predicate: NSPredicate(value: true))
-            let fileQuery = CKQuery(recordType: CloudKitSchema.RecordType.file.rawValue, predicate: NSPredicate(value: true))
-
             do {
-                // Get ROM records
-                let (romRecords, _) = try await privateDB.records(matching: romQuery, resultsLimit: 1000)
-                let romCount = romRecords.count
+                let database = iCloudConstants.container.privateCloudDatabase
 
-                // Get save state records
-                let (saveStateRecords, _) = try await privateDB.records(matching: saveStateQuery, resultsLimit: 1000)
-                let saveStateCount = saveStateRecords.count
+                async let romCountTask = countRecords(in: database, recordType: CloudKitSchema.RecordType.rom.rawValue)
+                async let saveStateCountTask = countRecords(in: database, recordType: CloudKitSchema.RecordType.saveState.rawValue)
+                async let biosCountTask = countRecords(in: database, recordType: CloudKitSchema.RecordType.bios.rawValue)
+                async let fileRecordsTask = fetchAllRecords(
+                    in: database,
+                    recordType: CloudKitSchema.RecordType.file.rawValue,
+                    desiredKeys: ["directory"]
+                )
 
-                // Get BIOS records
-                let (biosRecords, _) = try await privateDB.records(matching: biosQuery, resultsLimit: 1000)
-                let biosCount = biosRecords.count
+                let (romCount, saveStateCount, biosCount, fileRecords) = try await (
+                    romCountTask,
+                    saveStateCountTask,
+                    biosCountTask,
+                    fileRecordsTask
+                )
 
-                // Get file records and categorize them
-                let (fileRecords, _) = try await privateDB.records(matching: fileQuery, resultsLimit: 1000)
-
-                var batteryStatesCount = 0
-                var screenshotsCount = 0
-                var deltaSkinsCount = 0
-
-                // Process file records to categorize them
-                for (_, result) in fileRecords {
-                    if case .success(let record) = result, let directory = record["directory"] as? String {
-                        switch directory {
-                        case "Battery States":
-                            batteryStatesCount += 1
-                        case "Screenshots":
-                            screenshotsCount += 1
-                        case "DeltaSkins":
-                            deltaSkinsCount += 1
-                        default:
-                            break
-                        }
-                    }
-                }
+                let categorizedFileCounts = categorizeFileRecords(fileRecords)
 
                 // Update record counts on main thread
                 await MainActor.run {
@@ -690,9 +665,9 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                         roms: romCount,
                         saveStates: saveStateCount,
                         bios: biosCount,
-                        batteryStates: batteryStatesCount,
-                        screenshots: screenshotsCount,
-                        deltaSkins: deltaSkinsCount
+                        batteryStates: categorizedFileCounts.batteryStates,
+                        screenshots: categorizedFileCounts.screenshots,
+                        deltaSkins: categorizedFileCounts.deltaSkins
                     )
                     self.isLoadingCloudKitRecords = false
                 }
@@ -704,6 +679,120 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    /// Fetch all records for a given record type, following cursors until completion.
+    private func fetchAllRecords(
+        in database: CKDatabase,
+        recordType: String,
+        desiredKeys: [CKRecord.FieldKey]? = nil
+    ) async throws -> [CKRecord] {
+        var allRecords: [CKRecord] = []
+        var cursor: CKQueryOperation.Cursor?
+
+        repeat {
+            let tupleResult: ([CKRecord.ID: Result<CKRecord, Error>], CKQueryOperation.Cursor?)
+
+            if let existingCursor = cursor {
+                let continuationResult = try await database.records(
+                    continuingMatchFrom: existingCursor,
+                    desiredKeys: desiredKeys,
+                    resultsLimit: CKQueryOperation.maximumResults
+                )
+                tupleResult = (
+                    Dictionary(uniqueKeysWithValues: continuationResult.matchResults),
+                    continuationResult.queryCursor
+                )
+            } else {
+                let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
+                let matchResult = try await database.records(
+                    matching: query,
+                    desiredKeys: desiredKeys,
+                    resultsLimit: CKQueryOperation.maximumResults
+                )
+                tupleResult = (
+                    Dictionary(uniqueKeysWithValues: matchResult.matchResults),
+                    matchResult.queryCursor
+                )
+            }
+
+            for (_, result) in tupleResult.0 {
+                if case let .success(record) = result {
+                    allRecords.append(record)
+                }
+            }
+
+            cursor = tupleResult.1
+        } while cursor != nil
+
+        return allRecords
+    }
+
+    /// Count records for a given type without retaining them in memory.
+    private func countRecords(in database: CKDatabase, recordType: String) async throws -> Int {
+        var count = 0
+        var cursor: CKQueryOperation.Cursor?
+
+        repeat {
+            let tupleResult: ([CKRecord.ID: Result<CKRecord, Error>], CKQueryOperation.Cursor?)
+
+            if let existingCursor = cursor {
+                let continuationResult = try await database.records(
+                    continuingMatchFrom: existingCursor,
+                    desiredKeys: [],
+                    resultsLimit: CKQueryOperation.maximumResults
+                )
+                tupleResult = (
+                    Dictionary(uniqueKeysWithValues: continuationResult.matchResults),
+                    continuationResult.queryCursor
+                )
+            } else {
+                let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
+                let matchResult = try await database.records(
+                    matching: query,
+                    desiredKeys: [],
+                    resultsLimit: CKQueryOperation.maximumResults
+                )
+                tupleResult = (
+                    Dictionary(uniqueKeysWithValues: matchResult.matchResults),
+                    matchResult.queryCursor
+                )
+            }
+
+            for (_, result) in tupleResult.0 {
+                if case .success = result {
+                    count += 1
+                }
+            }
+
+            cursor = tupleResult.1
+        } while cursor != nil
+
+        return count
+    }
+
+    /// Categorize CKRecords from the generic File record type.
+    private func categorizeFileRecords(_ records: [CKRecord]) -> (batteryStates: Int, screenshots: Int, deltaSkins: Int) {
+        var batteryStates = 0
+        var screenshots = 0
+        var deltaSkins = 0
+
+        for record in records {
+            guard let directory = record["directory"] as? String else { continue }
+
+            switch directory {
+            case "Battery States":
+                batteryStates += 1
+            case "Screenshots":
+                screenshots += 1
+            case "DeltaSkins":
+                deltaSkins += 1
+            default:
+                continue
+            }
+        }
+
+        return (batteryStates, screenshots, deltaSkins)
     }
 
     /// Load the last sync date

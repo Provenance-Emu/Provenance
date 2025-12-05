@@ -154,7 +154,7 @@ public struct SpotlightDebugView: View {
                     do {
                         ILOG("Creating mock items from database")
                         // Get games from the database
-                        let realm = RomDatabase.sharedInstance.realm
+                        let realm = try! Realm()
                         let games = realm.objects(PVGame.self)
                         
                         // Create searchable items for each game

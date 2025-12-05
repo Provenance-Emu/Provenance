@@ -545,7 +545,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             .onAppear {
                 // Use system icon
                 Task { @MainActor in
-                    guard let console = RomDatabase.sharedInstance.realm.object(ofType: PVSystem.self, forPrimaryKey: systemID) else {
+                    guard let console = try! Realm().object(ofType: PVSystem.self, forPrimaryKey: systemID) else {
                         ELOG("No system for id: \(systemID)")
                         return
                     }

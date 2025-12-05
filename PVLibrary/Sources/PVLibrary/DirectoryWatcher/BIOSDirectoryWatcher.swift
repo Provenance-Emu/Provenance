@@ -192,7 +192,7 @@ public final class BIOSWatcher: ObservableObject {
     /// Updates a PVBIOS entry with a new file
     @MainActor
     public func updateBIOSEntry(_ bios: PVBIOS, withFileAt fileURL: URL) throws {
-        let realm = try Realm()
+        let realm = RomDatabase.sharedInstance.realm
         try realm.write {
             if let thawedBios = bios.thaw() {
                 let biosFile = PVFile(withURL: fileURL)
@@ -341,13 +341,8 @@ public final class BIOSWatcher: ObservableObject {
     private func filterNewFiles(_ files: [URL]) async -> [URL] {
         // Get realm and BIOS entries on the main thread
         let biosEntries = await MainActor.run { () -> Results<PVBIOS>? in
-            do {
-                let realm = try Realm()
-                return realm.objects(PVBIOS.self).freeze()
-            } catch {
-                ELOG("Failed to open Realm: \(error)")
-                return nil
-            }
+            let realm = RomDatabase.sharedInstance.realm
+            return realm.objects(PVBIOS.self).freeze()
         }
 
         guard let entries = biosEntries else {
@@ -420,7 +415,7 @@ public final class BIOSWatcher: ObservableObject {
                 ILOG("checkBIOSFile: BIOS \(biosEntry.expectedFilename) already correctly attached at \(currentUrl.path)")
                 return (ThreadSafeReference(to: biosEntry), true) // Correctly attached
             }
-            
+
             // BIOS definition exists, but not currently attached to a valid, non-Imports file
             ILOG("checkBIOSFile: BIOS \(biosEntry.expectedFilename) definition exists, but not currently attached to a valid, non-Imports file. Original path provided: \(path.path(percentEncoded: false))")
             return (ThreadSafeReference(to: biosEntry), false)
@@ -449,7 +444,7 @@ public final class BIOSWatcher: ObservableObject {
             ILOG("checkBIOSFile: BIOS for \(path.lastPathComponent) found at \(path.path) (in Imports). Needs to be moved by GameImporter. Returning false.")
             return false // Signal to GameImporter to process/move it.
         }
-        
+
         if isPathInBiosRootFolder {
             // The file is in a BIOS system folder (e.g., user manually placed it there)
             // but it's not yet linked in the DB to this valid path.
@@ -536,7 +531,7 @@ public final class BIOSWatcher: ObservableObject {
         Task {
             // Store the task for potential cancellation
             await fileOperationTasks.insert(task)
-            
+
             // Set up cleanup when task completes
             await Task {
                 await task.value

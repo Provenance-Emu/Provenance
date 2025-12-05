@@ -142,10 +142,10 @@ public class RealmSaveStateDriver: SaveStateDriver {
         do {
             return try Realm(configuration: realmConfiguration)
         } catch {
-            /// If we can't create a Realm with the stored configuration, fall back to the default
+            /// If we can't create a Realm with the stored configuration, fall back to the configured default
             ELOG("Failed to create Realm with stored configuration: \(error.localizedDescription)")
             do {
-                return try Realm()
+                return try Realm(configuration: RealmConfiguration.realmConfig)
             } catch {
                 /// This should never happen in practice, but we need to handle it
                 fatalError("Failed to create Realm: \(error.localizedDescription)")
@@ -550,19 +550,19 @@ public class RealmSaveStateDriver: SaveStateDriver {
     public func updateDescription(saveStateId: String, description: String?) {
         processingQueue.async { [weak self] in
             guard let self = self else { return }
-            
+
             // Get a thread-local Realm instance
             let realm = self.realm()
-            
+
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else { return }
-            
+
             // Only update if the value is actually changing
             guard saveState.userDescription != description else { return }
-            
+
             try? realm.write {
                 saveState.userDescription = description
             }
-            
+
             Task { @MainActor [weak self] in
                 guard let self = self else { return }
                 // Update cache if entry exists
@@ -574,7 +574,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
                     shouldUpdateUI = true
                 }
                 cacheLock.unlock()
-                
+
                 // Update UI on main thread if needed
                 if shouldUpdateUI {
                     // Instead of sending the entire value, update just the affected item
@@ -611,7 +611,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
             // Update cache if entry exists
             Task { @MainActor [weak self] in
                 guard let self = self else { return }
-                
+
                 cacheLock.lock()
                 var shouldUpdateUI = false
                 if var cachedViewModel = viewModelCache[saveStateId] {
@@ -620,7 +620,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
                     shouldUpdateUI = true
                 }
                 cacheLock.unlock()
-                
+
                 // Update UI on main thread if needed
                 if shouldUpdateUI {
                     // Instead of sending the entire value, update just the affected item

@@ -383,7 +383,7 @@ struct HomeView: SwiftUI.View {
         }
         .sheet(item: $continuesManagementState) { state in
             let game = state.game.warmUp()
-            let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
+            let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm
             /// Create the Realm driver
             if let driver = try? RealmSaveStateDriver(realm: realm) {
 

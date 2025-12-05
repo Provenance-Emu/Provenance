@@ -57,8 +57,8 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
     /// - Parameter game: The game to upload
     /// - Throws: CloudSyncError on failure
     public func uploadGame(_ md5: String) async throws {
-        //try await RealmProvider.ensureInitialized()
-        let realm = RomDatabase.sharedInstance.realm
+        try await RealmProvider.ensureInitialized()
+        let realm = try await Realm()
         guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
             throw CloudSyncError.invalidData
         }
@@ -143,7 +143,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             // Use a Realm write transaction to update the game properties
             try RomDatabase.sharedInstance.writeTransaction {
                 // Re-fetch game within the transaction's Realm instance
-                if let gameToUpdate = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
+                if let gameToUpdate = try! Realm().object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
                     gameToUpdate.isDownloaded = true
                     gameToUpdate.lastCloudSyncDate = Date()
                 } else {
@@ -160,7 +160,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             // Use a Realm write transaction to update the game properties
             try? RomDatabase.sharedInstance.writeTransaction {
                 // Re-fetch game within the transaction's Realm instance
-                if let gameToUpdate = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
+                if let gameToUpdate = try! Realm().object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
                     gameToUpdate.isDownloaded = false
                     // We don't have an error state, just mark as not downloaded
                 } else {

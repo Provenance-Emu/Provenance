@@ -132,13 +132,13 @@ public class CloudKitDownloadQueue: ObservableObject {
         // Check space before queuing
         switch kind {
         case .rom(let md5):
-            try await progressTracker.queueDownload(
-                md5: md5,
-                title: title,
-                fileSize: fileSize,
-                systemIdentifier: systemIdentifier,
-                priority: priority
-            )
+        try await progressTracker.queueDownload(
+            md5: md5,
+            title: title,
+            fileSize: fileSize,
+            systemIdentifier: systemIdentifier,
+            priority: priority
+        )
         case .saveState(let recordID):
             try await progressTracker.queueSaveStateDownload(
                 recordID: recordID,
@@ -158,7 +158,7 @@ public class CloudKitDownloadQueue: ObservableObject {
         if onDemand {
             ILOG("On-demand download queued with high priority: \(title)")
             if case .rom(let md5) = kind {
-                await startOnDemandImmediately(md5: md5)
+            await startOnDemandImmediately(md5: md5)
             }
         }
     }
@@ -288,43 +288,43 @@ public class CloudKitDownloadQueue: ObservableObject {
 
         switch download.kind {
         case .rom(let md5):
-            guard let romsSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer else {
-                throw CloudSyncError.missingDependency
-            }
+        guard let romsSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer else {
+            throw CloudSyncError.missingDependency
+        }
 
-            // Create a progress monitoring task that tracks actual CloudKit progress
-            let progressTask = Task { [weak self] in
-                var currentProgress: Double = 0.0
-                let startTime = Date()
+        // Create a progress monitoring task that tracks actual CloudKit progress
+        let progressTask = Task { [weak self] in
+            var currentProgress: Double = 0.0
+            let startTime = Date()
 
-                while !Task.isCancelled && currentProgress < 1.0 {
-                    // Check if download completed externally
-                    let isStillActive = await MainActor.run {
+            while !Task.isCancelled && currentProgress < 1.0 {
+                // Check if download completed externally
+                let isStillActive = await MainActor.run {
                         self?.progressTracker.activeDownloads.contains { $0.kind == download.kind } ?? false
-                    }
-
-                    if !isStillActive {
-                        break
-                    }
-
-                    // Update progress based on time elapsed (better than random)
-                    let timeElapsed = Date().timeIntervalSince(startTime)
-                    let estimatedTotalTime = TimeInterval(download.fileSize) / 1_000_000.0 // Rough estimate: 1MB/sec
-                    currentProgress = min(0.95, timeElapsed / max(estimatedTotalTime, 10.0)) // Cap at 95% until actual completion
-
-                    await MainActor.run {
-                        let estimatedBytes = Int64(Double(download.fileSize) * currentProgress)
-                        self?.progressTracker.updateDownloadProgress(kind: download.kind, bytesDownloaded: estimatedBytes)
-                    }
-
-                    // Update every 2 seconds
-                    try? await Task.sleep(nanoseconds: 2_000_000_000)
                 }
-            }
 
-            defer {
-                progressTask.cancel()
+                if !isStillActive {
+                    break
+                }
+
+                // Update progress based on time elapsed (better than random)
+                let timeElapsed = Date().timeIntervalSince(startTime)
+                let estimatedTotalTime = TimeInterval(download.fileSize) / 1_000_000.0 // Rough estimate: 1MB/sec
+                currentProgress = min(0.95, timeElapsed / max(estimatedTotalTime, 10.0)) // Cap at 95% until actual completion
+
+                await MainActor.run {
+                    let estimatedBytes = Int64(Double(download.fileSize) * currentProgress)
+                        self?.progressTracker.updateDownloadProgress(kind: download.kind, bytesDownloaded: estimatedBytes)
+                }
+
+                // Update every 2 seconds
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
             }
+        }
+
+        defer {
+            progressTask.cancel()
+        }
 
             try await romsSyncer.downloadGame(md5: md5)
 
@@ -337,20 +337,19 @@ public class CloudKitDownloadQueue: ObservableObject {
                 throw CloudSyncError.missingDependency
             }
 
-            //try await RealmProvider.ensureInitialized()
-            let realm = RomDatabase.sharedInstance.realm
-            let saveState = realm.objects(PVSaveState.self)
-                .filter("cloudRecordID == %@", recordID)
-                .first ?? realm.object(ofType: PVSaveState.self, forPrimaryKey: recordID)
-
-            guard let saveState else {
-                throw CloudSyncError.genericError("Save state not found for recordID \(recordID)")
+            let frozenSaveState = try? await RealmContext.withRealm { realm -> PVSaveState? in
+                let state = realm.objects(PVSaveState.self)
+                    .filter("cloudRecordID == %@", recordID)
+                    .first ?? realm.object(ofType: PVSaveState.self, forPrimaryKey: recordID)
+                return state?.freeze()
             }
 
-            let frozen = saveState.freeze()
-            try await saveStateSyncer.downloadSaveState(for: frozen).toAsync()
+            guard let saveState = frozenSaveState else {
+                throw CloudSyncError.genericError("Save state not found for recordID \(recordID)")
+            }
+            try await saveStateSyncer.downloadSaveState(for: saveState).toAsync()
 
-            await MainActor.run {
+        await MainActor.run {
                 self.progressTracker.updateDownloadProgress(kind: download.kind, bytesDownloaded: download.fileSize)
             }
         }

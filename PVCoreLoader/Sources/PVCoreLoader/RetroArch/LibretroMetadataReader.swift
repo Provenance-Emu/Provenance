@@ -1,5 +1,6 @@
 import Foundation
 import PVLogging
+import PVSupport
 
 #if canImport(Darwin)
 import Darwin
@@ -18,6 +19,11 @@ enum LibretroMetadataReader {
         #if !canImport(Darwin)
         return nil
         #else
+        let forceMetadata = ProcessInfo.processInfo.environment["PV_FORCE_RETRO_METADATA"] == "1"
+        if DebuggerDetector.isAttached && !forceMetadata {
+            DLOG("RetroArch metadata: Skipping metadata load for \(identifier) because debugger is attached")
+            return nil
+        }
         ILOG("RetroArch metadata: Loading metadata for core \(identifier)")
         cacheLock.lock()
         if let cached = cache[identifier] {

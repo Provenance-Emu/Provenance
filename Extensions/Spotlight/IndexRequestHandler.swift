@@ -243,7 +243,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 // let config = RealmConfiguration.realmConfig
                 
                 // Create a new Realm instance directly
-                let realm = try RomDatabase.sharedInstance.realm
+                let realm = try Realm()
                 let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
                 
                 if let game = game, let artworkURL = game.pathOfCachedImage {

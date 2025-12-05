@@ -43,24 +43,35 @@ public final class LocalGameSyncMonitor {
         }
 
         VLOG("Starting Realm observation for PVGame...")
-        do {
-            // Create a Realm instance specifically for this monitor's observation
-            // Assumes default Realm configuration is appropriate.
-            let realmInstance = try Realm()
-            self.realm = realmInstance // Store the instance
-
-            gamesResults = realmInstance.objects(PVGame.self).filter("contentless == false")
-
-            notificationToken = gamesResults?.observe { [weak self] (changes: RealmCollectionChange) in
-                guard let self = self else { return }
-                self.handleRealmChanges(changes)
+        Task { [weak self] in
+            guard let self = self else { return }
+            do {
+                try await RealmProvider.ensureInitialized()
+            } catch {
+                ELOG("Failed to initialize Realm for LocalGameSyncMonitor: \(error.localizedDescription)")
+                return
             }
-            ILOG("Successfully started Realm observation for PVGame.")
-        } catch {
-            ELOG("Failed to start Realm observation: \(error)")
-            // Handle error appropriately - perhaps retry?
-            stopMonitoring() // Ensure partial setup is cleaned up
+            await self.beginMonitoring()
         }
+    }
+
+    @MainActor
+    private func beginMonitoring() {
+        guard notificationToken == nil else {
+            WLOG("Monitoring already started.")
+            return
+        }
+
+        let realmInstance = try! Realm()
+        self.realm = realmInstance
+
+        gamesResults = realmInstance.objects(PVGame.self).filter("contentless == false")
+
+        notificationToken = gamesResults?.observe { [weak self] (changes: RealmCollectionChange) in
+            guard let self = self else { return }
+            self.handleRealmChanges(changes)
+        }
+        ILOG("Successfully started Realm observation for PVGame.")
     }
 
     /// Stops observing Realm changes.

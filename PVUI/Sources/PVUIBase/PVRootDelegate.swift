@@ -48,33 +48,28 @@ public extension PVRootDelegate {
     public func root_openSaveState(_ saveStateId: String) async {
         // Use Task to explicitly run on the main actor
         await MainActor.run {
-            do {
-                let realm = try Realm()
+            let realm = RomDatabase.sharedInstance.realm
 
-                // Find the save state
-                guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else {
-                    showMessage("Failed to load Save State with id: \(saveStateId)", title: "Failed to Load Save State")
-                    return
-                }
+            // Find the save state
+            guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateId) else {
+                showMessage("Failed to load Save State with id: \(saveStateId)", title: "Failed to Load Save State")
+                return
+            }
 
-                // Get references to the objects we need
-                let game = saveState.game
+            // Get references to the objects we need
+            let game = saveState.game
 
-                // Create frozen copies that can be safely passed across thread boundaries
-                let frozenSaveState = saveState.freeze()
+            // Create frozen copies that can be safely passed across thread boundaries
+            let frozenSaveState = saveState.freeze()
 
-                // Now we can safely pass the frozen objects
-                // We need to dismiss any presented sheets first, then load the save state
-                Task { @MainActor in
-                    // First, dismiss any presented sheets
-                    await dismissPresentedViews()
+            // Now we can safely pass the frozen objects
+            // We need to dismiss any presented sheets first, then load the save state
+            Task { @MainActor in
+                // First, dismiss any presented sheets
+                await dismissPresentedViews()
 
-                    // Then load the save state
-                    await root_load(frozenSaveState.game, sender: nil, core: nil, saveState: frozenSaveState)
-                }
-            } catch {
-                ELOG("Error accessing Realm: \(error.localizedDescription)")
-                showMessage("Failed to access database: \(error.localizedDescription)", title: "Database Error")
+                // Then load the save state
+                await root_load(frozenSaveState.game, sender: nil, core: nil, saveState: frozenSaveState)
             }
         }
     }
@@ -83,29 +78,24 @@ public extension PVRootDelegate {
     public func root_loadGame(byMD5Hash md5: String) async {
         // Use Task to explicitly run on the main actor
         await MainActor.run {
-            do {
-                let realm = try Realm()
+            let realm = RomDatabase.sharedInstance.realm
 
-                // Find the game
-                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
-                    showMessage("Failed to load game with MD5: \(md5)", title: "Failed to Load Game")
-                    return
-                }
+            // Find the game
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                showMessage("Failed to load game with MD5: \(md5)", title: "Failed to Load Game")
+                return
+            }
 
-                // Create a frozen copy that can be safely passed across thread boundaries
-                let frozenGame = game.freeze()
+            // Create a frozen copy that can be safely passed across thread boundaries
+            let frozenGame = game.freeze()
 
-                // Now we can safely pass the frozen object
-                Task { @MainActor in
-                    // First, dismiss any presented sheets
-                    await dismissPresentedViews()
+            // Now we can safely pass the frozen object
+            Task { @MainActor in
+                // First, dismiss any presented sheets
+                await dismissPresentedViews()
 
-                    // Then load the game
-                    await root_load(frozenGame, sender: nil, core: nil, saveState: nil)
-                }
-            } catch {
-                ELOG("Error accessing Realm: \(error.localizedDescription)")
-                showMessage("Failed to access database: \(error.localizedDescription)", title: "Database Error")
+                // Then load the game
+                await root_load(frozenGame, sender: nil, core: nil, saveState: nil)
             }
         }
     }

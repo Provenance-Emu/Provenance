@@ -344,16 +344,18 @@ public class CloudSyncManager {
     /// - Returns: Async function completes when initial sync is done (or immediately if not needed/disabled)
     public func startSync() async {
         guard Defaults[.iCloudSync] else {
-            DLOG("iCloud sync disabled, skipping startSync.")
+            DLOG("[SYNC] iCloud sync disabled, skipping startSync.")
             updateSyncStatus(.disabled)
             return
         }
 
         // Check if sync is allowed based on current conditions
         guard await shouldAllowSync() else {
-            DLOG("Sync not allowed due to current conditions (network, power, etc.)")
+            DLOG("[SYNC] Sync not allowed due to current conditions (network, power, etc.)")
             return
         }
+
+        ILOG("[SYNC] Starting CloudKit sync...")
 
         // Initialize sync providers if needed
         if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {
@@ -723,7 +725,7 @@ public class CloudSyncManager {
         }
     }
 
-    /// Schedule a background audit to verify CloudKit asset state
+    /// Schedule a background audit to verify CloudKit asset state and record integrity
     private func scheduleIntegrityAudit(reason: String, delay: TimeInterval = 2.0) {
         guard integrityAuditTask == nil else { return }
         guard Defaults[.iCloudSync],
@@ -735,13 +737,36 @@ public class CloudSyncManager {
             if delay > 0 {
                 try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
             }
+
+            // First, audit assets (quick check for missing files)
             await romSyncer.auditCloudAssets()
+
+            // Then, audit record integrity (check for incomplete metadata)
+            // Only run occasionally to avoid excessive API calls
+            if Bool.random() || reason.contains("manual") {
+                await romSyncer.auditAndRepairIncompleteRecords()
+            }
+
             await MainActor.run {
                 self?.integrityAuditTask = nil
             }
         }
 
         VLOG("Scheduled CloudKit integrity audit (\(reason))")
+    }
+
+    /// Manually trigger a full integrity audit including record repair
+    public func runFullIntegrityAudit() async {
+        guard Defaults[.iCloudSync],
+              let romSyncer = romsSyncer as? CloudKitRomsSyncer else {
+            WLOG("[SYNC] Cannot run audit - sync disabled or no ROM syncer")
+            return
+        }
+
+        ILOG("[SYNC] Starting manual full integrity audit...")
+        await romSyncer.auditCloudAssets()
+        await romSyncer.auditAndRepairIncompleteRecords()
+        ILOG("[SYNC] Manual full integrity audit complete")
     }
 
     /// Kick off a fast metadata-only bootstrap for ROMs and save states
@@ -777,7 +802,7 @@ public class CloudSyncManager {
             return
         }
 
-        ILOG("Starting CloudKit metadata bootstrap (\(reason))")
+        ILOG("[SYNC] Starting CloudKit metadata bootstrap (\(reason))")
 
         var totalProcessed = 0
         await withTaskGroup(of: Int.self) { group in
@@ -798,7 +823,7 @@ public class CloudSyncManager {
             }
         }
 
-        ILOG("Metadata bootstrap finished (\(reason)) - processed \(totalProcessed) records.")
+        ILOG("[SYNC] Metadata bootstrap finished (\(reason)) - processed \(totalProcessed) records.")
     }
 
     // MARK: - Private Methods
@@ -1019,61 +1044,62 @@ public class CloudSyncManager {
 
     /// Set up RxRealm observer for new PVSaveState creation
     private func setupSaveStateObserver() {
-        do {
-            let realm = try Realm()
-
-            // Observe all PVSaveState objects for insertions
-            Observable.collection(from: realm.objects(PVSaveState.self))
-                .distinctUntilChanged()
-                .scan(([] as [PVSaveState], [] as [PVSaveState])) { (previous: ([PVSaveState], [PVSaveState]), current: Results<PVSaveState>) -> ([PVSaveState], [PVSaveState]) in
-                    return (previous.1, Array(current))
-                }
-                .filter { (previous, current) in
-                    // Only proceed if we have a previous state (skip initial emission)
-                    return !previous.isEmpty
-                }
-                .map { (previous, current) -> [PVSaveState] in
-                    // Find newly added save states
-                    let previousIDs = Set(previous.map { $0.id })
-                    return current.filter { !previousIDs.contains($0.id) }
-                }
-                .filter { newSaveStates in
-                    // Only proceed if there are actually new save states
-                    return !newSaveStates.isEmpty
-                }
-                .subscribe(onNext: { [weak self] newSaveStates in
-                    guard let self = self else { return }
-
-                    // Only upload if iCloud sync is enabled
-                    guard Defaults[.iCloudSync] else {
-                        DLOG("iCloud sync disabled, skipping automatic save state upload")
-                        return
-                    }
-
-                    for saveState in newSaveStates {
-                        ILOG("New save state detected: \(saveState.file?.fileName ?? "unknown") for game \(saveState.game.title)")
-                        let frozenSaveState = saveState.freeze()
-                        Task {
-                            await CloudKitUploadQueueActor.shared.enqueueSaveStateUpload(
-                                saveStateID: frozenSaveState.id,
-                                gameTitle: frozenSaveState.game.title,
-                                priority: .high
-                            )
-                        }
-                    }
-                }, onError: { [weak self] error in
-                    ELOG("Error in save state observer: \(error.localizedDescription)")
-                    Task {
-                        await self?.errorHandler.handle(error: error)
-                    }
-                })
-                .disposed(by: disposeBag)
-
-            DLOG("RxRealm save state observer setup complete")
-
-        } catch {
-            ELOG("Failed to setup save state observer: \(error.localizedDescription)")
+        Task { [weak self] in
+            guard let self = self else { return }
+            do {
+                try await RealmProvider.ensureInitialized()
+            } catch {
+                ELOG("Failed to initialize Realm for save state observer: \(error.localizedDescription)")
+                return
+            }
+            await self.beginSaveStateObservation()
         }
+    }
+
+    @MainActor
+    private func beginSaveStateObservation() {
+        let realm = try! Realm()
+
+        Observable.collection(from: realm.objects(PVSaveState.self))
+            .distinctUntilChanged()
+            .scan(([] as [PVSaveState], [] as [PVSaveState])) { (previous: ([PVSaveState], [PVSaveState]), current: Results<PVSaveState>) -> ([PVSaveState], [PVSaveState]) in
+                return (previous.1, Array(current))
+            }
+            .filter { (previous, _) in
+                return !previous.isEmpty
+            }
+            .map { (previous, current) -> [PVSaveState] in
+                let previousIDs = Set(previous.map { $0.id })
+                return current.filter { !previousIDs.contains($0.id) }
+            }
+            .filter { !$0.isEmpty }
+            .subscribe(onNext: { [weak self] newSaveStates in
+                guard let self = self else { return }
+                guard Defaults[.iCloudSync] else {
+                    DLOG("iCloud sync disabled, skipping automatic save state upload")
+                    return
+                }
+
+                for saveState in newSaveStates {
+                    ILOG("New save state detected: \(saveState.file?.fileName ?? "unknown") for game \(saveState.game.title)")
+                    let frozenSaveState = saveState.freeze()
+                    Task {
+                        await CloudKitUploadQueueActor.shared.enqueueSaveStateUpload(
+                            saveStateID: frozenSaveState.id,
+                            gameTitle: frozenSaveState.game.title,
+                            priority: .high
+                        )
+                    }
+                }
+            }, onError: { [weak self] error in
+                ELOG("Error in save state observer: \(error.localizedDescription)")
+                Task {
+                    await self?.errorHandler.handle(error: error)
+                }
+            })
+            .disposed(by: disposeBag)
+
+        DLOG("RxRealm save state observer setup complete")
     }
 
     /// Handles changes to the iCloud sync setting
@@ -1290,30 +1316,37 @@ public class CloudSyncManager {
         var markedGamesCount = 0
 
         do {
-//            let realm = await try Realm()
-            let database = RomDatabase.sharedInstance
+            // Filter out contentless games (virtual entries for systems that boot without ROMs)
+            let frozenGames: [PVGame]
+            do {
+                frozenGames = try await RealmContext.withRealm { realm in
+                    Array(realm.objects(PVGame.self)
+                        .filter("contentless == false")
+                        .map { $0.freeze() })
+                }
+            } catch {
+                ELOG("[SYNC] Failed to fetch games for missing file check: \(error.localizedDescription)")
+                return
+            }
+            DLOG("Checking \(frozenGames.count) games for missing files (excluding contentless)")
 
-            // Get all games from database
-            let games = database.allGames //realm.objects(PVGame.self)
-            DLOG("Checking \(games.count) games for missing files")
-
-            // Process in batches to avoid excessive memory usage
             let batchSize = 50
-            let totalGames = games.count
+            let totalGames = frozenGames.count
+            let mainRealm = RomDatabase.sharedInstance.realm
 
             for batchStart in stride(from: 0, to: totalGames, by: batchSize) {
                 let batchEnd = min(batchStart + batchSize, totalGames)
-                let batch = Array(games[batchStart..<batchEnd])
+                let batch = Array(frozenGames[batchStart..<batchEnd])
 
-                for game in batch {
+                for frozenGame in batch {
+                    let game = frozenGame
                     // Skip games that are already marked as not downloaded unless forced
                     if !force && !game.isDownloaded {
                         continue
                     }
 
                     // Check if the file exists locally
-                    var threadSafeGame = game.freeze()
-                    let fileExists = await checkIfGameFileExists(threadSafeGame)
+                    let fileExists = await checkIfGameFileExists(game)
 
                     // Check if a CloudKit record exists for this game
                     var recordExists = false
@@ -1326,7 +1359,7 @@ public class CloudSyncManager {
                     // OR if the game is marked as downloaded but the file is missing
                     // THEN mark it for sync
                     if (!fileExists && recordExists) || (game.isDownloaded && !fileExists) {
-                        await markGameForSync(game: threadSafeGame, realm: database.realm)
+                        await markGameForSync(game: game, realm: mainRealm)
                         markedGamesCount += 1
                     }
                     // If no CloudKit record exists but we have a local file, mark for upload
@@ -1451,13 +1484,6 @@ public class CloudSyncManager {
 
     @MainActor
     private func waitForGame(matching predicate: NSPredicate, timeout: TimeInterval) async -> PVGame? {
-        do {
-            //try await RealmProvider.ensureInitialized()
-        } catch {
-            ELOG("Failed to ensure Realm initialization while waiting for game: \(error.localizedDescription)")
-            return nil
-        }
-
         let realm = RomDatabase.sharedInstance.realm
         let results = realm.objects(PVGame.self).filter(predicate)
 

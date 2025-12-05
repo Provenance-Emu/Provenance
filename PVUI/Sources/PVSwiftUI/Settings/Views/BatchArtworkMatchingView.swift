@@ -19,35 +19,35 @@ import PVUIBase
 /// View for batch matching artwork to games without artwork
 public struct BatchArtworkMatchingView: View {
     // MARK: - Properties
-    
+
     // State for filtering and processing
     @State private var includeGamesWithOriginalArtwork = false
     @State private var isLoading = false
     @State private var processingGames = false
     @State private var searchProgress: Double = 0
     @State private var errorMessage: String?
-    
+
     // Game and artwork data
     @State private var gamesNeedingArtwork: [PVGame] = []
     @State private var artworkResults: [String: ArtworkMetadata] = [:]
     @State private var selectedArtworks: Set<String> = []
-    
+
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
-    
+
     // MARK: - Body
-    
+
     public var body: some View {
         ZStack {
             // RetroWave background
             Color.black.edgesIgnoringSafeArea(.all)
-            
+
             // Grid background
             RetroGridForSettings()
                 .edgesIgnoringSafeArea(.all)
                 .opacity(0.5)
-            
+
             // Main content
             VStack(spacing: 16) {
                 // Title with retrowave styling
@@ -57,15 +57,15 @@ public struct BatchArtworkMatchingView: View {
                     .padding(.top, 20)
                     .padding(.bottom, 10)
                     .shadow(color: .retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-                
+
                 // Filter controls
                 filterControls
                     .padding(.horizontal)
-                
+
                 // Action buttons
                 actionButtons
                     .padding(.horizontal)
-                
+
                 // Content area
                 if isLoading {
                     loadingView
@@ -76,7 +76,7 @@ public struct BatchArtworkMatchingView: View {
                 } else {
                     gamesList
                 }
-                
+
                 // Bottom action bar
                 if !selectedArtworks.isEmpty {
                     selectionActionBar
@@ -93,7 +93,7 @@ public struct BatchArtworkMatchingView: View {
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 0.9
             }
-            
+
             // Load games on first appearance
             await loadGamesNeedingArtwork()
         }
@@ -108,9 +108,9 @@ public struct BatchArtworkMatchingView: View {
             }
         }
     }
-    
+
     // MARK: - UI Components
-    
+
     /// Filter controls for the view
     private var filterControls: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -120,7 +120,7 @@ public struct BatchArtworkMatchingView: View {
                 .foregroundColor(.retroPurple)
                 .shadow(color: .retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 .padding(.bottom, 4)
-            
+
             // Include games with original artwork toggle
             Toggle(isOn: $includeGamesWithOriginalArtwork) {
                 Text("Include games with original artwork")
@@ -134,7 +134,7 @@ public struct BatchArtworkMatchingView: View {
                     await loadGamesNeedingArtwork()
                 }
             }
-            
+
             // Game count
             Text("\(gamesNeedingArtwork.count) games need artwork")
                 .font(.system(size: 14))
@@ -158,7 +158,7 @@ public struct BatchArtworkMatchingView: View {
                 )
         )
     }
-    
+
     /// Action buttons for the view
     private var actionButtons: some View {
         HStack(spacing: 20) {
@@ -193,7 +193,7 @@ public struct BatchArtworkMatchingView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .disabled(isLoading || processingGames || gamesNeedingArtwork.isEmpty)
-            
+
             // Refresh button
             Button(action: {
                 Task {
@@ -227,50 +227,50 @@ public struct BatchArtworkMatchingView: View {
             .disabled(isLoading || processingGames)
         }
     }
-    
+
     /// Loading view shown during initial load
     private var loadingView: some View {
         VStack(spacing: 20) {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .retroPink))
                 .scaleEffect(1.5)
-            
+
             Text("Loading games...")
                 .font(.headline)
                 .foregroundColor(.retroPink)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     /// Processing view shown during artwork search
     private var processingView: some View {
         VStack(spacing: 20) {
             ProgressView(value: searchProgress)
                 .progressViewStyle(LinearProgressViewStyle(tint: .retroPink))
                 .frame(width: 200)
-            
+
             Text("Searching for artwork: \(Int(searchProgress * 100))%")
                 .font(.headline)
                 .foregroundColor(.retroPink)
-            
+
             Text("\(artworkResults.count) matches found so far")
                 .font(.subheadline)
                 .foregroundColor(.retroBlue)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     /// Empty state view when no games need artwork
     private var emptyStateView: some View {
         VStack(spacing: 20) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 60))
                 .foregroundColor(.retroBlue)
-            
+
             Text("All games have artwork!")
                 .font(.headline)
                 .foregroundColor(.retroPink)
-            
+
             Text("Try including games with original artwork to find better matches")
                 .font(.subheadline)
                 .foregroundColor(.gray)
@@ -279,7 +279,7 @@ public struct BatchArtworkMatchingView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     /// List of games needing artwork
     private var gamesList: some View {
         ScrollView {
@@ -297,16 +297,16 @@ public struct BatchArtworkMatchingView: View {
             .padding(.vertical)
         }
     }
-    
+
     /// Bottom action bar for selected items
     private var selectionActionBar: some View {
         HStack {
             Text("\(selectedArtworks.count) selected")
                 .foregroundColor(.white)
                 .padding(.leading)
-            
+
             Spacer()
-            
+
             Button(action: {
                 selectedArtworks.removeAll()
             }) {
@@ -314,7 +314,7 @@ public struct BatchArtworkMatchingView: View {
                     .foregroundColor(.retroBlue)
             }
             .padding(.horizontal)
-            
+
             Button(action: {
                 Task {
                     await applySelectedArtwork()
@@ -340,41 +340,29 @@ public struct BatchArtworkMatchingView: View {
         .padding(.vertical, 12)
         .background(Color.black.opacity(0.8))
     }
-    
+
     // MARK: - Methods
-    
+
     /// Load games that need artwork
     private func loadGamesNeedingArtwork() async {
         isLoading = true
         defer { isLoading = false }
-        
+
         do {
-            // Get all games from the database
-            let realm = RomDatabase.sharedInstance.realm
-            
-            // Build query based on filter settings
-            var predicates: [NSPredicate] = []
-            
-            if includeGamesWithOriginalArtwork {
-                // Include games that don't have custom artwork
-                predicates.append(NSPredicate(format: "customArtworkURL == ''"))
-            } else {
-                // Only include games that don't have any artwork
-                predicates.append(NSPredicate(format: "customArtworkURL == '' AND originalArtworkURL == ''"))
+            let frozenGames = try await RealmContext.withRealm { realm -> [PVGame] in
+                var predicates: [NSPredicate] = []
+                if includeGamesWithOriginalArtwork {
+                    predicates.append(NSPredicate(format: "customArtworkURL == ''"))
+                } else {
+                    predicates.append(NSPredicate(format: "customArtworkURL == '' AND originalArtworkURL == ''"))
+                }
+                let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+                let results = realm.objects(PVGame.self).filter(predicate)
+                return results.map { $0.freeze() }
             }
-            
-            // Combine predicates
-            let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-            
-            // Get games matching our criteria
-            let results = realm.objects(PVGame.self).filter(predicate)
-            
-            // Convert to array of frozen objects for thread safety
-            gamesNeedingArtwork = results.map { $0.freeze() }
-            
+
+            gamesNeedingArtwork = frozenGames
             ILOG("Found \(gamesNeedingArtwork.count) games needing artwork")
-            
-            // Clear previous results
             artworkResults.removeAll()
             selectedArtworks.removeAll()
         } catch {
@@ -382,72 +370,72 @@ public struct BatchArtworkMatchingView: View {
             errorMessage = "Error loading games: \(error.localizedDescription)"
         }
     }
-    
+
     /// Find artwork for all games in the list
     private func findArtworkForGames() async {
         guard !gamesNeedingArtwork.isEmpty else { return }
-        
+
         processingGames = true
         searchProgress = 0.0
         artworkResults.removeAll()
         selectedArtworks.removeAll()
-        
+
         do {
             // Process games in batches to avoid overwhelming the system
             let totalGames = gamesNeedingArtwork.count
-            
+
             for (index, game) in gamesNeedingArtwork.enumerated() {
                 // Update progress
                 searchProgress = Double(index) / Double(totalGames)
-                
+
                 // Skip games without an MD5 hash
                 let md5 = game.md5Hash
                 guard !md5.isEmpty else { continue }
-                
+
                 // Clean the game title for search
                 let searchTitle = game.title.cleanedForSearch()
                 DLOG("Searching for artwork for '\(game.title)' using cleaned title: '\(searchTitle)'")
-                
+
                 // Try to find artwork with the full cleaned title
                 if let results = try await searchWithFallback(gameTitle: searchTitle, systemID: game.systemIdentifier),
                     let firstResult = results.first {
                     // Store the first result
                     artworkResults[md5] = firstResult
-                    
+
                     // Automatically select this result
                     selectedArtworks.insert(md5)
                     DLOG("Found artwork for '\(game.title)' at \(firstResult.url)")
                 }
-                
+
                 // Small delay to avoid hammering the API
                 try await Task.sleep(nanoseconds: 100_000_000)  // 0.1 second
             }
-            
+
             // Complete progress
             searchProgress = 1.0
-            
+
             // Log results
             ILOG("Found artwork for \(artworkResults.count) out of \(totalGames) games")
         } catch {
             ELOG("Error searching for artwork: \(error)")
             errorMessage = "Error searching for artwork: \(error.localizedDescription)"
         }
-        
+
         processingGames = false
     }
-    
+
     /// Toggle selection for a game
     private func toggleSelection(for game: PVGame) {
         let md5 = game.md5Hash
         guard !md5.isEmpty else { return }
-        
+
         if selectedArtworks.contains(md5) {
             selectedArtworks.remove(md5)
         } else {
             selectedArtworks.insert(md5)
         }
     }
-    
+
     /// Search for artwork with fallback to fewer words if initial search fails
     private func searchWithFallback(gameTitle: String, systemID: String) async throws -> [ArtworkMetadata]? {
         // First try with the full cleaned title
@@ -458,16 +446,16 @@ public struct BatchArtworkMatchingView: View {
         ), !results.isEmpty {
             return results
         }
-        
+
         // Count words in the title
         let words = gameTitle.components(separatedBy: .whitespacesAndNewlines)
             .filter { !$0.isEmpty }
-        
+
         // If we have more than 3 words, try with just the first 3
         if words.count > 3 {
             let shortenedTitle = gameTitle.firstNWords(3)
             DLOG("No results found with full title. Trying with first 3 words: '\(shortenedTitle)'")
-            
+
             if let results = try await PVLookup.shared.searchArtwork(
                 byGameName: shortenedTitle,
                 systemID: SystemIdentifier(rawValue: systemID),
@@ -476,7 +464,7 @@ public struct BatchArtworkMatchingView: View {
                 return results
             }
         }
-        
+
         // This is probably excessive
         //        // If we have more than 2 words, try with just the first 2
         //        if words.count > 2 {
@@ -505,80 +493,62 @@ public struct BatchArtworkMatchingView: View {
         //                return results
         //            }
         //        }
-        
+
         // No results found with any approach
         DLOG("No artwork found for '\(gameTitle)' after trying multiple word combinations")
         return nil
     }
-    
+
     /// Apply selected artwork to games
     private func applySelectedArtwork() async {
         isLoading = true
         defer { isLoading = false }
-        
+
         do {
-            // Get a writable Realm instance
-            let realm = RomDatabase.sharedInstance.realm
-            
-            // Track successful updates
             var successCount = 0
-            
-            // Process each selected game
+
             for md5 in selectedArtworks {
-                // Get the artwork result
                 guard let artwork = artworkResults[md5] else { continue }
-                
-                // Find the game in the database
-                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
-                
-                // Download the artwork
+
                 do {
                     let (data, _) = try await URLSession.shared.data(from: artwork.url)
-                    
+
 #if os(macOS)
-                    if let image = NSImage(data: data) {
-                        // Generate a unique ID for this artwork
-                        let uniqueID = UUID().uuidString
-                        let key = "artwork_\(md5)_\(uniqueID)"
-                        
-                        // Write the image to the media cache
-                        let localURL = try PVMediaCache.writeImage(toDisk: image, withKey: key)
-                        
-                        // Update the game in a write transaction
+                    guard let image = NSImage(data: data) else { continue }
+#else
+                    guard let image = UIImage(data: data) else { continue }
+#endif
+
+                    let uniqueID = UUID().uuidString
+                    let key = "artwork_\(md5)_\(uniqueID)"
+                    let localURL = try PVMediaCache.writeImage(toDisk: image, withKey: key)
+
+                    let applyResult = try await RealmContext.withRealm { realm -> Bool in
+                        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                            return false
+                        }
                         try realm.write {
+#if os(macOS)
                             let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                             game.customArtworkURL = key
                             game.customArtworkFile = file
-                        }
-                        
-                        successCount += 1
-                    }
 #else
-                    if let image = UIImage(data: data) {
-                        // Generate a unique ID for this artwork
-                        let uniqueID = UUID().uuidString
-                        let key = "artwork_\(md5)_\(uniqueID)"
-                        
-                        // Write the image to the media cache
-                        let localURL = try PVMediaCache.writeImage(toDisk: image, withKey: key)
-                        
-                        // Update the game in a write transaction
-                        try realm.write {
                             game.customArtworkURL = key
+#endif
                         }
-                        
+                        return true
+                    }
+
+                    if applyResult {
                         successCount += 1
                     }
-#endif
                 } catch {
-                    ELOG("Error downloading artwork for game \(game.title): \(error)")
+                    let title = gamesNeedingArtwork.first(where: { $0.md5Hash == md5 })?.title ?? md5
+                    ELOG("Error updating artwork for game \(title): \(error)")
                 }
             }
-            
-            // Log results
+
             ILOG("Successfully applied artwork to \(successCount) games")
-            
-            // Reload the list to reflect changes
             await loadGamesNeedingArtwork()
         } catch {
             ELOG("Error applying artwork: \(error)")
@@ -595,11 +565,11 @@ struct GameArtworkRow: View {
     let artworkResult: ArtworkMetadata?
     let isSelected: Bool
     let onToggleSelection: () -> Void
-    
+
     @State private var artworkImage: Image?
     @State private var isLoading = false
     @State private var isHovered = false
-    
+
     var body: some View {
         HStack(spacing: 16) {
             // Selection checkbox
@@ -611,22 +581,22 @@ struct GameArtworkRow: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            
+
             // Game info
             VStack(alignment: .leading, spacing: 4) {
                 Text(game.title)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.white)
-                
+
                 if let systemName = game.system?.name {
                     Text(systemName)
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                 }
             }
-            
+
             Spacer()
-            
+
             // Artwork preview
             Group {
                 if let artworkResult = artworkResult {
@@ -681,15 +651,15 @@ struct GameArtworkRow: View {
         }
 #endif
     }
-    
+
     /// Load artwork image from URL
     private func loadArtwork(from url: URL) {
         isLoading = true
-        
+
         Task {
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
-                
+
 #if os(macOS)
                 if let nsImage = NSImage(data: data) {
                     await MainActor.run {
@@ -722,11 +692,11 @@ extension String {
     func cleanedForSearch() -> String {
         var cleaned = self
         let originalCleaned = cleaned
-        
+
         // Remove PAL/NTSC indicators
         cleaned = cleaned.replacingOccurrences(of: "\\bPAL\\b", with: "", options: [.regularExpression, .caseInsensitive])
         cleaned = cleaned.replacingOccurrences(of: "\\bNTSC\\b", with: "", options: [.regularExpression, .caseInsensitive])
-        
+
         // Remove text in brackets: [], (), {}
         let bracketPatterns = ["\\[.*?\\]", "\\(.*?\\)", "\\{.*?\\}"]
         for pattern in bracketPatterns {
@@ -734,20 +704,20 @@ extension String {
                 cleaned = regex.stringByReplacingMatches(in: cleaned, options: [], range: NSRange(location: 0, length: cleaned.utf16.count), withTemplate: " ")
             }
         }
-        
+
         // Handle leading numbers with dash (e.g., "234324 - SomeGame" -> "SomeGame")
         if let regex = try? NSRegularExpression(pattern: "^\\d+\\s*-\\s*", options: []) {
             cleaned = regex.stringByReplacingMatches(in: cleaned, options: [], range: NSRange(location: 0, length: cleaned.utf16.count), withTemplate: "")
         }
-        
+
         // Replace special characters with spaces, but preserve word-joining dashes
         // First, protect word-joining dashes by replacing them with a placeholder
         let wordJoiningDashPattern = "[a-zA-Z]-[a-zA-Z]"
         var protectedDashes: [String: String] = [:]
-        
+
         if let regex = try? NSRegularExpression(pattern: wordJoiningDashPattern, options: []) {
             let matches = regex.matches(in: cleaned, options: [], range: NSRange(location: 0, length: cleaned.utf16.count))
-            
+
             for match in matches.reversed() { // Process in reverse to avoid offset issues
                 if let range = Range(match.range, in: cleaned) {
                     let dashText = String(cleaned[range])
@@ -757,27 +727,27 @@ extension String {
                 }
             }
         }
-        
+
         // Replace special characters with spaces
         let specialChars = [",", ";", "'", "`", "-", "+", "_", "~"]
         for char in specialChars {
             cleaned = cleaned.replacingOccurrences(of: char, with: " ")
         }
-        
+
         // Restore protected dashes
         for (placeholder, original) in protectedDashes {
             cleaned = cleaned.replacingOccurrences(of: placeholder, with: original)
         }
-        
+
         // Remove extra spaces
         cleaned = cleaned.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-        
+
         // Trim whitespace
         cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         // Handle "vs." and similar abbreviations
         cleaned = cleaned.replacingOccurrences(of: "vs\\.", with: "vs", options: .regularExpression)
-        
+
         // If cleaning resulted in an empty string, use the original with just brackets removed
         if cleaned.isEmpty {
             // Just remove bracket contents without replacing the entire match
@@ -791,19 +761,19 @@ extension String {
             bracketsRemoved = bracketsRemoved.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
             return bracketsRemoved.trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        
+
         return cleaned
     }
-    
+
     /// Get first N words from a string
     func firstNWords(_ n: Int) -> String {
         let words = self.components(separatedBy: .whitespacesAndNewlines)
             .filter { !$0.isEmpty }
-        
+
         if words.count <= n {
             return self
         }
-        
+
         return words.prefix(n).joined(separator: " ")
     }
 }

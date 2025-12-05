@@ -124,10 +124,15 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         } else {
             // Check if this is a duplicate by MD5 hash
             if let md5 = queueItem.md5?.uppercased() {
-                let realm = RomDatabase.sharedInstance.realm
-                let gamesWithSameMD5 = realm.objects(PVGame.self).filter("md5Hash == %@", md5)
+                let matchingGame: PVGame? = try? await RealmContext.withRealm { realm in
+                    realm.objects(PVGame.self)
+                        .filter("md5Hash == %@", md5)
+                        .first?
+                        .freeze()
+                }
 
-                if let existingGameWithSameMD5 = gamesWithSameMD5.first, targetSystem.rawValue == existingGameWithSameMD5.systemIdentifier {
+                if let existingGameWithSameMD5 = matchingGame,
+                   targetSystem.rawValue == existingGameWithSameMD5.systemIdentifier {
                     ILOG("Found existing game with same MD5 hash: \(existingGameWithSameMD5.title), updating relative path")
                     await saveRelativePath(existingGameWithSameMD5, partialPath: partialPath, file: queueItem.url)
                     return
@@ -154,7 +159,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     /// Imports a ROM to the database
 //    @MainActor
-    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system: SystemIdentifier, relatedFiles: [URL]?) async throws {
+    internal func importToDatabaseROM(forItem queueItem: ImportQueueItem, system systemID: SystemIdentifier, relatedFiles: [URL]?) async throws {
 
         guard let destinationUrl = queueItem.destinationUrl else {
             //how did we get here, throw?
@@ -165,36 +170,43 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let filename = queueItem.url.lastPathComponent
         let filenameSansExtension = queueItem.url.deletingPathExtension().lastPathComponent
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
-        let destinationDir = (system.rawValue as NSString)
-        let partialPath: String = (system.rawValue as NSString).appendingPathComponent(filename)
+        let destinationDir = (systemID.rawValue as NSString)
+        let partialPath: String = (systemID.rawValue as NSString).appendingPathComponent(filename)
 
         DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
 
-        guard let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.rawValue) else {
-            throw GameImporterError.noSystemMatched
+        // Fetch system data on main thread to get related file info
+        let (files, name) = try await RealmContext.withRealm { realm -> ([URL], String) in
+            guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: systemID.rawValue) else {
+                throw GameImporterError.noSystemMatched
+            }
+
+            let filesCache = RomDatabase.getFileSystemROMCache(for: system)
+            let files = Array(filesCache.keys)
+            let name = RomDatabase.altName(queueItem.url, systemIdentifier: systemID)
+
+            return (files, name)
         }
 
-        // Extract system identifier immediately to avoid Realm thread issues
-        let systemIdentifierString = system.identifier
-
-        let file = PVFile(withURL: destinationUrl) //, relativeRoot: .iCloud)
-        let game = PVGame(withFile: file, system: system)
+        // Create game as unmanaged object - system will be linked in saveGame
+        let file = PVFile(withURL: destinationUrl)
+        let game = PVGame()
+        game.file = file
+        game.systemIdentifier = systemID.rawValue
         game.romPath = partialPath
         game.title = title
         game.requiresSync = true
-        var relatedPVFiles = [PVFile]()
-        let files = RomDatabase.getFileSystemROMCache(for: system).keys
-        let name = RomDatabase.altName(queueItem.url, systemIdentifier: system.identifier)
 
         DLOG("Searching for related files with name: \(name) among \(files.count) cached files")
 
         // Optimize: Use synchronous processing instead of asyncForEach to avoid hang
         // and reduce logging overhead for better performance
+        var relatedPVFiles = [PVFile]()
         let startTime = Date()
         var matchedCount = 0
 
         for url in files {
-            let relativeName = RomDatabase.altName(url, systemIdentifier: system.identifier)
+            let relativeName = RomDatabase.altName(url, systemIdentifier: systemID)
             if relativeName == name {
                 matchedCount += 1
                 relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
@@ -227,24 +239,23 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         game.relatedFiles.append(objectsIn: relatedPVFiles)
         game.md5Hash = md5
 
+        // Capture all game properties BEFORE finishUpdateOrImport (which adds game to Realm)
+        // After that, game becomes managed and can't be accessed from background threads
+        let gameID = game.id
+        let gameTitle = game.title ?? "Unknown"
+        let gameRomPath = game.romPath
+        let gameMd5Hash = game.md5Hash
+        let needsArtwork = game.originalArtworkFile == nil && game.originalArtworkURL.isEmpty
+
         DLOG("About to call finishUpdateOrImport for game: \(partialPath)")
         let finishStartTime = Date()
         try await finishUpdateOrImport(ofGame: game)
         let finishDuration = Date().timeIntervalSince(finishStartTime)
         DLOG("Completed finishUpdateOrImport for game: \(partialPath) in \(String(format: "%.2f", finishDuration))s")
 
-        queueItem.gameDatabaseID = game.id
-
-        // Queue game for enhanced artwork search if it doesn't have artwork
-        // This runs at lower priority after primary import completes
-        // Extract all Realm property values BEFORE await to avoid thread issues
-        let needsArtwork = game.originalArtworkFile == nil && game.originalArtworkURL.isEmpty
-        let gameID = game.id
-        let gameTitle = game.title ?? "Unknown"
-        let gameRomPath = game.romPath
-        let gameMd5Hash = game.md5Hash
-        // Use the system identifier we extracted earlier (before any await calls)
-        let systemIdentifier = systemIdentifierString
+        queueItem.gameDatabaseID = gameID
+        // Use the system identifier from the parameter
+        let systemIdentifier = systemID.rawValue
 
         if needsArtwork {
             // Extract filename from romPath (format: "systemID/filename" or just "filename")
@@ -304,24 +315,30 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             let lookupService = self.lookup
             Task.detached(priority: .utility) {
                 do {
-                    let realm = RomDatabase.sharedInstance.realm
-                    guard let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
+                    // Step 1: Fetch game from Realm (sync)
+                    let frozenGame: PVGame? = try await RealmContext.withRealm { realm in
+                        realm.object(ofType: PVGame.self, forPrimaryKey: gameID)?.freeze()
+                    }
+                    guard let frozenGame = frozenGame else {
                         DLOG("finishUpdateOrImport: Game \(gameID) not found for deferred metadata update")
                         return
                     }
-                    // Create a temporary service instance for the lookup
-                    let tempService = GameImporterDatabaseService(lookup: lookupService, gameImporterFileService: GameImporterFileService())
-                    let updatedGame = try await tempService.getUpdatedGameInfo(for: gameToUpdate, forceRefresh: true)
 
-                    // If metadata lookup found artwork URL, download it
+                    // Step 2: Do async metadata lookup
+                    let tempService = GameImporterDatabaseService(lookup: lookupService, gameImporterFileService: GameImporterFileService())
+                    let updatedGame = try await tempService.getUpdatedGameInfo(for: frozenGame, forceRefresh: true)
+
                     var finalGame = updatedGame
                     if !updatedGame.originalArtworkURL.isEmpty && updatedGame.originalArtworkFile == nil {
                         DLOG("finishUpdateOrImport: Metadata update found artwork URL, downloading for: \(updatedGame.romPath)")
                         finalGame = await tempService.getArtwork(forGame: updatedGame)
                     }
 
-                    try realm.write {
-                        realm.add(finalGame, update: .modified)
+                    // Step 3: Write back to Realm (sync)
+                    try await RealmContext.withRealm { realm in
+                        try realm.write {
+                            realm.add(finalGame, update: .modified)
+                        }
                     }
                     DLOG("finishUpdateOrImport: Completed deferred getUpdatedGameInfo for: \(finalGame.romPath)")
                 } catch {
@@ -340,21 +357,30 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("finishUpdateOrImport: Game has artwork URL, scheduling async download for: \(game.romPath)")
             Task.detached(priority: .utility) {
                 do {
-                    let realm = RomDatabase.sharedInstance.realm
-                    guard let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
-                        DLOG("finishUpdateOrImport: Game \(gameID) not found for artwork download")
-                        return
+                    // Step 1: Fetch and validate game from Realm (sync)
+                    let frozenGame: PVGame? = try await RealmContext.withRealm { realm in
+                        guard let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
+                            DLOG("finishUpdateOrImport: Game \(gameID) not found for artwork download")
+                            return nil
+                        }
+                        guard gameToUpdate.originalArtworkFile == nil,
+                              gameToUpdate.originalArtworkURL == artworkURL else {
+                            DLOG("finishUpdateOrImport: Game \(gameID) already has artwork or URL changed")
+                            return nil
+                        }
+                        return gameToUpdate.freeze()
                     }
-                    // Verify it still needs artwork download
-                    guard gameToUpdate.originalArtworkFile == nil,
-                          gameToUpdate.originalArtworkURL == artworkURL else {
-                        DLOG("finishUpdateOrImport: Game \(gameID) already has artwork or URL changed")
-                        return
-                    }
+                    guard let frozenGame = frozenGame else { return }
+
+                    // Step 2: Download artwork (async)
                     let tempService = GameImporterDatabaseService(lookup: PVLookup.shared, gameImporterFileService: GameImporterFileService())
-                    let updatedGame = await tempService.getArtwork(forGame: gameToUpdate)
-                    try realm.write {
-                        realm.add(updatedGame, update: .modified)
+                    let updatedGame = await tempService.getArtwork(forGame: frozenGame)
+
+                    // Step 3: Write back to Realm (sync)
+                    try await RealmContext.withRealm { realm in
+                        try realm.write {
+                            realm.add(updatedGame, update: .modified)
+                        }
                     }
                     DLOG("finishUpdateOrImport: Completed async artwork download for: \(updatedGame.romPath)")
                 } catch {
@@ -366,11 +392,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("finishUpdateOrImport: Game has no artwork URL, will be queued for enhanced artwork search")
         }
 
-        DLOG("finishUpdateOrImport: About to save game to database: \(game.romPath)")
+        let romPath = game.romPath
+
+        DLOG("finishUpdateOrImport: About to save game to database: \(romPath)")
         let saveStartTime = Date()
-        try self.saveGame(game)
+        try await self.saveGame(game)
         let saveDuration = Date().timeIntervalSince(saveStartTime)
-        DLOG("finishUpdateOrImport: Successfully saved game: \(game.romPath) in \(String(format: "%.2f", saveDuration))s")
+        DLOG("finishUpdateOrImport: Successfully saved game: \(romPath) in \(String(format: "%.2f", saveDuration))s")
     }
 
     @discardableResult
@@ -712,26 +740,28 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     /// Saves a game to the database
-    func saveGame(_ game: PVGame) throws {
-        let database = RomDatabase.sharedInstance
-        let realm = try Realm()
-
-        // Get system reference
-        guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) else {
-            ELOG("System not found in database: \(game.systemIdentifier)")
-            throw GameImporterError.noSystemMatched
-        }
-        game.system = system
-
-        do {
-            try database.writeTransaction {
-                database.realm.create(PVGame.self, value: game, update: .modified)
+    func saveGame(_ game: PVGame) async throws {
+        try await RealmContext.withRealm { realm in
+            guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) else {
+                let systemIdentifier = game.systemIdentifier
+                ELOG("System not found in database: \(systemIdentifier)")
+                throw GameImporterError.noSystemMatched
             }
-            RomDatabase.addGamesCache(game)
-        } catch {
-            ELOG("Failed to save game: \(error.localizedDescription)")
-            ELOG("Game details - systemID: \(game.systemIdentifier), romPath: \(game.romPath)")
-            throw GameImporterError.failedToMoveROM(error)
+            game.system = system
+
+            do {
+                try realm.write {
+                    realm.add(game, update: .modified)
+                }
+                // Freeze the game before passing to cache (which runs in a Task on background thread)
+                RomDatabase.addGamesCache(game.freeze())
+            } catch {
+                ELOG("Failed to save game: \(error.localizedDescription)")
+                let systemIdentifier = game.systemIdentifier
+                let romPath = game.romPath
+                ELOG("Game details - systemID: \(systemIdentifier), romPath: \(romPath)")
+                throw GameImporterError.failedToMoveROM(error)
+            }
         }
     }
 

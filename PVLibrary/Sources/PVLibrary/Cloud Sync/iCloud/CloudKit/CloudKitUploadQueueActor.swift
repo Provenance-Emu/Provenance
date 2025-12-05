@@ -274,9 +274,9 @@ public actor CloudKitUploadQueueActor {
                 try await romSyncer.uploadGameFile(md5: md5, filePath: filePath)
                 ILOG("✅ ROM upload completed: \(task.title) (MD5: \(md5))")
             case .saveState(let saveStateID):
-                //try await RealmProvider.ensureInitialized()
-                let realm = RomDatabase.sharedInstance.realm
-                guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID)?.freeze() else {
+                guard let saveState = try? await RealmContext.withRealm({ realm in
+                    realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID)?.freeze()
+                }) else {
                     throw CloudSyncError.gameNotFound("Save state \(saveStateID) not found locally")
                 }
                 try await CloudSyncManager.shared.uploadSaveState(for: saveState)

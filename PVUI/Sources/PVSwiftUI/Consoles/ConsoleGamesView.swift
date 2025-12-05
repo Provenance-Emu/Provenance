@@ -466,6 +466,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 .sheet(item: $gamesViewModel.continuesManagementState) { state in
                     let game = state.game.warmUp()
                     let realm = game.realm?.thaw() ?? RomDatabase.sharedInstance.realm.thaw()
+
                     /// Create the Realm driver
                     if let driver = try? RealmSaveStateDriver(realm: realm) {
 

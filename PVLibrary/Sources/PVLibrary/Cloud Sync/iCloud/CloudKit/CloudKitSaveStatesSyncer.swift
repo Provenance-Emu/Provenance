@@ -11,6 +11,12 @@ import RealmSwift
 
 /// Save states syncer for all OS's using CloudKit
 public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
+    @inline(__always)
+    private func withRealm<T: Sendable>(
+        _ work: @escaping (Realm) throws -> T
+    ) async throws -> T {
+        try await RealmContext.withRealm(work)
+    }
 
     /// Initialize a new save states syncer
     /// - Parameters:
@@ -241,22 +247,24 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     let privateDatabase = self.container.privateCloudDatabase
                     let savedRecord = try await privateDatabase.save(record)
 
+                    ILOG("""
+                        [SYNC] ✅ SAVE STATE UPLOAD SUCCESS: \(filename)
+                           RecordID: \(savedRecord.recordID.recordName), GameID: \(gameIdentifier), System: \(game.systemIdentifier)
+                        """)
+
                     // Update local save state with CloudKit metadata
-                    //try await RealmProvider.ensureInitialized()
-                    try await MainActor.run {
-                        let realm = RomDatabase.sharedInstance.realm
+                    try await self.withRealm { realm in
                         try realm.write {
-                            guard let saveState = saveState.thaw() else {
+                            guard let thawed = saveState.thaw() else {
                                 ELOG("Thaw of save state failed")
                                 return
                             }
-                            saveState.cloudRecordID = savedRecord.recordID.recordName
-//                            saveState.lastUploadedDate = Date()
+                            thawed.cloudRecordID = savedRecord.recordID.recordName
                         }
                     }
 
                     await self.insertUploadedFile(localURL)
-                    DLOG("Uploaded save state to CloudKit: \(filename)")
+                    DLOG("[SYNC] Save state upload complete: \(filename)")
                     observer(.completed)
                 } catch let error as CKError {
                     ELOG("CloudKit error uploading save state: \(error.localizedDescription) (Code: \(error.code.rawValue))")
@@ -354,17 +362,15 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         await self.insertDownloadedFile(destinationURL)
 
                         // Update save state's file reference
-                        //try await RealmProvider.ensureInitialized()
-                        try await MainActor.run {
-                            let realm = RomDatabase.sharedInstance.realm
+                        try await self.withRealm { realm in
                             try realm.write {
-                                guard let saveState = saveState.thaw() else {
+                                guard let thawed = saveState.thaw() else {
                                     ELOG("Thaw of SaveState failed")
                                     return
                                 }
                                 let file = PVFile(withURL: destinationURL, relativeRoot: .documents)
-                                saveState.file = file
-                                saveState.isDownloaded = true
+                                thawed.file = file
+                                thawed.isDownloaded = true
                             }
                         }
 
@@ -439,18 +445,15 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
                         await self.insertDownloadedFile(destinationURL)
 
-                        // Update save state's file reference
-                        //try await RealmProvider.ensureInitialized()
-                        try await MainActor.run {
-                            let realm = RomDatabase.sharedInstance.realm
+                        try await self.withRealm { realm in
                             try realm.write {
-                                guard let saveState = saveState.thaw() else {
+                                guard let thawed = saveState.thaw() else {
                                     ELOG("Save state thaw failed")
                                     return
                                 }
                                 let file = PVFile(withURL: destinationURL, relativeRoot: .documents)
-                                saveState.file = file
-                                saveState.isDownloaded = true
+                                thawed.file = file
+                                thawed.isDownloaded = true
                             }
                         }
 
@@ -501,12 +504,12 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             Task {
                 do {
-                    DLOG("Loading all save state records from CloudKit")
+                    ILOG("[SYNC] Loading all save state records from CloudKit...")
                     await CloudKitSyncAnalytics.shared.startSync(operation: "Load SaveStates")
 
                     // Fetch all save state records
                     let records = await self.getAllRecords()
-                    DLOG("Found \(records.count) save state records in CloudKit")
+                    ILOG("[SYNC] Found \(records.count) save state records in CloudKit")
 
                     // Process each record
                     for record in records {
@@ -536,15 +539,19 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Returns: Number of records processed.
     @discardableResult
     public func syncMetadataOnly() async -> Int {
+        ILOG("[SYNC] Starting save state metadata-only sync...")
         do {
             let records = try await fetchSaveStateMetadataRecords()
+            ILOG("[SYNC] Fetched \(records.count) save state records from CloudKit")
+
             for record in records {
                 await processCloudRecord(record)
             }
-            ILOG("Save-state metadata sync processed \(records.count) records.")
+
+            ILOG("[SYNC] Save state metadata sync complete: \(records.count) records processed")
             return records.count
         } catch {
-            ELOG("Save-state metadata sync failed: \(error.localizedDescription)")
+            ELOG("[SYNC] Save state metadata sync failed: \(error.localizedDescription)")
             return 0
         }
     }
@@ -553,38 +560,94 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Parameter record: The CloudKit record to process
     private func processCloudRecord(_ record: CKRecord) async {
         guard let filename = record[CloudKitSchema.SaveStateFields.filename] as? String,
-              let systemIdentifier = record[CloudKitSchema.SaveStateFields.systemIdentifier] as? String else {
-            WLOG("Save state record missing required fields: \(record.recordID.recordName)")
+              let _ = record[CloudKitSchema.SaveStateFields.systemIdentifier] as? String else {
+            WLOG("[SYNC] Save state record missing required fields: \(record.recordID.recordName)")
             return
         }
 
-        do {
-            //try await RealmProvider.ensureInitialized()
-            let realm = RomDatabase.sharedInstance.realm
-            guard let realmGame = resolveGame(for: record, realm: realm) else {
-                WLOG("Game not found locally for save state record: \(record.recordID.recordName)")
-                return
-            }
-            let gameReference = ThreadSafeReference(to: realmGame)
+        // Extract original save state ID from metadata JSON if available
+        let originalSaveStateID = extractSaveStateIDFromMetadata(record)
+        let cloudRecordID = record.recordID.recordName
 
-            // Check if save state already exists locally
-            let existingSaveState = realmGame.saveStates.first { $0.file?.fileName == filename }
+        ILOG("[SYNC] Processing save state record: \(cloudRecordID), filename: \(filename), originalID: \(originalSaveStateID ?? "none")")
+
+        do {
+            // Step 1: Sync Realm work - find game and existing save state
+            // Check by: 1) original ID from metadata, 2) cloudRecordID, 3) filename
+            let (frozenGame, existingSaveState): (PVGame?, PVSaveState?) = try await self.withRealm { [self] realm in
+                guard let realmGame = self.resolveGame(for: record, realm: realm) else {
+                    WLOG("[SYNC] Game not found locally for save state record: \(cloudRecordID)")
+                    return (nil, nil)
+                }
+
+                // Try to find existing save state by multiple criteria
+                var existing: PVSaveState? = nil
+
+                // First, try by original ID (most reliable)
+                if let originalID = originalSaveStateID {
+                    existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: originalID)
+                    if existing != nil {
+                        ILOG("[SYNC] Found existing save state by original ID: \(originalID)")
+                    }
+                }
+
+                // Second, try by cloudRecordID
+                if existing == nil {
+                    existing = realm.objects(PVSaveState.self)
+                        .filter("cloudRecordID == %@", cloudRecordID)
+                        .first
+                    if existing != nil {
+                        ILOG("[SYNC] Found existing save state by cloudRecordID: \(cloudRecordID)")
+                    }
+                }
+
+                // Third, try by filename within the game's save states
+                if existing == nil {
+                    existing = realmGame.saveStates.first(where: { $0.file?.fileName == filename })
+                    if existing != nil {
+                        ILOG("[SYNC] Found existing save state by filename: \(filename)")
+                    }
+                }
+
+                if existing == nil {
+                    ILOG("[SYNC] No existing save state found, will create new one")
+                }
+
+                return (realmGame.freeze(), existing?.freeze())
+            }
+
+            guard let frozenGame = frozenGame else { return }
 
             var targetSaveState: PVSaveState?
 
+            // Step 2: Handle existing or create new (async work)
             if let existingSaveState = existingSaveState {
-                let reference = ThreadSafeReference(to: existingSaveState)
+                ILOG("[SYNC] Handling existing save state: \(existingSaveState.id)")
                 await self.handleSaveStateConflict(existingSaveState, cloudRecord: record)
-                if let resolved = await resolveSaveStateReference(reference) {
-                    targetSaveState = resolved.freeze()
+                targetSaveState = existingSaveState
+
+                // Ensure cloudRecordID is set if it wasn't before
+                if existingSaveState.cloudRecordID == nil || existingSaveState.cloudRecordID!.isEmpty {
+                    do {
+                        try await self.withRealm { realm in
+                            try realm.write {
+                                if let thawed = existingSaveState.thaw() {
+                                    thawed.cloudRecordID = cloudRecordID
+                                    ILOG("[SYNC] Updated cloudRecordID for existing save state: \(existingSaveState.id)")
+                                }
+                            }
+                        }
+                    } catch {
+                        WLOG("[SYNC] Failed to update cloudRecordID for save state \(existingSaveState.id): \(error.localizedDescription)")
+                    }
                 }
-            } else {
-                if let newSaveState = await self.createSaveStateFromCloudRecord(record, game: realmGame) {
-                    await self.markSaveStateForDownload(newSaveState, cloudRecord: record)
-                    targetSaveState = await MainActor.run { newSaveState.freeze() }
-                }
+            } else if let newSaveState = await self.createSaveStateFromCloudRecord(record, game: frozenGame, originalID: originalSaveStateID) {
+                ILOG("[SYNC] Created new save state: \(newSaveState.id)")
+                await self.markSaveStateForDownload(newSaveState, cloudRecord: record)
+                targetSaveState = newSaveState
             }
 
+            // Step 3: Apply metadata and cache artwork
             if let targetSaveState = targetSaveState {
                 await applyCoreMetadata(from: record, to: targetSaveState)
                 if record[CloudKitSchema.SaveStateFields.imageAsset] as? CKAsset != nil {
@@ -592,8 +655,27 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 }
             }
         } catch {
-            ELOG("Error processing save state record \(record.recordID.recordName): \(error.localizedDescription)")
+            ELOG("[SYNC] Error processing save state record \(record.recordID.recordName): \(error.localizedDescription)")
         }
+    }
+
+    /// Extract the original save state ID from the metadata JSON in a CloudKit record
+    private func extractSaveStateIDFromMetadata(_ record: CKRecord) -> String? {
+        guard let metadataJSON = record[CloudKitSchema.SaveStateFields.metadataJSON] as? String,
+              let jsonData = metadataJSON.data(using: .utf8) else {
+            return nil
+        }
+
+        do {
+            if let json = try JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
+               let id = json["id"] as? String {
+                return id
+            }
+        } catch {
+            WLOG("[SYNC] Failed to parse metadata JSON for save state ID: \(error.localizedDescription)")
+        }
+
+        return nil
     }
 
     /// Handle a remote change notification for a save state record
@@ -616,17 +698,17 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
 
         do {
-            //try await RealmProvider.ensureInitialized()
-            let realm = RomDatabase.sharedInstance.realm
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: identifiers.gameID) else {
-                return
-            }
-
-            if let orphanedSaveState = game.saveStates.first(where: { $0.file?.fileName == identifiers.filename }) {
-                try realm.write {
-                    realm.delete(orphanedSaveState)
+            try await self.withRealm { realm in
+                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: identifiers.gameID) else {
+                    return
                 }
-                ILOG("Deleted local save state \(identifiers.filename) after CloudKit removal.")
+
+                if let orphanedSaveState = game.saveStates.first(where: { $0.file?.fileName == identifiers.filename }) {
+                    try realm.write {
+                        realm.delete(orphanedSaveState)
+                    }
+                    ILOG("Deleted local save state \(identifiers.filename) after CloudKit removal.")
+                }
             }
         } catch {
             ELOG("Failed to delete local save state for \(recordID.recordName): \(error.localizedDescription)")
@@ -660,7 +742,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Parameters:
     ///   - record: The CloudKit record
     ///   - game: The game this save state belongs to
-    private func createSaveStateFromCloudRecord(_ record: CKRecord, game: PVGame) async -> PVSaveState? {
+    private func createSaveStateFromCloudRecord(_ record: CKRecord, game: PVGame, originalID: String? = nil) async -> PVSaveState? {
         guard let filename = record[CloudKitSchema.SaveStateFields.filename] as? String else {
             return nil
         }
@@ -668,23 +750,33 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         let fallbackGameID = game.id
         let systemDir = (game.systemIdentifier as NSString).components(separatedBy: "/").last ?? game.systemIdentifier
 
-        var createdID: String?
         do {
-            //try await RealmProvider.ensureInitialized()
-            try await MainActor.run {
-                let realm = RomDatabase.sharedInstance.realm
+            return try await self.withRealm { realm in
+                // Check one more time if save state with this ID already exists
+                if let originalID = originalID,
+                   let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: originalID) {
+                    ILOG("[SYNC] Save state with ID \(originalID) already exists, returning existing")
+                    return existing.freeze()
+                }
+
+                // Create the save state
+                let saveState = PVSaveState()
+
+                // Use original ID if provided, otherwise keep the default UUID
+                if let originalID = originalID {
+                    saveState.id = originalID
+                    ILOG("[SYNC] Creating save state with original ID: \(originalID)")
+                }
+
+                let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: stableIdentifier)
+                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: fallbackGameID)
+
+                guard let localGame = realmGame else {
+                    ELOG("[SYNC] CreateSaveState: Unable to resolve local game for identifier \(stableIdentifier)")
+                    return nil
+                }
+
                 try realm.write {
-                    let saveState = PVSaveState()
-
-                    // Ensure we attach a game instance that belongs to this Realm
-                    let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: stableIdentifier)
-                        ?? realm.object(ofType: PVGame.self, forPrimaryKey: fallbackGameID)
-
-                    guard let localGame = realmGame else {
-                        ELOG("CreateSaveState: Unable to resolve local game for identifier \(stableIdentifier)")
-                        return
-                    }
-
                     saveState.game = localGame
                     saveState.cloudRecordID = record.recordID.recordName
                     saveState.isDownloaded = false
@@ -710,7 +802,6 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         saveState.createdWithCoreVersion = "Unknown"
                     }
 
-                    // Create placeholder file entry
                     let documentsURL = URL.documentsPath
                     let directoryURL = documentsURL
                         .appendingPathComponent("Saves")
@@ -722,20 +813,16 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     saveState.file = file
 
                     realm.add(saveState)
-                    createdID = saveState.id
                 }
-            }
 
-            DLOG("Created save state entry for download: \(filename)")
-            if let createdID {
-                //try await RealmProvider.ensureInitialized()
-                let realm = RomDatabase.sharedInstance.realm
-                return realm.object(ofType: PVSaveState.self, forPrimaryKey: createdID)
+                // Freeze AFTER the write transaction completes
+                DLOG("Created save state entry for download: \(filename)")
+                return saveState.freeze()
             }
         } catch {
             ELOG("Error creating save state from cloud record: \(error.localizedDescription)")
+            return nil
         }
-        return nil
     }
 
     private func resolveCore(from record: CKRecord, realm: Realm, fallbackSystem: PVSystem?) -> PVCore? {
@@ -762,9 +849,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
     private func applyCoreMetadata(from record: CKRecord, to frozenSaveState: PVSaveState) async {
         do {
-            //try await RealmProvider.ensureInitialized()
-            try await MainActor.run {
-                let realm = RomDatabase.sharedInstance.realm
+        try await self.withRealm { realm in
                 guard let liveSaveState = frozenSaveState.thaw() else { return }
                 try realm.write {
                     let resolvedCore = self.resolveCore(from: record,
@@ -809,18 +894,20 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             frozenSaveState.game?.title ??
             (frozenSaveState.file?.fileName ?? "Save State")
 
-        // Update Realm state to reflect pending download
-        try? await RealmProvider.ensureInitialized()
-        try? await MainActor.run {
-            let realm = RomDatabase.sharedInstance.realm
-            try realm.write {
-                guard let thawed = frozenSaveState.thaw() else {
-                    ELOG("Save state thaw failed")
-                    return
+        do {
+            try await self.withRealm { realm in
+                try realm.write {
+                    guard let thawed = frozenSaveState.thaw() else {
+                        ELOG("[SYNC] Save state thaw failed for marking download")
+                        return
+                    }
+                    thawed.isDownloaded = false
+                    thawed.cloudRecordID = recordID
                 }
-                thawed.isDownloaded = false
-                thawed.cloudRecordID = recordID
             }
+        } catch {
+            ELOG("[SYNC] Failed to mark save state for download: \(error.localizedDescription)")
+            return // Can't queue download if we couldn't update the record
         }
 
         // Avoid duplicating queued downloads
@@ -858,9 +945,11 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             Task {
                 do {
-                    //try await RealmProvider.ensureInitialized()
-                    let realm = RomDatabase.sharedInstance.realm
-                    let saveStatesNeedingUpload = realm.objects(PVSaveState.self).filter("cloudRecordID == nil OR lastUploadedDate == nil")
+                    let saveStatesNeedingUpload = try await self.withRealm { realm in
+                        realm.objects(PVSaveState.self)
+                            .filter("cloudRecordID == nil OR lastUploadedDate == nil")
+                            .map { $0.freeze() }
+                    }
 
                     DLOG("Found \(saveStatesNeedingUpload.count) save states needing upload")
 
@@ -894,9 +983,11 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             Task {
                 do {
-                    //try await RealmProvider.ensureInitialized()
-                    let realm = RomDatabase.sharedInstance.realm
-                    let saveStatesNeedingDownload = realm.objects(PVSaveState.self).filter("isDownloaded == false AND cloudRecordID != nil")
+                    let saveStatesNeedingDownload = try await self.withRealm { realm in
+                        realm.objects(PVSaveState.self)
+                            .filter("isDownloaded == false AND cloudRecordID != nil")
+                            .map { $0.freeze() }
+                    }
 
                     DLOG("Found \(saveStatesNeedingDownload.count) save states needing download")
 
@@ -1046,19 +1137,14 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             // Copy artwork from CloudKit asset to local storage
             try FileManager.default.copyItem(at: assetFileURL, to: artworkURL)
 
-            // Update save state with artwork reference
-            //try await RealmProvider.ensureInitialized()
-            try await MainActor.run {
-                let realm = RomDatabase.sharedInstance.realm
+            try await self.withRealm { realm in
                 try realm.write {
-                    guard let saveState = saveState.thaw() else {
+                    guard let thawed = saveState.thaw() else {
                         ELOG("Failed to thaw save state for artwork update")
                         return
                     }
-
-                    // Create or update PVImageFile for the artwork
                     let imageFile = PVImageFile(withURL: artworkURL, relativeRoot: .documents)
-                    saveState.image = imageFile
+                    thawed.image = imageFile
                 }
             }
 
@@ -1142,9 +1228,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             }
             try FileManager.default.copyItem(at: assetFileURL, to: artworkURL)
 
-            //try await RealmProvider.ensureInitialized()
-            try await MainActor.run {
-                let realm = RomDatabase.sharedInstance.realm
+            try await self.withRealm { realm in
                 try realm.write {
                     guard let liveSaveState = targetSaveState.thaw() else { return }
                     let imageFile = PVImageFile(withURL: artworkURL, relativeRoot: .documents)
@@ -1159,9 +1243,9 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
     private func resolveSaveStateReference(_ reference: ThreadSafeReference<PVSaveState>) async -> PVSaveState? {
         do {
-            //try await RealmProvider.ensureInitialized()
-            let realm = RomDatabase.sharedInstance.realm
-            return realm.resolve(reference)
+            return try await self.withRealm { realm in
+                realm.resolve(reference)
+            }
         } catch {
             ELOG("Failed to resolve save state reference: \(error.localizedDescription)")
             return nil

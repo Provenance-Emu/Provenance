@@ -147,8 +147,8 @@ extension PVRootViewController: PVRootDelegate {
     }
 
     private func fetchFreshSaveState(withID id: String) async throws -> PVSaveState? {
-        //try await RealmProvider.ensureInitialized()
-        let realm = RomDatabase.sharedInstance.realm
+        try await RealmProvider.ensureInitialized()
+        let realm = try! await Realm()
         return realm.object(ofType: PVSaveState.self, forPrimaryKey: id)?.freeze()
     }
 

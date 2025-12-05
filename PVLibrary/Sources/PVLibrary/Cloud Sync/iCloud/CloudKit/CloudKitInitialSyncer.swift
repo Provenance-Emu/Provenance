@@ -465,40 +465,53 @@ public actor CloudKitInitialSyncer {
                 // Attempt retry based on upload type
                 switch upload.type {
                 case .rom(let md5):
-                    // Queue the retry upload instead of blocking
                     if let romSyncer = romsSyncer as? CloudKitRomsSyncer {
-                        // Find the game to get file path and title
-                        //try await RealmProvider.ensureInitialized()
-                        let realm = RomDatabase.sharedInstance.realm
-                        if let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5.uppercased()).first,
-                           let romURL = game.file?.url {
-                            let taskId = await romSyncer.queueROMUpload(
-                                md5: md5.uppercased(),
-                                gameTitle: game.title,
-                                filePath: romURL,
-                                priority: .high // Higher priority for retries
-                            )
-                            DLOG("Queued ROM retry upload: \(game.title) (\(md5)) - Task ID: \(taskId)")
-                        } else {
-                            ELOG("Game not found for ROM retry: \(md5)")
+                        do {
+                            let romInfo = try await RealmContext.withRealm({ realm -> (String, URL)? in
+                                guard
+                                    let game = realm.objects(PVGame.self)
+                                        .filter("md5Hash == %@", md5.uppercased())
+                                        .first,
+                                    let fileURL = game.file?.url
+                                else {
+                                    return nil
+                                }
+                                return (game.title, fileURL)
+                            })
+                            if let romInfo = romInfo {
+                                let taskId = await romSyncer.queueROMUpload(
+                                    md5: md5.uppercased(),
+                                    gameTitle: romInfo.0,
+                                    filePath: romInfo.1,
+                                    priority: .high
+                                )
+                                DLOG("Queued ROM retry upload: \(romInfo.0) (\(md5)) - Task ID: \(taskId)")
+                            } else {
+                                WLOG("[SYNC] Game not found for ROM retry: \(md5)")
+                            }
+                        } catch {
+                            ELOG("[SYNC] Failed to fetch game for ROM retry \(md5): \(error.localizedDescription)")
                         }
                     } else {
-                        // Fallback to direct upload
                         try await romsSyncer.uploadGame(md5.uppercased())
                     }
                     completedRetries.append(index)
 
                 case .saveState(let id):
-                    //try await RealmProvider.ensureInitialized()
-                    let realm = RomDatabase.sharedInstance.realm
-                    if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: id) {
-                        try await saveStatesSyncer.uploadSaveState(for: saveState).toAsync()
-                        ILOG("Successfully retried save state upload: \(id)")
-                        completedRetries.append(index)
-                    } else {
-                        ELOG("Save state not found for retry: \(id)")
-                        completedRetries.append(index)
+                    do {
+                        let saveState = try await RealmContext.withRealm({ realm in
+                            realm.object(ofType: PVSaveState.self, forPrimaryKey: id)?.freeze()
+                        })
+                        if let saveState = saveState {
+                            try await saveStatesSyncer.uploadSaveState(for: saveState).toAsync()
+                            ILOG("[SYNC] Successfully retried save state upload: \(id)")
+                        } else {
+                            WLOG("[SYNC] Save state not found for retry: \(id)")
+                        }
+                    } catch {
+                        ELOG("[SYNC] Failed to fetch save state for retry \(id): \(error.localizedDescription)")
                     }
+                    completedRetries.append(index)
 
                 case .bios(let id):
                     // BIOS syncer not implemented yet, skip for now
@@ -545,10 +558,9 @@ public actor CloudKitInitialSyncer {
     // TODO: I would prefer this not be main actor, but realm keeps crashing, even making a local realm @JoeMatt
     @MainActor
     private func syncAllROMs(forceSync: Bool = false) async -> Int {
-        DLOG("Syncing all ROMs to CloudKit...")
+        ILOG("[SYNC] Syncing all ROMs to CloudKit (forceSync: \(forceSync))...")
 
         do {
-            //try await RealmProvider.ensureInitialized()
             let realm = RomDatabase.sharedInstance.realm
             let realmGames = realm.objects(PVGame.self).filter("contentless == false")
             let unsortedGames = Array(realmGames) // Convert to array to avoid Realm invalidation issues
@@ -560,7 +572,7 @@ public actor CloudKitInitialSyncer {
                 return size1 < size2
             }
 
-            DLOG("Found \(games.count) ROMs in Realm, sorted by file size (smallest first)")
+            ILOG("[SYNC] Found \(games.count) ROMs in Realm, sorted by file size (smallest first)")
 
             // Update progress
             var progress = await MainActor.run { syncProgressSubject.value }
@@ -663,15 +675,14 @@ public actor CloudKitInitialSyncer {
     // TODO: I would prefer this not be main actor, but realm keeps crashing, even making a local realm @JoeMatt
     @MainActor
     private func syncAllSaveStates(forceSync: Bool = false) async -> Int {
-        DLOG("💾 [syncAllSaveStates] Starting save state sync to CloudKit (forceSync: \(forceSync))...")
-        DLOG("💾 [syncAllSaveStates] saveStatesSyncer type: \(type(of: saveStatesSyncer))")
+        ILOG("[SYNC] Starting save state sync to CloudKit (forceSync: \(forceSync))...")
+        DLOG("[SYNC] saveStatesSyncer type: \(type(of: saveStatesSyncer))")
 
         do {
-            //try await RealmProvider.ensureInitialized()
             let realm = RomDatabase.sharedInstance.realm
             let saveStates = Array(realm.objects(PVSaveState.self)) // Convert to array to avoid invalidation
 
-            DLOG("Found \(saveStates.count) save states in Realm")
+            ILOG("[SYNC] Found \(saveStates.count) save states in Realm")
 
             // Update progress
             var progress = await MainActor.run { syncProgressSubject.value }
@@ -745,7 +756,6 @@ public actor CloudKitInitialSyncer {
         DLOG("Syncing all BIOS files to CloudKit...")
 
         do {
-            // Get all BIOS files from Realm
             let realm = RomDatabase.sharedInstance.realm
             let biosFiles = Array(realm.objects(PVBIOS.self))
 

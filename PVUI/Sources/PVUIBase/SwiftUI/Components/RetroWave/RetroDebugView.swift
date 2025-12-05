@@ -213,7 +213,7 @@ public struct RetroDebugView: View {
     // Reset the Realm database
     private func resetDatabase() {
         do {
-            let realm = try Realm()
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             try realm.write {
                 realm.deleteAll()
             }
@@ -791,7 +791,7 @@ struct DatabaseStatsView: View {
 
     private func loadStats() {
         do {
-            let realm = try Realm()
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             gameCount = realm.objects(PVGame.self).count
             systemCount = realm.objects(PVSystem.self).count
             coreCount = realm.objects(PVCore.self).count

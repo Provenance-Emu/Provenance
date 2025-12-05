@@ -119,16 +119,18 @@ public extension RomDatabase {
         }
     }
     static func addGameCache(_ game:PVGame, cache:[String:PVGame]) -> [String:PVGame] {
+        // Ensure we work with a frozen copy to avoid thread issues
+        let frozenGame = game.isFrozen ? game : game.freeze()
         var cache:[String:PVGame] = cache
-        game.relatedFiles.forEach {
+        frozenGame.relatedFiles.forEach {
             relatedFile in
             if let url = relatedFile.url {
-                cache = addRelativeFileCache(url, game:game, cache:cache)
+                cache = addRelativeFileCache(url, game:frozenGame, cache:cache)
             }
         }
-        cache[game.romPath] = game.detached()
-        if let url = game.file?.url {
-            cache[altName(url, systemIdentifier: game.systemIdentifier)] = game.detached()
+        cache[frozenGame.romPath] = frozenGame.detached()
+        if let url = frozenGame.file?.url {
+            cache[altName(url, systemIdentifier: frozenGame.systemIdentifier)] = frozenGame.detached()
         }
         return cache
     }

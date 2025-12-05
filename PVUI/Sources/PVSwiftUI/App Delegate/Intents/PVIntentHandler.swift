@@ -78,7 +78,7 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
     ///   - completion: Completion handler to call when the intent is handled
     private func handleOpenByGameName(_ gameName: String, completion: @escaping (PVOpenIntentResponse) -> Void) {
         do {
-            let realm = try Realm()
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
 
             // First try an exact match
             if let exactMatch = realm.objects(PVGame.self).filter("title == %@", gameName).first {
@@ -128,7 +128,7 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
     ///   - completion: Completion handler to call when the intent is handled
     private func handleOpenByGameAndSystem(gameName: String, systemName: String, completion: @escaping (PVOpenIntentResponse) -> Void) {
         do {
-            let realm = try Realm()
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
 
             // First find matching systems
             let systemMatches = realm.objects(PVSystem.self).filter("name CONTAINS[c] %@ OR shortName CONTAINS[c] %@", systemName, systemName)
@@ -221,7 +221,7 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
         }
 
         do {
-            let realm = try Realm()
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             if realm.objects(PVGame.self).filter("title CONTAINS[c] %@", gameName).first != nil {
                 ILOG("PVIntentHandler: Resolved game name: \(gameName)")
                 completion(INStringResolutionResult.success(with: gameName))
@@ -245,7 +245,7 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
         }
 
         do {
-            let realm = try Realm()
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             let matches = realm.objects(PVSystem.self).filter("name CONTAINS[c] %@ OR shortName CONTAINS[c] %@", systemName, systemName)
 
             if matches.isEmpty {
@@ -282,7 +282,7 @@ class PVIntentHandler: NSObject, PVOpenIntentHandling {
         // Check for game name
         if let gameName = intent.gameName, !gameName.isEmpty {
             do {
-                let realm = try Realm()
+                let realm = try Realm(configuration: RealmConfiguration.realmConfig)
                 if realm.objects(PVGame.self).filter("title CONTAINS[c] %@", gameName).first != nil {
                     ILOG("PVIntentHandler: Confirmed intent to open game '\(gameName)'")
                     completion(PVOpenIntentResponse(code: .success, userActivity: nil))

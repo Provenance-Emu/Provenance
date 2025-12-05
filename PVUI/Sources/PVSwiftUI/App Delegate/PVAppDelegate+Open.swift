@@ -43,27 +43,19 @@ public extension PVAppDelegate {
     /// Helper method to safely fetch a game from Realm by its MD5 hash
     /// - Parameter md5: The MD5 hash of the game
     /// - Returns: The game if found, nil otherwise
+    @MainActor
     internal func fetchGame(byMD5 md5: String) -> PVGame? {
-        do {
-            let realm = try Realm()
-            return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
-        } catch {
-            ELOG("Failed to access Realm: \(error.localizedDescription)")
-            return nil
-        }
+        let realm = RomDatabase.sharedInstance.realm
+        return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
     }
 
     /// Helper method to safely fetch a system from Realm by its identifier
     /// - Parameter identifier: The system identifier
     /// - Returns: The system if found, nil otherwise
+    @MainActor
     private func fetchSystem(byIdentifier identifier: String) -> PVSystem? {
-        do {
-            let realm = try Realm()
-            return realm.object(ofType: PVSystem.self, forPrimaryKey: identifier)
-        } catch {
-            ELOG("Failed to access Realm: \(error.localizedDescription)")
-            return nil
-        }
+        let realm = RomDatabase.sharedInstance.realm
+        return realm.object(ofType: PVSystem.self, forPrimaryKey: identifier)
     }
 
     public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -366,36 +358,31 @@ extension PVAppDelegate {
     /// Handle opening a game by name using fuzzy search
     /// - Parameter gameName: The name of the game to search for
     /// - Returns: True if a game was found and set to open, false otherwise
+    @MainActor
     private func handleOpenByGameName(_ gameName: String) -> Bool {
         ILOG("PVAppDelegate: handleOpenByGameName: \(gameName)")
 
-        do {
-            let realm = try Realm()
+        let realm = RomDatabase.sharedInstance.realm
 
-            // First try an exact match
-            if let exactMatch = realm.objects(PVGame.self).filter("title == %@", gameName).first {
-                ILOG("Found exact match for game name: \(gameName)")
-                AppState.shared.appOpenAction = .openGame(exactMatch)
-                return true
-            }
-
-            // If no exact match, try a case-insensitive contains search
-            let fuzzyMatches = realm.objects(PVGame.self).filter("title CONTAINS[c] %@", gameName)
-
-            if let bestMatch = fuzzyMatches.first {
-                ILOG("Found fuzzy match '\(bestMatch.title)' for game name: \(gameName)")
-                AppState.shared.appOpenAction = .openGame(bestMatch)
-                return true
-            }
-
-            // No matches found
-            WLOG("No games found matching name: \(gameName)")
-            return false
-
-        } catch {
-            ELOG("Error searching for game by name: \(error.localizedDescription)")
-            return false
+        // First try an exact match
+        if let exactMatch = realm.objects(PVGame.self).filter("title == %@", gameName).first {
+            ILOG("Found exact match for game name: \(gameName)")
+            AppState.shared.appOpenAction = .openGame(exactMatch)
+            return true
         }
+
+        // If no exact match, try a case-insensitive contains search
+        let fuzzyMatches = realm.objects(PVGame.self).filter("title CONTAINS[c] %@", gameName)
+
+        if let bestMatch = fuzzyMatches.first {
+            ILOG("Found fuzzy match '\(bestMatch.title)' for game name: \(gameName)")
+            AppState.shared.appOpenAction = .openGame(bestMatch)
+            return true
+        }
+
+        // No matches found
+        WLOG("No games found matching name: \(gameName)")
+        return false
     }
 
     /// Handle opening a game by name and system using fuzzy search
@@ -403,62 +390,57 @@ extension PVAppDelegate {
     ///   - gameName: The name of the game to search for
     ///   - systemName: The name of the system to search for
     /// - Returns: True if a game was found and set to open, false otherwise
+    @MainActor
     private func handleOpenByGameAndSystem(gameName: String, systemName: String) -> Bool {
         ILOG("PVAppDelegate: handleOpenByGameAndSystem: \(gameName), systemName: \(systemName)")
 
-        do {
-            let realm = try Realm()
+        let realm = RomDatabase.sharedInstance.realm
 
-            // First find matching systems
-            let systemMatches = realm.objects(PVSystem.self).filter("name CONTAINS[c] %@ OR shortName CONTAINS[c] %@", systemName, systemName)
+        // First find matching systems
+        let systemMatches = realm.objects(PVSystem.self).filter("name CONTAINS[c] %@ OR shortName CONTAINS[c] %@", systemName, systemName)
 
-            if systemMatches.isEmpty {
-                WLOG("No systems found matching: \(systemName)")
-                // Fall back to just game name search
-                return handleOpenByGameName(gameName)
+        if systemMatches.isEmpty {
+            WLOG("No systems found matching: \(systemName)")
+            // Fall back to just game name search
+            return handleOpenByGameName(gameName)
+        }
+
+        // Get system identifiers
+        let systemIdentifiers = systemMatches.map { $0.identifier }
+
+        // Try to find a game that matches both the name and one of the systems
+        var bestMatch: PVGame? = nil
+
+        // First try exact match on title with any matching system
+        for systemId in systemIdentifiers {
+            if let match = realm.objects(PVGame.self)
+                .filter("title == %@ AND systemIdentifier == %@", gameName, systemId)
+                .first {
+                bestMatch = match
+                break
             }
+        }
 
-            // Get system identifiers
-            let systemIdentifiers = systemMatches.map { $0.identifier }
-
-            // Try to find a game that matches both the name and one of the systems
-            var bestMatch: PVGame? = nil
-
-            // First try exact match on title with any matching system
+        // If no exact match, try fuzzy match on title with any matching system
+        if bestMatch == nil {
             for systemId in systemIdentifiers {
                 if let match = realm.objects(PVGame.self)
-                    .filter("title == %@ AND systemIdentifier == %@", gameName, systemId)
+                    .filter("title CONTAINS[c] %@ AND systemIdentifier == %@", gameName, systemId)
                     .first {
                     bestMatch = match
                     break
                 }
             }
-
-            // If no exact match, try fuzzy match on title with any matching system
-            if bestMatch == nil {
-                for systemId in systemIdentifiers {
-                    if let match = realm.objects(PVGame.self)
-                        .filter("title CONTAINS[c] %@ AND systemIdentifier == %@", gameName, systemId)
-                        .first {
-                        bestMatch = match
-                        break
-                    }
-                }
-            }
-
-            if let game = bestMatch {
-                ILOG("Found game '\(game.title)' on system '\(game.systemIdentifier)'")
-                AppState.shared.appOpenAction = .openGame(game)
-                return true
-            }
-
-            // No matches found with system, fall back to just game name
-            WLOG("No games found matching name: \(gameName) on system: \(systemName)")
-            return handleOpenByGameName(gameName)
-
-        } catch {
-            ELOG("Error searching for game by name and system: \(error.localizedDescription)")
-            return false
         }
+
+        if let game = bestMatch {
+            ILOG("Found game '\(game.title)' on system '\(game.systemIdentifier)'")
+            AppState.shared.appOpenAction = .openGame(game)
+            return true
+        }
+
+        // No matches found with system, fall back to just game name
+        WLOG("No games found matching name: \(gameName) on system: \(systemName)")
+        return handleOpenByGameName(gameName)
     }
 }

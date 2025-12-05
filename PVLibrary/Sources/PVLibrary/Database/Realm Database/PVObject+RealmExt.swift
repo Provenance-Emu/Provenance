@@ -11,7 +11,8 @@ import PVRealm
 public extension PVObject where Self: RealmSwift.Object {
     
     static var all: Results<Self> {
-        return RomDatabase.sharedInstance.all(Self.self)
+        let realm = try! Realm()
+        return realm.objects(Self.self)
     }
 
     func add(update: Bool = false) throws {

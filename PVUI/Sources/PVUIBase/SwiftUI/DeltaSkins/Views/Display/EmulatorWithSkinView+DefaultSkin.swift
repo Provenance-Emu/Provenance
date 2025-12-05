@@ -697,17 +697,14 @@ struct DefaultControllerSkinView: View {
     }
 
     // Load control layout data from the system
+    @MainActor
     private func loadControlLayoutData() {
         guard let systemId = systemId else { return }
 
         // Access Realm to get the system
-        do {
-            let realm = try Realm()
-            if let system = realm.object(ofType: PVSystem.self, forPrimaryKey: systemId.rawValue) {
-                self.controlLayout = system.controllerLayout
-            }
-        } catch {
-            print("Error accessing Realm: \(error)")
+        let realm = RomDatabase.sharedInstance.realm
+        if let system = realm.object(ofType: PVSystem.self, forPrimaryKey: systemId.rawValue) {
+            self.controlLayout = system.controllerLayout
         }
     }
 

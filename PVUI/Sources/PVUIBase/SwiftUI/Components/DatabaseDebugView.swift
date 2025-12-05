@@ -10,20 +10,20 @@ struct ConditionalDisclosureGroup<Label: View, Content: View>: View {
     @Binding var isExpanded: Bool
     let label: () -> Label
     let content: () -> Content
-    
+
     init(isExpanded: Binding<Bool>, @ViewBuilder label: @escaping () -> Label, @ViewBuilder content: @escaping () -> Content) {
         self._isExpanded = isExpanded
         self.label = label
         self.content = content
     }
-    
+
     // Convenience initializer for string labels
     init(_ titleKey: String, isExpanded: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) where Label == Text {
         self._isExpanded = isExpanded
         self.label = { Text(titleKey) }
         self.content = content
     }
-    
+
     var body: some View {
         #if os(tvOS)
         VStack(alignment: .leading) {
@@ -58,11 +58,11 @@ public struct DatabaseDebugView: View {
     @State private var games: Results<PVGame>?
     @State private var systems: Results<PVSystem>?
     @State private var cores: Results<PVCore>?
-    
+
     @State private var showGames = false
     @State private var showSystems = false
     @State private var showCores = false
-    
+
     private var gamesSection: some View {
         ConditionalDisclosureGroup(
             isExpanded: $showGames,
@@ -77,16 +77,16 @@ public struct DatabaseDebugView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(game.title)
                                 .font(.headline)
-                            
+
                             Text("System: \(game.system?.name ?? "Unknown")")
                                 .font(.subheadline)
-                            
+
                             if let userPreferredCoreID = game.userPreferredCoreID {
                                 Text("User Preferred Core: \(userPreferredCoreID)")
                                     .font(.caption)
                                     .foregroundColor(.blue)
                             }
-                            
+
                             Text("MD5: \(game.md5Hash)")
                                 .font(.caption2)
                                 .foregroundColor(.gray)
@@ -100,7 +100,7 @@ public struct DatabaseDebugView: View {
             }
         )
     }
-    
+
     private var systemsSection: some View {
         ConditionalDisclosureGroup(
             isExpanded: $showSystems,
@@ -115,17 +115,17 @@ public struct DatabaseDebugView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(system.name)
                                 .font(.headline)
-                            
+
                             Text("ID: \(system.identifier)")
                                 .font(.caption)
                                 .foregroundColor(.gray)
-                            
+
                             if let userPreferredCoreID = system.userPreferredCoreID {
                                 Text("User Preferred Core: \(userPreferredCoreID)")
                                     .font(.caption)
                                     .foregroundColor(.blue)
                             }
-                            
+
                             ConditionalDisclosureGroup("Associated Cores (\(system.cores.count))", isExpanded: .constant(false)) {
                                 ForEach(Array(system.cores), id: \.identifier) { core in
                                     Text(core.projectName)
@@ -144,7 +144,7 @@ public struct DatabaseDebugView: View {
             }
         )
     }
-    
+
     private var coresSection: some View {
         ConditionalDisclosureGroup(
             isExpanded: $showCores,
@@ -159,20 +159,20 @@ public struct DatabaseDebugView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(core.projectName)
                                 .font(.headline)
-                            
+
                             Text("ID: \(core.identifier)")
                                 .font(.caption)
                                 .foregroundColor(.gray)
-                            
+
                             if core.disabled {
                                 Text("DISABLED")
                                     .font(.caption)
                                     .foregroundColor(.red)
                             }
-                            
+
                             Text("Has Core Class: \(core.hasCoreClass ? "Yes" : "No")")
                                 .font(.caption)
-                            
+
                             ConditionalDisclosureGroup("Supported Systems (\(core.supportedSystems.count))", isExpanded: .constant(false)) {
                                 ForEach(Array(core.supportedSystems), id: \.identifier) { system in
                                     Text(system.name)
@@ -191,7 +191,7 @@ public struct DatabaseDebugView: View {
             }
         )
     }
-    
+
     public var body: some View {
         NavigationView {
             List {
@@ -210,10 +210,10 @@ public struct DatabaseDebugView: View {
             }
         }
     }
-    
+
     private func loadData() {
         do {
-            realm = try Realm()
+            realm = try Realm(configuration: RealmConfiguration.realmConfig)
             if let realm = realm {
                 games = realm.objects(PVGame.self).sorted(byKeyPath: "title")
                 systems = realm.objects(PVSystem.self).sorted(byKeyPath: "name")

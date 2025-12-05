@@ -50,6 +50,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private let progressTracker = SyncProgressTracker.shared // Added Progress Tracker
     private let uploadQueue = CloudKitUploadQueueActor.shared
 
+    @inline(__always)
+    private func withRealm<T: Sendable>(
+        _ work: @escaping (Realm) throws -> T
+    ) async throws -> T {
+        try await RealmContext.withRealm(work)
+    }
+
     // MARK: - Initialization
     public init(container: CKContainer, retryStrategy: @escaping CloudKitRetryOperation<Any>, romsDatastore: RomDatabase = RomDatabase.sharedInstance) {
         self.container = container
@@ -69,9 +76,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     // MARK: - SyncProvider Conformance Methods (Stubs)
     // TODO: Implement these methods based on CloudKit logic
     public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
-        ILOG("Starting loadAllFromCloud for CloudKit ROMs...")
-        ILOG("🔍 CloudKit Database: \(database.databaseScope.rawValue == 2 ? "Private" : "Public")")
-        ILOG("🔍 Query Record Type: \(CloudKitSchema.RecordType.rom.rawValue)")
+        ILOG("[SYNC] Starting loadAllFromCloud for CloudKit ROMs...")
+        ILOG("[SYNC] CloudKit Database: \(database.databaseScope.rawValue == 2 ? "Private" : "Public")")
+        ILOG("[SYNC] Query Record Type: \(CloudKitSchema.RecordType.rom.rawValue)")
 
         let query = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
         // Note: Removed sort descriptor as modificationDate is not marked sortable in CloudKit schema
@@ -80,24 +87,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         var allRecords: [CKRecord] = []
 
         do {
-            ILOG("🔍 Executing CloudKit query...")
-            // Use the convenience method to fetch all records, handling cursors automatically.
-            // TODO: Consider limiting fields fetched if only specific data is needed initially.
-            let (matchResults, _) = try await database.records(matching: query)
-            ILOG("🔍 CloudKit query completed. Processing \(matchResults.count) results...")
-
-            // First, collect all successful records
-            for (recordID, result) in matchResults {
-                switch result {
-                case .success(let record):
-                    allRecords.append(record)
-                    VLOG("🔍 Found ROM record: \(recordID.recordName)")
-                case .failure(let error):
-                    WLOG("Failed to fetch a specific ROM record during loadAll: \(error.localizedDescription)")
-                    WLOG("🔍 Failed record ID: \(recordID.recordName)")
-                    // Decide if we should continue or propagate the error
-                }
-            }
+            ILOG("[SYNC] Executing CloudKit query...")
+            allRecords = try await fetchAllRecords(matching: query)
+            ILOG("[SYNC] CloudKit query completed. Processing \(allRecords.count) results...")
 
             // Sort records by file size (smallest first) for better download reliability
             let sortedRecords = allRecords.sorted { record1, record2 in
@@ -106,15 +98,15 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return size1 < size2
             }
 
-            ILOG("Found \(allRecords.count) ROM records, starting enhanced two-phase sync...")
+            ILOG("[SYNC] Found \(allRecords.count) ROM records, starting enhanced two-phase sync...")
 
             // Debug: If we found 0 records, let's investigate why
             if allRecords.isEmpty {
-                ELOG("⚠️ No ROM records found in CloudKit! This suggests:")
-                ELOG("   1. No ROMs have been uploaded to CloudKit yet")
-                ELOG("   2. CloudKit authentication/permission issues")
-                ELOG("   3. Records are in a different database/zone")
-                ELOG("   4. Record ID format mismatch (old vs new format)")
+                ELOG("[SYNC] ⚠️ No ROM records found in CloudKit! This suggests:")
+                ELOG("[SYNC]    1. No ROMs have been uploaded to CloudKit yet")
+                ELOG("[SYNC]    2. CloudKit authentication/permission issues")
+                ELOG("[SYNC]    3. Records are in a different database/zone")
+                ELOG("[SYNC]    4. Record ID format mismatch (old vs new format)")
 
                 // Let's try a more specific query to see if there are ANY records
                 ILOG("🔍 Attempting to query for any records with 'rom_' prefix...")
@@ -212,20 +204,20 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     public func deleteFromDatastore(_ file: URL) async {
         VLOG("Attempting deleteFromDatastore for URL: \(file.path)")
         do {
-            // Find the game corresponding to this local URL
-            // Ensure we check on the correct thread/actor for Realm access
-            let realm = RomDatabase.sharedInstance.realm // Assuming this is safe or we need to pass the instance/actor
-            guard let game = realm.objects(PVGame.self).filter("file.path == %@", file.path).first else {
+            let md5 = try await withRealm { realm -> String? in
+                realm.objects(PVGame.self)
+                    .filter("file.path == %@", file.path)
+                    .first?
+                    .md5Hash
+            }
+
+            guard let md5 else {
                 WLOG("Could not find PVGame matching URL \(file.path) for deletion.")
                 return
             }
 
-            let md5 = game.md5Hash
-
-            // Call the primary deletion method
             ILOG("Found game with MD5 \(md5) for URL \(file.path). Calling markGameAsDeleted.")
             try await markGameAsDeleted(md5: md5)
-
         } catch {
             ELOG("Error during deleteFromDatastore for URL \(file.path): \(error.localizedDescription)")
             // Handle or propagate error
@@ -350,16 +342,17 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     public func uploadGame(_ md5: String) async throws {
-        //try await RealmProvider.ensureInitialized()
-        let realm = RomDatabase.sharedInstance.realm
-        guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
-            throw CloudSyncError.invalidData
+        let game = try await withRealm { realm -> PVGame in
+            guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                throw CloudSyncError.invalidData
+            }
+            return liveGame.freeze()
         }
-        guard !liveGame.contentless else {
-            VLOG("Skipping CloudKit upload for contentless placeholder game: \(liveGame.title)")
+
+        guard !game.contentless else {
+            VLOG("Skipping CloudKit upload for contentless placeholder game: \(game.title)")
             return
         }
-        let game = liveGame.freeze()
 
         let md5 = game.md5Hash
         guard !md5.isEmpty else {
@@ -528,7 +521,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Save Record to CloudKit
         do {
             try await saveRecord(record)
-            ILOG("Successfully saved record with asset for game \(md5) to CloudKit.")
+            ILOG("""
+                [SYNC] ✅ ROM UPLOAD SUCCESS: \(game.title)
+                   RecordID: \(record.recordID.recordName)
+                   MD5: \(md5), System: \(game.systemIdentifier), HasAsset: \(record[CloudKitSchema.ROMFields.fileData] != nil)
+                """)
         } catch let error as CKError {
             // Clean up zip file if upload fails
             if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
@@ -917,57 +914,66 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     #if os(tvOS)
     /// tvOS-specific helper that re-queues games whose files were evicted from local storage
     private func reconcileMissingLocalGames() async {
+        let downloadedGames: [PVGame]
         do {
-            //try await RealmProvider.ensureInitialized()
-            let realm = RomDatabase.sharedInstance.realm
-            let downloadedGames = realm.objects(PVGame.self).filter("isDownloaded == true")
-            guard !downloadedGames.isEmpty else { return }
-
-            let fileManager = FileManager.default
-            for game in downloadedGames {
-                let hasFile = game.file?.url.map { fileManager.fileExists(atPath: $0.path) } ?? false
-                if hasFile {
-                    continue
-                }
-
-                guard let cloudRecordID = game.cloudRecordID, !cloudRecordID.isEmpty else {
-                    continue
-                }
-
-                let md5 = game.md5Hash
-                let alreadyQueued = await MainActor.run {
-                    SyncProgressTracker.shared.alreadyQueued(md5: md5)
-                }
-                if alreadyQueued {
-                    continue
-                }
-
-                do {
-                    try realm.write {
-                        game.isDownloaded = false
-                    }
-                } catch {
-                    ELOG("Failed to flag missing game \(game.title) as not downloaded: \(error.localizedDescription)")
-                    continue
-                }
-
-                let fileSize = game.fileSize > 0 ? Int64(game.fileSize) : 1
-                do {
-                    try await CloudKitDownloadQueue.shared.queueDownload(
-                        md5: md5,
-                        title: game.title,
-                        fileSize: fileSize,
-                        systemIdentifier: game.systemIdentifier,
-                        priority: .normal,
-                        onDemand: false
-                    )
-                    ILOG("tvOS: Re-queued missing game \(game.title) (\(md5)) after storage eviction.")
-                } catch {
-                    ELOG("tvOS: Failed to re-queue \(game.title) (\(md5)): \(error.localizedDescription)")
-                }
+            downloadedGames = try await withRealm { realm -> [PVGame] in
+                realm.objects(PVGame.self)
+                    .filter("isDownloaded == true AND contentless == false")
+                    .map { $0.freeze() }
             }
         } catch {
-            ELOG("Failed to reconcile missing tvOS games: \(error.localizedDescription)")
+            ELOG("Failed to fetch downloaded games for reconciliation: \(error.localizedDescription)")
+            return
+        }
+        guard !downloadedGames.isEmpty else { return }
+
+        let fileManager = FileManager.default
+        for game in downloadedGames {
+            let hasFile = game.file?.url.map { fileManager.fileExists(atPath: $0.path) } ?? false
+            if hasFile {
+                continue
+            }
+
+            guard let cloudRecordID = game.cloudRecordID, !cloudRecordID.isEmpty else {
+                continue
+            }
+
+            let md5 = game.md5Hash
+            let alreadyQueued = await MainActor.run {
+                SyncProgressTracker.shared.alreadyQueued(md5: md5)
+            }
+            if alreadyQueued {
+                continue
+            }
+
+            do {
+                try await withRealm { realm in
+                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash.uppercased()) else {
+                        return
+                    }
+                    try realm.write {
+                        liveGame.isDownloaded = false
+                    }
+                }
+            } catch {
+                ELOG("Failed to flag missing game \(game.title) as not downloaded: \(error.localizedDescription)")
+                continue
+            }
+
+            let fileSize = game.fileSize > 0 ? Int64(game.fileSize) : 1
+            do {
+                try await CloudKitDownloadQueue.shared.queueDownload(
+                    md5: md5,
+                    title: game.title,
+                    fileSize: fileSize,
+                    systemIdentifier: game.systemIdentifier,
+                    priority: .normal,
+                    onDemand: false
+                )
+                ILOG("tvOS: Re-queued missing game \(game.title) (\(md5)) after storage eviction.")
+            } catch {
+                ELOG("tvOS: Failed to re-queue \(game.title) (\(md5)): \(error.localizedDescription)")
+            }
         }
     }
     #endif
@@ -1043,7 +1049,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     #else
                     if recordDeclaresAssetPresence(record) {
                         VLOG("Local game \(md5) is not marked as downloaded. Triggering download...")
-                        Task.detached { [self] in try? await downloadGame(md5: md5) }
+                        Task.detached { [self] in
+                            do {
+                                try await downloadGame(md5: md5)
+                            } catch {
+                                ELOG("[SYNC] Download failed for \(md5): \(error.localizedDescription)")
+                            }
+                        }
                     } else {
                         WLOG("Local game \(md5) needs download, but remote record has no asset. Skipping download trigger.")
                     }
@@ -1553,7 +1565,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // 4. Add the new game to the database using RomDatabase.shared
         do {
             try RomDatabase.sharedInstance.add(newGame, update: true) // Add the fully populated object
-            ILOG("✅ Successfully created and added new PVGame \(title) (MD5: \(md5)) from CloudKit record \(record.recordID.recordName). isDownloaded: \(newGame.isDownloaded)")
+            ILOG("""
+                [SYNC] ✅ ROM ENTRY CREATED FROM CLOUD: \(title)
+                   RecordID: \(record.recordID.recordName), MD5: \(md5)
+                   System: \(systemIdentifier), isDownloaded: \(newGame.isDownloaded), hasCloudAssets: \(newGame.hasCloudAssets)
+                """)
 
             // Perform artwork and metadata lookup for the new game
             await enhanceGameWithArtworkAndMetadata(md5: md5)
@@ -2156,56 +2172,103 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Quickly fetches ROM records and creates/updates PVGame entries without triggering any downloads
     public func syncMetadataOnly() async -> Int {
         var createdOrUpdated = 0
+        ILOG("[SYNC] Starting ROM metadata-only sync...")
         do {
-            let query = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
-            let (matchResults, _) = try await database.records(matching: query)
+            // Must include originalFilename - required for createPVGame
+            let metadataKeys: [CKRecord.FieldKey] = [
+                "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc", "originalFilename"
+            ]
+            let metadataQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
+            let metadataRecords = try await fetchAllRecords(matching: metadataQuery, desiredKeys: metadataKeys)
 
-            for (_, result) in matchResults {
-                if case .success(let record) = result {
-                    if let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) {
-                        // Create or update PVGame from record metadata
-                        if let _ = try? await createPVGame(from: record) {
+            ILOG("[SYNC] Fetched \(metadataRecords.count) ROM records from CloudKit")
+
+            for record in metadataRecords {
+                if let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) {
+                    let title = record["title"] as? String ?? "unknown"
+                    do {
+                        if let game = try await createPVGame(from: record) {
                             createdOrUpdated += 1
-                        } else {
-                            // If already exists, update basic fields
-                            try? await updatePVGame(from: record, gameMD5: md5)
+                            DLOG("[SYNC] Created ROM entry: \(title) (MD5: \(md5))")
+                        }
+                    } catch {
+                        // Game might already exist, try updating
+                        do {
+                            try await updatePVGame(from: record, gameMD5: md5)
                             createdOrUpdated += 1
+                            DLOG("[SYNC] Updated ROM entry: \(title) (MD5: \(md5))")
+                        } catch {
+                            WLOG("[SYNC] Failed to create or update ROM entry: \(title) (MD5: \(md5)) - \(error.localizedDescription)")
                         }
                     }
                 }
             }
+            ILOG("[SYNC] ROM metadata sync complete: \(createdOrUpdated) entries created/updated")
         } catch {
-            ELOG("Fast metadata-only ROM sync failed: \(error)")
+            ELOG("[SYNC] Fast metadata-only ROM sync failed: \(error)")
         }
         return createdOrUpdated
     }
 
     private func fetchROMRecords() async throws {
         // Metadata-first: exclude asset fields to avoid implicit CKAsset downloads filling caches
-        let metadataKeys: [String] = [
-            "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc"
+        // Must include originalFilename - required for createPVGame
+        let metadataKeys: [CKRecord.FieldKey] = [
+            "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc", "originalFilename"
         ]
         let query = CKQuery(recordType: "ROM", predicate: NSPredicate(value: true))
-        let op = CKQueryOperation(query: query)
-        op.desiredKeys = metadataKeys
-        op.resultsLimit = 200
-        var fetched: [CKRecord] = []
-        op.recordMatchedBlock = { _, result in
-            if case let .success(record) = result { fetched.append(record) }
-        }
-        let _ = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            op.queryResultBlock = { result in
-                switch result {
-                case .success:
-                    continuation.resume()
+        let fetched = try await fetchAllRecords(matching: query, desiredKeys: metadataKeys)
+        try await writePVGames(from: fetched)
+    }
+
+    private func fetchAllRecords(
+        matching query: CKQuery,
+        desiredKeys: [CKRecord.FieldKey]? = nil
+    ) async throws -> [CKRecord] {
+        var allRecords: [CKRecord] = []
+        var cursor: CKQueryOperation.Cursor?
+
+        DLOG("[SYNC] Fetching records for query: \(query.recordType)")
+
+        repeat {
+            let result: ([CKRecord.ID: Result<CKRecord, Error>], CKQueryOperation.Cursor?)
+            if let existingCursor = cursor {
+                let continuationResult = try await database.records(
+                    continuingMatchFrom: existingCursor,
+                    desiredKeys: desiredKeys,
+                    resultsLimit: CKQueryOperation.maximumResults
+                )
+                result = (
+                    Dictionary(uniqueKeysWithValues: continuationResult.matchResults),
+                    continuationResult.queryCursor
+                )
+            } else {
+                let matchResult = try await database.records(
+                    matching: query,
+                    desiredKeys: desiredKeys,
+                    resultsLimit: CKQueryOperation.maximumResults
+                )
+                result = (
+                    Dictionary(uniqueKeysWithValues: matchResult.matchResults),
+                    matchResult.queryCursor
+                )
+            }
+
+            for (recordID, matchResult) in result.0 {
+                switch matchResult {
+                case .success(let record):
+                    allRecords.append(record)
                 case .failure(let error):
-                    continuation.resume(throwing: error)
+                    WLOG("[SYNC] Failed to fetch record \(recordID.recordName): \(error.localizedDescription)")
                 }
             }
-            self.database.add(op)
-        }
-        // Write PVGame entries from metadata only
-        try await writePVGames(from: fetched)
+
+            cursor = result.1
+        } while cursor != nil
+
+        ILOG("[SYNC] Fetched \(allRecords.count) \(query.recordType) records from CloudKit")
+
+        return allRecords
     }
 
     /// Writes PVGame Realm objects from metadata records only (no assets)
@@ -2289,50 +2352,222 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Periodically verify that ROMs marked as synced still have CloudKit assets.
     public func auditCloudAssets(batchSize: Int = 40) async {
+        let sample: [PVGame]
         do {
-            //try await RealmProvider.ensureInitialized()
-            let realm = RomDatabase.sharedInstance.realm
-            let candidates = realm.objects(PVGame.self).filter("cloudRecordID != nil")
-            guard !candidates.isEmpty else { return }
-
-            let sample = Array(candidates.prefix(batchSize)).map { $0.freeze() }
-
-            for frozenGame in sample {
-                if Task.isCancelled { break }
-                guard let recordName = frozenGame.cloudRecordID else { continue }
-                let recordID = CKRecord.ID(recordName: recordName)
-
-                do {
-                    let record = try await fetchRecord(recordID: recordID, includeAssets: true)
-                    let hasAsset = record?[CloudKitSchema.ROMFields.fileData] is CKAsset
-                    await persistAuditResult(for: frozenGame, hasAsset: hasAsset, recordMissing: record == nil)
-                } catch let error as CKError where error.code == .unknownItem {
-                    await persistAuditResult(for: frozenGame, hasAsset: false, recordMissing: true)
-                } catch {
-                    WLOG("CloudKit audit failed for \(recordName): \(error.localizedDescription)")
-                }
+            sample = try await withRealm { realm -> [PVGame] in
+                let candidates = realm.objects(PVGame.self)
+                    .filter("cloudRecordID != nil AND contentless == false")
+                return Array(candidates.prefix(batchSize)).map { $0.freeze() }
             }
         } catch {
-            ELOG("Failed to audit CloudKit assets: \(error.localizedDescription)")
+            ELOG("Failed to fetch games for audit: \(error.localizedDescription)")
+            return
+        }
+        guard !sample.isEmpty else { return }
+
+        for frozenGame in sample {
+            if Task.isCancelled { break }
+            guard let recordName = frozenGame.cloudRecordID else { continue }
+            let recordID = CKRecord.ID(recordName: recordName)
+
+            do {
+                let record = try await fetchRecord(recordID: recordID, includeAssets: true)
+                let hasAsset: Bool = (record?[CloudKitSchema.ROMFields.fileData] as? CKAsset) != nil
+                await persistAuditResult(for: frozenGame, hasAsset: hasAsset, recordMissing: record == nil)
+            } catch let error as CKError where error.code == .unknownItem {
+                await persistAuditResult(for: frozenGame, hasAsset: false, recordMissing: true)
+            } catch {
+                WLOG("CloudKit audit failed for \(recordName): \(error.localizedDescription)")
+            }
         }
     }
 
     private func persistAuditResult(for frozenGame: PVGame, hasAsset: Bool, recordMissing: Bool) async {
         do {
-            //try await RealmProvider.ensureInitialized()
-            let realm = RomDatabase.sharedInstance.realm
-            try realm.write {
-                guard let liveGame = frozenGame.thaw() else { return }
-                liveGame.hasCloudAssets = hasAsset
-                if recordMissing {
-                    liveGame.cloudRecordID = nil
-                }
-                if recordMissing || !hasAsset {
-                    liveGame.requiresSync = true
+            try await withRealm { realm in
+                try realm.write {
+                    guard let liveGame = frozenGame.thaw() else { return }
+                    liveGame.hasCloudAssets = hasAsset
+                    if recordMissing {
+                        liveGame.cloudRecordID = nil
+                    }
+                    if recordMissing || !hasAsset {
+                        liveGame.requiresSync = true
+                    }
                 }
             }
         } catch {
             ELOG("Failed to persist audit result for \(frozenGame.md5Hash): \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Record Integrity Audit
+
+    /// Required fields for a valid ROM record
+    private static let requiredROMFields: [String] = [
+        CloudKitSchema.ROMFields.md5,
+        CloudKitSchema.ROMFields.title,
+        CloudKitSchema.ROMFields.systemIdentifier,
+        CloudKitSchema.ROMFields.originalFilename
+    ]
+
+    /// Audit CloudKit records for incomplete metadata and repair from local data if possible
+    /// - Parameter batchSize: Number of records to check per batch
+    /// - Returns: Tuple of (checked, repaired, unrepairable) counts
+    @discardableResult
+    public func auditAndRepairIncompleteRecords(batchSize: Int = 30) async -> (checked: Int, repaired: Int, unrepairable: Int) {
+        ILOG("[SYNC] Starting CloudKit record integrity audit...")
+
+        var checkedCount = 0
+        var repairedCount = 0
+        var unrepairableCount = 0
+
+        // Get local games that have cloudRecordIDs
+        let localGames: [PVGame]
+        do {
+            localGames = try await withRealm { realm -> [PVGame] in
+                Array(realm.objects(PVGame.self)
+                    .filter("cloudRecordID != nil AND contentless == false")
+                    .map { $0.freeze() })
+            }
+        } catch {
+            ELOG("[SYNC] Failed to fetch local games for audit: \(error.localizedDescription)")
+            return (0, 0, 0)
+        }
+
+        guard !localGames.isEmpty else {
+            ILOG("[SYNC] No games with cloudRecordID to audit")
+            return (0, 0, 0)
+        }
+
+        ILOG("[SYNC] Auditing \(localGames.count) CloudKit records for completeness...")
+
+        // Process in batches
+        for batch in localGames.chunked(into: batchSize) {
+            if Task.isCancelled { break }
+
+            for frozenGame in batch {
+                if Task.isCancelled { break }
+
+                guard let recordName = frozenGame.cloudRecordID else { continue }
+                checkedCount += 1
+
+                do {
+                    let recordID = CKRecord.ID(recordName: recordName)
+                    guard let record = try await fetchRecord(recordID: recordID, includeAssets: false) else {
+                        // Record doesn't exist, mark for re-upload
+                        WLOG("[SYNC] Record missing for \(frozenGame.title), marking for re-upload")
+                        await markGameForReupload(frozenGame)
+                        unrepairableCount += 1
+                        continue
+                    }
+
+                    // Check for missing required fields
+                    let missingFields = Self.requiredROMFields.filter { field in
+                        let value = record[field]
+                        if let str = value as? String {
+                            return str.isEmpty
+                        }
+                        return value == nil
+                    }
+
+                    if !missingFields.isEmpty {
+                        WLOG("[SYNC] Record \(recordName) missing fields: \(missingFields.joined(separator: ", "))")
+
+                        // Try to repair from local data
+                        if await repairRecord(record, from: frozenGame, missingFields: missingFields) {
+                            repairedCount += 1
+                            ILOG("[SYNC] ✅ Repaired record for \(frozenGame.title)")
+                        } else {
+                            unrepairableCount += 1
+                            WLOG("[SYNC] ⚠️ Could not repair record for \(frozenGame.title)")
+                        }
+                    }
+                } catch {
+                    WLOG("[SYNC] Audit error for \(frozenGame.title): \(error.localizedDescription)")
+                }
+            }
+
+            // Small delay between batches
+            try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+        }
+
+        ILOG("[SYNC] Record audit complete: checked=\(checkedCount), repaired=\(repairedCount), unrepairable=\(unrepairableCount)")
+        return (checkedCount, repairedCount, unrepairableCount)
+    }
+
+    /// Repair a CloudKit record by filling in missing fields from local data
+    private func repairRecord(_ record: CKRecord, from game: PVGame, missingFields: [String]) async -> Bool {
+        var updatedRecord = record
+        var canRepair = true
+
+        for field in missingFields {
+            switch field {
+            case CloudKitSchema.ROMFields.md5:
+                if !game.md5Hash.isEmpty {
+                    updatedRecord[field] = game.md5Hash
+                } else {
+                    canRepair = false
+                }
+
+            case CloudKitSchema.ROMFields.title:
+                if !game.title.isEmpty {
+                    updatedRecord[field] = game.title
+                } else {
+                    canRepair = false
+                }
+
+            case CloudKitSchema.ROMFields.systemIdentifier:
+                if !game.systemIdentifier.isEmpty {
+                    updatedRecord[field] = game.systemIdentifier
+                } else {
+                    canRepair = false
+                }
+
+            case CloudKitSchema.ROMFields.originalFilename:
+                if let filename = game.file?.fileName, !filename.isEmpty {
+                    updatedRecord[field] = filename
+                } else {
+                    // Try to derive from file URL
+                    if let url = game.file?.url {
+                        updatedRecord[field] = url.lastPathComponent
+                    } else {
+                        canRepair = false
+                    }
+                }
+
+            default:
+                DLOG("[SYNC] Unknown field to repair: \(field)")
+            }
+        }
+
+        guard canRepair else {
+            WLOG("[SYNC] Missing local data to repair record for \(game.title)")
+            return false
+        }
+
+        // Save the repaired record
+        do {
+            try await saveRecord(updatedRecord)
+            return true
+        } catch {
+            ELOG("[SYNC] Failed to save repaired record for \(game.title): \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// Mark a game for re-upload by clearing its cloudRecordID and setting requiresSync
+    private func markGameForReupload(_ frozenGame: PVGame) async {
+        do {
+            try await withRealm { realm in
+                try realm.write {
+                    guard let liveGame = frozenGame.thaw() else { return }
+                    liveGame.cloudRecordID = nil
+                    liveGame.requiresSync = true
+                }
+            }
+        } catch {
+            ELOG("[SYNC] Failed to mark game for re-upload: \(error.localizedDescription)")
         }
     }
 }

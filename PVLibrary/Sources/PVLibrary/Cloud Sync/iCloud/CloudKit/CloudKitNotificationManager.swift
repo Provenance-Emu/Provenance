@@ -105,13 +105,13 @@ public class CloudKitNotificationManager {
     /// - Returns: Background fetch result
     @discardableResult
     public func processNotification(_ userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
-        DLOG("Processing CloudKit notification")
-
         // Check if this is a CloudKit notification
         guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) else {
-            ELOG("Not a CloudKit notification")
+            ELOG("[SYNC] Not a CloudKit notification")
             return .noData
         }
+
+        ILOG("[SYNC] 📬 CloudKit push: type=\(notification.notificationType.rawValue), subscription=\(notification.subscriptionID ?? "none")")
 
         // Publish the notification for subscribers
         notificationSubject.send(notification)
@@ -122,25 +122,28 @@ public class CloudKitNotificationManager {
             case .query:
                 // Query notification - sync the specific query
                 if let queryNotification = notification as? CKQueryNotification {
+                    DLOG("[SYNC] Query notification for record: \(queryNotification.recordID?.recordName ?? "unknown")")
                     return try await processQueryNotification(queryNotification)
                 }
 
             case .recordZone:
                 // Record zone notification - sync the specific zone
                 if let zoneNotification = notification as? CKRecordZoneNotification {
+                    DLOG("[SYNC] Zone notification received")
                     return try await processZoneNotification(zoneNotification)
                 }
 
             case .database:
                 // Database notification - sync all data
+                DLOG("[SYNC] Database notification received")
                 return try await processDatabaseNotification(notification)
 
             default:
-                DLOG("Unhandled notification type: \(notification.notificationType)")
+                DLOG("[SYNC] Unhandled notification type: \(notification.notificationType)")
                 return .noData
             }
         } catch {
-            ELOG("Error processing CloudKit notification: \(error.localizedDescription)")
+            ELOG("[SYNC] Error processing CloudKit notification: \(error.localizedDescription)")
             return .failed
         }
 

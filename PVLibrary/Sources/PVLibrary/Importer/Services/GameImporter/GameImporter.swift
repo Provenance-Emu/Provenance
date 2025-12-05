@@ -609,19 +609,31 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     /// Initializes the systems
+    @MainActor
     public func initSystems() async {
         initialized.enter()
+
+        do {
+            try await RealmProvider.ensureInitialized()
+        } catch {
+            ELOG("GameImporter: Failed to initialize Realm before initSystems: \(error.localizedDescription)")
+            initialized.leave()
+            return
+        }
+
         await self.initCorePlists()
 
         /// Updates the system to path map
+        @MainActor
         @Sendable func updateSystemToPathMap() async -> [String: URL] {
-            let systems = PVSystem.all
+            let systems = PVSystem.all.toArray()
             return await systems.async.reduce(into: [String: URL]()) {partialResult, system in
                 partialResult[system.identifier] = system.romsDirectory
             }
         }
 
         /// Updates the ROM extension to systems map
+        @MainActor
         @Sendable func updateromExtensionToSystemsMap() -> [String: [String]] {
             return PVSystem.all.reduce([String: [String]](), { (dict, system) -> [String: [String]] in
                 let extensionsForSystem = system.supportedExtensions
@@ -638,29 +650,27 @@ public final class GameImporter: GameImporting, ObservableObject {
             })
         }
 
-        Task.detached { @MainActor in
-            let systems = PVSystem.all
+        let systems = PVSystem.all
 
-            self.notificationToken = systems.observe { [unowned self] (changes: RealmCollectionChange) in
-                switch changes {
-                case .initial:
-                    Task.detached {
-                        ILOG("RealmCollection changed state to .initial")
-                        self.systemToPathMap = await updateSystemToPathMap()
-                        self.initialized.leave()
+        self.notificationToken = systems.observe { [unowned self] (changes: RealmCollectionChange) in
+            switch changes {
+            case .initial:
+                Task { @MainActor in
+                    ILOG("RealmCollection changed state to .initial")
+                    self.systemToPathMap = await updateSystemToPathMap()
+                    self.initialized.leave()
 
-                        // Set up the queue subscription after all members are initialized
-                        self.setupQueueSubscription()
-                    }
-                case .update:
-                    Task.detached {
-                        ILOG("RealmCollection changed state to .update")
-                        self.systemToPathMap = await updateSystemToPathMap()
-                    }
-                case let .error(error):
-                    ELOG("RealmCollection changed state to .error")
-                    fatalError("\(error)")
+                    // Set up the queue subscription after all members are initialized
+                    self.setupQueueSubscription()
                 }
+            case .update:
+                Task { @MainActor in
+                    ILOG("RealmCollection changed state to .update")
+                    self.systemToPathMap = await updateSystemToPathMap()
+                }
+            case let .error(error):
+                ELOG("RealmCollection changed state to .error")
+                fatalError("\(error)")
             }
         }
     }
@@ -2303,69 +2313,69 @@ public final class GameImporter: GameImporting, ObservableObject {
                 return
             }
 
-            let realm = RomDatabase.sharedInstance.realm
-
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
-                ELOG("Cannot handle late associated file \(fileURL.lastPathComponent): PVGame with ID \(gameID) not found.")
-                return
-            }
-
-            // Determine the destination directory for the game's files.
-            var destinationDirectory: URL? = nil
-            if let primaryFileURL = game.file?.url, !primaryFileURL.path.isEmpty {
-                destinationDirectory = primaryFileURL.deletingLastPathComponent()
-            } else if let firstRelatedFileURL = game.relatedFiles.first(where: { $0.url?.path.isEmpty == false })?.url {
-                destinationDirectory = firstRelatedFileURL.deletingLastPathComponent()
-            }
-
-            guard let validDestinationDirectory = destinationDirectory else {
-                ELOG("Cannot determine destination directory for late associated file \(fileURL.lastPathComponent) for game \(game.title ?? "Unknown"): No existing file paths found for the game.")
-                return
-            }
-
-            let destinationFileURL = validDestinationDirectory.appendingPathComponent(fileURL.lastPathComponent)
+            // Track bin files to process after Realm work
+            var binFilesToProcess: [URL] = []
+            var processingFailed = false
 
             do {
-                // Move the file
-                let destPathString = destinationFileURL.path
-                DLOG("Moving late-arriving file from \(fileURL.path) to \(destPathString)")
-                try FileManager.default.moveItem(at: fileURL, to: destinationFileURL)
-
-                // Create PVFile and add to game
-                let newPVFile = PVFile(withURL: destinationFileURL, relativeRoot: .platformDefault)
-
-                try realm.write {
-                    realm.add(newPVFile, update: Realm.UpdatePolicy.modified)
-                    if !game.relatedFiles.contains(where: { $0.url == newPVFile.url }) {
-                        game.relatedFiles.append(newPVFile)
+                // Step 1: Sync Realm work - get game info, move file, update database
+                let result: (destinationURL: URL, gameTitle: String)? = try await RealmContext.withRealm { realm in
+                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
+                        ELOG("Cannot handle late associated file \(fileURL.lastPathComponent): PVGame with ID \(gameID) not found.")
+                        return nil
                     }
-                }
-                ILOG("Successfully processed late-arriving file \(destinationFileURL.lastPathComponent) for game \(game.title ?? "Unknown").")
 
-                // Update the ImportQueueItem's resolvedAssociatedFileURLs
-                if !item.resolvedAssociatedFileURLs.contains(destinationFileURL) {
-                    item.resolvedAssociatedFileURLs.append(destinationFileURL)
+                    var destinationDirectory: URL? = nil
+                    if let primaryFileURL = game.file?.url, !primaryFileURL.path.isEmpty {
+                        destinationDirectory = primaryFileURL.deletingLastPathComponent()
+                    } else if let firstRelatedFileURL = game.relatedFiles.first(where: { $0.url?.path.isEmpty == false })?.url {
+                        destinationDirectory = firstRelatedFileURL.deletingLastPathComponent()
+                    }
+
+                    guard let validDestinationDirectory = destinationDirectory else {
+                        ELOG("Cannot determine destination directory for late associated file \(fileURL.lastPathComponent) for game \(game.title ?? "Unknown"): No existing file paths found for the game.")
+                        return nil
+                    }
+
+                    let destinationFileURL = validDestinationDirectory.appendingPathComponent(fileURL.lastPathComponent)
+
+                    let destPathString = destinationFileURL.path
+                    DLOG("Moving late-arriving file from \(fileURL.path) to \(destPathString)")
+                    try FileManager.default.moveItem(at: fileURL, to: destinationFileURL)
+
+                    let newPVFile = PVFile(withURL: destinationFileURL, relativeRoot: .platformDefault)
+
+                    try realm.write {
+                        realm.add(newPVFile, update: Realm.UpdatePolicy.modified)
+                        if !game.relatedFiles.contains(where: { $0.url == newPVFile.url }) {
+                            game.relatedFiles.append(newPVFile)
+                        }
+                    }
+
+                    return (destinationFileURL, game.title ?? "Unknown")
                 }
 
-                // Remove the file from expectedAssociatedFileNames if it's there
+                guard let result = result else { return }
+
+                ILOG("Successfully processed late-arriving file \(result.destinationURL.lastPathComponent) for game \(result.gameTitle).")
+
+                if !item.resolvedAssociatedFileURLs.contains(result.destinationURL) {
+                    item.resolvedAssociatedFileURLs.append(result.destinationURL)
+                }
+
                 if var expectedFiles = item.expectedAssociatedFileNames {
                     expectedFiles.removeAll { $0.lowercased() == fileURL.lastPathComponent.lowercased() }
                     item.expectedAssociatedFileNames = expectedFiles.isEmpty ? nil : expectedFiles
                 }
 
-                // If this is a CUE file, check for BIN files and add them to expected files
+                // Collect bin files to process
                 if isCueFile && !binFilesToCheck.isEmpty {
-                    // Check if any of the BIN files already exist in the destination directory
                     for binFileName in binFilesToCheck {
                         let binFileInImports = self.importsPath.appendingPathComponent(binFileName)
-
-                        // If the BIN file exists in the imports directory, process it now
                         if FileManager.default.fileExists(atPath: binFileInImports.path) {
                             ILOG("Found BIN file \(binFileName) in imports directory for late-arriving CUE \(fileURL.lastPathComponent)")
-                            // Process it as a late-arriving file
-                            await handleLateAssociatedFile(fileURL: binFileInImports, forCompletedItem: item)
+                            binFilesToProcess.append(binFileInImports)
                         } else {
-                            // Add to expected files if it doesn't exist yet
                             if item.expectedAssociatedFileNames == nil {
                                 item.expectedAssociatedFileNames = [binFileName]
                                 ILOG("Created expected files list with BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
@@ -2376,11 +2386,18 @@ public final class GameImporter: GameImporting, ObservableObject {
                         }
                     }
                 }
-
             } catch {
-                ELOG("Error processing late-arriving file \(fileURL.lastPathComponent) for game \(game.title ?? "Unknown"): \(error.localizedDescription)")
-                // Consider adding the file back to the import queue if the move fails
+                ELOG("Error processing late-arriving file \(fileURL.lastPathComponent) for game ID \(gameID): \(error.localizedDescription)")
+                processingFailed = true
+            }
+
+            // Step 2: Async work outside Realm closure
+            if processingFailed {
                 await addImportItemToQueue(ImportQueueItem(url: fileURL, fileType: .unknown))
+            }
+
+            for binFileURL in binFilesToProcess {
+                await handleLateAssociatedFile(fileURL: binFileURL, forCompletedItem: item)
             }
         }
     }
@@ -3193,78 +3210,87 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// - Parameter items: Items to check
     /// - Returns: Set of URLs that already exist in database
     private func batchCheckExistingGames(_ items: [ImportQueueItem]) async -> Set<URL> {
-        var existingURLs = Set<URL>()
-        let realm = RomDatabase.sharedInstance.realm
-
-        ILOG("GameImporter: batchCheckExistingGames checking \(items.count) items")
-
-        /// Group items by system directory for efficient batch queries
-        let itemsBySystem = Dictionary(grouping: items) { item -> String in
-            item.url.deletingLastPathComponent().lastPathComponent
+        do {
+            try await RealmProvider.ensureInitialized()
+        } catch {
+            ELOG("GameImporter: Failed to initialize Realm for batch check: \(error.localizedDescription)")
+            return []
         }
 
-        for (systemDir, systemItems) in itemsBySystem {
-            guard let systemID = SystemIdentifier(rawValue: systemDir) else {
-                WLOG("GameImporter: batchCheckExistingGames - Invalid system directory: \(systemDir)")
-                continue
+        return await MainActor.run {
+            var existingURLs = Set<URL>()
+            ILOG("GameImporter: batchCheckExistingGames checking \(items.count) items")
+
+            let realm = RomDatabase.sharedInstance.realm
+
+            /// Group items by system directory for efficient batch queries
+            let itemsBySystem = Dictionary(grouping: items) { item -> String in
+                item.url.deletingLastPathComponent().lastPathComponent
             }
 
-            ILOG("GameImporter: batchCheckExistingGames - Checking \(systemItems.count) items for system \(systemID.rawValue)")
-
-            /// Batch query: Get all games for this system at once (single query instead of per-file)
-            let allGamesForSystem = realm.objects(PVGame.self)
-                .filter("systemIdentifier == %@", systemID.rawValue)
-
-            /// Build lookup sets for fast in-memory checking
-            var romPathsSet = Set<String>()
-            var md5Set = Set<String>()
-            var filePathsSet = Set<String>()
-
-            for game in allGamesForSystem {
-                if !game.romPath.isEmpty {
-                    romPathsSet.insert(game.romPath)
-                }
-                if !game.md5Hash.isEmpty {
-                    md5Set.insert(game.md5Hash.uppercased())
-                }
-                if let fileURL = game.file?.url?.path {
-                    filePathsSet.insert(fileURL)
-                }
-            }
-
-            ILOG("GameImporter: batchCheckExistingGames - Built lookup sets: \(romPathsSet.count) romPaths, \(md5Set.count) MD5s, \(filePathsSet.count) file paths")
-
-            /// Now check each item against the pre-built sets (fast in-memory lookups)
-            for item in systemItems {
-                let filename = item.url.lastPathComponent
-                let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
-
-                /// Fast-path: Check by romPath (in-memory set lookup)
-                if romPathsSet.contains(partialPath) {
-                    VLOG("GameImporter: batchCheckExistingGames - Found existing game by romPath: \(filename)")
-                    existingURLs.insert(item.url)
+            for (systemDir, systemItems) in itemsBySystem {
+                guard let systemID = SystemIdentifier(rawValue: systemDir) else {
+                    WLOG("GameImporter: batchCheckExistingGames - Invalid system directory: \(systemDir)")
                     continue
                 }
 
-                /// Check by MD5 if available (in-memory set lookup, skip expensive MD5 calculation if not needed)
-                /// Only calculate MD5 if we have games with MD5s to check against
-                if !md5Set.isEmpty, let md5 = item.md5?.uppercased(), md5Set.contains(md5) {
-                    VLOG("GameImporter: batchCheckExistingGames - Found existing game by MD5: \(filename)")
-                    existingURLs.insert(item.url)
-                    continue
+                ILOG("GameImporter: batchCheckExistingGames - Checking \(systemItems.count) items for system \(systemID.rawValue)")
+
+                /// Batch query: Get all games for this system at once (single query instead of per-file)
+                let allGamesForSystem = realm.objects(PVGame.self)
+                    .filter("systemIdentifier == %@", systemID.rawValue)
+
+                /// Build lookup sets for fast in-memory checking
+                var romPathsSet = Set<String>()
+                var md5Set = Set<String>()
+                var filePathsSet = Set<String>()
+
+                for game in allGamesForSystem {
+                    if !game.romPath.isEmpty {
+                        romPathsSet.insert(game.romPath)
+                    }
+                    if !game.md5Hash.isEmpty {
+                        md5Set.insert(game.md5Hash.uppercased())
+                    }
+                    if let fileURL = game.file?.url?.path {
+                        filePathsSet.insert(fileURL)
+                    }
                 }
 
-                /// Check by file path (in-memory set lookup)
-                if filePathsSet.contains(item.url.path) {
-                    VLOG("GameImporter: batchCheckExistingGames - Found existing game by file path: \(filename)")
-                    existingURLs.insert(item.url)
-                    continue
+                ILOG("GameImporter: batchCheckExistingGames - Built lookup sets: \(romPathsSet.count) romPaths, \(md5Set.count) MD5s, \(filePathsSet.count) file paths")
+
+                /// Now check each item against the pre-built sets (fast in-memory lookups)
+                for item in systemItems {
+                    let filename = item.url.lastPathComponent
+                    let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
+
+                    /// Fast-path: Check by romPath (in-memory set lookup)
+                    if romPathsSet.contains(partialPath) {
+                        VLOG("GameImporter: batchCheckExistingGames - Found existing game by romPath: \(filename)")
+                        existingURLs.insert(item.url)
+                        continue
+                    }
+
+                    /// Check by MD5 if available (in-memory set lookup, skip expensive MD5 calculation if not needed)
+                    /// Only calculate MD5 if we have games with MD5s to check against
+                    if !md5Set.isEmpty, let md5 = item.md5?.uppercased(), md5Set.contains(md5) {
+                        VLOG("GameImporter: batchCheckExistingGames - Found existing game by MD5: \(filename)")
+                        existingURLs.insert(item.url)
+                        continue
+                    }
+
+                    /// Check by file path (in-memory set lookup)
+                    if filePathsSet.contains(item.url.path) {
+                        VLOG("GameImporter: batchCheckExistingGames - Found existing game by file path: \(filename)")
+                        existingURLs.insert(item.url)
+                        continue
+                    }
                 }
             }
+
+            ILOG("GameImporter: batchCheckExistingGames - Found \(existingURLs.count) existing files out of \(items.count) checked")
+            return existingURLs
         }
-
-        ILOG("GameImporter: batchCheckExistingGames - Found \(existingURLs.count) existing files out of \(items.count) checked")
-        return existingURLs
     }
 
     private func addImportItemToQueue(_ item: ImportQueueItem) async {
@@ -3722,15 +3748,12 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         /// Fast-path: Quick duplicate check using file size (before expensive MD5)
         if let fileSize = try? FileManager.default.attributesOfItem(atPath: filePath)[.size] as? Int64 {
-            let realm = RomDatabase.sharedInstance.realm
-            /// Check for games with matching file size first (fast database query)
-            let gamesWithSameSize = realm.objects(PVGame.self).filter("file.sizeCache == %@", Int(fileSize))
-
-            /// If we find games with same size, check by romPath first (much faster than URL lookup)
-            /// Only check one game to avoid expensive iteration
-            if let gameWithSameSize = gamesWithSameSize.first {
+            let duplicateFound = try! await RealmContext.withRealm { realm -> Bool in
+                let gamesWithSameSize = realm.objects(PVGame.self).filter("file.sizeCache == %@", Int(fileSize))
+                guard let gameWithSameSize = gamesWithSameSize.first else {
+                    return false
+                }
                 let filename = item.url.lastPathComponent
-                /// Check if romPath matches (avoids expensive URL computation)
                 if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
                     let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
                     if gameWithSameSize.romPath == partialPath {
@@ -3738,12 +3761,15 @@ public final class GameImporter: GameImporting, ObservableObject {
                         return true
                     }
                 }
-                /// Fallback: Only check URL if romPath doesn't match (rare case)
                 if let gameFile = gameWithSameSize.file,
                    gameFile.url?.path == filePath {
                     ILOG("Found existing game by file path match: \(gameWithSameSize.title ?? "Unknown")")
                     return true
                 }
+                return false
+            }
+            if duplicateFound {
+                return true
             }
         }
 
@@ -3767,12 +3793,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             /// Check by MD5 for this system (fast lookup - primary key is very fast)
             if let md5 = item.md5?.uppercased() {
-                let realm = RomDatabase.sharedInstance.realm
-                if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
-                   systemFromPath.rawValue == gameWithSameMD5.systemIdentifier,
-                   gameWithSameMD5.file != nil {
-                    /// MD5 match + system match + file exists = definitely exists (no need to check URL)
-                    ILOG("Found existing game with same MD5 hash by path system: \(gameWithSameMD5.title ?? "Unknown")")
+                let md5Duplicate = try! await RealmContext.withRealm { realm -> Bool in
+                    if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+                       systemFromPath.rawValue == gameWithSameMD5.systemIdentifier,
+                       gameWithSameMD5.file != nil {
+                        ILOG("Found existing game with same MD5 hash by path system: \(gameWithSameMD5.title ?? "Unknown")")
+                        return true
+                    }
+                    return false
+                }
+                if md5Duplicate {
                     return true
                 }
             }
@@ -3792,22 +3822,14 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         if needsPathCheck {
             /// Query Realm directly on current thread instead of iterating cache to avoid thread safety issues
-            let realm = RomDatabase.sharedInstance.realm
-            /// Use a Realm query to find games with matching file paths
-            /// Convert file path to partial path format for comparison
-            let fileURL = URL(fileURLWithPath: filePath)
-            let filename = fileURL.lastPathComponent
+            let fileDuplicate = try! await RealmContext.withRealm { realm -> Bool in
+                let fileURL = URL(fileURLWithPath: filePath)
+                let filename = fileURL.lastPathComponent
 
-            /// Check by filename across all systems
-            /// Use romPath instead of file.partialPath (both store same format, but romPath is direct property)
-            /// Check if any game has this filename in its romPath
-            /// Only check games where romPath ends with the filename (faster than CONTAINS)
-            let gamesWithMatchingFile = realm.objects(PVGame.self)
-                .filter("romPath ENDSWITH %@", filename)
-            /// Only check first match to avoid expensive iteration
-            if let matchingGame = gamesWithMatchingFile.first {
-                /// If romPath matches exactly, no need to check URL
-                /// Extract system from path to build expected romPath
+                let gamesWithMatchingFile = realm.objects(PVGame.self)
+                    .filter("romPath ENDSWITH %@", filename)
+                guard let matchingGame = gamesWithMatchingFile.first else { return false }
+
                 if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
                     let expectedRomPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
                     if matchingGame.romPath == expectedRomPath {
@@ -3815,12 +3837,16 @@ public final class GameImporter: GameImporting, ObservableObject {
                         return true
                     }
                 }
-                /// Fallback: check URL only if romPath doesn't match exactly
                 if let gameFileURL = matchingGame.file?.url,
                    gameFileURL.path == filePath {
                     ILOG("Found existing game by file path: \(matchingGame.title ?? "Unknown") at \(filePath)")
                     return true
                 }
+                return false
+            }
+
+            if fileDuplicate {
+                return true
             }
         }
 
@@ -3845,11 +3871,15 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                     if system.rawValue == cachedSystemId {
                         /// Query Realm on current thread to verify file exists
-                        let realm = RomDatabase.sharedInstance.realm
-                        let gameId = cachedGameId
-                        if let existingGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameId),
-                           existingGame.file != nil {
-                            ILOG("Found existing game in database: \(existingGame.title ?? "Unknown")")
+                        let existsInRealm = try! await RealmContext.withRealm { realm -> Bool in
+                            if let existingGame = realm.object(ofType: PVGame.self, forPrimaryKey: cachedGameId),
+                               existingGame.file != nil {
+                                ILOG("Found existing game in database: \(existingGame.title ?? "Unknown")")
+                                return true
+                            }
+                            return false
+                        }
+                        if existsInRealm {
                             return true
                         }
                     }
@@ -3857,11 +3887,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                 /// Check by MD5 for this system
                 if let md5 = item.md5?.uppercased() {
-                    let realm = RomDatabase.sharedInstance.realm
-                    if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
-                       system.rawValue == gameWithSameMD5.systemIdentifier,
-                       gameWithSameMD5.file != nil {
-                        ILOG("Found existing game with same MD5 hash: \(gameWithSameMD5.title ?? "Unknown")")
+                    let md5Exists = try! await RealmContext.withRealm { realm -> Bool in
+                        if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+                           system.rawValue == gameWithSameMD5.systemIdentifier,
+                           gameWithSameMD5.file != nil {
+                            ILOG("Found existing game with same MD5 hash: \(gameWithSameMD5.title ?? "Unknown")")
+                            return true
+                        }
+                        return false
+                    }
+                    if md5Exists {
                         return true
                     }
                 }
@@ -3885,21 +3920,17 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Fast filename-based duplicate check for files in imports folder
     /// Only checks if a game with the same filename already exists (no expensive MD5 calculation)
     private func quickFilenameDuplicateCheck(_ filename: String) async -> Bool {
-        let realm = RomDatabase.sharedInstance.realm
+       try! await RealmContext.withRealm { realm in
+            let gamesWithMatchingFile = realm.objects(PVGame.self)
+                .filter("romPath ENDSWITH %@", filename)
 
-        // Quick check: See if any game has this filename in its romPath
-        // This is much faster than MD5 calculation and full path checking
-        let gamesWithMatchingFile = realm.objects(PVGame.self)
-            .filter("romPath ENDSWITH %@", filename)
-
-        // Only check first match to avoid expensive iteration
-        if let matchingGame = gamesWithMatchingFile.first,
-           matchingGame.file != nil {
-            VLOG("Quick filename check found existing game: \(matchingGame.title ?? "Unknown")")
-            return true
+            if let matchingGame = gamesWithMatchingFile.first,
+               matchingGame.file != nil {
+                VLOG("Quick filename check found existing game: \(matchingGame.title ?? "Unknown")")
+                return true
+            }
+            return false
         }
-
-        return false
     }
 
     /// Safely cleans up failed import files with proper error handling

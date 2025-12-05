@@ -86,7 +86,7 @@ public struct SystemPickerView: View {
             try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
             DLOG("Successfully moved game file to new system directory <\(destinationURL.path())>")
 
-            let realm = try Realm()
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             var updatedGame: PVGame?
             try realm.write {
                 /// Thaw the PVGame for editing

@@ -93,7 +93,7 @@ extension GameImporter {
     private func checkForAlreadyImportedFiles(_ fileNames: [String], primaryGameItem: ImportQueueItem, m3uURL: URL) async {
         ILOG("Checking if any files in M3U \(m3uURL.lastPathComponent) have already been imported to the database")
 
-        let realm = RomDatabase.sharedInstance.realm
+        let realm = try! await Realm()
         var filesToConsolidate: [PVFile] = []
         var gamesWithFilesToConsolidate = Set<PVGame>()
 
@@ -201,7 +201,7 @@ extension GameImporter {
     /// Find the imported game using multiple search strategies
     private func findImportedGame(primaryGameItem: ImportQueueItem, m3uURL: URL) async throws -> PVGame {
         let m3uFileName = m3uURL.lastPathComponent
-        let realm = RomDatabase.sharedInstance.realm
+        let realm = try! await Realm()
         var m3uGame: PVGame?
 
         // Strategy 1: Find by filename
@@ -286,7 +286,7 @@ extension GameImporter {
     private func consolidateFilesUnderGame(game: PVGame, files: [PVFile], games: [PVGame], m3uURL: URL) async throws {
         let gameID = game.id
 
-        let realm = RomDatabase.sharedInstance.realm
+        let realm = try! await Realm()
 
         try realm.write {
             // First, update the file paths to be in the same directory as the M3U

@@ -1051,78 +1051,56 @@ public class CloudKitSyncer: SyncProvider {
         let recordHasAsset = recordHasAssetFlag(record, assetKey: CloudKitSyncer.FileAttributes.fileData)
 
         do {
-            // Get the Realm instance
-            let realm: Realm = RomDatabase.sharedInstance.realm
+            try await RealmContext.withRealm { realm in
+                try realm.write {
+                    // Check if the game already exists
+                    let recordID = record.recordID.recordName
+                    var game: PVGame?
 
-            // Create or update the ROM entry
-            try await realm.write { [self] in
-                // Check if the game already exists
-                let recordID = record.recordID.recordName
-                var game: PVGame?
+                    // Try to find by cloudRecordID first
+                    game = realm.objects(PVGame.self).filter("cloudRecordID == %@", recordID).first
 
-                // Try to find by cloudRecordID first
-                game = realm.objects(PVGame.self).filter("cloudRecordID == %@", recordID).first
-
-                // If not found and we have MD5, try to find by MD5
-                if game == nil, !md5.isEmpty {
-                    game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first
-                }
-
-                // If still not found, try to find by filename
-                // (don't do this as we may have duplicate filenames for different systems
-                //                if game == nil {
-                //                    game = realm.objects(PVGame.self).filter("romPath CONTAINS %@", filename).first
-                //                }
-
-                // If no existing game found, create a new one
-                if game == nil {
-                    let newGame = PVGame()
-                    // Set a valid md5Hash (required as primary key)
-                    newGame.md5Hash = md5
-
-                    // Construct a proper ROM path
-                    let documentsURL = URL.documentsPath
-                    let systemDir = systemIdentifier.isEmpty ? system : systemIdentifier
-                    let romPath = "\(systemDir)/\(filename)"
-                    newGame.romPath = romPath
-
-                    // Set the cloud record ID to ensure we can match this record later
-                    newGame.cloudRecordID = record.recordID.recordName
-
-                    // Set download status
-                    newGame.isDownloaded = isDownloaded
-                    newGame.hasCloudAssets = recordHasAsset
-
-                    // Set the system if we can find it
-                    if let systemObj = realm.objects(PVSystem.self).filter("identifier == %@", systemIdentifier).first {
-                        newGame.system = systemObj
-                        newGame.systemIdentifier = systemIdentifier
+                    // If not found and we have MD5, try to find by MD5
+                    if game == nil, !md5.isEmpty {
+                        game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first
                     }
 
-                    // Set other properties
-                    newGame.title = title
-                    newGame.fileSize = Int(fileSize)
+                    // If no existing game found, create a new one
+                    if game == nil {
+                        let newGame = PVGame()
+                        newGame.md5Hash = md5
 
-                    // Add to Realm
-                    realm.add(newGame)
-                    DLOG("Created ROM entry for \(title)")
-                } else if let existingGame = game {
-                    // Update existing game properties
-                    existingGame.title = title
-                    existingGame.fileSize = Int(fileSize)
-                    existingGame.cloudRecordID = recordID
-                    existingGame.isDownloaded = isDownloaded
-                    existingGame.hasCloudAssets = recordHasAsset
-
-                    // Update ROM path if it's missing or invalid
-                    if existingGame.romPath.isEmpty || !existingGame.romPath.contains(systemIdentifier) {
                         let systemDir = systemIdentifier.isEmpty ? system : systemIdentifier
-                        let romPath = "\(systemDir)/\(filename)"
-                        existingGame.romPath = romPath
-                        DLOG("Updated ROM path: \(romPath)")
-                    }
+                        newGame.romPath = "\(systemDir)/\(filename)"
+                        newGame.cloudRecordID = record.recordID.recordName
+                        newGame.isDownloaded = isDownloaded
+                        newGame.hasCloudAssets = recordHasAsset
 
-                    DLOG("Updated ROM entry for \(title)")
+                        if let systemObj = realm.objects(PVSystem.self).filter("identifier == %@", systemIdentifier).first {
+                            newGame.system = systemObj
+                            newGame.systemIdentifier = systemIdentifier
+                        }
+
+                        newGame.title = title
+                        newGame.fileSize = Int(fileSize)
+
+                        realm.add(newGame)
+                        DLOG("Created ROM entry for \(title)")
+                    } else if let existingGame = game {
+                        existingGame.title = title
+                        existingGame.fileSize = Int(fileSize)
+                        existingGame.cloudRecordID = recordID
+                        existingGame.isDownloaded = isDownloaded
+                        existingGame.hasCloudAssets = recordHasAsset
+
+                        if existingGame.romPath.isEmpty || !existingGame.romPath.contains(systemIdentifier) {
+                            let systemDir = systemIdentifier.isEmpty ? system : systemIdentifier
+                            existingGame.romPath = "\(systemDir)/\(filename)"
+                            DLOG("Updated ROM path: \(existingGame.romPath)")
+                        }
+
+                        DLOG("Updated ROM entry for \(title)")
+                    }
                 }
             }
         } catch {
@@ -1167,16 +1145,13 @@ public class CloudKitSyncer: SyncProvider {
         }
 
         do {
-            // Get the Realm instance
-            let realm = RomDatabase.sharedInstance.realm
+            try await RealmContext.withRealm { realm in
+                try realm.write {
+                    // Check if the save state already exists
+                    var saveState: PVSaveState?
 
-            // Create or update the SaveState entry
-            try await realm.write { [self] in
-                // Check if the save state already exists
-                var saveState: PVSaveState?
-
-                // Try to find by cloudRecordID first
-                saveState = realm.objects(PVSaveState.self).filter("cloudRecordID == %@", recordID).first
+                    // Try to find by cloudRecordID first
+                    saveState = realm.objects(PVSaveState.self).filter("cloudRecordID == %@", recordID).first
 
                 // If not found and we have MD5, try to find by filename
                 if saveState == nil {
@@ -1190,13 +1165,11 @@ public class CloudKitSyncer: SyncProvider {
                     }
                 }
 
-                // If no existing save state found, we need a game to associate it with
-                if saveState == nil {
-                    // Find the game by ID
-                    if let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) {
-                        // Create a new PVFile for the save state
-                        let file = PVFile()
-                        file.partialPath = filename
+                    // If no existing save state found, we need a game to associate it with
+                    if saveState == nil {
+                        if let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) {
+                            let file = PVFile()
+                            file.partialPath = filename
 
                         // Find a core that can handle this save state
                         if let core = realm.objects(PVCore.self).filter("supportsSystem == %@", game.systemIdentifier).first {
@@ -1214,16 +1187,16 @@ public class CloudKitSyncer: SyncProvider {
                             realm.add(newSaveState)
                             DLOG("Created SaveState entry for \(description)")
                         }
-                    } else {
-                        DLOG("Could not create SaveState entry for \(description) - no matching game found")
+                        } else {
+                            DLOG("Could not create SaveState entry for \(description) - no matching game found")
+                        }
+                    } else if let existingSaveState = saveState {
+                        existingSaveState.userDescription = description
+                        existingSaveState.cloudRecordID = recordID
+                        existingSaveState.isDownloaded = isDownloaded
+                        existingSaveState.fileSize = Int(fileSize)
+                        DLOG("Updated SaveState entry for \(description)")
                     }
-                } else if let existingSaveState = saveState {
-                    // Update existing save state
-                    existingSaveState.userDescription = description
-                    existingSaveState.cloudRecordID = recordID
-                    existingSaveState.isDownloaded = isDownloaded
-                    existingSaveState.fileSize = Int(fileSize)
-                    DLOG("Updated SaveState entry for \(description)")
                 }
             }
         } catch {
@@ -1265,67 +1238,55 @@ public class CloudKitSyncer: SyncProvider {
         let md5 = record["md5"] as? String ?? ""
 
         do {
-            // Get the Realm instance
-            let realm = RomDatabase.sharedInstance.realm
+            try await RealmContext.withRealm { realm in
+                try realm.write {
+                    // Check if the BIOS already exists
+                    var bios: PVBIOS?
 
-            // Create or update the BIOS entry
-            try await realm.write { [self] in
-                // Check if the BIOS already exists
-                var bios: PVBIOS?
+                    bios = realm.objects(PVBIOS.self).filter("cloudRecordID == %@", recordID).first
 
-                // Try to find by cloudRecordID first
-                bios = realm.objects(PVBIOS.self).filter("cloudRecordID == %@", recordID).first
-
-                // If not found and we have MD5, try to find by MD5
-                if bios == nil, !md5.isEmpty {
-                    bios = realm.objects(PVBIOS.self).filter("expectedMD5 == %@", md5).first
-                }
-
-                // If still not found, try to find by filename
-                if bios == nil {
-                    bios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first
-                }
-
-                // If no existing BIOS found, create a new one
-                if bios == nil {
-                    // Create a new BIOS
-                    let newBios = PVBIOS()
-                    newBios.expectedFilename = filename
-
-                    // Set the system if we can find it
-                    if let systemObj = realm.objects(PVSystem.self).filter("identifier == %@", systemIdentifier).first {
-                        newBios.system = systemObj
+                    if bios == nil, !md5.isEmpty {
+                        bios = realm.objects(PVBIOS.self).filter("expectedMD5 == %@", md5).first
                     }
 
-                    // Create a file for the BIOS
-                    let file = PVFile()
-                    file.partialPath = filename
-                    newBios.file = file
-
-                    // Set other properties
-                    newBios.descriptionText = description
-                    if !md5.isEmpty {
-                        newBios.expectedMD5 = md5.uppercased()
+                    if bios == nil {
+                        bios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first
                     }
-                    newBios.expectedSize = Int(fileSize)
-                    newBios.cloudRecordID = recordID
-                    newBios.isDownloaded = isDownloaded
-                    newBios.fileSize = Int(fileSize)
 
-                    // Add to Realm
-                    realm.add(newBios)
-                    DLOG("Created BIOS entry for \(description)")
-                } else if let existingBios = bios {
-                    // Update existing BIOS
-                    existingBios.descriptionText = description
-                    if !md5.isEmpty {
-                        existingBios.expectedMD5 = md5.uppercased()
+                    if bios == nil {
+                        let newBios = PVBIOS()
+                        newBios.expectedFilename = filename
+
+                        if let systemObj = realm.objects(PVSystem.self).filter("identifier == %@", systemIdentifier).first {
+                            newBios.system = systemObj
+                        }
+
+                        let file = PVFile()
+                        file.partialPath = filename
+                        newBios.file = file
+
+                        newBios.descriptionText = description
+                        if !md5.isEmpty {
+                            newBios.expectedMD5 = md5.uppercased()
+                        }
+                        newBios.expectedSize = Int(fileSize)
+                        newBios.cloudRecordID = recordID
+                        newBios.isDownloaded = isDownloaded
+                        newBios.fileSize = Int(fileSize)
+
+                        realm.add(newBios)
+                        DLOG("Created BIOS entry for \(description)")
+                    } else if let existingBios = bios {
+                        existingBios.descriptionText = description
+                        if !md5.isEmpty {
+                            existingBios.expectedMD5 = md5.uppercased()
+                        }
+                        existingBios.expectedSize = Int(fileSize)
+                        existingBios.cloudRecordID = recordID
+                        existingBios.isDownloaded = isDownloaded
+                        existingBios.fileSize = Int(fileSize)
+                        DLOG("Updated BIOS entry for \(description)")
                     }
-                    existingBios.expectedSize = Int(fileSize)
-                    existingBios.cloudRecordID = recordID
-                    existingBios.isDownloaded = isDownloaded
-                    existingBios.fileSize = Int(fileSize)
-                    DLOG("Updated BIOS entry for \(description)")
                 }
             }
         } catch {
@@ -1625,6 +1586,17 @@ public class CloudKitSyncer: SyncProvider {
     ///   - directory: The base directory name (e.g., "Saves", "BIOS", "com.provenance.snes")
     /// - Returns: The relative path string, or nil if calculation fails
     private func calculateRelativePath(for file: URL, in directory: String) -> String? {
+        // Known subdirectories that files might be stored in
+        let knownSubdirectories = [
+            "Battery States",
+            "Save States",
+            "Saves",
+            "Screenshots",
+            "BIOS",
+            "ROMs",
+            "DeltaSkins"
+        ]
+
         let candidateRoots: [URL] = {
             var roots: [URL] = [URL.documentsPath]
             if URL.cachesPath != URL.documentsPath {
@@ -1635,6 +1607,7 @@ public class CloudKitSyncer: SyncProvider {
 
         let fileComponents = file.standardizedFileURL.pathComponents
 
+        // First, try direct path (directory directly under root)
         for root in candidateRoots {
             let directoryURL = root.appendingPathComponent(directory)
             let directoryComponents = directoryURL.standardizedFileURL.pathComponents
@@ -1648,6 +1621,42 @@ public class CloudKitSyncer: SyncProvider {
                 let relativePath = relativeComponents.joined(separator: "/")
                 DLOG("Calculated relative path: \(relativePath) for file: \(file.path) in directory: \(directory) using root \(root.path)")
                 return relativePath
+            }
+        }
+
+        // Second, try with known subdirectories (e.g., root/Battery States/directory/file)
+        for root in candidateRoots {
+            for subdir in knownSubdirectories {
+                let directoryURL = root.appendingPathComponent(subdir).appendingPathComponent(directory)
+                let directoryComponents = directoryURL.standardizedFileURL.pathComponents
+
+                guard fileComponents.count > directoryComponents.count else {
+                    continue
+                }
+
+                if Array(fileComponents.prefix(directoryComponents.count)) == directoryComponents {
+                    let relativeComponents = fileComponents.suffix(from: directoryComponents.count)
+                    let relativePath = relativeComponents.joined(separator: "/")
+                    DLOG("Calculated relative path: \(relativePath) for file: \(file.path) in directory: \(directory) via subdirectory \(subdir) using root \(root.path)")
+                    return relativePath
+                }
+            }
+        }
+
+        // Third, check if the file is in a known subdirectory and calculate full relative path from there
+        for root in candidateRoots {
+            for subdir in knownSubdirectories {
+                let subdirURL = root.appendingPathComponent(subdir)
+                let subdirComponents = subdirURL.standardizedFileURL.pathComponents
+
+                if fileComponents.count > subdirComponents.count,
+                   Array(fileComponents.prefix(subdirComponents.count)) == subdirComponents {
+                    // File is within this subdirectory, calculate relative path from subdirectory
+                    let relativeComponents = fileComponents.suffix(from: subdirComponents.count)
+                    let relativePath = relativeComponents.joined(separator: "/")
+                    DLOG("Calculated relative path from subdirectory: \(relativePath) for file: \(file.path) in subdirectory \(subdir)")
+                    return relativePath
+                }
             }
         }
 

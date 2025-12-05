@@ -32,9 +32,11 @@ public extension RomDatabase {
         // Get all .svs.json files in the directory
         guard let jsonFiles = try? fileManager.contentsOfDirectory(at: path, includingPropertiesForKeys: nil)
             .filter({ $0.pathExtension == "json" && $0.lastPathComponent.contains(".svs.") }) else {
-            ELOG("Failed to read directory contents at \(path)")
+            ELOG("[SYNC] Failed to read directory contents at \(path)")
             return
         }
+
+        ILOG("[SYNC] Scanning for save state recovery at: \(path.lastPathComponent), found \(jsonFiles.count) JSON metadata files")
 
 #if DEBUG
 //        // For testing, remove all PVSaveState imges
@@ -60,7 +62,7 @@ public extension RomDatabase {
 
                 // 2. Check if this save state already exists in the database
                 if let existingSave = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateMetadata.id) {
-                    DLOG("Save state already exists: \(existingSave.id)")
+                    DLOG("[SYNC] Save state already exists by ID: \(existingSave.id), cloudRecordID: \(existingSave.cloudRecordID ?? "none")")
 
                     // Check if the existing save state's image needs to be updated
                     if existingSave.image == nil || !fileManager.fileExists(atPath: existingSave.image!.url!.path) {
@@ -158,12 +160,13 @@ public extension RomDatabase {
                     realm.add(saveStatesToAdd)
                     ILOG("Successfully recovered \(saveStatesToAdd.count) save states")
                 }
-                
+
                 // Post notifications for CloudKit sync for each recovered save state
                 for saveState in saveStatesToAdd {
+                    let saveStateID = saveState.id
                     Task { @MainActor in
-                        NotificationCenter.default.post(name: .PVSaveStateSaved, object: nil, userInfo: ["saveStateID": saveState.id])
-                        DLOG("Posted PVSaveStateSaved notification for recovered save state: \(saveState.id)")
+                        NotificationCenter.default.post(name: .PVSaveStateSaved, object: nil, userInfo: ["saveStateID": saveStateID])
+                        DLOG("Posted PVSaveStateSaved notification for recovered save state: \(saveStateID)")
                     }
                 }
             } catch {
@@ -191,7 +194,7 @@ public extension RomDatabase {
                     let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
                     return date0.compare(date1) == .orderedAscending
                 })
-            let realm = try Realm()
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
 
             var saves:[String:Int]=[:]
             for saveState in game.saveStates {

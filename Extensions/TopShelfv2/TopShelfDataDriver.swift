@@ -192,7 +192,7 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             
             // Create a new Realm instance for this operation
 //            guard let realm = try? Realm(configuration: config) else { return [] }
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try! Realm()
 
             // Get recently played games
             let recentlyPlayedGames = realm.objects(PVRecentGame.self).sorted(byKeyPath: "lastPlayedDate", ascending: false)
@@ -215,7 +215,7 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             
             // Create a new Realm instance for this operation
 //            guard let realm = try? Realm(configuration: config) else { return [] }
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try! Realm()
 
             // Get favorite games
             let favoriteGames = realm.objects(PVGame.self).filter("isFavorite == true")
@@ -231,7 +231,7 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             
             // Create a new Realm instance for this operation
 //            guard let realm = try? Realm(configuration: config) else { return [] }
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try! Realm()
 
             // Get recently added games
             let recentlyAddedGames = realm.objects(PVGame.self).sorted(byKeyPath: "importDate", ascending: false)
@@ -246,7 +246,7 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             
             // Create a new Realm instance for this operation
 //            guard let realm = try? Realm(configuration: config) else { return nil }
-            let realm = RomDatabase.sharedInstance.realm
+            let realm = try! Realm()
             
             // Get the game and freeze it so it can be used across threads
             return realm.object(ofType: PVGame.self, forPrimaryKey: id)?.freeze()
