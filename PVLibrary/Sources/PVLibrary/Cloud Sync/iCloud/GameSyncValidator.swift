@@ -40,9 +40,11 @@ public actor GameSyncValidator {
     }
 
     /// Validates that a game is ready to launch, downloading if necessary
-    /// - Parameter game: The game to validate
+    /// - Parameters:
+    ///   - game: The game to validate
+    ///   - progressHandler: Optional callback for progress updates
     /// - Returns: Validation result indicating readiness or what action is needed
-    public func validateGameReady(_ game: PVGame) async -> ValidationResult {
+    public func validateGameReady(_ game: PVGame, progressHandler: ((String) -> Void)? = nil) async -> ValidationResult {
         let safeGame: PVGame = await MainActor.run {
             if game.isFrozen {
                 return game
@@ -52,6 +54,8 @@ public actor GameSyncValidator {
                 return game
             }
         }
+
+        progressHandler?("Checking local file...")
 
         // 1. Check if file exists locally (handling missing PVFile entries)
         let localURL = safeGame.file?.url
@@ -82,16 +86,21 @@ public actor GameSyncValidator {
         }
 
         // 5. Try to download the game
-        return await downloadAndValidateGame(game: safeGame, md5: md5)
+        return await downloadAndValidateGame(game: safeGame, md5: md5, progressHandler: progressHandler)
     }
 
     /// Downloads a game and validates it's ready
-    private func downloadAndValidateGame(game: PVGame, md5: String) async -> ValidationResult {
+    /// - Parameters:
+    ///   - game: The game to download
+    ///   - md5: The game's MD5 hash
+    ///   - progressHandler: Optional callback for progress updates
+    private func downloadAndValidateGame(game: PVGame, md5: String, progressHandler: ((String) -> Void)? = nil) async -> ValidationResult {
         guard let romsSyncer = cloudSyncManager.romsSyncer else {
             return .error("Cloud sync syncer not available")
         }
 
         // Check if record exists in cloud
+        progressHandler?("Checking iCloud...")
         let hasCloudRecord = await checkCloudRecordExists(game: game, syncer: romsSyncer)
 
         if !hasCloudRecord {
@@ -104,12 +113,22 @@ public actor GameSyncValidator {
             return .error("Game file not found and no cloud record exists")
         }
 
-        // Record exists - download it
+        // Record exists - download it with progress
         do {
             ILOG("Downloading game \(game.title) from cloud before launch...")
-            try await romsSyncer.downloadGame(md5: md5)
+
+            // Use CloudKitRomsSyncer's progress-enabled download if available
+            if let cloudKitSyncer = romsSyncer as? CloudKitRomsSyncer {
+                try await cloudKitSyncer.downloadGame(md5: md5) { progress, status in
+                    progressHandler?(status)
+                }
+            } else {
+                progressHandler?("Downloading...")
+                try await romsSyncer.downloadGame(md5: md5)
+            }
 
             // Verify file exists after download
+            progressHandler?("Verifying download...")
             let refreshedGame = RomDatabase.sharedInstance.game(withMD5: md5) ?? game
             guard let refreshedURL = refreshedGame.file?.url,
                   fileManager.fileExists(atPath: refreshedURL.path) else {
@@ -159,20 +178,20 @@ public actor GameSyncValidator {
     ) async -> Bool {
         progressCallback?("Checking game file...")
 
-        let result = await validateGameReady(game)
+        let result = await validateGameReady(game, progressHandler: progressCallback)
 
         switch result {
         case .ready:
-            progressCallback?("Game ready")
+            progressCallback?("Game ready!")
             return true
 
         case .needsDownload:
             progressCallback?("Downloading from iCloud...")
-            // Retry validation which will trigger download
-            let retryResult = await validateGameReady(game)
+            // Retry validation which will trigger download with progress
+            let retryResult = await validateGameReady(game, progressHandler: progressCallback)
             switch retryResult {
             case .ready:
-                progressCallback?("Download complete")
+                progressCallback?("Download complete!")
                 return true
             default:
                 return false
@@ -185,7 +204,7 @@ public actor GameSyncValidator {
                 let liveGame = game.thaw() ?? game
                 try await cloudSyncManager.uploadROM(for: liveGame)
                 // Verify file exists after upload attempt
-                return await validateGameReady(game) == .ready
+                return await validateGameReady(game, progressHandler: progressCallback) == .ready
             } catch {
                 ELOG("Failed to upload game: \(error.localizedDescription)")
                 return false
