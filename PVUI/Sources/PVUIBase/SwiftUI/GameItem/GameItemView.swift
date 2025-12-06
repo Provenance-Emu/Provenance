@@ -14,7 +14,9 @@ import PVThemes
 @available(iOS 16, tvOS 16, *)
 public struct GameItemView: SwiftUI.View {
 
-    @ObservedRealmObject public var game: PVGame
+    /// Use plain property instead of @ObservedRealmObject to avoid creating
+    /// thousands of Realm subscriptions for large libraries
+    public let game: PVGame
     public var constrainHeight: Bool = false
     public var viewType: GameItemViewType = .cell
     /// The section context this GameItemView is being rendered in
@@ -79,20 +81,22 @@ public struct GameItemView: SwiftUI.View {
             }
             .onDisappear {
                 isVisible = false
-                // Cancel artwork loading if it's still in progress when view disappears
+                /// Cancel artwork loading if it's still in progress when view disappears
                 ArtworkLoader.shared.cancelLoading(for: game.id)
             }
-            .onChange(of: game.trueArtworkURL) { _ in
-                loadArtworkIfNeeded()
-            }
             .onChange(of: isFocused) { newValue in
-                // Prioritize loading artwork for focused items
+                /// Prioritize loading artwork for focused items
                 if newValue && artwork == nil {
                     loadArtworkWithPriority(.high)
                 }
             }
-            // Apply focus effects conditionally to improve performance
+            #if os(tvOS)
+            /// On tvOS, use card button style for native focus effects (bloom/lift)
+            .buttonStyle(.card)
+            #else
+            /// On non-tvOS, apply custom focus effects
             .modifier(FocusEffectsModifier(isFocused: shouldShowFocus))
+            #endif
         }
     }
 
@@ -109,9 +113,18 @@ public struct GameItemView: SwiftUI.View {
     }
 
     private func loadArtworkWithPriority(_ priority: TaskPriority) {
-        Task.detached(priority: priority) { [game, isVisible] in
+        /// Extract needed properties on main thread to avoid Realm thread issues
+        /// Realm objects can only be accessed from the thread they were created on
+        guard !game.isInvalidated else { return }
+        let gameId = game.id
+        let artworkURL = game.trueArtworkURL
+        let gameTitle = game.title
+
+        Task.detached(priority: priority) { [isVisible] in
             let image = await ArtworkLoader.shared.loadArtwork(
-                for: game,
+                gameId: gameId,
+                artworkURL: artworkURL,
+                gameTitle: gameTitle,
                 priority: priority,
                 isVisible: isVisible
             )
@@ -127,18 +140,22 @@ public struct GameItemView: SwiftUI.View {
 }
 
 /// Separate modifier for focus effects to improve performance
+/// On tvOS, we rely on the native focus system instead of custom effects
+/// to avoid conflicts between native bloom and custom styling
 struct FocusEffectsModifier: ViewModifier {
     let isFocused: Bool
 
     @ViewBuilder
     func body(content: Content) -> some View {
+        #if os(tvOS)
+        /// On tvOS, let the native focus system handle all focus effects
+        /// This provides consistent behavior with Siri Remote and game controllers
+        content
+        #else
         if isFocused {
             content
                 .scaleEffect(1.05)
                 .brightness(0.1)
-            #if os(tvOS)
-                .shadow(color: .white.opacity(0.5), radius: 10, x: 0, y: 0)
-            #endif
                 .overlay(
                     Rectangle()
                         .stroke(Color.white, lineWidth: 2)
@@ -147,6 +164,7 @@ struct FocusEffectsModifier: ViewModifier {
         } else {
             content
         }
+        #endif
     }
 }
 

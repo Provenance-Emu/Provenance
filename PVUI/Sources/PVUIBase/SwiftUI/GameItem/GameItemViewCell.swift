@@ -25,7 +25,8 @@ struct GameItemViewCell: View, Equatable {
         lhs.glowIntensity == rhs.glowIntensity
     }
 
-    @ObservedRealmObject var game: PVGame
+    /// Use plain property instead of @ObservedRealmObject for performance
+    let game: PVGame
     @Default(.showGameTitles) private var showGameTitles
     @Default(.iCloudSync) private var iCloudSyncEnabled
     var artwork: SwiftImage?
