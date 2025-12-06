@@ -123,19 +123,15 @@ public class RetroGameLibraryViewModel: ObservableObject {
     public func toggleSection(_ systemId: String) {
         DLOG("RetroGameLibraryViewModel: Toggling section: \(systemId)")
 
-        // Use slightly longer animation to reduce perceived flickering
-        withAnimation(.easeInOut(duration: 0.3)) {
-            if expandedSections.contains(systemId) {
-                expandedSections.remove(systemId)
-                DLOG("RetroGameLibraryViewModel: Section collapsed: \(systemId)")
-            } else {
-                expandedSections.insert(systemId)
-                DLOG("RetroGameLibraryViewModel: Section expanded: \(systemId)")
-            }
-
-            // Save the expanded sections to AppStorage
-            saveExpandedSections()
+        /// Toggle the section state without animation wrapper to prevent focus issues on tvOS
+        if expandedSections.contains(systemId) {
+            expandedSections.remove(systemId)
+            DLOG("RetroGameLibraryViewModel: Section collapsed: \(systemId)")
+        } else {
+            expandedSections.insert(systemId)
+            DLOG("RetroGameLibraryViewModel: Section expanded: \(systemId)")
         }
+        /// Note: The view is responsible for persisting to AppStorage via onChange
     }
 
 
@@ -184,8 +180,8 @@ public class RetroGameLibraryViewModel: ObservableObject {
     public func showGameInfo(gameId: String, appState: AppState) {
         DLOG("RetroGameLibraryViewModel: Showing game info for game ID: \(gameId)")
 
-        /// First, find the game by ID from all games
-        guard let game = allGames.first(where: { $0.id == gameId }) else {
+        /// Find the game by ID directly from database (single query, no observation)
+        guard let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: gameId) else {
             ELOG("RetroGameLibraryViewModel: Could not find game with ID: \(gameId)")
             return
         }
@@ -220,6 +216,14 @@ public class RetroGameLibraryViewModel: ObservableObject {
 
     // MARK: - Private Properties
 
+    /// Cache for sorted games by system identifier to avoid repeated sorting
+    private var cachedSystemGames: [String: [PVGame]] = [:]
+
+    /// Cache for sorted all games
+    private var cachedAllGamesSorted: [PVGame]?
+
+    /// Last sort option used for caching
+    private var lastCacheSortOption: SortOptions?
 
     /// Debouncing properties
     private let searchDebounceTime: TimeInterval = 0.3
@@ -248,16 +252,13 @@ public class RetroGameLibraryViewModel: ObservableObject {
 
     // MARK: - Computed Properties
 
-    /// All games in the library
-    public var allGames: Results<PVGame> {
-        RomDatabase.sharedInstance.all(PVGame.self)
-    }
+    /// Filter games based on search text
+    /// - Parameter games: The games to filter
+    /// - Returns: Filtered array of games
+    public func filterGames(_ games: [PVGame]) -> [PVGame] {
+        guard !debouncedSearchText.isEmpty else { return games }
 
-    /// Filtered games based on search text
-    public var filteredGames: [PVGame] {
-        guard !debouncedSearchText.isEmpty else { return Array(allGames) }
-
-        return allGames.filter { game in
+        return games.filter { game in
             game.title.lowercased().contains(debouncedSearchText.lowercased())
         }
     }
@@ -411,14 +412,79 @@ public class RetroGameLibraryViewModel: ObservableObject {
         }
     }
 
-    /// Save expanded sections to AppStorage
-    public func saveExpandedSections() {
+    /// Get encoded expanded sections data for saving to AppStorage
+    public func getExpandedSectionsData() -> Data {
         let expandedArray = Array(expandedSections)
-        if let encodedData = try? JSONEncoder().encode(expandedArray) {
-            // This needs to be handled by the view since AppStorage is a SwiftUI property wrapper
-            Task { @MainActor in
-                self.objectWillChange.send()
-            }
+        return (try? JSONEncoder().encode(expandedArray)) ?? Data()
+    }
+
+    // MARK: - Games Caching
+
+    /// Get cached sorted games for a system, computing and caching if needed
+    /// - Parameters:
+    ///   - systemId: The system identifier
+    ///   - games: The RealmSwift List of games from the system
+    ///   - sortOption: The current sort option
+    /// - Returns: Sorted array of games
+    public func cachedGamesForSystem(_ systemId: String, games: LinkingObjects<PVGame>, sortOption: SortOptions) -> [PVGame] {
+        /// Invalidate cache if sort option changed
+        if lastCacheSortOption != sortOption {
+            invalidateGamesCache()
+            lastCacheSortOption = sortOption
+        }
+
+        /// Return cached games if available
+        if let cached = cachedSystemGames[systemId] {
+            return cached
+        }
+
+        /// Compute sorted games and cache them
+        let sorted = sortGames(Array(games), by: sortOption)
+        cachedSystemGames[systemId] = sorted
+        return sorted
+    }
+
+    /// Get cached sorted all games, computing and caching if needed
+    /// - Parameters:
+    ///   - games: Array of all games
+    ///   - sortOption: The current sort option
+    /// - Returns: Sorted array of games
+    public func cachedAllGamesSorted(games: [PVGame], sortOption: SortOptions) -> [PVGame] {
+        /// Invalidate cache if sort option changed
+        if lastCacheSortOption != sortOption {
+            invalidateGamesCache()
+            lastCacheSortOption = sortOption
+        }
+
+        /// Return cached games if available
+        if let cached = cachedAllGamesSorted {
+            return cached
+        }
+
+        /// Compute sorted games and cache them
+        let sorted = sortGames(games, by: sortOption)
+        cachedAllGamesSorted = sorted
+        return sorted
+    }
+
+    /// Invalidate all game caches
+    public func invalidateGamesCache() {
+        cachedSystemGames.removeAll()
+        cachedAllGamesSorted = nil
+        DLOG("RetroGameLibraryViewModel: Games cache invalidated")
+    }
+
+    /// Sort games based on sort option
+    private func sortGames(_ games: [PVGame], by sortOption: SortOptions) -> [PVGame] {
+        switch sortOption {
+        case .title:
+            return games.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+        case .lastPlayed:
+            return games.sorted { ($0.lastPlayed ?? .distantPast) > ($1.lastPlayed ?? .distantPast) }
+        case .importDate:
+            return games.sorted { $0.importDate > $1.importDate }
+        case .mostPlayed:
+            return games.sorted { $0.playCount > $1.playCount }
         }
     }
 

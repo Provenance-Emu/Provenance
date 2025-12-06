@@ -94,23 +94,23 @@ public struct RetroGameLibraryView: View {
     // Notification observer for web server status changes
     @State private var webServerStatusObserver: NSObjectProtocol?
 
-    // Observed results for all games in the database
-    @ObservedResults(
-        PVGame.self,
-        sortDescriptor: SortDescriptor(keyPath: "title", ascending: true)
-    ) var allGames
-
-    // Observed results for all systems in the database
-    @ObservedResults(
-        PVSystem.self,
-        sortDescriptor: SortDescriptor(keyPath: "name", ascending: true)
-    ) var allSystems
+    /// Cached games and systems - fetched once and refreshed manually
+    /// Using @State instead of @ObservedResults to prevent constant re-renders from CloudKit sync
+    @State private var cachedGames: [PVGame] = []
+    @State private var cachedSystems: [PVSystem] = []
+    @State private var gamesCount: Int = 0
+    @State private var needsDataRefresh: Bool = true
 
     // Track expanded sections with AppStorage to persist between app runs
     @AppStorage("GameLibraryExpandedSections") private var expandedSectionsData: Data = Data()
 
     // Focus state for rename field
     @FocusState internal var renameTitleFieldIsFocused: Bool
+
+    #if os(tvOS)
+    /// Centralized focus state for tvOS to reduce per-cell focus binding overhead
+    @FocusState private var focusedGameID: String?
+    #endif
 
     public init() {}
 
@@ -216,8 +216,13 @@ public struct RetroGameLibraryView: View {
                 }
             }
         .onAppear {
+            /// Fetch games and systems once on appear (not using @ObservedResults to avoid constant re-renders)
+            if needsDataRefresh {
+                refreshGameData()
+            }
+
             // Load expanded sections from AppStorage
-            viewModel.loadExpandedSections(from: expandedSectionsData, allSystems: Array(allSystems))
+            viewModel.loadExpandedSections(from: expandedSectionsData, allSystems: cachedSystems)
 
             // Set up web server status monitoring (one-time check)
             updateWebServerStatus()
@@ -237,6 +242,18 @@ public struct RetroGameLibraryView: View {
                 NotificationCenter.default.removeObserver(observer)
                 webServerStatusObserver = nil
             }
+        }
+        .onChange(of: viewModel.expandedSections) { _ in
+            /// Persist expanded sections to AppStorage when they change
+            expandedSectionsData = viewModel.getExpandedSectionsData()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .GameImporterDidFinish)) { _ in
+            /// Refresh data when games import finishes
+            refreshGameData()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .PVGameImported)) { _ in
+            /// Refresh data when a single game is imported
+            refreshGameData()
         }
         .sheet(isPresented: $viewModel.showImagePicker) {
 #if !os(tvOS)
@@ -367,7 +384,7 @@ public struct RetroGameLibraryView: View {
             // Background that respects safe areas
             RetroTheme.retroBackground
 
-            if allGames.isEmpty {
+            if cachedGames.isEmpty {
                 emptyLibraryView()
             } else {
                 libraryContentView()
@@ -390,28 +407,14 @@ public struct RetroGameLibraryView: View {
     @ViewBuilder
     private func retroBackgroundView() -> some View {
         ZStack {
-            // Base dark background with proper safe area handling
+            /// Base dark background with proper safe area handling
             RetroTheme.retroBlack.ignoresSafeArea(edges: [.horizontal, .bottom])
 
-            // Grid lines (horizontal)
-            VStack(spacing: 20) {
-                ForEach(0..<20) { _ in
-                    Rectangle()
-                        .fill(Color.retroBlue.opacity(0.2))
-                        .frame(height: 1)
-                }
-            }
+            /// Use single Shape for grid lines instead of 40 individual Rectangle views
+            RetroGridShape(spacing: 20)
+                .stroke(Color.retroBlue.opacity(0.2), lineWidth: 1)
 
-            // Grid lines (vertical)
-            HStack(spacing: 20) {
-                ForEach(0..<20) { _ in
-                    Rectangle()
-                        .fill(Color.retroBlue.opacity(0.2))
-                        .frame(width: 1)
-                }
-            }
-
-            // Sunset gradient at bottom
+            /// Sunset gradient at bottom
             VStack {
                 Spacer()
                 Rectangle()
@@ -570,16 +573,23 @@ public struct RetroGameLibraryView: View {
     /// Section displaying all games
     @ViewBuilder
     private func allGamesSection() -> some View {
+        let isExpanded = viewModel.expandedSections.contains("all")
+
         SwiftUI.Section {
-            if viewModel.expandedSections.contains("all") {
+            if isExpanded {
+                /// Use cached sorted games for better performance
+                let games = viewModel.cachedAllGamesSorted(
+                    games: cachedGames,
+                    sortOption: viewModel.selectedSortOption
+                )
                 if viewModel.selectedViewMode == .grid {
-                    systemGamesGrid(games: sortedGames(Array(allGames)))
+                    systemGamesGrid(games: games)
                 } else {
-                    systemGamesList(games: sortedGames(Array(allGames)))
+                    systemGamesList(games: games)
                 }
             }
         } header: {
-            sectionHeader(title: "All Games", count: allGames.count, systemId: "all")
+            sectionHeader(title: "All Games", count: gamesCount, systemId: "all")
         }
         .padding(.bottom, 8)
     }
@@ -587,25 +597,32 @@ public struct RetroGameLibraryView: View {
     /// Sections for individual systems
     @ViewBuilder
     private func systemSections() -> some View {
-        ForEach(allSystems, id: \.self) { system in
-            let systemGames = gamesForSystem(system)
-            if !systemGames.isEmpty {
+        ForEach(cachedSystems, id: \.identifier) { system in
+            /// Check if system has games without sorting (fast check)
+            let hasGames = !system.games.isEmpty
+            let isExpanded = viewModel.expandedSections.contains(system.systemIdentifier.rawValue)
+            let sectionId = "section-\(system.identifier)"
+
+            if hasGames {
                 SwiftUI.Section {
-                    if viewModel.expandedSections.contains(system.systemIdentifier.rawValue) {
+                    if isExpanded {
+                        /// Only fetch and sort games when section is expanded
+                        let systemGames = gamesForSystem(system)
                         if viewModel.selectedViewMode == .grid {
-                            systemGamesGrid(games: sortedGames(systemGames))
+                            systemGamesGrid(games: systemGames)
                         } else {
-                            systemGamesList(games: sortedGames(systemGames))
+                            systemGamesList(games: systemGames)
                         }
                     }
                 } header: {
                     sectionHeader(
                         title: system.name,
                         subtitle: system.shortName,
-                        count: systemGames.count,
+                        count: system.games.count,
                         systemId: system.systemIdentifier.rawValue
                     )
                 }
+                .id(sectionId)
             }
         }
     }
@@ -841,27 +858,32 @@ public struct RetroGameLibraryView: View {
         // Use the SceneCoordinator to launch the game
         sceneCoordinator.launchGame(game)
     }
+
+    // MARK: - Data Refresh
+
+    /// Refresh game and system data from Realm
+    /// Called once on appear and can be triggered manually for refresh
+    private func refreshGameData() {
+        DLOG("RetroGameLibraryView: Refreshing game data")
+
+        /// Fetch games sorted by title
+        let games = RomDatabase.sharedInstance.all(PVGame.self, sortedByKeyPath: "title")
+        cachedGames = Array(games)
+        gamesCount = cachedGames.count
+
+        /// Fetch systems sorted by name
+        let systems = RomDatabase.sharedInstance.all(PVSystem.self, sortedByKeyPath: "name")
+        cachedSystems = Array(systems)
+
+        /// Invalidate ViewModel cache since data changed
+        viewModel.invalidateGamesCache()
+
+        needsDataRefresh = false
+        DLOG("RetroGameLibraryView: Loaded \(gamesCount) games and \(cachedSystems.count) systems")
+    }
 }
 
 // MARK: - GameContextMenuDelegate
-
-extension RetroGameLibraryView {
-    /// Sort games based on the selected sort option
-    private func sortedGames(_ games: [PVGame]) -> [PVGame] {
-        switch viewModel.selectedSortOption {
-        case .title:
-            return games.sorted(by: { $0.title < $1.title })
-        case .lastPlayed:
-            // This would ideally use a lastPlayed date property
-            // For now, just return alphabetically sorted
-            return games.sorted(by: { ($0.lastPlayed ?? .distantPast) > ($1.lastPlayed ?? .distantPast) })
-        case .importDate:
-            return games.sorted(by: { $0.importDate > $1.importDate })
-        case .mostPlayed:
-            return games.sorted(by: { $0.playCount > $1.playCount })
-        }
-    }
-}
 
 extension RetroGameLibraryView: GameContextMenuDelegate {
 #if !os(tvOS)
@@ -966,7 +988,7 @@ extension RetroGameLibraryView {
 
     /// Filtered games based on search text
     private var filteredGames: [PVGame] {
-        viewModel.filteredGames
+        viewModel.filterGames(cachedGames)
     }
 
     /// Import progress view with retrowave styling
@@ -1040,9 +1062,26 @@ extension RetroGameLibraryView {
         }
     }
 
-    /// Get games for a specific system
+    /// Get games for a specific system using cached sorting
     private func gamesForSystem(_ system: PVSystem) -> [PVGame] {
-        return Array(system.games.sorted(by: { $0.title < $1.title }))
+        return viewModel.cachedGamesForSystem(
+            system.identifier,
+            games: system.games,
+            sortOption: viewModel.selectedSortOption
+        )
+    }
+
+    /// Creates a focus binding for a game ID
+    /// On tvOS, uses centralized focus state; on iOS, returns constant binding
+    private func gameIsFocusedBinding(for gameID: String) -> Binding<Bool> {
+        #if os(tvOS)
+        return Binding(
+            get: { focusedGameID == gameID },
+            set: { if $0 { focusedGameID = gameID } }
+        )
+        #else
+        return .constant(false)
+        #endif
     }
 
     /// Creates a collapsible section header for a system
@@ -1084,7 +1123,6 @@ extension RetroGameLibraryView {
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     .font(.system(size: 14, weight: .bold))
                     .frame(width: 24, height: 24)
-                    .animation(.easeInOut(duration: 0.2), value: viewModel.expandedSections.contains(systemId))
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
@@ -1113,30 +1151,28 @@ extension RetroGameLibraryView {
     /// Creates a grid of games for a system
     @ViewBuilder
     private func systemGamesGrid(games: [PVGame]) -> some View {
-        // Use stable ID to prevent unnecessary redraws
-        let gridID = "grid-\(viewModel.debouncedSearchText)-\(games.count)"
-
-       LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
-            ForEach(games, id: \.self) { game in
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
+            ForEach(games, id: \.id) { game in
                 gameGridItem(game: game)
             }
         }
+        #if os(tvOS)
+        .focusSection()
+        #endif
     }
 
     /// Creates a single game grid item
     @ViewBuilder
     private func gameGridItem(game: PVGame) -> some View {
-        // Use ID to stabilize view and prevent unnecessary redraws
-        let gameID = "grid-item-\(game.id)"
+        let gameID = game.id
 
         GameItemView(
             game: game,
             constrainHeight: false,
             viewType: .cell,
             sectionContext: .allGames,
-            isFocused: .constant(false)
+            isFocused: gameIsFocusedBinding(for: gameID)
         ) {
-            // Launch game action
             launchGame(game)
         }
         .contextMenu {
@@ -1146,37 +1182,38 @@ extension RetroGameLibraryView {
                 contextMenuDelegate: self
             )
         }
+        #if os(tvOS)
+        .focused($focusedGameID, equals: gameID)
+        #endif
         .transition(.scale(scale: 0.95).combined(with: .opacity))
-        .id(gameID)
+        .id("grid-item-\(gameID)")
     }
 
     /// Creates a list of games for a system
     @ViewBuilder
     private func systemGamesList(games: [PVGame]) -> some View {
-        // Use stable ID to prevent unnecessary redraws
-        //        let listID = "list-\(viewModel.debouncedSearchText)-\(games.count)"
-
-        VStack(spacing: 8) {
-            ForEach(games, id: \.self) { game in
+        LazyVStack(spacing: 8) {
+            ForEach(games, id: \.id) { game in
                 gameListItem(game: game)
             }
         }
-        //        .id(listID)
+        #if os(tvOS)
+        .focusSection()
+        #endif
     }
 
     /// Creates a single game list item
     @ViewBuilder
     private func gameListItem(game: PVGame) -> some View {
-        // Use ID to stabilize view and prevent unnecessary redraws
-        let gameID = "list-item-\(game.id)"
+        let gameID = game.id
+
         GameItemView(
             game: game,
             constrainHeight: true,
             viewType: .row,
             sectionContext: .allGames,
-            isFocused: .constant(false)
+            isFocused: gameIsFocusedBinding(for: gameID)
         ) {
-            // Launch game action
             launchGame(game)
         }
         .contextMenu {
@@ -1186,8 +1223,11 @@ extension RetroGameLibraryView {
                 contextMenuDelegate: self
             )
         }
+        #if os(tvOS)
+        .focused($focusedGameID, equals: gameID)
+        #endif
         .transition(.scale(scale: 0.95).combined(with: .opacity))
-        .id(gameID)
+        .id("list-item-\(gameID)")
     }
 
     // MARK: - Web Server Status
@@ -1301,5 +1341,35 @@ extension RetroGameLibraryView {
                 )
         )
         .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 5, x: 0, y: 0)
+    }
+}
+
+// MARK: - RetroGridShape
+
+/// Efficient grid shape that draws all lines in a single path
+/// instead of creating 40+ individual Rectangle views
+struct RetroGridShape: Shape {
+    let spacing: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+
+        /// Draw horizontal lines
+        var y: CGFloat = 0
+        while y < rect.height {
+            path.move(to: CGPoint(x: 0, y: y))
+            path.addLine(to: CGPoint(x: rect.width, y: y))
+            y += spacing
+        }
+
+        /// Draw vertical lines
+        var x: CGFloat = 0
+        while x < rect.width {
+            path.move(to: CGPoint(x: x, y: 0))
+            path.addLine(to: CGPoint(x: x, y: rect.height))
+            x += spacing
+        }
+
+        return path
     }
 }
