@@ -38,29 +38,35 @@ public class ArtworkLoader: ObservableObject {
     init() {}
 
     /// Load artwork for a game with priority based on visibility
+    /// Uses thread-safe parameters instead of Realm objects to avoid thread crashes
     /// - Parameters:
-    ///   - game: The game to load artwork for
+    ///   - gameId: The game's unique identifier
+    ///   - artworkURL: The artwork URL (pre-extracted from game.trueArtworkURL)
+    ///   - gameTitle: The game title for logging
     ///   - priority: The priority of the loading operation
     ///   - isVisible: Whether the game item is currently visible
     /// - Returns: The loaded artwork image, if available
-    public func loadArtwork(for game: PVGame, priority: TaskPriority = .medium, isVisible: Bool = true) async -> UIImage? {
-        guard !game.isInvalidated else { return nil }
-
+    public func loadArtwork(
+        gameId: String,
+        artworkURL: String,
+        gameTitle: String,
+        priority: TaskPriority = .medium,
+        isVisible: Bool = true
+    ) async -> UIImage? {
         // If game has no artwork URL, return nil early
-        let artworkURL = game.trueArtworkURL
         guard !artworkURL.isEmpty else {
             return nil
         }
 
         // Track this game ID as recently accessed
-        updateRecentlyAccessed(gameId: game.id)
+        updateRecentlyAccessed(gameId: gameId)
 
         // If there's already a task loading this artwork, join it
-        if let existingTask = loadingTasks[game.id] {
+        if let existingTask = loadingTasks[gameId] {
             do {
                 return try await existingTask.value
             } catch {
-                DLOG("Error loading artwork for \(game.title): \(error.localizedDescription)")
+                DLOG("Error loading artwork for \(gameTitle): \(error.localizedDescription)")
                 return nil
             }
         }
@@ -72,27 +78,51 @@ public class ArtworkLoader: ObservableObject {
                 try await Task.sleep(nanoseconds: 10_000_000) // 10ms delay for non-visible items
             }
 
-            // Fetch the artwork directly from PVMediaCache
-            return await game.fetchArtworkFromCache()
+            // Fetch the artwork directly from PVMediaCache using the pre-extracted URL
+            return await PVMediaCache.shareInstance().image(forKey: artworkURL)
         }
 
         // Store the task
-        loadingTasks[game.id] = loadingTask
+        loadingTasks[gameId] = loadingTask
 
         do {
             // Wait for the task to complete
             let result = try await loadingTask.value
 
             // Remove the task from the dictionary
-            loadingTasks[game.id] = nil
+            loadingTasks[gameId] = nil
 
             return result
         } catch {
             // Remove the task from the dictionary on error
-            loadingTasks[game.id] = nil
-            DLOG("Error loading artwork for \(game.title): \(error.localizedDescription)")
+            loadingTasks[gameId] = nil
+            DLOG("Error loading artwork for \(gameTitle): \(error.localizedDescription)")
             return nil
         }
+    }
+
+    /// Legacy method for backward compatibility - extracts values on main thread
+    /// - Parameters:
+    ///   - game: The game to load artwork for (must be called from main thread)
+    ///   - priority: The priority of the loading operation
+    ///   - isVisible: Whether the game item is currently visible
+    /// - Returns: The loaded artwork image, if available
+    @MainActor
+    public func loadArtwork(for game: PVGame, priority: TaskPriority = .medium, isVisible: Bool = true) async -> UIImage? {
+        guard !game.isInvalidated else { return nil }
+
+        // Extract thread-safe values on main thread
+        let gameId = game.id
+        let artworkURL = game.trueArtworkURL
+        let gameTitle = game.title
+
+        return await loadArtwork(
+            gameId: gameId,
+            artworkURL: artworkURL,
+            gameTitle: gameTitle,
+            priority: priority,
+            isVisible: isVisible
+        )
     }
 
     /// Update the recently accessed game IDs set
@@ -119,33 +149,34 @@ public class ArtworkLoader: ObservableObject {
     /// Preload artwork for a collection of games
     /// - Parameter games: The games to preload artwork for
     /// - Parameter priority: The priority to use for preloading
+    @MainActor
     public func preloadArtwork(for games: [PVGame], priority: TaskPriority = .low) {
-        // Prioritize games that were recently accessed
-        let prioritizedGames = games.sorted { game1, game2 in
-            let isRecent1 = recentlyAccessedIds.contains(game1.id)
-            let isRecent2 = recentlyAccessedIds.contains(game2.id)
+        /// Extract artwork URLs on main thread to avoid Realm thread issues
+        /// Sort by recently accessed first, then by title
+        let artworkURLs: [String] = games
+            .filter { !$0.isInvalidated }
+            .sorted { game1, game2 in
+                let isRecent1 = recentlyAccessedIds.contains(game1.id)
+                let isRecent2 = recentlyAccessedIds.contains(game2.id)
 
-            if isRecent1 && !isRecent2 {
-                return true
-            } else if !isRecent1 && isRecent2 {
-                return false
-            } else {
-                // Secondary sort by title for stable ordering
-                return game1.title < game2.title
+                if isRecent1 && !isRecent2 {
+                    return true
+                } else if !isRecent1 && isRecent2 {
+                    return false
+                } else {
+                    return game1.title < game2.title
+                }
             }
-        }
-
-        Task(priority: priority) {
-            // Extract valid artwork URLs
-            let artworkURLs = prioritizedGames.compactMap { game -> String? in
+            .compactMap { game -> String? in
                 let url = game.trueArtworkURL
                 return url.isEmpty ? nil : url
             }
 
-            // Use PVMediaCache's preload method directly
-            if !artworkURLs.isEmpty {
-                await PVMediaCache.shareInstance().preloadImages(forKeys: artworkURLs)
-            }
+        /// Now preload with thread-safe URLs
+        guard !artworkURLs.isEmpty else { return }
+
+        Task(priority: priority) {
+            await PVMediaCache.shareInstance().preloadImages(forKeys: artworkURLs)
         }
     }
 }
