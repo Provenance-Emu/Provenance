@@ -47,7 +47,7 @@ public struct MultiTouchView: UIViewRepresentable {
     public class TouchDetectingView: UIView {
         override init(frame: CGRect) {
             super.init(frame: frame)
-            DLOG("TouchDetectingView initialized with frame: \(frame)")
+            VLOG("TouchDetectingView initialized with frame: \(frame)")
             self.isUserInteractionEnabled = true
         }
 
@@ -58,7 +58,7 @@ public struct MultiTouchView: UIViewRepresentable {
 
         override public func layoutSubviews() {
             super.layoutSubviews()
-            DLOG("TouchDetectingView layout updated: \(self.frame)")
+            VLOG("TouchDetectingView layout updated: \(self.frame)")
         }
         var touchHandler: ((MultiTouchPhase, [TouchPoint]) -> Void)?
         var ignoredRects: [CGRect] = []
@@ -88,20 +88,15 @@ public struct MultiTouchView: UIViewRepresentable {
         }
 
         private func handleTouches(_ phase: MultiTouchPhase, touches: Set<UITouch>) {
-            DLOG("""
-                    ⚡️ MultiTouchView: \(phase) with \(touches.count) touches
-                    ⚡️ View frame: \(self.frame), bounds: \(self.bounds), window: \(String(describing: self.window))
-                    ⚡️ isUserInteractionEnabled: \(self.isUserInteractionEnabled), alpha: \(self.alpha)
-                    ⚡️ superview: \(String(describing: self.superview))
-                """)
+            VLOG("MultiTouchView: \(phase) with \(touches.count) touches")
 
             let touchPoints = touches.map { touch in
                 let location = touch.location(in: self)
-                DLOG("⚡️ Touch at \(location) - phase: \(phase), force: \(touch.force)")
+                VLOG("Touch at \(location) - phase: \(phase), force: \(touch.force)")
                 return TouchPoint(touch: touch, location: location)
             }
 
-            DLOG("⚡️ MultiTouchView: Handling \(touchPoints.count) touches in phase \(phase)")
+            VLOG("MultiTouchView: Handling \(touchPoints.count) touches in phase \(phase)")
             touchHandler?(phase, touchPoints)
         }
     }
