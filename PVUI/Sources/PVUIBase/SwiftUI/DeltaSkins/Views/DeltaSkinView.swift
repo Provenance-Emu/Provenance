@@ -4,6 +4,53 @@ import AVFoundation  // Add this for audio buffer types
 import PVLogging
 import PVEmulatorCore
 
+// MARK: - Identifiable wrapper types for stable ForEach IDs
+
+/// Wrapper for active button info with stable ID to prevent SwiftUI view graph corruption
+private struct ActiveButtonInfo: Identifiable {
+    let id: String  // Unique ID combining buttonId + UUID
+    let frame: CGRect
+    let mappingSize: CGSize
+    let buttonId: String
+    let timestamp: Date
+
+    init(frame: CGRect, mappingSize: CGSize, buttonId: String, timestamp: Date = Date()) {
+        self.id = "\(buttonId)-\(UUID().uuidString)"
+        self.frame = frame
+        self.mappingSize = mappingSize
+        self.buttonId = buttonId
+        self.timestamp = timestamp
+    }
+}
+
+/// Wrapper for active thumbstick info with stable ID
+private struct ActiveThumbstickInfo: Identifiable {
+    let id: String
+    let frame: CGRect
+    let image: UIImage
+    let size: CGSize
+    let buttonId: String
+
+    init(frame: CGRect, image: UIImage, size: CGSize, buttonId: String) {
+        self.id = "\(buttonId)-\(UUID().uuidString)"
+        self.frame = frame
+        self.image = image
+        self.size = size
+        self.buttonId = buttonId
+    }
+}
+
+/// Wrapper for touch location with stable ID
+private struct TouchLocationInfo: Identifiable {
+    let id: String
+    let location: CGPoint
+
+    init(location: CGPoint) {
+        self.id = UUID().uuidString
+        self.location = location
+    }
+}
+
 /// Core view for rendering a DeltaSkin with test patterns and interactive elements
 public struct DeltaSkinView: View {
     let skin: any DeltaSkinProtocol
@@ -26,7 +73,7 @@ public struct DeltaSkinView: View {
     @State private var skinImage: UIImage?
     @State private var thumbstickImage: UIImage?
 
-    @State private var activeThumbsticks: [(frame: CGRect, image: UIImage, size: CGSize, buttonId: String)] = []
+    @State private var activeThumbsticks: [ActiveThumbstickInfo] = []
 
     // Add feedback generator
     #if !os(tvOS)
@@ -39,8 +86,8 @@ public struct DeltaSkinView: View {
     // Single set of sound IDs without left/right variants
     internal static let buttonSounds: [String: PCMBuffer] = createButtonSounds()
 
-    // Track multiple active buttons
-    @State private var activeButtons: [(frame: CGRect, mappingSize: CGSize, buttonId: String, timestamp: Date)] = []
+    // Track multiple active buttons - using Identifiable wrapper for stable ForEach IDs
+    @State private var activeButtons: [ActiveButtonInfo] = []
 
     // Track the currently pressed button (legacy support)
     @State private var currentlyPressedButton: DeltaSkinButton?
@@ -260,12 +307,12 @@ public struct DeltaSkinView: View {
     }
 
     internal func calculateLayout(for geometry: GeometryProxy) -> SkinLayout? {
-        ILOG("skins: calculateLayout() called - geometry size: \(geometry.size), device: \(traits.device.rawValue)")
+        VLOG("skins: calculateLayout() geometry=\(geometry.size) device=\(traits.device.rawValue)")
         guard let mappingSize = skin.mappingSize(for: traits) else {
             ELOG("skins: ERROR - calculateLayout() failed: no mapping size for traits: \(traits.description)")
             return nil
         }
-        ILOG("skins: calculateLayout() - mappingSize: \(mappingSize)")
+        VLOG("skins: calculateLayout() - mappingSize: \(mappingSize)")
 
         // For simple image-based skins (no screens array, just background image),
         // use the actual image size for scaling instead of mappingSize
@@ -279,7 +326,7 @@ public struct DeltaSkinView: View {
                 // Simple image-based skin: use actual image size for scaling
                 // Even if it has gameScreenFrame, it's still a simple image skin
                 effectiveImageSize = image.size
-                DLOG("Simple image-based skin detected. Image size: \(effectiveImageSize), mappingSize: \(mappingSize)")
+                VLOG("Simple image-based skin detected. Image size: \(effectiveImageSize), mappingSize: \(mappingSize)")
             } else {
                 // Complex skin with screens array: use mappingSize as before
                 effectiveImageSize = mappingSize
@@ -564,7 +611,7 @@ public struct DeltaSkinView: View {
                         }
 
                         // Effects and thumbsticks inside the skin container
-                        ForEach(activeButtons, id: \.timestamp) { button in
+                        ForEach(activeButtons) { button in
                             DeltaSkinButtonHighlight(
                                 frame: button.frame,
                                 mappingSize: button.mappingSize,
@@ -576,7 +623,7 @@ public struct DeltaSkinView: View {
                         }
 
                         // Thumbstick layer - should be on top
-                        ForEach(activeThumbsticks, id: \.frame) { thumbstick in
+                        ForEach(activeThumbsticks) { thumbstick in
                             DeltaSkinThumbstick(
                                 frame: thumbstick.frame,
                                 thumbstickImage: thumbstick.image,
@@ -589,7 +636,8 @@ public struct DeltaSkinView: View {
                         }
 
                         // Touch indicators - always on top
-                        ForEach(Array(touchLocations), id: \.self) { location in
+                        // Use enumerated with index as ID to avoid CGPoint hash instability
+                        ForEach(Array(touchLocations.enumerated()), id: \.offset) { _, location in
                             DeltaSkinTouchIndicator(at: location)
                                 .zIndex(5)
                                 .allowsHitTesting(false)
@@ -683,7 +731,7 @@ public struct DeltaSkinView: View {
             .overlay(
                 MultiTouchView(
                     touchHandler: { touchPhase, touches in
-                        DLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
+                        VLOG("MultiTouchView callback: phase=\(touchPhase), touches=\(touches.count)")
 
                         switch touchPhase {
                         case .began:
@@ -1191,7 +1239,7 @@ public struct DeltaSkinView: View {
                     if let (image, size) = await loadThumbstickImage(for: button) {
                         // Determine stick ID based on button ID (check for "left" or "right" in button ID)
                         let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
-                        activeThumbsticks.append((frame: button.frame, image: image, size: size, buttonId: stickId))
+                        activeThumbsticks.append(ActiveThumbstickInfo(frame: button.frame, image: image, size: size, buttonId: stickId))
                     }
                 }
             } else if isDPadButton, case .directional = button.input {
@@ -1229,17 +1277,17 @@ public struct DeltaSkinView: View {
                 // Add visual feedback
                 let highlightButtonId = button.id
 
-                let newButton = (
+                let newButton = ActiveButtonInfo(
                     frame: button.frame,
                     mappingSize: mappingSize,
-                    buttonId: highlightButtonId,
-                    timestamp: Date()
+                    buttonId: highlightButtonId
                 )
                 activeButtons.append(newButton)
 
                 // Clean up old highlights after delay
+                let buttonTimestamp = newButton.timestamp
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    activeButtons.removeAll { $0.timestamp <= newButton.timestamp }
+                    activeButtons.removeAll { $0.timestamp <= buttonTimestamp }
                 }
             }
 
@@ -1592,11 +1640,10 @@ public struct DeltaSkinView: View {
         // Add visual feedback for active directions (show all merged directions)
         if !allResolvedDirections.isEmpty {
             for direction in allResolvedDirections {
-                let newButton = (
+                let newButton = ActiveButtonInfo(
                     frame: button.frame,
                     mappingSize: mappingSize,
-                    buttonId: direction,
-                    timestamp: Date()
+                    buttonId: direction
                 )
                 activeButtons.append(newButton)
             }
@@ -1610,9 +1657,9 @@ public struct DeltaSkinView: View {
 
             // Clean up old highlights after delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                self.activeButtons.removeAll { button in
+                self.activeButtons.removeAll { buttonInfo in
                     let now = Date()
-                    return now.timeIntervalSince(button.timestamp) > 0.2
+                    return now.timeIntervalSince(buttonInfo.timestamp) > 0.2
                 }
             }
         }
@@ -1665,7 +1712,7 @@ public struct DeltaSkinView: View {
                let (image, size) = await loadThumbstickImage(for: button) {
                 // Determine stick ID based on button ID (check for "right" or "right" in button ID)
                 let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
-                activeThumbsticks.append((frame: button.frame, image: image, size: size, buttonId: stickId))
+                activeThumbsticks.append(ActiveThumbstickInfo(frame: button.frame, image: image, size: size, buttonId: stickId))
             }
         }
     }
