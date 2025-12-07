@@ -822,6 +822,7 @@ public extension RomDatabase {
                 let bios = bios.warmUp()
                 try realm.write {
                     bios.file = nil
+                    bios.isDownloaded = false
                 }
             } catch {
                 WLOG("Failed to delete BIOS \(bios.expectedFilename)\n\(error.localizedDescription)")

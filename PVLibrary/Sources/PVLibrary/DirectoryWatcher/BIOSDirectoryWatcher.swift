@@ -197,6 +197,7 @@ public final class BIOSWatcher: ObservableObject {
             if let thawedBios = bios.thaw() {
                 let biosFile = PVFile(withURL: fileURL)
                 thawedBios.file = biosFile
+                thawedBios.isDownloaded = true
                 ILOG("Updated BIOS entry for \(bios.expectedFilename) with file at \(fileURL.path)")
             }
         }

@@ -12,6 +12,7 @@ import RxSwift
 import PVPrimitives
 import PVFileSystem
 import PVRealm
+import RealmSwift
 import CloudKit
 import CryptoKit
 
@@ -27,7 +28,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
     public init(notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
         super.init(directories: ["BIOS"], notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
-    
+
     /// Get the local URL for a BIOS file
     /// - Parameter filename: The BIOS filename or relative path (systemID/filename)
     /// - Returns: The local URL for the BIOS file
@@ -35,28 +36,28 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
         guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             return nil
         }
-        
+
         // Check if the filename contains a path separator
         if filename.contains("/") {
             // Split the path into components
             let components = filename.components(separatedBy: "/")
-            
+
             // If we have a valid system ID and filename
             if components.count >= 2 {
                 let systemID = components[0]
                 let actualFilename = components[1]
-                
+
                 // Return the URL with the system subdirectory
                 return documentsURL.appendingPathComponent("BIOS")
                     .appendingPathComponent(systemID)
                     .appendingPathComponent(actualFilename)
             }
         }
-        
+
         // Fallback to the old behavior for backward compatibility
         return documentsURL.appendingPathComponent("BIOS").appendingPathComponent(filename)
     }
-    
+
     /// Get the cloud URL for a BIOS file
     /// - Parameter filename: The BIOS filename or relative path (systemID/filename)
     /// - Returns: The cloud URL for the BIOS file
@@ -64,28 +65,28 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
         guard let containerURL = documentsURL else {
             return nil
         }
-        
+
         // Check if the filename contains a path separator
         if filename.contains("/") {
             // Split the path into components
             let components = filename.components(separatedBy: "/")
-            
+
             // If we have a valid system ID and filename
             if components.count >= 2 {
                 let systemID = components[0]
                 let actualFilename = components[1]
-                
+
                 // Return the URL with the system subdirectory
                 return containerURL.appendingPathComponent("BIOS")
                     .appendingPathComponent(systemID)
                     .appendingPathComponent(actualFilename)
             }
         }
-        
+
         // Fallback to the old behavior for backward compatibility
         return containerURL.appendingPathComponent("BIOS").appendingPathComponent(filename)
     }
-    
+
     /// Upload a BIOS file to the cloud
     /// - Parameter filename: The BIOS filename
     /// - Returns: Completable that completes when the upload is done
@@ -98,26 +99,26 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
                     observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid BIOS file or URLs"])))
                     return
                 }
-                
+
                 // Check if file exists locally
                 guard FileManager.default.fileExists(atPath: localURL.path) else {
                     observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "BIOS file not found locally"])))
                     return
                 }
-                
+
                 // Create directory if needed
                 let cloudDir = cloudURL.deletingLastPathComponent()
                 do {
                     try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true)
-                    
+
                     // Copy file to iCloud
                     if FileManager.default.fileExists(atPath: cloudURL.path) {
                         try await FileManager.default.removeItem(at: cloudURL)
                     }
-                    
+
                     try FileManager.default.copyItem(at: localURL, to: cloudURL)
                     await self.insertUploadedFile(cloudURL)
-                    
+
                     DLOG("Uploaded BIOS to iCloud: \(filename)")
                     observer(.completed)
                 } catch {
@@ -128,7 +129,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
             return Disposables.create()
         }
     }
-    
+
     /// Download a BIOS file from the cloud
     /// - Parameter filename: The BIOS filename
     /// - Returns: Completable that completes when the download is done
@@ -141,18 +142,18 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
                     observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid BIOS file or URLs"])))
                     return
                 }
-                
+
                 // Check if file exists in iCloud
                 if !FileManager.default.fileExists(atPath: cloudURL.path) {
                     observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "BIOS not found in iCloud"])))
                     return
                 }
-                
+
                 // Start downloading
                 do {
                     try FileManager.default.startDownloadingUbiquitousItem(at: cloudURL)
                     await self.insertDownloadingFile(cloudURL)
-                    
+
                     // Wait for download to complete
                     let checkDownload = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
                         .take(60) // Timeout after 60 seconds
@@ -172,15 +173,15 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
                                     // Create directory if needed
                                     let localDir = localURL.deletingLastPathComponent()
                                     try FileManager.default.createDirectory(at: localDir, withIntermediateDirectories: true)
-                                    
+
                                     // Copy file to local storage
                                     if FileManager.default.fileExists(atPath: localURL.path) {
                                         try await FileManager.default.removeItem(at: localURL)
                                     }
-                                    
+
                                     try FileManager.default.copyItem(at: cloudURL, to: localURL)
                                     await self.insertDownloadedFile(cloudURL)
-                                    
+
                                     DLOG("Downloaded BIOS from iCloud: \(filename)")
                                     observer(.completed)
                                 } catch {
@@ -200,7 +201,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
             return Disposables.create()
         }
     }
-    
+
     /// Check if a BIOS file exists locally
     /// - Parameter filename: The BIOS filename
     /// - Returns: True if the BIOS file exists locally
@@ -208,10 +209,10 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
         guard let localURL = localURL(for: filename) else {
             return false
         }
-        
+
         return FileManager.default.fileExists(atPath: localURL.path)
     }
-    
+
     /// Check if a BIOS file exists in the cloud
     /// - Parameter filename: The BIOS filename
     /// - Returns: True if the BIOS file exists in the cloud
@@ -219,7 +220,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
         guard let cloudURL = cloudURL(for: filename) else {
             return false
         }
-        
+
         return FileManager.default.fileExists(atPath: cloudURL.path)
     }
 }
@@ -229,7 +230,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
 
 /// BIOS syncer for all OSs  using CloudKit
 public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
-    
+
     /// Initialize a new BIOS syncer
     /// - Parameters:
     ///   - directories: Directories to manage (defaults to ["BIOS"])
@@ -238,17 +239,17 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     public override init(container: CKContainer, directories: Set<String> = ["BIOS"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
         super.init(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
-    
+
     /// Get all CloudKit records for BIOS files
     /// - Returns: Array of CKRecord objects
     public func getAllRecords() async -> [CKRecord] {
         do {
             // Create a query for all BIOS records
             let query = CKQuery(recordType: CloudKitSchema.RecordType.bios.rawValue, predicate: NSPredicate(value: true))
-            
+
             // Execute the query
             let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
-            
+
             // Convert to array of CKRecord
             let recordsArray = records.compactMap { _, result -> CKRecord? in
                 switch result {
@@ -259,7 +260,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     return nil
                 }
             }
-            
+
             DLOG("Fetched \(recordsArray.count) BIOS records from CloudKit")
             return recordsArray
         } catch {
@@ -267,7 +268,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             return []
         }
     }
-    
+
     /// Check if a file is downloaded locally
     /// - Parameters:
     ///   - filename: The filename to check
@@ -281,11 +282,11 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
         // Check if file exists
         let exists = FileManager.default.fileExists(atPath: fileURL.path)
-        
+
         if !exists {
             DLOG("File does not exist: \(fileURL.path)")
         }
-        
+
         return exists
     }
     /// The CloudKit record type for BIOS files
@@ -299,7 +300,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     public init(container: CKContainer, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
         super.init(container: container, directories: ["BIOS"], notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
-    
+
     /// Get the local URL for a BIOS file
     /// - Parameter filename: The BIOS filename
     /// - Returns: The local URL for the BIOS file
@@ -307,7 +308,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         let documentsURL = URL.documentsPath
         return documentsURL.appendingPathComponent("BIOS").appendingPathComponent(filename)
     }
-    
+
     /// Get the cloud URL for a BIOS file
     /// - Parameter filename: The BIOS filename
     /// - Returns: The cloud URL for the BIOS file (this is a virtual path for CloudKit)
@@ -318,10 +319,10 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         components.scheme = "cloudkit"
         components.host = "bios"
         components.path = "/\(filename)"
-        
+
         return components.url
     }
-    
+
     /// Upload a BIOS file to CloudKit
     /// - Parameter filename: The BIOS filename
     /// - Returns: Completable that completes when the upload is done
@@ -332,13 +333,13 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid BIOS file"])))
                 return Disposables.create()
             }
-            
+
             // Check if file exists locally
             guard FileManager.default.fileExists(atPath: localURL.path) else {
                 observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "BIOS file not found locally"])))
                 return Disposables.create()
             }
-            
+
             Task {
                 do {
                     // Upload the file to CloudKit
@@ -349,22 +350,22 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     record["filename"] = filename
                     record["fileData"] = CKAsset(fileURL: localURL)
                     record["lastModified"] = Date()
-                    
+
                     // Calculate MD5 hash if possible
                     if let data = try? Data(contentsOf: localURL) {
                         // Calculate MD5 hash using CryptoKit
                         let md5 = Insecure.MD5.hash(data: data).map { String(format: "%02hhx", $0) }.joined()
                         record["md5"] = md5
                     }
-                    
+
                     // Extract systemID from parent directory
                     let parentDirectoryName = localURL.deletingLastPathComponent().lastPathComponent
                     let systemID = SystemIdentifier(rawValue: parentDirectoryName)
-                    
+
                     // Save the record to CloudKit
                     _ = try await self.uploadFile(localURL, gameID: nil, systemID: systemID)
                     await self.insertUploadedFile(localURL)
-                    
+
                     DLOG("Uploaded BIOS to CloudKit: \(filename)")
                     observer(.completed)
                 } catch {
@@ -373,11 +374,11 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     observer(.error(error))
                 }
             }
-            
+
             return Disposables.create()
         }
     }
-    
+
     /// Download a BIOS file from CloudKit
     /// - Parameter filename: The BIOS filename
     /// - Returns: Completable that completes when the download is done
@@ -387,43 +388,43 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid BIOS syncer"])))
                 return Disposables.create()
             }
-            
+
             Task {
                 do {
                     // Find the record for this BIOS file
                     let recordID = CKRecord.ID(recordName: "bios_\(filename)")
                     let privateDatabase = self.container.privateCloudDatabase
-                    
+
                     do {
                         let record = try await privateDatabase.record(for: recordID)
-                        
+
                         guard let asset = record["fileData"] as? CKAsset,
                               let fileURL = asset.fileURL else {
                             throw NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "BIOS file not found in CloudKit"])
                         }
-                        
+
                         // Get filename
                         guard let filename = record["filename"] as? String else {
                             throw NSError(domain: "com.provenance-emu.provenance", code: 3, userInfo: [NSLocalizedDescriptionKey: "Invalid BIOS record data"])
                         }
-                        
+
                         // Create local file path
                         let documentsURL = URL.documentsPath
 
                         let directoryURL = documentsURL.appendingPathComponent("BIOS")
                         let destinationURL = directoryURL.appendingPathComponent(filename)
-                        
+
                         // Create directory if needed
                         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
-                        
+
                         // Copy file from asset to local storage
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
                             try await FileManager.default.removeItem(at: destinationURL)
                         }
-                        
+
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
                         await self.insertDownloadedFile(destinationURL)
-                        
+
                         DLOG("Downloaded BIOS from CloudKit: \(filename)")
                         observer(.completed)
                     } catch {
@@ -431,36 +432,36 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         // Create query
                         let predicate = NSPredicate(format: "directory == %@ AND filename == %@", "BIOS", filename)
                         let query = CKQuery(recordType: "File", predicate: predicate)
-                        
+
                         // Execute query
                         let (results, _) = try await privateDatabase.records(matching: query)
                         let records = results.compactMap { _, result in
                             try? result.get()
                         }
-                        
+
                         guard let record = records.first,
                               let asset = record["fileData"] as? CKAsset,
                               let fileURL = asset.fileURL else {
                             throw NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "BIOS file not found in CloudKit"])
                         }
-                        
+
                         // Create local file path
                         let documentsURL = URL.documentsPath
 
                         let directoryURL = documentsURL.appendingPathComponent("BIOS")
                         let destinationURL = directoryURL.appendingPathComponent(filename)
-                        
+
                         // Create directory if needed
                         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
-                        
+
                         // Copy file from asset to local storage
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
                             try await FileManager.default.removeItem(at: destinationURL)
                         }
-                        
+
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
                         await self.insertDownloadedFile(destinationURL)
-                        
+
                         DLOG("Downloaded BIOS from CloudKit: \(filename)")
                         observer(.completed)
                     }
@@ -470,11 +471,11 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     observer(.error(error))
                 }
             }
-            
+
             return Disposables.create()
         }
     }
-    
+
     /// Check if a BIOS file exists locally
     /// - Parameter filename: The BIOS filename
     /// - Returns: True if the BIOS file exists locally
@@ -482,10 +483,10 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         guard let localURL = localURL(for: filename) else {
             return false
         }
-        
+
         return FileManager.default.fileExists(atPath: localURL.path)
     }
-    
+
     /// Check if a BIOS file exists in the cloud
     /// - Parameter filename: The BIOS filename
     /// - Returns: True if the BIOS file exists in the cloud
@@ -493,5 +494,669 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         // This requires a CloudKit query, so we can't do it synchronously
         // Instead, we'll just return false and let the sync process handle it
         return false
+    }
+
+    // MARK: - Metadata Sync
+
+    /// Fetch all BIOS records from CloudKit (with pagination and timeout)
+    /// - Returns: Array of CKRecord objects
+    public func fetchAllBIOSRecords() async -> [CKRecord] {
+        ILOG("[SYNC] Fetching all BIOS records from CloudKit...")
+        var allRecords: [CKRecord] = []
+
+        // Query both record types since BIOS files may be stored as either:
+        // 1. "File" type with directory="BIOS" (from uploadBIOS or legacy code)
+        // 2. "BIOS" type (from uploadFile via CloudKitInitialSyncer)
+        let recordTypes = ["File", "BIOS"]
+
+        for recordType in recordTypes {
+            do {
+                let predicate: NSPredicate
+                if recordType == "File" {
+                    predicate = NSPredicate(format: "directory == %@", "BIOS")
+                } else {
+                    predicate = NSPredicate(value: true) // All BIOS records
+                }
+                let query = CKQuery(recordType: recordType, predicate: predicate)
+
+                DLOG("[BIOS FETCH] Starting query for recordType: \(recordType)")
+
+                var cursor: CKQueryOperation.Cursor? = nil
+                repeat {
+                    // Add timeout to prevent indefinite hanging
+                    let fetchTask = Task {
+                        if let currentCursor = cursor {
+                            return try await privateDatabase.records(continuingMatchFrom: currentCursor)
+                        } else {
+                            return try await privateDatabase.records(matching: query, resultsLimit: 200)
+                        }
+                    }
+
+                    let timeoutTask = Task {
+                        try await Task.sleep(nanoseconds: 30_000_000_000) // 30 second timeout
+                        fetchTask.cancel()
+                    }
+
+                    let (results, nextCursor): ([(CKRecord.ID, Result<CKRecord, Error>)], CKQueryOperation.Cursor?)
+                    do {
+                        (results, nextCursor) = try await fetchTask.value
+                        timeoutTask.cancel()
+                    } catch is CancellationError {
+                        WLOG("[BIOS FETCH] CloudKit query timed out for recordType: \(recordType)")
+                        timeoutTask.cancel()
+                        break
+                    }
+
+                    let records = results.compactMap { id, result -> CKRecord? in
+                        switch result {
+                        case .success(let record):
+                            let filename = record["filename"] as? String ?? "unknown"
+                            let hasAsset = record["fileData"] as? CKAsset != nil
+                            DLOG("[BIOS FETCH] Found record: \(id.recordName), filename: \(filename), hasAsset: \(hasAsset)")
+                            return record
+                        case .failure(let error):
+                            WLOG("[BIOS FETCH] Failed to fetch record \(id.recordName): \(error.localizedDescription)")
+                            return nil
+                        }
+                    }
+                    allRecords.append(contentsOf: records)
+                    cursor = nextCursor
+                    ILOG("[BIOS FETCH] Fetched batch of \(records.count) \(recordType) records, total: \(allRecords.count)")
+                } while cursor != nil
+            } catch let error as CKError where error.code == .unknownItem {
+                // Record type might not exist yet, that's okay
+                DLOG("[SYNC] No \(recordType) records found for BIOS (unknownItem)")
+            } catch let error as CKError {
+                ELOG("[SYNC] CloudKit error fetching \(recordType) BIOS records: code=\(error.code.rawValue), \(error.localizedDescription)")
+            } catch {
+                ELOG("[SYNC] Failed to fetch \(recordType) BIOS records: \(error.localizedDescription)")
+            }
+        }
+
+        ILOG("[SYNC] Fetched \(allRecords.count) total BIOS records from CloudKit")
+        return allRecords
+    }
+
+    /// Sync BIOS metadata from CloudKit and download missing files
+    /// - Returns: Number of BIOS files processed
+    @MainActor
+    public func syncMetadataOnly() async -> Int {
+        ILOG("[SYNC] Starting BIOS metadata sync...")
+        DLOG("[SYNC] Container: \(container.containerIdentifier ?? "nil"), database: \(privateDatabase)")
+
+        // Run fetch off main actor to avoid potential deadlocks, with overall timeout
+        let fetchTask = Task.detached { [self] () -> [CKRecord] in
+            await self.fetchAllBIOSRecords()
+        }
+
+        let timeoutTask = Task {
+            try await Task.sleep(nanoseconds: 60_000_000_000) // 60 second overall timeout
+            fetchTask.cancel()
+            WLOG("[SYNC] BIOS metadata fetch timed out after 60 seconds")
+        }
+
+        var records: [CKRecord] = []
+        do {
+            records = try await fetchTask.value
+            timeoutTask.cancel()
+        } catch is CancellationError {
+            WLOG("[SYNC] BIOS metadata fetch was cancelled (timeout)")
+            timeoutTask.cancel()
+            // Continue anyway - we'll try direct download by predicted IDs
+        } catch {
+            ELOG("[SYNC] BIOS metadata fetch failed: \(error.localizedDescription)")
+            timeoutTask.cancel()
+        }
+        guard !records.isEmpty else {
+            ILOG("[SYNC] No BIOS records found in CloudKit")
+            return 0
+        }
+
+        var processedCount = 0
+        let realm = RomDatabase.sharedInstance.realm
+
+        ILOG("[BIOS META] Processing \(records.count) cloud records...")
+
+        for record in records {
+            guard let filename = record["filename"] as? String else {
+                WLOG("[BIOS META] BIOS record missing filename, skipping: recordID=\(record.recordID.recordName)")
+                continue
+            }
+
+            // Log record details
+            let hasAsset = record["fileData"] as? CKAsset != nil
+            let recordType = record.recordType
+            ILOG("[BIOS META] Processing record: filename=\(filename), recordType=\(recordType), recordID=\(record.recordID.recordName), hasAsset=\(hasAsset)")
+
+            // Extract system identifier from directory path or relativePath
+            let relativePath = record["relativePath"] as? String ?? filename
+            let systemIdentifier = extractSystemIdentifier(from: relativePath)
+            DLOG("[BIOS META] Extracted systemIdentifier: \(systemIdentifier ?? "nil"), relativePath: \(relativePath)")
+
+            // Get MD5 if available
+            let md5 = record["md5"] as? String ?? ""
+
+            // Check if we have a matching PVBIOS entry
+            let matchingBIOS = findMatchingBIOS(filename: filename, md5: md5, in: realm)
+
+            if let bios = matchingBIOS {
+                ILOG("[BIOS META] Found matching PVBIOS for \(filename): expectedFilename=\(bios.expectedFilename), expectedMD5=\(bios.expectedMD5)")
+
+                // Update the PVBIOS with cloud info
+                do {
+                    try realm.write {
+                        bios.cloudRecordID = record.recordID.recordName
+
+                        // Check if file exists locally
+                        let localPath = self.localPathForBIOS(filename: filename, systemIdentifier: systemIdentifier)
+                        let fileExists = FileManager.default.fileExists(atPath: localPath.path)
+                        bios.isDownloaded = fileExists
+
+                        ILOG("[BIOS META] Updated BIOS \(filename): cloudRecordID=\(record.recordID.recordName), localPath=\(localPath.path), fileExists=\(fileExists)")
+
+                        // If file exists and we don't have a PVFile, create one
+                        if fileExists && bios.file == nil {
+                            let pvFile = PVFile()
+                            pvFile.partialPath = relativePath
+                            bios.file = pvFile
+                            ILOG("[BIOS META] Created PVFile for existing BIOS: \(filename)")
+                        }
+                    }
+                    processedCount += 1
+                    DLOG("[SYNC] Updated BIOS entry: \(filename), isDownloaded: \(bios.isDownloaded)")
+                } catch {
+                    ELOG("[SYNC] Failed to update BIOS \(filename): \(error.localizedDescription)")
+                }
+            } else {
+                DLOG("[SYNC] No matching PVBIOS for cloud record: \(filename)")
+            }
+        }
+
+        ILOG("[SYNC] BIOS metadata sync complete: processed \(processedCount) of \(records.count) records")
+
+        // After metadata sync, trigger download of missing BIOS files
+        await downloadMissingBIOSFiles()
+
+        return processedCount
+    }
+
+    /// Find a matching PVBIOS entry by filename or MD5
+    private func findMatchingBIOS(filename: String, md5: String, in realm: Realm) -> PVBIOS? {
+        // First try by exact filename
+        if let bios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first {
+            return bios
+        }
+
+        // Try by MD5 if available
+        if !md5.isEmpty {
+            if let bios = realm.objects(PVBIOS.self).filter("expectedMD5 ==[c] %@", md5).first {
+                return bios
+            }
+        }
+
+        // Try by filename without extension (some BIOS might have different extensions)
+        let filenameWithoutExt = (filename as NSString).deletingPathExtension
+        if let bios = realm.objects(PVBIOS.self).filter("expectedFilename BEGINSWITH %@", filenameWithoutExt).first {
+            return bios
+        }
+
+        return nil
+    }
+
+    /// Extract system identifier from a relative path like "com.provenance.psx/scph1001.bin"
+    private func extractSystemIdentifier(from relativePath: String) -> String? {
+        let components = relativePath.components(separatedBy: "/")
+        if components.count >= 2 {
+            return components[0]
+        }
+        return nil
+    }
+
+    /// Get local path for a BIOS file
+    private func localPathForBIOS(filename: String, systemIdentifier: String?) -> URL {
+        let documentsURL = URL.documentsPath
+        let biosDir = documentsURL.appendingPathComponent("BIOS")
+
+        if let sysID = systemIdentifier {
+            return biosDir.appendingPathComponent(sysID).appendingPathComponent(filename)
+        }
+        return biosDir.appendingPathComponent(filename)
+    }
+
+    /// Download missing BIOS files that have cloud records but no local file
+    @MainActor
+    public func downloadMissingBIOSFiles() async {
+        ILOG("[BIOS DOWNLOAD] Checking for missing BIOS files to download...")
+
+        let realm = RomDatabase.sharedInstance.realm
+
+        // Log all BIOS entries for debugging
+        let allBIOS = realm.objects(PVBIOS.self)
+        ILOG("[BIOS DOWNLOAD] Total BIOS entries in Realm: \(allBIOS.count)")
+
+        for bios in allBIOS {
+            DLOG("[BIOS DOWNLOAD] BIOS entry: filename=\(bios.expectedFilename), cloudRecordID=\(bios.cloudRecordID ?? "nil"), isDownloaded=\(bios.isDownloaded), system=\(bios.system?.identifier ?? "nil")")
+        }
+
+        // First, try to download BIOS files that already have cloudRecordID
+        let biosWithCloudRecords = realm.objects(PVBIOS.self)
+            .filter("cloudRecordID != nil AND cloudRecordID != '' AND isDownloaded == false")
+
+        var missingBIOS = Array(biosWithCloudRecords)
+
+        // Also try to download BIOS files without cloudRecordID by guessing the record ID
+        // This handles the case where metadata sync query hangs/fails
+        let biosWithoutCloudRecords = realm.objects(PVBIOS.self)
+            .filter("(cloudRecordID == nil OR cloudRecordID == '') AND isDownloaded == false")
+
+        for bios in biosWithoutCloudRecords {
+            if let systemID = bios.system?.identifier {
+                // Try to find the record using predicted ID format: {systemID}_{filename}_{md5prefix}
+                let md5Prefix = String(bios.expectedMD5.prefix(8)).uppercased()
+                let predictedRecordID = "\(systemID)_\(bios.expectedFilename)_\(md5Prefix)"
+                ILOG("[BIOS DOWNLOAD] Trying predicted recordID for \(bios.expectedFilename): \(predictedRecordID)")
+
+                if await tryFetchAndDownloadByRecordID(predictedRecordID, bios: bios) {
+                    continue // Successfully downloaded
+                }
+
+                // Also try without MD5 suffix (simpler format)
+                let simpleRecordID = "\(systemID)_\(bios.expectedFilename)"
+                ILOG("[BIOS DOWNLOAD] Trying simple recordID for \(bios.expectedFilename): \(simpleRecordID)")
+
+                if await tryFetchAndDownloadByRecordID(simpleRecordID, bios: bios) {
+                    continue // Successfully downloaded
+                }
+            }
+        }
+
+        guard !missingBIOS.isEmpty else {
+            ILOG("[BIOS DOWNLOAD] No missing BIOS files with known cloudRecordID to download")
+            return
+        }
+
+        ILOG("[BIOS DOWNLOAD] Found \(missingBIOS.count) BIOS files with cloudRecordID to download from CloudKit")
+
+        for bios in missingBIOS {
+            guard let recordID = bios.cloudRecordID, !recordID.isEmpty else {
+                WLOG("[BIOS DOWNLOAD] Skipping BIOS with empty recordID: \(bios.expectedFilename)")
+                continue
+            }
+
+            let filename = bios.expectedFilename
+            let systemID = bios.system?.identifier
+            ILOG("[BIOS DOWNLOAD] Initiating download: filename=\(filename), recordID=\(recordID), systemID=\(systemID ?? "nil")")
+
+            do {
+                try await downloadBIOSFromCloudKit(recordID: recordID, filename: filename, systemIdentifier: systemID)
+                ILOG("[BIOS DOWNLOAD] Successfully downloaded: \(filename)")
+            } catch {
+                ELOG("[BIOS DOWNLOAD] Failed to download BIOS \(filename): \(error.localizedDescription)")
+                // Log the specific error type for CloudKit errors
+                if let ckError = error as? CKError {
+                    ELOG("[BIOS DOWNLOAD] CKError code: \(ckError.code.rawValue), description: \(ckError.localizedDescription)")
+                }
+            }
+        }
+
+        ILOG("[BIOS DOWNLOAD] Download phase complete")
+    }
+
+    /// Try to fetch and download a BIOS by a specific record ID
+    /// - Parameters:
+    ///   - recordID: The predicted CloudKit record ID
+    ///   - bios: The PVBIOS entry
+    /// - Returns: True if download was successful
+    @MainActor
+    private func tryFetchAndDownloadByRecordID(_ recordID: String, bios: PVBIOS) async -> Bool {
+        let ckRecordID = CKRecord.ID(recordName: recordID)
+
+        do {
+            // Try to fetch the record directly (with timeout)
+            let fetchTask = Task {
+                try await privateDatabase.record(for: ckRecordID)
+            }
+
+            let timeoutTask = Task {
+                try await Task.sleep(nanoseconds: 10_000_000_000) // 10 second timeout
+                fetchTask.cancel()
+            }
+
+            let record: CKRecord
+            do {
+                record = try await fetchTask.value
+                timeoutTask.cancel()
+            } catch is CancellationError {
+                timeoutTask.cancel()
+                DLOG("[BIOS DOWNLOAD] Fetch timed out for recordID: \(recordID)")
+                return false
+            }
+
+            // Check if record has the file asset
+            guard let asset = record["fileData"] as? CKAsset,
+                  let assetURL = asset.fileURL,
+                  FileManager.default.fileExists(atPath: assetURL.path) else {
+                DLOG("[BIOS DOWNLOAD] Record \(recordID) exists but has no valid asset")
+                return false
+            }
+
+            ILOG("[BIOS DOWNLOAD] ✓ Found record \(recordID) with valid asset, downloading...")
+
+            // Download the file
+            let filename = bios.expectedFilename
+            let systemID = bios.system?.identifier
+            let destinationURL = localPathForBIOS(filename: filename, systemIdentifier: systemID)
+
+            // Create directory if needed
+            let directory = destinationURL.deletingLastPathComponent()
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+            // Remove existing file if present
+            if FileManager.default.fileExists(atPath: destinationURL.path) {
+                try FileManager.default.removeItem(at: destinationURL)
+            }
+
+            // Copy from CloudKit cache to local
+            try FileManager.default.copyItem(at: assetURL, to: destinationURL)
+
+            // Update Realm entry
+            let realm = RomDatabase.sharedInstance.realm
+            try realm.write {
+                bios.cloudRecordID = recordID
+                bios.isDownloaded = true
+
+                // Create PVFile if needed
+                if bios.file == nil {
+                    let pvFile = PVFile()
+                    pvFile.partialPath = systemID != nil ? "BIOS/\(systemID!)/\(filename)" : "BIOS/\(filename)"
+                    bios.file = pvFile
+                }
+            }
+
+            // Post notification
+            NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
+
+            ILOG("[BIOS DOWNLOAD] ✓ Successfully downloaded BIOS via predicted recordID: \(filename)")
+            return true
+
+        } catch let ckError as CKError where ckError.code == .unknownItem {
+            DLOG("[BIOS DOWNLOAD] Record not found for predicted ID: \(recordID)")
+            return false
+        } catch {
+            DLOG("[BIOS DOWNLOAD] Error fetching predicted ID \(recordID): \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// Download a specific BIOS file from CloudKit
+    /// - Parameters:
+    ///   - recordID: The CloudKit record ID
+    ///   - filename: The expected filename
+    ///   - systemIdentifier: The system identifier for subdirectory
+    private func downloadBIOSFromCloudKit(recordID: String, filename: String, systemIdentifier: String?) async throws {
+        let ckRecordID = CKRecord.ID(recordName: recordID)
+
+        ILOG("[BIOS DOWNLOAD] Starting download for: filename=\(filename), recordID=\(recordID), systemIdentifier=\(systemIdentifier ?? "nil")")
+
+        do {
+            DLOG("[BIOS DOWNLOAD] Fetching record from CloudKit: \(recordID)")
+            let record = try await privateDatabase.record(for: ckRecordID)
+
+            DLOG("[BIOS DOWNLOAD] Record fetched successfully, checking for asset...")
+            guard let asset = record["fileData"] as? CKAsset else {
+                ELOG("[BIOS DOWNLOAD] Record \(recordID) has no fileData asset!")
+                throw CloudSyncError.invalidData
+            }
+
+            guard let assetURL = asset.fileURL else {
+                ELOG("[BIOS DOWNLOAD] Asset exists but fileURL is nil for \(recordID)")
+                throw CloudSyncError.invalidData
+            }
+
+            ILOG("[BIOS DOWNLOAD] Asset found at cache path: \(assetURL.path)")
+
+            // Verify asset file exists in cache
+            guard FileManager.default.fileExists(atPath: assetURL.path) else {
+                ELOG("[BIOS DOWNLOAD] Asset file not found at cache path: \(assetURL.path)")
+                throw CloudSyncError.invalidData
+            }
+
+            // Determine destination path
+            let destinationURL = localPathForBIOS(filename: filename, systemIdentifier: systemIdentifier)
+            ILOG("[BIOS DOWNLOAD] Destination path: \(destinationURL.path)")
+
+            // Create directory if needed
+            let directory = destinationURL.deletingLastPathComponent()
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+            // Remove existing file if present
+            if FileManager.default.fileExists(atPath: destinationURL.path) {
+                try await FileManager.default.removeItem(at: destinationURL)
+                DLOG("[BIOS DOWNLOAD] Removed existing file at destination")
+            }
+
+            // Copy from CloudKit cache to local
+            try FileManager.default.copyItem(at: assetURL, to: destinationURL)
+
+            // Verify the copy succeeded
+            let copiedFileExists = FileManager.default.fileExists(atPath: destinationURL.path)
+            ILOG("[BIOS DOWNLOAD] Download complete: \(filename) -> \(destinationURL.path), verified: \(copiedFileExists)")
+
+            // Update Realm entry
+            await MainActor.run {
+                let realm = RomDatabase.sharedInstance.realm
+                if let bios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first {
+                    try? realm.write {
+                        bios.isDownloaded = true
+
+                        // Create or update PVFile
+                        if bios.file == nil {
+                            let pvFile = PVFile()
+                            pvFile.partialPath = systemIdentifier != nil ? "\(systemIdentifier!)/\(filename)" : filename
+                            bios.file = pvFile
+                        }
+                    }
+                }
+
+                // Post notification so BIOS cache and UI can be updated
+                NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
+            }
+
+            await insertDownloadedFile(destinationURL)
+        } catch let ckError as CKError where ckError.code == .unknownItem {
+            WLOG("[SYNC] BIOS record not found in CloudKit: \(recordID)")
+            throw CloudSyncError.recordNotFound
+        }
+    }
+
+    /// Upload all local BIOS files that have PVFile entries but no cloudRecordID
+    @MainActor
+    public func uploadMissingBIOSFiles() async -> Int {
+        ILOG("[SYNC] Checking for local BIOS files to upload...")
+
+        let realm = RomDatabase.sharedInstance.realm
+        let biosToUpload = realm.objects(PVBIOS.self)
+            .filter("file != nil AND (cloudRecordID == nil OR cloudRecordID == '')")
+
+        let biosArray = Array(biosToUpload)
+        guard !biosArray.isEmpty else {
+            ILOG("[SYNC] No local BIOS files need uploading")
+            return 0
+        }
+
+        ILOG("[SYNC] Found \(biosArray.count) BIOS files to upload")
+
+        var uploadedCount = 0
+        for bios in biosArray {
+            guard let fileURL = bios.file?.url,
+                  FileManager.default.fileExists(atPath: fileURL.path) else {
+                continue
+            }
+
+            let filename = bios.expectedFilename
+            ILOG("[SYNC] Uploading BIOS: \(filename)")
+
+            do {
+                // Extract system identifier from path
+                let parentDir = fileURL.deletingLastPathComponent().lastPathComponent
+                let systemID = SystemIdentifier(rawValue: parentDir)
+
+                let record = try await uploadFile(fileURL, gameID: nil, systemID: systemID)
+
+                // Update Realm with cloudRecordID
+                try realm.write {
+                    bios.cloudRecordID = record.recordID.recordName
+                }
+
+                uploadedCount += 1
+                ILOG("[SYNC] Uploaded BIOS: \(filename), recordID: \(record.recordID.recordName)")
+            } catch {
+                ELOG("[SYNC] Failed to upload BIOS \(filename): \(error.localizedDescription)")
+            }
+        }
+
+        ILOG("[SYNC] BIOS upload complete: \(uploadedCount) of \(biosArray.count) uploaded")
+        return uploadedCount
+    }
+
+    // MARK: - Diagnostics
+
+    /// Audit all BIOS CloudKit records to verify they have valid assets
+    /// This is useful for diagnosing sync issues
+    /// - Returns: Audit results containing valid, invalid, and missing records
+    public func auditBIOSCloudRecords() async -> BIOSAuditResult {
+        ILOG("[BIOS AUDIT] Starting CloudKit BIOS audit...")
+
+        var result = BIOSAuditResult()
+
+        // Fetch all records from CloudKit
+        let cloudRecords = await fetchAllBIOSRecords()
+        ILOG("[BIOS AUDIT] Found \(cloudRecords.count) BIOS records in CloudKit")
+
+        // Check each record for valid asset
+        for record in cloudRecords {
+            let filename = record["filename"] as? String ?? "unknown"
+            let recordID = record.recordID.recordName
+
+            if let asset = record["fileData"] as? CKAsset {
+                if let fileURL = asset.fileURL {
+                    let fileExists = FileManager.default.fileExists(atPath: fileURL.path)
+                    if fileExists {
+                        result.validRecords.append((recordID: recordID, filename: filename))
+                        DLOG("[BIOS AUDIT] ✓ Valid: \(filename) - asset at \(fileURL.path)")
+                    } else {
+                        result.assetMissingRecords.append((recordID: recordID, filename: filename))
+                        WLOG("[BIOS AUDIT] ⚠ Asset file missing: \(filename) - expected at \(fileURL.path)")
+                    }
+                } else {
+                    result.assetMissingRecords.append((recordID: recordID, filename: filename))
+                    WLOG("[BIOS AUDIT] ⚠ Asset URL nil: \(filename)")
+                }
+            } else {
+                result.noAssetRecords.append((recordID: recordID, filename: filename))
+                ELOG("[BIOS AUDIT] ✗ No asset: \(filename)")
+            }
+        }
+
+        // Check local BIOS entries against cloud
+        await MainActor.run {
+            let realm = RomDatabase.sharedInstance.realm
+            let allBIOS = realm.objects(PVBIOS.self)
+
+            for bios in allBIOS {
+                if let cloudRecordID = bios.cloudRecordID, !cloudRecordID.isEmpty {
+                    // Has cloud record ID - check if it's in our cloud records
+                    let found = cloudRecords.contains { $0.recordID.recordName == cloudRecordID }
+                    if !found {
+                        result.orphanedLocalRecords.append((recordID: cloudRecordID, filename: bios.expectedFilename))
+                        WLOG("[BIOS AUDIT] ⚠ Orphaned local record: \(bios.expectedFilename) - cloudRecordID \(cloudRecordID) not found in CloudKit")
+                    }
+                } else if bios.file?.url != nil && FileManager.default.fileExists(atPath: bios.file!.url!.path) {
+                    // Local file exists but no cloud record
+                    result.localOnlyFiles.append((filename: bios.expectedFilename, path: bios.file!.url!.path))
+                    ILOG("[BIOS AUDIT] Local-only: \(bios.expectedFilename) exists locally but not in CloudKit")
+                }
+            }
+        }
+
+        // Log summary
+        ILOG("""
+        [BIOS AUDIT] Audit complete:
+          - Valid records with assets: \(result.validRecords.count)
+          - Records missing assets: \(result.assetMissingRecords.count)
+          - Records with no asset field: \(result.noAssetRecords.count)
+          - Orphaned local records (cloud record deleted): \(result.orphanedLocalRecords.count)
+          - Local-only files (not uploaded): \(result.localOnlyFiles.count)
+        """)
+
+        return result
+    }
+
+    /// Force re-upload BIOS files that have issues
+    /// - Parameter recordIDs: Record IDs to re-upload, or nil to re-upload all with issues
+    /// - Returns: Number of BIOS files re-uploaded
+    @MainActor
+    public func repairBIOSSync(forRecordIDs recordIDs: [String]? = nil) async -> Int {
+        ILOG("[BIOS REPAIR] Starting BIOS sync repair...")
+
+        let realm = RomDatabase.sharedInstance.realm
+
+        // If specific record IDs provided, clear them so they'll be re-uploaded
+        if let recordIDs = recordIDs {
+            for recordID in recordIDs {
+                if let bios = realm.objects(PVBIOS.self).filter("cloudRecordID == %@", recordID).first {
+                    try? realm.write {
+                        bios.cloudRecordID = nil
+                    }
+                    ILOG("[BIOS REPAIR] Cleared cloudRecordID for \(bios.expectedFilename)")
+                }
+            }
+        } else {
+            // Run audit and clear all problematic records
+            let auditResult = await auditBIOSCloudRecords()
+
+            // Clear orphaned records
+            for (recordID, _) in auditResult.orphanedLocalRecords {
+                if let bios = realm.objects(PVBIOS.self).filter("cloudRecordID == %@", recordID).first {
+                    try? realm.write {
+                        bios.cloudRecordID = nil
+                    }
+                }
+            }
+
+            // Clear records with missing assets
+            for (recordID, _) in auditResult.assetMissingRecords + auditResult.noAssetRecords {
+                if let bios = realm.objects(PVBIOS.self).filter("cloudRecordID == %@", recordID).first {
+                    try? realm.write {
+                        bios.cloudRecordID = nil
+                    }
+                }
+            }
+        }
+
+        // Now upload missing BIOS files
+        let uploadedCount = await uploadMissingBIOSFiles()
+        ILOG("[BIOS REPAIR] Repair complete: uploaded \(uploadedCount) BIOS files")
+
+        return uploadedCount
+    }
+}
+
+/// Results from BIOS audit
+public struct BIOSAuditResult {
+    /// Records with valid assets
+    public var validRecords: [(recordID: String, filename: String)] = []
+    /// Records that have an asset field but the file is missing
+    public var assetMissingRecords: [(recordID: String, filename: String)] = []
+    /// Records that have no asset field at all
+    public var noAssetRecords: [(recordID: String, filename: String)] = []
+    /// Local BIOS entries with cloudRecordID that doesn't exist in CloudKit
+    public var orphanedLocalRecords: [(recordID: String, filename: String)] = []
+    /// Local BIOS files that exist but have no cloud record
+    public var localOnlyFiles: [(filename: String, path: String)] = []
+
+    /// True if all records are valid
+    public var isHealthy: Bool {
+        assetMissingRecords.isEmpty && noAssetRecords.isEmpty && orphanedLocalRecords.isEmpty
     }
 }
