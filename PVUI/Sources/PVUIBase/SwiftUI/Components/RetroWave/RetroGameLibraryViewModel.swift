@@ -159,6 +159,21 @@ public class RetroGameLibraryViewModel: ObservableObject {
                 }
                 DLOG("RetroGameLibraryViewModel: Database transaction completed successfully")
 
+                // Sync artwork to CloudKit in background
+                let gameMD5 = md5.uppercased()
+                Task.detached(priority: .utility) {
+                    if let gameToSync = await MainActor.run(body: {
+                        RomDatabase.sharedInstance.game(withMD5: gameMD5)
+                    }) {
+                        do {
+                            try await CloudSyncManager.shared.syncArtwork(for: gameToSync, artworkKey: key)
+                            ILOG("RetroGameLibraryViewModel: Artwork synced to CloudKit for game: \(gameToSync.title)")
+                        } catch {
+                            ELOG("RetroGameLibraryViewModel: Failed to sync artwork to CloudKit: \(error.localizedDescription)")
+                        }
+                    }
+                }
+
                 // Verify image retrieval
                 PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
                     if let retrievedImage = retrievedImage {

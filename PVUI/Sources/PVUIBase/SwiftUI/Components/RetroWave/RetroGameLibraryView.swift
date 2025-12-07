@@ -227,6 +227,12 @@ public struct RetroGameLibraryView: View {
             // Set up web server status monitoring (one-time check)
             updateWebServerStatus()
 
+            // Quick scan to fix games marked as iCloud-only but have local files
+            Task(priority: .utility) {
+                try? await Task.sleep(nanoseconds: 500_000_000) // 500ms delay to let UI settle
+                await scanAndFixAllLocalFileStatus()
+            }
+
             // Listen for web server status changes via notification instead of polling
             webServerStatusObserver = NotificationCenter.default.addObserver(
                 forName: .webServerStatusChanged,
@@ -880,6 +886,123 @@ public struct RetroGameLibraryView: View {
 
         needsDataRefresh = false
         DLOG("RetroGameLibraryView: Loaded \(gamesCount) games and \(cachedSystems.count) systems")
+    }
+
+    /// Scans all local ROM files and updates games marked as iCloud-only
+    /// that actually have local files present. Fixes race condition between CloudKit
+    /// sync and local file scanning.
+    private func scanAndFixAllLocalFileStatus() async {
+        // Step 1: Collect game info on main thread (fast Realm query)
+        let gameInfoList: [(md5: String, systemId: String, filenames: [String], title: String)] = await MainActor.run {
+            let realm = RomDatabase.sharedInstance.realm
+            let gamesNeedingCheck = realm.objects(PVGame.self)
+                .filter("isDownloaded == false")
+
+            guard !gamesNeedingCheck.isEmpty else {
+                DLOG("[LOCAL FILE FIX] No games need local file check")
+                return []
+            }
+
+            ILOG("[LOCAL FILE FIX] Checking \(gamesNeedingCheck.count) games for local files")
+
+            return gamesNeedingCheck.map { game in
+                let filenames: [String] = [
+                    game.file?.fileName,
+                    game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent
+                ].compactMap { $0 }.filter { !$0.isEmpty }
+                return (md5: game.md5Hash, systemId: game.systemIdentifier, filenames: filenames, title: game.title)
+            }
+        }
+
+        guard !gameInfoList.isEmpty else { return }
+
+        // Step 2: Do file system scanning on background thread (no Realm access)
+        let gamesToFix: [(md5: String, systemId: String, filename: String, path: URL, title: String)] = await Task.detached(priority: .utility) {
+            let fileManager = FileManager.default
+            var results: [(md5: String, systemId: String, filename: String, path: URL, title: String)] = []
+
+            // Group by system
+            var gamesBySystem: [String: [(md5: String, filenames: [String], title: String)]] = [:]
+            for info in gameInfoList {
+                if gamesBySystem[info.systemId] == nil {
+                    gamesBySystem[info.systemId] = []
+                }
+                gamesBySystem[info.systemId]?.append((md5: info.md5, filenames: info.filenames, title: info.title))
+            }
+
+            // Check each system
+            for (systemId, games) in gamesBySystem {
+                let systemRomsPath = Paths.romsPath(forSystemIdentifier: systemId)
+                guard fileManager.fileExists(atPath: systemRomsPath.path) else { continue }
+
+                // Build set of local files (fast)
+                var localFiles: [String: URL] = [:]
+                if let enumerator = fileManager.enumerator(at: systemRomsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles]) {
+                    for case let fileURL as URL in enumerator {
+                        var isDir: ObjCBool = false
+                        if fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDir), !isDir.boolValue {
+                            localFiles[fileURL.lastPathComponent.lowercased()] = fileURL
+                        }
+                    }
+                }
+
+                guard !localFiles.isEmpty else { continue }
+
+                // Match games to local files
+                for game in games {
+                    for filename in game.filenames {
+                        if let foundPath = localFiles[filename.lowercased()] {
+                            results.append((md5: game.md5, systemId: systemId, filename: filename, path: foundPath, title: game.title))
+                            break
+                        }
+                    }
+                }
+            }
+            return results
+        }.value
+
+        guard !gamesToFix.isEmpty else {
+            DLOG("[LOCAL FILE FIX] No local files found for games marked as iCloud-only")
+            return
+        }
+
+        // Step 3: Batch update Realm on main thread
+        let fixedCount = await MainActor.run {
+            let realm = RomDatabase.sharedInstance.realm
+            var count = 0
+
+            do {
+                try realm.write {
+                    for gameInfo in gamesToFix {
+                        guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameInfo.md5) else { continue }
+
+                        if liveGame.file == nil {
+                            let pvFile = PVFile(withURL: gameInfo.path)
+                            liveGame.file = pvFile
+                        } else if let existingFile = liveGame.file {
+                            let relativePath = "\(gameInfo.systemId)/\(gameInfo.filename)"
+                            if existingFile.partialPath != relativePath {
+                                existingFile.partialPath = relativePath
+                            }
+                        }
+                        liveGame.isDownloaded = true
+                        count += 1
+                        DLOG("[LOCAL FILE FIX] Updated: \(gameInfo.title)")
+                    }
+                }
+            } catch {
+                ELOG("[LOCAL FILE FIX] Failed to batch update games: \(error.localizedDescription)")
+            }
+            return count
+        }
+
+        if fixedCount > 0 {
+            ILOG("[LOCAL FILE FIX] Fixed \(fixedCount) games that had local files but were marked as iCloud-only")
+            await MainActor.run {
+                needsDataRefresh = true
+                refreshGameData()
+            }
+        }
     }
 }
 
