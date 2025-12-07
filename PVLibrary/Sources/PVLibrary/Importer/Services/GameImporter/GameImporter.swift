@@ -422,6 +422,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     public var importStatus: String = ""
 
+    /// Flag indicating if import is paused specifically for emulation (should not auto-resume)
+    @MainActor public private(set) var isPausedForEmulation: Bool = false
+
     var importAutoStartDelayTask: Task<Void, Never>?
 
     // Task management for preventing concurrent processing
@@ -1035,8 +1038,14 @@ public final class GameImporter: GameImporting, ObservableObject {
         let currentState = await normalizedProcessingState(reason: trigger)
         ILOG("GameImporter: Normalized state: \(currentState)")
 
-        // If we're paused, resume processing
+        // If we're paused, check if we should auto-resume
         if currentState == .paused {
+            // Don't auto-resume if paused for emulation
+            let pausedForEmulation = await MainActor.run { isPausedForEmulation }
+            if pausedForEmulation {
+                ILOG("GameImporter: Skipping auto-resume - paused for emulation")
+                return
+            }
             ILOG("GameImporter: Resuming from paused state")
             await resumeSafely()
             return
@@ -3207,8 +3216,9 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     /// Batch checks multiple items for existing games in database (more efficient than individual checks)
+    /// Also updates CloudKit-created games that are missing local file references.
     /// - Parameter items: Items to check
-    /// - Returns: Set of URLs that already exist in database
+    /// - Returns: Set of URLs that already exist in database with valid local files
     private func batchCheckExistingGames(_ items: [ImportQueueItem]) async -> Set<URL> {
         do {
             try await RealmProvider.ensureInitialized()
@@ -3217,9 +3227,20 @@ public final class GameImporter: GameImporting, ObservableObject {
             return []
         }
 
-        return await MainActor.run {
+        // Structure to hold games that need updating (collected without blocking main thread)
+        struct GameUpdateInfo {
+            let md5Hash: String
+            let fileURL: URL
+            let partialPath: String
+            let title: String
+        }
+
+        ILOG("GameImporter: batchCheckExistingGames checking \(items.count) items")
+
+        // Step 1: Query Realm and identify matches (on main actor but just reads)
+        let (existingURLs, gamesToUpdate): (Set<URL>, [GameUpdateInfo]) = await MainActor.run {
             var existingURLs = Set<URL>()
-            ILOG("GameImporter: batchCheckExistingGames checking \(items.count) items")
+            var gamesToUpdate: [GameUpdateInfo] = []
 
             let realm = RomDatabase.sharedInstance.realm
 
@@ -3234,48 +3255,59 @@ public final class GameImporter: GameImporting, ObservableObject {
                     continue
                 }
 
-                ILOG("GameImporter: batchCheckExistingGames - Checking \(systemItems.count) items for system \(systemID.rawValue)")
+                DLOG("GameImporter: batchCheckExistingGames - Checking \(systemItems.count) items for system \(systemID.rawValue)")
 
                 /// Batch query: Get all games for this system at once (single query instead of per-file)
                 let allGamesForSystem = realm.objects(PVGame.self)
                     .filter("systemIdentifier == %@", systemID.rawValue)
 
-                /// Build lookup sets for fast in-memory checking
-                var romPathsSet = Set<String>()
-                var md5Set = Set<String>()
+                /// Build lookup dictionaries for fast in-memory checking
+                var romPathsToGame = [String: PVGame]()
+                var md5ToGame = [String: PVGame]()
                 var filePathsSet = Set<String>()
 
                 for game in allGamesForSystem {
                     if !game.romPath.isEmpty {
-                        romPathsSet.insert(game.romPath)
+                        romPathsToGame[game.romPath] = game
                     }
                     if !game.md5Hash.isEmpty {
-                        md5Set.insert(game.md5Hash.uppercased())
+                        md5ToGame[game.md5Hash.uppercased()] = game
                     }
                     if let fileURL = game.file?.url?.path {
                         filePathsSet.insert(fileURL)
                     }
                 }
 
-                ILOG("GameImporter: batchCheckExistingGames - Built lookup sets: \(romPathsSet.count) romPaths, \(md5Set.count) MD5s, \(filePathsSet.count) file paths")
+                DLOG("GameImporter: batchCheckExistingGames - Built lookup sets: \(romPathsToGame.count) romPaths, \(md5ToGame.count) MD5s, \(filePathsSet.count) file paths")
 
                 /// Now check each item against the pre-built sets (fast in-memory lookups)
+                /// NOTE: We intentionally DO NOT access item.md5 here because that triggers
+                /// expensive MD5 computation on the main thread. Filename matching is sufficient
+                /// for duplicate detection. MD5 will be computed later during import if needed.
                 for item in systemItems {
                     let filename = item.url.lastPathComponent
                     let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
 
-                    /// Fast-path: Check by romPath (in-memory set lookup)
-                    if romPathsSet.contains(partialPath) {
-                        VLOG("GameImporter: batchCheckExistingGames - Found existing game by romPath: \(filename)")
-                        existingURLs.insert(item.url)
-                        continue
+                    // Helper to check if game needs update and collect info
+                    func checkGame(_ game: PVGame, fileURL: URL, partialPath: String) {
+                        if game.isDownloaded && game.file != nil {
+                            // Game is complete, just mark as existing
+                            existingURLs.insert(fileURL)
+                        } else {
+                            // CloudKit-created game needs local file update
+                            gamesToUpdate.append(GameUpdateInfo(
+                                md5Hash: game.md5Hash,
+                                fileURL: fileURL,
+                                partialPath: partialPath,
+                                title: game.title
+                            ))
+                            existingURLs.insert(fileURL)
+                        }
                     }
 
-                    /// Check by MD5 if available (in-memory set lookup, skip expensive MD5 calculation if not needed)
-                    /// Only calculate MD5 if we have games with MD5s to check against
-                    if !md5Set.isEmpty, let md5 = item.md5?.uppercased(), md5Set.contains(md5) {
-                        VLOG("GameImporter: batchCheckExistingGames - Found existing game by MD5: \(filename)")
-                        existingURLs.insert(item.url)
+                    /// Fast-path: Check by romPath (in-memory set lookup)
+                    if let existingGame = romPathsToGame[partialPath] {
+                        checkGame(existingGame, fileURL: item.url, partialPath: partialPath)
                         continue
                     }
 
@@ -3285,12 +3317,54 @@ public final class GameImporter: GameImporting, ObservableObject {
                         existingURLs.insert(item.url)
                         continue
                     }
+
+                    /// Check by filename match against existing games (case-insensitive)
+                    /// This is faster than MD5 and catches most duplicates
+                    let lowercaseFilename = filename.lowercased()
+                    for (romPath, game) in romPathsToGame {
+                        if romPath.lowercased().hasSuffix(lowercaseFilename) {
+                            checkGame(game, fileURL: item.url, partialPath: partialPath)
+                            break
+                        }
+                    }
                 }
             }
 
-            ILOG("GameImporter: batchCheckExistingGames - Found \(existingURLs.count) existing files out of \(items.count) checked")
-            return existingURLs
+            return (existingURLs, gamesToUpdate)
         }
+
+        // Step 2: Batch update games that need local file info (single write transaction)
+        if !gamesToUpdate.isEmpty {
+            await MainActor.run {
+                let realm = RomDatabase.sharedInstance.realm
+                var updatedCount = 0
+
+                do {
+                    try realm.write {
+                        for info in gamesToUpdate {
+                            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: info.md5Hash) else { continue }
+
+                            if game.file == nil {
+                                let pvFile = PVFile(withURL: info.fileURL)
+                                game.file = pvFile
+                            } else if let existingFile = game.file {
+                                if existingFile.partialPath != info.partialPath {
+                                    existingFile.partialPath = info.partialPath
+                                }
+                            }
+                            game.isDownloaded = true
+                            updatedCount += 1
+                        }
+                    }
+                    ILOG("GameImporter: batchCheckExistingGames - Updated \(updatedCount) CloudKit-created games with local files")
+                } catch {
+                    ELOG("[CLOUD SYNC FIX] Failed to batch update games: \(error.localizedDescription)")
+                }
+            }
+        }
+
+        ILOG("GameImporter: batchCheckExistingGames - Found \(existingURLs.count) existing files out of \(items.count) checked")
+        return existingURLs
     }
 
     private func addImportItemToQueue(_ item: ImportQueueItem) async {
@@ -3539,6 +3613,45 @@ public final class GameImporter: GameImporting, ObservableObject {
             currentTimeoutTask?.cancel()
             currentTimeoutTask = nil
             processingTaskLock.unlock()
+        }
+    }
+
+    /// Pauses the import processing specifically for emulation
+    /// This prevents auto-resume while emulation is active
+    public func pauseForEmulation() {
+        Task { @MainActor in
+            ILOG("GameImportQueue - Pausing import processing for emulation")
+            isPausedForEmulation = true
+
+            // Also pause normal processing if it's running
+            if processingState == .processing {
+                processingState = .paused
+                updateImporterStatus("Import paused for emulation")
+
+                // Cancel timeout task when pausing to avoid false timeout triggers
+                processingTaskLock.lock()
+                currentTimeoutTask?.cancel()
+                currentTimeoutTask = nil
+                processingTaskLock.unlock()
+            }
+        }
+    }
+
+    /// Resumes import processing after emulation ends
+    /// Called when emulation stops and user returns to library
+    public func resumeFromEmulation() {
+        Task { @MainActor in
+            guard isPausedForEmulation else { return }
+
+            ILOG("GameImportQueue - Resuming import processing after emulation")
+            isPausedForEmulation = false
+
+            // Resume processing if there are queued items
+            let queueSnapshot = await importQueueActor.getQueue()
+            let queuedCount = queueSnapshot.filter { $0.status == .queued }.count
+            if queuedCount > 0 {
+                await resumeSafely()
+            }
         }
     }
 
