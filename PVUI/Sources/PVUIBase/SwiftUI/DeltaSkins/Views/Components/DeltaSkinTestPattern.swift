@@ -142,17 +142,19 @@ public struct DeltaSkinTestPatternView: View {
     }
 }
 
-// Helper effects
+// Helper effects - using Canvas for efficient GPU-accelerated rendering
 struct ScanlinesEffect: View {
     var body: some View {
-        GeometryReader { geometry in
-            Path { path in
-                stride(from: 0, to: geometry.size.height, by: 2).forEach { y in
-                    path.move(to: CGPoint(x: 0, y: y))
-                    path.addLine(to: CGPoint(x: geometry.size.width, y: y))
-                }
+        Canvas { context, size in
+            // Draw horizontal scanlines every 2 pixels
+            var y: CGFloat = 0
+            while y < size.height {
+                var path = Path()
+                path.move(to: CGPoint(x: 0, y: y))
+                path.addLine(to: CGPoint(x: size.width, y: y))
+                context.stroke(path, with: .color(.black.opacity(0.3)), lineWidth: 1)
+                y += 2
             }
-            .stroke(.black.opacity(0.3), lineWidth: 1)
         }
         .allowsHitTesting(false)
     }
@@ -160,14 +162,16 @@ struct ScanlinesEffect: View {
 
 struct LCDEffect: View {
     var body: some View {
-        GeometryReader { geometry in
-            Path { path in
-                stride(from: 0, to: geometry.size.width, by: 3).forEach { x in
-                    path.move(to: CGPoint(x: x, y: 0))
-                    path.addLine(to: CGPoint(x: x, y: geometry.size.height))
-                }
+        Canvas { context, size in
+            // Draw vertical LCD lines every 3 pixels
+            var x: CGFloat = 0
+            while x < size.width {
+                var path = Path()
+                path.move(to: CGPoint(x: x, y: 0))
+                path.addLine(to: CGPoint(x: x, y: size.height))
+                context.stroke(path, with: .color(.black.opacity(0.1)), lineWidth: 1)
+                x += 3
             }
-            .stroke(.black.opacity(0.1), lineWidth: 1)
         }
         .allowsHitTesting(false)
     }
@@ -175,15 +179,36 @@ struct LCDEffect: View {
 
 struct SubpixelEffect: View {
     var body: some View {
-        GeometryReader { geometry in
-            HStack(spacing: 0) {
-                ForEach(0..<Int(geometry.size.width), id: \.self) { x in
-                    VStack(spacing: 0) {
-                        Color.red.opacity(0.2)
-                        Color.green.opacity(0.2)
-                        Color.blue.opacity(0.2)
-                    }
-                    .frame(width: 1)
+        // Use Canvas for efficient rendering instead of thousands of SwiftUI views
+        // The old ForEach approach created 3000+ views and crashed SwiftUI's view graph
+        Canvas { context, size in
+            let stripeWidth: CGFloat = 1.0
+            var x: CGFloat = 0
+
+            while x < size.width {
+                // Red stripe
+                context.fill(
+                    Path(CGRect(x: x, y: 0, width: stripeWidth, height: size.height)),
+                    with: .color(.red.opacity(0.2))
+                )
+                x += stripeWidth
+
+                // Green stripe
+                if x < size.width {
+                    context.fill(
+                        Path(CGRect(x: x, y: 0, width: stripeWidth, height: size.height)),
+                        with: .color(.green.opacity(0.2))
+                    )
+                    x += stripeWidth
+                }
+
+                // Blue stripe
+                if x < size.width {
+                    context.fill(
+                        Path(CGRect(x: x, y: 0, width: stripeWidth, height: size.height)),
+                        with: .color(.blue.opacity(0.2))
+                    )
+                    x += stripeWidth
                 }
             }
         }
