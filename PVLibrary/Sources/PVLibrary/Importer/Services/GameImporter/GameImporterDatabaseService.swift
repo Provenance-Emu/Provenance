@@ -288,10 +288,57 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         DLOG("Successfully completed database import for: \(partialPath)")
     }
 
-    /// Saves the relative path for a given game
+    /// Saves the relative path for a given game and updates cloud sync status if needed
     func saveRelativePath(_ existingGame: PVGame, partialPath:String, file:URL) async {
         if RomDatabase.gamesCache[partialPath] == nil {
             await RomDatabase.addRelativeFileCache(file, game:existingGame)
+        }
+
+        // Fix for race condition: If game was created from CloudKit before local scan,
+        // update the isDownloaded status and ensure PVFile is properly linked
+        if !existingGame.isDownloaded || existingGame.file == nil {
+            ILOG("[LOCAL SCAN FIX] Updating CloudKit-created game with local file: \(existingGame.title)")
+            do {
+                let realm = RomDatabase.sharedInstance.realm
+
+                // Get a live (thawed) version of the game for modification
+                let liveGame: PVGame?
+                if existingGame.isFrozen {
+                    liveGame = existingGame.thaw()
+                } else if let gameFromRealm = realm.object(ofType: PVGame.self, forPrimaryKey: existingGame.md5Hash) {
+                    liveGame = gameFromRealm
+                } else {
+                    liveGame = existingGame
+                }
+
+                guard let gameToUpdate = liveGame else {
+                    ELOG("[LOCAL SCAN FIX] Could not get live game reference for: \(existingGame.title)")
+                    return
+                }
+
+                try realm.write {
+                    // Update or create PVFile reference
+                    if gameToUpdate.file == nil {
+                        let pvFile = PVFile(withURL: file)
+                        gameToUpdate.file = pvFile
+                        ILOG("[LOCAL SCAN FIX] Created PVFile for game: \(gameToUpdate.title)")
+                    } else if let existingFile = gameToUpdate.file {
+                        // Update the partial path if it's different
+                        if existingFile.partialPath != partialPath {
+                            existingFile.partialPath = partialPath
+                            ILOG("[LOCAL SCAN FIX] Updated partialPath for game: \(gameToUpdate.title)")
+                        }
+                    }
+
+                    // Mark as downloaded since we found the file locally
+                    if !gameToUpdate.isDownloaded {
+                        gameToUpdate.isDownloaded = true
+                        ILOG("[LOCAL SCAN FIX] Marked game as downloaded: \(gameToUpdate.title)")
+                    }
+                }
+            } catch {
+                ELOG("[LOCAL SCAN FIX] Failed to update game \(existingGame.title): \(error.localizedDescription)")
+            }
         }
     }
 
