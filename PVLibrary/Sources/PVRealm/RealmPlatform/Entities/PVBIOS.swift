@@ -14,7 +14,7 @@ import PVPrimitives
 public final class PVBIOS: Object, Identifiable, BIOSFileProvider {
 //    public var status: BIOSStatus
     public var id: String { expectedMD5 }
-    
+
     @Persisted public var system: PVSystem!
 
     @Persisted public var descriptionText: String = ""
@@ -27,16 +27,16 @@ public final class PVBIOS: Object, Identifiable, BIOSFileProvider {
     @Persisted(primaryKey: true) public var expectedFilename: String = ""
 
     @Persisted public var file: PVFile?
-    
+
     // CloudKit sync properties
     @Persisted public var cloudRecordID: String? // CloudKit record ID for on-demand downloads
-    @Persisted public var isDownloaded: Bool = true // Whether the file is downloaded locally
+    @Persisted public var isDownloaded: Bool = false // Whether the file is downloaded locally (false until file is found/downloaded)
     @Persisted public var fileSize: Int = 0 // File size in bytes
     public var fileInfo: PVFile? { return file }
 }
 
 public extension PVBIOS {
-    
+
     convenience init(withSystem system: PVSystem, descriptionText: String, optional: Bool = false, expectedMD5: String, expectedSize: Int, expectedFilename: String) {
         self.init()
         self.system = system
@@ -68,7 +68,7 @@ public extension BIOS {
         let regions = bios.regions
         let version = bios.version
 //        let system = bios.system.asDomain()
-        
+
         self.init(descriptionText: descriptionText, regions: regions, version: version, expectedMD5: expectedMD5, expectedSize: expectedSize, expectedFilename: expectedFilename, optional: optional, status: status, file: file)
     }
 }
