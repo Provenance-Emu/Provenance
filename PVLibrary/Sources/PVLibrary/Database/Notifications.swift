@@ -47,4 +47,8 @@ public extension Notification.Name {
     static let cloudKitSyncDidComplete = Notification.Name("CloudKitSyncDidComplete")
     static let cloudKitSyncError = Notification.Name("CloudKitSyncError")
     static let cloudKitZoneChanged = Notification.Name("CloudKitZoneChanged") // Added for zone notifications
+
+    // Artwork Sync Events
+    static let PVGameArtworkDidUpdate = Notification.Name("PVGameArtworkDidUpdateNotification")
+    static let PVGameArtworkSyncRequested = Notification.Name("PVGameArtworkSyncRequestedNotification")
 }
