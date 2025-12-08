@@ -71,6 +71,7 @@ public struct RetroGameLibraryView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
+    @StateObject private var saveStatesStore = RetroSaveStatesStore.shared
 
     // State for document picker presentation
     #if !os(tvOS)
@@ -100,6 +101,7 @@ public struct RetroGameLibraryView: View {
     @State private var cachedSystems: [PVSystem] = []
     @State private var gamesCount: Int = 0
     @State private var needsDataRefresh: Bool = true
+    @State private var saveBrowserContext: SaveBrowserContext?
 
     // Track expanded sections with AppStorage to persist between app runs
     @AppStorage("GameLibraryExpandedSections") private var expandedSectionsData: Data = Data()
@@ -338,6 +340,14 @@ public struct RetroGameLibraryView: View {
                     }
                 )
             )
+        }
+        .sheet(item: $saveBrowserContext) { context in
+            RetroSaveStatesBrowserView(
+                systemID: context.systemID,
+                systemName: context.systemName,
+                gameFilter: context.game
+            )
+            .environmentObject(themeManager)
         }
 //            .fullScreenCover(item: $viewModel.continuesManagementState) { state in
 //                let driver = RealmSaveStateDriver()
@@ -612,6 +622,7 @@ public struct RetroGameLibraryView: View {
             if hasGames {
                 SwiftUI.Section {
                     if isExpanded {
+                        saveStatesStrip(for: system)
                         /// Only fetch and sort games when section is expanded
                         let systemGames = gamesForSystem(system)
                         if viewModel.selectedViewMode == .grid {
@@ -884,6 +895,11 @@ public struct RetroGameLibraryView: View {
         /// Invalidate ViewModel cache since data changed
         viewModel.invalidateGamesCache()
 
+        /// Prefetch recent save states for visible systems to avoid UI hitching
+        Task(priority: .utility) {
+            await saveStatesStore.prefetchRecent(systemIDs: cachedSystems.map(\.identifier), limit: 6)
+        }
+
         needsDataRefresh = false
         DLOG("RetroGameLibraryView: Loaded \(gamesCount) games and \(cachedSystems.count) systems")
     }
@@ -1072,6 +1088,12 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
     public func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("RetroGameLibraryView: Received request to show save states for game")
         viewModel.continuesManagementState = RetroGameLibraryContinuesManagementState(game: game)
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        saveBrowserContext = SaveBrowserContext(
+            systemID: game.systemIdentifier,
+            systemName: game.system?.name ?? game.systemIdentifier,
+            game: frozenGame
+        )
     }
 
     public func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
@@ -1192,6 +1214,43 @@ extension RetroGameLibraryView {
             games: system.games,
             sortOption: viewModel.selectedSortOption
         )
+    }
+
+    /// Recent save states for a system from the shared store
+    private func recentSaveStates(for system: PVSystem) -> [RetroSaveStateItem] {
+        saveStatesStore.recentBySystem[system.identifier] ?? []
+    }
+
+    /// Loads recent save states for a system with caching
+    private func loadRecentSaveStates(for system: PVSystem) async {
+        _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 6)
+    }
+
+    /// Horizontal strip of recent save states for a system
+    @ViewBuilder
+    private func saveStatesStrip(for system: PVSystem) -> some View {
+        let items = recentSaveStates(for: system)
+        if items.isEmpty {
+            Color.clear
+                .frame(height: 0)
+                .task {
+                    await loadRecentSaveStates(for: system)
+                }
+        } else {
+            RetroRecentSaveStatesStrip(
+                systemName: system.name,
+                systemId: system.identifier,
+                items: items,
+                store: saveStatesStore,
+                onOpen: { item in
+                    Task { await saveStatesStore.openSaveState(id: item.id) }
+                },
+                onViewAll: {
+                    saveBrowserContext = SaveBrowserContext(systemID: system.identifier, systemName: system.name, game: nil)
+                }
+            )
+            .transition(.opacity)
+        }
     }
 
     /// Creates a focus binding for a game ID
@@ -1495,4 +1554,13 @@ struct RetroGridShape: Shape {
 
         return path
     }
+}
+
+/// Context for presenting the save-state browser
+private struct SaveBrowserContext: Identifiable {
+    let systemID: String
+    let systemName: String
+    let game: PVGame?
+
+    var id: String { game?.id ?? systemID }
 }
