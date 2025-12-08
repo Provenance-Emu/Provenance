@@ -47,6 +47,10 @@ public struct CloudSyncSettingsView: View {
 
     @StateObject internal var viewModel = UnifiedCloudSyncViewModel()
 
+    #if os(tvOS)
+    @Environment(\.dismiss) private var dismiss
+    #endif
+
     public init() {}
 
     public var body: some View {
@@ -69,6 +73,7 @@ public struct CloudSyncSettingsView: View {
                     #endif
                     settingsTab.tag(2)
                     moreSettingsTab.tag(3)
+                    recordsManagementTab.tag(4)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .background(Color.retroBlack.opacity(0.3))
@@ -95,6 +100,13 @@ public struct CloudSyncSettingsView: View {
                     }
             }
         }
+        #if os(tvOS)
+        .focusSection() // Contain focus to prevent escape to parent tab bar
+        .onExitCommand {
+            // Handle Menu button to go back properly
+            dismiss()
+        }
+        #endif
     }
 
     // MARK: - Status Header
@@ -160,6 +172,7 @@ public struct CloudSyncSettingsView: View {
             #endif
             tabButton(title: "Settings", systemImage: "gear", tag: 2)
             tabButton(title: "Advanced", systemImage: "slider.horizontal.3", tag: 3)
+            tabButton(title: "Records", systemImage: "doc.on.doc.fill", tag: 4)
         }
         .padding(.horizontal)
         .padding(.bottom, 8)
