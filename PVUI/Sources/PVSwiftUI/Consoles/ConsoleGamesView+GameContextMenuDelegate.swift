@@ -215,6 +215,21 @@ extension ConsoleGamesView: GameContextMenuDelegate {
             DLOG("Database transaction completed successfully")
             rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
 
+            // Sync artwork to CloudKit in background
+            let gameMD5 = md5.uppercased()
+            Task.detached(priority: .utility) {
+                if let gameToSync = await MainActor.run(body: {
+                    RomDatabase.sharedInstance.game(withMD5: gameMD5)
+                }) {
+                    do {
+                        try await CloudSyncManager.shared.syncArtwork(for: gameToSync, artworkKey: key)
+                        ILOG("Artwork synced to CloudKit for game: \(gameToSync.title)")
+                    } catch {
+                        ELOG("Failed to sync artwork to CloudKit: \(error.localizedDescription)")
+                    }
+                }
+            }
+
             DLOG("Attempting to verify image retrieval")
             PVMediaCache.shareInstance().image(forKey: key) { retrievedKey, retrievedImage in
                 if let retrievedImage = retrievedImage {
