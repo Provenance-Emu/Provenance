@@ -20,6 +20,9 @@ import PVThemes
 /// default values either individually or all at once.
 public struct CoreOptionsView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
+    #if os(tvOS)
+    @Environment(\.dismiss) private var dismiss
+    #endif
 
     /// Initialize a new CoreOptionsView
     public init() {}
@@ -43,7 +46,16 @@ public struct CoreOptionsView: View {
 
             /// Core options list with theme-aware styling
             CoreOptionsListView()
+                #if os(tvOS)
+                .focusSection() // Contain focus to prevent escape to parent tab bar
+                #endif
         }
         .navigationTitle("Core Options")
+        #if os(tvOS)
+        .onExitCommand {
+            // Handle Menu button to go back properly
+            dismiss()
+        }
+        #endif
     }
 }

@@ -361,6 +361,13 @@ struct RetroMenuView: View {
             currentOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
         }
 #endif
+        // Handle tvOS Menu/Back button - resume game when dismissed
+#if os(tvOS)
+        .onExitCommand {
+            // Same behavior as pressing "RESUME GAME" button
+            dismissAction()
+        }
+#endif
     }
 
     /// Check if core has features that warrant a CORE tab
@@ -410,7 +417,7 @@ struct RetroMenuView: View {
             // Quit game button - show different title if save option is available
             menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: palette.defaultTintColor.swiftUIColor) {
                 dismissAction()
-                Task {
+                Task { @MainActor in
                     await emulatorVC.quit(optionallySave: false)
                 }
             }
@@ -421,7 +428,7 @@ struct RetroMenuView: View {
                     dismissAction()
                     let image = emulatorVC.captureScreenshot()
 
-                    Task {
+                    Task { @MainActor in
                         do {
                             try await emulatorVC.createNewSaveState(auto: true, screenshot: image)
                             await emulatorVC.quit(optionallySave: false)
@@ -1871,7 +1878,7 @@ struct RetroMenuView: View {
               let emulatorVC = emulatorVC as? PVEmulatorViewController else {
             return
         }
-        
+
         let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
 
         // Apply filter changes immediately

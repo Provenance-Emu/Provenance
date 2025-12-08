@@ -16,6 +16,9 @@ struct SystemSettingsView: View {
     @ObservedResults(PVSystem.self) private var systems
     @State private var searchText = ""
     @Default(.unsupportedCores) private var unsupportedCores
+    #if os(tvOS)
+    @Environment(\.dismiss) private var dismiss
+    #endif
 
     var isAppStore: Bool = {
         AppState.shared.isAppStore
@@ -116,7 +119,7 @@ struct SystemSettingsView: View {
                     .padding(.bottom, 20)
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
-                // Scrollable list
+                // Scrollable list with focus containment to prevent accidental back navigation
                 ScrollView {
                     LazyVStack(spacing: 20) {
                         ForEach(filteredSystems) { system in
@@ -125,8 +128,15 @@ struct SystemSettingsView: View {
                         }
                     }
                     .padding()
+                    .padding(.bottom, 50) // Extra padding to prevent focus escape at bottom
                 }
+                .focusSection() // Contain focus within this ScrollView
             }
+        }
+        .onExitCommand {
+            // Handle Menu button to go back properly
+            // This prevents focus from escaping to parent tab bar
+            dismiss()
         }
 #else
         ZStack {

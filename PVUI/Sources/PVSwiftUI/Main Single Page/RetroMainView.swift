@@ -153,6 +153,9 @@ public struct RetroMainView: View {
                 .transition(.opacity)
                 .animation(.easeInOut, value: syncStatusManager.isVisible)
             }
+
+            // RetroWave styled alert overlay
+            RetroAlertStateView(alertState: SceneCoordinator.shared.alertState)
         }
         .onAppear {
             ILOG("MainView: Appeared with RetroTabView")

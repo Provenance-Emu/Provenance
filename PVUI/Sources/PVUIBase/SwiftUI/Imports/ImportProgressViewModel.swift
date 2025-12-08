@@ -110,6 +110,8 @@ public class ImportProgressViewModel: ObservableObject {
     private var messageExpiryTimers: [UUID: Timer] = [:] // Timers for individual log message expiry
     private var processedSharedMessageIDs = Set<UUID>() // Tracks messages processed from StatusMessageManager
     private var hideViewTimer: Timer? // Timer for delayed hiding of the whole view
+    private var lastVisibilityConditions: Bool = false // Track last evaluated visibility to cut redundant work
+    private var lastHideTimerLog: Date? // Throttle hide-timer logging
     private var cancellables = Set<AnyCancellable>()
     private let gameImporter: any GameImporting
     private let updatesController: PVGameLibraryUpdatesController // Store updatesController
@@ -633,6 +635,7 @@ public class ImportProgressViewModel: ObservableObject {
             guard let self = self else { return }
 
             let conditionsMet = self._recalculateShouldShowConditions()
+            let sameConditions = conditionsMet == self.lastVisibilityConditions
 
             if conditionsMet {
                 // Conditions to show are met, so make sure view is visible and cancel any hide timer.
@@ -642,6 +645,7 @@ public class ImportProgressViewModel: ObservableObject {
                     self.shouldShow = true
                     ILOG("ImportProgressViewModel: Conditions met, showing view.")
                 }
+                self.lastVisibilityConditions = conditionsMet
             } else {
                 // Conditions to show are NOT met.
                 // If view is currently shown and no hide timer is active, start one.
@@ -658,12 +662,18 @@ public class ImportProgressViewModel: ObservableObject {
                         }
                         self.hideViewTimer = nil // Timer has fired, clear it.
                     }
+                    self.lastHideTimerLog = Date()
                 } else if !self.shouldShow {
                     // View is already hidden, do nothing.
                 } else if self.hideViewTimer != nil {
-                    // Timer is already running, do nothing, let it fire.
-                    ILOG("ImportProgressViewModel: Conditions NOT met, hide timer already active.")
+                    // Timer is already running, do nothing, let it fire. Throttle logs to avoid spam.
+                    let now = Date()
+                    if self.lastHideTimerLog == nil || now.timeIntervalSince(self.lastHideTimerLog!) > 5 {
+                        ILOG("ImportProgressViewModel: Conditions NOT met, hide timer already active.")
+                        self.lastHideTimerLog = now
+                    }
                 }
+                self.lastVisibilityConditions = conditionsMet
             }
         }
     }

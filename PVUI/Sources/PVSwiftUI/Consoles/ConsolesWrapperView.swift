@@ -173,6 +173,9 @@ struct ConsolesWrapperView: SwiftUI.View {
                 .transition(.opacity)
                 .animation(.easeInOut, value: syncStatusManager.isVisible)
             }
+
+            // RetroWave styled alert overlay
+            RetroAlertStateView(alertState: SceneCoordinator.shared.alertState)
         }
         .environment(\.rootDelegate, rootDelegate)
         .onAppear {
