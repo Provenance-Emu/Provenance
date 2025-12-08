@@ -25,3 +25,4 @@ public enum DebuggerDetector {
         #endif
     }
 }
+
