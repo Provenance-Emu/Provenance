@@ -64,6 +64,25 @@ struct TVOSNavigationSupport: ViewModifier {
     }
 }
 
+#if os(tvOS)
+/// ViewModifier that contains focus within a subpage to prevent accidental back navigation
+/// when scrolling past content on tvOS. This prevents focus from escaping to parent tab bars.
+@available(tvOS 14.0, *)
+struct TVOSSubpageFocusContainment: ViewModifier {
+    @Environment(\.dismiss) private var dismiss
+
+    func body(content: Content) -> some View {
+        content
+            // Contain focus within this view to prevent escape to parent tab bar
+            .focusSection()
+            // Handle Menu/Back button press to dismiss properly
+            .onExitCommand {
+                dismiss()
+            }
+    }
+}
+#endif
+
 extension View {
     /// Adds tvOS navigation support with a back button
     func tvOSNavigationSupport(title: String) -> some View {
@@ -73,7 +92,64 @@ extension View {
         self
         #endif
     }
+
+    /// Adds focus containment for tvOS subpages to prevent accidental back navigation
+    /// when scrolling past content. Focus will stay within the subpage.
+    func tvOSSubpageFocusContainment() -> some View {
+        #if os(tvOS)
+        if #available(tvOS 14.0, *) {
+            return AnyView(self.modifier(TVOSSubpageFocusContainment()))
+        } else {
+            return AnyView(self)
+        }
+        #else
+        return self
+        #endif
+    }
 }
+
+#if os(tvOS)
+/// A wrapper view for NavigationLink destinations on tvOS that properly contains focus
+/// and prevents accidental back navigation when scrolling past content.
+@available(tvOS 14.0, *)
+struct TVOSSettingsSubpage<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: () -> Content
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ScrollView {
+            content()
+                .padding(.bottom, 50) // Extra padding to prevent focus escape at bottom
+        }
+        .focusSection() // Contain focus within this ScrollView
+        .navigationTitle(title)
+        .onExitCommand {
+            // Handle Menu button to go back, not to parent's tab bar
+            dismiss()
+        }
+    }
+}
+
+/// Helper to wrap navigation destinations for tvOS with proper focus containment
+extension View {
+    /// Wraps the view in a tvOS-optimized subpage container that prevents focus escape
+    @ViewBuilder
+    func tvOSSettingsDestination(title: String) -> some View {
+        #if os(tvOS)
+        if #available(tvOS 14.0, *) {
+            TVOSSettingsSubpage(title: title) {
+                self
+            }
+        } else {
+            self.navigationTitle(title)
+        }
+        #else
+        self
+        #endif
+    }
+}
+#endif
 
 // MARK: - PVSettingsView
 public struct PVSettingsView: View {
@@ -197,6 +273,7 @@ public struct PVSettingsView: View {
                 )
                 #else
                 // Scroll view for tvOS (better for remote navigation)
+                // Uses focusSection to contain focus and prevent accidental escape to parent tab bars
                 ScrollView {
                     VStack(spacing: 16) {
                         Text("SETTINGS")
@@ -211,6 +288,7 @@ public struct PVSettingsView: View {
                             .padding(.top, 20)
                             .padding(.bottom, 10)
                             .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+                            .focusable(false) // Title shouldn't steal focus
 
                         VStack(spacing: 16) {
                             CollapsibleSection(title: "App") {
@@ -268,8 +346,9 @@ public struct PVSettingsView: View {
                         }
                         .padding(.horizontal)
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 50) // Extra padding to prevent focus escape at bottom
                 }
+                .focusSection() // Contain focus within settings content
                 #endif
             }
         }
