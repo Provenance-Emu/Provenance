@@ -73,7 +73,8 @@ extension GameImporter {
     internal func isBIOS(_ item: ImportQueueItem) -> Bool {
         let urlPath = item.url.path
         let filenameLowercased = item.url.lastPathComponent.lowercased()
-        let md5Upper = item.md5?.uppercased()
+        // NOTE: DO NOT compute MD5 upfront - it's expensive and blocks the main thread
+        // MD5 is only needed in step 3 if faster checks fail
 
         // 1. Check if the file is already in a known BIOS subdirectory
         //    and if it's already linked to an existing PVBIOS entry.
@@ -105,7 +106,26 @@ extension GameImporter {
         }
 
         // 3. Check MD5 against BIOS entries if available (slower, but needed for files with different names)
-        if let itemMD5 = md5Upper {
+        //    SKIP this expensive check for files that are clearly NOT BIOS:
+        //    - Files larger than 16MB (BIOS files are typically small, < 4MB)
+        //    - Files with extensions that are clearly ROMs (.chd, .iso, .rvz, .wbfs, etc.)
+        let fileExtension = item.url.pathExtension.lowercased()
+        let largeROMExtensions = Set(["chd", "iso", "rvz", "wbfs", "gcz", "nkit", "wad", "cia", "3ds", "nsp", "xci", "pkg"])
+        if largeROMExtensions.contains(fileExtension) {
+            VLOG("Skipping MD5 BIOS check for large ROM format: \(filenameLowercased)")
+            return false
+        }
+
+        // Check file size - skip MD5 for files larger than 16MB
+        if let fileSize = try? FileManager.default.attributesOfItem(atPath: item.url.path)[.size] as? Int64,
+           fileSize > 16 * 1024 * 1024 {
+            VLOG("Skipping MD5 BIOS check for large file (\(fileSize) bytes): \(filenameLowercased)")
+            return false
+        }
+
+        // Only compute MD5 for small files that could potentially be BIOS
+        // This is the expensive operation - only do it for files that passed the size check
+        if let itemMD5 = item.md5?.uppercased() {
             for biosEntry in PVEmulatorConfiguration.biosArray {
                 if !biosEntry.expectedMD5.isEmpty, biosEntry.expectedMD5.uppercased() == itemMD5 {
                     VLOG("BIOS match by MD5: \(itemMD5) for file: \(filenameLowercased)")
@@ -114,7 +134,7 @@ extension GameImporter {
             }
         }
 
-        VLOG("No BIOS match for file: \(filenameLowercased), MD5: \(md5Upper ?? "N/A")")
+        VLOG("No BIOS match for file: \(filenameLowercased)")
         return false
     }
 }
