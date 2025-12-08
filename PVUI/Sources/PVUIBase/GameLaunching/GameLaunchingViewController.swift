@@ -208,9 +208,14 @@ public extension GameLaunchingViewController {
                         canLoad = false
                     }
                 } else {
-                    // No MD5 matches either
-                    missingBIOSES.append("\(expectedFilename) (MD5: \(currentEntry.expectedMD5))")
-                    canLoad = false
+                    // No MD5 matches - try to download from CloudKit on-demand
+                    let downloaded = await tryDownloadBIOSFromCloud(filename: expectedFilename, md5: currentEntry.expectedMD5, system: system)
+                    if !downloaded {
+                        missingBIOSES.append("\(expectedFilename) (MD5: \(currentEntry.expectedMD5))")
+                        canLoad = false
+                    } else {
+                        ILOG("Successfully downloaded BIOS from CloudKit: \(expectedFilename)")
+                    }
                 }
             } else {
                 // Not as important, but log if MD5 is mismatched.
@@ -231,6 +236,63 @@ public extension GameLaunchingViewController {
         }
     }
 
+    /// Attempt to download a missing BIOS file from CloudKit
+    /// - Parameters:
+    ///   - filename: The expected BIOS filename
+    ///   - md5: The expected MD5 hash
+    ///   - system: The system requiring the BIOS
+    /// - Returns: True if the BIOS was successfully downloaded
+    @MainActor
+    private func tryDownloadBIOSFromCloud(filename: String, md5: String, system: PVSystem) async -> Bool {
+        ILOG("[BIOS ON-DEMAND] Checking CloudKit for missing BIOS: \(filename)")
+
+        // Check if we have a PVBIOS entry with a cloudRecordID
+        let realm = RomDatabase.sharedInstance.realm
+        let biosEntry = realm.objects(PVBIOS.self).filter("expectedFilename == %@ OR expectedMD5 ==[c] %@", filename, md5).first
+
+        guard let bios = biosEntry else {
+            DLOG("[BIOS ON-DEMAND] No PVBIOS entry found for: \(filename)")
+            return false
+        }
+
+        // If no cloudRecordID, try to sync metadata first
+        if bios.cloudRecordID == nil || bios.cloudRecordID?.isEmpty == true {
+            ILOG("[BIOS ON-DEMAND] No cloudRecordID, triggering metadata sync for: \(filename)")
+            await CloudSyncManager.shared.forceBIOSDownload()
+
+            // Re-check after sync
+            RomDatabase.refresh()
+            guard let updatedBios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first,
+                  let recordID = updatedBios.cloudRecordID, !recordID.isEmpty else {
+                WLOG("[BIOS ON-DEMAND] Still no cloudRecordID after sync for: \(filename)")
+                return false
+            }
+        }
+
+        // Re-fetch the BIOS entry to get updated cloudRecordID
+        guard let updatedBios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first,
+              let recordID = updatedBios.cloudRecordID, !recordID.isEmpty else {
+            return false
+        }
+
+        ILOG("[BIOS ON-DEMAND] Found cloudRecordID: \(recordID), downloading: \(filename)")
+
+        // Download the BIOS file
+        do {
+            // Use CloudSyncManager's forceBIOSDownload which handles the download
+            await CloudSyncManager.shared.forceBIOSDownload()
+
+            // Verify the file now exists
+            let biosPath = system.biosDirectory.appendingPathComponent(filename)
+            if FileManager.default.fileExists(atPath: biosPath.path) {
+                ILOG("[BIOS ON-DEMAND] ✓ Successfully downloaded BIOS: \(filename)")
+                return true
+            } else {
+                WLOG("[BIOS ON-DEMAND] Download completed but file not found at: \(biosPath.path)")
+                return false
+            }
+        }
+    }
 
     func updateRecentGames(_ game: PVGame) {
         let database = RomDatabase.sharedInstance
@@ -297,6 +359,240 @@ public extension GameLaunchingViewController {
             expectedFilename=expectedFilename.components(separatedBy: "|")[0]
         }
         return expectedFilename
+    }
+
+    /// Validates pre-download requirements and prompts user if there are issues
+    /// - Parameters:
+    ///   - game: The game to validate
+    ///   - system: The system the game belongs to
+    /// - Returns: True if user wants to continue, false if cancelled
+    @MainActor
+    func validateAndPromptPreDownload(game: PVGame, system: PVSystem) async -> Bool {
+        // Check for available cores
+        let unsupportedCores = Defaults[.unsupportedCores]
+        let availableCores = system.cores.filter {
+            (!$0.disabled || unsupportedCores) &&
+            $0.hasCoreClass &&
+            !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+        }
+        let hasAvailableCores = !availableCores.isEmpty
+
+        // Check for missing BIOS files
+        var missingBIOSFiles: [String] = []
+
+        if system.requiresBIOS {
+            let biosEntries = system.bioses
+            let biosDirectory = system.biosDirectory
+
+            // Get existing BIOS files
+            let existingFiles: Set<String>
+            if let contents = try? FileManager.default.contentsOfDirectory(
+                at: biosDirectory,
+                includingPropertiesForKeys: nil,
+                options: [.skipsHiddenFiles]
+            ) {
+                existingFiles = Set(contents.map { $0.lastPathComponent.lowercased() })
+            } else {
+                existingFiles = []
+            }
+
+            // Check each required BIOS
+            for bios in biosEntries {
+                if bios.optional { continue }
+
+                var expectedFilename = bios.expectedFilename
+                if expectedFilename.contains("|") {
+                    expectedFilename = expectedFilename.components(separatedBy: "|")[0]
+                }
+
+                if !existingFiles.contains(expectedFilename.lowercased()) {
+                    missingBIOSFiles.append(expectedFilename)
+                }
+            }
+        }
+
+        // If everything is fine, proceed without prompt
+        if hasAvailableCores && missingBIOSFiles.isEmpty {
+            return true
+        }
+
+        // Build warning message
+        var warningParts: [String] = []
+
+        if !hasAvailableCores {
+            warningParts.append("• No compatible emulator cores are available for \(system.name)")
+        }
+
+        if !missingBIOSFiles.isEmpty {
+            let biosFiles = missingBIOSFiles.prefix(3).joined(separator: ", ")
+            let moreCount = missingBIOSFiles.count - 3
+            if moreCount > 0 {
+                warningParts.append("• Missing BIOS files: \(biosFiles) and \(moreCount) more")
+            } else {
+                warningParts.append("• Missing BIOS files: \(biosFiles)")
+            }
+        }
+
+        let warningMessage = warningParts.joined(separator: "\n\n")
+
+        // Show warning using RetroWave alert and wait for user response
+        // Use a flag to ensure continuation is only resumed once
+        var hasResumed = false
+
+        return await withCheckedContinuation { continuation in
+            Task { @MainActor in
+                var title = "Download Warning"
+                var message = "This game may not be playable after downloading:\n\n\(warningMessage)\n\nDo you want to download anyway?"
+
+                if !hasAvailableCores {
+                    title = "No Compatible Core"
+                    message = "There are no compatible emulator cores available for \(system.name).\n\n"
+                    if AppState.shared.isAppStore {
+                        message += "Some cores may be unavailable in the App Store version. Enable 'Unsupported Cores' in Settings to see more options.\n\n"
+                    }
+                    message += "Download this ROM anyway? You won't be able to play it until a compatible core is available."
+                } else if !missingBIOSFiles.isEmpty {
+                    title = "Missing BIOS Files"
+                    message = "\(system.name) requires BIOS files to run games.\n\n\(warningMessage)\n\nDownload this ROM anyway? You'll need to add the BIOS files before playing."
+                }
+
+                SceneCoordinator.shared.alertState.show(
+                    title: title,
+                    message: message,
+                    type: .warning,
+                    primaryButtonTitle: "Download Anyway",
+                    primaryAction: {
+                        guard !hasResumed else { return }
+                        hasResumed = true
+                        continuation.resume(returning: true)
+                    },
+                    secondaryButtonTitle: "Cancel",
+                    secondaryAction: {
+                        guard !hasResumed else { return }
+                        hasResumed = true
+                        continuation.resume(returning: false)
+                    },
+                    onDismiss: {
+                        // Handle case where alert is dismissed via Menu button on tvOS
+                        guard !hasResumed else { return }
+                        hasResumed = true
+                        continuation.resume(returning: false)
+                    }
+                )
+            }
+        }
+    }
+
+    /// Check if a ROM file exists locally at the expected path and update the database if found.
+    /// This handles the race condition where CloudKit creates PVGame entries before local scanning completes.
+    /// - Parameters:
+    ///   - game: The game to check
+    ///   - system: The system the game belongs to
+    /// - Returns: Tuple indicating if file exists and if database was updated
+    @MainActor
+    func checkAndUpdateLocalFile(for game: PVGame, system: PVSystem) async -> (fileExists: Bool, updated: Bool) {
+        // If already marked as downloaded and has a valid file, check if it actually exists
+        if game.isDownloaded, let fileURL = game.file?.url {
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                return (fileExists: true, updated: false)
+            }
+        }
+
+        // Calculate the expected path for this ROM
+        let systemRomsPath = Paths.romsPath(forSystemIdentifier: system.identifier)
+
+        // Try multiple filename sources
+        let possibleFilenames: [String] = [
+            game.file?.fileName,
+            game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent,
+            game.title.appending(".").appending(game.file?.url?.pathExtension ?? "")
+        ].compactMap { $0 }.filter { !$0.isEmpty }
+
+        // Helper to update game in database
+        func updateGameWithFile(at fileURL: URL, relativePath: String) -> Bool {
+            do {
+                let realm = RomDatabase.sharedInstance.realm
+
+                // Get live (thawed) game reference for modification
+                let liveGame: PVGame?
+                if game.isFrozen {
+                    liveGame = game.thaw()
+                } else if let gameFromRealm = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
+                    liveGame = gameFromRealm
+                } else {
+                    liveGame = game
+                }
+
+                guard let gameToUpdate = liveGame else {
+                    ELOG("[LOCAL FILE CHECK] Could not get live game reference for: \(game.title)")
+                    return false
+                }
+
+                try realm.write {
+                    // Create or update PVFile
+                    if gameToUpdate.file == nil {
+                        let pvFile = PVFile(withURL: fileURL)
+                        gameToUpdate.file = pvFile
+                    } else if let existingFile = gameToUpdate.file {
+                        // Update the partial path if needed
+                        if existingFile.partialPath != relativePath {
+                            existingFile.partialPath = relativePath
+                        }
+                    }
+
+                    // Mark as downloaded since we found the file locally
+                    gameToUpdate.isDownloaded = true
+                }
+                return true
+            } catch {
+                ELOG("[LOCAL FILE CHECK] Failed to update database: \(error.localizedDescription)")
+                return false
+            }
+        }
+
+        for filename in possibleFilenames {
+            let expectedPath = systemRomsPath.appendingPathComponent(filename)
+
+            if FileManager.default.fileExists(atPath: expectedPath.path) {
+                ILOG("[LOCAL FILE CHECK] Found ROM at expected path: \(expectedPath.path) for game: \(game.title)")
+
+                let relativePath = "\(system.identifier)/\(filename)"
+                if updateGameWithFile(at: expectedPath, relativePath: relativePath) {
+                    ILOG("[LOCAL FILE CHECK] Updated database for game: \(game.title), isDownloaded=true")
+                    return (fileExists: true, updated: true)
+                } else {
+                    // File exists but database update failed - still return true for fileExists
+                    return (fileExists: true, updated: false)
+                }
+            }
+        }
+
+        // Also check if the file might be in a subdirectory (multi-disc games)
+        if let filename = possibleFilenames.first {
+            // Check in system ROM directory recursively for the file
+            let fileManager = FileManager.default
+            if let enumerator = fileManager.enumerator(at: systemRomsPath, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles]) {
+                for case let fileURL as URL in enumerator {
+                    if fileURL.lastPathComponent.lowercased() == filename.lowercased() {
+                        ILOG("[LOCAL FILE CHECK] Found ROM in subdirectory: \(fileURL.path) for game: \(game.title)")
+
+                        // Calculate relative path from Documents
+                        let documentsPath = URL.documentsPath.path
+                        let relativePath = fileURL.path.replacingOccurrences(of: documentsPath + "/", with: "")
+
+                        if updateGameWithFile(at: fileURL, relativePath: relativePath) {
+                            ILOG("[LOCAL FILE CHECK] Updated database for game: \(game.title) from subdirectory")
+                            return (fileExists: true, updated: true)
+                        } else {
+                            return (fileExists: true, updated: false)
+                        }
+                    }
+                }
+            }
+        }
+
+        DLOG("[LOCAL FILE CHECK] No local file found for game: \(game.title)")
+        return (fileExists: false, updated: false)
     }
 }
 
@@ -377,11 +673,38 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
         }
 
-        // Check if file exists
-        let offline: Bool = !(game.file?.online ?? true)
-        if  offline {
+        // Pre-flight system check first
+        guard let system = game.system else {
+            displayAndLogError(withTitle: "Cannot open game", message: "Requested system cannot be found for game '\(game.title)'.")
+            return
+        }
+
+        // Check if file exists locally - handle race condition where CloudKit sync created PVGame before local scan
+        let localFileCheckResult = await checkAndUpdateLocalFile(for: game, system: system)
+        if localFileCheckResult.updated {
+            ILOG("Found local file for game \(game.title) at expected path, updated database")
+            // Refresh game reference after database update
+            if let updatedGame = RomDatabase.sharedInstance.game(withMD5: game.md5Hash) {
+                game = updatedGame
+            }
+        }
+
+        // Now check if file is available (either local or needs download)
+        let hasLocalFile = localFileCheckResult.fileExists
+        let offline: Bool = !(game.file?.online ?? true) && !hasLocalFile
+        let needsDownload = (offline && !hasLocalFile) || (!hasLocalFile && game.file?.url != nil)
+
+        // If download is needed, validate requirements BEFORE downloading
+        if needsDownload {
+            let shouldContinue = await validateAndPromptPreDownload(game: game, system: system)
+            if !shouldContinue {
+                ILOG("User cancelled download due to missing requirements for game: \(game.title)")
+                return
+            }
+        }
+
+        if offline && !hasLocalFile {
             do {
-                // TODO: Not sure this works
                 try await downloadFileIfNeeded(game.file?.url)
             } catch {
                 displayAndLogError(withTitle: "Cannot open game",
@@ -390,16 +713,9 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
         }
 
-        // Pre-flight
-        guard let system = game.system else {
-            displayAndLogError(withTitle: "Cannot open game", message: "Requested system cannot be found for game '\(game.title)'.")
-            return
-        }
-
         do {
-            ///
-            if let url = game.file?.url {
-                // TODO: Not sure this works
+            // Only try to download if file doesn't exist locally
+            if !hasLocalFile, let url = game.file?.url {
                 try await downloadFileIfNeeded(url)
             }
 
@@ -494,7 +810,9 @@ extension GameLaunchingViewController where Self: UIViewController {
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
 
             let missingFilesString = missingBIOSes.joined(separator: "\n")
-            let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
+            // Use platform-aware path (Documents on iOS, Caches on tvOS)
+            let rootDirName = RelativeRoot.platformDefault == .caches ? "Caches" : "Documents"
+            let relativeBiosPath = "\(rootDirName)/BIOS/\(system.identifier)/"
 
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
 #if os(iOS)
@@ -650,11 +968,23 @@ extension GameLaunchingViewController where Self: UIViewController {
     func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]? = nil) {
         ELOG(message)
 
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
-        customActions?.forEach { alertController.addAction($0) }
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alertController, animated: true)
+        // Use RetroWave styled alert for simple OK-only alerts
+        if customActions == nil || customActions?.isEmpty == true {
+            Task { @MainActor in
+                SceneCoordinator.shared.alertState.show(
+                    title: title,
+                    message: message,
+                    type: .error
+                )
+            }
+        } else {
+            // Fall back to UIKit alert for complex alerts with custom actions
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alertController.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
+            customActions?.forEach { alertController.addAction($0) }
+            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alertController, animated: true)
+        }
     }
 
     @MainActor private func presentEMU(withCore core: PVCore, forGame game: PVGame, fromSaveState saveState: PVSaveState? = nil, source: UIView?) async {
