@@ -304,8 +304,12 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         }
 
         // Present the core selection using UIKit alert controller
-        guard let viewController = UIApplication.shared.windows.first?.rootViewController else {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let viewController = windowScene.windows.first?.rootViewController else {
             ELOG("EmulatorContainerView: No root view controller available for presenting core selection")
+            /// If we can't present core selection, close emulator and return to main
+            AppState.shared.emulationUIState.reset()
+            SceneCoordinator.shared.closeEmulator()
             return
         }
 
@@ -398,8 +402,20 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
     }
 
     func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]?) {
-        guard let viewController = UIApplication.shared.windows.first?.rootViewController else {
+        /// Get root view controller using modern API
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let viewController = windowScene.windows.first?.rootViewController else {
+            ELOG("EmulatorContainerView: Could not find root view controller to present error")
+            /// Fallback: just close the emulator if we can't present the alert
+            AppState.shared.emulationUIState.reset()
+            SceneCoordinator.shared.closeEmulator()
             return
+        }
+
+        /// Find the topmost presented view controller
+        var topController = viewController
+        while let presented = topController.presentedViewController {
+            topController = presented
         }
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -411,14 +427,13 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         } else {
             alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                 ILOG("EmulatorContainerView: User dismissed error alert, returning to main scene")
+                /// Reset state and close emulator immediately
                 AppState.shared.emulationUIState.reset()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    SceneCoordinator.shared.closeEmulator()
-                }
+                SceneCoordinator.shared.closeEmulator()
             }))
         }
 
-        viewController.present(alertController, animated: true)
+        topController.present(alertController, animated: true)
     }
 
     func updateRecentGames(_ game: PVGame) {
@@ -474,16 +489,21 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
                 alertController.addAction(action)
             }
         } else {
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
                 ILOG("EmulatorContainerViewController: User dismissed error alert, returning to main scene")
+                /// Reset state and close emulator immediately
                 AppState.shared.emulationUIState.reset()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    SceneCoordinator.shared.closeEmulator()
-                }
+                SceneCoordinator.shared.closeEmulator()
             }))
         }
 
-        present(alertController, animated: true, completion: nil)
+        /// Find the topmost presented view controller
+        var topController: UIViewController = self
+        while let presented = topController.presentedViewController {
+            topController = presented
+        }
+
+        topController.present(alertController, animated: true, completion: nil)
     }
 
     func updateRecentGames(_ game: PVGame) {
