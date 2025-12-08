@@ -360,11 +360,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         view.insetsLayoutMarginsFromSafeArea = true
 
         let emulationState = AppState.shared.emulationUIState
-
         emulationState.core = core
-        if emulationState.emulator == nil {
-            emulationState.emulator = self
-        }
+        emulationState.emulator = self
 
         // Set up the GPU view
         setupGPUView()
@@ -1166,6 +1163,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
     #endif
 
+    @MainActor
     public func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) async {
         NotificationCenter.default.removeObserver(self)
         NSSetUncaughtExceptionHandler(nil)
