@@ -506,6 +506,7 @@ public struct BatchArtworkMatchingView: View {
 
         do {
             var successCount = 0
+            var syncedMD5s: [String] = []
 
             for md5 in selectedArtworks {
                 guard let artwork = artworkResults[md5] else { continue }
@@ -541,6 +542,7 @@ public struct BatchArtworkMatchingView: View {
 
                     if applyResult {
                         successCount += 1
+                        syncedMD5s.append(md5.uppercased())
                     }
                 } catch {
                     let title = gamesNeedingArtwork.first(where: { $0.md5Hash == md5 })?.title ?? md5
@@ -549,6 +551,15 @@ public struct BatchArtworkMatchingView: View {
             }
 
             ILOG("Successfully applied artwork to \(successCount) games")
+
+            // Sync artwork to CloudKit in background
+            if !syncedMD5s.isEmpty {
+                Task.detached(priority: .utility) {
+                    let syncCount = await CloudSyncManager.shared.syncArtworkBatch(gameMD5s: syncedMD5s)
+                    ILOG("Synced \(syncCount) game artwork files to CloudKit")
+                }
+            }
+
             await loadGamesNeedingArtwork()
         } catch {
             ELOG("Error applying artwork: \(error)")
