@@ -1020,13 +1020,23 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
     private func applyCoreMetadata(from record: CKRecord, to frozenSaveState: PVSaveState, preferredCoreID: String? = nil, preferredCoreVersion: String? = nil) async {
         do {
-        try await self.withRealm { realm in
-                guard let liveSaveState = frozenSaveState.thaw() else { return }
+            try await RealmContext.withBackgroundRealm { realm in
+                guard let liveSaveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: frozenSaveState.id) else {
+                    return
+                }
+
+                let resolvedCore = self.resolveCore(from: record,
+                                                    realm: realm,
+                                                    fallbackSystem: liveSaveState.game?.system,
+                                                    preferredCoreID: preferredCoreID)
+
+                let incomingVersion: String? = {
+                    if let version = preferredCoreVersion, !version.isEmpty { return version }
+                    if let version = record[CloudKitSchema.SaveStateFields.coreVersion] as? String, !version.isEmpty { return version }
+                    return nil
+                }()
+
                 try realm.write {
-                    let resolvedCore = self.resolveCore(from: record,
-                                                        realm: realm,
-                                                        fallbackSystem: liveSaveState.game?.system,
-                                                        preferredCoreID: preferredCoreID)
                     if let resolvedCore {
                         liveSaveState.core = resolvedCore
                     } else if liveSaveState.core == nil,
@@ -1035,11 +1045,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         WLOG("SaveState \(liveSaveState.id) missing core; assigned fallback \(fallbackCore.identifier)")
                     }
 
-                    if let version = preferredCoreVersion,
-                       !version.isEmpty {
-                        liveSaveState.createdWithCoreVersion = version
-                    } else if let version = record[CloudKitSchema.SaveStateFields.coreVersion] as? String,
-                              !version.isEmpty {
+                    if let version = incomingVersion {
                         liveSaveState.createdWithCoreVersion = version
                     } else if let projectVersion = liveSaveState.core?.projectVersion,
                               !projectVersion.isEmpty {
@@ -1118,7 +1124,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// Ensures we do not re-queue downloads when the file already exists locally.
     private func refreshLocalDownloadState(for frozenSaveState: PVSaveState) async {
         do {
-            try await self.withRealm { realm in
+            try await RealmContext.withBackgroundRealm { realm in
                 guard let live = realm.object(ofType: PVSaveState.self, forPrimaryKey: frozenSaveState.id) else {
                     return
                 }

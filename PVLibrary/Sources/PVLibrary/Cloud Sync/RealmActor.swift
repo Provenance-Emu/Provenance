@@ -33,6 +33,19 @@ public enum RealmContext {
         let realm = RomDatabase.sharedInstance.realm
         return try operation(realm)
     }
+
+    /// Runs the provided closure on a background thread with a fresh Realm instance
+    /// using the default configuration. Prefer this for high-volume sync work to
+    /// avoid blocking the main thread.
+    @discardableResult
+    public static func withBackgroundRealm<T: Sendable>(
+        _ operation: @escaping (Realm) throws -> T
+    ) async throws -> T {
+        try await Task.detached(priority: .utility) {
+            let realm = try Realm(configuration: Realm.Configuration.defaultConfiguration)
+            return try operation(realm)
+        }.value
+    }
 }
 
 /// Legacy global actor - kept for compatibility but prefer using RealmContext.withRealm
