@@ -52,10 +52,6 @@ struct EmulatorWithSkinView: View {
     // Track if we have a user-selected filter
     @State private var hasUserSelectedFilter = false
 
-    // Cache the validated aspect ratio to prevent incorrect recalculation after rotation
-    @State private var cachedAspectRatio: CGFloat?
-    @State private var lastAspectSize: CGSize = .zero
-
     // Initialize with a game, extracting the necessary properties
     init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void, preselectedSkinIdentifier: String? = nil) {
         self.gameTitle = game.title
@@ -202,14 +198,13 @@ struct EmulatorWithSkinView: View {
                 NotificationCenter.default.removeObserver(self)
             }
             .onChange(of: selectedFilterName) { _ in
-                // Force view refresh when filter changes
-                ILOG("skins: Filter changed, refreshing view")
-                rotationCount += 1
+                // Filter changes propagate naturally via state to DeltaSkinView's filters parameter
+                // No need to force view recreation - this was causing AG::precondition_failure crashes
+                ILOG("skins: Filter changed to: \(selectedFilterName ?? "none")")
             }
             .onChange(of: metalFilterMode) { _ in
-                // Also refresh when metalFilterMode changes
-                ILOG("skins: metalFilterMode changed, refreshing view")
-                rotationCount += 1
+                // Same for metalFilterMode - state changes propagate naturally
+                ILOG("skins: metalFilterMode changed to: \(metalFilterMode.rawValue)")
             }
             .environment(\.debugSkinMappings, showDebugOverlay)
         }
@@ -463,24 +458,10 @@ struct EmulatorWithSkinView: View {
         let effects = overlayEffects(for: skin)
 
         // Calculate aspect ratio from core's aspectSize or bufferSize/screenRect
-        // Use cached aspect ratio to prevent incorrect recalculation after rotation
         let aspectRatio: CGFloat? = {
             let aspectSize = coreInstance.aspectSize
             let bufferSize = coreInstance.bufferSize
             let screenRect = coreInstance.screenRect
-
-            // Check if aspectSize has changed significantly (more than 10% difference)
-            // This prevents recalculation due to minor floating point differences after rotation
-            let sizeChanged = cachedAspectRatio == nil ||
-                             (lastAspectSize.width > 0 && lastAspectSize.height > 0 &&
-                              (abs(aspectSize.width - lastAspectSize.width) > lastAspectSize.width * 0.1 ||
-                               abs(aspectSize.height - lastAspectSize.height) > lastAspectSize.height * 0.1))
-
-            // If we have a cached ratio and size hasn't changed significantly, reuse it
-            if let cached = cachedAspectRatio, !sizeChanged {
-                DLOG("🎮 SKIN: Using cached aspect ratio: \(cached)")
-                return cached
-            }
 
             DLOG("🎮 SKIN: Calculating aspect ratio - aspectSize: \(aspectSize), bufferSize: \(bufferSize), screenRect: \(screenRect)")
 
@@ -528,11 +509,8 @@ struct EmulatorWithSkinView: View {
                 }
             }
 
-            // Cache the validated aspect ratio
+            // Return the validated aspect ratio
             if let ratio = calculatedRatio {
-                cachedAspectRatio = ratio
-                lastAspectSize = aspectSize
-                DLOG("🎮 SKIN: Cached aspect ratio: \(ratio) (from aspectSize: \(aspectSize))")
                 return ratio
             }
 
@@ -570,10 +548,13 @@ struct EmulatorWithSkinView: View {
             }
         }
         .environmentObject(inputHandler)
+        // NOTE: Removed aggressive .id() modifier that was causing AG::precondition_failure crashes
+        // when changing filters. The filter is passed as a parameter to DeltaSkinView and updates
+        // automatically when state changes. Using .id() to force full view recreation corrupts
+        // SwiftUI's attribute graph when combined with the complex ForEach hierarchy in DeltaSkinView.
         #if !os(tvOS)
-        .id("\(rotationCount)-\(currentOrientation.rawValue)-\(selectedFilterName ?? "none")") // Update when filter changes
-        #else
-        .id("\(selectedFilterName ?? "none")") // Update when filter changes
+        // Only use orientation for identity - rotation count and filter changes update via state
+        .id(currentOrientation.rawValue)
         #endif
     }
 
@@ -855,6 +836,8 @@ struct EmulatorWithSkinView: View {
                 ILOG("skins: Received ApplyScreenFilter notification: \(filterName)")
 
                 // Update selected filter on main actor
+                // State changes automatically propagate to DeltaSkinView via overlayEffects()
+                // No need to force view recreation - that was causing AG::precondition_failure crashes
                 Task { @MainActor in
                     selectedFilterName = filterName == "None" ? nil : filterName
                     hasUserSelectedFilter = filterName != "None"
@@ -863,9 +846,6 @@ struct EmulatorWithSkinView: View {
                     selectedFilterName = getUserSelectedFilter()
 
                     ILOG("skins: Updated filter to: \(selectedFilterName ?? "none")")
-
-                    // Force view refresh to apply new filter
-                    rotationCount += 1
                 }
             }
         }

@@ -125,7 +125,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         let rep = representation(for: traits)
         let size = rep?.mappingSize
         if let size = size {
-            ILOG("skins: mappingSize() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(size)")
+            VLOG("skins: mappingSize() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(size)")
         } else {
             ELOG("skins: ERROR - mappingSize() returned nil for traits: \(traits.description)")
         }
@@ -183,16 +183,26 @@ public struct DeltaSkin: DeltaSkinProtocol {
         ]
     }
 
+    /// Cached last representation lookup to avoid repeated work/log spam
+    private static var lastRepCacheKey: String?
+    private static var lastRepCacheValue: DeltaSkin.RepresentationInfo?
+
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
-        ILOG("skins: representation(for:) called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
-        ILOG("skins: Available device representations: \(info.representations.keys.map { $0.rawValue })")
+        // Fast-path cache: same traits → return cached value without logging
+        let cacheKey = "\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
+        if Self.lastRepCacheKey == cacheKey, let cached = Self.lastRepCacheValue {
+            return cached
+        }
+
+        VLOG("skins: representation(for:) device=\(traits.device.rawValue) displayType=\(traits.displayType.rawValue) orientation=\(traits.orientation.rawValue)")
+        VLOG("skins: Available device reps: \(info.representations.keys.map { $0.rawValue })")
 
         guard let deviceReps = info.representations[traits.device] else {
             ELOG("skins: ERROR - No representation found for device: \(traits.device.rawValue)")
             ELOG("skins: Available devices: \(info.representations.keys.map { $0.rawValue }.joined(separator: ", "))")
             return nil
         }
-        ILOG("skins: Found device representation for: \(traits.device.rawValue)")
+            VLOG("skins: Found device representation for: \(traits.device.rawValue)")
 
         // Log available display types for debugging
         var availableDisplayTypes: [String] = []
@@ -201,43 +211,43 @@ public struct DeltaSkin: DeltaSkinProtocol {
         if deviceReps.splitView != nil { availableDisplayTypes.append("splitView") }
         if deviceReps.stageManager != nil { availableDisplayTypes.append("stageManager") }
         if deviceReps.externalDisplay != nil { availableDisplayTypes.append("externalDisplay") }
-        ILOG("skins: Available display types for \(traits.device.rawValue): \(availableDisplayTypes.joined(separator: ", "))")
+        VLOG("skins: Available display types for \(traits.device.rawValue): \(availableDisplayTypes.joined(separator: ", "))")
 
         // Try the requested display type first
         var orientationReps: OrientationRepresentations?
         switch traits.displayType {
         case .standard:
             orientationReps = deviceReps.standard?[traits.orientation.rawValue]
-            ILOG("skins: Looking for standard/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
+            VLOG("skins: Looking for standard/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         case .edgeToEdge:
             orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
-            ILOG("skins: Looking for edgeToEdge/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
+            VLOG("skins: Looking for edgeToEdge/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         case .splitView:
             orientationReps = deviceReps.splitView?[traits.orientation.rawValue]
-            ILOG("skins: Looking for splitView/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
+            VLOG("skins: Looking for splitView/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         case .stageManager:
             orientationReps = deviceReps.stageManager?[traits.orientation.rawValue]
-            ILOG("skins: Looking for stageManager/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
+            VLOG("skins: Looking for stageManager/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         case .externalDisplay:
             orientationReps = deviceReps.externalDisplay?[traits.orientation.rawValue]
-            ILOG("skins: Looking for externalDisplay/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
+            VLOG("skins: Looking for externalDisplay/\(traits.orientation.rawValue) - found: \(orientationReps != nil)")
         }
 
         // If not found and requested display type is edgeToEdge, try standard as fallback
         if orientationReps == nil && traits.displayType == .edgeToEdge {
-            ILOG("skins: edgeToEdge not found, trying standard as fallback")
+            VLOG("skins: edgeToEdge not found, trying standard as fallback")
             orientationReps = deviceReps.standard?[traits.orientation.rawValue]
             if orientationReps != nil {
-                ILOG("skins: Found standard/\(traits.orientation.rawValue) as fallback")
+                VLOG("skins: Found standard/\(traits.orientation.rawValue) as fallback")
             }
         }
 
         // If still not found and requested display type is standard, try edgeToEdge as fallback
         if orientationReps == nil && traits.displayType == .standard {
-            ILOG("skins: standard not found, trying edgeToEdge as fallback")
+            VLOG("skins: standard not found, trying edgeToEdge as fallback")
             orientationReps = deviceReps.edgeToEdge?[traits.orientation.rawValue]
             if orientationReps != nil {
-                ILOG("skins: Found edgeToEdge/\(traits.orientation.rawValue) as fallback")
+                VLOG("skins: Found edgeToEdge/\(traits.orientation.rawValue) as fallback")
             }
         }
 
@@ -245,7 +255,11 @@ public struct DeltaSkin: DeltaSkinProtocol {
             ELOG("skins: ERROR - No orientation representation found for displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue), and fallbacks failed")
         }
 
-        return orientationReps?.toRepresentationInfo()
+        let result = orientationReps?.toRepresentationInfo()
+        // Store cache
+        Self.lastRepCacheKey = cacheKey
+        Self.lastRepCacheValue = result
+        return result
     }
 
     /// Cache for decoded images keyed by skin identifier + traits + asset filename
@@ -353,6 +367,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
             throw lastError ?? DeltaSkinError.invalidPNG
         } catch {
+            // Final fallback: if current skin failed, try the manager's default skin for this system
+            if let systemId = gameType.systemIdentifier,
+               let fallbackSkin = try? await DeltaSkinManager.shared.defaultSkin(for: systemId),
+               fallbackSkin.identifier != identifier,
+               fallbackSkin.supports(traits) {
+                WLOG("skins: Primary skin \(identifier) failed to load asset \(fallbackName); falling back to default skin \(fallbackSkin.identifier)")
+                return try await fallbackSkin.image(for: traits)
+            }
             throw lastError ?? error
         }
     }
