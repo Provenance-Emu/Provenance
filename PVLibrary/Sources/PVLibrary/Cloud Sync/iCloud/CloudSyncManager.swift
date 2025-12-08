@@ -81,6 +81,9 @@ public class CloudSyncManager {
     /// Save states syncer
     public var saveStatesSyncer: SaveStatesSyncing?
 
+    /// BIOS syncer
+    public var biosSyncer: BIOSSyncing?
+
     /// Non-database syncer for files like BIOS, Battery States, Screenshots, and DeltaSkins
     public var nonDatabaseSyncer: CloudKitNonDatabaseSyncer?
 
@@ -105,10 +108,18 @@ public class CloudSyncManager {
     /// Current sync info - used to provide additional context about the current operation
     @Published public var currentSyncInfo: [String: Any]? = nil
 
+    /// Flag to indicate if sync operations should be paused (e.g., during emulation)
+    @Published public private(set) var isPausedForEmulation: Bool = false
+
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
     private var integrityAuditTask: Task<Void, Never>?
     private var metadataBootstrapTask: Task<Void, Never>?
+
+    /// Throttle for status updates to prevent flooding the UI
+    private var lastStatusUpdate: Date = .distantPast
+    private var lastStatusSent: SyncStatus = .idle
+    private let statusUpdateThrottleInterval: TimeInterval = 0.5 // minimum seconds between status updates
 
     /// CloudKit Container
     private let container: CKContainer
@@ -143,6 +154,12 @@ public class CloudSyncManager {
 
     /// Check if sync should be allowed based on current device conditions and user settings
     private func shouldAllowSync() async -> Bool {
+        // Check if paused for emulation
+        if isPausedForEmulation {
+            DLOG("Sync paused for emulation, skipping sync")
+            return false
+        }
+
         // Check if background sync is disabled and app is in background
         let cloudKitBackgroundSync = Defaults[.cloudKitBackgroundSync]
         if !cloudKitBackgroundSync, await isAppInBackground() {
@@ -621,6 +638,138 @@ public class CloudSyncManager {
         }
     }
 
+    // MARK: - Artwork Sync
+
+    /// Sync custom artwork for a game to CloudKit
+    /// Call this after saving custom artwork locally to upload it to the cloud
+    /// - Parameters:
+    ///   - game: The game with updated artwork
+    ///   - artworkKey: The PVMediaCache key for the artwork
+    /// - Returns: True if artwork was successfully synced
+    @discardableResult
+    public func syncArtwork(for game: PVGame, artworkKey: String) async throws -> Bool {
+        guard Defaults[.iCloudSync], let romsSyncer = romsSyncer as? CloudKitRomsSyncer else {
+            DLOG("Sync disabled or CloudKit syncer not available. Skipping artwork sync.")
+            return false
+        }
+
+        // Check if sync is allowed
+        guard await shouldAllowSync() else {
+            DLOG("Sync not allowed due to current conditions, skipping artwork sync")
+            return false
+        }
+
+        let md5 = game.md5Hash
+        guard !md5.isEmpty else {
+            ELOG("Cannot sync artwork: game has no MD5 hash")
+            return false
+        }
+
+        ILOG("Syncing custom artwork for game: \(game.title), key: \(artworkKey)")
+
+        do {
+            var success = false
+
+            // Check if game has a local ROM file
+            let hasLocalFile = game.isDownloaded && game.file?.url != nil &&
+                FileManager.default.fileExists(atPath: game.file?.url?.path ?? "")
+
+            if hasLocalFile {
+                // Full upload with ROM and artwork
+                try await romsSyncer.uploadGame(md5)
+                success = true
+            } else {
+                // Artwork-only update (for cloud-synced games without local ROM)
+                success = try await romsSyncer.updateArtworkOnly(for: game, artworkKey: artworkKey)
+            }
+
+            if success {
+                // Post notification that artwork was synced
+                await MainActor.run {
+                    NotificationCenter.default.post(
+                        name: .PVGameArtworkDidUpdate,
+                        object: nil,
+                        userInfo: [
+                            PVNotificationUserInfoKeys.gameMD5Key: md5,
+                            PVNotificationUserInfoKeys.artworkURLKey: artworkKey
+                        ]
+                    )
+                }
+                ILOG("Successfully synced artwork for game: \(game.title)")
+            }
+            return success
+        } catch {
+            ELOG("Failed to sync artwork for game \(game.title): \(error.localizedDescription)")
+            throw error
+        }
+    }
+
+    /// Sync artwork for multiple games in batch
+    /// - Parameter gameMD5s: Array of game MD5 hashes to sync artwork for
+    /// - Returns: Number of games successfully synced
+    @discardableResult
+    public func syncArtworkBatch(gameMD5s: [String]) async -> Int {
+        guard Defaults[.iCloudSync], let romsSyncer = romsSyncer as? CloudKitRomsSyncer else {
+            DLOG("Sync disabled or CloudKit syncer not available. Skipping batch artwork sync.")
+            return 0
+        }
+
+        // Check if sync is allowed
+        guard await shouldAllowSync() else {
+            DLOG("Sync not allowed due to current conditions, skipping batch artwork sync")
+            return 0
+        }
+
+        ILOG("Starting batch artwork sync for \(gameMD5s.count) games")
+        var successCount = 0
+
+        for md5 in gameMD5s {
+            guard let game = await MainActor.run(body: {
+                RomDatabase.sharedInstance.game(withMD5: md5)
+            }) else {
+                WLOG("Game not found for MD5: \(md5)")
+                continue
+            }
+
+            // Only sync if game has custom artwork
+            guard !game.customArtworkURL.isEmpty else {
+                continue
+            }
+
+            do {
+                // Check if game has local file for full upload, otherwise artwork-only
+                let hasLocalFile = game.isDownloaded && game.file?.url != nil &&
+                    FileManager.default.fileExists(atPath: game.file?.url?.path ?? "")
+
+                if hasLocalFile {
+                    try await romsSyncer.uploadGame(md5)
+                } else {
+                    _ = try await romsSyncer.updateArtworkOnly(for: game, artworkKey: game.customArtworkURL)
+                }
+                successCount += 1
+
+                // Small delay between uploads to avoid rate limiting
+                try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
+            } catch {
+                ELOG("Failed to sync artwork for game \(game.title): \(error.localizedDescription)")
+            }
+        }
+
+        if successCount > 0 {
+            // Post batch notification
+            await MainActor.run {
+                NotificationCenter.default.post(
+                    name: .PVGameArtworkDidUpdate,
+                    object: nil,
+                    userInfo: ["batchCount": successCount]
+                )
+            }
+        }
+
+        ILOG("Batch artwork sync complete: \(successCount)/\(gameMD5s.count) games synced")
+        return successCount
+    }
+
     /// Upload a save state to the cloud
     /// - Parameter saveState: The save state to upload
     /// - Returns: Async function that completes when the upload is done or throws an error
@@ -719,9 +868,21 @@ public class CloudSyncManager {
     /// - Parameter status: The new sync status
     private func updateSyncStatus(_ status: SyncStatus, info: [String: Any]? = nil) {
         Task { @MainActor in // Ensure updates happen on the main thread
+            // Always update local state
             self.syncStatus = status
             self.currentSyncInfo = info
-            self.syncStatusSubject.send(status)
+
+            // Throttle publishing to prevent flooding subscribers
+            // Exception: always publish .idle status immediately
+            let now = Date()
+            let timeSinceLastUpdate = now.timeIntervalSince(self.lastStatusUpdate)
+            let statusChanged = status != self.lastStatusSent
+
+            if status == .idle || timeSinceLastUpdate >= self.statusUpdateThrottleInterval || statusChanged {
+                self.lastStatusUpdate = now
+                self.lastStatusSent = status
+                self.syncStatusSubject.send(status)
+            }
         }
     }
 
@@ -769,6 +930,67 @@ public class CloudSyncManager {
         ILOG("[SYNC] Manual full integrity audit complete")
     }
 
+    /// Run BIOS CloudKit audit to diagnose sync issues
+    /// - Returns: Audit result containing details about BIOS sync state
+    public func runBIOSAudit() async -> BIOSAuditResult? {
+        guard Defaults[.iCloudSync] else {
+            WLOG("[SYNC] Cannot run BIOS audit - sync disabled")
+            return nil
+        }
+
+        ILOG("[SYNC] Starting BIOS audit...")
+        let syncer = CloudKitBIOSSyncer(
+            container: iCloudConstants.container,
+            directories: ["BIOS"],
+            errorHandler: errorHandler
+        )
+        let result = await syncer.auditBIOSCloudRecords()
+        ILOG("[SYNC] BIOS audit complete")
+        return result
+    }
+
+    /// Repair BIOS sync issues by re-uploading problematic files
+    /// - Returns: Number of BIOS files re-uploaded
+    public func repairBIOSSync() async -> Int {
+        guard Defaults[.iCloudSync] else {
+            WLOG("[SYNC] Cannot repair BIOS sync - sync disabled")
+            return 0
+        }
+
+        ILOG("[SYNC] Starting BIOS sync repair...")
+        let syncer = CloudKitBIOSSyncer(
+            container: iCloudConstants.container,
+            directories: ["BIOS"],
+            errorHandler: errorHandler
+        )
+        let count = await syncer.repairBIOSSync()
+        ILOG("[SYNC] BIOS sync repair complete: \(count) files re-uploaded")
+        return count
+    }
+
+    /// Force BIOS download from CloudKit (re-syncs metadata and downloads missing files)
+    public func forceBIOSDownload() async {
+        guard Defaults[.iCloudSync] else {
+            WLOG("[SYNC] Cannot force BIOS download - sync disabled")
+            return
+        }
+
+        ILOG("[SYNC] Starting forced BIOS download...")
+        let syncer = CloudKitBIOSSyncer(
+            container: iCloudConstants.container,
+            directories: ["BIOS"],
+            errorHandler: errorHandler
+        )
+
+        // First sync metadata
+        _ = await syncer.syncMetadataOnly()
+
+        // Then force download all missing files
+        await syncer.downloadMissingBIOSFiles()
+
+        ILOG("[SYNC] Forced BIOS download complete")
+    }
+
     /// Kick off a fast metadata-only bootstrap for ROMs and save states
     private func startMetadataBootstrap(reason: String) {
         Task { @MainActor in
@@ -796,11 +1018,14 @@ public class CloudSyncManager {
         // Capture current syncers
         let romSyncer = self.romsSyncer as? CloudKitRomsSyncer
         let saveStatesSyncer = self.saveStatesSyncer as? CloudKitSaveStatesSyncer
+        let biosSyncer = self.biosSyncer as? CloudKitBIOSSyncer
 
-        guard romSyncer != nil || saveStatesSyncer != nil else {
+        guard romSyncer != nil || saveStatesSyncer != nil || biosSyncer != nil else {
             VLOG("Metadata bootstrap skipped (\(reason)) - no CloudKit syncers available.")
             return
         }
+
+        ILOG("[SYNC] Metadata bootstrap has syncers: ROMs=\(romSyncer != nil), SaveStates=\(saveStatesSyncer != nil), BIOS=\(biosSyncer != nil)")
 
         ILOG("[SYNC] Starting CloudKit metadata bootstrap (\(reason))")
 
@@ -815,6 +1040,13 @@ public class CloudSyncManager {
             if let saveStatesSyncer = saveStatesSyncer {
                 group.addTask {
                     await saveStatesSyncer.syncMetadataOnly()
+                }
+            }
+
+            // Add BIOS metadata sync
+            if let biosSyncer = biosSyncer {
+                group.addTask { @MainActor in
+                    await biosSyncer.syncMetadataOnly()
                 }
             }
 
@@ -934,11 +1166,15 @@ public class CloudSyncManager {
         )
 
         // 3. Initialize BIOS Syncer using factory
-        // Note: We don't store this directly but it's available through the factory
+        self.biosSyncer = SyncProviderFactory.createBIOSSyncProvider(
+            notificationCenter: .default,
+            errorHandler: errorHandler
+        )
+        ILOG("[SYNC] BIOS syncer initialized: \(self.biosSyncer != nil ? "SUCCESS" : "FAILED")")
 
         // 4. Initialize Non-Database Syncer (CloudKit only for now)
+        // Non-database syncer should exclude BIOS so BIOS files are handled only by the BIOS syncer.
         var nonDBSyncDirectories: Set<String> = [
-            "BIOS",
             "Battery States",
             "Screenshots"
 //            "RetroArch"
@@ -1222,33 +1458,53 @@ public class CloudSyncManager {
         let fileName = notification.userInfo?[PVNotificationUserInfoKeys.fileNameKey] as? String
         let md5 = notification.userInfo?[PVNotificationUserInfoKeys.md5Key] as? String
 
-//        precondition(fileName != nil, "Missing fileName in gameAdded notification")
-//        precondition(md5 != nil, "Missing md5 in gameAdded notification")
-
-        // Update sync status
-
-        ILOG("Game imported: \(fileName ?? "nil") \(md5 ?? "nil"). Uploading to CloudKit...")
+        DLOG("Game imported notification received: \(fileName ?? "nil") \(md5 ?? "nil")")
 
         Task { @MainActor [weak self] in
             guard let self = self else { return }
             guard let game = await self.resolveImportedGame(md5: md5, fileName: fileName) else {
                 if let md5 {
-                    ELOG("Game with MD5 \(md5) not found for upload (after waiting)")
+                    DLOG("Game with MD5 \(md5) not found for upload (after waiting)")
                 } else if let fileName {
-                    ELOG("Game with filename \(fileName) not found for upload (after waiting)")
+                    DLOG("Game with filename \(fileName) not found for upload (after waiting)")
                 } else {
-                    ELOG("Missing fileName or md5 in gameAdded notification")
+                    DLOG("Missing fileName or md5 in gameAdded notification")
                 }
                 return
             }
 
+            // Skip contentless placeholder games
             if game.contentless {
-                ILOG("Skipping CloudKit upload for contentless placeholder game: \(game.title)")
+                DLOG("Skipping CloudKit upload for contentless placeholder game: \(game.title)")
+                return
+            }
+
+            // Skip games that came from CloudKit (they already have a cloud record and no local file)
+            if !game.isDownloaded {
+                DLOG("Skipping CloudKit upload for game without local file: \(game.title) (isDownloaded=false)")
+                return
+            }
+
+            // Skip games that already have a cloud record and haven't been modified locally
+            // (this prevents re-uploading games that were just synced from CloudKit)
+            if let cloudRecordID = game.cloudRecordID, !cloudRecordID.isEmpty, game.hasCloudAssets {
+                DLOG("Skipping CloudKit upload for game already synced: \(game.title) (cloudRecordID=\(cloudRecordID))")
+                return
+            }
+
+            // Verify the local file actually exists before attempting upload
+            if let fileURL = game.file?.url {
+                guard FileManager.default.fileExists(atPath: fileURL.path) else {
+                    DLOG("Skipping CloudKit upload: local file does not exist for game \(game.title) at \(fileURL.path)")
+                    return
+                }
+            } else {
+                DLOG("Skipping CloudKit upload: game \(game.title) has no file reference")
                 return
             }
 
             let frozenGame = game.freeze()
-            ILOG("Found imported game: \(frozenGame.title) (MD5: \(frozenGame.md5Hash)). Uploading to CloudKit...")
+            ILOG("Uploading newly imported game to CloudKit: \(frozenGame.title) (MD5: \(frozenGame.md5Hash))")
 
             do {
                 try await self.uploadROM(for: frozenGame)
@@ -1359,7 +1615,9 @@ public class CloudSyncManager {
                     // OR if the game is marked as downloaded but the file is missing
                     // THEN mark it for sync
                     if (!fileExists && recordExists) || (game.isDownloaded && !fileExists) {
-                        await markGameForSync(game: game, realm: mainRealm)
+                        await MainActor.run {
+                            markGameForSync(game: game, realm: mainRealm)
+                        }
                         markedGamesCount += 1
                     }
                     // If no CloudKit record exists but we have a local file, mark for upload
@@ -1441,23 +1699,33 @@ public class CloudSyncManager {
     /// - Parameters:
     ///   - game: The game to mark
     ///   - realm: The Realm instance to use
-    private func markGameForSync(game: PVGame, realm: Realm) async {
-        guard let game = game.thaw() else {
-            ELOG("Game failed to unthaw.")
+    @MainActor
+    private func markGameForSync(game: PVGame, realm: Realm) {
+        // Get live game reference on main thread
+        let liveGame: PVGame?
+        if game.isFrozen {
+            liveGame = game.thaw()
+        } else {
+            liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash)
+        }
+
+        guard let gameToUpdate = liveGame else {
+            ELOG("Game failed to resolve for sync marking.")
             return
         }
+
         do {
             try realm.write {
                 // Mark as not downloaded (file is missing locally)
-                game.isDownloaded = false
+                gameToUpdate.isDownloaded = false
                 // Mark as requiring sync (needs to be downloaded from cloud)
-                game.requiresSync = true
+                gameToUpdate.requiresSync = true
                 // Clear last sync date since we need to re-sync
-                game.lastCloudSyncDate = nil
+                gameToUpdate.lastCloudSyncDate = nil
             }
-            ILOG("Marked game \(game.title) (MD5: \(game.md5Hash ?? "N/A")) as needing sync (isDownloaded=false, requiresSync=true)")
+            ILOG("Marked game \(gameToUpdate.title) (MD5: \(gameToUpdate.md5Hash ?? "N/A")) as needing sync (isDownloaded=false, requiresSync=true)")
         } catch {
-            ELOG("Failed to mark game \(game.title) as needing sync: \(error.localizedDescription)")
+            ELOG("Failed to mark game \(gameToUpdate.title) as needing sync: \(error.localizedDescription)")
         }
     }
 
@@ -1523,6 +1791,38 @@ public class CloudSyncManager {
                     }
                 }
             }
+        }
+    }
+
+    // MARK: - Emulation Pause/Resume
+
+    /// Pauses sync operations during emulation for better performance
+    /// Called when emulation starts
+    @MainActor
+    public func pauseForEmulation() {
+        guard !isPausedForEmulation else { return }
+
+        ILOG("CloudSyncManager: Pausing sync operations for emulation")
+        isPausedForEmulation = true
+
+        // Cancel any in-progress sync tasks
+        metadataBootstrapTask?.cancel()
+        integrityAuditTask?.cancel()
+    }
+
+    /// Resumes sync operations after emulation ends
+    /// Called when emulation stops and user returns to library
+    @MainActor
+    public func resumeFromEmulation() {
+        guard isPausedForEmulation else { return }
+
+        ILOG("CloudSyncManager: Resuming sync operations after emulation")
+        isPausedForEmulation = false
+
+        // Resume background sync tasks if enabled
+        if Defaults[.iCloudSync] {
+            // Restart metadata bootstrap to catch any changes that occurred during emulation
+            startMetadataBootstrap(reason: "emulationEnd")
         }
     }
 }

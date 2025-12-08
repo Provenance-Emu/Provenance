@@ -40,6 +40,11 @@ public class CloudKitSubscriptionManager {
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
 
+    /// Track recently processed record IDs to prevent duplicate processing
+    private var recentlyProcessedRecords: Set<String> = []
+    private let recentlyProcessedLock = NSLock()
+    private let recordProcessingCooldown: TimeInterval = 30 // seconds
+
     // MARK: - Initialization
 
     /// Private initializer for singleton
@@ -294,11 +299,42 @@ public class CloudKitSubscriptionManager {
         subscriptionSubject.send(subscription)
     }
 
+    /// Check if a record was recently processed and add it to the tracking set if not
+    /// - Parameter recordID: The record ID to check
+    /// - Returns: true if the record was already recently processed, false if it's new
+    private func wasRecentlyProcessed(_ recordID: CKRecord.ID) -> Bool {
+        recentlyProcessedLock.lock()
+        defer { recentlyProcessedLock.unlock() }
+
+        let key = recordID.recordName
+        if recentlyProcessedRecords.contains(key) {
+            return true
+        }
+
+        // Add to tracking set
+        recentlyProcessedRecords.insert(key)
+
+        // Schedule removal after cooldown period
+        DispatchQueue.global().asyncAfter(deadline: .now() + recordProcessingCooldown) { [weak self] in
+            self?.recentlyProcessedLock.lock()
+            self?.recentlyProcessedRecords.remove(key)
+            self?.recentlyProcessedLock.unlock()
+        }
+
+        return false
+    }
+
     /// Handle a query notification
     /// - Parameters:
     ///   - queryNotification: The notification object
     ///   - recordID: The ID of the affected record
     private func handleQueryNotification(_ queryNotification: CKQueryNotification, recordID: CKRecord.ID) {
+        // Check if we've already processed this record recently to prevent loops
+        if wasRecentlyProcessed(recordID) {
+            DLOG("Skipping recently processed record: \(recordID.recordName)")
+            return
+        }
+
         DLOG("Handling query notification for Record ID: \(recordID.recordName), Reason: \(queryNotification.queryNotificationReason.rawValue)")
 
         // Get the subscription ID to determine the record type context
@@ -356,9 +392,21 @@ public class CloudKitSubscriptionManager {
         }
     }
 
+    /// Track last database notification time to prevent rapid re-fetches
+    private var lastDatabaseNotificationTime: Date = .distantPast
+    private let databaseNotificationCooldown: TimeInterval = 5.0 // seconds
+
     /// Handle a database notification
     /// - Parameter notification: The database notification
     private func handleDatabaseNotification(_ notification: CKNotification) {
+        // Throttle database notifications to prevent rapid re-fetches
+        let now = Date()
+        guard now.timeIntervalSince(lastDatabaseNotificationTime) >= databaseNotificationCooldown else {
+            DLOG("Throttling database notification, last fetch was recent")
+            return
+        }
+        lastDatabaseNotificationTime = now
+
         // Post notification for database changes
         NotificationCenter.default.post(name: .CloudKitDatabaseChanged, object: nil)
 

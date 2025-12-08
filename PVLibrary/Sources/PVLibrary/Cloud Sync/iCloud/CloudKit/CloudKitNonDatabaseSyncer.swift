@@ -372,7 +372,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                     observer(.error(error))
                     // Aggregate errors if multiple occurred in TaskGroup
                     let finalError = errors.first ?? NSError(domain: "CloudKitNonDatabaseSyncer", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown force sync error"])
-                    CloudKitSyncAnalytics.shared.recordFailedSync(error: finalError)
+                    await CloudKitSyncAnalytics.shared.recordFailedSync(error: finalError)
                 }
             }
 

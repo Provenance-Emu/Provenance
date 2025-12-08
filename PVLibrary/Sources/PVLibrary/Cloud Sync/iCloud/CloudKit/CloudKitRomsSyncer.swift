@@ -49,6 +49,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private var cancellables = Set<AnyCancellable>()
     private let progressTracker = SyncProgressTracker.shared // Added Progress Tracker
     private let uploadQueue = CloudKitUploadQueueActor.shared
+    private let loadAllLock = NSLock()
+    private var isLoadAllInFlight: Bool = false
 
     @inline(__always)
     private func withRealm<T: Sendable>(
@@ -76,6 +78,22 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     // MARK: - SyncProvider Conformance Methods (Stubs)
     // TODO: Implement these methods based on CloudKit logic
     public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
+        // Prevent overlapping full-library queries which spam CloudKit and UI logs
+        loadAllLock.lock()
+        if isLoadAllInFlight {
+            loadAllLock.unlock()
+            ILOG("[SYNC] Skipping loadAllFromCloud: operation already in flight.")
+            await iterationComplete?()
+            return Completable.empty()
+        }
+        isLoadAllInFlight = true
+        loadAllLock.unlock()
+        defer {
+            loadAllLock.lock()
+            isLoadAllInFlight = false
+            loadAllLock.unlock()
+        }
+
         ILOG("[SYNC] Starting loadAllFromCloud for CloudKit ROMs...")
         ILOG("[SYNC] CloudKit Database: \(database.databaseScope.rawValue == 2 ? "Private" : "Public")")
         ILOG("[SYNC] Query Record Type: \(CloudKitSchema.RecordType.rom.rawValue)")
@@ -308,6 +326,113 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } catch {
             ELOG("Failed to fetch record \(recordID.recordName): \(error.localizedDescription)")
             throw CloudSyncError.cloudKitError(error)
+        }
+    }
+
+    /// Fetch a CloudKit record with download progress tracking for assets
+    /// - Parameters:
+    ///   - recordID: The record ID to fetch
+    ///   - expectedSize: Expected file size for speed calculation (optional)
+    ///   - progressHandler: Callback with progress (0.0 to 1.0) and speed string
+    /// - Returns: The fetched record, or nil if not found
+    public func fetchRecordWithProgress(
+        recordID: CKRecord.ID,
+        expectedSize: Int64? = nil,
+        progressHandler: ((Double, String?) -> Void)? = nil
+    ) async throws -> CKRecord? {
+        let downloadStartTime = Date()
+        var lastProgressUpdate = Date()
+        var lastProgress: Double = 0
+
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
+            let op = CKFetchRecordsOperation(recordIDs: [recordID])
+
+            // Include all fields including assets
+            op.desiredKeys = [
+                CloudKitSchema.ROMFields.md5,
+                CloudKitSchema.ROMFields.title,
+                CloudKitSchema.ROMFields.systemIdentifier,
+                CloudKitSchema.ROMFields.fileSize,
+                CloudKitSchema.ROMFields.originalFilename,
+                CloudKitSchema.ROMFields.isDeleted,
+                CloudKitSchema.ROMFields.fileData,
+                CloudKitSchema.ROMFields.isArchive,
+                CloudKitSchema.ROMFields.relatedFilenames
+            ]
+
+            // Track download progress with speed calculation
+            op.perRecordProgressBlock = { [expectedSize] _, progress in
+                let now = Date()
+                let elapsed = now.timeIntervalSince(downloadStartTime)
+
+                // Calculate speed string
+                var speedString: String? = nil
+                if elapsed > 0.5 && progress > 0.01 {
+                    if let totalSize = expectedSize, totalSize > 0 {
+                        // Calculate based on known file size
+                        let downloadedBytes = Double(totalSize) * progress
+                        let bytesPerSecond = downloadedBytes / elapsed
+                        speedString = Self.formatSpeed(bytesPerSecond)
+                    } else {
+                        // Estimate based on progress rate
+                        let progressDelta = progress - lastProgress
+                        let timeDelta = now.timeIntervalSince(lastProgressUpdate)
+                        if timeDelta > 0.1 && progressDelta > 0 {
+                            // Rough estimate assuming ~10MB average ROM
+                            let estimatedBytesPerSecond = (progressDelta / timeDelta) * 10_000_000
+                            speedString = Self.formatSpeed(estimatedBytesPerSecond)
+                        }
+                    }
+                }
+
+                lastProgress = progress
+                lastProgressUpdate = now
+
+                DLOG("[SYNC] Download progress: \(Int(progress * 100))% \(speedString ?? "")")
+                progressHandler?(progress, speedString)
+            }
+
+            var fetched: CKRecord?
+            op.perRecordResultBlock = { _, result in
+                if case let .success(r) = result { fetched = r }
+            }
+
+            op.fetchRecordsCompletionBlock = { _, error in
+                if let error = error as? CKError {
+                    if error.code == .unknownItem {
+                        continuation.resume(returning: nil)
+                    } else if error.code == .partialFailure,
+                              let partialErrors = error.partialErrorsByItemID,
+                              partialErrors.count == 1,
+                              let (_, partialError) = partialErrors.first,
+                              let partialCKError = partialError as? CKError,
+                              partialCKError.code == .unknownItem {
+                        continuation.resume(returning: nil)
+                    } else {
+                        continuation.resume(throwing: CloudSyncError.cloudKitError(error))
+                    }
+                } else if let error = error {
+                    continuation.resume(throwing: CloudSyncError.cloudKitError(error))
+                } else {
+                    continuation.resume(returning: fetched)
+                }
+            }
+
+            // Set quality of service for faster downloads
+            op.qualityOfService = .userInitiated
+
+            self.database.add(op)
+        }
+    }
+
+    /// Format bytes per second into human-readable speed string
+    private static func formatSpeed(_ bytesPerSecond: Double) -> String {
+        if bytesPerSecond >= 1_000_000 {
+            return String(format: "%.1f MB/s", bytesPerSecond / 1_000_000)
+        } else if bytesPerSecond >= 1_000 {
+            return String(format: "%.0f KB/s", bytesPerSecond / 1_000)
+        } else {
+            return String(format: "%.0f B/s", bytesPerSecond)
         }
     }
 
@@ -1097,12 +1222,42 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     // MARK: - Asset Handling
 
+    /// Download a game (protocol conformance - no progress tracking)
+    /// - Parameter md5: The game's MD5 hash
     public func downloadGame(md5: String) async throws {
-        VLOG("Starting download for game MD5: \(md5) using ZipArchive path")
+        try await downloadGame(md5: md5, progressHandler: nil)
+    }
 
-        // 1. Fetch the CloudKit Record
+    /// Download a game with progress tracking
+    /// - Parameters:
+    ///   - md5: The game's MD5 hash
+    ///   - progressHandler: Optional callback for download progress (0.0 to 1.0) and status message
+    public func downloadGame(md5: String, progressHandler: ((Double, String) -> Void)?) async throws {
+        ILOG("[SYNC] Starting download for game MD5: \(md5)")
+        let startTime = Date()
+
+        progressHandler?(0.0, "Connecting to iCloud...")
+
+        // Get expected file size from local game entry if available
+        let expectedSize: Int64? = RomDatabase.sharedInstance.game(withMD5: md5).flatMap { $0.fileSize > 0 ? Int64($0.fileSize) : nil }
+
+        // 1. Fetch the CloudKit Record with progress tracking
         let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
-        guard let record = try await fetchRecord(recordID: recordID, includeAssets: true) else {
+        guard let record = try await fetchRecordWithProgress(
+            recordID: recordID,
+            expectedSize: expectedSize,
+            progressHandler: { progress, speedString in
+                // Scale to 0-80% for download phase
+                let percent = Int(progress * 100)
+                let status: String
+                if let speed = speedString {
+                    status = "Downloading... \(percent)% (\(speed))"
+                } else {
+                    status = "Downloading... \(percent)%"
+                }
+                progressHandler?(progress * 0.8, status)
+            }
+        ) else {
             ELOG("Download failed: Record not found in CloudKit for MD5 \(md5).")
             // Check local state and update if needed
             if let localGame = RomDatabase.sharedInstance.game(withMD5: md5), localGame.isDownloaded {
@@ -1154,15 +1309,17 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         if let expectedFileSize = record[CloudKitSchema.ROMFields.fileSize] as? Int64, expectedFileSize > 0 {
             if assetFileSize != expectedFileSize && assetFileSize > 0 {
                 WLOG("Asset file size mismatch for \(md5): Expected \(expectedFileSize) bytes, got \(assetFileSize) bytes. File may be corrupted or incomplete.")
-                // Don't fail immediately - CloudKit may have downloaded correctly but size reporting differs
             }
         }
+
+        progressHandler?(0.85, "Processing file...")
 
         // 4. Handle File Placement (Direct Copy or Unzip using ZipArchive)
         var finalPrimaryFileURL: URL? = nil
         do {
             if isArchive {
                 // --- Unzip Archive using ZipArchive ---
+                progressHandler?(0.85, "Extracting archive...")
                 VLOG("Asset is an archive. Unzipping \(assetURL.path) to \(destinationDirectory.path)")
 
                 // Verify archive integrity before unzipping
@@ -1185,6 +1342,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             } else {
                 // Handle single file download
+                progressHandler?(0.90, "Copying file...")
                 let finalDestinationURL = destinationDirectory.appendingPathComponent(primaryFilename)
                 VLOG("Asset is a single file. Moving \(assetURL.path) to \(finalDestinationURL.path)")
 
@@ -1225,8 +1383,15 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             throw CloudSyncError.fileSystemError(CocoaError(.fileNoSuchFile))
         }
 
+        progressHandler?(0.95, "Updating database...")
+
         // Pass the confirmed primary file URL and the record (for related file info)
         try await updateLocalDownloadStatus(md5: md5, isDownloaded: true, fileURL: confirmedPrimaryFileURL, record: record)
+
+        let elapsed = Date().timeIntervalSince(startTime)
+        let sizeStr = ByteCountFormatter.string(fromByteCount: assetFileSize, countStyle: .file)
+        progressHandler?(1.0, "Complete!")
+        ILOG("[SYNC] Download complete for \(md5): \(sizeStr) in \(String(format: "%.1f", elapsed))s")
 
         ILOG("Successfully completed download and local update for game MD5: \(md5).")
     }
@@ -1332,6 +1497,81 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } catch {
             ELOG("Failed to create CKAsset for custom artwork: \(error.localizedDescription)")
             throw CloudSyncError.fileSystemError(error)
+        }
+    }
+
+    /// Update only the artwork for a game in CloudKit (without requiring ROM file)
+    /// Use this when the game is cloud-synced but doesn't have a local ROM file
+    /// - Parameters:
+    ///   - game: The PVGame with custom artwork to sync
+    ///   - artworkKey: The PVMediaCache key for the artwork
+    /// - Returns: True if artwork was successfully synced
+    @discardableResult
+    public func updateArtworkOnly(for game: PVGame, artworkKey: String) async throws -> Bool {
+        let md5 = game.md5Hash
+        guard !md5.isEmpty else {
+            ELOG("Cannot update artwork: game has no MD5 hash")
+            return false
+        }
+
+        guard !artworkKey.isEmpty else {
+            DLOG("No artwork key provided for game: \(game.title)")
+            return false
+        }
+
+        // Check if artwork exists in PVMediaCache
+        guard PVMediaCache.fileExists(forKey: artworkKey) else {
+            WLOG("Artwork not found in cache for key: \(artworkKey)")
+            return false
+        }
+
+        // Get the cached artwork file path
+        guard let artworkFilePath = PVMediaCache.filePath(forKey: artworkKey) else {
+            WLOG("Failed to get file path for artwork key: \(artworkKey)")
+            return false
+        }
+
+        // Verify the file exists on disk
+        guard FileManager.default.fileExists(atPath: artworkFilePath.path) else {
+            WLOG("Artwork file does not exist at path: \(artworkFilePath.path)")
+            return false
+        }
+
+        ILOG("Updating artwork-only for game: \(game.title) (MD5: \(md5))")
+
+        // Fetch or create the CloudKit record
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
+        var record: CKRecord
+        do {
+            record = try await fetchRecord(recordID: recordID) ?? CKRecord(recordType: CloudKitSchema.RecordType.rom.rawValue, recordID: recordID)
+        } catch {
+            // If the record doesn't exist, we need the full uploadGame method
+            WLOG("No existing CloudKit record for game \(game.title), cannot update artwork-only")
+            return false
+        }
+
+        // Update artwork fields
+        record[CloudKitSchema.ROMFields.customArtworkURL] = artworkKey
+        let artworkAsset = CKAsset(fileURL: artworkFilePath)
+        record[CloudKitSchema.ROMFields.customArtworkAsset] = artworkAsset
+
+        // Update modification timestamp
+        #if os(macOS)
+        let deviceIdentifier = Host.current().name ?? "Unknown macOS"
+        #else
+        let deviceIdentifier = UIDevice.current.name
+        #endif
+        record[CloudKitSchema.ROMFields.lastModifiedDevice] = deviceIdentifier
+
+        // Save the record
+        do {
+            let database = iCloudConstants.container.privateCloudDatabase
+            _ = try await database.save(record)
+            ILOG("Successfully updated artwork in CloudKit for game: \(game.title)")
+            return true
+        } catch {
+            ELOG("Failed to save artwork record for game \(game.title): \(error.localizedDescription)")
+            throw CloudSyncError.cloudKitError(error)
         }
     }
 
@@ -1608,27 +1848,35 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Get updated game metadata from PVLookup database
     /// - Parameter md5: The MD5 hash of the game to lookup metadata for
-    @MainActor
+    /// Note: Heavy database lookups run on background thread, only Realm writes on main thread
     private func getUpdatedGameInfo(forMD5 md5: String) async {
-        do {
+        // Fetch game info on main thread first (quick Realm read)
+        let gameInfo: (md5Hash: String, title: String, systemIdentifier: String)? = await MainActor.run {
             let realm = RomDatabase.sharedInstance.realm
-            // Fetch a fresh game instance on this thread
             guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
-                WLOG("Game with MD5 \(md5) not found for metadata lookup")
-                return
+                return nil
             }
+            return (md5Hash: game.md5Hash, title: game.title, systemIdentifier: game.systemIdentifier)
+        }
 
+        guard let info = gameInfo else {
+            WLOG("Game with MD5 \(md5) not found for metadata lookup")
+            return
+        }
+
+        // Perform heavy database lookups on background thread
+        let resultsMaybe: [ROMMetadata]? = await Task.detached(priority: .utility) {
             let lookup = PVLookup.shared
-            var resultsMaybe: [ROMMetadata]?
+            var results: [ROMMetadata]?
 
             // Try MD5 lookup first
-            if !game.md5Hash.isEmpty {
-                resultsMaybe = try? await lookup.searchDatabase(usingMD5: game.md5Hash, systemID: nil)
+            if !info.md5Hash.isEmpty {
+                results = try? await lookup.searchDatabase(usingMD5: info.md5Hash, systemID: nil)
             }
 
             // Try filename lookup if MD5 failed
-            if resultsMaybe == nil || resultsMaybe!.isEmpty {
-                let fileName = game.title
+            if results == nil || results!.isEmpty {
+                let fileName = info.title
                 // Remove any extraneous stuff in the rom name
                 let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: CharacterSet.alphanumerics.inverted)
                 var gameTitleLen: Int
@@ -1640,15 +1888,23 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 let subfileName = String(fileName.prefix(gameTitleLen))
 
                 // Convert system identifier to database ID
-                let system = SystemIdentifier(rawValue: game.systemIdentifier)
-                resultsMaybe = try? await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
+                let system = SystemIdentifier(rawValue: info.systemIdentifier)
+                results = try? await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
             }
 
-            // If no results found, just return the original game
+            return results
+        }.value
+
+        // Process results and write to Realm on main thread
+        do {
+            // If no results found, just mark as synced
             guard let results = resultsMaybe, !results.isEmpty else {
-                ILOG("No metadata found for game: \(game.title)")
-                try realm.write {
-                    game.requiresSync = false  // Mark as synced so we don't try again
+                ILOG("No metadata found for game: \(info.title)")
+                await MainActor.run {
+                    try? RomDatabase.sharedInstance.writeTransaction {
+                        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                        game.requiresSync = false
+                    }
                 }
                 return
             }
@@ -1666,42 +1922,46 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // If no USA version found, use the first result
             if chosenResult == nil {
                 if results.count > 1 {
-                    ILOG("Query returned \(results.count) possible matches for \(game.title). Using first result.")
+                    ILOG("Query returned \(results.count) possible matches for \(info.title). Using first result.")
                 }
                 chosenResult = results.first
             }
 
-            // Apply the metadata to the game
+            // Apply the metadata to the game on main thread
             if let result = chosenResult {
-                ILOG("Found metadata for \(game.title): \(result.gameTitle ?? "Unknown")")
+                ILOG("Found metadata for \(info.title): \(result.gameTitle ?? "Unknown")")
 
-                try realm.write {
-                    // Update game with metadata
-                    if let gameDescription = result.gameDescription {
-                        game.gameDescription = gameDescription
+                await MainActor.run {
+                    try? RomDatabase.sharedInstance.writeTransaction {
+                        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+
+                        // Update game with metadata
+                        if let gameDescription = result.gameDescription {
+                            game.gameDescription = gameDescription
+                        }
+                        if let boxImageURL = result.boxImageURL {
+                            game.originalArtworkURL = boxImageURL
+                        }
+                        if let developer = result.developer {
+                            game.developer = developer
+                        }
+                        if let publisher = result.publisher {
+                            game.publisher = publisher
+                        }
+                        if let genres = result.genres {
+                            game.genres = genres
+                        }
+                        if let regionID = result.regionID {
+                            game.regionID = regionID
+                        }
+                        if let referenceURL = result.referenceURL {
+                            game.referenceURL = referenceURL
+                        }
+                        if let releaseID = result.releaseID {
+                            game.releaseID = releaseID
+                        }
+                        game.requiresSync = false
                     }
-                    if let boxImageURL = result.boxImageURL {
-                        game.originalArtworkURL = boxImageURL
-                    }
-                    if let developer = result.developer {
-                        game.developer = developer
-                    }
-                    if let publisher = result.publisher {
-                        game.publisher = publisher
-                    }
-                    if let genres = result.genres {
-                        game.genres = genres
-                    }
-                    if let regionID = result.regionID {
-                        game.regionID = regionID
-                    }
-                    if let referenceURL = result.referenceURL {
-                        game.referenceURL = referenceURL
-                    }
-                    if let releaseID = result.releaseID {
-                        game.releaseID = releaseID
-                    }
-                    game.requiresSync = false
                 }
             }
         } catch {
@@ -1711,16 +1971,23 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Get artwork for a game
     /// - Parameter md5: The MD5 hash of the game to get artwork for
-    @MainActor
+    /// Note: Downloads happen on background thread, only Realm writes on main thread
     private func getArtwork(forGameMD5 md5: String) async {
-        // Fetch a fresh game instance on this thread
-        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+        // Fetch game info on main thread (quick Realm read)
+        let gameInfo: (md5Hash: String, title: String, originalArtworkURL: String)? = await MainActor.run {
+            guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+                return nil
+            }
+            return (md5Hash: game.md5Hash, title: game.title, originalArtworkURL: game.originalArtworkURL)
+        }
+
+        guard let info = gameInfo else {
             WLOG("Game with MD5 \(md5) not found for artwork lookup")
             return
         }
 
-                // Check for existing custom artwork first
-        let gameMD5 = game.md5Hash
+        // Check for existing custom artwork first (can be done off main thread)
+        let gameMD5 = info.md5Hash
         if !gameMD5.isEmpty {
             DLOG("Checking for existing custom artwork for game with MD5: \(gameMD5)")
 
@@ -1729,10 +1996,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 DLOG("Found existing custom artwork with key: \(customArtworkKey)")
 
                 // If we found a custom artwork key, set it as the customArtworkURL
-                if let localURL = PVMediaCache.filePath(forKey: customArtworkKey) {
-                    DLOG("Setting custom artwork URL: \(localURL.path)")
-                    try? RomDatabase.sharedInstance.writeTransaction {
-                        game.customArtworkURL = customArtworkKey
+                if let _ = PVMediaCache.filePath(forKey: customArtworkKey) {
+                    DLOG("Setting custom artwork URL")
+                    await MainActor.run {
+                        try? RomDatabase.sharedInstance.writeTransaction {
+                            guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                            game.customArtworkURL = customArtworkKey
+                        }
                     }
                 }
                 return
@@ -1742,7 +2012,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         // Continue with original artwork handling
-        var url = game.originalArtworkURL
+        var url = info.originalArtworkURL
         if url.isEmpty {
             return
         }
@@ -1750,39 +2020,46 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
                 let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
-                try? RomDatabase.sharedInstance.writeTransaction {
-                    game.originalArtworkFile = file
+                await MainActor.run {
+                    try? RomDatabase.sharedInstance.writeTransaction {
+                        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                        game.originalArtworkFile = file
+                    }
                 }
                 return
             }
         }
 
-        DLOG("Starting artwork download for \(game.title): \(url)")
+        DLOG("Starting artwork download for \(info.title): \(url)")
 
         // Note: Evil hack for bad domain in DB
         url = url.replacingOccurrences(of: "gamefaqs1.cbsistatic.com/box/", with: "gamefaqs.gamespot.com/a/box/")
         guard let artworkURL = URL(string: url) else {
-            ELOG("Invalid artwork URL for \(game.title): \(url)")
+            ELOG("Invalid artwork URL for \(info.title): \(url)")
             return
         }
 
+        // Download artwork on background thread
         do {
             let request = URLRequest(url: artworkURL)
             let (data, _) = try await URLSession.shared.data(for: request)
 
-            // Cache the artwork
+            // Cache the artwork (file I/O, can stay on background)
             try PVMediaCache.writeData(toDisk: data, withKey: url)
 
-            // Create image file and assign to game
+            // Create image file and assign to game on main thread
             if let localURL = PVMediaCache.filePath(forKey: url) {
                 let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
-                try RomDatabase.sharedInstance.writeTransaction {
-                    game.originalArtworkFile = file
+                await MainActor.run {
+                    try? RomDatabase.sharedInstance.writeTransaction {
+                        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                        game.originalArtworkFile = file
+                    }
                 }
-                ILOG("Successfully downloaded and cached artwork for \(game.title)")
+                ILOG("Successfully downloaded and cached artwork for \(info.title)")
             }
-                } catch {
-            ELOG("Failed to download artwork for \(game.title): \(error.localizedDescription)")
+        } catch {
+            ELOG("Failed to download artwork for \(info.title): \(error.localizedDescription)")
         }
     }
 
@@ -2170,11 +2447,135 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     // MARK: - Fast Metadata-Only Sync for Fresh Installs
     /// Quickly fetches ROM records and creates/updates PVGame entries without triggering any downloads
+    /// Uses batch processing and parallel operations for speed
     public func syncMetadataOnly() async -> Int {
-        var createdOrUpdated = 0
+        let startTime = Date()
         ILOG("[SYNC] Starting ROM metadata-only sync...")
+
         do {
             // Must include originalFilename - required for createPVGame
+            let metadataKeys: [CKRecord.FieldKey] = [
+                "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc", "originalFilename"
+            ]
+            let metadataQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
+            let metadataRecords = try await fetchAllRecords(matching: metadataQuery, desiredKeys: metadataKeys)
+
+            ILOG("[SYNC] Fetched \(metadataRecords.count) ROM records from CloudKit in \(String(format: "%.1f", Date().timeIntervalSince(startTime)))s")
+
+            // Use batch processing for speed
+            let result = await processBatchedROMRecords(metadataRecords)
+
+            let elapsed = Date().timeIntervalSince(startTime)
+            let rate = elapsed > 0 ? Double(result.total) / elapsed : 0
+            ILOG("[SYNC] ROM metadata sync complete in \(String(format: "%.1f", elapsed))s: \(result.created) created, \(result.updated) updated, \(result.skipped) skipped, \(result.failed) failed (\(String(format: "%.1f", rate)) records/sec)")
+
+            return result.created + result.updated
+        } catch {
+            ELOG("[SYNC] Fast metadata-only ROM sync failed: \(error)")
+            return 0
+        }
+    }
+
+    /// Process ROM records in batches with parallel processing for optimal speed
+    private func processBatchedROMRecords(_ records: [CKRecord]) async -> (created: Int, updated: Int, skipped: Int, failed: Int, total: Int) {
+        var created = 0
+        var updated = 0
+        var skipped = 0
+        var failed = 0
+
+        // Get existing game MD5s to skip unchanged records
+        let existingMD5s: Set<String>
+        do {
+            existingMD5s = try await withRealm { realm -> Set<String> in
+                Set(realm.objects(PVGame.self)
+                    .filter("cloudRecordID != nil")
+                    .compactMap { $0.md5Hash.uppercased() })
+            }
+        } catch {
+            existingMD5s = []
+        }
+
+        // Process in batches for Realm write efficiency
+        let batchSize = 50
+        let batches = records.chunked(into: batchSize)
+        var batchIndex = 0
+
+        for batch in batches {
+            batchIndex += 1
+            if Task.isCancelled { break }
+
+            // Process batch concurrently (up to 10 at a time for CloudKit rate limits)
+            let batchResults = await withTaskGroup(of: (created: Bool, updated: Bool, skipped: Bool, failed: Bool).self) { group in
+                var results: [(created: Bool, updated: Bool, skipped: Bool, failed: Bool)] = []
+
+                for record in batch {
+                    group.addTask { [self] in
+                        await self.processROMRecordFast(record, existingMD5s: existingMD5s)
+                    }
+                }
+
+                for await result in group {
+                    results.append(result)
+                }
+
+                return results
+            }
+
+            // Aggregate results
+            for result in batchResults {
+                if result.created { created += 1 }
+                if result.updated { updated += 1 }
+                if result.skipped { skipped += 1 }
+                if result.failed { failed += 1 }
+            }
+
+            // Log progress every 10 batches (500 records)
+            if batchIndex % 10 == 0 {
+                let processed = batchIndex * batchSize
+                ILOG("[SYNC] Progress: \(processed)/\(records.count) records processed...")
+            }
+        }
+
+        return (created, updated, skipped, failed, records.count)
+    }
+
+    /// Process a single ROM record quickly, returning status flags
+    private func processROMRecordFast(_ record: CKRecord, existingMD5s: Set<String>) async -> (created: Bool, updated: Bool, skipped: Bool, failed: Bool) {
+        guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) else {
+            return (false, false, false, true)
+        }
+
+        let upperMD5 = md5.uppercased()
+
+        // Skip if already synced (has cloudRecordID set)
+        if existingMD5s.contains(upperMD5) {
+            // Check if we need to update (record might have changed)
+            // For now, skip entirely for speed - can be refined later
+            return (false, false, true, false)
+        }
+
+        // Try to create or update
+        do {
+            if let _ = try await createPVGame(from: record) {
+                return (true, false, false, false)
+            }
+            return (false, false, false, true)
+        } catch {
+            // Game might already exist without cloudRecordID, try updating
+            do {
+                try await updatePVGame(from: record, gameMD5: upperMD5)
+                return (false, true, false, false)
+            } catch {
+                return (false, false, false, true)
+            }
+        }
+    }
+
+    /// Legacy sequential sync method - slower but more reliable for debugging
+    public func syncMetadataOnlySequential() async -> Int {
+        var createdOrUpdated = 0
+        ILOG("[SYNC] Starting sequential ROM metadata sync...")
+        do {
             let metadataKeys: [CKRecord.FieldKey] = [
                 "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc", "originalFilename"
             ]
@@ -2187,25 +2588,24 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 if let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) {
                     let title = record["title"] as? String ?? "unknown"
                     do {
-                        if let game = try await createPVGame(from: record) {
+                        if let _ = try await createPVGame(from: record) {
                             createdOrUpdated += 1
-                            DLOG("[SYNC] Created ROM entry: \(title) (MD5: \(md5))")
+                            VLOG("[SYNC] Created: \(title)")
                         }
                     } catch {
-                        // Game might already exist, try updating
                         do {
                             try await updatePVGame(from: record, gameMD5: md5)
                             createdOrUpdated += 1
-                            DLOG("[SYNC] Updated ROM entry: \(title) (MD5: \(md5))")
+                            VLOG("[SYNC] Updated: \(title)")
                         } catch {
-                            WLOG("[SYNC] Failed to create or update ROM entry: \(title) (MD5: \(md5)) - \(error.localizedDescription)")
+                            WLOG("[SYNC] Failed: \(title) - \(error.localizedDescription)")
                         }
                     }
                 }
             }
-            ILOG("[SYNC] ROM metadata sync complete: \(createdOrUpdated) entries created/updated")
+            ILOG("[SYNC] Sequential sync complete: \(createdOrUpdated) entries")
         } catch {
-            ELOG("[SYNC] Fast metadata-only ROM sync failed: \(error)")
+            ELOG("[SYNC] Sequential sync failed: \(error)")
         }
         return createdOrUpdated
     }

@@ -425,7 +425,7 @@ public actor CloudKitInitialSyncer {
                  See previous log messages for specific errors.
                  """)
 
-            CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
+            await CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
         }
 
         return totalCount
@@ -776,18 +776,27 @@ public actor CloudKitInitialSyncer {
             // Sync each BIOS file
             var syncedCount = 0
             for (index, bios) in biosFiles.enumerated() {
-                // Skip if already synced
-                if bios.cloudRecordID != nil && !bios.cloudRecordID!.isEmpty {
-                    VLOG("BIOS file already synced: \(bios.file?.fileName ?? "")")
+                let biosFilename = bios.file?.fileName ?? bios.expectedFilename
 
-                    // Update progress
-                    progress.biosCompleted += 1
-                    await MainActor.run {
-                        syncProgressSubject.send(progress)
+                // Skip if already synced - ALWAYS verify the record has asset
+                if let existingRecordID = bios.cloudRecordID, !existingRecordID.isEmpty {
+                    // Always verify the cloud record actually has a file asset
+                    // This ensures records without assets get re-uploaded
+                    DLOG("[BIOS SYNC] Verifying CloudKit asset for: \(biosFilename) (recordID: \(existingRecordID))")
+                    let hasValidAsset = await verifyBIOSCloudAsset(recordID: existingRecordID, filename: biosFilename)
+                    if !hasValidAsset {
+                        WLOG("[BIOS SYNC] Record \(existingRecordID) missing asset, will re-upload: \(biosFilename)")
+                        // Clear the recordID so it gets re-uploaded below
+                        try? await realm.asyncWrite {
+                            bios.cloudRecordID = nil
+                        }
+                    } else {
+                        ILOG("[BIOS SYNC] ✓ Verified asset exists for: \(biosFilename)")
+                        progress.biosCompleted += 1
+                        await MainActor.run { syncProgressSubject.send(progress) }
+                        syncedCount += 1
+                        continue
                     }
-
-                    syncedCount += 1
-                    continue
                 }
 
                 // Get BIOS file path
@@ -808,10 +817,14 @@ public actor CloudKitInitialSyncer {
 
                 do {
                     // Upload BIOS file to CloudKit
-                    DLOG("Uploading BIOS file \(index + 1)/\(biosFiles.count): \(bios.file?.fileName ?? "")")
+                    ILOG("[BIOS SYNC] Uploading BIOS file \(index + 1)/\(biosFiles.count): \(biosFilename)")
                     let parentDirectoryName = fileURL.deletingLastPathComponent().lastPathComponent
                     let systemID = SystemIdentifier(rawValue: parentDirectoryName)
                     let record = try await syncer.uploadFile(fileURL, gameID: nil, systemID: systemID)
+
+                    // Verify the upload actually has the asset
+                    let hasAsset = record["fileData"] as? CKAsset != nil
+                    ILOG("[BIOS SYNC] Upload complete for \(biosFilename): recordID=\(record.recordID.recordName), hasAsset=\(hasAsset)")
 
                     // Update Realm object with CloudKit record ID
                     try await realm.asyncWrite {
@@ -826,17 +839,53 @@ public actor CloudKitInitialSyncer {
                         syncProgressSubject.send(progress)
                     }
 
-                    DLOG("Successfully uploaded BIOS file: \(bios.file?.fileName ?? "")")
+                    ILOG("[BIOS SYNC] Successfully uploaded BIOS file: \(biosFilename), recordID: \(record.recordID.recordName)")
                 } catch {
-                    ELOG("Error uploading BIOS file \(bios.file?.fileName ?? ""): \(error.localizedDescription)")
+                    ELOG("[BIOS SYNC] Error uploading BIOS file \(biosFilename): \(error.localizedDescription)")
                 }
             }
 
-            DLOG("Completed BIOS sync: \(syncedCount) of \(biosFiles.count) BIOS files synced")
+            ILOG("[BIOS SYNC] Completed BIOS sync: \(syncedCount) of \(biosFiles.count) BIOS files synced")
             return syncedCount
         } catch {
             ELOG("Error syncing BIOS files: \(error.localizedDescription)")
             return 0
+        }
+    }
+
+    /// Verify that a CloudKit record for a BIOS file has a valid asset
+    /// - Parameters:
+    ///   - recordID: The CloudKit record ID
+    ///   - filename: The filename (for logging)
+    /// - Returns: True if the record exists and has a valid fileData asset
+    private func verifyBIOSCloudAsset(recordID: String, filename: String) async -> Bool {
+        let ckRecordID = CKRecord.ID(recordName: recordID)
+
+        do {
+            let record = try await container.privateCloudDatabase.record(for: ckRecordID)
+
+            // Check if record has fileData asset
+            if let asset = record["fileData"] as? CKAsset {
+                // Check if asset has a valid file URL (it's cached locally after fetch)
+                if let fileURL = asset.fileURL, FileManager.default.fileExists(atPath: fileURL.path) {
+                    DLOG("[BIOS SYNC] Verified asset exists for \(filename): \(fileURL.path)")
+                    return true
+                } else {
+                    // Asset exists but file might not be downloaded yet - still consider it valid
+                    // CloudKit will download it when needed
+                    DLOG("[BIOS SYNC] Asset exists for \(filename) but not yet downloaded locally")
+                    return true
+                }
+            } else {
+                WLOG("[BIOS SYNC] Record \(recordID) has no fileData asset for \(filename)")
+                return false
+            }
+        } catch let ckError as CKError where ckError.code == .unknownItem {
+            WLOG("[BIOS SYNC] Record not found in CloudKit for \(filename): \(recordID)")
+            return false
+        } catch {
+            ELOG("[BIOS SYNC] Error verifying asset for \(filename): \(error.localizedDescription)")
+            return false
         }
     }
 
@@ -912,6 +961,12 @@ public actor CloudKitInitialSyncer {
     ///   - progressUpdater: Closure that updates the progress with the completed count
     /// - Returns: Number of files successfully synced
     private func syncFiles(_ files: [URL], using syncer: any SyncProvider, progressUpdater: @escaping (Int) -> CloudKitInitialSyncProgress) async -> Int {
+        // Respect emulation pause: skip non-database uploads during emulation
+        if CloudSyncManager.shared.isPausedForEmulation {
+            WLOG("[INITIAL SYNC] Skipping file sync batch because sync is paused for emulation")
+            return 0
+        }
+
         var syncedCount = 0
         let totalFiles = files.count
 
@@ -935,6 +990,11 @@ public actor CloudKitInitialSyncer {
                 // Add tasks for each file in the batch
                 for fileURL in batch {
                     group.addTask {
+                        // Abort early if emulation pause engaged after the batch started
+                        if CloudSyncManager.shared.isPausedForEmulation {
+                            return (fileURL, false, CloudSyncError.genericError("Sync paused for emulation"))
+                        }
+
                         // Check if file exists
                         guard FileManager.default.fileExists(atPath: fileURL.path) else {
                             WLOG("File does not exist: \(fileURL.path)")

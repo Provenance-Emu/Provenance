@@ -1219,8 +1219,8 @@ private actor FileWatcherManager {
     }
 }
 
-extension Notification.Name {
-    static let BIOSFileFound = Notification.Name("BIOSFileFound")
+public extension Notification.Name {
+    public static let BIOSFileFound = Notification.Name("BIOSFileFound")
 }
 
 extension DirectoryWatcher {

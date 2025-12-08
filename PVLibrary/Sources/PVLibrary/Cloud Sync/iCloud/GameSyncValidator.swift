@@ -10,6 +10,7 @@ import CloudKit
 import PVLogging
 import PVRealm
 import PVSupport
+import PVFileSystem
 
 /// Validates game file availability and handles syncing before launch
 public actor GameSyncValidator {
@@ -59,34 +60,105 @@ public actor GameSyncValidator {
 
         // 1. Check if file exists locally (handling missing PVFile entries)
         let localURL = safeGame.file?.url
-        let fileExists = localURL.map { fileManager.fileExists(atPath: $0.path) } ?? false
+        var fileExists = localURL.map { fileManager.fileExists(atPath: $0.path) } ?? false
 
-        // 2. If file exists, verify it's readable
-        if fileExists {
-            var isDirectory: ObjCBool = false
-            guard let fileURL = localURL,
-                  fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDirectory),
-                  !isDirectory.boolValue else {
-                return .error("Game file path points to a directory")
+        // 2. If file doesn't exist at PVFile path, check expected path (race condition fix)
+        if !fileExists {
+            let foundAtExpectedPath = await checkAndUpdateExpectedPath(game: safeGame, progressHandler: progressHandler)
+            if foundAtExpectedPath {
+                fileExists = true
             }
-
-            // File exists and is valid - ready to launch
-            return .ready
         }
 
-        // 3. File doesn't exist - check if we can download it
+        // 3. If file exists, verify it's readable
+        if fileExists {
+            // Re-check the URL in case it was updated
+            let refreshedGame = RomDatabase.sharedInstance.game(withMD5: safeGame.md5Hash) ?? safeGame
+            let currentURL = refreshedGame.file?.url ?? localURL
+
+            var isDirectory: ObjCBool = false
+            if let fileURL = currentURL,
+               fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDirectory),
+               !isDirectory.boolValue {
+                // File exists and is valid - ready to launch
+                return .ready
+            }
+        }
+
+        // 4. File doesn't exist - check if we can download it
         guard Defaults[.iCloudSync] else {
             return .error("Game file not found and iCloud sync is disabled")
         }
 
-        // 4. Check if game has cloud record
+        // 5. Check if game has cloud record
         let md5 = safeGame.md5Hash
         guard !md5.isEmpty else {
             return .error("Game missing MD5 hash - cannot sync")
         }
 
-        // 5. Try to download the game
+        // 6. Try to download the game
         return await downloadAndValidateGame(game: safeGame, md5: md5, progressHandler: progressHandler)
+    }
+
+    /// Checks if file exists at expected path and updates database if found
+    /// This fixes race conditions where CloudKit creates PVGame before local scan completes
+    /// - Parameters:
+    ///   - game: The game to check
+    ///   - progressHandler: Optional progress callback
+    /// - Returns: True if file was found at expected path
+    private func checkAndUpdateExpectedPath(game: PVGame, progressHandler: ((String) -> Void)? = nil) async -> Bool {
+        guard let systemIdentifier = game.system?.identifier else {
+            return false
+        }
+
+        progressHandler?("Checking expected path...")
+
+        // Calculate expected path
+        let systemRomsPath = Paths.romsPath(forSystemIdentifier: systemIdentifier)
+
+        // Try multiple filename sources
+        let possibleFilenames: [String] = [
+            game.file?.fileName,
+            game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent
+        ].compactMap { $0 }.filter { !$0.isEmpty }
+
+        for filename in possibleFilenames {
+            let expectedPath = systemRomsPath.appendingPathComponent(filename)
+
+            if fileManager.fileExists(atPath: expectedPath.path) {
+                ILOG("[SYNC VALIDATOR] Found ROM at expected path: \(expectedPath.path) for game: \(game.title)")
+
+                // Update database with found file
+                await MainActor.run {
+                    let realm = RomDatabase.sharedInstance.realm
+                    let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash)
+
+                    do {
+                        try realm.write {
+                            if let liveGame = liveGame {
+                                if liveGame.file == nil {
+                                    let pvFile = PVFile(withURL: expectedPath)
+                                    liveGame.file = pvFile
+                                } else if let existingFile = liveGame.file {
+                                    let relativePath = "\(systemIdentifier)/\(filename)"
+                                    if existingFile.partialPath != relativePath {
+                                        existingFile.partialPath = relativePath
+                                    }
+                                }
+                                liveGame.isDownloaded = true
+                            }
+                        }
+                        ILOG("[SYNC VALIDATOR] Updated database for game: \(game.title)")
+                    } catch {
+                        ELOG("[SYNC VALIDATOR] Failed to update database: \(error.localizedDescription)")
+                    }
+                }
+
+                return true
+            }
+        }
+
+        return false
     }
 
     /// Downloads a game and validates it's ready

@@ -714,8 +714,8 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
     /// Get local path for a BIOS file
     private func localPathForBIOS(filename: String, systemIdentifier: String?) -> URL {
-        let documentsURL = URL.documentsPath
-        let biosDir = documentsURL.appendingPathComponent("BIOS")
+        // Use platform-aware BIOS directory (Documents on iOS, Caches on tvOS)
+        let biosDir = Paths.biosesPath
 
         if let sysID = systemIdentifier {
             return biosDir.appendingPathComponent(sysID).appendingPathComponent(filename)
@@ -853,7 +853,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             // Remove existing file if present
             if FileManager.default.fileExists(atPath: destinationURL.path) {
-                try FileManager.default.removeItem(at: destinationURL)
+                try await FileManager.default.removeItem(at: destinationURL)
             }
 
             // Copy from CloudKit cache to local

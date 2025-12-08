@@ -18,6 +18,7 @@ import PVSupport
 import Combine
 import PVFileSystem
 import PVRealm
+import CryptoKit
 
 /// CloudKit-based sync provider for all OS's
 /// Implements the SyncProvider protocol to provide a consistent interface
@@ -797,7 +798,7 @@ public class CloudKitSyncer: SyncProvider {
         // We assume downloadFileOnDemand sets its own tracking.
         // If CloudKitSyncAnalytics is already syncing, this specific download won't start a new op.
         // Note: This might need refinement if downloads can happen concurrently outside 'loadAllFromCloud'.
-        let shouldStartTracking = !CloudKitSyncAnalytics.shared.isSyncing
+        let shouldStartTracking = await !CloudKitSyncAnalytics.shared.isSyncing
         if shouldStartTracking {
             await CloudKitSyncAnalytics.shared.startSync(operation: "Download: \(filename)")
         }
@@ -1437,7 +1438,7 @@ public class CloudKitSyncer: SyncProvider {
                 return result
             } catch {
                 // Record analytics for failed operation
-                CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
+                await CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
                 throw error
             }
         }
@@ -1450,6 +1451,12 @@ public class CloudKitSyncer: SyncProvider {
     ///   - systemID: Optional system identifier to associate with the record.
     /// - Returns: The saved CloudKit record.
     public func uploadFile(_ file: URL, gameID: String? = nil, systemID: SystemIdentifier? = nil) async throws -> CKRecord {
+        // Respect emulation pause: do not upload while emulation is running
+        if CloudSyncManager.shared.isPausedForEmulation {
+            WLOG("CloudKitSyncer: Upload skipped during emulation pause for file: \(file.lastPathComponent)")
+            throw CloudSyncError.genericError("Sync paused for emulation")
+        }
+
         // Start tracking analytics for this upload
         let filename = file.lastPathComponent
         DLOG("Initiating upload for file: \(filename)")
@@ -1499,21 +1506,37 @@ public class CloudKitSyncer: SyncProvider {
                             record = existingRecord
 
                             // Check if local file is newer than cloud record's modification date
-                            if let cloudModifiedDate = record["lastModified"] as? Date,
-                               modifiedDate <= cloudModifiedDate {
-                                DLOG("Local file \(filename) is not newer than cloud version. Skipping upload.")
-                                return record // No need to upload
+                            // Use a 1-second tolerance to account for date precision issues
+                            if let cloudModifiedDate = record["lastModified"] as? Date {
+                                let timeDifference = modifiedDate.timeIntervalSince(cloudModifiedDate)
+                                if timeDifference <= 1.0 {
+                                    DLOG("Local file \(filename) is not newer than cloud version (diff: \(String(format: "%.1f", timeDifference))s). Skipping upload.")
+                                    return record // No need to upload
+                                }
+                                DLOG("Local file \(filename) is newer than cloud by \(String(format: "%.1f", timeDifference))s, will update.")
                             }
                             VLOG("Updating existing record for \(filename)")
                         } else {
-                            // Create new record with the appropriate record type
+                            DLOG("No existing record found for \(filename), creating new one.")
+                            // Create new record with a DETERMINISTIC record ID based on directory and filename
+                            // This prevents duplicate uploads of the same file
                             await progressTracker.updateProgress(0.3)
                             Task { @MainActor in
                                 progressTracker.currentOperation = "Creating new record..."
                             }
-                            let recordID = CKRecord.ID(recordName: "\(directory)_\(filename)_\(UUID().uuidString.prefix(8))") // Ensure unique record name
+                            // Use deterministic ID format: directory_filename_MD5prefix (or just directory_filename)
+                            // Calculate MD5 prefix for uniqueness if file is small, otherwise just use directory_filename
+                            let md5Prefix: String
+                            if size.int64Value < 50_000_000, // Only calculate MD5 for files under 50MB
+                               let fileData = try? Data(contentsOf: file, options: .mappedIfSafe) {
+                                let hash = Insecure.MD5.hash(data: fileData)
+                                md5Prefix = "_" + hash.prefix(4).map { String(format: "%02hhx", $0) }.joined().uppercased()
+                            } else {
+                                md5Prefix = ""
+                            }
+                            let recordID = CKRecord.ID(recordName: "\(directory)_\(filename)\(md5Prefix)")
                             record = CKRecord(recordType: self.recordType, recordID: recordID)
-                            VLOG("Creating new record for \(filename)")
+                            VLOG("Creating new record for \(filename) with ID: \(recordID.recordName)")
                         }
 
                         // Populate record fields
@@ -1705,18 +1728,54 @@ public class CloudKitSyncer: SyncProvider {
 
         let filename = relativePath
 
-        // Create query
-        let predicate = NSPredicate(format: "directory == %@ AND filename == %@", directory, filename)
-        let recordType = getRecordType()
-        let query = CKQuery(recordType: recordType, predicate: predicate)
-
-        // Execute query
-        let (results, _) = try await privateDatabase.records(matching: query)
-        let records = results.compactMap { _, result in
-            try? result.get()
+        // Try to find record by deterministic ID first (faster than query)
+        // Try both with and without MD5 prefix since older uploads may not have it
+        let baseRecordName = "\(directory)_\(filename)"
+        let deterministicID = CKRecord.ID(recordName: baseRecordName)
+        if let record = try? await privateDatabase.record(for: deterministicID) {
+            DLOG("Found existing record by deterministic ID: \(deterministicID.recordName)")
+            return record
         }
 
-        return records.first
+        // Also try with MD5 prefix pattern (for files uploaded with the new format)
+        // Calculate MD5 prefix for the file and try that ID
+        let fileURL = file
+        if let fileData = try? Data(contentsOf: fileURL, options: .mappedIfSafe),
+           fileData.count < 50_000_000 { // Only for files under 50MB
+            let hash = Insecure.MD5.hash(data: fileData)
+            let md5Prefix = "_" + hash.prefix(4).map { String(format: "%02hhx", $0) }.joined().uppercased()
+            let md5RecordID = CKRecord.ID(recordName: "\(baseRecordName)\(md5Prefix)")
+            if let record = try? await privateDatabase.record(for: md5RecordID) {
+                DLOG("Found existing record by MD5 ID: \(md5RecordID.recordName)")
+                return record
+            }
+        }
+
+        // Query for existing records with matching directory and filename (fallback)
+        let predicate = NSPredicate(format: "directory == %@ AND filename == %@", directory, filename)
+
+        // Search multiple record types since records may be stored as different types
+        let recordTypes = [getRecordType(), "File", "BIOS"]
+        for recordType in Set(recordTypes) { // Use Set to avoid duplicate queries
+            let query = CKQuery(recordType: recordType, predicate: predicate)
+
+            do {
+                let (results, _) = try await privateDatabase.records(matching: query, resultsLimit: 1)
+                let records = results.compactMap { _, result in
+                    try? result.get()
+                }
+
+                if let existingRecord = records.first {
+                    DLOG("Found existing record by query: \(existingRecord.recordID.recordName) (type: \(recordType))")
+                    return existingRecord
+                }
+            } catch let error as CKError where error.code == .unknownItem {
+                // Record type doesn't exist yet, continue to next type
+                continue
+            }
+        }
+
+        return nil
     }
 
     /// Get the record type based on the syncer's directories

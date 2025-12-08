@@ -260,6 +260,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                                 return
                             }
                             thawed.cloudRecordID = savedRecord.recordID.recordName
+                            thawed.lastUploadedDate = savedRecord.modificationDate ?? Date()
                         }
                     }
 
@@ -361,7 +362,8 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
                         await self.insertDownloadedFile(destinationURL)
 
-                        // Update save state's file reference
+                        // Update save state's file reference and sync timestamps
+                        let cloudModDate = record.modificationDate ?? Date()
                         try await self.withRealm { realm in
                             try realm.write {
                                 guard let thawed = saveState.thaw() else {
@@ -371,6 +373,9 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                                 let file = PVFile(withURL: destinationURL, relativeRoot: .documents)
                                 thawed.file = file
                                 thawed.isDownloaded = true
+                                // Update lastUploadedDate to match cloud record's modification date
+                                // This prevents re-downloading on subsequent syncs
+                                thawed.lastUploadedDate = cloudModDate
                             }
                         }
 
@@ -445,6 +450,8 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         try FileManager.default.copyItem(at: fileURL, to: destinationURL)
                         await self.insertDownloadedFile(destinationURL)
 
+                        // Update save state's file reference and sync timestamps
+                        let cloudModDate = record.modificationDate ?? Date()
                         try await self.withRealm { realm in
                             try realm.write {
                                 guard let thawed = saveState.thaw() else {
@@ -454,6 +461,9 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                                 let file = PVFile(withURL: destinationURL, relativeRoot: .documents)
                                 thawed.file = file
                                 thawed.isDownloaded = true
+                                // Update lastUploadedDate to match cloud record's modification date
+                                // This prevents re-downloading on subsequent syncs
+                                thawed.lastUploadedDate = cloudModDate
                             }
                         }
 
@@ -536,19 +546,49 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     }
 
     /// Quickly fetches save-state metadata and updates the local Realm without downloading assets.
+    /// Uses batch processing for optimal speed with large libraries.
     /// - Returns: Number of records processed.
     @discardableResult
     public func syncMetadataOnly() async -> Int {
+        let startTime = Date()
         ILOG("[SYNC] Starting save state metadata-only sync...")
+
         do {
             let records = try await fetchSaveStateMetadataRecords()
-            ILOG("[SYNC] Fetched \(records.count) save state records from CloudKit")
+            ILOG("[SYNC] Fetched \(records.count) save state records from CloudKit in \(String(format: "%.1f", Date().timeIntervalSince(startTime)))s")
 
-            for record in records {
-                await processCloudRecord(record)
+            // Process in batches with concurrency
+            let batchSize = 30
+            let batches = stride(from: 0, to: records.count, by: batchSize).map {
+                Array(records[$0..<Swift.min($0 + batchSize, records.count)])
+            }
+            var processedCount = 0
+            var batchIndex = 0
+
+            for batch in batches {
+                batchIndex += 1
+                if Task.isCancelled { break }
+
+                // Process batch concurrently
+                await withTaskGroup(of: Void.self) { group in
+                    for record in batch {
+                        group.addTask { [self] in
+                            await self.processCloudRecord(record)
+                        }
+                    }
+                }
+
+                processedCount += batch.count
+
+                // Log progress every 5 batches (150 records)
+                if batchIndex % 5 == 0 {
+                    ILOG("[SYNC] Save state progress: \(processedCount)/\(records.count) records processed...")
+                }
             }
 
-            ILOG("[SYNC] Save state metadata sync complete: \(records.count) records processed")
+            let elapsed = Date().timeIntervalSince(startTime)
+            let rate = elapsed > 0 ? Double(records.count) / elapsed : 0
+            ILOG("[SYNC] Save state metadata sync complete in \(String(format: "%.1f", elapsed))s: \(records.count) records (\(String(format: "%.1f", rate)) records/sec)")
             return records.count
         } catch {
             ELOG("[SYNC] Save state metadata sync failed: \(error.localizedDescription)")
@@ -565,8 +605,14 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             return
         }
 
-        // Extract original save state ID from metadata JSON if available
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Emulation pause active, skipping save state record: \(record.recordID.recordName)")
+            return
+        }
+
+        // Extract original save state ID and preferred core metadata from JSON/record
         let originalSaveStateID = extractSaveStateIDFromMetadata(record)
+        let coreHint = extractCoreInfoFromMetadata(record)
         let cloudRecordID = record.recordID.recordName
 
         ILOG("[SYNC] Processing save state record: \(cloudRecordID), filename: \(filename), originalID: \(originalSaveStateID ?? "none")")
@@ -619,12 +665,18 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             guard let frozenGame = frozenGame else { return }
 
             var targetSaveState: PVSaveState?
+            var needsRomDownload = false
 
             // Step 2: Handle existing or create new (async work)
             if let existingSaveState = existingSaveState {
                 ILOG("[SYNC] Handling existing save state: \(existingSaveState.id)")
-                await self.handleSaveStateConflict(existingSaveState, cloudRecord: record)
+                await self.refreshLocalDownloadState(for: existingSaveState)
+                await self.handleSaveStateConflict(existingSaveState, cloudRecord: record, preferredCoreID: coreHint.coreID, preferredCoreVersion: coreHint.coreVersion)
                 targetSaveState = existingSaveState
+                // If the game isn't downloaded locally, flag for ROM download
+                if existingSaveState.game?.isDownloaded == false {
+                    needsRomDownload = true
+                }
 
                 // Ensure cloudRecordID is set if it wasn't before
                 if existingSaveState.cloudRecordID == nil || existingSaveState.cloudRecordID!.isEmpty {
@@ -641,17 +693,38 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         WLOG("[SYNC] Failed to update cloudRecordID for save state \(existingSaveState.id): \(error.localizedDescription)")
                     }
                 }
-            } else if let newSaveState = await self.createSaveStateFromCloudRecord(record, game: frozenGame, originalID: originalSaveStateID) {
+            } else if let newSaveState = await self.createSaveStateFromCloudRecord(record, game: frozenGame, originalID: originalSaveStateID, preferredCoreID: coreHint.coreID, preferredCoreVersion: coreHint.coreVersion) {
                 ILOG("[SYNC] Created new save state: \(newSaveState.id)")
                 await self.markSaveStateForDownload(newSaveState, cloudRecord: record)
                 targetSaveState = newSaveState
+                // New save states from cloud need the ROM downloaded
+                needsRomDownload = true
             }
 
             // Step 3: Apply metadata and cache artwork
             if let targetSaveState = targetSaveState {
-                await applyCoreMetadata(from: record, to: targetSaveState)
+                await applyCoreMetadata(from: record,
+                                        to: targetSaveState,
+                                        preferredCoreID: coreHint.coreID,
+                                        preferredCoreVersion: coreHint.coreVersion)
                 if record[CloudKitSchema.SaveStateFields.imageAsset] as? CKAsset != nil {
                     await cacheSaveStateArtworkAsset(from: record, for: targetSaveState)
+                }
+
+                // Queue ROM download if required and available
+                if needsRomDownload,
+                   let romsSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer {
+                    let md5 = targetSaveState.game?.md5Hash ?? ""
+                    if !md5.isEmpty {
+                        Task.detached {
+                            do {
+                                try await romsSyncer.downloadGame(md5: md5)
+                                ILOG("[SYNC] Queued ROM download for save state: \(targetSaveState.id) (md5: \(md5))")
+                            } catch {
+                                WLOG("[SYNC] Failed to queue ROM download for md5 \(md5): \(error.localizedDescription)")
+                            }
+                        }
+                    }
                 }
             }
         } catch {
@@ -676,6 +749,42 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
 
         return nil
+    }
+
+    /// Extract core identifier/version hints from metadata JSON if available
+    private func extractCoreInfoFromMetadata(_ record: CKRecord) -> (coreID: String?, coreVersion: String?) {
+        guard let metadataJSON = record[CloudKitSchema.SaveStateFields.metadataJSON] as? String,
+              let jsonData = metadataJSON.data(using: .utf8) else {
+            // Fall back to record fields
+            let recordCoreID = (record[CloudKitSchema.SaveStateFields.coreIdentifier] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let recordCoreVersion = (record[CloudKitSchema.SaveStateFields.coreVersion] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+            return (recordCoreID, recordCoreVersion)
+        }
+
+        do {
+            if let json = try JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
+                // Try several common keys for core identifier/version
+                let coreID = (json["coreIdentifier"] as? String)
+                    ?? (json["coreID"] as? String)
+                    ?? (json["core"] as? String)
+                    ?? (json["core_id"] as? String)
+
+                let coreVersion = (json["coreVersion"] as? String)
+                    ?? (json["version"] as? String)
+                    ?? (json["core_version"] as? String)
+
+                let trimmedID = coreID?.trimmingCharacters(in: .whitespacesAndNewlines)
+                let trimmedVersion = coreVersion?.trimmingCharacters(in: .whitespacesAndNewlines)
+                return (trimmedID, trimmedVersion)
+            }
+        } catch {
+            WLOG("[SYNC] Failed to parse core info from metadata JSON: \(error.localizedDescription)")
+        }
+
+        // Fallback to record fields
+        let recordCoreID = (record[CloudKitSchema.SaveStateFields.coreIdentifier] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let recordCoreVersion = (record[CloudKitSchema.SaveStateFields.coreVersion] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        return (recordCoreID, recordCoreVersion)
     }
 
     /// Handle a remote change notification for a save state record
@@ -719,21 +828,57 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Parameters:
     ///   - localSaveState: The local save state
     ///   - cloudRecord: The CloudKit record
-    private func handleSaveStateConflict(_ localSaveState: PVSaveState, cloudRecord: CKRecord) async {
+    private func handleSaveStateConflict(_ localSaveState: PVSaveState, cloudRecord: CKRecord, preferredCoreID: String? = nil, preferredCoreVersion: String? = nil) async {
         guard let cloudModificationDate = cloudRecord.modificationDate else {
             // If we can't determine dates, prefer cloud version
             await self.markSaveStateForDownload(localSaveState, cloudRecord: cloudRecord)
             return
         }
 
-        let localModificationDate = localSaveState.lastUploadedDate ?? localSaveState.date
+        // If already downloaded and cloudRecordID matches, check if we're already in sync
+        let cloudRecordID = cloudRecord.recordID.recordName
+        let localRecordedDate = localSaveState.lastUploadedDate ?? localSaveState.date
+        let localFileDate: Date? = {
+            guard let fileURL = localSaveState.file?.url,
+                  FileManager.default.fileExists(atPath: fileURL.path),
+                  let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
+                  let mtime = attrs[.modificationDate] as? Date else {
+                return nil
+            }
+            return mtime
+        }()
 
-        // Use most recent version
-        if cloudModificationDate > localModificationDate {
-            DLOG("Cloud save state is newer, marking for download: \(localSaveState.file?.fileName ?? "unknown")")
+        // Use the freshest local timestamp (Realm lastUploadedDate vs filesystem mtime)
+        let localBaseline = max(localRecordedDate, localFileDate ?? localRecordedDate)
+
+        if localSaveState.isDownloaded,
+           localSaveState.cloudRecordID == cloudRecordID {
+            // Compare with tolerance of 1s
+            let timeDifference = cloudModificationDate.timeIntervalSince(localBaseline)
+            if timeDifference <= 1.0 {
+                DLOG("Save state already synced and up to date (diff \(String(format: "%.1f", timeDifference))s): \(localSaveState.file?.fileName ?? "unknown")")
+                // Normalize lastUploadedDate to cloud mod date to prevent future drift
+                try? await self.withRealm { realm in
+                    if let live = realm.object(ofType: PVSaveState.self, forPrimaryKey: localSaveState.id) {
+                        try realm.write {
+                            live.lastUploadedDate = cloudModificationDate
+                        }
+                    }
+                }
+                return
+            }
+        }
+
+        let timeDifference = cloudModificationDate.timeIntervalSince(localBaseline)
+
+        // Use most recent version - add small tolerance for date comparison
+        if timeDifference > 1.0 {
+            DLOG("Cloud save state is newer by \(String(format: "%.1f", timeDifference) ) s, marking for download: \(localSaveState.file?.fileName ?? "unknown")")
             await self.markSaveStateForDownload(localSaveState, cloudRecord: cloudRecord)
+            // Also apply preferred core metadata if known
+            await self.applyCoreMetadata(from: cloudRecord, to: localSaveState, preferredCoreID: preferredCoreID, preferredCoreVersion: preferredCoreVersion)
         } else {
-            DLOG("Local save state is newer or same, keeping local: \(localSaveState.file?.fileName ?? "unknown")")
+            DLOG("Local save state is newer or same (diff: \(String(format: "%.1f", timeDifference))s), keeping local: \(localSaveState.file?.fileName ?? "unknown")")
             // Local is newer, could upload to cloud if needed
         }
     }
@@ -742,7 +887,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Parameters:
     ///   - record: The CloudKit record
     ///   - game: The game this save state belongs to
-    private func createSaveStateFromCloudRecord(_ record: CKRecord, game: PVGame, originalID: String? = nil) async -> PVSaveState? {
+    private func createSaveStateFromCloudRecord(_ record: CKRecord, game: PVGame, originalID: String? = nil, preferredCoreID: String? = nil, preferredCoreVersion: String? = nil) async -> PVSaveState? {
         guard let filename = record[CloudKitSchema.SaveStateFields.filename] as? String else {
             return nil
         }
@@ -780,7 +925,10 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     saveState.game = localGame
                     saveState.cloudRecordID = record.recordID.recordName
                     saveState.isDownloaded = false
-                    if let resolvedCore = self.resolveCore(from: record, realm: realm, fallbackSystem: localGame.system) {
+                    if let resolvedCore = self.resolveCore(from: record,
+                                                          realm: realm,
+                                                          fallbackSystem: localGame.system,
+                                                          preferredCoreID: preferredCoreID) {
                         saveState.core = resolvedCore
                     } else if let fallbackCore = localGame.system?.cores.first {
                         saveState.core = fallbackCore
@@ -789,11 +937,25 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         WLOG("CreateSaveState: No core mapping available for \(filename)")
                     }
 
+                // Use the cloud record's modificationDate for lastUploadedDate
+                // This ensures consistency with the conflict detection logic
+                if let modified = record.modificationDate {
+                    saveState.lastUploadedDate = modified
+                    // Use the custom field for the actual save state creation date if available
                     if let creationDate = record[CloudKitSchema.SaveStateFields.lastUploadedDate] as? Date {
                         saveState.date = creationDate
+                    } else {
+                        saveState.date = modified
                     }
-                    if let version = record[CloudKitSchema.SaveStateFields.coreVersion] as? String,
+                } else if let creationDate = record[CloudKitSchema.SaveStateFields.lastUploadedDate] as? Date {
+                    saveState.date = creationDate
+                    saveState.lastUploadedDate = creationDate
+                }
+                    if let version = preferredCoreVersion,
                        !version.isEmpty {
+                        saveState.createdWithCoreVersion = version
+                    } else if let version = record[CloudKitSchema.SaveStateFields.coreVersion] as? String,
+                              !version.isEmpty {
                         saveState.createdWithCoreVersion = version
                     } else if let projectVersion = saveState.core?.projectVersion,
                               !projectVersion.isEmpty {
@@ -825,7 +987,16 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
     }
 
-    private func resolveCore(from record: CKRecord, realm: Realm, fallbackSystem: PVSystem?) -> PVCore? {
+    private func resolveCore(from record: CKRecord, realm: Realm, fallbackSystem: PVSystem?, preferredCoreID: String? = nil) -> PVCore? {
+        // Preferred core from metadata JSON takes priority
+        if let preferred = preferredCoreID?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !preferred.isEmpty,
+           let matched = realm.object(ofType: PVCore.self, forPrimaryKey: preferred) {
+            return matched
+        }
+
+        // Next, use the CloudKit record field
         if let rawIdentifier = record[CloudKitSchema.SaveStateFields.coreIdentifier] as? String {
             let coreIdentifier = rawIdentifier.trimmingCharacters(in: .whitespacesAndNewlines)
             if !coreIdentifier.isEmpty,
@@ -847,14 +1018,15 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         return nil
     }
 
-    private func applyCoreMetadata(from record: CKRecord, to frozenSaveState: PVSaveState) async {
+    private func applyCoreMetadata(from record: CKRecord, to frozenSaveState: PVSaveState, preferredCoreID: String? = nil, preferredCoreVersion: String? = nil) async {
         do {
         try await self.withRealm { realm in
                 guard let liveSaveState = frozenSaveState.thaw() else { return }
                 try realm.write {
                     let resolvedCore = self.resolveCore(from: record,
                                                         realm: realm,
-                                                        fallbackSystem: liveSaveState.game?.system)
+                                                        fallbackSystem: liveSaveState.game?.system,
+                                                        preferredCoreID: preferredCoreID)
                     if let resolvedCore {
                         liveSaveState.core = resolvedCore
                     } else if liveSaveState.core == nil,
@@ -863,8 +1035,11 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         WLOG("SaveState \(liveSaveState.id) missing core; assigned fallback \(fallbackCore.identifier)")
                     }
 
-                    if let version = record[CloudKitSchema.SaveStateFields.coreVersion] as? String,
+                    if let version = preferredCoreVersion,
                        !version.isEmpty {
+                        liveSaveState.createdWithCoreVersion = version
+                    } else if let version = record[CloudKitSchema.SaveStateFields.coreVersion] as? String,
+                              !version.isEmpty {
                         liveSaveState.createdWithCoreVersion = version
                     } else if let projectVersion = liveSaveState.core?.projectVersion,
                               !projectVersion.isEmpty {
@@ -884,6 +1059,11 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     ///   - saveState: The save state to download
     ///   - cloudRecord: The CloudKit record
     private func markSaveStateForDownload(_ saveState: PVSaveState, cloudRecord: CKRecord) async {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Emulation pause active, skipping save state download queue for: \(cloudRecord.recordID.recordName)")
+            return
+        }
+
         let frozenSaveState = saveState.freeze()
         let recordID = cloudRecord.recordID.recordName
         let declaredFileSize = cloudRecord[CloudKitSchema.SaveStateFields.fileSize] as? Int64
@@ -931,6 +1111,41 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             ILOG("Queued save state download: \(title) [\(recordID)]")
         } catch {
             await errorHandler.handle(error: error)
+        }
+    }
+
+    /// Normalize local flags for an existing save state based on filesystem state.
+    /// Ensures we do not re-queue downloads when the file already exists locally.
+    private func refreshLocalDownloadState(for frozenSaveState: PVSaveState) async {
+        do {
+            try await self.withRealm { realm in
+                guard let live = realm.object(ofType: PVSaveState.self, forPrimaryKey: frozenSaveState.id) else {
+                    return
+                }
+
+                let fileURL = live.file?.url
+                let exists = fileURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
+
+                try realm.write {
+                    live.isDownloaded = exists
+
+                    guard exists, let path = fileURL?.path,
+                          let attrs = try? FileManager.default.attributesOfItem(atPath: path),
+                          let mtime = attrs[.modificationDate] as? Date else {
+                        return
+                    }
+
+                    if let recorded = live.lastUploadedDate {
+                        if mtime > recorded {
+                            live.lastUploadedDate = mtime
+                        }
+                    } else {
+                        live.lastUploadedDate = mtime
+                    }
+                }
+            }
+        } catch {
+            WLOG("Failed to refresh local download state for save state \(frozenSaveState.id): \(error.localizedDescription)")
         }
     }
 
@@ -1110,12 +1325,39 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
     }
 
+    /// Decide if artwork should be refreshed based on local presence and freshness
+    private func shouldRefreshArtwork(existingURL: URL?, record: CKRecord) -> Bool {
+        guard let existingURL,
+              FileManager.default.fileExists(atPath: existingURL.path) else {
+            return true
+        }
+        let recordModDate = record.modificationDate
+        let localModDate = (try? FileManager.default.attributesOfItem(atPath: existingURL.path)[.modificationDate] as? Date) ?? nil
+        if let recordModDate,
+           let localModDate,
+           recordModDate <= localModDate.addingTimeInterval(0.5) {
+            return false
+        }
+        return true
+    }
+
+    private func replaceFileAtomically(from source: URL, to destination: URL) throws {
+        let tempURL = destination.deletingLastPathComponent().appendingPathComponent(UUID().uuidString)
+        try FileManager.default.copyItem(at: source, to: tempURL)
+        _ = try FileManager.default.replaceItemAt(destination, withItemAt: tempURL)
+    }
+
     /// Download and save artwork asset for a save state
     /// - Parameters:
     ///   - record: The CloudKit record containing the artwork asset
     ///   - saveState: The save state to update with artwork
     ///   - saveStateURL: The local URL of the save state file
     private func downloadSaveStateArtworkAsset(from record: CKRecord, for saveState: PVSaveState, saveStateURL: URL) async throws {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Emulation pause active, skipping artwork download for: \(saveState.id)")
+            return
+        }
+
         // Check if there's an artwork asset to download
         guard let artworkAsset = record[CloudKitSchema.SaveStateFields.imageAsset] as? CKAsset,
               let assetFileURL = artworkAsset.fileURL else {
@@ -1124,18 +1366,16 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
 
         do {
-            // Create artwork file path in the same directory as the save state
             let saveStateDirectory = saveStateURL.deletingLastPathComponent()
             let artworkFilename = saveStateURL.deletingPathExtension().appendingPathExtension("png").lastPathComponent
             let artworkURL = saveStateDirectory.appendingPathComponent(artworkFilename)
 
-            // Remove existing artwork file if it exists
-            if FileManager.default.fileExists(atPath: artworkURL.path) {
-                try await FileManager.default.removeItem(at: artworkURL)
+            guard shouldRefreshArtwork(existingURL: artworkURL, record: record) else {
+                DLOG("Artwork up to date for save state: \(saveState.id)")
+                return
             }
 
-            // Copy artwork from CloudKit asset to local storage
-            try FileManager.default.copyItem(at: assetFileURL, to: artworkURL)
+            try replaceFileAtomically(from: assetFileURL, to: artworkURL)
 
             try await self.withRealm { realm in
                 try realm.write {
@@ -1189,6 +1429,11 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             return
         }
 
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Emulation pause active, skipping artwork cache for: \(record.recordID.recordName)")
+            return
+        }
+
         let filename = record[CloudKitSchema.SaveStateFields.filename] as? String
 
         let targetSaveState = frozenSaveState.freeze()
@@ -1223,10 +1468,12 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         let artworkURL = saveStateDirectory.appendingPathComponent(artworkFilename)
 
         do {
-            if FileManager.default.fileExists(atPath: artworkURL.path) {
-                try await FileManager.default.removeItem(at: artworkURL)
+            guard shouldRefreshArtwork(existingURL: artworkURL, record: record) else {
+                DLOG("Artwork cache is current for save state \(targetSaveState.id)")
+                return
             }
-            try FileManager.default.copyItem(at: assetFileURL, to: artworkURL)
+
+            try replaceFileAtomically(from: assetFileURL, to: artworkURL)
 
             try await self.withRealm { realm in
                 try realm.write {
