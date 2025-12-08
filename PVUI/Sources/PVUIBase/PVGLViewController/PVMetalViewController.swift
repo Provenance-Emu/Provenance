@@ -1613,6 +1613,44 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
+        guard let inputTexture = inputTexture else {
+            DLOG("Error: Input texture is nil")
+            return
+        }
+
+        // Apply CIFilter if present - MUST happen BEFORE creating the render encoder
+        // CIContext.render() adds commands to the command buffer that conflict with an active render encoder
+        let finalSourceTexture: MTLTexture
+        if let filter = self.filter,
+           let ciContext = self.ciContext,
+           let ciImage = CIImage(mtlTexture: inputTexture, options: nil),
+           let filteredImage = filter.apply(to: ciImage,
+                                            in: CGRect(x: 0, y: 0,
+                                                       width: inputTexture.width,
+                                                       height: inputTexture.height)) {
+            let descriptor = MTLTextureDescriptor.texture2DDescriptor(
+                pixelFormat: inputTexture.pixelFormat,
+                width: inputTexture.width,
+                height: inputTexture.height,
+                mipmapped: false
+            )
+            descriptor.usage = [.shaderRead, .renderTarget]
+
+            if let filteredTexture = device?.makeTexture(descriptor: descriptor) {
+                // Use the same command buffer to ensure proper synchronization
+                ciContext.render(filteredImage,
+                                 to: filteredTexture,
+                                 commandBuffer: commandBuffer,
+                                 bounds: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height),
+                                 colorSpace: CGColorSpaceCreateDeviceRGB())
+                finalSourceTexture = filteredTexture
+            } else {
+                finalSourceTexture = inputTexture
+            }
+        } else {
+            finalSourceTexture = inputTexture
+        }
+
         // Create a render pass descriptor
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = outputTexture
@@ -1620,7 +1658,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderPassDescriptor.colorAttachments[0].storeAction = .store
         renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
 
-        // Create a render command encoder
+        // Create a render command encoder AFTER CIFilter has been applied
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
             DLOG("Error: Could not create render encoder")
             return
@@ -1636,44 +1674,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             zfar: 1.0
         )
         renderEncoder.setViewport(viewport)
-
-        guard let inputTexture = inputTexture else {
-            DLOG("Error: Input texture is nil")
-            renderEncoder.endEncoding()
-            return
-        }
-
-        let finalSourceTexture: MTLTexture = {
-            guard let filter = self.filter,
-                  let ciContext = self.ciContext,
-                  let ciImage = CIImage(mtlTexture: inputTexture, options: nil),
-                  let filteredImage = filter.apply(to: ciImage,
-                                                   in: CGRect(x: 0,
-                                                              y: 0,
-                                                              width: inputTexture.width,
-                                                              height: inputTexture.height)) else {
-                return inputTexture
-            }
-
-            let descriptor = MTLTextureDescriptor.texture2DDescriptor(
-                pixelFormat: inputTexture.pixelFormat,
-                width: inputTexture.width,
-                height: inputTexture.height,
-                mipmapped: false
-            )
-            descriptor.usage = [.shaderRead, .renderTarget]
-
-            guard let filteredTexture = device?.makeTexture(descriptor: descriptor) else {
-                return inputTexture
-            }
-
-            ciContext.render(filteredImage,
-                             to: filteredTexture,
-                             commandBuffer: nil,
-                             bounds: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height),
-                             colorSpace: CGColorSpaceCreateDeviceRGB())
-            return filteredTexture
-        }()
 
         var filterApplied = false
         if renderSettings.metalFilterMode != .none {
