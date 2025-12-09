@@ -1906,7 +1906,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             let safeWidth = min(backingTexture.width, destTexture.width)
             let safeHeight = min(backingTexture.height, destTexture.height)
 
-            DLOG("Using fallback texture copy: size=(\(safeWidth),\(safeHeight))")
+            VLOG("Using fallback texture copy: size=(\(safeWidth),\(safeHeight))")
 
             encoder.copy(from: backingTexture,
                          sourceSlice: 0, sourceLevel: 0,
@@ -1922,7 +1922,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             let safeWidth = min(Int(screenRect.width), backingTexture.width - safeX)
             let safeHeight = min(Int(screenRect.height), backingTexture.height - safeY)
 
-            DLOG("OpenGL texture copy: origin=(\(safeX),\(safeY)), size=(\(safeWidth),\(safeHeight))")
+            VLOG("OpenGL texture copy: origin=(\(safeX),\(safeY)), size=(\(safeWidth),\(safeHeight))")
 
             /// Copy from the backing texture to the input texture
             encoder.copy(from: backingTexture,
@@ -1981,12 +1981,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         lastNativeScaleEnabled = useNativeScale
 
 #if DEBUG
-        ILOG("Recalculating viewport values:")
-        ILOG("EmulatorCore sizes:")
-        ILOG("- bufferSize: \(bufferSize)")
-        ILOG("Screen bounds: \(screenBounds)")
-        ILOG("Screen scale: \(screenScale)")
-        ILOG("Native scale enabled: \(useNativeScale)")
+        VLOG("Recalculating viewport values:")
+        VLOG("EmulatorCore sizes:")
+        VLOG("- bufferSize: \(bufferSize)")
+        VLOG("Screen bounds: \(screenBounds)")
+        VLOG("Screen scale: \(screenScale)")
+        VLOG("Native scale enabled: \(useNativeScale)")
 #endif
 
         /// Calculate viewport size based on native scale setting
