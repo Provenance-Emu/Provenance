@@ -12,6 +12,7 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import Combine
+import Perception
 
 /// Optimized view model with reduced @Published properties to minimize re-renders
 class ContinuesSectionViewModel: ObservableObject {
@@ -749,40 +750,42 @@ private struct SaveStatesGridView: View {
     }
 
     var body: some View {
-        LazyVGrid(columns: gridColumns, spacing: 16) {
-            ForEach(saveStatesForPage, id: \.id) { saveState in
-                // Use optimized HomeContinueItemView with extracted data
-                HomeContinueItemView(
-                    continueState: saveState,
-                    height: adjustedHeight,
-                    hideSystemLabel: hideSystemLabel,
-                    action: {
-                        Task.detached { @MainActor in
-                            await rootDelegate?.root_load(
-                                saveState.game,
-                                sender: self,
-                                core: saveState.core,
-                                saveState: saveState
-                            )
+        WithPerceptionTracking {
+            LazyVGrid(columns: gridColumns, spacing: 16) {
+                ForEach(saveStatesForPage, id: \.id) { saveState in
+                    // Use optimized HomeContinueItemView with extracted data
+                    HomeContinueItemView(
+                        continueState: saveState,
+                        height: adjustedHeight,
+                        hideSystemLabel: hideSystemLabel,
+                        action: {
+                            Task.detached { @MainActor in
+                                await rootDelegate?.root_load(
+                                    saveState.game,
+                                    sender: self,
+                                    core: saveState.core,
+                                    saveState: saveState
+                                )
+                            }
+                        },
+                        isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,
+                        rootDelegate: rootDelegate
+                    )
+                    .id(saveState.id) // Stable identity for better performance
+                    .focusableIfAvailable()
+                    .onChange(of: parentFocusedItem) { newValue in
+                        if newValue == saveState.id {
+                            parentFocusedSection = .recentSaveStates
                         }
-                    },
-                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,
-                    rootDelegate: rootDelegate
-                )
-                .id(saveState.id) // Stable identity for better performance
-                .focusableIfAvailable()
-                .onChange(of: parentFocusedItem) { newValue in
-                    if newValue == saveState.id {
-                        parentFocusedSection = .recentSaveStates
                     }
                 }
             }
-        }
-        .padding(.horizontal) // Add padding inside the container
-        .onAppear {
-            // Check if we need to load more save states when this page appears
-            if pageIndex >= viewModel.pageCount - ContinuesSectionViewModel.loadMoreThreshold && !viewModel.hasLoadedAllSaveStates {
-                viewModel.loadMoreSaveStates()
+            .padding(.horizontal) // Add padding inside the container
+            .onAppear {
+                // Check if we need to load more save states when this page appears
+                if pageIndex >= viewModel.pageCount - ContinuesSectionViewModel.loadMoreThreshold && !viewModel.hasLoadedAllSaveStates {
+                    viewModel.loadMoreSaveStates()
+                }
             }
         }
     }
