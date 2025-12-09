@@ -726,6 +726,11 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// Download missing BIOS files that have cloud records but no local file
     @MainActor
     public func downloadMissingBIOSFiles() async {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[BIOS DOWNLOAD] Skipping missing BIOS download scan - paused for emulation")
+            return
+        }
+
         ILOG("[BIOS DOWNLOAD] Checking for missing BIOS files to download...")
 
         let realm = RomDatabase.sharedInstance.realm
@@ -894,6 +899,11 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     ///   - filename: The expected filename
     ///   - systemIdentifier: The system identifier for subdirectory
     private func downloadBIOSFromCloudKit(recordID: String, filename: String, systemIdentifier: String?) async throws {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[BIOS DOWNLOAD] Skipping BIOS download (paused for emulation): \(recordID)")
+            return
+        }
+
         let ckRecordID = CKRecord.ID(recordName: recordID)
 
         ILOG("[BIOS DOWNLOAD] Starting download for: filename=\(filename), recordID=\(recordID), systemIdentifier=\(systemIdentifier ?? "nil")")

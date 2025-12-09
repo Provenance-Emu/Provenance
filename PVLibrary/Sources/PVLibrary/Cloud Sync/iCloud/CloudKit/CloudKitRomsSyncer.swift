@@ -45,12 +45,39 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private let retryOperation: CloudKitRetryOperation<Any> // Specify generic type <Any>
     private let romsDatastore: RomDatabase // Add Datastore reference
     private let fileManager = FileManager.default
-    private let operationQueue = OperationQueue()
+    public var workQueue: OperationQueue? = OperationQueue()
     private var cancellables = Set<AnyCancellable>()
     private let progressTracker = SyncProgressTracker.shared // Added Progress Tracker
     private let uploadQueue = CloudKitUploadQueueActor.shared
     private let loadAllLock = NSLock()
     private var isLoadAllInFlight: Bool = false
+
+    // Execute async work on the configured queue so suspension/cancellation during emulation is honored.
+    private func runOnQueue<T>(_ work: @escaping @Sendable () async throws -> T) async throws -> T {
+        guard let queue = workQueue else {
+            return try await work()
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let op = BlockOperation()
+            op.addExecutionBlock { [weak op] in
+                guard let op, !op.isCancelled else {
+                    continuation.resume(throwing: CloudSyncError.genericError("Operation cancelled"))
+                    return
+                }
+                Task {
+                    do {
+                        if Task.isCancelled { throw CloudSyncError.genericError("Task cancelled") }
+                        let result = try await work()
+                        continuation.resume(returning: result)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+            queue.addOperation(op)
+        }
+    }
 
     @inline(__always)
     private func withRealm<T: Sendable>(
@@ -72,7 +99,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     private func setupOperationQueue() {
-        // TODO: Implement setupOperationQueue
+        guard let queue = workQueue else { return }
+        queue.name = "org.provenance.cloudsync.romsQueue.legacy"
+        queue.qualityOfService = .utility
+        queue.maxConcurrentOperationCount = 2
     }
 
     // MARK: - SyncProvider Conformance Methods (Stubs)
@@ -269,63 +299,70 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     ///   - recordID: The CloudKit record identifier.
     ///   - includeAssets: When true, also fetches asset fields required for downloads.
     public func fetchRecord(recordID: CKRecord.ID, includeAssets: Bool = false) async throws -> CKRecord? {
-        do {
-            let record = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
-                let op = CKFetchRecordsOperation(recordIDs: [recordID])
-                let metadataKeys = [
-                    CloudKitSchema.ROMFields.md5,
-                    CloudKitSchema.ROMFields.title,
-                    CloudKitSchema.ROMFields.systemIdentifier,
-                    CloudKitSchema.ROMFields.fileSize,
-                    CloudKitSchema.SaveStateFields.directory,
-                    CloudKitSchema.SaveStateFields.filename,
-                    CloudKitSchema.ROMFields.originalFilename,
-                    CloudKitSchema.ROMFields.isDeleted
-                ]
-                if includeAssets {
-                    op.desiredKeys = metadataKeys + [
-                        CloudKitSchema.ROMFields.fileData,
-                        CloudKitSchema.ROMFields.isArchive,
-                        CloudKitSchema.ROMFields.relatedFilenames
-                    ]
-                } else {
-                    // Metadata-only: exclude asset fields to avoid auto-downloading CKAsset payloads
-                    op.desiredKeys = metadataKeys
-                }
-                var fetched: CKRecord?
-                op.perRecordResultBlock = { _, result in
-                    if case let .success(r) = result { fetched = r }
-                }
-                op.fetchRecordsCompletionBlock = { _, error in
-                    if let error = error { continuation.resume(throwing: error) }
-                    else { continuation.resume(returning: fetched) }
-                }
-                self.database.add(op)
-            }
-            if let record { VLOG("Fetched record (metadata-only): \(record.recordID.recordName)") }
-            return record
-        } catch let error as CKError where error.code == .unknownItem {
-            VLOG("Record not found: \(recordID.recordName)")
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Emulation pause active, skipping ROM fetch for \(recordID.recordName)")
             return nil
-        } catch let ckError as CKError {
-            // Check if this is a partial failure where the only error is "record not found"
-            if ckError.code == .partialFailure,
-               let partialErrors = ckError.partialErrorsByItemID,
-               partialErrors.count == 1,
-               let (partialItemID, partialError) = partialErrors.first,
-               let partialCKError = partialError as? CKError,
-               partialCKError.code == .unknownItem {
-                // Only one partial error and it's "record not found" - treat as record doesn't exist
-                VLOG("Record not found (via partial failure): \(recordID.recordName)")
-                return nil
-            }
+        }
 
-            let errorDetails = formatCloudKitError(ckError)
-            ELOG("Failed to fetch record \(recordID.recordName): \(errorDetails)")
-            throw CloudSyncError.cloudKitError(ckError)
-        } catch {
-            ELOG("Failed to fetch record \(recordID.recordName): \(error.localizedDescription)")
-            throw CloudSyncError.cloudKitError(error)
+        return try await runOnQueue { [self] in
+            do {
+                let record = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
+                    let op = CKFetchRecordsOperation(recordIDs: [recordID])
+                    let metadataKeys = [
+                        CloudKitSchema.ROMFields.md5,
+                        CloudKitSchema.ROMFields.title,
+                        CloudKitSchema.ROMFields.systemIdentifier,
+                        CloudKitSchema.ROMFields.fileSize,
+                        CloudKitSchema.SaveStateFields.directory,
+                        CloudKitSchema.SaveStateFields.filename,
+                        CloudKitSchema.ROMFields.originalFilename,
+                        CloudKitSchema.ROMFields.isDeleted
+                    ]
+                    if includeAssets {
+                        op.desiredKeys = metadataKeys + [
+                            CloudKitSchema.ROMFields.fileData,
+                            CloudKitSchema.ROMFields.isArchive,
+                            CloudKitSchema.ROMFields.relatedFilenames
+                        ]
+                    } else {
+                        // Metadata-only: exclude asset fields to avoid auto-downloading CKAsset payloads
+                        op.desiredKeys = metadataKeys
+                    }
+                    var fetched: CKRecord?
+                    op.perRecordResultBlock = { _, result in
+                        if case let .success(r) = result { fetched = r }
+                    }
+                    op.fetchRecordsCompletionBlock = { _, error in
+                        if let error = error { continuation.resume(throwing: error) }
+                        else { continuation.resume(returning: fetched) }
+                    }
+                    self.database.add(op)
+                }
+                if let record { VLOG("Fetched record (metadata-only): \(record.recordID.recordName)") }
+                return record
+            } catch let error as CKError where error.code == .unknownItem {
+                VLOG("Record not found: \(recordID.recordName)")
+                return nil
+            } catch let ckError as CKError {
+                // Check if this is a partial failure where the only error is "record not found"
+                if ckError.code == .partialFailure,
+                   let partialErrors = ckError.partialErrorsByItemID,
+                   partialErrors.count == 1,
+                   let (partialItemID, partialError) = partialErrors.first,
+                   let partialCKError = partialError as? CKError,
+                   partialCKError.code == .unknownItem {
+                    // Only one partial error and it's "record not found" - treat as record doesn't exist
+                    VLOG("Record not found (via partial failure): \(recordID.recordName)")
+                    return nil
+                }
+
+                let errorDetails = formatCloudKitError(ckError)
+                ELOG("Failed to fetch record \(recordID.recordName): \(errorDetails)")
+                throw CloudSyncError.cloudKitError(ckError)
+            } catch {
+                ELOG("Failed to fetch record \(recordID.recordName): \(error.localizedDescription)")
+                throw CloudSyncError.cloudKitError(error)
+            }
         }
     }
 
@@ -340,88 +377,95 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         expectedSize: Int64? = nil,
         progressHandler: ((Double, String?) -> Void)? = nil
     ) async throws -> CKRecord? {
-        let downloadStartTime = Date()
-        var lastProgressUpdate = Date()
-        var lastProgress: Double = 0
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Emulation pause active, skipping ROM fetch (with progress) for \(recordID.recordName)")
+            return nil
+        }
 
-        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
-            let op = CKFetchRecordsOperation(recordIDs: [recordID])
+        return try await runOnQueue { [self] in
+            let downloadStartTime = Date()
+            var lastProgressUpdate = Date()
+            var lastProgress: Double = 0
 
-            // Include all fields including assets
-            op.desiredKeys = [
-                CloudKitSchema.ROMFields.md5,
-                CloudKitSchema.ROMFields.title,
-                CloudKitSchema.ROMFields.systemIdentifier,
-                CloudKitSchema.ROMFields.fileSize,
-                CloudKitSchema.ROMFields.originalFilename,
-                CloudKitSchema.ROMFields.isDeleted,
-                CloudKitSchema.ROMFields.fileData,
-                CloudKitSchema.ROMFields.isArchive,
-                CloudKitSchema.ROMFields.relatedFilenames
-            ]
+            return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
+                let op = CKFetchRecordsOperation(recordIDs: [recordID])
 
-            // Track download progress with speed calculation
-            op.perRecordProgressBlock = { [expectedSize] _, progress in
-                let now = Date()
-                let elapsed = now.timeIntervalSince(downloadStartTime)
+                // Include all fields including assets
+                op.desiredKeys = [
+                    CloudKitSchema.ROMFields.md5,
+                    CloudKitSchema.ROMFields.title,
+                    CloudKitSchema.ROMFields.systemIdentifier,
+                    CloudKitSchema.ROMFields.fileSize,
+                    CloudKitSchema.ROMFields.originalFilename,
+                    CloudKitSchema.ROMFields.isDeleted,
+                    CloudKitSchema.ROMFields.fileData,
+                    CloudKitSchema.ROMFields.isArchive,
+                    CloudKitSchema.ROMFields.relatedFilenames
+                ]
 
-                // Calculate speed string
-                var speedString: String? = nil
-                if elapsed > 0.5 && progress > 0.01 {
-                    if let totalSize = expectedSize, totalSize > 0 {
-                        // Calculate based on known file size
-                        let downloadedBytes = Double(totalSize) * progress
-                        let bytesPerSecond = downloadedBytes / elapsed
-                        speedString = Self.formatSpeed(bytesPerSecond)
-                    } else {
-                        // Estimate based on progress rate
-                        let progressDelta = progress - lastProgress
-                        let timeDelta = now.timeIntervalSince(lastProgressUpdate)
-                        if timeDelta > 0.1 && progressDelta > 0 {
-                            // Rough estimate assuming ~10MB average ROM
-                            let estimatedBytesPerSecond = (progressDelta / timeDelta) * 10_000_000
-                            speedString = Self.formatSpeed(estimatedBytesPerSecond)
+                // Track download progress with speed calculation
+                op.perRecordProgressBlock = { [expectedSize] _, progress in
+                    let now = Date()
+                    let elapsed = now.timeIntervalSince(downloadStartTime)
+
+                    // Calculate speed string
+                    var speedString: String? = nil
+                    if elapsed > 0.5 && progress > 0.01 {
+                        if let totalSize = expectedSize, totalSize > 0 {
+                            // Calculate based on known file size
+                            let downloadedBytes = Double(totalSize) * progress
+                            let bytesPerSecond = downloadedBytes / elapsed
+                            speedString = Self.formatSpeed(bytesPerSecond)
+                        } else {
+                            // Estimate based on progress rate
+                            let progressDelta = progress - lastProgress
+                            let timeDelta = now.timeIntervalSince(lastProgressUpdate)
+                            if timeDelta > 0.1 && progressDelta > 0 {
+                                // Rough estimate assuming ~10MB average ROM
+                                let estimatedBytesPerSecond = (progressDelta / timeDelta) * 10_000_000
+                                speedString = Self.formatSpeed(estimatedBytesPerSecond)
+                            }
                         }
                     }
+
+                    lastProgress = progress
+                    lastProgressUpdate = now
+
+                    DLOG("[SYNC] Download progress: \(Int(progress * 100))% \(speedString ?? "")")
+                    progressHandler?(progress, speedString)
                 }
 
-                lastProgress = progress
-                lastProgressUpdate = now
+                var fetched: CKRecord?
+                op.perRecordResultBlock = { _, result in
+                    if case let .success(r) = result { fetched = r }
+                }
 
-                DLOG("[SYNC] Download progress: \(Int(progress * 100))% \(speedString ?? "")")
-                progressHandler?(progress, speedString)
-            }
-
-            var fetched: CKRecord?
-            op.perRecordResultBlock = { _, result in
-                if case let .success(r) = result { fetched = r }
-            }
-
-            op.fetchRecordsCompletionBlock = { _, error in
-                if let error = error as? CKError {
-                    if error.code == .unknownItem {
-                        continuation.resume(returning: nil)
-                    } else if error.code == .partialFailure,
-                              let partialErrors = error.partialErrorsByItemID,
-                              partialErrors.count == 1,
-                              let (_, partialError) = partialErrors.first,
-                              let partialCKError = partialError as? CKError,
-                              partialCKError.code == .unknownItem {
-                        continuation.resume(returning: nil)
-                    } else {
+                op.fetchRecordsCompletionBlock = { _, error in
+                    if let error = error as? CKError {
+                        if error.code == .unknownItem {
+                            continuation.resume(returning: nil)
+                        } else if error.code == .partialFailure,
+                                  let partialErrors = error.partialErrorsByItemID,
+                                  partialErrors.count == 1,
+                                  let (_, partialError) = partialErrors.first,
+                                  let partialCKError = partialError as? CKError,
+                                  partialCKError.code == .unknownItem {
+                            continuation.resume(returning: nil)
+                        } else {
+                            continuation.resume(throwing: CloudSyncError.cloudKitError(error))
+                        }
+                    } else if let error = error {
                         continuation.resume(throwing: CloudSyncError.cloudKitError(error))
+                    } else {
+                        continuation.resume(returning: fetched)
                     }
-                } else if let error = error {
-                    continuation.resume(throwing: CloudSyncError.cloudKitError(error))
-                } else {
-                    continuation.resume(returning: fetched)
                 }
+
+                // Set quality of service for faster downloads
+                op.qualityOfService = .userInitiated
+
+                self.database.add(op)
             }
-
-            // Set quality of service for faster downloads
-            op.qualityOfService = .userInitiated
-
-            self.database.add(op)
         }
     }
 
@@ -2449,6 +2493,31 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Quickly fetches ROM records and creates/updates PVGame entries without triggering any downloads
     /// Uses batch processing and parallel operations for speed
     public func syncMetadataOnly() async -> Int {
+        if let queue = workQueue {
+            return await withCheckedContinuation { continuation in
+                let op = BlockOperation()
+                op.addExecutionBlock { [weak self, weak op] in
+                    guard let self, let op, !op.isCancelled else {
+                        continuation.resume(returning: 0)
+                        return
+                    }
+                    Task {
+                        let result = await self.syncMetadataOnlyBody()
+                        continuation.resume(returning: result)
+                    }
+                }
+                queue.addOperation(op)
+            }
+        } else {
+            return await syncMetadataOnlyBody()
+        }
+    }
+
+    private func syncMetadataOnlyBody() async -> Int {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] ROM metadata sync skipped (paused for emulation)")
+            return 0
+        }
         let startTime = Date()
         ILOG("[SYNC] Starting ROM metadata-only sync...")
 
@@ -2502,7 +2571,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         for batch in batches {
             batchIndex += 1
-            if Task.isCancelled { break }
+            if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
 
             // Process batch concurrently (up to 10 at a time for CloudKit rate limits)
             let batchResults = await withTaskGroup(of: (created: Bool, updated: Bool, skipped: Bool, failed: Bool).self) { group in
@@ -2541,6 +2610,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Process a single ROM record quickly, returning status flags
     private func processROMRecordFast(_ record: CKRecord, existingMD5s: Set<String>) async -> (created: Bool, updated: Bool, skipped: Bool, failed: Bool) {
+        if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled {
+            return (false, false, true, false)
+        }
         guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) else {
             return (false, false, false, true)
         }

@@ -62,30 +62,32 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Returns: Array of CKRecord objects
     public func getAllRecords() async -> [CKRecord] {
         do {
-            // Create a query for all file records
-            let query = CKQuery(recordType: RecordType.file, predicate: NSPredicate(value: true))
+            return try await runOnQueue { [self] in
+                // Create a query for all file records
+                let query = CKQuery(recordType: RecordType.file, predicate: NSPredicate(value: true))
 
-            // Execute the query
-            let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
+                // Execute the query
+                let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
 
-            // Convert to array of CKRecord
-            let recordsArray = records.compactMap { _, result -> CKRecord? in
-                switch result {
-                case .success(let record):
-                    // Only include records for our managed directories
-                    if let directory = record[Field.directory] as? String,
-                       self.directories.contains(directory) {
-                        return record
+                // Convert to array of CKRecord
+                let recordsArray = records.compactMap { _, result -> CKRecord? in
+                    switch result {
+                    case .success(let record):
+                        // Only include records for our managed directories
+                        if let directory = record[Field.directory] as? String,
+                           self.directories.contains(directory) {
+                            return record
+                        }
+                        return nil
+                    case .failure(let error):
+                        ELOG("Error fetching file record: \(error.localizedDescription)")
+                        return nil
                     }
-                    return nil
-                case .failure(let error):
-                    ELOG("Error fetching file record: \(error.localizedDescription)")
-                    return nil
                 }
-            }
 
-            DLOG("Fetched \(recordsArray.count) file records from CloudKit")
-            return recordsArray
+                DLOG("Fetched \(recordsArray.count) file records from CloudKit")
+                return recordsArray
+            }
         } catch {
             ELOG("Failed to fetch file records: \(error.localizedDescription)")
             return []
@@ -99,18 +101,14 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Returns: The count of records
     public func getRecordCount(for recordType: String, withDirectory directory: String) async -> Int {
         do {
-            // Create a query for files in the specified directory
-            let predicate = NSPredicate(format: "%K == %@", Field.directory, directory)
-            let query = CKQuery(recordType: recordType, predicate: predicate)
-
-            // Execute the query
-            let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
-
-            // Count the records
-            let count = records.count
-            DLOG("Found \(count) records of type \(recordType) in directory \(directory)")
-
-            return count
+            return try await runOnQueue { [self] in
+                let predicate = NSPredicate(format: "%K == %@", Field.directory, directory)
+                let query = CKQuery(recordType: recordType, predicate: predicate)
+                let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
+                let count = records.count
+                DLOG("Found \(count) records of type \(recordType) in directory \(directory)")
+                return count
+            }
         } catch {
             ELOG("Error getting record count for \(recordType) in directory \(directory): \(error.localizedDescription)")
             return 0
@@ -126,44 +124,43 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
             return []
         }
         DLOG("Getting all files in directory: \(directory)")
-        var allFiles: [URL] = []
-
-        // Get the documents directory
-        let documentsURL = URL.documentsPath
-        let directoryURL = documentsURL.appendingPathComponent(directory)
-
-        DLOG("Scanning directory: \(directoryURL.path)")
-
         do {
-            // Get all files recursively
-            if FileManager.default.fileExists(atPath: directoryURL.path) {
-                // Use recursive enumeration to get all files in the directory and subdirectories
-                if let enumerator = FileManager.default.enumerator(at: directoryURL, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey], options: [.skipsHiddenFiles]) {
-                    for case let fileURL as URL in enumerator {
-                        // Check if it's a regular file (not a directory)
-                        var isDirectory: ObjCBool = false
-                        if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory), !isDirectory.boolValue {
-                            if directory == DeltaSkinSyncSupport.directoryName {
-                                let ext = fileURL.pathExtension.lowercased()
-                                guard DeltaSkinSyncSupport.allowedExtensions.contains(ext) else {
-                                    continue
+            return try await runOnQueue {
+                var allFiles: [URL] = []
+
+                let documentsURL = URL.documentsPath
+                let directoryURL = documentsURL.appendingPathComponent(directory)
+
+                DLOG("Scanning directory: \(directoryURL.path)")
+
+                // Get all files recursively
+                if FileManager.default.fileExists(atPath: directoryURL.path) {
+                    if let enumerator = FileManager.default.enumerator(at: directoryURL, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey], options: [.skipsHiddenFiles]) {
+                        for case let fileURL as URL in enumerator {
+                            var isDirectory: ObjCBool = false
+                            if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory), !isDirectory.boolValue {
+                                if directory == DeltaSkinSyncSupport.directoryName {
+                                    let ext = fileURL.pathExtension.lowercased()
+                                    guard DeltaSkinSyncSupport.allowedExtensions.contains(ext) else {
+                                        continue
+                                    }
                                 }
+                                DLOG("Found file: \(fileURL.path)")
+                                allFiles.append(fileURL)
                             }
-                            DLOG("Found file: \(fileURL.path)")
-                            allFiles.append(fileURL)
                         }
                     }
+                    DLOG("Found \(allFiles.count) files in \(directory) and its subdirectories")
+                } else {
+                    DLOG("Directory does not exist: \(directoryURL.path)")
                 }
 
-                DLOG("Found \(allFiles.count) files in \(directory) and its subdirectories")
-            } else {
-                DLOG("Directory does not exist: \(directoryURL.path)")
+                return allFiles
             }
         } catch {
             ELOG("Error getting files in directory \(directory): \(error.localizedDescription)")
+            return []
         }
-
-        return allFiles
     }
 
     /// Get the proper record type prefix for a directory
@@ -210,12 +207,10 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Returns: Dictionary mapping directory names to arrays of file URLs
     public func getAllFiles() async -> [String: [URL]] {
         var result: [String: [URL]] = [:]
-
         for directory in directories {
             let files = await getAllFiles(in: directory)
             result[directory] = files
         }
-
         return result
     }
 
@@ -384,56 +379,49 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Parameter recordID: The CloudKit record ID to download
     /// - Throws: CloudSyncError if download fails
     public func downloadFile(for recordID: CKRecord.ID) async throws {
-        DLOG("Downloading file for record ID: \(recordID.recordName)")
+        try await runOnQueue { [self] in
+            DLOG("Downloading file for record ID: \(recordID.recordName)")
 
-        // 1. Fetch the record from CloudKit
-        let record: CKRecord
-        do {
-            record = try await privateDatabase.record(for: recordID)
-            DLOG("Successfully fetched record: \(record.recordType) - \(record.recordID.recordName)")
-        } catch let error as CKError where error.code == .unknownItem {
-            ELOG("Record \(recordID.recordName) not found in CloudKit.")
-            throw CloudSyncError.recordNotFound
-        } catch {
-            ELOG("Error fetching record \(recordID.recordName): \(error.localizedDescription)")
-            throw CloudSyncError.cloudKitError(error)
-        }
-
-        // 2. Extract necessary info (directory, relative path, asset)
-        let directory = resolveDirectory(from: record)
-        let relativePath = resolveRelativePath(from: record, directory: directory)
-        let fileAsset = resolveAsset(from: record)
-        guard let directory, let relativePath, let fileAsset, let assetURL = fileAsset.fileURL else {
-            ELOG("Record \(recordID.recordName) is missing required fields or asset even after fallback resolution.")
-            throw CloudSyncError.invalidData
-        }
-
-        // 3. Determine the local file path
-        let documentsURL = URL.documentsPath
-        let directoryURL = documentsURL.appendingPathComponent(directory)
-        let fileURL = directoryURL.appendingPathComponent(relativePath)
-
-        do {
-            // Ensure the target directory exists
-            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-
-            // Remove existing item at destination if it exists (replace)
-            if FileManager.default.fileExists(atPath: fileURL.path) {
-                try await FileManager.default.removeItem(at: fileURL)
-                DLOG("Removed existing local file at \(fileURL.path)")
+            let record: CKRecord
+            do {
+                record = try await privateDatabase.record(for: recordID)
+                DLOG("Successfully fetched record: \(record.recordType) - \(record.recordID.recordName)")
+            } catch let error as CKError where error.code == .unknownItem {
+                ELOG("Record \(recordID.recordName) not found in CloudKit.")
+                throw CloudSyncError.recordNotFound
+            } catch {
+                ELOG("Error fetching record \(recordID.recordName): \(error.localizedDescription)")
+                throw CloudSyncError.cloudKitError(error)
             }
 
-            // Copy the file from the temporary CloudKit location
-            try FileManager.default.copyItem(at: assetURL, to: fileURL)
-            ILOG("Successfully downloaded file \(relativePath) in \(directory) from CloudKit.")
+            let directory = resolveDirectory(from: record)
+            let relativePath = resolveRelativePath(from: record, directory: directory)
+            let fileAsset = resolveAsset(from: record)
+            guard let directory, let relativePath, let fileAsset, let assetURL = fileAsset.fileURL else {
+                ELOG("Record \(recordID.recordName) is missing required fields or asset even after fallback resolution.")
+                throw CloudSyncError.invalidData
+            }
 
-            // Post notification about file download if needed
-            notificationCenter.post(name: .PVCloudSyncDidDownloadFile, object: self, userInfo: ["fileURL": fileURL, "directory": directory])
+            let documentsURL = URL.documentsPath
+            let directoryURL = documentsURL.appendingPathComponent(directory)
+            let fileURL = directoryURL.appendingPathComponent(relativePath)
 
-            return
-        } catch {
-            ELOG("Error saving downloaded file to \(fileURL.path): \(error.localizedDescription)")
-            throw CloudSyncError.fileSystemError(error)
+            do {
+                try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+
+                if FileManager.default.fileExists(atPath: fileURL.path) {
+                    try await FileManager.default.removeItem(at: fileURL)
+                    DLOG("Removed existing local file at \(fileURL.path)")
+                }
+
+                try FileManager.default.copyItem(at: assetURL, to: fileURL)
+                ILOG("Successfully downloaded file \(relativePath) in \(directory) from CloudKit.")
+
+                notificationCenter.post(name: .PVCloudSyncDidDownloadFile, object: self, userInfo: ["fileURL": fileURL, "directory": directory])
+            } catch {
+                ELOG("Error saving downloaded file to \(fileURL.path): \(error.localizedDescription)")
+                throw CloudSyncError.fileSystemError(error)
+            }
         }
     }
 
@@ -441,69 +429,48 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// Fetches the record and handles the download/update of the associated file.
     /// - Parameter recordID: The ID of the record that changed.
     public func processRemoteRecordUpdate(recordID: CKRecord.ID) async throws {
-        // Defer non-database assets until the DB is populated
         guard await SyncProgressTracker.shared.databaseSynced else { return }
         DLOG("Processing remote update notification for record ID: \(recordID.recordName)")
-        do {
-            // 1. Fetch the record from CloudKit
-            let record = try await privateDatabase.record(for: recordID)
-            DLOG("Successfully fetched record: \(record.recordType) - \(record.recordID.recordName)")
+        try await runOnQueue { [self] in
+            do {
+                let record = try await privateDatabase.record(for: recordID)
+                DLOG("Successfully fetched record: \(record.recordType) - \(record.recordID.recordName)")
 
-            // 2. Extract necessary info (directory, relative path, asset)
-            let directory = resolveDirectory(from: record)
-            let relativePath = resolveRelativePath(from: record, directory: directory)
-            let fileAsset = resolveAsset(from: record)
-            guard let directory, let relativePath, let fileAsset else {
-                WLOG("Record \(recordID.recordName) is missing required fields (directory, relativePath, or fileAsset) even after fallback. Skipping.")
-                return
-            }
-
-            // 3. Determine the local file path
-            let documentsURL = URL.documentsPath
-            let directoryURL = documentsURL.appendingPathComponent(directory)
-            let fileURL = directoryURL.appendingPathComponent(relativePath)
-
-            // 4. Check if the asset needs downloading (e.g., based on modification date or existence)
-            // For simplicity now, always attempt download if asset exists. Add sophisticated checks later.
-            if let assetURL = fileAsset.fileURL {
-                DLOG("Attempting to copy/move downloaded asset for \(relativePath) in \(directory) from \(assetURL.path) to \(fileURL.path)")
-
-                // Ensure the target directory exists
-                try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-
-                // Remove existing item at destination if it exists (replace)
-                if FileManager.default.fileExists(atPath: fileURL.path) {
-                    try await FileManager.default.removeItem(at: fileURL)
-                    DLOG("Removed existing local file at \(fileURL.path)")
+                let directory = resolveDirectory(from: record)
+                let relativePath = resolveRelativePath(from: record, directory: directory)
+                let fileAsset = resolveAsset(from: record)
+                guard let directory, let relativePath, let fileAsset else {
+                    WLOG("Record \(recordID.recordName) is missing required fields (directory, relativePath, or fileAsset) even after fallback. Skipping.")
+                    return
                 }
 
-                // Copy the file from the temporary CloudKit location
-                try FileManager.default.copyItem(at: assetURL, to: fileURL)
-                ILOG("Successfully updated local file \(relativePath) in \(directory) from CloudKit.")
+                let documentsURL = URL.documentsPath
+                let directoryURL = documentsURL.appendingPathComponent(directory)
+                let fileURL = directoryURL.appendingPathComponent(relativePath)
 
-                // Optional: Update local metadata if needed (e.g., modification date)
-                // let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
-                // if let cloudModDate = record.modificationDate {
-                //     try FileManager.default.setAttributes([.modificationDate: cloudModDate], ofItemAtPath: fileURL.path)
-                // }
+                if let assetURL = fileAsset.fileURL {
+                    DLOG("Attempting to copy/move downloaded asset for \(relativePath) in \(directory) from \(assetURL.path) to \(fileURL.path)")
 
-                // Post notification about file update?
-                // notificationCenter.post(name: .PVFileSyncDidUpdateFile, object: self, userInfo: ["fileURL": fileURL, "directory": directory])
+                    try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
 
-            } else {
-                WLOG("File asset for record \(recordID.recordName) does not have a fileURL. Cannot download.")
-                // This might happen if the asset is empty or wasn't downloaded properly by CloudKit daemon
+                    if FileManager.default.fileExists(atPath: fileURL.path) {
+                        try await FileManager.default.removeItem(at: fileURL)
+                        DLOG("Removed existing local file at \(fileURL.path)")
+                    }
+
+                    try FileManager.default.copyItem(at: assetURL, to: fileURL)
+                    ILOG("Successfully updated local file \(relativePath) in \(directory) from CloudKit.")
+                } else {
+                    WLOG("File asset for record \(recordID.recordName) does not have a fileURL. Cannot download.")
+                }
+
+                notificationCenter.post(name: .PVCloudSyncDidDownloadFile, object: self, userInfo: ["fileURL": fileURL, "directory": directory])
+            } catch let error as CKError where error.code == .unknownItem {
+                WLOG("Record \(recordID.recordName) not found in CloudKit. Assuming deleted remotely.")
+            } catch {
+                ELOG("Error processing remote update for record \(recordID.recordName): \(error.localizedDescription)")
+                await errorHandler.handleError(error, file: nil)
             }
-
-        } catch let error as CKError where error.code == .unknownItem {
-            // Record was likely deleted remotely
-            WLOG("Record \(recordID.recordName) not found in CloudKit. Assuming deleted remotely.")
-            // TODO: Implement local file deletion logic if required for this syncer.
-            // Need to determine the local path based on the recordID structure if possible,
-            // or rely on having fetched the record info before deletion.
-        } catch {
-            ELOG("Error processing remote update for record \(recordID.recordName): \(error.localizedDescription)")
-            await errorHandler.handleError(error, file: nil)
         }
     }
 

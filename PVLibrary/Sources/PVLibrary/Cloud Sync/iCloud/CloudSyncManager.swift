@@ -115,11 +115,47 @@ public class CloudSyncManager {
     private var notificationTokens: [NSObjectProtocol] = []
     private var integrityAuditTask: Task<Void, Never>?
     private var metadataBootstrapTask: Task<Void, Never>?
+    /// Track active async tasks so they can be cancelled on emulation pause
+    private var activeSyncTasks: [Task<Void, Never>] = []
+    private let activeTasksLock = NSLock()
 
     /// Throttle for status updates to prevent flooding the UI
     private var lastStatusUpdate: Date = .distantPast
     private var lastStatusSent: SyncStatus = .idle
     private let statusUpdateThrottleInterval: TimeInterval = 0.5 // minimum seconds between status updates
+
+    /// Operation queues for pausable/cancellable work
+    private let metadataQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.name = "org.provenance.cloudsync.metadataQueue"
+        q.qualityOfService = .utility
+        q.maxConcurrentOperationCount = 1
+        return q
+    }()
+    private let romsQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.name = "org.provenance.cloudsync.romsQueue"
+        q.qualityOfService = .utility
+        return q
+    }()
+    private let saveStatesQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.name = "org.provenance.cloudsync.saveStatesQueue"
+        q.qualityOfService = .utility
+        return q
+    }()
+    private let biosQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.name = "org.provenance.cloudsync.biosQueue"
+        q.qualityOfService = .utility
+        return q
+    }()
+    private let nonDbQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.name = "org.provenance.cloudsync.nonDbQueue"
+        q.qualityOfService = .utility
+        return q
+    }()
 
     /// CloudKit Container
     private let container: CKContainer
@@ -148,6 +184,35 @@ public class CloudSyncManager {
         }
         // Remove observers
         NotificationCenter.default.removeObserver(self)
+    }
+
+    // MARK: - Task Tracking
+
+    private func trackSyncTask(_ task: Task<Void, Never>) {
+        activeTasksLock.lock()
+        activeSyncTasks.append(task)
+        activeTasksLock.unlock()
+    }
+
+    private func cancelAllActiveSyncTasks() {
+        activeTasksLock.lock()
+        let tasks = activeSyncTasks
+        activeSyncTasks.removeAll()
+        activeTasksLock.unlock()
+        tasks.forEach { $0.cancel() }
+    }
+
+    private func enqueueMetadataWork(_ work: @escaping @Sendable () async -> Void) {
+        let op = BlockOperation()
+        op.addExecutionBlock { [weak self, weak op] in
+            guard let self, let op, !op.isCancelled else { return }
+            let task = Task {
+                if Task.isCancelled || self.isPausedForEmulation { return }
+                await work()
+            }
+            self.trackSyncTask(task)
+        }
+        metadataQueue.addOperation(op)
     }
 
     // MARK: - CloudKit Settings Integration
@@ -360,6 +425,12 @@ public class CloudSyncManager {
     /// Start syncing
     /// - Returns: Async function completes when initial sync is done (or immediately if not needed/disabled)
     public func startSync() async {
+        // Hard guard: never start sync while emulation is paused
+        if isPausedForEmulation {
+            DLOG("[SYNC] startSync called while paused for emulation; skipping.")
+            return
+        }
+
         guard Defaults[.iCloudSync] else {
             DLOG("[SYNC] iCloud sync disabled, skipping startSync.")
             updateSyncStatus(.disabled)
@@ -390,13 +461,13 @@ public class CloudSyncManager {
 
         // Kick off remote changes fetch IMMEDIATELY to populate Realm with PVGame metadata on fresh installs
         updateSyncStatus(.downloading)
-        Task.detached { [weak self] in
+        enqueueMetadataWork { [weak self] in
             await self?.fetchRemoteChanges()
         }
 
         // Check for missing ROM files at startup (non-blocking)
-        Task.detached {
-            await self.checkForMissingROMFiles(force: false)
+        enqueueMetadataWork { [weak self] in
+            await self?.checkForMissingROMFiles(force: false)
         }
 
         // Proceed with initial sync (uploads) in parallel
@@ -431,6 +502,11 @@ public class CloudSyncManager {
     /// Fetch only remote changes without doing initial sync
     /// Useful for responding to CloudKit notifications
     public func fetchRemoteChangesOnly() async {
+        if isPausedForEmulation {
+            DLOG("[SYNC] fetchRemoteChangesOnly called while paused for emulation; skipping.")
+            return
+        }
+
         guard Defaults[.iCloudSync] else {
             DLOG("iCloud sync disabled, skipping fetchRemoteChangesOnly.")
             return
@@ -449,7 +525,9 @@ public class CloudSyncManager {
         updateSyncStatus(.downloading)
         DLOG("Fetching remote changes from CloudKit...")
 
-        await fetchRemoteChanges()
+        enqueueMetadataWork { [weak self] in
+            await self?.fetchRemoteChanges()
+        }
 
         updateSyncStatus(.idle)
         DLOG("Remote fetch complete.")
@@ -1158,18 +1236,21 @@ public class CloudSyncManager {
             notificationCenter: .default,
             errorHandler: errorHandler
         )
+        self.romsSyncer?.workQueue = romsQueue
 
         // 2. Initialize Save States Syncer using factory
         self.saveStatesSyncer = SyncProviderFactory.createSaveStatesSyncProvider(
             notificationCenter: .default,
             errorHandler: errorHandler
         )
+        self.saveStatesSyncer?.workQueue = saveStatesQueue
 
         // 3. Initialize BIOS Syncer using factory
         self.biosSyncer = SyncProviderFactory.createBIOSSyncProvider(
             notificationCenter: .default,
             errorHandler: errorHandler
         )
+        self.biosSyncer?.workQueue = biosQueue
         ILOG("[SYNC] BIOS syncer initialized: \(self.biosSyncer != nil ? "SUCCESS" : "FAILED")")
 
         // 4. Initialize Non-Database Syncer (CloudKit only for now)
@@ -1188,6 +1269,7 @@ public class CloudSyncManager {
             notificationCenter: .default,
             errorHandler: errorHandler
         )
+        self.nonDatabaseSyncer?.workQueue = nonDbQueue
 
         // TODO: Support partial init
 
@@ -1558,7 +1640,7 @@ public class CloudSyncManager {
     /// Checks all PVGame objects to verify if their local files exist
     /// If a file doesn't exist locally or lacks a CloudKit record, mark it for sync
     /// - Parameter force: Force check even for games that are already marked as not downloaded
-    @MainActor
+    //@MainActor
     public func checkForMissingROMFiles(force: Bool) async {
         guard Defaults[.iCloudSync], let romsSyncer = romsSyncer else {
             DLOG("iCloud sync disabled or syncer not available. Skipping missing ROM file check.")
@@ -1588,8 +1670,6 @@ public class CloudSyncManager {
 
             let batchSize = 50
             let totalGames = frozenGames.count
-            let mainRealm = RomDatabase.sharedInstance.realm
-
             for batchStart in stride(from: 0, to: totalGames, by: batchSize) {
                 let batchEnd = min(batchStart + batchSize, totalGames)
                 let batch = Array(frozenGames[batchStart..<batchEnd])
@@ -1616,13 +1696,13 @@ public class CloudSyncManager {
                     // THEN mark it for sync
                     if (!fileExists && recordExists) || (game.isDownloaded && !fileExists) {
                         await MainActor.run {
-                            markGameForSync(game: game, realm: mainRealm)
+                            markGameForSync(game: game)
                         }
                         markedGamesCount += 1
                     }
                     // If no CloudKit record exists but we have a local file, mark for upload
                     else if fileExists && !recordExists && game.md5Hash != nil {
-                        ILOG("Game \(game.title) has local file but no CloudKit record. Marking for upload.")
+                        ILOG("Game \(game.title) \(game.systemIdentifier) has local file but no CloudKit record. Marking for upload.")
                         Task {
                             do {
                                 try await uploadROM(for: game.freeze())
@@ -1700,14 +1780,11 @@ public class CloudSyncManager {
     ///   - game: The game to mark
     ///   - realm: The Realm instance to use
     @MainActor
-    private func markGameForSync(game: PVGame, realm: Realm) {
+    private func markGameForSync(game: PVGame) {
+        let realm = RomDatabase.sharedInstance.realm
+
         // Get live game reference on main thread
-        let liveGame: PVGame?
-        if game.isFrozen {
-            liveGame = game.thaw()
-        } else {
-            liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash)
-        }
+        let liveGame: PVGame? = game.isFrozen ? game.thaw() : realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash)
 
         guard let gameToUpdate = liveGame else {
             ELOG("Game failed to resolve for sync marking.")
@@ -1808,6 +1885,19 @@ public class CloudSyncManager {
         // Cancel any in-progress sync tasks
         metadataBootstrapTask?.cancel()
         integrityAuditTask?.cancel()
+        cancelAllActiveSyncTasks()
+
+        metadataQueue.isSuspended = true
+        romsQueue.isSuspended = true
+        saveStatesQueue.isSuspended = true
+        biosQueue.isSuspended = true
+        nonDbQueue.isSuspended = true
+
+        metadataQueue.cancelAllOperations()
+        romsQueue.cancelAllOperations()
+        saveStatesQueue.cancelAllOperations()
+        biosQueue.cancelAllOperations()
+        nonDbQueue.cancelAllOperations()
     }
 
     /// Resumes sync operations after emulation ends
@@ -1818,6 +1908,12 @@ public class CloudSyncManager {
 
         ILOG("CloudSyncManager: Resuming sync operations after emulation")
         isPausedForEmulation = false
+
+        metadataQueue.isSuspended = false
+        romsQueue.isSuspended = false
+        saveStatesQueue.isSuspended = false
+        biosQueue.isSuspended = false
+        nonDbQueue.isSuspended = false
 
         // Resume background sync tasks if enabled
         if Defaults[.iCloudSync] {

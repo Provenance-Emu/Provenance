@@ -41,54 +41,61 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     }
 
     private func fetchSaveStateMetadataRecords() async throws -> [CKRecord] {
-        var allRecords: [CKRecord] = []
-        var cursor: CKQueryOperation.Cursor?
-        let desiredKeys = [
-            CloudKitSchema.SaveStateFields.filename,
-            CloudKitSchema.SaveStateFields.systemIdentifier,
-            CloudKitSchema.SaveStateFields.gameID,
-            CloudKitSchema.SaveStateFields.coreIdentifier,
-            CloudKitSchema.SaveStateFields.coreVersion,
-            CloudKitSchema.SaveStateFields.fileSize,
-            CloudKitSchema.SaveStateFields.lastUploadedDate,
-            CloudKitSchema.SaveStateFields.directory,
-            CloudKitSchema.SaveStateFields.imageAsset
-        ]
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Emulation pause active, skipping save state metadata query")
+            return []
+        }
 
-        repeat {
-            let (batch, nextCursor): ([CKRecord], CKQueryOperation.Cursor?) = try await withCheckedThrowingContinuation { continuation in
-                let operation: CKQueryOperation
-                if let cursor = cursor {
-                    operation = CKQueryOperation(cursor: cursor)
-                } else {
-                    let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
-                    operation = CKQueryOperation(query: query)
-                }
+        return try await runSaveStateQueue { [self] in
+            var allRecords: [CKRecord] = []
+            var cursor: CKQueryOperation.Cursor?
+            let desiredKeys = [
+                CloudKitSchema.SaveStateFields.filename,
+                CloudKitSchema.SaveStateFields.systemIdentifier,
+                CloudKitSchema.SaveStateFields.gameID,
+                CloudKitSchema.SaveStateFields.coreIdentifier,
+                CloudKitSchema.SaveStateFields.coreVersion,
+                CloudKitSchema.SaveStateFields.fileSize,
+                CloudKitSchema.SaveStateFields.lastUploadedDate,
+                CloudKitSchema.SaveStateFields.directory,
+                CloudKitSchema.SaveStateFields.imageAsset
+            ]
 
-                operation.desiredKeys = desiredKeys
-                operation.resultsLimit = 100
-
-                var batchRecords: [CKRecord] = []
-                operation.recordFetchedBlock = { record in
-                    batchRecords.append(record)
-                }
-
-                operation.queryCompletionBlock = { cursor, error in
-                    if let error = error {
-                        continuation.resume(throwing: error)
+            repeat {
+                let (batch, nextCursor): ([CKRecord], CKQueryOperation.Cursor?) = try await withCheckedThrowingContinuation { continuation in
+                    let operation: CKQueryOperation
+                    if let cursor = cursor {
+                        operation = CKQueryOperation(cursor: cursor)
                     } else {
-                        continuation.resume(returning: (batchRecords, cursor))
+                        let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
+                        operation = CKQueryOperation(query: query)
                     }
+
+                    operation.desiredKeys = desiredKeys
+                    operation.resultsLimit = 100
+
+                    var batchRecords: [CKRecord] = []
+                    operation.recordFetchedBlock = { record in
+                        batchRecords.append(record)
+                    }
+
+                    operation.queryCompletionBlock = { cursor, error in
+                        if let error = error {
+                            continuation.resume(throwing: error)
+                        } else {
+                            continuation.resume(returning: (batchRecords, cursor))
+                        }
+                    }
+
+                    self.privateDatabase.add(operation)
                 }
 
-                self.privateDatabase.add(operation)
-            }
+                allRecords.append(contentsOf: batch)
+                cursor = nextCursor
+            } while cursor != nil
 
-            allRecords.append(contentsOf: batch)
-            cursor = nextCursor
-        } while cursor != nil
-
-        return allRecords
+            return allRecords
+        }
     }
 
     /// Check if a file is downloaded locally
@@ -117,6 +124,10 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         return "SaveState"
     }
 
+    /// Route save-state CloudKit work through the pausable queue.
+    private func runSaveStateQueue<T>(_ work: @escaping @Sendable () async throws -> T) async throws -> T {
+        try await runOnQueue(work)
+    }
 
 
     /// Get the local URL for a save state
@@ -194,6 +205,13 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             Task {
                 do {
+                    // Check if paused for emulation
+                    if await CloudSyncManager.shared.isPausedForEmulation {
+                        ILOG("CloudKitSaveStatesSyncer: Skipping uploadSaveState - paused for emulation")
+                        observer(.completed)
+                        return
+                    }
+
                     // Upload the file to CloudKit
                     guard let game = saveState.game else {
                         // Game unlinked for whatever reason
@@ -550,6 +568,31 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Returns: Number of records processed.
     @discardableResult
     public func syncMetadataOnly() async -> Int {
+        if let queue = workQueue {
+            return await withCheckedContinuation { continuation in
+                let op = BlockOperation()
+                op.addExecutionBlock { [weak self, weak op] in
+                    guard let self, let op, !op.isCancelled else {
+                        continuation.resume(returning: 0)
+                        return
+                    }
+                    Task {
+                        let result = await self.syncMetadataOnlyBody()
+                        continuation.resume(returning: result)
+                    }
+                }
+                queue.addOperation(op)
+            }
+        } else {
+            return await syncMetadataOnlyBody()
+        }
+    }
+
+    private func syncMetadataOnlyBody() async -> Int {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Save state metadata sync skipped (paused for emulation)")
+            return 0
+        }
         let startTime = Date()
         ILOG("[SYNC] Starting save state metadata-only sync...")
 
@@ -567,7 +610,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             for batch in batches {
                 batchIndex += 1
-                if Task.isCancelled { break }
+                if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
 
                 // Process batch concurrently
                 await withTaskGroup(of: Void.self) { group in
@@ -1080,15 +1123,55 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             frozenSaveState.game?.title ??
             (frozenSaveState.file?.fileName ?? "Save State")
 
+        // Short-circuit if we already have this record locally and it's fresh
+        if let cloudMod = cloudRecord.modificationDate {
+            do {
+                let needsDownload = try await RealmContext.withBackgroundRealm { realm -> Bool in
+                    guard let live = realm.object(ofType: PVSaveState.self, forPrimaryKey: frozenSaveState.id) else {
+                        return true
+                    }
+                    let fileURL = live.file?.url
+                    let exists = fileURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
+                    guard exists else { return true }
+
+                    let mtime: Date? = {
+                        guard let path = fileURL?.path,
+                              let attrs = try? FileManager.default.attributesOfItem(atPath: path),
+                              let d = attrs[.modificationDate] as? Date else { return nil }
+                        return d
+                    }()
+
+                    let baseline = max(live.lastUploadedDate ?? live.date, mtime ?? live.date)
+                    let diff = cloudMod.timeIntervalSince(baseline)
+                    return diff > 1.0
+                }
+                if !needsDownload {
+                    DLOG("[SYNC] Save state already present and up to date, skipping download queue: \(recordID)")
+                    return
+                }
+            } catch {
+                WLOG("Failed freshness check for save state \(recordID): \(error.localizedDescription)")
+            }
+        }
+
         do {
             try await self.withRealm { realm in
-                try realm.write {
-                    guard let thawed = frozenSaveState.thaw() else {
-                        ELOG("[SYNC] Save state thaw failed for marking download")
-                        return
+                guard let live = frozenSaveState.thaw() else {
+                    ELOG("[SYNC] Save state thaw failed for marking download")
+                    return
+                }
+
+                let applyChanges: (PVSaveState) -> Void = { target in
+                    target.isDownloaded = false
+                    target.cloudRecordID = recordID
+                }
+
+                if realm.isInWriteTransaction {
+                    applyChanges(live)
+                } else {
+                    try realm.write {
+                        applyChanges(live)
                     }
-                    thawed.isDownloaded = false
-                    thawed.cloudRecordID = recordID
                 }
             }
         } catch {

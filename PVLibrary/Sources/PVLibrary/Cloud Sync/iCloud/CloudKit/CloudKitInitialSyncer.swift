@@ -753,6 +753,11 @@ public actor CloudKitInitialSyncer {
     // TODO: I would prefer this not be main actor, but realm keeps crashing, even making a local realm @JoeMatt
     @MainActor
     private func syncAllBIOSFiles(forceSync: Bool = false) async -> Int {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[BIOS SYNC] Skipping BIOS sync - paused for emulation")
+            return 0
+        }
+
         DLOG("Syncing all BIOS files to CloudKit...")
 
         do {

@@ -102,6 +102,8 @@ public final class DirectoryWatcher: ObservableObject {
     private var extractingFiles: Set<URL> = []
     private let extractingFilesLock = NSLock()
     private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
+    /// Buffered events to replay after emulation pause
+    private var bufferedEvents: [URL] = []
 
     /// The extractors for the supported archive types
     private let extractors: [ArchiveType: ArchiveExtractor] = [
@@ -789,13 +791,34 @@ fileprivate extension DirectoryWatcher {
             )
             ILOG("Found \(contents.count) items in directory after file system event (including subdirectories: \(options.includeSubdirectories))")
 
+            // Defer processing during emulation pause, but remember what arrived
+            let importerPaused = await MainActor.run { GameImporter.shared.isPausedForEmulation }
+            if CloudSyncManager.shared.isPausedForEmulation || importerPaused {
+                bufferedEvents.append(contentsOf: contents)
+                ILOG("Deferring directory events while emulation paused. Buffered total: \(bufferedEvents.count)")
+                return
+            }
+
             let isImportsFolder = watchedDirectory.path.contains("/Imports/")
 
             // Filter to only actual files (not directories)
-            let filesOnly = contents.filter { item in
+            var filesOnly = contents.filter { item in
                 guard isValidFile(item) else { return false }
                 var isDirectory: ObjCBool = false
                 return FileManager.default.fileExists(atPath: item.path, isDirectory: &isDirectory) && !isDirectory.boolValue
+            }
+
+            // Merge any buffered events collected during pause
+            if !bufferedEvents.isEmpty {
+                var seenPaths = Set<String>()
+                let merged = filesOnly + bufferedEvents
+                filesOnly = merged.compactMap { url in
+                    let path = url.path.lowercased()
+                    guard !seenPaths.contains(path) else { return nil }
+                    seenPaths.insert(path)
+                    return url
+                }
+                bufferedEvents.removeAll()
             }
 
             for file in filesOnly {

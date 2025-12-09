@@ -801,6 +801,13 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     public func addImports(forPaths paths: [URL], targetSystem: SystemIdentifier) async {
+        // Check if paused for emulation
+        let pausedForEmulation = await MainActor.run { isPausedForEmulation }
+        if pausedForEmulation {
+            ILOG("GameImporter: Skipping addImports - paused for emulation")
+            return
+        }
+
         var newItems: [ImportQueueItem] = []
         for path in paths {
             var item = ImportQueueItem(url: path, fileType: .unknown)
@@ -3220,6 +3227,13 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// - Parameter items: Items to check
     /// - Returns: Set of URLs that already exist in database with valid local files
     private func batchCheckExistingGames(_ items: [ImportQueueItem]) async -> Set<URL> {
+        // Check if paused for emulation
+        let pausedForEmulation = await MainActor.run { isPausedForEmulation }
+        if pausedForEmulation {
+            ILOG("GameImporter: Skipping batchCheckExistingGames - paused for emulation")
+            return []
+        }
+
         do {
             try await RealmProvider.ensureInitialized()
         } catch {
@@ -3482,7 +3496,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             // For ROM files, check if we already have a matching game entry in the database
             // Skip expensive check if userChosenSystem is set (meaning it came from scan and was already batch-checked)
-            if item.userChosenSystem == nil {
+//            if item.userChosenSystem == nil {
                 let isInImportsFolder = item.url.path.contains("/Imports/")
 
                 if isInImportsFolder {
@@ -3496,14 +3510,14 @@ public final class GameImporter: GameImporting, ObservableObject {
                         return
                     }
                 }
-            } else {
-                VLOG("GameImportQueue - Skipping duplicate check for \(item.url.lastPathComponent) (already batch-checked with userChosenSystem)")
-            }
+//            } else {
+//                VLOG("GameImportQueue - Skipping duplicate check for \(item.url.lastPathComponent) (already batch-checked with userChosenSystem)")
+//            }
 
             // Check if this is a late-arriving file that belongs to an already processed M3U or CUE
             // Only check for CD-ROM related files to avoid expensive queue iteration for regular ROMs
             // Skip this check for files in Imports folder (they're new files, not late arrivals)
-            let isInImportsFolder = item.url.path.contains("/Imports/")
+            //let isInImportsFolder = item.url.path.contains("/Imports/")
             if !isInImportsFolder && (fileType == .cdRom || item.url.pathExtension.lowercased() == Extensions.bin.rawValue) {
                 let currentQueue = await importQueueActor.getQueue()
                 let successfulItems = currentQueue.filter { $0.status == .success }
@@ -3623,16 +3637,26 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("GameImportQueue - Pausing import processing for emulation")
             isPausedForEmulation = true
 
+            workQueue.isSuspended = true
+            serialImportQueue.isSuspended = true
+
             // Also pause normal processing if it's running
             if processingState == .processing {
                 processingState = .paused
                 updateImporterStatus("Import paused for emulation")
 
-                // Cancel timeout task when pausing to avoid false timeout triggers
+                // Cancel any in-flight processing immediately
                 processingTaskLock.lock()
+                currentProcessingTask?.cancel()
+                currentProcessingTask = nil
                 currentTimeoutTask?.cancel()
                 currentTimeoutTask = nil
+                processingStartTime = nil
                 processingTaskLock.unlock()
+
+                // Cancel queued operations so nothing continues
+                workQueue.cancelAllOperations()
+                serialImportQueue.cancelAllOperations()
             }
         }
     }
@@ -3645,6 +3669,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             ILOG("GameImportQueue - Resuming import processing after emulation")
             isPausedForEmulation = false
+
+            workQueue.isSuspended = false
+            serialImportQueue.isSuspended = false
 
             // Resume processing if there are queued items
             let queueSnapshot = await importQueueActor.getQueue()

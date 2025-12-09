@@ -35,6 +35,8 @@ public enum CloudSyncError: Error {
     case downloadQueueFull
     case assetTooLarge(size: Int64, maxSize: Int64)
     case networkUnavailable
+ 
+    case pausedForEmulation
 }
 
 extension CloudSyncError: LocalizedError {
@@ -87,6 +89,8 @@ extension CloudSyncError: LocalizedError {
             return "Asset too large: \(ByteCountFormatter.string(fromByteCount: size, countStyle: .file)) > \(ByteCountFormatter.string(fromByteCount: maxSize, countStyle: .file))"
         case .networkUnavailable:
             return "Network unavailable"
+        case .pausedForEmulation:
+            return "Paused for emulation"
         }
     }
 }

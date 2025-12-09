@@ -20,6 +20,12 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
     public var initialSyncResult: SyncResult = .indeterminate
     public var purgeStatus: DatastorePurgeStatus = .incomplete
     public var status: ConcurrentSingle<iCloudSyncStatus> = .init(.initialUpload)
+    public var workQueue: OperationQueue? = {
+        let q = OperationQueue()
+        q.name = "org.provenance.cloudsync.icloudcontainer.queue"
+        q.qualityOfService = .utility
+        return q
+    }()
 
     public lazy var newFiles: ConcurrentSet<URL> = []
     public lazy var pendingFilesToDownload: ConcurrentSet<URL> = []
@@ -36,7 +42,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             await newFiles.count
         }
     }
-    
+
     public init(directories: Set<String>,
                 notificationCenter: NotificationCenter = .default,
                 errorHandler: SyncErrorHandler) {
@@ -46,7 +52,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         // Register with the syncer store
         SyncerStore.shared.register(syncer: self)
     }
-    
+
     func stopObserving() {
         // Unregister from the syncer store
         SyncerStore.shared.unregister(syncer: self)
@@ -56,7 +62,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         querySubscriber?.cancel()
     }
-    
+
     var canPurgeDatastore: Bool {
         get async {
             let arePendingFilesToDownloadEmpty = await pendingFilesToDownload.isEmpty
@@ -71,7 +77,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             && areNewFilesEmpty
         }
     }
-    
+
     var alliCloudDirectories: [URL: URL]!
     var localAndCloudDirectories: [URL: URL] {
         guard alliCloudDirectories == nil
@@ -88,9 +94,9 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         return alliCloudDirectories
     }
-    
+
     public let metadataQuery: NSMetadataQuery = .init()
-    
+
     public func insertDownloadingFile(_ file: URL) async -> URL? {
         guard await !uploadedFiles.contains(file)
         else {
@@ -99,15 +105,15 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         await pendingFilesToDownload.insert(file)
         return file
     }
-    
+
     public func insertDownloadedFile(_ file: URL) async {
         await pendingFilesToDownload.remove(file)
     }
-    
+
     public func insertUploadedFile(_ file: URL) async {
         await uploadedFiles.insert(file)
     }
-    
+
     public func setNewCloudFilesAvailable() async {
         if await pendingFilesToDownload.isEmpty {
             await status.set(value: .filesAlreadyMoved)
@@ -117,11 +123,11 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         let statusDescription = await status.description
         DLOG("\(directories): status: \(statusDescription), uploadedFiles: \(uploadedCount)")
     }
-    
+
     public func deleteFromDatastore(_ file: URL) async {
         //no-op
     }
-    
+
     public func prepareNextBatchToProcess() async -> any Collection<URL> {
         var newFilesCount = await newFiles.count
         DLOG("\(directories): newFiles: (\(newFilesCount)):")
@@ -138,11 +144,11 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         return nextFilesToProcess
     }
-    
+
     public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
         await loadAllFromICloud(iterationComplete: iterationComplete)
     }
-    
+
     public func loadAllFromICloud(iterationComplete: (() async -> Void)? = nil) async -> Completable {
         initialSyncResult = await syncToiCloud()
         return Completable.create { [weak self] completable in
@@ -150,7 +156,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             return Disposables.create()
         }
     }
-    
+
     func setupObservers(completable: PrimitiveSequenceType.CompletableObserver, iterationComplete: (() async -> Void)? = nil) {
         DLOG("\(directories) syncToiCloud result: \(initialSyncResult)")
         guard initialSyncResult != .saveFailure,
@@ -186,7 +192,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             self?.metadataQuery.start()
         }
     }
-    
+
     func queryFinished(notification: Notification) async {
         DLOG("directories: \(directories)")
         guard (notification.object as? NSMetadataQuery) === metadataQuery,
@@ -251,7 +257,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         ILOG("\(notification.name): \(directories): current iteration: files pending to be downloaded: \(pendingFilesToDownloadCount), files downloaded pending to process: \(totalDownloadedCount)")
         await hitiCloud(with: .wrench)
     }
-    
+
     /// When there's a large library, thousands of files, but even 500+ files, the innitial download starts, but we do NOT get the events when the download completes. So we have to disable/stop and then start again and that does the trick. We only do this initially, ie the first time the user taps on the icloud switch or when the app opens for the first time and icloud is enabled. after the initial process, we don't do this because small chunks of updates work. this is essentially the equiv of hitting hardware with a wrench when it doesn't work.
     func hitiCloud(with tool: iCloudHittingTool) async {
         guard await status.value == .initialUpload
@@ -266,7 +272,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             self?.metadataQuery.start()
         }
     }
-    
+
     func handleFileToDownload(_ file: URL, isDownloading: Bool, percentDownload: Double) async {
         do {//only start download if we haven't already started
             if let fileToDownload = await insertDownloadingFile(file),
@@ -287,7 +293,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             ELOG("Failed to start download on file \(file.pathDecoded): \(error)")
         }
     }
-    
+
     func handleDownloadedFile(_ file: URL) async {
         DLOG("item up to date: \(file)")
         if !fileManager.fileExists(atPath: file.pathDecoded) {
@@ -299,7 +305,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         }
         await insertDownloadedFile(file)
     }
-    
+
     func syncToiCloud() async -> SyncResult {
         let allDirectories = localAndCloudDirectories
         guard allDirectories.count > 0
@@ -331,7 +337,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
          }
          return moveResult ?? .success*/
     }
-    
+
     @discardableResult
     func removeFromiCloud() async -> SyncResult {
         stopObserving()
@@ -356,9 +362,9 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                 } catch {
                     /*
                      this usually just happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download. In this case the icloud file wouldn't be removed locally, but the file does get copied to the local container properly. Here's a sample Error:
-                     
+
                      Error Domain=NSCocoaErrorDomain Code=255 "The file couldn’t be locked." UserInfo={NSUnderlyingError=0x3046f1740 {Error Domain=NSPOSIXErrorDomain Code=16 "Resource busy" UserInfo={NSURL=file:///some/path/file.extension, NSLocalizedDescription=The file ‘file.extension’ is currently in use by an application.}}}
-                     
+
                      of course there could be a real error when this happens, but this is significant enough to document in case you see it in the log.
                      */
                     await errorHandler.handleError(error, file: existing)
@@ -380,7 +386,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         result = moveResult ?? .success
         return result
     }
-    
+
     //TODO: refactor this so it's not static.
     static func moveFiles(at source: URL,
                           containerDestination: URL,
@@ -408,7 +414,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         DLOG("subdirectories of \(source): \(subdirectories)")
         for currentChild in subdirectories {
             let currentItem = source.appendingPathComponent(currentChild)
-            
+
             var isDirectory: ObjCBool = false
             let exists = fileManager.fileExists(atPath: currentItem.pathDecoded, isDirectory: &isDirectory)
             DLOG("\(currentItem) isDirectory?\(isDirectory) exists?\(exists)")
@@ -441,16 +447,16 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                 if destinationPath.contains("/Documents/") {
                     let fallbackPath = destinationPath.replacingOccurrences(of: "/Documents/", with: "/")
                     let fallbackDestination = URL(fileURLWithPath: fallbackPath)
-                    
+
                     DLOG("#\(totalMoved) First move failed, trying fallback path: \(fallbackDestination.pathDecoded)")
-                    
+
                     do {
                         // Create parent directory for fallback destination if needed
                         let fallbackParent = fallbackDestination.deletingLastPathComponent()
                         if !fileManager.fileExists(atPath: fallbackParent.pathDecoded) {
                             try fileManager.createDirectory(atPath: fallbackParent.pathDecoded, withIntermediateDirectories: true)
                         }
-                        
+
                         await try moveClosure(currentItem, fallbackDestination)
                         await insertUploadedFileClosure?(fallbackDestination)
                         DLOG("#\(totalMoved) Fallback move succeeded to \(fallbackDestination.pathDecoded)")

@@ -79,6 +79,38 @@ public class CloudKitSyncer: SyncProvider {
     public lazy var newFiles: ConcurrentSet<URL> = []
     public lazy var uploadedFiles: ConcurrentSet<URL> = []
 
+    /// Optional operation queue for pausable/cancellable scheduling
+    public var workQueue: OperationQueue?
+
+    /// Execute work on the configured operation queue if present, otherwise run inline.
+    /// This allows all IO (network/file) to be serialized/suspended with emulation pauses.
+    @discardableResult
+    internal func runOnQueue<T>(_ work: @escaping @Sendable () async throws -> T) async throws -> T {
+        guard let queue = workQueue else {
+            return try await work()
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let op = BlockOperation()
+            op.addExecutionBlock { [weak op] in
+                guard let op, !op.isCancelled else {
+                    continuation.resume(throwing: CloudSyncError.genericError("Operation cancelled"))
+                    return
+                }
+                Task {
+                    do {
+                        if Task.isCancelled { throw CloudSyncError.genericError("Task cancelled") }
+                        let result = try await work()
+                        continuation.resume(returning: result)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+            queue.addOperation(op)
+        }
+    }
+
     // File type extensions
     private let saveStateExtensions = ["svs"]
 
@@ -318,15 +350,18 @@ public class CloudKitSyncer: SyncProvider {
     /// Fetch all records from CloudKit
     /// - Returns: Array of CloudKit records
     internal func fetchAllRecords() async throws -> [CKRecord] {
-        // Fetch all records for the directories we're responsible for
-        return try await fetchRecordsForDirectories()
+        return try await runOnQueue { [self] in
+            try await fetchRecordsForDirectories()
+        }
     }
 
     /// Fetch records of the primary type (`.file`) for a specific directory from the private database.
     /// - Parameter directory: The directory name to filter records by.
     /// - Returns: An array of CKRecord objects matching the directory.
     internal func fetchAllRecords(for directory: String) async throws -> [CKRecord] {
-        try await fetchAllRecords(recordType: CloudKitSyncer.RecordType.file, directory: directory)
+        return try await runOnQueue { [self] in
+            try await fetchAllRecords(recordType: CloudKitSyncer.RecordType.file, directory: directory)
+        }
     }
 
     /// Fetches all records of a specific type, optionally filtered by directory, from the private database.
@@ -335,6 +370,35 @@ public class CloudKitSyncer: SyncProvider {
     /// - Parameter directory: The directory name to filter records by.
     /// - Returns: An array of CKRecord objects matching the type and directory.
     internal func fetchAllRecords(recordType: String? = nil, directory: String? = nil) async throws -> [CKRecord] {
+        if let queue = workQueue {
+            return try await withCheckedThrowingContinuation { continuation in
+                let op = BlockOperation()
+                op.addExecutionBlock { [weak self, weak op] in
+                    guard let self, let op, !op.isCancelled else {
+                        continuation.resume(throwing: CloudSyncError.genericError("Operation cancelled"))
+                        return
+                    }
+                    Task {
+                        do {
+                            if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation {
+                                throw CloudSyncError.pausedForEmulation
+                            }
+                            let result = try await self.fetchAllRecords(recordType: recordType, directory: directory, bypassQueue: true)
+                            continuation.resume(returning: result)
+                        } catch {
+                            continuation.resume(throwing: error)
+                        }
+                    }
+                }
+                queue.addOperation(op)
+            }
+        }
+
+        return try await fetchAllRecords(recordType: recordType, directory: directory, bypassQueue: true)
+    }
+
+    /// Internal variant that assumes caller handled queueing
+    private func fetchAllRecords(recordType: String? = nil, directory: String? = nil, bypassQueue: Bool) async throws -> [CKRecord] {
         // Base predicate
         let basePredicate = NSPredicate(value: true)
         let finalPredicate: NSPredicate
@@ -785,6 +849,27 @@ public class CloudKitSyncer: SyncProvider {
     ///   - filename: The filename
     ///   - record: The CloudKit record
     private func downloadFile(from fileURL: URL, to directory: String, filename: String, record: CKRecord) async {
+        if let queue = workQueue {
+            await withCheckedContinuation { continuation in
+                let op = BlockOperation()
+                op.addExecutionBlock { [weak self, weak op] in
+                    guard let self, let op, !op.isCancelled else {
+                        continuation.resume()
+                        return
+                    }
+                    Task {
+                        await self.downloadFileBody(from: fileURL, to: directory, filename: filename, record: record)
+                        continuation.resume()
+                    }
+                }
+                queue.addOperation(op)
+            }
+        } else {
+            await downloadFileBody(from: fileURL, to: directory, filename: filename, record: record)
+        }
+    }
+
+    private func downloadFileBody(from fileURL: URL, to directory: String, filename: String, record: CKRecord) async {
         // Log the download start
         CloudSyncLogManager.shared.logSyncOperation(
             "Starting download of file: \(filename) from CloudKit",
@@ -1451,6 +1536,7 @@ public class CloudKitSyncer: SyncProvider {
     ///   - systemID: Optional system identifier to associate with the record.
     /// - Returns: The saved CloudKit record.
     public func uploadFile(_ file: URL, gameID: String? = nil, systemID: SystemIdentifier? = nil) async throws -> CKRecord {
+        return try await runOnQueue {
         // Respect emulation pause: do not upload while emulation is running
         if CloudSyncManager.shared.isPausedForEmulation {
             WLOG("CloudKitSyncer: Upload skipped during emulation pause for file: \(file.lastPathComponent)")
@@ -1487,9 +1573,17 @@ public class CloudKitSyncer: SyncProvider {
                             throw NSError(domain: "com.provenance-emu.provenance", code: 3, userInfo: [NSLocalizedDescriptionKey: "Failed to get file attributes"])
                         }
 
-                        let filename = file.lastPathComponent
-                        let directory = file.deletingLastPathComponent().lastPathComponent
-                        let relativePath = self.calculateRelativePath(for: file, in: directory) ?? ""
+                        // Resolve the top-level sync directory (e.g., "DeltaSkins", "ROMs", "BIOS")
+                        let pathComponents = file.pathComponents
+                        guard let baseIndex = pathComponents.firstIndex(where: { self.directories.contains($0) }),
+                              baseIndex < pathComponents.count - 1 else {
+                            ELOG("Unable to resolve base sync directory for \(file.path)")
+                            throw NSError(domain: "com.provenance-emu.provenance", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid sync path"])
+                        }
+
+                        let directory = pathComponents[baseIndex]
+                        let relativePath = pathComponents.suffix(from: baseIndex + 1).joined(separator: "/")
+                        let filename = relativePath
 
                         // Find existing record or create new one
                         await progressTracker.updateProgress(0.2)
@@ -1600,6 +1694,7 @@ public class CloudKitSyncer: SyncProvider {
                 await CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
                 throw error
             }
+        }
         }
     }
 

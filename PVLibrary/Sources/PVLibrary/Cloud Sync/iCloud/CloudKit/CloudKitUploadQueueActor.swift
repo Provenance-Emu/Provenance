@@ -362,6 +362,8 @@ public actor CloudKitUploadQueueActor {
                 return "Asset too large: \(ByteCountFormatter.string(fromByteCount: size, countStyle: .file)) > \(ByteCountFormatter.string(fromByteCount: maxSize, countStyle: .file))"
             case .networkUnavailable:
                 return "Network unavailable"
+            case .pausedForEmulation:
+                return "Paused for emulation"
             }
         }
 

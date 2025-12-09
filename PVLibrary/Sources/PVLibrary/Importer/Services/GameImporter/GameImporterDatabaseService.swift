@@ -121,6 +121,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             // Otherwise, just update the relative path
             DLOG("Updating relative path for existing game")
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
+            return
         } else {
             // Check if this is a duplicate by MD5 hash
             if let md5 = queueItem.md5?.uppercased() {
