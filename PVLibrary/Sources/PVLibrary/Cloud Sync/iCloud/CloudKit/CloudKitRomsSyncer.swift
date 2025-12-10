@@ -2015,11 +2015,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Get artwork for a game
     /// - Parameter md5: The MD5 hash of the game to get artwork for
-    /// Note: Downloads happen on background thread, only Realm writes on main thread
+    /// Note: All Realm work is off the main thread; only UI logging happens on main.
     private func getArtwork(forGameMD5 md5: String) async {
-        // Fetch game info on main thread (quick Realm read)
-        let gameInfo: (md5Hash: String, title: String, originalArtworkURL: String)? = await MainActor.run {
-            guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+        // Fetch game info on a background realm to avoid blocking the main thread.
+        let gameInfo: (md5Hash: String, title: String, originalArtworkURL: String)? = try? await RealmContext.withBackgroundRealm { realm in
+            guard let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first else {
                 return nil
             }
             return (md5Hash: game.md5Hash, title: game.title, originalArtworkURL: game.originalArtworkURL)
@@ -2042,9 +2042,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 // If we found a custom artwork key, set it as the customArtworkURL
                 if let _ = PVMediaCache.filePath(forKey: customArtworkKey) {
                     DLOG("Setting custom artwork URL")
-                    await MainActor.run {
-                        try? RomDatabase.sharedInstance.writeTransaction {
-                            guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                    try? await RealmContext.withBackgroundRealm { realm in
+                        guard let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first else { return }
+                        try? realm.write {
                             game.customArtworkURL = customArtworkKey
                         }
                     }
@@ -2064,9 +2064,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
                 let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
-                await MainActor.run {
-                    try? RomDatabase.sharedInstance.writeTransaction {
-                        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                try? await RealmContext.withBackgroundRealm { realm in
+                    guard let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first else { return }
+                    try? realm.write {
                         game.originalArtworkFile = file
                     }
                 }
@@ -2094,9 +2094,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // Create image file and assign to game on main thread
             if let localURL = PVMediaCache.filePath(forKey: url) {
                 let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
-                await MainActor.run {
-                    try? RomDatabase.sharedInstance.writeTransaction {
-                        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                try? await RealmContext.withBackgroundRealm { realm in
+                    guard let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first else { return }
+                    try? realm.write {
                         game.originalArtworkFile = file
                     }
                 }
