@@ -830,6 +830,11 @@ public extension PVGameLibraryUpdatesController {
 
             ILOG("Copied file from \(sourceURL.path) to \(destinationURL.path)")
 
+            // Immediately enqueue the copied file for import to avoid relying solely on watchers
+            Task {
+                await GameImporter.shared.addImports(forPaths: [destinationURL])
+            }
+
         } catch {
             // Mark as failed
             await FileCopyProgressTracker.shared.completeCopyOperation(
