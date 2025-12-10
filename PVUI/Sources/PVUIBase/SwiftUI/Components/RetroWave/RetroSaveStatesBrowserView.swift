@@ -116,8 +116,9 @@ public final class RetroSaveStatesStore: ObservableObject {
                     continuation.resume(returning: nil)
                     return
                 }
+                let localURL = self.ensureLocalAvailability(for: url)
                 let scale = UIScreen.main.scale
-                let downsampled = self.downsampleImage(at: url, to: targetSize, scale: scale)
+                let downsampled = localURL.flatMap { self.downsampleImage(at: $0, to: targetSize, scale: scale) }
                 if let downsampled {
                     self.imageCache.setObject(downsampled, forKey: cacheKey)
                 }
@@ -190,6 +191,21 @@ public final class RetroSaveStatesStore: ObservableObject {
         guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, downsampleOptions) else { return nil }
         return UIImage(cgImage: cgImage)
     }
+
+    /// Ensure the file exists locally; if it's a ubiquitous item, trigger download.
+    private func ensureLocalAvailability(for url: URL) -> URL? {
+        let fm = FileManager.default
+        var isDirectory: ObjCBool = false
+        if fm.fileExists(atPath: url.path, isDirectory: &isDirectory), !isDirectory.boolValue {
+            return url
+        }
+
+        // Attempt to trigger iCloud download if needed
+        if fm.isUbiquitousItem(at: url) {
+            try? fm.startDownloadingUbiquitousItem(at: url)
+        }
+        return fm.fileExists(atPath: url.path) ? url : nil
+    }
 }
 
 /// Compact card for a single save state
@@ -219,7 +235,12 @@ struct RetroSaveStateCard: View {
             )
             .shadow(color: .black.opacity(0.4), radius: 6, x: 0, y: 4)
         }
+        #if os(tvOS)
+        .buttonStyle(.card)
+        .focusable()
+        #else
         .buttonStyle(.plain)
+        #endif
         .task {
             if thumbnail == nil {
                 thumbnail = await store.thumbnail(for: item, targetSize: cardSize)
@@ -327,11 +348,13 @@ struct RetroRecentSaveStatesStrip: View {
                         }
                         #if os(tvOS)
                         .focused($focusedID, equals: item.id)
-                        .focusable()
                         #endif
                     }
                 }
                 .padding(.vertical, 4)
+                #if os(tvOS)
+                .focusSection()
+                #endif
             }
         }
         .padding()
@@ -343,6 +366,9 @@ struct RetroRecentSaveStatesStrip: View {
                         .stroke(Color.retroBlue.opacity(0.3), lineWidth: 1)
                 )
         )
+        #if os(tvOS)
+        .defaultFocus($focusedID, items.first?.id)
+        #endif
     }
 }
 
@@ -355,6 +381,7 @@ public struct RetroSaveStatesBrowserView: View {
 
     @State private var items: [RetroSaveStateItem] = []
     @State private var isLoading = true
+    @FocusState private var focusedSaveID: String?
 
     public init(
         systemID: String,
@@ -393,22 +420,31 @@ public struct RetroSaveStatesBrowserView: View {
                                         }
                                         #if os(tvOS)
                                         .focusable()
-                                        .focusSection()
+                                        .focused($focusedSaveID, equals: item.id)
                                         #endif
                                     }
                                 }
                                 .padding(.horizontal)
+                                #if os(tvOS)
+                                .focusSection()
+                                #endif
                             }
                         }
                     }
                 }
             }
             .padding(.vertical)
+            #if os(tvOS)
+            .focusSection()
+            #endif
         }
         .navigationTitle(gameFilter == nil ? "\(systemName) Saves" : "Saves for \(gameFilter?.title ?? "")")
         .task {
             await load()
         }
+        #if os(tvOS)
+        .defaultFocus($focusedSaveID, items.first?.id)
+        #endif
     }
 
     private func load() async {
