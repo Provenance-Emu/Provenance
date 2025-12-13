@@ -28,12 +28,12 @@ public class MissingArtworkCacheManager {
     /// URL for the disk cache directory
     private let diskCacheURL: URL
 
-    /// Maximum number of disk-cached images to keep
-    private let maxDiskCachedImages = 100
+    /// Maximum number of disk-cached images to keep - increased for better hit rates
+    private let maxDiskCachedImages = 500
 
     private init() {
-        // Set up memory cache limits
-        memoryCache.countLimit = 50
+        // Set up memory cache limits - increased for better hit rates
+        memoryCache.countLimit = 200
 
         // Create disk cache directory in the caches folder
         let cachesDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
@@ -71,12 +71,14 @@ public class MissingArtworkCacheManager {
 
         // If not in memory, check disk cache
         let fileURL = diskURL(for: key as String)
-        if FileManager.default.fileExists(atPath: fileURL.path),
-           let data = try? Data(contentsOf: fileURL),
-           let image = SwiftImage(data: data) {
-            // Store in memory cache for faster access next time
-            memoryCache.setObject(image, forKey: key)
-            return image
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            /// Use background queue for disk reads to avoid blocking main thread
+            if let data = try? Data(contentsOf: fileURL),
+               let image = SwiftImage(data: data) {
+                // Store in memory cache for faster access next time
+                memoryCache.setObject(image, forKey: key)
+                return image
+            }
         }
 
         return nil
@@ -145,6 +147,46 @@ public class MissingArtworkCacheManager {
             }
         } catch {
             print("Error clearing disk cache: \(error)")
+        }
+    }
+
+    /// Preload images for multiple games in background
+    public func preloadImages(
+        games: [(title: String, ratio: CGFloat)],
+        pattern: RetroTestPattern,
+        minFontSize: CGFloat = 12.0,
+        isDarkTheme: Bool
+    ) {
+        Task.detached(priority: .utility) {
+            for game in games {
+                /// Check if already cached
+                if self.getImage(
+                    gameTitle: game.title,
+                    ratio: game.ratio,
+                    pattern: pattern,
+                    minFontSize: minFontSize,
+                    isDarkTheme: isDarkTheme
+                ) != nil {
+                    continue
+                }
+
+                /// Generate and cache
+                let image = SwiftImage.missingArtworkImage(
+                    gameTitle: game.title,
+                    ratio: game.ratio,
+                    pattern: pattern,
+                    minFontSize: minFontSize
+                )
+
+                self.storeImage(
+                    image,
+                    gameTitle: game.title,
+                    ratio: game.ratio,
+                    pattern: pattern,
+                    minFontSize: minFontSize,
+                    isDarkTheme: isDarkTheme
+                )
+            }
         }
     }
 }
@@ -306,6 +348,7 @@ extension SwiftImage {
         return (finalFont, lineCount)
     }
 
+    /// Synchronous generator (kept for compatibility; may run on caller's thread).
     public static func missingArtworkImage(
         gameTitle: String,
         ratio: CGFloat,
@@ -481,6 +524,49 @@ extension SwiftImage {
         }
 
         return SwiftImage()
+    }
+
+    /// Async, worker-thread generation with caching.
+    /// Note: Callers should check cache synchronously first for instant display
+    public static func missingArtworkImageAsync(
+        gameTitle: String,
+        ratio: CGFloat,
+        pattern: RetroTestPattern = Defaults[.missingArtworkStyle],
+        minFontSize: CGFloat = RetroStyle.defaultMinFontSize
+    ) async -> SwiftImage {
+        let isDarkTheme = ThemeManager.shared.currentPalette.dark
+
+        /// Double-check cache in case it was populated between view check and async call
+        if let cached = MissingArtworkCacheManager.shared.getImage(
+            gameTitle: gameTitle,
+            ratio: ratio,
+            pattern: pattern,
+            minFontSize: minFontSize,
+            isDarkTheme: isDarkTheme
+        ) {
+            return cached
+        }
+
+        return await Task.detached(priority: .utility) {
+            /// Generate image off main thread
+            let image = SwiftImage.missingArtworkImage(
+                gameTitle: gameTitle,
+                ratio: ratio,
+                pattern: pattern,
+                minFontSize: minFontSize
+            )
+
+            /// Store in cache
+            MissingArtworkCacheManager.shared.storeImage(
+                image,
+                gameTitle: gameTitle,
+                ratio: ratio,
+                pattern: pattern,
+                minFontSize: minFontSize,
+                isDarkTheme: isDarkTheme
+            )
+            return image
+        }.value
     }
 
     private static func drawSMPTEColorBars(in context: CGContext, size: CGSize) {
