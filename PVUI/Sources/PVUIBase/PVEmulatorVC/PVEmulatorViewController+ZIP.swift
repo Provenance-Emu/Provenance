@@ -16,7 +16,7 @@ extension PVEmulatorViewController {
             if (filePath.pathExtension.caseInsensitiveCompare("zip") == .orderedSame) {
                 var unzippedFiles = [URL]()
                 
-                Task {
+                Task.detached {
                     let savePath = self.batterySavesPath.standardizedFileURL
                     SSZipArchive.unzipFile(
                         atPath: filePath.path,
