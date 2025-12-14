@@ -104,6 +104,10 @@ public final class DirectoryWatcher: ObservableObject {
     private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
     /// Buffered events to replay after emulation pause
     private var bufferedEvents: [URL] = []
+    /// Track if we're currently flushing buffered events to avoid re-entrancy
+    private var isFlushingBufferedEvents = false
+    /// Track if paused for emulation
+    private var isPausedForEmulation = false
 
     /// The extractors for the supported archive types
     private let extractors: [ArchiveType: ArchiveExtractor] = [
@@ -793,7 +797,7 @@ fileprivate extension DirectoryWatcher {
 
             // Defer processing during emulation pause, but remember what arrived
             let importerPaused = await MainActor.run { GameImporter.shared.isPausedForEmulation }
-            if CloudSyncManager.shared.isPausedForEmulation || importerPaused {
+            if isPausedForEmulation || CloudSyncManager.shared.isPausedForEmulation || importerPaused {
                 bufferedEvents.append(contentsOf: contents)
                 ILOG("Deferring directory events while emulation paused. Buffered total: \(bufferedEvents.count)")
                 return
@@ -856,6 +860,36 @@ fileprivate extension DirectoryWatcher {
 
         } catch {
             ELOG("Error handling file system event: \(error.localizedDescription)")
+        }
+    }
+
+    /// Flush buffered directory events after emulation resumes.
+    private func flushBufferedEventsIfNeeded() async {
+        if isFlushingBufferedEvents { return }
+        let importerPaused = await MainActor.run { GameImporter.shared.isPausedForEmulation }
+        if isPausedForEmulation || CloudSyncManager.shared.isPausedForEmulation || importerPaused {
+            ILOG("Pause flags still set; deferring flush")
+            return
+        }
+        guard !bufferedEvents.isEmpty else { return }
+        isFlushingBufferedEvents = true
+        ILOG("Flushing \(bufferedEvents.count) buffered directory events after emulation resume for directory: \(watchedDirectory.path)")
+        await handleFileSystemEvent()
+        isFlushingBufferedEvents = false
+    }
+
+    /// Pause watcher for emulation
+    public func pauseForEmulation() {
+        isPausedForEmulation = true
+        ILOG("DirectoryWatcher paused for emulation: \(watchedDirectory.path)")
+    }
+
+    /// Resume watcher from emulation pause
+    public func resumeFromEmulation() {
+        isPausedForEmulation = false
+        ILOG("DirectoryWatcher resumed from emulation: \(watchedDirectory.path)")
+        Task {
+            await flushBufferedEventsIfNeeded()
         }
     }
 

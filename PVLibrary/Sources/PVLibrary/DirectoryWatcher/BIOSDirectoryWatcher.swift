@@ -19,7 +19,7 @@ public final class BIOSWatcher: ObservableObject {
     public static let shared = BIOSWatcher()
 
     private let biosPath: URL
-    private var directoryWatcher: DirectoryWatcher?
+    private(set) public var directoryWatcher: DirectoryWatcher?
     private var newBIOSFilesContinuation: AsyncStream<[URL]>.Continuation?
 
     /// Task group for managing concurrent file operations
@@ -72,6 +72,9 @@ public final class BIOSWatcher: ObservableObject {
         ILOG("BIOSWatcher root path: \(biosPath.path)")
         directoryWatcher = DirectoryWatcher(directory: biosPath, options: options)
         ILOG("Created new DirectoryWatcher for path: \(biosPath.path)")
+
+        /// Register watcher with registry for direct pause/resume control
+        /// Note: Registration happens from PVUIBase/AppState to avoid module dependency cycles
 
         // Create system-specific subdirectories in background
         Task.detached(priority: .utility) {

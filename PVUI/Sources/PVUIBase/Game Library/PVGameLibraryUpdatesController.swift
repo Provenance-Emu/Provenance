@@ -30,7 +30,6 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     public var gameImporter: any GameImporting
 
     public let directoryWatcher: DirectoryWatcher
-    public let conflictsWatcher: ConflictsWatcher
     public let biosWatcher: BIOSWatcher
 
     private var statusCheckTimer: Timer?
@@ -63,8 +62,17 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         self.directoryWatcher = DirectoryWatcher(directory: importPath)
         directoryWatcher.delayedStartMonitoring()
 
-        self.conflictsWatcher = .shared
         self.biosWatcher = .shared
+
+        /// Register watchers with registry for direct pause/resume control
+        /// Defer registration until after initialization completes
+        Task { [directoryWatcher] in
+            await DirectoryWatcherRegistry.register(directoryWatcher)
+
+            if let biosDirectoryWatcher = biosWatcher.directoryWatcher {
+                await DirectoryWatcherRegistry.register(biosDirectoryWatcher)
+            }
+        }
 
         // Perform initial BIOS scan
         Task.detached(priority: .background) { [self] in
@@ -751,27 +759,10 @@ extension PVGameLibraryUpdatesController: ConflictsController {
 
     public func updateConflicts() async {
         await MainActor.run {
-//            let conflictsPath = gameImporter.conflictPath
-//            guard let filesInConflictsFolder = try? FileManager.default.contentsOfDirectory(at: conflictsPath, includingPropertiesForKeys: nil, options: []) else {
-//                self.conflicts = []
-//                return
-//            }
-            withPerceptionTracking {
-                let filesInConflictsFolder = conflictsWatcher.conflictFiles
-            } onChange: {
-                self.conflictsWatcher.objectWillChange.send()
-            }
-
-            //TODO: fix alongside conflicts
-//            let sortedFiles = PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
-//
-//            self.conflicts = sortedFiles.compactMap { file -> (path: URL, candidates: [System])? in
-//                let candidates = RomDatabase.systemCache.values
-//                    .filter { $0.supportedExtensions.contains(file.pathExtension.lowercased()) }
-//                    .map { $0.asDomain() }
-//
-//                return candidates.isEmpty ? nil : .init((path: file, candidates: candidates))
-//            }
+            /// Conflicts are now handled directly by GameImporter
+            /// This method is kept for ConflictsController protocol compliance
+            /// but conflicts are managed internally by the importer
+            self.conflicts = []
         }
     }
 }

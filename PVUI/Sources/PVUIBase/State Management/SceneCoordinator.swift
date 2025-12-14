@@ -127,6 +127,11 @@ public class SceneCoordinator: ObservableObject {
 
         // Pause background services during emulation for better performance
         pauseBackgroundServices()
+
+        // Pause directory watchers
+        Task {
+            await DirectoryWatcherRegistry.pauseAll()
+        }
     }
 
     /// Pauses background services (import queue, cloud sync) during emulation
@@ -152,6 +157,11 @@ public class SceneCoordinator: ObservableObject {
         // Resume cloud sync operations
         if Defaults[.iCloudSync] {
             CloudSyncManager.shared.resumeFromEmulation()
+        }
+
+        // Resume directory watchers (replaces notification-based approach)
+        Task {
+            await DirectoryWatcherRegistry.resumeAll()
         }
     }
 
@@ -618,6 +628,11 @@ public class SceneCoordinator: ObservableObject {
 
         // Resume background services that were paused during emulation
         resumeBackgroundServices()
+
+        // Resume directory watchers
+        Task {
+            await DirectoryWatcherRegistry.resumeAll()
+        }
 
         // Return to the main scene
         ILOG("SceneCoordinator: Calling openMainScene()")
