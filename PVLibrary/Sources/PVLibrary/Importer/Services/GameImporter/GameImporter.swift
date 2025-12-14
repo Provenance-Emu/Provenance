@@ -3490,29 +3490,26 @@ public final class GameImporter: GameImporting, ObservableObject {
                 return
             }
 
+            // For ROM files, check if we already have a matching game entry in the database BEFORE adding to queue
+            // This prevents race conditions where the item gets processed before it can be removed
+            // Skip expensive check if userChosenSystem is set (meaning it came from scan and was already batch-checked)
+            let isInImportsFolder = item.url.path.contains("/Imports/")
+
+            if !isInImportsFolder {
+                // Full check for files not in imports folder (e.g., re-scanning ROMs folder)
+                // Even if userChosenSystem is set, batchCheckExistingGames doesn't check MD5,
+                // so we need to do a full check here to catch MD5 duplicates
+                let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
+                if isROMAlreadyImported {
+                    ILOG("GameImportQueue - Skipping ROM file that already exists in database: \(item.url.lastPathComponent)")
+                    return
+                }
+            }
+
             // Stage the item in the queue so the UI reflects processing immediately
+            // Only add to queue after confirming it's not a duplicate
             await importQueueActor.addImport(item)
             ILOG("GameImportQueue - Staged import item: \(item.url.lastPathComponent) (id: \(item.id))")
-
-            // For ROM files, check if we already have a matching game entry in the database
-            // Skip expensive check if userChosenSystem is set (meaning it came from scan and was already batch-checked)
-//            if item.userChosenSystem == nil {
-                let isInImportsFolder = item.url.path.contains("/Imports/")
-
-                if isInImportsFolder {
-                    VLOG("GameImportQueue - Allowing potential duplicate from imports folder: \(item.url.lastPathComponent)")
-                } else {
-                    // Full check for files not in imports folder (e.g., re-scanning ROMs folder)
-                    let isROMAlreadyImported = await isROMAlreadyInDatabase(item)
-                    if isROMAlreadyImported {
-                        ILOG("GameImportQueue - Skipping ROM file that already exists in database: \(item.url.lastPathComponent)")
-                        await importQueueActor.removeImport(byID: item.id)
-                        return
-                    }
-                }
-//            } else {
-//                VLOG("GameImportQueue - Skipping duplicate check for \(item.url.lastPathComponent) (already batch-checked with userChosenSystem)")
-//            }
 
             // Check if this is a late-arriving file that belongs to an already processed M3U or CUE
             // Only check for CD-ROM related files to avoid expensive queue iteration for regular ROMs
