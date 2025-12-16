@@ -90,6 +90,9 @@ struct ConsolesWrapperView: SwiftUI.View {
     /// Cache for rasterized tab icons to avoid repeated image processing
     private static var iconCache: [String: Image] = [:]
 
+    /// State to track loaded icons asynchronously
+    @State private var loadedIcons: [String: Image] = [:]
+
     /// State for game info presentation
     struct GameInfoState: Identifiable {
         let id: String
@@ -195,6 +198,9 @@ struct ConsolesWrapperView: SwiftUI.View {
                 if let console = selectedConsole {
                     await self.preloadArtworkForConsole(console)
                 }
+
+                // Load tab icons asynchronously off main thread
+                await self.loadTabIconsAsync()
             }
         }
         .onChange(of: viewModel.sortConsolesAscending) { _ in
@@ -211,6 +217,8 @@ struct ConsolesWrapperView: SwiftUI.View {
                 await MainActor.run {
                     self.updateCachedSortedConsoles()
                 }
+                // Reload icons for new consoles
+                await self.loadTabIconsAsync()
             }
         }
         .onDisappear {
@@ -293,12 +301,12 @@ struct ConsolesWrapperView: SwiftUI.View {
                 .tag(console.identifier)
                 .tabItem {
                     let iconName = console.iconName
-                    if let icon = rasterizedTabIcon(named: iconName) {
+                    if let icon = loadedIcons[iconName] {
                         Label {
                             Text(console.name)
                         } icon: { icon }
                     } else {
-                        // Generic fallback
+                        // Generic fallback while loading
                         Label(console.name, systemImage: "gamecontroller")
                             .imageScale(.medium)
                     }
@@ -381,7 +389,83 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     // MARK: - Icon Rasterization
-    /// Cached icon rasterization to avoid repeated image processing
+    /// Load tab icons asynchronously off the main thread
+    private func loadTabIconsAsync() async {
+        let consolesToLoad = await MainActor.run {
+            sortedConsoles()
+        }
+
+        var newIcons: [String: Image] = [:]
+
+        for console in consolesToLoad {
+            let iconName = console.iconName
+            if iconName.isEmpty { continue }
+
+            // Check static cache first (thread-safe read)
+            if let cached = Self.iconCache[iconName] {
+                newIcons[iconName] = cached
+                continue
+            }
+
+            // Load and rasterize icon off main thread
+            if let icon = await rasterizeTabIconAsync(named: iconName) {
+                newIcons[iconName] = icon
+                // Update static cache
+                await MainActor.run {
+                    Self.iconCache[iconName] = icon
+                }
+            }
+        }
+
+        // Update UI on main thread
+        await MainActor.run {
+            loadedIcons.merge(newIcons) { _, new in new }
+        }
+    }
+
+    /// Async icon rasterization to avoid blocking main thread
+    private func rasterizeTabIconAsync(named name: String) async -> Image? {
+        if name.isEmpty { return nil }
+
+        #if canImport(UIKit)
+        // Load image off main thread
+        guard let source = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) else {
+            return nil
+        }
+
+        // Derive a conservative size based on tab bar metrics to prevent page style from upscaling
+        let defaultPointSize: CGFloat = 12
+        let font = UIFont.systemFont(ofSize: defaultPointSize, weight: .regular)
+        let metrics = UIFontMetrics(forTextStyle: .footnote)
+        let clamped = metrics.scaledValue(for: font.pointSize)
+        let maxSide = max(36, min(42, clamped))
+
+        // Preserve aspect ratio of original image
+        let sourceSize = source.size
+        let aspectRatio = sourceSize.width / sourceSize.height
+
+        // Calculate target size maintaining aspect ratio
+        let targetSize: CGSize
+        if aspectRatio > 1.0 {
+            // Wider than tall - constrain by width
+            targetSize = CGSize(width: maxSide, height: maxSide / aspectRatio)
+        } else {
+            // Taller than wide or square - constrain by height
+            targetSize = CGSize(width: maxSide * aspectRatio, height: maxSide)
+        }
+
+        // Perform rasterization off main thread
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        let scaled = renderer.image { _ in
+            source.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+        return Image(uiImage: scaled).renderingMode(.template)
+        #else
+        return nil
+        #endif
+    }
+
+    /// Cached icon rasterization to avoid repeated image processing (deprecated - use async version)
     private func rasterizedTabIcon(named name: String) -> Image? {
         if name.isEmpty { return nil }
 
