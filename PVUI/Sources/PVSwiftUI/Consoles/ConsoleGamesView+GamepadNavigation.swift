@@ -30,36 +30,31 @@ extension ConsoleGamesView {
         case .recentSaveStates:
             if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(
-                        saveState.game,
-                        sender: self,
-                        core: saveState.core,
-                        saveState: saveState
-                    )
+                    SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
                 }
             }
         case .favorites:
             if let game = favorites.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    SceneCoordinator.shared.launchGame(game.freeze())
                 }
             }
         case .recentlyPlayedGames:
             if let recentGame = recentlyPlayedGames.first(where: { $0.id == itemId })?.game {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(recentGame, sender: self, core: nil, saveState: nil)
+                    SceneCoordinator.shared.launchGame(recentGame.freeze())
                 }
             }
         case .allGames:
             if let game = games.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    SceneCoordinator.shared.launchGame(game.freeze())
                 }
             }
         case .mostPlayed:
             if let game = mostPlayed.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    SceneCoordinator.shared.launchGame(game.freeze())
                 }
             }
         }

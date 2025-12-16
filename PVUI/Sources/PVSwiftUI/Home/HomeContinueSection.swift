@@ -627,12 +627,7 @@ struct HomeContinueSection: SwiftUI.View {
         if let focused = parentFocusedItem,
            let saveState = limitedSaveStates.first(where: { $0.id == focused }) {
             Task.detached { @MainActor in
-                await self.rootDelegate?.root_load(
-                    saveState.game,
-                    sender: self,
-                    core: saveState.core,
-                    saveState: saveState
-                )
+                SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
             }
         }
     }
@@ -760,12 +755,7 @@ private struct SaveStatesGridView: View {
                         hideSystemLabel: hideSystemLabel,
                         action: {
                             Task.detached { @MainActor in
-                                await rootDelegate?.root_load(
-                                    saveState.game,
-                                    sender: self,
-                                    core: saveState.core,
-                                    saveState: saveState
-                                )
+                                SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
                             }
                         },
                         isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,

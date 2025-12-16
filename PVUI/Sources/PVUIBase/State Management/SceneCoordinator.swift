@@ -175,8 +175,52 @@ public class SceneCoordinator: ObservableObject {
         }
     }
 
+    /// Launch a save state with sync validation for game ROM, BIOS, and save state
+    public func launchSaveState(_ saveState: PVSaveState, core: PVCore? = nil) {
+        guard let game = saveState.game else {
+            showGameLaunchError(
+                title: "Cannot Launch Save State",
+                message: "No game found for this save state. The save state may be corrupted or misconfigured."
+            )
+            return
+        }
+
+        ILOG("SceneCoordinator: Launching save state: \(saveState.id) for game: \(game.title)")
+
+        // Validate and sync before launch
+        Task { @MainActor in
+            await launchSaveStateWithValidation(saveState, game: game, core: core)
+        }
+    }
+
+    /// Launch a game with optional core (bypasses core selection if core is provided)
+    public func launchGame(_ game: PVGame, core: PVCore?) {
+        ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id)) with core: \(core?.projectName ?? "auto")")
+
+        // Validate and sync game before launch
+        Task { @MainActor in
+            await launchGameWithValidation(game, core: core)
+        }
+    }
+
+    /// Launch a game with disc path (for multi-disc games)
+    public func launchGame(_ game: PVGame, discPath: String, core: PVCore?, saveState: PVSaveState?) {
+        ILOG("SceneCoordinator: Launching game: \(game.title) with disc path: \(discPath)")
+
+        // Create a temporary game object with the disc path
+        var tempGame = game
+        tempGame.selectedDiscFilename = (discPath as NSString).lastPathComponent
+
+        // If there's a save state, launch that instead
+        if let saveState = saveState {
+            launchSaveState(saveState, core: core)
+        } else {
+            launchGame(tempGame, core: core)
+        }
+    }
+
     /// Launch game with sync validation
-    private func launchGameWithValidation(_ game: PVGame) async {
+    private func launchGameWithValidation(_ game: PVGame, core: PVCore? = nil) async {
         guard let system = game.system else {
             showGameLaunchError(
                 title: "Cannot Launch Game",
@@ -301,12 +345,18 @@ public class SceneCoordinator: ObservableObject {
             return
         }
 
-        // Set the current game in EmulationUIState
+        // Set the current game and core in EmulationUIState
         AppState.shared.emulationUIState.currentGame = game
+        if let core = core {
+            AppState.shared.emulationUIState.currentCore = core
+        }
 
         // Verify the game was set correctly
         if let currentGame = AppState.shared.emulationUIState.currentGame {
             ILOG("SceneCoordinator: Successfully set current game in EmulationUIState: \(currentGame.title) (ID: \(currentGame.id))")
+            if let core = core {
+                ILOG("SceneCoordinator: Core set: \(core.projectName)")
+            }
 
             // Open the emulator scene - errors will be handled by PVEmulatorViewController
             openEmulatorScene()
@@ -595,6 +645,216 @@ public class SceneCoordinator: ObservableObject {
                     hasResumed = true
                     continuation.resume(returning: false)
                 }
+            )
+        }
+    }
+
+    /// Launch save state with sync validation
+    private func launchSaveStateWithValidation(_ saveState: PVSaveState, game: PVGame, core: PVCore? = nil) async {
+        guard let system = game.system else {
+            showGameLaunchError(
+                title: "Cannot Launch Save State",
+                message: "No system found for this game. The game may be corrupted or misconfigured."
+            )
+            return
+        }
+
+        // Check if the game needs to be downloaded from the cloud
+        let needsDownload = !game.isDownloaded || !(game.file?.online ?? true)
+
+        // If download is needed, validate requirements BEFORE downloading
+        if needsDownload {
+            let validation = await validatePreDownloadRequirements(for: game, system: system)
+
+            if !validation.canProceed {
+                // Show warning and let user choose
+                let shouldContinue = await showPreDownloadWarning(validation: validation)
+                if !shouldContinue {
+                    ILOG("SceneCoordinator: User cancelled save state launch due to missing requirements")
+                    return
+                }
+                ILOG("SceneCoordinator: User chose to continue save state launch despite missing requirements")
+            }
+        }
+
+        // Show sync status overlay
+        syncStatusManager.show(
+            gameTitle: game.title,
+            statusMessage: "Checking game file...",
+            onCancel: { [weak self] in
+                self?.syncStatusManager.hide()
+                self?.openMainScene()
+            }
+        )
+
+        // Create validator if cloud sync is enabled
+        let validator: GameSyncValidator?
+        if Defaults[.iCloudSync] {
+            validator = GameSyncValidator(cloudSyncManager: CloudSyncManager.shared)
+        } else {
+            validator = nil
+        }
+
+        // Validate game availability
+        if let validator = validator {
+            let isValid = await validator.ensureGameReady(game) { [weak self] progressMessage in
+                Task { @MainActor in
+                    self?.syncStatusManager.update(statusMessage: progressMessage)
+                }
+                ILOG("Game sync progress: \(progressMessage)")
+            }
+
+            if !isValid {
+                syncStatusManager.error("Game file is not available. Please ensure iCloud sync is enabled and the game is synced.")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    self?.syncStatusManager.hide()
+                    self?.showGameLaunchError(
+                        title: "Cannot Launch Save State",
+                        message: "The game file is not available on this device.\n\nTo fix this:\n1. Make sure iCloud sync is enabled in Settings\n2. Wait for the game to finish syncing (check the cloud icon)\n3. Try launching again\n\nIf the problem persists, try removing and re-importing the game."
+                    )
+                }
+                return
+            }
+        } else {
+            // No cloud sync - just verify file exists
+            syncStatusManager.update(statusMessage: "Verifying file...")
+
+            guard let fileURL = game.file?.url,
+                  FileManager.default.fileExists(atPath: fileURL.path) else {
+                syncStatusManager.error("Game file not found. Please verify the ROM file exists.")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    self?.syncStatusManager.hide()
+                    self?.showGameLaunchError(
+                        title: "Game File Not Found",
+                        message: "The game file could not be found on your device.\n\nThis can happen if:\n• The file was deleted\n• The file was moved\n• There's a storage issue\n\nTry removing the game from your library and re-importing it."
+                    )
+                }
+                return
+            }
+        }
+
+        // Validate BIOS and core requirements
+        let validation = await validatePreDownloadRequirements(for: game, system: system)
+
+        if !validation.canProceed {
+            var errorTitle = "Cannot Launch Save State"
+            var errorMessage = ""
+
+            if !validation.hasAvailableCores {
+                errorTitle = "No Compatible Core"
+                errorMessage = "There are no compatible emulator cores available for \(system.name).\n\n"
+                if AppState.shared.isAppStore {
+                    errorMessage += "Some cores may be unavailable in the App Store version. Enable 'Unsupported Cores' in Settings to see more options."
+                } else {
+                    errorMessage += "Please ensure the required core is installed and enabled."
+                }
+            } else if !validation.missingBIOSFiles.isEmpty {
+                errorTitle = "Missing BIOS Files"
+                PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
+                let missingFiles = validation.missingBIOSFiles.joined(separator: "\n• ")
+                let rootDirName = RelativeRoot.platformDefault == .caches ? "Caches" : "Documents"
+                let biosPath = "\(rootDirName)/BIOS/\(system.identifier)/"
+                errorMessage = "\(system.name) requires BIOS files to run games.\n\nMissing files:\n• \(missingFiles)\n\nPlease add these files to:\n\(biosPath)"
+            }
+
+            syncStatusManager.hide()
+            WLOG("SceneCoordinator: Cannot launch save state - \(errorTitle)")
+            showGameLaunchError(title: errorTitle, message: errorMessage)
+            return
+        }
+
+        // Download save state if needed
+        syncStatusManager.update(statusMessage: "Checking save state...")
+
+        let fileManager = FileManager.default
+        let saveStateReady: Bool
+
+        if let localURL = saveState.file?.url, fileManager.fileExists(atPath: localURL.path) {
+            saveStateReady = true
+        } else {
+            // Save state needs to be downloaded
+            guard let recordID = saveState.cloudRecordID, !recordID.isEmpty else {
+                syncStatusManager.error("Save state not available.")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    self?.syncStatusManager.hide()
+                    self?.showGameLaunchError(
+                        title: "Save State Not Available",
+                        message: "The save state file is not available on this device and cannot be downloaded from iCloud.\n\nThis may happen if:\n• iCloud sync is disabled\n• The save state was never synced\n• There's a sync issue\n\nTry enabling iCloud sync and waiting for sync to complete."
+                    )
+                }
+                return
+            }
+
+            let frozenSaveState = saveState.freeze()
+            syncStatusManager.update(statusMessage: "Downloading save state...")
+
+            do {
+                try await CloudSyncManager.shared.downloadSaveState(for: frozenSaveState)
+                saveStateReady = true
+            } catch {
+                syncStatusManager.error("Save state download failed.")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    self?.syncStatusManager.hide()
+                    self?.showGameLaunchError(
+                        title: "Download Failed",
+                        message: "Failed to download the save state: \(error.localizedDescription)\n\nPlease check your internet connection and iCloud sync settings."
+                    )
+                }
+                ELOG("Failed to download save state \(recordID): \(error)")
+                return
+            }
+        }
+
+        guard saveStateReady else {
+            syncStatusManager.hide()
+            return
+        }
+
+        syncStatusManager.complete()
+
+        // Small delay to show completion status
+        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Hide sync status before launching
+        syncStatusManager.hide()
+
+        // Fetch fresh save state from Realm to ensure file references are up to date
+        let preparedSaveState: PVSaveState?
+        do {
+            let realm = RomDatabase.sharedInstance.realm
+            preparedSaveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveState.id)?.freeze()
+        } catch {
+            ELOG("Failed to refresh save state \(saveState.id): \(error)")
+            preparedSaveState = saveState.freeze()
+        }
+
+        // Determine which core to use: explicit core parameter, save state's core, or nil
+        let coreToUse: PVCore? = core ?? preparedSaveState?.core
+
+        // Set the current game, save state, and core in EmulationUIState
+        AppState.shared.emulationUIState.currentGame = game
+        AppState.shared.emulationUIState.currentSaveState = preparedSaveState
+        if let coreToUse = coreToUse {
+            AppState.shared.emulationUIState.currentCore = coreToUse
+        }
+
+        // Verify the game was set correctly
+        if let currentGame = AppState.shared.emulationUIState.currentGame {
+            ILOG("SceneCoordinator: Successfully set current game in EmulationUIState: \(currentGame.title) (ID: \(currentGame.id))")
+            if let saveState = preparedSaveState {
+                ILOG("SceneCoordinator: Save state set: \(saveState.id)")
+            }
+            if let core = core {
+                ILOG("SceneCoordinator: Core set: \(core.projectName)")
+            }
+
+            // Open the emulator scene - the emulator will handle loading the game with save state
+            openEmulatorScene()
+        } else {
+            ELOG("SceneCoordinator: Failed to set current game in EmulationUIState")
+            showGameLaunchError(
+                title: "Failed to Launch Save State",
+                message: "Could not prepare the game for launch. This may be due to:\n\n• Missing or corrupted game file\n• Core not available or failed to load\n• Insufficient memory\n\nTry restarting the app, or remove and re-import the game if the problem persists."
             )
         }
     }

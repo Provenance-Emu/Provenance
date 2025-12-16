@@ -397,7 +397,16 @@ struct HomeView: SwiftUI.View {
                         continuesManagementState = nil
                         Task.detached {
                             Task { @MainActor in
-                                await rootDelegate?.root_openSaveState(saveID)
+                                let realm = RomDatabase.sharedInstance.realm
+                                guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveID) else {
+                                    SceneCoordinator.shared.alertState.show(
+                                        title: "Failed to Load Save State",
+                                        message: "Save state with id: \(saveID) not found",
+                                        type: .error
+                                    )
+                                    return
+                                }
+                                SceneCoordinator.shared.launchSaveState(saveState.freeze())
                             }
                         }
                     })
@@ -446,8 +455,8 @@ struct HomeView: SwiftUI.View {
             if let alert = discSelectionAlert, let game = alert.game {
                 let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
                     UIAlertAction(title: disc.fileName, style: .default) { _ in
-                        Task {
-                            await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
+                        Task { @MainActor in
+                            SceneCoordinator.shared.launchGame(game.freeze(), discPath: disc.path, core: nil, saveState: nil)
                         }
                     }
                 }
@@ -627,7 +636,7 @@ struct HomeView: SwiftUI.View {
                         )
                     ) {
                         Task.detached { @MainActor in
-                            await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                            SceneCoordinator.shared.launchGame(game.freeze())
                         }
                     }
                     .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
@@ -676,7 +685,7 @@ struct HomeView: SwiftUI.View {
             )
         ) {
             Task.detached { @MainActor in
-                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                SceneCoordinator.shared.launchGame(game.freeze())
             }
         }
         .focusableIfAvailable()
@@ -693,19 +702,19 @@ struct HomeView: SwiftUI.View {
         case .recentSaveStates:
             if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(saveState.game, sender: self, core: saveState.core, saveState: saveState)
+                    SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
                 }
             }
         case .recentlyPlayedGames:
             if let game = recentlyPlayedGames.first(where: { $0.game?.id == itemId })?.game {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    SceneCoordinator.shared.launchGame(game.freeze())
                 }
             }
         case .favorites, .mostPlayed, .allGames:
             if let game = allGames.first(where: { $0.id == itemId }) {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    SceneCoordinator.shared.launchGame(game.freeze())
                 }
             }
         }
@@ -944,7 +953,7 @@ struct HomeView: SwiftUI.View {
                         )
                     ) {
                         Task.detached { @MainActor in
-                            await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                            SceneCoordinator.shared.launchGame(game.freeze())
                         }
                     }
                     .focusableIfAvailable()
@@ -980,7 +989,7 @@ struct HomeView: SwiftUI.View {
                         )
                     ) {
                         Task.detached { @MainActor in
-                            await rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
+                            SceneCoordinator.shared.launchGame(favorite.freeze())
                         }
                     }
                     .focusableIfAvailable()
@@ -1015,7 +1024,7 @@ struct HomeView: SwiftUI.View {
                     )
                 ) {
                     Task.detached { @MainActor in
-                        await rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
+                        SceneCoordinator.shared.launchGame(playedGame.freeze())
                     }
                 }
                 .focusableIfAvailable()
@@ -1169,7 +1178,7 @@ struct HomeView: SwiftUI.View {
                             )
                         ) {
                             Task.detached { @MainActor in
-                                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                                SceneCoordinator.shared.launchGame(game.freeze())
                             }
                         }
                         .focusableIfAvailable()

@@ -128,8 +128,19 @@ struct ConsolesWrapperView: SwiftUI.View {
             let viewModel = PagedGameMoreInfoViewModel(
                 driver: driver,
                 initialGameId: state.id,
-                playGameCallback: { [weak rootDelegate] md5 in
-                    await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                playGameCallback: { md5 in
+                    Task { @MainActor in
+                        let realm = RomDatabase.sharedInstance.realm
+                        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                            SceneCoordinator.shared.alertState.show(
+                                title: "Failed to Load Game",
+                                message: "Game with MD5: \(md5) not found",
+                                type: .error
+                            )
+                            return
+                        }
+                        SceneCoordinator.shared.launchGame(game.freeze())
+                    }
                 }
             )
             return AnyView(PagedGameMoreInfoView(viewModel: viewModel))

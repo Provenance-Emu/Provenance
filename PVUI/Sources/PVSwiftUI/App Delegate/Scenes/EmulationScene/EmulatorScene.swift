@@ -127,7 +127,7 @@ public struct EmulatorScene: Scene {
 }
 
 /// A container view that manages the emulator view controller
-struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewController {
+struct EmulatorContainerView: UIViewControllerRepresentable {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var sceneCoordinator: SceneCoordinator
 
@@ -160,8 +160,17 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
             ILOG("EmulatorContainerView: Found game to launch: \(game.title) (ID: \(game.id))")
             ILOG("EmulatorContainerView: Game details - System: \(game.system?.name ?? "nil"), userPreferredCoreID: \(game.userPreferredCoreID ?? "nil")")
 
+            let saveState = appState.emulationUIState.currentSaveState
+            let core = appState.emulationUIState.currentCore
+            if let saveState = saveState {
+                ILOG("EmulatorContainerView: Found save state to load: \(saveState.id)")
+            }
+            if let core = core {
+                ILOG("EmulatorContainerView: Found core to use: \(core.projectName)")
+            }
+
             Task {
-                await handleGameLaunch(game: game, containerVC: containerVC)
+                await handleGameLaunch(game: game, saveState: saveState, core: core, containerVC: containerVC, coordinator: context.coordinator)
             }
         } else {
             ELOG("EmulatorContainerView: No game found to launch in EmulationUIState")
@@ -172,7 +181,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
     }
 
     /// Handles the game launch process, including core selection if needed
-    private func handleGameLaunch(game: PVGame, containerVC: EmulatorContainerViewController) async {
+    private func handleGameLaunch(game: PVGame, saveState: PVSaveState?, core: PVCore?, containerVC: EmulatorContainerViewController, coordinator: Coordinator) async {
         ILOG("EmulatorContainerView: Handling game launch for \(game.title)")
 
         // Check if the game has a system
@@ -190,10 +199,40 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         let availableCores = system.cores
         ILOG("EmulatorContainerView: System \(system.name) has \(availableCores.count) available cores")
 
+        // If a core was explicitly set (e.g., from SceneCoordinator), use it
+        if let explicitCore = core {
+            ILOG("EmulatorContainerView: Core explicitly set: \(explicitCore.projectName), using it")
+            // Verify the core is available for this system
+            if availableCores.contains(where: { $0.id == explicitCore.id }) {
+                await containerVC.load(game, sender: nil, core: explicitCore, saveState: saveState)
+                return
+            } else {
+                WLOG("EmulatorContainerView: Explicitly set core \(explicitCore.projectName) is not available for system \(system.name)")
+            }
+        }
+
+        // If launching with a save state, use the save state's core (save states are core-specific)
+        if let saveState = saveState, let saveStateCore = saveState.core {
+            ILOG("EmulatorContainerView: Save state has associated core: \(saveStateCore.projectName), using it")
+            // Verify the core is available for this system
+            if availableCores.contains(where: { $0.id == saveStateCore.id }) {
+                await containerVC.load(game, sender: nil, core: saveStateCore, saveState: saveState)
+                return
+            } else {
+                WLOG("EmulatorContainerView: Save state's core \(saveStateCore.projectName) is not available for system \(system.name)")
+                displayAndLogError(
+                    withTitle: "Core Not Available",
+                    message: "The save state was created with core '\(saveStateCore.projectName)', but this core is not available for \(system.name).\n\nPlease install the required core or use a different save state.",
+                    customActions: nil
+                )
+                return
+            }
+        }
+
         // If there's only one core, use it
         if availableCores.count == 1, let singleCore = availableCores.first {
             ILOG("EmulatorContainerView: System has only one core (\(singleCore.projectName)), using it automatically")
-            await containerVC.load(game, sender: nil, core: singleCore, saveState: nil)
+            await containerVC.load(game, sender: nil, core: singleCore, saveState: saveState)
             return
         }
 
@@ -208,7 +247,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
                 // Find the core with the matching ID
                 if let preferredCore = availableCores.first(where: { $0.id == preferredCoreID }) {
                     ILOG("EmulatorContainerView: Found preferred core: \(preferredCore.projectName), using it")
-                    await containerVC.load(game, sender: nil, core: preferredCore, saveState: nil)
+                    await containerVC.load(game, sender: nil, core: preferredCore, saveState: saveState)
                     return
                 } else {
                     WLOG("EmulatorContainerView: Preferred core ID \(preferredCoreID) not found in available cores")
@@ -222,7 +261,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
                 // Find the core with the matching ID
                 if let preferredCore = availableCores.first(where: { $0.id == systemPreferredCoreID }) {
                     ILOG("EmulatorContainerView: Found system's preferred core: \(preferredCore.projectName), using it")
-                    await containerVC.load(game, sender: nil, core: preferredCore, saveState: nil)
+                    await containerVC.load(game, sender: nil, core: preferredCore, saveState: saveState)
                     return
                 } else {
                     WLOG("EmulatorContainerView: System's preferred core ID \(systemPreferredCoreID) not found in available cores")
@@ -232,7 +271,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
             // If we get here, we need to show the core selection UI
             ILOG("EmulatorContainerView: No preferred core found, showing core selection UI")
             await MainActor.run {
-                presentCoreSelection(forGame: game, sender: containerVC)
+                presentCoreSelection(forGame: game, saveState: saveState, sender: containerVC, coordinator: coordinator)
             }
             return
         }
@@ -253,32 +292,16 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         }
     }
 
-    // MARK: - GameLaunchingViewController Protocol Implementation
+    // MARK: - Helper Methods
 
-    func load(_ game: PVRealm.PVGame, sender: Any?, core: PVRealm.PVCore?, saveState: PVRealm.PVSaveState?) async {
-        ILOG("EmulatorContainerView: Delegating load to container view controller")
-        if let containerVC = (UIApplication.shared.connectedScenes.first?.delegate as? UIWindowSceneDelegate)?.window??.rootViewController?.children.first as? EmulatorContainerViewController {
-            await containerVC.load(game, sender: sender, core: core, saveState: saveState)
-        } else {
-            ELOG("EmulatorContainerView: No container view controller available to load game")
-        }
-    }
-
-    func openSaveState(_ saveState: PVRealm.PVSaveState) async {
-        ILOG("EmulatorContainerView: Delegating openSaveState to container view controller")
-        if let containerVC = (UIApplication.shared.connectedScenes.first?.delegate as? UIWindowSceneDelegate)?.window??.rootViewController?.children.first as? EmulatorContainerViewController {
-            await containerVC.openSaveState(saveState)
-        } else {
-            ELOG("EmulatorContainerView: No container view controller available to open save state")
-        }
-    }
-
-    // Implementation of GameLaunchingViewController protocol
-    func presentCoreSelection(forGame game: PVGame, sender: Any?) {
+    private func presentCoreSelection(forGame game: PVGame, saveState: PVSaveState?, sender: Any?, coordinator: Coordinator) {
         ILOG("EmulatorContainerView: Presenting core selection for game: \(game.title)")
 
         // Store the game for core selection
         gameForCoreSelection = game
+
+        // Get save state from EmulationUIState if not provided
+        let saveStateToUse = saveState ?? AppState.shared.emulationUIState.currentSaveState
 
         guard let system = game.system else {
             ELOG("EmulatorContainerView: Game has no system, cannot present core selection")
@@ -332,11 +355,13 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
 //                        ELOG("EmulatorContainerView: Failed to set preferred core: \(error)")
 //                    }
 
-                    // Load the game with the selected core
+                    // Load the game with the selected core and save state
                     if let containerVC = sender as? EmulatorContainerViewController {
-                        await containerVC.load(game, sender: nil, core: core, saveState: nil)
+                        await containerVC.load(game, sender: nil, core: core, saveState: saveStateToUse)
+                    } else if let containerVC = coordinator.containerViewController {
+                        await containerVC.load(game, sender: sender, core: core, saveState: saveStateToUse)
                     } else {
-                        await self.load(game, sender: sender, core: core, saveState: nil)
+                        ELOG("EmulatorContainerView: No container view controller available to load game")
                     }
                 }
             }
@@ -401,7 +426,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         viewController.present(alertController, animated: true, completion: nil)
     }
 
-    func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]?) {
+    private func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]?) {
         /// Get root view controller using modern API
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let viewController = windowScene.windows.first?.rootViewController else {
@@ -457,14 +482,17 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
     }
 
     // Implementation of GameLaunchingViewController protocol
-    func presentCoreSelection(forGame game: PVGame, sender: Any?) {
+    func presentCoreSelection(forGame game: PVGame, saveState: PVSaveState? = nil, sender: Any?) {
         let alertController = UIAlertController(title: "Select Core", message: "Choose a core to run \(game.title)", preferredStyle: .actionSheet)
+
+        // Get save state from EmulationUIState if not provided
+        let saveStateToUse = saveState ?? AppState.shared.emulationUIState.currentSaveState
 
         if let system = game.system {
             for core in system.cores {
                 let action = UIAlertAction(title: core.projectName, style: .default) { _ in
                     Task {
-                        await self.load(game, sender: sender, core: core, saveState: nil)
+                        await self.load(game, sender: sender, core: core, saveState: saveStateToUse)
                     }
                 }
                 alertController.addAction(action)

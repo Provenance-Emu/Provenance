@@ -56,20 +56,17 @@ public extension PVRootDelegate {
                 return
             }
 
-            // Get references to the objects we need
-            let game = saveState.game
-
-            // Create frozen copies that can be safely passed across thread boundaries
+            // Create frozen copy that can be safely passed across thread boundaries
             let frozenSaveState = saveState.freeze()
 
-            // Now we can safely pass the frozen objects
-            // We need to dismiss any presented sheets first, then load the save state
+            // Now we can safely pass the frozen object
+            // Use SceneCoordinator's launchSaveState which handles sync validation
             Task { @MainActor in
                 // First, dismiss any presented sheets
                 await dismissPresentedViews()
 
-                // Then load the save state
-                await root_load(frozenSaveState.game, sender: nil, core: nil, saveState: frozenSaveState)
+                // Use SceneCoordinator to launch with proper sync validation
+                SceneCoordinator.shared.launchSaveState(frozenSaveState)
             }
         }
     }

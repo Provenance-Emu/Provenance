@@ -10,6 +10,7 @@ import PVCoreBridge
 import SwiftUI
 import PVLogging
 import Perception
+import PVLibrary
 
 @MainActor
 //@Observable
@@ -22,20 +23,28 @@ public final class EmulationUIState : ObservableObject {
     }
     public var emulator: PVEmualatorControllerProtocol?
     public var isInBackground: Bool = false
-    
+
     /// The current game that should be loaded in the emulator scene
     public var currentGame: PVGame? = nil
-    
+
+    /// The current save state that should be loaded with the game
+    public var currentSaveState: PVSaveState? = nil
+
+    /// The core to use for launching (if specified, bypasses core selection)
+    public var currentCore: PVCore? = nil
+
     @discardableResult
     public func reset() -> (PVEmulatorCore?, PVEmualatorControllerProtocol?, PVGame?) {
         defer {
             core = nil
             emulator = nil
             currentGame = nil
+            currentSaveState = nil
+            currentCore = nil
         }
         return (core, emulator, currentGame)
     }
-    
+
     /// Update state
 //    public func update(_ update: (inout EmulationUIState) -> Void) {
 //        var newState = state

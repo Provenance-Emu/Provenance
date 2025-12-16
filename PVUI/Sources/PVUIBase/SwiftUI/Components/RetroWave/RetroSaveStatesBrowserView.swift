@@ -90,14 +90,30 @@ public final class RetroSaveStatesStore: ObservableObject {
         return items
     }
 
-    /// Opens a save state via the root delegate if available
+    /// Opens a save state via SceneCoordinator with proper sync validation
     public func openSaveState(id: String) async {
         await MainActor.run {
-            guard let delegate = UIApplication.shared.delegate as? PVRootDelegate else {
-                ELOG("RetroSaveStatesStore: PVRootDelegate unavailable; cannot open save state")
+            let realm = RomDatabase.sharedInstance.realm
+
+            // Find the save state
+            guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: id) else {
+                ELOG("RetroSaveStatesStore: Save state not found with id: \(id)")
+                Task { @MainActor in
+                    SceneCoordinator.shared.alertState.show(
+                        title: "Save State Not Found",
+                        message: "The save state could not be found. It may have been deleted or is not available.",
+                        type: .error
+                    )
+                }
                 return
             }
-            Task { await delegate.root_openSaveState(id) }
+
+            // Create frozen copy for thread safety
+            let frozenSaveState = saveState.freeze()
+
+            // Use SceneCoordinator to launch with proper sync validation
+            ILOG("RetroSaveStatesStore: Launching save state via SceneCoordinator: \(id)")
+            SceneCoordinator.shared.launchSaveState(frozenSaveState)
         }
     }
 
@@ -213,33 +229,72 @@ struct RetroSaveStateCard: View {
     let item: RetroSaveStateItem
     @ObservedObject var store: RetroSaveStatesStore
     let action: () -> Void
+    var isFocused: Bool = false
 
     @State private var thumbnail: UIImage?
 
     private let cardSize = CGSize(width: 220, height: 140)
 
+    #if os(tvOS)
+    private var focusBorderColor: Color {
+        isFocused ? Color.retroPink : Color.retroPink.opacity(0.6)
+    }
+
+    private var focusBorderWidth: CGFloat {
+        isFocused ? 3 : 1
+    }
+
+    private var focusShadowColor: Color {
+        isFocused ? Color.retroPink.opacity(0.8) : .black.opacity(0.4)
+    }
+
+    private var focusShadowRadius: CGFloat {
+        isFocused ? 10 : 6
+    }
+    #else
+    private var focusBorderColor: Color {
+        Color.retroPink.opacity(0.6)
+    }
+
+    private var focusBorderWidth: CGFloat {
+        1
+    }
+
+    private var focusShadowColor: Color {
+        .black.opacity(0.4)
+    }
+
+    private var focusShadowRadius: CGFloat {
+        6
+    }
+    #endif
+
     var body: some View {
-        Button(action: action) {
-            ZStack(alignment: .bottomLeading) {
-                thumbnailView
-                overlayText
-            }
-            .frame(width: cardSize.width, height: cardSize.height)
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(Color.retroBlack.opacity(0.4))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(Color.retroPink.opacity(0.6), lineWidth: 1)
-            )
-            .shadow(color: .black.opacity(0.4), radius: 6, x: 0, y: 4)
+        ZStack(alignment: .bottomLeading) {
+            thumbnailView
+            overlayText
         }
+        .frame(width: cardSize.width, height: cardSize.height)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.retroBlack.opacity(0.4))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .strokeBorder(
+                    focusBorderColor,
+                    lineWidth: focusBorderWidth
+                )
+        )
+        .shadow(
+            color: focusShadowColor,
+            radius: focusShadowRadius,
+            x: 0,
+            y: 4
+        )
         #if os(tvOS)
-        .buttonStyle(.card)
-        .focusable()
-        #else
-        .buttonStyle(.plain)
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: isFocused)
         #endif
         .task {
             if thumbnail == nil {
@@ -321,7 +376,10 @@ struct RetroRecentSaveStatesStrip: View {
     let onOpen: (RetroSaveStateItem) -> Void
     let onViewAll: () -> Void
 
+    #if os(tvOS)
     @FocusState private var focusedID: String?
+    @FocusState private var viewAllFocused: Bool
+    #endif
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -334,26 +392,78 @@ struct RetroRecentSaveStatesStrip: View {
                         .foregroundColor(.secondary)
                 }
                 Spacer()
-                Button(action: onViewAll) {
-                    Label("View All", systemImage: "rectangle.stack.badge.play")
-                        .font(.callout.weight(.semibold))
-                }
-                .buttonStyle(.plain)
             }
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 14) {
                     ForEach(items) { item in
-                        RetroSaveStateCard(item: item, store: store) {
-                            onOpen(item)
+                        Button {
+                            ILOG("RetroRecentSaveStatesStrip: Button tapped for save state: \(item.id)")
+                            Task { @MainActor in
+                                onOpen(item)
+                            }
+                        } label: {
+                            RetroSaveStateCard(
+                                item: item,
+                                store: store,
+                                isFocused: {
+                                    #if os(tvOS)
+                                    return focusedID == item.id
+                                    #else
+                                    return false
+                                    #endif
+                                }()
+                            ) {
+                                // Action handled by parent Button
+                            }
                         }
                         #if os(tvOS)
+                        .buttonStyle(.card)
                         .focused($focusedID, equals: item.id)
+                        #else
+                        .buttonStyle(.plain)
                         #endif
                     }
+                    #if os(tvOS)
+                    Button(action: onViewAll) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "rectangle.stack.badge.play")
+                            Text("View All")
+                                .font(.callout.weight(.semibold))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(viewAllFocused ? Color.retroPink.opacity(0.2) : Color.retroBlack.opacity(0.4))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .strokeBorder(
+                                    viewAllFocused ? Color.retroPink : Color.retroPink.opacity(0.6),
+                                    lineWidth: viewAllFocused ? 3 : 1
+                                )
+                        )
+                        .shadow(
+                            color: viewAllFocused ? Color.retroPink.opacity(0.8) : .black.opacity(0.4),
+                            radius: viewAllFocused ? 10 : 6
+                        )
+                        .scaleEffect(viewAllFocused ? 1.05 : 1.0)
+                        .animation(.easeInOut(duration: 0.2), value: viewAllFocused)
+                    }
+                    .buttonStyle(.plain)
+                    .focused($viewAllFocused)
+                    #else
+                    Button(action: onViewAll) {
+                        Label("View All", systemImage: "rectangle.stack.badge.play")
+                            .font(.callout.weight(.semibold))
+                    }
+                    .buttonStyle(.plain)
+                    #endif
                 }
                 .padding(.vertical, 4)
                 #if os(tvOS)
                 .focusSection()
+                .defaultFocus($focusedID, items.first?.id)
                 #endif
             }
         }
@@ -367,7 +477,7 @@ struct RetroRecentSaveStatesStrip: View {
                 )
         )
         #if os(tvOS)
-        .defaultFocus($focusedID, items.first?.id)
+        .focusSection()
         #endif
     }
 }
@@ -415,7 +525,11 @@ public struct RetroSaveStatesBrowserView: View {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 LazyHStack(spacing: 14) {
                                     ForEach(group.value) { item in
-                                        RetroSaveStateCard(item: item, store: store) {
+                                        RetroSaveStateCard(
+                                            item: item,
+                                            store: store,
+                                            isFocused: focusedSaveID == item.id
+                                        ) {
                                             Task { await store.openSaveState(id: item.id) }
                                         }
                                         #if os(tvOS)

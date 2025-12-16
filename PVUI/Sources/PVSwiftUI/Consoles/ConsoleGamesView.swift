@@ -349,10 +349,19 @@ struct ConsoleGamesView: SwiftUI.View {
                                 let infoVM = PagedGameMoreInfoViewModel(
                                     driver: driver,
                                     initialGameId: game.md5Hash,
-                                    playGameCallback: { [weak rootDelegate] md5 in
+                                    playGameCallback: { md5 in
                                         DLOG("Play game requested for MD5: \(md5) from PagedGameMoreInfoView")
-                                        Task {
-                                            await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                                        Task { @MainActor in
+                                            let realm = RomDatabase.sharedInstance.realm
+                                            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                                                SceneCoordinator.shared.alertState.show(
+                                                    title: "Failed to Load Game",
+                                                    message: "Game with MD5: \(md5) not found",
+                                                    type: .error
+                                                )
+                                                return
+                                            }
+                                            SceneCoordinator.shared.launchGame(game.freeze())
                                         }
                                     }
                                 )
@@ -480,7 +489,16 @@ struct ConsoleGamesView: SwiftUI.View {
                                 gamesViewModel.continuesManagementState = nil
                                 Task.detached {
                                     Task { @MainActor in
-                                        await rootDelegate?.root_openSaveState(saveID)
+                                        let realm = RomDatabase.sharedInstance.realm
+                                        guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveID) else {
+                                            SceneCoordinator.shared.alertState.show(
+                                                title: "Failed to Load Save State",
+                                                message: "Save state with id: \(saveID) not found",
+                                                type: .error
+                                            )
+                                            return
+                                        }
+                                        SceneCoordinator.shared.launchSaveState(saveState.freeze())
                                     }
                                 }
                             })
@@ -595,7 +613,7 @@ struct ConsoleGamesView: SwiftUI.View {
                                 UIAlertAction(title: disc.fileName, style: .default) { _ in
                                     gamesViewModel.discSelectionAlert = nil
                                     Task { @MainActor in
-                                        await rootDelegate?.root_loadPath(disc.path, forGame: game, sender: nil, core: nil, saveState: nil)
+                                        SceneCoordinator.shared.launchGame(game.freeze(), discPath: disc.path, core: nil, saveState: nil)
                                     }
                                 }
                             }
@@ -684,7 +702,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
     private func loadGame(_ game: PVGame) {
         Task.detached { @MainActor in
-            await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+            SceneCoordinator.shared.launchGame(game.freeze())
         }
     }
 
@@ -728,7 +746,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     )
                 ) {
                     Task.detached { @MainActor in
-                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                        SceneCoordinator.shared.launchGame(game.freeze())
                     }
                 }
                 .id(game.id)
@@ -771,7 +789,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     ) {
                         Task.detached { @MainActor in
-                            await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                            SceneCoordinator.shared.launchGame(game.freeze())
                         }
                     }
                     .id(game.id)
@@ -812,7 +830,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     )
                 ) {
                     Task.detached { @MainActor in
-                        await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                        SceneCoordinator.shared.launchGame(game.freeze())
                     }
                 }
                 .id(game.id)
@@ -874,8 +892,19 @@ struct ConsoleGamesView: SwiftUI.View {
             let viewModel = PagedGameMoreInfoViewModel(
                 driver: driver,
                 initialGameId: game.md5Hash,
-                playGameCallback: { [weak rootDelegate] md5 in
-                    await rootDelegate?.root_loadGame(byMD5Hash: md5)
+                playGameCallback: { md5 in
+                    Task { @MainActor in
+                        let realm = RomDatabase.sharedInstance.realm
+                        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                            SceneCoordinator.shared.alertState.show(
+                                title: "Failed to Load Game",
+                                message: "Game with MD5: \(md5) not found",
+                                type: .error
+                            )
+                            return
+                        }
+                        SceneCoordinator.shared.launchGame(game.freeze())
+                    }
                 }
             )
             return AnyView(PagedGameMoreInfoView(viewModel: viewModel))
@@ -952,7 +981,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             )
                         ) {
                             Task.detached { @MainActor in
-                                await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                                SceneCoordinator.shared.launchGame(game.freeze())
                             }
                         }
                         .id(game.id)
@@ -1316,7 +1345,7 @@ extension ConsoleGamesView {
                 )
             ) {
                 Task.detached { @MainActor in
-                    await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    SceneCoordinator.shared.launchGame(game.freeze())
                 }
             }
             .id(game.id)
@@ -1355,7 +1384,7 @@ extension ConsoleGamesView {
             ) {
                 Task.detached { @MainActor in
                     guard !saveState.isInvalidated, !saveState.game.isInvalidated else { return }
-                    await rootDelegate?.root_load(saveState.game, sender: self, core: saveState.core, saveState: saveState)
+                    SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
                 }
             }
             .id(saveState.id)

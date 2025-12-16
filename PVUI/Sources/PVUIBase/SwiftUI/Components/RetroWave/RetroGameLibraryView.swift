@@ -622,14 +622,19 @@ public struct RetroGameLibraryView: View {
             if hasGames {
                 SwiftUI.Section {
                     if isExpanded {
-                        saveStatesStrip(for: system)
-                        /// Only fetch and sort games when section is expanded
-                        let systemGames = gamesForSystem(system)
-                        if viewModel.selectedViewMode == .grid {
-                            systemGamesGrid(games: systemGames)
-                        } else {
-                            systemGamesList(games: systemGames)
+                        VStack(spacing: 0) {
+                            saveStatesStrip(for: system)
+                            /// Only fetch and sort games when section is expanded
+                            let systemGames = gamesForSystem(system)
+                            if viewModel.selectedViewMode == .grid {
+                                systemGamesGrid(games: systemGames)
+                            } else {
+                                systemGamesList(games: systemGames)
+                            }
                         }
+                        #if os(tvOS)
+                        .focusSection()
+                        #endif
                     }
                 } header: {
                     sectionHeader(

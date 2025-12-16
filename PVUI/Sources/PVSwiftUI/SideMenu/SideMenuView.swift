@@ -322,7 +322,7 @@ SideMenuView: SwiftUI.View {
                     isFocused: .constant(false) ,
                     action: {
                         Task.detached { @MainActor in
-                            await rootDelegate.root_load(game, sender: self, core: nil, saveState: nil)
+                            SceneCoordinator.shared.launchGame(game.freeze())
                         }
                     }
                 )

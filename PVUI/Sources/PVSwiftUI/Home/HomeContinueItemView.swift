@@ -16,7 +16,7 @@ struct HomeContinueItemView: SwiftUI.View {
     let gameTitle: String?
     let imageURL: URL?
     let isInvalidated: Bool
-    
+
     @ObservedObject private var themeManager = ThemeManager.shared
     let height: CGFloat
     let hideSystemLabel: Bool
@@ -32,7 +32,7 @@ struct HomeContinueItemView: SwiftUI.View {
         // Scanline effects
         static let scanlineOpacity: CGFloat = 0.3
         static let lcdOpacity: CGFloat = 0.1
-        
+
         // Retrowave effects
         static let glowRadius: CGFloat = 4.0
         static let glowOpacity: CGFloat = 0.7
@@ -41,7 +41,7 @@ struct HomeContinueItemView: SwiftUI.View {
         // Image presentation
         static let zoomFactor: CGFloat = 1.15
     }
-    
+
     /// Convenience initializer that extracts data from PVSaveState to reduce Realm observation overhead
     init(continueState: PVSaveState, height: CGFloat, hideSystemLabel: Bool, action: @escaping () -> Void, isFocused: Bool, rootDelegate: PVRootDelegate?) {
         self.saveStateId = continueState.id
@@ -105,9 +105,9 @@ struct HomeContinueItemView: SwiftUI.View {
                         )
                 )
                 // Add glow effect when focused
-                .shadow(color: isFocused ? 
-                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(CRTEffects.glowOpacity) : 
-                        Color.clear, 
+                .shadow(color: isFocused ?
+                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(CRTEffects.glowOpacity) :
+                        Color.clear,
                         radius: CRTEffects.glowRadius)
                 .scaleEffect(isFocused ? 1.05 : 1.0)
                 .brightness(isFocused ? 0.1 : 0)
@@ -125,12 +125,7 @@ struct HomeContinueItemView: SwiftUI.View {
                    let game = continueState.game, !game.isInvalidated {
                     Button {
                         Task.detached { @MainActor in
-                            await rootDelegate?.root_load(
-                                game,
-                                sender: self,
-                                core: nil,
-                                saveState: nil
-                            )
+                            SceneCoordinator.shared.launchGame(game.freeze())
                         }
                     } label: {
                         Label("Load Game", systemImage: "gamecontroller")
@@ -143,7 +138,7 @@ struct HomeContinueItemView: SwiftUI.View {
                     } label: {
                         Label("Manage Game Save States", systemImage: "clock.arrow.circlepath")
                     }
-                    
+
                     if let system = game.system {
                         Button {
                             Task.detached { @MainActor in

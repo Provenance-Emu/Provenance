@@ -37,81 +37,38 @@ extension PVRootViewController: PVRootDelegate {
         }
     }
 
-    /// Ensure a save state is downloaded locally before attempting to load it
-    private func ensureSaveStateReady(_ saveState: PVSaveState, for game: PVGame) async -> Bool {
-        let fileManager = FileManager.default
-        if let localURL = saveState.file?.url, fileManager.fileExists(atPath: localURL.path) {
-            return true
-        }
-
-        guard let recordID = saveState.cloudRecordID else {
-            ELOG("Save state \(saveState.id) missing cloudRecordID and not present locally.")
-            SceneCoordinator.shared.syncStatusManager.error("Save state not available.")
-            return false
-        }
-
-        let frozenSaveState = saveState.freeze()
-
-        SceneCoordinator.shared.syncStatusManager.show(
-            gameTitle: game.title,
-            statusMessage: "Downloading save state...",
-            onCancel: {
-                SceneCoordinator.shared.syncStatusManager.hide()
-            }
-        )
-
-        do {
-            try await CloudSyncManager.shared.downloadSaveState(for: frozenSaveState)
-
-            SceneCoordinator.shared.syncStatusManager.complete()
-            return true
-        } catch {
-            SceneCoordinator.shared.syncStatusManager.error("Save state download failed.")
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
-                SceneCoordinator.shared.syncStatusManager.hide()
-            }
-            ELOG("Failed to download save state \(recordID): \(error)")
-            return false
-        }
-    }
-
     public func root_canLoad(_ game: PVGame) async throws {
         try await self.canLoad(game.warmUp())
     }
 
     public func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
-        let warmedGame = game.warmUp()
+        // First, dismiss any presented views
+        await dismissPresentedViews()
 
-        // Use the SceneCoordinator pipeline for standard launches so we get the sync HUD
-        if core == nil && saveState == nil {
-            await SceneCoordinator.shared.launchGame(warmedGame)
-            return
+        let frozenGame = game.freeze()
+        let frozenCore = core?.freeze()
+        let frozenSaveState = saveState?.freeze()
+
+        // Route all launches through SceneCoordinator for consistent sync validation
+        if let saveState = frozenSaveState {
+            // Launch with save state (includes game ROM, BIOS, and save state validation)
+            SceneCoordinator.shared.launchSaveState(saveState, core: frozenCore)
+        } else {
+            // Launch game (includes game ROM and BIOS validation)
+            SceneCoordinator.shared.launchGame(frozenGame, core: frozenCore)
         }
-
-        var preparedSaveState = saveState
-        if let saveState = saveState {
-            let saveStateReady = await ensureSaveStateReady(saveState, for: warmedGame)
-            guard saveStateReady else { return }
-
-            // Fetch a fresh copy from Realm to ensure file references are up to date
-            do {
-                preparedSaveState = try await fetchFreshSaveState(withID: saveState.id)
-            } catch {
-                ELOG("Failed to refresh save state \(saveState.id): \(error)")
-            }
-        }
-
-        await self.load(warmedGame, sender: sender, core: core?.warmUp(), saveState: preparedSaveState?.warmUp())
     }
 
     public func root_loadPath(_ path: String, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
-        // Create a temporary game object with the new path
-        var tempGame = game
-        tempGame.selectedDiscFilename = (path as NSString).lastPathComponent
+        // First, dismiss any presented views
+        await dismissPresentedViews()
 
-        // Load the temporary game
-        await self.load(tempGame.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
+        // Route through SceneCoordinator for consistent sync validation
+        let frozenGame = game.freeze()
+        let frozenCore = core?.freeze()
+        let frozenSaveState = saveState?.freeze()
+
+        SceneCoordinator.shared.launchGame(frozenGame, discPath: path, core: frozenCore, saveState: frozenSaveState)
     }
 
     public func root_openSaveState(_ saveState: PVSaveState) async {
@@ -123,33 +80,11 @@ extension PVRootViewController: PVRootDelegate {
             // If a game is already running, use the existing openSaveState method
             await self.openSaveState(saveState.warmUp())
         } else {
-            // If no game is running, first load the game, then the save state
-            guard let game = saveState.game else {
-                ELOG("nil game")
-                return
-            }
-            let warmedGame = game.warmUp()
-            var preparedSaveState: PVSaveState? = saveState
-
-            let saveStateReady = await ensureSaveStateReady(saveState, for: warmedGame)
-            guard saveStateReady else {
-                return
-            }
-
-            do {
-                preparedSaveState = try await fetchFreshSaveState(withID: saveState.id)
-            } catch {
-                ELOG("Failed to refresh save state \(saveState.id): \(error)")
-            }
-
-            await self.load(warmedGame, sender: nil, core: nil, saveState: preparedSaveState?.warmUp())
+            // Use SceneCoordinator to launch with proper sync validation
+            // This ensures game ROM, BIOS, and save state are all validated and synced
+            let frozenSaveState = saveState.freeze()
+            SceneCoordinator.shared.launchSaveState(frozenSaveState)
         }
-    }
-
-    private func fetchFreshSaveState(withID id: String) async throws -> PVSaveState? {
-        try await RealmProvider.ensureInitialized()
-        let realm = try! await Realm()
-        return realm.object(ofType: PVSaveState.self, forPrimaryKey: id)?.freeze()
     }
 
     public func root_updateRecentGames(_ game: PVGame) {
@@ -161,18 +96,25 @@ extension PVRootViewController: PVRootDelegate {
     }
 
     public func root_loadDisc(_ disc: PVFile, forGame game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
-        // Update the game's romPath to point to the selected disc
-        do {
-            try RomDatabase.sharedInstance.writeTransaction {
-                let thawedGame = game.thaw()
-                thawedGame?.romPath = disc.url!.path
-            }
+        // First, dismiss any presented views
+        await dismissPresentedViews()
 
-            // Load the game with the updated romPath
-            await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
-        } catch {
-            self.presentError(error.localizedDescription, source: self.view)
+        // Route through SceneCoordinator for consistent sync validation
+        // SceneCoordinator will handle the disc path via selectedDiscFilename
+        guard let discPath = disc.url?.path else {
+            SceneCoordinator.shared.alertState.show(
+                title: "Cannot Load Disc",
+                message: "The disc file path is not available.",
+                type: .error
+            )
+            return
         }
+
+        let frozenGame = game.freeze()
+        let frozenCore = core?.freeze()
+        let frozenSaveState = saveState?.freeze()
+
+        SceneCoordinator.shared.launchGame(frozenGame, discPath: discPath, core: frozenCore, saveState: frozenSaveState)
     }
 
     public func attemptToDelete(game: PVGame, deleteSaves: Bool) {
