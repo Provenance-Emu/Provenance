@@ -185,6 +185,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     let minimumPlayTimeToMakeAutosave: Double = 60
 
+    /// Retrowave progress HUD shown during emulator boot (and rare one-time RetroArch sync/version updates)
+    private var bootHUD: RetroProgressHUD?
+    private var bootHUDIsVisible = false
+
     public required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
         self.game = game
@@ -225,6 +229,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
             #endif
             if core.isRunning {
+                DispatchQueue.main.async { [weak self] in
+                    self?.hideBootHUDIfNeeded()
+                }
                 if gameStartTime != nil {
                     ELOG("Didn't expect to get a KVO update of isRunning to true while we still have an unflushed gameStartTime variable")
                 }
@@ -235,6 +242,54 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 }
             }
         }
+    }
+
+    @MainActor
+    private func showBootHUDIfNeeded() {
+        guard !bootHUDIsVisible else { return }
+        bootHUDIsVisible = true
+
+        let hud = RetroProgressHUD.show(in: view, animated: true)
+        hud.setText(initialBootHUDText())
+        bootHUD = hud
+    }
+
+    @MainActor
+    private func hideBootHUDIfNeeded() {
+        guard bootHUDIsVisible else { return }
+        bootHUDIsVisible = false
+
+        bootHUD?.hide(animated: true, afterDelay: 0.1)
+        bootHUD = nil
+    }
+
+    private func initialBootHUDText() -> String {
+        if shouldShowRetroArchSyncMessage() {
+            return "Updating RetroArch resources…"
+        }
+        return "Starting emulator…"
+    }
+
+    private func shouldShowRetroArchSyncMessage() -> Bool {
+        guard (core.coreIdentifier?.contains("libretro") == true) || (core.coreIdentifier?.localizedCaseInsensitiveContains("retroarch") == true) else {
+            return false
+        }
+
+        guard let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+              !appVersion.isEmpty else {
+            return false
+        }
+
+        let fm = FileManager.default
+        let roots: [URL] = [
+            fm.urls(for: .documentDirectory, in: .userDomainMask).first,
+            fm.urls(for: .cachesDirectory, in: .userDomainMask).first
+        ].compactMap { $0 }
+
+        return !roots.contains(where: { root in
+            let marker = root.appendingPathComponent("RetroArch/config/\(appVersion).cfg", isDirectory: false)
+            return fm.fileExists(atPath: marker.path)
+        })
     }
 
     @available(*, unavailable)
@@ -374,6 +429,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Initialize emulator asynchronously to support CloudKit downloads
         Task {
             do {
+                await MainActor.run { self.showBootHUDIfNeeded() }
                 try await createEmulator()
                 //            } catch is CreateEmulatorError {
                 //                let customError = error as! CreateEmulatorError
@@ -385,6 +441,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     // Download was cancelled - just dismiss, don't show error
                     ILOG("Emulator creation cancelled due to download cancellation")
                     await MainActor.run {
+                        self.hideBootHUDIfNeeded()
                         self.dismiss(animated: true)
                     }
                     return
@@ -400,6 +457,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 //                    }
                 //                } else {
                 Task { @MainActor in
+                    self.hideBootHUDIfNeeded()
                     let alert = UIAlertController(title: neError.localizedDescription,
                                                   message: neError.localizedRecoverySuggestion,
                                                   preferredStyle: .alert)
