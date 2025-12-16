@@ -522,6 +522,8 @@ void extract_bundles();
     BOOL versionFileExists = [fm fileExistsAtPath:verFile];
     ILOG(@"Version file exists: %@", versionFileExists ? @"YES" : @"NO");
 
+    BOOL isFirstRunOrVersionUpdate = !configFileExists || !versionFileExists;
+
     BOOL shouldUpdateAssets = [self shouldUpdateAssets];
     ILOG(@"Should update assets: %@", shouldUpdateAssets ? @"YES" : @"NO");
 
@@ -533,7 +535,7 @@ void extract_bundles();
     ILOG(@"Should update overlays: %@", shouldUpdateOverlays ? @"YES" : @"NO");
 
 
-    if (!configFileExists || !versionFileExists || shouldUpdateAssets) {
+    if (isFirstRunOrVersionUpdate || shouldUpdateAssets) {
 
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
 
@@ -581,7 +583,7 @@ void extract_bundles();
     }
 
     // Check if we need to trigger RetroArch updates (first run or version update)
-    BOOL shouldTriggerUpdates = !configFileExists || !versionFileExists;
+    BOOL shouldTriggerUpdates = isFirstRunOrVersionUpdate;
     if (shouldTriggerUpdates) {
         ILOG(@"First run or version update detected - will trigger RetroArch resource updates after initialization");
         // Store flag to trigger updates after RetroArch is initialized
@@ -607,12 +609,14 @@ void extract_bundles();
         ILOG(@"Hatari video settings: integer scaling, no smoothing (pixel format set by core)");
     }
 
-    [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay" ofType:nil]
-                     to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/overlays/pv_ui_overlay" ]];
-    [self syncResource:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay/pv_ui.cfg" ofType:nil]
-                     to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/overlays/pv_ui_overlay/pv_ui.cfg" ]];
-    [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"mame_plugins" ofType:nil]
-                     to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system/mame/plugins" ]];
+    /// Only sync bundled resources on first-run or version update
+    /// These are copy-if-missing, but enumerating bundles is expensive; avoid doing it every launch.
+    if (isFirstRunOrVersionUpdate) {
+        [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay" ofType:nil]
+                         to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/overlays/pv_ui_overlay" ]];
+        [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"mame_plugins" ofType:nil]
+                         to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system/mame/plugins" ]];
+    }
     NSString *systemDirectory = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
 
     /// Ensure TOS image is properly synced for Hatari core (force update if corrupted)
@@ -797,40 +801,41 @@ void extract_bundles();
     }
 
     /// Update hatari.cfg with dynamic paths (must be updated each time as app dir can change on iOS)
-    NSString *hatariCfgPath = [systemDirectory stringByAppendingPathComponent:@"hatari.cfg"];
-    NSString *hatariCfgSource = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"hatari.cfg" ofType:nil];
-    if (hatariCfgSource && ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"])) {
-        NSString *hatariCfgContent = [NSString stringWithContentsOfFile:hatariCfgSource encoding:NSUTF8StringEncoding error:nil];
-        if (hatariCfgContent) {
-            /// Update TOS image path with full absolute path
-            NSString *tosImagePath = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
-            hatariCfgContent = [hatariCfgContent stringByReplacingOccurrencesOfString:@"szTosImageFileName = tos.img"
-                                                                           withString:[NSString stringWithFormat:@"szTosImageFileName = %@", tosImagePath]];
+    /// Only relevant for Hatari/AtariST; do not copy/sync for every other system.
+    if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
+        NSString *hatariCfgPath = [systemDirectory stringByAppendingPathComponent:@"hatari.cfg"];
+        NSString *hatariCfgSource = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"hatari.cfg" ofType:nil];
+        if (hatariCfgSource) {
+            NSString *hatariCfgContent = [NSString stringWithContentsOfFile:hatariCfgSource encoding:NSUTF8StringEncoding error:nil];
+            if (hatariCfgContent) {
+                /// Update TOS image path with full absolute path
+                NSString *tosImagePath = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
+                hatariCfgContent = [hatariCfgContent stringByReplacingOccurrencesOfString:@"szTosImageFileName = tos.img"
+                                                                               withString:[NSString stringWithFormat:@"szTosImageFileName = %@", tosImagePath]];
 
-            /// Update disk image directory - expand tilde and use full path
-            NSString *romsDirectory = [self.documentsDirectory stringByAppendingPathComponent:@"ROMs"];
-            if (self.systemIdentifier) {
-                romsDirectory = [romsDirectory stringByAppendingPathComponent:self.systemIdentifier];
+                /// Update disk image directory - expand tilde and use full path
+                NSString *romsDirectory = [self.documentsDirectory stringByAppendingPathComponent:@"ROMs"];
+                if (self.systemIdentifier) {
+                    romsDirectory = [romsDirectory stringByAppendingPathComponent:self.systemIdentifier];
+                }
+                /// Replace tilde path with full absolute path
+                hatariCfgContent = [hatariCfgContent stringByReplacingOccurrencesOfString:@"szDiskImageDirectory = ~/Documents/ROMs/com.provenance.atarist/"
+                                                                               withString:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
+                /// Also handle case where system identifier might be different
+                NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"szDiskImageDirectory = ~/Documents/ROMs/[^\\n]+"
+                                                                                        options:0 error:nil];
+                hatariCfgContent = [regex stringByReplacingMatchesInString:hatariCfgContent
+                                                                   options:0
+                                                                     range:NSMakeRange(0, hatariCfgContent.length)
+                                                              withTemplate:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
+
+                [hatariCfgContent writeToFile:hatariCfgPath atomically:NO encoding:NSUTF8StringEncoding error:nil];
+                ILOG(@"Updated hatari.cfg with TOS path: %@ and ROMs directory: %@", tosImagePath, romsDirectory);
+            } else {
+                /// Fallback to standard sync if we can't read the source
+                [self syncResource:hatariCfgSource to:hatariCfgPath];
             }
-            /// Replace tilde path with full absolute path
-            hatariCfgContent = [hatariCfgContent stringByReplacingOccurrencesOfString:@"szDiskImageDirectory = ~/Documents/ROMs/com.provenance.atarist/"
-                                                                           withString:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
-            /// Also handle case where system identifier might be different
-            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"szDiskImageDirectory = ~/Documents/ROMs/[^\\n]+"
-                                                                                    options:0 error:nil];
-            hatariCfgContent = [regex stringByReplacingMatchesInString:hatariCfgContent
-                                                               options:0
-                                                                 range:NSMakeRange(0, hatariCfgContent.length)
-                                                          withTemplate:[NSString stringWithFormat:@"szDiskImageDirectory = %@/", romsDirectory]];
-
-            [hatariCfgContent writeToFile:hatariCfgPath atomically:NO encoding:NSUTF8StringEncoding error:nil];
-            ILOG(@"Updated hatari.cfg with TOS path: %@ and ROMs directory: %@", tosImagePath, romsDirectory);
-        } else {
-            /// Fallback to standard sync if we can't read the source
-            [self syncResource:hatariCfgSource to:hatariCfgPath];
         }
-    } else if (hatariCfgSource) {
-        [self syncResource:hatariCfgSource to:hatariCfgPath];
     }
 
     /// Set system directory in RetroArch config (required for Hatari to find TOS image)
@@ -882,15 +887,19 @@ void extract_bundles();
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString *file=[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory];
     ILOG(@"Checking if assets exist at %@", file);
-    if ([fm fileExistsAtPath: file]) {
+
+    if ([fm fileExistsAtPath:file]) {
         unsigned long long fileSize = [[fm attributesOfItemAtPath:file error:nil] fileSize];
         ILOG(@"File size: %llu", fileSize);
-//        if (fileSize == 1687) {
-//            ILOG(@"File size is 1687, returning false");
+
+        /// Any non-empty asset means we already synced this version; skip
+        if (fileSize > 0) {
+            ILOG(@"Assets present; no update needed");
             return false;
-//        }
+        }
     }
-    ILOG(@"File does not exist or size is not 1687, returning true");
+
+    ILOG(@"File missing or empty, update assets");
     return true;
 // #endif
 }
@@ -994,32 +1003,27 @@ void extract_bundles();
         ELOG(@"From path is nil");
         return;
     }
-    ILOG(@"Syncing %@ to %@", from, to);
 	NSError *error;
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	NSArray* files = [fm contentsOfDirectoryAtPath:from error:&error];
     if (![fm fileExistsAtPath: to]) {
-        ILOG(@"Creating directory at %@", to);
-
         [fm createDirectoryAtPath:to withIntermediateDirectories:true attributes:nil error:&error];
         if (error) {
             ELOG(@"Error creating directory at %@: %@", to, error.localizedDescription);
         } else {
-            ILOG(@"Directory created at %@", to);
+            ILOG(@"Created directory at %@", to);
         }
     }
 	for (NSString *file in files) {
 		NSString *src=  [NSString stringWithFormat:@"%@/%@", from, file];
 		NSString *dst = [NSString stringWithFormat:@"%@/%@", to, file];
-        ILOG(@"Syncing %@ %@", src, dst);
 		if (![fm fileExistsAtPath: dst]) {
-            ILOG(@"Copying %@ to %@", src, dst);
             NSError *error;
 			[fm copyItemAtPath:src toPath:dst error:&error];
             if (error) {
                 ELOG(@"Error copying %@ to %@: %@", src, dst, error.localizedDescription);
             } else {
-                ILOG(@"Copied %@ to %@", src, dst);
+                ILOG(@"Copied %@ -> %@", src, dst);
             }
 		}
 	}
@@ -1030,11 +1034,35 @@ void extract_bundles();
         ELOG(@"From path is nil");
         return;
     }
-    ILOG(@"Syncing %@ to %@", from, to);
-    NSError *error;
     NSFileManager *fm = [[NSFileManager alloc] init];
+
+    NSString *destDir = [to stringByDeletingLastPathComponent];
+    if (![fm fileExistsAtPath:destDir]) {
+        NSError *dirError = nil;
+        [fm createDirectoryAtPath:destDir withIntermediateDirectories:YES attributes:nil error:&dirError];
+        if (dirError) {
+            ELOG(@"Error creating directory %@: %@", destDir, dirError.localizedDescription);
+            return;
+        }
+    }
+
+    if ([fm fileExistsAtPath:to]) {
+        return;
+    }
+
     NSData *fileData = [NSData dataWithContentsOfFile:from];
-    [fileData writeToFile:to atomically:NO];
+    if (!fileData) {
+        ELOG(@"Failed to read data from %@", from);
+        return;
+    }
+
+    NSError *writeError = nil;
+    BOOL ok = [fileData writeToFile:to options:NSDataWritingAtomic error:&writeError];
+    if (!ok || writeError) {
+        ELOG(@"Error writing file to %@: %@", to, writeError.localizedDescription);
+    } else {
+        ILOG(@"Copied %@ -> %@", from, to);
+    }
 }
 
 - (void)setViewType:(apple_view_type_t)vt
@@ -1333,7 +1361,9 @@ void extract_bundles();
         ILOG(@"Loading %s %s\n", param[2], param[3]);
 	}
     if (processing_init) {
-        [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
+        dispatch_sync(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+            [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
+        });
         processing_init=false;
     }
 //	NSError *error;
