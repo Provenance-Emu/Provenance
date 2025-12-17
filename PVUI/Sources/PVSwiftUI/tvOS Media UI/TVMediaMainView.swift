@@ -132,6 +132,7 @@ struct TVMediaMainView: View {
                     model: libraryModel,
                     router: router
                 )
+                .transition(.opacity)
             case .systemGames:
                 if let system = libraryModel.selectedSystem {
                     TVMediaSystemGamesView(
@@ -141,6 +142,10 @@ struct TVMediaMainView: View {
                         gameActions: gameActions,
                         router: router
                     )
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .scale(scale: 1.02)),
+                        removal: .opacity.combined(with: .scale(scale: 0.98))
+                    ))
                 } else {
                     TVMediaEmptyStateView(
                         title: "Select a System",
