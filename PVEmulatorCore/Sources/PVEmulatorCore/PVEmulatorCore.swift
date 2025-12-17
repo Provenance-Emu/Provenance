@@ -254,14 +254,16 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 
     // MARK: Skins
 
-    /// Default skins off while we develop the feature
+    /// If skins are supported
     @objc dynamic open var supportsSkins: Bool { true }
+    
+    /// Default skins off while we develop the feature
+    @objc dynamic open var supportsFilters: Bool { true }
 
     /// Whether this core supports dual screens (e.g., 3DS, DS)
     @objc dynamic open var supportsDualScreens: Bool { false }
 
     @objc dynamic open var supportsAudioVisualizer: Bool { true }
-
 }
 
 #if !os(macOS) && !os(watchOS)

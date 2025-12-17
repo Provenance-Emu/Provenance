@@ -27,6 +27,17 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
 
     public override var rendersToOpenGL: Bool { true }
     public override var isDoubleBuffered: Bool { true }
+    public override var supportsFilters: Bool {
+        let unsupportedCores = [
+            "com.provenance.ps2",
+            "com.provenance.gamecube",
+            "com.provenance.wii",
+            "com.provenance.vectrex"
+        ]
+        DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
+        return (!unsupportedCores.contains(self.systemIdentifier ?? "")
+                && !unsupportedCores.contains(self.systemName))
+    }
     public override var supportsSkins: Bool {
         let unsupportedCores = [
             "com.provenance.ds",
