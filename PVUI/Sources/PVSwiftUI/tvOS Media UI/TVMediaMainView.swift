@@ -29,20 +29,25 @@ struct TVMediaMainView: View {
     /// Sidebar collapsed width for content padding
     private let sidebarCollapsedWidth: CGFloat = 80
 
+    @Namespace private var mainNamespace
+    @Namespace private var sidebarNamespace
+    @Environment(\.resetFocus) private var resetFocus
+
     public var body: some View {
         ZStack(alignment: .leading) {
             TVMediaBackground()
                 .ignoresSafeArea()
 
-            // Content area with proper focus management
-            TVMediaFocusAwareContent(focusCoordinator: focusCoordinator) {
-                contentArea
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.leading, sidebarCollapsedWidth)
-            .allowsHitTesting(focusCoordinator.activeZone != .alert)
+            // Content area
+            contentArea
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.leading, sidebarCollapsedWidth)
+                .allowsHitTesting(!focusCoordinator.isAlertPresented)
+                .animation(.easeInOut(duration: 0.25), value: router.destination)
+                .focusScope(mainNamespace)
+                .prefersDefaultFocus(!focusCoordinator.isSidebarExpanded, in: mainNamespace)
 
-            // Sidebar - only focusable when it should be active
+            // Sidebar
             TVMediaSidebarRail(
                 destination: $router.destination,
                 focusCoordinator: focusCoordinator,
@@ -54,7 +59,10 @@ struct TVMediaMainView: View {
                     router.navigate(to: .status)
                 }
             )
+            .focusScope(sidebarNamespace)
+            .prefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
             .allowsHitTesting(!focusCoordinator.isAlertPresented)
+            .disabled(!focusCoordinator.isSidebarExpanded)
 
             overlays
         }
@@ -70,17 +78,29 @@ struct TVMediaMainView: View {
         }
         .onChange(of: router.destination) { newValue in
             lastDestinationRaw = newValue.rawValue
-            // Clear edge registrations when destination changes
-            focusCoordinator.clearEdgeRegistrations()
+            // Close sidebar when navigating
+            focusCoordinator.closeSidebar()
+        }
+        .onChange(of: focusCoordinator.isSidebarExpanded) { expanded in
+            // Reset focus to the appropriate namespace when sidebar state changes
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                if expanded {
+                    resetFocus(in: sidebarNamespace)
+                } else {
+                    resetFocus(in: mainNamespace)
+                }
+            }
         }
         .onChange(of: router.selectedSystemID) { newValue in
             lastSystemIdentifier = newValue
             libraryModel.selectSystem(identifier: newValue)
         }
         .onExitCommand {
-            if !focusCoordinator.handleExitCommand() {
-                // Default behavior
+            // Menu/Back button toggles sidebar
+            if focusCoordinator.isAlertPresented || focusCoordinator.isModalPresented {
+                return
             }
+            focusCoordinator.toggleSidebar()
         }
         .sheet(item: $router.activeModal) { modal in
             modalContent(for: modal)
@@ -168,7 +188,13 @@ struct TVMediaMainView: View {
                     saveStatesStore: saveStatesStore
                 )
             case .settings:
+                // Wrap settings in focus containment to prevent sidebar stealing focus
                 SettingsWrapperView()
+                    .focusSection()
+                    .onExitCommand {
+                        // Go back to home when pressing Menu/Back in settings
+                        router.navigate(to: .home)
+                    }
             case .status:
                 RetroStatusControlView()
                     .padding(.horizontal, 8)
@@ -238,7 +264,7 @@ struct TVMediaAlertOverlay: View {
             }
         }
         .onChange(of: alertState.isPresented) { presented in
-            focusCoordinator.setAlertPresented(presented)
+            focusCoordinator.isAlertPresented = presented
             if presented {
                 // Delay focus capture to allow view to appear
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
@@ -635,6 +661,7 @@ struct TVMediaHomeView: View {
     @ObservedObject var gameActions: TVMediaGameActions
     @ObservedObject var router: TVMediaRouter
 
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @State private var isLoading = true
 
     var body: some View {
@@ -668,6 +695,7 @@ struct TVMediaHomeView: View {
                                 games: games,
                                 gameActions: gameActions,
                                 onViewAll: {
+                                    focusCoordinator.closeSidebar()
                                     router.navigateToSystem(system.identifier)
                                 },
                                 ensureLoaded: {
@@ -716,6 +744,10 @@ struct TVMediaSystemsView: View {
     @ObservedObject var router: TVMediaRouter
 
     @State private var icons: [String: Image] = [:]
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+
+    /// Number of columns for calculating left edge
+    private let columnsPerRow: Int = 4
 
     private let columns = [
         GridItem(.adaptive(minimum: 340, maximum: 420), spacing: 28)
@@ -735,12 +767,16 @@ struct TVMediaSystemsView: View {
                 TVMediaTopBar(title: "Systems")
 
                 LazyVGrid(columns: columns, spacing: 28) {
-                    ForEach(systemsWithGames, id: \.identifier) { system in
+                    ForEach(Array(systemsWithGames.enumerated()), id: \.element.identifier) { index, system in
+                        let isAtLeftEdge = index % columnsPerRow == 0
                         TVMediaSystemCard(
                             system: system,
                             icon: icons[system.identifier],
-                            gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count
+                            gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count,
+                            isAtLeftEdge: isAtLeftEdge,
+                            focusCoordinator: focusCoordinator
                         ) {
+                            focusCoordinator.closeSidebar()
                             router.navigateToSystem(system.identifier)
                         }
                         .task {
@@ -790,10 +826,28 @@ struct TVMediaSystemCard: View {
     let system: PVSystem
     let icon: Image?
     let gameCount: Int
+    let isAtLeftEdge: Bool
+    var focusCoordinator: TVMediaFocusCoordinator?
     let action: () -> Void
 
     @FocusState private var isFocused: Bool
     @State private var glowIntensity: Double = 0
+
+    init(
+        system: PVSystem,
+        icon: Image?,
+        gameCount: Int,
+        isAtLeftEdge: Bool = false,
+        focusCoordinator: TVMediaFocusCoordinator? = nil,
+        action: @escaping () -> Void
+    ) {
+        self.system = system
+        self.icon = icon
+        self.gameCount = gameCount
+        self.isAtLeftEdge = isAtLeftEdge
+        self.focusCoordinator = focusCoordinator
+        self.action = action
+    }
 
     var body: some View {
         Button(action: action) {
@@ -928,6 +982,12 @@ struct TVMediaSystemCard: View {
                 glowIntensity = focused ? 0.8 : 0
             }
         }
+        .onMoveCommand { direction in
+            // Open sidebar when at left edge and swiping left
+            if direction == .left && isAtLeftEdge && isFocused {
+                focusCoordinator?.openSidebar()
+            }
+        }
     }
 
     private var cardBackground: some View {
@@ -1021,17 +1081,101 @@ struct TVMediaCardButtonStyle: ButtonStyle {
     }
 }
 
-/// View All button style with subtle scale
+/// View All card that appears at the end of horizontal shelves
 @available(tvOS 16.0, *)
-struct TVMediaViewAllButtonStyle: ButtonStyle {
-    let isFocused: Bool
+struct TVMediaViewAllCard: View {
+    let title: String
+    let subtitle: String
+    let action: () -> Void
 
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(isFocused ? 1.05 : 1.0)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
-            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    @FocusState private var isFocused: Bool
+
+    private let cardWidth: CGFloat = 180
+    private let cardHeight: CGFloat = 220
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 16) {
+                // Arrow icon
+                ZStack {
+                    if isFocused {
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [Color.retroPink.opacity(0.3), .clear],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: 40
+                                )
+                            )
+                            .frame(width: 80, height: 80)
+                    }
+
+                    Image(systemName: "arrow.right.circle")
+                        .font(.system(size: 48, weight: .light))
+                        .foregroundStyle(
+                            isFocused ?
+                                AnyShapeStyle(LinearGradient(
+                                    colors: [.white, Color.retroBlue.opacity(0.9)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )) :
+                                AnyShapeStyle(Color.white.opacity(0.5))
+                        )
+                        .shadow(color: isFocused ? Color.retroPink.opacity(0.6) : .clear, radius: 10)
+                }
+
+                VStack(spacing: 6) {
+                    Text(title.uppercased())
+                        .font(.system(size: 15, weight: .semibold, design: .default))
+                        .tracking(1)
+                        .foregroundStyle(isFocused ? .white : .white.opacity(0.8))
+
+                    Text(subtitle)
+                        .font(.system(size: 12, weight: .medium, design: .default))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+            }
+            .frame(width: cardWidth, height: cardHeight)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        isFocused ?
+                            LinearGradient(
+                                colors: [Color.retroPink.opacity(0.1), Color.retroBlue.opacity(0.08)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        isFocused ?
+                            LinearGradient(
+                                colors: [Color.retroPink.opacity(0.8), Color.retroBlue.opacity(0.6)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.08), Color.white.opacity(0.04)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                        lineWidth: isFocused ? 2 : 1
+                    )
+            )
+            .shadow(color: isFocused ? Color.retroPink.opacity(0.4) : .clear, radius: 15, x: 0, y: 5)
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .focused($isFocused)
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 }
 
@@ -1045,50 +1189,100 @@ struct TVMediaSystemGamesView: View {
     @ObservedObject var gameActions: TVMediaGameActions
     @ObservedObject var router: TVMediaRouter
 
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @State private var recentGames: [PVGame] = []
-    @FocusState private var focusedGameID: String?
+    @State private var isLoading: Bool = true
 
-    private let gamesTopID = "gamesTop"
+    private let headerID = "systemHeader"
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 24) {
+                LazyVStack(alignment: .leading, spacing: 28) {
+                    // Header - always visible and focusable
                     TVMediaSystemHeader(system: system)
+                        .id(headerID)
 
-                    if !recentGames.isEmpty {
-                        TVMediaShelf(title: "Recently Played", items: recentGames, gameActions: gameActions)
+                    if isLoading {
+                        ProgressView("Loading...")
+                            .controlSize(.large)
+                            .frame(maxWidth: .infinity, minHeight: 200)
+                            .foregroundStyle(.white.opacity(0.7))
+                    } else {
+                        // Recently played shelf
+                        if !recentGames.isEmpty {
+                            TVMediaShelf(title: "Recently Played", items: recentGames, gameActions: gameActions)
+                        }
+
+                        // Recent saves shelf
+                        if let recentSaves = saveStatesStore.recentBySystem[system.identifier], !recentSaves.isEmpty {
+                            TVMediaSaveStatesShelfRow(title: "Recent Saves", items: recentSaves, store: saveStatesStore)
+                        }
+
+                        // All Games section with proper title
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack(spacing: 14) {
+                                // Accent bar
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 1)
+                                        .fill(Color.retroPink.opacity(0.5))
+                                        .frame(width: 4, height: 28)
+                                        .blur(radius: 4)
+
+                                    RoundedRectangle(cornerRadius: 1)
+                                        .fill(
+                                            LinearGradient(
+                                                colors: [Color.retroPink, Color.retroBlue],
+                                                startPoint: .top,
+                                                endPoint: .bottom
+                                            )
+                                        )
+                                        .frame(width: 3, height: 26)
+                                }
+
+                                Text("ALL \(system.shortName.uppercased()) GAMES")
+                                    .font(.system(size: 18, weight: .semibold, design: .default))
+                                    .tracking(1.2)
+                                    .foregroundStyle(.white.opacity(0.95))
+
+                                Spacer()
+
+                                let gameCount = model.gamesBySystemIdentifier[system.identifier]?.count ?? 0
+                                Text("\(gameCount) GAMES")
+                                    .font(.system(size: 13, weight: .medium, design: .default))
+                                    .tracking(0.8)
+                                    .foregroundStyle(.white.opacity(0.4))
+                            }
+
+                            TVMediaAllGamesGrid(
+                                games: model.gamesBySystemIdentifier[system.identifier] ?? [],
+                                gameActions: gameActions
+                            )
+                        }
                     }
-
-                    if let recentSaves = saveStatesStore.recentBySystem[system.identifier], !recentSaves.isEmpty {
-                        TVMediaSaveStatesShelfRow(title: "Recent Saves", items: recentSaves, store: saveStatesStore)
-                    }
-
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(height: 1)
-                        .id(gamesTopID)
-
-                    Text("All Games")
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(.white)
-
-                    TVMediaAllGamesGrid(
-                        games: model.gamesBySystemIdentifier[system.identifier] ?? [],
-                        gameActions: gameActions
-                    )
                 }
                 .padding(.horizontal, 60)
                 .padding(.vertical, 40)
             }
-            .onAppear {
-                model.loadGamesIfNeeded(systemIdentifier: system.identifier)
-                Task { await loadHeaderContent(proxy: proxy) }
+            .onMoveCommand { direction in
+                if direction == .up {
+                    // When at top of games grid and pressing up, scroll to header
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        proxy.scrollTo(headerID, anchor: .top)
+                    }
+                }
+                // Left-edge handling is done by individual game tiles
             }
+        }
+        .task {
+            isLoading = true
+            await loadContent()
+            isLoading = false
         }
     }
 
-    private func loadHeaderContent(proxy: ScrollViewProxy) async {
+    private func loadContent() async {
+        model.loadGamesIfNeeded(systemIdentifier: system.identifier)
         _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 10)
 
         let recents: [PVGame] = await Task.detached(priority: .userInitiated) {
@@ -1105,11 +1299,6 @@ struct TVMediaSystemGamesView: View {
 
         await MainActor.run {
             recentGames = recents
-        }
-
-        try? await Task.sleep(nanoseconds: 100_000_000)
-        await MainActor.run {
-            proxy.scrollTo(gamesTopID, anchor: .top)
         }
     }
 }
@@ -1448,6 +1637,7 @@ struct TVMediaShelf: View {
 
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @Namespace private var shelfNamespace
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -1493,6 +1683,8 @@ struct TVMediaShelf: View {
                 }
                 .padding(.vertical, 14)
             }
+            // Use focusSection to ensure this shelf catches vertical focus navigation
+            .focusSection()
         }
     }
 }
@@ -1507,11 +1699,11 @@ struct TVMediaSystemShelfRow: View {
 
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
-    @FocusState private var viewAllFocused: Bool
     @State private var systemIcon: Image?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
+            // Header row (non-focusable label only)
             HStack(spacing: 14) {
                 // Neon accent bar with glow
                 ZStack {
@@ -1555,51 +1747,14 @@ struct TVMediaSystemShelfRow: View {
 
                 Spacer()
 
-                // View All button with premium hover
-                Button {
-                    onViewAll()
-                } label: {
-                    HStack(spacing: 8) {
-                        Text("VIEW ALL")
-                            .font(.system(size: 14, weight: .medium, design: .default))
-                            .tracking(1)
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 12, weight: .medium))
-                    }
-                    .foregroundStyle(
-                        viewAllFocused ?
-                            AnyShapeStyle(LinearGradient(
-                                colors: [.white, Color.retroBlue.opacity(0.9)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )) :
-                            AnyShapeStyle(Color.white.opacity(0.5))
-                    )
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .fill(viewAllFocused ? Color.white.opacity(0.12) : Color.white.opacity(0.03))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .strokeBorder(
-                                viewAllFocused ?
-                                    LinearGradient(
-                                        colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.6)],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ) :
-                                    LinearGradient(colors: [Color.white.opacity(0.1), Color.white.opacity(0.05)], startPoint: .leading, endPoint: .trailing),
-                                lineWidth: viewAllFocused ? 2 : 1
-                            )
-                    )
-                    .shadow(color: viewAllFocused ? Color.retroPink.opacity(0.4) : .clear, radius: 10)
-                }
-                .buttonStyle(TVMediaViewAllButtonStyle(isFocused: viewAllFocused))
-                .focused($viewAllFocused)
+                // Game count indicator
+                Text("\(games.count) GAMES")
+                    .font(.system(size: 12, weight: .medium, design: .default))
+                    .tracking(0.8)
+                    .foregroundStyle(.white.opacity(0.4))
             }
 
+            // Horizontal scroll with games + View All card at the end
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 24) {
                     let gamesArray = Array(games.prefix(30))
@@ -1613,9 +1768,18 @@ struct TVMediaSystemShelfRow: View {
                             focusCoordinator: focusCoordinator
                         )
                     }
+
+                    // View All card at the end of the row - always focusable in the horizontal flow
+                    TVMediaViewAllCard(
+                        title: "View All",
+                        subtitle: "\(games.count) games",
+                        action: onViewAll
+                    )
                 }
                 .padding(.vertical, 12)
             }
+            // Use focusSection to ensure this shelf catches vertical focus navigation
+            .focusSection()
         }
         .onAppear(perform: ensureLoaded)
         .task {
@@ -1674,6 +1838,8 @@ struct TVMediaSaveStatesShelfRow: View {
                 }
                 .padding(.vertical, 12)
             }
+            // Use focusSection to ensure this shelf catches vertical focus navigation
+            .focusSection()
         }
     }
 
