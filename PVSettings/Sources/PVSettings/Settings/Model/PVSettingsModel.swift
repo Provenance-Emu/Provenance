@@ -30,7 +30,7 @@ extension Defaults.Keys {
     static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
 
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
-   
+
     static let showGameBadges = Key<Bool>("showGameBadges", default: true)
 
     static let showRecentGames = Key<Bool>("showRecentGames", default: true)
@@ -465,6 +465,9 @@ public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, D
     case paged = "Paged"
     #endif
     case singlePage = "Single Page"
+    #if os(tvOS)
+    case tvosMedia = "TV Media"
+    #endif
     case uikit = "UIKit"
 
     public var id: String {
@@ -478,11 +481,17 @@ public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, D
             return "Paged (Default)"
         case .singlePage:
             return "Single Page (RetroWave)"
+        #if os(tvOS)
+        case .tvosMedia:
+            return "TV Media (Drawer)"
+        #endif
         case .uikit:
             return "UIKit (Legacy)"
 #else
         case .singlePage:
             return "Single Page (RetroWave)"
+        case .tvosMedia:
+            return "TV Media (Drawer)"
         case .uikit:
             return "UIKit (Default)"
 #endif
@@ -497,11 +506,17 @@ public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, D
             return "The default paged mode."
         case .singlePage:
             return "All consoles in a single page, reduced features."
+        #if os(tvOS)
+        case .tvosMedia:
+            return "A tvOS-first media style UI with an overlay drawer sidebar."
+        #endif
         case .uikit:
             return "Original UIKit mode from 1.X/2.X (Legacy)."
 #else
         case .singlePage:
             return "New SwiftUI single page mode."
+        case .tvosMedia:
+            return "Media-style shelves with an overlay drawer sidebar."
         case .uikit:
             return "Original UIKit mode."
 #endif
@@ -550,7 +565,7 @@ public extension Defaults.Keys {
 #endif
     static let autoJIT = Key<Bool>("autoJIT", default: false)
 #if os(tvOS)
-    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .singlePage)
+    static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .tvosMedia)
 #elseif os(macOS) || targetEnvironment(macCatalyst) || APP_STORE
     static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .paged)
 #elseif os(visionOS)
@@ -625,7 +640,7 @@ public final class PVSettingsWrapper: NSObject {
     public static var volume: Float {
         get { Defaults[.volume] }
         set { Defaults[.volume] = newValue }}
-    
+
     @objc
     public static var showFPS: Bool {
         get { Defaults[.showFPSCount] }

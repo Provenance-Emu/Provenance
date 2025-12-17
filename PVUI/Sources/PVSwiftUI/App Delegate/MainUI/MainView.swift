@@ -49,6 +49,13 @@ struct MainView: View {
                             .environmentObject(appDelegate)
                             .environmentObject(ThemeManager.shared)
                             .edgesIgnoringSafeArea(.all)
+#if os(tvOS)
+                    case .tvosMedia:
+                        TVMediaMainView()
+                            .environmentObject(appDelegate)
+                            .environmentObject(ThemeManager.shared)
+                            .edgesIgnoringSafeArea(.all)
+#endif
                     case .uikit:
                         UIKitHostedProvenanceMainView(appDelegate: appDelegate)
                             .environmentObject(appDelegate)

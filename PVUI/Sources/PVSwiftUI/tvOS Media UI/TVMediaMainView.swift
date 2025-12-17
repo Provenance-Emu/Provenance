@@ -1,0 +1,2027 @@
+import SwiftUI
+import PVUIBase
+import PVThemes
+import PVLibrary
+import RealmSwift
+import PVRealm
+
+#if os(tvOS)
+
+@available(tvOS 16.0, *)
+struct TVMediaMainView: View {
+    @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var themeManager: ThemeManager
+    @EnvironmentObject private var appDelegate: PVAppDelegate
+
+    @AppStorage("TVMediaUI.lastDestination") private var lastDestinationRaw: String = TVMediaDestination.home.rawValue
+    @AppStorage("TVMediaUI.lastSystemIdentifier") private var lastSystemIdentifier: String = ""
+
+    @StateObject private var focusCoordinator = TVMediaFocusCoordinator()
+    @StateObject private var router = TVMediaRouter()
+    @StateObject private var libraryModel = TVMediaLibraryModel()
+    @StateObject private var saveStatesStore = RetroSaveStatesStore.shared
+    @StateObject private var gameActions = TVMediaGameActions()
+
+    @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
+
+    init() {}
+
+    /// Sidebar collapsed width for content padding
+    private let sidebarCollapsedWidth: CGFloat = 80
+
+    public var body: some View {
+        ZStack(alignment: .leading) {
+            TVMediaBackground()
+                .ignoresSafeArea()
+
+            // Content area with proper focus management
+            TVMediaFocusAwareContent(focusCoordinator: focusCoordinator) {
+                contentArea
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.leading, sidebarCollapsedWidth)
+            .allowsHitTesting(focusCoordinator.activeZone != .alert)
+
+            // Sidebar - only focusable when it should be active
+            TVMediaSidebarRail(
+                destination: $router.destination,
+                focusCoordinator: focusCoordinator,
+                router: router,
+                onSelectSettings: {
+                    router.navigate(to: .settings)
+                },
+                onSelectStatus: {
+                    router.navigate(to: .status)
+                }
+            )
+            .allowsHitTesting(!focusCoordinator.isAlertPresented)
+
+            overlays
+        }
+        .environment(\.tvMediaFocusCoordinator, focusCoordinator)
+        .onAppear {
+            gameActions.appState = appState
+            router.destination = TVMediaDestination(rawValue: lastDestinationRaw) ?? .home
+            router.selectedSystemID = lastSystemIdentifier
+            libraryModel.refresh()
+            if !lastSystemIdentifier.isEmpty {
+                libraryModel.selectSystem(identifier: lastSystemIdentifier)
+            }
+        }
+        .onChange(of: router.destination) { newValue in
+            lastDestinationRaw = newValue.rawValue
+            // Clear edge registrations when destination changes
+            focusCoordinator.clearEdgeRegistrations()
+        }
+        .onChange(of: router.selectedSystemID) { newValue in
+            lastSystemIdentifier = newValue
+            libraryModel.selectSystem(identifier: newValue)
+        }
+        .onExitCommand {
+            if !focusCoordinator.handleExitCommand() {
+                // Default behavior
+            }
+        }
+        .sheet(item: $router.activeModal) { modal in
+            modalContent(for: modal)
+        }
+        .retroAlert(
+            "Rename Game",
+            message: "Enter a new name for \(gameActions.renameGame?.title ?? "")",
+            isPresented: Binding(
+                get: { gameActions.renameGame != nil },
+                set: { if !$0 { gameActions.clearRename() } }
+            ),
+            textFieldBinding: Binding<String?>(
+                get: { gameActions.renameText },
+                set: { gameActions.renameText = $0 ?? "" }
+            ),
+            textFieldConfiguration: { textField in
+                textField.placeholder = "Game name"
+                textField.clearButtonMode = .whileEditing
+                textField.autocapitalizationType = .words
+            }
+        ) {
+            VStack(spacing: 10) {
+                RetroButton(title: "Save", isPrimary: true) {
+                    Task { await gameActions.commitRenameIfPossible() }
+                }
+                RetroButton(title: "Cancel", isPrimary: false) {
+                    gameActions.clearRename()
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+        .ignoresSafeArea(.all)
+        .hideHomeIndicator()
+    }
+
+    @ViewBuilder
+    private var contentArea: some View {
+        Group {
+            switch router.destination {
+            case .home:
+                TVMediaHomeView(
+                    model: libraryModel,
+                    saveStatesStore: saveStatesStore,
+                    gameActions: gameActions,
+                    router: router
+                )
+            case .system:
+                TVMediaSystemsView(
+                    model: libraryModel,
+                    router: router
+                )
+            case .systemGames:
+                if let system = libraryModel.selectedSystem {
+                    TVMediaSystemGamesView(
+                        system: system,
+                        model: libraryModel,
+                        saveStatesStore: saveStatesStore,
+                        gameActions: gameActions,
+                        router: router
+                    )
+                } else {
+                    TVMediaEmptyStateView(
+                        title: "Select a System",
+                        subtitle: "Choose a system to browse games."
+                    )
+                }
+            case .search:
+                TVMediaSearchView(
+                    model: libraryModel,
+                    gameActions: gameActions
+                )
+            case .favorites:
+                TVMediaFavoritesView(
+                    model: libraryModel,
+                    gameActions: gameActions
+                )
+            case .saves:
+                TVMediaSavesView(
+                    model: libraryModel,
+                    saveStatesStore: saveStatesStore
+                )
+            case .settings:
+                SettingsWrapperView()
+            case .status:
+                RetroStatusControlView()
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var overlays: some View {
+        if syncStatusManager.isVisible {
+            GameSyncStatusView(
+                gameTitle: syncStatusManager.gameTitle,
+                statusMessage: syncStatusManager.statusMessage,
+                isComplete: syncStatusManager.isComplete,
+                hasError: syncStatusManager.hasError,
+                onCancel: syncStatusManager.onCancel
+            )
+            .transition(.opacity)
+            .animation(.easeInOut, value: syncStatusManager.isVisible)
+        }
+
+        // Alert overlay with focus capture
+        TVMediaAlertOverlay(
+            alertState: SceneCoordinator.shared.alertState,
+            focusCoordinator: focusCoordinator
+        )
+    }
+
+    @ViewBuilder
+    private func modalContent(for modal: TVMediaModal) -> some View {
+        switch modal {
+        case .saveBrowser(let systemID, let systemName, let game):
+            RetroSaveStatesBrowserView(
+                systemID: systemID,
+                systemName: systemName,
+                gameFilter: game
+            )
+            .environmentObject(themeManager)
+        case .systemPicker(let game):
+            SystemPickerView(game: game, isPresented: Binding(
+                get: { router.activeModal != nil },
+                set: { if !$0 { router.dismissModal() } }
+            ))
+        case .renameGame:
+            EmptyView()
+        case .gameInfo:
+            EmptyView()
+        }
+    }
+}
+
+/// Alert overlay that properly captures focus on tvOS
+@available(tvOS 16.0, *)
+struct TVMediaAlertOverlay: View {
+    @ObservedObject var alertState: RetroAlertState
+    @ObservedObject var focusCoordinator: TVMediaFocusCoordinator
+
+    @FocusState private var isAlertFocused: Bool
+
+    var body: some View {
+        Group {
+            if alertState.isPresented {
+                RetroAlertStateView(alertState: alertState)
+                    .focusSection()
+                    .focused($isAlertFocused)
+            }
+        }
+        .onChange(of: alertState.isPresented) { presented in
+            focusCoordinator.setAlertPresented(presented)
+            if presented {
+                // Delay focus capture to allow view to appear
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    isAlertFocused = true
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Destination Enum
+
+enum TVMediaDestination: String, CaseIterable {
+    case home
+    case system
+    case systemGames
+    case search
+    case favorites
+    case saves
+    case settings
+    case status
+
+    var title: String {
+        switch self {
+        case .home: return "Home"
+        case .system: return "Systems"
+        case .systemGames: return "Games"
+        case .search: return "Search"
+        case .favorites: return "Favorites"
+        case .saves: return "Save States"
+        case .settings: return "Settings"
+        case .status: return "Status"
+        }
+    }
+}
+
+// MARK: - Library Model
+
+@MainActor
+final class TVMediaLibraryModel: ObservableObject {
+    @Published public private(set) var systems: [PVSystem] = []
+    @Published public private(set) var gamesBySystemIdentifier: [String: [PVGame]] = [:]
+    @Published public var selectedSystemIdentifier: String = ""
+    @Published public private(set) var favoriteGamesList: [PVGame] = []
+
+    init() {}
+
+    var selectedSystem: PVSystem? {
+        systems.first(where: { $0.identifier == selectedSystemIdentifier })
+    }
+
+    func refresh() {
+        Task {
+            await loadSystems()
+            await loadFavorites()
+        }
+    }
+
+    func selectSystem(identifier: String) {
+        selectedSystemIdentifier = identifier
+        Task {
+            await loadGamesForSystem(identifier: identifier)
+        }
+    }
+
+    private func loadSystems() async {
+        let loaded: [PVSystem] = await Task.detached(priority: .userInitiated) {
+            do {
+                let realm = try Realm()
+                let results = realm.objects(PVSystem.self)
+                    .sorted(byKeyPath: "name", ascending: true)
+                return Array(results).map { $0.freeze() }
+            } catch {
+                return []
+            }
+        }.value
+
+        systems = loaded
+        if selectedSystemIdentifier.isEmpty, let first = systems.first {
+            selectedSystemIdentifier = first.identifier
+        }
+    }
+
+    func loadGamesForSystem(identifier: String) async {
+        guard gamesBySystemIdentifier[identifier] == nil else { return }
+        await loadGamesForSystemAsync(identifier: identifier)
+    }
+
+    /// Async method that always loads games (no guard)
+    @MainActor
+    func loadGamesForSystemAsync(identifier: String) async {
+        let loaded: [PVGame] = await Task.detached(priority: .userInitiated) {
+            do {
+                let realm = try Realm()
+                let results = realm.objects(PVGame.self)
+                    .filter("systemIdentifier == %@", identifier)
+                    .sorted(byKeyPath: "title", ascending: true)
+                return Array(results).map { $0.freeze() }
+            } catch {
+                return []
+            }
+        }.value
+
+        await MainActor.run {
+            gamesBySystemIdentifier[identifier] = loaded
+        }
+    }
+
+    func loadGamesIfNeeded(systemIdentifier: String) {
+        guard gamesBySystemIdentifier[systemIdentifier] == nil else { return }
+        Task {
+            await loadGamesForSystem(identifier: systemIdentifier)
+        }
+    }
+
+    private func loadFavorites() async {
+        let loaded: [PVGame] = await Task.detached(priority: .userInitiated) {
+            do {
+                let realm = try Realm()
+                let results = realm.objects(PVGame.self)
+                    .filter("isFavorite == true")
+                    .sorted(byKeyPath: "title", ascending: true)
+                return Array(results.prefix(100)).map { $0.freeze() }
+            } catch {
+                return []
+            }
+        }.value
+
+        favoriteGamesList = loaded
+    }
+
+    func favoriteGames(limit: Int = 40) -> [PVGame] {
+        Array(favoriteGamesList.prefix(limit))
+    }
+}
+
+// MARK: - Game Actions
+
+final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
+    @MainActor var appState: AppState?
+    @Published var saveBrowserContext: TVMediaSaveBrowserContext?
+    @Published var systemPickerGame: PVGame?
+    @Published var renameGame: PVGame?
+    @Published var renameText: String? = nil
+
+    private let retroModel = RetroGameLibraryViewModel()
+
+    @MainActor
+    func clearRename() {
+        renameGame = nil
+        renameText = nil
+    }
+
+    @MainActor
+    func commitRenameIfPossible() async {
+        guard let renameGame, let newName = renameText, !newName.isEmpty else {
+            clearRename()
+            return
+        }
+        await retroModel.renameGame(renameGame, to: newName)
+        clearRename()
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame) {
+        Task { @MainActor in
+            renameGame = game.isFrozen ? game : game.freeze()
+            renameText = renameGame?.title
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+        Task { @MainActor in
+            systemPickerGame = game.isFrozen ? game : game.freeze()
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
+        Task { @MainActor in
+            let frozen = game.isFrozen ? game : game.freeze()
+            saveBrowserContext = TVMediaSaveBrowserContext(
+                systemID: frozen.systemIdentifier,
+                systemName: frozen.system?.name ?? frozen.systemIdentifier,
+                game: frozen
+            )
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
+        Task { @MainActor in
+            guard let appState else { return }
+            retroModel.showGameInfo(gameId: gameId, appState: appState)
+        }
+    }
+}
+
+struct TVMediaSaveBrowserContext: Identifiable {
+    let systemID: String
+    let systemName: String
+    let game: PVGame?
+    var id: String { game?.id ?? systemID }
+}
+
+// MARK: - Empty State View
+
+struct TVMediaEmptyStateView: View {
+    let title: String
+    let subtitle: String
+
+    @State private var pulseOpacity: Double = 0.3
+
+    var body: some View {
+        VStack(spacing: 24) {
+            // Icon with glow
+            ZStack {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [Color.retroPink.opacity(pulseOpacity), .clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 60
+                        )
+                    )
+                    .frame(width: 120, height: 120)
+
+                Image(systemName: "tray")
+                    .font(.system(size: 48, weight: .light))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.white.opacity(0.6), Color.retroBlue.opacity(0.5)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .shadow(color: Color.retroPink.opacity(0.3), radius: 10)
+            }
+
+            Text(title)
+                .font(.title2.weight(.semibold))
+                .foregroundStyle(.white)
+                .shadow(color: Color.retroPink.opacity(0.3), radius: 6)
+
+            Text(subtitle)
+                .font(.callout)
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 520)
+
+            // Navigation hint with subtle styling
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.circle")
+                    .font(.caption)
+                Text("Swipe left for menu")
+                    .font(.caption)
+            }
+            .foregroundStyle(.white.opacity(0.35))
+            .padding(.top, 16)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(40)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+                pulseOpacity = 0.15
+            }
+        }
+    }
+}
+
+// MARK: - Saves View (with empty state handling)
+
+@available(tvOS 16.0, *)
+struct TVMediaSavesView: View {
+    @ObservedObject var model: TVMediaLibraryModel
+    @ObservedObject var saveStatesStore: RetroSaveStatesStore
+
+    @State private var allSaves: [RetroSaveStateItem] = []
+    @State private var isLoading = true
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 24) {
+                TVMediaTopBar(title: "Save States")
+
+                if isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 200)
+                } else if allSaves.isEmpty {
+                    emptyState
+                } else {
+                    saveStatesGrid
+                }
+            }
+            .padding(.horizontal, 60)
+            .padding(.vertical, 40)
+        }
+        .task {
+            await loadAllSaves()
+        }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 14) {
+            Image(systemName: "rectangle.stack.badge.play")
+                .font(.system(size: 44, weight: .light))
+                .foregroundStyle(.white.opacity(0.4))
+
+            Text("No Save States")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+
+            Text("Play some games and create save states to see them here.")
+                .font(.callout)
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 480)
+        }
+        .frame(maxWidth: .infinity, minHeight: 300)
+        .padding(.top, 40)
+    }
+
+    private var saveStatesGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 280, maximum: 340), spacing: 18)], spacing: 18) {
+            ForEach(allSaves) { item in
+                TVMediaSaveStateTileButton(item: item, store: saveStatesStore)
+            }
+        }
+    }
+
+    private func loadAllSaves() async {
+        let saves = await saveStatesStore.loadAllRecent(limit: 100)
+        await MainActor.run {
+            allSaves = saves
+            isLoading = false
+        }
+    }
+}
+
+@available(tvOS 16.0, *)
+private struct TVMediaSaveStateTileButton: View {
+    let item: RetroSaveStateItem
+    @ObservedObject var store: RetroSaveStatesStore
+
+    @FocusState private var isFocused: Bool
+    @State private var thumbnail: UIImage?
+
+    var body: some View {
+        Button {
+            Task { await store.openSaveState(id: item.id) }
+        } label: {
+            TVMediaSaveStateTile(
+                title: item.gameTitle,
+                subtitle: item.date,
+                thumbnail: thumbnail,
+                isFocused: isFocused
+            )
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .focused($isFocused)
+        .contextMenu {
+            Button(role: .destructive) {
+                Task { await deleteSaveState() }
+            } label: {
+                Label("Delete Save State", systemImage: "trash")
+            }
+        }
+        .task {
+            thumbnail = await store.thumbnail(for: item, targetSize: CGSize(width: 280, height: 180))
+        }
+    }
+
+    private func deleteSaveState() async {
+        await MainActor.run {
+            let realm = RomDatabase.sharedInstance.realm
+            guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: item.id) else { return }
+            do {
+                try RomDatabase.sharedInstance.delete(saveState: saveState)
+            } catch {
+                SceneCoordinator.shared.alertState.show(
+                    title: "Delete Failed",
+                    message: error.localizedDescription,
+                    type: .error
+                )
+            }
+        }
+    }
+}
+
+// MARK: - Home View
+
+@available(tvOS 16.0, *)
+struct TVMediaHomeView: View {
+    @ObservedObject var model: TVMediaLibraryModel
+    @ObservedObject var saveStatesStore: RetroSaveStatesStore
+    @ObservedObject var gameActions: TVMediaGameActions
+    @ObservedObject var router: TVMediaRouter
+
+    @State private var isLoading = true
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 28) {
+                TVMediaTopBar(title: "Home")
+
+                if isLoading && model.gamesBySystemIdentifier.isEmpty {
+                    // Show loading state
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                            .scaleEffect(1.5)
+                        Spacer()
+                    }
+                    .padding(.vertical, 100)
+                } else {
+                    // Favorites section
+                    let favorites = model.favoriteGames(limit: 40)
+                    if !favorites.isEmpty {
+                        TVMediaShelf(title: "Favorites", items: favorites, gameActions: gameActions)
+                    }
+
+                    // System shelves - iterate all systems, only show if they have games
+                    ForEach(model.systems, id: \.identifier) { system in
+                        let games = model.gamesBySystemIdentifier[system.identifier] ?? []
+
+                        if !games.isEmpty {
+                            TVMediaSystemShelfRow(
+                                system: system,
+                                games: games,
+                                gameActions: gameActions,
+                                onViewAll: {
+                                    router.navigateToSystem(system.identifier)
+                                },
+                                ensureLoaded: {
+                                    model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+                                }
+                            )
+                            .task {
+                                _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 6)
+                            }
+
+                            if let recent = saveStatesStore.recentBySystem[system.identifier], !recent.isEmpty {
+                                TVMediaSaveStatesShelfRow(
+                                    title: "\(system.name) Recent Saves",
+                                    items: recent,
+                                    store: saveStatesStore
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 60)
+            .padding(.vertical, 40)
+        }
+        .task {
+            // Load games for all systems
+            await loadAllGames()
+        }
+    }
+
+    private func loadAllGames() async {
+        isLoading = true
+        // Load games for each system
+        for system in model.systems {
+            await model.loadGamesForSystemAsync(identifier: system.identifier)
+        }
+        isLoading = false
+    }
+}
+
+// MARK: - Systems View
+
+@available(tvOS 16.0, *)
+struct TVMediaSystemsView: View {
+    @ObservedObject var model: TVMediaLibraryModel
+    @ObservedObject var router: TVMediaRouter
+
+    @State private var icons: [String: Image] = [:]
+
+    private let columns = [
+        GridItem(.adaptive(minimum: 340, maximum: 420), spacing: 28)
+    ]
+
+    /// Only show systems that have games
+    private var systemsWithGames: [PVSystem] {
+        model.systems.filter { system in
+            let gameCount = model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count
+            return gameCount > 0
+        }
+    }
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 28) {
+                TVMediaTopBar(title: "Systems")
+
+                LazyVGrid(columns: columns, spacing: 28) {
+                    ForEach(systemsWithGames, id: \.identifier) { system in
+                        TVMediaSystemCard(
+                            system: system,
+                            icon: icons[system.identifier],
+                            gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count
+                        ) {
+                            router.navigateToSystem(system.identifier)
+                        }
+                        .task {
+                            model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 60)
+            .padding(.vertical, 40)
+        }
+        .task {
+            await loadIcons()
+        }
+    }
+
+    private func loadIcons() async {
+        guard icons.isEmpty else { return }
+        var newIcons: [String: Image] = [:]
+        for system in model.systems {
+            // Try the short name first (like "snes", "nes")
+            let shortName = system.identifier.components(separatedBy: ".").last?.lowercased() ?? ""
+
+            // Try multiple naming patterns used in the app
+            let namesToTry = [
+                shortName,
+                "prov_\(shortName)_icon",
+                "\(shortName)_icon",
+                system.shortName.lowercased()
+            ]
+
+            for name in namesToTry {
+                if let uiImage = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) {
+                    newIcons[system.identifier] = Image(uiImage: uiImage).renderingMode(.template)
+                    break
+                }
+            }
+        }
+        await MainActor.run {
+            icons = newIcons
+        }
+    }
+}
+
+@available(tvOS 16.0, *)
+struct TVMediaSystemCard: View {
+    let system: PVSystem
+    let icon: Image?
+    let gameCount: Int
+    let action: () -> Void
+
+    @FocusState private var isFocused: Bool
+    @State private var glowIntensity: Double = 0
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                // Outer glow layer
+                if isFocused {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.retroPink.opacity(0.2), Color.retroBlue.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .blur(radius: 12)
+                        .opacity(glowIntensity)
+                }
+
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: 20) {
+                        // System icon container
+                        ZStack {
+                            // Focus glow
+                            if isFocused {
+                                Circle()
+                                    .fill(
+                                        RadialGradient(
+                                            colors: [Color.retroPink.opacity(0.35), .clear],
+                                            center: .center,
+                                            startRadius: 0,
+                                            endRadius: 50
+                                        )
+                                    )
+                                    .frame(width: 100, height: 100)
+                                    .blur(radius: 6)
+                            }
+
+                            if let icon {
+                                icon
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: isFocused ?
+                                                [.white, Color.retroBlue.opacity(0.85)] :
+                                                [.white.opacity(0.7), .white.opacity(0.5)],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    )
+                                    .frame(width: 60, height: 60)
+                                    .shadow(color: isFocused ? Color.retroPink.opacity(0.7) : .clear, radius: 12)
+                            } else {
+                                Image(systemName: "gamecontroller")
+                                    .font(.system(size: 38, weight: .light))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: isFocused ?
+                                                [.white, Color.retroBlue.opacity(0.8)] :
+                                                [.white.opacity(0.4), .white.opacity(0.3)],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    )
+                                    .shadow(color: isFocused ? Color.retroPink.opacity(0.6) : .clear, radius: 10)
+                            }
+                        }
+                        .frame(width: 80, height: 80)
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            // System name with premium typography
+                            Text(system.name.uppercased())
+                                .font(.system(size: 17, weight: .bold, design: .default))
+                                .tracking(0.8)
+                                .foregroundStyle(isFocused ? .white : .white.opacity(0.85))
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.8)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 6)
+
+                            // Game count with subtle styling
+                            HStack(spacing: 6) {
+                                Text("\(gameCount)")
+                                    .font(.system(size: 15, weight: .semibold, design: .monospaced))
+                                    .foregroundStyle(isFocused ? Color.retroBlue : .white.opacity(0.6))
+                                Text("GAMES")
+                                    .font(.system(size: 11, weight: .medium, design: .default))
+                                    .tracking(1)
+                                    .foregroundStyle(.white.opacity(0.45))
+                            }
+                        }
+
+                        Spacer(minLength: 0)
+
+                        // Chevron indicator
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(
+                                isFocused ?
+                                    AnyShapeStyle(LinearGradient(
+                                        colors: [Color.retroBlue.opacity(0.9), Color.retroPink.opacity(0.6)],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )) :
+                                    AnyShapeStyle(Color.white.opacity(0.2))
+                            )
+                            .shadow(color: isFocused ? Color.retroBlue.opacity(0.5) : .clear, radius: 6)
+                    }
+
+                    // Metadata row
+                    if !system.manufacturer.isEmpty || system.releaseYear > 0 {
+                        Text(systemMetadataFull(system).uppercased())
+                            .font(.system(size: 11, weight: .medium, design: .default))
+                            .tracking(0.8)
+                            .foregroundStyle(.white.opacity(0.35))
+                            .lineLimit(1)
+                            .padding(.top, 12)
+                            .padding(.leading, 100) // Align with text
+                    }
+                }
+                .padding(.vertical, 20)
+                .padding(.horizontal, 24)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(cardBackground)
+                .overlay(cardBorder)
+            }
+        }
+        .buttonStyle(TVMediaSystemCardButtonStyle(isFocused: isFocused))
+        .focused($isFocused)
+        .onChange(of: isFocused) { focused in
+            withAnimation(.easeOut(duration: focused ? 0.3 : 0.15)) {
+                glowIntensity = focused ? 0.8 : 0
+            }
+        }
+    }
+
+    private var cardBackground: some View {
+        RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .fill(
+                isFocused ?
+                    LinearGradient(
+                        colors: [
+                            Color.retroPink.opacity(0.06),
+                            Color.retroBlue.opacity(0.04),
+                            Color.retroPink.opacity(0.02)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ) :
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.02), Color.white.opacity(0.01)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+            )
+    }
+
+    private var cardBorder: some View {
+        RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .strokeBorder(
+                isFocused ?
+                    LinearGradient(
+                        colors: [
+                            Color.retroPink.opacity(0.9),
+                            Color.retroBlue.opacity(0.7),
+                            Color.retroPink.opacity(0.5)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ) :
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.06), Color.white.opacity(0.03)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ),
+                lineWidth: isFocused ? 2 : 1
+            )
+    }
+
+    private func systemMetadataFull(_ system: PVSystem) -> String {
+        var parts: [String] = []
+        if !system.manufacturer.isEmpty { parts.append(system.manufacturer) }
+        if system.releaseYear > 0 { parts.append(String(system.releaseYear)) }
+        if !system.shortName.isEmpty && system.shortName != system.name {
+            parts.append(system.shortName)
+        }
+        return parts.joined(separator: " • ")
+    }
+}
+
+/// System card button style
+@available(tvOS 16.0, *)
+struct TVMediaSystemCardButtonStyle: ButtonStyle {
+    let isFocused: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(isFocused ? 1.02 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .shadow(color: isFocused ? Color.retroPink.opacity(0.35) : .clear, radius: 20, x: 0, y: 6)
+            .animation(.spring(response: 0.28, dampingFraction: 0.78), value: isFocused)
+            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+/// Flat button style - no background, scale on focus
+@available(tvOS 16.0, *)
+struct TVMediaFlatButtonStyle: ButtonStyle {
+    let isFocused: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(isFocused ? 1.04 : 1.0)
+            .animation(.spring(response: 0.22, dampingFraction: 0.85), value: isFocused)
+    }
+}
+
+/// Card button style without the default tvOS focus overlay
+/// We handle focus styling ourselves with our RetroWave effects
+@available(tvOS 16.0, *)
+struct TVMediaCardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.85 : 1.0)
+    }
+}
+
+/// View All button style with subtle scale
+@available(tvOS 16.0, *)
+struct TVMediaViewAllButtonStyle: ButtonStyle {
+    let isFocused: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(isFocused ? 1.05 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+// MARK: - System Games View
+
+@available(tvOS 16.0, *)
+struct TVMediaSystemGamesView: View {
+    let system: PVSystem
+    @ObservedObject var model: TVMediaLibraryModel
+    @ObservedObject var saveStatesStore: RetroSaveStatesStore
+    @ObservedObject var gameActions: TVMediaGameActions
+    @ObservedObject var router: TVMediaRouter
+
+    @State private var recentGames: [PVGame] = []
+    @FocusState private var focusedGameID: String?
+
+    private let gamesTopID = "gamesTop"
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 24) {
+                    TVMediaSystemHeader(system: system)
+
+                    if !recentGames.isEmpty {
+                        TVMediaShelf(title: "Recently Played", items: recentGames, gameActions: gameActions)
+                    }
+
+                    if let recentSaves = saveStatesStore.recentBySystem[system.identifier], !recentSaves.isEmpty {
+                        TVMediaSaveStatesShelfRow(title: "Recent Saves", items: recentSaves, store: saveStatesStore)
+                    }
+
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 1)
+                        .id(gamesTopID)
+
+                    Text("All Games")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.white)
+
+                    TVMediaAllGamesGrid(
+                        games: model.gamesBySystemIdentifier[system.identifier] ?? [],
+                        gameActions: gameActions
+                    )
+                }
+                .padding(.horizontal, 60)
+                .padding(.vertical, 40)
+            }
+            .onAppear {
+                model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+                Task { await loadHeaderContent(proxy: proxy) }
+            }
+        }
+    }
+
+    private func loadHeaderContent(proxy: ScrollViewProxy) async {
+        _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 10)
+
+        let recents: [PVGame] = await Task.detached(priority: .userInitiated) {
+            do {
+                let realm = try Realm()
+                let results = realm.objects(PVGame.self)
+                    .filter("systemIdentifier == %@ AND lastPlayed != nil", system.identifier)
+                    .sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: false)
+                return Array(results.prefix(24)).map { $0.freeze() }
+            } catch {
+                return []
+            }
+        }.value
+
+        await MainActor.run {
+            recentGames = recents
+        }
+
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        await MainActor.run {
+            proxy.scrollTo(gamesTopID, anchor: .top)
+        }
+    }
+}
+
+@available(tvOS 16.0, *)
+struct TVMediaSystemHeader: View {
+    let system: PVSystem
+
+    @State private var icon: Image?
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 20) {
+            ZStack {
+                if let icon {
+                    icon
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(.white.opacity(0.85))
+                        .padding(14)
+                } else {
+                    Image(systemName: "gamecontroller.fill")
+                        .font(.largeTitle.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+            }
+            .frame(width: 80, height: 80)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(system.name)
+                    .font(.largeTitle.weight(.bold))
+                    .foregroundStyle(.white)
+
+                Text(systemMetadataLine(system))
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .lineLimit(1)
+            }
+
+            Spacer()
+        }
+        .task {
+            await loadIcon()
+        }
+    }
+
+    private func systemMetadataLine(_ system: PVSystem) -> String {
+        var parts: [String] = []
+        if !system.manufacturer.isEmpty { parts.append(system.manufacturer) }
+        if system.releaseYear > 0 { parts.append(String(system.releaseYear)) }
+        if system.bit > 0 { parts.append("\(system.bit)-bit") }
+        if system.usesCDs { parts.append("CD") }
+        if system.portableSystem { parts.append("Portable") }
+        if system.supportsRumble { parts.append("Rumble") }
+        return parts.joined(separator: " • ")
+    }
+
+    private func loadIcon() async {
+        guard icon == nil else { return }
+        let name = system.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
+        if let uiImage = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) {
+            icon = Image(uiImage: uiImage).renderingMode(.template)
+        }
+    }
+}
+
+// MARK: - All Games Grid
+
+@available(tvOS 16.0, *)
+struct TVMediaAllGamesGrid: View {
+    let games: [PVGame]
+    @ObservedObject var gameActions: TVMediaGameActions
+
+    @EnvironmentObject private var sceneCoordinator: SceneCoordinator
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+
+    /// Number of columns for calculating left edge items
+    private let columnsPerRow: Int = 5
+
+    private let columns = [
+        GridItem(.adaptive(minimum: 260, maximum: 300), spacing: 20)
+    ]
+
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 20) {
+            ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
+                // First column in each row is at left edge
+                let isAtLeftEdge = index % columnsPerRow == 0
+                TVMediaGameTileView(
+                    game: game,
+                    titleFont: .headline.weight(.semibold),
+                    onPlay: { sceneCoordinator.launchGame(game) },
+                    contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
+                    isAtLeftEdge: isAtLeftEdge,
+                    focusCoordinator: focusCoordinator
+                )
+            }
+        }
+    }
+}
+
+// MARK: - Search View
+
+@available(tvOS 16.0, *)
+struct TVMediaSearchView: View {
+    @ObservedObject var model: TVMediaLibraryModel
+    @ObservedObject var gameActions: TVMediaGameActions
+
+    @State private var text: String = ""
+    @State private var results: [PVGame] = []
+    @State private var isSearching: Bool = false
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 24) {
+                TVMediaTopBar(title: "Search")
+
+                searchField
+
+                if isSearching {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 200)
+                } else if text.isEmpty {
+                    searchPlaceholder
+                } else if results.isEmpty {
+                    noResultsView
+                } else {
+                    TVMediaSearchResultsGrid(results: results, gameActions: gameActions)
+                }
+            }
+            .padding(.horizontal, 60)
+            .padding(.vertical, 40)
+        }
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "magnifyingglass")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(text.isEmpty ? .white.opacity(0.5) : .white)
+
+            TextField("Search games…", text: $text)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
+                .foregroundStyle(.white)
+                .font(.title3)
+                .onChange(of: text) { _ in
+                    Task { await performSearch() }
+                }
+
+            if !text.isEmpty {
+                Button {
+                    text = ""
+                    results = []
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.vertical, 16)
+        .padding(.horizontal, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.white.opacity(0.06))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
+                )
+        )
+    }
+
+    private var searchPlaceholder: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 40, weight: .light))
+                .foregroundStyle(.white.opacity(0.3))
+
+            Text("Type to search your library")
+                .font(.callout)
+                .foregroundStyle(.white.opacity(0.6))
+        }
+        .frame(maxWidth: .infinity, minHeight: 200)
+    }
+
+    private var noResultsView: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "questionmark.circle")
+                .font(.system(size: 40, weight: .light))
+                .foregroundStyle(.white.opacity(0.3))
+
+            Text("No results for \"\(text)\"")
+                .font(.callout)
+                .foregroundStyle(.white.opacity(0.6))
+        }
+        .frame(maxWidth: .infinity, minHeight: 200)
+    }
+
+    private func performSearch() async {
+        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else {
+            await MainActor.run {
+                results = []
+                isSearching = false
+            }
+            return
+        }
+
+        await MainActor.run { isSearching = true }
+
+        let games: [PVGame] = await Task.detached(priority: .userInitiated) {
+            do {
+                let realm = try Realm()
+                let matched = realm.objects(PVGame.self)
+                    .filter("title CONTAINS[c] %@", query)
+                    .sorted(byKeyPath: "title", ascending: true)
+                return Array(matched.prefix(120)).map { $0.freeze() }
+            } catch {
+                return []
+            }
+        }.value
+
+        await MainActor.run {
+            results = games
+            isSearching = false
+        }
+    }
+}
+
+// MARK: - Favorites View
+
+@available(tvOS 16.0, *)
+struct TVMediaFavoritesView: View {
+    @ObservedObject var model: TVMediaLibraryModel
+    @ObservedObject var gameActions: TVMediaGameActions
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 28) {
+                TVMediaTopBar(title: "Favorites")
+
+                let favorites = model.favoriteGames(limit: 240)
+                if favorites.isEmpty {
+                    emptyState
+                } else {
+                    TVMediaSearchResultsGrid(results: favorites, gameActions: gameActions)
+                }
+            }
+            .padding(.horizontal, 60)
+            .padding(.vertical, 40)
+        }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 14) {
+            Image(systemName: "heart")
+                .font(.system(size: 44, weight: .light))
+                .foregroundStyle(.white.opacity(0.4))
+
+            Text("No Favorites")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+
+            Text("Mark games as favorites to see them here.")
+                .font(.callout)
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 480)
+        }
+        .frame(maxWidth: .infinity, minHeight: 300)
+        .padding(.top, 40)
+    }
+}
+
+// MARK: - Top Bar
+
+struct TVMediaTopBar: View {
+    let title: String
+
+    var body: some View {
+        HStack(spacing: 18) {
+            // Premium neon accent bar with glow
+            ZStack {
+                // Glow layer
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.6), Color.retroBlue.opacity(0.4)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: 6, height: 40)
+                    .blur(radius: 8)
+
+                // Main bar
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.retroPink, Color.retroBlue.opacity(0.9)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: 4, height: 36)
+            }
+
+            // Title with premium typography
+            Text(title.uppercased())
+                .font(.system(size: 38, weight: .bold, design: .default))
+                .tracking(2)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.white, .white.opacity(0.85)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .shadow(color: Color.retroPink.opacity(0.4), radius: 10)
+                .shadow(color: Color.retroBlue.opacity(0.2), radius: 20)
+
+            Spacer()
+        }
+        .padding(.bottom, 16)
+    }
+}
+
+// MARK: - Shelf Components
+
+@available(tvOS 16.0, *)
+struct TVMediaShelf: View {
+    let title: String
+    let items: [PVGame]
+    @ObservedObject var gameActions: TVMediaGameActions
+
+    @EnvironmentObject private var sceneCoordinator: SceneCoordinator
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            // Premium shelf header
+            HStack(spacing: 12) {
+                // Neon accent bar with glow
+                ZStack {
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(Color.retroPink.opacity(0.5))
+                        .frame(width: 4, height: 26)
+                        .blur(radius: 4)
+
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.retroPink.opacity(0.9), Color.retroBlue.opacity(0.7)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(width: 3, height: 24)
+                }
+
+                Text(title.uppercased())
+                    .font(.system(size: 16, weight: .semibold, design: .default))
+                    .tracking(1.2)
+                    .foregroundStyle(.white.opacity(0.9))
+                    .shadow(color: Color.retroPink.opacity(0.3), radius: 4)
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 26) {
+                    ForEach(Array(items.enumerated()), id: \.element.id) { index, game in
+                        TVMediaGameTileView(
+                            game: game,
+                            titleFont: .callout.weight(.semibold),
+                            onPlay: { sceneCoordinator.launchGame(game) },
+                            contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
+                            isAtLeftEdge: index == 0,
+                            focusCoordinator: focusCoordinator
+                        )
+                    }
+                }
+                .padding(.vertical, 14)
+            }
+        }
+    }
+}
+
+@available(tvOS 16.0, *)
+struct TVMediaSystemShelfRow: View {
+    let system: PVSystem
+    let games: [PVGame]
+    @ObservedObject var gameActions: TVMediaGameActions
+    let onViewAll: () -> Void
+    let ensureLoaded: () -> Void
+
+    @EnvironmentObject private var sceneCoordinator: SceneCoordinator
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var viewAllFocused: Bool
+    @State private var systemIcon: Image?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(spacing: 14) {
+                // Neon accent bar with glow
+                ZStack {
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(Color.retroPink.opacity(0.5))
+                        .frame(width: 4, height: 30)
+                        .blur(radius: 4)
+
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.retroPink.opacity(0.9), Color.retroBlue.opacity(0.7)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(width: 3, height: 28)
+                }
+
+                // System icon with subtle glow
+                if let icon = systemIcon {
+                    icon
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.white.opacity(0.9), Color.retroBlue.opacity(0.7)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(width: 30, height: 30)
+                        .shadow(color: Color.retroPink.opacity(0.3), radius: 6)
+                }
+
+                Text(system.name.uppercased())
+                    .font(.system(size: 17, weight: .semibold, design: .default))
+                    .tracking(1)
+                    .foregroundStyle(.white.opacity(0.95))
+                    .shadow(color: Color.retroPink.opacity(0.2), radius: 4)
+
+                Spacer()
+
+                // View All button with premium hover
+                Button {
+                    onViewAll()
+                } label: {
+                    HStack(spacing: 8) {
+                        Text("VIEW ALL")
+                            .font(.system(size: 14, weight: .medium, design: .default))
+                            .tracking(1)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundStyle(
+                        viewAllFocused ?
+                            AnyShapeStyle(LinearGradient(
+                                colors: [.white, Color.retroBlue.opacity(0.9)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )) :
+                            AnyShapeStyle(Color.white.opacity(0.5))
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(viewAllFocused ? Color.white.opacity(0.12) : Color.white.opacity(0.03))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .strokeBorder(
+                                viewAllFocused ?
+                                    LinearGradient(
+                                        colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.6)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ) :
+                                    LinearGradient(colors: [Color.white.opacity(0.1), Color.white.opacity(0.05)], startPoint: .leading, endPoint: .trailing),
+                                lineWidth: viewAllFocused ? 2 : 1
+                            )
+                    )
+                    .shadow(color: viewAllFocused ? Color.retroPink.opacity(0.4) : .clear, radius: 10)
+                }
+                .buttonStyle(TVMediaViewAllButtonStyle(isFocused: viewAllFocused))
+                .focused($viewAllFocused)
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 24) {
+                    let gamesArray = Array(games.prefix(30))
+                    ForEach(Array(gamesArray.enumerated()), id: \.element.id) { index, game in
+                        TVMediaGameTileView(
+                            game: game,
+                            titleFont: .callout.weight(.semibold),
+                            onPlay: { sceneCoordinator.launchGame(game) },
+                            contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
+                            isAtLeftEdge: index == 0,
+                            focusCoordinator: focusCoordinator
+                        )
+                    }
+                }
+                .padding(.vertical, 12)
+            }
+        }
+        .onAppear(perform: ensureLoaded)
+        .task {
+            await loadSystemIcon()
+        }
+    }
+
+    private func loadSystemIcon() async {
+        let shortName = system.identifier.components(separatedBy: ".").last?.lowercased() ?? ""
+        let namesToTry = [shortName, "prov_\(shortName)_icon", "\(shortName)_icon", system.shortName.lowercased()]
+        for name in namesToTry {
+            if let uiImage = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) {
+                await MainActor.run {
+                    systemIcon = Image(uiImage: uiImage).renderingMode(.template)
+                }
+                return
+            }
+        }
+    }
+}
+
+@available(tvOS 16.0, *)
+struct TVMediaSaveStatesShelfRow: View {
+    let title: String
+    let items: [RetroSaveStateItem]
+    @ObservedObject var store: RetroSaveStatesStore
+
+    @FocusState private var focusedSaveID: String?
+    @State private var thumbs: [String: UIImage] = [:]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header with accent
+            HStack(spacing: 10) {
+                RoundedRectangle(cornerRadius: 1)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.retroBlue.opacity(0.8), Color.retroPink.opacity(0.6)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: 3, height: 22)
+                    .shadow(color: Color.retroBlue.opacity(0.4), radius: 4)
+
+                Text(title)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.95))
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 20) {
+                    ForEach(items) { item in
+                        saveStateTile(for: item)
+                    }
+                }
+                .padding(.vertical, 12)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func saveStateTile(for item: RetroSaveStateItem) -> some View {
+        let isFocused = focusedSaveID == item.id
+
+        Button {
+            Task { await store.openSaveState(id: item.id) }
+        } label: {
+            TVMediaSaveStateTile(
+                title: item.gameTitle,
+                subtitle: item.date,
+                thumbnail: thumbs[item.id],
+                isFocused: isFocused
+            )
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .focused($focusedSaveID, equals: item.id)
+        .contextMenu {
+            Button(role: .destructive) {
+                Task { await deleteSaveState(item) }
+            } label: {
+                Label("Delete Save State", systemImage: "trash")
+            }
+        }
+        .task {
+            if thumbs[item.id] == nil {
+                thumbs[item.id] = await store.thumbnail(for: item, targetSize: CGSize(width: 280, height: 180))
+            }
+        }
+    }
+
+    private func deleteSaveState(_ item: RetroSaveStateItem) async {
+        await MainActor.run {
+            let realm = RomDatabase.sharedInstance.realm
+            guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: item.id) else { return }
+            do {
+                try RomDatabase.sharedInstance.delete(saveState: saveState)
+            } catch {
+                SceneCoordinator.shared.alertState.show(
+                    title: "Delete Failed",
+                    message: error.localizedDescription,
+                    type: .error
+                )
+            }
+        }
+        _ = await store.loadRecent(forSystemID: item.systemId, limit: 6)
+    }
+}
+
+// MARK: - Search Results Grid
+
+@available(tvOS 16.0, *)
+struct TVMediaSearchResultsGrid: View {
+    let results: [PVGame]
+    @ObservedObject var gameActions: TVMediaGameActions
+
+    @EnvironmentObject private var sceneCoordinator: SceneCoordinator
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+
+    private let columnsPerRow: Int = 5
+
+    private let columns = [
+        GridItem(.adaptive(minimum: 260, maximum: 300), spacing: 20)
+    ]
+
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 20) {
+            ForEach(Array(results.enumerated()), id: \.element.id) { index, game in
+                let isAtLeftEdge = index % columnsPerRow == 0
+                TVMediaGameTileView(
+                    game: game,
+                    titleFont: .callout.weight(.semibold),
+                    onPlay: { sceneCoordinator.launchGame(game) },
+                    contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
+                    isAtLeftEdge: isAtLeftEdge,
+                    focusCoordinator: focusCoordinator
+                )
+            }
+        }
+        .padding(.top, 8)
+    }
+}
+
+// MARK: - Background
+
+struct TVMediaBackground: View {
+    var body: some View {
+        ZStack {
+            // Deep base - true black with subtle blue tint
+            Color(red: 0.01, green: 0.01, blue: 0.03)
+
+            // Radial gradient for depth
+            RadialGradient(
+                colors: [
+                    Color(red: 0.03, green: 0.02, blue: 0.06),
+                    Color(red: 0.01, green: 0.01, blue: 0.02)
+                ],
+                center: .topLeading,
+                startRadius: 100,
+                endRadius: 1200
+            )
+            .opacity(0.8)
+
+            // Subtle horizon glow at bottom
+            VStack {
+                Spacer()
+                ZStack {
+                    // Pink horizon line
+                    LinearGradient(
+                        colors: [
+                            Color.clear,
+                            Color.retroPink.opacity(0.04),
+                            Color.retroPink.opacity(0.06),
+                            Color.retroPink.opacity(0.02)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 300)
+
+                    // Blue ambient glow
+                    RadialGradient(
+                        colors: [
+                            Color.retroBlue.opacity(0.05),
+                            Color.clear
+                        ],
+                        center: .bottom,
+                        startRadius: 0,
+                        endRadius: 600
+                    )
+                }
+            }
+
+            // Corner accent glows
+            VStack {
+                HStack {
+                    RadialGradient(
+                        colors: [Color.retroPink.opacity(0.015), .clear],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 400
+                    )
+                    .frame(width: 500, height: 500)
+                    Spacer()
+                }
+                Spacer()
+            }
+
+            // Subtle grid pattern
+            TVMediaGridPattern()
+                .opacity(0.03)
+
+            // CRT scanline overlay
+            TVMediaScanlines()
+                .opacity(0.015)
+
+            // Subtle vignette
+            RadialGradient(
+                colors: [.clear, .black.opacity(0.4)],
+                center: .center,
+                startRadius: 400,
+                endRadius: 1200
+            )
+        }
+    }
+}
+
+/// Subtle grid pattern for RetroWave aesthetic
+struct TVMediaGridPattern: View {
+    var body: some View {
+        Canvas { context, size in
+            let spacing: CGFloat = 60
+
+            // Vertical lines
+            var x: CGFloat = 0
+            while x < size.width {
+                var path = Path()
+                path.move(to: CGPoint(x: x, y: 0))
+                path.addLine(to: CGPoint(x: x, y: size.height))
+                context.stroke(path, with: .color(Color.retroBlue), lineWidth: 0.5)
+                x += spacing
+            }
+
+            // Horizontal lines
+            var y: CGFloat = 0
+            while y < size.height {
+                var path = Path()
+                path.move(to: CGPoint(x: 0, y: y))
+                path.addLine(to: CGPoint(x: size.width, y: y))
+                context.stroke(path, with: .color(Color.retroBlue), lineWidth: 0.5)
+                y += spacing
+            }
+        }
+    }
+}
+
+/// Subtle scanline effect
+struct TVMediaScanlines: View {
+    var body: some View {
+        Canvas { context, size in
+            var y: CGFloat = 0
+            while y < size.height {
+                var path = Path()
+                path.move(to: CGPoint(x: 0, y: y))
+                path.addLine(to: CGPoint(x: size.width, y: y))
+                context.stroke(path, with: .color(Color.black), lineWidth: 1)
+                y += 3
+            }
+        }
+    }
+}
+
+/// SMPTE color bars for save states without thumbnails
+@available(tvOS 16.0, *)
+struct TVMediaSaveStateSMPTE: View {
+    private let colors: [Color] = [
+        Color(red: 0.75, green: 0.75, blue: 0.75),
+        Color(red: 0.75, green: 0.75, blue: 0.0),
+        Color(red: 0.0, green: 0.75, blue: 0.75),
+        Color(red: 0.0, green: 0.75, blue: 0.0),
+        Color(red: 0.75, green: 0.0, blue: 0.75),
+        Color(red: 0.75, green: 0.0, blue: 0.0),
+        Color(red: 0.0, green: 0.0, blue: 0.75)
+    ]
+
+    var body: some View {
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                ForEach(0..<colors.count, id: \.self) { index in
+                    colors[index]
+                        .frame(width: geo.size.width / CGFloat(colors.count))
+                }
+            }
+            .overlay(
+                VStack(spacing: 0) {
+                    ForEach(0..<Int(geo.size.height / 2.5), id: \.self) { _ in
+                        Color.clear.frame(height: 1.5)
+                        Color.black.opacity(0.12).frame(height: 1)
+                    }
+                }
+            )
+        }
+    }
+}
+
+// MARK: - Save State Tile
+
+@available(tvOS 16.0, *)
+struct TVMediaSaveStateTile: View {
+    let title: String
+    let subtitle: Date
+    let thumbnail: UIImage?
+    let isFocused: Bool
+
+    private let tileWidth: CGFloat = 300
+    private let tileHeight: CGFloat = 190
+
+    var body: some View {
+        ZStack {
+            // Outer glow when focused
+            if isFocused {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.25), Color.retroBlue.opacity(0.15)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .blur(radius: 16)
+            }
+
+            ZStack(alignment: .bottomLeading) {
+                // Thumbnail or placeholder
+                Group {
+                    if let thumbnail {
+                        Image(uiImage: thumbnail)
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        TVMediaSaveStateSMPTE()
+                    }
+                }
+                .frame(width: tileWidth, height: tileHeight)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                // Scanline overlay
+                VStack(spacing: 0) {
+                    ForEach(0..<Int(tileHeight / 3), id: \.self) { _ in
+                        Color.clear.frame(height: 2)
+                        Color.black.opacity(0.06).frame(height: 1)
+                    }
+                }
+                .frame(width: tileWidth, height: tileHeight)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                // Info overlay
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(title)
+                        .font(.system(size: 15, weight: .semibold, design: .default))
+                        .tracking(0.2)
+                        .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .shadow(color: .black.opacity(0.8), radius: 4)
+                        .shadow(color: isFocused ? Color.retroPink.opacity(0.6) : .clear, radius: 6)
+
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock")
+                            .font(.system(size: 10, weight: .medium))
+                        Text(subtitle, style: .relative)
+                            .font(.system(size: 12, weight: .medium, design: .default))
+                    }
+                    .foregroundStyle(.white.opacity(0.75))
+                    .shadow(color: .black.opacity(0.6), radius: 2)
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    LinearGradient(
+                        colors: [.clear, .black.opacity(0.4), .black.opacity(0.8)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+            }
+            .frame(width: tileWidth, height: tileHeight)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(focusBorder)
+        }
+        .frame(width: tileWidth, height: tileHeight)
+        .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 20, x: 0, y: 8)
+        .shadow(color: isFocused ? Color.retroBlue.opacity(0.3) : .clear, radius: 30, x: 0, y: 12)
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .animation(.spring(response: 0.28, dampingFraction: 0.75), value: isFocused)
+    }
+
+    private var focusBorder: some View {
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .strokeBorder(
+                LinearGradient(
+                    colors: isFocused ? [
+                        Color.retroPink.opacity(0.9),
+                        Color.retroBlue.opacity(0.7),
+                        Color.retroPink.opacity(0.5)
+                    ] : [.clear, .clear, .clear],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                lineWidth: isFocused ? 3 : 0
+            )
+    }
+}
+
+#endif

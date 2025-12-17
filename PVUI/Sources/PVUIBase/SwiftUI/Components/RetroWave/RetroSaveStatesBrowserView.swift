@@ -90,6 +90,12 @@ public final class RetroSaveStatesStore: ObservableObject {
         return items
     }
 
+    /// Loads recent save states across all systems
+    @discardableResult
+    public func loadAllRecent(limit: Int = 50) async -> [RetroSaveStateItem] {
+        await fetchSaveStates(predicate: NSPredicate(value: true), limit: limit)
+    }
+
     /// Opens a save state via SceneCoordinator with proper sync validation
     public func openSaveState(id: String) async {
         await MainActor.run {
@@ -225,15 +231,22 @@ public final class RetroSaveStatesStore: ObservableObject {
 }
 
 /// Compact card for a single save state
-struct RetroSaveStateCard: View {
-    let item: RetroSaveStateItem
-    @ObservedObject var store: RetroSaveStatesStore
-    let action: () -> Void
-    var isFocused: Bool = false
+public struct RetroSaveStateCard: View {
+    public let item: RetroSaveStateItem
+    @ObservedObject public var store: RetroSaveStatesStore
+    public let action: () -> Void
+    public var isFocused: Bool = false
 
     @State private var thumbnail: UIImage?
 
     private let cardSize = CGSize(width: 220, height: 140)
+
+    public init(item: RetroSaveStateItem, store: RetroSaveStatesStore, isFocused: Bool = false, action: @escaping () -> Void) {
+        self.item = item
+        self.store = store
+        self.isFocused = isFocused
+        self.action = action
+    }
 
     #if os(tvOS)
     private var focusBorderColor: Color {
@@ -269,7 +282,7 @@ struct RetroSaveStateCard: View {
     }
     #endif
 
-    var body: some View {
+    public var body: some View {
         ZStack(alignment: .bottomLeading) {
             thumbnailView
             overlayText
@@ -368,7 +381,7 @@ struct RetroSaveStateCard: View {
 }
 
 /// Horizontal strip of recent save states for a system
-struct RetroRecentSaveStatesStrip: View {
+public struct RetroRecentSaveStatesStrip: View {
     let systemName: String
     let systemId: String
     let items: [RetroSaveStateItem]
@@ -381,7 +394,7 @@ struct RetroRecentSaveStatesStrip: View {
     @FocusState private var viewAllFocused: Bool
     #endif
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
