@@ -801,7 +801,13 @@ public struct RetroAlertStateView: View {
     @ObservedObject var alertState: RetroAlertState
 
     #if os(tvOS)
-    @FocusState private var isAlertFocused: Bool
+    @FocusState private var focusedButton: AlertButton?
+
+    private enum AlertButton: Hashable {
+        case primary
+        case secondary
+        case destructive
+    }
     #endif
 
     public init(alertState: RetroAlertState) {
@@ -810,51 +816,69 @@ public struct RetroAlertStateView: View {
 
     public var body: some View {
         if alertState.isPresented {
-            RetroAlertView(
-                title: alertState.title,
-                message: alertState.message,
-                isPresented: $alertState.isPresented,
-                alertType: alertState.alertType
-            ) {
-                VStack(spacing: 12) {
-                    // Primary button
-                    RetroAlertButton(title: alertState.primaryButtonTitle, style: .primary) {
-                        alertState.onPrimaryAction?()
-                        alertState.hide()
-                    }
+            // Full-screen overlay that blocks all interaction with content behind
+            ZStack {
+                // Invisible focusable blocker that prevents focus from escaping
+                #if os(tvOS)
+                Color.clear
+                    .focusable(false)
+                    .disabled(true)
+                #endif
 
-                    // Secondary button if provided
-                    if let secondaryTitle = alertState.secondaryButtonTitle {
-                        RetroAlertButton(title: secondaryTitle, style: .secondary) {
-                            alertState.onSecondaryAction?()
+                RetroAlertView(
+                    title: alertState.title,
+                    message: alertState.message,
+                    isPresented: $alertState.isPresented,
+                    alertType: alertState.alertType
+                ) {
+                    VStack(spacing: 12) {
+                        // Primary button
+                        RetroAlertButton(title: alertState.primaryButtonTitle, style: .primary) {
+                            alertState.onPrimaryAction?()
                             alertState.hide()
                         }
-                    }
+                        #if os(tvOS)
+                        .focused($focusedButton, equals: .primary)
+                        #endif
 
-                    // Destructive button if provided
-                    if let destructiveTitle = alertState.destructiveButtonTitle {
-                        RetroAlertButton(title: destructiveTitle, style: .destructive) {
-                            alertState.onDestructiveAction?()
-                            alertState.hide()
+                        // Secondary button if provided
+                        if let secondaryTitle = alertState.secondaryButtonTitle {
+                            RetroAlertButton(title: secondaryTitle, style: .secondary) {
+                                alertState.onSecondaryAction?()
+                                alertState.hide()
+                            }
+                            #if os(tvOS)
+                            .focused($focusedButton, equals: .secondary)
+                            #endif
+                        }
+
+                        // Destructive button if provided
+                        if let destructiveTitle = alertState.destructiveButtonTitle {
+                            RetroAlertButton(title: destructiveTitle, style: .destructive) {
+                                alertState.onDestructiveAction?()
+                                alertState.hide()
+                            }
+                            #if os(tvOS)
+                            .focused($focusedButton, equals: .destructive)
+                            #endif
                         }
                     }
                 }
-                #if os(tvOS)
-                .focusSection()
-                #endif
             }
             #if os(tvOS)
-            .focusSection()
-            .focused($isAlertFocused)
+            .focusScope(alertFocusNamespace)
             .onAppear {
-                // Capture focus when alert appears
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    isAlertFocused = true
+                // Force focus to primary button when alert appears
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    focusedButton = .primary
                 }
+            }
+            .onMoveCommand { _ in
+                // Intercept all move commands to keep focus in alert
+                // Focus will still move between buttons within the alert
             }
             .onExitCommand {
                 // Handle Menu/Back button press on tvOS - dismiss alert
-                // Prefer secondary action (Cancel) if available, otherwise use onDismiss
                 if let secondaryAction = alertState.onSecondaryAction {
                     secondaryAction()
                 } else {
@@ -868,6 +892,10 @@ public struct RetroAlertStateView: View {
             .zIndex(2000)
         }
     }
+
+    #if os(tvOS)
+    @Namespace private var alertFocusNamespace
+    #endif
 }
 
 // MARK: - View Modifier for Alert State
