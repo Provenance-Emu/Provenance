@@ -68,6 +68,15 @@ final class TVMediaFocusCoordinator: ObservableObject {
         activeZone = .content
     }
 
+    /// Toggle sidebar state (for Menu button)
+    func toggleSidebar() {
+        if isSidebarExpanded {
+            closeSidebar()
+        } else {
+            openSidebar()
+        }
+    }
+
     /// Called when sidebar gains focus (from focus engine)
     func sidebarGainedFocus() {
         guard !isModalPresented, !isAlertPresented else { return }

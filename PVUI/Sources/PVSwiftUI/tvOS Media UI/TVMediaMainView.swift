@@ -38,14 +38,21 @@ struct TVMediaMainView: View {
             TVMediaBackground()
                 .ignoresSafeArea()
 
-            // Content area
+            // Content area - wrapped in focusable container for empty pages
             contentArea
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.leading, sidebarCollapsedWidth)
                 .allowsHitTesting(!focusCoordinator.isAlertPresented)
                 .animation(.easeInOut(duration: 0.25), value: router.destination)
+                .focusSection()
                 .focusScope(mainNamespace)
                 .prefersDefaultFocus(!focusCoordinator.isSidebarExpanded, in: mainNamespace)
+                .onMoveCommand { direction in
+                    // Fallback left-swipe handler for pages with no focusable items
+                    if direction == .left {
+                        focusCoordinator.openSidebar()
+                    }
+                }
 
             // Sidebar
             TVMediaSidebarRail(
@@ -473,6 +480,8 @@ struct TVMediaEmptyStateView: View {
     let title: String
     let subtitle: String
 
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var isFocused: Bool
     @State private var pulseOpacity: Double = 0.3
 
     var body: some View {
@@ -517,7 +526,7 @@ struct TVMediaEmptyStateView: View {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.circle")
                     .font(.caption)
-                Text("Swipe left for menu")
+                Text("Swipe left or press Menu for navigation")
                     .font(.caption)
             }
             .foregroundStyle(.white.opacity(0.35))
@@ -525,7 +534,15 @@ struct TVMediaEmptyStateView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(40)
+        .focusable()
+        .focused($isFocused)
+        .onMoveCommand { direction in
+            if direction == .left {
+                focusCoordinator.openSidebar()
+            }
+        }
         .onAppear {
+            isFocused = true
             withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
                 pulseOpacity = 0.15
             }
@@ -540,6 +557,8 @@ struct TVMediaSavesView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var saveStatesStore: RetroSaveStatesStore
 
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var isEmptyStateFocused: Bool
     @State private var allSaves: [RetroSaveStateItem] = []
     @State private var isLoading = true
 
@@ -553,6 +572,8 @@ struct TVMediaSavesView: View {
                         .frame(maxWidth: .infinity, minHeight: 200)
                 } else if allSaves.isEmpty {
                     emptyState
+                        .focusable()
+                        .focused($isEmptyStateFocused)
                 } else {
                     saveStatesGrid
                 }
@@ -560,8 +581,16 @@ struct TVMediaSavesView: View {
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
         }
+        .onMoveCommand { direction in
+            if direction == .left {
+                focusCoordinator.openSidebar()
+            }
+        }
         .task {
             await loadAllSaves()
+            if allSaves.isEmpty {
+                isEmptyStateFocused = true
+            }
         }
     }
 
@@ -580,6 +609,16 @@ struct TVMediaSavesView: View {
                 .foregroundStyle(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 480)
+
+            // Navigation hint
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.circle")
+                    .font(.caption)
+                Text("Swipe left or press Menu for navigation")
+                    .font(.caption)
+            }
+            .foregroundStyle(.white.opacity(0.35))
+            .padding(.top, 16)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
         .padding(.top, 40)
@@ -1536,6 +1575,9 @@ struct TVMediaFavoritesView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var gameActions: TVMediaGameActions
 
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var isEmptyStateFocused: Bool
+
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 28) {
@@ -1544,12 +1586,25 @@ struct TVMediaFavoritesView: View {
                 let favorites = model.favoriteGames(limit: 240)
                 if favorites.isEmpty {
                     emptyState
+                        .focusable()
+                        .focused($isEmptyStateFocused)
                 } else {
                     TVMediaSearchResultsGrid(results: favorites, gameActions: gameActions)
                 }
             }
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
+        }
+        .onMoveCommand { direction in
+            if direction == .left {
+                focusCoordinator.openSidebar()
+            }
+        }
+        .onAppear {
+            // Focus empty state if no favorites
+            if model.favoriteGames(limit: 1).isEmpty {
+                isEmptyStateFocused = true
+            }
         }
     }
 
@@ -1568,6 +1623,16 @@ struct TVMediaFavoritesView: View {
                 .foregroundStyle(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 480)
+
+            // Navigation hint
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.circle")
+                    .font(.caption)
+                Text("Swipe left or press Menu for navigation")
+                    .font(.caption)
+            }
+            .foregroundStyle(.white.opacity(0.35))
+            .padding(.top, 16)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
         .padding(.top, 40)
