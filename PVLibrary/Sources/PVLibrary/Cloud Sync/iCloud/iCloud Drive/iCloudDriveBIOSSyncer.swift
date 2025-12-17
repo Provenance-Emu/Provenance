@@ -675,7 +675,10 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         ILOG("[SYNC] BIOS metadata sync complete: processed \(processedCount) of \(records.count) records")
 
         // After metadata sync, trigger download of missing BIOS files
-        await downloadMissingBIOSFiles()
+        // Must run on MainActor since downloadMissingBIOSFiles accesses Realm
+        Task { @MainActor in
+            await self.downloadMissingBIOSFiles()
+        }
 
         return processedCount
     }
@@ -723,6 +726,14 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         return biosDir.appendingPathComponent(filename)
     }
 
+    /// Data structure to hold BIOS info extracted from Realm for thread-safe access
+    private struct BIOSDownloadInfo {
+        let expectedFilename: String
+        let expectedMD5: String
+        let systemIdentifier: String?
+        let cloudRecordID: String?
+    }
+
     /// Download missing BIOS files that have cloud records but no local file
     @MainActor
     public func downloadMissingBIOSFiles() async {
@@ -733,71 +744,53 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
         ILOG("[BIOS DOWNLOAD] Checking for missing BIOS files to download...")
 
-        let realm = RomDatabase.sharedInstance.realm
+        // Extract data from Realm into value types for thread-safe access
+        let (biosWithCloudRecordsInfo, biosWithoutCloudRecordsInfo) = extractBIOSDownloadInfo()
 
-        // Log all BIOS entries for debugging
-        let allBIOS = realm.objects(PVBIOS.self)
-        ILOG("[BIOS DOWNLOAD] Total BIOS entries in Realm: \(allBIOS.count)")
+        ILOG("[BIOS DOWNLOAD] Found \(biosWithCloudRecordsInfo.count) BIOS with cloudRecordID, \(biosWithoutCloudRecordsInfo.count) without")
 
-        for bios in allBIOS {
-            DLOG("[BIOS DOWNLOAD] BIOS entry: filename=\(bios.expectedFilename), cloudRecordID=\(bios.cloudRecordID ?? "nil"), isDownloaded=\(bios.isDownloaded), system=\(bios.system?.identifier ?? "nil")")
-        }
+        // Try to download BIOS files without cloudRecordID by guessing the record ID
+        for info in biosWithoutCloudRecordsInfo {
+            guard let systemID = info.systemIdentifier else { continue }
 
-        // First, try to download BIOS files that already have cloudRecordID
-        let biosWithCloudRecords = realm.objects(PVBIOS.self)
-            .filter("cloudRecordID != nil AND cloudRecordID != '' AND isDownloaded == false")
+            // Try to find the record using predicted ID format: {systemID}_{filename}_{md5prefix}
+            let md5Prefix = String(info.expectedMD5.prefix(8)).uppercased()
+            let predictedRecordID = "\(systemID)_\(info.expectedFilename)_\(md5Prefix)"
+            ILOG("[BIOS DOWNLOAD] Trying predicted recordID for \(info.expectedFilename): \(predictedRecordID)")
 
-        var missingBIOS = Array(biosWithCloudRecords)
+            if await tryFetchAndDownloadByInfo(predictedRecordID, info: info) {
+                continue // Successfully downloaded
+            }
 
-        // Also try to download BIOS files without cloudRecordID by guessing the record ID
-        // This handles the case where metadata sync query hangs/fails
-        let biosWithoutCloudRecords = realm.objects(PVBIOS.self)
-            .filter("(cloudRecordID == nil OR cloudRecordID == '') AND isDownloaded == false")
+            // Also try without MD5 suffix (simpler format)
+            let simpleRecordID = "\(systemID)_\(info.expectedFilename)"
+            ILOG("[BIOS DOWNLOAD] Trying simple recordID for \(info.expectedFilename): \(simpleRecordID)")
 
-        for bios in biosWithoutCloudRecords {
-            if let systemID = bios.system?.identifier {
-                // Try to find the record using predicted ID format: {systemID}_{filename}_{md5prefix}
-                let md5Prefix = String(bios.expectedMD5.prefix(8)).uppercased()
-                let predictedRecordID = "\(systemID)_\(bios.expectedFilename)_\(md5Prefix)"
-                ILOG("[BIOS DOWNLOAD] Trying predicted recordID for \(bios.expectedFilename): \(predictedRecordID)")
-
-                if await tryFetchAndDownloadByRecordID(predictedRecordID, bios: bios) {
-                    continue // Successfully downloaded
-                }
-
-                // Also try without MD5 suffix (simpler format)
-                let simpleRecordID = "\(systemID)_\(bios.expectedFilename)"
-                ILOG("[BIOS DOWNLOAD] Trying simple recordID for \(bios.expectedFilename): \(simpleRecordID)")
-
-                if await tryFetchAndDownloadByRecordID(simpleRecordID, bios: bios) {
-                    continue // Successfully downloaded
-                }
+            if await tryFetchAndDownloadByInfo(simpleRecordID, info: info) {
+                continue // Successfully downloaded
             }
         }
 
-        guard !missingBIOS.isEmpty else {
+        guard !biosWithCloudRecordsInfo.isEmpty else {
             ILOG("[BIOS DOWNLOAD] No missing BIOS files with known cloudRecordID to download")
             return
         }
 
-        ILOG("[BIOS DOWNLOAD] Found \(missingBIOS.count) BIOS files with cloudRecordID to download from CloudKit")
+        ILOG("[BIOS DOWNLOAD] Found \(biosWithCloudRecordsInfo.count) BIOS files with cloudRecordID to download from CloudKit")
 
-        for bios in missingBIOS {
-            guard let recordID = bios.cloudRecordID, !recordID.isEmpty else {
-                WLOG("[BIOS DOWNLOAD] Skipping BIOS with empty recordID: \(bios.expectedFilename)")
+        for info in biosWithCloudRecordsInfo {
+            guard let recordID = info.cloudRecordID, !recordID.isEmpty else {
+                WLOG("[BIOS DOWNLOAD] Skipping BIOS with empty recordID: \(info.expectedFilename)")
                 continue
             }
 
-            let filename = bios.expectedFilename
-            let systemID = bios.system?.identifier
-            ILOG("[BIOS DOWNLOAD] Initiating download: filename=\(filename), recordID=\(recordID), systemID=\(systemID ?? "nil")")
+            ILOG("[BIOS DOWNLOAD] Initiating download: filename=\(info.expectedFilename), recordID=\(recordID), systemID=\(info.systemIdentifier ?? "nil")")
 
             do {
-                try await downloadBIOSFromCloudKit(recordID: recordID, filename: filename, systemIdentifier: systemID)
-                ILOG("[BIOS DOWNLOAD] Successfully downloaded: \(filename)")
+                try await downloadBIOSFromCloudKit(recordID: recordID, filename: info.expectedFilename, systemIdentifier: info.systemIdentifier)
+                ILOG("[BIOS DOWNLOAD] Successfully downloaded: \(info.expectedFilename)")
             } catch {
-                ELOG("[BIOS DOWNLOAD] Failed to download BIOS \(filename): \(error.localizedDescription)")
-                // Log the specific error type for CloudKit errors
+                ELOG("[BIOS DOWNLOAD] Failed to download BIOS \(info.expectedFilename): \(error.localizedDescription)")
                 if let ckError = error as? CKError {
                     ELOG("[BIOS DOWNLOAD] CKError code: \(ckError.code.rawValue), description: \(ckError.localizedDescription)")
                 }
@@ -807,17 +800,51 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         ILOG("[BIOS DOWNLOAD] Download phase complete")
     }
 
-    /// Try to fetch and download a BIOS by a specific record ID
-    /// - Parameters:
-    ///   - recordID: The predicted CloudKit record ID
-    ///   - bios: The PVBIOS entry
-    /// - Returns: True if download was successful
+    /// Extract BIOS download info from Realm into thread-safe value types
     @MainActor
-    private func tryFetchAndDownloadByRecordID(_ recordID: String, bios: PVBIOS) async -> Bool {
+    private func extractBIOSDownloadInfo() -> (withCloudRecords: [BIOSDownloadInfo], withoutCloudRecords: [BIOSDownloadInfo]) {
+        let realm = RomDatabase.sharedInstance.realm
+
+        var withCloudRecords: [BIOSDownloadInfo] = []
+        var withoutCloudRecords: [BIOSDownloadInfo] = []
+
+        // BIOS with cloud records but not downloaded
+        let biosWithRecords = realm.objects(PVBIOS.self)
+            .filter("cloudRecordID != nil AND cloudRecordID != '' AND isDownloaded == false")
+
+        for bios in biosWithRecords {
+            let info = BIOSDownloadInfo(
+                expectedFilename: bios.expectedFilename,
+                expectedMD5: bios.expectedMD5,
+                systemIdentifier: bios.system?.identifier,
+                cloudRecordID: bios.cloudRecordID
+            )
+            withCloudRecords.append(info)
+        }
+
+        // BIOS without cloud records
+        let biosWithoutRecords = realm.objects(PVBIOS.self)
+            .filter("(cloudRecordID == nil OR cloudRecordID == '') AND isDownloaded == false")
+
+        for bios in biosWithoutRecords {
+            let info = BIOSDownloadInfo(
+                expectedFilename: bios.expectedFilename,
+                expectedMD5: bios.expectedMD5,
+                systemIdentifier: bios.system?.identifier,
+                cloudRecordID: nil
+            )
+            withoutCloudRecords.append(info)
+        }
+
+        return (withCloudRecords, withoutCloudRecords)
+    }
+
+    /// Try to fetch and download a BIOS by a specific record ID using extracted info
+    @MainActor
+    private func tryFetchAndDownloadByInfo(_ recordID: String, info: BIOSDownloadInfo) async -> Bool {
         let ckRecordID = CKRecord.ID(recordName: recordID)
 
         do {
-            // Try to fetch the record directly (with timeout)
             let fetchTask = Task {
                 try await privateDatabase.record(for: ckRecordID)
             }
@@ -837,7 +864,6 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 return false
             }
 
-            // Check if record has the file asset
             guard let asset = record["fileData"] as? CKAsset,
                   let assetURL = asset.fileURL,
                   FileManager.default.fileExists(atPath: assetURL.path) else {
@@ -847,41 +873,35 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             ILOG("[BIOS DOWNLOAD] ✓ Found record \(recordID) with valid asset, downloading...")
 
-            // Download the file
-            let filename = bios.expectedFilename
-            let systemID = bios.system?.identifier
-            let destinationURL = localPathForBIOS(filename: filename, systemIdentifier: systemID)
+            let destinationURL = localPathForBIOS(filename: info.expectedFilename, systemIdentifier: info.systemIdentifier)
 
-            // Create directory if needed
             let directory = destinationURL.deletingLastPathComponent()
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 
-            // Remove existing file if present
             if FileManager.default.fileExists(atPath: destinationURL.path) {
                 try await FileManager.default.removeItem(at: destinationURL)
             }
 
-            // Copy from CloudKit cache to local
             try FileManager.default.copyItem(at: assetURL, to: destinationURL)
 
-            // Update Realm entry
+            // Update Realm entry by looking up fresh
             let realm = RomDatabase.sharedInstance.realm
-            try realm.write {
-                bios.cloudRecordID = recordID
-                bios.isDownloaded = true
+            if let bios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", info.expectedFilename).first {
+                try realm.write {
+                    bios.cloudRecordID = recordID
+                    bios.isDownloaded = true
 
-                // Create PVFile if needed
-                if bios.file == nil {
-                    let pvFile = PVFile()
-                    pvFile.partialPath = systemID != nil ? "BIOS/\(systemID!)/\(filename)" : "BIOS/\(filename)"
-                    bios.file = pvFile
+                    if bios.file == nil {
+                        let pvFile = PVFile()
+                        pvFile.partialPath = info.systemIdentifier != nil ? "BIOS/\(info.systemIdentifier!)/\(info.expectedFilename)" : "BIOS/\(info.expectedFilename)"
+                        bios.file = pvFile
+                    }
                 }
             }
 
-            // Post notification
             NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
 
-            ILOG("[BIOS DOWNLOAD] ✓ Successfully downloaded BIOS via predicted recordID: \(filename)")
+            ILOG("[BIOS DOWNLOAD] ✓ Successfully downloaded BIOS via predicted recordID: \(info.expectedFilename)")
             return true
 
         } catch let ckError as CKError where ckError.code == .unknownItem {
@@ -892,7 +912,6 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             return false
         }
     }
-
     /// Download a specific BIOS file from CloudKit
     /// - Parameters:
     ///   - recordID: The CloudKit record ID
