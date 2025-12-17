@@ -1875,16 +1875,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private func enhanceGameWithArtworkAndMetadata(md5: String) async {
         ILOG("🎨 Starting artwork and metadata lookup for game with MD5: \(md5)")
 
-        // Fetch a fresh game instance on this thread
-        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+        let gameExists = (try? await RealmContext.withBackgroundRealm { realm in
+            realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) != nil
+        }) ?? false
+
+        guard gameExists else {
             WLOG("🎨 Game with MD5 \(md5) not found for artwork enhancement")
             return
         }
 
-        // First, try to get updated game info (metadata lookup)
         await getUpdatedGameInfo(forMD5: md5)
-
-        // Then, try to get artwork
         await getArtwork(forGameMD5: md5)
 
         ILOG("🎨 Completed artwork lookup for game with MD5: \(md5)")
@@ -1892,15 +1892,19 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Get updated game metadata from PVLookup database
     /// - Parameter md5: The MD5 hash of the game to lookup metadata for
-    /// Note: Heavy database lookups run on background thread, only Realm writes on main thread
+    /// Note: All metadata work runs on a background Realm to avoid blocking the main thread.
     private func getUpdatedGameInfo(forMD5 md5: String) async {
-        // Fetch game info on main thread first (quick Realm read)
-        let gameInfo: (md5Hash: String, title: String, systemIdentifier: String)? = await MainActor.run {
-            let realm = RomDatabase.sharedInstance.realm
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
-                return nil
+        let gameInfo: (md5Hash: String, title: String, systemIdentifier: String)?
+        do {
+            gameInfo = try await RealmContext.withBackgroundRealm { realm in
+                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                    return nil
+                }
+                return (md5Hash: game.md5Hash, title: game.title, systemIdentifier: game.systemIdentifier)
             }
-            return (md5Hash: game.md5Hash, title: game.title, systemIdentifier: game.systemIdentifier)
+        } catch {
+            ELOG("Game lookup failed for metadata update \(md5): \(error.localizedDescription)")
+            return
         }
 
         guard let info = gameInfo else {
@@ -1908,22 +1912,18 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return
         }
 
-        // Perform heavy database lookups on background thread
         let resultsMaybe: [ROMMetadata]? = await Task.detached(priority: .utility) {
             let lookup = PVLookup.shared
             var results: [ROMMetadata]?
 
-            // Try MD5 lookup first
             if !info.md5Hash.isEmpty {
                 results = try? await lookup.searchDatabase(usingMD5: info.md5Hash, systemID: nil)
             }
 
-            // Try filename lookup if MD5 failed
             if results == nil || results!.isEmpty {
                 let fileName = info.title
-                // Remove any extraneous stuff in the rom name
                 let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: CharacterSet.alphanumerics.inverted)
-                var gameTitleLen: Int
+                let gameTitleLen: Int
                 if nonCharRange.length > 0, nonCharRange.location > 1 {
                     gameTitleLen = nonCharRange.location - 1
                 } else {
@@ -1931,7 +1931,6 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
                 let subfileName = String(fileName.prefix(gameTitleLen))
 
-                // Convert system identifier to database ID
                 let system = SystemIdentifier(rawValue: info.systemIdentifier)
                 results = try? await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
             }
@@ -1939,14 +1938,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return results
         }.value
 
-        // Process results and write to Realm on main thread
         do {
-            // If no results found, just mark as synced
             guard let results = resultsMaybe, !results.isEmpty else {
                 ILOG("No metadata found for game: \(info.title)")
-                await MainActor.run {
-                    try? RomDatabase.sharedInstance.writeTransaction {
-                        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                try? await RealmContext.withBackgroundRealm { realm in
+                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { return }
+                    try? realm.write {
                         game.requiresSync = false
                     }
                 }
@@ -1955,15 +1952,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             var chosenResult: ROMMetadata?
 
-            // Try to find USA version first (Region ID 21)
             chosenResult = results.first { metadata in
                 return metadata.regionID == 21 // USA region ID
             } ?? results.first { metadata in
-                // Fallback: try matching by region string containing "USA"
                 return metadata.region?.uppercased().contains("USA") ?? false
             }
 
-            // If no USA version found, use the first result
             if chosenResult == nil {
                 if results.count > 1 {
                     ILOG("Query returned \(results.count) possible matches for \(info.title). Using first result.")
@@ -1971,15 +1965,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 chosenResult = results.first
             }
 
-            // Apply the metadata to the game on main thread
             if let result = chosenResult {
                 ILOG("Found metadata for \(info.title): \(result.gameTitle ?? "Unknown")")
 
-                await MainActor.run {
-                    try? RomDatabase.sharedInstance.writeTransaction {
-                        guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                try? await RealmContext.withBackgroundRealm { realm in
+                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { return }
 
-                        // Update game with metadata
+                    try? realm.write {
                         if let gameDescription = result.gameDescription {
                             game.gameDescription = gameDescription
                         }
