@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -209,6 +209,8 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libbeetle_psx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbeetle_psx.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B309BD8F2ECAA7D00068AC28 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B309BD902ECAA7D00068AC28 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3344BC32859E088006E6B3A /* libbeetle_psx-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libbeetle_psx-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1118,6 +1120,10 @@
 		B3EBB1262872978C00EAEB37 /* ugui_tools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ugui_tools.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B35C06D52ECADA42003EE969 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		B30178D0207C901D0051B93D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -1151,6 +1157,7 @@
 				B37022C0287253B300B3F6DA /* PVBeetlePSX.h */,
 				B37022BF287253B300B3F6DA /* Core.plist */,
 				B37022C1287253B300B3F6DA /* Info.plist */,
+				B35C06D52ECADA42003EE969 /* Dependencies */,
 			);
 			path = PVBeetlePSX;
 			sourceTree = "<group>";
@@ -1158,6 +1165,8 @@
 		B37022C4287253B300B3F6DA /* PVBeetlePSXCore */ = {
 			isa = PBXGroup;
 			children = (
+				B309BD8F2ECAA7D00068AC28 /* CorePlist.swift */,
+				B309BD902ECAA7D00068AC28 /* CorePlist-Generated.swift */,
 				B37022C5287253B300B3F6DA /* PVBeetlePSXCore.h */,
 				B37022C6287253B300B3F6DA /* PVBeetlePSXCore.mm */,
 			);
@@ -3334,6 +3343,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/cmake";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -3461,6 +3471,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/cmake";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
