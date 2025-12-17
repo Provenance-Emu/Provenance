@@ -151,6 +151,313 @@ extension View {
 }
 #endif
 
+// MARK: - tvOS Premium Settings Components
+
+#if os(tvOS)
+/// Cinematic background for tvOS settings matching the Media UI aesthetic
+struct TVOSSettingsBackground: View {
+    var body: some View {
+        ZStack {
+            // Deep space gradient
+            LinearGradient(
+                colors: [
+                    Color(red: 0.02, green: 0.02, blue: 0.06),
+                    Color(red: 0.05, green: 0.03, blue: 0.10),
+                    Color(red: 0.03, green: 0.02, blue: 0.08)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            // Subtle horizon glow
+            RadialGradient(
+                colors: [
+                    Color.retroPink.opacity(0.08),
+                    Color.retroBlue.opacity(0.04),
+                    .clear
+                ],
+                center: .bottom,
+                startRadius: 100,
+                endRadius: 800
+            )
+
+            // Grid pattern overlay
+            TVOSSettingsGridPattern()
+                .opacity(0.03)
+
+            // Subtle scanlines
+            TVOSSettingsScanlines()
+                .opacity(0.015)
+        }
+    }
+}
+
+/// Grid pattern for settings background
+struct TVOSSettingsGridPattern: View {
+    var body: some View {
+        GeometryReader { geo in
+            Canvas { context, size in
+                let spacing: CGFloat = 60
+                let lineWidth: CGFloat = 0.5
+
+                // Vertical lines
+                for x in stride(from: 0, through: size.width, by: spacing) {
+                    var path = Path()
+                    path.move(to: CGPoint(x: x, y: 0))
+                    path.addLine(to: CGPoint(x: x, y: size.height))
+                    context.stroke(path, with: .color(.white.opacity(0.3)), lineWidth: lineWidth)
+                }
+
+                // Horizontal lines
+                for y in stride(from: 0, through: size.height, by: spacing) {
+                    var path = Path()
+                    path.move(to: CGPoint(x: 0, y: y))
+                    path.addLine(to: CGPoint(x: size.width, y: y))
+                    context.stroke(path, with: .color(.white.opacity(0.3)), lineWidth: lineWidth)
+                }
+            }
+        }
+    }
+}
+
+/// Subtle CRT scanlines
+struct TVOSSettingsScanlines: View {
+    var body: some View {
+        GeometryReader { geo in
+            Canvas { context, size in
+                let lineSpacing: CGFloat = 3
+
+                for y in stride(from: 0, through: size.height, by: lineSpacing) {
+                    var path = Path()
+                    path.move(to: CGPoint(x: 0, y: y))
+                    path.addLine(to: CGPoint(x: size.width, y: y))
+                    context.stroke(path, with: .color(.black.opacity(0.4)), lineWidth: 1)
+                }
+            }
+        }
+    }
+}
+
+/// Premium header for tvOS settings
+struct TVOSSettingsHeader: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 20) {
+                // Neon accent bar
+                ZStack {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.retroPink.opacity(0.5))
+                        .frame(width: 6, height: 50)
+                        .blur(radius: 6)
+
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.retroPink, Color.retroBlue],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(width: 4, height: 48)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("SETTINGS")
+                        .font(.system(size: 42, weight: .bold, design: .default))
+                        .tracking(4)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.white, Color.retroBlue.opacity(0.9)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .shadow(color: Color.retroPink.opacity(0.5), radius: 15, x: 0, y: 0)
+
+                    Text("CONFIGURE YOUR EXPERIENCE")
+                        .font(.system(size: 14, weight: .medium, design: .default))
+                        .tracking(3)
+                        .foregroundStyle(Color.retroPink.opacity(0.7))
+                }
+
+                Spacer()
+
+                // Provenance logo
+                Image(systemName: "gamecontroller.fill")
+                    .font(.system(size: 36, weight: .light))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.6), Color.retroBlue.opacity(0.4)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .shadow(color: Color.retroPink.opacity(0.3), radius: 10)
+            }
+
+            // Accent line
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color.retroPink.opacity(0.8),
+                            Color.retroBlue.opacity(0.6),
+                            Color.retroPink.opacity(0.3),
+                            .clear
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 2)
+                .shadow(color: Color.retroPink.opacity(0.5), radius: 4)
+        }
+        .focusable(false)
+    }
+}
+
+/// Premium collapsible section for tvOS settings
+struct TVOSSettingsSection<Content: View>: View {
+    let title: String
+    let icon: String
+    @ViewBuilder let content: () -> Content
+
+    @State private var isExpanded: Bool = true
+    @FocusState private var headerFocused: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Section header
+            Button {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack(spacing: 16) {
+                    // Icon with glow
+                    ZStack {
+                        if headerFocused {
+                            Circle()
+                                .fill(
+                                    RadialGradient(
+                                        colors: [Color.retroPink.opacity(0.4), .clear],
+                                        center: .center,
+                                        startRadius: 0,
+                                        endRadius: 30
+                                    )
+                                )
+                                .frame(width: 60, height: 60)
+                        }
+
+                        Image(systemName: icon)
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundStyle(
+                                headerFocused ?
+                                    AnyShapeStyle(LinearGradient(
+                                        colors: [.white, Color.retroBlue],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )) :
+                                    AnyShapeStyle(Color.white.opacity(0.6))
+                            )
+                            .shadow(color: headerFocused ? Color.retroPink.opacity(0.6) : .clear, radius: 8)
+                    }
+                    .frame(width: 44, height: 44)
+
+                    Text(title.uppercased())
+                        .font(.system(size: 20, weight: .semibold, design: .default))
+                        .tracking(1.5)
+                        .foregroundStyle(
+                            headerFocused ?
+                                AnyShapeStyle(LinearGradient(
+                                    colors: [.white, Color.retroBlue.opacity(0.9)],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )) :
+                                AnyShapeStyle(Color.white.opacity(0.85))
+                        )
+
+                    Spacer()
+
+                    // Expand/collapse indicator
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(
+                            headerFocused ?
+                                AnyShapeStyle(Color.retroPink) :
+                                AnyShapeStyle(Color.white.opacity(0.4))
+                        )
+                        .rotationEffect(.degrees(isExpanded ? 0 : 0))
+                        .animation(.spring(response: 0.3), value: isExpanded)
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 18)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(
+                            headerFocused ?
+                                LinearGradient(
+                                    colors: [Color.retroPink.opacity(0.15), Color.retroBlue.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ) :
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.04), Color.white.opacity(0.02)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(
+                            headerFocused ?
+                                LinearGradient(
+                                    colors: [Color.retroPink.opacity(0.8), Color.retroBlue.opacity(0.6)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ) :
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.08), Color.white.opacity(0.04)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                ),
+                            lineWidth: headerFocused ? 2 : 1
+                        )
+                )
+                .shadow(color: headerFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 15, x: 0, y: 5)
+            }
+            .buttonStyle(TVOSSettingsSectionButtonStyle())
+            .focused($headerFocused)
+            .scaleEffect(headerFocused ? 1.02 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: headerFocused)
+
+            // Section content
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 12) {
+                    content()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+                .padding(.bottom, 8)
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .move(edge: .top)),
+                    removal: .opacity
+                ))
+            }
+        }
+    }
+}
+
+/// Button style that removes default tvOS highlight
+struct TVOSSettingsSectionButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.9 : 1.0)
+    }
+}
+#endif
+
 // MARK: - PVSettingsView
 public struct PVSettingsView: View {
 
@@ -272,83 +579,78 @@ public struct PVSettingsView: View {
                     }
                 )
                 #else
-                // Scroll view for tvOS (better for remote navigation)
-                // Uses focusSection to contain focus and prevent accidental escape to parent tab bars
-                ScrollView {
-                    VStack(spacing: 16) {
-                        Text("SETTINGS")
-                            .font(.system(size: 32, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .padding(.top, 20)
-                            .padding(.bottom, 10)
-                            .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-                            .focusable(false) // Title shouldn't steal focus
+                // Premium tvOS Settings with RetroWave styling
+                ZStack {
+                    // Cinematic background matching tvOS Media UI
+                    TVOSSettingsBackground()
+                        .ignoresSafeArea()
 
-                        VStack(spacing: 16) {
-                            CollapsibleSection(title: "App") {
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 28) {
+                            // Premium header
+                            TVOSSettingsHeader()
+                                .padding(.top, 40)
+                                .padding(.bottom, 20)
+
+                            // Settings sections with premium styling
+                            TVOSSettingsSection(title: "App", icon: "gearshape.fill") {
                                 AppSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            CollapsibleSection(title: "Core Options") {
+                            TVOSSettingsSection(title: "Core Options", icon: "cpu") {
                                 CoreOptionsSection()
                             }
 
-                            CollapsibleSection(title: "Saves") {
+                            TVOSSettingsSection(title: "Saves", icon: "square.and.arrow.down.fill") {
                                 SavesSection()
                             }
 
-                            CollapsibleSection(title: "Audio") {
+                            TVOSSettingsSection(title: "Audio", icon: "speaker.wave.3.fill") {
                                 AudioSection()
                             }
 
-                            CollapsibleSection(title: "Video") {
+                            TVOSSettingsSection(title: "Video", icon: "tv.fill") {
                                 VideoSection()
                             }
 
-                            CollapsibleSection(title: "Controller") {
+                            TVOSSettingsSection(title: "Controller", icon: "gamecontroller.fill") {
                                 ControllerSection()
                             }
 
-                            CollapsibleSection(title: "RetroAchievements") {
+                            TVOSSettingsSection(title: "RetroAchievements", icon: "trophy.fill") {
                                 RetroAchievementsSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            CollapsibleSection(title: "Library") {
+                            TVOSSettingsSection(title: "Library", icon: "books.vertical.fill") {
                                 LibrarySection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            CollapsibleSection(title: "Library Management") {
+                            TVOSSettingsSection(title: "Library Management", icon: "folder.badge.gearshape") {
                                 LibrarySection2(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            CollapsibleSection(title: "Advanced") {
+                            TVOSSettingsSection(title: "Advanced", icon: "wrench.and.screwdriver.fill") {
                                 AdvancedSection()
                             }
 
-                            CollapsibleSection(title: "Build") {
+                            TVOSSettingsSection(title: "Build", icon: "hammer.fill") {
                                 BuildSection(viewModel: viewModel)
                                     .environmentObject(viewModel)
                             }
 
-                            CollapsibleSection(title: "Extra Info") {
+                            TVOSSettingsSection(title: "About", icon: "info.circle.fill") {
                                 ExtraInfoSection()
                             }
                         }
-                        .padding(.horizontal)
+                        .padding(.horizontal, 80)
+                        .padding(.bottom, 80)
                     }
-                    .padding(.bottom, 50) // Extra padding to prevent focus escape at bottom
+                    .focusSection()
                 }
-                .focusSection() // Contain focus within settings content
                 #endif
             }
         }
@@ -558,15 +860,61 @@ struct SettingsRow: View {
 
     @State private var isHovered = false
     @ObservedObject private var themeManager = ThemeManager.shared
+    #if os(tvOS)
+    @Environment(\.isFocused) private var isFocused
+    #endif
+
+    private var iconBorderWidth: CGFloat {
+        #if os(tvOS)
+        return isFocused ? 2 : 1
+        #else
+        return 1.5
+        #endif
+    }
+
+    private var iconShadowColor: Color {
+        #if os(tvOS)
+        return isFocused ? .retroPink.opacity(0.6) : .retroPink.opacity(0.2)
+        #else
+        return .retroPink.opacity(isHovered ? 0.5 : 0.2)
+        #endif
+    }
+
+    private var iconShadowRadius: CGFloat {
+        #if os(tvOS)
+        return isFocused ? 10 : 5
+        #else
+        return 5
+        #endif
+    }
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 16) {
             // Icon with retrowave styling
             if let icon = icon {
                 ZStack {
+                    #if os(tvOS)
+                    if isFocused {
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [Color.retroPink.opacity(0.3), .clear],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: 25
+                                )
+                            )
+                            .frame(width: 50, height: 50)
+                    }
+                    #endif
+
                     Circle()
                         .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
+                        #if os(tvOS)
+                        .frame(width: 44, height: 44)
+                        #else
                         .frame(width: 36, height: 36)
+                        #endif
                         .overlay(
                             Circle()
                                 .strokeBorder(
@@ -575,15 +923,19 @@ struct SettingsRow: View {
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     ),
-                                    lineWidth: 1.5
+                                    lineWidth: iconBorderWidth
                                 )
                         )
-                        .shadow(color: .retroPink.opacity(isHovered ? 0.5 : 0.2), radius: 5)
+                        .shadow(color: iconShadowColor, radius: iconShadowRadius)
 
                     icon.image
                         .resizable()
                         .scaledToFit()
+                        #if os(tvOS)
+                        .frame(width: 22, height: 22)
+                        #else
                         .frame(width: 18, height: 18)
+                        #endif
                         .foregroundStyle(
                             LinearGradient(
                                 gradient: Gradient(colors: [.retroPink, .retroBlue]),
@@ -595,16 +947,27 @@ struct SettingsRow: View {
             }
 
             // Text content with retrowave styling
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(title)
+                    #if os(tvOS)
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(isFocused ? .white : Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
+                    #else
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
+                    #endif
 
                 if let subtitle = subtitle {
                     Text(subtitle)
+                        #if os(tvOS)
+                        .font(.system(size: 15))
+                        .foregroundStyle(isFocused ? .white.opacity(0.8) : Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.7))
+                        .lineLimit(3)
+                        #else
                         .font(.caption)
                         .foregroundColor(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.8))
                         .lineLimit(2)
+                        #endif
                         .multilineTextAlignment(.leading)
                 }
             }
@@ -614,7 +977,11 @@ struct SettingsRow: View {
             // Value with retrowave styling
             if let value = value {
                 Text(value)
+                    #if os(tvOS)
+                    .font(.system(size: 16, weight: .semibold))
+                    #else
                     .font(.system(size: 14, weight: .medium))
+                    #endif
                     .foregroundStyle(
                         LinearGradient(
                             gradient: Gradient(colors: [.retroBlue, .retroPurple]),
@@ -622,14 +989,77 @@ struct SettingsRow: View {
                             endPoint: .trailing
                         )
                     )
+                    #if os(tvOS)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    #else
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
+                    #endif
                     .background(
-                        RoundedRectangle(cornerRadius: 6)
+                        RoundedRectangle(cornerRadius: 8)
                             .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.4))
+                            #if os(tvOS)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            colors: [Color.retroBlue.opacity(0.5), Color.retroPurple.opacity(0.3)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 1
+                                    )
+                            )
+                            #endif
                     )
             }
+
+            #if os(tvOS)
+            // Chevron for navigation items
+            Image(systemName: "chevron.right")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(isFocused ? Color.retroPink : Color.white.opacity(0.3))
+            #endif
         }
+        #if os(tvOS)
+        .padding(.vertical, 14)
+        .padding(.horizontal, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    isFocused ?
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.12), Color.retroBlue.opacity(0.08)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ) :
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    isFocused ?
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ) :
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                    lineWidth: isFocused ? 2 : 1
+                )
+        )
+        .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
+        #else
         .padding(.vertical, 8)
         .padding(.horizontal, 4)
         .background(
@@ -637,13 +1067,12 @@ struct SettingsRow: View {
                 .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.3))
                 .opacity(isHovered ? 1.0 : 0.0)
         )
-#if !os(tvOS)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering
             }
         }
-#endif
+        #endif
     }
 }
 
