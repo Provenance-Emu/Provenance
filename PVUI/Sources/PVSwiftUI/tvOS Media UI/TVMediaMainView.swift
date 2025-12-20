@@ -47,12 +47,6 @@ struct TVMediaMainView: View {
                 .focusSection()
                 .focusScope(mainNamespace)
                 .prefersDefaultFocus(!focusCoordinator.isSidebarExpanded, in: mainNamespace)
-                .onMoveCommand { direction in
-                    // Fallback left-swipe handler for pages with no focusable items
-                    if direction == .left {
-                        focusCoordinator.openSidebar()
-                    }
-                }
 
             // Sidebar
             TVMediaSidebarRail(
@@ -789,11 +783,6 @@ struct TVMediaHomeView: View {
             }
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
-        }
-        .onMoveCommand { direction in
-            if direction == .left {
-                focusCoordinator.openSidebar()
-            }
         }
         .task {
             await loadAllGames()
