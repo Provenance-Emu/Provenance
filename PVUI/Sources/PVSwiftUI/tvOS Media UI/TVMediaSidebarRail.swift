@@ -145,8 +145,8 @@ struct TVMediaSidebarRail: View {
             if focusCoordinator.isSidebarExpanded {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("PROVENANCE")
-                        .font(.system(size: 20, weight: .bold, design: .default))
-                        .tracking(3) // Wide letter spacing for premium feel
+                        .font(.system(size: 18, weight: .bold, design: .default))
+                        .tracking(2)
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [.white, Color.retroBlue.opacity(0.8)],
@@ -155,12 +155,17 @@ struct TVMediaSidebarRail: View {
                             )
                         )
                         .shadow(color: Color.retroPink.opacity(0.5), radius: 8)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .fixedSize(horizontal: true, vertical: false)
 
                     Text("EMULATOR")
-                        .font(.system(size: 10, weight: .medium, design: .default))
-                        .tracking(4)
+                        .font(.system(size: 9, weight: .medium, design: .default))
+                        .tracking(3)
                         .foregroundStyle(Color.retroPink.opacity(0.7))
+                        .lineLimit(1)
                 }
+                .frame(maxWidth: expandedWidth - 100, alignment: .leading)
                 .transition(.asymmetric(
                     insertion: .opacity.combined(with: .move(edge: .leading)).animation(.easeOut(duration: 0.25).delay(0.1)),
                     removal: .opacity.animation(.easeIn(duration: 0.15))
