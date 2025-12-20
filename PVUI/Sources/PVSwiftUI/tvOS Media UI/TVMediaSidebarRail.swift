@@ -51,6 +51,11 @@ struct TVMediaSidebarRail: View {
                     focusedItem = nil
                 }
             }
+            .onChange(of: focusCoordinator.isSidebarExpanded) { expanded in
+                if expanded {
+                    focusedItem = itemForDestination(destination)
+                }
+            }
             .onMoveCommand { direction in
                 if direction == .right && focusCoordinator.isSidebarExpanded {
                     focusedItem = nil
