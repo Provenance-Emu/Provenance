@@ -72,6 +72,7 @@ struct TVMediaMainView: View {
             gameActions.appState = appState
             router.destination = TVMediaDestination(rawValue: lastDestinationRaw) ?? .home
             router.selectedSystemID = lastSystemIdentifier
+            libraryModel.startObservingLibraryChanges()
             libraryModel.refresh()
             if !lastSystemIdentifier.isEmpty {
                 libraryModel.selectSystem(identifier: lastSystemIdentifier)
@@ -337,6 +338,15 @@ final class TVMediaLibraryModel: ObservableObject {
     @Published public var selectedSystemIdentifier: String = ""
     @Published public private(set) var favoriteGamesList: [PVGame] = []
 
+    /// Realm notifications for live updates
+    private var gameToken: NotificationToken?
+    private var saveStateToken: NotificationToken?
+    private var recentGameToken: NotificationToken?
+
+    /// Debounce to avoid hammering UI on rapid Realm writes
+    private let refreshDebounceInterval: TimeInterval = 0.35
+    private var scheduledRefresh: DispatchWorkItem?
+
     init() {}
 
     var selectedSystem: PVSystem? {
@@ -357,6 +367,39 @@ final class TVMediaLibraryModel: ObservableObject {
         }
     }
 
+    /// Begin observing Realm changes for games, save states, and recents
+    func startObservingLibraryChanges() {
+        guard gameToken == nil, saveStateToken == nil, recentGameToken == nil else { return }
+
+        do {
+            let realm = try Realm()
+
+            let gamesResults = realm.objects(PVGame.self)
+            gameToken = gamesResults.observe { [weak self] _ in
+                self?.scheduleLibraryRefresh()
+            }
+
+            let saveStateResults = realm.objects(PVSaveState.self)
+            saveStateToken = saveStateResults.observe { [weak self] _ in
+                self?.scheduleLibraryRefresh()
+            }
+
+            let recentResults = realm.objects(PVRecentGame.self)
+            recentGameToken = recentResults.observe { [weak self] _ in
+                self?.scheduleLibraryRefresh()
+            }
+        } catch {
+            // Safe to ignore; without Realm we just won't live-refresh
+        }
+    }
+
+    deinit {
+        gameToken?.invalidate()
+        saveStateToken?.invalidate()
+        recentGameToken?.invalidate()
+        scheduledRefresh?.cancel()
+    }
+
     private func loadSystems() async {
         let loaded: [PVSystem] = await Task.detached(priority: .userInitiated) {
             do {
@@ -372,6 +415,28 @@ final class TVMediaLibraryModel: ObservableObject {
         systems = loaded
         if selectedSystemIdentifier.isEmpty, let first = systems.first {
             selectedSystemIdentifier = first.identifier
+        }
+    }
+
+    /// Debounced refresh for Realm notifications
+    private func scheduleLibraryRefresh() {
+        scheduledRefresh?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            Task { await self?.refreshFromRealmChanges() }
+        }
+        scheduledRefresh = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + refreshDebounceInterval, execute: work)
+    }
+
+    @MainActor
+    private func refreshFromRealmChanges() async {
+        await loadSystems()
+        await loadFavorites()
+
+        // Reload games for already-known systems to keep shelves in sync
+        let identifiers = systems.map { $0.identifier }
+        for id in identifiers {
+            await loadGamesForSystemAsync(identifier: id)
         }
     }
 
