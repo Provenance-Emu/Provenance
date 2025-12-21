@@ -579,6 +579,8 @@ public extension Defaults.Keys {
 #if os(tvOS)
     static let iCloudSync = Key<Bool>("iCloudSync", default: true)
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)
+    /// One-time flag to avoid repeatedly forcing users into the new tvOS UI
+    static let tvOSMainUIMigrationShown = Key<Bool>("tvOSMainUIMigrationShown", default: false)
 #else
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
 #endif

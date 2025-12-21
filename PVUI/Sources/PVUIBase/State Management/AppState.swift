@@ -196,6 +196,8 @@ public class AppState: ObservableObject {
 
         ILOG("AppState: Initialization completed")
 
+        enforceTVMediaUIModeIfNeeded()
+
         // Set up import pause monitoring
         setupImportPauseMonitoring()
     }
@@ -266,6 +268,31 @@ public class AppState: ObservableObject {
             ILOG("AppState: Initial import resume timer fired")
             self?.resumeImportsIfNoOtherConditions(previousCondition: "Initial delay")
         }
+    }
+
+    /// Force users on tvOS into the new TV Media UI once, and inform them they can switch back
+    private func enforceTVMediaUIModeIfNeeded() {
+        #if os(tvOS)
+        // Only run once
+        guard !Defaults[.tvOSMainUIMigrationShown] else { return }
+
+        let currentMode = Defaults[.mainUIMode]
+        guard currentMode != .tvosMedia else { return }
+
+        // Force to new UI and persist
+        Defaults[.mainUIMode] = .tvosMedia
+        mainUIMode = .tvosMedia
+        Defaults[.tvOSMainUIMigrationShown] = true
+
+        // Let the user know they can switch back in Settings
+        DispatchQueue.main.async {
+            SceneCoordinator.shared.alertState.show(
+                title: "New tvOS Experience",
+                message: "We've switched you to the new tvOS media UI. You can change UI mode anytime in Settings if you prefer the old layout.",
+                type: .standard
+            )
+        }
+        #endif
     }
 
     /// Pauses imports with a specific reason
