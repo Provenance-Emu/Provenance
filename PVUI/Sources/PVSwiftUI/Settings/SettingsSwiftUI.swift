@@ -670,20 +670,10 @@ public struct PVSettingsView: View {
                 tvMediaFocusCoordinator.openSidebar()
             }
         }
-        .onExitCommand {
-            // If we're in the TVMedia context, toggle the sidebar
-            // Otherwise, try to focus the RetroTabBar (for other contexts)
-            if tvMediaFocusCoordinator.isSidebarExpanded || tvMediaFocusCoordinator.activeZone == .content {
-                tvMediaFocusCoordinator.toggleSidebar()
-            } else {
-                focusRetroTabBar?()
-            }
-        }
 #endif
     }
 
 #if os(tvOS)
-    @Environment(\.focusRetroTabBar) private var focusRetroTabBar
     @Environment(\.tvMediaFocusCoordinator) private var tvMediaFocusCoordinator
 #endif
 
