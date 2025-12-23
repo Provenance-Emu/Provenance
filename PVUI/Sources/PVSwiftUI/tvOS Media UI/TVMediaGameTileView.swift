@@ -81,7 +81,6 @@ struct TVMediaGameTileView: View {
                         .frame(width: tileWidth, height: baseHeight)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .overlay(focusBorder)
-                        .overlay(scanlineEffect)
                 }
                 .shadow(color: isFocused ? Color.retroPink.opacity(glowIntensity * 0.6) : .clear, radius: 25, x: 0, y: 8)
                 .shadow(color: isFocused ? Color.retroBlue.opacity(glowIntensity * 0.4) : .clear, radius: 35, x: 0, y: 12)
@@ -175,25 +174,6 @@ struct TVMediaGameTileView: View {
             .animation(.easeOut(duration: 0.2), value: borderGlow)
     }
 
-    // MARK: - Scanline Effect
-
-    private var scanlineEffect: some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .fill(.clear)
-            .overlay(
-                GeometryReader { geo in
-                    VStack(spacing: 0) {
-                        ForEach(0..<Int(geo.size.height / 3), id: \.self) { _ in
-                            Color.clear.frame(height: 2)
-                            Color.black.opacity(0.08).frame(height: 1)
-                        }
-                    }
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            )
-            .opacity(isFocused ? 0.5 : 0.3)
-    }
-
     // MARK: - Artwork Loading
 
     private func loadArtworkIfNeeded(priority: TaskPriority = .utility) async {
@@ -226,35 +206,18 @@ struct SMPTEColorBarsView: View {
     ]
 
     var body: some View {
-        GeometryReader { geo in
-            HStack(spacing: 0) {
-                ForEach(0..<colors.count, id: \.self) { index in
-                    colors[index]
-                        .frame(width: geo.size.width / CGFloat(colors.count))
-                }
-            }
-            .overlay(scanlines)
-            .overlay(vignette)
-        }
-    }
-
-    private var scanlines: some View {
-        GeometryReader { geo in
-            VStack(spacing: 0) {
-                ForEach(0..<Int(geo.size.height / 2), id: \.self) { _ in
-                    Color.clear.frame(height: 1)
-                    Color.black.opacity(0.12).frame(height: 1)
-                }
-            }
-        }
-    }
-
-    private var vignette: some View {
-        RadialGradient(
-            colors: [.clear, .black.opacity(0.3)],
-            center: .center,
-            startRadius: 50,
-            endRadius: 200
+        // Lightweight placeholder without nested GeometryReader overlays
+        LinearGradient(
+            colors: colors,
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        .overlay(
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.22)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
         )
     }
 }
