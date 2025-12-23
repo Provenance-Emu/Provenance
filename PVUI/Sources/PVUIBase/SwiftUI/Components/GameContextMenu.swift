@@ -103,9 +103,11 @@ public struct GameContextMenu: View {
                 Button {
                     contextMenuDelegate?.gameContextMenu(self, didRequestRenameFor: game)
                 } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
+                #if !os(tvOS)
                 Button {
                     promptUserMD5CopiedToClipboard(forGame: game)
                 } label: { Label("Copy MD5 URL", systemImage: "number.square") }
+                #endif
 
                 if game.userPreferredCoreID != nil || game.system?.userPreferredCoreID != nil {
                     Button {
@@ -113,6 +115,7 @@ public struct GameContextMenu: View {
                     } label: { Label("Reset Core Preferences", systemImage: "arrow.counterclockwise") }
                 }
                 Divider()
+    #if !os(tvOS)
                 Button {
                     contextMenuDelegate?.gameContextMenu(self, didRequestSkinSelectionFor: game)
                 } label: { Label("Controller Skin", systemImage: "gamecontroller") }
@@ -121,15 +124,14 @@ public struct GameContextMenu: View {
                         contextMenuDelegate?.gameContextMenu(self, didRequestResetSkinFor: game)
                     } label: { Label("Reset Game Skin", systemImage: "arrow.counterclockwise.circle") }
                 }
-    #if !os(tvOS)
                 Button {
                     DLOG("GameContextMenu: Choose Cover button tapped")
                     contextMenuDelegate?.gameContextMenu(self, didRequestChooseArtworkSourceFor: game)
                 } label: { Label("Choose Cover", systemImage: "book.closed") }
-    #endif
                 Button {
                     pasteArtwork(forGame: game)
                 } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
+    #endif
                 if game.customArtworkURL != "" {
                     Button {
                         clearCustomArtwork(forGame: game)
