@@ -18,6 +18,7 @@ import FreemiumKit
 struct SettingsWrapperView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     #if !os(tvOS)
     @State private var showingDocumentPicker = false
     #endif
@@ -44,6 +45,17 @@ struct SettingsWrapperView: View {
 #endif
         }
         .navigationViewStyle(.stack)
+        #if os(tvOS)
+        // Forward remote gestures to the media focus coordinator so sidebar can open/close
+        .onMoveCommand { direction in
+            if direction == .left {
+                focusCoordinator.openSidebar()
+            }
+        }
+        .onExitCommand {
+            focusCoordinator.toggleSidebar()
+        }
+        #endif
         #if !os(tvOS)
         .sheet(isPresented: $showingDocumentPicker) {
             DocumentPicker(onImport: importFiles)

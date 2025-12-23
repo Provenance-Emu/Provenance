@@ -190,12 +190,10 @@ struct TVMediaMainView: View {
                     saveStatesStore: saveStatesStore
                 )
             case .settings:
-                // Wrap settings in focus containment to prevent sidebar stealing focus
+                // Settings view handles its own sidebar commands via tvMediaFocusCoordinator environment
                 SettingsWrapperView()
-                    .focusSection()
-                    .onExitCommand {
-                        // Go back to home when pressing Menu/Back in settings
-                        router.navigate(to: .home)
+                    .onAppear {
+                        focusCoordinator.closeSidebar()
                     }
             case .status:
                 RetroStatusControlView()

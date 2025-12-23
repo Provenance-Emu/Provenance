@@ -652,20 +652,39 @@ public struct PVSettingsView: View {
                     // Remove default tvOS focus highlight; rely on our RetroWave styling
                     .buttonStyle(TVOSSettingsSectionButtonStyle())
                     .focusSection()
+                    .onMoveCommand { direction in
+                        // Left swipe from Settings opens the sidebar
+                        if direction == .left {
+                            tvMediaFocusCoordinator.openSidebar()
+                        }
+                    }
                 }
                 #endif
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
 #if os(tvOS)
+        .onMoveCommand { direction in
+            // Left swipe from anywhere in Settings opens the sidebar
+            if direction == .left {
+                tvMediaFocusCoordinator.openSidebar()
+            }
+        }
         .onExitCommand {
-            focusRetroTabBar?()
+            // If we're in the TVMedia context, toggle the sidebar
+            // Otherwise, try to focus the RetroTabBar (for other contexts)
+            if tvMediaFocusCoordinator.isSidebarExpanded || tvMediaFocusCoordinator.activeZone == .content {
+                tvMediaFocusCoordinator.toggleSidebar()
+            } else {
+                focusRetroTabBar?()
+            }
         }
 #endif
     }
 
 #if os(tvOS)
     @Environment(\.focusRetroTabBar) private var focusRetroTabBar
+    @Environment(\.tvMediaFocusCoordinator) private var tvMediaFocusCoordinator
 #endif
 
     #if !os(tvOS)
