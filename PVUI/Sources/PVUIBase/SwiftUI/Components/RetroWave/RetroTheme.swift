@@ -131,26 +131,22 @@ public struct RetroTheme {
 
         public func makeBody(configuration: Configuration) -> some View {
             #if os(tvOS)
-            // On tvOS, use a Button wrapper to handle focus and selection properly
-            Button(action: {
-                withAnimation {
-                    configuration.isOn.toggle()
+            // On tvOS, avoid default Button focus effect by using a focusable container
+            toggleContent(configuration: configuration)
+                .focusable(true)
+                .focused($isFocused)
+                .scaleEffect(isFocused ? 1.05 : 1.0)
+                .animation(.easeInOut(duration: 0.2), value: isFocused)
+                .onPlayPauseCommand {
+                    withAnimation {
+                        configuration.isOn.toggle()
+                    }
                 }
-            }) {
-                toggleContent(configuration: configuration)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .focused($isFocused)
-            .scaleEffect(isFocused ? 1.05 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: isFocused)
-            .onPlayPauseCommand {
-                withAnimation {
-                    configuration.isOn.toggle()
+                .onTapGesture {
+                    withAnimation {
+                        configuration.isOn.toggle()
+                    }
                 }
-            }
-            .onExitCommand {
-                // Handle remote exit/back button if needed
-            }
             #else
             // On iOS, use the original tap gesture approach
             toggleContent(configuration: configuration)
