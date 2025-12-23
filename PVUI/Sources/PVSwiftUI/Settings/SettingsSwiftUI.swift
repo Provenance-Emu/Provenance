@@ -649,6 +649,8 @@ public struct PVSettingsView: View {
                         .padding(.horizontal, 80)
                         .padding(.bottom, 80)
                     }
+                    // Remove default tvOS focus highlight; rely on our RetroWave styling
+                    .buttonStyle(TVOSSettingsSectionButtonStyle())
                     .focusSection()
                 }
                 #endif
@@ -1025,6 +1027,7 @@ struct SettingsRow: View {
         #if os(tvOS)
         .padding(.vertical, 14)
         .padding(.horizontal, 20)
+        .buttonStyle(.plain) // remove default tvOS focus overlay; rely on our styling
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(
