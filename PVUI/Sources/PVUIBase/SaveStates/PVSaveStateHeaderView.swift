@@ -10,6 +10,7 @@
 import UIKit
 #endif
 
-final class PVSaveStateHeaderView: UICollectionReusableView {
-    @IBOutlet var label: UILabel!
+@objc(PVSaveStateHeaderView)
+public final class PVSaveStateHeaderView: UICollectionReusableView {
+    @IBOutlet public var label: UILabel!
 }

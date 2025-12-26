@@ -26,7 +26,7 @@
         <!--Save States View Controller-->
         <scene sceneID="7UN-gu-BcD">
             <objects>
-                <collectionViewController storyboardIdentifier="PVSaveStatesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="i2k-XG-ULw" customClass="PVSaveStatesViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController storyboardIdentifier="PVSaveStatesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="i2k-XG-ULw" customClass="PVSaveStatesViewController" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="ct2-kB-n76">
                         <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -38,7 +38,7 @@
                             <inset key="sectionInset" minX="60" minY="0.0" maxX="60" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells/>
-                        <collectionReusableView key="sectionHeaderView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SaveStateHeader" id="cAl-KV-5M4" customClass="PVSaveStateHeaderView" customModule="Provenance" customModuleProvider="target">
+                        <collectionReusableView key="sectionHeaderView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SaveStateHeader" id="cAl-KV-5M4" customClass="PVSaveStateHeaderView">
                             <rect key="frame" x="0.0" y="0.0" width="1920" height="86"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                             <subviews>

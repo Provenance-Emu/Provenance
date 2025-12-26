@@ -28,8 +28,8 @@ struct SaveSection {
     let saves: Results<PVSaveState>
 }
 
-public
-final class PVSaveStatesViewController: UICollectionViewController {
+@objc(PVSaveStatesViewController)
+public final class PVSaveStatesViewController: UICollectionViewController {
     private var autoSaveStatesObserverToken: NotificationToken!
     private var manualSaveStatesObserverToken: NotificationToken!
 
