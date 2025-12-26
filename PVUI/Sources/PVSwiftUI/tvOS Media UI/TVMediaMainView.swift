@@ -33,6 +33,11 @@ struct TVMediaMainView: View {
     @Namespace private var sidebarNamespace
     @Environment(\.resetFocus) private var resetFocus
 
+    /// Convenience flag for modal rename alert
+    private var isRenamePresented: Bool {
+        gameActions.renameGame != nil
+    }
+
     public var body: some View {
         ZStack(alignment: .leading) {
             TVMediaBackground()
@@ -42,7 +47,8 @@ struct TVMediaMainView: View {
             contentArea
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.leading, sidebarCollapsedWidth)
-                .allowsHitTesting(!focusCoordinator.isAlertPresented)
+                .allowsHitTesting(!focusCoordinator.isAlertPresented && !isRenamePresented)
+                .disabled(focusCoordinator.isAlertPresented || isRenamePresented)
                 .animation(.easeInOut(duration: 0.25), value: router.destination)
                 .focusSection()
                 .focusScope(mainNamespace)
@@ -62,8 +68,8 @@ struct TVMediaMainView: View {
             )
             .focusScope(sidebarNamespace)
             .prefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
-            .allowsHitTesting(!focusCoordinator.isAlertPresented)
-            .disabled(!focusCoordinator.isSidebarExpanded)
+            .allowsHitTesting(!focusCoordinator.isAlertPresented && !isRenamePresented)
+            .disabled(!focusCoordinator.isSidebarExpanded || isRenamePresented)
 
             overlays
         }
@@ -97,8 +103,20 @@ struct TVMediaMainView: View {
             lastSystemIdentifier = newValue
             libraryModel.selectSystem(identifier: newValue)
         }
+        .onChange(of: gameActions.systemPickerGame) { newValue in
+            // Present the Move to System picker when requested from context menu
+            if let game = newValue {
+                router.activeModal = .systemPicker(game: game)
+            } else if case .systemPicker = router.activeModal {
+                router.dismissModal()
+            }
+        }
         .onExitCommand {
-            // Menu/Back button toggles sidebar
+            // Menu/Back button: close rename/alerts first, then sidebar
+            if isRenamePresented {
+                gameActions.clearRename()
+                return
+            }
             if focusCoordinator.isAlertPresented || focusCoordinator.isModalPresented {
                 return
             }
@@ -136,6 +154,14 @@ struct TVMediaMainView: View {
         .preferredColorScheme(.dark)
         .ignoresSafeArea(.all)
         .hideHomeIndicator()
+        .onChange(of: gameActions.renameGame) { newValue in
+            // Treat rename alert as a blocking alert for focus and hit testing
+            focusCoordinator.isAlertPresented = (newValue != nil)
+            // When showing, push focus to sidebar off
+            if newValue != nil {
+                resetFocus(in: mainNamespace)
+            }
+        }
     }
 
     @ViewBuilder
