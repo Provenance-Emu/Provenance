@@ -31,6 +31,14 @@ struct RetroMenuView: View {
 
     private var palette: UXThemePalette { themeManager.currentPalette }
 
+    /// Dismisses the menu without resuming emulation - use when opening sub-sheets that should keep the game paused
+    private func dismissMenuForSubSheet() {
+        // Just remove the menu view, don't unpause the game
+        if let hostingController = emulatorVC.presentedViewController {
+            hostingController.dismiss(animated: true, completion: nil)
+        }
+    }
+
     /// Environment value to detect screen size
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -408,7 +416,8 @@ struct RetroMenuView: View {
 
             // Game info button
             menuButton(title: "GAME INFO", icon: "info.circle", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
-                dismissAction()
+                // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                dismissMenuForSubSheet()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     emulatorVC.showMoreInfo()
                 }
@@ -466,7 +475,8 @@ struct RetroMenuView: View {
             // Core options button (if available)
             if emulatorVC.core is CoreOptional {
                 menuButton(title: "CORE OPTIONS", icon: "gearshape", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
-                    dismissAction()
+                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                    dismissMenuForSubSheet()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         emulatorVC.showCoreOptions()
                     }
@@ -505,7 +515,8 @@ struct RetroMenuView: View {
 
                 // Load state button
                 menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
-                    dismissAction()
+                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                    dismissMenuForSubSheet()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         emulatorVC.showSaveStateMenu()
                     }
@@ -513,7 +524,8 @@ struct RetroMenuView: View {
 
                 // Save states menu button
                 menuButton(title: "SAVE STATES", icon: "list.bullet", color: palette.defaultTintColor.swiftUIColor) {
-                    dismissAction()
+                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                    dismissMenuForSubSheet()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         emulatorVC.showSaveStateMenu()
                     }
@@ -542,7 +554,8 @@ struct RetroMenuView: View {
         VStack(spacing: menuSpacing) {
             // Game speed button
             menuButton(title: "GAME SPEED", icon: "speedometer", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
-                dismissAction()
+                // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                dismissMenuForSubSheet()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     emulatorVC.showSpeedMenu()
                 }
@@ -551,7 +564,8 @@ struct RetroMenuView: View {
             // Cheat codes button (if supported)
             if let gameWithCheat = emulatorVC.core as? GameWithCheat, gameWithCheat.supportsCheatCode {
                 menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: palette.defaultTintColor.swiftUIColor) {
-                    dismissAction()
+                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                    dismissMenuForSubSheet()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         emulatorVC.showCheatsMenu()
                     }
@@ -602,7 +616,6 @@ struct RetroMenuView: View {
                     syncSelectedFilterFromSettings()
                 }
             }
-
 
             #if os(iOS)
             // Audio visualizer button (iOS 16+ only, if supported by core)
@@ -1407,9 +1420,125 @@ struct RetroMenuView: View {
         }
     }
 
+    // MARK: - Filter Picker Helper Views
+
+    /// Filter option row for the filter picker
+    @ViewBuilder
+    private func filterOptionRow(for option: MetalFilterSelectionOption, isCompact: Bool) -> some View {
+        let isSelected = option == selectedMetalFilter
+        let label = option == .none ? "None" : option.description
+        let textColor = isSelected
+            ? (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+            : (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7)
+        let bgOpacity = isSelected ? (palette.dark ? 0.4 : 0.6) : (palette.dark ? 0.6 : 0.8)
+        let borderColor = isSelected
+            ? palette.defaultTintColor.swiftUIColor
+            : palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.3 : 0.2)
+        let borderWidth: CGFloat = isSelected ? 3 : 1
+
+        Button(action: {
+            selectedMetalFilter = option
+            applyFilterImmediately(option)
+            showingFilterPicker = false
+        }) {
+            filterOptionContent(label: label, isSelected: isSelected, textColor: textColor, isCompact: isCompact)
+                .background(filterOptionBackground(bgOpacity: bgOpacity, borderColor: borderColor, borderWidth: borderWidth))
+        }
+        .buttonStyle(PlainButtonStyle())
+        #if os(tvOS)
+        .focusable(true)
+        #endif
+    }
+
+    @ViewBuilder
+    private func filterOptionContent(label: String, isSelected: Bool, textColor: Color, isCompact: Bool) -> some View {
+        HStack {
+            Text(label)
+                #if os(tvOS)
+                .font(.system(size: 28, weight: .bold))
+                #else
+                .font(.system(size: isCompact ? 16 : 18, weight: .bold))
+                #endif
+                .foregroundColor(textColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+
+            Spacer()
+
+            if isSelected {
+                Image(systemName: "checkmark.circle.fill")
+                    #if os(tvOS)
+                    .font(.system(size: 32))
+                    #else
+                    .font(.system(size: 20))
+                    #endif
+                    .foregroundColor(palette.defaultTintColor.swiftUIColor)
+            }
+        }
+        #if os(tvOS)
+        .padding(.vertical, 20)
+        .padding(.horizontal, 30)
+        #else
+        .padding(.vertical, isLandscape ? 8 : 12)
+        .padding(.horizontal, 20)
+        #endif
+    }
+
+    @ViewBuilder
+    private func filterOptionBackground(bgOpacity: Double, borderColor: Color, borderWidth: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill((palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(bgOpacity))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(borderColor, lineWidth: borderWidth)
+            )
+    }
+
+    /// Done button for filter picker
+    @ViewBuilder
+    private var filterPickerDoneButton: some View {
+        let buttonGradient = LinearGradient(
+            gradient: Gradient(colors: [
+                palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                palette.defaultTintColor.swiftUIColor
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        let textColor = palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor
+        let shadowColor = (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(0.5)
+
+        Button(action: { showingFilterPicker = false }) {
+            Text("DONE")
+                #if os(tvOS)
+                .font(.system(size: 28, weight: .bold))
+                .padding(.vertical, 24)
+                #else
+                .font(.system(size: 18, weight: .bold))
+                .padding(.vertical, 16)
+                #endif
+                .foregroundColor(textColor)
+                .frame(maxWidth: .infinity)
+                .background(RoundedRectangle(cornerRadius: 12).fill(buttonGradient))
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(textColor.opacity(0.5), lineWidth: 1))
+                .shadow(color: shadowColor, radius: 8, x: 0, y: 0)
+        }
+        .buttonStyle(PlainButtonStyle())
+        #if os(tvOS)
+        .focusable(true)
+        .padding(.horizontal, 30)
+        .padding(.bottom, 50)
+        #else
+        .padding(.horizontal, 16)
+        .padding(.bottom, 30)
+        #endif
+    }
+
     // Filter picker sheet view with retrowave styling
     private var filterPickerView: some View {
         GeometryReader { geometry in
+            let isCompact = geometry.size.width < 400
+
             ZStack {
                 // Theme-aware background
                 Color(palette.gameLibraryBackground)
@@ -1423,115 +1552,88 @@ struct RetroMenuView: View {
                 .opacity(palette.dark ? 0.3 : 0.2)
 
                 // Content
-                VStack(spacing: 0) {
-                    // Header
-                    Text("SCREEN FILTERS")
-                        .font(.system(size: geometry.size.width < 400 ? 24 : 28, weight: .bold, design: .rounded))
-                        .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
-                        .padding(.top, 30)
-                        .padding(.bottom, 20)
-                        .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.8 : 0.5), radius: 10, x: 0, y: 0)
-
-                    // Filter options
-                    VStack(spacing: isLandscape ? 8 : 12) {
-                        ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
-                            Button(action: {
-                                selectedMetalFilter = option
-                                applyFilterImmediately(option)
-                                showingFilterPicker = false
-                            }) {
-                                HStack {
-                                    let label = option == .none ? "None" : option.description
-                                    Text(label)
-                                        .font(.system(size: geometry.size.width < 400 ? 16 : 18, weight: .bold))
-                                        .foregroundColor(
-                                            option == selectedMetalFilter
-                                                ? (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
-                                                : (palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7)
-                                        )
-
-                                    Spacer()
-
-                                    if option == selectedMetalFilter {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .font(.system(size: 20))
-                                            .foregroundColor(palette.defaultTintColor.swiftUIColor)
-                                    }
-                                }
-                                .padding(.vertical, isLandscape ? 8 : 12)
-                                .padding(.horizontal, 20)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(
-                                            option == selectedMetalFilter
-                                                ? (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.4 : 0.6)
-                                                : (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.6 : 0.8)
-                                        )
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .strokeBorder(
-                                                    option == selectedMetalFilter
-                                                        ? palette.defaultTintColor.swiftUIColor
-                                                        : palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.3 : 0.2),
-                                                    lineWidth: option == selectedMetalFilter ? 2 : 1
-                                                )
-                                        )
-                                )
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                    }
-                    .padding(.horizontal, 16)
-
-                    Spacer()
-
-                    // Done button
-                    Button(action: {
-                        showingFilterPicker = false
-                    }) {
-                        Text("DONE")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
-                                            palette.defaultTintColor.swiftUIColor
-                                        ]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder((palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.5), lineWidth: 1)
-                            )
-                            .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(0.5), radius: 8, x: 0, y: 0)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 30)
-                }
-                .frame(
-                    width: isLandscape ? min(400, geometry.size.width * 0.8) : min(500, geometry.size.width * 0.9),
-                    height: isLandscape ? geometry.size.height * 0.9 : min(600, geometry.size.height * 0.8)
-                )
-                .background(
-                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                        .opacity(palette.dark ? 0.7 : 0.95)
-                )
-                .cornerRadius(20)
-                .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 20)
-                .position(
-                    x: geometry.size.width / 2,
-                    y: geometry.size.height / 2
-                )
+                filterPickerContent(geometry: geometry, isCompact: isCompact)
             }
         }
         .edgesIgnoringSafeArea(.all)
+    }
+
+    @ViewBuilder
+    private func filterPickerContent(geometry: GeometryProxy, isCompact: Bool) -> some View {
+        let headerShadow = palette.defaultTintColor.swiftUIColor.opacity(palette.dark ? 0.8 : 0.5)
+        let containerBg = (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground)).opacity(palette.dark ? 0.7 : 0.95)
+
+        #if os(tvOS)
+        // tvOS: Center content with generous sizing
+        HStack {
+            Spacer()
+            VStack(spacing: 0) {
+                // Header
+                Text("SCREEN FILTERS")
+                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .padding(.top, 80)
+                    .padding(.bottom, 40)
+                    .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
+                    .shadow(color: headerShadow, radius: 10, x: 0, y: 0)
+
+                // Filter options - larger for TV
+                ScrollView {
+                    VStack(spacing: 20) {
+                        ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
+                            filterOptionRow(for: option, isCompact: false)
+                        }
+                    }
+                    .padding(.horizontal, 60)
+                }
+                .frame(maxWidth: 900)
+
+                Spacer()
+
+                // Done button
+                filterPickerDoneButton
+                    .padding(.bottom, 60)
+            }
+            .frame(width: min(1000, geometry.size.width * 0.6))
+            .background(containerBg)
+            .cornerRadius(24)
+            .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(0.4), radius: 30)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #else
+        VStack(spacing: 0) {
+            // Header
+            Text("SCREEN FILTERS")
+                .font(.system(size: isCompact ? 24 : 28, weight: .bold, design: .rounded))
+                .padding(.top, 30)
+                .padding(.bottom, 20)
+                .foregroundColor(palette.gameLibraryHeaderText.swiftUIColor)
+                .shadow(color: headerShadow, radius: 10, x: 0, y: 0)
+
+            // Filter options
+            ScrollView {
+                VStack(spacing: 16) {
+                    ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
+                        filterOptionRow(for: option, isCompact: isCompact)
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+
+            Spacer()
+
+            // Done button
+            filterPickerDoneButton
+        }
+        .frame(
+            width: isLandscape ? min(400, geometry.size.width * 0.8) : min(500, geometry.size.width * 0.9),
+            height: isLandscape ? geometry.size.height * 0.9 : min(600, geometry.size.height * 0.8)
+        )
+        .background(containerBg)
+        .cornerRadius(20)
+        .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 20)
+        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        #endif
     }
 
     // Load available skins for the current system
