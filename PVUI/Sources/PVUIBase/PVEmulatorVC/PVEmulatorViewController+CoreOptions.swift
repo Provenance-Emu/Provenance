@@ -31,17 +31,31 @@ extension PVEmulatorViewController {
         hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .done,
             target: self,
-            action: #selector(dismissNav)
+            action: #selector(dismissCoreOptionsAndResume)
         )
         // disable iOS 13 swipe to dismiss...
         nav.isModalInPresentation = true
         present(nav, animated: true)
         #else
         // Add menu button gesture for tvOS
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissNav))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissCoreOptionsAndResume))
         tap.allowedPressTypes = [.menu]
         hostingController.view.addGestureRecognizer(tap)
         present(TVFullscreenController(rootViewController: nav), animated: true)
         #endif
+    }
+
+    /// Dismisses core options and resumes emulation
+    @objc private func dismissCoreOptionsAndResume() {
+        presentedViewController?.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.core.setPauseEmulation(false)
+            self.isShowingMenu = false
+            self.enableControllerInput(false)
+            #if os(tvOS)
+            // Ensure the emulator view can receive gesture events again
+            self.view.becomeFirstResponder()
+            #endif
+        }
     }
 }
