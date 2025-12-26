@@ -15,7 +15,7 @@ import UIKit
 import PVEmulatorCore
 
 extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
-    
+
     struct CheatLoadState {
         static var isFirstLoad:Bool = true
     }
@@ -95,12 +95,18 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     }
 
     func cheatsViewControllerDone(_: PVCheatsViewController) {
-        dismiss(animated: true, completion: nil)
-        core.setPauseEmulation(false)
-        isShowingMenu = false
-        enableControllerInput(false)
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.core.setPauseEmulation(false)
+            self.isShowingMenu = false
+            self.enableControllerInput(false)
+            #if os(tvOS)
+            // Ensure the emulator view can receive gesture events again
+            self.view.becomeFirstResponder()
+            #endif
+        }
     }
-    
+
     func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
                                             code: String,
                                             type: String,
@@ -154,6 +160,54 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             guard let self = self else { return }
             await self.recoverCheatCodes()
         }
+
+        self.core.resetCheatCodes()
+
+        #if os(tvOS)
+        // Use SwiftUI-based cheats view on tvOS for reliability
+        let cheatsVC = TVOSCheatsHostingController(
+            cheats: game.cheats,
+            coreID: core.coreIdentifier,
+            cheatTypes: getCheatTypes(),
+            onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    await self.setCheatState(code: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) { result in
+                        switch result {
+                        case .success:
+                            DLOG("Cheat saved successfully")
+                        case let .error(error):
+                            ELOG("Error saving cheat: \(error)")
+                        }
+                    }
+                }
+            },
+            onUpdateCheat: { [weak self] cheat, cheatIndex in
+                guard let self = self else { return }
+                self.cheatsViewControllerUpdateState(self, cheat: cheat, cheatIndex: cheatIndex) { result in
+                    switch result {
+                    case .success:
+                        DLOG("Cheat updated successfully")
+                    case let .error(error):
+                        ELOG("Error updating cheat: \(error)")
+                    }
+                }
+            },
+            onDone: { [weak self] in
+                guard let self = self else { return }
+                self.core.setPauseEmulation(false)
+                self.isShowingMenu = false
+                self.enableControllerInput(false)
+                // Ensure the emulator view can receive gesture events again
+                self.view.becomeFirstResponder()
+            }
+        )
+        cheatsVC.modalPresentationStyle = .blurOverFullScreen
+        present(cheatsVC, animated: true)
+        return
+        #endif
+
+        #if os(iOS)
         guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
             return
         }
@@ -165,21 +219,14 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         }
         cheatsNavController.modalPresentationStyle = .overCurrentContext
 
-        self.core.resetCheatCodes();
-        #if os(iOS)
-            if traitCollection.userInterfaceIdiom == .pad {
-                cheatsNavController.modalPresentationStyle = .formSheet
-            }
-            self.enableControllerInput(false)
-            let ui=UIViewController()
-            ui.addChildViewController(cheatsNavController, toContainerView: ui.view)
-            present(ui, animated: true)
-            return
+        if traitCollection.userInterfaceIdiom == .pad {
+            cheatsNavController.modalPresentationStyle = .formSheet
+        }
+        self.enableControllerInput(false)
+        let ui=UIViewController()
+        ui.addChildViewController(cheatsNavController, toContainerView: ui.view)
+        present(ui, animated: true)
         #endif
-        #if os(tvOS)
-            cheatsNavController.modalPresentationStyle = .blurOverFullScreen
-        #endif
-        present(cheatsNavController, animated: true)
     }
 
     @objc func getCheatTypes() -> [String] {
@@ -201,9 +248,9 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
                 return date0.compare(date1) == .orderedAscending
             })
-            
+
             let realm = try await Realm()
-            
+
             var cheats:[String:Bool]=[:]
             game.realm?.refresh()
             for code in game.cheats {
