@@ -18,7 +18,9 @@ import FreemiumKit
 struct SettingsWrapperView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
+    #if os(tvOS)
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    #endif
     #if !os(tvOS)
     @State private var showingDocumentPicker = false
     #endif
