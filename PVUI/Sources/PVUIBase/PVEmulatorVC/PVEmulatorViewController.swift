@@ -751,8 +751,23 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         ILOG("tvOS menu gestures configured: single tap = start button, double tap = pause menu")
     }
 
+    /// Remove any existing menu-press recognizers and reinstall them (used after dismissing sub-sheets)
+    @objc func resetTVOSMenuGestures() {
+        // Remove existing menu-press gestures
+        let menuGestures = view.gestureRecognizers?.filter { gesture in
+            if let tapGesture = gesture as? UITapGestureRecognizer {
+                return tapGesture.allowedPressTypes.contains(NSNumber(value: UIPress.PressType.menu.rawValue))
+            }
+            return false
+        }
+        menuGestures?.forEach { view.removeGestureRecognizer($0) }
+
+        // Recreate them
+        setupTVOSMenuGestures()
+    }
+
     /// Handle single tap of menu button - send "start" button press
-    @objc private func handleMenuSingleTap(_ gesture: UITapGestureRecognizer) {
+    @objc func handleMenuSingleTap(_ gesture: UITapGestureRecognizer) {
         ILOG("tvOS menu single tap - sending start button press")
 
         // Send start button press to the controller
@@ -770,7 +785,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     /// Handle double tap of menu button - show pause menu
-    @objc private func handleMenuDoubleTap(_ gesture: UITapGestureRecognizer) {
+    @objc func handleMenuDoubleTap(_ gesture: UITapGestureRecognizer) {
         ILOG("tvOS menu double tap - showing pause menu")
         showMenu(gesture)
     }
@@ -1291,11 +1306,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         AppState.shared.emulationUIState.reset()
     }
 
+    /// Dismisses the currently presented navigation and optionally resumes emulation
+    /// - Parameter resumeEmulation: Whether to resume emulation after dismissal. Defaults to true.
     @objc
     func dismissNav() {
+        dismissNav(resumeEmulation: true)
+    }
+
+    /// Dismisses the currently presented navigation with control over emulation state
+    /// - Parameter resumeEmulation: Whether to resume emulation after dismissal
+    func dismissNav(resumeEmulation: Bool) {
         presentedViewController?.dismiss(animated: true, completion: nil)
-        core.setPauseEmulation(false)
-        isShowingMenu = false
+        if resumeEmulation {
+            core.setPauseEmulation(false)
+            isShowingMenu = false
+        }
 
         // Post notifications to reconnect inputs and refresh the GPU view
         NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinInputHandlerReconnect"), object: nil)
