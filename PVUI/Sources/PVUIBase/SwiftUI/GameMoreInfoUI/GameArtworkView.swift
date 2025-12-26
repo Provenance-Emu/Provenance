@@ -130,6 +130,10 @@ struct GameArtworkView: View {
                 .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 8, x: 0, y: 0)
         }
         .cornerRadius(12)
+        #if os(tvOS)
+        // Constrain artwork size on tvOS to prevent it from being too large
+        .frame(maxWidth: 400, maxHeight: 500)
+        #endif
         .padding()
         .rotation3DEffect(
             .degrees(showingFrontArt ? 0 : 180),

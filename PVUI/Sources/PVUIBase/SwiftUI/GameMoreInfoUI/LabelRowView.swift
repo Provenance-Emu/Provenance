@@ -27,13 +27,20 @@ struct LabelRowView: View {
     // Animation states
     @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
+    #if os(tvOS)
+    @FocusState private var isFocused: Bool
+    #endif
 
     /// Computed property to determine what text to display
     private var displayText: String {
         if let value = value, !value.isEmpty {
             return value
         } else if isEditable {
+            #if os(tvOS)
+            return "Select to edit"
+            #else
             return "Tap to edit"
+            #endif
         } else {
             return "Not available"
         }
@@ -49,13 +56,41 @@ struct LabelRowView: View {
     }
 
     var body: some View {
+        #if os(tvOS)
+        // tvOS: Use Button for proper focus handling
+        Button(action: {
+            if isEditable {
+                onLongPress?()
+            }
+        }) {
+            rowContent
+        }
+        .buttonStyle(TVOSLabelRowButtonStyle(
+            isEditable: isEditable,
+            labelColor: labelColor,
+            backgroundColor: backgroundColor,
+            borderGradient: borderGradient,
+            glowOpacity: glowOpacity
+        ))
+        .disabled(!isEditable)
+        .focused($isFocused)
+        .onChange(of: isFocused) { focused in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovered = focused
+            }
+        }
+        .frame(height: 60)
+        .padding(.vertical, 4)
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+            }
+        }
+        #else
         ZStack {
             // Background with retrowave styling
-            #if os(tvOS)
-            #else
             RoundedRectangle(cornerRadius: 8)
                 .fill(backgroundColor)
-            #endif
 
             // Optional border with gradient
             if let gradient = borderGradient {
@@ -67,55 +102,106 @@ struct LabelRowView: View {
                             y: 0)
             }
 
-            // Content
-            HStack {
-                // Label side - right aligned with retrowave styling
-                Text(label + ":")
-                    .font(.system(size: 14, weight: .bold))
-                    .frame(width: 120, alignment: .trailing)
-                    .foregroundColor(labelColor)
-                    .shadow(color: labelColor.opacity(glowOpacity * 0.5), radius: 2, x: 0, y: 0)
-
-                // Value side - left aligned with placeholder for empty values
-                HStack {
-                    Text(displayText)
-                        .foregroundColor(textColor)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                    if isEditable {
-                        Image(systemName: "pencil")
-                            .font(.caption)
-                            .foregroundColor(labelColor)
-                            .shadow(color: labelColor.opacity(glowOpacity), radius: 2, x: 0, y: 0)
-                    }
-                }
-                .contentShape(Rectangle()) // Make entire area tappable
-                .onTapGesture {
-                    if isEditable {
-                        #if !os(tvOS)
-                        Haptics.impact(style: .light)
-                        #endif
-                        onLongPress?()
-                    }
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            rowContent
         }
         .frame(height: 40)
         .padding(.vertical, 4)
-        #if !os(tvOS)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering && isEditable
             }
         }
-        #endif
         .onAppear {
-            // Start animations
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
             }
         }
+        #endif
+    }
+
+    private var rowContent: some View {
+        HStack {
+            // Label side - right aligned with retrowave styling
+            Text(label + ":")
+                #if os(tvOS)
+                .font(.system(size: 20, weight: .bold))
+                .frame(width: 180, alignment: .trailing)
+                #else
+                .font(.system(size: 14, weight: .bold))
+                .frame(width: 120, alignment: .trailing)
+                #endif
+                .foregroundColor(labelColor)
+                .shadow(color: labelColor.opacity(glowOpacity * 0.5), radius: 2, x: 0, y: 0)
+
+            // Value side - left aligned with placeholder for empty values
+            HStack {
+                Text(displayText)
+                    #if os(tvOS)
+                    .font(.system(size: 22, weight: .medium))
+                    #endif
+                    .foregroundColor(textColor)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                if isEditable {
+                    Image(systemName: "pencil")
+                        #if os(tvOS)
+                        .font(.system(size: 20))
+                        #else
+                        .font(.caption)
+                        #endif
+                        .foregroundColor(labelColor)
+                        .shadow(color: labelColor.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                }
+            }
+            #if !os(tvOS)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if isEditable {
+                    Haptics.impact(style: .light)
+                    onLongPress?()
+                }
+            }
+            #endif
+        }
+        .padding(.horizontal, 12)
+        #if os(tvOS)
+        .padding(.vertical, 12)
+        #else
+        .padding(.vertical, 8)
+        #endif
     }
 }
+
+#if os(tvOS)
+/// Custom button style for tvOS LabelRowView
+private struct TVOSLabelRowButtonStyle: ButtonStyle {
+    let isEditable: Bool
+    let labelColor: Color
+    let backgroundColor: Color
+    let borderGradient: LinearGradient?
+    let glowOpacity: Double
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(backgroundColor.opacity(configuration.isPressed ? 0.9 : 0.7))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(
+                        borderGradient ?? LinearGradient(colors: [labelColor], startPoint: .leading, endPoint: .trailing),
+                        lineWidth: isEditable ? 2 : 1
+                    )
+            )
+            .scaleEffect(configuration.isPressed ? 1.02 : 1.0)
+            .shadow(
+                color: isEditable ? labelColor.opacity(glowOpacity * 0.6) : .clear,
+                radius: configuration.isPressed ? 8 : 4,
+                x: 0,
+                y: 0
+            )
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+    }
+}
+#endif

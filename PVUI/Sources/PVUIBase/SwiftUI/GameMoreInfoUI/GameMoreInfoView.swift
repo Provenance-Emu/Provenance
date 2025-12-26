@@ -54,12 +54,23 @@ struct StarRatingView: View {
     }
 
     var body: some View {
-        HStack(spacing: spacing) {
+        #if os(tvOS)
+        // tvOS: Use a focusable container with left/right navigation
+        HStack(spacing: spacing * 2) {
             ForEach(1...maxRating, id: \.self) { index in
-                starButton(for: index)
+                starImage(for: index)
             }
         }
-#if os(tvOS)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.black.opacity(isFocused ? 0.3 : 0.1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(color.opacity(isFocused ? 0.8 : 0.3), lineWidth: isFocused ? 2 : 1)
+                )
+        )
         .focusable()
         .focused($isFocusedState)
         .onChange(of: isFocusedState) { focused in
@@ -70,8 +81,38 @@ struct StarRatingView: View {
                 focusedStar = nil
             }
         }
-#endif
-#if !os(tvOS)
+        .onMoveCommand { direction in
+            guard isFocused else { return }
+            switch direction {
+            case .left:
+                if let current = focusedStar, current > 1 {
+                    focusedStar = current - 1
+                }
+            case .right:
+                if let current = focusedStar, current < maxRating {
+                    focusedStar = current + 1
+                }
+            default:
+                break
+            }
+        }
+        .onPlayPauseCommand {
+            if let star = focusedStar {
+                handleTap(star)
+            }
+        }
+        .onExitCommand {
+            // Select current star on menu button press if focused
+            if let star = focusedStar {
+                handleTap(star)
+            }
+        }
+        #else
+        HStack(spacing: spacing) {
+            ForEach(1...maxRating, id: \.self) { index in
+                starButton(for: index)
+            }
+        }
         .gesture(
             DragGesture()
                 .onChanged { value in
@@ -87,8 +128,28 @@ struct StarRatingView: View {
                     dragOffset = 0
                 }
         )
-#endif
+        #endif
     }
+
+    #if os(tvOS)
+    @ViewBuilder
+    private func starImage(for index: Int) -> some View {
+        let isSelected = index <= rating
+        let isHighlighted = focusedStar == index
+
+        Button(action: {
+            handleTap(index)
+        }) {
+            Image(systemName: isSelected ? "star.fill" : "star")
+                .foregroundColor(isSelected ? color : color.opacity(0.4))
+                .font(.system(size: size * 1.5))
+                .scaleEffect(isHighlighted ? 1.3 : 1.0)
+                .shadow(color: isHighlighted ? color : .clear, radius: isHighlighted ? 12 : 0)
+                .animation(.spring(response: 0.3), value: isHighlighted)
+        }
+        .buttonStyle(.plain)
+    }
+    #endif
 
     @ViewBuilder
     private func starButton(for index: Int) -> some View {
@@ -98,23 +159,18 @@ struct StarRatingView: View {
             Image(systemName: index <= rating ? "star.fill" : "star")
                 .foregroundColor(color)
                 .font(.system(size: size))
-#if os(tvOS)
-                .scaleEffect(focusedStar == index ? 1.2 : 1.0)
-                .shadow(color: focusedStar == index ? color : .clear, radius: focusedStar == index ? 10 : 0)
-                .animation(.spring(), value: focusedStar == index)
-#endif
         }
         .buttonStyle(StarButtonStyle())
-        .id("star-\(index)-\(rating)") // Force view refresh when rating changes
+        .id("star-\(index)-\(rating)")
     }
 
     private func handleTap(_ index: Int) {
-#if !os(tvOS)
+        #if !os(tvOS)
         Haptics.impact(style: .light)
-#endif
+        #endif
 
         if index == rating {
-            onRatingChanged(0) // Toggle off if tapping the same star
+            onRatingChanged(0)
         } else {
             onRatingChanged(index)
         }
@@ -339,6 +395,8 @@ struct GameMoreInfoView: View {
     @State private var originalRating: Int = 0
     @State private var editingField: EditableField?
     @State private var editingValue: String = ""
+    @State private var showingResetStatsConfirmation = false
+    @FocusState private var focusedField: EditableField?
     /// Context menu delegate for handling artwork selection
     var contextMenuDelegate: GameContextMenuDelegate?
 
@@ -421,6 +479,35 @@ struct GameMoreInfoView: View {
             .opacity(0.3)
 
             ScrollView {
+                #if os(tvOS)
+                // Ensure tvOS focus stays within this section
+                HStack(alignment: .top, spacing: 40) {
+                    // Artwork section
+                    GameArtworkView(
+                        frontArtwork: viewModel.frontArtwork,
+                        backArtwork: viewModel.backArtwork,
+                        game: viewModel.pvGame,
+                        rootDelegate: viewModel.rootDelegate,
+                        contextMenuDelegate: contextMenuDelegate
+                    )
+                    .frame(width: 400)
+
+                    // Info section
+                    VStack(spacing: 24) {
+                        gameInfoSection
+
+                        // Game description section
+                        if let description = viewModel.gameDescription,
+                           !description.isEmpty {
+                            descriptionSection(description: description)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .padding(.horizontal, 80)
+                .padding(.vertical, 40)
+                .focusSection() // keep focus contained
+                #else
                 VStack(spacing: 24) {
                     // Artwork section with direct binding to published properties
                     GameArtworkView(
@@ -448,7 +535,11 @@ struct GameMoreInfoView: View {
                 if let debugInfo = viewModel.debugDescription {
                     debugSection(debugInfo: debugInfo)
                 }
+                #endif
             }
+            #if os(tvOS)
+            .focusable(true)
+            #endif
             .padding(.bottom, 50)
         }
         .onAppear {
@@ -460,6 +551,10 @@ struct GameMoreInfoView: View {
             withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
             }
+#if os(tvOS)
+            // Set initial focus to the first editable field
+            focusedField = .name
+#endif
         }
         .alert(editingField?.title ?? "", isPresented: .init(
             get: { editingField != nil },
@@ -510,12 +605,21 @@ struct GameMoreInfoView: View {
     private var gameInfoSection: some View {
         VStack(spacing: 16) {
             // Add instruction text at the top with theme-aware styling
+            #if os(tvOS)
+            Text("SELECT ANY FIELD WITH A PENCIL ICON TO EDIT")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(accentColor)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.bottom, 12)
+                .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+            #else
             Text("TAP ANY FIELD WITH A PENCIL ICON TO EDIT")
                 .font(.system(size: 12, weight: .bold))
                 .foregroundColor(accentColor)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 8)
                 .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+            #endif
 
             // Game info rows
             LabelRowView(
@@ -528,7 +632,10 @@ struct GameMoreInfoView: View {
                 backgroundColor: cellBackgroundColor,
                 borderGradient: accentGradient()
             )
-
+            #if os(tvOS)
+            .focused($focusedField, equals: .name)
+            #endif
+            // Non-editable rows: keep focusable to allow navigation continuity
             LabelRowView(
                 label: "FILENAME",
                 value: viewModel.filename,
@@ -559,6 +666,9 @@ struct GameMoreInfoView: View {
                 backgroundColor: cellBackgroundColor,
                 borderGradient: accentGradient()
             )
+            #if os(tvOS)
+            .focused($focusedField, equals: .developer)
+            #endif
 
             LabelRowView(
                 label: "PUBLISH DATE",
@@ -570,6 +680,9 @@ struct GameMoreInfoView: View {
                 backgroundColor: cellBackgroundColor,
                 borderGradient: accentGradient()
             )
+            #if os(tvOS)
+            .focused($focusedField, equals: .publishDate)
+            #endif
 
             LabelRowView(
                 label: "GENRES",
@@ -581,6 +694,9 @@ struct GameMoreInfoView: View {
                 backgroundColor: cellBackgroundColor,
                 borderGradient: accentGradient()
             )
+            #if os(tvOS)
+            .focused($focusedField, equals: .genres)
+            #endif
 
             LabelRowView(
                 label: "REGION",
@@ -593,6 +709,9 @@ struct GameMoreInfoView: View {
                 backgroundColor: cellBackgroundColor,
                 borderGradient: accentGradient()
             )
+            #if os(tvOS)
+            .focused($focusedField, equals: .region)
+            #endif
 
             if let timeSpent = viewModel.timeSpent {
                 LabelRowView(
@@ -613,6 +732,9 @@ struct GameMoreInfoView: View {
                 resetStatsButton
             }
         }
+#if os(tvOS)
+        .focusSection() // Contain focus within the metadata block
+#endif
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
@@ -706,20 +828,37 @@ struct GameMoreInfoView: View {
     /// Reset stats button with theme-aware styling
     private var resetStatsButton: some View {
         Button(action: {
-            viewModel.resetStats()
+            showingResetStatsConfirmation = true
         }) {
             Text("RESET STATS")
+                #if os(tvOS)
+                .font(.system(size: 20, weight: .bold))
+                .padding(.horizontal, 30)
+                .padding(.vertical, 12)
+                #else
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(accentColor)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 8)
+                #endif
+                .foregroundColor(accentColor)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(accentGradient(), lineWidth: 1.5)
                 )
                 .shadow(color: accentColor.opacity(glowOpacity), radius: 5, x: 0, y: 0)
         }
+        #if os(tvOS)
+        .buttonStyle(.plain)
+        #endif
         .padding(.top)
+        .alert("Reset Statistics", isPresented: $showingResetStatsConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Reset", role: .destructive) {
+                viewModel.resetStats()
+            }
+        } message: {
+            Text("Are you sure you want to reset play count and time spent for this game? This action cannot be undone.")
+        }
     }
 
     /// Game description section component
