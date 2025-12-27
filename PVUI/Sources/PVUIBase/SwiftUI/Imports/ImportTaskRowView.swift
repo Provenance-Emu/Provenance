@@ -169,8 +169,21 @@ struct ImportTaskRowView: View {
         }
     }
 
+    private var needsSystemSelection: Bool {
+        guard item.userChosenSystem == nil else { return false }
+        switch item.status {
+        case .conflict, .failure:
+            return true
+        case .partial:
+            let ext = item.url.pathExtension.lowercased()
+            return ext == "cue" || ext == "m3u"
+        default:
+            return false
+        }
+    }
+
     var mainView: some View {
-        ZStack {
+        let base = ZStack {
             // Background with retrowave styling
             background
             // Content
@@ -184,40 +197,42 @@ struct ImportTaskRowView: View {
                 isHovered = hovering
             }
         }
-        #endif
+#endif
         .onAppear {
             // Start animations
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
             }
         }
-        .onTapGesture {
-            // Only show system selection if we haven't chosen a system yet
-            if item.userChosenSystem == nil {
-                switch item.status {
-                case .conflict, .failure:
-                    isNavigatingToSystemSelection = true
-                case .partial:
-                    if item.url.pathExtension.lowercased() == "cue" || item.url.pathExtension.lowercased() == "m3u" {
-                        isNavigatingToSystemSelection = true
-                    }
-                default:
-                    break
+
+        return Group {
+            if needsSystemSelection {
+                NavigationLink(
+                    destination: SystemSelectionView(
+                        item: item,
+                        onSystemSelected: onSystemSelected
+                    ),
+                    isActive: $isNavigatingToSystemSelection
+                ) {
+                    base
                 }
+                .buttonStyle(.plain)
+#if os(tvOS)
+                .focusable(true)
+#endif
+            } else {
+                base
+                    .onTapGesture { isNavigatingToSystemSelection = false }
+#if os(tvOS)
+                    .focusable(true)
+#endif
             }
         }
-        .background(
-            NavigationLink(
-                destination: SystemSelectionView(
-                    item: item,
-                    onSystemSelected: onSystemSelected
-                ),
-                isActive: $isNavigatingToSystemSelection
-            ) {
-                EmptyView()
+        .onTapGesture {
+            if needsSystemSelection {
+                isNavigatingToSystemSelection = true
             }
-                .hidden()
-        )
+        }
     }
 
     var body: some View {

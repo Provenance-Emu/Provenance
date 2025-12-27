@@ -29,25 +29,25 @@ public struct ImportStatusView: View {
     public var gameImporter: any GameImporting
     public weak var delegate: ImportStatusDelegate?
     public var dismissAction: (() -> Void)? = nil
-    
+
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var messageManager = StatusMessageManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
     @Namespace private var namespace  // Add namespace for focus management
-    
+
     // ViewModel to handle state and actor isolation
     @StateObject private var viewModel = ImportStatusViewModel()
-    
+
     // Store for cancellables
     private var cancellables = Set<AnyCancellable>()
-    
+
     public init(updatesController: PVGameLibraryUpdatesController, gameImporter: any GameImporting, delegate: ImportStatusDelegate? = nil, dismissAction: (() -> Void)? = nil) {
         self.updatesController = updatesController
         self.gameImporter = gameImporter
         self.delegate = delegate
         self.dismissAction = dismissAction
     }
-    
+
     private func deleteItems(at offsets: IndexSet) {
         Task {
             await gameImporter.removeImports(at: offsets)
@@ -55,24 +55,24 @@ public struct ImportStatusView: View {
             await viewModel.refreshQueueItems()
         }
     }
-    
+
     // Define the system selection handler
     private func handleSystemSelection(_ system: SystemIdentifier, for item: ImportQueueItem) {
         // Forward to the delegate
         delegate?.didSelectSystem(system, for: item)
     }
-    
+
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
-    
+
     // MARK: - Helper Methods
-    
+
     /// Determines if the full import view should be shown
     private var shouldShowFullView: Bool {
         return !viewModel.queueItems.isEmpty || messageManager.isImportActive || messageManager.fileRecoveryProgress != nil
     }
-    
+
     public var body: some View {
         WithPerceptionTracking {
 //            Group {
@@ -91,7 +91,7 @@ public struct ImportStatusView: View {
                 glowOpacity = 1.0
                 scanlineOffset = 100
             }
-            
+
             // Load the queue items when the view appears
             Task {
                 await viewModel.refreshQueueItems()
@@ -104,32 +104,32 @@ public struct ImportStatusView: View {
         }
         #endif // !tvOS
     }
-    
+
     // Background layers for the retrowave effect
     private var backgroundLayers: some View {
         ZStack {
             // RetroWave background
             RetroTheme.retroBackground
-            
+
             // Grid overlay
             RetroGrid()
                 .opacity(0.3)
         }
     }
-    
+
     // Full import view when there are items to show
     private var fullImportView: some View {
         NavigationView {
             ZStack {
                 // Background layers
                 backgroundLayers
-                
+
                 // Main content
                 VStack {
                                 // File copy progress (shown above import queue)
                                 FileCopyProgressView()
                                     .padding(.bottom, 16)
-                                
+
                                 // Retrowave header
                                 Text("IMPORT QUEUE")
                                     .font(.system(size: 28, weight: .bold))
@@ -138,7 +138,7 @@ public struct ImportStatusView: View {
                                     .padding(.top, 20)
                                     .padding(.bottom, 10)
                                     .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-                                
+
                                 // Main content
                                 if viewModel.queueItems.isEmpty {
                                     VStack {
@@ -151,6 +151,23 @@ public struct ImportStatusView: View {
                                         Spacer()
                                     }
                                 } else {
+#if os(tvOS)
+                                    ScrollView {
+                                        LazyVStack(spacing: 12) {
+                                            ForEach(viewModel.queueItems) { item in
+                                                ImportTaskRowView(
+                                                    item: item,
+                                                    onSystemSelected: handleSystemSelection
+                                                )
+                                                .id(item.id)
+                                                .padding(.horizontal)
+                                            }
+                                        }
+                                        .padding(.vertical, 8)
+                                    }
+                                    .focusSection()
+                                    .focusScope(namespace)
+#else
                                     List {
                                         ForEach(viewModel.queueItems) { item in
                                             ZStack {
@@ -169,7 +186,7 @@ public struct ImportStatusView: View {
                                                             )
                                                             .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                                     )
-                                                
+
                                                 // Pass callback to ImportTaskRowView
                                                 ImportTaskRowView(
                                                     item: item,
@@ -180,20 +197,13 @@ public struct ImportStatusView: View {
                                             }
                                             .listRowInsets(EdgeInsets()) // Remove default list row insets
                                             .listRowBackground(Color.clear) // Make the list row background transparent
-#if os(tvOS)
-                                            .focusable()
-                                            .prefersDefaultFocus(in: namespace)
-#endif
                                         }
                                         .onDelete(perform: deleteItems) // Add swipe-to-delete functionality
-#if !os(tvOS)
                                         .listRowSeparator(.hidden) // Hide default separators
-#endif
                                     }
                                     .listStyle(PlainListStyle()) // Use plain style to minimize default styling
                                     .padding(.horizontal)
                                     .background(Color.clear) // Make list background transparent
-#if !os(tvOS)
                                     .scrollContentBackground(.hidden) // Hide the scroll content background on iOS 16+
 #endif
                                 }
@@ -259,7 +269,7 @@ public struct ImportStatusView: View {
                                         .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                 }
 #endif
-                                
+
                                 Button(action: {
                                     delegate?.forceImportsAction()
                                 }) {
@@ -294,7 +304,7 @@ public struct ImportStatusView: View {
                         }
                     }
     }
-    
+
     /// Refresh the queue items from the game importer
     @MainActor
     func refreshQueueItems() async {
@@ -308,9 +318,9 @@ public struct ImportStatusView: View {
 //#Preview {
 //    @ObservedObject var themeManager = ThemeManager.shared
 //    var currentPalette: any UXThemePalette { themeManager.currentPalette }
-//    
+//
 //    let mockImportStatusDriverData = MockImportStatusDriverData()
-//    
+//
 //    ImportStatusView(
 //        updatesController: mockImportStatusDriverData.pvgamelibraryUpdatesController,
 //        gameImporter: mockImportStatusDriverData.gameImporter,
@@ -330,7 +340,7 @@ private extension ButtonStyle where Self == TVCardButtonStyle {
 
 private struct TVCardButtonStyle: ButtonStyle {
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

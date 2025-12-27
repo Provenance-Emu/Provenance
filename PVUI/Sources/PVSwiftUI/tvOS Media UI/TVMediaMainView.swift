@@ -301,12 +301,14 @@ struct TVMediaMainView: View {
         case .importStatus:
             if let gameImporter = appState.gameImporter,
                let updatesController = appState.libraryUpdatesController {
-                ImportStatusView(
-                    updatesController: updatesController,
-                    gameImporter: gameImporter,
-                    delegate: nil,
-                    dismissAction: { router.dismissModal() }
-                )
+                NavigationStack {
+                    ImportStatusView(
+                        updatesController: updatesController,
+                        gameImporter: gameImporter,
+                        delegate: nil,
+                        dismissAction: { router.dismissModal() }
+                    )
+                }
             } else {
                 EmptyView()
             }
