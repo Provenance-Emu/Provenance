@@ -1534,8 +1534,34 @@ struct RetroMenuView: View {
         #endif
     }
 
-    // Filter picker sheet view with retrowave styling
+    // Filter picker sheet view
     private var filterPickerView: some View {
+        #if os(tvOS)
+        NavigationView {
+            Form {
+                Picker("Screen Filter", selection: $selectedMetalFilter) {
+                    ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
+                        Text(option == .none ? "None" : option.description)
+                            .tag(option)
+                    }
+                }
+                .pickerStyle(.navigationLink)
+            }
+            .navigationTitle("Screen Filters")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingFilterPicker = false
+                    }
+                    .font(.headline)
+                }
+            }
+        }
+        .onAppear { syncSelectedFilterFromSettings() }
+        .onChange(of: selectedMetalFilter) { newValue in
+            applyFilterImmediately(newValue)
+        }
+        #else
         GeometryReader { geometry in
             let isCompact = geometry.size.width < 400
 
@@ -1556,6 +1582,7 @@ struct RetroMenuView: View {
             }
         }
         .edgesIgnoringSafeArea(.all)
+        #endif
     }
 
     @ViewBuilder
