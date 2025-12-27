@@ -40,6 +40,9 @@ struct ImportTaskRowView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
+#if os(tvOS)
+    @FocusState private var isFocusedTV: Bool
+#endif
 
     // Replace delegate with callback
     var onSystemSelected: ((SystemIdentifier, ImportQueueItem) -> Void)?
@@ -69,7 +72,15 @@ struct ImportTaskRowView: View {
 
     var background: some View {
         // Background with retrowave styling
-        RoundedRectangle(cornerRadius: 12)
+#if os(tvOS)
+        let lineWidth: CGFloat = isFocusedTV ? 3.0 : 1.5
+        let shadowRadius: CGFloat = isFocusedTV ? 8 : 4
+#else
+        let lineWidth: CGFloat = isHovered ? 2.0 : 1.5
+        let shadowRadius: CGFloat = isHovered ? 5 : 3
+#endif
+
+        return RoundedRectangle(cornerRadius: 12)
             .fill(Color.black.opacity(0.7))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
@@ -79,11 +90,15 @@ struct ImportTaskRowView: View {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
-                        lineWidth: isHovered ? 2.0 : 1.5
+                        lineWidth: lineWidth
                     )
-                    .shadow(color: primaryColor.opacity(glowOpacity), radius: isHovered ? 5 : 3, x: 0, y: 0)
+                    .shadow(
+                        color: primaryColor.opacity(glowOpacity),
+                        radius: shadowRadius,
+                        x: 0,
+                        y: 0
+                    )
             )
-
     }
 
     var content: some View {
@@ -215,16 +230,23 @@ struct ImportTaskRowView: View {
                     isActive: $isNavigatingToSystemSelection
                 ) {
                     base
+                        .contentShape(Rectangle())
+#if os(tvOS)
+                        .focusable(true)
+                        .focused($isFocusedTV)
+                        .scaleEffect(isFocusedTV ? 1.04 : 1.0)
+                        .tvOSDisableFocusEffect()
+#endif
                 }
                 .buttonStyle(.plain)
-#if os(tvOS)
-                .focusable(true)
-#endif
             } else {
                 base
                     .onTapGesture { isNavigatingToSystemSelection = false }
 #if os(tvOS)
                     .focusable(true)
+                    .focused($isFocusedTV)
+                    .scaleEffect(isFocusedTV ? 1.04 : 1.0)
+                    .tvOSDisableFocusEffect()
 #endif
             }
         }
@@ -241,6 +263,24 @@ struct ImportTaskRowView: View {
         }
     }
 }
+
+#if os(tvOS)
+private struct TVOSDisableFocusEffect: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(tvOS 17.0, *) {
+            content.focusEffectDisabled()
+        } else {
+            content
+        }
+    }
+}
+
+private extension View {
+    func tvOSDisableFocusEffect() -> some View {
+        modifier(TVOSDisableFocusEffect())
+    }
+}
+#endif
 
 #if DEBUG
 import PVThemes

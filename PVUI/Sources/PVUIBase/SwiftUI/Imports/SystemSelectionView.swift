@@ -15,7 +15,7 @@ struct SystemSelectionView: View {
     @ObservedObject var item: ImportQueueItem
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var themeManager = ThemeManager.shared
-    
+
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
@@ -28,11 +28,11 @@ struct SystemSelectionView: View {
         ZStack {
             // RetroWave background
             RetroTheme.retroBackground
-            
+
             // Grid overlay
             RetroGrid()
                 .opacity(0.3)
-            
+
             VStack(spacing: 16) {
                 // Retrowave header
                 Text("SELECT SYSTEM")
@@ -41,7 +41,7 @@ struct SystemSelectionView: View {
                     .padding(.top, 20)
                     .padding(.bottom, 10)
                     .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-                
+
                 // System selection list
                 WithPerceptionTracking {
                     ScrollView {
@@ -52,15 +52,15 @@ struct SystemSelectionView: View {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         selectedSystem = system
                                     }
-                                    
+
                                     // Delay to show selection animation
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                         // Set the chosen system
                                         item.userChosenSystem = system
-                                        
+
                                         // Call the callback
                                         onSystemSelected?(system, item)
-                                        
+
                                         // Dismiss the view
                                         presentationMode.wrappedValue.dismiss()
                                     }
@@ -70,9 +70,9 @@ struct SystemSelectionView: View {
                                             .font(.system(size: 16, weight: .bold))
                                             .foregroundColor(.white)
                                             .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
-                                        
+
                                         Spacer()
-                                        
+
                                         Image(systemName: "chevron.right")
                                             .font(.system(size: 14))
                                             .foregroundColor(RetroTheme.retroPurple)
@@ -99,6 +99,11 @@ struct SystemSelectionView: View {
                                                             y: 0)
                                             )
                                     )
+                                    .buttonStyle(.plain)
+#if os(tvOS)
+                                    .focusable(true)
+                                    .tvOSDisableFocusEffect()
+#endif
                                 }
                             } // ForEach
                         } // VStack
@@ -115,13 +120,31 @@ struct SystemSelectionView: View {
             withAnimation(Animation.linear(duration: 20).repeatForever(autoreverses: false)) {
                 scanlineOffset = 1000
             }
-            
+
             withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
             }
         }
     }
 }
+
+#if os(tvOS)
+private struct TVOSDisableFocusEffect: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(tvOS 17.0, *) {
+            content.focusEffectDisabled()
+        } else {
+            content
+        }
+    }
+}
+
+private extension View {
+    func tvOSDisableFocusEffect() -> some View {
+        modifier(TVOSDisableFocusEffect())
+    }
+}
+#endif
 
 #if DEBUG
 import PVPrimitives
