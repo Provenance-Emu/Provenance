@@ -108,6 +108,7 @@ enum TVMediaModal: Identifiable, Equatable {
     case systemPicker(game: PVGame)
     case renameGame(game: PVGame)
     case gameInfo(gameID: String)
+    case importStatus
     case importQueue
 
     var id: String {
@@ -120,6 +121,8 @@ enum TVMediaModal: Identifiable, Equatable {
             return "renameGame-\(game.id)"
         case .gameInfo(let gameID):
             return "gameInfo-\(gameID)"
+        case .importStatus:
+            return "importStatus"
         case .importQueue:
             return "importQueue"
         }

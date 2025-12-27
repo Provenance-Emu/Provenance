@@ -15,6 +15,7 @@ struct TVMediaSidebarRail: View {
 
     let onSelectSettings: () -> Void
     let onSelectStatus: () -> Void
+    let onSelectImports: () -> Void
 
     @FocusState private var focusedItem: SidebarItem?
     @ObservedObject private var iconManager = IconManager.shared
@@ -106,6 +107,7 @@ struct TVMediaSidebarRail: View {
                     .padding(.vertical, 20)
 
                 // Footer items
+                sidebarButton(for: .imports)
                 sidebarButton(for: .settings)
                 sidebarButton(for: .status)
             }
@@ -357,6 +359,8 @@ struct TVMediaSidebarRail: View {
         case .status:
             destination = .status
             onSelectStatus()
+        case .imports:
+            onSelectImports()
         }
 
         focusedItem = nil
@@ -428,13 +432,15 @@ private enum SidebarItem: Hashable {
     case destination(TVMediaDestination)
     case settings
     case status
+    case imports
 
     static let mainNavItems: [SidebarItem] = [
         .destination(.home),
         .destination(.system),
         .destination(.search),
         .destination(.favorites),
-        .destination(.saves)
+        .destination(.saves),
+        //.imports
     ]
 
     var title: String {
@@ -442,6 +448,7 @@ private enum SidebarItem: Hashable {
         case .destination(let dest): return dest.title
         case .settings: return "Settings"
         case .status: return "Status"
+        case .imports: return "Imports"
         }
     }
 
@@ -459,6 +466,7 @@ private enum SidebarItem: Hashable {
             }
         case .settings: return "gearshape"
         case .status: return "info.circle"
+        case .imports: return "tray.and.arrow.down"
         }
     }
 
@@ -469,6 +477,7 @@ private enum SidebarItem: Hashable {
             return d == dest
         case .settings: return dest == .settings
         case .status: return dest == .status
+        case .imports: return false
         }
     }
 }

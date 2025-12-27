@@ -64,6 +64,9 @@ struct TVMediaMainView: View {
                 },
                 onSelectStatus: {
                     router.navigate(to: .status)
+                },
+                onSelectImports: {
+                    router.activeModal = .importStatus
                 }
             )
             .focusScope(sidebarNamespace)
@@ -291,6 +294,18 @@ struct TVMediaMainView: View {
                     gameImporter: gameImporter,
                     updatesController: updatesController,
                     onDismiss: { router.dismissModal() }
+                )
+            } else {
+                EmptyView()
+            }
+        case .importStatus:
+            if let gameImporter = appState.gameImporter,
+               let updatesController = appState.libraryUpdatesController {
+                ImportStatusView(
+                    updatesController: updatesController,
+                    gameImporter: gameImporter,
+                    delegate: nil,
+                    dismissAction: { router.dismissModal() }
                 )
             } else {
                 EmptyView()
