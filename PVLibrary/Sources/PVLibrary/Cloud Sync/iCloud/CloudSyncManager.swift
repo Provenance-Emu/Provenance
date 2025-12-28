@@ -1069,6 +1069,59 @@ public class CloudSyncManager {
         ILOG("[SYNC] Forced BIOS download complete")
     }
 
+    /// Fast targeted download of a single BIOS file from CloudKit
+    /// - Parameters:
+    ///   - filename: The BIOS filename to download
+    ///   - expectedMD5: The expected MD5 hash (used for record ID prediction)
+    ///   - systemIdentifier: The system identifier (e.g., "com.provenance.psx")
+    /// - Returns: True if the BIOS was downloaded successfully
+    public func downloadSingleBIOS(filename: String, expectedMD5: String, systemIdentifier: String) async -> Bool {
+        guard Defaults[.iCloudSync] else {
+            WLOG("[BIOS FAST] Cannot download - sync disabled")
+            return false
+        }
+
+        ILOG("[BIOS FAST] Starting targeted download for: \(filename)")
+
+        let syncer = CloudKitBIOSSyncer(
+            container: iCloudConstants.container,
+            directories: ["BIOS"],
+            errorHandler: errorHandler
+        )
+
+        // Try multiple record ID formats in order of likelihood
+        let md5Prefix = String(expectedMD5.prefix(8)).uppercased()
+        let recordIDCandidates = [
+            // Most common format: systemID_filename_md5prefix
+            "\(systemIdentifier)_\(filename)_\(md5Prefix)",
+            // Simple format: systemID_filename
+            "\(systemIdentifier)_\(filename)",
+            // Legacy format: bios_filename
+            "bios_\(filename)",
+            // Just filename
+            filename
+        ]
+
+        for recordID in recordIDCandidates {
+            DLOG("[BIOS FAST] Trying recordID: \(recordID)")
+
+            if await syncer.tryDownloadBIOSByRecordID(recordID, filename: filename, systemIdentifier: systemIdentifier) {
+                ILOG("[BIOS FAST] ✓ Successfully downloaded \(filename) using recordID: \(recordID)")
+                return true
+            }
+        }
+
+        // If direct lookup failed, try a targeted query by filename
+        DLOG("[BIOS FAST] Direct lookup failed, trying filename query...")
+        if await syncer.tryDownloadBIOSByFilename(filename, systemIdentifier: systemIdentifier) {
+            ILOG("[BIOS FAST] ✓ Successfully downloaded \(filename) via filename query")
+            return true
+        }
+
+        WLOG("[BIOS FAST] Failed to download BIOS: \(filename)")
+        return false
+    }
+
     /// Kick off a fast metadata-only bootstrap for ROMs and save states
     private func startMetadataBootstrap(reason: String) {
         Task { @MainActor in

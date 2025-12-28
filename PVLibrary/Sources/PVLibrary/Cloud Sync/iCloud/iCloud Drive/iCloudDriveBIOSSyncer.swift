@@ -912,6 +912,166 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             return false
         }
     }
+
+    /// Fast targeted BIOS download by record ID (public API for on-demand downloads)
+    /// - Parameters:
+    ///   - recordID: The CloudKit record ID to try
+    ///   - filename: The expected BIOS filename
+    ///   - systemIdentifier: The system identifier for subdirectory
+    /// - Returns: True if download succeeded
+    public func tryDownloadBIOSByRecordID(_ recordID: String, filename: String, systemIdentifier: String) async -> Bool {
+        let ckRecordID = CKRecord.ID(recordName: recordID)
+
+        do {
+            // Fast fetch with short timeout
+            let fetchTask = Task {
+                try await privateDatabase.record(for: ckRecordID)
+            }
+
+            let timeoutTask = Task {
+                try await Task.sleep(nanoseconds: 5_000_000_000) // 5 second timeout
+                fetchTask.cancel()
+            }
+
+            let record: CKRecord
+            do {
+                record = try await fetchTask.value
+                timeoutTask.cancel()
+            } catch is CancellationError {
+                timeoutTask.cancel()
+                return false
+            }
+
+            guard let asset = record["fileData"] as? CKAsset,
+                  let assetURL = asset.fileURL,
+                  FileManager.default.fileExists(atPath: assetURL.path) else {
+                return false
+            }
+
+            // Download to local path
+            let destinationURL = localPathForBIOS(filename: filename, systemIdentifier: systemIdentifier)
+            let directory = destinationURL.deletingLastPathComponent()
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+            if FileManager.default.fileExists(atPath: destinationURL.path) {
+                try await FileManager.default.removeItem(at: destinationURL)
+            }
+
+            try FileManager.default.copyItem(at: assetURL, to: destinationURL)
+
+            // Update Realm
+            await MainActor.run {
+                let realm = RomDatabase.sharedInstance.realm
+                if let bios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first {
+                    try? realm.write {
+                        bios.cloudRecordID = recordID
+                        bios.isDownloaded = true
+                        if bios.file == nil {
+                            let pvFile = PVFile()
+                            pvFile.partialPath = "BIOS/\(systemIdentifier)/\(filename)"
+                            bios.file = pvFile
+                        }
+                    }
+                }
+                NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
+            }
+
+            return true
+
+        } catch let ckError as CKError where ckError.code == .unknownItem {
+            return false
+        } catch {
+            DLOG("[BIOS FAST] Error downloading by recordID \(recordID): \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    /// Fast targeted BIOS download by filename query
+    /// - Parameters:
+    ///   - filename: The BIOS filename to search for
+    ///   - systemIdentifier: The system identifier for subdirectory
+    /// - Returns: True if download succeeded
+    public func tryDownloadBIOSByFilename(_ filename: String, systemIdentifier: String) async -> Bool {
+        do {
+            // Query both record types
+            let recordTypes = ["BIOS", "File"]
+
+            for recordType in recordTypes {
+                let predicate: NSPredicate
+                if recordType == "File" {
+                    predicate = NSPredicate(format: "directory == %@ AND filename == %@", "BIOS", filename)
+                } else {
+                    predicate = NSPredicate(format: "filename == %@", filename)
+                }
+                let query = CKQuery(recordType: recordType, predicate: predicate)
+
+                // Fast query with timeout
+                let fetchTask = Task {
+                    try await privateDatabase.records(matching: query, resultsLimit: 1)
+                }
+
+                let timeoutTask = Task {
+                    try await Task.sleep(nanoseconds: 5_000_000_000) // 5 second timeout
+                    fetchTask.cancel()
+                }
+
+                let results: [(CKRecord.ID, Result<CKRecord, Error>)]
+                do {
+                    (results, _) = try await fetchTask.value
+                    timeoutTask.cancel()
+                } catch is CancellationError {
+                    timeoutTask.cancel()
+                    continue
+                }
+
+                guard let firstResult = results.first,
+                      case .success(let record) = firstResult.1,
+                      let asset = record["fileData"] as? CKAsset,
+                      let assetURL = asset.fileURL,
+                      FileManager.default.fileExists(atPath: assetURL.path) else {
+                    continue
+                }
+
+                // Download to local path
+                let destinationURL = localPathForBIOS(filename: filename, systemIdentifier: systemIdentifier)
+                let directory = destinationURL.deletingLastPathComponent()
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+                if FileManager.default.fileExists(atPath: destinationURL.path) {
+                    try await FileManager.default.removeItem(at: destinationURL)
+                }
+
+                try FileManager.default.copyItem(at: assetURL, to: destinationURL)
+
+                // Update Realm
+                await MainActor.run {
+                    let realm = RomDatabase.sharedInstance.realm
+                    if let bios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first {
+                        try? realm.write {
+                            bios.cloudRecordID = record.recordID.recordName
+                            bios.isDownloaded = true
+                            if bios.file == nil {
+                                let pvFile = PVFile()
+                                pvFile.partialPath = "BIOS/\(systemIdentifier)/\(filename)"
+                                bios.file = pvFile
+                            }
+                        }
+                    }
+                    NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
+                }
+
+                ILOG("[BIOS FAST] Downloaded via \(recordType) query: \(filename)")
+                return true
+            }
+
+            return false
+
+        } catch {
+            DLOG("[BIOS FAST] Error downloading by filename \(filename): \(error.localizedDescription)")
+            return false
+        }
+    }
+
     /// Download a specific BIOS file from CloudKit
     /// - Parameters:
     ///   - recordID: The CloudKit record ID

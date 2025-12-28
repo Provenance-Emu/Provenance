@@ -381,11 +381,11 @@ public extension GameLaunchingViewController {
         var missingBIOSFiles: [String] = []
 
         if system.requiresBIOS {
-            let biosEntries = system.bioses
+            let biosEntries = Array(system.bioses)
             let biosDirectory = system.biosDirectory
 
             // Get existing BIOS files
-            let existingFiles: Set<String>
+            var existingFiles: Set<String>
             if let contents = try? FileManager.default.contentsOfDirectory(
                 at: biosDirectory,
                 includingPropertiesForKeys: nil,
@@ -396,7 +396,7 @@ public extension GameLaunchingViewController {
                 existingFiles = []
             }
 
-            // Check each required BIOS
+            // Check each required BIOS and try to download missing ones from CloudKit
             for bios in biosEntries {
                 if bios.optional { continue }
 
@@ -406,7 +406,29 @@ public extension GameLaunchingViewController {
                 }
 
                 if !existingFiles.contains(expectedFilename.lowercased()) {
-                    missingBIOSFiles.append(expectedFilename)
+                    // BIOS not found locally - attempt CloudKit download if sync is enabled
+                    if Defaults[.iCloudSync] {
+                        // Update status via SceneCoordinator
+                        SceneCoordinator.shared.syncStatusManager.update(statusMessage: "Downloading BIOS: \(expectedFilename)...")
+
+                        ILOG("[BIOS ON-DEMAND] Missing BIOS \(expectedFilename), attempting CloudKit download...")
+                        let downloaded = await SceneCoordinator.shared.tryDownloadBIOSFromCloud(
+                            filename: expectedFilename,
+                            expectedMD5: bios.expectedMD5,
+                            system: system
+                        )
+
+                        if downloaded {
+                            ILOG("[BIOS ON-DEMAND] ✓ Successfully downloaded BIOS from CloudKit: \(expectedFilename)")
+                            existingFiles.insert(expectedFilename.lowercased())
+                        } else {
+                            WLOG("[BIOS ON-DEMAND] CloudKit download failed for BIOS: \(expectedFilename)")
+                            missingBIOSFiles.append(expectedFilename)
+                        }
+                    } else {
+                        // CloudKit sync disabled - mark as missing
+                        missingBIOSFiles.append(expectedFilename)
+                    }
                 }
             }
         }

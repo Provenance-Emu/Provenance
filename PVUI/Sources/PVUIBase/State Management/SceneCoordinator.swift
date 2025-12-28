@@ -232,11 +232,26 @@ public class SceneCoordinator: ObservableObject {
         // Check if the game needs to be downloaded from the cloud
         let needsDownload = !game.isDownloaded || !(game.file?.online ?? true)
 
+        // Show sync status overlay early if we need to validate (may download BIOS)
+        if needsDownload || system.requiresBIOS {
+            syncStatusManager.show(
+                gameTitle: game.title,
+                statusMessage: "Validating requirements...",
+                onCancel: { [weak self] in
+                    self?.syncStatusManager.hide()
+                    self?.openMainScene()
+                }
+            )
+        }
+
         // If download is needed, validate requirements BEFORE downloading
         if needsDownload {
             let validation = await validatePreDownloadRequirements(for: game, system: system)
 
             if !validation.canProceed {
+                // Hide status overlay before showing warning
+                syncStatusManager.hide()
+
                 // Show warning and let user choose
                 let shouldContinue = await showPreDownloadWarning(validation: validation)
                 if !shouldContinue {
@@ -244,18 +259,34 @@ public class SceneCoordinator: ObservableObject {
                     return
                 }
                 ILOG("SceneCoordinator: User chose to continue download despite missing requirements")
-            }
-        }
 
-        // Show sync status overlay
-        syncStatusManager.show(
-            gameTitle: game.title,
-            statusMessage: "Checking game file...",
-            onCancel: { [weak self] in
-                self?.syncStatusManager.hide()
-                self?.openMainScene()
+                // Re-show status overlay after user chooses to continue
+                syncStatusManager.show(
+                    gameTitle: game.title,
+                    statusMessage: "Checking game file...",
+                    onCancel: { [weak self] in
+                        self?.syncStatusManager.hide()
+                        self?.openMainScene()
+                    }
+                )
+            } else {
+                // Validation passed, update status
+                syncStatusManager.update(statusMessage: "Checking game file...")
             }
-        )
+        } else if !system.requiresBIOS {
+            // Show sync status overlay (no early show was done)
+            syncStatusManager.show(
+                gameTitle: game.title,
+                statusMessage: "Checking game file...",
+                onCancel: { [weak self] in
+                    self?.syncStatusManager.hide()
+                    self?.openMainScene()
+                }
+            )
+        } else {
+            // Early show was done, just update message
+            syncStatusManager.update(statusMessage: "Checking game file...")
+        }
 
         // Create validator if cloud sync is enabled
         let validator: GameSyncValidator?
@@ -311,11 +342,16 @@ public class SceneCoordinator: ObservableObject {
         // Small delay to show completion status
         try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
 
-        // Hide sync status before any further checks
-        syncStatusManager.hide()
-
         // ALWAYS validate BIOS and core requirements before launching (not just for cloud downloads)
+        // Show status for BIOS validation if system requires BIOS
+        if system.requiresBIOS {
+            syncStatusManager.update(statusMessage: "Validating BIOS requirements...")
+        }
+
         let validation = await validatePreDownloadRequirements(for: game, system: system)
+
+        // Hide sync status after validation
+        syncStatusManager.hide()
 
         if !validation.canProceed {
             // Show error and stay in main scene - don't launch emulator
@@ -413,7 +449,6 @@ public class SceneCoordinator: ObservableObject {
 
         // Check for missing BIOS files
         var missingBIOSFiles: [String] = []
-        var queuedBackgroundBIOSDownloads: [String] = []
 
         if system.requiresBIOS {
             // Snapshot BIOS entries to an Array to avoid iterating live Realm collections across awaits
@@ -442,25 +477,32 @@ public class SceneCoordinator: ObservableObject {
                 }
 
                 if !existingFiles.contains(expectedFilename.lowercased()) {
-                    // BIOS not found locally - if it exists in CloudKit, queue background download instead of blocking launch
-                    if let biosEntry = RomDatabase.sharedInstance.realm.objects(PVBIOS.self).filter("expectedFilename ==[c] %@", expectedFilename).first,
-                       let recordID = biosEntry.cloudRecordID,
-                       !recordID.isEmpty {
-                        queueBackgroundBIOSDownload(filename: expectedFilename)
-                        queuedBackgroundBIOSDownloads.append(expectedFilename)
-                        missingBIOSFiles.append(expectedFilename)
-                    } else {
-                        // Fall back to legacy on-demand attempt (kept for safety)
+                    // BIOS not found locally - attempt CloudKit download if sync is enabled
+                    if Defaults[.iCloudSync] {
+                        // Show status update for BIOS download
+                        await MainActor.run {
+                            syncStatusManager.update(statusMessage: "Downloading BIOS: \(expectedFilename)...")
+                        }
+
                         ILOG("[BIOS ON-DEMAND] Missing BIOS \(expectedFilename), attempting CloudKit download...")
-                        let downloaded = await tryDownloadBIOSFromCloud(filename: expectedFilename, expectedMD5: bios.expectedMD5, system: system)
+                        let downloaded = await tryDownloadBIOSFromCloud(
+                            filename: expectedFilename,
+                            expectedMD5: bios.expectedMD5,
+                            system: system
+                        )
 
                         if downloaded {
-                            ILOG("[BIOS ON-DEMAND] ✓ Successfully downloaded BIOS: \(expectedFilename)")
+                            ILOG("[BIOS ON-DEMAND] ✓ Successfully downloaded BIOS from CloudKit: \(expectedFilename)")
                             existingFiles.insert(expectedFilename.lowercased())
+                            // Don't add to missingBIOSFiles - we got it!
                         } else {
-                            WLOG("[BIOS ON-DEMAND] Failed to download BIOS: \(expectedFilename)")
+                            WLOG("[BIOS ON-DEMAND] CloudKit download failed for BIOS: \(expectedFilename)")
                             missingBIOSFiles.append(expectedFilename)
                         }
+                    } else {
+                        // CloudKit sync disabled - mark as missing
+                        DLOG("[BIOS] CloudKit sync disabled, BIOS marked as missing: \(expectedFilename)")
+                        missingBIOSFiles.append(expectedFilename)
                     }
                 }
             }
@@ -535,46 +577,44 @@ public class SceneCoordinator: ObservableObject {
     ///   - expectedMD5: The expected MD5 hash
     ///   - system: The system requiring the BIOS
     /// - Returns: True if the BIOS was successfully downloaded
-    private func tryDownloadBIOSFromCloud(filename: String, expectedMD5: String, system: PVSystem) async -> Bool {
-        // Check if we have a PVBIOS entry with a cloudRecordID
-        let realm = RomDatabase.sharedInstance.realm
-        let biosEntry = realm.objects(PVBIOS.self).filter("expectedFilename == %@ OR expectedMD5 ==[c] %@", filename, expectedMD5).first
+    func tryDownloadBIOSFromCloud(filename: String, expectedMD5: String, system: PVSystem) async -> Bool {
+        let systemIdentifier = system.identifier
 
-        // If no PVBIOS entry found, we can't download from cloud
-        guard let bios = biosEntry else {
-            DLOG("[BIOS ON-DEMAND] No PVBIOS entry found for: \(filename)")
-            return false
+        // First, check if file already exists (might have been downloaded by another process)
+        let biosPath = system.biosDirectory.appendingPathComponent(filename)
+        if FileManager.default.fileExists(atPath: biosPath.path) {
+            ILOG("[BIOS ON-DEMAND] File already exists at: \(biosPath.path)")
+            return true
         }
+
+        ILOG("[BIOS ON-DEMAND] Starting fast targeted download for: \(filename)")
 
         // Use a timeout task to prevent hanging
         let downloadTask = Task { @MainActor () -> Bool in
-            // If no cloudRecordID, try to sync metadata first to get one
-            if bios.cloudRecordID == nil || bios.cloudRecordID?.isEmpty == true {
-                ILOG("[BIOS ON-DEMAND] No cloudRecordID for \(filename), triggering BIOS metadata sync...")
-                await CloudSyncManager.shared.forceBIOSDownload()
+            // Try the fast targeted download first (tries predicted record IDs + filename query)
+            let fastResult = await CloudSyncManager.shared.downloadSingleBIOS(
+                filename: filename,
+                expectedMD5: expectedMD5,
+                systemIdentifier: systemIdentifier
+            )
 
-                // Re-check after sync
-                RomDatabase.refresh()
+            if fastResult {
+                // Verify the file now exists
+                let fileExists = FileManager.default.fileExists(atPath: biosPath.path)
+                if fileExists {
+                    ILOG("[BIOS ON-DEMAND] ✓ Fast download succeeded: \(filename)")
+                    return true
+                }
             }
 
-            // Re-fetch to get updated cloudRecordID
-            guard let updatedBios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first,
-                  let recordID = updatedBios.cloudRecordID, !recordID.isEmpty else {
-                WLOG("[BIOS ON-DEMAND] Still no cloudRecordID after sync for: \(filename)")
-                return false
-            }
-
-            ILOG("[BIOS ON-DEMAND] Found cloudRecordID: \(recordID), downloading: \(filename)")
-
-            // Trigger download - forceBIOSDownload will handle fetching and downloading
+            // Fast method failed - try the slower full sync as fallback
+            ILOG("[BIOS ON-DEMAND] Fast download failed, trying full sync for: \(filename)")
             await CloudSyncManager.shared.forceBIOSDownload()
 
             // Verify the file now exists
-            let biosPath = system.biosDirectory.appendingPathComponent(filename)
             let fileExists = FileManager.default.fileExists(atPath: biosPath.path)
-
             if fileExists {
-                ILOG("[BIOS ON-DEMAND] ✓ Download verified, file exists at: \(biosPath.path)")
+                ILOG("[BIOS ON-DEMAND] ✓ Full sync download verified: \(filename)")
             } else {
                 WLOG("[BIOS ON-DEMAND] Download completed but file not found at: \(biosPath.path)")
             }
@@ -582,9 +622,9 @@ public class SceneCoordinator: ObservableObject {
             return fileExists
         }
 
-        // Timeout after 45 seconds to prevent indefinite hanging
+        // Timeout after 20 seconds (reduced from 45 since fast path should be quick)
         let timeoutTask = Task {
-            try await Task.sleep(nanoseconds: 45_000_000_000) // 45 seconds
+            try await Task.sleep(nanoseconds: 20_000_000_000) // 20 seconds
             downloadTask.cancel()
             WLOG("[BIOS ON-DEMAND] Download timed out for: \(filename)")
         }
@@ -662,11 +702,26 @@ public class SceneCoordinator: ObservableObject {
         // Check if the game needs to be downloaded from the cloud
         let needsDownload = !game.isDownloaded || !(game.file?.online ?? true)
 
+        // Show sync status overlay early if we need to validate (may download BIOS)
+        if needsDownload || system.requiresBIOS {
+            syncStatusManager.show(
+                gameTitle: game.title,
+                statusMessage: "Validating requirements...",
+                onCancel: { [weak self] in
+                    self?.syncStatusManager.hide()
+                    self?.openMainScene()
+                }
+            )
+        }
+
         // If download is needed, validate requirements BEFORE downloading
         if needsDownload {
             let validation = await validatePreDownloadRequirements(for: game, system: system)
 
             if !validation.canProceed {
+                // Hide status overlay before showing warning
+                syncStatusManager.hide()
+
                 // Show warning and let user choose
                 let shouldContinue = await showPreDownloadWarning(validation: validation)
                 if !shouldContinue {
@@ -674,18 +729,34 @@ public class SceneCoordinator: ObservableObject {
                     return
                 }
                 ILOG("SceneCoordinator: User chose to continue save state launch despite missing requirements")
-            }
-        }
 
-        // Show sync status overlay
-        syncStatusManager.show(
-            gameTitle: game.title,
-            statusMessage: "Checking game file...",
-            onCancel: { [weak self] in
-                self?.syncStatusManager.hide()
-                self?.openMainScene()
+                // Re-show status overlay after user chooses to continue
+                syncStatusManager.show(
+                    gameTitle: game.title,
+                    statusMessage: "Checking game file...",
+                    onCancel: { [weak self] in
+                        self?.syncStatusManager.hide()
+                        self?.openMainScene()
+                    }
+                )
+            } else {
+                // Validation passed, update status
+                syncStatusManager.update(statusMessage: "Checking game file...")
             }
-        )
+        } else if !system.requiresBIOS {
+            // Show sync status overlay (no early show was done)
+            syncStatusManager.show(
+                gameTitle: game.title,
+                statusMessage: "Checking game file...",
+                onCancel: { [weak self] in
+                    self?.syncStatusManager.hide()
+                    self?.openMainScene()
+                }
+            )
+        } else {
+            // Early show was done, just update message
+            syncStatusManager.update(statusMessage: "Checking game file...")
+        }
 
         // Create validator if cloud sync is enabled
         let validator: GameSyncValidator?
@@ -734,6 +805,11 @@ public class SceneCoordinator: ObservableObject {
         }
 
         // Validate BIOS and core requirements
+        // Show status for BIOS validation if system requires BIOS
+        if system.requiresBIOS {
+            syncStatusManager.update(statusMessage: "Validating BIOS requirements...")
+        }
+
         let validation = await validatePreDownloadRequirements(for: game, system: system)
 
         if !validation.canProceed {
