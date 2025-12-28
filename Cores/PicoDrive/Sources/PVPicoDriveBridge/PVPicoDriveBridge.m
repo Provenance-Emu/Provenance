@@ -35,6 +35,7 @@
 @import GameController;
 @import PVEmulatorCore;
 @import PVSettings;
+#import <stdatomic.h>
 
 #import <TargetConditionals.h>
 
@@ -64,6 +65,7 @@ __weak PVPicoDriveBridge *_current;
     double sampleRate;
     NSTimeInterval frameInterval;
     NSMutableDictionary<NSString *, NSString *> *_variableCache;
+    atomic_bool _shouldRun;
 }
 
 @end
@@ -382,6 +384,7 @@ static void writeSaveFile(const char* path, int type)
 //        _pad = (int16_t *)malloc(24 * sizeof(int16_t));
         memset((void*)_pad, 0, sizeof(int16_t) * 24);
         _variableCache = [NSMutableDictionary dictionary];
+        atomic_init(&_shouldRun, false);
     }
 
 	_current = self;
@@ -390,6 +393,9 @@ static void writeSaveFile(const char* path, int type)
 }
 
 - (void)executeFrame {
+    if (!atomic_load(&_shouldRun)) {
+        return;
+    }
     retro_run();
 }
 
@@ -465,6 +471,7 @@ static void writeSaveFile(const char* path, int type)
         retro_get_region();
 
         retro_run();
+        atomic_store(&_shouldRun, true);
 
         return YES;
     }
@@ -528,6 +535,7 @@ static void writeSaveFile(const char* path, int type)
 }
 
 - (void)stopEmulation {
+    atomic_store(&_shouldRun, false);
     NSString *path = romName;
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
 
@@ -543,10 +551,12 @@ static void writeSaveFile(const char* path, int type)
 
     retro_unload_game();
     retro_deinit();
+    _current = nil;
     [super stopEmulation];
 }
 
 - (void)dealloc {
+    atomic_store(&_shouldRun, false);
     free(self->videoBuffer);
 }
 
