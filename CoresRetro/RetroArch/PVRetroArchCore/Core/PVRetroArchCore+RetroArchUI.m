@@ -1120,12 +1120,13 @@ void extract_bundles();
             return;
     }
 
-    _renderView.translatesAutoresizingMaskIntoConstraints = NO;
     UIView *rootView = [CocoaView get].view;
     [rootView addSubview:_renderView];
 
 //    _renderView.backgroundColor = [UIColor greenColor];
 //    rootView.backgroundColor = [UIColor redColor];
+
+    _renderView.translatesAutoresizingMaskIntoConstraints = NO;
 
     // Apply custom layout if it was requested before _renderView was created
     if (self.useCustomRenderViewLayout) {
@@ -1134,11 +1135,20 @@ void extract_bundles();
         [self setUseCustomRenderViewLayout:YES];
     } else {
         DLOG(@"[RA] Default: pin to full-screen");
-        // Default: pin to full-screen
-        [[_renderView.safeAreaLayoutGuide.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
-        [[_renderView.safeAreaLayoutGuide.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
-        [[_renderView.safeAreaLayoutGuide.leadingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.leadingAnchor] setActive:YES];
-        [[_renderView.safeAreaLayoutGuide.trailingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.trailingAnchor] setActive:YES];
+#if TARGET_OS_TV
+        /// tvOS: Center within superview (the actual container) to avoid rootView offset issues
+        UIView *containerView = rootView.superview ?: rootView;
+        [[_renderView.centerXAnchor constraintEqualToAnchor:containerView.centerXAnchor] setActive:YES];
+        [[_renderView.centerYAnchor constraintEqualToAnchor:containerView.centerYAnchor] setActive:YES];
+        [[_renderView.widthAnchor constraintEqualToAnchor:containerView.widthAnchor] setActive:YES];
+        [[_renderView.heightAnchor constraintEqualToAnchor:containerView.heightAnchor] setActive:YES];
+#else
+        /// iOS: Use safe area to respect notch/dynamic island
+        [[_renderView.topAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.topAnchor] setActive:YES];
+        [[_renderView.bottomAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.bottomAnchor] setActive:YES];
+        [[_renderView.leadingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.leadingAnchor] setActive:YES];
+        [[_renderView.trailingAnchor constraintEqualToAnchor:rootView.safeAreaLayoutGuide.trailingAnchor] setActive:YES];
+#endif
     }
 }
 
