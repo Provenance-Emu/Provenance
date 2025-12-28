@@ -17,7 +17,9 @@ public extension SystemIdentifier {
             return PVGBSystemResponderClient.self
         case .GBA:
             return PVGBASystemResponderClient.self
-        case .Genesis, .SegaCD, .Sega32X:
+        case .Sega32X:
+            return PVSega32XSystemResponderClient.self
+        case .Genesis, .SegaCD:
             return PVGenesisSystemResponderClient.self
         case .MasterSystem, .GameGear:
             return PVMasterSystemSystemResponderClient.self
