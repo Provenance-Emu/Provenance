@@ -35,59 +35,123 @@ extern GCController *touch_controller;
 
 @implementation PVRetroArchCoreBridge (GenesisControls)
 #pragma mark - Control
-- (void)didPushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player {
+- (void)didPushGenesisButton:(PVSega32XButton)button forPlayer:(NSInteger)player {
     [self handleGenesisButton:button forPlayer:player pressed:true value:1];
 }
 
-- (void)didReleaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player {
+- (void)didReleaseGenesisButton:(PVSega32XButton)button forPlayer:(NSInteger)player {
     [self handleGenesisButton:button forPlayer:player pressed:false value:0];
 }
 
-- (void)didMoveGenesisJoystickDirection:(PVGenesisButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+- (void)didMoveGenesisJoystickDirection:(PVSega32XButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
     [self handleGenesisButton:button forPlayer:player pressed:(value != 0) value:value];
 }
-- (void)handleGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
+- (void)handleGenesisButton:(PVSega32XButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
 
     switch (button) {
-        case(PVGenesisButtonUp):
+        case(PVSega32XButtonUp):
             yAxis=pressed?(!xAxis?1.0:0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
-        case(PVGenesisButtonDown):
+        case(PVSega32XButtonDown):
             yAxis=pressed?(!xAxis?-1.0:-0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
-        case(PVGenesisButtonLeft):
+        case(PVSega32XButtonLeft):
             xAxis=pressed?(!yAxis?-1.0:-0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
-        case(PVGenesisButtonRight):
+        case(PVSega32XButtonRight):
             xAxis=pressed?(!yAxis?1.0:0.5):0;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
-        case(PVGenesisButtonA):
+        case(PVSega32XButtonA):
             [touch_controller.extendedGamepad.buttonX setValue:pressed?1:0];
             break;
-        case(PVGenesisButtonB):
+        case(PVSega32XButtonB):
             [touch_controller.extendedGamepad.buttonA setValue:pressed?1:0];
             break;
-        case(PVGenesisButtonC):
+        case(PVSega32XButtonC):
             [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
             break;
-        case(PVGenesisButtonY):
+        case(PVSega32XButtonY):
             [touch_controller.extendedGamepad.buttonY setValue:pressed?1:0];
             break;
-        case(PVGenesisButtonX):
+        case(PVSega32XButtonX):
             [touch_controller.extendedGamepad.leftShoulder setValue:pressed?1:0];
             break;
-        case(PVGenesisButtonZ):
+        case(PVSega32XButtonZ):
             [touch_controller.extendedGamepad.rightShoulder setValue:pressed?1:0];
             break;
-        case(PVGenesisButtonMode):
+        case(PVSega32XButtonMode):
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
             [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
             break;
-        case(PVGenesisButtonStart):
+        case(PVSega32XButtonStart):
+            [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
+            break;
+    }
+}
+@end
+
+@interface PVRetroArchCoreBridge (Sega32XControls) <PVSega32XSystemResponderClient>
+@end
+
+@implementation PVRetroArchCoreBridge (Sega32XControls)
+#pragma mark - Control
+- (void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSInteger)player {
+    [self handleSega32XButton:button forPlayer:player pressed:true value:1];
+}
+
+- (void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSInteger)player {
+    [self handleSega32XButton:button forPlayer:player pressed:false value:0];
+}
+
+- (void)didMoveSega32XJoystickDirection:(PVSega32XButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    [self handleSega32XButton:button forPlayer:player pressed:(value != 0) value:value];
+}
+- (void)handleSega32XButton:(PVSega32XButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
+
+    switch (button) {
+        case(PVSega32XButtonUp):
+            yAxis=pressed?(!xAxis?1.0:0.5):0;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case(PVSega32XButtonDown):
+            yAxis=pressed?(!xAxis?-1.0:-0.5):0;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case(PVSega32XButtonLeft):
+            xAxis=pressed?(!yAxis?-1.0:-0.5):0;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case(PVSega32XButtonRight):
+            xAxis=pressed?(!yAxis?1.0:0.5):0;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case(PVSega32XButtonA):
+            [touch_controller.extendedGamepad.buttonX setValue:pressed?1:0];
+            break;
+        case(PVSega32XButtonB):
+            [touch_controller.extendedGamepad.buttonA setValue:pressed?1:0];
+            break;
+        case(PVSega32XButtonC):
+            [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
+            break;
+        case(PVSega32XButtonY):
+            [touch_controller.extendedGamepad.buttonY setValue:pressed?1:0];
+            break;
+        case(PVSega32XButtonX):
+            [touch_controller.extendedGamepad.leftShoulder setValue:pressed?1:0];
+            break;
+        case(PVSega32XButtonZ):
+            [touch_controller.extendedGamepad.rightShoulder setValue:pressed?1:0];
+            break;
+        case(PVSega32XButtonMode):
+            [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
+            [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
+            break;
+        case(PVSega32XButtonStart):
             [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
             break;
     }
