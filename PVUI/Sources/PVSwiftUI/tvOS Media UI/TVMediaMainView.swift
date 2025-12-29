@@ -805,7 +805,7 @@ struct TVMediaSavesView: View {
             .scaleEffect(isFilterButtonFocused ? 1.03 : 1.0)
             .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isFilterButtonFocused)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($isFilterButtonFocused)
     }
@@ -1066,7 +1066,7 @@ struct TVMediaSystemFilterPicker: View {
                     )
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($focusedSystemID, equals: systemID)
         .scaleEffect(isFocused ? 1.01 : 1.0)
@@ -1114,7 +1114,7 @@ private struct TVMediaFilterHeaderButton: View {
             .scaleEffect(isFocused ? 1.05 : 1.0)
             .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isFocused)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($isFocused)
     }
@@ -2167,7 +2167,7 @@ struct TVMediaSearchView: View {
                         .font(.title3)
                         .foregroundStyle(.white.opacity(0.5))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
             }
         }
