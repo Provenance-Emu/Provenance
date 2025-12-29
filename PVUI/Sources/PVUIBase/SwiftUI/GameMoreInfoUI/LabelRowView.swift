@@ -67,6 +67,7 @@ struct LabelRowView: View {
         }
         .buttonStyle(TVOSLabelRowButtonStyle(
             isEditable: isEditable,
+            isFocused: isFocused,
             labelColor: labelColor,
             backgroundColor: backgroundColor,
             borderGradient: borderGradient,
@@ -176,6 +177,7 @@ struct LabelRowView: View {
 /// Custom button style for tvOS LabelRowView
 private struct TVOSLabelRowButtonStyle: ButtonStyle {
     let isEditable: Bool
+    let isFocused: Bool
     let labelColor: Color
     let backgroundColor: Color
     let borderGradient: LinearGradient?
@@ -184,24 +186,41 @@ private struct TVOSLabelRowButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(backgroundColor.opacity(configuration.isPressed ? 0.9 : 0.7))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(
-                        borderGradient ?? LinearGradient(colors: [labelColor], startPoint: .leading, endPoint: .trailing),
-                        lineWidth: isEditable ? 2 : 1
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        isFocused ?
+                            LinearGradient(
+                                colors: [Color.retroPink.opacity(0.12), Color.retroBlue.opacity(0.08)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                     )
             )
-            .scaleEffect(configuration.isPressed ? 1.02 : 1.0)
-            .shadow(
-                color: isEditable ? labelColor.opacity(glowOpacity * 0.6) : .clear,
-                radius: configuration.isPressed ? 8 : 4,
-                x: 0,
-                y: 0
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        isFocused ?
+                            LinearGradient(
+                                colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                        lineWidth: isFocused ? 2 : 1
+                    )
             )
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+            .scaleEffect(isFocused ? 1.02 : 1.0)
+            .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
+            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 }
 #endif
