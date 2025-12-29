@@ -324,6 +324,22 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
     {
         GCExtendedGamepad *gamepad = [self.controller1 extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+        
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ?  (GCDualSenseGamepad *)gamepad : nil;
+        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ?  (GCDualShockGamepad *)gamepad : nil;
+        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? (GCXboxGamepad *)gamepad : nil;
+        GCControllerButtonInput *selectButton = nil;
+        GCControllerButtonInput *startButton = nil;
+
+        if (dualSense || dualShock) {
+            selectButton = gamepad.buttonOptions;
+            startButton = gamepad.buttonMenu;
+        } else if (xbox) {
+            selectButton = xbox.buttonShare;
+            startButton = xbox.buttonMenu;
+        } else {
+            startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
+        }
 
         (dpad.up.isPressed || gamepad.leftThumbstick.up.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonUp] : gb_pad[0] &= ~GBMap[PVGBButtonUp];
         (dpad.down.isPressed || gamepad.leftThumbstick.down.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonDown] : gb_pad[0] &= ~GBMap[PVGBButtonDown];
@@ -333,8 +349,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
         (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonB] : gb_pad[0] &= ~GBMap[PVGBButtonB];
         (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonA] : gb_pad[0] &= ~GBMap[PVGBButtonA];
 
-        (gamepad.leftShoulder.isPressed || gamepad.leftTrigger.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonSelect] : gb_pad[0] &= ~GBMap[PVGBButtonSelect];
-        (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonStart] : gb_pad[0] &= ~GBMap[PVGBButtonStart];
+        (gamepad.leftShoulder.isPressed || gamepad.leftTrigger.isPressed || selectButton.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonSelect] : gb_pad[0] &= ~GBMap[PVGBButtonSelect];
+        (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed || startButton.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonStart] : gb_pad[0] &= ~GBMap[PVGBButtonStart];
     }
     else if ([self.controller1 gamepad])
     {
