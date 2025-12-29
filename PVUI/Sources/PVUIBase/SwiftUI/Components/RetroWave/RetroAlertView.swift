@@ -480,7 +480,8 @@ public struct RetroAlertButton: View {
         }
         #if os(tvOS)
         .focused($isFocused)
-        .buttonStyle(PlainButtonStyle())
+//        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .animation(.easeInOut(duration: 0.15), value: isFocused)
         #endif

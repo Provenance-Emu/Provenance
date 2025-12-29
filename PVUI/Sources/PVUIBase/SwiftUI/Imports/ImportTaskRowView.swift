@@ -265,8 +265,10 @@ struct ImportTaskRowView: View {
 }
 
 #if os(tvOS)
-internal struct TVOSDisableFocusEffect: ViewModifier {
-    func body(content: Content) -> some View {
+public struct TVOSDisableFocusEffect: ViewModifier {
+    public init() {}
+
+    public func body(content: Content) -> some View {
         if #available(tvOS 17.0, *) {
             content.focusEffectDisabled()
         } else {
@@ -275,7 +277,7 @@ internal struct TVOSDisableFocusEffect: ViewModifier {
     }
 }
 
-internal extension View {
+public extension View {
     func tvOSDisableFocusEffect() -> some View {
         modifier(TVOSDisableFocusEffect())
     }

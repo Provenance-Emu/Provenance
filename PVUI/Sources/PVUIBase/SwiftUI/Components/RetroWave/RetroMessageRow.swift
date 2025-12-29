@@ -8,7 +8,36 @@
 
 import SwiftUI
 import PVThemes
-import PVUIBase
+
+/// Card button style without the default tvOS focus overlay
+/// We handle focus styling ourselves with our RetroWave effects
+@available(tvOS 16.0, *)
+/// Custom button style that disables the default tvOS focus appearance
+public struct TVMediaCardButtonStyle: ButtonStyle {
+    public init() {
+        
+    }
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.85 : 1.0)
+            // Explicitly disable the default tvOS button appearance
+            .contentShape(Rectangle())
+    }
+}
+
+#if os(tvOS)
+/// Plain button style variant that removes all default tvOS button styling
+public struct TVMediaPlainButtonStyle: ButtonStyle {
+    public init() {
+        
+    }
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.7 : 1.0)
+    }
+}
+#endif
+
 
 /// A row displaying a status message with retrowave styling
 public struct RetroMessageRow: View {
