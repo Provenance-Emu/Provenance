@@ -505,6 +505,65 @@ public extension GameLaunchingViewController {
         }
     }
 
+    /// Presents a core selection alert with save state counts for each core
+    /// - Parameters:
+    ///   - game: The game to select a core for
+    ///   - cores: Available cores for the game's system
+    /// - Returns: The selected core, or nil if cancelled
+    @MainActor
+    func selectCoreWithSaveCounts(game: PVGame, cores: [PVCore]) async -> PVCore? {
+        let items = cores.map { core in
+            let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
+            let subtitle = formatSaveCountSubtitle(saveCount)
+            return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
+        }
+
+        var hasResumed = false
+
+        return await withCheckedContinuation { continuation in
+            Task { @MainActor in
+                let selectionView = CoreSelectionAlertHostingView(
+                    title: "Select Core",
+                    message: "Choose a core to run \(game.title)",
+                    items: items,
+                    onSelect: { selectedId in
+                        guard !hasResumed else { return }
+                        hasResumed = true
+                        let selectedCore = cores.first { $0.identifier == selectedId }
+                        continuation.resume(returning: selectedCore)
+                    },
+                    onCancel: {
+                        guard !hasResumed else { return }
+                        hasResumed = true
+                        continuation.resume(returning: nil)
+                    }
+                )
+
+                let hostingVC = UIHostingController(rootView: selectionView)
+                hostingVC.modalPresentationStyle = .overFullScreen
+                hostingVC.modalTransitionStyle = .crossDissolve
+                hostingVC.view.backgroundColor = .clear
+
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let rootVC = windowScene.windows.first?.rootViewController {
+                    var topVC = rootVC
+                    while let presented = topVC.presentedViewController {
+                        topVC = presented
+                    }
+                    topVC.present(hostingVC, animated: true)
+                }
+            }
+        }
+    }
+
+    private func formatSaveCountSubtitle(_ count: Int) -> String {
+        switch count {
+        case 0: return "No saves"
+        case 1: return "1 save"
+        default: return "\(count) saves"
+        }
+    }
+
     /// Check if a ROM file exists locally at the expected path and update the database if found.
     /// This handles the race condition where CloudKit creates PVGame entries before local scanning completes.
     /// - Parameters:
@@ -797,36 +856,32 @@ extension GameLaunchingViewController where Self: UIViewController {
                 ILOG("Multiple cores found for system \(system.name). Cores: \(coresString)")
 
                 // See if the system or game has a default selection already set
-                if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID,
-                   let chosenCore = cores.first(where: { $0.identifier == userSelecion }) {
+                if let userSelection = game.userPreferredCoreID ?? system.userPreferredCoreID,
+                   let chosenCore = cores.first(where: { $0.identifier == userSelection }) {
                     ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
-                    let presentingView = self.view
-                    Task { @MainActor in
-                        await presentEMU(withCore: chosenCore, forGame: game, source: sender as? UIView ?? presentingView)
+                    selectedCore = chosenCore
+                } else {
+                    // User has no core preference, present selection alert with save counts
+                    ILOG("Presenting core selection with save counts for \(game.title)")
+                    if let chosenCore = await selectCoreWithSaveCounts(game: game, cores: cores) {
+                        selectedCore = chosenCore
+                        ILOG("User selected core: \(chosenCore.projectName)")
+                    } else {
+                        ILOG("User cancelled core selection, returning to main scene")
+                        AppState.shared.emulationUIState.reset()
+                        SceneCoordinator.shared.closeEmulator()
+                        return
                     }
-                    return
                 }
-
-                // User has no core preference, present dialogue to pick
-                presentCoreSelection(forGame: game, sender: sender)
-            } else {
-                guard let selectedCore = selectedCore ?? cores.first else {
-                    displayAndLogError(withTitle: "Cannot open game", message: "No core found.")
-                    return
-                }
-                let presentingView = self.view
-                @ThreadSafe var core = core
-                @ThreadSafe var theadsafeCore = game
-                @ThreadSafe var saveState = saveState
-
-                await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? presentingView)
-                //                let contentId : String = "\(system.shortName):\(game.title)"
-                //                let customAttributes : [String : Any] = ["timeSpent" : game.timeSpentInGame, "md5" : game.md5Hash]
-                //                Answers.logContentView(withName: "Play ROM",
-                //                                       contentType: "Gameplay",
-                //                                       contentId: contentId,
-                //                                       customAttributes: customAttributes)
             }
+
+            guard let selectedCore = selectedCore ?? cores.first else {
+                displayAndLogError(withTitle: "Cannot open game", message: "No core found.")
+                return
+            }
+
+            let presentingView = self.view
+            await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? presentingView)
         } catch let GameLaunchingError.missingBIOSes(missingBIOSes) {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
@@ -1031,7 +1086,13 @@ extension GameLaunchingViewController where Self: UIViewController {
         let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
 
         // Check if Save State exists
-        if saveState == nil, emulatorViewController.core.supportsSaveStates {
+        // Check both core.supportsSaveStates AND if saves exist in DB for this core
+        // This handles RetroArch cores where supportsSaveStates may be false before core initialization
+        let hasSavesInDatabase = !game.saveStates.filter("core.identifier == %@", core.identifier).isEmpty ||
+                                  !game.autoSaves.filter("core.identifier == %@", core.identifier).isEmpty
+        let shouldCheckForSaves = saveState == nil && (emulatorViewController.core.supportsSaveStates || hasSavesInDatabase)
+
+        if shouldCheckForSaves {
             @ThreadSafe var theadsafeCore = core
             @ThreadSafe var threadsafeGame = game
 
@@ -1226,6 +1287,46 @@ extension GameLaunchingViewController where Self: UIViewController {
 
             self.present(hostingController, animated: true)
             #endif
+        }
+    }
+}
+
+// MARK: - Core Selection Hosting View
+
+/// A SwiftUI view that wraps RetroSelectionAlertView for core selection and auto-dismisses
+struct CoreSelectionAlertHostingView: View {
+    let title: String
+    let message: String
+    let items: [RetroSelectionItem]
+    let onSelect: (String) -> Void
+    let onCancel: () -> Void
+
+    @State private var isPresented = true
+    @Environment(\.presentationMode) private var presentationMode
+
+    var body: some View {
+        ZStack {
+            if isPresented {
+                RetroSelectionAlertView(
+                    title: title,
+                    message: message,
+                    items: items,
+                    isPresented: $isPresented,
+                    onSelect: { selectedId in
+                        presentationMode.wrappedValue.dismiss()
+                        onSelect(selectedId)
+                    },
+                    onCancel: {
+                        presentationMode.wrappedValue.dismiss()
+                        onCancel()
+                    }
+                )
+            }
+        }
+        .onChange(of: isPresented) { newValue in
+            if !newValue {
+                presentationMode.wrappedValue.dismiss()
+            }
         }
     }
 }

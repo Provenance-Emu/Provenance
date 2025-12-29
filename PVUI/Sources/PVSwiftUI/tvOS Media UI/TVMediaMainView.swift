@@ -216,7 +216,8 @@ struct TVMediaMainView: View {
             case .saves:
                 TVMediaSavesView(
                     model: libraryModel,
-                    saveStatesStore: saveStatesStore
+                    saveStatesStore: saveStatesStore,
+                    router: router
                 )
             case .settings:
                 // Settings view handles its own sidebar commands via tvMediaFocusCoordinator environment
@@ -682,21 +683,35 @@ struct TVMediaEmptyStateView: View {
 struct TVMediaSavesView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var saveStatesStore: RetroSaveStatesStore
+    @ObservedObject var router: TVMediaRouter
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isEmptyStateFocused: Bool
     @State private var allSaves: [RetroSaveStateItem] = []
+    @State private var filteredSaves: [RetroSaveStateItem] = []
     @State private var isLoading = true
+    @State private var availableSystemIDs: [String] = []
+    @State private var selectedSystems: Set<String> = []
+    @State private var isAutoFiltered = false
+    @State private var isFilterPickerPresented = false
+
+    private var displayTitle: String {
+        if isAutoFiltered, let systemID = selectedSystems.first {
+            let systemName = model.systems.first(where: { $0.identifier == systemID })?.shortName ?? systemID
+            return "\(systemName) Saves"
+        }
+        return "Save States"
+    }
 
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 24) {
-                TVMediaTopBar(title: "Save States")
+                headerView
 
                 if isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, minHeight: 200)
-                } else if allSaves.isEmpty {
+                } else if filteredSaves.isEmpty {
                     emptyState
                         .focusable()
                         .focused($isEmptyStateFocused)
@@ -713,10 +728,76 @@ struct TVMediaSavesView: View {
             }
         }
         .task {
+            await initializeFilters()
             await loadAllSaves()
-            if allSaves.isEmpty {
+            applyFilter()
+            if filteredSaves.isEmpty {
                 isEmptyStateFocused = true
             }
+        }
+        .onChange(of: selectedSystems) { _ in
+            applyFilter()
+        }
+        .sheet(isPresented: $isFilterPickerPresented) {
+            TVMediaSystemFilterPicker(
+                availableSystemIDs: availableSystemIDs,
+                selectedSystems: $selectedSystems,
+                model: model,
+                onDismiss: { isFilterPickerPresented = false }
+            )
+        }
+    }
+
+    private var headerView: some View {
+        HStack(spacing: 18) {
+            TVMediaTopBar(title: displayTitle)
+
+            Spacer()
+
+            if !isAutoFiltered && !availableSystemIDs.isEmpty {
+                filterButton
+            }
+        }
+    }
+
+    private var filterButton: some View {
+        Button {
+            isFilterPickerPresented = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: selectedSystems.isEmpty ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
+                    .font(.system(size: 18, weight: .medium))
+                Text(filterButtonLabel)
+                    .font(.system(size: 14, weight: .semibold))
+                    .tracking(0.5)
+            }
+            .foregroundStyle(selectedSystems.isEmpty ? .white.opacity(0.6) : Color.retroBlue)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color.white.opacity(0.05))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(
+                        selectedSystems.isEmpty ?
+                            Color.white.opacity(0.1) :
+                            Color.retroBlue.opacity(0.5),
+                        lineWidth: 1
+                    )
+            )
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+    }
+
+    private var filterButtonLabel: String {
+        if selectedSystems.isEmpty {
+            return "All Systems"
+        } else if selectedSystems.count == 1, let systemID = selectedSystems.first {
+            return model.systems.first(where: { $0.identifier == systemID })?.shortName ?? "1 System"
+        } else {
+            return "\(selectedSystems.count) Systems"
         }
     }
 
@@ -726,17 +807,37 @@ struct TVMediaSavesView: View {
                 .font(.system(size: 44, weight: .light))
                 .foregroundStyle(.white.opacity(0.4))
 
-            Text("No Save States")
+            Text(selectedSystems.isEmpty ? "No Save States" : "No Saves for Selection")
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.white)
 
-            Text("Play some games and create save states to see them here.")
+            Text(selectedSystems.isEmpty ?
+                 "Play some games and create save states to see them here." :
+                 "No save states found for the selected systems.")
                 .font(.callout)
                 .foregroundStyle(.white.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 480)
 
-            // Navigation hint
+            if !selectedSystems.isEmpty && !isAutoFiltered {
+                Button {
+                    selectedSystems = []
+                } label: {
+                    Text("CLEAR FILTER")
+                        .font(.system(size: 13, weight: .bold))
+                        .tracking(1)
+                        .foregroundStyle(Color.retroBlue)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.retroBlue.opacity(0.6), lineWidth: 1.5)
+                        )
+                }
+                .buttonStyle(TVMediaCardButtonStyle())
+                .padding(.top, 8)
+            }
+
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.circle")
                     .font(.caption)
@@ -752,18 +853,248 @@ struct TVMediaSavesView: View {
 
     private var saveStatesGrid: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 280, maximum: 340), spacing: 18)], spacing: 18) {
-            ForEach(allSaves) { item in
+            ForEach(filteredSaves) { item in
                 TVMediaSaveStateTileButton(item: item, store: saveStatesStore)
             }
         }
     }
 
+    private func initializeFilters() async {
+        availableSystemIDs = await saveStatesStore.systemIDsWithSaves()
+
+        let routerFilter = router.saveSystemFilter
+        if !routerFilter.isEmpty {
+            selectedSystems = routerFilter
+            isAutoFiltered = true
+        }
+    }
+
     private func loadAllSaves() async {
-        let saves = await saveStatesStore.loadAllRecent(limit: 100)
+        let saves = await saveStatesStore.loadAllRecent(limit: 200)
         await MainActor.run {
             allSaves = saves
             isLoading = false
         }
+    }
+
+    private func applyFilter() {
+        if selectedSystems.isEmpty {
+            filteredSaves = allSaves
+        } else {
+            filteredSaves = allSaves.filter { selectedSystems.contains($0.systemId) }
+        }
+    }
+}
+
+/// Multi-select system filter picker for saves
+@available(tvOS 16.0, *)
+struct TVMediaSystemFilterPicker: View {
+    let availableSystemIDs: [String]
+    @Binding var selectedSystems: Set<String>
+    @ObservedObject var model: TVMediaLibraryModel
+    let onDismiss: () -> Void
+
+    @FocusState private var focusedSystemID: String?
+    @Namespace private var pickerNamespace
+
+    var body: some View {
+        ZStack {
+            TVMediaBackground()
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                header
+                    .padding(.horizontal, 60)
+                    .padding(.top, 50)
+                    .padding(.bottom, 24)
+
+                ScrollView {
+                    LazyVStack(spacing: 12) {
+                        ForEach(availableSystemIDs, id: \.self) { systemID in
+                            systemRow(for: systemID)
+                        }
+                    }
+                    .padding(.horizontal, 60)
+                    .padding(.bottom, 60)
+                }
+                .focusSection()
+            }
+        }
+        .focusScope(pickerNamespace)
+        .onExitCommand {
+            onDismiss()
+        }
+    }
+
+    private var header: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("FILTER BY SYSTEM")
+                    .font(.system(size: 28, weight: .bold, design: .default))
+                    .tracking(2)
+                    .foregroundStyle(.white)
+                    .shadow(color: Color.retroPink.opacity(0.4), radius: 8)
+
+                Text("Select systems to show saves from")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.6))
+            }
+
+            Spacer()
+
+            HStack(spacing: 16) {
+                TVMediaFilterHeaderButton(
+                    title: "SELECT ALL",
+                    accentColor: Color.retroBlue,
+                    action: { selectedSystems = Set(availableSystemIDs) }
+                )
+
+                TVMediaFilterHeaderButton(
+                    title: "CLEAR",
+                    accentColor: .white.opacity(0.5),
+                    action: { selectedSystems = [] }
+                )
+
+                TVMediaFilterHeaderButton(
+                    title: "DONE",
+                    icon: "checkmark",
+                    accentColor: Color.retroPink,
+                    isPrimary: true,
+                    action: onDismiss
+                )
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func systemRow(for systemID: String) -> some View {
+        let isSelected = selectedSystems.contains(systemID)
+        let isFocused = focusedSystemID == systemID
+        let system = model.systems.first(where: { $0.identifier == systemID })
+        let systemName = system?.name ?? systemID
+        let shortName = system?.shortName ?? ""
+
+        Button {
+            if isSelected {
+                selectedSystems.remove(systemID)
+            } else {
+                selectedSystems.insert(systemID)
+            }
+        } label: {
+            HStack(spacing: 18) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(isSelected ? Color.retroBlue.opacity(0.2) : Color.white.opacity(0.05))
+                        .frame(width: 32, height: 32)
+
+                    if isSelected {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(Color.retroBlue)
+                    }
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .strokeBorder(
+                            isSelected ? Color.retroBlue : Color.white.opacity(0.15),
+                            lineWidth: isSelected ? 2 : 1
+                        )
+                )
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(systemName)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(.white)
+
+                    if !shortName.isEmpty && shortName != systemName {
+                        Text(shortName.uppercased())
+                            .font(.system(size: 12, weight: .medium))
+                            .tracking(0.8)
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                }
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(Color.retroBlue)
+                        .shadow(color: Color.retroBlue.opacity(0.5), radius: 6)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        isFocused ?
+                            (isSelected ? Color.retroBlue.opacity(0.08) : Color.white.opacity(0.06)) :
+                            (isSelected ? Color.retroBlue.opacity(0.04) : Color.white.opacity(0.02))
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        isFocused ?
+                            (isSelected ?
+                                LinearGradient(colors: [Color.retroBlue.opacity(0.8), Color.retroPink.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing) :
+                                LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            ) :
+                            LinearGradient(colors: [Color.white.opacity(0.08), Color.white.opacity(0.04)], startPoint: .top, endPoint: .bottom),
+                        lineWidth: isFocused ? 2 : 1
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+        .focused($focusedSystemID, equals: systemID)
+        .scaleEffect(isFocused ? 1.01 : 1.0)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+    }
+}
+
+/// A consistent header button for filter overlays
+@available(tvOS 16.0, *)
+private struct TVMediaFilterHeaderButton: View {
+    let title: String
+    var icon: String? = nil
+    var accentColor: Color = .white
+    var isPrimary: Bool = false
+    let action: () -> Void
+
+    @FocusState private var isFocused: Bool
+
+    private let buttonWidth: CGFloat = 140
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                if let icon = icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .bold))
+                }
+                Text(title)
+                    .font(.system(size: 13, weight: .bold))
+                    .tracking(1)
+            }
+            .foregroundStyle(isFocused ? .white : accentColor)
+            .frame(width: buttonWidth, height: 44)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isFocused ? accentColor : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(
+                        isFocused ? accentColor : accentColor.opacity(isPrimary ? 0.7 : 0.4),
+                        lineWidth: isPrimary ? 2 : 1.5
+                    )
+            )
+            .scaleEffect(isFocused ? 1.05 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isFocused)
+        }
+        .buttonStyle(.plain)
+        .focused($isFocused)
     }
 }
 
@@ -881,7 +1212,10 @@ struct TVMediaHomeView: View {
                                 TVMediaSaveStatesShelfRow(
                                     title: "\(system.shortName) · SAVES",
                                     items: recent,
-                                    store: saveStatesStore
+                                    store: saveStatesStore,
+                                    onViewAll: {
+                                        router.navigateToSaves(filterBySystem: system.identifier)
+                                    }
                                 )
                             }
                         }
@@ -1332,12 +1666,25 @@ struct TVMediaFlatButtonStyle: ButtonStyle {
 /// Card button style without the default tvOS focus overlay
 /// We handle focus styling ourselves with our RetroWave effects
 @available(tvOS 16.0, *)
+/// Custom button style that disables the default tvOS focus appearance
 struct TVMediaCardButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.85 : 1.0)
+            // Explicitly disable the default tvOS button appearance
+            .contentShape(Rectangle())
     }
 }
+
+#if os(tvOS)
+/// Plain button style variant that removes all default tvOS button styling
+struct TVMediaPlainButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.7 : 1.0)
+    }
+}
+#endif
 
 /// View All card that appears at the end of horizontal shelves
 @available(tvOS 16.0, *)
@@ -1437,6 +1784,102 @@ struct TVMediaViewAllCard: View {
     }
 }
 
+/// View All card for save states shelf
+@available(tvOS 16.0, *)
+struct TVMediaSaveStatesViewAllCard: View {
+    let count: Int
+    let action: () -> Void
+
+    @FocusState private var isFocused: Bool
+
+    private let cardWidth: CGFloat = 160
+    private let cardHeight: CGFloat = 190
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 14) {
+                ZStack {
+                    if isFocused {
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [Color.retroBlue.opacity(0.3), .clear],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: 35
+                                )
+                            )
+                            .frame(width: 70, height: 70)
+                    }
+
+                    Image(systemName: "rectangle.stack.badge.play")
+                        .font(.system(size: 36, weight: .light))
+                        .foregroundStyle(
+                            isFocused ?
+                                AnyShapeStyle(LinearGradient(
+                                    colors: [.white, Color.retroBlue.opacity(0.9)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )) :
+                                AnyShapeStyle(Color.white.opacity(0.5))
+                        )
+                        .shadow(color: isFocused ? Color.retroBlue.opacity(0.6) : .clear, radius: 8)
+                }
+
+                VStack(spacing: 4) {
+                    Text("VIEW ALL")
+                        .font(.system(size: 13, weight: .semibold, design: .default))
+                        .tracking(1)
+                        .foregroundStyle(isFocused ? .white : .white.opacity(0.8))
+
+                    Text("\(count) saves")
+                        .font(.system(size: 11, weight: .medium, design: .default))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
+            }
+            .frame(width: cardWidth, height: cardHeight)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        isFocused ?
+                            LinearGradient(
+                                colors: [Color.retroBlue.opacity(0.12), Color.retroPink.opacity(0.06)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        isFocused ?
+                            LinearGradient(
+                                colors: [Color.retroBlue.opacity(0.8), Color.retroPink.opacity(0.5)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.08), Color.white.opacity(0.04)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                        lineWidth: isFocused ? 2 : 1
+                    )
+            )
+            .shadow(color: isFocused ? Color.retroBlue.opacity(0.4) : .clear, radius: 12, x: 0, y: 4)
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .focused($isFocused)
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+    }
+}
+
 // MARK: - System Games View
 
 @available(tvOS 16.0, *)
@@ -1474,7 +1917,14 @@ struct TVMediaSystemGamesView: View {
 
                         // Recent saves shelf
                         if let recentSaves = saveStatesStore.recentBySystem[system.identifier], !recentSaves.isEmpty {
-                            TVMediaSaveStatesShelfRow(title: "Recent Saves", items: recentSaves, store: saveStatesStore)
+                            TVMediaSaveStatesShelfRow(
+                                title: "Recent Saves",
+                                items: recentSaves,
+                                store: saveStatesStore,
+                                onViewAll: {
+                                    router.navigateToSaves(filterBySystem: system.identifier)
+                                }
+                            )
                         }
 
                         // All Games section with proper title
@@ -2090,6 +2540,7 @@ struct TVMediaSaveStatesShelfRow: View {
     let title: String
     let items: [RetroSaveStateItem]
     @ObservedObject var store: RetroSaveStatesStore
+    var onViewAll: (() -> Void)? = nil
 
     @FocusState private var focusedSaveID: String?
     @State private var thumbs: [String: UIImage] = [:]
@@ -2120,6 +2571,13 @@ struct TVMediaSaveStatesShelfRow: View {
                 LazyHStack(spacing: 20) {
                     ForEach(items) { item in
                         saveStateTile(for: item)
+                    }
+
+                    if let onViewAll {
+                        TVMediaSaveStatesViewAllCard(
+                            count: items.count,
+                            action: onViewAll
+                        )
                     }
                 }
                 .padding(.vertical, 12)

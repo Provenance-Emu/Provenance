@@ -9,6 +9,7 @@
 import SwiftUI
 import PVUIBase
 import PVLibrary
+import PVRealm
 import PVEmulatorCore
 import PVCoreBridge
 import PVLogging
@@ -136,10 +137,6 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         var containerViewController: EmulatorContainerViewController?
         var parentView: EmulatorContainerView?
     }
-
-    // State for core selection alert
-    @State private var showCoreSelectionAlert = false
-    @State private var gameForCoreSelection: PVGame? = nil
 
     func makeCoordinator() -> Coordinator {
         return Coordinator()
@@ -297,10 +294,6 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
     private func presentCoreSelection(forGame game: PVGame, saveState: PVSaveState?, sender: Any?, coordinator: Coordinator) {
         ILOG("EmulatorContainerView: Presenting core selection for game: \(game.title)")
 
-        // Store the game for core selection
-        gameForCoreSelection = game
-
-        // Get save state from EmulationUIState if not provided
         let saveStateToUse = saveState ?? AppState.shared.emulationUIState.currentSaveState
 
         guard let system = game.system else {
@@ -313,8 +306,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
             return
         }
 
-        // Get the available cores
-        let availableCores = system.cores
+        let availableCores = Array(system.cores)
 
         if availableCores.isEmpty {
             ELOG("EmulatorContainerView: No cores available for system \(system.name)")
@@ -326,104 +318,53 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
             return
         }
 
-        // Present the core selection using UIKit alert controller
+        let items = availableCores.map { core in
+            let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
+            let subtitle = formatSaveCountSubtitle(saveCount)
+            return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
+        }
+
+        let selectionView = CoreSelectionAlertHostingView(
+            title: "Select Core",
+            message: "Choose a core to run \(game.title)",
+            items: items,
+            cores: availableCores,
+            onSelect: { selectedCore in
+                Task {
+                    if let containerVC = coordinator.containerViewController {
+                        await containerVC.load(game, sender: sender, core: selectedCore, saveState: saveStateToUse)
+                    }
+                }
+            },
+            onCancel: {
+                ILOG("EmulatorContainerView: Core selection cancelled")
+            }
+        )
+
+        let hostingVC = UIHostingController(rootView: selectionView)
+        hostingVC.modalPresentationStyle = .overFullScreen
+        hostingVC.modalTransitionStyle = .crossDissolve
+        hostingVC.view.backgroundColor = .clear
+
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let viewController = windowScene.windows.first?.rootViewController else {
-            ELOG("EmulatorContainerView: No root view controller available for presenting core selection")
-            /// If we can't present core selection, close emulator and return to main
-            AppState.shared.emulationUIState.reset()
-            SceneCoordinator.shared.closeEmulator()
+              let rootVC = windowScene.windows.first?.rootViewController else {
+            ELOG("EmulatorContainerView: No root view controller to present core selection")
             return
         }
 
-        let alertController = UIAlertController(title: "Select Core", message: "Choose a core to run \(game.title)", preferredStyle: .actionSheet)
-
-        // Add actions for each core
-        for core in availableCores {
-            let action = UIAlertAction(title: core.projectName, style: .default) { _ in
-                ILOG("EmulatorContainerView: Selected core: \(core.projectName)")
-
-                // Remember this core as the preferred core for this game
-                Task {
-//                    do {
-//                        let realm = try await Realm()
-//                        try await realm.asyncWrite {
-//                            game.userPreferredCoreID = core.id
-//                        }
-//                        ILOG("EmulatorContainerView: Set preferred core ID \(core.id) for game \(game.title)")
-//                    } catch {
-//                        ELOG("EmulatorContainerView: Failed to set preferred core: \(error)")
-//                    }
-
-                    // Load the game with the selected core and save state
-                    if let containerVC = sender as? EmulatorContainerViewController {
-                        await containerVC.load(game, sender: nil, core: core, saveState: saveStateToUse)
-                    } else if let containerVC = coordinator.containerViewController {
-                        await containerVC.load(game, sender: sender, core: core, saveState: saveStateToUse)
-                    } else {
-                        ELOG("EmulatorContainerView: No container view controller available to load game")
-                    }
-                }
-            }
-            alertController.addAction(action)
+        var topVC = rootVC
+        while let presented = topVC.presentedViewController {
+            topVC = presented
         }
+        topVC.present(hostingVC, animated: true)
+    }
 
-        // Add a "Remember for all games of this system" option
-//        let rememberSystemAction = UIAlertAction(title: "Remember choice for all \(system.name) games", style: .default) { _ in
-//            // Show another alert to select which core to remember
-//            let systemCoreAlert = UIAlertController(title: "Select Default Core for \(system.name)",
-//                                                  message: "This core will be used for all \(system.name) games",
-//                                                  preferredStyle: .actionSheet)
-//
-//            for core in availableCores {
-//                let coreAction = UIAlertAction(title: core.projectName, style: .default) { _ in
-//                    Task {
-//                        do {
-//                            let realm = try await Realm()
-//                            try await realm.asyncWrite {
-//                                // Set the preferred core for the system
-//                                system.userPreferredCoreID = core.id
-//                                // Also set it for this game
-//                                game.userPreferredCoreID = core.id
-//                            }
-//                            ILOG("EmulatorContainerView: Set preferred core ID \(core.id) for system \(system.name)")
-//
-//                            // Load the game with the selected core
-//                            if let containerVC = sender as? EmulatorContainerViewController {
-//                                await containerVC.load(game, sender: nil, core: core, saveState: nil)
-//                            } else {
-//                                await self.load(game, sender: sender, core: core, saveState: nil)
-//                            }
-//                        } catch {
-//                            ELOG("EmulatorContainerView: Failed to set preferred core for system: \(error)")
-//                        }
-//                    }
-//                }
-//                systemCoreAlert.addAction(coreAction)
-//            }
-//
-//            systemCoreAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-//
-//            if let popover = systemCoreAlert.popoverPresentationController, let sourceView = sender as? UIView {
-//                popover.sourceView = sourceView
-//                popover.sourceRect = sourceView.bounds
-//            }
-//
-//            viewController.present(systemCoreAlert, animated: true, completion: nil)
-//        }
-//        alertController.addAction(rememberSystemAction)
-
-        // Add a cancel action
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-        // Configure popover for iPad
-        if let popover = alertController.popoverPresentationController, let sourceView = sender as? UIView {
-            popover.sourceView = sourceView
-            popover.sourceRect = sourceView.bounds
+    private func formatSaveCountSubtitle(_ count: Int) -> String {
+        switch count {
+        case 0: return "No saves"
+        case 1: return "1 save"
+        default: return "\(count) saves"
         }
-
-        // Present the alert controller
-        viewController.present(alertController, animated: true, completion: nil)
     }
 
     private func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]?) {
@@ -483,30 +424,48 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
 
     // Implementation of GameLaunchingViewController protocol
     func presentCoreSelection(forGame game: PVGame, saveState: PVSaveState? = nil, sender: Any?) {
-        let alertController = UIAlertController(title: "Select Core", message: "Choose a core to run \(game.title)", preferredStyle: .actionSheet)
-
-        // Get save state from EmulationUIState if not provided
         let saveStateToUse = saveState ?? AppState.shared.emulationUIState.currentSaveState
 
-        if let system = game.system {
-            for core in system.cores {
-                let action = UIAlertAction(title: core.projectName, style: .default) { _ in
-                    Task {
-                        await self.load(game, sender: sender, core: core, saveState: saveStateToUse)
-                    }
-                }
-                alertController.addAction(action)
+        guard let system = game.system else {
+            ELOG("EmulatorContainerViewController: Game has no system")
+            return
+        }
+
+        let cores = Array(system.cores)
+        guard !cores.isEmpty else {
+            ELOG("EmulatorContainerViewController: No cores available")
+            return
+        }
+
+        let items = cores.map { core in
+            let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
+            let subtitle: String
+            switch saveCount {
+            case 0: subtitle = "No saves"
+            case 1: subtitle = "1 save"
+            default: subtitle = "\(saveCount) saves"
             }
+            return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
         }
 
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let selectionView = CoreSelectionAlertHostingView(
+            title: "Select Core",
+            message: "Choose a core to run \(game.title)",
+            items: items,
+            cores: cores,
+            onSelect: { [weak self] selectedCore in
+                Task {
+                    await self?.load(game, sender: sender, core: selectedCore, saveState: saveStateToUse)
+                }
+            },
+            onCancel: { }
+        )
 
-        if let popover = alertController.popoverPresentationController, let sourceView = sender as? UIView {
-            popover.sourceView = sourceView
-            popover.sourceRect = sourceView.bounds
-        }
-
-        present(alertController, animated: true, completion: nil)
+        let hostingVC = UIHostingController(rootView: selectionView)
+        hostingVC.modalPresentationStyle = .overFullScreen
+        hostingVC.modalTransitionStyle = .crossDissolve
+        hostingVC.view.backgroundColor = .clear
+        present(hostingVC, animated: true)
     }
 
     func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]?) {
@@ -623,6 +582,49 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             )
         case .generic(let message):
             displayAndLogError(withTitle: "Error", message: message, customActions: nil)
+        }
+    }
+}
+
+// MARK: - Core Selection Hosting View
+
+/// A SwiftUI view that wraps RetroSelectionAlertView for core selection and auto-dismisses
+struct CoreSelectionAlertHostingView: View {
+    let title: String
+    let message: String
+    let items: [RetroSelectionItem]
+    let cores: [PVCore]
+    let onSelect: (PVCore) -> Void
+    let onCancel: () -> Void
+
+    @State private var isPresented = true
+    @Environment(\.presentationMode) private var presentationMode
+
+    var body: some View {
+        ZStack {
+            if isPresented {
+                RetroSelectionAlertView(
+                    title: title,
+                    message: message,
+                    items: items,
+                    isPresented: $isPresented,
+                    onSelect: { selectedId in
+                        if let selectedCore = cores.first(where: { $0.identifier == selectedId }) {
+                            presentationMode.wrappedValue.dismiss()
+                            onSelect(selectedCore)
+                        }
+                    },
+                    onCancel: {
+                        presentationMode.wrappedValue.dismiss()
+                        onCancel()
+                    }
+                )
+            }
+        }
+        .onChange(of: isPresented) { newValue in
+            if !newValue {
+                presentationMode.wrappedValue.dismiss()
+            }
         }
     }
 }

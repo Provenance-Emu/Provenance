@@ -128,24 +128,6 @@ struct SystemSelectionView: View {
     }
 }
 
-#if os(tvOS)
-private struct TVOSDisableFocusEffect: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(tvOS 17.0, *) {
-            content.focusEffectDisabled()
-        } else {
-            content
-        }
-    }
-}
-
-private extension View {
-    func tvOSDisableFocusEffect() -> some View {
-        modifier(TVOSDisableFocusEffect())
-    }
-}
-#endif
-
 #if DEBUG
 import PVPrimitives
 #Preview {

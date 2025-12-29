@@ -432,9 +432,10 @@ private struct RetroScanlineOverlay: View {
 
 // MARK: - Button Styles
 
-/// A retrowave-styled button
+/// A retrowave-styled button with optional subtitle support
 public struct RetroAlertButton: View {
     let title: String
+    let subtitle: String?
     let style: RetroAlertButtonStyle
     let action: () -> Void
 
@@ -442,39 +443,78 @@ public struct RetroAlertButton: View {
     @FocusState private var isFocused: Bool
     #endif
 
-    public init(title: String, style: RetroAlertButtonStyle = .primary, action: @escaping () -> Void) {
+    public init(title: String, subtitle: String? = nil, style: RetroAlertButtonStyle = .primary, action: @escaping () -> Void) {
         self.title = title
+        self.subtitle = subtitle
         self.style = style
         self.action = action
     }
 
     public var body: some View {
         Button(action: action) {
-            Text(title)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(textColor)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 24)
-                .frame(maxWidth: .infinity)
-                .background(backgroundGradient)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(borderGradient, lineWidth: 1)
-                )
-                #if os(tvOS)
-                .scaleEffect(isFocused ? 1.05 : 1.0)
-                .shadow(color: isFocused ? shadowColor.opacity(0.8) : shadowColor.opacity(0.4), radius: isFocused ? 10 : 5)
-                #else
-                .shadow(color: shadowColor.opacity(0.4), radius: 5)
-                #endif
+            VStack(spacing: 2) {
+                Text(title)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(textColor)
+                if let subtitle = subtitle {
+                    Text(subtitle)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(textColor.opacity(0.7))
+                }
+            }
+            .padding(.vertical, subtitle != nil ? 10 : 12)
+            .padding(.horizontal, 24)
+            .frame(maxWidth: .infinity)
+            .background(backgroundGradient)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(focusedBorderGradient, lineWidth: focusedBorderWidth)
+            )
+            #if os(tvOS)
+            .scaleEffect(isFocused ? 1.08 : 1.0)
+            .shadow(color: isFocused ? focusedGlowColor.opacity(0.9) : shadowColor.opacity(0.4), radius: isFocused ? 15 : 5)
+            #else
+            .shadow(color: shadowColor.opacity(0.4), radius: 5)
+            #endif
         }
         #if os(tvOS)
         .focused($isFocused)
-        .buttonStyle(.plain)
+        .buttonStyle(PlainButtonStyle())
+        .tvOSDisableFocusEffect()
         .animation(.easeInOut(duration: 0.15), value: isFocused)
         #endif
     }
+
+    #if os(tvOS)
+    private var focusedBorderGradient: LinearGradient {
+        if isFocused {
+            return LinearGradient(
+                gradient: Gradient(colors: [.retroPink, .retroBlue, .retroPink]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        } else {
+            return borderGradient
+        }
+    }
+
+    private var focusedBorderWidth: CGFloat {
+        isFocused ? 3 : 1
+    }
+
+    private var focusedGlowColor: Color {
+        switch style {
+        case .primary: return .retroPink
+        case .secondary: return .retroBlue
+        case .destructive: return .red
+        case .cancel: return .retroBlue
+        }
+    }
+    #else
+    private var focusedBorderGradient: LinearGradient { borderGradient }
+    private var focusedBorderWidth: CGFloat { 1 }
+    #endif
 
     private var textColor: Color {
         .white
@@ -920,5 +960,246 @@ public extension View {
     /// Attaches a RetroAlertState to the view for showing alerts
     func retroAlertState(_ alertState: RetroAlertState) -> some View {
         modifier(RetroAlertStateModifier(alertState: alertState))
+    }
+}
+
+// MARK: - Selection Alert
+
+/// A generic data model for selection items with optional subtitle
+public struct RetroSelectionItem: Identifiable {
+    public let id: String
+    public let title: String
+    public let subtitle: String?
+
+    public init(id: String, title: String, subtitle: String? = nil) {
+        self.id = id
+        self.title = title
+        self.subtitle = subtitle
+    }
+}
+
+/// A retrowave-themed alert for selecting from a list of items
+public struct RetroSelectionAlertView: View {
+    private let title: String
+    private let message: String
+    private let items: [RetroSelectionItem]
+    private let onSelect: (String) -> Void
+    private let onCancel: () -> Void
+
+    @Binding private var isPresented: Bool
+    @State private var glowOpacity: Double = 0.7
+
+    #if os(tvOS)
+    @FocusState private var focusedItemId: String?
+    #endif
+
+    public init(
+        title: String,
+        message: String,
+        items: [RetroSelectionItem],
+        isPresented: Binding<Bool>,
+        onSelect: @escaping (String) -> Void,
+        onCancel: @escaping () -> Void = {}
+    ) {
+        self.title = title
+        self.message = message
+        self.items = items
+        self._isPresented = isPresented
+        self.onSelect = onSelect
+        self.onCancel = onCancel
+    }
+
+    private var useGridLayout: Bool {
+        items.count > 4
+    }
+
+    private var gridColumns: [GridItem] {
+        [GridItem(.flexible()), GridItem(.flexible())]
+    }
+
+    public var body: some View {
+        ZStack {
+            Color.black.opacity(0.8)
+                .edgesIgnoringSafeArea(.all)
+
+            VStack(spacing: 20) {
+                Text(title)
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 20)
+                    .shadow(color: Color.retroBlue.opacity(0.8), radius: 8, x: 0, y: 0)
+
+                Text(message)
+                    .font(.system(size: 16))
+                    .foregroundColor(.white.opacity(0.9))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
+                    .lineSpacing(4)
+
+                ScrollView {
+                    if useGridLayout {
+                        LazyVGrid(columns: gridColumns, spacing: 12) {
+                            ForEach(items) { item in
+                                RetroAlertButton(
+                                    title: item.title,
+                                    subtitle: item.subtitle,
+                                    style: .primary
+                                ) {
+                                    isPresented = false
+                                    onSelect(item.id)
+                                }
+                                #if os(tvOS)
+                                .focused($focusedItemId, equals: item.id)
+                                #endif
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                    } else {
+                        VStack(spacing: 12) {
+                            ForEach(items) { item in
+                                RetroAlertButton(
+                                    title: item.title,
+                                    subtitle: item.subtitle,
+                                    style: .primary
+                                ) {
+                                    isPresented = false
+                                    onSelect(item.id)
+                                }
+                                #if os(tvOS)
+                                .focused($focusedItemId, equals: item.id)
+                                #endif
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                    }
+                }
+                .frame(maxHeight: useGridLayout ? 400 : 300)
+
+                RetroAlertButton(title: "Cancel", style: .cancel) {
+                    isPresented = false
+                    onCancel()
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+            }
+            .frame(minWidth: 300, maxWidth: useGridLayout ? 500 : 400)
+            .background(
+                ZStack {
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.retroBlack,
+                            Color.retroBlack.opacity(0.95)
+                        ]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    RetroAlertGridPattern()
+                        .opacity(0.2)
+                    RetroScanlineOverlay()
+                        .opacity(0.05)
+                }
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 2
+                    )
+            )
+            .shadow(color: Color.retroPink.opacity(glowOpacity), radius: 20, x: 0, y: 0)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                    glowOpacity = 0.3
+                }
+                #if os(tvOS)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    focusedItemId = items.first?.id
+                }
+                #endif
+            }
+            #if os(tvOS)
+            .onExitCommand {
+                isPresented = false
+                onCancel()
+            }
+            #endif
+        }
+        .transition(.opacity.combined(with: .scale(scale: 0.9)))
+    }
+}
+
+// MARK: - Selection Alert View Modifier
+
+/// View modifier to present RetroSelectionAlertView
+public struct RetroSelectionAlertModifier: ViewModifier {
+    let title: String
+    let message: String
+    let items: [RetroSelectionItem]
+    @Binding var isPresented: Bool
+    let onSelect: (String) -> Void
+    let onCancel: () -> Void
+
+    public init(
+        title: String,
+        message: String,
+        items: [RetroSelectionItem],
+        isPresented: Binding<Bool>,
+        onSelect: @escaping (String) -> Void,
+        onCancel: @escaping () -> Void = {}
+    ) {
+        self.title = title
+        self.message = message
+        self.items = items
+        self._isPresented = isPresented
+        self.onSelect = onSelect
+        self.onCancel = onCancel
+    }
+
+    public func body(content: Content) -> some View {
+        ZStack {
+            content
+
+            if isPresented {
+                RetroSelectionAlertView(
+                    title: title,
+                    message: message,
+                    items: items,
+                    isPresented: $isPresented,
+                    onSelect: onSelect,
+                    onCancel: onCancel
+                )
+                .animation(.easeInOut(duration: 0.2), value: isPresented)
+                .zIndex(1000)
+            }
+        }
+    }
+}
+
+public extension View {
+    /// Presents a selection alert with optional subtitles
+    func retroSelectionAlert(
+        title: String,
+        message: String,
+        items: [RetroSelectionItem],
+        isPresented: Binding<Bool>,
+        onSelect: @escaping (String) -> Void,
+        onCancel: @escaping () -> Void = {}
+    ) -> some View {
+        modifier(
+            RetroSelectionAlertModifier(
+                title: title,
+                message: message,
+                items: items,
+                isPresented: isPresented,
+                onSelect: onSelect,
+                onCancel: onCancel
+            )
+        )
     }
 }

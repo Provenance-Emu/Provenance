@@ -38,6 +38,9 @@ final class TVMediaRouter: ObservableObject {
     /// Selected system identifier
     @Published var selectedSystemID: String = ""
 
+    /// System IDs to filter saves by (empty = show all)
+    @Published var saveSystemFilter: Set<String> = []
+
     /// Active modal presentation
     @Published var activeModal: TVMediaModal?
 
@@ -56,6 +59,17 @@ final class TVMediaRouter: ObservableObject {
     func navigateToSystem(_ systemID: String) {
         selectedSystemID = systemID
         destination = .systemGames
+        navigationPath = []
+    }
+
+    /// Navigate to saves with optional system filter
+    func navigateToSaves(filterBySystem systemID: String? = nil) {
+        if let systemID {
+            saveSystemFilter = [systemID]
+        } else {
+            saveSystemFilter = []
+        }
+        destination = .saves
         navigationPath = []
     }
 

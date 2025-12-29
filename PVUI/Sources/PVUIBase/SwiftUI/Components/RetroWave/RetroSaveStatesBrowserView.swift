@@ -96,6 +96,33 @@ public final class RetroSaveStatesStore: ObservableObject {
         await fetchSaveStates(predicate: NSPredicate(value: true), limit: limit)
     }
 
+    /// Loads recent save states filtered by multiple system IDs
+    @discardableResult
+    public func loadAllRecent(forSystemIDs systemIDs: Set<String>, limit: Int = 100) async -> [RetroSaveStateItem] {
+        guard !systemIDs.isEmpty else {
+            return await loadAllRecent(limit: limit)
+        }
+        let predicate = NSPredicate(format: "game.systemIdentifier IN %@", Array(systemIDs))
+        return await fetchSaveStates(predicate: predicate, limit: limit)
+    }
+
+    /// Returns all system IDs that have at least one save state
+    public func systemIDsWithSaves() async -> [String] {
+        await withCheckedContinuation { continuation in
+            workQueue.async {
+                do {
+                    let realm = try Realm()
+                    let results = realm.objects(PVSaveState.self)
+                    let systemIDs = Set(results.compactMap { $0.game.systemIdentifier })
+                    continuation.resume(returning: Array(systemIDs).sorted())
+                } catch {
+                    ELOG("RetroSaveStatesStore: Failed fetching system IDs with saves: \(error)")
+                    continuation.resume(returning: [])
+                }
+            }
+        }
+    }
+
     /// Opens a save state via SceneCoordinator with proper sync validation
     public func openSaveState(id: String) async {
         await MainActor.run {
