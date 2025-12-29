@@ -428,7 +428,7 @@ public struct RetroSaveSelectionAlertView: View {
             )
         }
         #if os(tvOS)
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($focusedItemId, equals: save.id)
         .scaleEffect(focusedItemId == save.id ? 1.15 : 1.0)
