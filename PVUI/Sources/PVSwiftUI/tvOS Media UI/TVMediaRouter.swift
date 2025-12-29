@@ -53,6 +53,11 @@ final class TVMediaRouter: ObservableObject {
     func navigate(to dest: TVMediaDestination) {
         destination = dest
         navigationPath = []
+
+        // Reset saves filter when navigating from sidebar
+        if dest == .saves {
+            saveSystemFilter = []
+        }
     }
 
     /// Navigate to a system's games
