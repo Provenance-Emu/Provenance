@@ -193,6 +193,7 @@ struct TVMediaMainView: View {
                         gameActions: gameActions,
                         router: router
                     )
+                    .id(system.identifier)
                     .transition(.asymmetric(
                         insertion: .opacity.combined(with: .scale(scale: 1.02)),
                         removal: .opacity.combined(with: .scale(scale: 0.98))
@@ -694,6 +695,7 @@ struct TVMediaSavesView: View {
     @State private var selectedSystems: Set<String> = []
     @State private var isAutoFiltered = false
     @State private var isFilterPickerPresented = false
+    @FocusState private var isFilterButtonFocused: Bool
 
     private var displayTitle: String {
         if isAutoFiltered, let systemID = selectedSystems.first {
@@ -738,6 +740,18 @@ struct TVMediaSavesView: View {
         .onChange(of: selectedSystems) { _ in
             applyFilter()
         }
+        .onChange(of: router.saveSystemFilter) { newFilter in
+            // Reset to show all when navigating from sidebar (filter is empty)
+            if newFilter.isEmpty && isAutoFiltered {
+                selectedSystems = []
+                isAutoFiltered = false
+                applyFilter()
+            } else if !newFilter.isEmpty {
+                selectedSystems = newFilter
+                isAutoFiltered = true
+                applyFilter()
+            }
+        }
         .sheet(isPresented: $isFilterPickerPresented) {
             TVMediaSystemFilterPicker(
                 availableSystemIDs: availableSystemIDs,
@@ -761,34 +775,39 @@ struct TVMediaSavesView: View {
     }
 
     private var filterButton: some View {
-        Button {
+        let hasFilter = !selectedSystems.isEmpty
+        let accentColor = hasFilter ? Color.retroBlue : .white.opacity(0.6)
+
+        return Button {
             isFilterPickerPresented = true
         } label: {
             HStack(spacing: 8) {
-                Image(systemName: selectedSystems.isEmpty ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill")
+                Image(systemName: hasFilter ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
                     .font(.system(size: 18, weight: .medium))
                 Text(filterButtonLabel)
                     .font(.system(size: 14, weight: .semibold))
                     .tracking(0.5)
             }
-            .foregroundStyle(selectedSystems.isEmpty ? .white.opacity(0.6) : Color.retroBlue)
+            .foregroundStyle(isFilterButtonFocused ? .white : accentColor)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color.white.opacity(0.05))
+                    .fill(isFilterButtonFocused ? accentColor : Color.white.opacity(0.05))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .strokeBorder(
-                        selectedSystems.isEmpty ?
-                            Color.white.opacity(0.1) :
-                            Color.retroBlue.opacity(0.5),
-                        lineWidth: 1
+                        isFilterButtonFocused ? accentColor : (hasFilter ? Color.retroBlue.opacity(0.5) : Color.white.opacity(0.1)),
+                        lineWidth: isFilterButtonFocused ? 2 : 1
                     )
             )
+            .scaleEffect(isFilterButtonFocused ? 1.03 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isFilterButtonFocused)
         }
-        .buttonStyle(TVMediaCardButtonStyle())
+        .buttonStyle(.plain)
+        .tvOSDisableFocusEffect()
+        .focused($isFilterButtonFocused)
     }
 
     private var filterButtonLabel: String {
@@ -835,6 +854,7 @@ struct TVMediaSavesView: View {
                         )
                 }
                 .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
                 .padding(.top, 8)
             }
 
@@ -1047,6 +1067,7 @@ struct TVMediaSystemFilterPicker: View {
             )
         }
         .buttonStyle(.plain)
+        .tvOSDisableFocusEffect()
         .focused($focusedSystemID, equals: systemID)
         .scaleEffect(isFocused ? 1.01 : 1.0)
         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
@@ -1094,6 +1115,7 @@ private struct TVMediaFilterHeaderButton: View {
             .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isFocused)
         }
         .buttonStyle(.plain)
+        .tvOSDisableFocusEffect()
         .focused($isFocused)
     }
 }
@@ -1119,6 +1141,7 @@ private struct TVMediaSaveStateTileButton: View {
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
         .focused($isFocused)
         .contextMenu {
             Button(role: .destructive) {
@@ -1663,29 +1686,6 @@ struct TVMediaFlatButtonStyle: ButtonStyle {
     }
 }
 
-/// Card button style without the default tvOS focus overlay
-/// We handle focus styling ourselves with our RetroWave effects
-@available(tvOS 16.0, *)
-/// Custom button style that disables the default tvOS focus appearance
-struct TVMediaCardButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .opacity(configuration.isPressed ? 0.85 : 1.0)
-            // Explicitly disable the default tvOS button appearance
-            .contentShape(Rectangle())
-    }
-}
-
-#if os(tvOS)
-/// Plain button style variant that removes all default tvOS button styling
-struct TVMediaPlainButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .opacity(configuration.isPressed ? 0.7 : 1.0)
-    }
-}
-#endif
-
 /// View All card that appears at the end of horizontal shelves
 @available(tvOS 16.0, *)
 struct TVMediaViewAllCard: View {
@@ -1778,6 +1778,7 @@ struct TVMediaViewAllCard: View {
             .shadow(color: isFocused ? Color.retroPink.opacity(0.4) : .clear, radius: 15, x: 0, y: 5)
         }
         .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
         .focused($isFocused)
         .scaleEffect(isFocused ? 1.05 : 1.0)
         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
@@ -1874,6 +1875,7 @@ struct TVMediaSaveStatesViewAllCard: View {
             .shadow(color: isFocused ? Color.retroBlue.opacity(0.4) : .clear, radius: 12, x: 0, y: 4)
         }
         .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
         .focused($isFocused)
         .scaleEffect(isFocused ? 1.05 : 1.0)
         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
@@ -2166,6 +2168,7 @@ struct TVMediaSearchView: View {
                         .foregroundStyle(.white.opacity(0.5))
                 }
                 .buttonStyle(.plain)
+                .tvOSDisableFocusEffect()
             }
         }
         .padding(.vertical, 16)
@@ -2603,6 +2606,7 @@ struct TVMediaSaveStatesShelfRow: View {
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
         .focused($focusedSaveID, equals: item.id)
         .contextMenu {
             Button(role: .destructive) {
@@ -3266,6 +3270,7 @@ struct TVMediaImportStatusSheet: View {
                 )
             }
             .buttonStyle(TVMediaCardButtonStyle())
+            .tvOSDisableFocusEffect()
         }
     }
 
@@ -3403,6 +3408,7 @@ struct TVMediaImportStatusSheet: View {
                         .strokeBorder(Color.retroBlue.opacity(0.6), lineWidth: 1.5)
                 )
                 .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
             }
 
             // Delete button
@@ -3418,6 +3424,7 @@ struct TVMediaImportStatusSheet: View {
                     .foregroundStyle(Color.retroPink.opacity(0.7))
             }
             .buttonStyle(TVMediaCardButtonStyle())
+            .tvOSDisableFocusEffect()
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
