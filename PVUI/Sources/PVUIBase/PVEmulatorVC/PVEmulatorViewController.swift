@@ -1317,9 +1317,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// - Parameter resumeEmulation: Whether to resume emulation after dismissal
     func dismissNav(resumeEmulation: Bool) {
         presentedViewController?.dismiss(animated: true, completion: nil)
+        // Always clear the menu state when dismissing
+        isShowingMenu = false
         if resumeEmulation {
             core.setPauseEmulation(false)
-            isShowingMenu = false
         }
 
         // Post notifications to reconnect inputs and refresh the GPU view

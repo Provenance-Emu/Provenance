@@ -52,9 +52,9 @@ class PVGameMenuOverlay: UIView {
         guard let emulatorVC = emulatorViewController else { return }
 
         // Create the SwiftUI menu view
-        let menuView = RetroMenuView(emulatorVC: emulatorVC) { [weak self] in
-            self?.dismiss()
-        }
+        let menuView = RetroMenuView(emulatorVC: emulatorVC, dismissAction: { [weak self] resumeEmulation in
+            self?.dismiss(resumeEmulation: resumeEmulation)
+        })
 
         // Create and configure the hosting controller
         hostingController = UIHostingController(rootView: menuView)
@@ -76,11 +76,15 @@ class PVGameMenuOverlay: UIView {
     // MARK: - Actions
 
     @objc func dismiss() {
-        DLOG("Dismissing custom game menu")
+        dismiss(resumeEmulation: true)
+    }
 
-        // Prefer the emulator VC's own dismissal helper so it can resume emulation
+    func dismiss(resumeEmulation: Bool) {
+        DLOG("Dismissing custom game menu (resumeEmulation: \(resumeEmulation))")
+
+        // Prefer the emulator VC's own dismissal helper so it can control emulation state
         if let emulatorVC = emulatorViewController {
-            emulatorVC.dismissNav()
+            emulatorVC.dismissNav(resumeEmulation: resumeEmulation)
             return
         }
 

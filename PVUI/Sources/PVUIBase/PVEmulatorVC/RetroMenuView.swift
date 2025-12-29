@@ -23,7 +23,7 @@ import PVThemes
 // Main menu view with retrowave styling
 struct RetroMenuView: View {
     let emulatorVC: PVEmulatorViewController
-    let dismissAction: () -> Void
+    let dismissAction: (Bool) -> Void
     @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var selectedCategory: MenuCategory = .main
@@ -68,7 +68,7 @@ struct RetroMenuView: View {
             .modifier(RetrowaveBackgroundModifier())
             .ignoresSafeArea()
             .onTapGesture {
-                dismissAction()
+                dismissAction(true)
             }
     }
 
@@ -373,7 +373,7 @@ struct RetroMenuView: View {
 #if os(tvOS)
         .onExitCommand {
             // Same behavior as pressing "RESUME GAME" button
-            dismissAction()
+            dismissAction(true)
         }
 #endif
     }
@@ -405,12 +405,12 @@ struct RetroMenuView: View {
         return VStack(spacing: menuSpacing) {
             // Resume game button
             menuButton(title: "RESUME GAME", icon: "play.fill", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
-                dismissAction()
+                dismissAction(true)
             }
 
             // Reset game button
             menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: palette.defaultTintColor.swiftUIColor) {
-                dismissAction()
+                dismissAction(true)
                 emulatorVC.core.resetEmulation()
             }
 
@@ -425,7 +425,7 @@ struct RetroMenuView: View {
 
             // Quit game button - show different title if save option is available
             menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: palette.defaultTintColor.swiftUIColor) {
-                dismissAction()
+                dismissAction(false)
                 Task { @MainActor in
                     await emulatorVC.quit(optionallySave: false)
                 }
@@ -434,7 +434,7 @@ struct RetroMenuView: View {
             // Save & Quit button - only show if save option is available
             if shouldSave {
                 menuButton(title: "SAVE & QUIT", icon: "square.and.arrow.down", color: palette.defaultTintColor.swiftUIColor) {
-                    dismissAction()
+                    dismissAction(false)
                     let image = emulatorVC.captureScreenshot()
 
                     Task { @MainActor in
@@ -460,7 +460,7 @@ struct RetroMenuView: View {
             if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
                 ForEach(actions) { coreAction in
                     menuButton(title: coreAction.title, icon: "bolt", color: palette.defaultTintColor.swiftUIColor) {
-                        dismissAction()
+                        dismissAction(true)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             actionableCore.selected(action: coreAction)
                             self.emulatorVC.core.setPauseEmulation(false)
@@ -503,7 +503,7 @@ struct RetroMenuView: View {
                 menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
                     // Capture screenshot while emulator is still paused
                     let screenshot = emulatorVC.captureScreenshot()
-                    dismissAction()
+                    dismissAction(true)
                     Task { @MainActor in
                         do {
                             try await emulatorVC.createNewSaveState(auto: false, screenshot: screenshot)
@@ -539,7 +539,7 @@ struct RetroMenuView: View {
             // Screenshot button
 #if os(iOS) || targetEnvironment(macCatalyst)
             menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: palette.defaultTintColor.swiftUIColor) {
-                dismissAction()
+                dismissAction(true)
                 emulatorVC.takeScreenshot()
             }
 #endif
@@ -632,14 +632,14 @@ struct RetroMenuView: View {
                 if Defaults[.missingButtonsAlwaysOn] || (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
                     menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
                         // Show P1 controls submenu
-                        dismissAction()
+                        dismissAction(true)
                     }
                 }
 #else
                 if player1.extendedGamepad != nil || wantsStartSelectInMenu {
                     menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
                         // Show P1 controls submenu
-                        dismissAction()
+                        dismissAction(true)
                     }
                 }
 #endif
@@ -650,7 +650,7 @@ struct RetroMenuView: View {
                 if player2.extendedGamepad != nil || wantsStartSelectInMenu {
                     menuButton(title: "P2 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
                         // Show P2 controls submenu
-                        dismissAction()
+                        dismissAction(true)
                     }
                 }
             }
@@ -954,7 +954,7 @@ struct RetroMenuView: View {
 
                 // Apply button - applies both skin and filter changes after dismissing menu
                 menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
-                    dismissAction()
+                    dismissAction(true)
                     // Apply skin and filter changes after menu is dismissed
                     Task {
                         await applySkinAndFilterChanges()

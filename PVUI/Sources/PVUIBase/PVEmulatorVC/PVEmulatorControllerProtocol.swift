@@ -150,7 +150,7 @@ public extension PVEmualatorControllerProtocol {
 
 // MARK: Screenshots
 public extension PVEmualatorControllerProtocol {
-    
+
     @discardableResult
     @MainActor
     func quicksave() async throws -> Bool {
@@ -158,12 +158,12 @@ public extension PVEmualatorControllerProtocol {
             WLOG("Core \(core.description) doesn't support save states.")
             throw SaveStateError.saveStatesUnsupportedByCore
         }
-        
+
         DLOG("Performing quick save for \(game.title)")
         let image = captureScreenshot()
         return try await createNewSaveState(auto: false, screenshot: image)
     }
-    
+
     @discardableResult
     @MainActor
     func quickload() async throws -> Bool {
@@ -171,26 +171,26 @@ public extension PVEmualatorControllerProtocol {
             WLOG("Core \(core.description) doesn't support save states.")
             throw SaveStateError.saveStatesUnsupportedByCore
         }
-        
+
         // Get the most recent save state (manual or auto)
         let saveStates = game.saveStates.sorted(byKeyPath: "date", ascending: false)
-        
+
         guard let latestSaveState = saveStates.first else {
             WLOG("No save states found for \(game.title)")
             throw SaveStateError.noSaveStatesFound
         }
-        
+
         DLOG("Loading most recent save state for \(game.title) from \(latestSaveState.date)")
-        
+
         // Load the save state
         guard let saveStateURL = latestSaveState.url else {
             ELOG("Save state file URL is nil")
             throw SaveStateError.saveStateFileNotFound
         }
-        
+
         try await core.loadState(fromFileAtPath: saveStateURL.path)
         DLOG("Successfully loaded save state")
-        
+
         return true
     }
 
@@ -311,7 +311,7 @@ public extension PVEmualatorControllerProtocol {
             /// Create and add the save state
             let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
             realm.add(saveState)
-            
+
             /// Post notification for CloudKit sync
             let saveStateID = saveState.id
             Task { @MainActor in
@@ -328,7 +328,7 @@ public extension PVEmualatorControllerProtocol {
                     ELOG("Failed to serialize save metadata. \(error)")
                 }
             }
-            
+
             /// Handle cleanup if this is an auto-save
             if auto {
                 self.cleanupOldAutoSaves(for: game)
@@ -345,11 +345,11 @@ public extension PVEmualatorControllerProtocol {
             ELOG("Realm() failed")
             return
         }
-        
+
         if autoSaves.count > 5 {
             // Get saves to delete (keeping the 5 most recent)
             let savesToDelete = Array(autoSaves.sorted(byKeyPath: "date", ascending: false).suffix(from: 5))
-            
+
             for saveState in savesToDelete {
                 DLOG("Deleting old auto save of \(saveState.game.title) dated: \(saveState.date.description)")
                 realm.delete(saveState)
@@ -364,6 +364,9 @@ extension PVEmualatorControllerProtocol {
         // If option enabled, toggle the pause menu
         if Defaults[.pauseButtonIsMenuButton] {
             DispatchQueue.main.async(execute: { () -> Void in
+                // Prevent toggling menu if core is not running (e.g., during quit)
+                guard self.core.isOn else { return }
+
                 if !self.isShowingMenu {
                     self.showMenu(self)
                 } else {
