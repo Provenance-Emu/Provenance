@@ -26,6 +26,13 @@ import FreemiumKit
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
+/// Helper class to hold mutable state for the unified launch flow
+private final class LaunchFlowState: @unchecked Sendable {
+    var hasResumed = false
+    var continuation: CheckedContinuation<GameLaunchDecision?, Never>?
+    weak var hostingVC: UIHostingController<RetroAlertNavigationStackHostingView>?
+}
+
 /*
  Protocol with default implimentation.
 
@@ -47,6 +54,13 @@ public protocol GameLaunchingViewController {
     func displayAndLogError(withTitle title: String,
                             message: String,
                             customActions: [UIAlertAction]?)
+}
+
+/// The result of the unified launch flow for game launching
+public enum GameLaunchDecision {
+    case startFresh(core: PVCore)
+    case loadSave(save: PVSaveState, core: PVCore)
+    case cancelled
 }
 
 public extension GameLaunchingViewController {
@@ -522,6 +536,9 @@ public extension GameLaunchingViewController {
 
         return await withCheckedContinuation { continuation in
             Task { @MainActor in
+                // Capture hostingVC so callbacks can dismiss it
+                var hostingVC: UIHostingController<CoreSelectionAlertHostingView>?
+
                 let selectionView = CoreSelectionAlertHostingView(
                     title: "Select Core",
                     message: "Choose a core to run \(game.title)",
@@ -530,16 +547,210 @@ public extension GameLaunchingViewController {
                         guard !hasResumed else { return }
                         hasResumed = true
                         let selectedCore = cores.first { $0.identifier == selectedId }
-                        continuation.resume(returning: selectedCore)
+                        // Dismiss first, then resume continuation in completion
+                        hostingVC?.dismiss(animated: true) {
+                            continuation.resume(returning: selectedCore)
+                        }
                     },
                     onCancel: {
                         guard !hasResumed else { return }
                         hasResumed = true
-                        continuation.resume(returning: nil)
+                        // Dismiss first, then resume continuation in completion
+                        hostingVC?.dismiss(animated: true) {
+                            continuation.resume(returning: nil)
+                        }
                     }
                 )
 
-                let hostingVC = UIHostingController(rootView: selectionView)
+                hostingVC = UIHostingController(rootView: selectionView)
+                hostingVC?.modalPresentationStyle = .overFullScreen
+                hostingVC?.modalTransitionStyle = .crossDissolve
+                hostingVC?.view.backgroundColor = .clear
+
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let rootVC = windowScene.windows.first?.rootViewController {
+                    var topVC = rootVC
+                    while let presented = topVC.presentedViewController {
+                        topVC = presented
+                    }
+                    if let vc = hostingVC {
+                        topVC.present(vc, animated: true)
+                    }
+                }
+            }
+        }
+    }
+
+    private func formatSaveCountSubtitle(_ count: Int) -> String {
+        switch count {
+        case 0: return "No saves"
+        case 1: return "1 save"
+        default: return "\(count) saves"
+        }
+    }
+
+    // MARK: - Unified Launch Flow
+
+    /// Presents a unified flow for core and save state selection using the RetroAlertNavigationStack
+    /// - Parameters:
+    ///   - game: The game to launch
+    ///   - cores: Available cores for the game's system
+    ///   - existingStack: Optional existing navigation stack to use
+    ///   - preselectedCore: Optional core that was already selected (skips core selection if provided)
+    /// - Returns: GameLaunchDecision indicating how to proceed, or nil if cancelled
+    @MainActor
+    func launchWithUnifiedFlow(game: PVGame, cores: [PVCore], existingStack: RetroAlertNavigationStack? = nil, preselectedCore: PVCore? = nil) async -> GameLaunchDecision? {
+        let stack = existingStack ?? RetroAlertNavigationStack()
+
+        // Determine if we need core selection
+        let needsCoreSelection = cores.count > 1
+        var selectedCore: PVCore?
+
+        // If a core was preselected (e.g., from previous core selection dialog), use it
+        if let preselectedCore = preselectedCore, cores.contains(preselectedCore) {
+            selectedCore = preselectedCore
+        } else if let userSelection = game.userPreferredCoreID ?? game.system?.userPreferredCoreID,
+           let preferredCore = cores.first(where: { $0.identifier == userSelection }) {
+            // Check for user's preferred core
+            selectedCore = preferredCore
+        } else if needsCoreSelection {
+            selectedCore = nil
+        } else {
+            selectedCore = cores.first
+        }
+
+        let flowState = LaunchFlowState()
+
+        return await withCheckedContinuation { continuation in
+            flowState.continuation = continuation
+
+            // Helper to resume once
+            let resumeOnce: @MainActor (GameLaunchDecision?) -> Void = { decision in
+                guard !flowState.hasResumed else { return }
+                flowState.hasResumed = true
+                flowState.continuation?.resume(returning: decision)
+            }
+
+            // Helper to get saves for a core
+            // Note: saveStates already includes autoSaves (autoSaves is a filtered subset of saveStates)
+            let getSavesForCore: (PVCore) -> [PVSaveState] = { core in
+                game.saveStates.filter("core.identifier == %@", core.identifier)
+                    .sorted(byKeyPath: "date", ascending: false)
+                    .toArray()
+            }
+
+            // Helper to dismiss and resume with proper sequencing
+            let dismissAndResume: @MainActor (GameLaunchDecision) -> Void = { decision in
+                // First dismiss the hosting controller with a completion handler
+                // Only resume the continuation after the dismiss animation completes
+                if let hostingVC = flowState.hostingVC {
+                    hostingVC.dismiss(animated: true) {
+                        resumeOnce(decision)
+                    }
+                } else {
+                    resumeOnce(decision)
+                }
+            }
+
+            // Helper to create save selection view
+            let createSaveSelectionView: @MainActor (PVCore, Bool) -> AnyView = { core, showBack in
+                let allSaves = getSavesForCore(core)
+
+                // Debug logging for save count verification
+                let totalInRealm = game.saveStates.filter("core.identifier == %@", core.identifier).count
+                DLOG("[LaunchFlow] Save count for \(core.projectName): Realm total=\(totalInRealm), getSavesForCore=\(allSaves.count)")
+
+                if allSaves.isEmpty {
+                    dismissAndResume(.startFresh(core: core))
+                    return AnyView(EmptyView())
+                }
+
+                let saveItems = allSaves.map { RetroSaveSelectionItem(from: $0) }
+                DLOG("[LaunchFlow] Created \(saveItems.count) RetroSaveSelectionItems for display")
+                let viewModel = RetroSaveSelectionViewModel(
+                    gameTitle: game.title,
+                    coreName: core.projectName,
+                    coreIdentifier: core.identifier,
+                    saves: saveItems
+                )
+
+                return AnyView(RetroSaveSelectionAlertView(
+                    viewModel: viewModel,
+                    showBackButton: showBack,
+                    onStartFresh: {
+                        Task { @MainActor in
+                            dismissAndResume(.startFresh(core: core))
+                        }
+                    },
+                    onSelectSave: { selectedItem in
+                        Task { @MainActor in
+                            if let saveState = allSaves.first(where: { $0.id == selectedItem.saveStateId }) {
+                                dismissAndResume(.loadSave(save: saveState, core: core))
+                            } else {
+                                dismissAndResume(.startFresh(core: core))
+                            }
+                        }
+                    },
+                    onBack: showBack ? {
+                        Task { @MainActor in
+                            stack.pop()
+                        }
+                    } : nil,
+                    onCancel: {
+                        Task { @MainActor in
+                            dismissAndResume(.cancelled)
+                        }
+                    }
+                ))
+            }
+
+            // Present on main actor
+            Task { @MainActor in
+                // If we have a selected core (no core selection needed), go straight to save selection
+                if let selectedCore = selectedCore {
+                    let saveView = createSaveSelectionView(selectedCore, false)
+                    if !flowState.hasResumed {
+                        stack.push(saveView, id: "save-selection-\(selectedCore.identifier)")
+                    }
+                } else {
+                    // Show core selection first
+                    let coreItems = cores.map { core in
+                        // Note: saveStates already includes autoSaves
+                        let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
+                        DLOG("[LaunchFlow] Core selection: \(core.projectName) has \(saveCount) saves")
+                        let subtitle = formatSaveCountSubtitle(saveCount)
+                        return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
+                    }
+
+                    let coreSelectionView = RetroSelectionAlertView(
+                        title: "Select Core",
+                        message: "Choose a core to run \(game.title)",
+                        items: coreItems,
+                        isPresented: .constant(true),
+                        onSelect: { selectedId in
+                            Task { @MainActor in
+                                if let core = cores.first(where: { $0.identifier == selectedId }) {
+                                    let saveView = createSaveSelectionView(core, true)
+                                    if !flowState.hasResumed {
+                                        stack.push(saveView, id: "save-selection-\(core.identifier)")
+                                    }
+                                }
+                            }
+                        },
+                        onCancel: {
+                            Task { @MainActor in
+                                dismissAndResume(.cancelled)
+                            }
+                        }
+                    )
+
+                    stack.push(coreSelectionView, id: "core-selection")
+                }
+
+                // Present the stack
+                let hostingView = RetroAlertNavigationStackHostingView(stack: stack)
+                let hostingVC = UIHostingController(rootView: hostingView)
+                flowState.hostingVC = hostingVC
                 hostingVC.modalPresentationStyle = .overFullScreen
                 hostingVC.modalTransitionStyle = .crossDissolve
                 hostingVC.view.backgroundColor = .clear
@@ -552,15 +763,12 @@ public extension GameLaunchingViewController {
                     }
                     topVC.present(hostingVC, animated: true)
                 }
-            }
-        }
-    }
 
-    private func formatSaveCountSubtitle(_ count: Int) -> String {
-        switch count {
-        case 0: return "No saves"
-        case 1: return "1 save"
-        default: return "\(count) saves"
+                // Set up dismiss handler
+                stack.onDismiss = {
+                    flowState.hostingVC?.dismiss(animated: true)
+                }
+            }
         }
     }
 
@@ -835,39 +1043,54 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
 
             var selectedCore: PVCore?
+            var selectedSaveState: PVSaveState? = saveState
 
-            // If a core is passed in and it's valid for this system, use it.
+            // If a save state is passed in and its core is valid, use it directly
             if let saveState = saveState {
                 if let saveStateCore = saveState.core, cores.contains(saveStateCore) {
                     selectedCore = saveStateCore
+                    ILOG("Using save state's core: \(saveStateCore.projectName)")
                 } else {
-                    WLOG("Save state core missing or not available. Falling back to default core.")
+                    WLOG("Save state core missing or not available. Falling back to selection flow.")
+                    selectedSaveState = nil
                 }
             }
 
-            // See if the user chose a core
+            // If a core is passed in and it's valid, use it
             if selectedCore == nil, let core = core, cores.contains(core) {
                 selectedCore = core
+                ILOG("Using passed-in core: \(core.projectName)")
             }
 
-            // Check if multiple cores can launch this rom
-            if selectedCore == nil, cores.count > 1 {
-                let coresString: String = cores.map({ $0.projectName }).joined(separator: ", ")
-                ILOG("Multiple cores found for system \(system.name). Cores: \(coresString)")
+            // If no save state passed in or no core determined, use the unified flow
+            // The unified flow handles both core selection AND save state selection
+            if selectedCore == nil || (selectedSaveState == nil && !Defaults[.autoLoadSaves]) {
+                // Check if user preference allows skipping the UI
+                let shouldAskToLoadSave = Defaults[.askToAutoLoad]
+                let shouldAutoLoadSave = Defaults[.autoLoadSaves]
 
-                // See if the system or game has a default selection already set
-                if let userSelection = game.userPreferredCoreID ?? system.userPreferredCoreID,
-                   let chosenCore = cores.first(where: { $0.identifier == userSelection }) {
-                    ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
-                    selectedCore = chosenCore
-                } else {
-                    // User has no core preference, present selection alert with save counts
-                    ILOG("Presenting core selection with save counts for \(game.title)")
-                    if let chosenCore = await selectCoreWithSaveCounts(game: game, cores: cores) {
-                        selectedCore = chosenCore
-                        ILOG("User selected core: \(chosenCore.projectName)")
-                    } else {
-                        ILOG("User cancelled core selection, returning to main scene")
+                // If auto-load is enabled and we have a core, skip the unified flow
+                if shouldAutoLoadSave, let core = selectedCore ?? cores.first {
+                    selectedCore = core
+                    // The save will be handled by presentEMU's checkForSaveStateThenRun
+                } else if shouldAskToLoadSave || selectedCore == nil {
+                    // Use unified flow for core + save selection
+                    ILOG("Starting unified launch flow for \(game.title)")
+                    let decision = await launchWithUnifiedFlow(game: game, cores: cores, preselectedCore: selectedCore)
+
+                    switch decision {
+                    case .startFresh(let core):
+                        selectedCore = core
+                        selectedSaveState = nil
+                        ILOG("Unified flow: Starting fresh with \(core.projectName)")
+
+                    case .loadSave(let save, let core):
+                        selectedCore = core
+                        selectedSaveState = save
+                        ILOG("Unified flow: Loading save from \(core.projectName)")
+
+                    case .cancelled, .none:
+                        ILOG("Unified flow: User cancelled, returning to main scene")
                         AppState.shared.emulationUIState.reset()
                         SceneCoordinator.shared.closeEmulator()
                         return
@@ -881,7 +1104,14 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
 
             let presentingView = self.view
-            await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? presentingView)
+
+            // If we got a save state from unified flow, pass it directly
+            // Otherwise let presentEMU handle save state detection
+            if selectedSaveState != nil {
+                await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: selectedSaveState, source: sender as? UIView ?? presentingView)
+            } else {
+                await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: nil, source: sender as? UIView ?? presentingView)
+            }
         } catch let GameLaunchingError.missingBIOSes(missingBIOSes) {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
@@ -1161,8 +1391,10 @@ extension GameLaunchingViewController where Self: UIViewController {
     @MainActor
     private func checkForSaveStateThenRun(withCore core: PVCore, forGame game: PVGame, source: UIView?, completion: @escaping (PVSaveState?) -> Void) async {
         var foundSave = false
-        var saves = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).toArray() + game.autoSaves.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).toArray()
-        saves = saves.sorted(by: { $0.date.compare($1.date) == .orderedDescending })
+        // Note: saveStates already includes autoSaves (autoSaves is a filtered subset)
+        let saves = game.saveStates.filter("core.identifier == \"\(core.identifier)\"")
+            .sorted(byKeyPath: "date", ascending: false)
+            .toArray()
 
         let saveState : PVSaveState? = await Task {
             for save in saves {
@@ -1293,7 +1525,8 @@ extension GameLaunchingViewController where Self: UIViewController {
 
 // MARK: - Core Selection Hosting View
 
-/// A SwiftUI view that wraps RetroSelectionAlertView for core selection and auto-dismisses
+/// A SwiftUI view that wraps RetroSelectionAlertView for core selection
+/// Note: The caller is responsible for dismissing the hosting controller
 struct CoreSelectionAlertHostingView: View {
     let title: String
     let message: String
@@ -1302,7 +1535,6 @@ struct CoreSelectionAlertHostingView: View {
     let onCancel: () -> Void
 
     @State private var isPresented = true
-    @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
         ZStack {
@@ -1313,19 +1545,14 @@ struct CoreSelectionAlertHostingView: View {
                     items: items,
                     isPresented: $isPresented,
                     onSelect: { selectedId in
-                        presentationMode.wrappedValue.dismiss()
+                        isPresented = false
                         onSelect(selectedId)
                     },
                     onCancel: {
-                        presentationMode.wrappedValue.dismiss()
+                        isPresented = false
                         onCancel()
                     }
                 )
-            }
-        }
-        .onChange(of: isPresented) { newValue in
-            if !newValue {
-                presentationMode.wrappedValue.dismiss()
             }
         }
     }

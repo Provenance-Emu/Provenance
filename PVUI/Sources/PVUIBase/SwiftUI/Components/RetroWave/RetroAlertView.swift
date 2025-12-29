@@ -384,52 +384,6 @@ struct UIKitTextField: UIViewRepresentable {
     }
 }
 
-/// A grid pattern view for retrowave aesthetic
-private struct RetroAlertGridPattern: View {
-    public var body: some View {
-        Canvas { context, size in
-            // Horizontal lines
-            let hSpacing: CGFloat = 20
-            var y: CGFloat = 0
-            while y < size.height {
-                var path = Path()
-                path.move(to: CGPoint(x: 0, y: y))
-                path.addLine(to: CGPoint(x: size.width, y: y))
-                context.stroke(path, with: .color(Color.retroBlue.opacity(0.3)), lineWidth: 1)
-                y += hSpacing
-            }
-
-            // Vertical lines
-            let vSpacing: CGFloat = 20
-            var x: CGFloat = 0
-            while x < size.width {
-                var path = Path()
-                path.move(to: CGPoint(x: x, y: 0))
-                path.addLine(to: CGPoint(x: x, y: size.height))
-                context.stroke(path, with: .color(Color.retroBlue.opacity(0.3)), lineWidth: 1)
-                x += vSpacing
-            }
-        }
-    }
-}
-
-/// Scanline overlay effect
-private struct RetroScanlineOverlay: View {
-    var body: some View {
-        Canvas { context, size in
-            let lineSpacing: CGFloat = 2
-            var y: CGFloat = 0
-            while y < size.height {
-                var path = Path()
-                path.move(to: CGPoint(x: 0, y: y))
-                path.addLine(to: CGPoint(x: size.width, y: y))
-                context.stroke(path, with: .color(Color.black), lineWidth: 1)
-                y += lineSpacing
-            }
-        }
-    }
-}
-
 // MARK: - Button Styles
 
 /// A retrowave-styled button with optional subtitle support

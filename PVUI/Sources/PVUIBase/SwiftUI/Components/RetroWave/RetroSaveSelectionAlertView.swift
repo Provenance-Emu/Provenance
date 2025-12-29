@@ -1,0 +1,669 @@
+///
+/// RetroSaveSelectionAlertView.swift
+/// Provenance
+///
+/// Save state selection alert with cloud sync support and inline download progress
+/// Created by Joseph Mattiello on 12/29/25.
+///
+
+import SwiftUI
+import PVThemes
+import PVRealm
+import PVLibrary
+import PVLogging
+import RealmSwift
+
+// MARK: - Save Selection Item
+
+/// Data model for save state selection with download status
+public struct RetroSaveSelectionItem: Identifiable {
+    public let id: String
+    public let saveStateId: String
+    public let title: String
+    public let subtitle: String
+    public let isDownloaded: Bool
+    public let thumbnailURL: URL?
+    public let date: Date
+    public let isAutosave: Bool
+    public let coreIdentifier: String
+    public let coreName: String
+    public let fileSize: Int
+
+    public init(
+        id: String = UUID().uuidString,
+        saveStateId: String,
+        title: String,
+        subtitle: String,
+        isDownloaded: Bool,
+        thumbnailURL: URL?,
+        date: Date,
+        isAutosave: Bool,
+        coreIdentifier: String,
+        coreName: String,
+        fileSize: Int = 0
+    ) {
+        self.id = id
+        self.saveStateId = saveStateId
+        self.title = title
+        self.subtitle = subtitle
+        self.isDownloaded = isDownloaded
+        self.thumbnailURL = thumbnailURL
+        self.date = date
+        self.isAutosave = isAutosave
+        self.coreIdentifier = coreIdentifier
+        self.coreName = coreName
+        self.fileSize = fileSize
+    }
+
+    /// Creates from a PVSaveState
+    public init(from saveState: PVSaveState) {
+        self.id = saveState.id
+        self.saveStateId = saveState.id
+
+        if saveState.isAutosave {
+            self.title = "Auto-Save"
+        } else if let desc = saveState.userDescription, !desc.isEmpty {
+            self.title = desc
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            formatter.timeStyle = .short
+            self.title = formatter.string(from: saveState.date)
+        }
+
+        let relativeDate = Self.relativeDate(from: saveState.date)
+        self.subtitle = "\(saveState.core?.projectName ?? "Unknown") • \(relativeDate)"
+
+        self.isDownloaded = saveState.isDownloaded
+        self.thumbnailURL = saveState.image?.url
+        self.date = saveState.date
+        self.isAutosave = saveState.isAutosave
+        self.coreIdentifier = saveState.core?.identifier ?? ""
+        self.coreName = saveState.core?.projectName ?? "Unknown"
+        self.fileSize = saveState.fileSize
+    }
+
+    private static func relativeDate(from date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+}
+
+// MARK: - Save Selection View Model
+
+/// View model for managing save selection state and downloads
+@MainActor
+public class RetroSaveSelectionViewModel: ObservableObject {
+    @Published public var saves: [RetroSaveSelectionItem] = []
+    @Published public var downloadingItemId: String?
+    @Published public var downloadProgress: Double = 0
+    @Published public var downloadError: String?
+
+    public let gameTitle: String
+    public let coreName: String
+    public let coreIdentifier: String
+
+    private var downloadTask: Task<Void, Never>?
+
+    public init(gameTitle: String, coreName: String, coreIdentifier: String, saves: [RetroSaveSelectionItem] = []) {
+        self.gameTitle = gameTitle
+        self.coreName = coreName
+        self.coreIdentifier = coreIdentifier
+        self.saves = saves
+    }
+
+    /// The most recent save state
+    public var mostRecentSave: RetroSaveSelectionItem? {
+        saves.first
+    }
+
+    /// Whether there are any saves to show
+    public var hasSaves: Bool {
+        !saves.isEmpty
+    }
+
+    /// Whether a download is in progress
+    public var isDownloading: Bool {
+        downloadingItemId != nil
+    }
+
+    /// Starts downloading a save state using the appropriate cloud syncer
+    public func startDownload(for item: RetroSaveSelectionItem, completion: @escaping (Bool) -> Void) {
+        downloadingItemId = item.id
+        downloadProgress = 0
+        downloadError = nil
+
+        downloadTask = Task {
+            do {
+                ILOG("[SaveSelection] Starting download for save state: \(item.saveStateId)")
+
+                // Get the save state from Realm
+                let realmInstance = try await Realm()
+                guard let saveState = realmInstance.object(ofType: PVSaveState.self, forPrimaryKey: item.saveStateId) else {
+                    throw NSError(domain: "RetroSaveSelection", code: 1, userInfo: [NSLocalizedDescriptionKey: "Save state not found in database"])
+                }
+
+                // Check if already downloaded
+                if saveState.isDownloaded, let fileURL = saveState.file?.url,
+                   FileManager.default.fileExists(atPath: fileURL.path) {
+                    ILOG("[SaveSelection] Save state already downloaded locally: \(item.saveStateId)")
+                    downloadingItemId = nil
+                    downloadProgress = 0
+                    completion(true)
+                    return
+                }
+
+                // Use CloudSyncManager to download via the proper syncer
+                downloadProgress = 0.1
+
+                // Simulate progress while waiting for download
+                let progressTask = Task {
+                    var progress = 0.1
+                    while !Task.isCancelled && progress < 0.9 {
+                        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 second
+                        progress += 0.05
+                        await MainActor.run {
+                            self.downloadProgress = progress
+                        }
+                    }
+                }
+
+                // Download via CloudSyncManager
+                let frozenSaveState = saveState.freeze()
+                try await CloudSyncManager.shared.downloadSaveState(for: frozenSaveState)
+
+                // Cancel progress simulation
+                progressTask.cancel()
+
+                if Task.isCancelled {
+                    ILOG("[SaveSelection] Download cancelled for: \(item.saveStateId)")
+                    return
+                }
+
+                // Verify download completed by refreshing the save state
+                let updatedRealm = try await Realm()
+                if let updatedSaveState = updatedRealm.object(ofType: PVSaveState.self, forPrimaryKey: item.saveStateId),
+                   updatedSaveState.isDownloaded,
+                   let fileURL = updatedSaveState.file?.url,
+                   FileManager.default.fileExists(atPath: fileURL.path) {
+                    ILOG("[SaveSelection] Download complete for: \(item.saveStateId)")
+                    downloadProgress = 1.0
+                    downloadingItemId = nil
+                    downloadProgress = 0
+                    completion(true)
+                } else {
+                    throw NSError(domain: "RetroSaveSelection", code: 2, userInfo: [NSLocalizedDescriptionKey: "File not available after download"])
+                }
+            } catch {
+                ELOG("[SaveSelection] Download failed: \(error.localizedDescription)")
+                downloadError = error.localizedDescription
+                downloadingItemId = nil
+                completion(false)
+            }
+        }
+    }
+
+    /// Cancels an in-progress download
+    public func cancelDownload() {
+        downloadTask?.cancel()
+        downloadTask = nil
+        downloadingItemId = nil
+        downloadProgress = 0
+    }
+
+    deinit {
+        downloadTask?.cancel()
+    }
+}
+
+// MARK: - Save Selection Alert View
+
+/// Alert view for selecting save states with cloud download support
+public struct RetroSaveSelectionAlertView: View {
+    @ObservedObject var viewModel: RetroSaveSelectionViewModel
+
+    let showBackButton: Bool
+    let onStartFresh: () -> Void
+    let onSelectSave: (RetroSaveSelectionItem) -> Void
+    let onBack: (() -> Void)?
+    let onCancel: () -> Void
+
+    @State private var glowOpacity: Double = 0.7
+
+    #if os(tvOS)
+    @FocusState private var focusedItemId: String?
+    private let gridColumns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    #else
+    private let gridColumns = [GridItem(.flexible()), GridItem(.flexible())]
+    #endif
+
+    public init(
+        viewModel: RetroSaveSelectionViewModel,
+        showBackButton: Bool = false,
+        onStartFresh: @escaping () -> Void,
+        onSelectSave: @escaping (RetroSaveSelectionItem) -> Void,
+        onBack: (() -> Void)? = nil,
+        onCancel: @escaping () -> Void
+    ) {
+        self.viewModel = viewModel
+        self.showBackButton = showBackButton
+        self.onStartFresh = onStartFresh
+        self.onSelectSave = onSelectSave
+        self.onBack = onBack
+        self.onCancel = onCancel
+    }
+
+    public var body: some View {
+        VStack(spacing: 0) {
+            headerSection
+
+            quickActionsSection
+
+            if viewModel.saves.count > 1 {
+                savesGridSection
+            }
+
+            footerSection
+        }
+        .frame(minWidth: 350, maxWidth: 600)
+        .background(alertBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(alertBorder)
+        .shadow(color: Color.retroPink.opacity(glowOpacity), radius: 20, x: 0, y: 0)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowOpacity = 0.3
+            }
+            #if os(tvOS)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                focusedItemId = "quick-continue"
+            }
+            #endif
+        }
+        #if os(tvOS)
+        .onExitCommand {
+            if viewModel.isDownloading {
+                viewModel.cancelDownload()
+            } else if showBackButton {
+                onBack?()
+            } else {
+                onCancel()
+            }
+        }
+        #endif
+    }
+
+    // MARK: - Header Section
+
+    private var headerSection: some View {
+        VStack(spacing: 8) {
+            Text(viewModel.gameTitle)
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .shadow(color: Color.retroBlue.opacity(0.8), radius: 8, x: 0, y: 0)
+
+            Text("Playing with \(viewModel.coreName)")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.white.opacity(0.7))
+
+            if viewModel.hasSaves {
+                Text("\(viewModel.saves.count) save\(viewModel.saves.count == 1 ? "" : "s") available")
+                    .font(.system(size: 12))
+                    .foregroundColor(.retroBlue)
+            }
+        }
+        .padding(.top, 24)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 16)
+    }
+
+    // MARK: - Quick Actions Section
+
+    private var quickActionsSection: some View {
+        HStack(spacing: 12) {
+            RetroAlertButton(title: "Start Fresh", style: .secondary) {
+                onStartFresh()
+            }
+            #if os(tvOS)
+            .focused($focusedItemId, equals: "start-fresh")
+            #endif
+
+            if let mostRecent = viewModel.mostRecentSave {
+                quickContinueButton(for: mostRecent)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, viewModel.saves.count > 1 ? 16 : 20)
+    }
+
+    private func quickContinueButton(for save: RetroSaveSelectionItem) -> some View {
+        RetroAlertButton(
+            title: "Quick Continue",
+            subtitle: save.isDownloaded ? nil : "☁️ Download required",
+            style: .primary
+        ) {
+            handleSaveSelection(save)
+        }
+        .overlay(
+            Group {
+                if viewModel.downloadingItemId == save.id {
+                    downloadProgressOverlay
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+        )
+        #if os(tvOS)
+        .focused($focusedItemId, equals: "quick-continue")
+        #endif
+    }
+
+    // MARK: - Saves Grid Section
+
+    private var savesGridSection: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Text("Other Saves")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.8))
+                Text("(\(viewModel.saves.count - 1) more)")
+                    .font(.system(size: 12))
+                    .foregroundColor(.white.opacity(0.5))
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+
+            ScrollView {
+                LazyVGrid(columns: gridColumns, spacing: 12) {
+                    ForEach(viewModel.saves.dropFirst()) { save in
+                        saveGridItem(for: save)
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+            .frame(maxHeight: 250)
+        }
+        .padding(.bottom, 16)
+    }
+
+    private func saveGridItem(for save: RetroSaveSelectionItem) -> some View {
+        Button {
+            handleSaveSelection(save)
+        } label: {
+            VStack(spacing: 6) {
+                ZStack {
+                    thumbnailView(for: save)
+
+                    if !save.isDownloaded && viewModel.downloadingItemId != save.id {
+                        cloudBadge
+                    }
+
+                    if viewModel.downloadingItemId == save.id {
+                        downloadProgressOverlay
+                    }
+                }
+                .frame(width: 80, height: 60)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+
+                VStack(spacing: 2) {
+                    Text(save.title)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+
+                    Text(save.subtitle)
+                        .font(.system(size: 9))
+                        .foregroundColor(.white.opacity(0.6))
+                        .lineLimit(1)
+                }
+            }
+            .padding(8)
+            .background(Color.white.opacity(0.05))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
+            )
+        }
+        #if os(tvOS)
+        .buttonStyle(PlainButtonStyle())
+        .tvOSDisableFocusEffect()
+        .focused($focusedItemId, equals: save.id)
+        .scaleEffect(focusedItemId == save.id ? 1.15 : 1.0)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(
+                    focusedItemId == save.id
+                        ? LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [.clear], startPoint: .topLeading, endPoint: .bottomTrailing),
+                    lineWidth: focusedItemId == save.id ? 3 : 0
+                )
+        )
+        .shadow(color: focusedItemId == save.id ? Color.retroPink.opacity(0.6) : .clear, radius: 8, x: 0, y: 0)
+        .animation(.easeInOut(duration: 0.15), value: focusedItemId)
+        #else
+        .buttonStyle(.plain)
+        #endif
+    }
+
+    private func thumbnailView(for save: RetroSaveSelectionItem) -> some View {
+        Group {
+            if let thumbnailURL = save.thumbnailURL {
+                AsyncImage(url: thumbnailURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    case .failure:
+                        placeholderThumbnail(autosave: save.isAutosave)
+                    case .empty:
+                        ProgressView()
+                            .tint(.white)
+                    @unknown default:
+                        placeholderThumbnail(autosave: save.isAutosave)
+                    }
+                }
+            } else {
+                placeholderThumbnail(autosave: save.isAutosave)
+            }
+        }
+    }
+
+    private func placeholderThumbnail(autosave: Bool) -> some View {
+        ZStack {
+            LinearGradient(
+                colors: [Color.retroBlack, Color.retroBlack.opacity(0.7)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            Image(systemName: autosave ? "clock.arrow.circlepath" : "square.and.arrow.down")
+                .font(.system(size: 20))
+                .foregroundColor(.white.opacity(0.5))
+        }
+    }
+
+    private var cloudBadge: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Image(systemName: "icloud.and.arrow.down")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding(4)
+                    .background(Color.retroBlue.opacity(0.9))
+                    .clipShape(Circle())
+            }
+            Spacer()
+        }
+        .padding(4)
+    }
+
+    private var downloadProgressOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.7)
+
+            VStack(spacing: 4) {
+                CircularProgressView(progress: viewModel.downloadProgress)
+                    .frame(width: 30, height: 30)
+
+                Text("\(Int(viewModel.downloadProgress * 100))%")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.white)
+            }
+        }
+    }
+
+    // MARK: - Footer Section
+
+    private var footerSection: some View {
+        HStack(spacing: 12) {
+            if showBackButton {
+                RetroAlertButton(title: "Back", style: .secondary) {
+                    onBack?()
+                }
+                #if os(tvOS)
+                .focused($focusedItemId, equals: "back")
+                #endif
+            }
+
+            RetroAlertButton(title: "Cancel", style: .cancel) {
+                onCancel()
+            }
+            #if os(tvOS)
+            .focused($focusedItemId, equals: "cancel")
+            #endif
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 20)
+    }
+
+    // MARK: - Helpers
+
+    private func handleSaveSelection(_ save: RetroSaveSelectionItem) {
+        if save.isDownloaded {
+            onSelectSave(save)
+        } else {
+            viewModel.startDownload(for: save) { success in
+                if success {
+                    onSelectSave(save)
+                }
+            }
+        }
+    }
+
+    private var alertBackground: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.retroBlack,
+                    Color.retroBlack.opacity(0.95)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            RetroAlertGridPattern()
+                .opacity(0.2)
+            RetroScanlineOverlay()
+                .opacity(0.05)
+        }
+    }
+
+    private var alertBorder: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .strokeBorder(
+                LinearGradient(
+                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                lineWidth: 2
+            )
+    }
+}
+
+// MARK: - Circular Progress View
+
+struct CircularProgressView: View {
+    let progress: Double
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.white.opacity(0.2), lineWidth: 3)
+
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .topLeading, endPoint: .bottomTrailing),
+                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut(duration: 0.2), value: progress)
+        }
+    }
+}
+
+// MARK: - Preview
+
+#if DEBUG
+struct RetroSaveSelectionAlertView_Previews: PreviewProvider {
+    static var previews: some View {
+        ZStack {
+            Color.gray.opacity(0.3)
+                .edgesIgnoringSafeArea(.all)
+
+            RetroSaveSelectionAlertView(
+                viewModel: RetroSaveSelectionViewModel(
+                    gameTitle: "Super Mario World",
+                    coreName: "Snes9x",
+                    coreIdentifier: "com.provenance.snes9x",
+                    saves: [
+                        RetroSaveSelectionItem(
+                            saveStateId: "1",
+                            title: "Auto-Save",
+                            subtitle: "Snes9x • 2h ago",
+                            isDownloaded: true,
+                            thumbnailURL: nil,
+                            date: Date(),
+                            isAutosave: true,
+                            coreIdentifier: "com.provenance.snes9x",
+                            coreName: "Snes9x"
+                        ),
+                        RetroSaveSelectionItem(
+                            saveStateId: "2",
+                            title: "Before Boss",
+                            subtitle: "Snes9x • 1d ago",
+                            isDownloaded: false,
+                            thumbnailURL: nil,
+                            date: Date().addingTimeInterval(-86400),
+                            isAutosave: false,
+                            coreIdentifier: "com.provenance.snes9x",
+                            coreName: "Snes9x"
+                        ),
+                        RetroSaveSelectionItem(
+                            saveStateId: "3",
+                            title: "World 2",
+                            subtitle: "Snes9x • 3d ago",
+                            isDownloaded: true,
+                            thumbnailURL: nil,
+                            date: Date().addingTimeInterval(-259200),
+                            isAutosave: false,
+                            coreIdentifier: "com.provenance.snes9x",
+                            coreName: "Snes9x"
+                        )
+                    ]
+                ),
+                showBackButton: true,
+                onStartFresh: { print("Start fresh") },
+                onSelectSave: { save in print("Selected: \(save.title)") },
+                onBack: { print("Back") },
+                onCancel: { print("Cancel") }
+            )
+        }
+    }
+}
+#endif

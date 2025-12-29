@@ -324,27 +324,34 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
             return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
         }
 
+        // Capture hostingVC in a variable so onSelect/onCancel can dismiss it
+        var hostingVC: UIHostingController<CoreSelectionAlertHostingView>?
+
         let selectionView = CoreSelectionAlertHostingView(
             title: "Select Core",
             message: "Choose a core to run \(game.title)",
             items: items,
             cores: availableCores,
             onSelect: { selectedCore in
-                Task {
-                    if let containerVC = coordinator.containerViewController {
-                        await containerVC.load(game, sender: sender, core: selectedCore, saveState: saveStateToUse)
+                // Dismiss the core selection alert FIRST, then load
+                hostingVC?.dismiss(animated: true) {
+                    Task {
+                        if let containerVC = coordinator.containerViewController {
+                            await containerVC.load(game, sender: sender, core: selectedCore, saveState: saveStateToUse)
+                        }
                     }
                 }
             },
             onCancel: {
                 ILOG("EmulatorContainerView: Core selection cancelled")
+                hostingVC?.dismiss(animated: true)
             }
         )
 
-        let hostingVC = UIHostingController(rootView: selectionView)
-        hostingVC.modalPresentationStyle = .overFullScreen
-        hostingVC.modalTransitionStyle = .crossDissolve
-        hostingVC.view.backgroundColor = .clear
+        hostingVC = UIHostingController(rootView: selectionView)
+        hostingVC?.modalPresentationStyle = .overFullScreen
+        hostingVC?.modalTransitionStyle = .crossDissolve
+        hostingVC?.view.backgroundColor = .clear
 
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootVC = windowScene.windows.first?.rootViewController else {
@@ -356,7 +363,9 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         while let presented = topVC.presentedViewController {
             topVC = presented
         }
-        topVC.present(hostingVC, animated: true)
+        if let vc = hostingVC {
+            topVC.present(vc, animated: true)
+        }
     }
 
     private func formatSaveCountSubtitle(_ count: Int) -> String {
@@ -448,24 +457,34 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
         }
 
+        // Capture hostingVC so onSelect/onCancel can dismiss it
+        var hostingVC: UIHostingController<CoreSelectionAlertHostingView>?
+
         let selectionView = CoreSelectionAlertHostingView(
             title: "Select Core",
             message: "Choose a core to run \(game.title)",
             items: items,
             cores: cores,
             onSelect: { [weak self] selectedCore in
-                Task {
-                    await self?.load(game, sender: sender, core: selectedCore, saveState: saveStateToUse)
+                // Dismiss the core selection alert FIRST, then load
+                hostingVC?.dismiss(animated: true) {
+                    Task {
+                        await self?.load(game, sender: sender, core: selectedCore, saveState: saveStateToUse)
+                    }
                 }
             },
-            onCancel: { }
+            onCancel: {
+                hostingVC?.dismiss(animated: true)
+            }
         )
 
-        let hostingVC = UIHostingController(rootView: selectionView)
-        hostingVC.modalPresentationStyle = .overFullScreen
-        hostingVC.modalTransitionStyle = .crossDissolve
-        hostingVC.view.backgroundColor = .clear
-        present(hostingVC, animated: true)
+        hostingVC = UIHostingController(rootView: selectionView)
+        hostingVC?.modalPresentationStyle = .overFullScreen
+        hostingVC?.modalTransitionStyle = .crossDissolve
+        hostingVC?.view.backgroundColor = .clear
+        if let vc = hostingVC {
+            present(vc, animated: true)
+        }
     }
 
     func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]?) {
@@ -588,7 +607,8 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
 
 // MARK: - Core Selection Hosting View
 
-/// A SwiftUI view that wraps RetroSelectionAlertView for core selection and auto-dismisses
+/// A SwiftUI view that wraps RetroSelectionAlertView for core selection
+/// Note: The caller is responsible for dismissing the hosting controller
 struct CoreSelectionAlertHostingView: View {
     let title: String
     let message: String
@@ -598,7 +618,6 @@ struct CoreSelectionAlertHostingView: View {
     let onCancel: () -> Void
 
     @State private var isPresented = true
-    @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
         ZStack {
@@ -610,20 +629,15 @@ struct CoreSelectionAlertHostingView: View {
                     isPresented: $isPresented,
                     onSelect: { selectedId in
                         if let selectedCore = cores.first(where: { $0.identifier == selectedId }) {
-                            presentationMode.wrappedValue.dismiss()
+                            isPresented = false
                             onSelect(selectedCore)
                         }
                     },
                     onCancel: {
-                        presentationMode.wrappedValue.dismiss()
+                        isPresented = false
                         onCancel()
                     }
                 )
-            }
-        }
-        .onChange(of: isPresented) { newValue in
-            if !newValue {
-                presentationMode.wrappedValue.dismiss()
             }
         }
     }

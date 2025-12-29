@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 import PVLogging
 import PVLibrary
 import PVFileSystem
@@ -43,6 +44,9 @@ public class SceneCoordinator: ObservableObject {
 
     // Alert state for showing RetroWave styled alerts
     @Published public var alertState = RetroAlertState()
+
+    // Navigation stack for multi-step alert flows (core selection, save selection, etc.)
+    @Published public var alertNavigationStack = RetroAlertNavigationStack()
 
     public enum Scenes {
         case main
