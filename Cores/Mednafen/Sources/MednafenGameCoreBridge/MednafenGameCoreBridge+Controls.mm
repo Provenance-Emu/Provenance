@@ -55,7 +55,7 @@
                 return [[gamepad rightShoulder] isPressed];
             case PVLynxButtonPause:
                 return [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed] && ([[gamepad buttonX] isPressed] || [[gamepad buttonY] isPressed]);
-            
+
             default:
                 break;
         }
@@ -297,7 +297,7 @@
 }
 
 - (void)didMovePSXJoystickDirection:(PVPSXButton)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
-    
+
     DLOG(@"button: %i, x: %f, y:%f player: %f");
     // TODO
     // Fix the analog circle-to-square axis range conversion by scaling between a value of 1.00 and 1.50
@@ -308,7 +308,7 @@
     float down = yValue < 0 ? fabs(yValue) : 0.0;
     float left = xValue < 0 ? fabs(xValue) : 0.0;
     float right = xValue > 0 ? fabs(xValue) : 0.0;
-    
+
     up = fmin(up, 1.0);
     down = fmin(down, 1.0);
     left = fmin(left, 1.0);
@@ -318,21 +318,21 @@
     down = fmax(down, 0.0);
     left = fmax(left, 0.0);
     right = fmax(right, 0.0);
-    
+
     NSDictionary *buttons = @{ @(PVPSXButtonLeftAnalogUp):@(up),
                                @(PVPSXButtonLeftAnalogDown):@(down),
                                @(PVPSXButtonLeftAnalogLeft):@(left),
                                @(PVPSXButtonLeftAnalogRight):@(right) };
-    
+
     for (NSNumber *key in buttons) {
         int button = [(NSNumber *)key intValue];
         float value = [(NSNumber *)[buttons objectForKey:key] floatValue];
-        
+
         uint16 modifiedValue = value * 32767;
-        
+
         int analogNumber = [InputMaps.PSXMap[button] intValue] - 17;
         int address = analogNumber;
-        
+
         if (analogNumber % 2 != 0) {
             axis[analogNumber] = -1 * modifiedValue;
             address -= 1;
@@ -340,9 +340,9 @@
         else {
             axis[analogNumber] = modifiedValue;
         }
-        
+
         uint16 actualValue = 32767 + axis[analogNumber] + axis[analogNumber ^ 1];
-        
+
         uint8 *buf = (uint8 *)inputBuffer[player];
         Mednafen::MDFN_en16lsb(&buf[3]+address, (uint16) actualValue);
     }
@@ -370,7 +370,7 @@
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player withAnalogMode:(bool)analogMode {
     GCController *controller = nil;
-    
+
     if (player == 0) {
         controller = self.controller1;
     }
@@ -383,7 +383,7 @@
     else if (player == 3) {
         controller = self.controller4;
     }
-    
+
     switch (self.systemType) {
         case MednaSystemSMS:
         case MednaSystemMD:
@@ -415,23 +415,23 @@
         case MednaSystemPCFX:
             return [self PCEValueForButtonID:buttonID forController:controller];
             break;
-            
+
         case MednaSystemPSX:
             return [self PSXcontrollerValueForButtonID:buttonID forController:controller withAnalogMode:analogMode];
             break;
-            
+
         case MednaSystemVirtualBoy:
             return [self VirtualBoyControllerValueForButtonID:buttonID forController:controller];
             break;
-            
+
         case MednaSystemWonderSwan:
             return [self WonderSwanControllerValueForButtonID:buttonID forController:controller];
             break;
-            
+
         default:
             break;
     }
-    
+
     return 0;
 }
 
@@ -466,14 +466,28 @@
             case PVSaturnButtonL:
                 return [[gamepad leftTrigger] isPressed];
             case PVSaturnButtonStart:
+            {
+                BOOL isStart = self.isStartPressed;
+                GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+                GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+                GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+
+                if (dualSense && dualSense.buttonOptions) {
+                    isStart = isStart || [dualSense.buttonOptions isPressed];
+                } else if (dualShock && dualShock.buttonOptions) {
+                    isStart = isStart || [dualShock.buttonOptions isPressed];
+                } else if (xbox && xbox.buttonMenu) {
+                    isStart = isStart || [xbox.buttonMenu isPressed];
+                }
 #if TARGET_OS_TV
-                return self.isStartPressed || [[gamepad buttonMenu] isPressed];
-            case PVSaturnButtonR:
-                return [[gamepad rightTrigger] isPressed];
+                isStart = isStart || [[gamepad buttonMenu] isPressed];
 #else
-                return self.isStartPressed || [[gamepad rightTrigger] isPressed];
                 // no Access to the R Shoulder Button on the Saturn Controller using the M30 due to Start Mismapping on iOS, for now
 #endif
+                return isStart;
+            }
+            case PVSaturnButtonR:
+                return [[gamepad rightTrigger] isPressed];
             default:
                 break;
             }
@@ -507,26 +521,18 @@
                     return [[gamepad leftTrigger] isPressed];
                 case PVSaturnButtonStart:
                 {
-                    BOOL isStart = NO;
-                    if (dualSense) {
-                        isStart = self.isStartPressed || dualSense.touchpadButton.isPressed;
-                    } else if (dualShock) {
-                        isStart = self.isStartPressed || dualShock.touchpadButton.isPressed;
-                    } else if (xbox) {
-                        isStart = self.isStartPressed || xbox.buttonShare.isPressed;
+                    BOOL isStart = self.isStartPressed;
+                    if (dualSense && dualSense.buttonOptions) {
+                        isStart = isStart || [dualSense.buttonOptions isPressed];
+                    } else if (dualShock && dualShock.buttonOptions) {
+                        isStart = isStart || [dualShock.buttonOptions isPressed];
+                    } else if (xbox && xbox.buttonMenu) {
+                        isStart = isStart || [xbox.buttonMenu isPressed];
                     } else {
-//                        if (!gamepad.buttonHome.isBoundToSystemGesture) {
-//                            return gamepad.buttonHome.isPressed;
-//                        }
-                        if (gamepad.buttonOptions) {
-                            isStart =  gamepad.buttonOptions.isPressed;
-                        }
-
                         bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
                         bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];
                         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
-
-                        isStart =  self.isStartPressed || (modifiersPressed && [[gamepad buttonX] isPressed]);
+                        isStart = isStart || (modifiersPressed && [[gamepad buttonX] isPressed]);
                     }
                     DLOG("isStart: %@", isStart ? @"Yes" : @"No");
                     return isStart;
@@ -600,6 +606,23 @@
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+        GCControllerButtonInput *selectButton = nil;
+        GCControllerButtonInput *startButton = nil;
+
+        if (dualSense || dualShock) {
+            selectButton = gamepad.buttonOptions;
+            startButton = gamepad.buttonMenu;
+        } else if (xbox) {
+            selectButton = xbox.buttonShare;
+            startButton = xbox.buttonMenu;
+        } else {
+            startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
+        }
+
         switch (buttonID) {
             case PVGBButtonUp:
                 return DPAD_PRESSED(up);
@@ -614,14 +637,22 @@
             case PVGBButtonA:
                 return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
             case PVGBButtonSelect:
+                if (selectButton && [selectButton isPressed]) {
+                    return YES;
+                } else if (xbox && xbox.buttonShare && [xbox.buttonShare isPressed]) {
+                    return YES;
+                }
                 return [[gamepad leftShoulder] isPressed]?:[[gamepad leftTrigger] isPressed];
             case PVGBButtonStart:
+                if (startButton && [startButton isPressed]) {
+                    return YES;
+                }
                 return [[gamepad rightShoulder] isPressed]?:[[gamepad rightTrigger] isPressed];
             default:
                 NSLog(@"Unknown button %i", buttonID);
                 break;
         }
-        
+
         //        if (buttonID == [InputMaps.GBMap[PVGBButtonUp] intValue]) {
         //            return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
         //        }
@@ -706,6 +737,23 @@
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+        GCControllerButtonInput *selectButton = nil;
+        GCControllerButtonInput *startButton = nil;
+
+        if (dualSense || dualShock) {
+            selectButton = gamepad.buttonOptions;
+            startButton = gamepad.buttonMenu;
+        } else if (xbox) {
+            selectButton = xbox.buttonShare;
+            startButton = xbox.buttonMenu;
+        } else {
+            startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
+        }
+
         switch (buttonID) {
             case PVGBAButtonUp:
                 return DPAD_PRESSED(up);
@@ -724,8 +772,16 @@
             case PVGBAButtonR:
                 return [[gamepad rightShoulder] isPressed];
             case PVGBAButtonSelect:
+                if (selectButton && [selectButton isPressed]) {
+                    return YES;
+                } else if (xbox && xbox.buttonShare && [xbox.buttonShare isPressed]) {
+                    return YES;
+                }
                 return [[gamepad leftTrigger] isPressed];
             case PVGBAButtonStart:
+                if (startButton && [startButton isPressed]) {
+                    return YES;
+                }
                 return [[gamepad rightTrigger] isPressed];
             default:
                 break;
@@ -795,6 +851,23 @@
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+        GCControllerButtonInput *selectButton = nil;
+        GCControllerButtonInput *startButton = nil;
+
+        if (dualSense || dualShock) {
+            selectButton = gamepad.buttonOptions;
+            startButton = gamepad.buttonMenu;
+        } else if (xbox) {
+            selectButton = xbox.buttonShare;
+            startButton = xbox.buttonMenu;
+        } else {
+            startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
+        }
+
         switch (buttonID) {
             case PVSNESButtonUp:
                 return DPAD_PRESSED(up);
@@ -817,8 +890,16 @@
             case PVSNESButtonTriggerRight:
                 return [[gamepad rightShoulder] isPressed];
             case PVSNESButtonSelect:
+                if (selectButton && [selectButton isPressed]) {
+                    return YES;
+                } else if (xbox && xbox.buttonShare && [xbox.buttonShare isPressed]) {
+                    return YES;
+                }
                 return [[gamepad leftTrigger] isPressed];
             case PVSNESButtonStart:
+                if (startButton && [startButton isPressed]) {
+                    return YES;
+                }
                 return [[gamepad rightTrigger] isPressed];
             default:
                 break;
@@ -887,6 +968,13 @@
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+        GCControllerButtonInput *selectButton = dualSense ? dualSense.touchpadButton : dualShock ? dualShock.touchpadButton : nil;
+        GCControllerButtonInput *startButton = gamepad.buttonOptions ? gamepad.buttonOptions : (xbox ? xbox.buttonMenu : nil);
+
         switch (buttonID) {
             case PVNESButtonUp:
                 return DPAD_PRESSED(up);
@@ -901,8 +989,16 @@
             case PVNESButtonA:
                 return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
             case PVNESButtonSelect:
+                if (selectButton && [selectButton isPressed]) {
+                    return YES;
+                } else if (xbox && xbox.buttonShare && [xbox.buttonShare isPressed]) {
+                    return YES;
+                }
                 return [[gamepad leftShoulder] isPressed]?:[[gamepad leftTrigger] isPressed];
             case PVNESButtonStart:
+                if (startButton && [startButton isPressed]) {
+                    return YES;
+                }
                 return [[gamepad rightShoulder] isPressed]?:[[gamepad rightTrigger] isPressed];
             default:
                 break;
@@ -1043,6 +1139,13 @@
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+        GCControllerButtonInput *selectButton = dualSense ? dualSense.touchpadButton : dualShock ? dualShock.touchpadButton : nil;
+        GCControllerButtonInput *startButton = gamepad.buttonOptions ? gamepad.buttonOptions : (xbox ? xbox.buttonMenu : nil);
+
         if (PVSettingsWrapper.use8BitdoM30) // M30 Mode
         {switch (buttonID) {
                 // D-Pad
@@ -1054,13 +1157,21 @@
                 return [[[gamepad leftThumbstick] left] value] > DEADZONE;
             case PVPCEButtonRight:
                 return [[[gamepad leftThumbstick] right] value] > DEADZONE;
-                
+
                 // Select + Run
             case PVPCEButtonSelect:
+                if (selectButton && [selectButton isPressed]) {
+                    return YES;
+                } else if (xbox && xbox.buttonShare && [xbox.buttonShare isPressed]) {
+                    return YES;
+                }
                 return [[gamepad leftTrigger] isPressed];
             case PVPCEButtonRun:
+                if (startButton && [startButton isPressed]) {
+                    return YES;
+                }
                 return [[gamepad rightTrigger] isPressed];
-                
+
                 // NEC Avenue 6 button layout
             case PVPCEButtonButton1:
                 return [[gamepad rightShoulder] isPressed];
@@ -1074,7 +1185,7 @@
                 return [[gamepad buttonY] isPressed];
             case PVPCEButtonButton6:
                 return [[gamepad leftShoulder] isPressed];
-                
+
                 // Toggle to the 6 Button Mode when the Extended Buttons are pressed
             case PVPCEButtonMode:
                 return [[gamepad buttonB] isPressed] || [[gamepad buttonX] isPressed] || [[gamepad buttonY] isPressed] || [[gamepad leftShoulder] isPressed] || [[gamepad buttonA] isPressed] || [[gamepad rightShoulder] isPressed];
@@ -1091,18 +1202,26 @@
                 return DPAD_PRESSED(left);
             case PVPCEButtonRight:
                 return DPAD_PRESSED(right);
-                
+
                 // Standard Buttons
             case PVPCEButtonButton1:
                 return [[gamepad buttonB] isPressed];
             case PVPCEButtonButton2:
                 return [[gamepad buttonA] isPressed];
-                
+
             case PVPCEButtonSelect:
+                if (selectButton && [selectButton isPressed]) {
+                    return YES;
+                } else if (xbox && xbox.buttonShare && [xbox.buttonShare isPressed]) {
+                    return YES;
+                }
                 return [[gamepad leftTrigger] isPressed];
             case PVPCEButtonRun:
+                if (startButton && [startButton isPressed]) {
+                    return YES;
+                }
                 return [[gamepad rightTrigger] isPressed];
-                
+
                 // Extended Buttons
             case PVPCEButtonButton3:
                 return [[gamepad buttonX] isPressed];
@@ -1112,7 +1231,7 @@
                 return [[gamepad buttonY] isPressed];
             case PVPCEButtonButton6:
                 return [[gamepad rightShoulder] isPressed];
-                
+
                 // Toggle the Mode: Extended Buttons are pressed
             case PVPCEButtonMode:
                 return [[gamepad buttonX] isPressed] || [[gamepad leftShoulder] isPressed] || [[gamepad buttonY] isPressed] || [[gamepad rightShoulder] isPressed];
@@ -1132,24 +1251,24 @@
                 return [[dpad left] isPressed];
             case PVPCEButtonRight:
                 return [[dpad right] isPressed];
-                
+
                 // Standard Buttons
             case PVPCEButtonButton1:
                 return [[gamepad buttonB] isPressed];
             case PVPCEButtonButton2:
                 return [[gamepad buttonA] isPressed];
-                
+
             case PVPCEButtonSelect:
                 return [[gamepad leftShoulder] isPressed];
             case PVPCEButtonRun:
                 return [[gamepad rightShoulder] isPressed];
-                
+
                 // Extended Buttons
             case PVPCEButtonButton3:
                 return [[gamepad buttonX] isPressed];
             case PVPCEButtonButton4:
                 return [[gamepad buttonY] isPressed];
-                
+
                 // Toggle the Mode: Extended Buttons are pressed
             case PVPCEButtonMode:
                 return [[gamepad buttonX] isPressed] || [[gamepad buttonY] isPressed];
@@ -1186,7 +1305,7 @@
         }
     }
 #endif
-    
+
     return 0;
 }
 #pragma mark PSX Buttons
@@ -1235,25 +1354,17 @@
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = [[controller extendedGamepad] capture];
         GCControllerDirectionPad *dpad = [gamepad dpad];
-        
-        if (@available(iOS 14, *)) {
-            
-            if ([gamepad isKindOfClass:[GCDualSenseGamepad class]]) {
-                GCDualSenseGamepad *dualSense = gamepad;
-            } else if ([gamepad isKindOfClass:[GCDualShockGamepad class]]) {
-                GCDualShockGamepad *dualShock = gamepad;
-                
-            } else if ([gamepad isKindOfClass:[GCXboxGamepad class]]) {
-                GCXboxGamepad *xboxGamepad = gamepad;
-            }
-        }
-        
+
         GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-        
+        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+        GCControllerButtonInput *selectButton = dualSense ? dualSense.touchpadButton : dualShock ? dualShock.touchpadButton : nil;
+        GCControllerButtonInput *startButton = gamepad.buttonOptions ? gamepad.buttonOptions : (xbox ? xbox.buttonMenu : nil);
+
         bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
         bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];
         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
-        
+
         switch (buttonID) {
             case PVPSXButtonUp:
                 return ([[dpad up] isPressed] || (!analogMode && [[[gamepad leftThumbstick] up] isPressed]));
@@ -1292,9 +1403,29 @@
             case PVPSXButtonR3:
                 return self.isR3Pressed || [[gamepad rightThumbstickButton] isPressed] || (modifiersPressed && [[gamepad buttonA] isPressed]);
             case PVPSXButtonSelect:
-                return self.isSelectPressed || (modifiersPressed && [[dpad right] isPressed]);
+            {
+                BOOL isSelect = self.isSelectPressed;
+                if (selectButton && [selectButton isPressed]) {
+                    isSelect = YES;
+                } else if (xbox && xbox.buttonShare) {
+                    isSelect = isSelect || [xbox.buttonShare isPressed];
+                } else {
+                    isSelect = isSelect || (modifiersPressed && [[dpad right] isPressed]);
+                }
+                return isSelect;
+            }
             case PVPSXButtonStart:
-                return self.isStartPressed || (modifiersPressed && [[gamepad buttonX] isPressed]);
+            {
+                BOOL isStart = self.isStartPressed;
+                if (startButton && [startButton isPressed]) {
+                    isStart = YES;
+                } else if (xbox && xbox.buttonMenu) {
+                    isStart = isStart || [xbox.buttonMenu isPressed];
+                } else {
+                    isStart = isStart || (modifiersPressed && [[gamepad buttonX] isPressed]);
+                }
+                return isStart;
+            }
             case PVPSXButtonAnalogMode:
                 return self.isAnalogModePressed || (modifiersPressed && [[gamepad buttonB] isPressed]);
             default:
@@ -1304,7 +1435,7 @@
         GCGamepad *gamepad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
-        
+
         switch (buttonID) {
             case PVPSXButtonUp:
                 return [[dpad up] isPressed] && !modifierPressed;
