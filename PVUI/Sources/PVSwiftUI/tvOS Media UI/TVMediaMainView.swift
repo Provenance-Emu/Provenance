@@ -783,7 +783,8 @@ private struct TVMediaSaveStateTileButton: View {
                 title: item.gameTitle,
                 subtitle: item.date,
                 thumbnail: thumbnail,
-                isFocused: isFocused
+                isFocused: isFocused,
+                coreName: item.coreName.isEmpty ? nil : item.coreName
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
@@ -2139,7 +2140,8 @@ struct TVMediaSaveStatesShelfRow: View {
                 title: item.gameTitle,
                 subtitle: item.date,
                 thumbnail: thumbs[item.id],
-                isFocused: isFocused
+                isFocused: isFocused,
+                coreName: item.coreName.isEmpty ? nil : item.coreName
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
@@ -2380,9 +2382,18 @@ struct TVMediaSaveStateTile: View {
     let subtitle: Date
     let thumbnail: UIImage?
     let isFocused: Bool
+    let coreName: String?
 
     private let tileWidth: CGFloat = 300
     private let tileHeight: CGFloat = 190
+
+    init(title: String, subtitle: Date, thumbnail: UIImage?, isFocused: Bool, coreName: String? = nil) {
+        self.title = title
+        self.subtitle = subtitle
+        self.thumbnail = thumbnail
+        self.isFocused = isFocused
+        self.coreName = coreName
+    }
 
     var body: some View {
         ZStack {
@@ -2438,6 +2449,16 @@ struct TVMediaSaveStateTile: View {
                             .font(.system(size: 10, weight: .medium))
                         Text(subtitle, style: .relative)
                             .font(.system(size: 12, weight: .medium, design: .default))
+
+                        if let coreName = coreName, !coreName.isEmpty {
+                            Text("•")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.5))
+                            Text(coreName)
+                                .font(.system(size: 11, weight: .medium, design: .default))
+                                .foregroundStyle(.white.opacity(0.7))
+                                .lineLimit(1)
+                        }
                     }
                     .foregroundStyle(.white.opacity(0.75))
                     .shadow(color: .black.opacity(0.6), radius: 2)
