@@ -12,9 +12,6 @@ import PVLibrary
 import os.log
 import RealmSwift
 
-// We only need the schema version from PVLibrary
-private let topShelfSchemaVersion = schemaVersion
-
 /// Protocol defining the interface for TopShelf data drivers
 protocol TopShelfDataDriver {
     /// Initialize the driver
@@ -38,48 +35,33 @@ protocol TopShelfDataDriver {
 
 /// Mock implementation of TopShelfDataDriver for development and testing
 class MockTopShelfDataDriver: TopShelfDataDriver {
-    /// Collection of error messages for debugging
     private(set) var errorMessages: [String] = []
-    /// Collection of mock games
     private var games: [PVGame] = []
-    
-    /// Collection of mock recent games
     private var recentGames: [PVRecentGame] = []
     
-    /// Initialize the driver with mock data
     func initialize() async throws {
-        // Create mock games
         createMockData()
     }
     
-    /// Get recently played games
     func getRecentlyPlayedGames(limit: Int) -> [PVGame] {
-        // Sort by last played date and return the most recent ones
         return Array(recentGames.prefix(limit).compactMap { recentGame in
             return games.first { $0.md5Hash == recentGame.game.md5Hash }
         })
     }
     
-    /// Get favorite games
     func getFavoriteGames(limit: Int) -> [PVGame] {
-        // Filter for favorites and sort by title
         return Array(games.filter { $0.isFavorite }.sorted { $0.title < $1.title }.prefix(limit))
     }
     
-    /// Get recently added games
     func getRecentlyAddedGames(limit: Int) -> [PVGame] {
-        // Sort by import date and return the most recent ones
         return Array(games.sorted { $0.importDate > $1.importDate }.prefix(limit))
     }
     
-    /// Get a game by ID
     func getGame(byID id: String) -> PVGame? {
         return games.first { $0.md5Hash == id }
     }
     
-    /// Create mock data for testing
     private func createMockData() {
-        // Create some mock systems
         let nesSystem = PVSystem()
         nesSystem.identifier = "NES"
         nesSystem.name = "Nintendo Entertainment System"
@@ -100,7 +82,6 @@ class MockTopShelfDataDriver: TopShelfDataDriver {
         psx.identifier = "PSX"
         psx.name = "PlayStation"
         
-        // Create some mock games
         let game1 = PVGame()
         game1.md5Hash = "game1"
         game1.title = "Super Mario Bros."
@@ -143,220 +124,111 @@ class MockTopShelfDataDriver: TopShelfDataDriver {
         game6.isFavorite = true
         game6.originalArtworkURL = "https://pngimg.com/uploads/sony_playstation/sony_playstation_PNG17532.png"
         
-        // Add games to the collection
         games = [game1, game2, game3, game4, game5, game6]
         
-        // Create recent games (in order of play)
         let recent1 = PVRecentGame()
-        recent1.game = game4 // Sonic
-        recent1.lastPlayedDate = Date().addingTimeInterval(-3600 * 2) // 2 hours ago
+        recent1.game = game4
+        recent1.lastPlayedDate = Date().addingTimeInterval(-3600 * 2)
         
         let recent2 = PVRecentGame()
-        recent2.game = game5 // Pokémon
-        recent2.lastPlayedDate = Date().addingTimeInterval(-3600 * 5) // 5 hours ago
+        recent2.game = game5
+        recent2.lastPlayedDate = Date().addingTimeInterval(-3600 * 5)
         
         let recent3 = PVRecentGame()
-        recent3.game = game1 // Mario
-        recent3.lastPlayedDate = Date().addingTimeInterval(-3600 * 10) // 10 hours ago
+        recent3.game = game1
+        recent3.lastPlayedDate = Date().addingTimeInterval(-3600 * 10)
         
         let recent4 = PVRecentGame()
-        recent4.game = game6 // FF7
-        recent4.lastPlayedDate = Date().addingTimeInterval(-3600 * 24) // 1 day ago
+        recent4.game = game6
+        recent4.lastPlayedDate = Date().addingTimeInterval(-3600 * 24)
         
-        // Add recent games to the collection
         recentGames = [recent1, recent2, recent3, recent4]
     }
 }
 
-/// Real implementation of TopShelfDataDriver that uses Realm database
+/// Real implementation of TopShelfDataDriver that uses shared RomDatabase
 class RealmTopShelfDataDriver: TopShelfDataDriver {
     private let logger = OSLog(subsystem: "org.provenance-emu.provenance.topshelf", category: "RealmDriver")
-    
-    /// Actor to isolate Realm configuration and coordinate access
-    private actor RealmActor {
-        var configuration: Realm.Configuration?
-        
-        func setConfiguration(_ config: Realm.Configuration) {
-            self.configuration = config
-        }
-        
-        func getConfiguration() -> Realm.Configuration? {
-            return configuration
-        }
-        
-        // Instead of storing a Realm instance, we'll create a frozen copy of the objects we need
-        // This allows us to safely pass them across thread boundaries
-        
-        func queryRecentlyPlayedGames(limit: Int) -> [PVGame] {
-            guard let config = configuration else { return [] }
-            
-            // Create a new Realm instance for this operation
-//            guard let realm = try? Realm(configuration: config) else { return [] }
-            let realm = try! Realm()
-
-            // Get recently played games
-            let recentlyPlayedGames = realm.objects(PVRecentGame.self).sorted(byKeyPath: "lastPlayedDate", ascending: false)
-                .prefix(limit)
-            
-            // Map to actual games and freeze them so they can be used across threads
-            var games: [PVGame] = []
-            for recentGame in recentlyPlayedGames {
-                if let game = realm.object(ofType: PVGame.self, forPrimaryKey: recentGame.game.md5Hash) {
-                    // Create a detached copy by extracting the primary key and refetching later
-                    games.append(game.freeze())
-                }
-            }
-            
-            return games
-        }
-        
-        func queryFavoriteGames(limit: Int) -> [PVGame] {
-            guard let config = configuration else { return [] }
-            
-            // Create a new Realm instance for this operation
-//            guard let realm = try? Realm(configuration: config) else { return [] }
-            let realm = try! Realm()
-
-            // Get favorite games
-            let favoriteGames = realm.objects(PVGame.self).filter("isFavorite == true")
-                .sorted(byKeyPath: "title", ascending: true)
-                .prefix(limit)
-            
-            // Freeze the results so they can be used across threads
-            return favoriteGames.map { $0.freeze() }
-        }
-        
-        func queryRecentlyAddedGames(limit: Int) -> [PVGame] {
-            guard let config = configuration else { return [] }
-            
-            // Create a new Realm instance for this operation
-//            guard let realm = try? Realm(configuration: config) else { return [] }
-            let realm = try! Realm()
-
-            // Get recently added games
-            let recentlyAddedGames = realm.objects(PVGame.self).sorted(byKeyPath: "importDate", ascending: false)
-                .prefix(limit)
-            
-            // Freeze the results so they can be used across threads
-            return recentlyAddedGames.map { $0.freeze() }
-        }
-        
-        func queryGameByID(id: String) -> PVGame? {
-            guard let config = configuration else { return nil }
-            
-            // Create a new Realm instance for this operation
-//            guard let realm = try? Realm(configuration: config) else { return nil }
-            let realm = try! Realm()
-            
-            // Get the game and freeze it so it can be used across threads
-            return realm.object(ofType: PVGame.self, forPrimaryKey: id)?.freeze()
-        }
-        
-        func getGameCount() -> Int {
-            guard let config = configuration else { return 0 }
-            
-            // Create a new Realm instance for this operation
-            guard let realm = try? Realm(configuration: config) else { return 0 }
-            
-            return realm.objects(PVGame.self).count
-        }
-    }
-    
-    private let realmActor = RealmActor()
     
     /// Collection of error messages for debugging
     private(set) var errorMessages: [String] = []
     
-    /// Initialize the driver with the real database
+    /// Initialize the driver using the shared RomDatabase configuration
     func initialize() async throws {
-        do {
-            // Log initialization start
-            os_log("Starting Realm database initialization", log: logger, type: .debug)
+        os_log("Starting Realm database initialization using shared RomDatabase", log: logger, type: .debug)
+        
+        // Check if app groups are supported
+        guard RealmConfiguration.supportsAppGroups else {
+            let error = "App Groups not supported. Check that \(PVAppGroupId) is a valid group id"
+            os_log("%{public}@", log: logger, type: .error, error)
+            errorMessages.append(error)
+            throw NSError(domain: "TopShelfDataDriver", code: 1, userInfo: [NSLocalizedDescriptionKey: error])
+        }
+        
+        os_log("App Groups supported, configuring Realm", log: logger, type: .debug)
+        
+        // Log app group container info
+        if let container = RealmConfiguration.appGroupContainer {
+            os_log("App group container: %{public}@", log: logger, type: .debug, container.path)
+        }
+        
+        if let appGroupPath = RealmConfiguration.appGroupPath {
+            os_log("App group path: %{public}@", log: logger, type: .debug, appGroupPath.path)
             
-            // Get the app group container URL
-            guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
-                let error = "Could not access app group container"
-                os_log("%{public}@", log: logger, type: .error, error)
-                throw NSError(domain: "TopShelfDataDriver", code: 1, userInfo: [NSLocalizedDescriptionKey: error])
-            }
-            
-            os_log("App group container exists at: %{public}@", log: logger, type: .debug, containerURL.path)
-            
-            // On tvOS, the Realm database is stored in a Library/Caches/ subfolder
-            let realmFilename = "default.realm"
-            let tvOSCachesPath = containerURL.appendingPathComponent("Library/Caches/")
-            let realmURL = tvOSCachesPath.appendingPathComponent(realmFilename, isDirectory: false)
-            
-            // Make sure the directory exists
-            if !FileManager.default.fileExists(atPath: tvOSCachesPath.path) {
-                os_log("Creating Library/Caches directory", log: logger, type: .debug)
-                do {
-                    try FileManager.default.createDirectory(at: tvOSCachesPath, withIntermediateDirectories: true)
-                } catch {
-                    os_log("Failed to create Library/Caches directory: %{public}@", log: logger, type: .error, error.localizedDescription)
-                }
-            }
-            
+            // Check if Realm file exists
+            let realmURL = appGroupPath.appendingPathComponent("default.realm", isDirectory: false)
             if FileManager.default.fileExists(atPath: realmURL.path) {
                 os_log("Realm database file exists at: %{public}@", log: logger, type: .debug, realmURL.path)
             } else {
-                let error = "Realm database file does not exist at: \(realmURL.path)"
-                os_log("%{public}@", log: logger, type: .error, error)
-                throw NSError(domain: "TopShelfDataDriver", code: 2, userInfo: [NSLocalizedDescriptionKey: error])
+                let warning = "Realm database file does not exist at: \(realmURL.path)"
+                os_log("%{public}@", log: logger, type: .error, warning)
+                errorMessages.append(warning)
+                throw NSError(domain: "TopShelfDataDriver", code: 2, userInfo: [NSLocalizedDescriptionKey: warning])
             }
+        }
+        
+        // Set the default Realm configuration using PVLibrary's shared configuration
+        RealmConfiguration.setDefaultRealmConfig()
+        os_log("Set default Realm configuration from PVLibrary", log: logger, type: .debug)
+        
+        // Verify database is accessible using RomDatabase.sharedInstance
+        do {
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
+            let gameCount = realm.objects(PVGame.self).count
+            os_log("Successfully connected to shared Realm database. Found %d games", log: logger, type: .debug, gameCount)
             
-            // Set up the Realm configuration with the correct schema version
-            var config = Realm.Configuration.defaultConfiguration
-            config.fileURL = realmURL
-            config.readOnly = true // Use read-only mode for TopShelf extension
-            
-            // Use the schema version we imported from PVLibrary
-            config.schemaVersion = topShelfSchemaVersion
-            os_log("Using schema version %{public}llu", log: logger, type: .debug, topShelfSchemaVersion)
-            
-            // Add migration block to handle schema changes
-            config.migrationBlock = { _, _ in
-                // Migration is handled by the main app, we just need to provide a block
-                // This is a no-op since we're in read-only mode
-            }
-            
-            // Store the configuration in the actor for potential reuse
-            await realmActor.setConfiguration(config)
-            
-            os_log("Set up Realm configuration with URL: %{public}@", log: logger, type: .debug, realmURL.path)
-            
-            // Test opening a Realm with the configuration to verify it works
-            let testRealm = try await Realm(configuration: config)
-            os_log("Successfully opened Realm database", log: logger, type: .debug)
-            
-            // Verify we can access data in the Realm
-            do {
-                let count = await realmActor.getGameCount()
-                os_log("Found %d total games in database", log: logger, type: .debug, count)
-                
-                if count == 0 {
-                    let warning = "Realm database opened successfully but contains no games"
-                    os_log("%{public}@", log: logger, type: .info, warning)
-                    errorMessages.append(warning)
-                }
-            } catch {
-                let errorMsg = "Error accessing Realm data: \(error.localizedDescription)"
-                os_log("%{public}@", log: logger, type: .error, errorMsg)
-                errorMessages.append(errorMsg)
-                throw error
+            if gameCount == 0 {
+                let warning = "Realm database opened successfully but contains no games"
+                os_log("%{public}@", log: logger, type: .info, warning)
+                errorMessages.append(warning)
             }
         } catch {
-            os_log("Error initializing Realm database: %{public}@", log: logger, type: .error, error.localizedDescription)
+            let errorMsg = "Error accessing shared Realm database: \(error.localizedDescription)"
+            os_log("%{public}@", log: logger, type: .error, errorMsg)
+            errorMessages.append(errorMsg)
             throw error
         }
     }
     
-    /// Get recently played games
+    /// Get recently played games using shared RomDatabase
     func getRecentlyPlayedGames(limit: Int) async -> [PVGame] {
         do {
-            let games = await realmActor.queryRecentlyPlayedGames(limit: limit)
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
+            
+            let recentlyPlayedGames = realm.objects(PVRecentGame.self)
+                .sorted(byKeyPath: "lastPlayedDate", ascending: false)
+                .prefix(limit)
+            
+            // Map to actual games and freeze them for thread safety
+            let games = recentlyPlayedGames.compactMap { recentGame -> PVGame? in
+                guard let game = recentGame.game else { return nil }
+                return game.freeze()
+            }
+            
             os_log("Found %d recently played games", log: logger, type: .debug, games.count)
-            return games
+            return Array(games)
         } catch {
             let errorMsg = "Error getting recently played games: \(error.localizedDescription)"
             os_log("%{public}@", log: logger, type: .error, errorMsg)
@@ -365,12 +237,22 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         }
     }
     
-    /// Get favorite games
+    /// Get favorite games using shared RomDatabase
     func getFavoriteGames(limit: Int) async -> [PVGame] {
         do {
-            let favoriteGames = await realmActor.queryFavoriteGames(limit: limit)
-            os_log("Found %d favorite games", log: logger, type: .debug, favoriteGames.count)
-            return favoriteGames
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
+            
+            let favoriteGames = realm.objects(PVGame.self)
+                .filter("isFavorite == true")
+                .sorted(byKeyPath: "title", ascending: true)
+                .prefix(limit)
+            
+            // Freeze the results for thread safety
+            let games = favoriteGames.map { $0.freeze() }
+            
+            os_log("Found %d favorite games", log: logger, type: .debug, games.count)
+            return Array(games)
         } catch {
             let errorMsg = "Error getting favorite games: \(error.localizedDescription)"
             os_log("%{public}@", log: logger, type: .error, errorMsg)
@@ -379,23 +261,32 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         }
     }
     
-    /// Get recently added games
+    /// Get recently added games using shared RomDatabase
     func getRecentlyAddedGames(limit: Int) async -> [PVGame] {
         do {
-            // Try to get total game count first
-            let count = await realmActor.getGameCount()
-            os_log("Found %d total games in database", log: logger, type: .debug, count)
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
             
-            if count == 0 {
+            let gameCount = realm.objects(PVGame.self).count
+            os_log("Total games in database: %d", log: logger, type: .debug, gameCount)
+            
+            if gameCount == 0 {
                 let warning = "Database contains no games"
-                errorMessages.append(warning)
+                if !errorMessages.contains(warning) {
+                    errorMessages.append(warning)
+                }
                 os_log("%{public}@", log: logger, type: .info, warning)
             }
             
-            // Get recently added games
-            let recentlyAddedGames = await realmActor.queryRecentlyAddedGames(limit: limit)
-            os_log("Found %d recently added games", log: logger, type: .debug, recentlyAddedGames.count)
-            return recentlyAddedGames
+            let recentlyAddedGames = realm.objects(PVGame.self)
+                .sorted(byKeyPath: "importDate", ascending: false)
+                .prefix(limit)
+            
+            // Freeze the results for thread safety
+            let games = recentlyAddedGames.map { $0.freeze() }
+            
+            os_log("Found %d recently added games", log: logger, type: .debug, games.count)
+            return Array(games)
         } catch {
             let errorMsg = "Error getting recently added games: \(error.localizedDescription)"
             os_log("%{public}@", log: logger, type: .error, errorMsg)
@@ -404,10 +295,17 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         }
     }
     
-    /// Get a game by ID
+    /// Get a game by ID using shared RomDatabase
     func getGame(byID id: String) async -> PVGame? {
         do {
-            return await realmActor.queryGameByID(id: id)
+            let database = RomDatabase.sharedInstance
+            let realm = database.realm
+            
+            // Get the game and freeze it for thread safety
+            if let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) {
+                return game.freeze()
+            }
+            return nil
         } catch {
             let errorMsg = "Error getting game by ID: \(error.localizedDescription)"
             os_log("%{public}@", log: logger, type: .error, errorMsg)

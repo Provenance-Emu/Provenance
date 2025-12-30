@@ -290,6 +290,7 @@ class ContentProvider: TVTopShelfContentProvider {
                 let possibleLocations = [
                     containerURL.appendingPathComponent("topshelf_log.txt"),
                     containerURL.appendingPathComponent("Library/topshelf_log.txt"),
+                    containerURL.appendingPathComponent("Caches/topshelf_log.txt"),
                     containerURL.appendingPathComponent("Documents/topshelf_log.txt")
                 ]
                 
