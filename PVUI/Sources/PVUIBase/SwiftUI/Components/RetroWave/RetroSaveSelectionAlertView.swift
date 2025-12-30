@@ -427,25 +427,13 @@ public struct RetroSaveSelectionAlertView: View {
                     .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
             )
         }
-        #if os(tvOS)
-        .buttonStyle(TVMediaCardButtonStyle())
-        .tvOSDisableFocusEffect()
-        .focused($focusedItemId, equals: save.id)
-        .scaleEffect(focusedItemId == save.id ? 1.15 : 1.0)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(
-                    focusedItemId == save.id
-                        ? LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .topLeading, endPoint: .bottomTrailing)
-                        : LinearGradient(colors: [.clear], startPoint: .topLeading, endPoint: .bottomTrailing),
-                    lineWidth: focusedItemId == save.id ? 3 : 0
-                )
+        .retroFocusableButton(
+            focused: $focusedItemId,
+            equals: save.id,
+            focusScale: 1.15,
+            cornerRadius: 8,
+            glowRadius: 8
         )
-        .shadow(color: focusedItemId == save.id ? Color.retroPink.opacity(0.6) : .clear, radius: 8, x: 0, y: 0)
-        .animation(.easeInOut(duration: 0.15), value: focusedItemId)
-        #else
-        .buttonStyle(.plain)
-        #endif
     }
 
     private func thumbnailView(for save: RetroSaveSelectionItem) -> some View {
