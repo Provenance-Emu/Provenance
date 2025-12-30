@@ -605,12 +605,7 @@ struct RetroMenuView: View {
                             )
                     )
                 }
-                #if os(tvOS)
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
-                #else
-                .buttonStyle(.plain)
-                #endif
+                .buttonStyle(PlainButtonStyle())
                 .sheet(isPresented: $showingFilterPicker) {
                     filterPickerView
                 }
@@ -786,12 +781,7 @@ struct RetroMenuView: View {
                             )
                     )
                 }
-                #if os(tvOS)
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
-                #else
-                .buttonStyle(.plain)
-                #endif
+                .buttonStyle(PlainButtonStyle())
                 .sheet(isPresented: $showingSkinPicker, onDismiss: {
                     // Ensure we don't get stuck in a loading state if dismissed while loading
                     if isLoadingSkins {
@@ -826,12 +816,7 @@ struct RetroMenuView: View {
                             )
                     )
                 }
-                #if os(tvOS)
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
-                #else
-                .buttonStyle(.plain)
-                #endif
+                .buttonStyle(PlainButtonStyle())
 #if !os(tvOS)
                 .sheet(isPresented: $showingDocumentPicker) {
                     SkinDocumentPicker { urls in
@@ -927,12 +912,6 @@ struct RetroMenuView: View {
                         buttonEffectPickerView
                     }
                 }
-                #if os(tvOS)
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
-                #else
-                .buttonStyle(.plain)
-                #endif
 
                 // Button Sound Selection
                 VStack(alignment: .leading, spacing: 4) {
@@ -972,12 +951,6 @@ struct RetroMenuView: View {
                         buttonSoundPickerView
                     }
                 }
-                #if os(tvOS)
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
-                #else
-                .buttonStyle(.plain)
-                #endif
 
                 // Apply button - applies both skin and filter changes after dismissing menu
                 menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
@@ -1142,12 +1115,6 @@ struct RetroMenuView: View {
                             )
                             .shadow(color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(glowOpacity), radius: 3, x: 0, y: 0)
                     }
-                    #if os(tvOS)
-                    .buttonStyle(TVMediaCardButtonStyle())
-                    .tvOSDisableFocusEffect()
-                    #else
-                    .buttonStyle(.plain)
-                    #endif
                 }
             }
             #endif
@@ -1302,12 +1269,7 @@ struct RetroMenuView: View {
                 }
                 #endif
             }
-            #if os(tvOS)
-            .buttonStyle(TVMediaCardButtonStyle())
-            .tvOSDisableFocusEffect()
-            #else
-            .buttonStyle(.plain)
-            #endif
+            .buttonStyle(PlainButtonStyle())
 #if os(tvOS)
             .focusable(true)
 #endif
@@ -1482,12 +1444,7 @@ struct RetroMenuView: View {
             filterOptionContent(label: label, isSelected: isSelected, textColor: textColor, isCompact: isCompact)
                 .background(filterOptionBackground(bgOpacity: bgOpacity, borderColor: borderColor, borderWidth: borderWidth))
         }
-        #if os(tvOS)
-        .buttonStyle(TVMediaCardButtonStyle())
-        .tvOSDisableFocusEffect()
-        #else
-        .buttonStyle(.plain)
-        #endif
+        .buttonStyle(PlainButtonStyle())
         #if os(tvOS)
         .focusable(true)
         #endif
@@ -2446,12 +2403,7 @@ struct RetroMenuView: View {
             )
             .cornerRadius(8)
         }
-        #if os(tvOS)
-        .buttonStyle(TVMediaCardButtonStyle())
-        .tvOSDisableFocusEffect()
-        #else
-        .buttonStyle(.plain)
-        #endif
+        .buttonStyle(PlainButtonStyle())
     }
 
     // Helper function to create menu buttons
@@ -2490,12 +2442,7 @@ struct RetroMenuView: View {
             )
             .shadow(color: color.opacity(palette.dark ? 0.5 : 0.3), radius: 5, x: 0, y: 0)
         }
-        #if os(tvOS)
-        .buttonStyle(TVMediaCardButtonStyle())
-        .tvOSDisableFocusEffect()
-        #else
-        .buttonStyle(.plain)
-        #endif
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
