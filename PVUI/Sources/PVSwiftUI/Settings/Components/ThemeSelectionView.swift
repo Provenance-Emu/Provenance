@@ -18,22 +18,86 @@ struct ThemeButtonStyle: ButtonStyle {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     func makeBody(configuration: Configuration) -> some View {
+        ThemeButtonContent(
+            configuration: configuration,
+            isSelected: isSelected,
+            accentColor: accentColor,
+            themeManager: themeManager
+        )
+    }
+}
+
+/// Content view for ThemeButtonStyle with focus handling
+private struct ThemeButtonContent: View {
+    let configuration: ButtonStyle.Configuration
+    let isSelected: Bool
+    let accentColor: Color
+    @ObservedObject var themeManager: ThemeManager
+
+    #if os(tvOS)
+    @Environment(\.isFocused) private var isFocused: Bool
+    #else
+    private var isFocused: Bool { false }
+    #endif
+
+    var body: some View {
         configuration.label
             .padding(.vertical, 10)
             .padding(.horizontal, 20)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
+                    .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(isFocused ? 0.8 : 0.6))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(
-                                isSelected ? RetroTheme.retroPink : accentColor.opacity(0.7),
-                                lineWidth: isSelected ? 2 : 1
+                                borderGradient,
+                                lineWidth: borderWidth
                             )
                     )
             )
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .shadow(color: isSelected ? RetroTheme.retroPink.opacity(0.5) : Color.clear, radius: 5)
+            .scaleEffect(scaleEffect)
+            .shadow(color: shadowColor, radius: shadowRadius)
+            #if os(tvOS)
+            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+            #endif
+    }
+
+    private var borderGradient: some ShapeStyle {
+        if isFocused {
+            return AnyShapeStyle(LinearGradient(
+                colors: [.retroPink, .retroBlue],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ))
+        } else if isSelected {
+            return AnyShapeStyle(RetroTheme.retroPink)
+        } else {
+            return AnyShapeStyle(accentColor.opacity(0.7))
+        }
+    }
+
+    private var borderWidth: CGFloat {
+        if isFocused { return 3 }
+        if isSelected { return 2 }
+        return 1
+    }
+
+    private var scaleEffect: CGFloat {
+        if configuration.isPressed { return 0.98 }
+        if isFocused { return 1.04 }
+        return 1.0
+    }
+
+    private var shadowColor: Color {
+        if isFocused { return RetroTheme.retroPink.opacity(0.6) }
+        if isSelected { return RetroTheme.retroPink.opacity(0.5) }
+        return .clear
+    }
+
+    private var shadowRadius: CGFloat {
+        if isFocused { return 10 }
+        if isSelected { return 5 }
+        return 0
     }
 }
 
@@ -82,6 +146,9 @@ struct StandardThemeRow: View {
             }
         }
         .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: RetroTheme.retroBlue))
+        #if os(tvOS)
+        .tvOSDisableFocusEffect()
+        #endif
         .padding(.horizontal)
     }
 
@@ -121,6 +188,9 @@ struct CGAThemeRow: View {
             }
         }
         .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: RetroTheme.retroPurple))
+        #if os(tvOS)
+        .tvOSDisableFocusEffect()
+        #endif
         .padding(.horizontal)
     }
 
@@ -171,6 +241,11 @@ struct RetroWaveThemeRow: View {
     let isSelected: Bool
     let action: () -> Void
     @ObservedObject private var themeManager = ThemeManager.shared
+    #if os(tvOS)
+    @Environment(\.isFocused) private var isFocused: Bool
+    #else
+    private var isFocused: Bool { false }
+    #endif
 
     var body: some View {
         Button(action: action) {
@@ -202,18 +277,25 @@ struct RetroWaveThemeRow: View {
             }
         }
         .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: Color.clear))
+        #if os(tvOS)
+        .tvOSDisableFocusEffect()
+        #endif
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
+                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(isFocused ? 0.8 : 0.6))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(
                             RetroTheme.retroGradient,
-                            lineWidth: 2
+                            lineWidth: isFocused ? 3 : 2
                         )
                 )
         )
-        .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 8)
+        .scaleEffect(isFocused ? 1.04 : 1.0)
+        .shadow(color: RetroTheme.retroPurple.opacity(isFocused ? 0.7 : 0.5), radius: isFocused ? 12 : 8)
+        #if os(tvOS)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        #endif
         .padding(.horizontal)
     }
 }
@@ -274,6 +356,11 @@ struct ThemeSelectionTitleView: View {
 struct ThemeSelectionBackButton: View {
     let action: () -> Void
     @ObservedObject private var themeManager = ThemeManager.shared
+    #if os(tvOS)
+    @Environment(\.isFocused) private var isFocused: Bool
+    #else
+    private var isFocused: Bool { false }
+    #endif
 
     var body: some View {
         Button(action: action) {
@@ -284,15 +371,20 @@ struct ThemeSelectionBackButton: View {
                 .padding(.horizontal, 30)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.7))
+                        .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(isFocused ? 0.9 : 0.7))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                                .strokeBorder(RetroTheme.retroGradient, lineWidth: isFocused ? 3 : 2)
                         )
                 )
-                .shadow(color: RetroTheme.retroPink.opacity(0.3), radius: 5)
+                .shadow(color: RetroTheme.retroPink.opacity(isFocused ? 0.6 : 0.3), radius: isFocused ? 10 : 5)
         }
         .buttonStyle(PlainButtonStyle())
+        #if os(tvOS)
+        .tvOSDisableFocusEffect()
+        .scaleEffect(isFocused ? 1.08 : 1.0)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        #endif
         .padding(.vertical, 20)
     }
 }
