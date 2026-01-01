@@ -12,10 +12,20 @@ extension PVEmulatorViewController {
 
     @MainActor
     public func captureScreenshot() -> UIImage? {
+        /// Safety check: ensure view controller is in a valid state
+        guard isViewLoaded,
+              view.window != nil,
+              parent != nil || presentingViewController != nil else {
+            return nil
+        }
+
         fpsLabel.alpha = 0.0
         defer { fpsLabel.alpha = 1.0 }
 
         guard let targetView = screenshotTargetView() else { return nil }
+
+        /// Safety check: ensure target view is in a valid state
+        guard targetView.window != nil else { return nil }
 
         targetView.layoutIfNeeded()
         view.layoutIfNeeded()
@@ -31,7 +41,7 @@ extension PVEmulatorViewController {
             size: targetView.bounds.size
         )
 
-        targetView.drawHierarchy(in: drawRect, afterScreenUpdates: true)
+        targetView.drawHierarchy(in: drawRect, afterScreenUpdates: false)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
 
@@ -39,10 +49,22 @@ extension PVEmulatorViewController {
     }
 
     private func screenshotTargetView() -> UIView? {
-        if let renderView = (gpuViewController as? PVMetalViewController)?.mtlView {
+        /// Safety check: ensure gpuViewController is in a valid parent-child relationship
+        guard gpuViewController.parent === self else {
+            return view
+        }
+
+        if let metalVC = gpuViewController as? PVMetalViewController,
+           let renderView = metalVC.mtlView,
+           renderView.window != nil {
             return renderView
         }
-        return gpuViewController.view ?? view
+
+        if let gpuView = gpuViewController.view, gpuView.window != nil {
+            return gpuView
+        }
+
+        return view
     }
 
     private func resolvedScreenshotRect(for targetView: UIView) -> CGRect {
