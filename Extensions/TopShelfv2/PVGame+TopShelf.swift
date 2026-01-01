@@ -117,10 +117,11 @@ extension PVGame {
             }
         }
 
-        // Set display actions with deep link to game
-        if let url = URL(string: "provenance://game/\(md5Hash)") {
+        // Create deep link URL in the format the app expects: provenance://open?md5={hash}
+        if let url = URL(string: "provenance://open?md5=\(md5Hash)") {
             item.playAction = TVTopShelfAction(url: url)
             item.displayAction = TVTopShelfAction(url: url)
+            DLOG("TopShelf: Set deep link for \(title): \(url.absoluteString)")
         }
 
         return item
