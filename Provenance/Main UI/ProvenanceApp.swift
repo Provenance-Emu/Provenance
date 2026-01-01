@@ -221,10 +221,11 @@ struct ProvenanceApp: App {
                         #endif
                     }
                 }
-                // Observe appOpenAction changes to handle shortcuts
+                // Observe appOpenAction changes to handle shortcuts and TopShelf launches
                 .onReceive(appState.$appOpenAction) { action in
-                    if case .openMD5(let md5) = action {
-                        ILOG("ProvenanceApp: Detected appOpenAction change to .openMD5(\(md5))")
+                    // Handle all action types that require the emulator scene
+                    if action.requiresEmulatorScene {
+                        ILOG("ProvenanceApp: Detected appOpenAction change requiring emulator scene: \(String(describing: action))")
                         if appState.bootupState == .completed {
                             openEmulatorSceneIfNeeded()
                         }
@@ -308,6 +309,29 @@ extension UIApplication {
 
 // MARK: - URL Handling
 extension ProvenanceApp {
+    /// Prepares the game for the emulator scene by fetching it from the database if needed
+    private func prepareGameForEmulatorScene() {
+        switch appState.appOpenAction {
+        case .openMD5(let md5):
+            // Fetch the game from the database
+            if let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) {
+                ILOG("ProvenanceApp: Found game '\(game.title)' for MD5: \(md5)")
+                appState.emulationUIState.currentGame = game
+            } else {
+                ELOG("ProvenanceApp: No game found for MD5: \(md5)")
+            }
+        case .openGame(let game):
+            ILOG("ProvenanceApp: Setting currentGame to '\(game.title)'")
+            appState.emulationUIState.currentGame = game
+        case .openFile(let url):
+            ILOG("ProvenanceApp: Opening file '\(url.lastPathComponent)' - emulator scene will handle import")
+        case .none:
+            break
+        }
+        // Reset the action to avoid processing it multiple times
+        appState.appOpenAction = .none
+    }
+
     // Helper method to open the emulator scene if needed based on app open action
     private func openEmulatorSceneIfNeeded() {
         // If a game is already set, open the emulator scene
@@ -320,6 +344,9 @@ extension ProvenanceApp {
         // Otherwise check if appOpenAction requires emulator scene
         if appState.appOpenAction.requiresEmulatorScene {
             ILOG("Opening emulator scene for action: \(appState.appOpenAction)")
+            // First prepare the game (fetch from database if needed)
+            prepareGameForEmulatorScene()
+            // Now open the emulator scene
             sceneCoordinator.openEmulatorScene()
         }
     }

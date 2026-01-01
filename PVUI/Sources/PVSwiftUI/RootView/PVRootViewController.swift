@@ -229,10 +229,11 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                 if AppState.shared.bootupState == .completed {
                     // Check if this action requires the emulator scene
                     if action.requiresEmulatorScene {
-                        ILOG("PVRootViewController: Action requires emulator scene, delegating to emulator scene")
+                        ILOG("PVRootViewController: Action requires emulator scene, preparing game and opening scene")
                         // Store game info in app state for the emulator scene to use
                         prepareGameForEmulatorScene(action)
-                        // The ProvenanceApp will handle opening the emulator scene
+                        // Open the emulator scene - SceneCoordinator will handle it
+                        SceneCoordinator.shared.openEmulatorScene()
                     } else {
                         ILOG("PVRootViewController: Processing app open action in main scene")
                         await handleAppOpenEvents(action)
