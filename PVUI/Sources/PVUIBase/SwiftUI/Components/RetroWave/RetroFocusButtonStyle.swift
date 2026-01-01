@@ -87,6 +87,12 @@ public struct RetroFocusButtonStyle: ButtonStyle {
     public let secondaryColor: Color
     /// Glow radius when focused (default: 10)
     public let glowRadius: CGFloat
+    /// Whether to show border on focus (default: true)
+    public let showBorder: Bool
+    /// Whether to show glow on focus (default: true)
+    public let showGlow: Bool
+    /// Whether to scale on focus (default: true)
+    public let showScale: Bool
 
     public init(
         focusScale: CGFloat = 1.08,
@@ -94,7 +100,10 @@ public struct RetroFocusButtonStyle: ButtonStyle {
         cornerRadius: CGFloat = 12,
         primaryColor: Color = .retroPink,
         secondaryColor: Color = .retroBlue,
-        glowRadius: CGFloat = 10
+        glowRadius: CGFloat = 10,
+        showBorder: Bool = true,
+        showGlow: Bool = true,
+        showScale: Bool = true
     ) {
         self.focusScale = focusScale
         self.focusBorderWidth = focusBorderWidth
@@ -102,6 +111,9 @@ public struct RetroFocusButtonStyle: ButtonStyle {
         self.primaryColor = primaryColor
         self.secondaryColor = secondaryColor
         self.glowRadius = glowRadius
+        self.showBorder = showBorder
+        self.showGlow = showGlow
+        self.showScale = showScale
     }
 
     public func makeBody(configuration: Configuration) -> some View {
@@ -112,7 +124,10 @@ public struct RetroFocusButtonStyle: ButtonStyle {
             cornerRadius: cornerRadius,
             primaryColor: primaryColor,
             secondaryColor: secondaryColor,
-            glowRadius: glowRadius
+            glowRadius: glowRadius,
+            showBorder: showBorder,
+            showGlow: showGlow,
+            showScale: showScale
         )
     }
 }
@@ -126,6 +141,9 @@ private struct RetroFocusButtonContent: View {
     let primaryColor: Color
     let secondaryColor: Color
     let glowRadius: CGFloat
+    let showBorder: Bool
+    let showGlow: Bool
+    let showScale: Bool
 
     @Environment(\.isFocused) private var isFocused: Bool
 
@@ -145,17 +163,21 @@ private struct RetroFocusButtonContent: View {
         configuration.label
             .opacity(configuration.isPressed ? 0.85 : 1.0)
             .contentShape(Rectangle())
-            .scaleEffect(configuration.isPressed ? 0.95 : (isFocused ? focusScale : 1.0))
+            .scaleEffect(configuration.isPressed ? 0.95 : (isFocused && showScale ? focusScale : 1.0))
             .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(
-                        isFocused ? focusBorderGradient : clearGradient,
-                        lineWidth: isFocused ? focusBorderWidth : 0
-                    )
+                Group {
+                    if showBorder {
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .strokeBorder(
+                                isFocused ? focusBorderGradient : clearGradient,
+                                lineWidth: isFocused ? focusBorderWidth : 0
+                            )
+                    }
+                }
             )
             .shadow(
-                color: isFocused ? primaryColor.opacity(0.6) : .clear,
-                radius: isFocused ? glowRadius : 0,
+                color: isFocused && showGlow ? primaryColor.opacity(0.6) : .clear,
+                radius: isFocused && showGlow ? glowRadius : 0,
                 x: 0,
                 y: 0
             )
@@ -171,6 +193,16 @@ private struct RetroFocusButtonContent: View {
 public extension View {
     /// Applies the standard RetroWave focus button styling for tvOS
     /// On iOS/macOS, applies plain button style
+    /// - Parameters:
+    ///   - focusScale: Scale factor when focused (default: 1.08)
+    ///   - focusBorderWidth: Border width when focused (default: 3)
+    ///   - cornerRadius: Corner radius for the border (default: 12)
+    ///   - primaryColor: Primary glow/border color (default: retroPink)
+    ///   - secondaryColor: Secondary gradient color (default: retroBlue)
+    ///   - glowRadius: Glow radius when focused (default: 10)
+    ///   - showBorder: Whether to show focus border (default: true). Set to false if button has its own border.
+    ///   - showGlow: Whether to show focus glow (default: true)
+    ///   - showScale: Whether to scale on focus (default: true)
     @ViewBuilder
     func retroFocusButtonStyle(
         focusScale: CGFloat = 1.08,
@@ -178,7 +210,10 @@ public extension View {
         cornerRadius: CGFloat = 12,
         primaryColor: Color = .retroPink,
         secondaryColor: Color = .retroBlue,
-        glowRadius: CGFloat = 10
+        glowRadius: CGFloat = 10,
+        showBorder: Bool = true,
+        showGlow: Bool = true,
+        showScale: Bool = true
     ) -> some View {
         #if os(tvOS)
         if #available(tvOS 16.0, *) {
@@ -188,7 +223,10 @@ public extension View {
                 cornerRadius: cornerRadius,
                 primaryColor: primaryColor,
                 secondaryColor: secondaryColor,
-                glowRadius: glowRadius
+                glowRadius: glowRadius,
+                showBorder: showBorder,
+                showGlow: showGlow,
+                showScale: showScale
             ))
         } else {
             self.buttonStyle(.plain)

@@ -1269,10 +1269,16 @@ struct RetroMenuView: View {
                 }
                 #endif
             }
-            .buttonStyle(PlainButtonStyle())
-#if os(tvOS)
-            .focusable(true)
-#endif
+            .retroFocusButtonStyle(
+                focusScale: 1.04,
+                cornerRadius: 12,
+                primaryColor: palette.defaultTintColor.swiftUIColor,
+                secondaryColor: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                glowRadius: 8,
+                showBorder: false,  // Row already has its own border
+                showGlow: true,
+                showScale: true
+            )
         }
         .frame(height: UIScreen.main.bounds.width < 350 ? 84 : 104)
     }
@@ -1398,7 +1404,16 @@ struct RetroMenuView: View {
                             )
                     )
                 }
-                .buttonStyle(PlainButtonStyle())
+                .retroFocusButtonStyle(
+                    focusScale: 1.04,
+                    cornerRadius: 12,
+                    primaryColor: palette.defaultTintColor.swiftUIColor,
+                    secondaryColor: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+                    glowRadius: 8,
+                    showBorder: false,  // Row already has its own border
+                    showGlow: true,
+                    showScale: true
+                )
             }
             .frame(height: UIScreen.main.bounds.width < 350 ? 84 : 104)
             .task {
@@ -1414,9 +1429,6 @@ struct RetroMenuView: View {
                     previewImage = await DeltaSkinManager.shared.previewImage(for: skin, device: device)
                 }
             }
-#if os(tvOS)
-            .focusable(true)
-#endif
         }
     }
 
@@ -1444,10 +1456,16 @@ struct RetroMenuView: View {
             filterOptionContent(label: label, isSelected: isSelected, textColor: textColor, isCompact: isCompact)
                 .background(filterOptionBackground(bgOpacity: bgOpacity, borderColor: borderColor, borderWidth: borderWidth))
         }
-        .buttonStyle(PlainButtonStyle())
-        #if os(tvOS)
-        .focusable(true)
-        #endif
+        .retroFocusButtonStyle(
+            focusScale: 1.04,
+            cornerRadius: 12,
+            primaryColor: palette.defaultTintColor.swiftUIColor,
+            secondaryColor: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+            glowRadius: 8,
+            showBorder: false,  // Row already has its own border
+            showGlow: true,
+            showScale: true
+        )
     }
 
     @ViewBuilder
@@ -1523,9 +1541,17 @@ struct RetroMenuView: View {
                 .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(textColor.opacity(0.5), lineWidth: 1))
                 .shadow(color: shadowColor, radius: 8, x: 0, y: 0)
         }
-        .buttonStyle(PlainButtonStyle())
+        .retroFocusButtonStyle(
+            focusScale: 1.05,
+            cornerRadius: 12,
+            primaryColor: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+            secondaryColor: palette.defaultTintColor.swiftUIColor,
+            glowRadius: 10,
+            showBorder: false,  // Button already has its own border
+            showGlow: true,
+            showScale: true
+        )
         #if os(tvOS)
-        .focusable(true)
         .padding(.horizontal, 30)
         .padding(.bottom, 50)
         #else
@@ -2403,7 +2429,14 @@ struct RetroMenuView: View {
             )
             .cornerRadius(8)
         }
-        .buttonStyle(PlainButtonStyle())
+        .retroFocusButtonStyle(
+            focusScale: 1.05,
+            focusBorderWidth: 2,
+            cornerRadius: 8,
+            primaryColor: palette.defaultTintColor.swiftUIColor,
+            secondaryColor: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor,
+            glowRadius: 6
+        )
     }
 
     // Helper function to create menu buttons
@@ -2442,7 +2475,16 @@ struct RetroMenuView: View {
             )
             .shadow(color: color.opacity(palette.dark ? 0.5 : 0.3), radius: 5, x: 0, y: 0)
         }
-        .buttonStyle(PlainButtonStyle())
+        .retroFocusButtonStyle(
+            focusScale: 1.06,
+            cornerRadius: 12,
+            primaryColor: color,
+            secondaryColor: palette.settingsHeaderText?.swiftUIColor ?? color,
+            glowRadius: 10,
+            showBorder: false,  // Button already has its own border
+            showGlow: true,
+            showScale: true
+        )
     }
 }
 
