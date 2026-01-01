@@ -2483,10 +2483,20 @@ extension PVEmulatorViewController {
         if !core.isOn {
             return
         }
-        Task {
-            if Defaults[.autoSave], core.supportsSaveStates {
+
+        /// Safety check: ensure view controller is in a valid state before attempting auto-save
+        guard isViewLoaded,
+              view.window != nil,
+              parent != nil || presentingViewController != nil else {
+            DLOG("appWillResignActive: Skipping auto-save - view controller not in valid state")
+            return
+        }
+
+        Task { [weak self] in
+            guard let self = self else { return }
+            if Defaults[.autoSave], self.core.supportsSaveStates {
                 do {
-                    let success = try await autoSaveState()
+                    let success = try await self.autoSaveState()
                     if !success {
                         ELOG("Auto-save failed for unknown reasons")
                     }
