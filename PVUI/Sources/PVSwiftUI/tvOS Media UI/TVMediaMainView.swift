@@ -2119,6 +2119,46 @@ struct TVMediaSearchView: View {
     @State private var text: String = ""
     @State private var results: [PVGame] = []
     @State private var isSearching: Bool = false
+    @State private var showRecentSearches: Bool = false
+    @State private var didRestoreLastSearch: Bool = false
+
+    @AppStorage("TVMediaSearch.lastSearch") private var lastSearch: String = ""
+    @AppStorage("TVMediaSearch.recentSearches") private var recentSearchesData: Data = Data()
+
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var isSearchFieldFocused: Bool
+    @FocusState private var focusedRecentIndex: Int?
+
+    private let maxRecentSearches = 8
+
+    private var recentSearches: [String] {
+        (try? JSONDecoder().decode([String].self, from: recentSearchesData)) ?? []
+    }
+
+    private func saveRecentSearches(_ searches: [String]) {
+        recentSearchesData = (try? JSONEncoder().encode(searches)) ?? Data()
+    }
+
+    private func addToRecentSearches(_ query: String) {
+        guard !query.isEmpty else { return }
+        var searches = recentSearches
+        searches.removeAll { $0.lowercased() == query.lowercased() }
+        searches.insert(query, at: 0)
+        if searches.count > maxRecentSearches {
+            searches = Array(searches.prefix(maxRecentSearches))
+        }
+        saveRecentSearches(searches)
+    }
+
+    private func removeFromRecentSearches(_ query: String) {
+        var searches = recentSearches
+        searches.removeAll { $0 == query }
+        saveRecentSearches(searches)
+    }
+
+    private func clearRecentSearches() {
+        saveRecentSearches([])
+    }
 
     var body: some View {
         ScrollView {
@@ -2127,86 +2167,458 @@ struct TVMediaSearchView: View {
 
                 searchField
 
+                if !recentSearches.isEmpty && (text.isEmpty || showRecentSearches) {
+                    recentSearchesSection
+                }
+
                 if isSearching {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, minHeight: 200)
-                } else if text.isEmpty {
+                    searchingIndicator
+                } else if text.isEmpty && recentSearches.isEmpty {
                     searchPlaceholder
-                } else if results.isEmpty {
+                } else if !text.isEmpty && results.isEmpty {
                     noResultsView
-                } else {
+                } else if !results.isEmpty {
                     TVMediaSearchResultsGrid(results: results, gameActions: gameActions)
                 }
             }
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
         }
+        .onMoveCommand { direction in
+            if direction == .left {
+                focusCoordinator.openSidebar()
+            }
+        }
+        .onAppear {
+            if !didRestoreLastSearch && !lastSearch.isEmpty {
+                didRestoreLastSearch = true
+                text = lastSearch
+                Task { await performSearch() }
+            }
+        }
     }
 
     private var searchField: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 16) {
+            // Animated search icon with glow
+            ZStack {
+                if isSearchFieldFocused || !text.isEmpty {
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [Color.retroPink.opacity(0.3), .clear],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 25
+                            )
+                        )
+                        .frame(width: 50, height: 50)
+                        .blur(radius: 4)
+                }
+
             Image(systemName: "magnifyingglass")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(text.isEmpty ? .white.opacity(0.5) : .white)
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(
+                        isSearchFieldFocused || !text.isEmpty ?
+                            AnyShapeStyle(LinearGradient(
+                                colors: [Color.retroPink, Color.retroBlue],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )) :
+                            AnyShapeStyle(Color.white.opacity(0.5))
+                    )
+                    .shadow(color: isSearchFieldFocused ? Color.retroPink.opacity(0.6) : .clear, radius: 8)
+            }
+            .frame(width: 40)
 
             TextField("Search games…", text: $text)
                 .textInputAutocapitalization(.never)
                 .disableAutocorrection(true)
                 .foregroundStyle(.white)
-                .font(.title3)
-                .onChange(of: text) { _ in
+                .font(.system(size: 24, weight: .medium))
+                .focused($isSearchFieldFocused)
+                .onChange(of: text) { newValue in
                     Task { await performSearch() }
                 }
+                .onSubmit {
+                    if !text.isEmpty {
+                        addToRecentSearches(text)
+                        lastSearch = text
+                    }
+                }
 
+            // Recent searches toggle button
+            if !recentSearches.isEmpty {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showRecentSearches.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .font(.system(size: 16, weight: .medium))
+                        Text("RECENT")
+                            .font(.system(size: 12, weight: .bold))
+                            .tracking(0.8)
+                    }
+                    .foregroundStyle(showRecentSearches ? Color.retroBlue : .white.opacity(0.6))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(showRecentSearches ? Color.retroBlue.opacity(0.15) : Color.white.opacity(0.05))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .strokeBorder(
+                                showRecentSearches ? Color.retroBlue.opacity(0.6) : Color.white.opacity(0.1),
+                                lineWidth: 1.5
+                            )
+                    )
+                }
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+            }
+
+            // Clear button
             if !text.isEmpty {
                 Button {
                     text = ""
                     results = []
+                    lastSearch = ""
                 } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(.white.opacity(0.5))
+                    ZStack {
+                        Circle()
+                            .fill(Color.retroPink.opacity(0.15))
+                            .frame(width: 36, height: 36)
+
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(Color.retroPink)
+                    }
                 }
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
             }
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 20)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.white.opacity(0.06))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
+        .padding(.vertical, 20)
+        .padding(.horizontal, 24)
+        .background(searchFieldBackground)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isSearchFieldFocused)
+    }
+
+    private var searchFieldBackground: some View {
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(isSearchFieldFocused ? 0.08 : 0.04),
+                        Color.white.opacity(isSearchFieldFocused ? 0.04 : 0.02)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-        )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .strokeBorder(
+                        isSearchFieldFocused ?
+                            LinearGradient(
+                                colors: [Color.retroPink.opacity(0.8), Color.retroBlue.opacity(0.6)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.1), Color.white.opacity(0.05)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                        lineWidth: isSearchFieldFocused ? 2 : 1
+                    )
+            )
+            .shadow(color: isSearchFieldFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 20, x: 0, y: 5)
+    }
+
+    private var recentSearchesSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Section header
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(Color.retroBlue.opacity(0.5))
+                        .frame(width: 3, height: 20)
+                        .blur(radius: 3)
+
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.retroBlue.opacity(0.9), Color.retroPink.opacity(0.6)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(width: 2, height: 18)
+                }
+
+                Text("RECENT SEARCHES")
+                    .font(.system(size: 13, weight: .semibold, design: .default))
+                    .tracking(1.2)
+                    .foregroundStyle(.white.opacity(0.7))
+
+                Spacer()
+
+                // Clear all button
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        clearRecentSearches()
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 11, weight: .medium))
+                        Text("CLEAR ALL")
+                            .font(.system(size: 10, weight: .bold))
+                            .tracking(0.8)
+                    }
+                    .foregroundStyle(Color.retroPink.opacity(0.7))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+        .background(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+            }
+
+            // Recent search chips
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 12) {
+                    ForEach(Array(recentSearches.enumerated()), id: \.offset) { index, query in
+                        recentSearchChip(query: query, index: index)
+                    }
+                }
+                .padding(.vertical, 8)
+            }
+            .focusSection()
+        }
+        .transition(.opacity.combined(with: .move(edge: .top)))
+    }
+
+    @ViewBuilder
+    private func recentSearchChip(query: String, index: Int) -> some View {
+        let isFocused = focusedRecentIndex == index
+
+        Button {
+            text = query
+            lastSearch = query
+            Task { await performSearch() }
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "clock")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(isFocused ? Color.retroBlue : .white.opacity(0.5))
+
+                Text(query)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(isFocused ? .white : .white.opacity(0.85))
+                    .lineLimit(1)
+
+                // Delete button (visible on focus)
+                if isFocused {
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            removeFromRecentSearches(query)
+                        }
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(Color.retroPink)
+                            .padding(4)
+                            .background(Circle().fill(Color.retroPink.opacity(0.2)))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        isFocused ?
+                            LinearGradient(
+                                colors: [Color.retroBlue.opacity(0.15), Color.retroPink.opacity(0.08)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.04), Color.white.opacity(0.02)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                    )
+            )
+                .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        isFocused ?
+                            LinearGradient(
+                                colors: [Color.retroBlue.opacity(0.8), Color.retroPink.opacity(0.5)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ) :
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.1), Color.white.opacity(0.05)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                        lineWidth: isFocused ? 2 : 1
+                    )
+            )
+            .shadow(color: isFocused ? Color.retroBlue.opacity(0.4) : .clear, radius: 12, x: 0, y: 4)
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
+        .focused($focusedRecentIndex, equals: index)
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+    }
+
+    private var searchingIndicator: some View {
+        VStack(spacing: 20) {
+            ZStack {
+                // Outer glow ring
+                Circle()
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.3), Color.retroBlue.opacity(0.2)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 3
+                    )
+                    .frame(width: 60, height: 60)
+                    .blur(radius: 4)
+
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: Color.retroPink))
+                    .scaleEffect(1.5)
+            }
+
+            Text("SEARCHING...")
+                .font(.system(size: 14, weight: .bold, design: .default))
+                .tracking(2)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Color.retroPink, Color.retroBlue],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .shadow(color: Color.retroPink.opacity(0.5), radius: 6)
+        }
+        .frame(maxWidth: .infinity, minHeight: 200)
     }
 
     private var searchPlaceholder: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 40, weight: .light))
-                .foregroundStyle(.white.opacity(0.3))
+        VStack(spacing: 20) {
+            ZStack {
+                // Animated glow
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [Color.retroPink.opacity(0.15), .clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 60
+                        )
+                    )
+                    .frame(width: 120, height: 120)
 
-            Text("Type to search your library")
-                .font(.callout)
-                .foregroundStyle(.white.opacity(0.6))
+            Image(systemName: "magnifyingglass")
+                    .font(.system(size: 48, weight: .light))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.white.opacity(0.5), Color.retroBlue.opacity(0.3)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .shadow(color: Color.retroPink.opacity(0.3), radius: 10)
+            }
+
+            VStack(spacing: 8) {
+                Text("SEARCH YOUR LIBRARY")
+                    .font(.system(size: 18, weight: .bold, design: .default))
+                    .tracking(1.5)
+                    .foregroundStyle(.white)
+                    .shadow(color: Color.retroPink.opacity(0.3), radius: 6)
+
+                Text("Type to find games by title")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.5))
+            }
+
+            // Navigation hint
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.circle")
+                    .font(.caption)
+                Text("Swipe left or press Menu for navigation")
+                    .font(.caption)
+            }
+            .foregroundStyle(.white.opacity(0.35))
+            .padding(.top, 16)
         }
-        .frame(maxWidth: .infinity, minHeight: 200)
+        .frame(maxWidth: .infinity, minHeight: 280)
     }
 
     private var noResultsView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "questionmark.circle")
-                .font(.system(size: 40, weight: .light))
-                .foregroundStyle(.white.opacity(0.3))
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [Color.retroPink.opacity(0.1), .clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 50
+                        )
+                    )
+                    .frame(width: 100, height: 100)
 
-            Text("No results for \"\(text)\"")
-                .font(.callout)
+            Image(systemName: "questionmark.circle")
+                    .font(.system(size: 44, weight: .light))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.6), Color.retroBlue.opacity(0.4)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .shadow(color: Color.retroPink.opacity(0.3), radius: 8)
+            }
+
+            VStack(spacing: 8) {
+                Text("NO RESULTS")
+                    .font(.system(size: 18, weight: .bold, design: .default))
+                    .tracking(1.5)
+                    .foregroundStyle(.white)
+
+                Text("No games found for \"\(text)\"")
+                    .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(.white.opacity(0.6))
         }
-        .frame(maxWidth: .infinity, minHeight: 200)
+
+            // Suggestion to try different search
+            if !recentSearches.isEmpty {
+                Text("Try one of your recent searches above")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(Color.retroBlue.opacity(0.7))
+                    .padding(.top, 8)
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 250)
     }
 
     private func performSearch() async {
@@ -2236,6 +2648,11 @@ struct TVMediaSearchView: View {
         await MainActor.run {
             results = games
             isSearching = false
+            // Save as last search when results are found or search is completed
+            if !query.isEmpty {
+                lastSearch = query
+                addToRecentSearches(query)
+            }
         }
     }
 }
