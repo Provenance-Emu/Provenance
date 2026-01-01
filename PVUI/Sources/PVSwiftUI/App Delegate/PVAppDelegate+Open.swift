@@ -67,6 +67,11 @@ public extension PVAppDelegate {
         }
         #endif
 #if os(tvOS)
+        // On tvOS, check if this is an app URL scheme first (e.g., from TopShelf)
+        if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
+            return handle(appURL: url, options: options)
+        }
+        // Otherwise treat as file import
         importFile(atURL: url)
         return true
 #else
