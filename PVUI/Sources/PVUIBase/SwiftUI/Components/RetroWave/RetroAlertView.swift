@@ -406,46 +406,38 @@ public struct RetroAlertButton: View {
 
     public var body: some View {
         Button(action: action) {
-            buttonContent
+            VStack(spacing: 2) {
+                Text(title)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(textColor)
+                if let subtitle = subtitle {
+                    Text(subtitle)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(textColor.opacity(0.7))
+                }
+            }
+            .padding(.vertical, subtitle != nil ? 10 : 12)
+            .padding(.horizontal, 24)
+            .frame(maxWidth: .infinity)
+            .background(backgroundGradient)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(focusedBorderGradient, lineWidth: focusedBorderWidth)
+            )
+            #if os(tvOS)
+            .scaleEffect(isFocused ? 1.08 : 1.0)
+            .shadow(color: isFocused ? focusedGlowColor.opacity(0.9) : shadowColor.opacity(0.4), radius: isFocused ? 15 : 5)
+            #else
+            .shadow(color: shadowColor.opacity(0.4), radius: 5)
+            #endif
         }
         #if os(tvOS)
-        .buttonStyle(.plain)
-        .tvOSDisableFocusEffect()
         .focused($isFocused)
-        .scaleEffect(isFocused ? 1.08 : 1.0)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(focusedBorderGradient, lineWidth: focusedBorderWidth)
-        )
-        .shadow(color: isFocused ? focusedGlowColor.opacity(0.9) : shadowColor.opacity(0.4), radius: isFocused ? 15 : 5, x: 0, y: 0)
+//        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
         .animation(.easeInOut(duration: 0.15), value: isFocused)
-        #else
-        .buttonStyle(.plain)
-        #endif
-    }
-
-    private var buttonContent: some View {
-        VStack(spacing: 2) {
-            Text(title)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(textColor)
-            if let subtitle = subtitle {
-                Text(subtitle)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(textColor.opacity(0.7))
-            }
-        }
-        .padding(.vertical, subtitle != nil ? 10 : 12)
-        .padding(.horizontal, 24)
-        .frame(maxWidth: .infinity)
-        .background(backgroundGradient)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(borderGradient, lineWidth: 1)
-        )
-        #if !os(tvOS)
-        .shadow(color: shadowColor.opacity(0.4), radius: 5)
         #endif
     }
 
@@ -458,12 +450,12 @@ public struct RetroAlertButton: View {
                 endPoint: .bottomTrailing
             )
         } else {
-            return LinearGradient(colors: [.clear], startPoint: .leading, endPoint: .trailing)
+            return borderGradient
         }
     }
 
     private var focusedBorderWidth: CGFloat {
-        isFocused ? 3 : 0
+        isFocused ? 3 : 1
     }
 
     private var focusedGlowColor: Color {
@@ -474,6 +466,9 @@ public struct RetroAlertButton: View {
         case .cancel: return .retroBlue
         }
     }
+    #else
+    private var focusedBorderGradient: LinearGradient { borderGradient }
+    private var focusedBorderWidth: CGFloat { 1 }
     #endif
 
     private var textColor: Color {
@@ -801,7 +796,13 @@ public struct RetroAlertStateView: View {
     @ObservedObject var alertState: RetroAlertState
 
     #if os(tvOS)
-    @Namespace private var alertFocusNamespace
+    @FocusState private var focusedButton: AlertButton?
+
+    private enum AlertButton: Hashable {
+        case primary
+        case secondary
+        case destructive
+    }
     #endif
 
     public init(alertState: RetroAlertState) {
@@ -826,13 +827,13 @@ public struct RetroAlertStateView: View {
                     alertType: alertState.alertType
                 ) {
                     VStack(spacing: 12) {
-                        // Primary button - gets default focus
+                        // Primary button
                         RetroAlertButton(title: alertState.primaryButtonTitle, style: .primary) {
                             alertState.onPrimaryAction?()
                             alertState.hide()
                         }
                         #if os(tvOS)
-                        .prefersDefaultFocus(true, in: alertFocusNamespace)
+                        .focused($focusedButton, equals: .primary)
                         #endif
 
                         // Secondary button if provided
@@ -841,6 +842,9 @@ public struct RetroAlertStateView: View {
                                 alertState.onSecondaryAction?()
                                 alertState.hide()
                             }
+                            #if os(tvOS)
+                            .focused($focusedButton, equals: .secondary)
+                            #endif
                         }
 
                         // Destructive button if provided
@@ -849,12 +853,25 @@ public struct RetroAlertStateView: View {
                                 alertState.onDestructiveAction?()
                                 alertState.hide()
                             }
+                            #if os(tvOS)
+                            .focused($focusedButton, equals: .destructive)
+                            #endif
                         }
                     }
                 }
             }
             #if os(tvOS)
             .focusScope(alertFocusNamespace)
+            .onAppear {
+                // Force focus to primary button when alert appears
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    focusedButton = .primary
+                }
+            }
+            .onMoveCommand { _ in
+                // Intercept all move commands to keep focus in alert
+                // Focus will still move between buttons within the alert
+            }
             .onExitCommand {
                 // Handle Menu/Back button press on tvOS - dismiss alert
                 if let secondaryAction = alertState.onSecondaryAction {
@@ -870,6 +887,10 @@ public struct RetroAlertStateView: View {
             .zIndex(2000)
         }
     }
+
+    #if os(tvOS)
+    @Namespace private var alertFocusNamespace
+    #endif
 }
 
 // MARK: - View Modifier for Alert State
@@ -924,7 +945,7 @@ public struct RetroSelectionAlertView: View {
     @State private var glowOpacity: Double = 0.7
 
     #if os(tvOS)
-    @Namespace private var selectionNamespace
+    @FocusState private var focusedItemId: String?
     #endif
 
     public init(
@@ -974,7 +995,7 @@ public struct RetroSelectionAlertView: View {
                 ScrollView {
                     if useGridLayout {
                         LazyVGrid(columns: gridColumns, spacing: 12) {
-                            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                            ForEach(items) { item in
                                 RetroAlertButton(
                                     title: item.title,
                                     subtitle: item.subtitle,
@@ -984,14 +1005,14 @@ public struct RetroSelectionAlertView: View {
                                     onSelect(item.id)
                                 }
                                 #if os(tvOS)
-                                .prefersDefaultFocus(index == 0, in: selectionNamespace)
+                                .focused($focusedItemId, equals: item.id)
                                 #endif
                             }
                         }
                         .padding(.horizontal, 20)
                     } else {
                         VStack(spacing: 12) {
-                            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                            ForEach(items) { item in
                                 RetroAlertButton(
                                     title: item.title,
                                     subtitle: item.subtitle,
@@ -1001,7 +1022,7 @@ public struct RetroSelectionAlertView: View {
                                     onSelect(item.id)
                                 }
                                 #if os(tvOS)
-                                .prefersDefaultFocus(index == 0, in: selectionNamespace)
+                                .focused($focusedItemId, equals: item.id)
                                 #endif
                             }
                         }
@@ -1017,9 +1038,6 @@ public struct RetroSelectionAlertView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)
             }
-            #if os(tvOS)
-            .focusScope(selectionNamespace)
-            #endif
             .frame(minWidth: 300, maxWidth: useGridLayout ? 500 : 400)
             .background(
                 ZStack {
@@ -1054,6 +1072,11 @@ public struct RetroSelectionAlertView: View {
                 withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     glowOpacity = 0.3
                 }
+                #if os(tvOS)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    focusedItemId = items.first?.id
+                }
+                #endif
             }
             #if os(tvOS)
             .onExitCommand {
