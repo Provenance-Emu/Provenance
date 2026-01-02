@@ -66,6 +66,7 @@ __weak PVPicoDriveBridge *_current;
     NSTimeInterval frameInterval;
     NSMutableDictionary<NSString *, NSString *> *_variableCache;
     atomic_bool _shouldRun;
+    atomic_bool _isGameLoaded;
 }
 
 @end
@@ -377,14 +378,15 @@ static void writeSaveFile(const char* path, int type)
 
 - (instancetype)init {
     if((self = [super init])) {
-        self->videoBuffer = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
         self->videoBufferA = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
         self->videoBufferB = (uint16_t *)malloc(320 * 240 * sizeof(uint16_t));
+        self->videoBuffer = self->videoBufferA;
 
 //        _pad = (int16_t *)malloc(24 * sizeof(int16_t));
         memset((void*)_pad, 0, sizeof(int16_t) * 24);
         _variableCache = [NSMutableDictionary dictionary];
         atomic_init(&_shouldRun, false);
+        atomic_init(&_isGameLoaded, false);
     }
 
 	_current = self;
@@ -472,6 +474,7 @@ static void writeSaveFile(const char* path, int type)
 
         retro_run();
         atomic_store(&_shouldRun, true);
+        atomic_store(&_isGameLoaded, true);
 
         return YES;
     }
@@ -536,6 +539,8 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)stopEmulation {
     atomic_store(&_shouldRun, false);
+    [super stopEmulation];
+
     NSString *path = romName;
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
 
@@ -549,15 +554,24 @@ static void writeSaveFile(const char* path, int type)
         writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
     }
 
-    retro_unload_game();
+    if (atomic_load(&_isGameLoaded)) {
+        retro_unload_game();
+        atomic_store(&_isGameLoaded, false);
+    }
     retro_deinit();
     _current = nil;
-    [super stopEmulation];
 }
 
 - (void)dealloc {
     atomic_store(&_shouldRun, false);
-    free(self->videoBuffer);
+    if (atomic_load(&_isGameLoaded)) {
+        retro_unload_game();
+        atomic_store(&_isGameLoaded, false);
+    }
+    retro_deinit();
+    _current = nil;
+    free(self->videoBufferA);
+    free(self->videoBufferB);
 }
 
 #pragma mark Video
