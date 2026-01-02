@@ -60,6 +60,8 @@ public class PVGPUViewController: BaseViewController {
     private let maxFrameTimestamps = 60
     /// Thread-safe access to frame timestamps
     private let frameTimestampsLock = NSLock()
+    private var didPostFirstFrameNotification: Bool = false
+    private let firstFrameLock = NSLock()
     #endif
 
     #if os(iOS)
@@ -80,6 +82,40 @@ public class PVGPUViewController: BaseViewController {
     }
 
     /// Track frame presentation for FPS calculation on iOS
+    #endif
+
+    /// Track frame presentation for FPS calculation and first-frame notification.
+    /// Call this from GL/Metal draw paths after a frame is actually scheduled for presentation.
+    @objc public func markFramePresented() {
+        trackFramePresentation()
+
+        firstFrameLock.lock()
+        let shouldPost = !didPostFirstFrameNotification
+        if shouldPost {
+            didPostFirstFrameNotification = true
+        }
+        firstFrameLock.unlock()
+
+        guard shouldPost else { return }
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .pvFirstFramePresented, object: self)
+        }
+    }
+
+    /// Reset first-frame tracking when starting a new emulation session.
+    @objc public func resetFirstFrameTracking() {
+        frameTimestampsLock.lock()
+        frameTimestamps.removeAll()
+        lastFrameTimestamp = 0
+        frameTimestampsLock.unlock()
+
+        firstFrameLock.lock()
+        didPostFirstFrameNotification = false
+        firstFrameLock.unlock()
+    }
+
+    #if os(iOS) || os(tvOS)
+    /// Track frame presentation for FPS calculation on iOS/tvOS
     @objc func trackFramePresentation() {
         let currentTime = CACurrentMediaTime()
         frameTimestampsLock.lock()
@@ -99,7 +135,7 @@ public class PVGPUViewController: BaseViewController {
 
     /// Calculate rendering FPS from tracked frame timestamps
     /// Note: For GLKViewController, this extends the base property
-    #if os(iOS)
+    #if os(iOS) || os(tvOS)
     #if !USE_METAL
     /// Override GLKViewController's timeSinceLastDraw property
     public override var timeSinceLastDraw: TimeInterval {
@@ -161,4 +197,9 @@ public class PVGPUViewController: BaseViewController {
     }
     #endif
     #endif
+}
+
+public extension Notification.Name {
+    /// Posted once per emulation session when the GPU view schedules its first presented frame.
+    static let pvFirstFramePresented = Notification.Name("pvFirstFramePresented")
 }

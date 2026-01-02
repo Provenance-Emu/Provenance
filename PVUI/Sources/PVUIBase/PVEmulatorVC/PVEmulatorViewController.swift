@@ -127,7 +127,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     private(set) lazy var gpuViewController: PVGPUViewController = {
         let useMetal = (use_metal && !core.alwaysUseGL) || core.alwaysUseMetal
-        return useMetal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
+        let vc: PVGPUViewController = useMetal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
+        vc.resetFirstFrameTracking()
+        return vc
     }()
 
     public private(set) lazy var controllerViewController: (any ControllerVC)? = {
@@ -152,20 +154,49 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }()
 
     var fpsTimer: Timer?
+    /// Theme-change observer token for the performance HUD.
+    /// Must not be `private` because the HUD is configured from a separate extension file.
+    var themeDidChangeObserver: NSObjectProtocol?
+    /// Container for the performance HUD.
+    lazy var fpsHUDView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = false
+        view.layer.cornerRadius = 8
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            view.layer.cornerCurve = .continuous
+        }
+        view.layer.masksToBounds = true
+        return view
+    }()
+    /// Applies the current theme to the performance HUD.
+    /// Not `private` because the HUD is configured from a separate extension file.
+    func applyFPSHUDTheme() {
+        let palette = ThemeManager.shared.currentPalette
+        let bg = palette.settingsCellBackground ?? palette.gameLibraryBackground
+        let fg = palette.settingsCellText ?? palette.gameLibraryText
+
+        fpsHUDView.backgroundColor = bg.withAlphaComponent(palette.dark ? 0.55 : 0.70)
+        fpsHUDView.layer.borderWidth = 1.0 / UIScreen.main.scale
+        fpsHUDView.layer.borderColor = palette.defaultTintColor.withAlphaComponent(palette.dark ? 0.25 : 0.15).cgColor
+
+        fpsLabel.textColor = fg
+        fpsLabel.shadowColor = UIColor.black.withAlphaComponent(palette.dark ? 0.45 : 0.25)
+        fpsLabel.shadowOffset = .init(width: 0, height: 1)
+    }
     lazy var fpsLabel: UILabel = {
         let fpsLabel = UILabel()
-        fpsLabel.textColor = .yellow.withAlphaComponent(0.8)
-        fpsLabel.shadowColor = .white.withAlphaComponent(0.75)
-        fpsLabel.shadowOffset = .init(width: 0, height: 1)
         fpsLabel.translatesAutoresizingMaskIntoConstraints = false
-        fpsLabel.backgroundColor = .black.withAlphaComponent(0.25)
+        fpsLabel.backgroundColor = .clear
         fpsLabel.textAlignment = .right
+        fpsLabel.lineBreakMode = .byClipping
         fpsLabel.isOpaque = false
         fpsLabel.numberOfLines = 5
+        fpsLabel.adjustsFontSizeToFitWidth = false
         #if os(tvOS)
-        fpsLabel.font = .monospacedSystemFont(ofSize: 26, weight: .light)
+        fpsLabel.font = .monospacedSystemFont(ofSize: 22, weight: .regular)
         #else
-        fpsLabel.font = .monospacedSystemFont(ofSize: 13, weight: .light)
+        fpsLabel.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
         #endif
         return fpsLabel
     }()

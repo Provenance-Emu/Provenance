@@ -2451,10 +2451,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Increment frame count
         frameCount += 1
 
-        // Track frame presentation for FPS calculation on iOS
-        #if os(iOS)
-        trackFramePresentation()
-        #endif
+        // Track presentation + fire first-frame notification once
+        markFramePresented()
     }
 
     // Helper method to update texture from core's buffer

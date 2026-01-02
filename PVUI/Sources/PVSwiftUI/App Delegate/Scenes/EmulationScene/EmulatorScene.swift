@@ -152,26 +152,10 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         ILOG("EmulatorContainerView: AppState.shared instance: \(AppState.shared)")
         ILOG("EmulatorContainerView: Current EmulationUIState: \(appState.emulationUIState)")
 
-        // Check if we have a game to launch
+        // Do not launch here: SwiftUI may not have attached this VC to a window yet.
+        // Queue the launch on the VC and let it start in `viewDidAppear`.
         if let game = appState.emulationUIState.currentGame {
-            ILOG("EmulatorContainerView: Found game to launch: \(game.title) (ID: \(game.id))")
-            ILOG("EmulatorContainerView: Game details - System: \(game.system?.name ?? "nil"), userPreferredCoreID: \(game.userPreferredCoreID ?? "nil")")
-
-            let saveState = appState.emulationUIState.currentSaveState
-            let core = appState.emulationUIState.currentCore
-            if let saveState = saveState {
-                ILOG("EmulatorContainerView: Found save state to load: \(saveState.id)")
-            }
-            if let core = core {
-                ILOG("EmulatorContainerView: Found core to use: \(core.projectName)")
-            }
-
-            Task {
-                await handleGameLaunch(game: game, saveState: saveState, core: core, containerVC: containerVC, coordinator: context.coordinator)
-            }
-        } else {
-            ELOG("EmulatorContainerView: No game found to launch in EmulationUIState")
-            ELOG("EmulatorContainerView: This is likely because the EmulationUIState.currentGame property is not being properly set or observed")
+            containerVC.enqueueLaunch(game: game, saveState: appState.emulationUIState.currentSaveState, core: appState.emulationUIState.currentCore)
         }
 
         return containerVC
@@ -286,6 +270,9 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         // Update the view controller if needed
         if let containerVC = uiViewController as? EmulatorContainerViewController {
             context.coordinator.containerViewController = containerVC
+            if let game = appState.emulationUIState.currentGame {
+                containerVC.enqueueLaunch(game: game, saveState: appState.emulationUIState.currentSaveState, core: appState.emulationUIState.currentCore)
+            }
         }
     }
 
@@ -425,10 +412,48 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
     // Delegate for handling quit completion
     var quitCompletionHandler: (() -> Void)?
     private var emulatorViewController: PVEmulatorViewController?
+    private var pendingLaunch: (game: PVGame, saveState: PVSaveState?, core: PVCore?)?
+    private var lastLaunchedKey: String?
+    private var hasAppeared: Bool = false
+    /// We intentionally do NOT show a first-frame HUD here.
+    /// It conflicts with core/save selector overlays and can appear “on top” of them.
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+    }
+
+    deinit {
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        hasAppeared = true
+        processPendingLaunchIfPossible()
+    }
+
+    func enqueueLaunch(game: PVGame, saveState: PVSaveState?, core: PVCore?) {
+        pendingLaunch = (game: game, saveState: saveState, core: core)
+        processPendingLaunchIfPossible()
+    }
+
+    private func processPendingLaunchIfPossible() {
+        guard hasAppeared else { return }
+        guard let pending = pendingLaunch else { return }
+
+        let key = [
+            pending.game.md5Hash,
+            pending.saveState?.id ?? "no-save",
+            pending.core?.identifier ?? "no-core"
+        ].joined(separator: "|")
+
+        guard lastLaunchedKey != key else { return }
+        lastLaunchedKey = key
+
+        pendingLaunch = nil
+        Task { @MainActor in
+            await load(pending.game, sender: nil, core: pending.core, saveState: pending.saveState)
+        }
     }
 
     // Implementation of GameLaunchingViewController protocol

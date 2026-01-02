@@ -248,9 +248,9 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     @objc func render() {
         emulatorCore?.executeFrame()
 
-        // Track frame presentation for FPS calculation on iOS
-        #if os(iOS)
-        trackFramePresentation()
+        // Track presentation + fire first-frame notification once (iOS/tvOS)
+        #if os(iOS) || os(tvOS)
+        markFramePresented()
         #endif
     }
 #endif
@@ -1006,6 +1006,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
         safeCommandBuffer.present(safeCurrentDrawable)
         safeCommandBuffer.commit()
+        markFramePresented()
     }
 
 #else
@@ -1186,6 +1187,8 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 objc_sync_exit(emulatorCore)
             }
         }
+
+        markFramePresented()
     }
 #endif
 

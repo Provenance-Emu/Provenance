@@ -11,9 +11,30 @@
 extension PVEmulatorViewController {
 
     internal func initFPSLabel() {
-        gpuViewController.view.addSubview(fpsLabel)
-        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .topMargin, relatedBy: .equal, toItem: gpuViewController.view, attribute: .top, multiplier: 1.0, constant: -10))
-        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: gpuViewController.view, attribute: .right, multiplier: 1.0, constant: -10))
+        gpuViewController.view.addSubview(fpsHUDView)
+        fpsHUDView.addSubview(fpsLabel)
+
+        NSLayoutConstraint.activate([
+            fpsHUDView.topAnchor.constraint(equalTo: gpuViewController.view.topAnchor, constant: 10),
+            fpsHUDView.trailingAnchor.constraint(equalTo: gpuViewController.view.trailingAnchor, constant: -10),
+            fpsHUDView.widthAnchor.constraint(equalToConstant: {
+                #if os(tvOS)
+                return 340
+                #else
+                return 210
+                #endif
+            }()),
+
+            fpsLabel.topAnchor.constraint(equalTo: fpsHUDView.topAnchor, constant: 6),
+            fpsLabel.bottomAnchor.constraint(equalTo: fpsHUDView.bottomAnchor, constant: -6),
+            fpsLabel.leadingAnchor.constraint(equalTo: fpsHUDView.leadingAnchor, constant: 8),
+            fpsLabel.trailingAnchor.constraint(equalTo: fpsHUDView.trailingAnchor, constant: -8)
+        ])
+
+        applyFPSHUDTheme()
+        themeDidChangeObserver = NotificationCenter.default.addObserver(forName: .themeDidChange, object: nil, queue: .main) { [weak self] _ in
+            self?.applyFPSHUDTheme()
+        }
 
         fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true, block: { [weak self] (_: Timer) -> Void in
             guard let `self` = self else { return }
@@ -22,12 +43,27 @@ extension PVEmulatorViewController {
             /// This is especially important for 3D accelerated cores like RetroArch
             let emulationFPS = self.core.emulationFPS
 
-            /// Calculate core speed based on emulation FPS vs target frame interval
-            let targetFPS = 1.0 / self.core.frameInterval
-            let coreSpeed = targetFPS > 0 ? (emulationFPS / targetFPS) * 100 : 0
+            /// Calculate core speed based on emulation FPS vs target FPS
+            /// Note: `core.frameInterval` is treated as FPS across the codebase (e.g. 60), not seconds-per-frame.
+            let targetFPS = self.core.frameInterval > 0 ? self.core.frameInterval : 60.0
+            let coreSpeed = (targetFPS > 0 && emulationFPS >= 0) ? (emulationFPS / targetFPS) * 100 : 0
 
             /// Calculate rendering FPS from GPU view controller frame timing
-            let drawTime = self.gpuViewController.timeSinceLastDraw * 1000
+            var drawTime = self.gpuViewController.timeSinceLastDraw * 1000
+            if drawTime <= 0 {
+                let gpuFPS: Double = {
+                    if let glVC = self.gpuViewController as? PVGLViewController {
+                        return glVC.calculatedFramesPerSecond
+                    } else if let metalVC = self.gpuViewController as? PVMetalViewController {
+                        return Double(metalVC.framesPerSecond)
+                    } else {
+                        return 0.0
+                    }
+                }()
+                if gpuFPS > 0 {
+                    drawTime = 1000.0 / gpuFPS
+                }
+            }
             let renderFPS: Double
             if drawTime > 0 {
                 renderFPS = 1000.0 / drawTime
@@ -41,11 +77,14 @@ extension PVEmulatorViewController {
 
             let mem = self.memoryUsage()
             let cpu = self.cpuUsage()
-            let cpuFormatted = String.init(format: "%03.01f", cpu)
-            let memFormatted: String = NSString.localizedStringWithFormat("%i", (mem.used/1024/1024)) as String
-            let memTotalFormatted: String = NSString.localizedStringWithFormat("%i", (mem.total/1024/1024)) as String
+            let cpuFormatted = String(format: "%5.1f", cpu)
+            let memUsedMB = Int(mem.used / 1024 / 1024)
+            let memTotalMB = Int(mem.total / 1024 / 1024)
 
-            self.fpsLabel.text = String(format: "Core speed %03.02f%%\nDraw time %02.02f%ms\nFPS %03.02f\nCPU %@%%\nMem %@/%@(MB)", coreSpeed, drawTime, displayFPS, cpuFormatted, memFormatted, memTotalFormatted)
+            self.fpsLabel.text = String(
+                format: "Core speed %6.2f%%\nDraw time %6.2fms\nFPS %6.2f\nCPU %@%%\nMem %5d/%5d(MB)",
+                coreSpeed, drawTime, displayFPS, cpuFormatted, memUsedMB, memTotalMB
+            )
         })
     }
 

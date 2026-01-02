@@ -20,7 +20,11 @@ extension PVEmulatorViewController {
         }
 
         fpsLabel.alpha = 0.0
-        defer { fpsLabel.alpha = 1.0 }
+        fpsHUDView.alpha = 0.0
+        defer {
+            fpsLabel.alpha = 1.0
+            fpsHUDView.alpha = 1.0
+        }
 
         guard let targetView = screenshotTargetView() else { return nil }
 

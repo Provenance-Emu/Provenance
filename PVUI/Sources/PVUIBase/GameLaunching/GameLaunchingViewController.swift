@@ -747,6 +747,12 @@ public extension GameLaunchingViewController {
                     stack.push(coreSelectionView, id: "core-selection")
                 }
 
+                /// If the flow already resolved (e.g. no saves => start fresh), do not present the hosting UI.
+                /// Otherwise we can end up with an alert controller presented while trying to present the emulator VC.
+                if flowState.hasResumed {
+                    return
+                }
+
                 // Present the stack
                 let hostingView = RetroAlertNavigationStackHostingView(stack: stack)
                 let hostingVC = UIHostingController(rootView: hostingView)
