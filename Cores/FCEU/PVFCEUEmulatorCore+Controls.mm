@@ -58,6 +58,23 @@ static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B
         {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ?  (GCDualSenseGamepad *)gamepad : nil;
+            GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ?  (GCDualShockGamepad *)gamepad : nil;
+            GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? (GCXboxGamepad *)gamepad : nil;
+            GCControllerButtonInput *selectButton = nil;
+            GCControllerButtonInput *startButton = nil;
+
+            if (dualSense || dualShock) {
+                selectButton = gamepad.buttonOptions;
+                startButton = gamepad.buttonMenu;
+            } else if (xbox) {
+                selectButton = xbox.buttonShare;
+                startButton = xbox.buttonMenu;
+            } else {
+                startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
+            }
+
 
             (dpad.up.isPressed || gamepad.leftThumbstick.up.value > DEADZONE) ? pad[playerIndex][0] |= JOY_UP << playerShift : pad[playerIndex][0] &= ~JOY_UP << playerShift;
             (dpad.down.isPressed || gamepad.leftThumbstick.down.value > DEADZONE) ? pad[playerIndex][0] |= JOY_DOWN << playerShift : pad[playerIndex][0] &= ~JOY_DOWN << playerShift;
@@ -67,8 +84,8 @@ static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B
             (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed) ? pad[playerIndex][0] |= JOY_B << playerShift : pad[playerIndex][0] &= ~JOY_B << playerShift;
             (gamepad.buttonX.isPressed || gamepad.buttonB.isPressed) ? pad[playerIndex][0] |= JOY_A << playerShift : pad[playerIndex][0] &= ~JOY_A << playerShift;
 
-            (gamepad.leftShoulder.isPressed || gamepad.leftTrigger.isPressed) ? pad[playerIndex][0] |= JOY_SELECT << playerShift : pad[playerIndex][0] &= ~JOY_SELECT << playerShift;
-            (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed) ? pad[playerIndex][0] |= JOY_START << playerShift : pad[playerIndex][0] &= ~JOY_START << playerShift;
+            (gamepad.leftShoulder.isPressed || gamepad.leftTrigger.isPressed || selectButton.isPressed) ? pad[playerIndex][0] |= JOY_SELECT << playerShift : pad[playerIndex][0] &= ~JOY_SELECT << playerShift;
+            (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed || startButton.isPressed) ? pad[playerIndex][0] |= JOY_START << playerShift : pad[playerIndex][0] &= ~JOY_START << playerShift;
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad])
