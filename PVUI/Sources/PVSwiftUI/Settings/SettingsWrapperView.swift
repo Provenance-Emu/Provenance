@@ -20,6 +20,7 @@ struct SettingsWrapperView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     #if os(tvOS)
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @Binding var canPop: Bool
     #endif
     #if !os(tvOS)
     @State private var showingDocumentPicker = false
@@ -27,6 +28,14 @@ struct SettingsWrapperView: View {
     @State private var importMessage: String? = nil
     @State private var showingImportMessage = false
     @State private var showingSettings = true
+
+    #if os(tvOS)
+    init(canPop: Binding<Bool> = .constant(false)) {
+        _canPop = canPop
+    }
+    #else
+    init() {}
+    #endif
 
     var body: some View {
         NavigationView {
@@ -42,22 +51,14 @@ struct SettingsWrapperView: View {
                 showingSettings = false
             }
             .navigationBarHidden(true)
+            #if os(tvOS)
+            .background(TVOSSettingsNavigationCanPopReader(canPop: $canPop))
+            #endif
 #if canImport(FreemiumKit)
             .environmentObject(FreemiumKit.shared)
 #endif
         }
         .navigationViewStyle(.stack)
-        #if os(tvOS)
-        // Forward remote gestures to the media focus coordinator so sidebar can open/close
-        .onMoveCommand { direction in
-            if direction == .left {
-                focusCoordinator.openSidebar()
-            }
-        }
-        .onExitCommand {
-            focusCoordinator.toggleSidebar()
-        }
-        #endif
         #if !os(tvOS)
         .sheet(isPresented: $showingDocumentPicker) {
             DocumentPicker(onImport: importFiles)
@@ -131,3 +132,58 @@ struct SettingsWrapperView: View {
         showingImportMessage = true
     }
 }
+
+#if os(tvOS)
+/// Tracks whether the Settings `NavigationView` can pop (i.e. a subpage is pushed).
+/// This is used by the tvOS Media UI to suppress sidebar gestures while inside Settings subpages.
+private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable {
+    @Binding var canPop: Bool
+
+    func makeUIViewController(context: Context) -> Controller {
+        Controller(canPop: $canPop)
+    }
+
+    func updateUIViewController(_ uiViewController: Controller, context: Context) {
+        uiViewController.canPop = $canPop
+        uiViewController.refresh()
+    }
+
+    final class Controller: UIViewController, UINavigationControllerDelegate {
+        var canPop: Binding<Bool>
+
+        init(canPop: Binding<Bool>) {
+            self.canPop = canPop
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        @available(*, unavailable)
+        required init?(coder: NSCoder) { nil }
+
+        override func didMove(toParent parent: UIViewController?) {
+            super.didMove(toParent: parent)
+            refresh()
+        }
+
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            refresh()
+        }
+
+        func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+            refresh(for: navigationController)
+        }
+
+        func refresh() {
+            refresh(for: navigationController)
+        }
+
+        private func refresh(for navigationController: UINavigationController?) {
+            navigationController?.delegate = self
+            let value = (navigationController?.viewControllers.count ?? 1) > 1
+            if canPop.wrappedValue != value {
+                canPop.wrappedValue = value
+            }
+        }
+    }
+}
+#endif

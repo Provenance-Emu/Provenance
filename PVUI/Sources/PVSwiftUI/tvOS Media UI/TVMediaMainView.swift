@@ -21,6 +21,7 @@ struct TVMediaMainView: View {
     @StateObject private var libraryModel = TVMediaLibraryModel()
     @StateObject private var saveStatesStore = RetroSaveStatesStore.shared
     @StateObject private var gameActions = TVMediaGameActions()
+    @State private var settingsCanPop: Bool = false
 
     @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
 
@@ -43,8 +44,15 @@ struct TVMediaMainView: View {
             TVMediaBackground()
                 .ignoresSafeArea()
 
-            // Content area - wrapped in focusable container for empty pages
-            contentArea
+            // Content area - wrapped in focus-aware container for edge-gated sidebar navigation.
+            // While inside Settings subpages, do not intercept LEFT (subpage controls may rely on left/right).
+            Group {
+                if (router.destination == .settings && settingsCanPop) || router.destination == .saves {
+                    contentArea
+                } else {
+                    TVMediaFocusAwareContent(focusCoordinator: focusCoordinator) { contentArea }
+                }
+            }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.leading, sidebarCollapsedWidth)
                 .allowsHitTesting(!focusCoordinator.isAlertPresented && !isRenamePresented)
@@ -91,6 +99,7 @@ struct TVMediaMainView: View {
             lastDestinationRaw = newValue.rawValue
             // Close sidebar when navigating
             focusCoordinator.closeSidebar()
+            focusCoordinator.clearEdgeRegistrations()
         }
         .onChange(of: focusCoordinator.isSidebarExpanded) { expanded in
             // Reset focus to the appropriate namespace when sidebar state changes
@@ -121,6 +130,9 @@ struct TVMediaMainView: View {
                 return
             }
             if focusCoordinator.isAlertPresented || focusCoordinator.isModalPresented {
+                return
+            }
+            if router.destination == .settings, settingsCanPop {
                 return
             }
             focusCoordinator.toggleSidebar()
@@ -222,7 +234,7 @@ struct TVMediaMainView: View {
                 )
             case .settings:
                 // Settings view handles its own sidebar commands via tvMediaFocusCoordinator environment
-                SettingsWrapperView()
+                SettingsWrapperView(canPop: $settingsCanPop)
                     .onAppear {
                         focusCoordinator.closeSidebar()
                     }
@@ -230,6 +242,12 @@ struct TVMediaMainView: View {
                 RetroStatusControlView()
                     .padding(.horizontal, 8)
                     .padding(.vertical, 6)
+                    .focusable()
+                    .onMoveCommand { direction in
+                        if direction == .left {
+                            focusCoordinator.openSidebar()
+                        }
+                    }
             }
         }
     }
@@ -602,6 +620,41 @@ struct TVMediaSaveBrowserContext: Identifiable {
     var id: String { game?.id ?? systemID }
 }
 
+private struct TVMediaWidthPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+private extension View {
+    func tvMediaTrackWidth(_ onChange: @escaping (CGFloat) -> Void) -> some View {
+        background(
+            GeometryReader { geo in
+                Color.clear.preference(key: TVMediaWidthPreferenceKey.self, value: geo.size.width)
+            }
+        )
+        .onPreferenceChange(TVMediaWidthPreferenceKey.self, perform: onChange)
+    }
+}
+
+private func tvMediaAdaptiveColumnsPerRow(
+    availableWidth: CGFloat,
+    minItemWidth: CGFloat,
+    maxItemWidth: CGFloat,
+    spacing: CGFloat
+) -> Int {
+    guard availableWidth > 0, minItemWidth > 0 else { return 1 }
+
+    var columns = max(1, Int((availableWidth + spacing) / (minItemWidth + spacing)))
+    while columns > 1 {
+        let itemWidth = (availableWidth - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+        if itemWidth <= maxItemWidth { break }
+        columns -= 1
+    }
+    return max(columns, 1)
+}
+
 // MARK: - Empty State View
 
 struct TVMediaEmptyStateView: View {
@@ -611,6 +664,8 @@ struct TVMediaEmptyStateView: View {
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isFocused: Bool
     @State private var pulseOpacity: Double = 0.3
+
+    private var focusID: String { "emptyState.\(title)" }
 
     var body: some View {
         VStack(spacing: 24) {
@@ -665,15 +720,25 @@ struct TVMediaEmptyStateView: View {
         .focusable()
         .focused($isFocused)
         .onMoveCommand { direction in
-            if direction == .left {
+            if direction == .left, isFocused {
                 focusCoordinator.openSidebar()
             }
         }
         .onAppear {
             isFocused = true
+            focusCoordinator.registerLeftEdgeItem(focusID)
+            focusCoordinator.contentItemFocused(id: focusID, isAtLeftEdge: true)
             withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
                 pulseOpacity = 0.15
             }
+        }
+        .onChange(of: isFocused) { focused in
+            if focused {
+                focusCoordinator.contentItemFocused(id: focusID, isAtLeftEdge: true)
+            }
+        }
+        .onDisappear {
+            focusCoordinator.unregisterLeftEdgeItem(focusID)
         }
     }
 }
@@ -688,6 +753,7 @@ struct TVMediaSavesView: View {
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isEmptyStateFocused: Bool
+    @State private var gridWidth: CGFloat = 0
     @State private var allSaves: [RetroSaveStateItem] = []
     @State private var filteredSaves: [RetroSaveStateItem] = []
     @State private var isLoading = true
@@ -723,11 +789,6 @@ struct TVMediaSavesView: View {
             }
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
-        }
-        .onMoveCommand { direction in
-            if direction == .left {
-                focusCoordinator.openSidebar()
-            }
         }
         .task {
             await initializeFilters()
@@ -872,11 +933,49 @@ struct TVMediaSavesView: View {
     }
 
     private var saveStatesGrid: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 280, maximum: 340), spacing: 18)], spacing: 18) {
-            ForEach(filteredSaves) { item in
-                TVMediaSaveStateTileButton(item: item, store: saveStatesStore)
+        let spacing: CGFloat = 18
+        let tileWidth: CGFloat = 300
+        let effectiveWidth = gridWidth > 0 ? gridWidth : max(1, UIScreen.main.bounds.width - 120)
+        let columnsPerRow = max(1, Int((effectiveWidth + spacing) / (tileWidth + spacing)))
+
+        return LazyVGrid(
+            columns: [GridItem(.adaptive(minimum: tileWidth, maximum: tileWidth), spacing: spacing)],
+            spacing: spacing
+        ) {
+            ForEach(Array(filteredSaves.enumerated()), id: \.element.id) { index, item in
+                let isAtLeftEdge = (index % columnsPerRow) == 0
+                TVMediaSaveStateTileButton(
+                    item: item,
+                    store: saveStatesStore,
+                    isAtLeftEdge: isAtLeftEdge,
+                    focusCoordinator: focusCoordinator,
+                    onDeleteCompleted: { deletedID in
+                        allSaves.removeAll { $0.id == deletedID }
+                        filteredSaves.removeAll { $0.id == deletedID }
+                        Task {
+                            await loadAllSaves()
+                            applyFilter()
+                        }
+                    }
+                )
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .focusSection()
+        .tvMediaTrackWidth { gridWidth = $0 }
+        .onChange(of: gridWidth) { _ in
+            syncFocusedEdgeState(columnsPerRow: columnsPerRow)
+        }
+        .onChange(of: focusCoordinator.focusedContentID) { _ in
+            syncFocusedEdgeState(columnsPerRow: columnsPerRow)
+        }
+    }
+
+    private func syncFocusedEdgeState(columnsPerRow: Int) {
+        guard let focusedID = focusCoordinator.focusedContentID else { return }
+        guard let index = filteredSaves.firstIndex(where: { $0.id == focusedID }) else { return }
+        let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
+        focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
     }
 
     private func initializeFilters() async {
@@ -1124,9 +1223,26 @@ private struct TVMediaFilterHeaderButton: View {
 private struct TVMediaSaveStateTileButton: View {
     let item: RetroSaveStateItem
     @ObservedObject var store: RetroSaveStatesStore
+    let isAtLeftEdge: Bool
+    var focusCoordinator: TVMediaFocusCoordinator?
+    let onDeleteCompleted: (String) -> Void
 
     @FocusState private var isFocused: Bool
     @State private var thumbnail: UIImage?
+
+    init(
+        item: RetroSaveStateItem,
+        store: RetroSaveStatesStore,
+        isAtLeftEdge: Bool = false,
+        focusCoordinator: TVMediaFocusCoordinator? = nil,
+        onDeleteCompleted: @escaping (String) -> Void = { _ in }
+    ) {
+        self.item = item
+        self.store = store
+        self.isAtLeftEdge = isAtLeftEdge
+        self.focusCoordinator = focusCoordinator
+        self.onDeleteCompleted = onDeleteCompleted
+    }
 
     var body: some View {
         Button {
@@ -1143,6 +1259,11 @@ private struct TVMediaSaveStateTileButton: View {
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($isFocused)
+        .onMoveCommand { direction in
+            if direction == .left, isFocused, isAtLeftEdge {
+                focusCoordinator?.openSidebar()
+            }
+        }
         .contextMenu {
             Button(role: .destructive) {
                 Task { await deleteSaveState() }
@@ -1153,14 +1274,29 @@ private struct TVMediaSaveStateTileButton: View {
         .task {
             thumbnail = await store.thumbnail(for: item, targetSize: CGSize(width: 280, height: 180))
         }
+        .onChange(of: isFocused) { focused in
+            if focused {
+                focusCoordinator?.contentItemFocused(id: item.id, isAtLeftEdge: isAtLeftEdge)
+            }
+        }
+        .onAppear {
+            if isAtLeftEdge {
+                focusCoordinator?.registerLeftEdgeItem(item.id)
+            }
+        }
+        .onDisappear {
+            focusCoordinator?.unregisterLeftEdgeItem(item.id)
+        }
     }
 
     private func deleteSaveState() async {
+        let deletedID = item.id
         await MainActor.run {
             let realm = RomDatabase.sharedInstance.realm
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: item.id) else { return }
             do {
                 try RomDatabase.sharedInstance.delete(saveState: saveState)
+                onDeleteCompleted(deletedID)
             } catch {
                 SceneCoordinator.shared.alertState.show(
                     title: "Delete Failed",
@@ -2084,14 +2220,24 @@ struct TVMediaAllGamesGrid: View {
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
 
-    /// Number of columns for calculating left edge items
-    private let columnsPerRow: Int = 5
+    @State private var gridWidth: CGFloat = 0
 
     private let columns = [
         GridItem(.adaptive(minimum: 260, maximum: 300), spacing: 20)
     ]
 
     var body: some View {
+        let spacing: CGFloat = 20
+        let minItemWidth: CGFloat = 260
+        let maxItemWidth: CGFloat = 300
+        let effectiveWidth = gridWidth > 0 ? gridWidth : max(1, UIScreen.main.bounds.width - 120)
+        let columnsPerRow = tvMediaAdaptiveColumnsPerRow(
+            availableWidth: effectiveWidth,
+            minItemWidth: minItemWidth,
+            maxItemWidth: maxItemWidth,
+            spacing: spacing
+        )
+
         LazyVGrid(columns: columns, spacing: 20) {
             ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
                 // First column in each row is at left edge
@@ -2106,6 +2252,20 @@ struct TVMediaAllGamesGrid: View {
                 )
             }
         }
+        .tvMediaTrackWidth { gridWidth = $0 }
+        .onChange(of: gridWidth) { _ in
+            syncFocusedEdgeState(columnsPerRow: columnsPerRow)
+        }
+        .onChange(of: focusCoordinator.focusedContentID) { _ in
+            syncFocusedEdgeState(columnsPerRow: columnsPerRow)
+        }
+    }
+
+    private func syncFocusedEdgeState(columnsPerRow: Int) {
+        guard let focusedID = focusCoordinator.focusedContentID else { return }
+        guard let index = games.firstIndex(where: { $0.id == focusedID }) else { return }
+        let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
+        focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
     }
 }
 
@@ -2183,11 +2343,6 @@ struct TVMediaSearchView: View {
             }
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
-        }
-        .onMoveCommand { direction in
-            if direction == .left {
-                focusCoordinator.openSidebar()
-            }
         }
         .onAppear {
             if !didRestoreLastSearch && !lastSearch.isEmpty {
@@ -2684,11 +2839,6 @@ struct TVMediaFavoritesView: View {
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
         }
-        .onMoveCommand { direction in
-            if direction == .left {
-                focusCoordinator.openSidebar()
-            }
-        }
         .onAppear {
             // Focus empty state if no favorites
             if model.favoriteGames(limit: 1).isEmpty {
@@ -2964,6 +3114,7 @@ struct TVMediaSaveStatesShelfRow: View {
 
     @FocusState private var focusedSaveID: String?
     @State private var thumbs: [String: UIImage] = [:]
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -3004,6 +3155,11 @@ struct TVMediaSaveStatesShelfRow: View {
             }
             // Use focusSection to ensure this shelf catches vertical focus navigation
             .focusSection()
+        }
+        .onChange(of: focusedSaveID) { newValue in
+            guard let id = newValue else { return }
+            guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+            focusCoordinator.contentItemFocused(id: id, isAtLeftEdge: index == 0)
         }
     }
 
@@ -3067,13 +3223,24 @@ struct TVMediaSearchResultsGrid: View {
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
 
-    private let columnsPerRow: Int = 5
+    @State private var gridWidth: CGFloat = 0
 
     private let columns = [
         GridItem(.adaptive(minimum: 260, maximum: 300), spacing: 20)
     ]
 
     var body: some View {
+        let spacing: CGFloat = 20
+        let minItemWidth: CGFloat = 260
+        let maxItemWidth: CGFloat = 300
+        let effectiveWidth = gridWidth > 0 ? gridWidth : max(1, UIScreen.main.bounds.width - 120)
+        let columnsPerRow = tvMediaAdaptiveColumnsPerRow(
+            availableWidth: effectiveWidth,
+            minItemWidth: minItemWidth,
+            maxItemWidth: maxItemWidth,
+            spacing: spacing
+        )
+
         LazyVGrid(columns: columns, spacing: 20) {
             ForEach(Array(results.enumerated()), id: \.element.id) { index, game in
                 let isAtLeftEdge = index % columnsPerRow == 0
@@ -3088,6 +3255,20 @@ struct TVMediaSearchResultsGrid: View {
             }
         }
         .padding(.top, 8)
+        .tvMediaTrackWidth { gridWidth = $0 }
+        .onChange(of: gridWidth) { _ in
+            syncFocusedEdgeState(columnsPerRow: columnsPerRow)
+        }
+        .onChange(of: focusCoordinator.focusedContentID) { _ in
+            syncFocusedEdgeState(columnsPerRow: columnsPerRow)
+        }
+    }
+
+    private func syncFocusedEdgeState(columnsPerRow: Int) {
+        guard let focusedID = focusCoordinator.focusedContentID else { return }
+        guard let index = results.firstIndex(where: { $0.id == focusedID }) else { return }
+        let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
+        focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
     }
 }
 

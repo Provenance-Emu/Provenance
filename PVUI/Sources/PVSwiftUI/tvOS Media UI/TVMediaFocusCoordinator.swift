@@ -97,13 +97,12 @@ final class TVMediaFocusCoordinator: ObservableObject {
         guard !isModalPresented, !isAlertPresented else { return false }
         guard activeZone == .content else { return false }
 
-        // Only navigate to sidebar if current focus is at left edge
-        if let focusedID = focusedContentID {
-            return leftEdgeItemIDs.contains(focusedID)
-        }
+        // If focus isn't being tracked, be conservative and do not hijack left navigation.
+        guard focusedContentID != nil else { return false }
 
-        // If no specific item focused, allow navigation
-        return true
+        // Open sidebar only when the currently-focused item is at the left edge of its container.
+        // `contentCanScrollLeft` is updated via `contentItemFocused(id:isAtLeftEdge:)`.
+        return contentCanScrollLeft == false
     }
 
     /// Register an item as being at the left edge
