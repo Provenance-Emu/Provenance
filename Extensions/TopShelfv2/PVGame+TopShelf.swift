@@ -18,15 +18,15 @@ extension PVGame {
     var cachedArtworkURL: URL? {
         // Try custom artwork first, then original
         let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
-        
+
         guard !artworkKey.isEmpty else {
             DLOG("TopShelf: No artwork key for game \(title)")
             return nil
         }
-        
+
         // Get the MD5 hash of the artwork key (this is how PVMediaCache stores files)
         let keyHash = artworkKey.md5Hash
-        
+
         // Try app group cache path first (for extension access)
         if let appGroupCachePath = appGroupCachePath(forKeyHash: keyHash) {
             if FileManager.default.fileExists(atPath: appGroupCachePath.path) {
@@ -34,7 +34,7 @@ extension PVGame {
                 return appGroupCachePath
             }
         }
-        
+
         // Try the originalArtworkFile if available
         if let artworkFile = originalArtworkFile, let fileURL = artworkFile.url {
             if FileManager.default.fileExists(atPath: fileURL.path) {
@@ -42,7 +42,7 @@ extension PVGame {
                 return fileURL
             }
         }
-        
+
         // Check if the file exists in the standard cache location
         if PVMediaCache.fileExists(forKey: artworkKey) {
             if let cacheURL = PVMediaCache.filePath(forKey: artworkKey) {
@@ -50,17 +50,17 @@ extension PVGame {
                 return cacheURL
             }
         }
-        
+
         DLOG("TopShelf: No cached artwork found for game \(title)")
         return nil
     }
-    
+
     /// Gets the app group cache path for a given key hash
     private func appGroupCachePath(forKeyHash keyHash: String) -> URL? {
         guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
             return nil
         }
-        
+
         // Check multiple possible locations where artwork might be stored
         let possiblePaths = [
             // App group Documents/PVCache/
@@ -72,16 +72,16 @@ extension PVGame {
             // Direct in app group
             containerURL.appendingPathComponent("PVCache/\(keyHash)")
         ]
-        
+
         for path in possiblePaths {
             if FileManager.default.fileExists(atPath: path.path) {
                 return path
             }
         }
-        
+
         return possiblePaths.first // Return first path for potential future use
     }
-    
+
     /// Creates a TVTopShelfItem for this game for display in the Top Shelf
     func topShelfItem() -> TVTopShelfSectionedItem {
         let item = TVTopShelfSectionedItem(identifier: md5Hash)
@@ -142,5 +142,89 @@ extension PVSystem {
         default:
             return .square
         }
+    }
+}
+
+extension PVSaveState {
+    /// Builds a TopShelf item that opens this save state (falls back to opening the game if needed).
+    func topShelfItem() -> TVTopShelfSectionedItem {
+        let item = TVTopShelfSectionedItem(identifier: id)
+
+        let gameTitle = game.title
+        if let systemName = game.system?.name {
+            item.title = "\(gameTitle) (\(systemName))"
+        } else {
+            item.title = gameTitle
+        }
+
+        if let system = game.system {
+            item.imageShape = system.imageType
+        } else {
+            item.imageShape = .square
+        }
+
+        if let imageURL = resolveTopShelfImageURL() {
+            item.setImageURL(imageURL, for: .screenScale1x)
+            item.setImageURL(imageURL, for: .screenScale2x)
+        } else if let fallbackArtworkURL = game.cachedArtworkURL {
+            item.setImageURL(fallbackArtworkURL, for: .screenScale1x)
+            item.setImageURL(fallbackArtworkURL, for: .screenScale2x)
+        }
+
+        if let url = URL(string: "provenance://open?md5=\(game.md5Hash)&saveStateId=\(id)") {
+            item.playAction = TVTopShelfAction(url: url)
+            item.displayAction = TVTopShelfAction(url: url)
+        }
+
+        return item
+    }
+
+    private func resolveTopShelfImageURL() -> URL? {
+        let fileManager = FileManager.default
+
+        if let directURL = image?.url, fileManager.fileExists(atPath: directURL.path) {
+            return directURL
+        }
+
+        guard let groupURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId),
+              let image = image else {
+            return nil
+        }
+
+        let relativePath = image.actualPartialPath
+        let directCandidates: [URL] = [
+            groupURL.appendingPathComponent("Caches").appendingPathComponent(relativePath),
+            groupURL.appendingPathComponent("Documents").appendingPathComponent(relativePath),
+            groupURL.appendingPathComponent(relativePath)
+        ]
+
+        for url in directCandidates where fileManager.fileExists(atPath: url.path) {
+            return url
+        }
+
+        let cacheKeyCandidates: [String] = {
+            guard let url = image.url else { return [] }
+            return [
+                url.lastPathComponent,
+                url.path,
+                url.absoluteString,
+                "savestate_image_\(url.absoluteString)"
+            ].filter { !$0.isEmpty }
+        }()
+
+        for key in cacheKeyCandidates {
+            let keyHash = key.md5Hash
+            let hashedCandidates: [URL] = [
+                groupURL.appendingPathComponent("Documents/PVCache/\(keyHash)"),
+                groupURL.appendingPathComponent("Caches/PVCache/\(keyHash)"),
+                groupURL.appendingPathComponent("Library/Caches/PVCache/\(keyHash)"),
+                groupURL.appendingPathComponent("PVCache/\(keyHash)")
+            ]
+            for url in hashedCandidates where fileManager.fileExists(atPath: url.path) {
+                return url
+            }
+        }
+
+        return nil
     }
 }

@@ -323,6 +323,16 @@ extension ProvenanceApp {
         case .openGame(let game):
             ILOG("ProvenanceApp: Setting currentGame to '\(game.title)'")
             appState.emulationUIState.currentGame = game
+        case .openSaveStateID(let saveStateID):
+            let realm = RomDatabase.sharedInstance.realm
+            guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID) else {
+                ELOG("ProvenanceApp: No save state found for id: \(saveStateID)")
+                break
+            }
+            let frozen = saveState.freeze()
+            appState.emulationUIState.currentGame = frozen.game?.freeze()
+            appState.emulationUIState.currentSaveState = frozen
+            appState.emulationUIState.currentCore = frozen.core?.freeze()
         case .openFile(let url):
             ILOG("ProvenanceApp: Opening file '\(url.lastPathComponent)' - emulator scene will handle import")
         case .none:
@@ -419,6 +429,14 @@ extension ProvenanceApp {
             }
 
             DLOG("Processing open action with \(queryItems.count) query items")
+
+            // Check for save state id parameter (provenance://open?saveStateId=...)
+            if let saveStateId = queryItems.first(where: { $0.name == AppURLKeys.OpenKeys.saveStateId.rawValue })?.value,
+               !saveStateId.isEmpty {
+                ILOG("Opening save state by id: \(saveStateId)")
+                AppState.shared.appOpenAction = .openSaveStateID(saveStateId)
+                return true
+            }
 
             // Check for direct md5 parameter (provenance://open?md5=...)
             if let md5Value = queryItems.first(where: { $0.name == "md5" })?.value, !md5Value.isEmpty {

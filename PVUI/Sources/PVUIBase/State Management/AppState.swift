@@ -33,10 +33,11 @@ public class AppState: ObservableObject {
         case openFile(URL)
         case openMD5(String)
         case openGame(PVGame)
+        case openSaveStateID(String)
 
         public var requiresEmulatorScene: Bool {
             switch self {
-            case .openGame, .openMD5, .openFile:
+            case .openGame, .openMD5, .openFile, .openSaveStateID:
                 return true
             case .none:
                 return false

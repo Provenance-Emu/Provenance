@@ -283,6 +283,14 @@ extension PVAppDelegate {
 
             DLOG("Processing open action with \(queryItems.count) query items")
 
+            // Check for save state id parameter (provenance://open?saveStateId=...)
+            if let saveStateId = queryItems.first(where: { $0.name == AppURLKeys.OpenKeys.saveStateId.rawValue })?.value,
+               !saveStateId.isEmpty {
+                ILOG("Opening save state by id: \(saveStateId)")
+                AppState.shared.appOpenAction = .openSaveStateID(saveStateId)
+                return true
+            }
+
             // Check for direct md5 parameter (provenance://open?md5=...)
             if let md5Value = queryItems.first(where: { $0.name == AppURLKeys.OpenKeys.md5.rawValue })?.value, !md5Value.isEmpty {
                 DLOG("Found direct md5 parameter: \(md5Value)")

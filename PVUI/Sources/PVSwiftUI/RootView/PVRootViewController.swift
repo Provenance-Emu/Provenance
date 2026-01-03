@@ -280,6 +280,9 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         case .openGame(let game):
             ILOG("PVRootViewController: Opening game directly: \(game.title) (MD5: \(game.md5Hash))")
             await root_load(game, sender: self, core: nil, saveState: nil)
+        case .openSaveStateID(let saveStateID):
+            ILOG("PVRootViewController: Opening save state by id: \(saveStateID)")
+            await root_openSaveState(saveStateID)
         case .none:
             DLOG("PVRootViewController: No app open action to handle")
             break
@@ -405,6 +408,16 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         case .openGame(let game):
             ILOG("PVRootViewController: Preparing game '\(game.title)' for emulator scene")
             AppState.shared.emulationUIState.currentGame = game
+        case .openSaveStateID(let saveStateID):
+            let realm = RomDatabase.sharedInstance.realm
+            guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID) else {
+                ELOG("PVRootViewController: No save state found for id: \(saveStateID)")
+                break
+            }
+            let frozen = saveState.freeze()
+            AppState.shared.emulationUIState.currentGame = frozen.game?.freeze()
+            AppState.shared.emulationUIState.currentSaveState = frozen
+            AppState.shared.emulationUIState.currentCore = frozen.core?.freeze()
         case .openFile(let url):
             ILOG("PVRootViewController: Preparing file '\(url.lastPathComponent)' for emulator scene")
             // The emulator scene will handle importing the file

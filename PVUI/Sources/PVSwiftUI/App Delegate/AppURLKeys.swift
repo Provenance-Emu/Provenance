@@ -15,6 +15,8 @@ public enum AppURLKeys: String, Codable {
         case md5Key = "PVGameMD5Key"
         /// Direct md5 parameter for simplified URL format (provenance://open?md5=...)
         case md5 = "md5"
+        /// Save state primary key (provenance://open?saveStateId=...)
+        case saveStateId = "saveStateId"
         /// System identifier or name for fuzzy search
         case system = "system"
         /// Game title for fuzzy search
