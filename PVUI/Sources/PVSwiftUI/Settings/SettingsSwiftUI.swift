@@ -652,25 +652,11 @@ public struct PVSettingsView: View {
                     // Remove default tvOS focus highlight; rely on our RetroWave styling
                     .buttonStyle(TVOSSettingsSectionButtonStyle())
                     .focusSection()
-                    .onMoveCommand { direction in
-                        // Left swipe from Settings opens the sidebar
-                        if direction == .left {
-                            tvMediaFocusCoordinator.openSidebar()
-                        }
-                    }
                 }
                 #endif
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-#if os(tvOS)
-        .onMoveCommand { direction in
-            // Left swipe from anywhere in Settings opens the sidebar
-            if direction == .left {
-                tvMediaFocusCoordinator.openSidebar()
-            }
-        }
-#endif
     }
 
 #if os(tvOS)
