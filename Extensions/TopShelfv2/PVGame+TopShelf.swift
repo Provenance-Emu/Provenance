@@ -191,6 +191,18 @@ extension PVSaveState {
             return nil
         }
 
+        let stableKeyHash = "topshelf_savestate_\(id)".md5Hash
+        let stableCandidates: [URL] = [
+            groupURL.appendingPathComponent("Documents/PVCache/\(stableKeyHash)"),
+            groupURL.appendingPathComponent("Caches/PVCache/\(stableKeyHash)"),
+            groupURL.appendingPathComponent("Library/Caches/PVCache/\(stableKeyHash)"),
+            groupURL.appendingPathComponent("PVCache/\(stableKeyHash)")
+        ]
+
+        for url in stableCandidates where fileManager.fileExists(atPath: url.path) {
+            return url
+        }
+
         let relativePath = image.actualPartialPath
         let directCandidates: [URL] = [
             groupURL.appendingPathComponent("Caches").appendingPathComponent(relativePath),
