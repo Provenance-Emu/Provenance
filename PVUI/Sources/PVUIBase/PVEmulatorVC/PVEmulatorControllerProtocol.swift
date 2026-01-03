@@ -10,6 +10,11 @@ import PVCoreAudio
 import PVEmulatorCore
 import PVCoreBridge
 import RealmSwift
+import PVLibrary
+#if os(tvOS)
+import PVFileSystem
+import PVHashing
+#endif
 
 public protocol PVEmualatorControllerProtocol: AnyObject {
     typealias QuitCompletion = () -> Void
@@ -76,6 +81,34 @@ public extension PVEmualatorControllerProtocol where Self: UIViewController {
 
 // MARK: Core
 public extension PVEmualatorControllerProtocol {
+#if os(tvOS)
+    private func storeSaveStateScreenshotForTopShelf(from sourceURL: URL, saveStateID: String) {
+        let fileManager = FileManager.default
+        guard fileManager.fileExists(atPath: sourceURL.path),
+              let groupURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
+            return
+        }
+
+        let keyHash = "topshelf_savestate_\(saveStateID)".md5Hash
+        let destinations: [URL] = [
+            groupURL.appendingPathComponent("Documents/PVCache/\(keyHash)"),
+            groupURL.appendingPathComponent("Caches/PVCache/\(keyHash)"),
+            groupURL.appendingPathComponent("Library/Caches/PVCache/\(keyHash)")
+        ]
+
+        for destinationURL in destinations {
+            do {
+                try fileManager.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                if fileManager.fileExists(atPath: destinationURL.path) {
+                    try fileManager.removeItem(at: destinationURL)
+                }
+                try fileManager.copyItem(at: sourceURL, to: destinationURL)
+            } catch {
+                continue
+            }
+        }
+    }
+#endif
     @MainActor
     func initCore() {
         if let audioDelegate = self as? PVAudioDelegate {
@@ -274,12 +307,18 @@ public extension PVEmualatorControllerProtocol {
         let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
 
         var imageFile: PVImageFile?
+        #if os(tvOS)
+        var localTopShelfImageURL: URL?
+        #endif
         if let screenshot = screenshot {
             if let jpegData = screenshot.jpegData(compressionQuality: 0.95) {
                 let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
                 do {
                     try jpegData.write(to: imageURL)
                     imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
+                    #if os(tvOS)
+                    localTopShelfImageURL = imageURL
+                    #endif
                 } catch {
                     if let vc = self as? UIViewController {
                         Task { @MainActor in
@@ -311,6 +350,15 @@ public extension PVEmualatorControllerProtocol {
             /// Create and add the save state
             let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
             realm.add(saveState)
+
+            #if os(tvOS)
+            if let localTopShelfImageURL {
+                let saveStateID = saveState.id
+                Task.detached(priority: .utility) { [self, localTopShelfImageURL] in
+                    storeSaveStateScreenshotForTopShelf(from: localTopShelfImageURL, saveStateID: saveStateID)
+                }
+            }
+            #endif
 
             /// Post notification for CloudKit sync
             let saveStateID = saveState.id
