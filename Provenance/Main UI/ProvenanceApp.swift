@@ -161,6 +161,19 @@ struct ProvenanceApp: App {
                     else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
                         ILOG("ProvenanceApp: Handling app URL with scheme: \(scheme)")
 
+                        // Prefer save state id if present (TopShelf "Recent Saves")
+                        if let components = components,
+                           components.host?.lowercased() == "open",
+                           let queryItems = components.queryItems,
+                           let saveStateID = queryItems.first(where: { $0.name == AppURLKeys.OpenKeys.saveStateId.rawValue })?.value,
+                           !saveStateID.isEmpty {
+                            ILOG("ProvenanceApp: Found saveStateId parameter in URL: \(saveStateID)")
+                            AppState.shared.appOpenAction = .openSaveStateID(saveStateID)
+                            // Don't open immediately - wait for bootup completion
+                            openEmulatorSceneWhenReady()
+                            return
+                        }
+
                         // Check for direct md5 parameter in the URL
                         if let components = components,
                            components.host?.lowercased() == "open",

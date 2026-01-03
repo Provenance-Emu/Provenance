@@ -171,7 +171,7 @@ extension PVSaveState {
             item.setImageURL(fallbackArtworkURL, for: .screenScale2x)
         }
 
-        if let url = URL(string: "provenance://open?md5=\(game.md5Hash)&saveStateId=\(id)") {
+        if let url = URL(string: "provenance://open?saveStateId=\(id)") {
             item.playAction = TVTopShelfAction(url: url)
             item.displayAction = TVTopShelfAction(url: url)
         }
