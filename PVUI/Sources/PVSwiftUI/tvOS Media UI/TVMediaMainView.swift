@@ -2117,7 +2117,9 @@ struct TVMediaSystemGamesView: View {
                         proxy.scrollTo(headerID, anchor: .top)
                     }
                 }
-                // Left-edge handling is done by individual game tiles
+                if direction == .left, focusCoordinator.shouldNavigateToSidebar() {
+                    focusCoordinator.openSidebar()
+                }
             }
         }
         .task {
