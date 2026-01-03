@@ -71,6 +71,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     // Store cancellables for skin loading observation
     var skinLoadingCancellable: AnyCancellable?
+    /// Observes the FPS counter preference and updates the in-game HUD live.
+    private var showFPSCountCancellable: AnyCancellable?
 
     // Store the current skin for rotation handling
     var currentSkin: DeltaSkinProtocol?
@@ -201,18 +203,52 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return fpsLabel
     }()
 
+    /// Shows or hides the in-game FPS/CPU/Mem HUD based on user preference.
+    /// Note: Skip-layout cores (e.g. RetroArch rendering its own view) do not use this HUD.
+    @MainActor
+    private func applyFPSCounterVisibilityPreference(_ enabled: Bool) {
+        guard !core.skipLayout else { return }
+
+        if enabled {
+            initFPSLabel()
+            fpsHUDView.alpha = 1.0
+        } else {
+            fpsTimer?.invalidate()
+            fpsTimer = nil
+            if let themeDidChangeObserver {
+                NotificationCenter.default.removeObserver(themeDidChangeObserver)
+                self.themeDidChangeObserver = nil
+            }
+            fpsHUDView.removeFromSuperview()
+        }
+    }
+
+    private func configureFPSCounterPreferenceObservationIfNeeded() {
+        guard showFPSCountCancellable == nil else { return }
+        showFPSCountCancellable = Defaults.publisher(.showFPSCount)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] change in
+                guard let self else { return }
+                Task { @MainActor in
+                    self.applyFPSCounterVisibilityPreference(change.newValue)
+                }
+            }
+    }
+
     var secondaryScreen: UIScreen?
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
 
     public var isShowingMenu: Bool = false {
         didSet {
-            Task { @MainActor in
-                // Single authoritative pause toggle to avoid conflicting calls
-                core.setPauseEmulation(isShowingMenu)
-            }
+            // Single authoritative pause toggle to avoid conflicting calls
+            core.setPauseEmulation(isShowingMenu)
         }
     }
+
+    /// Tracks the currently presented pause-menu container so we can dismiss it reliably,
+    /// even if additional controllers are presented on top during the menu flow.
+    weak var menuPresentationViewController: UIViewController?
 
     let minimumPlayTimeToMakeAutosave: Double = 60
 
@@ -717,8 +753,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         initMenuButton()
         #endif
 
-        if Defaults[.showFPSCount] && !core.skipLayout {
-            initFPSLabel()
+        configureFPSCounterPreferenceObservationIfNeeded()
+        Task { @MainActor in
+            self.applyFPSCounterVisibilityPreference(Defaults[.showFPSCount])
         }
 
         hideOrShowMenuButton()
@@ -1329,6 +1366,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         fpsTimer?.invalidate()
         fpsTimer = nil
+        showFPSCountCancellable?.cancel()
+        showFPSCountCancellable = nil
+        if let themeDidChangeObserver {
+            NotificationCenter.default.removeObserver(themeDidChangeObserver)
+            self.themeDidChangeObserver = nil
+        }
+        fpsHUDView.removeFromSuperview()
         dismiss(animated: true, completion: completion)
         view?.removeFromSuperview()
         removeFromParent()
@@ -1347,11 +1391,30 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// Dismisses the currently presented navigation with control over emulation state
     /// - Parameter resumeEmulation: Whether to resume emulation after dismissal
     func dismissNav(resumeEmulation: Bool) {
-        presentedViewController?.dismiss(animated: true, completion: nil)
-        // Always clear the menu state when dismissing
-        isShowingMenu = false
-        if resumeEmulation {
-            core.setPauseEmulation(false)
+        dismissNav(resumeEmulation: resumeEmulation, completion: nil)
+    }
+
+    func dismissNav(resumeEmulation: Bool, completion: (() -> Void)?) {
+        // Dismiss the menu container reliably if we have it; otherwise fall back to the currently presented VC.
+        let dismissalTarget = menuPresentationViewController ?? presentedViewController
+        guard let dismissalTarget else {
+            isShowingMenu = false
+            core.setPauseEmulation(!resumeEmulation)
+            completion?()
+            return
+        }
+
+        dismissalTarget.dismiss(animated: true) { [weak self] in
+            guard let self else {
+                completion?()
+                return
+            }
+            self.menuPresentationViewController = nil
+            // Always clear the menu state when dismissing
+            self.isShowingMenu = false
+            // If we're transitioning into another modal flow, keep emulation paused.
+            self.core.setPauseEmulation(!resumeEmulation)
+            completion?()
         }
 
         // Post notifications to reconnect inputs and refresh the GPU view
@@ -1378,6 +1441,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         enableControllerInput(false)
+        #if os(tvOS)
+        resetTVOSMenuGestures()
+        #endif
     }
 }
 

@@ -11,6 +11,11 @@
 extension PVEmulatorViewController {
 
     internal func initFPSLabel() {
+        /// Avoid duplicate view/constraint installation if called more than once.
+        guard fpsHUDView.superview == nil else {
+            applyFPSHUDTheme()
+            return
+        }
         gpuViewController.view.addSubview(fpsHUDView)
         fpsHUDView.addSubview(fpsLabel)
 

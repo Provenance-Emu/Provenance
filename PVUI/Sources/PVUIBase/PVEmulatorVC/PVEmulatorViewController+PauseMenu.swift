@@ -26,9 +26,24 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             return;
         }
 
-        // Check if a menu is already being presented
-        if presentedViewController != nil {
-            DLOG("A view controller is already being presented, ignoring duplicate request")
+        // If something is already presented, don't permanently wedge the pause menu.
+        // This can happen if we're racing a prior dismissal or another modal flow.
+        if let presented = presentedViewController {
+            if presented === menuPresentationViewController {
+                DLOG("Pause menu already presented, ignoring duplicate request")
+                return
+            }
+            if presented.isBeingDismissed || presented.isBeingPresented {
+                DLOG("Presented VC is in transition (\(type(of: presented))); retrying showMenu shortly")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                    self?.showMenu(sender)
+                }
+                return
+            }
+            DLOG("Dismissing existing presented VC (\(type(of: presented))) to show pause menu")
+            presented.dismiss(animated: false) { [weak self] in
+                self?.showMenu(sender)
+            }
             return
         }
 
@@ -41,6 +56,7 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
         let menuVC = UIViewController()
         menuVC.modalPresentationStyle = .overFullScreen
         menuVC.view.backgroundColor = .clear
+        menuPresentationViewController = menuVC
 
         // Create our custom menu overlay
         let menuOverlay = PVGameMenuOverlay(frame: menuVC.view.bounds, emulatorViewController: self)
@@ -92,6 +108,9 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
 
             // First disable controller input
             enableControllerInput(false)
+            #if os(tvOS)
+            resetTVOSMenuGestures()
+            #endif
 
             // Reset controller state
             #if !os(tvOS)
@@ -115,5 +134,6 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             // Setting isShowingMenu to false will handle resuming the emulation
             isShowingMenu = false
         }
+        menuPresentationViewController = nil
     }
 }
