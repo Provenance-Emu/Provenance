@@ -427,6 +427,7 @@ public struct RetroSaveSelectionAlertView: View {
                     .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
             )
         }
+        #if os(tvOS)
         .retroFocusableButton(
             focused: $focusedItemId,
             equals: save.id,
@@ -434,6 +435,7 @@ public struct RetroSaveSelectionAlertView: View {
             cornerRadius: 8,
             glowRadius: 8
         )
+        #endif
     }
 
     private func thumbnailView(for save: RetroSaveSelectionItem) -> some View {
