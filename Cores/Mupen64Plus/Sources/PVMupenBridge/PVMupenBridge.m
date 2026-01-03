@@ -706,7 +706,7 @@ static void *dlopen_myself()
 
 - (void)tryToResizeVideoTo:(CGSize)size {
     #if TARGET_OS_IOS || TARGET_OS_TV
-    CGFloat screenScale = UIScreen.mainScreen.scale;
+    CGFloat screenScale = UIScreen.mainScreen.nativeScale;
 
     CGSize finalSize;
     if (RESIZE_TO_FULLSCREEN) {

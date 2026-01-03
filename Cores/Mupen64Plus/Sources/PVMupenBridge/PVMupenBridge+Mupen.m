@@ -218,7 +218,7 @@ void ConfigureVideoGeneral() {
 #if __has_include(<UIKit/UIKit.h>)
     if(RESIZE_TO_FULLSCREEN) {
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-        float widthScale = floor(size.height / WIDTHf);
+        float widthScale = floor(size.width / WIDTHf);
         float heightScale = floor(size.height / HEIGHTf);
         float scale = MAX(MIN(widthScale, heightScale), 1);
         screenWidth =  scale * WIDTHf;
