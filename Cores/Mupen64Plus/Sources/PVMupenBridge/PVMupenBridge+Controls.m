@@ -210,9 +210,24 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
     }
     if (LIKELY(controller.extendedGamepad)) {
         GCExtendedGamepad *gamepad     = [controller extendedGamepad];
-        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-
         GCControllerDirectionPad *dpad = [gamepad dpad];
+        
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+        GCControllerButtonInput *selectButton = nil;
+        GCControllerButtonInput *startButton = nil;
+
+        if (dualSense || dualShock) {
+            selectButton = gamepad.buttonOptions;
+            startButton = gamepad.buttonMenu;
+        } else if (xbox) {
+            selectButton = xbox.buttonShare;
+            startButton = xbox.buttonMenu;
+        } else {
+            startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
+        }
+
         
         BOOL dualModeOverrides = self.dualJoystick && (playerIndex == 0 || playerIndex == 2);
 
@@ -233,25 +248,14 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
             // MFi-L2 → P1.Z
             padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
 
-            if (dualSense) {
-                padData[playerIndex][PVN64ButtonStart] = dualSense.touchpadButton.touched;
-            } else if (gamepad.rightThumbstickButton != nil) {
                 //fallback for non-dual sense only if the R3 button exists on the controller
-                padData[playerIndex][PVN64ButtonStart] = gamepad.rightThumbstickButton.isPressed;
-            }
+            padData[playerIndex][PVN64ButtonStart] = gamepad.rightThumbstickButton.isPressed || startButton.isPressed;
         } else {
-            if (dualSense) {
-                // DualShock-TouchPad → Start
-                padData[playerIndex][PVN64ButtonStart] = dualSense.touchpadButton.touched;
-                // DualShock-Either Trigger → Z
-                padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed || gamepad.rightTrigger.isPressed;
-            } else {
-                // MFi-R2 → Start
-                padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
+            // MFi-R2 → Start
+            padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed || startButton.isPressed;
 
-                // MFi-L2 → Z
-                padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
-            }
+            // MFi-L2 → Z
+            padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
         }
         
         // If MFi-L2 is not pressed… MFi-L1 → L
