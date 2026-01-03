@@ -72,6 +72,7 @@
 @property (nonatomic) int menu_count;
 + (PVRetroArchCoreBridge *)get;
 - (void)showGameView;
+- (void)setShowFPSCounterVisible:(BOOL)visible;
 - (void)supportOtherAudioSessions;
 - (void)refreshSystemConfig;
 

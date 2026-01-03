@@ -263,6 +263,22 @@ int argc =  1;
 
 @implementation PVRetroArchCoreBridge (RetroArchUI)
 
+- (void)setShowFPSCounterVisible:(BOOL)visible {
+    if (![NSThread isMainThread]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setShowFPSCounterVisible:visible];
+        });
+        return;
+    }
+
+    settings_t *settings = config_get_ptr();
+    if (!settings) {
+        WLOG(@"[RA] setShowFPSCounterVisible: settings not ready");
+        return;
+    }
+    settings->bools.video_fps_show = visible;
+}
+
 - (UIView *)_ensureRenderContainerInMTKView:(UIView *)mtkView {
     if (!_renderContainerView || _renderContainerView.superview != mtkView) {
         [_renderContainerView removeFromSuperview];

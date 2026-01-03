@@ -18,6 +18,9 @@ import PVLogging
 import PVAudio
 import PVEmulatorCore
 import PVCoreObjCBridge
+import Combine
+import Defaults
+import PVSettings
 internal import enum PVCoreBridge.PVDSButton
 //import PVCoreBridge
 
@@ -74,10 +77,21 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
 
     // MARK: Lifecycle
     public lazy var _bridge: PVRetroArchCoreBridge = .init()
+    private var showFPSCancellable: AnyCancellable?
 
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+        configureShowFPSPreferenceObservation()
+    }
+
+    private func configureShowFPSPreferenceObservation() {
+        _bridge.setShowFPSCounterVisible(Defaults[.showFPSCount])
+        showFPSCancellable = Defaults.publisher(.showFPSCount)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] change in
+                self?._bridge.setShowFPSCounterVisible(change.newValue)
+            }
     }
 }
 // MARK: RetroArch
@@ -530,7 +544,7 @@ extension PVRetroArchCoreCore: PVVectrexSystemResponderClient {
     public func didMoveJoystick(_ button: PVCoreBridge.PVVectrexButton, withValue value: CGFloat, forPlayer player: Int) {
         (_bridge as! PVVectrexSystemResponderClient).didMoveJoystick(button, withValue: value, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PVVectrexButton, forPlayer player: Int) {
         (_bridge as! PVVectrexSystemResponderClient).didRelease(button, forPlayer: player)
 
