@@ -162,7 +162,15 @@ struct TVMediaMainView: View {
         ) {
             VStack(spacing: 10) {
                 RetroButton(title: "Save", isPrimary: true) {
-                    Task { await gameActions.commitRenameIfPossible() }
+                    Task {
+                        let systemID = gameActions.renameGame?.systemIdentifier
+                        await gameActions.commitRenameIfPossible()
+                        if let systemID {
+                            await libraryModel.refreshAfterGameRename(systemIdentifier: systemID)
+                        } else {
+                            libraryModel.refresh()
+                        }
+                    }
                 }
                 RetroButton(title: "Cancel", isPrimary: false) {
                     gameActions.clearRename()
@@ -422,6 +430,13 @@ final class TVMediaLibraryModel: ObservableObject {
             await loadSystems()
             await loadFavorites()
         }
+    }
+
+    /// Refreshes the minimal data needed after renaming a game so visible lists update immediately.
+    @MainActor
+    func refreshAfterGameRename(systemIdentifier: String) async {
+        await loadFavorites()
+        await loadGamesForSystemAsync(identifier: systemIdentifier)
     }
 
     func selectSystem(identifier: String) {

@@ -356,13 +356,18 @@ public class RetroGameLibraryViewModel: ObservableObject {
     /// Rename a game
     public func renameGame(_ game: PVGame, to newName: String) async {
         guard !newName.isEmpty else { return }
-
-        // Get a reference to the Realm
-        let realm = try? await Realm()
-
-        // Update the game title
-        try? realm?.write {
-            game.thaw()?.title = newName
+        await MainActor.run {
+            do {
+                try RomDatabase.sharedInstance.writeTransaction {
+                    let primaryKey = game.md5Hash.uppercased()
+                    guard let liveGame = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: primaryKey) else {
+                        return
+                    }
+                    liveGame.title = newName
+                }
+            } catch {
+                ELOG("RetroGameLibraryViewModel: Failed to rename game: \(error)")
+            }
         }
     }
 
