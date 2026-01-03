@@ -242,6 +242,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     public var isShowingMenu: Bool = false {
         didSet {
             // Single authoritative pause toggle to avoid conflicting calls
+            guard core.isOn else { return }
             core.setPauseEmulation(isShowingMenu)
         }
     }
@@ -1399,7 +1400,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         let dismissalTarget = menuPresentationViewController ?? presentedViewController
         guard let dismissalTarget else {
             isShowingMenu = false
-            core.setPauseEmulation(!resumeEmulation)
+            if core.isOn {
+                core.setPauseEmulation(!resumeEmulation)
+            }
             completion?()
             return
         }
@@ -1413,7 +1416,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             // Always clear the menu state when dismissing
             self.isShowingMenu = false
             // If we're transitioning into another modal flow, keep emulation paused.
-            self.core.setPauseEmulation(!resumeEmulation)
+            if self.core.isOn && !resumeEmulation {
+                self.core.setPauseEmulation(true)
+            }
             completion?()
         }
 

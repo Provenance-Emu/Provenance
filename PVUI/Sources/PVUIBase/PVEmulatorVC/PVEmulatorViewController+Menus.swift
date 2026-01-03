@@ -59,7 +59,9 @@ extension PVEmulatorViewController {
         DispatchQueue.main.async { [weak self] in
             self?.updateLastPlayedTime()
         }
-        core.setPauseEmulation(false)
+        if core.isOn {
+            core.setPauseEmulation(false)
+        }
     }
 
     @objc public func showSpeedMenu() {
@@ -101,7 +103,7 @@ extension PVEmulatorViewController {
             ELOG("Game is nil, wtf you doing bruh?")
             return
         }
-        
+
         // Create the SwiftUI view model
         guard let driver = try? RealmGameLibraryDriver() else {
             ELOG("No driver, no ride!")
@@ -109,18 +111,18 @@ extension PVEmulatorViewController {
         }
 
         let viewModel = GameMoreInfoViewModel(driver: driver, gameId: game.md5Hash ?? "")
-        
+
         // Create the SwiftUI view
         let gameMoreInfoView = GameMoreInfoView(viewModel: viewModel)
             .environment(\.colorScheme, .dark) // Force dark mode for the retrowave theme
-        
+
         // Create a hosting controller for the SwiftUI view
         let hostingController = UIHostingController(rootView: gameMoreInfoView)
         hostingController.modalPresentationStyle = .fullScreen
-        
+
         // Create navigation controller
         let newNav = UINavigationController(rootViewController: hostingController)
-        
+
 #if os(iOS)
         // Add a done button
         hostingController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
