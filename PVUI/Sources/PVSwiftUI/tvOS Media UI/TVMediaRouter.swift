@@ -44,6 +44,9 @@ final class TVMediaRouter: ObservableObject {
     /// Active modal presentation
     @Published var activeModal: TVMediaModal?
 
+    /// Remembers where `.systemGames` was entered from so Back can return appropriately.
+    @Published private(set) var systemGamesReturnDestination: TVMediaDestination?
+
     /// Whether back navigation is possible
     var canGoBack: Bool {
         !navigationPath.isEmpty
@@ -53,6 +56,7 @@ final class TVMediaRouter: ObservableObject {
     func navigate(to dest: TVMediaDestination) {
         destination = dest
         navigationPath = []
+        systemGamesReturnDestination = nil
 
         // Reset saves filter when navigating from sidebar
         if dest == .saves {
@@ -62,9 +66,21 @@ final class TVMediaRouter: ObservableObject {
 
     /// Navigate to a system's games
     func navigateToSystem(_ systemID: String) {
+        systemGamesReturnDestination = destination
         selectedSystemID = systemID
         destination = .systemGames
         navigationPath = []
+    }
+
+    /// Navigate back from `.systemGames` to the destination it was entered from.
+    @discardableResult
+    func navigateBackFromSystemGames() -> Bool {
+        guard destination == .systemGames else { return false }
+        guard let returnDestination = systemGamesReturnDestination else { return false }
+        destination = returnDestination
+        navigationPath = []
+        systemGamesReturnDestination = nil
+        return true
     }
 
     /// Navigate to saves with optional system filter
@@ -108,6 +124,10 @@ final class TVMediaRouter: ObservableObject {
     func handleBack() -> Bool {
         if activeModal != nil {
             dismissModal()
+            return true
+        }
+
+        if navigateBackFromSystemGames() {
             return true
         }
 

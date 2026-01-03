@@ -132,6 +132,9 @@ struct TVMediaMainView: View {
             if focusCoordinator.isAlertPresented || focusCoordinator.isModalPresented {
                 return
             }
+            if router.handleBack() {
+                return
+            }
             if router.destination == .settings, settingsCanPop {
                 return
             }
