@@ -683,7 +683,21 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             let effectiveSize = CGSize(width: effectiveRect.width, height: effectiveRect.height)
             let safeWidth = max(effectiveSize.width, 1)
             let safeHeight = max(effectiveSize.height, 1)
-            let ratio = safeWidth / safeHeight
+            /// Prefer the core-reported display aspect (`aspectSize`) when available, while keeping `effectiveRect` for texture dimensions.
+            var ratio = safeWidth / safeHeight
+            let aspectSize = emulatorCore.aspectSize
+            if aspectSize.width > 0 && aspectSize.height > 0 {
+                var aspectRatio = aspectSize.width / max(0.01, aspectSize.height)
+                if aspectRatio < 0.5 || aspectRatio > 3.0 {
+                    let inverted = aspectSize.height / max(0.01, aspectSize.width)
+                    if inverted >= 0.5 && inverted <= 3.0 {
+                        aspectRatio = inverted
+                    }
+                }
+                if aspectRatio >= 0.5 && aspectRatio <= 3.0 {
+                    ratio = aspectRatio
+                }
+            }
 
             /// Get parent size in points (not scaled)
             var parentSize = parent?.view.bounds.size ?? CGSize.zero
