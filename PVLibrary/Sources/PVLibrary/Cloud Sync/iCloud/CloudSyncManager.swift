@@ -1705,6 +1705,7 @@ public class CloudSyncManager {
 
         let fileManager = FileManager.default
         var markedGamesCount = 0
+        let isPausedForEmulation = self.isPausedForEmulation
 
         do {
             // Filter out contentless games (virtual entries for systems that boot without ROMs)
@@ -1740,7 +1741,11 @@ public class CloudSyncManager {
                     // Check if a CloudKit record exists for this game
                     var recordExists = false
                     let md5 = game.md5Hash
-                    if !md5.isEmpty {
+                    if isPausedForEmulation {
+                        // When emulation is running, CloudKit fetches are intentionally suppressed.
+                        // Treat record existence as "unknown" to avoid incorrectly marking local files for upload.
+                        recordExists = true
+                    } else if !md5.isEmpty {
                         recordExists = await checkIfCloudRecordExists(md5: md5, syncer: romsSyncer)
                     }
 
