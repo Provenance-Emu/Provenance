@@ -371,6 +371,26 @@ public class CloudSyncManager {
         return frequency.timeInterval
     }
 
+    /// Whether ROM metadata/content should be synced for the current content preference.
+    private func shouldSyncROMContent() -> Bool {
+        switch Defaults[.cloudKitSyncContentType] {
+        case .all, .romsOnly, .metadataOnly:
+            return true
+        case .saveStatesOnly:
+            return false
+        }
+    }
+
+    /// Whether save state metadata/content should be synced for the current content preference.
+    private func shouldSyncSaveStateContent() -> Bool {
+        switch Defaults[.cloudKitSyncContentType] {
+        case .all, .saveStatesOnly, .metadataOnly:
+            return true
+        case .romsOnly:
+            return false
+        }
+    }
+
     // MARK: - Content Type Enum for Settings Integration
 
     private enum CloudKitSyncContentType {
@@ -560,7 +580,7 @@ public class CloudSyncManager {
         }
 
         if game.contentless {
-            VLOG("Skipping CloudKit ROM upload for contentless placeholder game: \(game.title)")
+            DLOG("Skipping CloudKit ROM upload for contentless placeholder game: \(game.title)")
             return
         }
 
@@ -991,7 +1011,7 @@ public class CloudSyncManager {
             }
         }
 
-        VLOG("Scheduled CloudKit integrity audit (\(reason))")
+        DLOG("Scheduled CloudKit integrity audit (\(reason))")
     }
 
     /// Manually trigger a full integrity audit including record repair
@@ -1127,7 +1147,7 @@ public class CloudSyncManager {
         Task { @MainActor in
             guard Defaults[.iCloudSync] else { return }
             guard metadataBootstrapTask == nil else {
-                VLOG("Metadata bootstrap already in progress, skipping (\(reason)).")
+                DLOG("Metadata bootstrap already in progress, skipping (\(reason)).")
                 return
             }
 
@@ -1152,7 +1172,7 @@ public class CloudSyncManager {
         let biosSyncer = self.biosSyncer as? CloudKitBIOSSyncer
 
         guard romSyncer != nil || saveStatesSyncer != nil || biosSyncer != nil else {
-            VLOG("Metadata bootstrap skipped (\(reason)) - no CloudKit syncers available.")
+            DLOG("Metadata bootstrap skipped (\(reason)) - no CloudKit syncers available.")
             return
         }
 
@@ -1161,29 +1181,25 @@ public class CloudSyncManager {
         ILOG("[SYNC] Starting CloudKit metadata bootstrap (\(reason))")
 
         var totalProcessed = 0
-        await withTaskGroup(of: Int.self) { group in
-            if let romSyncer = romSyncer {
-                group.addTask {
-                    await romSyncer.syncMetadataOnly()
-                }
-            }
 
-            if let saveStatesSyncer = saveStatesSyncer {
-                group.addTask {
-                    await saveStatesSyncer.syncMetadataOnly()
-                }
-            }
+        // Process ROM metadata first so save states can resolve games reliably on fresh installs.
+        if let romSyncer = romSyncer, shouldSyncROMContent() {
+            let count = await romSyncer.syncMetadataOnly()
+            totalProcessed += count
+        } else {
+            DLOG("[SYNC] Skipping ROM metadata bootstrap due to content settings.")
+        }
 
-            // Add BIOS metadata sync
-            if let biosSyncer = biosSyncer {
-                group.addTask { @MainActor in
-                    await biosSyncer.syncMetadataOnly()
-                }
-            }
+        if let saveStatesSyncer = saveStatesSyncer, shouldSyncSaveStateContent() {
+            let count = await saveStatesSyncer.syncMetadataOnly()
+            totalProcessed += count
+        } else {
+            DLOG("[SYNC] Skipping save-state metadata bootstrap due to content settings.")
+        }
 
-            for await count in group {
-                totalProcessed += count
-            }
+        // BIOS metadata is independent of ROM/save-state ordering.
+        if let biosSyncer = biosSyncer {
+            totalProcessed += await biosSyncer.syncMetadataOnly()
         }
 
         ILOG("[SYNC] Metadata bootstrap finished (\(reason)) - processed \(totalProcessed) records.")
@@ -1199,7 +1215,7 @@ public class CloudSyncManager {
         var lastError: Error?
 
         // Fetch ROM changes
-        if let romsSyncer = romsSyncer {
+        if let romsSyncer = romsSyncer, shouldSyncROMContent() {
             do {
                 DLOG("Fetching remote ROM changes...")
                 _ = try await romsSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
@@ -1211,11 +1227,11 @@ public class CloudSyncManager {
                 await errorHandler.handle(error: error)
             }
         } else {
-            WLOG("ROM syncer not available for fetching remote changes")
+            DLOG("ROM syncer not available or ROM content disabled; skipping ROM fetch.")
         }
 
         // Fetch Save State changes
-        if let saveStatesSyncer = saveStatesSyncer {
+        if let saveStatesSyncer = saveStatesSyncer, shouldSyncSaveStateContent() {
             do {
                 DLOG("Fetching remote save state changes...")
                 _ = try await saveStatesSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
@@ -1227,7 +1243,7 @@ public class CloudSyncManager {
                 await errorHandler.handle(error: error)
             }
         } else {
-            WLOG("Save states syncer not available for fetching remote changes")
+            DLOG("Save states syncer not available or save-state content disabled; skipping save-state fetch.")
         }
 
         // Fetch Non-Database file changes (BIOS, screenshots, etc.)
@@ -1791,7 +1807,7 @@ public class CloudSyncManager {
     /// - Returns: True if the file exists, false otherwise
     private func checkIfGameFileExists(_ game: PVGame) async -> Bool {
         guard let url = game.file?.url else {
-            VLOG("Game \(game.title) has no file URL.")
+            DLOG("Game \(game.title) has no file URL.")
             return false
         }
 
@@ -1799,7 +1815,7 @@ public class CloudSyncManager {
         let exists = fileManager.fileExists(atPath: url.path)
 
         if !exists {
-            VLOG("File not found for game \(game.title): \(url.path)")
+            DLOG("File not found for game \(game.title): \(url.path)")
         }
 
         return exists
@@ -1824,7 +1840,7 @@ public class CloudSyncManager {
         } catch {
             // Handle record not found gracefully without logging errors for expected cases
             if let ckError = error as? CKError, ckError.code == .unknownItem {
-                VLOG("No CloudKit record found for game with MD5 \(md5)")
+                DLOG("No CloudKit record found for game with MD5 \(md5)")
                 return false
             }
 

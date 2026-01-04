@@ -11,6 +11,9 @@ import RealmSwift
 
 /// Save states syncer for all OS's using CloudKit
 public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
+    /// Track save-state records that need a deferred retry once ROM metadata is available.
+    private var pendingRecordRetries = ConcurrentSet<String>()
+
     @inline(__always)
     private func withRealm<T: Sendable>(
         _ work: @escaping (Realm) throws -> T
@@ -24,6 +27,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
     public override init(container: CKContainer,directories: Set<String> = ["Saves"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+        VLOG("[SYNC] Init CloudKitSaveStatesSyncer container=\(container.containerIdentifier ?? "nil") dirs=\(directories)")
         super.init(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
 
@@ -31,8 +35,15 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Returns: Array of CKRecord objects
     public func getAllRecords() async -> [CKRecord] {
         do {
-            let records = try await fetchSaveStateMetadataRecords()
-            DLOG("Fetched \(records.count) save state metadata records from CloudKit")
+            // Prefer direct records(matching:) path (matches diagnostic view behavior)
+            let records = try await fetchSaveStatesDirect()
+            ILOG("[SYNC] SaveState direct fetch returned \(records.count) records")
+            if records.isEmpty {
+                // Fallback to CKQueryOperation path for completeness
+                let opRecords = try await fetchSaveStateMetadataRecords()
+                ILOG("[SYNC] SaveState query-operation fetch returned \(opRecords.count) records")
+                return opRecords
+            }
             return records
         } catch {
             ELOG("Failed to fetch save state records: \(error.localizedDescription)")
@@ -91,10 +102,111 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 }
 
                 allRecords.append(contentsOf: batch)
+                ILOG("[SYNC] SaveState batch fetched \(batch.count) records (total \(allRecords.count)) cursor=\(nextCursor != nil ? "more" : "end")")
                 cursor = nextCursor
             } while cursor != nil
 
+            ILOG("[SYNC] SaveState metadata fetch completed with \(allRecords.count) records")
             return allRecords
+        }
+    }
+
+    /// Fallback fetch using CKDatabase.records(matching:) to detect schema/environment issues.
+    private func fetchSaveStatesDirect() async throws -> [CKRecord] {
+        let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
+        var all: [CKRecord] = []
+        var cursor: CKQueryOperation.Cursor?
+
+        repeat {
+            if let c = cursor {
+                let page = try await privateDatabase.records(continuingMatchFrom: c, desiredKeys: saveStateDesiredKeys(), resultsLimit: CKQueryOperation.maximumResults)
+                let pageRecords = page.matchResults.compactMap { _, result in try? result.get() }
+                all.append(contentsOf: pageRecords)
+                cursor = page.queryCursor
+                ILOG("[SYNC] SaveState direct page fetched \(pageRecords.count) records (total \(all.count)) cursor=\(cursor != nil ? "more" : "end")")
+            } else {
+                let first = try await privateDatabase.records(matching: query, desiredKeys: saveStateDesiredKeys(), resultsLimit: CKQueryOperation.maximumResults)
+                let pageRecords = first.matchResults.compactMap { _, result in try? result.get() }
+                all.append(contentsOf: pageRecords)
+                cursor = first.queryCursor
+                ILOG("[SYNC] SaveState direct first page fetched \(pageRecords.count) records (total \(all.count)) cursor=\(cursor != nil ? "more" : "end")")
+            }
+        } while cursor != nil
+
+        return all
+    }
+
+    private func saveStateDesiredKeys() -> [CKRecord.FieldKey] {
+        return [
+            CloudKitSchema.SaveStateFields.filename,
+            CloudKitSchema.SaveStateFields.systemIdentifier,
+            CloudKitSchema.SaveStateFields.gameID,
+            CloudKitSchema.SaveStateFields.coreIdentifier,
+            CloudKitSchema.SaveStateFields.coreVersion,
+            CloudKitSchema.SaveStateFields.fileSize,
+            CloudKitSchema.SaveStateFields.lastUploadedDate,
+            CloudKitSchema.SaveStateFields.directory,
+            CloudKitSchema.SaveStateFields.imageAsset
+        ]
+    }
+
+    /// Cache artwork for save states already in Realm that are missing images locally.
+    private func cacheMissingArtworkForExistingSaveStates(limit: Int) async {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Artwork backfill skipped (paused for emulation)")
+            return
+        }
+
+        do {
+            let candidates = try await withRealm { realm in
+                realm.objects(PVSaveState.self)
+                    .filter("(cloudRecordID != nil) AND (image == nil OR image.url == nil)")
+                    .prefix(limit)
+                    .map { $0.freeze() }
+            }
+
+            guard !candidates.isEmpty else { return }
+            ILOG("[SYNC] Backfilling artwork for \(candidates.count) save states missing images")
+
+            for saveState in candidates {
+                guard let recordName = saveState.cloudRecordID else { continue }
+                let recordID = CKRecord.ID(recordName: recordName)
+                do {
+                    let record = try await fetchSaveStateRecordIncludingAssets(recordID: recordID)
+                    if let record = record,
+                       record[CloudKitSchema.SaveStateFields.imageAsset] as? CKAsset != nil {
+                        await cacheSaveStateArtworkAsset(from: record, for: saveState)
+                    }
+                } catch {
+                    WLOG("[SYNC] Artwork backfill failed for \(recordName): \(error.localizedDescription)")
+                }
+            }
+        } catch {
+            ELOG("[SYNC] Failed to query save states for artwork backfill: \(error.localizedDescription)")
+        }
+    }
+
+    /// Fetch a save-state record including assets.
+    private func fetchSaveStateRecordIncludingAssets(recordID: CKRecord.ID) async throws -> CKRecord? {
+        return try await withCheckedThrowingContinuation { continuation in
+            let op = CKFetchRecordsOperation(recordIDs: [recordID])
+            op.desiredKeys = saveStateDesiredKeys() + [CloudKitSchema.SaveStateFields.fileData]
+            var fetched: CKRecord?
+
+            op.perRecordResultBlock = { _, result in
+                if case let .success(r) = result { fetched = r }
+            }
+
+            op.fetchRecordsResultBlock = { result in
+                switch result {
+                case .success:
+                    continuation.resume(returning: fetched)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+
+            self.privateDatabase.add(op)
         }
     }
 
@@ -577,12 +689,16 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
                     // Fetch all save state records
                     let records = await self.getAllRecords()
+                    ILOG("[SYNC] SaveState loadAllFromCloud received \(records.count) records")
                     ILOG("[SYNC] Found \(records.count) save state records in CloudKit")
 
                     // Process each record
                     for record in records {
                         await self.processCloudRecord(record)
                     }
+
+                    // Backfill artwork for existing save states missing cached images
+                    await self.cacheMissingArtworkForExistingSaveStates(limit: 100)
 
                     // Call iteration complete callback
                     await iterationComplete?()
@@ -705,7 +821,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             // Check by: 1) original ID from metadata, 2) cloudRecordID, 3) filename
             let (frozenGame, existingSaveState): (PVGame?, PVSaveState?) = try await self.withRealm { [self] realm in
                 guard let realmGame = self.resolveGame(for: record, realm: realm) else {
-                    WLOG("[SYNC] Game not found locally for save state record: \(cloudRecordID)")
+                    WLOG("[SYNC] Game not found locally for save state record: \(cloudRecordID). Will retry after ROM metadata sync.")
                     return (nil, nil)
                 }
 
@@ -745,7 +861,10 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 return (realmGame.freeze(), existing?.freeze())
             }
 
-            guard let frozenGame = frozenGame else { return }
+            guard let frozenGame = frozenGame else {
+                await scheduleDeferredSaveStateRetry(record)
+                return
+            }
 
             var targetSaveState: PVSaveState?
             var needsRomDownload = false
@@ -783,6 +902,11 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 // New save states from cloud need the ROM downloaded
                 needsRomDownload = true
             }
+            else if frozenGame == nil {
+                // Defer processing until ROM metadata lands to avoid losing this record on fresh installs.
+                await scheduleDeferredSaveStateRetry(record)
+                return
+            }
 
             // Step 3: Apply metadata and cache artwork
             if let targetSaveState = targetSaveState {
@@ -812,6 +936,23 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             }
         } catch {
             ELOG("[SYNC] Error processing save state record \(record.recordID.recordName): \(error.localizedDescription)")
+        }
+    }
+
+    /// Queue a one-time retry for a save-state record when its game isn't available yet.
+    private func scheduleDeferredSaveStateRetry(_ record: CKRecord) async {
+        let recordID = record.recordID.recordName
+        let alreadyQueued = await pendingRecordRetries.contains(recordID)
+        guard !alreadyQueued else { return }
+
+        await pendingRecordRetries.insert(recordID)
+        Task.detached { [weak self] in
+            // Wait briefly to allow ROM metadata to land.
+            try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5s
+            guard let self else { return }
+            await self.pendingRecordRetries.remove(recordID)
+            VLOG("[SYNC] Retrying deferred save state processing for record: \(recordID)")
+            await self.processCloudRecord(record)
         }
     }
 
