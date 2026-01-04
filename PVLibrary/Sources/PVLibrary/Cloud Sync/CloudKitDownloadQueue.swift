@@ -378,6 +378,26 @@ public class CloudKitDownloadQueue: ObservableObject {
         }
     }
 
+    /// Cancel a specific save-state download
+    public func cancelSaveStateDownload(recordID: String) {
+        let key = SyncProgressTracker.DownloadKind.saveState(recordID: recordID).identifier
+        if let task = activeDownloadTasks[key] {
+            task.cancel()
+            activeDownloadTasks.removeValue(forKey: key)
+            Task { @MainActor in
+                progressTracker.failDownload(kind: .saveState(recordID: recordID), error: .downloadCancelled)
+            }
+            ILOG("Cancelled save-state download: \(recordID)")
+        } else {
+            Task { @MainActor in
+                if let index = progressTracker.queuedDownloads.firstIndex(where: { $0.kind == .saveState(recordID: recordID) }) {
+                    progressTracker.queuedDownloads.remove(at: index)
+                    ILOG("Removed save-state from queue: \(recordID)")
+                }
+            }
+        }
+    }
+
     /// Cancel all downloads
     public func cancelAllDownloads() {
         // Cancel active tasks

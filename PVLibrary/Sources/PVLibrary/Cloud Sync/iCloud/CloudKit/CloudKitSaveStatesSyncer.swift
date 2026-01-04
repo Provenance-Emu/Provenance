@@ -347,7 +347,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     let privateDatabase = self.container.privateCloudDatabase
 
                     do {
-                        let record = try await privateDatabase.record(for: recordID)
+                        let record = try await self.fetchSaveStateRecordWithProgress(recordID: recordID)
 
                         guard let asset = record["fileData"] as? CKAsset,
                               let fileURL = asset.fileURL else {
@@ -517,6 +517,46 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             }
 
             return Disposables.create()
+        }
+    }
+
+    /// Fetch a save-state CloudKit record while reporting real progress to `SyncProgressTracker` when the download is being managed by `CloudKitDownloadQueue`.
+    private func fetchSaveStateRecordWithProgress(recordID: CKRecord.ID) async throws -> CKRecord {
+        try await withCheckedThrowingContinuation { continuation in
+            let op = CKFetchRecordsOperation(recordIDs: [recordID])
+            op.qualityOfService = .userInitiated
+
+            let kind = SyncProgressTracker.DownloadKind.saveState(recordID: recordID.recordName)
+
+            op.perRecordProgressBlock = { _, progress in
+                Task { @MainActor in
+                    guard let active = SyncProgressTracker.shared.activeDownloads.first(where: { $0.kind == kind }) else { return }
+                    let bytes = Int64(Double(active.fileSize) * progress)
+                    SyncProgressTracker.shared.updateDownloadProgress(kind: kind, bytesDownloaded: bytes)
+                }
+            }
+
+            var fetched: CKRecord?
+            op.perRecordResultBlock = { _, result in
+                if case let .success(record) = result {
+                    fetched = record
+                }
+            }
+
+            op.fetchRecordsResultBlock = { result in
+                switch result {
+                case .success:
+                    if let record = fetched {
+                        continuation.resume(returning: record)
+                    } else {
+                        continuation.resume(throwing: CloudSyncError.genericError("CloudKit record fetch succeeded but record was nil (\(recordID.recordName))"))
+                    }
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+
+            self.container.privateCloudDatabase.add(op)
         }
     }
 

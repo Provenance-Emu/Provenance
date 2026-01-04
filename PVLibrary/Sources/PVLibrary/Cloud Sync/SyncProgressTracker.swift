@@ -556,11 +556,22 @@ public extension SyncProgressTracker.DownloadKind {
         }
         return false
     }
+
+    func matchesSaveState(recordID: String) -> Bool {
+        if case let .saveState(candidate) = self {
+            return candidate == recordID
+        }
+        return false
+    }
 }
 
 public extension SyncProgressTracker.QueuedDownload {
     func matchesROM(md5: String) -> Bool {
         kind.matchesROM(md5: md5)
+    }
+
+    func matchesSaveState(recordID: String) -> Bool {
+        kind.matchesSaveState(recordID: recordID)
     }
 }
 
@@ -568,10 +579,18 @@ public extension SyncProgressTracker.ActiveDownload {
     func matchesROM(md5: String) -> Bool {
         kind.matchesROM(md5: md5)
     }
+
+    func matchesSaveState(recordID: String) -> Bool {
+        kind.matchesSaveState(recordID: recordID)
+    }
 }
 
 public extension SyncProgressTracker.FailedDownload {
     func matchesROM(md5: String) -> Bool {
         kind.matchesROM(md5: md5)
+    }
+
+    func matchesSaveState(recordID: String) -> Bool {
+        kind.matchesSaveState(recordID: recordID)
     }
 }
