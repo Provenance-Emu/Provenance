@@ -1320,9 +1320,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if audioInited {
             gameAudio.stopAudio()
         }
-        // Resume CloudKit and GameImporter when gameplay stops
+        // Resume CloudKit and import/sync pipelines when gameplay stops
         CloudKitDownloadQueue.shared.resumeQueue()
         GameImporter.shared.resume()
+        CloudSyncManager.shared.resumeFromEmulation()
+        GameImporter.shared.resumeFromEmulation()
 
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)

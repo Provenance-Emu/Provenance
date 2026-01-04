@@ -231,9 +231,19 @@ public class AppState: ObservableObject {
                 if isEmulationActive {
                     ILOG("AppState: Pausing imports due to active emulation")
                     self?.pauseImports(reason: "Emulation active")
+                    /// Pause CloudKit + importer pipelines while emulation is running.
+                    /// CloudKit syncers gate work off `CloudSyncManager.shared.isPausedForEmulation`.
+                    Task { @MainActor in
+                        CloudSyncManager.shared.pauseForEmulation()
+                        GameImporter.shared.pauseForEmulation()
+                    }
                 } else {
                     ILOG("AppState: Emulation inactive, can resume imports")
                     self?.resumeImportsIfNoOtherConditions(previousCondition: "Emulation")
+                    Task { @MainActor in
+                        CloudSyncManager.shared.resumeFromEmulation()
+                        GameImporter.shared.resumeFromEmulation()
+                    }
                 }
             }
             .store(in: &importPauseSubscriptions)
