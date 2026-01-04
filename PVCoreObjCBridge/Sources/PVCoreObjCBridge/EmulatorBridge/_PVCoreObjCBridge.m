@@ -771,7 +771,11 @@ static NSString *_systemName;
         RingBufferType bufferType = [PVSettingsWrapper audioRingBufferType];
 
         id<RingBufferProtocol> newRingBuffer = [RingBufferFactory makeWithType:bufferType withLength:length];
-        [ringBuffers addObject:newRingBuffer];
+        if(newRingBuffer) {
+            [ringBuffers addObject:newRingBuffer];
+        } else {
+            ELOG(@"Failed to created newRingBuffer");
+        }
         return newRingBuffer;
     }
 
