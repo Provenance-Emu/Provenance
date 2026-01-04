@@ -19,11 +19,13 @@ extension PVEmulatorViewController {
             return nil
         }
 
-        fpsLabel.alpha = 0.0
-        fpsHUDView.alpha = 0.0
+        let fpsLabelWasHidden = fpsLabel.isHidden
+        let fpsHUDViewWasHidden = fpsHUDView.isHidden
+        fpsLabel.isHidden = true
+        fpsHUDView.isHidden = true
         defer {
-            fpsLabel.alpha = 1.0
-            fpsHUDView.alpha = 1.0
+            fpsLabel.isHidden = fpsLabelWasHidden
+            fpsHUDView.isHidden = fpsHUDViewWasHidden
         }
 
         guard let targetView = screenshotTargetView() else { return nil }
@@ -33,6 +35,9 @@ extension PVEmulatorViewController {
 
         targetView.layoutIfNeeded()
         view.layoutIfNeeded()
+
+        /// Ensure view hierarchy updates are committed before capture
+        CATransaction.flush()
 
         let captureRect = resolvedScreenshotRect(for: targetView)
         guard captureRect.width > 1, captureRect.height > 1 else { return nil }
@@ -45,7 +50,7 @@ extension PVEmulatorViewController {
             size: targetView.bounds.size
         )
 
-        targetView.drawHierarchy(in: drawRect, afterScreenUpdates: false)
+        targetView.drawHierarchy(in: drawRect, afterScreenUpdates: true)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
 
