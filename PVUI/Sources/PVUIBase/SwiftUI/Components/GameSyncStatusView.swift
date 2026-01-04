@@ -316,7 +316,9 @@ private struct RetroTVOSCancelButton: View {
                 .scaleEffect(isFocused ? 1.1 : 1.0)
                 .animation(.easeInOut(duration: 0.15), value: isFocused)
         }
-        .buttonStyle(.plain)
+        .tvOSDisableFocusEffect()
+//        .buttonStyle(.plain)
+        .buttonStyle(TVMediaCardButtonStyle())
     }
 }
 #endif
