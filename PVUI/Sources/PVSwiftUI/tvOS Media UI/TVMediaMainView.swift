@@ -2308,6 +2308,7 @@ struct TVMediaSearchView: View {
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isSearchFieldFocused: Bool
     @FocusState private var focusedRecentIndex: Int?
+    @FocusState private var isRecentButtonFocused: Bool
 
     private let maxRecentSearches = 8
 
@@ -2436,23 +2437,44 @@ struct TVMediaSearchView: View {
                             .font(.system(size: 12, weight: .bold))
                             .tracking(0.8)
                     }
-                    .foregroundStyle(showRecentSearches ? Color.retroBlue : .white.opacity(0.6))
+                    .foregroundStyle(isRecentButtonFocused ? .white : (showRecentSearches ? Color.retroBlue : .white.opacity(0.6)))
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
                     .background(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(showRecentSearches ? Color.retroBlue.opacity(0.15) : Color.white.opacity(0.05))
+                            .fill(
+                                isRecentButtonFocused ?
+                                    (showRecentSearches ? Color.retroBlue.opacity(0.25) : Color.white.opacity(0.1)) :
+                                    (showRecentSearches ? Color.retroBlue.opacity(0.15) : Color.white.opacity(0.05))
+                            )
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(
-                                showRecentSearches ? Color.retroBlue.opacity(0.6) : Color.white.opacity(0.1),
-                                lineWidth: 1.5
-                            )
+                        Group {
+                            if isRecentButtonFocused {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            colors: [Color.retroPink.opacity(0.8), Color.retroBlue.opacity(0.6)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 2
+                                    )
+                            } else {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .strokeBorder(
+                                        showRecentSearches ? Color.retroBlue.opacity(0.6) : Color.white.opacity(0.1),
+                                        lineWidth: 1.5
+                                    )
+                            }
+                        }
                     )
                 }
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
+                .focused($isRecentButtonFocused)
+                .scaleEffect(isRecentButtonFocused ? 1.05 : 1.0)
+                .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isRecentButtonFocused)
             }
 
             // Clear button
