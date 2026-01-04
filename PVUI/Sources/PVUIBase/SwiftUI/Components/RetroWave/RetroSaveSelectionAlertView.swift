@@ -105,6 +105,7 @@ public class RetroSaveSelectionViewModel: ObservableObject {
     public let coreIdentifier: String
 
     private var downloadTask: Task<Void, Never>?
+    private var downloadingRecordID: String?
 
     public init(gameTitle: String, coreName: String, coreIdentifier: String, saves: [RetroSaveSelectionItem] = []) {
         self.gameTitle = gameTitle
@@ -148,33 +149,55 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                 if saveState.isDownloaded, let fileURL = saveState.file?.url,
                    FileManager.default.fileExists(atPath: fileURL.path) {
                     ILOG("[SaveSelection] Save state already downloaded locally: \(item.saveStateId)")
+                    downloadingRecordID = nil
                     downloadingItemId = nil
                     downloadProgress = 0
                     completion(true)
                     return
                 }
 
-                // Use CloudSyncManager to download via the proper syncer
-                downloadProgress = 0.1
-
-                // Simulate progress while waiting for download
-                let progressTask = Task {
-                    var progress = 0.1
-                    while !Task.isCancelled && progress < 0.9 {
-                        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 second
-                        progress += 0.05
-                        await MainActor.run {
-                            self.downloadProgress = progress
-                        }
+                let gameMD5 = saveState.game?.md5Hash.uppercased()
+                let filename = saveState.file?.fileName ?? "savestate_\(saveState.id)"
+                let recordID: String = {
+                    if let cloudRecordName = saveState.cloudRecordID, !cloudRecordName.isEmpty {
+                        return cloudRecordName
                     }
+                    if let gameMD5, !gameMD5.isEmpty {
+                        return CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: gameMD5, filename: filename).recordName
+                    }
+                    return saveState.id
+                }()
+
+                downloadingRecordID = recordID
+
+                let systemIdentifier = saveState.game?.systemIdentifier ?? "Saves"
+                try await CloudKitDownloadQueue.shared.queueSaveStateDownload(
+                    recordID: recordID,
+                    title: item.title,
+                    fileSize: Int64(item.fileSize),
+                    systemIdentifier: systemIdentifier,
+                    priority: .high
+                )
+
+                while !Task.isCancelled {
+                    if let active = SyncProgressTracker.shared.activeDownloads.first(where: { $0.matchesSaveState(recordID: recordID) }) {
+                        self.downloadProgress = active.progress
+                        try await Task.sleep(nanoseconds: 100_000_000)
+                        continue
+                    }
+
+                    if SyncProgressTracker.shared.queuedDownloads.contains(where: { $0.matchesSaveState(recordID: recordID) }) {
+                        self.downloadProgress = 0
+                        try await Task.sleep(nanoseconds: 200_000_000)
+                        continue
+                    }
+
+                    if let failed = SyncProgressTracker.shared.failedDownloads.first(where: { $0.matchesSaveState(recordID: recordID) }) {
+                        throw failed.error
+                    }
+
+                    break
                 }
-
-                // Download via CloudSyncManager
-                let frozenSaveState = saveState.freeze()
-                try await CloudSyncManager.shared.downloadSaveState(for: frozenSaveState)
-
-                // Cancel progress simulation
-                progressTask.cancel()
 
                 if Task.isCancelled {
                     ILOG("[SaveSelection] Download cancelled for: \(item.saveStateId)")
@@ -189,6 +212,7 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                    FileManager.default.fileExists(atPath: fileURL.path) {
                     ILOG("[SaveSelection] Download complete for: \(item.saveStateId)")
                     downloadProgress = 1.0
+                    downloadingRecordID = nil
                     downloadingItemId = nil
                     downloadProgress = 0
                     completion(true)
@@ -198,6 +222,7 @@ public class RetroSaveSelectionViewModel: ObservableObject {
             } catch {
                 ELOG("[SaveSelection] Download failed: \(error.localizedDescription)")
                 downloadError = error.localizedDescription
+                downloadingRecordID = nil
                 downloadingItemId = nil
                 completion(false)
             }
@@ -208,6 +233,10 @@ public class RetroSaveSelectionViewModel: ObservableObject {
     public func cancelDownload() {
         downloadTask?.cancel()
         downloadTask = nil
+        if let recordID = downloadingRecordID {
+            CloudKitDownloadQueue.shared.cancelSaveStateDownload(recordID: recordID)
+        }
+        downloadingRecordID = nil
         downloadingItemId = nil
         downloadProgress = 0
     }
