@@ -1460,7 +1460,7 @@ struct TVMediaHomeView: View {
         .onAppear {
             refreshWebServerURL()
         }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name.webServerStatusChanged)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("WebServerStatusChanged"))) { _ in
             refreshWebServerURL()
         }
 #endif
