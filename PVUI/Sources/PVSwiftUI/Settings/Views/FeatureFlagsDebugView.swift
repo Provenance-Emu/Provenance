@@ -447,9 +447,9 @@ private struct DebugControlsSection: View {
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
 
     /// Helper function to get the border gradient based on focus state
+    #if os(tvOS)
     private func focusedBorderGradient(for buttonID: FeatureFlagsDebugView.ButtonID) -> LinearGradient {
         let colors = getButtonColors(for: buttonID)
-        #if os(tvOS)
         if focusedButton == buttonID {
             return LinearGradient(
                 gradient: Gradient(colors: [colors.0, colors.1, colors.0]),
@@ -463,16 +463,11 @@ private struct DebugControlsSection: View {
                 endPoint: .trailing
             )
         }
-        #else
-        return LinearGradient(
-            gradient: Gradient(colors: [colors.0, colors.1]),
-            startPoint: .leading,
-            endPoint: .trailing
-        )
-        #endif
     }
+    #endif
 
     /// Helper function to get colors for each button type
+    #if os(tvOS)
     private func getButtonColors(for buttonID: FeatureFlagsDebugView.ButtonID) -> (Color, Color) {
         switch buttonID {
         case .clearOverrides:
@@ -487,15 +482,14 @@ private struct DebugControlsSection: View {
             return (RetroTheme.retroPink, RetroTheme.retroPink.opacity(0.5))
         }
     }
+    #endif
 
     /// Helper function to get the border width based on focus state
+    #if os(tvOS)
     private func focusedBorderWidth(for buttonID: FeatureFlagsDebugView.ButtonID) -> CGFloat {
-        #if os(tvOS)
         return focusedButton == buttonID ? 3 : 2
-        #else
-        return 2
-        #endif
     }
+    #endif
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -526,6 +520,7 @@ private struct DebugControlsSection: View {
                         Color.black.opacity(0.6)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    #if os(tvOS)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(
@@ -533,7 +528,6 @@ private struct DebugControlsSection: View {
                                 lineWidth: focusedBorderWidth(for: .clearOverrides)
                             )
                     )
-                    #if os(tvOS)
                     .scaleEffect(focusedButton == .clearOverrides ? 1.08 : 1.0)
                     .shadow(color: focusedButton == .clearOverrides ? RetroTheme.retroBlue.opacity(0.9) : RetroTheme.retroBlue.opacity(glowOpacity), radius: focusedButton == .clearOverrides ? 15 : 3, x: 0, y: 0)
                     #else
@@ -576,6 +570,7 @@ private struct DebugControlsSection: View {
                         Color.black.opacity(0.6)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    #if os(tvOS)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(
@@ -583,7 +578,6 @@ private struct DebugControlsSection: View {
                                 lineWidth: focusedBorderWidth(for: .reindexSpotlight)
                             )
                     )
-                    #if os(tvOS)
                     .scaleEffect(focusedButton == .reindexSpotlight ? 1.08 : 1.0)
                     .shadow(color: focusedButton == .reindexSpotlight ? RetroTheme.retroPink.opacity(0.9) : RetroTheme.retroPink.opacity(glowOpacity), radius: focusedButton == .reindexSpotlight ? 15 : 3, x: 0, y: 0)
                     #else
@@ -617,6 +611,7 @@ private struct DebugControlsSection: View {
                         Color.black.opacity(0.6)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    #if os(tvOS)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(
@@ -624,7 +619,6 @@ private struct DebugControlsSection: View {
                                 lineWidth: focusedBorderWidth(for: .refreshFlags)
                             )
                     )
-                    #if os(tvOS)
                     .scaleEffect(focusedButton == .refreshFlags ? 1.08 : 1.0)
                     .shadow(color: focusedButton == .refreshFlags ? RetroTheme.retroPurple.opacity(0.9) : RetroTheme.retroPurple.opacity(glowOpacity), radius: focusedButton == .refreshFlags ? 15 : 3, x: 0, y: 0)
                     #else
@@ -658,6 +652,7 @@ private struct DebugControlsSection: View {
                         Color.black.opacity(0.6)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    #if os(tvOS)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(
@@ -665,7 +660,6 @@ private struct DebugControlsSection: View {
                                 lineWidth: focusedBorderWidth(for: .loadTest)
                             )
                     )
-                    #if os(tvOS)
                     .scaleEffect(focusedButton == .loadTest ? 1.08 : 1.0)
                     .shadow(color: focusedButton == .loadTest ? RetroTheme.retroBlue.opacity(0.9) : RetroTheme.retroBlue.opacity(glowOpacity), radius: focusedButton == .loadTest ? 15 : 3, x: 0, y: 0)
                     #else
@@ -714,6 +708,7 @@ private struct DebugControlsSection: View {
                         Color.black.opacity(0.6)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    #if os(tvOS)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(
@@ -721,7 +716,6 @@ private struct DebugControlsSection: View {
                                 lineWidth: focusedBorderWidth(for: .resetDefault)
                             )
                     )
-                    #if os(tvOS)
                     .scaleEffect(focusedButton == .resetDefault ? 1.08 : 1.0)
                     .shadow(color: focusedButton == .resetDefault ? RetroTheme.retroPink.opacity(0.9) : RetroTheme.retroPink.opacity(glowOpacity), radius: focusedButton == .resetDefault ? 15 : 3, x: 0, y: 0)
                     #else

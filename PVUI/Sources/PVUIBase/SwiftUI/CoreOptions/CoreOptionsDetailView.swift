@@ -220,9 +220,11 @@ public struct CoreOptionsDetailView: View {
                     )
                     .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 5)
                 }
+                .retroSettingsRowFocus(cornerRadius: 8)
+                #if os(tvOS)
                 .tvOSDisableFocusEffect()
                 .buttonStyle(TVMediaPlainButtonStyle())
-                .retroSettingsRowFocus(cornerRadius: 8)
+                #endif
                 .padding(.vertical, 20)
                 .padding(.horizontal)
             }
