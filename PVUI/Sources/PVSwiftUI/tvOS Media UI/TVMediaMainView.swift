@@ -1,9 +1,15 @@
 import SwiftUI
+import Combine
 import PVUIBase
 import PVThemes
 import PVLibrary
 import RealmSwift
 import PVRealm
+import PVPrimitives
+
+#if canImport(PVWebServer)
+import PVWebServer
+#endif
 
 #if os(tvOS)
 
@@ -1380,6 +1386,9 @@ struct TVMediaHomeView: View {
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isEmptyStateFocused: Bool
     @State private var isLoading = true
+#if canImport(PVWebServer)
+    @State private var webServerURL: String?
+#endif
 
     /// Check if we have any games at all
     private var hasAnyGames: Bool {
@@ -1447,6 +1456,14 @@ struct TVMediaHomeView: View {
         .task {
             await loadAllGames()
         }
+#if canImport(PVWebServer)
+        .onAppear {
+            refreshWebServerURL()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .webServerStatusChanged)) { _ in
+            refreshWebServerURL()
+        }
+#endif
         .onAppear {
             if !hasAnyGames && !isLoading {
                 isEmptyStateFocused = true
@@ -1502,11 +1519,22 @@ struct TVMediaHomeView: View {
                     .foregroundStyle(.white)
                     .shadow(color: Color.retroPink.opacity(0.4), radius: 8)
 
-                Text("Add ROMs via Files app, AirDrop, or Web Server")
+                Text("Add ROMs via Web Server or CloudKit sync from an iPhone, iPad or Macintosh")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(.white.opacity(0.6))
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 500)
+#if canImport(PVWebServer)
+
+                if let webServerURL {
+                    Text(webServerURL)
+                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(Color.retroBlue)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: 600)
+                        .padding(.top, 2)
+                }
+#endif
             }
 
             // Sync status hint
@@ -1545,6 +1573,18 @@ struct TVMediaHomeView: View {
             isEmptyStateFocused = true
         }
     }
+
+#if canImport(PVWebServer)
+    private func refreshWebServerURL() {
+        let webServer = PVWebServer.shared
+        guard webServer.isWWWUploadServerRunning else {
+            webServerURL = nil
+            return
+        }
+
+        webServerURL = webServer.urlString
+    }
+#endif
 }
 
 // MARK: - Systems View

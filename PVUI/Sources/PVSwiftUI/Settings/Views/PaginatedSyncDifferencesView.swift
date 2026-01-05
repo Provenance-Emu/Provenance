@@ -14,24 +14,34 @@ import PVLogging
 public struct PaginatedSyncDifferencesView: View {
     /// The view model
     @ObservedObject var viewModel: UnifiedCloudSyncViewModel
-    
+
     /// Whether to show the copied toast
     @State private var showCopiedToast = false
-    
+
     /// The copied item
     @State private var copiedItem: String = ""
-    
+
     /// Whether reduced motion is enabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
+    #if os(tvOS)
+    @FocusState private var focusedButton: ButtonID?
+
+    private enum ButtonID: Hashable {
+        case copy(String)
+        case previousPage
+        case nextPage
+    }
+    #endif
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Sync Differences")
                     .retroSectionHeader()
-                
+
                 Spacer()
-                
+
                 // Page indicator
                 if viewModel.syncDifferences.count > viewModel.itemsPerPage {
                     Text("Page \(viewModel.currentPage + 1) of \(viewModel.totalPages)")
@@ -39,7 +49,7 @@ public struct PaginatedSyncDifferencesView: View {
                         .foregroundColor(.gray)
                 }
             }
-            
+
             if viewModel.syncDifferences.isEmpty {
                 Text("No sync differences found")
                     .foregroundColor(.gray)
@@ -50,14 +60,14 @@ public struct PaginatedSyncDifferencesView: View {
                         HStack {
                             Image(systemName: "exclamationmark.triangle")
                                 .foregroundColor(.yellow)
-                            
+
                             Text(difference)
                                 .foregroundColor(.white)
                                 .font(.footnote)
                                 .lineLimit(1)
-                            
+
                             Spacer()
-                            
+
                             Button(action: {
 #if !os(tvOS)
                                 // Copy to clipboard
@@ -77,7 +87,14 @@ public struct PaginatedSyncDifferencesView: View {
                                 Image(systemName: "doc.on.doc")
                                     .foregroundColor(.gray)
                             }
+                            #if os(tvOS)
+                            .focused($focusedButton, equals: .copy(difference))
+                            .buttonStyle(TVMediaCardButtonStyle())
+                            .tvOSDisableFocusEffect()
+                            .retroThemedFocus(focusScale: 1.05, cornerRadius: 6)
+                            #else
                             .buttonStyle(PlainButtonStyle())
+                            #endif
                         }
                         .padding(.vertical, 4)
                         .padding(.horizontal, 8)
@@ -91,7 +108,7 @@ public struct PaginatedSyncDifferencesView: View {
                 .padding()
                 .background(Color.retroBlack.opacity(0.3))
                 .cornerRadius(10)
-                
+
                 // Pagination controls
                 if viewModel.syncDifferences.count > viewModel.itemsPerPage {
                     HStack {
@@ -105,27 +122,34 @@ public struct PaginatedSyncDifferencesView: View {
                         }) {
                             Image(systemName: "chevron.left")
                                 .foregroundColor(viewModel.currentPage > 0 ? .white : .gray)
+                                .padding(8)
                         }
+                        #if os(tvOS)
+                        .focused($focusedButton, equals: .previousPage)
+                        .buttonStyle(TVMediaCardButtonStyle())
+                        .tvOSDisableFocusEffect()
+                        .retroThemedFocus(focusScale: 1.1, cornerRadius: 8)
+                        #endif
                         .disabled(viewModel.currentPage <= 0)
-                        
+
                         Spacer()
-                        
+
                         // Items per page selector
                         if #available(tvOS 17.0, *) {
                             Menu {
-                                Button("10 per page") { 
+                                Button("10 per page") {
                                     viewModel.itemsPerPage = 10
 #if !os(tvOS)
                                     HapticFeedbackService.shared.playSelection()
 #endif
                                 }
-                                Button("20 per page") { 
+                                Button("20 per page") {
                                     viewModel.itemsPerPage = 20
 #if !os(tvOS)
                                     HapticFeedbackService.shared.playSelection()
 #endif
                                 }
-                                Button("50 per page") { 
+                                Button("50 per page") {
                                     viewModel.itemsPerPage = 50
 #if !os(tvOS)
                                     HapticFeedbackService.shared.playSelection()
@@ -136,7 +160,7 @@ public struct PaginatedSyncDifferencesView: View {
                                     Text("\(viewModel.itemsPerPage) per page")
                                         .font(.caption)
                                         .foregroundColor(.gray)
-                                    
+
                                     Image(systemName: "chevron.down")
                                         .font(.caption)
                                         .foregroundColor(.gray)
@@ -145,9 +169,9 @@ public struct PaginatedSyncDifferencesView: View {
                         } else {
                             // Fallback on earlier versions
                         }
-                        
+
                         Spacer()
-                        
+
                         Button(action: {
                             withAnimation {
                                 viewModel.nextPage()
@@ -158,7 +182,14 @@ public struct PaginatedSyncDifferencesView: View {
                         }) {
                             Image(systemName: "chevron.right")
                                 .foregroundColor(viewModel.currentPage < viewModel.totalPages - 1 ? .white : .gray)
+                                .padding(8)
                         }
+                        #if os(tvOS)
+                        .focused($focusedButton, equals: .nextPage)
+                        .buttonStyle(TVMediaCardButtonStyle())
+                        .tvOSDisableFocusEffect()
+                        .retroThemedFocus(focusScale: 1.1, cornerRadius: 8)
+                        #endif
                         .disabled(viewModel.currentPage >= viewModel.totalPages - 1)
                     }
                     .padding(.horizontal, 8)
@@ -167,13 +198,13 @@ public struct PaginatedSyncDifferencesView: View {
                     .cornerRadius(8)
                 }
             }
-            
+
             // Copied to clipboard toast
             if showCopiedToast {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
-                    
+
                     Text("Copied to clipboard")
                         .foregroundColor(.white)
                 }

@@ -12,7 +12,7 @@ import AudioToolbox
 internal struct SecretSettingsRow: View {
     @State private var showSecretView = false
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
-    
+
     var body: some View {
         Group {
 #if DEBUG
@@ -20,8 +20,12 @@ internal struct SecretSettingsRow: View {
                 SettingsRow(title: "Feature Flags Debug",
                             subtitle: "Override feature flags for testing",
                             icon: .sfSymbol("flag.fill"))
-                
+
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
             Button {
                 showSecretView = true
             } label: {
@@ -29,7 +33,11 @@ internal struct SecretSettingsRow: View {
                             subtitle: "Version information",
                             icon: .sfSymbol("info.circle"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #else
             .buttonStyle(.plain)
+            #endif
 #else
             if showFeatureFlagsDebug {
                 NavigationLink(destination: FeatureFlagsDebugView()) {
@@ -37,6 +45,9 @@ internal struct SecretSettingsRow: View {
                                 subtitle: "Override feature flags for testing",
                                 icon: .sfSymbol("flag.fill"))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
             } else {
                 Button {
                     showSecretView = true
@@ -45,7 +56,11 @@ internal struct SecretSettingsRow: View {
                                 subtitle: "Version information",
                                 icon: .sfSymbol("info.circle"))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #else
                 .buttonStyle(.plain)
+                #endif
             }
 #endif
         }
@@ -55,14 +70,14 @@ internal struct SecretSettingsRow: View {
             }
         }
     }
-    
+
 }
 
 private struct SecretDPadView: View {
     enum Direction {
         case up, down, left, right
     }
-    
+
     let onComplete: () -> Void
     @State private var pressedButtons: [Direction] = []
     @State private var showDPad = false
@@ -75,9 +90,9 @@ private struct SecretDPadView: View {
     @State private var lastInputTime: Date = Date()
     private let inputDebounceInterval: TimeInterval = 0.2
 #endif
-    
+
     private let konamiCode: [Direction] = [.up, .up, .down, .down, .left, .right, .left, .right]
-    
+
     var body: some View {
         // On tvOS, we need to ensure the view is ready to receive input
         // even before showDPad becomes true
@@ -89,7 +104,7 @@ private struct SecretDPadView: View {
                     Text("Use Siri Remote to enter the code")
                         .font(.headline)
                         .padding()
-                    
+
                     // Show current sequence with better visibility
                     Text(sequenceText.isEmpty ? "No input yet" : sequenceText)
                         .font(.title)
@@ -100,7 +115,7 @@ private struct SecretDPadView: View {
                                 .fill(Color.secondary.opacity(0.2))
                         )
                         .padding()
-                    
+
                     // Show hint about remaining inputs needed
                     Text("\(konamiCode.count - (pressedButtons.count % konamiCode.count)) more inputs needed")
                         .font(.caption)
@@ -116,21 +131,21 @@ private struct SecretDPadView: View {
                             .resizable()
                             .frame(width: 60, height: 60)
                     }
-                    
+
                     HStack(spacing: 60) {
                         Button(action: { pressButton(.left) }) {
                             Image(systemName: "arrow.left.circle.fill")
                                 .resizable()
                                 .frame(width: 60, height: 60)
                         }
-                        
+
                         Button(action: { pressButton(.right) }) {
                             Image(systemName: "arrow.right.circle.fill")
                                 .resizable()
                                 .frame(width: 60, height: 60)
                         }
                     }
-                    
+
                     Button(action: { pressButton(.down) }) {
                         Image(systemName: "arrow.down.circle.fill")
                             .resizable()
@@ -138,7 +153,7 @@ private struct SecretDPadView: View {
                     }
                 }
                 .foregroundColor(.accentColor)
-                
+
                 Text(sequenceText)
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -225,31 +240,31 @@ private struct SecretDPadView: View {
         }
 #endif
     }
-    
+
 #if os(tvOS)
     private func setupController() {
         DLOG("[SecretDPadView] Setting up controller")
-        
+
         // Find all connected controllers and log them
         let controllers = GCController.controllers()
         DLOG("[SecretDPadView] Found \(controllers.count) controllers")
-        
+
         for (index, ctrl) in controllers.enumerated() {
             DLOG("[SecretDPadView] Controller \(index): \(ctrl.vendorName ?? "Unknown")")
             DLOG("[SecretDPadView] - Has microGamepad: \(ctrl.microGamepad != nil)")
             DLOG("[SecretDPadView] - Has extendedGamepad: \(ctrl.extendedGamepad != nil)")
         }
-        
+
         // Get the first connected controller
         controller = controllers.first
-        
+
         guard let controller = controller else {
             DLOG("[SecretDPadView] No controller found")
             return
         }
-        
+
         DLOG("[SecretDPadView] Using controller: \(controller.vendorName ?? "Unknown")")
-        
+
         // Prioritize extendedGamepad over microGamepad for full controllers
         // This prevents conflicts when a controller supports both profiles
         if let extendedGamepad = controller.extendedGamepad {
@@ -262,16 +277,16 @@ private struct SecretDPadView: View {
             DLOG("[SecretDPadView] Controller has no supported input profile")
         }
     }
-    
+
     private func setupMicroGamepad(_ microGamepad: GCMicroGamepad) {
         microGamepad.reportsAbsoluteDpadValues = false
-        
+
         microGamepad.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
             DLOG("[SecretDPadView] MicroGamepad dpad input - x: \(xValue), y: \(yValue)")
-            
+
             let threshold: Float = 0.5 // Threshold for detecting directional input
             let resetThreshold: Float = 0.2 // Lower threshold for resetting state
-            
+
             // Handle X-axis (left/right)
             if xValue > threshold && !self.isHandlingX {
                 self.isHandlingX = true
@@ -284,7 +299,7 @@ private struct SecretDPadView: View {
             } else if abs(xValue) < resetThreshold {
                 self.isHandlingX = false
             }
-            
+
             // Handle Y-axis (up/down)
             if yValue > threshold && !self.isHandlingY {
                 self.isHandlingY = true
@@ -299,15 +314,15 @@ private struct SecretDPadView: View {
             }
         }
     }
-    
+
     private func setupExtendedGamepad(_ extendedGamepad: GCExtendedGamepad) {
         // Handle D-pad input with higher priority
         extendedGamepad.dpad.valueChangedHandler = { [self] dpad, xValue, yValue in
             DLOG("[SecretDPadView] ExtendedGamepad dpad input - x: \(xValue), y: \(yValue)")
-            
+
             let threshold: Float = 0.3 // Lower threshold for game controller D-pads
             let resetThreshold: Float = 0.1 // Lower threshold for resetting state
-            
+
             // Handle X-axis (left/right)
             if xValue > threshold && !self.isHandlingX {
                 self.isHandlingX = true
@@ -320,7 +335,7 @@ private struct SecretDPadView: View {
             } else if abs(xValue) < resetThreshold {
                 self.isHandlingX = false
             }
-            
+
             // Handle Y-axis (up/down)
             if yValue > threshold && !self.isHandlingY {
                 self.isHandlingY = true
@@ -334,14 +349,14 @@ private struct SecretDPadView: View {
                 self.isHandlingY = false
             }
         }
-        
+
         // Handle left joystick input as backup
         extendedGamepad.leftThumbstick.valueChangedHandler = { [self] thumbstick, xValue, yValue in
             let threshold: Float = 0.7 // Higher threshold for joystick to avoid accidental input
             let resetThreshold: Float = 0.3
-            
+
             DLOG("[SecretDPadView] Left thumbstick input - x: \(xValue), y: \(yValue)")
-            
+
             // Handle X-axis (left/right)
             if xValue > threshold && !self.isHandlingX {
                 self.isHandlingX = true
@@ -354,7 +369,7 @@ private struct SecretDPadView: View {
             } else if abs(xValue) < resetThreshold {
                 self.isHandlingX = false
             }
-            
+
             // Handle Y-axis (up/down) - Note: Y is inverted for thumbsticks
             if yValue > threshold && !self.isHandlingY {
                 self.isHandlingY = true
@@ -369,22 +384,22 @@ private struct SecretDPadView: View {
             }
         }
     }
-    
+
     private func removeController() {
         DLOG("[SecretDPadView] Removing controller")
         // Clean up microGamepad handlers
         controller?.microGamepad?.dpad.valueChangedHandler = nil
-        
+
         // Clean up extendedGamepad handlers
         controller?.extendedGamepad?.dpad.valueChangedHandler = nil
         controller?.extendedGamepad?.leftThumbstick.valueChangedHandler = nil
-        
+
         controller = nil
         isHandlingX = false
         isHandlingY = false
     }
 #endif
-    
+
     private var sequenceText: String {
         pressedButtons.map { direction in
             switch direction {
@@ -395,11 +410,11 @@ private struct SecretDPadView: View {
             }
         }.joined(separator: " ")
     }
-    
+
     // Unified input handler for all input sources (Siri Remote, gamepads, touchpad, iOS buttons)
     private func handleInput(_ direction: Direction) {
         let currentTime = Date()
-        
+
 #if os(tvOS)
         // Debounce input to prevent duplicate triggers from multiple sources
         guard currentTime.timeIntervalSince(lastInputTime) >= inputDebounceInterval else {
@@ -408,9 +423,9 @@ private struct SecretDPadView: View {
         }
         lastInputTime = currentTime
 #endif
-        
+
         DLOG("[SecretDPadView] Input received: \(direction)")
-        
+
         // Always show the D-pad UI when we receive input (for tvOS)
         if !showDPad {
             withAnimation {
@@ -420,16 +435,16 @@ private struct SecretDPadView: View {
 #endif
             }
         }
-        
+
         // Add the direction to our sequence
         pressedButtons.append(direction)
         DLOG("[SecretDPadView] Current sequence: \(pressedButtons)")
-        
+
         // Provide audio feedback
 #if os(tvOS)
         AudioServicesPlaySystemSound(1519) // Standard system sound for tvOS
 #endif
-        
+
         // Check if the sequence matches the Konami code
         if pressedButtons.count >= konamiCode.count {
             let lastEight = Array(pressedButtons.suffix(konamiCode.count))
@@ -445,15 +460,15 @@ private struct SecretDPadView: View {
                 return
             }
         }
-        
+
         // Limit the stored sequence length to prevent memory bloat
         if pressedButtons.count > 16 {
             pressedButtons.removeFirst(8)
         }
-        
+
         DLOG("[SecretDPadView] Current sequence display: \(sequenceText)")
     }
-    
+
     // iOS button press handler - routes to unified input handler
     private func pressButton(_ direction: Direction) {
         handleInput(direction)

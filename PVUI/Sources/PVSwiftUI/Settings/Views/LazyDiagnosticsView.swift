@@ -14,13 +14,13 @@ import PVLogging
 public struct LazyDiagnosticsView: View {
     /// The view model
     @ObservedObject var viewModel: UnifiedCloudSyncViewModel
-    
+
     /// Whether the view is expanded
     @State private var isExpanded = false
-    
+
     /// Whether reduced motion is enabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Header with expand/collapse button
@@ -35,28 +35,28 @@ public struct LazyDiagnosticsView: View {
                 HStack {
                     Text("Diagnostics")
                         .retroSectionHeader()
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                         .foregroundColor(.retroPink)
                 }
             }
             .buttonStyle(PlainButtonStyle())
-            
+
             if isExpanded {
                 // Container info
                 diagnosticSection(title: "iCloud Container", content: viewModel.containerInfo)
-                
+
                 // Entitlement info
                 diagnosticSection(title: "Entitlements", content: viewModel.entitlementInfo)
-                
+
                 // Info.plist info
                 diagnosticSection(title: "Info.plist", content: viewModel.infoPlistInfo)
-                
+
                 // Refresh info
                 diagnosticSection(title: "Refresh Status", content: viewModel.refreshInfo)
-                
+
                 // Actions
                 HStack {
                     Button(action: {
@@ -64,17 +64,17 @@ public struct LazyDiagnosticsView: View {
                         let allDiagnostics = """
                         === CONTAINER INFO ===
                         \(viewModel.containerInfo)
-                        
+
                         === ENTITLEMENTS ===
                         \(viewModel.entitlementInfo)
-                        
+
                         === INFO.PLIST ===
                         \(viewModel.infoPlistInfo)
-                        
+
                         === REFRESH STATUS ===
                         \(viewModel.refreshInfo)
                         """
-                        
+
 #if !os(tvOS)
                         UIPasteboard.general.string = allDiagnostics
                         HapticFeedbackService.shared.playSuccess()
@@ -83,9 +83,12 @@ public struct LazyDiagnosticsView: View {
                         Label("Copy All", systemImage: "doc.on.doc")
                     }
                     .retroButton(colors: [.retroBlue])
-                    
+                    #if os(tvOS)
+                    .retroThemedFocus()
+                    #endif
+
                     Spacer()
-                    
+
                     Button(action: {
                         viewModel.loadDiagnosticInfo()
 #if !os(tvOS)
@@ -95,6 +98,9 @@ public struct LazyDiagnosticsView: View {
                         Label("Refresh", systemImage: "arrow.clockwise")
                     }
                     .retroButton(colors: [.retroPurple])
+                    #if os(tvOS)
+                    .retroThemedFocus()
+                    #endif
                 }
                 .padding(.top, 8)
             }
@@ -104,7 +110,7 @@ public struct LazyDiagnosticsView: View {
         .cornerRadius(10)
         .animateWithReducedMotion(.easeInOut, value: isExpanded)
     }
-    
+
     /// Create a diagnostic section
     /// - Parameters:
     ///   - title: The title of the section
@@ -115,7 +121,7 @@ public struct LazyDiagnosticsView: View {
             Text(title)
                 .font(.subheadline)
                 .foregroundColor(.retroBlue)
-            
+
             ScrollView {
                 Text(content)
                     .font(.system(.caption, design: .monospaced))

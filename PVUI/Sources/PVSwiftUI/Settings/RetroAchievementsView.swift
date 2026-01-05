@@ -336,6 +336,12 @@ public struct RetroAchievementsView: View {
             )
             .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
         }
+        #if os(tvOS)
+        .buttonStyle(.card)
+        .retroThemedFocus(cornerRadius: 12)
+        #else
+        .buttonStyle(.plain)
+        #endif
         .disabled(isLoading || !isFormValid)
         .opacity(isFormValid ? 1.0 : 0.6)
     }
@@ -462,6 +468,12 @@ public struct RetroAchievementsView: View {
                         )
                 )
             }
+            #if os(tvOS)
+            .buttonStyle(.card)
+            .retroThemedFocus(cornerRadius: 8, primaryColor: .red, secondaryColor: .retroPink)
+            #else
+            .buttonStyle(.plain)
+            #endif
         }
         .padding()
         .background(retroCardBackground)

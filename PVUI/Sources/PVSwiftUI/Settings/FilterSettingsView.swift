@@ -1,6 +1,7 @@
 import SwiftUI
 import PVSettings
 import Defaults
+import PVThemes
 
 struct FilterSettingsView: View {
     @Default(.metalFilterMode) var metalFilterMode
@@ -11,10 +12,28 @@ struct FilterSettingsView: View {
             MetalFilterSection(metalFilterMode: $metalFilterMode)
             OpenGLFilterSection(openGLFilterMode: $openGLFilterMode)
         }
+        #if os(tvOS)
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.black,
+                    Color.retroPurple.opacity(0.1),
+                    Color.retroPink.opacity(0.05)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        #else
+        // .scrollContentBackground(.hidden)
+        #endif
         .navigationTitle("Display Filters")
-        
+
         Text("Metal filters provided by Mr. J & Mame4iOS.")
             .font(.caption)
+            #if os(tvOS)
+            .foregroundColor(.retroBlue)
+            #endif
     }
 }
 
@@ -48,33 +67,47 @@ private struct MetalFilterSection: View {
     }
 
     var body: some View {
-        Section(header: Text("Metal Filters")) {
+        Section(header:
+            Text("Metal Filters")
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                .font(.headline)
+                #endif
+        ) {
             Picker("Filter Mode", selection: $metalFilterMode) {
                 Text("Off").tag(MetalFilterModeOption.none)
                 Text("Auto").tag(MetalFilterModeOption.auto(crt: selectedCRTFilter, lcd: selectedLCDFilter))
                 Text("Always").tag(MetalFilterModeOption.always(filter: selectedAlwaysFilter))
             }
+            #if os(tvOS)
+            .pickerStyle(.automatic)
+            .tint(.retroBlue)
+            #endif
 
             switch metalFilterMode {
             case .auto:
-                VStack {
-                    Picker("CRT Filter Type", selection: $selectedCRTFilter) {
-                        ForEach([MetalFilterSelectionOption.simpleCRT, .complexCRT], id: \.self) { filter in
-                            Text(filter.description).tag(filter)
-                        }
+                Picker("CRT Filter Type", selection: $selectedCRTFilter) {
+                    ForEach([MetalFilterSelectionOption.simpleCRT, .complexCRT], id: \.self) { filter in
+                        Text(filter.description).tag(filter)
                     }
-                    .onChange(of: selectedCRTFilter) { newValue in
-                        metalFilterMode = .auto(crt: newValue, lcd: selectedLCDFilter)
-                    }
+                }
+                #if os(tvOS)
+                .tint(.retroPurple)
+                #endif
+                .onChange(of: selectedCRTFilter) { newValue in
+                    metalFilterMode = .auto(crt: newValue, lcd: selectedLCDFilter)
+                }
 
-                    Picker("LCD Filter Type", selection: $selectedLCDFilter) {
-                        ForEach([MetalFilterSelectionOption.lcd], id: \.self) { filter in
-                            Text(filter.description).tag(filter)
-                        }
+                Picker("LCD Filter Type", selection: $selectedLCDFilter) {
+                    ForEach([MetalFilterSelectionOption.lcd], id: \.self) { filter in
+                        Text(filter.description).tag(filter)
                     }
-                    .onChange(of: selectedLCDFilter) { newValue in
-                        metalFilterMode = .auto(crt: selectedCRTFilter, lcd: newValue)
-                    }
+                }
+                #if os(tvOS)
+                .tint(.retroPurple)
+                #endif
+                .onChange(of: selectedLCDFilter) { newValue in
+                    metalFilterMode = .auto(crt: selectedCRTFilter, lcd: newValue)
                 }
 
             case .always:
@@ -83,6 +116,9 @@ private struct MetalFilterSection: View {
                         Text(filter.description).tag(filter)
                     }
                 }
+                #if os(tvOS)
+                .tint(.retroPink)
+                #endif
                 .onChange(of: selectedAlwaysFilter) { newValue in
                     metalFilterMode = .always(filter: newValue)
                 }
@@ -98,12 +134,22 @@ private struct OpenGLFilterSection: View {
     @Binding var openGLFilterMode: OpenGLFilterModeOption
 
     var body: some View {
-        Section(header: Text("OpenGL Filters")) {
+        Section(header:
+            Text("OpenGL Filters")
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                .font(.headline)
+                #endif
+        ) {
             Picker("Filter Type", selection: $openGLFilterMode) {
                 ForEach(OpenGLFilterModeOption.allCases, id: \.self) { filter in
                     Text(filter.description).tag(filter)
                 }
             }
+            #if os(tvOS)
+            .pickerStyle(.automatic)
+            .tint(.retroBlue)
+            #endif
         }
     }
 }

@@ -23,16 +23,16 @@ public struct SpotlightDebugView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var reindexingInProgress = false
-    
+
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
-    
+
     public var body: some View {
         ZStack {
             // RetroWave background
             RetroTheme.retroBackground
-            
+
             // Main content
             ScrollView {
                 VStack(spacing: 16) {
@@ -43,7 +43,7 @@ public struct SpotlightDebugView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 10)
                         .shadow(color: .retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-                    
+
                     // Content sections
                     SpotlightControlsSection(
                         isLoading: $isLoading,
@@ -54,7 +54,7 @@ public struct SpotlightDebugView: View {
                     )
                     .modifier(RetroTheme.RetroSectionStyle())
                     .padding(.horizontal)
-                    
+
                     SpotlightItemsSection(items: spotlightItems, isLoading: isLoading)
                         .modifier(RetroTheme.RetroSectionStyle())
                         .padding(.horizontal)
@@ -68,7 +68,7 @@ public struct SpotlightDebugView: View {
 #endif
         .task {
             await refreshSpotlightItems()
-            
+
             // Start animation for glow effect
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 0.9
@@ -85,18 +85,18 @@ public struct SpotlightDebugView: View {
             }
         }
     }
-    
+
     /// Refresh the list of Spotlight items
     @MainActor
     private func refreshSpotlightItems() async {
         isLoading = true
-        
+
         do {
             ILOG("Starting to refresh Spotlight items")
             // Get items from Spotlight
             let searchableIndex = CSSearchableIndex.default()
             let fetchedItems = try await fetchSpotlightItems(from: searchableIndex)
-            
+
             // Update the UI
             spotlightItems = fetchedItems
             ILOG("Loaded \(spotlightItems.count) Spotlight items")
@@ -104,29 +104,29 @@ public struct SpotlightDebugView: View {
             ELOG("Error fetching Spotlight items: \(error)")
             errorMessage = "Error fetching Spotlight items: \(error.localizedDescription)"
         }
-        
+
         isLoading = false
     }
-    
+
     /// Force reindex all content in Spotlight
     @MainActor
     private func forceReindexSpotlight() async {
         reindexingInProgress = true
         defer { reindexingInProgress = false }
-        
+
         do {
             // Use the SpotlightHelper to reindex all content
             let helper = SpotlightHelper.shared
-            
+
             // Show a task is in progress
             isLoading = true
-            
+
             // Force reindex all content
             try await helper.forceReindexAllAsync()
-            
+
             // Refresh the items list
             await refreshSpotlightItems()
-            
+
             ILOG("Successfully reindexed all Spotlight content")
         } catch {
             ELOG("Error reindexing Spotlight content: \(error)")
@@ -134,11 +134,11 @@ public struct SpotlightDebugView: View {
             isLoading = false
         }
     }
-    
+
     /// Fetch items from Spotlight
     private func fetchSpotlightItems(from searchableIndex: CSSearchableIndex) async throws -> [CSSearchableItem] {
         ILOG("Starting to fetch Spotlight items")
-        
+
         // Use a simpler approach - just delete and reindex to get the latest items
         // This is more reliable than trying to query the index
         return try await withCheckedThrowingContinuation { continuation in
@@ -148,7 +148,7 @@ public struct SpotlightDebugView: View {
                 if let error = error {
                     ELOG("Error deleting Spotlight items: \(error)")
                 }
-                
+
                 // Now get the items directly from our database instead of querying Spotlight
                 Task {
                     do {
@@ -156,23 +156,23 @@ public struct SpotlightDebugView: View {
                         // Get games from the database
                         let realm = try! Realm()
                         let games = realm.objects(PVGame.self)
-                        
+
                         // Create searchable items for each game
                         var items: [CSSearchableItem] = []
                         for game in games {
                             let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
                             attributeSet.displayName = game.title
-                            attributeSet.contentDescription = "Game for \(game.system?.name ?? "Unknown System")" 
-                            
+                            attributeSet.contentDescription = "Game for \(game.system?.name ?? "Unknown System")"
+
                             let item = CSSearchableItem(
                                 uniqueIdentifier: "org.provenance-emu.game.\(game.md5Hash)",
                                 domainIdentifier: "org.provenance-emu.games",
                                 attributeSet: attributeSet
                             )
-                            
+
                             items.append(item)
                         }
-                        
+
                         // Get save states
                         let saveStates = realm.objects(PVSaveState.self)
                         for saveState in saveStates {
@@ -180,17 +180,17 @@ public struct SpotlightDebugView: View {
                                 let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
                                 attributeSet.displayName = "Save State: \(game.title)"
                                 attributeSet.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
-                                
+
                                 let item = CSSearchableItem(
                                     uniqueIdentifier: "org.provenance-emu.savestate.\(saveState.id)",
                                     domainIdentifier: "org.provenance-emu.games",
                                     attributeSet: attributeSet
                                 )
-                                
+
                                 items.append(item)
                             }
                         }
-                        
+
                         ILOG("Created \(items.count) mock items")
                         continuation.resume(returning: items)
                     } catch {
@@ -208,12 +208,12 @@ private struct SpotlightControlsSection: View {
     @Binding var isLoading: Bool
     @Binding var errorMessage: String?
     @Binding var reindexingInProgress: Bool
-    
+
     let refreshItems: () async -> Void
     let forceReindex: () async -> Void
-    
+
     @State private var glowOpacity: Double = 0.6
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Section header with retrowave styling
@@ -222,7 +222,7 @@ private struct SpotlightControlsSection: View {
                 .foregroundColor(.retroPurple)
                 .shadow(color: .retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 .padding(.bottom, 4)
-            
+
             VStack(spacing: 12) {
                 // Refresh items button
                 Button(action: {
@@ -238,16 +238,15 @@ private struct SpotlightControlsSection: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
+                    .foregroundColor(.white)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroBlue.opacity(0.6), .retroPurple.opacity(0.6)]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroBlue.opacity(0.6), .retroPurple.opacity(0.6)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.retroBlue, lineWidth: 1)
@@ -255,7 +254,7 @@ private struct SpotlightControlsSection: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .disabled(isLoading || reindexingInProgress)
-                
+
                 // Force reindex button
                 Button(action: {
                     Task {
@@ -270,16 +269,15 @@ private struct SpotlightControlsSection: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
+                    .foregroundColor(.white)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink.opacity(0.6), .retroPurple.opacity(0.6)]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink.opacity(0.6), .retroPurple.opacity(0.6)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.retroPink, lineWidth: 1)
@@ -287,7 +285,7 @@ private struct SpotlightControlsSection: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .disabled(isLoading || reindexingInProgress)
-                
+
                 // Loading indicator
                 if isLoading || reindexingInProgress {
                     HStack {
@@ -316,7 +314,7 @@ private struct SpotlightControlsSection: View {
 private struct SpotlightItemsSection: View {
     let items: [CSSearchableItem]
     let isLoading: Bool
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Section header with retrowave styling
@@ -325,7 +323,7 @@ private struct SpotlightItemsSection: View {
                 .foregroundColor(.retroPurple)
                 .shadow(color: .retroPink.opacity(0.7), radius: 3, x: 0, y: 0)
                 .padding(.bottom, 4)
-            
+
             if isLoading {
                 // Loading placeholder
                 VStack {
@@ -355,7 +353,7 @@ private struct SpotlightItemsSection: View {
                     .font(.system(size: 14))
                     .foregroundColor(.retroBlue)
                     .padding(.bottom, 8)
-                
+
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(items, id: \.uniqueIdentifier) { item in
@@ -374,7 +372,7 @@ private struct SpotlightItemsSection: View {
 private struct SpotlightItemRow: View {
     let item: CSSearchableItem
     @State private var isExpanded = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Item header
@@ -382,9 +380,9 @@ private struct SpotlightItemRow: View {
                 Text(itemTitle)
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.retroPink)
-                
+
                 Spacer()
-                
+
                 Button(action: {
                     withAnimation {
                         isExpanded.toggle()
@@ -395,19 +393,19 @@ private struct SpotlightItemRow: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            
+
             // Item ID
             Text("ID: \(item.uniqueIdentifier)")
                 .font(.system(size: 12))
                 .foregroundColor(.retroBlue)
-            
+
             // Expanded details
             if isExpanded {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Domain: \(item.domainIdentifier ?? "Unknown")")
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
-                    
+
                     // The attributeSet might be nil, so we need to check if it exists
                     if let attributeSet = item.attributeSet as? CSSearchableItemAttributeSet {
                         if let title = attributeSet.displayName {
@@ -415,21 +413,21 @@ private struct SpotlightItemRow: View {
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                         }
-                        
+
                         if let description = attributeSet.contentDescription {
                             Text("Description: \(description)")
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                                 .lineLimit(2)
                         }
-                        
+
                         if let keywords = attributeSet.keywords, !keywords.isEmpty {
                             Text("Keywords: \(keywords.joined(separator: ", "))")
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                                 .lineLimit(1)
                         }
-                        
+
                         if let date = attributeSet.contentModificationDate {
                             Text("Modified: \(formattedDate(date))")
                                 .font(.system(size: 12))
@@ -458,11 +456,11 @@ private struct SpotlightItemRow: View {
                 )
         )
     }
-    
+
     // Extract a title from the item ID
     private var itemTitle: String {
         let id = item.uniqueIdentifier
-        
+
         if id.contains("savestate") {
             return "Save State"
         } else if id.contains("game") {
@@ -471,7 +469,7 @@ private struct SpotlightItemRow: View {
             return "Item"
         }
     }
-    
+
     // Format date for display
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
@@ -487,7 +485,7 @@ extension SpotlightHelper {
     /// Async version of forceReindexAll
     public func forceReindexAllAsync() async throws {
         return try await withCheckedThrowingContinuation { continuation in
-            forceReindexAll { 
+            forceReindexAll {
                 // The completion handler doesn't provide an error, so we just assume success
                 continuation.resume(returning: ())
             }

@@ -46,12 +46,15 @@ public struct PremiumThemedToggle<Label: View>: View {
             Toggle(isOn: $isOn) {
                 label
             }
+            .toggleStyle(RetroTheme.RetroToggleStyle())
         } lockedView: {
             ZStack {
                 Color(.clear)
                 Toggle(isOn: $isOn) {
                     label
                 }
+                .toggleStyle(RetroTheme.RetroToggleStyle())
+                .opacity(0.6)
                 .disabled(true)
             }
         }

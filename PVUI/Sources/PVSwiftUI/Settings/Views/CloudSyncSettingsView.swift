@@ -203,7 +203,12 @@ public struct CloudSyncSettingsView: View {
             .cornerRadius(8)
             .foregroundColor(selectedTab == tag ? .white : .gray)
         }
+        #if os(tvOS)
         .buttonStyle(PlainButtonStyle())
+        .retroThemedFocus(cornerRadius: 8)
+        #else
+        .buttonStyle(PlainButtonStyle())
+        #endif
     }
 
     // MARK: - CloudKit Tab
@@ -407,6 +412,11 @@ public struct CloudSyncSettingsView: View {
                     .background(Color.retroPurple.opacity(0.5))
                     .cornerRadius(8)
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(cornerRadius: 8, showBorder: false)
+                #else
+                .buttonStyle(PlainButtonStyle())
+                #endif
             }
 
             HStack(spacing: 16) {
@@ -482,6 +492,11 @@ public struct CloudSyncSettingsView: View {
                         .retroCard()
                         .retroGlowingBorder(color: .retroBlue)
                     }
+                    #if os(tvOS)
+                    .retroThemedFocus()
+                    #else
+                    .buttonStyle(PlainButtonStyle())
+                    #endif
                     .padding(.horizontal)
                     .transitionWithReducedMotion(.opacity)
                 } else {
@@ -903,6 +918,11 @@ public struct CloudSyncSettingsView: View {
                     .cornerRadius(8)
                     .foregroundColor(.white)
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(cornerRadius: 8, showBorder: false)
+                #else
+                .buttonStyle(PlainButtonStyle())
+                #endif
                 .disabled(!viewModel.iCloudAvailable || viewModel.isSyncing)
 
 #if DEBUG
@@ -923,6 +943,11 @@ public struct CloudSyncSettingsView: View {
                     .cornerRadius(8)
                     .foregroundColor(.white)
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(cornerRadius: 8, showBorder: false)
+                #else
+                .buttonStyle(PlainButtonStyle())
+                #endif
                 .disabled(!viewModel.iCloudAvailable || viewModel.isSyncing)
                 .alert(isPresented: $showingResetConfirmation) {
                     Alert(
@@ -947,6 +972,11 @@ public struct CloudSyncSettingsView: View {
                         Image(systemName: "chevron.left")
                             .foregroundColor(viewModel.currentPage > 0 ? .white : .gray)
                     }
+                    #if os(tvOS)
+                    .retroThemedFocus(focusScale: 1.1)
+                    #else
+                    .buttonStyle(PlainButtonStyle())
+                    #endif
                     .disabled(viewModel.currentPage <= 0)
 
                     Spacer()
@@ -1208,6 +1238,7 @@ public struct CloudSyncSettingsView: View {
                                 let newValue = max(1, currentMB - 5)
                                 cloudKitMaxCellularFileSizeBytes = newValue * 1024 * 1024
                             }
+                            .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
                             .disabled(cloudKitMaxCellularFileSizeBytes <= 1024 * 1024)
 
                             Button("+") {
@@ -1215,6 +1246,7 @@ public struct CloudSyncSettingsView: View {
                                 let newValue = min(500, currentMB + 5)
                                 cloudKitMaxCellularFileSizeBytes = newValue * 1024 * 1024
                             }
+                            .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
                             .disabled(cloudKitMaxCellularFileSizeBytes >= 500 * 1024 * 1024)
                         }
                         #else
@@ -1419,12 +1451,14 @@ public struct CloudSyncSettingsView: View {
                                 let newValue = max(1, Defaults[.cloudKitMaxConcurrentUploads] - 1)
                                 Defaults[.cloudKitMaxConcurrentUploads] = newValue
                             }
+                            .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
                             .disabled(Defaults[.cloudKitMaxConcurrentUploads] <= 1)
 
                             Button("+") {
                                 let newValue = min(10, Defaults[.cloudKitMaxConcurrentUploads] + 1)
                                 Defaults[.cloudKitMaxConcurrentUploads] = newValue
                             }
+                            .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
                             .disabled(Defaults[.cloudKitMaxConcurrentUploads] >= 10)
                         }
                         #else
@@ -1536,12 +1570,14 @@ public struct CloudSyncSettingsView: View {
                                     let newValue = max(1, Defaults[.cloudKitMaxRetryAttempts] - 1)
                                     Defaults[.cloudKitMaxRetryAttempts] = newValue
                                 }
+                                .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
                                 .disabled(Defaults[.cloudKitMaxRetryAttempts] <= 1)
 
                                 Button("+") {
                                     let newValue = min(10, Defaults[.cloudKitMaxRetryAttempts] + 1)
                                     Defaults[.cloudKitMaxRetryAttempts] = newValue
                                 }
+                                .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
                                 .disabled(Defaults[.cloudKitMaxRetryAttempts] >= 10)
                             }
                             #else

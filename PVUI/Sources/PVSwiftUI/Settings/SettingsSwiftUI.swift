@@ -1382,8 +1382,61 @@ private struct BuildSection: View {
 }
 
 private struct ExtraInfoSection: View {
+    @State private var showLicensesAlert = false
+    @State private var showPrivacyAlert = false
+    @State private var showEULAAlert = false
+
     var body: some View {
         Section(header: Text("3rd Party & Legal")) {
+            #if os(tvOS)
+            /// Open source licenses - Show alert on tvOS
+            Button(action: { showLicensesAlert = true }) {
+                SettingsRow(title: "Licenses",
+                            subtitle: "Open-source libraries Provenance uses and their respective licenses.",
+                            icon: .sfSymbol("doc.text"))
+            }
+            .tvOSDisableFocusEffect()
+            .buttonStyle(.plain) // remove default tvOS focus overlay; rely on our styling
+            .alert(isPresented: $showLicensesAlert) {
+                Alert(
+                    title: Text("View Licenses"),
+                    message: Text("Licenses are available in the iOS/iPadOS app or at:\nhttps://provenance-emu.com/licenses/"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+
+            /// Privacy Policy - Show URL on tvOS
+            Button(action: { showPrivacyAlert = true }) {
+                SettingsRow(title: "Privacy Policy",
+                            subtitle: "View our privacy policy",
+                            icon: .sfSymbol("hand.raised"))
+            }
+            .tvOSDisableFocusEffect()
+            .buttonStyle(.plain) // remove default tvOS focus overlay; rely on our styling
+            .alert(isPresented: $showPrivacyAlert) {
+                Alert(
+                    title: Text("Privacy Policy"),
+                    message: Text("Visit our privacy policy at:\nhttps://provenance-emu.com/privacy/"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+
+            /// End User License Agreement - Show URL on tvOS
+            Button(action: { showEULAAlert = true }) {
+                SettingsRow(title: "End User License Agreement (EULA)",
+                            subtitle: "Apple's standard EULA",
+                            icon: .sfSymbol("signature"))
+            }
+            .tvOSDisableFocusEffect()
+            .buttonStyle(.plain) // remove default tvOS focus overlay; rely on our styling
+            .alert(isPresented: $showEULAAlert) {
+                Alert(
+                    title: Text("EULA"),
+                    message: Text("Apple's standard EULA is available at:\nhttps://www.apple.com/legal/internet-services/itunes/dev/stdeula/"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+            #else
             /// Open source licenses
             NavigationLink(destination: LicensesView()) {
                 SettingsRow(title: "Licenses",
@@ -1402,6 +1455,7 @@ private struct ExtraInfoSection: View {
                             subtitle: nil,
                             icon: .sfSymbol("signature"))
             }
+            #endif
         }
     }
 }

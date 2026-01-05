@@ -164,7 +164,22 @@ struct ControllerSettingsView: View {
                             // Player number with background
                             ZStack {
                                 Circle()
+                                    #if os(tvOS)
+                                    .fill(hasController(player) ?
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ) :
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.secondary.opacity(0.2), Color.secondary.opacity(0.1)]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    #else
                                     .fill(hasController(player) ? accentColor : Color.secondary.opacity(0.2))
+                                    #endif
                                     .frame(width: 36, height: 36)
                                 Text("\(player)")
                                     .font(.headline)
@@ -174,9 +189,16 @@ struct ControllerSettingsView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Player \(player)")
                                     .font(.headline)
+                                    #if os(tvOS)
+                                    .foregroundColor(.white)
+                                    #endif
                                 Text(controllerName(controller(for: player)))
                                     .font(.subheadline)
+                                    #if os(tvOS)
+                                    .foregroundColor(hasController(player) ? RetroTheme.retroBlue : .secondary)
+                                    #else
                                     .foregroundColor(.secondary)
+                                    #endif
                             }
 
                             Spacer()
@@ -184,14 +206,27 @@ struct ControllerSettingsView: View {
                             // Controller status icon
                             Image(systemName: controllerIcon(controller(for: player)))
                                 .imageScale(.large)
+                                #if os(tvOS)
+                                .foregroundColor(hasController(player) ? RetroTheme.retroPink : .secondary)
+                                #else
                                 .foregroundColor(hasController(player) ? accentColor : .secondary)
+                                #endif
                                 .opacity(connectionAnimation && hasController(player) ? 0.5 : 1.0)
                                 .animation(.easeInOut(duration: 1.0).repeatForever(), value: connectionAnimation)
                         }
                         .contentShape(Rectangle())
+                        #if os(tvOS)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.black.opacity(0.3))
+                        )
+                        #endif
                     }
                     #if os(tvOS)
                     .buttonStyle(.card)
+                    .retroThemedFocus(cornerRadius: 12)
                     #else
                     .buttonStyle(.plain)
                     #endif
@@ -202,6 +237,9 @@ struct ControllerSettingsView: View {
                     Text("Controller Assignments")
                 }
                 .font(.headline)
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                #endif
             } footer: {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Controllers must be paired with device.")
@@ -215,7 +253,11 @@ struct ControllerSettingsView: View {
                     } else {
                         Text("Available controllers: \(controllerManager.controllers.count)")
                             .font(.footnote)
+                            #if os(tvOS)
+                            .foregroundColor(.retroBlue)
+                            #else
                             .foregroundColor(accentColor)
+                            #endif
                     }
                 }
             }
@@ -250,6 +292,9 @@ struct ControllerSettingsView: View {
                     Text("⌨️ Keyboard Controls")
                 }
                 .font(.headline)
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                #endif
             }
 //            }
 
@@ -292,6 +337,9 @@ struct ControllerSettingsView: View {
                         Text("Button Remapping")
                     }
                     .font(.headline)
+                    #if os(tvOS)
+                    .foregroundColor(.retroPink)
+                    #endif
                 } footer: {
                     Text("Customize button mappings for each controller. Joy-Con controllers are automatically fixed.")
                         .font(.footnote)
@@ -301,8 +349,19 @@ struct ControllerSettingsView: View {
         }
         #if os(tvOS)
         .listStyle(.plain)
-        .background(backgroundColor)
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.black,
+                    RetroTheme.retroPurple.opacity(0.1),
+                    RetroTheme.retroPink.opacity(0.05)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
         #else
+//        .scrollContentBackground(.hidden)
         .listStyle(.insetGrouped)
         #endif
         .navigationTitle("Controller Settings")

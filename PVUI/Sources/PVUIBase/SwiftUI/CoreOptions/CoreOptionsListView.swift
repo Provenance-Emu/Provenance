@@ -432,7 +432,12 @@ struct CoreOptionsListView: View {
                         } label: {
                             RetroWaveCoreListItemView(item: item)
                         }
+                        #if os(tvOS)
+                        .buttonStyle(.card)
+                        .retroThemedFocus(cornerRadius: 12)
+                        #else
                         .buttonStyle(PlainButtonStyle())
+                        #endif
                         .padding(.horizontal)
                         .padding(.vertical, 4)
                         .id(item.id) // Add id to help maintain identity

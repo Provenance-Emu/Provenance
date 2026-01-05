@@ -32,17 +32,17 @@ struct PickerStyleModifier: ViewModifier {
 
 /// A view that allows browsing the App Group container files, local app storage, and iCloud directory
 public struct AppGroupFileBrowserView: View {
-    
+
     // MARK: - Properties
-    
+
     /// Enum to represent different directory sources
     enum DirectorySource: String, CaseIterable, Identifiable {
         case appGroup = "App Group"
         case localAppStorage = "Local Storage"
         case iCloudStorage = "iCloud"
-        
+
         var id: String { self.rawValue }
-        
+
         /// Get the root URL for this directory source
         func getRootURL() -> URL? {
             switch self {
@@ -59,43 +59,43 @@ public struct AppGroupFileBrowserView: View {
             }
         }
     }
-    
+
     /// Current directory source
     @State private var directorySource: DirectorySource = .appGroup
-    
+
     /// Current directory being displayed
     @State private var currentDirectory: URL
-    
+
     /// Root directory for the current source
     @State private var rootDirectory: URL
-    
+
     /// Items in the current directory
     @State private var directoryItems: [DirectoryItem] = []
-    
+
     /// Selected item for detail view
     @State private var selectedItem: DirectoryItem?
-    
+
     /// Show file contents
     @State private var showingFileContents = false
-    
+
     /// File contents
     @State private var fileContents: String = ""
-    
+
     /// Error message
     @State private var errorMessage: String?
-    
+
     /// Loading state
     @State private var isLoading = false
-    
+
     /// iCloud availability
     @State private var iCloudAvailable = false
-    
+
     // MARK: - Initialization
-    
+
     public init() {
         // Start at the app group container
         let appGroupID = PVAppGroupId
-        
+
         if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
             self._currentDirectory = State(initialValue: containerURL)
             self._rootDirectory = State(initialValue: containerURL)
@@ -107,23 +107,23 @@ public struct AppGroupFileBrowserView: View {
             ELOG("Could not access app group container: \(appGroupID)")
         }
     }
-    
+
     // MARK: - Body
-    
+
     public var body: some View {
         ZStack {
             // Background
             Color.retroDarkBlue.edgesIgnoringSafeArea(.all)
-            
+
             VStack {
                 // Header with directory source picker
                 HStack {
                     Text("File Browser")
                         .font(.headline)
                         .foregroundColor(.retroBlue)
-                    
+
                     Spacer()
-                    
+
                     // Directory source picker
                     Picker("Source", selection: $directorySource) {
                         ForEach(DirectorySource.allCases) { source in
@@ -140,7 +140,7 @@ public struct AppGroupFileBrowserView: View {
                     .padding(8)
                     .background(Color.retroPurple.opacity(0.3))
                     .cornerRadius(8)
-                    
+
                     // Go up button - larger for tvOS
                     Button(action: navigateUp) {
                         HStack {
@@ -155,23 +155,53 @@ public struct AppGroupFileBrowserView: View {
                     .disabled(isRootDirectory)
                     #if os(tvOS)
                     .buttonStyle(CardButtonStyle())
+                    .retroThemedFocus(cornerRadius: 8)
                     .padding(.horizontal)
                     #endif
                 }
                 .padding(.horizontal)
-                
+
                 // Current path
+                #if os(tvOS)
+                // Interactive path breadcrumb for tvOS
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 4) {
+                        ForEach(pathComponents, id: \.self) { component in
+                            Button(action: {
+                                navigateToPathComponent(component)
+                            }) {
+                                Text(component.lastPathComponent.isEmpty ? "/" : component.lastPathComponent)
+                                    .font(.caption)
+                                    .foregroundColor(.retroBlue)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.retroPurple.opacity(0.3))
+                                    .cornerRadius(4)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .retroThemedFocus(focusScale: 1.05, cornerRadius: 4)
+
+                            if component != pathComponents.last {
+                                Image(systemName: "chevron.right")
+                                    .font(.caption2)
+                                    .foregroundColor(.retroPink.opacity(0.6))
+                            }
+                        }
+                    }
+                    .padding(8)
+                }
+                .padding(.horizontal)
+                #else
+                // Simple text path for iOS
                 ScrollView(.horizontal, showsIndicators: false) {
                     Text(currentDirectory.path)
                         .font(.caption)
                         .foregroundColor(.retroBlue)
                         .lineLimit(1)
-                        #if os(tvOS)
-                        .padding(8)
-                        #endif
                 }
                 .padding(.horizontal)
-                
+                #endif
+
                 // Directory contents
                 #if os(tvOS)
                 // tvOS-specific list with larger items and focus support
@@ -186,6 +216,7 @@ public struct AppGroupFileBrowserView: View {
                                     .cornerRadius(10)
                             }
                             .buttonStyle(CardButtonStyle())
+                            .retroThemedFocus(cornerRadius: 10)
                         }
                     }
                     .padding()
@@ -204,7 +235,7 @@ public struct AppGroupFileBrowserView: View {
                 .listStyle(PlainListStyle())
                 .background(Color.black.opacity(0.5))
                 #endif
-                
+
                 // Error message
                 if let errorMessage = errorMessage {
                     Text(errorMessage)
@@ -213,7 +244,7 @@ public struct AppGroupFileBrowserView: View {
                 }
             }
             .padding()
-            
+
             // Loading indicator
             if isLoading {
                 ProgressView()
@@ -234,30 +265,30 @@ public struct AppGroupFileBrowserView: View {
             FileContentsView(fileName: selectedItem?.name ?? "", contents: fileContents)
         }
     }
-    
+
     // MARK: - Helper Methods
-    
+
     /// Loads the contents of the current directory
     private func loadDirectoryContents() {
         isLoading = true
         errorMessage = nil
-        
+
         // Check iCloud availability when loading contents
         checkICloudAvailability()
-        
+
         DispatchQueue.global(qos: .userInitiated).async {
             do {
                 let fileManager = FileManager.default
                 let contents = try fileManager.contentsOfDirectory(at: currentDirectory, includingPropertiesForKeys: [.isDirectoryKey, .fileSizeKey, .creationDateKey], options: [.skipsHiddenFiles])
-                
+
                 var items: [DirectoryItem] = []
-                
+
                 for url in contents {
                     let resourceValues = try url.resourceValues(forKeys: [.isDirectoryKey, .fileSizeKey, .creationDateKey])
                     let isDirectory = resourceValues.isDirectory ?? false
                     let size = resourceValues.fileSize ?? 0
                     let creationDate = resourceValues.creationDate ?? Date()
-                    
+
                     let item = DirectoryItem(
                         id: url.lastPathComponent,
                         name: url.lastPathComponent,
@@ -266,10 +297,10 @@ public struct AppGroupFileBrowserView: View {
                         size: size,
                         creationDate: creationDate
                     )
-                    
+
                     items.append(item)
                 }
-                
+
                 // Sort: directories first, then alphabetically
                 items.sort { (item1, item2) in
                     if item1.isDirectory && !item2.isDirectory {
@@ -280,7 +311,7 @@ public struct AppGroupFileBrowserView: View {
                         return item1.name.localizedCaseInsensitiveCompare(item2.name) == .orderedAscending
                     }
                 }
-                
+
                 DispatchQueue.main.async {
                     self.directoryItems = items
                     self.isLoading = false
@@ -294,7 +325,7 @@ public struct AppGroupFileBrowserView: View {
             }
         }
     }
-    
+
     /// Handles tapping on an item
     private func handleItemTap(_ item: DirectoryItem) {
         if item.isDirectory {
@@ -308,20 +339,20 @@ public struct AppGroupFileBrowserView: View {
             showingFileContents = true
         }
     }
-    
+
     /// Loads the contents of a file
     private func loadFileContents(_ item: DirectoryItem) {
         isLoading = true
-        
+
         DispatchQueue.global(qos: .userInitiated).async {
             do {
                 // Check if it's a text file or binary
                 let fileExtension = item.url.pathExtension.lowercased()
                 let textExtensions = ["txt", "json", "xml", "plist", "log", "md", "swift", "h", "m", "c", "cpp", "html", "css", "js", "py", "sh", "bat", "csv"]
-                
+
                 if textExtensions.contains(fileExtension) || item.size < 1_000_000 { // Only try to read files < 1MB
                     let data = try Data(contentsOf: item.url)
-                    
+
                     // Try to interpret as text
                     if let string = String(data: data, encoding: .utf8) {
                         DispatchQueue.main.async {
@@ -353,15 +384,15 @@ public struct AppGroupFileBrowserView: View {
             }
         }
     }
-    
+
     /// Navigates up one directory
     private func navigateUp() {
         guard !isRootDirectory else { return }
-        
+
         currentDirectory = currentDirectory.deletingLastPathComponent()
         loadDirectoryContents()
     }
-    
+
     /// Checks if the current directory is the root directory
     private var isRootDirectory: Bool {
         // Check if we're at the app group container root
@@ -370,24 +401,47 @@ public struct AppGroupFileBrowserView: View {
         }
         return false
     }
-    
+
+    /// Get path components for breadcrumb navigation
+    private var pathComponents: [URL] {
+        var components: [URL] = []
+        var url = currentDirectory
+
+        // Build path from current directory up to root
+        while url.path != rootDirectory.path {
+            components.insert(url, at: 0)
+            url = url.deletingLastPathComponent()
+        }
+
+        // Add root
+        components.insert(rootDirectory, at: 0)
+
+        return components
+    }
+
+    /// Navigate to a specific path component
+    private func navigateToPathComponent(_ url: URL) {
+        currentDirectory = url
+        loadDirectoryContents()
+    }
+
     /// Check if iCloud is available
     private func checkICloudAvailability() {
         iCloudAvailable = FileManager.default.ubiquityIdentityToken != nil && URL.iCloudContainerDirectory != nil
         DLOG("iCloud availability: \(iCloudAvailable)")
     }
-    
+
     /// Switch to a different directory source
     private func switchDirectorySource(to source: DirectorySource) {
         guard let newRootURL = source.getRootURL() else {
             errorMessage = "Could not access \(source.rawValue) directory"
             return
         }
-        
+
         rootDirectory = newRootURL
         currentDirectory = newRootURL
         loadDirectoryContents()
-        
+
         DLOG("Switched to directory source: \(source.rawValue) at path: \(newRootURL.path)")
     }
 }
@@ -402,11 +456,11 @@ struct DirectoryItem: Identifiable {
     let isDirectory: Bool
     let size: Int
     let creationDate: Date
-    
+
     var formattedSize: String {
         ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file)
     }
-    
+
     var formattedDate: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -420,7 +474,7 @@ struct DirectoryItem: Identifiable {
 /// A row view for a directory item
 struct DirectoryItemRow: View {
     let item: DirectoryItem
-    
+
     var body: some View {
         HStack {
             // Icon
@@ -432,7 +486,7 @@ struct DirectoryItemRow: View {
                 #else
                 .font(.title3)
                 #endif
-            
+
             // Name and details
             VStack(alignment: .leading) {
                 Text(item.name)
@@ -442,7 +496,7 @@ struct DirectoryItemRow: View {
                     .font(.body)
                     #endif
                     .foregroundColor(.white)
-                
+
                 HStack {
                     Text(item.formattedSize)
                     Text("•")
@@ -455,9 +509,9 @@ struct DirectoryItemRow: View {
                 #endif
                 .foregroundColor(.gray)
             }
-            
+
             Spacer()
-            
+
             // Arrow for directories
             if item.isDirectory {
                 Image(systemName: "chevron.right")
@@ -498,22 +552,22 @@ struct CardButtonStyle: ButtonStyle {
 struct FileContentsView: View {
     let fileName: String
     let contents: String
-    
+
     @Environment(\.presentationMode) var presentationMode
-    
+
     var body: some View {
         ZStack {
             Color.retroDarkBlue.edgesIgnoringSafeArea(.all)
-            
+
             VStack {
                 // Header
                 HStack {
                     Text(fileName)
                         .font(.headline)
                         .foregroundColor(.retroBlue)
-                    
+
                     Spacer()
-                    
+
                     Button(action: { presentationMode.wrappedValue.dismiss() }) {
                         HStack {
                             Image(systemName: "xmark.circle")
@@ -530,7 +584,7 @@ struct FileContentsView: View {
                     #endif
                 }
                 .padding()
-                
+
                 // File contents
                 ScrollView {
                     Text(contents)

@@ -176,22 +176,26 @@ public struct BatchArtworkMatchingView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
+                .foregroundColor(.white)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroBlue.opacity(0.6), .retroPurple.opacity(0.6)]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
+                    LinearGradient(
+                        gradient: Gradient(colors: [.retroBlue.opacity(0.6), .retroPurple.opacity(0.6)]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.retroBlue, lineWidth: 1)
                 )
             }
+            #if os(tvOS)
+            .buttonStyle(.card)
+            .retroThemedFocus(cornerRadius: 8)
+            #else
             .buttonStyle(PlainButtonStyle())
+            #endif
             .disabled(isLoading || processingGames || gamesNeedingArtwork.isEmpty)
 
             // Refresh button
@@ -223,7 +227,12 @@ public struct BatchArtworkMatchingView: View {
                         .stroke(Color.retroPurple, lineWidth: 1)
                 )
             }
+            #if os(tvOS)
+            .buttonStyle(.card)
+            .retroThemedFocus(cornerRadius: 8)
+            #else
             .buttonStyle(PlainButtonStyle())
+            #endif
             .disabled(isLoading || processingGames)
         }
     }
@@ -311,8 +320,20 @@ public struct BatchArtworkMatchingView: View {
                 selectedArtworks.removeAll()
             }) {
                 Text("Clear")
-                    .foregroundColor(.retroBlue)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule()
+                            .fill(Color.retroBlue.opacity(0.7))
+                    )
             }
+            #if os(tvOS)
+            .buttonStyle(.card)
+            .retroThemedFocus()
+            #else
+            .buttonStyle(.plain)
+            #endif
             .padding(.horizontal)
 
             Button(action: {
@@ -335,6 +356,12 @@ public struct BatchArtworkMatchingView: View {
                             )
                     )
             }
+            #if os(tvOS)
+            .buttonStyle(.card)
+            .retroThemedFocus()
+            #else
+            .buttonStyle(.plain)
+            #endif
             .padding(.trailing)
         }
         .padding(.vertical, 12)

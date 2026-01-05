@@ -29,11 +29,23 @@ struct FeatureFlagsDebugView: View {
     @State private var flags: [(key: String, flag: FeatureFlag, enabled: Bool)] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
-    
+
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
-    
+
+    #if os(tvOS)
+    @FocusState private var focusedButton: ButtonID?
+
+    internal enum ButtonID: Hashable {
+        case clearOverrides
+        case reindexSpotlight
+        case refreshFlags
+        case loadTest
+        case resetDefault
+    }
+    #endif
+
     private func refreshFlagsList() {
         flags = featureFlags.getAllFeatureFlags() // Ensure this is called after overrides
     }
@@ -42,7 +54,7 @@ struct FeatureFlagsDebugView: View {
         ZStack {
             // RetroWave background
             RetroTheme.retroBackground
-            
+
             // Main content
             ScrollView {
                 VStack(spacing: 16) {
@@ -53,28 +65,33 @@ struct FeatureFlagsDebugView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 10)
                         .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-                    
+
                     // Content sections
                     LoadingSection(isLoading: isLoading, flags: flags)
                         .modifier(RetroTheme.RetroSectionStyle())
                         .padding(.horizontal)
-                    
+
                     FeatureFlagsSection(flags: flags, featureFlags: featureFlags, refreshAction: refreshFlagsList) // Pass refresh action
                         .modifier(RetroTheme.RetroSectionStyle())
                         .padding(.horizontal)
-                    
+
                     UserDefaultsSection()
                         .modifier(RetroTheme.RetroSectionStyle())
                         .padding(.horizontal)
-                    
+
                     ConfigurationSection()
                         .modifier(RetroTheme.RetroSectionStyle())
                         .padding(.horizontal)
-                    
-                    DebugControlsSection(featureFlags: featureFlags, flags: $flags, isLoading: $isLoading, errorMessage: $errorMessage)
-                        .modifier(RetroTheme.RetroSectionStyle())
-                        .padding(.horizontal)
-                        .padding(.bottom, 20)
+
+                    DebugControlsSection(
+                        featureFlags: featureFlags,
+                        flags: $flags,
+                        isLoading: $isLoading,
+                        errorMessage: $errorMessage
+                    )
+                    .modifier(RetroTheme.RetroSectionStyle())
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
                 }
             }
         }
@@ -84,7 +101,7 @@ struct FeatureFlagsDebugView: View {
 #endif
         .task {
             await loadInitialConfiguration()
-            
+
             // Start animation for glow effect
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 0.9
@@ -142,7 +159,7 @@ private struct LoadingSection: View {
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(RetroTheme.retroBlue)
                     .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
-                
+
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
                     .scaleEffect(1.5)
@@ -168,7 +185,7 @@ private struct FeatureFlagsSection: View {
                 .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
                 .padding(.bottom, 4)
                 .padding(.horizontal)
-            
+
             if flags.isEmpty {
                 Text("NO FEATURE FLAGS FOUND")
                     .font(.system(size: 16, weight: .medium))
@@ -287,7 +304,7 @@ private struct FeatureFlagRow: View {
                         .foregroundColor(.orange)
                 }
             }
-            
+
             // RetroWave toggle
             RetroWaveToggle(isOn: $isEnabled, label: "Override")
                 .padding(.top, 4)
@@ -341,68 +358,68 @@ private struct ConfigurationSection: View {
                 .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
                 .padding(.bottom, 4)
                 .padding(.horizontal)
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 // App type with icon
                 HStack(spacing: 8) {
                     Image(systemName: "app.fill")
                         .foregroundColor(RetroTheme.retroPink)
                         .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-                    
+
                     Text("APP TYPE:")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white.opacity(0.8))
-                    
+
                     Text(PVFeatureFlags.getCurrentAppType().rawValue.uppercased())
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(RetroTheme.retroBlue)
                         .shadow(color: RetroTheme.retroBlue.opacity(0.6), radius: 2, x: 0, y: 0)
                 }
-                
+
                 // App version with icon
                 HStack(spacing: 8) {
                     Image(systemName: "tag.fill")
                         .foregroundColor(RetroTheme.retroPink)
                         .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-                    
+
                     Text("APP VERSION:")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white.opacity(0.8))
-                    
+
                     Text(PVFeatureFlags.getCurrentAppVersion())
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(RetroTheme.retroBlue)
                         .shadow(color: RetroTheme.retroBlue.opacity(0.6), radius: 2, x: 0, y: 0)
                 }
-                
+
                 // Build number with icon (if available)
                 if let buildNumber = PVFeatureFlags.getCurrentBuildNumber() {
                     HStack(spacing: 8) {
                         Image(systemName: "number.circle.fill")
                             .foregroundColor(RetroTheme.retroPink)
                             .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-                        
+
                         Text("BUILD NUMBER:")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.white.opacity(0.8))
-                        
+
                         Text("\(buildNumber)")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(RetroTheme.retroBlue)
                             .shadow(color: RetroTheme.retroBlue.opacity(0.6), radius: 2, x: 0, y: 0)
                     }
                 }
-                
+
                 // Remote URL with icon
                 HStack(spacing: 8) {
                     Image(systemName: "link")
                         .foregroundColor(RetroTheme.retroPink)
                         .shadow(color: RetroTheme.retroPink.opacity(0.6), radius: 2, x: 0, y: 0)
-                    
+
                     Text("REMOTE URL:")
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(.white.opacity(0.8))
-                    
+
                     Text("data.provenance-emu.com")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
@@ -419,11 +436,66 @@ private struct DebugControlsSection: View {
     @Binding var flags: [(key: String, flag: FeatureFlag, enabled: Bool)]
     @Binding var isLoading: Bool
     @Binding var errorMessage: String?
-    
+
+    #if os(tvOS)
+    @FocusState private var focusedButton: FeatureFlagsDebugView.ButtonID?
+    #endif
+
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isReindexingSpotlight = false
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
+
+    /// Helper function to get the border gradient based on focus state
+    private func focusedBorderGradient(for buttonID: FeatureFlagsDebugView.ButtonID) -> LinearGradient {
+        let colors = getButtonColors(for: buttonID)
+        #if os(tvOS)
+        if focusedButton == buttonID {
+            return LinearGradient(
+                gradient: Gradient(colors: [colors.0, colors.1, colors.0]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        } else {
+            return LinearGradient(
+                gradient: Gradient(colors: [colors.0, colors.1]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        }
+        #else
+        return LinearGradient(
+            gradient: Gradient(colors: [colors.0, colors.1]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        #endif
+    }
+
+    /// Helper function to get colors for each button type
+    private func getButtonColors(for buttonID: FeatureFlagsDebugView.ButtonID) -> (Color, Color) {
+        switch buttonID {
+        case .clearOverrides:
+            return (RetroTheme.retroBlue, RetroTheme.retroPurple)
+        case .reindexSpotlight:
+            return (RetroTheme.retroPink, RetroTheme.retroPurple)
+        case .refreshFlags:
+            return (RetroTheme.retroPurple, RetroTheme.retroBlue)
+        case .loadTest:
+            return (RetroTheme.retroBlue, RetroTheme.retroPink)
+        case .resetDefault:
+            return (RetroTheme.retroPink, RetroTheme.retroPink.opacity(0.5))
+        }
+    }
+
+    /// Helper function to get the border width based on focus state
+    private func focusedBorderWidth(for buttonID: FeatureFlagsDebugView.ButtonID) -> CGFloat {
+        #if os(tvOS)
+        return focusedButton == buttonID ? 3 : 2
+        #else
+        return 2
+        #endif
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -434,7 +506,7 @@ private struct DebugControlsSection: View {
                 .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
                 .padding(.bottom, 4)
                 .padding(.horizontal)
-            
+
             VStack(spacing: 12) {
                 // Clear All Overrides button
                 Button(action: {
@@ -449,26 +521,34 @@ private struct DebugControlsSection: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
+                    .foregroundColor(RetroTheme.retroBlue)
                     .background(
+                        Color.black.opacity(0.6)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 2
-                                    )
+                            .strokeBorder(
+                                focusedBorderGradient(for: .clearOverrides),
+                                lineWidth: focusedBorderWidth(for: .clearOverrides)
                             )
                     )
-                    .foregroundColor(RetroTheme.retroBlue)
+                    #if os(tvOS)
+                    .scaleEffect(focusedButton == .clearOverrides ? 1.08 : 1.0)
+                    .shadow(color: focusedButton == .clearOverrides ? RetroTheme.retroBlue.opacity(0.9) : RetroTheme.retroBlue.opacity(glowOpacity), radius: focusedButton == .clearOverrides ? 15 : 3, x: 0, y: 0)
+                    #else
                     .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                    #endif
                 }
+                #if os(tvOS)
+                .focused($focusedButton, equals: .clearOverrides)
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                .animation(.easeInOut(duration: 0.15), value: focusedButton)
+                #else
                 .buttonStyle(PlainButtonStyle())
-                
+                #endif
+
                 // Spotlight Re-indexing button
                 Button(action: {
                     isReindexingSpotlight = true
@@ -491,27 +571,35 @@ private struct DebugControlsSection: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
+                    .foregroundColor(RetroTheme.retroPink)
                     .background(
+                        Color.black.opacity(0.6)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 2
-                                    )
+                            .strokeBorder(
+                                focusedBorderGradient(for: .reindexSpotlight),
+                                lineWidth: focusedBorderWidth(for: .reindexSpotlight)
                             )
                     )
-                    .foregroundColor(RetroTheme.retroPink)
+                    #if os(tvOS)
+                    .scaleEffect(focusedButton == .reindexSpotlight ? 1.08 : 1.0)
+                    .shadow(color: focusedButton == .reindexSpotlight ? RetroTheme.retroPink.opacity(0.9) : RetroTheme.retroPink.opacity(glowOpacity), radius: focusedButton == .reindexSpotlight ? 15 : 3, x: 0, y: 0)
+                    #else
                     .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                    #endif
                 }
+                #if os(tvOS)
+                .focused($focusedButton, equals: .reindexSpotlight)
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                .animation(.easeInOut(duration: 0.15), value: focusedButton)
+                #else
                 .buttonStyle(PlainButtonStyle())
+                #endif
                 .disabled(isReindexingSpotlight)
-                
+
                 // Refresh Flags button
                 Button(action: {
                     flags = featureFlags.getAllFeatureFlags() // Correct: is a method call
@@ -524,26 +612,34 @@ private struct DebugControlsSection: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
+                    .foregroundColor(RetroTheme.retroPurple)
                     .background(
+                        Color.black.opacity(0.6)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroBlue]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 2
-                                    )
+                            .strokeBorder(
+                                focusedBorderGradient(for: .refreshFlags),
+                                lineWidth: focusedBorderWidth(for: .refreshFlags)
                             )
                     )
-                    .foregroundColor(RetroTheme.retroPurple)
+                    #if os(tvOS)
+                    .scaleEffect(focusedButton == .refreshFlags ? 1.08 : 1.0)
+                    .shadow(color: focusedButton == .refreshFlags ? RetroTheme.retroPurple.opacity(0.9) : RetroTheme.retroPurple.opacity(glowOpacity), radius: focusedButton == .refreshFlags ? 15 : 3, x: 0, y: 0)
+                    #else
                     .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                    #endif
                 }
+                #if os(tvOS)
+                .focused($focusedButton, equals: .refreshFlags)
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                .animation(.easeInOut(duration: 0.15), value: focusedButton)
+                #else
                 .buttonStyle(PlainButtonStyle())
-                
+                #endif
+
                 // Load Test Configuration button
                 Button(action: {
                     loadTestConfiguration()
@@ -557,26 +653,34 @@ private struct DebugControlsSection: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
+                    .foregroundColor(RetroTheme.retroBlue)
                     .background(
+                        Color.black.opacity(0.6)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPink]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 2
-                                    )
+                            .strokeBorder(
+                                focusedBorderGradient(for: .loadTest),
+                                lineWidth: focusedBorderWidth(for: .loadTest)
                             )
                     )
-                    .foregroundColor(RetroTheme.retroBlue)
+                    #if os(tvOS)
+                    .scaleEffect(focusedButton == .loadTest ? 1.08 : 1.0)
+                    .shadow(color: focusedButton == .loadTest ? RetroTheme.retroBlue.opacity(0.9) : RetroTheme.retroBlue.opacity(glowOpacity), radius: focusedButton == .loadTest ? 15 : 3, x: 0, y: 0)
+                    #else
                     .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                    #endif
                 }
+                #if os(tvOS)
+                .focused($focusedButton, equals: .loadTest)
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                .animation(.easeInOut(duration: 0.15), value: focusedButton)
+                #else
                 .buttonStyle(PlainButtonStyle())
-                
+                #endif
+
                 // Reset to Default button (destructive action)
                 Button(action: {
                     Task {
@@ -605,25 +709,33 @@ private struct DebugControlsSection: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
+                    .foregroundColor(RetroTheme.retroPink)
                     .background(
+                        Color.black.opacity(0.6)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.6))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPink.opacity(0.5)]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 2
-                                    )
+                            .strokeBorder(
+                                focusedBorderGradient(for: .resetDefault),
+                                lineWidth: focusedBorderWidth(for: .resetDefault)
                             )
                     )
-                    .foregroundColor(RetroTheme.retroPink)
+                    #if os(tvOS)
+                    .scaleEffect(focusedButton == .resetDefault ? 1.08 : 1.0)
+                    .shadow(color: focusedButton == .resetDefault ? RetroTheme.retroPink.opacity(0.9) : RetroTheme.retroPink.opacity(glowOpacity), radius: focusedButton == .resetDefault ? 15 : 3, x: 0, y: 0)
+                    #else
                     .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                    #endif
                 }
+                #if os(tvOS)
+                .focused($focusedButton, equals: .resetDefault)
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                .animation(.easeInOut(duration: 0.15), value: focusedButton)
+                #else
                 .buttonStyle(PlainButtonStyle())
+                #endif
             }
             .padding(.horizontal)
             .onAppear {
@@ -680,21 +792,21 @@ private struct UserDefaultsSection: View {
                 .font(.headline)
                 .foregroundColor(RetroTheme.retroPink)
                 .padding(.bottom, 5)
-            
+
             // User App Groups toggle
             UserDefaultRow(
                 title: "useAppGroups",
                 subtitle: "Use App Groups for shared storage",
                 isOn: $useAppGroups
             )
-            
+
             // Unsupported Cores toggle
             UserDefaultRow(
                 title: "unsupportedCores",
                 subtitle: "Enable experimental and unsupported cores",
                 isOn: $unsupportedCores
             )
-            
+
             // iCloud Sync toggle
             UserDefaultRow(
                 title: "iCloudSync",
@@ -766,7 +878,7 @@ private struct UserDefaultRow: View {
     let subtitle: String
     @Binding var isOn: Bool
     @State private var glowOpacity: Double = 0.6
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
@@ -779,9 +891,9 @@ private struct UserDefaultRow: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
-                
+
                 Spacer()
-                
+
                 // Right side - ON/OFF button
                 Button(action: {
                     isOn.toggle()

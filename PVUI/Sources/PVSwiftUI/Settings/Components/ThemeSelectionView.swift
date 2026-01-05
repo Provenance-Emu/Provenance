@@ -379,11 +379,13 @@ struct ThemeSelectionBackButton: View {
                 )
                 .shadow(color: RetroTheme.retroPink.opacity(isFocused ? 0.6 : 0.3), radius: isFocused ? 10 : 5)
         }
-        .buttonStyle(PlainButtonStyle())
         #if os(tvOS)
+        .buttonStyle(TVMediaFlatButtonStyle(isFocused: isFocused))
         .tvOSDisableFocusEffect()
         .scaleEffect(isFocused ? 1.08 : 1.0)
         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        #else
+        .buttonStyle(PlainButtonStyle())
         #endif
         .padding(.vertical, 20)
     }
