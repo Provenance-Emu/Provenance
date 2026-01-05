@@ -243,6 +243,13 @@ struct TVMediaMainView: View {
                     saveStatesStore: saveStatesStore,
                     router: router
                 )
+            case .logs:
+                TVMediaLogsView()
+                    .onMoveCommand { direction in
+                        if direction == .left {
+                            focusCoordinator.openSidebar()
+                        }
+                    }
             case .settings:
                 // Settings view handles its own sidebar commands via tvMediaFocusCoordinator environment
                 SettingsWrapperView(canPop: $settingsCanPop)
@@ -384,6 +391,7 @@ enum TVMediaDestination: String, CaseIterable {
     case search
     case favorites
     case saves
+    case logs
     case settings
     case status
 
@@ -395,6 +403,7 @@ enum TVMediaDestination: String, CaseIterable {
         case .search: return "Search"
         case .favorites: return "Favorites"
         case .saves: return "Save States"
+        case .logs: return "Logs"
         case .settings: return "Settings"
         case .status: return "Status"
         }
@@ -671,6 +680,38 @@ private func tvMediaAdaptiveColumnsPerRow(
         columns -= 1
     }
     return max(columns, 1)
+}
+
+// MARK: - Logs View
+
+@available(tvOS 16.0, *)
+struct TVMediaLogsView: View {
+    @State private var isFullscreen = false
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+
+    var body: some View {
+        Group {
+            if isFullscreen {
+                RetroLogView(isFullscreen: $isFullscreen)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.horizontal, 40)
+                    .padding(.vertical, 40)
+            } else {
+                RetroLogView(isFullscreen: $isFullscreen)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    .focusSection()
+                    .onMoveCommand { direction in
+                        if direction == .left {
+                            focusCoordinator.openSidebar()
+                        }
+                    }
+            }
+        }
+        .onAppear {
+            focusCoordinator.closeSidebar()
+        }
+    }
 }
 
 // MARK: - Empty State View
@@ -1289,7 +1330,8 @@ private struct TVMediaSaveStateTileButton: View {
                 Label("Delete Save State", systemImage: "trash")
             }
         }
-        .task {
+        .task(id: item.id, priority: .utility) {
+            // Load thumbnail with utility priority to avoid blocking scroll performance
             thumbnail = await store.thumbnail(for: item, targetSize: CGSize(width: 280, height: 180))
         }
         .onChange(of: isFocused) { focused in
@@ -3443,7 +3485,7 @@ struct TVMediaScanlines: View {
     }
 }
 
-/// SMPTE color bars for save states without thumbnails
+/// SMPTE color bars for save states without thumbnails - optimized for performance
 @available(tvOS 16.0, *)
 struct TVMediaSaveStateSMPTE: View {
     private let colors: [Color] = [
@@ -3457,22 +3499,30 @@ struct TVMediaSaveStateSMPTE: View {
     ]
 
     var body: some View {
-        GeometryReader { geo in
-            HStack(spacing: 0) {
-                ForEach(0..<colors.count, id: \.self) { index in
-                    colors[index]
-                        .frame(width: geo.size.width / CGFloat(colors.count))
+        // Optimized: Use LinearGradient instead of GeometryReader + ForEach
+        LinearGradient(
+            stops: colors.enumerated().map { index, color in
+                Gradient.Stop(
+                    color: color,
+                    location: CGFloat(index) / CGFloat(colors.count - 1)
+                )
+            },
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        .overlay(
+            // Simplified scanline overlay using Canvas
+            Canvas { context, size in
+                var y: CGFloat = 0
+                while y < size.height {
+                    var path = Path()
+                    path.move(to: CGPoint(x: 0, y: y))
+                    path.addLine(to: CGPoint(x: size.width, y: y))
+                    context.stroke(path, with: .color(Color.black.opacity(0.12)), lineWidth: 1)
+                    y += 3.5
                 }
             }
-            .overlay(
-                VStack(spacing: 0) {
-                    ForEach(0..<Int(geo.size.height / 2.5), id: \.self) { _ in
-                        Color.clear.frame(height: 1.5)
-                        Color.black.opacity(0.12).frame(height: 1)
-                    }
-                }
-            )
-        }
+        )
     }
 }
 
@@ -3513,7 +3563,7 @@ struct TVMediaSaveStateTile: View {
             }
 
             ZStack(alignment: .bottomLeading) {
-                // Thumbnail or placeholder
+                // Thumbnail or placeholder - optimized rendering
                 Group {
                     if let thumbnail {
                         Image(uiImage: thumbnail)
@@ -3525,16 +3575,22 @@ struct TVMediaSaveStateTile: View {
                 }
                 .frame(width: tileWidth, height: tileHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .drawingGroup() // Flatten image rendering for better performance
 
-                // Scanline overlay
-                VStack(spacing: 0) {
-                    ForEach(0..<Int(tileHeight / 3), id: \.self) { _ in
-                        Color.clear.frame(height: 2)
-                        Color.black.opacity(0.06).frame(height: 1)
+                // Scanline overlay - optimized with Canvas for better performance
+                Canvas { context, size in
+                    var y: CGFloat = 0
+                    while y < size.height {
+                        var path = Path()
+                        path.move(to: CGPoint(x: 0, y: y))
+                        path.addLine(to: CGPoint(x: size.width, y: y))
+                        context.stroke(path, with: .color(Color.black.opacity(0.06)), lineWidth: 1)
+                        y += 3
                     }
                 }
                 .frame(width: tileWidth, height: tileHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .allowsHitTesting(false) // Don't interfere with touch events
 
                 // Info overlay
                 VStack(alignment: .leading, spacing: 5) {
@@ -3578,6 +3634,7 @@ struct TVMediaSaveStateTile: View {
             .frame(width: tileWidth, height: tileHeight)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(focusBorder)
+            .drawingGroup() // Flatten inner content for better scroll performance
         }
         .frame(width: tileWidth, height: tileHeight)
         .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 20, x: 0, y: 8)

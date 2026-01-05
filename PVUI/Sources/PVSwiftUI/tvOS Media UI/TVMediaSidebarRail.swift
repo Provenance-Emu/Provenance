@@ -109,6 +109,7 @@ struct TVMediaSidebarRail: View {
                 // Footer items
                 sidebarButton(for: .imports)
                 sidebarButton(for: .settings)
+                sidebarButton(for: .destination(.logs))
                 sidebarButton(for: .status)
             }
             .padding(.horizontal, 14)
@@ -461,6 +462,7 @@ private enum SidebarItem: Hashable {
             case .search: return "magnifyingglass"
             case .favorites: return "heart"
             case .saves: return "bookmark"
+            case .logs: return "doc.text"
             case .settings: return "gearshape"
             case .status: return "info.circle"
             }
