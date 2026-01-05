@@ -24,6 +24,7 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
     internal weak var gameCore: EmulatorCoreAudioDataSource!
     private var isRunning = false
     private let muteSwitchMonitor = PVMuteSwitchMonitor()
+    private var reusablePCMBuffer: AVAudioPCMBuffer?
 
     /// Audio buffer for waveform visualization
     private var audioBufferForVisualization = [Float](repeating: 0, count: 4096)
@@ -147,7 +148,7 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
         let renderBlock: AVAudioSourceNodeRenderBlock = { isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
 
-            guard let pcmBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else {
+            guard let pcmBuffer = self.obtainPCMBuffer(format: format, frameCapacity: frameCount) else {
                 isSilence.pointee = true
                 return noErr
             }
@@ -252,6 +253,17 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
             ELOG("Failed to configure audio session: \(error.localizedDescription)")
         }
         #endif
+    }
+
+    private func obtainPCMBuffer(format: AVAudioFormat, frameCapacity: AVAudioFrameCount) -> AVAudioPCMBuffer? {
+        if let existing = reusablePCMBuffer, existing.frameCapacity >= frameCapacity {
+            existing.frameLength = 0
+            return existing
+        }
+
+        reusablePCMBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCapacity)
+        reusablePCMBuffer?.frameLength = 0
+        return reusablePCMBuffer
     }
 
     private func updateOutputVolume() {

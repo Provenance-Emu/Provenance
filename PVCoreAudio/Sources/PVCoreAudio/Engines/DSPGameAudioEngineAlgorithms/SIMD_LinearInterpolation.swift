@@ -10,10 +10,25 @@ import Accelerate
 import AVFoundation
 import PVAudio
 
+private final class DSPInterpolationScratch {
+    var leftChannel = [Float]()
+    var rightChannel = [Float]()
+    var filteredLeft = [Float]()
+    var filteredRight = [Float]()
+
+    func ensureCapacity(_ count: Int) {
+        if leftChannel.count < count { leftChannel = [Float](repeating: 0, count: count) }
+        if rightChannel.count < count { rightChannel = [Float](repeating: 0, count: count) }
+        if filteredLeft.count < count { filteredLeft = [Float](repeating: 0, count: count) }
+        if filteredRight.count < count { filteredRight = [Float](repeating: 0, count: count) }
+    }
+}
+
 extension DSPGameAudioEngine {
     /// Linear Interpolation with SIMD
     internal func readBlockForBuffer_SIMD_LinearInterpolation
     (_ buffer: RingBufferProtocol) -> DSPAudioEngineRenderBlock {
+        let scratch = DSPInterpolationScratch()
         /// Cache format information
         let sourceChannels = Int(gameCore.channelCount(forBuffer: 0))
         let sourceBitDepth = gameCore.audioBitDepth
@@ -80,109 +95,115 @@ extension DSPGameAudioEngine {
                 sourceBuffer.withMemoryRebound(to: Int16.self, capacity: bytesRead / 2) { input in
                     let sourceFrames = bytesRead / (2 * sourceChannels)  /// Account for mono/stereo
 
-                    /// Create temporary buffers
-                    var leftChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
-                    var rightChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
-                    var filteredLeft = [Float](repeating: 0, count: sourceFrames + filterSize)
-                    var filteredRight = [Float](repeating: 0, count: sourceFrames + filterSize)
+                    let capacity = sourceFrames + filterSize
+                    scratch.ensureCapacity(capacity)
 
-                    /// Convert to float with headroom
-                    var scale = Float(0.9 / 32768.0)
+                    scratch.leftChannel.withUnsafeMutableBufferPointer { leftPtr in
+                        scratch.rightChannel.withUnsafeMutableBufferPointer { rightPtr in
+                            scratch.filteredLeft.withUnsafeMutableBufferPointer { filteredLeftPtr in
+                                scratch.filteredRight.withUnsafeMutableBufferPointer { filteredRightPtr in
+                                    guard let leftBase = leftPtr.baseAddress,
+                                          let rightBase = rightPtr.baseAddress,
+                                          let filteredLeftBase = filteredLeftPtr.baseAddress,
+                                          let filteredRightBase = filteredRightPtr.baseAddress
+                                    else { return }
 
-                    if sourceChannels == 2 {
-                        /// Stereo source
-                        vDSP_vflt16(input, 2, &leftChannel, 1, vDSP_Length(sourceFrames))
-                        vDSP_vflt16(input.advanced(by: 1), 2, &rightChannel, 1, vDSP_Length(sourceFrames))
-                    } else {
-                        /// Mono source - convert once and copy to both channels
-                        vDSP_vflt16(input, 1, &leftChannel, 1, vDSP_Length(sourceFrames))
-                        vDSP_mmov(&leftChannel, &rightChannel, vDSP_Length(sourceFrames), 1, 1, 1)
-                    }
+                                    /// Convert to float with headroom
+                                    var scale = Float(0.9 / 32768.0)
 
-                    /// Apply scaling
-                    vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(sourceFrames))
-                    vDSP_vsmul(rightChannel, 1, &scale, &rightChannel, 1, vDSP_Length(sourceFrames))
+                                    if sourceChannels == 2 {
+                                        /// Stereo source
+                                        vDSP_vflt16(input, 2, leftBase, 1, vDSP_Length(sourceFrames))
+                                        vDSP_vflt16(input.advanced(by: 1), 2, rightBase, 1, vDSP_Length(sourceFrames))
+                                    } else {
+                                        /// Mono source - convert once and copy to both channels
+                                        vDSP_vflt16(input, 1, leftBase, 1, vDSP_Length(sourceFrames))
+                                        vDSP_mmov(leftBase, rightBase, vDSP_Length(sourceFrames), 1, 1, 1)
+                                    }
 
-                    /// Apply low-pass filter
-                    vDSP_conv(leftChannel, 1, filterCoeff, 1, &filteredLeft, 1,
-                              vDSP_Length(sourceFrames), vDSP_Length(filterSize))
-                    vDSP_conv(rightChannel, 1, filterCoeff, 1, &filteredRight, 1,
-                              vDSP_Length(sourceFrames), vDSP_Length(filterSize))
+                                    /// Apply scaling
+                                    vDSP_vsmul(leftBase, 1, &scale, leftBase, 1, vDSP_Length(sourceFrames))
+                                    vDSP_vsmul(rightBase, 1, &scale, rightBase, 1, vDSP_Length(sourceFrames))
 
-                    /// Get output buffer pointers
-                    let outLeft = pcmBuffer.floatChannelData?[0]
-                    let outRight = pcmBuffer.floatChannelData?[1]
+                                    /// Apply low-pass filter
+                                    vDSP_conv(leftBase, 1, filterCoeff, 1, filteredLeftBase, 1,
+                                              vDSP_Length(sourceFrames), vDSP_Length(filterSize))
+                                    vDSP_conv(rightBase, 1, filterCoeff, 1, filteredRightBase, 1,
+                                              vDSP_Length(sourceFrames), vDSP_Length(filterSize))
 
-                    /// Perform SIMD linear interpolation
-                    let simdCount = outputFrames & ~7  /// Round down to multiple of 8
+                                    /// Get output buffer pointers
+                                    let outLeft = pcmBuffer.floatChannelData?[0]
+                                    let outRight = pcmBuffer.floatChannelData?[1]
 
-                    /// Process 8 samples at a time using SIMD
-                    for i in stride(from: 0, to: simdCount, by: 8) {
-                        /// Calculate source positions for 8 samples
-                        let baseIndex = Double(i) * rateRatio
-                        let indices = SIMD8<Double>(
-                            baseIndex,
-                            baseIndex + rateRatio,
-                            baseIndex + rateRatio * 2,
-                            baseIndex + rateRatio * 3,
-                            baseIndex + rateRatio * 4,
-                            baseIndex + rateRatio * 5,
-                            baseIndex + rateRatio * 6,
-                            baseIndex + rateRatio * 7
-                        )
+                                    /// Perform SIMD linear interpolation
+                                    let simdCount = outputFrames & ~7  /// Round down to multiple of 8
 
-                        /// Get integer indices and fractions
-                        var sourceIndices = SIMD8<Int>()
-                        var fractions = SIMD8<Float>()
+                                    /// Process 8 samples at a time using SIMD
+                                    for i in stride(from: 0, to: simdCount, by: 8) {
+                                        let baseIndex = Double(i) * rateRatio
+                                        let indices = SIMD8<Double>(
+                                            baseIndex,
+                                            baseIndex + rateRatio,
+                                            baseIndex + rateRatio * 2,
+                                            baseIndex + rateRatio * 3,
+                                            baseIndex + rateRatio * 4,
+                                            baseIndex + rateRatio * 5,
+                                            baseIndex + rateRatio * 6,
+                                            baseIndex + rateRatio * 7
+                                        )
 
-                        for j in 0..<8 {
-                            let index = floor(indices[j])
-                            sourceIndices[j] = Int(index)
-                            fractions[j] = Float(indices[j] - index)
-                        }
+                                        var sourceIndices = SIMD8<Int>()
+                                        var fractions = SIMD8<Float>()
 
-                        /// Load source samples
-                        var leftLow = SIMD8<Float>()
-                        var leftHigh = SIMD8<Float>()
-                        var rightLow = SIMD8<Float>()
-                        var rightHigh = SIMD8<Float>()
+                                        for j in 0..<8 {
+                                            let index = floor(indices[j])
+                                            sourceIndices[j] = Int(index)
+                                            fractions[j] = Float(indices[j] - index)
+                                        }
 
-                        for j in 0..<8 {
-                            leftLow[j] = filteredLeft[sourceIndices[j]]
-                            leftHigh[j] = filteredLeft[sourceIndices[j] + 1]
-                            rightLow[j] = filteredRight[sourceIndices[j]]
-                            rightHigh[j] = filteredRight[sourceIndices[j] + 1]
-                        }
+                                        var leftLow = SIMD8<Float>()
+                                        var leftHigh = SIMD8<Float>()
+                                        var rightLow = SIMD8<Float>()
+                                        var rightHigh = SIMD8<Float>()
 
-                        /// Perform linear interpolation
-                        let oneMinusFraction = 1.0 - fractions
-                        let leftResult = leftLow * oneMinusFraction + leftHigh * fractions
-                        let rightResult = rightLow * oneMinusFraction + rightHigh * fractions
+                                        for j in 0..<8 {
+                                            leftLow[j] = filteredLeftBase[sourceIndices[j]]
+                                            leftHigh[j] = filteredLeftBase[sourceIndices[j] + 1]
+                                            rightLow[j] = filteredRightBase[sourceIndices[j]]
+                                            rightHigh[j] = filteredRightBase[sourceIndices[j] + 1]
+                                        }
 
-                        /// Store results
-                        for j in 0..<8 {
-                            outLeft?[i + j] = leftResult[j]
-                            outRight?[i + j] = rightResult[j]
-                        }
-                    }
+                                        let oneMinusFraction = 1.0 - fractions
+                                        let leftResult = leftLow * oneMinusFraction + leftHigh * fractions
+                                        let rightResult = rightLow * oneMinusFraction + rightHigh * fractions
 
-                    /// Handle remaining samples
-                    for i in simdCount..<outputFrames {
-                        let sourcePos = Double(i) * rateRatio
-                        let sourceIndex = Int(floor(sourcePos))
-                        let fraction = Float(sourcePos - Double(sourceIndex))
+                                        for j in 0..<8 {
+                                            outLeft?[i + j] = leftResult[j]
+                                            outRight?[i + j] = rightResult[j]
+                                        }
+                                    }
 
-                        if sourceIndex + 1 < sourceFrames {
-                            let leftSample = filteredLeft[sourceIndex] * (1.0 - fraction) +
-                            filteredLeft[sourceIndex + 1] * fraction
-                            let rightSample = filteredRight[sourceIndex] * (1.0 - fraction) +
-                            filteredRight[sourceIndex + 1] * fraction
+                                    /// Handle remaining samples
+                                    for i in simdCount..<outputFrames {
+                                        let sourcePos = Double(i) * rateRatio
+                                        let sourceIndex = Int(floor(sourcePos))
+                                        let fraction = Float(sourcePos - Double(sourceIndex))
 
-                            outLeft?[i] = leftSample
-                            outRight?[i] = rightSample
-                        } else {
-                            outLeft?[i] = filteredLeft[sourceIndex]
-                            outRight?[i] = filteredRight[sourceIndex]
+                                        if sourceIndex + 1 < sourceFrames {
+                                            let leftSample = filteredLeftBase[sourceIndex] * (1.0 - fraction) +
+                                            filteredLeftBase[sourceIndex + 1] * fraction
+                                            let rightSample = filteredRightBase[sourceIndex] * (1.0 - fraction) +
+                                            filteredRightBase[sourceIndex + 1] * fraction
+
+                                            outLeft?[i] = leftSample
+                                            outRight?[i] = rightSample
+                                        } else {
+                                            outLeft?[i] = filteredLeftBase[sourceIndex]
+                                            outRight?[i] = filteredRightBase[sourceIndex]
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -190,114 +211,125 @@ extension DSPGameAudioEngine {
                 sourceBuffer.withMemoryRebound(to: Int8.self, capacity: bytesRead) { input in
                     let sourceFrames = bytesRead / sourceChannels
 
-                    /// Create temporary buffers
-                    var leftChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
-                    var rightChannel = [Float](repeating: 0, count: sourceFrames + filterSize)
-                    var filteredLeft = [Float](repeating: 0, count: sourceFrames + filterSize)
-                    var filteredRight = [Float](repeating: 0, count: sourceFrames + filterSize)
+                    let capacity = sourceFrames + filterSize
+                    scratch.ensureCapacity(capacity)
 
-                    /// Convert to float with headroom (8-bit range is -128 to 127)
-                    var scale = Float(0.9 / 128.0)
+                    scratch.leftChannel.withUnsafeMutableBufferPointer { leftPtr in
+                        scratch.rightChannel.withUnsafeMutableBufferPointer { rightPtr in
+                            scratch.filteredLeft.withUnsafeMutableBufferPointer { filteredLeftPtr in
+                                scratch.filteredRight.withUnsafeMutableBufferPointer { filteredRightPtr in
+                                    guard let leftBase = leftPtr.baseAddress,
+                                          let rightBase = rightPtr.baseAddress,
+                                          let filteredLeftBase = filteredLeftPtr.baseAddress,
+                                          let filteredRightBase = filteredRightPtr.baseAddress
+                                    else { return }
 
-                    if sourceChannels == 2 {
-                        /// Stereo source
-                        var tempLeft = [Int8](repeating: 0, count: sourceFrames)
-                        var tempRight = [Int8](repeating: 0, count: sourceFrames)
+                                    /// Convert to float with headroom (8-bit range is -128 to 127)
+                                    var scale = Float(0.9 / 128.0)
 
-                        /// Deinterleave channels
-                        for i in 0..<sourceFrames {
-                            tempLeft[i] = input[i * 2]
-                            tempRight[i] = input[i * 2 + 1]
-                        }
+                                    if sourceChannels == 2 {
+                                        /// Stereo source
+                                        var tempLeft = [Int8](repeating: 0, count: sourceFrames)
+                                        var tempRight = [Int8](repeating: 0, count: sourceFrames)
 
-                        /// Convert to float
-                        vDSP_vflt8(tempLeft, 1, &leftChannel, 1, vDSP_Length(sourceFrames))
-                        vDSP_vflt8(tempRight, 1, &rightChannel, 1, vDSP_Length(sourceFrames))
-                    } else {
-                        /// Mono source - convert once and copy to both channels
-                        vDSP_vflt8(input, 1, &leftChannel, 1, vDSP_Length(sourceFrames))
-                        vDSP_mmov(&leftChannel, &rightChannel, vDSP_Length(sourceFrames), 1, 1, 1)
-                    }
+                                        /// Deinterleave channels
+                                        for i in 0..<sourceFrames {
+                                            tempLeft[i] = input[i * 2]
+                                            tempRight[i] = input[i * 2 + 1]
+                                        }
 
-                    /// Apply scaling
-                    vDSP_vsmul(leftChannel, 1, &scale, &leftChannel, 1, vDSP_Length(sourceFrames))
-                    vDSP_vsmul(rightChannel, 1, &scale, &rightChannel, 1, vDSP_Length(sourceFrames))
+                                        /// Convert to float
+                                        vDSP_vflt8(tempLeft, 1, leftBase, 1, vDSP_Length(sourceFrames))
+                                        vDSP_vflt8(tempRight, 1, rightBase, 1, vDSP_Length(sourceFrames))
+                                    } else {
+                                        /// Mono source - convert once and copy to both channels
+                                        vDSP_vflt8(input, 1, leftBase, 1, vDSP_Length(sourceFrames))
+                                        vDSP_mmov(leftBase, rightBase, vDSP_Length(sourceFrames), 1, 1, 1)
+                                    }
 
-                    /// Apply low-pass filter
-                    vDSP_conv(leftChannel, 1, filterCoeff, 1, &filteredLeft, 1,
-                              vDSP_Length(sourceFrames), vDSP_Length(filterSize))
-                    vDSP_conv(rightChannel, 1, filterCoeff, 1, &filteredRight, 1,
-                              vDSP_Length(sourceFrames), vDSP_Length(filterSize))
+                                    /// Apply scaling
+                                    vDSP_vsmul(leftBase, 1, &scale, leftBase, 1, vDSP_Length(sourceFrames))
+                                    vDSP_vsmul(rightBase, 1, &scale, rightBase, 1, vDSP_Length(sourceFrames))
 
-                    /// Get output buffer pointers
-                    let outLeft = pcmBuffer.floatChannelData?[0]
-                    let outRight = pcmBuffer.floatChannelData?[1]
+                                    /// Apply low-pass filter
+                                    vDSP_conv(leftBase, 1, filterCoeff, 1, filteredLeftBase, 1,
+                                              vDSP_Length(sourceFrames), vDSP_Length(filterSize))
+                                    vDSP_conv(rightBase, 1, filterCoeff, 1, filteredRightBase, 1,
+                                              vDSP_Length(sourceFrames), vDSP_Length(filterSize))
 
-                    /// Perform SIMD linear interpolation
-                    let simdCount = outputFrames & ~7  /// Round down to multiple of 8
+                                    /// Get output buffer pointers
+                                    let outLeft = pcmBuffer.floatChannelData?[0]
+                                    let outRight = pcmBuffer.floatChannelData?[1]
 
-                    /// Process 8 samples at a time using SIMD
-                    for i in stride(from: 0, to: simdCount, by: 8) {
-                        let baseIndex = Double(i) * rateRatio
-                        let indices = SIMD8<Double>(
-                            baseIndex,
-                            baseIndex + rateRatio,
-                            baseIndex + rateRatio * 2,
-                            baseIndex + rateRatio * 3,
-                            baseIndex + rateRatio * 4,
-                            baseIndex + rateRatio * 5,
-                            baseIndex + rateRatio * 6,
-                            baseIndex + rateRatio * 7
-                        )
+                                    /// Perform SIMD linear interpolation
+                                    let simdCount = outputFrames & ~7  /// Round down to multiple of 8
 
-                        var sourceIndices = SIMD8<Int>()
-                        var fractions = SIMD8<Float>()
+                                    /// Process 8 samples at a time using SIMD
+                                    for i in stride(from: 0, to: simdCount, by: 8) {
+                                        let baseIndex = Double(i) * rateRatio
+                                        let indices = SIMD8<Double>(
+                                            baseIndex,
+                                            baseIndex + rateRatio,
+                                            baseIndex + rateRatio * 2,
+                                            baseIndex + rateRatio * 3,
+                                            baseIndex + rateRatio * 4,
+                                            baseIndex + rateRatio * 5,
+                                            baseIndex + rateRatio * 6,
+                                            baseIndex + rateRatio * 7
+                                        )
 
-                        for j in 0..<8 {
-                            let index = floor(indices[j])
-                            sourceIndices[j] = Int(index)
-                            fractions[j] = Float(indices[j] - index)
-                        }
+                                        var sourceIndices = SIMD8<Int>()
+                                        var fractions = SIMD8<Float>()
 
-                        var leftLow = SIMD8<Float>()
-                        var leftHigh = SIMD8<Float>()
-                        var rightLow = SIMD8<Float>()
-                        var rightHigh = SIMD8<Float>()
+                                        for j in 0..<8 {
+                                            let index = floor(indices[j])
+                                            sourceIndices[j] = Int(index)
+                                            fractions[j] = Float(indices[j] - index)
+                                        }
 
-                        for j in 0..<8 {
-                            leftLow[j] = filteredLeft[sourceIndices[j]]
-                            leftHigh[j] = filteredLeft[sourceIndices[j] + 1]
-                            rightLow[j] = filteredRight[sourceIndices[j]]
-                            rightHigh[j] = filteredRight[sourceIndices[j] + 1]
-                        }
+                                        var leftLow = SIMD8<Float>()
+                                        var leftHigh = SIMD8<Float>()
+                                        var rightLow = SIMD8<Float>()
+                                        var rightHigh = SIMD8<Float>()
 
-                        let oneMinusFraction = 1.0 - fractions
-                        let leftResult = leftLow * oneMinusFraction + leftHigh * fractions
-                        let rightResult = rightLow * oneMinusFraction + rightHigh * fractions
+                                        for j in 0..<8 {
+                                            leftLow[j] = filteredLeftBase[sourceIndices[j]]
+                                            leftHigh[j] = filteredLeftBase[sourceIndices[j] + 1]
+                                            rightLow[j] = filteredRightBase[sourceIndices[j]]
+                                            rightHigh[j] = filteredRightBase[sourceIndices[j] + 1]
+                                        }
 
-                        for j in 0..<8 {
-                            outLeft?[i + j] = leftResult[j]
-                            outRight?[i + j] = rightResult[j]
-                        }
-                    }
+                                        let oneMinusFraction = 1.0 - fractions
+                                        let leftResult = leftLow * oneMinusFraction + leftHigh * fractions
+                                        let rightResult = rightLow * oneMinusFraction + rightHigh * fractions
 
-                    /// Handle remaining samples
-                    for i in simdCount..<outputFrames {
-                        let sourcePos = Double(i) * rateRatio
-                        let sourceIndex = Int(floor(sourcePos))
-                        let fraction = Float(sourcePos - Double(sourceIndex))
+                                        for j in 0..<8 {
+                                            outLeft?[i + j] = leftResult[j]
+                                            outRight?[i + j] = rightResult[j]
+                                        }
+                                    }
 
-                        if sourceIndex + 1 < sourceFrames {
-                            let leftSample = filteredLeft[sourceIndex] * (1.0 - fraction) +
-                            filteredLeft[sourceIndex + 1] * fraction
-                            let rightSample = filteredRight[sourceIndex] * (1.0 - fraction) +
-                            filteredRight[sourceIndex + 1] * fraction
+                                    /// Handle remaining samples
+                                    for i in simdCount..<outputFrames {
+                                        let sourcePos = Double(i) * rateRatio
+                                        let sourceIndex = Int(floor(sourcePos))
+                                        let fraction = Float(sourcePos - Double(sourceIndex))
 
-                            outLeft?[i] = leftSample
-                            outRight?[i] = rightSample
-                        } else {
-                            outLeft?[i] = filteredLeft[sourceIndex]
-                            outRight?[i] = filteredRight[sourceIndex]
+                                        if sourceIndex + 1 < sourceFrames {
+                                            let leftSample = filteredLeftBase[sourceIndex] * (1.0 - fraction) +
+                                            filteredLeftBase[sourceIndex + 1] * fraction
+                                            let rightSample = filteredRightBase[sourceIndex] * (1.0 - fraction) +
+                                            filteredRightBase[sourceIndex + 1] * fraction
+
+                                            outLeft?[i] = leftSample
+                                            outRight?[i] = rightSample
+                                        } else {
+                                            outLeft?[i] = filteredLeftBase[sourceIndex]
+                                            outRight?[i] = filteredRightBase[sourceIndex]
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
