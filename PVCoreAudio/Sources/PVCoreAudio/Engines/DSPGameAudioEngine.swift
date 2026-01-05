@@ -24,7 +24,7 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
     internal weak var gameCore: EmulatorCoreAudioDataSource!
     private var isRunning = false
     private let muteSwitchMonitor = PVMuteSwitchMonitor()
-    
+
     /// Audio buffer for waveform visualization
     private var audioBufferForVisualization = [Float](repeating: 0, count: 4096)
     private let audioBufferLock = NSLock()
@@ -34,11 +34,6 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
             updateOutputVolume()
         }
     }
-
-    private lazy var varispeedNode: AVAudioUnitVarispeed = {
-        let node = AVAudioUnitVarispeed()
-        return node
-    }()
 
     private lazy var audioFormat: AVAudioFormat? = {
         return AVAudioFormat(
@@ -158,8 +153,9 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
             }
 
             let bytesCopied = read(pcmBuffer)
+            let framesProduced = Int(pcmBuffer.frameLength)
 
-            if bytesCopied == 0 {
+            if bytesCopied == 0 || framesProduced == 0 {
                 isSilence.pointee = true
                 ablPointer[0].mDataByteSize = 0
                 ablPointer[1].mDataByteSize = 0
@@ -170,19 +166,19 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
             for i in 0..<2 {
                 let source = pcmBuffer.floatChannelData?[i]
                 let dest = ablPointer[i].mData?.assumingMemoryBound(to: Float.self)
-                let count = Int(pcmBuffer.frameLength)
+                let count = framesProduced
 
                 vDSP_mmov(source!, dest!, vDSP_Length(count), 1, 1, 1)
                 ablPointer[i].mDataByteSize = UInt32(count * 4)
             }
-            
+
             // Capture audio data for visualization
             if let leftChannel = pcmBuffer.floatChannelData?[0], let rightChannel = pcmBuffer.floatChannelData?[1] {
                 self.audioBufferLock.lock()
                 defer { self.audioBufferLock.unlock() }
-                
+
                 let count = min(Int(pcmBuffer.frameLength), self.audioBufferForVisualization.count)
-                
+
                 // Average left and right channels for visualization
                 for i in 0..<count {
                     self.audioBufferForVisualization[i] = (leftChannel[i] + rightChannel[i]) / 2.0
@@ -200,22 +196,11 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
             return
         }
 
-        /// Setup audio chain with varispeed
+        /// Setup audio chain without additional resampling
         engine.attach(src)
-        engine.attach(varispeedNode)
+        engine.connect(src, to: engine.mainMixerNode, format: format)
 
-        engine.connect(src, to: varispeedNode, format: format)
-        engine.connect(varispeedNode, to: engine.mainMixerNode, format: format)
-
-        /// Set varispeed rate based on source rate
-        let sourceRate = gameCore.audioSampleRate(forBuffer: 0)
-        let targetRate = AVAudioSession.sharedInstance().sampleRate
-        let rateRatio = sourceRate / targetRate
-
-        /// Adjust varispeed rate since we're also interpolating
-        varispeedNode.rate = Float(rateRatio)
-
-        DLOG("Audio setup - Source rate: \(sourceRate)Hz, Target rate: \(targetRate)Hz, Rate ratio: \(rateRatio)")
+        DLOG("Audio setup - DSP source rate: \(gameCore.audioSampleRate(forBuffer: 0))Hz, Target rate: \(AVAudioSession.sharedInstance().sampleRate)Hz (DSP handles resample)")
 
         updateOutputVolume()
     }
@@ -336,20 +321,20 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
             )
         }
     }
-    
+
     /// Captures audio data for visualization
     private func captureAudioDataForVisualization(_ buffer: UnsafeMutableRawPointer, _ byteCount: Int, _ channels: Int32) {
         // Only process if we have enough data
         guard byteCount > 0 else { return }
-        
+
         // Lock to prevent concurrent access
         audioBufferLock.lock()
         defer { audioBufferLock.unlock() }
-        
+
         // Process 16-bit PCM audio data
         let samples = buffer.bindMemory(to: Int16.self, capacity: byteCount / 2)
         let sampleCount = min(byteCount / 2, audioBufferForVisualization.count)
-        
+
         // For stereo, average the channels
         if channels == 2 {
             for i in 0..<(sampleCount / 2) {
@@ -364,41 +349,41 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
             }
         }
     }
-    
+
     /// Get waveform data for visualization
     public func getWaveformData(numberOfPoints: Int) -> WaveformData {
         audioBufferLock.lock()
         defer { audioBufferLock.unlock() }
-        
+
         // Create a result array of the requested size
         var result = [Float](repeating: 0, count: numberOfPoints)
-        
+
         // If we don't have enough data or engine isn't running, return zeros
         guard isRunning, !audioBufferForVisualization.isEmpty else {
             return WaveformData(amplitudes: result)
         }
-        
+
         // Use Accelerate framework to downsample the audio buffer to the requested number of points
         let inputLength = vDSP_Length(audioBufferForVisualization.count)
         let stride = max(1, Int(inputLength) / numberOfPoints)
-        
+
         for i in 0..<numberOfPoints {
             let startIdx = i * stride
             let endIdx = min(startIdx + stride, audioBufferForVisualization.count)
-            
+
             if startIdx < endIdx {
                 // Take absolute values for visualization
                 var absValues = [Float](repeating: 0, count: endIdx - startIdx)
                 vDSP_vabs(Array(audioBufferForVisualization[startIdx..<endIdx]), 1, &absValues, 1, vDSP_Length(endIdx - startIdx))
-                
+
                 // Find the maximum value in this segment
                 var maxValue: Float = 0
                 vDSP_maxv(absValues, 1, &maxValue, vDSP_Length(absValues.count))
-                
+
                 result[i] = maxValue
             }
         }
-        
+
         return WaveformData(amplitudes: result)
     }
 }
