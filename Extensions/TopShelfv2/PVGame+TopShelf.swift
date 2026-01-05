@@ -151,11 +151,21 @@ extension PVSaveState {
         let item = TVTopShelfSectionedItem(identifier: id)
 
         let gameTitle = game.title
+        var titleComponents: [String] = [gameTitle]
+
+        /// Add system name for context
         if let systemName = game.system?.name {
-            item.title = "\(gameTitle) (\(systemName))"
-        } else {
-            item.title = gameTitle
+            titleComponents.append("(\(systemName))")
         }
+
+        /// Add relative date information for better context
+        let dateToShow = lastOpened ?? date
+        let relativeDate = formatRelativeDate(dateToShow)
+        if !relativeDate.isEmpty {
+            titleComponents.append("• \(relativeDate)")
+        }
+
+        item.title = titleComponents.joined(separator: " ")
 
         if let system = game.system {
             item.imageShape = system.imageType
@@ -177,6 +187,33 @@ extension PVSaveState {
         }
 
         return item
+    }
+
+    /// Formats a date as a relative time string (e.g., "2 hours ago", "Yesterday", "3 days ago")
+    private func formatRelativeDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+        let components = calendar.dateComponents([.day, .hour, .minute], from: date, to: now)
+
+        if let days = components.day, days > 0 {
+            if days == 1 {
+                return "Yesterday"
+            } else if days < 7 {
+                return "\(days) days ago"
+            } else if days < 30 {
+                let weeks = days / 7
+                return weeks == 1 ? "1 week ago" : "\(weeks) weeks ago"
+            } else {
+                let months = days / 30
+                return months == 1 ? "1 month ago" : "\(months) months ago"
+            }
+        } else if let hours = components.hour, hours > 0 {
+            return hours == 1 ? "1 hour ago" : "\(hours) hours ago"
+        } else if let minutes = components.minute, minutes > 0 {
+            return minutes == 1 ? "1 minute ago" : "\(minutes) minutes ago"
+        } else {
+            return "Just now"
+        }
     }
 
     private func resolveTopShelfImageURL() -> URL? {

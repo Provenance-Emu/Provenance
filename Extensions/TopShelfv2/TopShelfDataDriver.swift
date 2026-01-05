@@ -250,16 +250,27 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
             let database = RomDatabase.sharedInstance
             let realm = database.realm
 
-            let saveStates = realm.objects(PVSaveState.self)
-                .sorted(by: [
-                    SortDescriptor(keyPath: "lastOpened", ascending: false),
-                    SortDescriptor(keyPath: "date", ascending: false)
-                ])
-                .prefix(limit)
+            /// Get save states with lastOpened dates first (most recent first)
+            let withLastOpened = realm.objects(PVSaveState.self)
+                .filter("lastOpened != nil")
+                .sorted(byKeyPath: "lastOpened", ascending: false)
 
-            let frozen = saveStates.map { $0.freeze() }
-            os_log("Found %d recent save states", log: logger, type: .debug, frozen.count)
-            return Array(frozen)
+            /// Get save states without lastOpened, sorted by date (most recent first)
+            let withoutLastOpened = realm.objects(PVSaveState.self)
+                .filter("lastOpened == nil")
+                .sorted(byKeyPath: "date", ascending: false)
+
+            /// Combine: first those with lastOpened, then those without
+            var combined: [PVSaveState] = []
+            combined.append(contentsOf: withLastOpened)
+            combined.append(contentsOf: withoutLastOpened)
+
+            /// Take the limit and freeze for thread safety
+            let limited = Array(combined.prefix(limit))
+            let frozen = limited.map { $0.freeze() }
+
+            os_log("Found %d recent save states (%d with lastOpened, %d without)", log: logger, type: .debug, frozen.count, withLastOpened.count, withoutLastOpened.count)
+            return frozen
         } catch {
             let errorMsg = "Error getting recent save states: \(error.localizedDescription)"
             os_log("%{public}@", log: logger, type: .error, errorMsg)
