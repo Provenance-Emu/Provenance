@@ -160,15 +160,19 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         do {
             let candidates = try await withRealm { realm in
                 realm.objects(PVSaveState.self)
-                    .filter("(cloudRecordID != nil) AND (image == nil OR image.url == nil)")
-                    .prefix(limit)
+                    .filter("cloudRecordID != nil")
+                    .prefix(limit * 2)
                     .map { $0.freeze() }
             }
 
-            guard !candidates.isEmpty else { return }
-            ILOG("[SYNC] Backfilling artwork for \(candidates.count) save states missing images")
+            let filteredCandidates = Array(candidates.filter { saveState in
+                saveState.image == nil || saveState.image?.url == nil
+            }.prefix(limit))
 
-            for saveState in candidates {
+            guard !filteredCandidates.isEmpty else { return }
+            ILOG("[SYNC] Backfilling artwork for \(filteredCandidates.count) save states missing images")
+
+            for saveState in filteredCandidates {
                 guard let recordName = saveState.cloudRecordID else { continue }
                 let recordID = CKRecord.ID(recordName: recordName)
                 do {
