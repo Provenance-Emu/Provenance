@@ -27,7 +27,6 @@
          NSAssert(paramType == M64CORE_STATE_SAVECOMPLETE, @"This block should only be called for save completion!");
          if(newValue == 0)
          {
-
              if (block) {
                  NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain"
                                                       code:-5
@@ -37,9 +36,8 @@
                                                              }];
 
                  dispatch_async(dispatch_get_main_queue(), ^{
-                     block(nil);
+                     block(error);
                  });
-
              }
              return NO;
          }
@@ -74,7 +72,7 @@
 
          return !scheduleSaveState();
      }];
-    
+
     [super saveStateToFileAtPath:fileName completionHandler:block];
 }
 
@@ -86,14 +84,23 @@
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block
 {
     __block BOOL wasPaused = [self isEmulationPaused];
+    __block BOOL completionHandlerCalled = NO;
+
+    /// Register completion handler first to minimize race condition window
     [self OE_addHandlerForType:M64CORE_STATE_LOADCOMPLETE usingBlock:
      ^ BOOL (m64p_core_param paramType, int newValue)
      {
          NSAssert(paramType == M64CORE_STATE_LOADCOMPLETE, @"This block should only be called for load completion!");
 
-         [self setPauseEmulation:wasPaused];
+         /// Prevent duplicate callbacks
+         if (completionHandlerCalled) {
+             return NO;
+         }
+         completionHandlerCalled = YES;
+
          if(newValue == 0)
          {
+             [self setPauseEmulation:wasPaused];
              dispatch_async(dispatch_get_main_queue(), ^{
                  NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain"
                                                       code:-3
@@ -107,6 +114,12 @@
              return NO;
          }
 
+         /// Allow at least one frame to render before restoring pause state to prevent black screen
+         /// This ensures the video buffer is populated before pausing
+         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+             [self setPauseEmulation:wasPaused];
+         });
+
          dispatch_async(dispatch_get_main_queue(), ^{
              block(nil);
          });
@@ -118,7 +131,7 @@
     ^ BOOL {
         if(CoreDoCommand(M64CMD_STATE_LOAD, 1, (void *)[fileName fileSystemRepresentation]) == M64ERR_SUCCESS)
         {
-            // Mupen needs to run for a bit for the state loading to take place.
+            /// Mupen needs to run for a bit for the state loading to take place.
             [self setPauseEmulation:NO];
             return YES;
         }
@@ -126,16 +139,42 @@
         return NO;
     };
 
-    if(scheduleLoadState()) return;
+    if(scheduleLoadState()) {
+        /// Load command succeeded, handler is registered, wait for completion callback
+        return;
+    }
 
+    /// Load command failed, wait for emulator to be in valid state before retrying
+    __block NSTimeInterval startTime = [[NSDate date] timeIntervalSince1970];
     [self OE_addHandlerForType:M64CORE_EMU_STATE usingBlock:
      ^ BOOL (m64p_core_param paramType, int newValue)
      {
-         NSAssert(paramType == M64CORE_EMU_STATE, @"This block should only be called for load completion!");
+         NSAssert(paramType == M64CORE_EMU_STATE, @"This block should only be called for emu state changes!");
+
          if(newValue != M64EMU_RUNNING && newValue != M64EMU_PAUSED)
              return YES;
 
-         return !scheduleLoadState();
+         /// Timeout after 5 seconds to prevent hanging
+         NSTimeInterval elapsed = [[NSDate date] timeIntervalSince1970] - startTime;
+         if (elapsed > 5.0) {
+             if (!completionHandlerCalled && block) {
+                 completionHandlerCalled = YES;
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain"
+                                                          code:-4
+                                                      userInfo:@{
+                                                                 NSLocalizedDescriptionKey : @"Mupen Could not load the save state",
+                                                                 NSLocalizedRecoverySuggestionErrorKey : @"The emulator did not reach a valid state in time.",
+                                                                 NSFilePathErrorKey : fileName
+                                                                 }];
+                     block(error);
+                 });
+             }
+             return NO;
+         }
+
+         BOOL success = scheduleLoadState();
+         return !success;
      }];
 }
 
