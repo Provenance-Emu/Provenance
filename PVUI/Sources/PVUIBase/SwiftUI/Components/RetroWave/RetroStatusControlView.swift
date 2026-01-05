@@ -560,7 +560,8 @@ public struct RetroStatusControlView: View {
                         Label("Clear Messages", systemImage: "trash")
                     }
                     #if os(tvOS)
-                    .buttonStyle(.card) // Use tvOS card style for better focus indication
+                    .buttonStyle(RetroTheme.RetroButtonStyle())
+                    //.buttonStyle(.card) // Use tvOS card style for better focus indication
                     .focusable(true)
                     #else
                     .buttonStyle(RetroTheme.RetroButtonStyle())
@@ -891,7 +892,8 @@ public struct RetroStatusControlView: View {
             } label: {
                 Label("Clear Messages", systemImage: "trash")
             }
-            .buttonStyle(.card) // Use tvOS card style for better focus indication
+            .buttonStyle(RetroTheme.RetroButtonStyle())
+            // .buttonStyle(.card) // Use tvOS card style for better focus indication
             .focusable(true)
         }
     }
