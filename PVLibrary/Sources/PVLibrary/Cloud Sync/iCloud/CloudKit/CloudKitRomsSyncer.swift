@@ -294,6 +294,48 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     // MARK: - CloudKit Operations
 
+    /// Fetches and processes ROM metadata by MD5 hash to create/update PVGame.
+    /// This is useful when a save state references a game that doesn't exist locally yet.
+    /// - Parameter md5: The MD5 hash of the ROM
+    /// - Returns: True if the game was created or updated, false otherwise
+    public func fetchAndProcessROMMetadata(md5: String) async -> Bool {
+        guard !CloudSyncManager.shared.isPausedForEmulation else {
+            ILOG("[SYNC] Emulation pause active, skipping ROM metadata fetch for MD5 \(md5)")
+            return false
+        }
+
+        do {
+            let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
+            guard let romRecord = try await fetchRecord(recordID: recordID, includeAssets: false) else {
+                WLOG("[SYNC] ROM record not found in CloudKit for MD5 \(md5)")
+                return false
+            }
+
+            /// Try to create the game first
+            do {
+                if let _ = try await createPVGame(from: romRecord) {
+                    ILOG("[SYNC] Created PVGame for MD5 \(md5) from ROM metadata")
+                    return true
+                }
+            } catch {
+                /// Game might already exist, try updating it
+                do {
+                    try await updatePVGame(from: romRecord, gameMD5: md5.uppercased())
+                    ILOG("[SYNC] Updated PVGame for MD5 \(md5) from ROM metadata")
+                    return true
+                } catch {
+                    WLOG("[SYNC] Failed to process ROM metadata for MD5 \(md5): \(error.localizedDescription)")
+                    return false
+                }
+            }
+        } catch {
+            WLOG("[SYNC] Failed to fetch ROM metadata for MD5 \(md5): \(error.localizedDescription)")
+            return false
+        }
+
+        return false
+    }
+
     /// Fetches a single CKRecord by its ID using the retry strategy.
     /// - Parameters:
     ///   - recordID: The CloudKit record identifier.

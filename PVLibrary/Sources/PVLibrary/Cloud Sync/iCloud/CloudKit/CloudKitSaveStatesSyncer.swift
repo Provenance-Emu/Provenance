@@ -950,10 +950,40 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         guard !alreadyQueued else { return }
 
         await pendingRecordRetries.insert(recordID)
+
+        /// Extract MD5 from save state record to fetch the associated ROM metadata
+        let gameMD5: String? = {
+            if let identifier = record[CloudKitSchema.SaveStateFields.gameID] as? String {
+                return identifier.uppercased()
+            }
+            if let filename = record[CloudKitSchema.SaveStateFields.filename] as? String,
+               let md5Candidate = filename.components(separatedBy: ".").first,
+               !md5Candidate.isEmpty {
+                return md5Candidate.uppercased()
+            }
+            return nil
+        }()
+
         Task.detached { [weak self] in
-            // Wait briefly to allow ROM metadata to land.
-            try? await Task.sleep(nanoseconds: 1_500_000_000) // 1.5s
             guard let self else { return }
+
+            /// If we have an MD5, try to fetch and process the ROM metadata first
+            if let md5 = gameMD5,
+               let romsSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer {
+                ILOG("[SYNC] Fetching ROM metadata for MD5 \(md5) to enable save state processing")
+                let success = await romsSyncer.fetchAndProcessROMMetadata(md5: md5)
+                if success {
+                    ILOG("[SYNC] Successfully processed ROM metadata for MD5 \(md5)")
+                } else {
+                    WLOG("[SYNC] Failed to process ROM metadata for MD5 \(md5)")
+                }
+            } else {
+                WLOG("[SYNC] Could not extract MD5 from save state record \(recordID)")
+            }
+
+            /// Wait briefly to allow ROM processing to complete
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
+
             await self.pendingRecordRetries.remove(recordID)
             VLOG("[SYNC] Retrying deferred save state processing for record: \(recordID)")
             await self.processCloudRecord(record)
