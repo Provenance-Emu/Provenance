@@ -491,11 +491,18 @@ public struct RetroSaveSelectionAlertView: View {
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(.white)
                 } else {
-                    ProgressView()
-                        .tint(.white)
-                    Text("Downloading…")
+                    RetroIndeterminateSpinner()
+                        .frame(width: 30, height: 30)
+                    Text("DOWNLOADING")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.white)
+                        .tracking(1)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.retroPink, .retroBlue],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
                 }
             }
         }
