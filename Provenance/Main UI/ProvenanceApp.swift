@@ -1144,6 +1144,68 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+        WhatsNew(
+            version: "3.3.0",
+            title: "iCloud Sync, Shaders, and UI Improvements",
+            features: [
+                .init(
+                    image: .init(systemName: "icloud.and.arrow.up", foregroundColor: .blue),
+                    title: "iCloud Sync Improvements",
+                    subtitle: "Improved ROM and save state iCloud sync reliability and accuracy"
+                ),
+                .init(
+                    image: .init(systemName: "photo.on.rectangle", foregroundColor: .green),
+                    title: "Better Save State Selection",
+                    subtitle: "Improved save state selection when launching a game, including save counts per core and screenshot-based selection with cloud sync support"
+                ),
+                .init(
+                    image: .init(systemName: "speedometer", foregroundColor: .orange),
+                    title: "More Accurate Performance Overlay",
+                    subtitle: "Improved FPS and performance metrics overlay for better accuracy and debugging"
+                ),
+                .init(
+                    image: .init(systemName: "sparkles", foregroundColor: .purple),
+                    title: "Shader Fixes and Expansion",
+                    subtitle: "Fixed Metal shaders and added shader support for RetroArch-based cores, PPSSPP, and Dolphin (CRT, LCD, and more)"
+                ),
+                .init(
+                    image: .init(systemName: "gamecontroller.fill", foregroundColor: .yellow),
+                    title: "32X Controller Fixes",
+                    subtitle: "Fixed Sega 32X external controller mappings and resolved a crash that could occur when unloading a game"
+                ),
+                .init(
+                    image: .init(systemName: "button.programmable", foregroundColor: .blue),
+                    title: "Start/Select Mapping Improvements",
+                    subtitle: "Added Start/Select mappings for DualShock, DualSense, Xbox, and Switch controllers across many cores"
+                ),
+                .init(
+                    image: .init(systemName: "aspectratio", foregroundColor: .purple),
+                    title: "Rendering and Layout Fixes",
+                    subtitle: "Fixed Mupen and Mednafen resolution issues and corrected several screen placement bugs"
+                ),
+                .init(
+                    image: .init(systemName: "paintpalette.fill", foregroundColor: .pink),
+                    title: "Controller Skin Improvements",
+                    subtitle: "Improved controller skin performance and expanded supported layouts"
+                ),
+                .init(
+                    image: .init(systemName: "opticaldisc", foregroundColor: .orange),
+                    title: "GenesisPlusGX CHD Support",
+                    subtitle: "Added CHD support to GenesisPlusGX for improved disc-based library compatibility"
+                ),
+                .init(
+                    image: .init(systemName: "pause.circle.fill", foregroundColor: .blue),
+                    title: "Pause Menu Refresh",
+                    subtitle: "Improved pause menu design with new features and a more polished experience"
+                )
+            ],
+            primaryAction: .init(
+                title: "Continue",
+                backgroundColor: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                foregroundColor: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white,
+                hapticFeedback: .notification(.success)
+            )
+        )
     }
 }
 #endif
