@@ -131,6 +131,7 @@ public class RetroSaveSelectionViewModel: ObservableObject {
 
     /// Starts downloading a save state using the appropriate cloud syncer
     public func startDownload(for item: RetroSaveSelectionItem, completion: @escaping (Bool) -> Void) {
+        let actionStart = CFAbsoluteTimeGetCurrent()
         downloadingItemId = item.id
         downloadProgress = 0
         downloadError = nil
@@ -156,53 +157,13 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                     return
                 }
 
-                let gameMD5 = saveState.game?.md5Hash.uppercased()
-                let filename = saveState.file?.fileName ?? "savestate_\(saveState.id)"
-                let recordID: String = {
-                    if let cloudRecordName = saveState.cloudRecordID, !cloudRecordName.isEmpty {
-                        return cloudRecordName
-                    }
-                    if let gameMD5, !gameMD5.isEmpty {
-                        return CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: gameMD5, filename: filename).recordName
-                    }
-                    return saveState.id
-                }()
-
+                let recordID = (saveState.cloudRecordID?.isEmpty == false) ? saveState.cloudRecordID! : saveState.id
                 downloadingRecordID = recordID
 
-                let systemIdentifier = saveState.game?.systemIdentifier ?? "Saves"
-                try await CloudKitDownloadQueue.shared.queueSaveStateDownload(
-                    recordID: recordID,
-                    title: item.title,
-                    fileSize: Int64(item.fileSize),
-                    systemIdentifier: systemIdentifier,
-                    priority: .high
-                )
-
-                while !Task.isCancelled {
-                    if let active = SyncProgressTracker.shared.activeDownloads.first(where: { $0.matchesSaveState(recordID: recordID) }) {
-                        self.downloadProgress = active.progress
-                        try await Task.sleep(nanoseconds: 100_000_000)
-                        continue
-                    }
-
-                    if SyncProgressTracker.shared.queuedDownloads.contains(where: { $0.matchesSaveState(recordID: recordID) }) {
-                        self.downloadProgress = 0
-                        try await Task.sleep(nanoseconds: 200_000_000)
-                        continue
-                    }
-
-                    if let failed = SyncProgressTracker.shared.failedDownloads.first(where: { $0.matchesSaveState(recordID: recordID) }) {
-                        throw failed.error
-                    }
-
-                    break
-                }
-
-                if Task.isCancelled {
-                    ILOG("[SaveSelection] Download cancelled for: \(item.saveStateId)")
-                    return
-                }
+                ILOG("[SaveSelection] Starting direct CloudSyncManager download after \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - actionStart))s (recordID=\(recordID))")
+                let downloadStart = CFAbsoluteTimeGetCurrent()
+                try await CloudSyncManager.shared.downloadSaveState(for: saveState.freeze())
+                ILOG("[SaveSelection] Direct download completed in \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - downloadStart))s (recordID=\(recordID))")
 
                 // Verify download completed by refreshing the save state
                 let updatedRealm = try await Realm()
@@ -211,7 +172,6 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                    let fileURL = updatedSaveState.file?.url,
                    FileManager.default.fileExists(atPath: fileURL.path) {
                     ILOG("[SaveSelection] Download complete for: \(item.saveStateId)")
-                    downloadProgress = 1.0
                     downloadingRecordID = nil
                     downloadingItemId = nil
                     downloadProgress = 0
@@ -233,9 +193,6 @@ public class RetroSaveSelectionViewModel: ObservableObject {
     public func cancelDownload() {
         downloadTask?.cancel()
         downloadTask = nil
-        if let recordID = downloadingRecordID {
-            CloudKitDownloadQueue.shared.cancelSaveStateDownload(recordID: recordID)
-        }
         downloadingRecordID = nil
         downloadingItemId = nil
         downloadProgress = 0
@@ -526,12 +483,20 @@ public struct RetroSaveSelectionAlertView: View {
             Color.black.opacity(0.7)
 
             VStack(spacing: 4) {
-                CircularProgressView(progress: viewModel.downloadProgress)
-                    .frame(width: 30, height: 30)
+                if viewModel.downloadProgress > 0 {
+                    CircularProgressView(progress: viewModel.downloadProgress)
+                        .frame(width: 30, height: 30)
 
-                Text("\(Int(viewModel.downloadProgress * 100))%")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(.white)
+                    Text("\(Int(viewModel.downloadProgress * 100))%")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.white)
+                } else {
+                    ProgressView()
+                        .tint(.white)
+                    Text("Downloading…")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.white)
+                }
             }
         }
     }
