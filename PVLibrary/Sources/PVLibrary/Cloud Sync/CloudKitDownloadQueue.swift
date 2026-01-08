@@ -107,7 +107,7 @@ public class CloudKitDownloadQueue: ObservableObject {
         title: String,
         fileSize: Int64,
         systemIdentifier: String,
-        priority: SyncProgressTracker.DownloadPriority = .high
+        priority: SyncProgressTracker.DownloadPriority = .normal
     ) async throws {
         try await enqueueDownload(
             kind: .saveState(recordID: recordID),
