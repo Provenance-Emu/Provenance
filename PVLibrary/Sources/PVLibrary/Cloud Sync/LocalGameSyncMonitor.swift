@@ -16,11 +16,39 @@ import PVSupport
 /// CloudKit uploads/updates accordingly.
 public final class LocalGameSyncMonitor {
 
+    private struct MetadataSnapshot: Equatable, Sendable {
+        let title: String
+        let isFavorite: Bool
+        let rating: Int
+        let originalArtworkURL: String
+        let customArtworkURL: String
+        let boxBackArtworkURL: String?
+        let gameDescription: String?
+        let developer: String?
+        let publisher: String?
+        let publishDate: String?
+        let genres: String?
+        let referenceURL: String?
+        let releaseID: String?
+        let regionName: String?
+        let regionID: Int?
+        let systemShortName: String?
+        let language: String?
+    }
+
+    private struct StatsSnapshot: Equatable, Sendable {
+        let playCount: Int
+        let timeSpentInGame: Int
+        let lastPlayed: Date?
+    }
+
     // Realm instance used for observation. Created when monitoring starts.
     private var realm: Realm?
     private let romsSyncer: CloudKitRomsSyncer
     private var notificationToken: NotificationToken?
     private var gamesResults: Results<PVGame>?
+    private var metadataCache: [String: MetadataSnapshot] = [:]
+    private var statsCache: [String: StatsSnapshot] = [:]
 
     /// Initializes the monitor.
     /// - Parameters:
@@ -92,10 +120,16 @@ public final class LocalGameSyncMonitor {
             return
         }
 
+        if CloudKitRemoteApplyGuard.isApplyingRemoteChanges {
+            rebuildCaches(from: currentResults)
+            return
+        }
+
         switch changes {
         case .initial:
             // Results are now populated and ready
             VLOG("Realm observation initial results received for PVGame (count: \(currentResults.count)).")
+            rebuildCaches(from: currentResults)
             // Potentially trigger an initial consistency check here if needed,
             // but CloudKitInitialSyncer likely handles the first full sync.
             break
@@ -115,6 +149,7 @@ public final class LocalGameSyncMonitor {
                         continue
                     }
                     let md5 = insertedGame.md5Hash.uppercased()
+                    metadataCache[md5] = snapshot(for: insertedGame)
                     Task {
                         do {
                             VLOG("Realm insertion detected for \(md5). Triggering CloudKit upload.")
@@ -142,6 +177,47 @@ public final class LocalGameSyncMonitor {
                         continue
                     }
                     let md5 = modifiedGame.md5Hash
+
+                    let normalizedMD5 = md5.uppercased()
+                    let newMetadata = metadataSnapshot(for: modifiedGame)
+                    let oldMetadata = metadataCache[normalizedMD5]
+                    let metadataChanged = oldMetadata.map { $0 != newMetadata } ?? true
+                    metadataCache[normalizedMD5] = newMetadata
+
+                    let newStats = statsSnapshot(for: modifiedGame)
+                    let oldStats = statsCache[normalizedMD5]
+                    statsCache[normalizedMD5] = newStats
+
+                    if let oldStats {
+                        let playDelta = max(0, newStats.playCount - oldStats.playCount)
+                        let timeDelta = max(0, newStats.timeSpentInGame - oldStats.timeSpentInGame)
+                        let endedAt = newStats.lastPlayed ?? Date()
+
+                        if playDelta > 0 || timeDelta > 0 {
+                            Task {
+                                do {
+                                    try await self.romsSyncer.incrementPlayStats(
+                                        md5: normalizedMD5,
+                                        playCountDelta: playDelta,
+                                        timeSpentDelta: timeDelta,
+                                        lastPlayed: endedAt
+                                    )
+                                } catch {
+                                    WLOG("[SYNC] Failed to increment play stats for \(normalizedMD5): \(error.localizedDescription)")
+                                }
+                            }
+                        }
+                    }
+
+                    if metadataChanged {
+                        Task { [weak self] in
+                            guard let self else { return }
+                            await CloudKitGameMetadataUpdateQueue.shared.enqueue(md5: normalizedMD5)
+                            await CloudKitGameMetadataUpdateQueue.shared.drain(using: self.romsSyncer)
+                        }
+                        VLOG("Detected user-metadata change for \(normalizedMD5). Queued CloudKit metadata-only update.")
+                        continue
+                    }
 
                     // Skip if game is marked as not downloaded (likely downloading/syncing)
                     if !modifiedGame.isDownloaded {
@@ -198,6 +274,8 @@ public final class LocalGameSyncMonitor {
             // Handle Deletions (Explicitly, not here)
             if !deletions.isEmpty {
                 VLOG("Detected \(deletions.count) PVGame deletions in Realm notification. These should be handled explicitly by the code performing the deletion.")
+                // Keep cache consistent with current results
+                rebuildCaches(from: currentResults)
                 // No action needed here as the trigger should be coupled with the delete operation itself.
             }
 
@@ -207,5 +285,46 @@ public final class LocalGameSyncMonitor {
             stopMonitoring()
             // Consider notifying the user or attempting to restart monitoring?
         }
+    }
+
+    private func snapshot(for game: PVGame) -> MetadataSnapshot {
+        MetadataSnapshot(
+            title: game.title,
+            isFavorite: game.isFavorite,
+            rating: game.rating,
+            originalArtworkURL: game.originalArtworkURL,
+            customArtworkURL: game.customArtworkURL,
+            boxBackArtworkURL: game.boxBackArtworkURL,
+            gameDescription: game.gameDescription,
+            developer: game.developer,
+            publisher: game.publisher,
+            publishDate: game.publishDate,
+            genres: game.genres,
+            referenceURL: game.referenceURL,
+            releaseID: game.releaseID,
+            regionName: game.regionName,
+            regionID: game.regionID,
+            systemShortName: game.systemShortName,
+            language: game.language
+        )
+    }
+
+    private func metadataSnapshot(for game: PVGame) -> MetadataSnapshot { snapshot(for: game) }
+
+    private func statsSnapshot(for game: PVGame) -> StatsSnapshot {
+        StatsSnapshot(playCount: game.playCount, timeSpentInGame: game.timeSpentInGame, lastPlayed: game.lastPlayed)
+    }
+
+    private func rebuildCaches(from results: Results<PVGame>) {
+        var newMetadata: [String: MetadataSnapshot] = [:]
+        var newStats: [String: StatsSnapshot] = [:]
+        for game in results {
+            let md5 = game.md5Hash.uppercased()
+            guard !md5.isEmpty else { continue }
+            newMetadata[md5] = metadataSnapshot(for: game)
+            newStats[md5] = statsSnapshot(for: game)
+        }
+        metadataCache = newMetadata
+        statsCache = newStats
     }
 }

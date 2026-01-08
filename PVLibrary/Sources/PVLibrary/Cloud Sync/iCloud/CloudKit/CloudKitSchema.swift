@@ -117,6 +117,8 @@ public enum CloudKitSchema {
         // Add relevant fields for metadata if needed
     }
 
+
+
     /// Field keys for the BIOS record type.
     public struct BIOSAttributes {
         /// System identifier

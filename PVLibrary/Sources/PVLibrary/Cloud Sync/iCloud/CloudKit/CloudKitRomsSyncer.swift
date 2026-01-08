@@ -51,6 +51,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private let uploadQueue = CloudKitUploadQueueActor.shared
     private let loadAllLock = NSLock()
     private var isLoadAllInFlight: Bool = false
+    private let changeTokenStorageKey = "org.provenance.cloudsync.cloudkit.roms.zoneChangeToken.v1"
+    private let changeTokenStorage = UserDefaults.standard
 
     // Execute async work on the configured queue so suspension/cancellation during emulation is honored.
     private func runOnQueue<T>(_ work: @escaping @Sendable () async throws -> T) async throws -> T {
@@ -290,6 +292,184 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return true
         }
         return record[CloudKitSchema.ROMFields.fileData] is CKAsset
+    }
+
+    /// Fetch and apply remote ROM changes using a persisted zone change token.
+    public func fetchAndApplyRemoteChanges() async {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            return
+        }
+
+        do {
+            let zoneID = CKRecordZone.default().zoneID
+            let previousToken = loadZoneChangeToken()
+            let (records, newToken) = try await fetchZoneChanges(zoneID: zoneID, previousToken: previousToken)
+
+            for record in records {
+                if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
+
+                switch record.recordType {
+                case CloudKitSchema.RecordType.rom.rawValue:
+                    guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) else { continue }
+                    do {
+                        try await updatePVGame(from: record, gameMD5: md5.uppercased())
+                    } catch {
+                        WLOG("[SYNC] Failed applying ROM metadata change for \(md5): \(error.localizedDescription)")
+                    }
+
+                default:
+                    continue
+                }
+            }
+
+            if let newToken {
+                saveZoneChangeToken(newToken)
+            }
+        } catch {
+            WLOG("[SYNC] Remote change fetch failed: \(error.localizedDescription)")
+        }
+    }
+
+    /// Increment play stats in CloudKit without clobbering concurrent updates.
+    /// This uses a fetch-merge-save retry loop on `.serverRecordChanged`.
+    public func incrementPlayStats(
+        md5: String,
+        playCountDelta: Int,
+        timeSpentDelta: Int,
+        lastPlayed: Date
+    ) async throws {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            throw CloudSyncError.pausedForEmulation
+        }
+
+        let md5 = md5.uppercased()
+        guard !md5.isEmpty else { throw CloudSyncError.invalidData }
+        guard playCountDelta > 0 || timeSpentDelta > 0 else { return }
+
+        #if os(macOS)
+        let deviceIdentifier = Host.current().name ?? "Unknown macOS"
+        #else
+        let deviceIdentifier = UIDevice.current.name
+        #endif
+
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
+        let desiredKeys: [CKRecord.FieldKey] = [
+            CloudKitSchema.ROMFields.md5,
+            CloudKitSchema.ROMFields.systemIdentifier,
+            CloudKitSchema.ROMFields.title,
+            CloudKitSchema.ROMFields.originalFilename,
+            CloudKitSchema.ROMFields.isDeleted,
+            CloudKitSchema.ROMFields.playCount,
+            CloudKitSchema.ROMFields.timeSpentInGame,
+            CloudKitSchema.ROMFields.lastPlayed
+        ]
+
+        let maxRetries = 4
+        for attempt in 0..<maxRetries {
+            if CloudSyncManager.shared.isPausedForEmulation { throw CloudSyncError.pausedForEmulation }
+
+            let existing = try await fetchRecord(recordID: recordID, desiredKeys: desiredKeys)
+            let record = existing ?? CKRecord(recordType: CloudKitSchema.RecordType.rom.rawValue, recordID: recordID)
+
+            if let isDeleted = record[CloudKitSchema.ROMFields.isDeleted] as? Bool, isDeleted {
+                return
+            }
+
+            if record[CloudKitSchema.ROMFields.md5] == nil { record[CloudKitSchema.ROMFields.md5] = md5 }
+            if record[CloudKitSchema.ROMFields.originalFilename] == nil {
+                let fileName = try? await withRealm { realm -> String? in
+                    realm.object(ofType: PVGame.self, forPrimaryKey: md5)?.file?.fileName ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5)?.fileName
+                }
+                if let fileName { record[CloudKitSchema.ROMFields.originalFilename] = fileName }
+            }
+
+            let currentPlay = (record[CloudKitSchema.ROMFields.playCount] as? NSNumber)?.intValue ?? 0
+            let currentTime = (record[CloudKitSchema.ROMFields.timeSpentInGame] as? NSNumber)?.intValue ?? 0
+            let currentLast = record[CloudKitSchema.ROMFields.lastPlayed] as? Date
+
+            record[CloudKitSchema.ROMFields.playCount] = NSNumber(value: currentPlay + playCountDelta)
+            record[CloudKitSchema.ROMFields.timeSpentInGame] = NSNumber(value: currentTime + timeSpentDelta)
+            record[CloudKitSchema.ROMFields.lastPlayed] = currentLast.map { max($0, lastPlayed) } ?? lastPlayed
+            record[CloudKitSchema.ROMFields.lastModifiedDevice] = deviceIdentifier
+
+            do {
+                _ = try await self.database.save(record)
+                return
+            } catch let error as CKError where error.code == .serverRecordChanged && attempt < maxRetries - 1 {
+                continue
+            }
+        }
+    }
+
+    private func fetchRecord(recordID: CKRecord.ID, desiredKeys: [CKRecord.FieldKey]) async throws -> CKRecord? {
+        if CloudSyncManager.shared.isPausedForEmulation {
+            return nil
+        }
+
+        return try await runOnQueue { [self] in
+            do {
+                let record = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
+                    let op = CKFetchRecordsOperation(recordIDs: [recordID])
+                    op.desiredKeys = desiredKeys
+                    var fetched: CKRecord?
+                    op.perRecordResultBlock = { _, result in
+                        if case let .success(r) = result { fetched = r }
+                    }
+                    op.fetchRecordsCompletionBlock = { _, error in
+                        if let error = error { continuation.resume(throwing: error) }
+                        else { continuation.resume(returning: fetched) }
+                    }
+                    self.database.add(op)
+                }
+                return record
+            } catch let error as CKError where error.code == .unknownItem {
+                return nil
+            }
+        }
+    }
+
+    private func fetchZoneChanges(zoneID: CKRecordZone.ID, previousToken: CKServerChangeToken?) async throws -> ([CKRecord], CKServerChangeToken?) {
+        try await runOnQueue { [self] in
+            try await withCheckedThrowingContinuation { continuation in
+                var fetchedRecords: [CKRecord] = []
+                var nextToken: CKServerChangeToken?
+                var fetchError: Error?
+
+                let config = CKFetchRecordZoneChangesOperation.ZoneConfiguration(previousServerChangeToken: previousToken)
+                let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [zoneID], configurationsByRecordZoneID: [zoneID: config])
+                op.fetchAllChanges = true
+
+                op.recordChangedBlock = { record in
+                    fetchedRecords.append(record)
+                }
+
+                op.recordZoneChangeTokensUpdatedBlock = { _, token, _ in
+                    nextToken = token
+                }
+
+                op.recordZoneFetchCompletionBlock = { _, token, _, _, error in
+                    if let token { nextToken = token }
+                    if let error { fetchError = error }
+                }
+
+                op.fetchRecordZoneChangesCompletionBlock = { error in
+                    if let error = fetchError ?? error { continuation.resume(throwing: error) }
+                    else { continuation.resume(returning: (fetchedRecords, nextToken)) }
+                }
+
+                self.database.add(op)
+            }
+        }
+    }
+
+    private func loadZoneChangeToken() -> CKServerChangeToken? {
+        guard let data = changeTokenStorage.data(forKey: changeTokenStorageKey) else { return nil }
+        return try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: data)
+    }
+
+    private func saveZoneChangeToken(_ token: CKServerChangeToken) {
+        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) else { return }
+        changeTokenStorage.set(data, forKey: changeTokenStorageKey)
     }
 
     // MARK: - CloudKit Operations
@@ -1515,10 +1695,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         record[CloudKitSchema.ROMFields.language] = game.language
 
         // --- User Stats & Info ---
+        // Play stats are stored as totals on the ROM record.
         record[CloudKitSchema.ROMFields.lastPlayed] = game.lastPlayed
         record[CloudKitSchema.ROMFields.playCount] = game.playCount as NSNumber
         record[CloudKitSchema.ROMFields.timeSpentInGame] = game.timeSpentInGame as NSNumber
         record[CloudKitSchema.ROMFields.rating] = game.rating as NSNumber
+        record[CloudKitSchema.ROMFields.isFavorite] = game.isFavorite
         record[CloudKitSchema.ROMFields.importDate] = game.importDate
 
         // --- Artwork Fields ---
@@ -1661,6 +1843,78 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
+    /// Update only user-editable metadata for a game in CloudKit (without requiring the ROM file).
+    /// - Parameter md5: The game's MD5 hash.
+    /// - Returns: True if the record was saved successfully.
+    @discardableResult
+    public func updateGameMetadata(md5: String) async throws -> Bool {
+        let frozenGame = try await withRealm { realm -> PVGame in
+            guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+                throw CloudSyncError.gameNotFound("PVGame with MD5 \(md5) not found in Realm")
+            }
+            return liveGame.freeze()
+        }
+
+        guard !frozenGame.contentless else {
+            VLOG("Skipping CloudKit metadata update for contentless placeholder game: \(frozenGame.title)")
+            return false
+        }
+
+        let normalizedMD5 = frozenGame.md5Hash.uppercased()
+        guard !normalizedMD5.isEmpty else {
+            throw CloudSyncError.invalidData
+        }
+
+        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: normalizedMD5)
+        var record = try await fetchRecord(recordID: recordID, includeAssets: false)
+            ?? CKRecord(recordType: CloudKitSchema.RecordType.rom.rawValue, recordID: recordID)
+
+        record[CloudKitSchema.ROMFields.md5] = normalizedMD5
+        record[CloudKitSchema.ROMFields.systemIdentifier] = frozenGame.systemIdentifier
+        record[CloudKitSchema.ROMFields.title] = frozenGame.title
+        record[CloudKitSchema.ROMFields.isFavorite] = frozenGame.isFavorite
+        record[CloudKitSchema.ROMFields.rating] = frozenGame.rating as NSNumber
+
+        // OpenVGDB / user-editable metadata fields
+        record[CloudKitSchema.ROMFields.gameDescription] = frozenGame.gameDescription
+        record[CloudKitSchema.ROMFields.boxBackArtworkURL] = frozenGame.boxBackArtworkURL
+        record[CloudKitSchema.ROMFields.developer] = frozenGame.developer
+        record[CloudKitSchema.ROMFields.publisher] = frozenGame.publisher
+        record[CloudKitSchema.ROMFields.publishDate] = frozenGame.publishDate
+        record[CloudKitSchema.ROMFields.genres] = frozenGame.genres
+        record[CloudKitSchema.ROMFields.referenceURL] = frozenGame.referenceURL
+        record[CloudKitSchema.ROMFields.releaseID] = frozenGame.releaseID
+        record[CloudKitSchema.ROMFields.regionName] = frozenGame.regionName
+        record[CloudKitSchema.ROMFields.regionID] = frozenGame.regionID.map { NSNumber(value: $0) }
+        record[CloudKitSchema.ROMFields.systemShortName] = frozenGame.systemShortName as NSString?
+        record[CloudKitSchema.ROMFields.language] = frozenGame.language
+
+        // Artwork sync (URLs + optional custom artwork asset)
+        record[CloudKitSchema.ROMFields.originalArtworkURL] = frozenGame.originalArtworkURL
+        record[CloudKitSchema.ROMFields.customArtworkURL] = frozenGame.customArtworkURL
+
+        do {
+            record = try await prepareCustomArtworkAsset(for: frozenGame, record: record)
+        } catch {
+            WLOG("Failed to attach customArtworkAsset for metadata-only update \(normalizedMD5): \(error.localizedDescription)")
+        }
+
+        #if os(macOS)
+        let deviceIdentifier = Host.current().name ?? "Unknown macOS"
+        #else
+        let deviceIdentifier = UIDevice.current.name
+        #endif
+        record[CloudKitSchema.ROMFields.lastModifiedDevice] = deviceIdentifier
+
+        if record[CloudKitSchema.ROMFields.originalFilename] == nil {
+            record[CloudKitSchema.ROMFields.originalFilename] = frozenGame.file?.fileName ?? frozenGame.fileName
+        }
+
+        try await saveRecord(record)
+        ILOG("[SYNC] ✅ Updated ROM metadata-only: \(frozenGame.title) (MD5: \(normalizedMD5))")
+        return true
+    }
+
     /// Download and cache custom artwork asset from CloudKit
     /// - Parameters:
     ///   - record: The CloudKit record containing the artwork asset
@@ -1716,7 +1970,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             // Update the local game record with the new customArtworkURL if it changed
             if artworkURLChanged {
-                try RomDatabase.sharedInstance.writeTransaction {
+                try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+                    try RomDatabase.sharedInstance.writeTransaction {
                     // Re-fetch the game to ensure we have a valid reference
                     guard let liveGame = RomDatabase.sharedInstance.game(withMD5: game.md5Hash) else {
                         ELOG("Game \(game.md5Hash) was invalidated during artwork URL update.")
@@ -1725,6 +1980,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
                     liveGame.customArtworkURL = cloudCustomArtworkURL
                     ILOG("Updated local customArtworkURL for game \(game.title): \(cloudCustomArtworkURL)")
+                    }
                 }
             }
 
@@ -1755,19 +2011,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Perform updates within a Realm write transaction via RomDatabase.shared
         let recordHasAsset = recordDeclaresAssetPresence(record)
 
-        try RomDatabase.sharedInstance.writeTransaction {
-            // Update fields based on CloudKit record
+        try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+            try RomDatabase.sharedInstance.writeTransaction {
+            // Update fields based on CloudKit record (merge totals to avoid clobbering unuploaded local increments)
             localGame.title = record[CloudKitSchema.ROMFields.title] as? String ?? localGame.title
             localGame.rating = record[CloudKitSchema.ROMFields.rating] as? Int ?? localGame.rating
-            localGame.playCount = record[CloudKitSchema.ROMFields.playCount] as? Int ?? localGame.playCount
-            localGame.lastPlayed = record[CloudKitSchema.ROMFields.lastPlayed] as? Date ?? localGame.lastPlayed
-            localGame.isFavorite = record[CloudKitSchema.ROMFields.isFavorite] as? Bool ?? localGame.isFavorite
-
-            // Conflict Resolution for timeSpentInGame: Keep the larger value
-            let cloudTimeSpent = record[CloudKitSchema.ROMFields.timeSpentInGame] as? Int ?? 0
-            if cloudTimeSpent > localGame.timeSpentInGame {
+            if let cloudPlayCount = record[CloudKitSchema.ROMFields.playCount] as? Int, cloudPlayCount > localGame.playCount {
+                localGame.playCount = cloudPlayCount
+            }
+            if let cloudTimeSpent = record[CloudKitSchema.ROMFields.timeSpentInGame] as? Int, cloudTimeSpent > localGame.timeSpentInGame {
                 localGame.timeSpentInGame = cloudTimeSpent
             }
+            if let cloudLastPlayed = record[CloudKitSchema.ROMFields.lastPlayed] as? Date {
+                localGame.lastPlayed = localGame.lastPlayed.map { max($0, cloudLastPlayed) } ?? cloudLastPlayed
+            }
+            localGame.isFavorite = record[CloudKitSchema.ROMFields.isFavorite] as? Bool ?? localGame.isFavorite
 
             // Update OpenVGDB fields if present
             localGame.gameDescription = record[CloudKitSchema.ROMFields.gameDescription] as? String ?? localGame.gameDescription
@@ -1781,7 +2039,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             localGame.customArtworkURL = record[CloudKitSchema.ROMFields.customArtworkURL] as? String ?? localGame.customArtworkURL
 
             // Update download status and size based on asset presence and local file existence
-            if let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset {
+            if record.allKeys().contains(CloudKitSchema.ROMFields.fileData),
+               let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset {
                 // Check if the local file actually exists before marking as downloaded
                 let expectedLocalURL = self.localURL(for: localGame)
                 let hasLocalFile = expectedLocalURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
@@ -1807,7 +2066,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                         VLOG("Replaced PVFile due to differing URL for game \(localGame.md5Hash ?? "nil")")
                     }
                 }
-            } else {
+            } else if record.allKeys().contains(CloudKitSchema.ROMFields.fileData) {
                 // Mark as not downloaded
                 ILOG("📤 Marking game \(localGame.title) as not downloaded (no CloudKit asset)")
                 localGame.isDownloaded = false
@@ -1825,7 +2084,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     VLOG("Related file \(relatedFile.fileName) exists for game \(localGame.md5Hash ?? "unknown") but primary is not downloaded.")
                 }
             }
-        } // End write transaction
+            } // End write transaction
+        }
         VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5Hash ?? "unknown"))")
 
         // Download custom artwork asset if available
@@ -1890,7 +2150,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // 4. Add the new game to the database using RomDatabase.shared
         do {
-            try RomDatabase.sharedInstance.add(newGame, update: true) // Add the fully populated object
+            try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+                try RomDatabase.sharedInstance.add(newGame, update: true) // Add the fully populated object
+            }
             ILOG("""
                 [SYNC] ✅ ROM ENTRY CREATED FROM CLOUD: \(title)
                    RecordID: \(record.recordID.recordName), MD5: \(md5)
@@ -2145,7 +2407,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         VLOG("Updating download status for \(md5): isDownloaded = \(isDownloaded), fileURL = \(fileURL?.path ?? "nil")")
 
         // Perform updates within a Realm write transaction via RomDatabase.shared
-        try RomDatabase.sharedInstance.writeTransaction {
+        try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+            try RomDatabase.sharedInstance.writeTransaction {
             guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else {
                 WLOG("Cannot update download status: PVGame with MD5 \(md5) not found locally.")
                 return
@@ -2222,7 +2485,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     VLOG("Related file \(relatedFile.fileName) exists for game \(md5) but primary is not downloaded.")
                 }
             }
-        } // End write transaction
+            } // End write transaction
+        }
         VLOG("Finished updating download status for \(md5).)")
     }
 
@@ -2855,6 +3119,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return error.localizedDescription
         }
     }
+
 
     /// Periodically verify that ROMs marked as synced still have CloudKit assets.
     public func auditCloudAssets(batchSize: Int = 40) async {

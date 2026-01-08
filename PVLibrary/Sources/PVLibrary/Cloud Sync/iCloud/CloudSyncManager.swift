@@ -160,6 +160,9 @@ public class CloudSyncManager {
     /// CloudKit Container
     private let container: CKContainer
 
+    /// Observes local PVGame changes to forward metadata edits to CloudKit.
+    private var localGameSyncMonitor: LocalGameSyncMonitor?
+
     // MARK: - Initialization
 
     /// Private initializer for singleton
@@ -1307,6 +1310,16 @@ public class CloudSyncManager {
         )
         self.romsSyncer?.workQueue = romsQueue
 
+        if let ckRomsSyncer = self.romsSyncer as? CloudKitRomsSyncer {
+            if localGameSyncMonitor == nil {
+                localGameSyncMonitor = LocalGameSyncMonitor(romsSyncer: ckRomsSyncer)
+            }
+            localGameSyncMonitor?.startMonitoring()
+        } else {
+            localGameSyncMonitor?.stopMonitoring()
+            localGameSyncMonitor = nil
+        }
+
         // 2. Initialize Save States Syncer using factory
         self.saveStatesSyncer = SyncProviderFactory.createSaveStatesSyncProvider(
             notificationCenter: .default,
@@ -1417,6 +1430,7 @@ public class CloudSyncManager {
             NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [weak self] _ in
                 guard let self = self else { return }
                 Task {
+                    await CloudKitSyncerStore.shared.refreshRomRemoteChanges()
                     await self.checkForMissingROMFiles(force: false)
                 }
             }
@@ -1510,6 +1524,8 @@ public class CloudSyncManager {
             romsSyncer = nil
             saveStatesSyncer = nil
             nonDatabaseSyncer = nil
+            localGameSyncMonitor?.stopMonitoring()
+            localGameSyncMonitor = nil
             updateSyncStatus(.disabled)
         }
     }
