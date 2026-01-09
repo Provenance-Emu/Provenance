@@ -287,21 +287,76 @@ struct HomeView: SwiftUI.View {
             RetroLogView(isFullscreen: $showLogViewer)
         }
         // System Status Modal
-        .sheet(isPresented: $showSystemStatus) {
-            NavigationStack {
-                RetroStatusControlView()
-                    .navigationTitle("System Status")
-                #if !os(tvOS)
-                    .navigationBarTitleDisplayMode(.inline)
-                #endif
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Done") {
-                                showSystemStatus = false
-                            }
-                            .foregroundColor(RetroTheme.retroPink)
-                        }
+        .fullScreenCover(
+            isPresented: Binding(
+                get: {
+                    #if os(tvOS)
+                    false
+                    #else
+                    showSystemStatus && UIDevice.current.userInterfaceIdiom == .pad
+                    #endif
+                },
+                set: { newValue in
+                    if !newValue {
+                        showSystemStatus = false
                     }
+                }
+            )
+        ) {
+            NavigationStack {
+                ScrollView {
+                    RetroStatusControlView()
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                }
+                .navigationTitle("System Status")
+                #if !os(tvOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            showSystemStatus = false
+                        }
+                        .foregroundColor(RetroTheme.retroPink)
+                    }
+                }
+            }
+        }
+        .sheet(
+            isPresented: Binding(
+                get: {
+                    #if os(tvOS)
+                    showSystemStatus
+                    #else
+                    showSystemStatus && UIDevice.current.userInterfaceIdiom != .pad
+                    #endif
+                },
+                set: { newValue in
+                    if !newValue {
+                        showSystemStatus = false
+                    }
+                }
+            )
+        ) {
+            NavigationStack {
+                ScrollView {
+                    RetroStatusControlView()
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                }
+                .navigationTitle("System Status")
+                #if !os(tvOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            showSystemStatus = false
+                        }
+                        .foregroundColor(RetroTheme.retroPink)
+                    }
+                }
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
