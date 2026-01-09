@@ -1220,9 +1220,9 @@ public class CloudSyncManager {
         // Fetch ROM changes
         if let romsSyncer = romsSyncer, shouldSyncROMContent() {
             do {
-                DLOG("Fetching remote ROM changes...")
-                _ = try await romsSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
-                DLOG("Successfully fetched remote ROM changes")
+                DLOG("Fetching remote ROM changes (zone change token incremental)...")
+                await CloudKitSyncerStore.shared.refreshRomRemoteChanges()
+                DLOG("Finished applying remote ROM changes")
             } catch {
                 ELOG("Error fetching remote ROM changes: \(error.localizedDescription)")
                 hasErrors = true

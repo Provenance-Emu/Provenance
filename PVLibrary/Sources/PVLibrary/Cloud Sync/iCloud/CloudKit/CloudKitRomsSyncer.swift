@@ -2014,6 +2014,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
             try RomDatabase.sharedInstance.writeTransaction {
             // Update fields based on CloudKit record (merge totals to avoid clobbering unuploaded local increments)
+            localGame.cloudRecordID = record.recordID.recordName
             localGame.title = record[CloudKitSchema.ROMFields.title] as? String ?? localGame.title
             localGame.rating = record[CloudKitSchema.ROMFields.rating] as? Int ?? localGame.rating
             if let cloudPlayCount = record[CloudKitSchema.ROMFields.playCount] as? Int, cloudPlayCount > localGame.playCount {
@@ -2084,6 +2085,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     VLOG("Related file \(relatedFile.fileName) exists for game \(localGame.md5Hash ?? "unknown") but primary is not downloaded.")
                 }
             }
+
+            /// Update lastCloudSyncDate so we can skip this record next time unless CloudKit has a newer modification date.
+            localGame.lastCloudSyncDate = cloudModDate
             } // End write transaction
         }
         VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5Hash ?? "unknown"))")
@@ -2132,6 +2136,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // newGame.fileName = originalFilename // REMOVED: fileName is computed
         newGame.title = title
         newGame.cloudRecordID = record.recordID.recordName
+        newGame.lastCloudSyncDate = record.modificationDate
 
         // Set other properties from the record
         newGame.isDownloaded = false // Mark as not downloaded initially, download happens separately
