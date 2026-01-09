@@ -67,8 +67,23 @@ class ContinuesSectionViewModel: ObservableObject {
         hasLoadedAllSaveStates = states.count >= totalCount
 
         // Update current save state if needed
-        if currentSaveState == nil || !states.contains(currentSaveState!) {
-            currentSaveState = states.first
+        updateCurrentSaveState(selectedItemId: selectedItemId, page: currentPage)
+    }
+
+    /// Syncs `currentSaveState` to the focused item when possible, otherwise the page-start item.
+    func updateCurrentSaveState(selectedItemId: String?, page: Int) {
+        if let selectedItemId,
+           let focusedState = saveStates.first(where: { $0.id == selectedItemId }),
+           !focusedState.isInvalidated {
+            currentSaveState = focusedState
+            return
+        }
+
+        let startIndex = page * itemsPerPage
+        if startIndex >= 0, startIndex < saveStates.count {
+            currentSaveState = saveStates[startIndex]
+        } else {
+            currentSaveState = saveStates.first
         }
     }
 
@@ -180,6 +195,15 @@ private struct ContinuesFooterView: View {
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                             .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.5), radius: 1)
+
+                        HStack(spacing: 6) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 9, weight: .semibold))
+                                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.65))
+                            Text(continueState.date, style: .relative)
+                                .font(.system(size: 9, weight: .semibold))
+                                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.65))
+                        }
                     }
                     Spacer()
                     if !hideSystemLabel, let system = continueState.game?.system, !system.isInvalidated {
@@ -439,6 +463,12 @@ struct HomeContinueSection: SwiftUI.View {
     @State private var gamepadCancellable: AnyCancellable?
     @State private var selectedPage = 0
 
+    /// Keeps `viewModel.selectedItemId` and the footer selection in sync with focus and paging.
+    private func syncSelectionState() {
+        viewModel.selectedItemId = parentFocusedItem
+        viewModel.updateCurrentSaveState(selectedItemId: parentFocusedItem, page: viewModel.currentPage)
+    }
+
     var body: some SwiftUI.View {
         // Main container
         ZStack(alignment: .bottom) {
@@ -545,6 +575,7 @@ struct HomeContinueSection: SwiftUI.View {
 
                 // Initialize with the initial limit
                 updateSaveStateLimit(ContinuesSectionViewModel.initialSaveStateLimit)
+                syncSelectionState()
             }
         }
         .onDisappear {
@@ -552,6 +583,13 @@ struct HomeContinueSection: SwiftUI.View {
             gamepadCancellable?.cancel()
             delayTask?.cancel()
             continuousNavigationTask?.cancel()
+        }
+        .onChange(of: parentFocusedItem) { _ in
+            syncSelectionState()
+        }
+        .onChange(of: isLandscapePhone) { _ in
+            viewModel.updateSaveStates(limitedSaveStates, isLandscape: isLandscapePhone, totalCount: totalSaveStatesCount)
+            syncSelectionState()
         }
         .onChange(of: filteredSaveStates) { newValue in
             // Use weak self to prevent retain cycles
@@ -563,17 +601,19 @@ struct HomeContinueSection: SwiftUI.View {
 
                     // Update limited save states with current limit
                     self.updateSaveStateLimit(self.viewModel.currentLimit)
+                    self.syncSelectionState()
                 }
             }
         }
         .onChange(of: viewModel.currentPage) { newPage in
             handlePageChange(newPage)
-            viewModel.updateCurrentSaveState(forPage: newPage)
+            syncSelectionState()
 
             // Check if we need to load more save states
             if viewModel.shouldLoadMoreSaveStates {
                 viewModel.loadMoreSaveStates()
                 updateSaveStateLimit(viewModel.currentLimit)
+                syncSelectionState()
             }
 
             #if !os(tvOS)
@@ -587,7 +627,10 @@ struct HomeContinueSection: SwiftUI.View {
         DLOG("HomeContinueSection: Updating save state limit to \(newLimit) (total available: \(totalSaveStatesCount))")
 
         // Take only the first newLimit items from filteredSaveStates
-        let allSaveStates = Array(filteredSaveStates)
+        let allSaveStates = Array(filteredSaveStates).sorted { lhs, rhs in
+            if lhs.date != rhs.date { return lhs.date > rhs.date }
+            return lhs.id > rhs.id
+        }
         let limitedCount = min(newLimit, allSaveStates.count)
 
         // Update the limited save states
@@ -595,6 +638,7 @@ struct HomeContinueSection: SwiftUI.View {
 
         // Update the view model with the limited save states
         viewModel.updateSaveStates(limitedSaveStates, isLandscape: isLandscapePhone, totalCount: totalSaveStatesCount)
+        syncSelectionState()
     }
 
     private func setupGamepadHandling() {
