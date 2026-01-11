@@ -652,8 +652,8 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         self.hud.label.text = "Initializing ROM Database..."
         self.hud.show(animated: true)
         if !once || !isLoaded {
-            Task.detached {
-                await self.updatesController.importROMDirectories()
+            Task.detached(priority: .utility) { [weak self] in
+                await self?.updatesController.importROMDirectories()
             }
         }
         self.hud.hide(animated: true)
