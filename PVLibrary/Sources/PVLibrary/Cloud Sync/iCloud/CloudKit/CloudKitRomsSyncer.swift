@@ -54,6 +54,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private let metadataOnlyGate = MetadataOnlyGate()
     private let artworkDownloadGate = ArtworkDownloadGate()
     private let artworkLookupGate = ArtworkLookupGate()
+    private let originalArtworkDownloadGate = OriginalArtworkDownloadGate()
     private let changeTokenStorageKey = "org.provenance.cloudsync.cloudkit.roms.zoneChangeToken.v1"
     private let changeTokenStorage = UserDefaults.standard
 
@@ -2904,6 +2905,30 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
+    private actor OriginalArtworkDownloadGate {
+        private var inFlight: Set<String> = []
+        private let semaphore = AsyncSemaphore(value: 2)
+
+        func enqueue(md5: String, work: @escaping @Sendable (String) async -> Void) async {
+            let key = md5.uppercased()
+            guard !key.isEmpty else { return }
+            guard !inFlight.contains(key) else { return }
+            inFlight.insert(key)
+
+            let gate = self
+            Task.detached(priority: .utility) {
+                await gate.semaphore.acquire()
+                await work(key)
+                await gate.semaphore.release()
+                await gate.finish(md5: key)
+            }
+        }
+
+        private func finish(md5: String) {
+            inFlight.remove(md5)
+        }
+    }
+
     private actor AsyncSemaphore {
         private var value: Int
         private var waiters: [CheckedContinuation<Void, Never>] = []
@@ -3078,7 +3103,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             var skipped = 0
             var failed = 0
             var artworkMD5s: [String] = []
-            var lookupMD5s: [String] = []
+            var originalArtworkMD5s: [String] = []
+            var lookupItems: [(md5: String, title: String, filename: String, systemIdentifier: String)] = []
 
             try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
                 try realm.write {
@@ -3120,6 +3146,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                                 }
                                 artworkMD5s.append(snap.md5)
                             }
+                            if !game.customArtworkURL.isEmpty {
+                                // Custom artwork takes precedence; skip original downloader.
+                            } else if !game.originalArtworkURL.isEmpty, game.originalArtworkFile == nil {
+                                // Metadata-only path bypasses createPVGame(), so explicitly queue original artwork download.
+                                originalArtworkMD5s.append(snap.md5)
+                            } else if game.originalArtworkURL.isEmpty && game.originalArtworkFile == nil && game.customArtworkURL.isEmpty {
+                                // No cloud artwork fields: queue enhanced artwork search.
+                                let baseName = (snap.originalFilename as NSString).deletingPathExtension
+                                lookupItems.append((md5: snap.md5, title: snap.title, filename: baseName, systemIdentifier: snap.systemIdentifier))
+                            }
 
                             // Metadata-only reads omit asset fields.
                             if snap.hasCloudAssets && !game.hasCloudAssets {
@@ -3150,9 +3186,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             if let cloudCustomArtworkURL = snap.customArtworkURL, !cloudCustomArtworkURL.isEmpty {
                                 newGame.customArtworkURL = cloudCustomArtworkURL
                                 artworkMD5s.append(snap.md5)
-                            } else if (snap.originalArtworkURL?.isEmpty ?? true) {
-                                // No cloud artwork fields at all: fall back to PVLookup artwork pipeline.
-                                lookupMD5s.append(snap.md5)
+                            } else if !newGame.originalArtworkURL.isEmpty {
+                                originalArtworkMD5s.append(snap.md5)
+                            } else {
+                                let baseName = (snap.originalFilename as NSString).deletingPathExtension
+                                lookupItems.append((md5: snap.md5, title: snap.title, filename: baseName, systemIdentifier: snap.systemIdentifier))
                             }
 
                             realm.add(newGame, update: .modified)
@@ -3162,7 +3200,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             }
 
-            return (created: created, updated: updated, skipped: skipped, failed: failed, artworkMD5s: artworkMD5s, lookupMD5s: lookupMD5s)
+            return (created: created, updated: updated, skipped: skipped, failed: failed, artworkMD5s: artworkMD5s, originalArtworkMD5s: originalArtworkMD5s, lookupItems: lookupItems)
         }
 
         // Eager-all: queue artwork downloads for any games with a cloud custom artwork key.
@@ -3179,13 +3217,28 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
         }
 
-        // Fallback: for games with no cloud artwork fields at all, run the existing PVLookup artwork pipeline.
-        let uniqueLookupMD5s = Array(Set(result.lookupMD5s))
-        for md5 in uniqueLookupMD5s {
-            await artworkLookupGate.enqueue(md5: md5) { [weak self] md5 in
+        // If CloudKit provided originalArtworkURL but not custom artwork, download/copy it into PVMediaCache + set originalArtworkFile.
+        let uniqueOriginalArtworkMD5s = Array(Set(result.originalArtworkMD5s))
+        for md5 in uniqueOriginalArtworkMD5s {
+            await originalArtworkDownloadGate.enqueue(md5: md5) { [weak self] md5 in
                 guard let self else { return }
                 if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled { return }
-                await self.enhanceGameWithArtworkAndMetadata(md5: md5)
+                await self.getArtwork(forGameMD5: md5)
+            }
+        }
+
+        // Fallback: for games with no cloud artwork fields at all, use enhanced ArtworkSearchQueue (md5+filename+system).
+        for item in result.lookupItems {
+            await artworkLookupGate.enqueue(md5: item.md5) { md5 in
+                if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled { return }
+                let systemID = SystemIdentifier(rawValue: item.systemIdentifier)
+                await ArtworkSearchQueue.shared.queueGameForArtworkSearch(
+                    gameID: md5,
+                    title: item.title,
+                    filename: item.filename,
+                    systemID: systemID,
+                    md5Hash: md5
+                )
             }
         }
 
