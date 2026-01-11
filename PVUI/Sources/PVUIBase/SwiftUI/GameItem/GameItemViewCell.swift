@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import PVRealm
-import RealmSwift
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import PVThemes
@@ -15,18 +13,25 @@ import PVSettings
 import Defaults
 
 /// A view that displays a game item in a cell layout
-struct GameItemViewCell: View, Equatable {
+struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     /// Implement Equatable to prevent unnecessary redraws
-    static func == (lhs: GameItemViewCell, rhs: GameItemViewCell) -> Bool {
+    static func == (lhs: GameItemViewCell<Presentable>, rhs: GameItemViewCell<Presentable>) -> Bool {
         /// Only redraw if these key properties change
         lhs.game.id == rhs.game.id &&
+        lhs.game.title == rhs.game.title &&
+        lhs.game.trueArtworkURL == rhs.game.trueArtworkURL &&
+        lhs.game.publishDate == rhs.game.publishDate &&
+        lhs.game.rating == rhs.game.rating &&
+        lhs.game.hasCloudAssets == rhs.game.hasCloudAssets &&
+        lhs.game.isDownloaded == rhs.game.isDownloaded &&
+        lhs.game.boxartAspectRatio == rhs.game.boxartAspectRatio &&
         lhs.artwork?.hashValue == rhs.artwork?.hashValue &&
         lhs.hoverScale == rhs.hoverScale &&
         lhs.glowIntensity == rhs.glowIntensity
     }
 
     /// Use plain property instead of @ObservedRealmObject for performance
-    let game: PVGame
+    let game: Presentable
     @Default(.showGameTitles) private var showGameTitles
     @Default(.iCloudSync) private var iCloudSyncEnabled
     var artwork: SwiftImage?
@@ -49,9 +54,7 @@ struct GameItemViewCell: View, Equatable {
     }
 
     private var discCount: Int {
-        let allFiles = game.relatedFiles.toArray()
-        let uniqueFiles = Set(allFiles.compactMap { $0.url?.path })
-        return uniqueFiles.count
+        game.discCount
     }
 
     private var shouldShowCloudIndicator: Bool {
@@ -80,7 +83,7 @@ struct GameItemViewCell: View, Equatable {
                         if shouldShowCloudIndicator {
                             CloudSyncIndicatorView(
                                 isDownloaded: game.isDownloaded,
-                                    hasCloudAssets: game.hasCloudAssets,
+                                hasCloudAssets: game.hasCloudAssets,
                                 isDownloading: isDownloading,
                                 size: 24
                             )
@@ -244,15 +247,9 @@ private extension GameItemViewCell {
 
     /// Check if the game file needs to be synced to iCloud
     func checkSyncStatus() {
-        // Check if the game has a file that needs syncing
-        if let file = game.file {
-            needsSync = file.requiresSync
-        } else if !game.relatedFiles.isEmpty {
-            // Check if any related files need syncing
-            needsSync = game.relatedFiles.contains { $0.requiresSync }
-        } else {
-            needsSync = false
-        }
+        // Snapshot-driven rendering: do not inspect file state here.
+        // (Avoids requiring PVFile / Realm objects on the render path.)
+        needsSync = false
     }
 }
 

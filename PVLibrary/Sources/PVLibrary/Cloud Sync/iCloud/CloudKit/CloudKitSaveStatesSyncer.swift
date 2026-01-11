@@ -13,6 +13,45 @@ import RealmSwift
 public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// Track save-state records that need a deferred retry once ROM metadata is available.
     private var pendingRecordRetries = ConcurrentSet<String>()
+    private let pendingROMMetadataFetches = PendingROMMetadataFetches()
+
+    /// Prevent concurrent full-library scans. Multiple boot-time call sites can trigger this.
+    private let loadAllLock = NSLock()
+    private var isLoadAllInFlight: Bool = false
+
+    /// Dedupes ROM metadata fetches across many save-state records that refer to the same game MD5.
+    /// Also applies a short negative cache to avoid hammering CloudKit when a record truly doesn't exist.
+    private actor PendingROMMetadataFetches {
+        private var inFlight: [String: Task<Bool, Never>] = [:]
+        private var lastFailure: [String: Date] = [:]
+
+        private let negativeCacheTTL: TimeInterval = 60 * 5 // 5 minutes
+
+        func fetch(md5: String, operation: @escaping @Sendable () async -> Bool) async -> Bool {
+            let md5 = md5.uppercased()
+
+            if let last = lastFailure[md5], Date().timeIntervalSince(last) < negativeCacheTTL {
+                return false
+            }
+
+            if let existing = inFlight[md5] {
+                return await existing.value
+            }
+
+            let task = Task.detached(priority: .utility) { await operation() }
+            inFlight[md5] = task
+            let result = await task.value
+            inFlight[md5] = nil
+
+            if !result {
+                lastFailure[md5] = Date()
+            } else {
+                lastFailure[md5] = nil
+            }
+
+            return result
+        }
+    }
 
     @inline(__always)
     private func withRealm<T: Sendable>(
@@ -686,7 +725,22 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 return Disposables.create()
             }
 
+            self.loadAllLock.lock()
+            if self.isLoadAllInFlight {
+                self.loadAllLock.unlock()
+                DLOG("[SYNC] SaveState loadAllFromCloud already in-flight; skipping duplicate call.")
+                observer(.completed)
+                return Disposables.create()
+            }
+            self.isLoadAllInFlight = true
+            self.loadAllLock.unlock()
+
             Task {
+                defer {
+                    self.loadAllLock.lock()
+                    self.isLoadAllInFlight = false
+                    self.loadAllLock.unlock()
+                }
                 do {
                     ILOG("[SYNC] Loading all save state records from CloudKit...")
                     await CloudKitSyncAnalytics.shared.startSync(operation: "Load SaveStates")
@@ -971,7 +1025,9 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             if let md5 = gameMD5,
                let romsSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer {
                 ILOG("[SYNC] Fetching ROM metadata for MD5 \(md5) to enable save state processing")
-                let success = await romsSyncer.fetchAndProcessROMMetadata(md5: md5)
+                let success = await self.pendingROMMetadataFetches.fetch(md5: md5) {
+                    await romsSyncer.fetchAndProcessROMMetadata(md5: md5)
+                }
                 if success {
                     ILOG("[SYNC] Successfully processed ROM metadata for MD5 \(md5)")
                 } else {

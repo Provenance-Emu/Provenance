@@ -46,9 +46,9 @@ public final class LocalGameSyncMonitor {
     private var realm: Realm?
     private let romsSyncer: CloudKitRomsSyncer
     private var notificationToken: NotificationToken?
-    private var gamesResults: Results<PVGame>?
     private var metadataCache: [String: MetadataSnapshot] = [:]
     private var statsCache: [String: StatsSnapshot] = [:]
+    private let monitorQueue = DispatchQueue(label: "org.provenance.cloudsync.localgames.monitor", qos: .utility)
 
     /// Initializes the monitor.
     /// - Parameters:
@@ -65,68 +65,58 @@ public final class LocalGameSyncMonitor {
 
     /// Starts observing Realm changes for PVGame objects.
     public func startMonitoring() {
-        guard notificationToken == nil else {
-            WLOG("Monitoring already started.")
-            return
-        }
-
-        VLOG("Starting Realm observation for PVGame...")
-        Task { [weak self] in
-            guard let self = self else { return }
-            do {
-                try await RealmProvider.ensureInitialized()
-            } catch {
-                ELOG("Failed to initialize Realm for LocalGameSyncMonitor: \(error.localizedDescription)")
+        monitorQueue.async { [weak self] in
+            guard let self else { return }
+            guard self.notificationToken == nil else {
+                WLOG("Monitoring already started.")
                 return
             }
-            await self.beginMonitoring()
+            VLOG("Starting Realm observation for PVGame...")
+            do {
+                let realmInstance = try Realm()
+                self.realm = realmInstance
+                let results = realmInstance.objects(PVGame.self).filter("contentless == false")
+                self.notificationToken = results.observe(on: self.monitorQueue) { [weak self] (changes: RealmCollectionChange) in
+                    guard let self else { return }
+                    self.handleRealmChanges(changes)
+                }
+                ILOG("Successfully started Realm observation for PVGame.")
+            } catch {
+                ELOG("Failed to initialize Realm for LocalGameSyncMonitor: \(error.localizedDescription)")
+            }
         }
-    }
-
-    @MainActor
-    private func beginMonitoring() {
-        guard notificationToken == nil else {
-            WLOG("Monitoring already started.")
-            return
-        }
-
-        let realmInstance = try! Realm()
-        self.realm = realmInstance
-
-        gamesResults = realmInstance.objects(PVGame.self).filter("contentless == false")
-
-        notificationToken = gamesResults?.observe { [weak self] (changes: RealmCollectionChange) in
-            guard let self = self else { return }
-            self.handleRealmChanges(changes)
-        }
-        ILOG("Successfully started Realm observation for PVGame.")
     }
 
     /// Stops observing Realm changes.
     public func stopMonitoring() {
-        VLOG("Stopping Realm observation for PVGame...")
-        notificationToken?.invalidate()
-        notificationToken = nil
-        gamesResults = nil
-        realm = nil // Release Realm instance when stopping
-        ILOG("Stopped Realm observation for PVGame.")
+        monitorQueue.async { [weak self] in
+            guard let self else { return }
+            VLOG("Stopping Realm observation for PVGame...")
+            self.notificationToken?.invalidate()
+            self.notificationToken = nil
+            self.realm = nil
+            self.metadataCache.removeAll()
+            self.statsCache.removeAll()
+            ILOG("Stopped Realm observation for PVGame.")
+        }
     }
 
     /// Handles the changes received from the Realm notification block.
     private func handleRealmChanges(_ changes: RealmCollectionChange<Results<PVGame>>) {
-        guard let currentResults = gamesResults else {
-            ELOG("Received Realm changes but results object is nil. Stopping monitoring.")
-            stopMonitoring()
-            return
-        }
-
         if CloudKitRemoteApplyGuard.isApplyingRemoteChanges {
-            rebuildCaches(from: currentResults)
+            switch changes {
+            case .initial(let collection):
+                rebuildCaches(from: collection)
+            case .update(let collection, _, _, _):
+                rebuildCaches(from: collection)
+            case .error:
+                break
+            }
             return
         }
 
         switch changes {
-        case .initial:
+        case .initial(let currentResults):
             // Results are now populated and ready
             VLOG("Realm observation initial results received for PVGame (count: \(currentResults.count)).")
             rebuildCaches(from: currentResults)
@@ -134,7 +124,7 @@ public final class LocalGameSyncMonitor {
             // but CloudKitInitialSyncer likely handles the first full sync.
             break
 
-        case .update(_, let deletions, let insertions, let modifications):
+        case .update(let currentResults, let deletions, let insertions, let modifications):
             // Handle Insertions
             if !insertions.isEmpty {
                 VLOG("Processing \(insertions.count) PVGame insertions...")

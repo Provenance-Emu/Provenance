@@ -22,6 +22,6 @@ public struct SwiftUIHostedProvenanceMainView: UIViewControllerRepresentable {
     }
 
     public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        ILOG("SwiftUIHostedProvenanceMainView: Updating UIViewController")
+        // Avoid logging here: SwiftUI can call this extremely frequently during layout/transactions.
     }
 }

@@ -125,27 +125,47 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         NotificationCenter.default.publisher(for: .PVReimportLibrary)
             .flatMap { _ in
                 Future<Void, Never> { promise in
-                    Task.detached {  @MainActor [self] in
-                        RomDatabase.refresh()
-                        if let _ = self.gameLibraryViewController {
-                            self.gameLibraryViewController?.checkROMs(false)
-                        } else {
-                            if let updates = self.appState?.libraryUpdatesController {
-                                await updates.importROMDirectories()
-                            }
+                    Task.detached(priority: .utility) { [weak self] in
+                        guard let self else {
+                            promise(.success(()))
+                            return
                         }
-                        RomDatabase.sharedInstance.recoverAllSaveStates()
-                        if PVFeatureFlagsManager.shared.featureStates[.romPathMigrator] ?? false {
-                            Task {
-                                do {
-                                    try await self.appState?.gameLibrary?.romMigrator.fixOrphanedFiles()
-                                    try await self.appState?.gameLibrary?.romMigrator.fixPartialPaths()
 
-                                } catch {
-                                    ELOG("Error: \(error.localizedDescription)")
-                                }
+                        // Safely capture @MainActor state before doing background work.
+                        let (updatesController, migratorEnabled, romMigrator, hasLibraryVC) = await MainActor.run {
+                            (
+                                self.appState?.libraryUpdatesController,
+                                PVFeatureFlagsManager.shared.featureStates[.romPathMigrator] ?? false,
+                                self.appState?.gameLibrary?.romMigrator,
+                                self.gameLibraryViewController != nil
+                            )
+                        }
+
+                        // Heavy work must never run on the main actor during boot.
+                        RomDatabase.refresh()
+
+                        if let updatesController {
+                            await updatesController.importROMDirectories()
+                        }
+
+                        RomDatabase.sharedInstance.recoverAllSaveStates()
+
+                        if migratorEnabled, let migrator = romMigrator {
+                            do {
+                                try await migrator.fixOrphanedFiles()
+                                try await migrator.fixPartialPaths()
+                            } catch {
+                                ELOG("Error: \(error.localizedDescription)")
                             }
                         }
+
+                        // UI-affecting work should happen on main.
+                        if hasLibraryVC {
+                            await MainActor.run { [weak self] in
+                                self?.gameLibraryViewController?.checkROMs(false)
+                            }
+                        }
+
                         promise(.success(()))
                     }
                 }
@@ -153,10 +173,10 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
 
-        // Trigger a refresh
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-            NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
-        }
+        // NOTE:
+        // We intentionally do NOT auto-post `.PVReimportLibrary` at boot.
+        // A full library reimport is extremely expensive and will make the UI feel hung on cold launches.
+        // The user can trigger it manually from Settings / menu when needed.
 
         /// Refresh the library
         NotificationCenter.default.publisher(for: .PVRefreshLibrary)

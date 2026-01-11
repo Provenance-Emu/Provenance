@@ -139,6 +139,123 @@ public struct GameItemView: SwiftUI.View {
     }
 }
 
+// MARK: - Snapshot-driven rendering
+@available(iOS 16, tvOS 16, *)
+public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI.View {
+    public let game: Presentable
+    public var constrainHeight: Bool = false
+    public var viewType: GameItemViewType = .cell
+    public let sectionContext: HomeSectionType
+
+    @Binding public var isFocused: Bool
+
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+    @State private var artwork: SwiftImage?
+    @State private var isVisible: Bool = false
+    public var action: () -> Void
+
+    public init(
+        game: Presentable,
+        constrainHeight: Bool = false,
+        viewType: GameItemViewType = .cell,
+        sectionContext: HomeSectionType = .allGames,
+        isFocused: Binding<Bool> = .constant(false),
+        themeManager: ThemeManager = ThemeManager.shared,
+        gamepadManager: GamepadManager = GamepadManager.shared,
+        artwork: SwiftImage? = nil,
+        isVisible: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.game = game
+        self.constrainHeight = constrainHeight
+        self.viewType = viewType
+        self.sectionContext = sectionContext
+        self._isFocused = isFocused
+        self.themeManager = themeManager
+        self.gamepadManager = gamepadManager
+        self.artwork = artwork
+        self.isVisible = isVisible
+        self.action = action
+    }
+
+    private var shouldShowFocus: Bool {
+        gamepadManager.isControllerConnected && isFocused
+    }
+
+    private var shouldShowDiscIndicator: Bool {
+        game.discCount > 1
+    }
+
+    public var body: some SwiftUI.View {
+        if !game.isInvalidated {
+            Button {
+                action()
+            } label: {
+                switch viewType {
+                case .cell:
+                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+                        .overlay(alignment: .topTrailing) {
+                            if shouldShowDiscIndicator {
+                                DiscIndicatorView(count: game.discCount)
+                                    .padding(4)
+                            }
+                        }
+                case .row:
+                    GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+                }
+            }
+            .onAppear {
+                isVisible = true
+                loadArtworkIfNeeded()
+            }
+            .onDisappear {
+                isVisible = false
+                ArtworkLoader.shared.cancelLoading(for: game.id)
+            }
+            .onChange(of: isFocused) { newValue in
+                if newValue && artwork == nil {
+                    loadArtworkWithPriority(.high)
+                }
+            }
+            #if os(tvOS)
+            .buttonStyle(.card)
+            #else
+            .modifier(FocusEffectsModifier(isFocused: shouldShowFocus))
+            #endif
+        }
+    }
+
+    private func loadArtworkIfNeeded() {
+        guard isVisible && !game.isInvalidated else { return }
+        if artwork != nil { return }
+        let priority: TaskPriority = isFocused ? .high : .medium
+        loadArtworkWithPriority(priority)
+    }
+
+    private func loadArtworkWithPriority(_ priority: TaskPriority) {
+        let gameId = game.id
+        let artworkURL = game.trueArtworkURL
+        let gameTitle = game.title
+
+        Task.detached(priority: priority) { [isVisible] in
+            let image = await ArtworkLoader.shared.loadArtwork(
+                gameId: gameId,
+                artworkURL: artworkURL,
+                gameTitle: gameTitle,
+                priority: priority,
+                isVisible: isVisible
+            )
+
+            if isVisible {
+                await MainActor.run {
+                    self.artwork = image
+                }
+            }
+        }
+    }
+}
+
 /// Separate modifier for focus effects to improve performance
 /// On tvOS, we rely on the native focus system instead of custom effects
 /// to avoid conflicts between native bloom and custom styling

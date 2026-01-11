@@ -53,51 +53,51 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showRecentGames) var showRecentGames: Bool
     @Default(.showSearchbar) var showSearchbar: Bool
 
-    // New state variable for HomeContinueSection binding
-    @State private var recentGamesForBinding: [PVRecentGame] = []
-
     // Modal state for log viewer and system status
     @State private var showLogViewer = false
     @State private var showSystemStatus = false
     @State private var showSystemSkinSelection = false
     @State private var gameForSkinSelection: GameSkinSelectionState? = nil
 
-    weak var rootDelegate: PVRootDelegate?
-    var showGameInfo: (String) -> Void
-
     let gamesForSystemPredicate: NSPredicate
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
-
-    /// Note: these CANNOT be in a @StateObject
     @ObservedResults(
         PVGame.self,
-        filter: NSPredicate(format: "systemIdentifier == %@"),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+        filter: NSPredicate(value: true),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true)
     ) var games
 
     @ObservedResults(
         PVSaveState.self,
-        filter: NSPredicate(format: "game.systemIdentifier == %@"),
+        filter: NSPredicate(value: true),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) var recentSaveStates
 
     @ObservedResults(
         PVRecentGame.self,
-        filter: NSPredicate(format: "game.systemIdentifier == %@")
+        filter: NSPredicate(value: true),
+        sortDescriptor: SortDescriptor(keyPath: "lastPlayedDate", ascending: false)
     ) var recentlyPlayedGames
 
     @ObservedResults(
         PVGame.self,
-        filter: NSPredicate(format: "isFavorite == true AND systemIdentifier == %@")
+        filter: NSPredicate(value: true)
     ) var favorites
 
     @ObservedResults(
         PVGame.self,
-        filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0"),
+        filter: NSPredicate(value: true),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
+
+    weak var rootDelegate: PVRootDelegate?
+    var showGameInfo: (String) -> Void
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @State private var gamesSnapshot: [PVGame] = []
+    @State private var favoritesSnapshot: [PVGame] = []
+    @State private var recentSnapshot: [PVRecentGame] = []
 
     init(
         console: PVSystem,
@@ -105,12 +105,12 @@ struct ConsoleGamesView: SwiftUI.View {
         rootDelegate: PVRootDelegate? = nil,
         showGameInfo: @escaping (String) -> Void
     ) {
+        self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
         _gamesViewModel = StateObject(wrappedValue: ConsoleGamesViewModel(console: console))
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
         self.showGameInfo = showGameInfo
-        self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
 
         _games = ObservedResults(
             PVGame.self,
@@ -124,7 +124,8 @@ struct ConsoleGamesView: SwiftUI.View {
         )
         _recentlyPlayedGames = ObservedResults(
             PVRecentGame.self,
-            filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier)
+            filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier),
+            sortDescriptor: SortDescriptor(keyPath: "lastPlayedDate", ascending: false)
         )
         _favorites = ObservedResults(
             PVGame.self,
@@ -139,23 +140,75 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @State private var shouldShowImportProgress = false
 
-    /// Safely access games as an Array to avoid Realm observation issues during bad states
+    /// Models used for rendering. These update when relevant game metadata changes.
     private var safeGames: [PVGame] {
-        // Access games property wrapper value safely
-        // This converts Results to Array immediately to avoid Realm enumeration issues
-        let gamesArray: [PVGame]
-        do {
-            // Try to access games and convert to array
-            // This will trigger @ObservedResults observation, but converting to Array
-            // immediately avoids enumeration crashes during bad Realm states
-            gamesArray = games.toArray()
-        } catch {
-            DLOG("Error accessing games: \(error.localizedDescription)")
-            return []
-        }
+        gamesSnapshot.filter { !$0.isInvalidated }
+    }
 
-        // Filter out invalidated objects
-        return gamesArray.filter { !$0.isInvalidated }
+    private var sortedGames: [PVGame] {
+        safeGames.sorted {
+            if viewModel.sortGamesAscending {
+                return $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            } else {
+                return $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedDescending
+            }
+        }
+    }
+
+    var allGamesModels: [GameCellModel] {
+        sortedGames.map { GameCellModel(game: $0) }
+    }
+
+    var favoritesModels: [GameCellModel] {
+        let models = favoritesSnapshot.filter { !$0.isInvalidated }.map { GameCellModel(game: $0) }
+        return sortModels(models)
+    }
+
+    var recentlyPlayedModels: [GameCellModel] {
+        recentSnapshot
+            .compactMap { $0.game }
+            .filter { !$0.isInvalidated }
+            .map { GameCellModel(game: $0) }
+    }
+
+    private var hasRecentSaveStates: Bool {
+        !recentSaveStates.isEmpty
+    }
+
+    private func sortModels(_ models: [GameCellModel]) -> [GameCellModel] {
+        models.sorted { lhs, rhs in
+            if viewModel.sortGamesAscending {
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            } else {
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedDescending
+            }
+        }
+    }
+
+    /// Resolve a live `PVGame` for actions / menus (on-demand).
+    private func liveGame(for model: GameCellModel) -> PVGame? {
+        let realm = RomDatabase.sharedInstance.realm
+        let candidates = [model.md5, model.md5.uppercased(), model.md5.lowercased()]
+        var seen = Set<String>()
+        for key in candidates where seen.insert(key).inserted {
+            if let game = realm.object(ofType: PVGame.self, forPrimaryKey: key) {
+                return game
+            }
+        }
+        return nil
+    }
+
+    func launchGame(md5: String) {
+        Task.detached { @MainActor in
+            let realm = RomDatabase.sharedInstance.realm
+            let candidates = [md5, md5.uppercased(), md5.lowercased()]
+            var seen = Set<String>()
+            guard let game = candidates.compactMap({ key -> PVGame? in
+                guard seen.insert(key).inserted else { return nil }
+                return realm.object(ofType: PVGame.self, forPrimaryKey: key)
+            }).first else { return }
+            SceneCoordinator.shared.launchGame(game.freeze())
+        }
     }
 
     @ViewBuilder
@@ -207,7 +260,7 @@ struct ConsoleGamesView: SwiftUI.View {
             ScrollViewReader { proxy in
                 LazyVStack(spacing: 0) {
                     // Add search bar with visibility control
-                    if safeGames.count > 8 && showSearchbar {
+                    if allGamesModels.count > 8 && showSearchbar {
                         PVSearchBar(text: $gamesViewModel.searchText)
                             .opacity(gamesViewModel.isSearchBarVisible ? 1 : 0)
                             .frame(height: gamesViewModel.isSearchBarVisible ? nil : 0)
@@ -698,13 +751,15 @@ struct ConsoleGamesView: SwiftUI.View {
                     await scanAndFixLocalFileStatus(for: console)
                 }
                 .task(priority: .utility) {
-                    // Convert array with low priority to avoid blocking initial render
-                    // Realm Results access must be on main thread
-                    let games = await MainActor.run {
-                        Array(recentlyPlayedGames)
-                    }
+                    // Keep model sorting aligned with the root view sort setting.
                     await MainActor.run {
-                        self.recentGamesForBinding = games
+                        gamesViewModel.sortAscending = viewModel.sortGamesAscending
+                    }
+                    // Prime snapshots once on appear to avoid per-render conversions.
+                    await MainActor.run {
+                        gamesSnapshot = games.toArray()
+                        favoritesSnapshot = favorites.toArray()
+                        recentSnapshot = recentlyPlayedGames.toArray()
                     }
                 }
                 .task(priority: .utility) {
@@ -716,21 +771,23 @@ struct ConsoleGamesView: SwiftUI.View {
                         self.shouldShowImportProgress = true
                     }
                 }
+                .onChange(of: viewModel.sortGamesAscending) { newValue in
+                    gamesViewModel.sortAscending = newValue
+                    gamesSnapshot = games.toArray()
+                    favoritesSnapshot = favorites.toArray()
+                }
+                .onChange(of: games) { newValue in
+                    gamesSnapshot = newValue.toArray()
+                }
+                .onChange(of: favorites) { newValue in
+                    favoritesSnapshot = newValue.toArray()
+                }
                 .onChange(of: recentlyPlayedGames) { newValue in
-                    // Convert array off main thread with low priority
-                    Task.detached(priority: .utility) {
-                        // Access Realm Results on background thread, convert to array
-                        let games = await MainActor.run {
-                            Array(newValue)
-                        }
-                        await MainActor.run {
-                            self.recentGamesForBinding = games
-                        }
-                    }
+                    recentSnapshot = newValue.toArray()
                 }
             }
             .modifier(ConditionalSearchModifier(
-                isEnabled: safeGames.count > 8,
+                isEnabled: allGamesModels.count > 8,
                 searchText: $gamesViewModel.searchText
             ))
             .ignoresSafeArea(.all)
@@ -741,18 +798,6 @@ struct ConsoleGamesView: SwiftUI.View {
         // Use compact size class to determine if we're in portrait on iPhone
         let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
         return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
-    }
-
-    private var hasRecentSaveStates: Bool {
-        !recentSaveStates.filter("game.systemIdentifier == %@", console.identifier).isEmpty
-    }
-
-    private var hasFavorites: Bool {
-        !favorites.filter("systemIdentifier == %@", console.identifier).isEmpty
-    }
-
-    private var hasRecentlyPlayedGames: Bool {
-        !recentlyPlayedGames.isEmpty
     }
 
     private func loadGame(_ game: PVGame) {
@@ -772,7 +817,7 @@ struct ConsoleGamesView: SwiftUI.View {
             // TODO: Fill space on iOS or certain layouts only, or a max width?
             let fillSpace = false
             if fillSpace {
-                count = min(max(1, roundedScale), safeGames.count)
+                count = min(max(1, roundedScale), allGamesModels.count)
             } else {
                 count = max(1, roundedScale)
             }
@@ -787,7 +832,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ViewBuilder
     private func showGamesGrid(_ games: [PVGame]) -> some View {
         LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
+            ForEach(games.filter { !$0.isInvalidated }, id: \.id) { game in
                 GameItemView(
                     game: game,
                     constrainHeight: false,
@@ -819,11 +864,49 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     @ViewBuilder
+    private func showGamesGrid(_ games: [GameCellModel]) -> some View {
+        LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(games, id: \.id) { model in
+                GameItemPresentableView(
+                    game: model,
+                        constrainHeight: false,
+                        sectionContext: .allGames,
+                        isFocused: Binding(
+                            get: {
+                                gamesViewModel.focusedSection == .allGames &&
+                                gamesViewModel.focusedItemInSection == model.id
+                            },
+                            set: {
+                                if $0 {
+                                    gamesViewModel.focusedItemInSection = model.id
+                                }
+                            }
+                        )
+                ) {
+                    launchGame(md5: model.md5)
+                }
+                .id(model.id)
+                .focusableIfAvailable()
+                .contextMenu {
+                    if let live = liveGame(for: model) {
+                        GameContextMenu(
+                            game: live,
+                            rootDelegate: rootDelegate,
+                            contextMenuDelegate: self
+                        )
+                    }
+                }
+            }
+        }
+        .padding(.horizontal, 10)
+    }
+
+    @ViewBuilder
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         ScrollViewReader { proxy in
             LazyVGrid(columns: columns, spacing: 10) {
                 // Custom styling for grid items
-                ForEach(games.toArray().filter{!$0.isInvalidated}, id: \.self) { game in
+                ForEach(games.toArray().filter { !$0.isInvalidated }, id: \.id) { game in
                     GameItemView(
                         game: game,
                         constrainHeight: false,
@@ -864,7 +947,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ViewBuilder
     private func showGamesList(_ games: [PVGame]) -> some View {
         LazyVStack(spacing: 0) {
-            ForEach(games.filter{!$0.isInvalidated}, id: \.self) { game in
+            ForEach(games.filter { !$0.isInvalidated }, id: \.id) { game in
                 GameItemView(
                     game: game,
                     constrainHeight: true,
@@ -903,9 +986,49 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     @ViewBuilder
+    private func showGamesList(_ games: [GameCellModel]) -> some View {
+        LazyVStack(spacing: 0) {
+            ForEach(games, id: \.id) { model in
+                GameItemPresentableView(
+                    game: model,
+                        constrainHeight: true,
+                        viewType: .row,
+                        sectionContext: .allGames,
+                        isFocused: Binding(
+                            get: {
+                                gamesViewModel.focusedSection == .allGames &&
+                                gamesViewModel.focusedItemInSection == model.id
+                            },
+                            set: {
+                                if $0 {
+                                    gamesViewModel.focusedSection = .allGames
+                                    gamesViewModel.focusedItemInSection = model.id
+                                }
+                            }
+                        )
+                ) {
+                    launchGame(md5: model.md5)
+                }
+                .id(model.id)
+                .focusableIfAvailable()
+                .contextMenu {
+                    if let live = liveGame(for: model) {
+                        GameContextMenu(
+                            game: live,
+                            rootDelegate: rootDelegate,
+                            contextMenuDelegate: self
+                        )
+                    }
+                }
+                GamesDividerView()
+            }
+        }
+    }
+
+    @ViewBuilder
     private func showGamesList(_ games: Results<PVGame>) -> some View {
         LazyVStack(spacing: 8) {
-            ForEach(games.toArray().filter{!$0.isInvalidated}, id: \.self) { game in
+            ForEach(games.toArray().filter { !$0.isInvalidated }, id: \.id) { game in
                 GameItemView(
                     game: game,
                     constrainHeight: false,
@@ -994,8 +1117,11 @@ struct ConsoleGamesView: SwiftUI.View {
     //}
 
     /// Optimized search results using ViewModel cache
-    private func filteredSearchResults() -> [PVGame] {
-        return gamesViewModel.getFilteredSearchResults(from: games)
+    private func filteredSearchResults() -> [GameCellModel] {
+        let query = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return [] }
+        let lowered = query.lowercased()
+        return allGamesModels.filter { $0.title.lowercased().contains(lowered) }
     }
 
     @ViewBuilder
@@ -1015,38 +1141,37 @@ struct ConsoleGamesView: SwiftUI.View {
                         .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
                         .padding()
                 } else {
-                    ForEach(results, id: \.self) { game in
-                        GameItemView(
+                    ForEach(results, id: \.id) { game in
+                        GameItemPresentableView(
                             game: game,
                             constrainHeight: true,
                             viewType: .row,
                             sectionContext: .allGames,
                             isFocused: Binding(
                                 get: {
-                                    !game.isInvalidated &&
                                     gamesViewModel.focusedSection == .allGames &&
                                     gamesViewModel.focusedItemInSection == game.id
                                 },
                                 set: {
-                                    if $0 && !game.isInvalidated {
+                                    if $0 {
                                         gamesViewModel.focusedSection = .allGames
                                         gamesViewModel.focusedItemInSection = game.id
                                     }
                                 }
                             )
                         ) {
-                            Task.detached { @MainActor in
-                                SceneCoordinator.shared.launchGame(game.freeze())
-                            }
+                            launchGame(md5: game.md5)
                         }
                         .id(game.id)
                         .focusableIfAvailable()
                         .contextMenu {
-                            GameContextMenu(
-                                game: game,
-                                rootDelegate: rootDelegate,
-                                contextMenuDelegate: self
-                            )
+                            if let live = liveGame(for: game) {
+                                GameContextMenu(
+                                    game: live,
+                                    rootDelegate: rootDelegate,
+                                    contextMenuDelegate: self
+                                )
+                            }
                         }
                         GamesDividerView()
                     }
@@ -1238,7 +1363,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func continueSection() -> some View {
         Group {
-            if showRecentSaveStates && !recentSaveStates.isEmpty { // Check recentGamesForBinding here as well
+            if showRecentSaveStates && hasRecentSaveStates {
                 HomeContinueSection(
                     rootDelegate: rootDelegate,
                     consoleIdentifier: console.identifier,
@@ -1253,9 +1378,9 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func favoritesSection() -> some View {
         Group {
-            if showFavorites && !favorites.isEmpty {
+            if showFavorites && !favoritesModels.isEmpty {
                 HomeSection(title: "Favorites") {
-                    ForEach(favorites, id: \.self) { game in
+                    ForEach(favoritesModels, id: \.id) { game in
                         gameItem(game, section: .favorites)
                     }
                 }
@@ -1268,12 +1393,10 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func recentlyPlayedSection() -> some View {
         Group {
-            if showRecentGames && !recentlyPlayedGames.isEmpty {
+            if showRecentGames && !recentlyPlayedModels.isEmpty {
                 HomeSection(title: "Recently Played") {
-                    ForEach(recentGamesForBinding, id: \.self) { recentGame in
-                        if let game = recentGame.game {
-                            gameItem(game, section: .recentlyPlayedGames)
-                        }
+                    ForEach(recentlyPlayedModels, id: \.id) { game in
+                        gameItem(game, section: .recentlyPlayedGames)
                     }
                 }
                 .frame(height: sectionHeight)
@@ -1285,7 +1408,7 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func gamesSection() -> some View {
         Group {
-            if safeGames.isEmpty && AppState.shared.isSimulator {
+            if allGamesModels.isEmpty && AppState.shared.isSimulator {
                 let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                 if viewModel.viewGamesAsGrid {
                     showGamesGrid(fakeGames)
@@ -1298,9 +1421,9 @@ extension ConsoleGamesView {
                     titleBar()
 
                     if viewModel.viewGamesAsGrid {
-                        showGamesGrid(safeGames)
+                        showGamesGrid(allGamesModels)
                     } else {
-                        showGamesList(safeGames)
+                        showGamesList(allGamesModels)
                     }
                 }
             }
@@ -1377,37 +1500,33 @@ extension ConsoleGamesView {
     }
 
     @ViewBuilder
-    private func gameItem(_ game: PVGame, section: HomeSectionType) -> some View {
-        if !game.isInvalidated {
-
-            GameItemView(
-                game: game,
+    private func gameItem(_ game: GameCellModel, section: HomeSectionType) -> some View {
+        GameItemPresentableView(
+            game: game,
                 constrainHeight: true,
                 viewType: .cell,
                 sectionContext: section,
                 isFocused: Binding(
                     get: {
-                        !game.isInvalidated &&
                         gamesViewModel.focusedSection == section &&
                         gamesViewModel.focusedItemInSection == game.id
                     },
                     set: {
-                        if $0 && !game.isInvalidated {
+                        if $0 {
                             gamesViewModel.focusedSection = section
                             gamesViewModel.focusedItemInSection = game.id
                         }
                     }
                 )
-            ) {
-                Task.detached { @MainActor in
-                    SceneCoordinator.shared.launchGame(game.freeze())
-                }
-            }
-            .id(game.id)
-            .focusableIfAvailable()
-            .contextMenu {
+        ) {
+            launchGame(md5: game.md5)
+        }
+        .id(game.id)
+        .focusableIfAvailable()
+        .contextMenu {
+            if let live = liveGame(for: game) {
                 GameContextMenu(
-                    game: game,
+                    game: live,
                     rootDelegate: rootDelegate,
                     contextMenuDelegate: self
                 )

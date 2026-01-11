@@ -93,6 +93,8 @@ public class CloudSyncManager {
     /// Disposable for subscriptions
     private var disposeBag = DisposeBag()
     private var cancellables = Set<AnyCancellable>()
+    private var saveStateToken: NotificationToken?
+    private let saveStateObserverQueue = DispatchQueue(label: "org.provenance.cloudsync.savestates.observer", qos: .utility)
 
     /// Publisher for sync status changes
     private let syncStatusSubject = PassthroughSubject<SyncStatus, Never>()
@@ -1445,62 +1447,67 @@ public class CloudSyncManager {
 
     /// Set up RxRealm observer for new PVSaveState creation
     private func setupSaveStateObserver() {
-        Task { [weak self] in
-            guard let self = self else { return }
+        saveStateObserverQueue.async { [weak self] in
+            guard let self else { return }
             do {
-                try await RealmProvider.ensureInitialized()
+                _ = try Realm()
             } catch {
                 ELOG("Failed to initialize Realm for save state observer: \(error.localizedDescription)")
                 return
             }
-            await self.beginSaveStateObservation()
-        }
-    }
 
-    @MainActor
-    private func beginSaveStateObservation() {
-        let realm = try! Realm()
+            let realm: Realm
+            do {
+                realm = try Realm()
+            } catch {
+                ELOG("Failed to open Realm for save state observer: \(error.localizedDescription)")
+                return
+            }
 
-        Observable.collection(from: realm.objects(PVSaveState.self))
-            .distinctUntilChanged()
-            .scan(([] as [PVSaveState], [] as [PVSaveState])) { (previous: ([PVSaveState], [PVSaveState]), current: Results<PVSaveState>) -> ([PVSaveState], [PVSaveState]) in
-                return (previous.1, Array(current))
-            }
-            .filter { (previous, _) in
-                return !previous.isEmpty
-            }
-            .map { (previous, current) -> [PVSaveState] in
-                let previousIDs = Set(previous.map { $0.id })
-                return current.filter { !previousIDs.contains($0.id) }
-            }
-            .filter { !$0.isEmpty }
-            .subscribe(onNext: { [weak self] newSaveStates in
-                guard let self = self else { return }
-                guard Defaults[.iCloudSync] else {
-                    DLOG("iCloud sync disabled, skipping automatic save state upload")
+            let results = realm.objects(PVSaveState.self)
+            self.saveStateToken = results.observe(on: self.saveStateObserverQueue) { [weak self] change in
+                guard let self else { return }
+
+                if CloudKitRemoteApplyGuard.isApplyingRemoteChanges {
                     return
                 }
 
-                for saveState in newSaveStates {
-                    ILOG("New save state detected: \(saveState.file?.fileName ?? "unknown") for game \(saveState.game.title)")
-                    let frozenSaveState = saveState.freeze()
-                    Task {
-                        await CloudKitUploadQueueActor.shared.enqueueSaveStateUpload(
-                            saveStateID: frozenSaveState.id,
-                            gameTitle: frozenSaveState.game.title,
-                            priority: .high
-                        )
+                guard Defaults[.iCloudSync] else { return }
+
+                switch change {
+                case .initial:
+                    return
+                case .update(let collection, _, let insertions, _):
+                    guard !insertions.isEmpty else { return }
+
+                    let newSaveStates = insertions.compactMap { idx -> PVSaveState? in
+                        guard idx < collection.count else { return nil }
+                        let ss = collection[idx]
+                        guard !ss.isInvalidated else { return nil }
+                        if let cloudRecordID = ss.cloudRecordID, !cloudRecordID.isEmpty { return nil }
+                        return ss.freeze()
+                    }
+
+                    guard !newSaveStates.isEmpty else { return }
+
+                    for saveState in newSaveStates {
+                        let title = saveState.game?.title ?? "Unknown"
+                        Task {
+                            await CloudKitUploadQueueActor.shared.enqueueSaveStateUpload(
+                                saveStateID: saveState.id,
+                                gameTitle: title,
+                                priority: .high
+                            )
+                        }
+                    }
+                case .error(let error):
+                    ELOG("Error in save state observer: \(error.localizedDescription)")
+                    Task { [weak self] in
+                        await self?.errorHandler.handle(error: error)
                     }
                 }
-            }, onError: { [weak self] error in
-                ELOG("Error in save state observer: \(error.localizedDescription)")
-                Task {
-                    await self?.errorHandler.handle(error: error)
-                }
-            })
-            .disposed(by: disposeBag)
-
-        DLOG("RxRealm save state observer setup complete")
+            }
+        }
     }
 
     /// Handles changes to the iCloud sync setting
@@ -1759,6 +1766,7 @@ public class CloudSyncManager {
             for batchStart in stride(from: 0, to: totalGames, by: batchSize) {
                 let batchEnd = min(batchStart + batchSize, totalGames)
                 let batch = Array(frozenGames[batchStart..<batchEnd])
+                var md5sToMarkForSync: [String] = []
 
                 for frozenGame in batch {
                     let game = frozenGame
@@ -1770,42 +1778,35 @@ public class CloudSyncManager {
                     // Check if the file exists locally
                     let fileExists = await checkIfGameFileExists(game)
 
-                    // Check if a CloudKit record exists for this game
-                    var recordExists = false
-                    let md5 = game.md5Hash
+                    // Check if a CloudKit record exists for this game.
+                    //
+                    // IMPORTANT:
+                    // - Do NOT fetch per-game records from CloudKit here (that will hammer CK and keep the app busy for minutes).
+                    // - Use local state. ROM metadata bootstrap / remote change fetch is responsible for populating cloudRecordID.
+                    //
+                    // When emulation is running, CloudKit fetches are intentionally suppressed; treat record existence as "unknown".
+                    let recordExists: Bool
                     if isPausedForEmulation {
-                        // When emulation is running, CloudKit fetches are intentionally suppressed.
-                        // Treat record existence as "unknown" to avoid incorrectly marking local files for upload.
                         recordExists = true
-                    } else if !md5.isEmpty {
-                        recordExists = await checkIfCloudRecordExists(md5: md5, syncer: romsSyncer)
+                    } else {
+                        recordExists = (game.cloudRecordID?.isEmpty == false)
                     }
 
                     // If the file doesn't exist locally but a record exists in CloudKit
                     // OR if the game is marked as downloaded but the file is missing
                     // THEN mark it for sync
                     if (!fileExists && recordExists) || (game.isDownloaded && !fileExists) {
-                        await MainActor.run {
-                            markGameForSync(game: game)
-                        }
+                        md5sToMarkForSync.append(game.md5Hash.uppercased())
                         markedGamesCount += 1
-                    }
-                    // If no CloudKit record exists but we have a local file, mark for upload
-                    else if fileExists && !recordExists && game.md5Hash != nil {
-                        ILOG("Game \(game.title) \(game.systemIdentifier) has local file but no CloudKit record. Marking for upload.")
-                        Task {
-                            do {
-                                try await uploadROM(for: game.freeze())
-                                ILOG("Successfully marked \(game.title) for upload.")
-                            } catch {
-                                ELOG("Failed to mark \(game.title) for upload: \(error.localizedDescription)")
-                            }
-                        }
                     }
                 }
 
-                // Small delay to prevent UI blocking
-//                try? await Task.sleep(nanoseconds: 10_000_000) // 10ms
+                if !md5sToMarkForSync.isEmpty {
+                    await markGamesForSync(md5s: md5sToMarkForSync)
+                }
+
+                // Yield to let the system breathe during long scans
+                try? await Task.sleep(nanoseconds: 5_000_000) // 5ms
             }
 
         } catch {
@@ -1893,6 +1894,29 @@ public class CloudSyncManager {
             ILOG("Marked game \(gameToUpdate.title) (MD5: \(gameToUpdate.md5Hash ?? "N/A")) as needing sync (isDownloaded=false, requiresSync=true)")
         } catch {
             ELOG("Failed to mark game \(gameToUpdate.title) as needing sync: \(error.localizedDescription)")
+        }
+    }
+
+    /// Batch-mark games as needing sync (file missing locally, but CloudKit record is expected to exist).
+    /// This avoids per-game MainActor hops and per-game Realm write commits.
+    private func markGamesForSync(md5s: [String]) async {
+        guard !md5s.isEmpty else { return }
+
+        do {
+            try await RealmContext.withRealm { realm in
+                try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+                    try realm.write {
+                        for md5 in md5s {
+                            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else { continue }
+                            game.isDownloaded = false
+                            game.requiresSync = true
+                            game.lastCloudSyncDate = nil
+                        }
+                    }
+                }
+            }
+        } catch {
+            ELOG("Failed to batch mark games for sync (count=\(md5s.count)): \(error.localizedDescription)")
         }
     }
 

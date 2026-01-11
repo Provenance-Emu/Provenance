@@ -95,12 +95,10 @@ public extension PVFile {
             #endif
         }
 
-        // For iCloud Drive, use the iCloud container if available
+        // For iCloud Drive, use the iCloud container if available.
+        // IMPORTANT: avoid filesystem hits from rendering-time URL resolution.
         if let iCloudContainer = URL.iCloudContainerDirectory {
-            let possibleCloudPath =  iCloudContainer.appendingPathComponent(fixedPartialPath)
-            if FileManager.default.fileExists(atPath: possibleCloudPath.path) {
-                return possibleCloudPath
-            }
+            return iCloudContainer.appendingPathComponent(fixedPartialPath)
         }
 
         // Fallback to the local documents directory
@@ -118,14 +116,36 @@ public extension PVFile {
         }
         var mutatingPartialPath = partialPath
 
+        // Fast-path: in SwiftUI rendering hot paths, avoid repeated full-string scans.
+        // Most values are already clean relative paths ("Save States/...", "ROMs/...", etc).
+        // Only run the fixup logic when the string *starts* like a known-bad format.
+        if let firstByte = mutatingPartialPath.utf8.first {
+            switch firstByte {
+            case UInt8(ascii: "/"), // absolute path
+                 UInt8(ascii: "f"), // "file://..."
+                 UInt8(ascii: "p"), // "private/..."
+                 UInt8(ascii: "v"), // "var/mobile/..."
+                 UInt8(ascii: "D"), // "Documents/..."
+                 UInt8(ascii: "C"), // "Caches/..." / "Containers/..."
+                 UInt8(ascii: "i"): // "iCloud..."
+                break
+            default:
+                _actualPartialPath = mutatingPartialPath
+                return mutatingPartialPath
+            }
+        }
+
         // Fix common path issues
         fixPartialPath(substring: "file:///private/", &mutatingPartialPath)
         fixPartialPath(substring: "file:///", &mutatingPartialPath)
         fixPartialPath(substring: "private/", &mutatingPartialPath)
 
-        // Remove document directory paths
-        fixPartialPath(remove: URL.documentsDirectory, &mutatingPartialPath)
-        fixPartialPath(remove: URL.iCloudDocumentsDirectory, &mutatingPartialPath)
+        // Remove document directory paths (use cached URLs; avoid Foundation URL.documentsDirectory and iCloudDocumentsDirectory side effects)
+        fixPartialPath(remove: URL.documentsPath, &mutatingPartialPath)
+
+        // Don't call URL.iCloudDocumentsDirectory here (it can touch the filesystem / create dirs).
+        let iCloudDocumentsNoCreate = URL.iCloudContainerDirectory?.appendingPathComponent("Documents")
+        fixPartialPath(remove: iCloudDocumentsNoCreate, &mutatingPartialPath)
         fixPartialPath(remove: URL.iCloudContainerDirectory, &mutatingPartialPath)
 
         // Check if this looks like an absolute path from a different app bundle
@@ -331,7 +351,7 @@ public extension PVFile {
                 // If we're using CloudKit, use the local documents directory
                 if isDocumentsDir {
                     if useiCloudDocs {
-                        let iCloudBase = URL.iCloudContainerDirectory
+                        let iCloudBase = URL.iCloudContainerDirectory?.appendingPathComponent("Documents")
                         returnUrl = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
                         return returnUrl
                     } else {
@@ -339,7 +359,7 @@ public extension PVFile {
                         return returnUrl
                     }
                 } else {
-                    if useiCloudDocs, let iCloudBase = URL.iCloudDocumentsDirectory {
+                    if useiCloudDocs, let iCloudBase = URL.iCloudContainerDirectory?.appendingPathComponent("Documents") {
                         returnUrl = iCloudBase.appendingPathComponent(path)
                         return returnUrl
                     } else {
@@ -361,21 +381,11 @@ public extension PVFile {
                 returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
                 #endif
             } else {
-                // For iCloud Drive, use the iCloud container if available
+                // For iCloud Drive, prefer the iCloud container path if available.
+                // IMPORTANT: Do NOT hit the filesystem here (SwiftUI calls this a lot).
                 if let iCloudContainer = URL.iCloudContainerDirectory {
-                    let possibleCloudPath = iCloudContainer.appendingPathComponent(fixedPartialPath)
-                    if FileManager.default.fileExists(atPath: possibleCloudPath.path) {
-                        returnUrl = possibleCloudPath
-                    } else {
-                        // Fallback to the local documents directory
-                        #if os(tvOS)
-                        returnUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
-                        #else
-                        returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
-                        #endif
-                    }
+                    returnUrl = iCloudContainer.appendingPathComponent(fixedPartialPath)
                 } else {
-                    // Fallback to the local documents directory
                     #if os(tvOS)
                     returnUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
                     #else
@@ -390,6 +400,9 @@ public extension PVFile {
                 relativeRoot: \(relativeRoot)
                 """)
             }*/
+
+            // Fast-path: if we didn't detect any problematic patterns above, avoid any additional work.
+            // NOTE: We intentionally do not check filesystem existence here (SwiftUI calls this a lot).
             return returnUrl
         }
     }

@@ -40,6 +40,8 @@ public enum iCloudDriveSync {
 
     // Track whether a file recovery session is currently active
     static var isRecoverySessionActive: Bool = false
+    private static let recoveryLock = NSLock()
+    private static var isRecoveryInFlight: Bool = false
 
     // Set of files currently being recovered - used to prevent premature access
     /// Thread-safe set of files currently being recovered from iCloud
@@ -833,38 +835,53 @@ public enum iCloudDriveSync {
     }
 
     static func moveFilesFromiCloudDriveToLocalDocuments() async {
-        ILOG("Moving files from iCloud Drive to local Documents directory")
-
-        // Reset progress tracking
-        resetProgress()
-        // Clear retry queue
-        retryQueue = []
-        currentRetryAttempt = 0
-
-        // Only post notification if we're not already in an active recovery session
-        if !iCloudDriveSync.isRecoverySessionActive {
-            iCloudDriveSync.isRecoverySessionActive = true
-            DLOG("Starting new file recovery session")
-
-            Task { @MainActor in
-                // Post notification with additional information for RetroStatusControlView
-                NotificationCenter.default.post(
-                    name: iCloudDriveSync.iCloudFileRecoveryStarted,
-                    object: nil,
-                    userInfo: [
-                        "timestamp": Date(),
-                        "sessionId": UUID().uuidString
-                    ]
-                )
-            }
-        } else {
-            DLOG("File recovery session already active, skipping duplicate notification")
-        }
-
-        guard let iCloudContainer = URL.iCloudContainerDirectory else {
-            ELOG("Cannot access iCloud container directory")
+        recoveryLock.lock()
+        if isRecoveryInFlight {
+            recoveryLock.unlock()
+            DLOG("File recovery already in-flight; skipping duplicate run.")
             return
         }
+        isRecoveryInFlight = true
+        let shouldPostStarted = !isRecoverySessionActive
+        isRecoverySessionActive = true
+        recoveryLock.unlock()
+
+        defer {
+            recoveryLock.lock()
+            isRecoveryInFlight = false
+            isRecoverySessionActive = false
+            recoveryLock.unlock()
+        }
+
+        // Ensure heavy filesystem enumeration and copying never runs on the main actor/runloop.
+        await Task.detached(priority: .utility) {
+            ILOG("Moving files from iCloud Drive to local Documents directory")
+
+            // Reset progress tracking
+            resetProgress()
+            // Clear retry queue
+            retryQueue = []
+            currentRetryAttempt = 0
+
+            if shouldPostStarted {
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: iCloudDriveSync.iCloudFileRecoveryStarted,
+                        object: nil,
+                        userInfo: [
+                            "timestamp": Date(),
+                            "sessionId": UUID().uuidString
+                        ]
+                    )
+                }
+            } else {
+                DLOG("File recovery session already active, skipping duplicate notification")
+            }
+
+            guard let iCloudContainer = URL.iCloudContainerDirectory else {
+                ELOG("Cannot access iCloud container directory")
+                return
+            }
 
         // Get the Documents directory within the iCloud container
         let iCloudDocuments = iCloudContainer.appendingPathComponent("Documents")
@@ -952,8 +969,7 @@ public enum iCloudDriveSync {
             )
         }
 
-        // Reset the session flag to allow future recovery sessions
-        iCloudDriveSync.isRecoverySessionActive = false
+        }.value
     }
 
     /// Count all files in the directories to get a total for progress tracking

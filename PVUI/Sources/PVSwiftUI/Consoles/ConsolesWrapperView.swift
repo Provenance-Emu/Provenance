@@ -92,6 +92,8 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     /// State to track loaded icons asynchronously
     @State private var loadedIcons: [String: Image] = [:]
+    /// Track consoles whose views have been instantiated to keep them alive after first load
+    @State private var loadedConsoleIDs: Set<String> = []
 
     /// State for game info presentation
     struct GameInfoState: Identifiable {
@@ -298,15 +300,29 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     @ViewBuilder
     var consolesList: some View {
-        ForEach(sortedConsoles(), id: \.identifier) { (console: PVSystem) in
+        let consoles = sortedConsoles()
+        ForEach(consoles, id: \.identifier) { (console: PVSystem) in
             if console.identifier != SystemIdentifier.RetroArch.rawValue || forceRetroarchConsole { // Skip RetroArch unless in forced
-                ConsoleGamesView(
-                    console: console,
-                    viewModel: viewModel,
-                    rootDelegate: rootDelegate,
-                    showGameInfo: showGameInfo
-                )
-                .id(console.identifier) // Keep ConsoleGamesView instance stable
+                let isRenderable = shouldRenderConsoleTab(console.identifier, consoles: consoles) || loadedConsoleIDs.contains(console.identifier)
+                ZStack {
+                    if isRenderable {
+                        ConsoleGamesView(
+                            console: console,
+                            viewModel: viewModel,
+                            rootDelegate: rootDelegate,
+                            showGameInfo: showGameInfo
+                        )
+                        .id(console.identifier) // Keep ConsoleGamesView instance stable
+                        .onAppear {
+                            loadedConsoleIDs.insert(console.identifier)
+                        }
+                    }
+
+                    if !loadedConsoleIDs.contains(console.identifier) {
+                        ConsolePlaceholderView(systemName: console.name)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
                 .background(RetroTheme.retroBackground)
                 .toolbarColorScheme(SwiftUI.ColorScheme.dark, for: SwiftUI.ToolbarPlacement.tabBar)
                 .tag(console.identifier)
@@ -326,15 +342,24 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
     }
 
+    private func shouldRenderConsoleTab(_ identifier: String, consoles: [PVSystem]) -> Bool {
+        if identifier == delegate.selectedTab { return true }
+        if identifier == previousTab { return true }
+
+        guard let selectedIndex = consoles.firstIndex(where: { $0.identifier == delegate.selectedTab }) else {
+            return false
+        }
+
+        let neighborIndices = [selectedIndex - 1, selectedIndex + 1].filter { $0 >= 0 && $0 < consoles.count }
+        return neighborIndices.contains { consoles[$0].identifier == identifier }
+    }
+
     @ViewBuilder
     var consolesTabView: some View {
         let binding = Binding<String>(
             get: { delegate.selectedTab },
             set: { newTab in
-                // Store the previous tab before changing
-                let oldTab = previousTab
                 previousTab = delegate.selectedTab
-
                 // Set the new tab immediately (main thread operation)
                 delegate.setTab(newTab)
 
@@ -523,6 +548,24 @@ struct ConsolesWrapperView: SwiftUI.View {
         #else
         return nil
         #endif
+    }
+}
+
+private struct ConsolePlaceholderView: View {
+    let systemName: String
+
+    var body: some View {
+        ZStack {
+            RetroTheme.retroBackground
+            VStack(spacing: 12) {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                Text("Loading \(systemName)…")
+                    .foregroundColor(.retroPink)
+                    .font(.system(size: 14, weight: .medium))
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

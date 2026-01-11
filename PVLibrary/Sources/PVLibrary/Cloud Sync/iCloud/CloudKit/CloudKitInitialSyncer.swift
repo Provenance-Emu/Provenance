@@ -130,60 +130,37 @@ public actor CloudKitInitialSyncer {
 
     /// Check if initial sync is needed
     /// - Returns: True if initial sync is needed, false otherwise
-    /// NOTE: This method now always returns true to allow individual sync types to decide if they need to sync
-    /// This fixes the issue where save state sync was skipped when ROM records existed
     public func isInitialSyncNeeded() async -> Bool {
-        DLOG("🔄 [isInitialSyncNeeded] Always allowing initial sync to run - individual sync types will decide if they need to sync")
-        return true
-
-        // DISABLED: Previous flawed logic that prevented save state sync when other record types existed
-        /*
+        /// Determine initial sync necessity from LOCAL datastore state (Realm), not CloudKit state.
+        /// If there are no local items that would be uploaded, skip initial sync to avoid heavy launch work.
         do {
-            // Check multiple record types, not just ROMs
-            for recordTypeRaw in [CloudKitSchema.RecordType.rom.rawValue,
-                               CloudKitSchema.RecordType.saveState.rawValue,
-                               CloudKitSchema.RecordType.bios.rawValue,
-                               CloudKitSchema.RecordType.file.rawValue] {
+            return try await RealmContext.withRealm { realm in
+                let hasUnsyncedROMs = !realm.objects(PVGame.self)
+                    .filter("""
+                        contentless == false AND
+                        isDownloaded == true AND
+                        (cloudRecordID == nil OR cloudRecordID == '' OR hasCloudAssets == false)
+                    """)
+                    .isEmpty
 
-                DLOG("Checking for existing records of type: \(recordTypeRaw)")
-                let query = CKQuery(recordType: recordTypeRaw, predicate: NSPredicate(value: true))
+                if hasUnsyncedROMs { return true }
 
-                // Use a task with timeout to prevent hanging if CloudKit is slow to respond
-                let checkTask = Task {
-                    try await privateDatabase.records(matching: query, resultsLimit: 1)
-                }
+                let hasUnsyncedSaveStates = !realm.objects(PVSaveState.self)
+                    .filter("cloudRecordID == nil OR cloudRecordID == ''")
+                    .isEmpty
 
-                do {
-                    // Set a 10-second timeout for the query
-                    let (results, _) = try await withTimeout(seconds: 10) {
-                        try await checkTask.value
-                    }
+                if hasUnsyncedSaveStates { return true }
 
-                    // If we find records of any type, we don't need initial sync
-                    if !results.isEmpty {
-                        DLOG("Found existing \(recordTypeRaw) records, initial sync not needed")
-                        return false
-                    }
-                } catch is TimeoutError {
-                    ELOG("Timeout checking for \(recordTypeRaw) records, continuing with other types")
-                    // Cancel the task to clean up resources
-                    checkTask.cancel()
-                    continue
-                } catch {
-                    ELOG("Error checking for \(recordTypeRaw) records: \(error.localizedDescription)")
-                    // Continue checking other record types
-                    continue
-                }
+                let hasUnsyncedBIOS = !realm.objects(PVBIOS.self)
+                    .filter("cloudRecordID == nil OR cloudRecordID == ''")
+                    .isEmpty
+
+                return hasUnsyncedBIOS
             }
-
-            // If we get here, we found no records of any type
-            DLOG("No existing records found in CloudKit, initial sync needed")
-            return true
         } catch {
-            ELOG("Error checking if initial sync is needed: \(error.localizedDescription)")
-            return true // Assume we need initial sync if we can't check
+            WLOG("[isInitialSyncNeeded] Unable to query Realm: \(error.localizedDescription). Skipping initial sync for safety.")
+            return false
         }
-        */
     }
 
     /// Helper function to add timeout to async operations

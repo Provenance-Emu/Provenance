@@ -51,6 +51,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private let uploadQueue = CloudKitUploadQueueActor.shared
     private let loadAllLock = NSLock()
     private var isLoadAllInFlight: Bool = false
+    private let metadataOnlyGate = MetadataOnlyGate()
     private let changeTokenStorageKey = "org.provenance.cloudsync.cloudkit.roms.zoneChangeToken.v1"
     private let changeTokenStorage = UserDefaults.standard
 
@@ -2796,23 +2797,42 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Quickly fetches ROM records and creates/updates PVGame entries without triggering any downloads
     /// Uses batch processing and parallel operations for speed
     public func syncMetadataOnly() async -> Int {
-        if let queue = workQueue {
-            return await withCheckedContinuation { continuation in
-                let op = BlockOperation()
-                op.addExecutionBlock { [weak self, weak op] in
-                    guard let self, let op, !op.isCancelled else {
-                        continuation.resume(returning: 0)
-                        return
+        // This can be triggered from multiple boot-time call sites.
+        // Collapse concurrent runs into a single in-flight task to avoid overlapping full-library scans.
+        return await metadataOnlyGate.run { [weak self] in
+            guard let self else { return 0 }
+
+            if let queue = self.workQueue {
+                return await withCheckedContinuation { continuation in
+                    let op = BlockOperation()
+                    op.addExecutionBlock { [weak self, weak op] in
+                        guard let self, let op, !op.isCancelled else {
+                            continuation.resume(returning: 0)
+                            return
+                        }
+                        Task {
+                            let result = await self.syncMetadataOnlyBody()
+                            continuation.resume(returning: result)
+                        }
                     }
-                    Task {
-                        let result = await self.syncMetadataOnlyBody()
-                        continuation.resume(returning: result)
-                    }
+                    queue.addOperation(op)
                 }
-                queue.addOperation(op)
+            } else {
+                return await self.syncMetadataOnlyBody()
             }
-        } else {
-            return await syncMetadataOnlyBody()
+        }
+    }
+
+    private actor MetadataOnlyGate {
+        private var inFlight: Task<Int, Never>?
+
+        func run(_ operation: @escaping @Sendable () async -> Int) async -> Int {
+            if let inFlight { return await inFlight.value }
+            let task = Task.detached(priority: .utility) { await operation() }
+            inFlight = task
+            let result = await task.value
+            inFlight = nil
+            return result
         }
     }
 
@@ -2848,6 +2868,56 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
+    private struct ROMMetadataSnapshot: Sendable {
+        let md5: String
+        let recordName: String
+        let modificationDate: Date
+        let title: String
+        let systemIdentifier: String
+        let originalFilename: String
+        let fileSize: Int
+        let hasCloudAssets: Bool
+    }
+
+    private func makeMetadataSnapshot(from record: CKRecord) -> ROMMetadataSnapshot? {
+        // Always normalize MD5 to uppercase (Realm primary key expectation)
+        let md5 = ((record[CloudKitSchema.ROMFields.md5] as? String)
+                   ?? CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID))?
+            .uppercased()
+        guard let md5, !md5.isEmpty else { return nil }
+
+        guard let systemIdentifier = record[CloudKitSchema.ROMFields.systemIdentifier] as? String,
+              !systemIdentifier.isEmpty,
+              let originalFilename = record[CloudKitSchema.ROMFields.originalFilename] as? String,
+              !originalFilename.isEmpty
+        else {
+            return nil
+        }
+
+        let title = (record[CloudKitSchema.ROMFields.title] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let safeTitle = (title?.isEmpty == false) ? title! : originalFilename
+
+        let modDate = record.modificationDate ?? .distantPast
+        let hasCloudAssets = recordDeclaresAssetPresence(record)
+
+        let explicitFileSize: Int = {
+            if let v = record[CloudKitSchema.ROMFields.fileSize] as? Int64 { return Int(v) }
+            if let v = record[CloudKitSchema.ROMFields.fileSize] as? Int { return v }
+            return 0
+        }()
+
+        return ROMMetadataSnapshot(
+            md5: md5,
+            recordName: record.recordID.recordName,
+            modificationDate: modDate,
+            title: safeTitle,
+            systemIdentifier: systemIdentifier,
+            originalFilename: originalFilename,
+            fileSize: explicitFileSize,
+            hasCloudAssets: hasCloudAssets
+        )
+    }
+
     /// Process ROM records in batches with parallel processing for optimal speed
     private func processBatchedROMRecords(_ records: [CKRecord]) async -> (created: Int, updated: Int, skipped: Int, failed: Int, total: Int) {
         var created = 0
@@ -2855,19 +2925,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         var skipped = 0
         var failed = 0
 
-        // Get existing game MD5s to skip unchanged records
-        let existingMD5s: Set<String>
-        do {
-            existingMD5s = try await withRealm { realm -> Set<String> in
-                Set(realm.objects(PVGame.self)
-                    .filter("cloudRecordID != nil")
-                    .compactMap { $0.md5Hash.uppercased() })
-            }
-        } catch {
-            existingMD5s = []
-        }
-
-        // Process in batches for Realm write efficiency
+        // Process in batches for Realm write efficiency and to keep write locks short
         let batchSize = 50
         let batches = records.chunked(into: batchSize)
         var batchIndex = 0
@@ -2876,34 +2934,26 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             batchIndex += 1
             if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
 
-            // Process batch concurrently (up to 10 at a time for CloudKit rate limits)
-            let batchResults = await withTaskGroup(of: (created: Bool, updated: Bool, skipped: Bool, failed: Bool).self) { group in
-                var results: [(created: Bool, updated: Bool, skipped: Bool, failed: Bool)] = []
-
-                for record in batch {
-                    group.addTask { [self] in
-                        await self.processROMRecordFast(record, existingMD5s: existingMD5s)
-                    }
-                }
-
-                for await result in group {
-                    results.append(result)
-                }
-
-                return results
+            // Build lightweight snapshots outside Realm to avoid touching Realm while parsing CloudKit records
+            let snapshots: [ROMMetadataSnapshot] = batch.compactMap { makeMetadataSnapshot(from: $0) }
+            if snapshots.isEmpty {
+                failed += batch.count
+                continue
             }
 
-            // Aggregate results
-            for result in batchResults {
-                if result.created { created += 1 }
-                if result.updated { updated += 1 }
-                if result.skipped { skipped += 1 }
-                if result.failed { failed += 1 }
+            do {
+                let batchResult = try await applyMetadataSnapshotsBatch(snapshots)
+                created += batchResult.created
+                updated += batchResult.updated
+                skipped += batchResult.skipped
+                failed += batchResult.failed
+            } catch {
+                failed += snapshots.count
             }
 
             // Log progress every 10 batches (500 records)
             if batchIndex % 10 == 0 {
-                let processed = batchIndex * batchSize
+                let processed = min(batchIndex * batchSize, records.count)
                 ILOG("[SYNC] Progress: \(processed)/\(records.count) records processed...")
             }
         }
@@ -2911,38 +2961,72 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         return (created, updated, skipped, failed, records.count)
     }
 
-    /// Process a single ROM record quickly, returning status flags
-    private func processROMRecordFast(_ record: CKRecord, existingMD5s: Set<String>) async -> (created: Bool, updated: Bool, skipped: Bool, failed: Bool) {
-        if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled {
-            return (false, false, true, false)
-        }
-        guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) else {
-            return (false, false, false, true)
-        }
+    private func applyMetadataSnapshotsBatch(_ snapshots: [ROMMetadataSnapshot]) async throws -> (created: Int, updated: Int, skipped: Int, failed: Int) {
+        try await withRealm { realm in
+            var created = 0
+            var updated = 0
+            var skipped = 0
+            var failed = 0
 
-        let upperMD5 = md5.uppercased()
+            try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+                try realm.write {
+                    for snap in snapshots {
+                        if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
 
-        // Skip if already synced (has cloudRecordID set)
-        if existingMD5s.contains(upperMD5) {
-            // Check if we need to update (record might have changed)
-            // For now, skip entirely for speed - can be refined later
-            return (false, false, true, false)
-        }
+                        guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: snap.systemIdentifier) else {
+                            failed += 1
+                            continue
+                        }
 
-        // Try to create or update
-        do {
-            if let _ = try await createPVGame(from: record) {
-                return (true, false, false, false)
+                        if let game = realm.object(ofType: PVGame.self, forPrimaryKey: snap.md5) {
+                            let localSyncDate = game.lastCloudSyncDate ?? .distantPast
+                            if snap.modificationDate <= localSyncDate, game.cloudRecordID != nil {
+                                skipped += 1
+                                continue
+                            }
+
+                            // Do not clobber local user edits during metadata bootstrap.
+                            if game.cloudRecordID == nil { game.cloudRecordID = snap.recordName }
+                            if game.systemIdentifier.isEmpty { game.systemIdentifier = snap.systemIdentifier }
+                            if game.system == nil { game.system = system }
+                            if game.title.isEmpty { game.title = snap.title }
+
+                            if snap.fileSize > 0 && (game.fileSize == 0 || snap.modificationDate > localSyncDate) {
+                                game.fileSize = snap.fileSize
+                            }
+
+                            // Metadata-only reads omit asset field; `recordDeclaresAssetPresence` treats that as true.
+                            if snap.hasCloudAssets && !game.hasCloudAssets {
+                                game.hasCloudAssets = true
+                            }
+
+                            // Never flip to true here; presence of a local file should control this.
+                            if game.isDownloaded == false {
+                                // keep as-is
+                            }
+
+                            game.lastCloudSyncDate = max(localSyncDate, snap.modificationDate)
+                            updated += 1
+                        } else {
+                            let newGame = PVGame()
+                            newGame.md5Hash = snap.md5
+                            newGame.systemIdentifier = snap.systemIdentifier
+                            newGame.system = system
+                            newGame.title = snap.title
+                            newGame.cloudRecordID = snap.recordName
+                            newGame.lastCloudSyncDate = snap.modificationDate
+                            newGame.fileSize = snap.fileSize
+                            newGame.hasCloudAssets = snap.hasCloudAssets
+                            newGame.isDownloaded = false
+
+                            realm.add(newGame, update: .modified)
+                            created += 1
+                        }
+                    }
+                }
             }
-            return (false, false, false, true)
-        } catch {
-            // Game might already exist without cloudRecordID, try updating
-            do {
-                try await updatePVGame(from: record, gameMD5: upperMD5)
-                return (false, true, false, false)
-            } catch {
-                return (false, false, false, true)
-            }
+
+            return (created, updated, skipped, failed)
         }
     }
 

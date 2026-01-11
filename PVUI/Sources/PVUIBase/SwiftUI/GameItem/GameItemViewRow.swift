@@ -6,23 +6,32 @@
 //
 
 import SwiftUI
-import PVRealm
-import RealmSwift
 import PVThemes
 
 @available(iOS 14, tvOS 14, *)
-struct GameItemViewRow: SwiftUI.View, Equatable {
+struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatable {
     /// Implement Equatable to prevent unnecessary redraws
-    static func == (lhs: GameItemViewRow, rhs: GameItemViewRow) -> Bool {
+    static func == (lhs: GameItemViewRow<Presentable>, rhs: GameItemViewRow<Presentable>) -> Bool {
         /// Only redraw if these key properties change
         lhs.game.id == rhs.game.id &&
+        lhs.game.title == rhs.game.title &&
+        lhs.game.trueArtworkURL == rhs.game.trueArtworkURL &&
+        lhs.game.publishDate == rhs.game.publishDate &&
+        lhs.game.rating == rhs.game.rating &&
+        lhs.game.lastPlayed == rhs.game.lastPlayed &&
+        lhs.game.playCount == rhs.game.playCount &&
+        lhs.game.hasCloudAssets == rhs.game.hasCloudAssets &&
+        lhs.game.isDownloaded == rhs.game.isDownloaded &&
+        lhs.game.boxartAspectRatio == rhs.game.boxartAspectRatio &&
+        lhs.game.systemShortName == rhs.game.systemShortName &&
+        lhs.game.discCount == rhs.game.discCount &&
         lhs.artwork?.hashValue == rhs.artwork?.hashValue &&
         lhs.hoverScale == rhs.hoverScale &&
         lhs.glowIntensity == rhs.glowIntensity
     }
 
     /// Use plain property instead of @ObservedRealmObject for performance
-    let game: PVGame
+    let game: Presentable
     @Default(.showGameTitles) private var showGameTitles
     @Default(.iCloudSync) private var iCloudSyncEnabled
 
@@ -39,9 +48,7 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     private var discCount: Int {
-        let allFiles = game.relatedFiles.toArray()
-        let uniqueFiles = Set(allFiles.compactMap { $0.url?.path })
-        return uniqueFiles.count
+        game.discCount
     }
 
     private var shouldShowDiscIndicator: Bool {
@@ -141,8 +148,8 @@ struct GameItemViewRow: SwiftUI.View, Equatable {
                     // Game metadata row
                     HStack(spacing: 12) {
                         // System name
-                        if let system = game.system {
-                            Text(system.shortName.uppercased())
+                        if let systemShortName = game.systemShortName {
+                            Text(systemShortName.uppercased())
                                 .font(.system(size: viewType.subtitleFontSize, weight: .semibold, design: .monospaced))
                                 .foregroundColor(secondaryColor)
                                 .shadow(color: glowColor.opacity(0.5), radius: 1, x: 0, y: 0)

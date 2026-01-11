@@ -8,12 +8,20 @@
 /// Gamepad navigation
 extension ConsoleGamesView {
 
+    private var recentSaveStateIdsForNavigation: [String] {
+        let realm = RomDatabase.sharedInstance.realm
+        let results = realm.objects(PVSaveState.self)
+            .filter("game.systemIdentifier == %@", console.identifier)
+            .sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
+        return results.prefix(20).map { $0.id }
+    }
+
     internal var availableSections: [HomeSectionType] {
         [
-            (showRecentSaveStates && !recentSaveStates.isEmpty) ? .recentSaveStates : nil,
-            (showFavorites && !favorites.isEmpty) ? .favorites : nil,
-            (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
-            !games.isEmpty ? .allGames : nil
+            (showRecentSaveStates && !recentSaveStateIdsForNavigation.isEmpty) ? .recentSaveStates : nil,
+            (showFavorites && !favoritesModels.isEmpty) ? .favorites : nil,
+            (showRecentGames && !recentlyPlayedModels.isEmpty) ? .recentlyPlayedGames : nil,
+            !allGamesModels.isEmpty ? .allGames : nil
         ].compactMap { $0 }
     }
 
@@ -28,35 +36,26 @@ extension ConsoleGamesView {
 
         switch section {
         case .recentSaveStates:
-            if let saveState = recentSaveStates.first(where: { $0.id == itemId }) {
+            let realm = RomDatabase.sharedInstance.realm
+            if let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: itemId) {
                 Task.detached { @MainActor in
                     SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
                 }
             }
         case .favorites:
-            if let game = favorites.first(where: { $0.id == itemId }) {
-                Task.detached { @MainActor in
-                    SceneCoordinator.shared.launchGame(game.freeze())
-                }
+            if let model = favoritesModels.first(where: { $0.id == itemId }) {
+                launchGame(md5: model.md5)
             }
         case .recentlyPlayedGames:
-            if let recentGame = recentlyPlayedGames.first(where: { $0.id == itemId })?.game {
-                Task.detached { @MainActor in
-                    SceneCoordinator.shared.launchGame(recentGame.freeze())
-                }
+            if let model = recentlyPlayedModels.first(where: { $0.id == itemId }) {
+                launchGame(md5: model.md5)
             }
         case .allGames:
-            if let game = games.first(where: { $0.id == itemId }) {
-                Task.detached { @MainActor in
-                    SceneCoordinator.shared.launchGame(game.freeze())
-                }
+            if let model = allGamesModels.first(where: { $0.id == itemId }) {
+                launchGame(md5: model.md5)
             }
         case .mostPlayed:
-            if let game = mostPlayed.first(where: { $0.id == itemId }) {
-                Task.detached { @MainActor in
-                    SceneCoordinator.shared.launchGame(game.freeze())
-                }
-            }
+            break
         }
     }
 
@@ -82,7 +81,7 @@ extension ConsoleGamesView {
                     Task {
                         await gamesViewModel.updateFocus(
                             section: nextSection,
-                            item: recentSaveStates.last?.id
+                            item: recentSaveStateIdsForNavigation.last
                         )
                     }
                 } else {
@@ -128,15 +127,15 @@ extension ConsoleGamesView {
         guard !game.isInvalidated else { return .allGames }
         // If we're in favorites section, ONLY return favorites if the game is actually in favorites
         if gamesViewModel.focusedSection == .favorites {
-            return favorites.contains(where: { $0.id == game.id }) ? .favorites : .allGames
+            return favoritesModels.contains(where: { $0.id == game.id }) ? .favorites : .allGames
         }
         // If we're in recently played, ONLY return recently played if the game is actually in recently played
         else if gamesViewModel.focusedSection == .recentlyPlayedGames {
-            return recentlyPlayedGames.contains(where: { $0.game?.id == game.id }) ? .recentlyPlayedGames : .allGames
+            return recentlyPlayedModels.contains(where: { $0.id == game.id }) ? .recentlyPlayedGames : .allGames
         }
         // If we're in most played, ONLY return most played if the game is actually in most played
         else if gamesViewModel.focusedSection == .mostPlayed {
-            return mostPlayed.contains(where: { $0.id == game.id }) ? .mostPlayed : .allGames
+            return .allGames
         }
         // Default to all games
         else {
@@ -194,24 +193,24 @@ extension ConsoleGamesView {
     private func handleVerticalNavigationWithinSection(_ section: HomeSectionType, direction: Float) {
         switch section {
         case .allGames:
-            if let currentIndex = games.firstIndex(where: { $0.id == gamesViewModel.focusedItemInSection }) {
+            if let currentIndex = allGamesModels.firstIndex(where: { $0.id == gamesViewModel.focusedItemInSection }) {
                 if direction > 0 {
                     // Moving up
                     let newIndex = currentIndex - Int(gameLibraryScale)
                     if newIndex >= 0 {
                         Task {
-                            await gamesViewModel.updateFocus(section: section, item: games[newIndex].id)
+                            await gamesViewModel.updateFocus(section: section, item: allGamesModels[newIndex].id)
                         }
                     } else {
                         // We're at the first row
                         if let nextSection = getNextSection(from: section, direction: direction) {
                             if nextSection == .allGames {
                                 // If next section is the same section, wrap to bottom
-                                let totalRows = (games.count + Int(gameLibraryScale) - 1) / Int(gameLibraryScale)
+                                let totalRows = (allGamesModels.count + Int(gameLibraryScale) - 1) / Int(gameLibraryScale)
                                 let currentColumn = currentIndex % Int(gameLibraryScale)
-                                let lastRowIndex = min(games.count - 1, ((totalRows - 1) * Int(gameLibraryScale)) + currentColumn)
+                                let lastRowIndex = min(allGamesModels.count - 1, ((totalRows - 1) * Int(gameLibraryScale)) + currentColumn)
                                 Task {
-                                    await gamesViewModel.updateFocus(section: section, item: games[lastRowIndex].id)
+                                    await gamesViewModel.updateFocus(section: section, item: allGamesModels[lastRowIndex].id)
                                 }
                             } else {
                                 // Move to next section
@@ -227,9 +226,9 @@ extension ConsoleGamesView {
                 } else {
                     // Moving down
                     let newIndex = currentIndex + Int(gameLibraryScale)
-                    if newIndex < games.count {
+                    if newIndex < allGamesModels.count {
                         Task {
-                            await gamesViewModel.updateFocus(section: section, item: games[newIndex].id)
+                            await gamesViewModel.updateFocus(section: section, item: allGamesModels[newIndex].id)
                         }
                     } else {
                         // We're at the last row
@@ -239,7 +238,7 @@ extension ConsoleGamesView {
                                 Task {
                                     await gamesViewModel.updateFocus(
                                         section: section,
-                                        item: games[currentIndex % Int(gameLibraryScale)].id
+                                        item: allGamesModels[currentIndex % Int(gameLibraryScale)].id
                                     )
                                 }
                             } else {
@@ -311,15 +310,15 @@ extension ConsoleGamesView {
     private func getItemsForSection(_ section: HomeSectionType) -> [String] {
         switch section {
         case .recentSaveStates:
-            return recentSaveStates.map { $0.id }
+            return recentSaveStateIdsForNavigation
         case .favorites:
-            return favorites.map { $0.id }
+            return favoritesModels.map { $0.id }
         case .recentlyPlayedGames:
-            return recentlyPlayedGames.map { $0.id }
+            return recentlyPlayedModels.map { $0.id }
         case .allGames:
-            return games.map { $0.id }
+            return allGamesModels.map { $0.id }
         case .mostPlayed:
-            return mostPlayed.map { $0.id }
+            return []
         }
     }
 }

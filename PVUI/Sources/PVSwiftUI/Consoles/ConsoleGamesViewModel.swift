@@ -17,6 +17,7 @@ import struct PVUIBase.DiscSelectionAlert
 
 class ConsoleGamesViewModel: ObservableObject {
     let console: PVSystem
+    private let consoleIdentifier: String
 
     /// Game controller navigation state
     @Published var focusedSection: HomeSectionType?
@@ -79,8 +80,29 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var previousScrollOffset: CGFloat = 0
     @Published var isSearchBarVisible: Bool = true
 
+    // MARK: - Snapshot models for rendering (no Realm objects in SwiftUI lists/grids)
+    @Published var allGamesModels: [GameCellModel] = []
+    @Published var favoritesModels: [GameCellModel] = []
+    @Published var recentlyPlayedModels: [GameCellModel] = []
+
+    @Published var sortAscending: Bool = true {
+        didSet {
+            Task { @MainActor in
+                resortModelsOnMain()
+            }
+        }
+    }
+
+    private let modelsQueue = DispatchQueue(label: "org.provenance.ui.consoleGames.models", qos: .userInitiated)
+    private var modelsRealm: Realm?
+    private var gamesToken: NotificationToken?
+    private var recentToken: NotificationToken?
+
+    private var recentMD5Order: [String] = []
+    private var modelsByMD5: [String: GameCellModel] = [:]
+
     /// Cache for filtered search results
-    private var cachedSearchResults: [PVGame] = []
+    private var cachedSearchResults: [GameCellModel] = []
     private var cachedSearchQuery: String = ""
 
     /// Timer for debouncing search
@@ -94,8 +116,10 @@ class ConsoleGamesViewModel: ObservableObject {
     /// Initialize the view model with a console
     init(console: PVSystem) {
         self.console = console
+        self.consoleIdentifier = console.identifier
 
         self.showingRenameAlert = false
+        startModelObservations()
     }
 
     /// Navigation state helpers
@@ -214,7 +238,7 @@ class ConsoleGamesViewModel: ObservableObject {
     }
 
     /// Get cached filtered search results
-    func getFilteredSearchResults(from games: Results<PVGame>) -> [PVGame] {
+    func getFilteredSearchResults() -> [GameCellModel] {
         guard !searchText.isEmpty else {
             cachedSearchResults = []
             cachedSearchQuery = ""
@@ -227,9 +251,9 @@ class ConsoleGamesViewModel: ObservableObject {
         }
 
         let searchTextLowercased = searchText.lowercased()
-        let results = Array(games.filter { game in
-            game.title.lowercased().contains(searchTextLowercased)
-        })
+        let results = allGamesModels.filter { model in
+            model.title.lowercased().contains(searchTextLowercased)
+        }
 
         // Cache results
         cachedSearchResults = results
@@ -240,5 +264,121 @@ class ConsoleGamesViewModel: ObservableObject {
 
     deinit {
         searchDebounceTimer?.invalidate()
+        gamesToken?.invalidate()
+        recentToken?.invalidate()
+    }
+}
+
+// MARK: - Snapshot model observation
+private extension ConsoleGamesViewModel {
+    func startModelObservations() {
+        modelsQueue.async { [weak self] in
+            guard let self else { return }
+            do {
+                let realm = try Realm()
+                self.modelsRealm = realm
+
+                let games = realm.objects(PVGame.self)
+                    .filter("systemIdentifier == %@", self.consoleIdentifier)
+
+                self.gamesToken = games.observe(keyPaths: GameCellModel.observedKeyPaths, on: self.modelsQueue) { [weak self] change in
+                    autoreleasepool {
+                        guard let self else { return }
+                        switch change {
+                        case .initial(let collection),
+                             .update(let collection, _, _, _):
+                            let snapshot = collection.freeze()
+                            self.rebuildGameModels(from: snapshot)
+                        case .error(let error):
+                            ELOG("ConsoleGamesViewModel: error observing PVGame: \(error.localizedDescription)")
+                        }
+                    }
+                }
+
+                let recent = realm.objects(PVRecentGame.self)
+                    .filter("game.systemIdentifier == %@", self.consoleIdentifier)
+                    .sorted(byKeyPath: "lastPlayedDate", ascending: false)
+
+                self.recentToken = recent.observe(on: self.modelsQueue) { [weak self] change in
+                    autoreleasepool {
+                        guard let self else { return }
+                        switch change {
+                        case .initial(let collection),
+                             .update(let collection, _, _, _):
+                            let snapshot = collection.freeze()
+                            self.rebuildRecentOrder(from: snapshot)
+                        case .error(let error):
+                            ELOG("ConsoleGamesViewModel: error observing PVRecentGame: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            } catch {
+                ELOG("ConsoleGamesViewModel: failed to open Realm for models: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    func rebuildGameModels(from games: Results<PVGame>) {
+        autoreleasepool {
+        // Build snapshots on the Realm thread.
+        var byMD5: [String: GameCellModel] = [:]
+        byMD5.reserveCapacity(games.count)
+
+        var all: [GameCellModel] = []
+        all.reserveCapacity(games.count)
+
+        for game in games where !game.isInvalidated {
+            let model = GameCellModel(game: game)
+            byMD5[model.md5] = model
+            all.append(model)
+        }
+
+        // Derive favorites from snapshots (avoids a second Realm observer).
+        let favs = all.filter { $0.isFavorite }
+
+        // Derive recently played from existing order.
+        let recents = recentMD5Order.compactMap { byMD5[$0] }
+
+        modelsByMD5 = byMD5
+
+        Task { @MainActor in
+            self.allGamesModels = self.sorted(all)
+            self.favoritesModels = self.sorted(favs)
+            self.recentlyPlayedModels = recents
+        }
+        }
+    }
+
+    func rebuildRecentOrder(from recents: Results<PVRecentGame>) {
+        autoreleasepool {
+            // Build ordering list on Realm thread.
+            recentMD5Order = recents.compactMap { recent in
+                guard !recent.isInvalidated, !recent.game.isInvalidated else { return nil }
+                return recent.game.md5Hash.uppercased()
+            }
+
+            let models = recentMD5Order.compactMap { modelsByMD5[$0] }
+
+            Task { @MainActor in
+                self.recentlyPlayedModels = models
+            }
+        }
+    }
+
+    @MainActor
+    func resortModelsOnMain() {
+        allGamesModels = sorted(allGamesModels)
+        favoritesModels = sorted(favoritesModels)
+        // recentlyPlayedModels keeps play-order, do not resort.
+    }
+
+    func sorted(_ models: [GameCellModel]) -> [GameCellModel] {
+        models.sorted { lhs, rhs in
+            if sortAscending {
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            } else {
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedDescending
+            }
+        }
     }
 }

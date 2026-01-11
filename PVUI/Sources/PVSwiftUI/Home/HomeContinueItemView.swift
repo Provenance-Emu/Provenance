@@ -43,17 +43,20 @@ struct HomeContinueItemView: SwiftUI.View {
     }
 
     /// Convenience initializer that extracts data from PVSaveState to reduce Realm observation overhead
-    init(continueState: PVSaveState, height: CGFloat, hideSystemLabel: Bool, action: @escaping () -> Void, isFocused: Bool, rootDelegate: PVRootDelegate?) {
-        self.saveStateId = continueState.id
-        self.gameTitle = continueState.game?.title
-        self.imageURL = continueState.image?.url
-        self.isInvalidated = continueState.isInvalidated
+    init(model: ContinueItemModel, height: CGFloat, hideSystemLabel: Bool, action: @escaping () -> Void, isFocused: Bool, rootDelegate: PVRootDelegate?) {
+        self.saveStateId = model.id
+        self.gameTitle = model.gameTitle
+        self.imageURL = model.imageURL
+        self.isInvalidated = false
         self.height = height
         self.hideSystemLabel = hideSystemLabel
         self.action = action
         self.isFocused = isFocused
         self.rootDelegate = rootDelegate
+        self.resolver = model.resolver
     }
+
+    private let resolver: () -> PVSaveState?
 
     var body: some SwiftUI.View {
         if !isInvalidated {
@@ -121,7 +124,7 @@ struct HomeContinueItemView: SwiftUI.View {
                 }
 
                 // Context menu items that require Realm access - fetch fresh data
-                if let continueState = RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: saveStateId),
+                if let continueState = resolver(),
                    let game = continueState.game, !game.isInvalidated {
                     Button {
                         Task.detached { @MainActor in
