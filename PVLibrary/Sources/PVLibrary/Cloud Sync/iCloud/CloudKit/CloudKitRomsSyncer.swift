@@ -52,6 +52,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private let loadAllLock = NSLock()
     private var isLoadAllInFlight: Bool = false
     private let metadataOnlyGate = MetadataOnlyGate()
+    private let artworkDownloadGate = ArtworkDownloadGate()
+    private let artworkLookupGate = ArtworkLookupGate()
     private let changeTokenStorageKey = "org.provenance.cloudsync.cloudkit.roms.zoneChangeToken.v1"
     private let changeTokenStorage = UserDefaults.standard
 
@@ -539,13 +541,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                         CloudKitSchema.SaveStateFields.directory,
                         CloudKitSchema.SaveStateFields.filename,
                         CloudKitSchema.ROMFields.originalFilename,
+                        CloudKitSchema.ROMFields.originalArtworkURL,
+                        CloudKitSchema.ROMFields.customArtworkURL,
                         CloudKitSchema.ROMFields.isDeleted
                     ]
                     if includeAssets {
                         op.desiredKeys = metadataKeys + [
                             CloudKitSchema.ROMFields.fileData,
                             CloudKitSchema.ROMFields.isArchive,
-                            CloudKitSchema.ROMFields.relatedFilenames
+                            CloudKitSchema.ROMFields.relatedFilenames,
+                            CloudKitSchema.ROMFields.customArtworkAsset
                         ]
                     } else {
                         // Metadata-only: exclude asset fields to avoid auto-downloading CKAsset payloads
@@ -620,10 +625,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     CloudKitSchema.ROMFields.systemIdentifier,
                     CloudKitSchema.ROMFields.fileSize,
                     CloudKitSchema.ROMFields.originalFilename,
+                    CloudKitSchema.ROMFields.originalArtworkURL,
+                    CloudKitSchema.ROMFields.customArtworkURL,
                     CloudKitSchema.ROMFields.isDeleted,
                     CloudKitSchema.ROMFields.fileData,
                     CloudKitSchema.ROMFields.isArchive,
-                    CloudKitSchema.ROMFields.relatedFilenames
+                    CloudKitSchema.ROMFields.relatedFilenames,
+                    CloudKitSchema.ROMFields.customArtworkAsset
                 ]
 
                 // Track download progress with speed calculation
@@ -2093,9 +2101,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
         VLOG("Finished updating game: \(localGame.title) (MD5: \(localGame.md5Hash ?? "unknown"))")
 
-        // Download custom artwork asset if available
+        // Download custom artwork asset if available.
+        // Remote-change zone fetches may omit CKAsset payloads, so fall back to an asset-inclusive fetch.
         do {
-            try await downloadCustomArtworkAsset(from: record, for: localGame)
+            let hasCustomArtworkURL = (record[CloudKitSchema.ROMFields.customArtworkURL] as? String)?.isEmpty == false
+            let hasCustomArtworkAsset = (record[CloudKitSchema.ROMFields.customArtworkAsset] as? CKAsset)?.fileURL != nil
+
+            if hasCustomArtworkURL && !hasCustomArtworkAsset {
+                if let full = try await fetchRecord(recordID: record.recordID, includeAssets: true) {
+                    try await downloadCustomArtworkAsset(from: full, for: localGame)
+                } else {
+                    try await downloadCustomArtworkAsset(from: record, for: localGame)
+                }
+            } else {
+                try await downloadCustomArtworkAsset(from: record, for: localGame)
+            }
         } catch {
             WLOG("Failed to download custom artwork for game \(localGame.title): \(error.localizedDescription)")
             // Continue with other operations even if artwork download fails
@@ -2836,6 +2856,82 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
+    private actor ArtworkDownloadGate {
+        private var inFlight: Set<String> = []
+        private let semaphore = AsyncSemaphore(value: 2)
+
+        func enqueue(md5: String, work: @escaping @Sendable (String) async -> Void) async {
+            let key = md5.uppercased()
+            guard !key.isEmpty else { return }
+            guard !inFlight.contains(key) else { return }
+            inFlight.insert(key)
+
+            let gate = self
+            Task.detached(priority: .utility) {
+                await gate.semaphore.acquire()
+                await work(key)
+                await gate.semaphore.release()
+                await gate.finish(md5: key)
+            }
+        }
+
+        private func finish(md5: String) {
+            inFlight.remove(md5)
+        }
+    }
+
+    private actor ArtworkLookupGate {
+        private var inFlight: Set<String> = []
+        private let semaphore = AsyncSemaphore(value: 1)
+
+        func enqueue(md5: String, work: @escaping @Sendable (String) async -> Void) async {
+            let key = md5.uppercased()
+            guard !key.isEmpty else { return }
+            guard !inFlight.contains(key) else { return }
+            inFlight.insert(key)
+
+            let gate = self
+            Task.detached(priority: .utility) {
+                await gate.semaphore.acquire()
+                await work(key)
+                await gate.semaphore.release()
+                await gate.finish(md5: key)
+            }
+        }
+
+        private func finish(md5: String) {
+            inFlight.remove(md5)
+        }
+    }
+
+    private actor AsyncSemaphore {
+        private var value: Int
+        private var waiters: [CheckedContinuation<Void, Never>] = []
+
+        init(value: Int) {
+            self.value = value
+        }
+
+        func acquire() async {
+            if value > 0 {
+                value -= 1
+                return
+            }
+            await withCheckedContinuation { continuation in
+                waiters.append(continuation)
+            }
+        }
+
+        func release() {
+            if !waiters.isEmpty {
+                let waiter = waiters.removeFirst()
+                waiter.resume()
+            } else {
+                value += 1
+            }
+        }
+    }
+
     private func syncMetadataOnlyBody() async -> Int {
         if CloudSyncManager.shared.isPausedForEmulation {
             ILOG("[SYNC] ROM metadata sync skipped (paused for emulation)")
@@ -2847,7 +2943,17 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         do {
             // Must include originalFilename - required for createPVGame
             let metadataKeys: [CKRecord.FieldKey] = [
-                "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc", "originalFilename"
+                CloudKitSchema.ROMFields.md5,
+                CloudKitSchema.ROMFields.title,
+                CloudKitSchema.ROMFields.systemIdentifier,
+                CloudKitSchema.ROMFields.fileSize,
+                CloudKitSchema.ROMFields.relativePath,
+                CloudKitSchema.SaveStateFields.directory,
+                CloudKitSchema.ROMFields.crc,
+                CloudKitSchema.ROMFields.originalFilename,
+                // Include string artwork keys (no CKAsset) so we can queue asset downloads separately.
+                CloudKitSchema.ROMFields.originalArtworkURL,
+                CloudKitSchema.ROMFields.customArtworkURL
             ]
             let metadataQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
             let metadataRecords = try await fetchAllRecords(matching: metadataQuery, desiredKeys: metadataKeys)
@@ -2877,6 +2983,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         let originalFilename: String
         let fileSize: Int
         let hasCloudAssets: Bool
+        let originalArtworkURL: String?
+        let customArtworkURL: String?
     }
 
     private func makeMetadataSnapshot(from record: CKRecord) -> ROMMetadataSnapshot? {
@@ -2914,7 +3022,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             systemIdentifier: systemIdentifier,
             originalFilename: originalFilename,
             fileSize: explicitFileSize,
-            hasCloudAssets: hasCloudAssets
+            hasCloudAssets: hasCloudAssets,
+            originalArtworkURL: record[CloudKitSchema.ROMFields.originalArtworkURL] as? String,
+            customArtworkURL: record[CloudKitSchema.ROMFields.customArtworkURL] as? String
         )
     }
 
@@ -2962,11 +3072,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     private func applyMetadataSnapshotsBatch(_ snapshots: [ROMMetadataSnapshot]) async throws -> (created: Int, updated: Int, skipped: Int, failed: Int) {
-        try await withRealm { realm in
+        let result = try await withRealm { realm in
             var created = 0
             var updated = 0
             var skipped = 0
             var failed = 0
+            var artworkMD5s: [String] = []
+            var lookupMD5s: [String] = []
 
             try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
                 try realm.write {
@@ -2995,7 +3107,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                                 game.fileSize = snap.fileSize
                             }
 
-                            // Metadata-only reads omit asset field; `recordDeclaresAssetPresence` treats that as true.
+                            // Sync artwork URL values (string-only); asset download happens out-of-band.
+                            if let cloudOriginalArtworkURL = snap.originalArtworkURL,
+                               !cloudOriginalArtworkURL.isEmpty,
+                               game.originalArtworkURL.isEmpty {
+                                game.originalArtworkURL = cloudOriginalArtworkURL
+                            }
+                            if let cloudCustomArtworkURL = snap.customArtworkURL,
+                               !cloudCustomArtworkURL.isEmpty {
+                                if game.customArtworkURL != cloudCustomArtworkURL {
+                                    game.customArtworkURL = cloudCustomArtworkURL
+                                }
+                                artworkMD5s.append(snap.md5)
+                            }
+
+                            // Metadata-only reads omit asset fields.
                             if snap.hasCloudAssets && !game.hasCloudAssets {
                                 game.hasCloudAssets = true
                             }
@@ -3018,6 +3144,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             newGame.fileSize = snap.fileSize
                             newGame.hasCloudAssets = snap.hasCloudAssets
                             newGame.isDownloaded = false
+                            if let cloudOriginalArtworkURL = snap.originalArtworkURL, !cloudOriginalArtworkURL.isEmpty {
+                                newGame.originalArtworkURL = cloudOriginalArtworkURL
+                            }
+                            if let cloudCustomArtworkURL = snap.customArtworkURL, !cloudCustomArtworkURL.isEmpty {
+                                newGame.customArtworkURL = cloudCustomArtworkURL
+                                artworkMD5s.append(snap.md5)
+                            } else if (snap.originalArtworkURL?.isEmpty ?? true) {
+                                // No cloud artwork fields at all: fall back to PVLookup artwork pipeline.
+                                lookupMD5s.append(snap.md5)
+                            }
 
                             realm.add(newGame, update: .modified)
                             created += 1
@@ -3026,8 +3162,34 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             }
 
-            return (created, updated, skipped, failed)
+            return (created: created, updated: updated, skipped: skipped, failed: failed, artworkMD5s: artworkMD5s, lookupMD5s: lookupMD5s)
         }
+
+        // Eager-all: queue artwork downloads for any games with a cloud custom artwork key.
+        // Throttled + deduped to avoid boot stalls.
+        let uniqueMD5s = Array(Set(result.artworkMD5s))
+        for md5 in uniqueMD5s {
+            await artworkDownloadGate.enqueue(md5: md5) { [weak self] md5 in
+                guard let self else { return }
+                if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled { return }
+                let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
+                guard let record = try? await self.fetchRecord(recordID: recordID, includeAssets: true) else { return }
+                guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
+                try? await self.downloadCustomArtworkAsset(from: record, for: liveGame)
+            }
+        }
+
+        // Fallback: for games with no cloud artwork fields at all, run the existing PVLookup artwork pipeline.
+        let uniqueLookupMD5s = Array(Set(result.lookupMD5s))
+        for md5 in uniqueLookupMD5s {
+            await artworkLookupGate.enqueue(md5: md5) { [weak self] md5 in
+                guard let self else { return }
+                if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled { return }
+                await self.enhanceGameWithArtworkAndMetadata(md5: md5)
+            }
+        }
+
+        return (created: result.created, updated: result.updated, skipped: result.skipped, failed: result.failed)
     }
 
     /// Legacy sequential sync method - slower but more reliable for debugging
@@ -3036,7 +3198,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         ILOG("[SYNC] Starting sequential ROM metadata sync...")
         do {
             let metadataKeys: [CKRecord.FieldKey] = [
-                "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc", "originalFilename"
+                CloudKitSchema.ROMFields.md5,
+                CloudKitSchema.ROMFields.title,
+                CloudKitSchema.ROMFields.systemIdentifier,
+                CloudKitSchema.ROMFields.fileSize,
+                CloudKitSchema.ROMFields.relativePath,
+                CloudKitSchema.SaveStateFields.directory,
+                CloudKitSchema.ROMFields.crc,
+                CloudKitSchema.ROMFields.originalFilename,
+                CloudKitSchema.ROMFields.originalArtworkURL,
+                CloudKitSchema.ROMFields.customArtworkURL
             ]
             let metadataQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
             let metadataRecords = try await fetchAllRecords(matching: metadataQuery, desiredKeys: metadataKeys)
@@ -3073,7 +3244,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Metadata-first: exclude asset fields to avoid implicit CKAsset downloads filling caches
         // Must include originalFilename - required for createPVGame
         let metadataKeys: [CKRecord.FieldKey] = [
-            "md5", "title", "systemIdentifier", "fileSize", "relativePath", "directory", "crc", "originalFilename"
+            CloudKitSchema.ROMFields.md5,
+            CloudKitSchema.ROMFields.title,
+            CloudKitSchema.ROMFields.systemIdentifier,
+            CloudKitSchema.ROMFields.fileSize,
+            CloudKitSchema.ROMFields.relativePath,
+            CloudKitSchema.SaveStateFields.directory,
+            CloudKitSchema.ROMFields.crc,
+            CloudKitSchema.ROMFields.originalFilename,
+            CloudKitSchema.ROMFields.originalArtworkURL,
+            CloudKitSchema.ROMFields.customArtworkURL
         ]
         let query = CKQuery(recordType: "ROM", predicate: NSPredicate(value: true))
         let fetched = try await fetchAllRecords(matching: query, desiredKeys: metadataKeys)

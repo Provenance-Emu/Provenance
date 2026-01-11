@@ -46,6 +46,8 @@ public enum CloudKitSchema {
         public static let fileSize = "fileSize" // Int64
         public static let originalFilename = "originalFilename" // String
         public static let relatedFilenames = "relatedFilenames" // [String]?
+        public static let relativePath = "relativePath" // String? (Optional)
+        public static let crc = "crc" // String? (Optional)
 
         // OpenVGDB Metadata (Optional Strings)
         public static let title = "title" // String (Maybe redundant if derived from originalFilename, but good for display)
