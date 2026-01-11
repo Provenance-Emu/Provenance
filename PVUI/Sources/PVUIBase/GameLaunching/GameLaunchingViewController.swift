@@ -974,20 +974,29 @@ extension GameLaunchingViewController where Self: UIViewController {
             return
         }
 
+        // Contentless games intentionally have no ROM file; bypass file checks/downloads.
+        let isContentless = game.contentless
+
         // Check if file exists locally - handle race condition where CloudKit sync created PVGame before local scan
-        let localFileCheckResult = await checkAndUpdateLocalFile(for: game, system: system)
-        if localFileCheckResult.updated {
-            ILOG("Found local file for game \(game.title) at expected path, updated database")
-            // Refresh game reference after database update
-            if let updatedGame = RomDatabase.sharedInstance.game(withMD5: game.md5Hash) {
-                game = updatedGame
+        let localFileCheckResult: (fileExists: Bool, updated: Bool)
+        if isContentless {
+            localFileCheckResult = (fileExists: true, updated: false)
+        } else {
+            let result = await checkAndUpdateLocalFile(for: game, system: system)
+            if result.updated {
+                ILOG("Found local file for game \(game.title) at expected path, updated database")
+                // Refresh game reference after database update
+                if let updatedGame = RomDatabase.sharedInstance.game(withMD5: game.md5Hash) {
+                    game = updatedGame
+                }
             }
+            localFileCheckResult = result
         }
 
         // Now check if file is available (either local or needs download)
-        let hasLocalFile = localFileCheckResult.fileExists
-        let offline: Bool = !(game.file?.online ?? true) && !hasLocalFile
-        let needsDownload = (offline && !hasLocalFile) || (!hasLocalFile && game.file?.url != nil)
+        let hasLocalFile = isContentless ? true : localFileCheckResult.fileExists
+        let offline: Bool = isContentless ? false : (!(game.file?.online ?? true) && !hasLocalFile)
+        let needsDownload = isContentless ? false : ((offline && !hasLocalFile) || (!hasLocalFile && game.file?.url != nil))
 
         // If download is needed, validate requirements BEFORE downloading
         if needsDownload {

@@ -233,6 +233,17 @@ public class SceneCoordinator: ObservableObject {
             return
         }
 
+        // Contentless placeholder games intentionally have no ROM file; skip file/sync validation.
+        if game.contentless {
+            syncStatusManager.hide()
+            AppState.shared.emulationUIState.currentGame = game
+            if let core = core {
+                AppState.shared.emulationUIState.currentCore = core
+            }
+            openEmulatorScene()
+            return
+        }
+
         // Check if the game needs to be downloaded from the cloud
         let needsDownload = !game.isDownloaded || !(game.file?.online ?? true)
 
