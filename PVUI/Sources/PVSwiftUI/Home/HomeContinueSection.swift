@@ -941,7 +941,21 @@ struct HomeContinueSection: SwiftUI.View {
     }
 
     private func resolveCurrentSaveState() -> PVSaveState? {
-        viewModel.currentItem?.resolver()
+        currentDisplayItem()?.resolver()
+    }
+
+    /// Derive the display item directly from focus/page to avoid stale cached selections.
+    private func currentDisplayItem() -> ContinueItemModel? {
+        if let focusedId = parentFocusedItem,
+           let focused = limitedItems.first(where: { $0.id == focusedId }) {
+            return focused
+        }
+
+        let page = viewModel.currentPage
+        guard page >= 0, page < pagedItems.count else {
+            return limitedItems.first
+        }
+        return pagedItems[page].first ?? limitedItems.first
     }
 
     private func rebuildPagedItems() {
