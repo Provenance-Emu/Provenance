@@ -14,6 +14,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// Track save-state records that need a deferred retry once ROM metadata is available.
     private var pendingRecordRetries = ConcurrentSet<String>()
     private let pendingROMMetadataFetches = PendingROMMetadataFetches()
+    private let deferredRetryGate = DeferredSaveStateRetryGate()
 
     /// Prevent concurrent full-library scans. Multiple boot-time call sites can trigger this.
     private let loadAllLock = NSLock()
@@ -50,6 +51,49 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             }
 
             return result
+        }
+    }
+
+    /// Prevents tight save-state retry loops when ROM metadata cannot be fetched (missing record, transient failures, etc).
+    /// This is separate from `PendingROMMetadataFetches` (which only dedupes the ROM fetch itself) because we also need
+    /// to throttle the *save-state reprocessing* retries.
+    private actor DeferredSaveStateRetryGate {
+        private struct State {
+            var failures: Int
+            var nextAllowedAt: UInt64
+        }
+
+        private var perMD5: [String: State] = [:]
+        private var perRecord: [String: State] = [:]
+
+        func nextDelayNanos(recordID: String, md5: String) -> UInt64 {
+            let now = DispatchTime.now().uptimeNanoseconds
+            let md5Key = md5.uppercased()
+
+            let md5State = bump(state: perMD5[md5Key], now: now)
+            perMD5[md5Key] = md5State
+
+            let recState = bump(state: perRecord[recordID], now: now)
+            perRecord[recordID] = recState
+
+            let next = max(md5State.nextAllowedAt, recState.nextAllowedAt)
+            return next > now ? (next - now) : 0
+        }
+
+        func clear(recordID: String, md5: String) {
+            perMD5.removeValue(forKey: md5.uppercased())
+            perRecord.removeValue(forKey: recordID)
+        }
+
+        private func bump(state: State?, now: UInt64) -> State {
+            var s = state ?? State(failures: 0, nextAllowedAt: 0)
+            s.failures += 1
+
+            // Exponential backoff: 1s,2s,4s,... capped at 5 minutes.
+            let backoffSeconds = min(300.0, pow(2.0, Double(min(s.failures, 9))))
+            let backoffNanos = UInt64(backoffSeconds * 1_000_000_000)
+            s.nextAllowedAt = max(s.nextAllowedAt, now + backoffNanos)
+            return s
         }
     }
 
@@ -1024,11 +1068,19 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             /// If we have an MD5, try to fetch and process the ROM metadata first
             if let md5 = gameMD5,
                let romsSyncer = CloudSyncManager.shared.romsSyncer as? CloudKitRomsSyncer {
+                // Back off retries for save states whose ROM metadata can't be fetched yet.
+                // Without this, we can end up in an endless hot loop reprocessing the same records.
+                let delay = await self.deferredRetryGate.nextDelayNanos(recordID: recordID, md5: md5)
+                if delay > 0 {
+                    try? await Task.sleep(nanoseconds: delay)
+                }
+
                 ILOG("[SYNC] Fetching ROM metadata for MD5 \(md5) to enable save state processing")
                 let success = await self.pendingROMMetadataFetches.fetch(md5: md5) {
                     await romsSyncer.fetchAndProcessROMMetadata(md5: md5)
                 }
                 if success {
+                    await self.deferredRetryGate.clear(recordID: recordID, md5: md5)
                     ILOG("[SYNC] Successfully processed ROM metadata for MD5 \(md5)")
                 } else {
                     WLOG("[SYNC] Failed to process ROM metadata for MD5 \(md5)")
