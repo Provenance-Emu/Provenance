@@ -1408,12 +1408,17 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func gamesSection() -> some View {
         Group {
-            if allGamesModels.isEmpty && AppState.shared.isSimulator {
-                let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
-                if viewModel.viewGamesAsGrid {
-                    showGamesGrid(fakeGames)
+            if allGamesModels.isEmpty {
+                if AppState.shared.isSimulator {
+                    let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
+                    if viewModel.viewGamesAsGrid {
+                        showGamesGrid(fakeGames)
+                    } else {
+                        showGamesList(fakeGames)
+                    }
                 } else {
-                    showGamesList(fakeGames)
+                    cloudSyncUpsell()
+                        .padding(.vertical, 12)
                 }
             } else {
                 VStack(alignment: .leading) {
@@ -1597,6 +1602,23 @@ private struct ConditionalSearchModifier: ViewModifier {
             content
                 .searchable(text: .constant(""), prompt: "")
         }
+    }
+}
+
+extension ConsoleGamesView {
+    @ViewBuilder
+    private func cloudSyncUpsell() -> some View {
+        CloudSyncUpsellView(
+            hasCachedCloudData: CloudSyncUpsellView.detectCachedCloudData(),
+            onOpenSettings: {
+                SettingsNavigator.shared.navigate(to: .cloudSync)
+                NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+            },
+            onUpgrade: {
+                SettingsNavigator.shared.navigate(to: .cloudSync)
+                NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+            }
+        )
     }
 }
 #endif

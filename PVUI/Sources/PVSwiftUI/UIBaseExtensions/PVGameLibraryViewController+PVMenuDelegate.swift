@@ -17,9 +17,9 @@ import FreemiumKit
 
 extension PVGameLibraryViewController: PVMenuDelegate {
     public func didTapImports() {
-        
+
     }
-    
+
     public func didTapSettings() {
         // TODO: This is a copy/paste from PVRootViewController+PVMenuDelegate
         let settingsView = PVSettingsView(
@@ -33,6 +33,7 @@ extension PVGameLibraryViewController: PVMenuDelegate {
         #if canImport(FreemiumKit)
         .environmentObject(FreemiumKit.shared)
         #endif
+            .environmentObject(SettingsNavigator.shared)
 
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
@@ -40,26 +41,26 @@ extension PVGameLibraryViewController: PVMenuDelegate {
         self.closeMenu()
         self.present(navigationController, animated: true)
     }
-    
+
     public func didTapHome() {
-        
+
     }
-    
+
     public func didTapAddGames() {
-        
+
     }
-    
+
     public func didTapConsole(with consoleId: String) {
-        
+
     }
-    
+
     public func didTapCollection(with collection: Int) {
-        
+
     }
-    
+
     public func closeMenu() {
-        
+
     }
-    
+
 
 }

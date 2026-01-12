@@ -135,6 +135,14 @@ struct HomeView: SwiftUI.View {
         ].compactMap { $0 }
     }
 
+    private var isLibraryCompletelyEmpty: Bool {
+        allGames.isEmpty &&
+        recentlyPlayedGames.isEmpty &&
+        favorites.isEmpty &&
+        mostPlayed.isEmpty &&
+        recentSaveStates.isEmpty
+    }
+
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             VStack(spacing: 0) {
@@ -187,6 +195,10 @@ struct HomeView: SwiftUI.View {
                 ) {
                     ScrollViewReader { proxy in
                         LazyVStack {
+                            if isLibraryCompletelyEmpty {
+                                cloudSyncUpsell()
+                                    .padding(.horizontal)
+                            }
                             continuesSection()
                                 .id("section_continues")
                             favoritesSection()
@@ -538,6 +550,21 @@ struct HomeView: SwiftUI.View {
                 UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
                     showArtworkSourceAlert = false
                 }
+            }
+        )
+    }
+
+    @ViewBuilder
+    private func cloudSyncUpsell() -> some View {
+        CloudSyncUpsellView(
+            hasCachedCloudData: CloudSyncUpsellView.detectCachedCloudData(),
+            onOpenSettings: {
+                SettingsNavigator.shared.navigate(to: .cloudSync)
+                NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+            },
+            onUpgrade: {
+                SettingsNavigator.shared.navigate(to: .cloudSync)
+                NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
             }
         )
     }

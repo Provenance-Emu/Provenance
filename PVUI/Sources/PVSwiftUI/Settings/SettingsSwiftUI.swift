@@ -464,6 +464,7 @@ public struct PVSettingsView: View {
     @StateObject private var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
     @StateObject private var advancedSkinFeaturesFlag = PVFeatureFlagsManager.shared.flag(.advancedSkinFeatures)
+    private let settingsNavigator = SettingsNavigator.shared
     var dismissAction: () -> Void
     weak var menuDelegate: PVMenuDelegate!
 
@@ -473,6 +474,8 @@ public struct PVSettingsView: View {
     #if !os(tvOS)
     @State private var selectedTab: Int = 0
     #endif
+    @State private var showCloudSync = false
+    @State private var destinationCancellable: AnyCancellable?
 
     // Update initializer to take dismissAction
     public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, showsDoneButton: Bool = true, dismissAction: @escaping () -> Void) {
@@ -485,6 +488,7 @@ public struct PVSettingsView: View {
     public var body: some View {
         NavigationView {
             ZStack {
+                navigationLinks
                 // Background using theme palette
                 Color(themeManager.currentPalette.gameLibraryBackground)
                     .edgesIgnoringSafeArea(.all)
@@ -657,6 +661,14 @@ public struct PVSettingsView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            subscribeSettingsDestination()
+            handleSettingsDestination(settingsNavigator.destination)
+        }
+        .onDisappear {
+            destinationCancellable?.cancel()
+            destinationCancellable = nil
+        }
     }
 
 #if os(tvOS)
@@ -672,6 +684,29 @@ public struct PVSettingsView: View {
             RetroTabItem(title: "Advanced", systemImage: "gearshape.2.fill"),
             RetroTabItem(title: "About", systemImage: "info.circle.fill")
         ]
+    }
+
+    @ViewBuilder
+    private var navigationLinks: some View {
+        NavigationLink(destination: CloudSyncSettingsView(), isActive: $showCloudSync) { EmptyView() }
+            .hidden()
+    }
+
+    private func subscribeSettingsDestination() {
+        guard destinationCancellable == nil else { return }
+        destinationCancellable = settingsNavigator.$destination.sink { dest in
+            handleSettingsDestination(dest)
+        }
+    }
+
+    private func handleSettingsDestination(_ destination: SettingsDestination) {
+        switch destination {
+        case .cloudSync:
+            showCloudSync = true
+            settingsNavigator.navigate(to: .none)
+        case .none:
+            break
+        }
     }
 
     private var generalTabContent: some View {

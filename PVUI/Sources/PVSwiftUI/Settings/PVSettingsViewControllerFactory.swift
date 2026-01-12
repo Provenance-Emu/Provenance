@@ -23,6 +23,7 @@ public class SwiftUISettingsViewControllerFactory: PVSettingsViewControllerFacto
         #if canImport(FreemiumKit)
         .environmentObject(FreemiumKit.shared)
         #endif
+        .environmentObject(SettingsNavigator.shared)
         return UIHostingController(rootView: settingsView)
     }
 }

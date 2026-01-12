@@ -766,6 +766,20 @@ public struct RetroGameLibraryView: View {
                 }
                 .padding(.top, 20)
 
+                // Cloud sync CTA for premium users with empty libraries
+                CloudSyncUpsellView(
+                    hasCachedCloudData: CloudSyncUpsellView.detectCachedCloudData(),
+                    onOpenSettings: {
+                        SettingsNavigator.shared.navigate(to: .cloudSync)
+                        showImportOptions()
+                    },
+                    onUpgrade: {
+                        SettingsNavigator.shared.navigate(to: .cloudSync)
+                        showImportOptions()
+                    }
+                )
+                .padding(.horizontal)
+
                 // Web server status - show when server is running
                 if isWebServerRunning {
                     webServerStatusView()

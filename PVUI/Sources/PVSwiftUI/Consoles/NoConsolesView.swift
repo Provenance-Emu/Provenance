@@ -8,6 +8,7 @@
 
 import SwiftUI
 import PVThemes
+import PVUIBase
 import AnimatedGradient
 
 /// Animated gradient background for the NoConsolesView
@@ -32,13 +33,13 @@ public struct PVAnimatedGradient: View {
 public struct NoConsolesView: SwiftUI.View {
     /// Delegate to handle user actions
     weak var delegate: PVMenuDelegate!
-    
+
     /// Animation state for glow effect
     @State private var glowOpacity: Double = 0.7
-    
+
     /// Animation state for title
     @State private var titleOffset: CGFloat = -10
-    
+
     public var body: some SwiftUI.View {
         ZStack {
             // Background
@@ -47,11 +48,11 @@ public struct NoConsolesView: SwiftUI.View {
             } else {
                 PVAnimatedGradient()
             }
-            
+
             // Grid pattern
             RetroGridPattern()
                 .opacity(0.3)
-            
+
             // Content container
             VStack(spacing: 30) {
                 // Title with animation
@@ -81,13 +82,13 @@ public struct NoConsolesView: SwiftUI.View {
                     )
                     .shadow(color: Color.retroPink.opacity(glowOpacity), radius: 10, x: 0, y: 0)
                     .offset(y: titleOffset)
-                
+
                 // Description text
                 Text("Import games to start playing")
                     .font(.system(size: 18, weight: .medium, design: .monospaced))
                     .foregroundColor(.white.opacity(0.8))
                     .padding(.bottom, 10)
-                
+
                 // Add Games button with retrowave styling
                 Button(action: {
                     delegate?.didTapAddGames()
@@ -122,6 +123,19 @@ public struct NoConsolesView: SwiftUI.View {
                     .cornerRadius(8)
                     .shadow(color: Color.retroBlue.opacity(glowOpacity), radius: 10, x: 0, y: 0)
                 }
+
+                CloudSyncUpsellView(
+                    hasCachedCloudData: CloudSyncUpsellView.detectCachedCloudData(),
+                    onOpenSettings: {
+                        SettingsNavigator.shared.navigate(to: .cloudSync)
+                        NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+                    },
+                    onUpgrade: {
+                        SettingsNavigator.shared.navigate(to: .cloudSync)
+                        NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+                    }
+                )
+                .padding(.horizontal)
             }
             .padding(30)
             .onAppear {
@@ -129,7 +143,7 @@ public struct NoConsolesView: SwiftUI.View {
                 withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     glowOpacity = 0.4
                 }
-                
+
                 // Animate title
                 withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                     titleOffset = 10

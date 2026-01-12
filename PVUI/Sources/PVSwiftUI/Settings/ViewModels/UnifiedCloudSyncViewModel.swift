@@ -670,6 +670,15 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                         deltaSkins: categorizedFileCounts.deltaSkins
                     )
                     self.isLoadingCloudKitRecords = false
+                    let snapshot: [String: Int] = [
+                        "roms": romCount,
+                        "saveStates": saveStateCount,
+                        "bios": biosCount,
+                        "batteryStates": categorizedFileCounts.batteryStates,
+                        "screenshots": categorizedFileCounts.screenshots,
+                        "deltaSkins": categorizedFileCounts.deltaSkins
+                    ]
+                    UserDefaults.standard.set(snapshot, forKey: "org.provenance.cloudsync.cloudkit.lastRecordCounts")
                 }
 
             } catch {

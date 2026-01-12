@@ -74,6 +74,7 @@ extension PVRootViewController: PVMenuDelegate {
 #if canImport(FreemiumKit)
             .environmentObject(FreemiumKit.shared)
 #endif
+            .environmentObject(SettingsNavigator.shared)
 
         let hostingController = UIHostingController(rootView: settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
