@@ -488,7 +488,9 @@ public struct PVSettingsView: View {
     public var body: some View {
         NavigationView {
             ZStack {
+                #if !os(tvOS)
                 navigationLinks
+                #endif
                 // Background using theme palette
                 Color(themeManager.currentPalette.gameLibraryBackground)
                     .edgesIgnoringSafeArea(.all)
@@ -662,8 +664,10 @@ public struct PVSettingsView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
+            #if !os(tvOS)
             subscribeSettingsDestination()
             handleSettingsDestination(settingsNavigator.destination)
+            #endif
         }
         .onDisappear {
             destinationCancellable?.cancel()
