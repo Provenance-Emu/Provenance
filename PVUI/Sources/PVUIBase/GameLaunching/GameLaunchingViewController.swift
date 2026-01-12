@@ -1059,6 +1059,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
             var selectedCore: PVCore?
             var selectedSaveState: PVSaveState? = saveState
+            var skipLegacySaveStatePrompt = false
 
             // If a save state is passed in and its core is valid, use it directly
             if let saveState = saveState {
@@ -1097,11 +1098,13 @@ extension GameLaunchingViewController where Self: UIViewController {
                     case .startFresh(let core):
                         selectedCore = core
                         selectedSaveState = nil
+                        skipLegacySaveStatePrompt = true
                         ILOG("Unified flow: Starting fresh with \(core.projectName)")
 
                     case .loadSave(let save, let core):
                         selectedCore = core
                         selectedSaveState = save
+                        skipLegacySaveStatePrompt = false
                         ILOG("Unified flow: Loading save from \(core.projectName)")
 
                     case .cancelled, .none:
@@ -1125,7 +1128,13 @@ extension GameLaunchingViewController where Self: UIViewController {
             if selectedSaveState != nil {
                 await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: selectedSaveState, source: sender as? UIView ?? presentingView)
             } else {
-                await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: nil, source: sender as? UIView ?? presentingView)
+                await presentEMU(
+                    withCore: selectedCore,
+                    forGame: game,
+                    fromSaveState: nil,
+                    source: sender as? UIView ?? presentingView,
+                    skipSaveStatePrompt: skipLegacySaveStatePrompt
+                )
             }
         } catch let GameLaunchingError.missingBIOSes(missingBIOSes) {
             // Create missing BIOS directory to help user out
@@ -1309,7 +1318,16 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
     }
 
-    @MainActor private func presentEMU(withCore core: PVCore, forGame game: PVGame, fromSaveState saveState: PVSaveState? = nil, source: UIView?) async {
+    /// Presents the emulator and optionally prompts the user about continuing from a save state.
+    /// - Note: When a caller has already explicitly decided to **start fresh** (e.g. via `RetroSaveSelectionAlertView`),
+    ///   pass `skipSaveStatePrompt = true` to avoid falling back to the legacy UIKit prompt.
+    @MainActor private func presentEMU(
+        withCore core: PVCore,
+        forGame game: PVGame,
+        fromSaveState saveState: PVSaveState? = nil,
+        source: UIView?,
+        skipSaveStatePrompt: Bool = false
+    ) async {
         guard let realm = await try? Realm() else {
             ELOG("Realm initialization failed")
             return
@@ -1335,7 +1353,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         // This handles RetroArch cores where supportsSaveStates may be false before core initialization
         let hasSavesInDatabase = !game.saveStates.filter("core.identifier == %@", core.identifier).isEmpty ||
                                   !game.autoSaves.filter("core.identifier == %@", core.identifier).isEmpty
-        let shouldCheckForSaves = saveState == nil && (emulatorViewController.core.supportsSaveStates || hasSavesInDatabase)
+        let shouldCheckForSaves = !skipSaveStatePrompt && saveState == nil && (emulatorViewController.core.supportsSaveStates || hasSavesInDatabase)
 
         if shouldCheckForSaves {
             @ThreadSafe var theadsafeCore = core
