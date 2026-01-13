@@ -1,41 +1,45 @@
 # TODO.md
 
+## tvOS
+
+- [ ] New banner image that doesn't use copyrighted art
+- [X] TopShelf extension working and right archs
+- [X] Contenxt Menu 'Games'
+  - [X] Remove skins item
+  - [X] Rename and other alerts needt to steal focus
+- [X] Add a way to open the import queue
+- [X] RetroArch cores not centered
+- [X] Settings UI
+  - [X] Back on sub-pages opens side menu
+  - [X] Sub-pages with left scrolling selection always opens menu
+- [X] Pause menu
+  - [X] Pause menu 'Game Info' UI broken
+  - [X] Opening Core Options unpauses the game
+  - [X] Screen filter selector not working
+  - [X] Cheat Codes UI crashes
+  - [X] mFI double tap home hides app instead of showing pause menu
+- [ ] RetroArch cores MFi issue
+    - [ ] Controller 1 presses both p1 and p2
+    - [ ] Controller 1 share shows retroarch menu, should be pause?
+    - [ ] Controller 1 options (start) presses P2 start only (doesn't seem to be siri remote)
+- [ ] Space is blowing up?
+- [X] CloudKit PVGame "Favorite" and other values possibly not syncing
+- [X] Log viewer UI, can't scroll on tvOS, can only access from settings, and focus could be pretteir
+- [X] 3.3.0 release notes to app
+
 ## Before merge to release
 
-- [ ] Remove or fix spotlight breaking the library
-- [ ] Better screenshot support (protocol, fix gamecube and retroarch)
-- [X] Dolhin hacks options, especially vbi sync off
-- [ ] Fix all @MainActor code in cloudkit sync
-- [ ] Fix rotation
-- [ ] Option to use a custom skin or not
-- [ ] if rotate and same skin, don't reload
-- [ ] Retroarch needs to pause showing menu
-- [X] remove slow metalvc logs
-- [ ] singlepage error on loading core results in stuck screen
 - [ ] some cores, like quake not showing retroarch controller even though it should be on for them
-- [ ] RetroArch save states isn't accurate
-
-## Skins
-
-- [ ] Joysticks don't move
-- [ ] N64 DPAD not working
-- [ ] PSP skins not working
-- [ ] "Scalable" verticle skins still not rendering correctly
-- [ ] GLES Retroarch cores not working (N64, PSP)
-- [X] save and quit in the new pause menu
-- [X] uikit settings needs useUIKit replaced with new selections
-- [X] homeview settings bar size and padding
-- [X] RetroArch cores don't work with skins
 
 ## Other
 
 - [ ] Move unsupport cores to general settings?
 - [ ] Moveable buttons goes weird
 - [ ] Moveable buttons in the pause menu and close button
-- [ ] Indicator in import queue for roms that are being copied from the cloud
-- [ ] Indicator on game start that could games are being downloaded
+- [X] Indicator in import queue for roms that are being copied from the cloud
+- [X] Indicator on game start that cloud games are being downloaded
 - [ ] Add mutli-select delete/move/favorite support
 - [ ] Hookup PVMediaCache trimDiskCache, fix it, and make it work with the status info thing (maybe add a force button too)
-- [ ] retroarch audio visualizer
-- [ ] test v-sync
+- [X] retroarch audio visualizer
+- [X] test v-sync
 - [ ] RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK for Melon DS specific screen layout, reference JesseTG message in Discord for details, https://github.com/libretro/RetroArch/blob/master/libretro-common/include/libretro.h#L1366-L1387
