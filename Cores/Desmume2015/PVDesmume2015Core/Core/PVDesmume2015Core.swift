@@ -15,7 +15,7 @@ import PVCoreBridgeRetro
 @objc
 @objcMembers
 open class PVDesmume2015Core: PVEmulatorCore {
-    public override var supportsSkins: Bool { true }
+    public override var supportsSkins: Bool { false }
 
     public override var supportsDualScreens: Bool { true }
     
