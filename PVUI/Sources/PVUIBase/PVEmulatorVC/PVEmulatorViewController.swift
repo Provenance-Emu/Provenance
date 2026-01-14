@@ -269,10 +269,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             emulationUIState.emulator = self
         }
         // Update the singleton state
+        let coreId = core.coreIdentifier ?? ""
+        let sysId = core.systemIdentifier ?? ""
         Task {
             await EmulationState.shared.update { state in
-                state.coreClassName = core.coreIdentifier ?? ""
-                state.systemName = core.systemIdentifier ?? ""
+                state.coreClassName = coreId
+                state.systemName = sysId
                 state.isOn = true
             }
         }
@@ -785,10 +787,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         enableControllerInput(false)
 
         // Update the singleton state
+        let coreId2 = core.coreIdentifier ?? ""
+        let sysId2 = core.systemIdentifier ?? ""
         Task {
             await EmulationState.shared.update { state in
-                state.coreClassName = core.coreIdentifier ?? ""
-                state.systemName = core.systemIdentifier ?? ""
+                state.coreClassName = coreId2
+                state.systemName = sysId2
                 state.isOn = true
             }
         }
@@ -1364,8 +1368,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         emulationUIState.core = nil
         emulationUIState.emulator = nil
 
-        let emulationState = AppState.shared.emulationState
-        emulationState.isOn = false
+        Task {
+            await EmulationState.shared.setIsOn(false)
+        }
 
         fpsTimer?.invalidate()
         fpsTimer = nil

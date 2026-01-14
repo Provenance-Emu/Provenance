@@ -120,10 +120,12 @@ import PVLogging
         shouldStop = false
         isOn = true
         // Update the singleton state
+        let coreId = self.coreIdentifier ?? ""
+        let sysId = self.systemIdentifier ?? ""
         Task {
             await EmulationState.shared.update { state in
-                state.coreClassName = self.coreIdentifier ?? ""
-                state.systemName = self.systemIdentifier ?? ""
+                state.coreClassName = coreId
+                state.systemName = sysId
                 state.isOn = true
             }
         }

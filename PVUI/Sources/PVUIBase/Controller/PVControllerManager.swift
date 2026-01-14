@@ -868,7 +868,7 @@ public extension GCKeyboard {
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
 
             // Bind / to select, rightShift to start
-            if let emulator = emulationUIState.emulator, let core = emulationUIState.core, EmulationState.shared.isOn, core.isRunning {
+            if let emulator = emulationUIState.emulator, let core = emulationUIState.core, EmulationState.shared.stateSubject.value.isOn, core.isRunning {
                 if (isPressed(.slash)) {
                     print("Select Pressed\n")
                     emulator.controllerViewController?.pressSelect(forPlayer: 0)

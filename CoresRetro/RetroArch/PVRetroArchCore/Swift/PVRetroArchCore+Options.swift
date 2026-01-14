@@ -51,7 +51,7 @@ extension PVRetroArchCoreOptions: SubCoreOptional {
             isDOS=true
             subCoreOptions.append(numKeyControllerOption)
         }
-        if EmulationState.shared.isOn,
+        if EmulationState.shared.stateSubject.value.isOn,
            systemName.contains("appleII") {
             subCoreOptions.append(apple2MachineOption)
         }
@@ -258,11 +258,13 @@ extension PVRetroArchCoreCore: @preconcurrency CoreOptional, SubCoreOptional {
     }
 
     private static var identifier: String {
-        EmulationState.shared.coreClassName.isEmpty ? "retroarch" : EmulationState.shared.coreClassName
+        let name = EmulationState.shared.stateSubject.value.coreClassName
+        return name.isEmpty ? "retroarch" : name
     }
 
     private static var systemName: String {
-        EmulationState.shared.systemName.isEmpty ? "retroarch" : EmulationState.shared.systemName
+        let name = EmulationState.shared.stateSubject.value.systemName
+        return name.isEmpty ? "retroarch" : name
     }
 }
 

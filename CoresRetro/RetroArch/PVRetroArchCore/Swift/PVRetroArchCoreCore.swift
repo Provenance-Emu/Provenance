@@ -37,9 +37,10 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
             "com.provenance.wii",
             "com.provenance.vectrex"
         ]
-        DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
+        let sysName = EmulationState.shared.stateSubject.value.systemName
+        DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), systemName: \(sysName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
-                && !unsupportedCores.contains(self.systemName))
+                && !unsupportedCores.contains(sysName))
     }
     public override var supportsSkins: Bool {
         let unsupportedCores = [
@@ -54,9 +55,10 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
             "com.provenance.msx",
             "com.provenance.msx2"
         ]
-        DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
+        let sysName = EmulationState.shared.stateSubject.value.systemName
+        DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), systemName: \(sysName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
-                && !unsupportedCores.contains(self.systemName))
+                && !unsupportedCores.contains(sysName))
     }
     public override var supportsAudioVisualizer: Bool { true }
     public override func setPauseEmulation(_ flag: Bool) {
@@ -69,9 +71,10 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
             // "com.provenance.dreamcast"
 //            "com.provenance.dos"
         ]
-        DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), self.systemName: \(self.systemName))")
+        let sysName = EmulationState.shared.stateSubject.value.systemName
+        DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), systemName: \(sysName))")
         return (!unsupportedCores.contains(self.systemIdentifier ?? "")
-                && !unsupportedCores.contains(self.systemName))
+                && !unsupportedCores.contains(sysName))
                 || core_info_current_supports_savestate()
     }
 

@@ -214,49 +214,32 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     @objc dynamic open var ringBuffers: [RingBufferProtocol]?
     { get { bridge.ringBuffers } set { bridge.ringBuffers = newValue }}
 
-    /// Wrapper for isOn state
+    /// Wrapper for isOn state (uses MainActor-safe cached sync access)
     @MainActor
     @objc dynamic open var isOn: Bool {
-        get {
-            EmulationState.shared.isOn
-        }
-        set {
-            Task {
-                await EmulationState.shared.setIsOn(newValue)
-            }
-        }
+        get { EmulationStateSync.shared.isOn }
+        set { Task { await EmulationState.shared.setIsOn(newValue) } }
     }
 
-    /// Wrapper for coreClassName
+    /// Wrapper for coreClassName (uses MainActor-safe cached sync access)
     @MainActor
     @objc dynamic open var coreClassName: String {
-        get {
-            EmulationState.shared.coreClassName
-        }
-        set {
-            Task {
-                await EmulationState.shared.setCoreClassName(newValue)
-            }
-        }
+        get { EmulationStateSync.shared.coreClassName }
+        set { Task { await EmulationState.shared.setCoreClassName(newValue) } }
     }
 
-    /// Wrapper for systemName
+    /// Wrapper for systemName (uses MainActor-safe cached sync access)
+    @MainActor
     @objc dynamic open var systemName: String {
-        get {
-                EmulationState.shared.systemName
-        }
-        set {
-            Task {
-                await EmulationState.shared.setSystemName(newValue)
-            }
-        }
+        get { EmulationStateSync.shared.systemName }
+        set { Task { await EmulationState.shared.setSystemName(newValue) } }
     }
 
     // MARK: Skins
 
     /// If skins are supported
     @objc dynamic open var supportsSkins: Bool { true }
-    
+
     /// Default skins off while we develop the feature
     @objc dynamic open var supportsFilters: Bool { true }
 
