@@ -2927,10 +2927,9 @@ struct TVMediaSearchView: View {
         await MainActor.run {
             results = games
             isSearching = false
-            // Save as last search when results are found or search is completed
+            // Save last search for restoration (history is only added on explicit submit)
             if !query.isEmpty {
                 lastSearch = query
-                addToRecentSearches(query)
             }
         }
     }
