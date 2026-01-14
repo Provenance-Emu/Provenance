@@ -59,6 +59,10 @@ void handle_touch_event(NSArray* touches);
 void handle_click_event(CGPoint click, bool pressed);
 GCController *touch_controller;
 static NSMutableArray *mfiControllers;
+/// Flag to indicate Provenance is managing controllers
+/// When true, hardware controllers are only accessed via bindControls forwarding to touch_controller
+/// When false, RetroArch polls hardware controllers directly (standalone mode)
+static bool provenance_controller_mode = false;
 void apple_gamecontroller_joypad_connect(GCController *controller);
 void refresh_gamecontrollers();
 void apple_gamecontroller_joypad_disconnect(GCController* controller);
@@ -283,7 +287,11 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
 #pragma mark - Control
 -(void)controllerConnected:(NSNotification *)notification {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        apple_gamecontroller_joypad_connect([notification object]);
+        /// In Provenance mode, don't connect hardware controllers to RetroArch's internal system
+        /// Provenance manages controller assignments, and inputs are forwarded via bindControls
+        if (!provenance_controller_mode) {
+            apple_gamecontroller_joypad_connect([notification object]);
+        }
         [self refresh_gamecontrollers];
         [self useRetroArchController:self.retroArchControls];
         ILOG(@"Binding Controls\n");
@@ -291,7 +299,10 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
 }
 -(void)controllerDisconnected:(NSNotification *)notification {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        apple_gamecontroller_joypad_disconnect([notification object]);
+        /// In Provenance mode, hardware controllers aren't connected to RetroArch's internal system
+        if (!provenance_controller_mode) {
+            apple_gamecontroller_joypad_disconnect([notification object]);
+        }
         [self refresh_gamecontrollers];
         [self useRetroArchController:self.retroArchControls];
     });
@@ -511,50 +522,41 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
     }
 }
 -(void)refresh_gamecontrollers {
+    /// Always connect touch_controller as the primary input for player 1
     apple_gamecontroller_joypad_connect(touch_controller);
-    for (NSInteger player = 0; player < 4; player++) {
-        GCController *controller = nil;
-        if (_current.controller1 && player == 0)
-        {
-            controller = _current.controller1;
+
+    /// In Provenance mode, we don't connect hardware controllers to RetroArch's internal system
+    /// Instead, inputs are forwarded via bindControls handlers to touch_controller
+    /// This prevents player index conflicts and double input registration
+    if (!provenance_controller_mode) {
+        /// Standalone mode - connect hardware controllers directly
+        for (NSInteger player = 0; player < 8; player++) {
+            GCController *controller = nil;
+            switch (player) {
+                case 0: controller = _current.controller1; break;
+                case 1: controller = _current.controller2; break;
+                case 2: controller = _current.controller3; break;
+                case 3: controller = _current.controller4; break;
+                case 4: controller = _current.controller5; break;
+                case 5: controller = _current.controller6; break;
+                case 6: controller = _current.controller7; break;
+                case 7: controller = _current.controller8; break;
+            }
+            if (controller) {
+                apple_gamecontroller_joypad_connect(controller);
+            }
         }
-        else if (_current.controller2 && player == 1)
-        {
-            controller = _current.controller2;
-        }
-        else if (_current.controller3 && player == 2)
-        {
-            controller = _current.controller3;
-        }
-        else if (_current.controller4 && player == 3)
-        {
-            controller = _current.controller4;
-        }
-        else if (_current.controller5 && player == 4)
-        {
-            controller = _current.controller5;
-        }
-        else if (_current.controller6 && player == 5)
-        {
-            controller = _current.controller6;
-        }
-        else if (_current.controller7 && player == 6)
-        {
-            controller = _current.controller7;
-        }
-        else if (_current.controller8 && player == 7)
-        {
-            controller = _current.controller8;
-        }
-        if (controller) {
-            apple_gamecontroller_joypad_connect(controller);
-        }
-        [self bindControls];
     }
+
+    /// Set up input forwarding handlers for all connected controllers
+    [self bindControls];
 }
 -(void)setupControllers {
     _current=self;
     ILOG(@"Setting up Controller Notification Listeners\n");
+    /// Enable Provenance controller mode - hardware controllers are managed via bindControls
+    /// forwarding to touch_controller, preventing double input registration
+    provenance_controller_mode = true;
     [self initControllBuffers];
     [self useRetroArchController:self.retroArchControls];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -599,6 +601,16 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
             controller = self.controller4;
         }
         ILOG(@"Controller Vendor Name: %s\n",controller.vendorName.UTF8String);
+
+#if TARGET_OS_TV
+        /// On tvOS, skip the Siri Remote (microGamepad only, no extendedGamepad)
+        /// The Siri Remote has limited buttons and shouldn't be used for game input
+        if (controller.microGamepad != nil && controller.extendedGamepad == nil) {
+            ILOG(@"Skipping Siri Remote (microGamepad only) for game input\n");
+            continue;
+        }
+#endif
+
         if (controller.extendedGamepad != nil && ![controller.vendorName containsString:@"Keyboard"])
         {
             controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
@@ -642,13 +654,21 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
             };
             controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 [touch_controller.extendedGamepad.buttonOptions setValue:value];
-                if (pressed) {
-                    command_event(CMD_EVENT_MENU_TOGGLE, NULL);
-                }
             };
+            #if defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+            /// buttonMenu maps to START in RetroArch (RETRO_DEVICE_ID_JOYPAD_START)
+            /// Forward it to touch_controller for proper player 1 mapping
+            controller.extendedGamepad.buttonMenu.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.buttonMenu setValue:value];
+            };
+            #endif
             #if defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
             controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 [touch_controller.extendedGamepad.buttonHome setValue:value];
+                /// Toggle RetroArch menu on HOME button press
+                if (pressed) {
+                    command_event(CMD_EVENT_MENU_TOGGLE, NULL);
+                }
             };
             #endif
         }
@@ -860,6 +880,17 @@ static void apple_gamecontroller_joypad_poll(void)
 {
 	if (!apple_gamecontroller_available())
 		return;
+
+	/// When Provenance is managing controllers, only poll touch_controller
+	/// Hardware controller inputs are forwarded via bindControls handlers
+	/// This prevents double input registration (buttons appearing on multiple players)
+	if (provenance_controller_mode) {
+		if (touch_controller)
+			apple_gamecontroller_joypad_poll_internal(touch_controller);
+		return;
+	}
+
+	/// Standalone RetroArch mode - poll all hardware controllers directly
 	for (GCController *controller in [GCController controllers])
 		apple_gamecontroller_joypad_poll_internal(controller);
     if (touch_controller)
@@ -886,6 +917,10 @@ static void apple_gamecontroller_joypad_register(GCExtendedGamepad * _Nullable _
 
 	gamepad.valueChangedHandler = ^(GCExtendedGamepad *updateGamepad, GCControllerElement *element)
 	{
+		/// In Provenance mode, hardware controllers are polled via touch_controller forwarding
+		/// Skip direct polling to avoid double input registration
+		if (provenance_controller_mode && updateGamepad.controller != touch_controller)
+			return;
 		apple_gamecontroller_joypad_poll_internal(updateGamepad.controller);
 	};
 
