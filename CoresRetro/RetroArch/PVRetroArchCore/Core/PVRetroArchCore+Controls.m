@@ -57,10 +57,14 @@ extern bool _isInitialized;
 extern __weak PVRetroArchCoreBridge *_current;
 void handle_touch_event(NSArray* touches);
 void handle_click_event(CGPoint click, bool pressed);
+/// Virtual controller for player 1 (used for on-screen touch controls and forwarded hardware input)
 GCController *touch_controller;
+/// Array of virtual controllers for multiplayer support (one per player)
+/// Each hardware controller forwards inputs to its corresponding touch_controller
+static GCController *touch_controllers[MAX_USERS];
 static NSMutableArray *mfiControllers;
 /// Flag to indicate Provenance is managing controllers
-/// When true, hardware controllers are only accessed via bindControls forwarding to touch_controller
+/// When true, hardware controllers are only accessed via bindControls forwarding to touch_controllers
 /// When false, RetroArch polls hardware controllers directly (standalone mode)
 static bool provenance_controller_mode = false;
 void apple_gamecontroller_joypad_connect(GCController *controller);
@@ -522,11 +526,16 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
     }
 }
 -(void)refresh_gamecontrollers {
-    /// Always connect touch_controller as the primary input for player 1
-    apple_gamecontroller_joypad_connect(touch_controller);
+    /// Connect all virtual touch_controllers for multiplayer support
+    /// Each player slot gets its own touch_controller that hardware controllers forward to
+    for (int player = 0; player < MAX_USERS; player++) {
+        if (touch_controllers[player]) {
+            apple_gamecontroller_joypad_connect(touch_controllers[player]);
+        }
+    }
 
     /// In Provenance mode, we don't connect hardware controllers to RetroArch's internal system
-    /// Instead, inputs are forwarded via bindControls handlers to touch_controller
+    /// Instead, inputs are forwarded via bindControls handlers to the appropriate touch_controller
     /// This prevents player index conflicts and double input registration
     if (!provenance_controller_mode) {
         /// Standalone mode - connect hardware controllers directly
@@ -581,26 +590,25 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
     ];
 }
 -(void)bindControls {
-    for (NSInteger player = 0; player < 4; player++)
+    for (NSInteger player = 0; player < 8; player++)
     {
         GCController *controller = nil;
-        if (self.controller1 && player == 0)
-        {
-            controller = self.controller1;
+        switch (player) {
+            case 0: controller = self.controller1; break;
+            case 1: controller = self.controller2; break;
+            case 2: controller = self.controller3; break;
+            case 3: controller = self.controller4; break;
+            case 4: controller = self.controller5; break;
+            case 5: controller = self.controller6; break;
+            case 6: controller = self.controller7; break;
+            case 7: controller = self.controller8; break;
         }
-        else if (self.controller2 && player == 1)
-        {
-            controller = self.controller2;
+
+        if (!controller) {
+            continue;
         }
-        else if (self.controller3 && player == 2)
-        {
-            controller = self.controller3;
-        }
-        else if (self.controller4 && player == 3)
-        {
-            controller = self.controller4;
-        }
-        ILOG(@"Controller Vendor Name: %s\n",controller.vendorName.UTF8String);
+
+        ILOG(@"Controller Vendor Name: %s for player %ld\n", controller.vendorName.UTF8String, (long)player);
 
 #if TARGET_OS_TV
         /// On tvOS, skip the Siri Remote (microGamepad only, no extendedGamepad)
@@ -613,58 +621,68 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
 
         if (controller.extendedGamepad != nil && ![controller.vendorName containsString:@"Keyboard"])
         {
+            /// Get the correct virtual controller for this player slot
+            /// Each player gets their own touch_controller to ensure proper player separation
+            GCController *targetController = touch_controllers[player];
+            if (!targetController) {
+                ILOG(@"No touch_controller for player %ld, falling back to player 0\n", (long)player);
+                targetController = touch_controller;
+            }
+
+            /// Capture targetController in block to ensure correct player mapping
+            __weak GCController *weakTarget = targetController;
+
             controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.buttonA setValue:value];
+                [weakTarget.extendedGamepad.buttonA setValue:value];
             };
             controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.buttonB setValue:value];
+                [weakTarget.extendedGamepad.buttonB setValue:value];
             };
             controller.extendedGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.buttonX setValue:value];
+                [weakTarget.extendedGamepad.buttonX setValue:value];
             };
             controller.extendedGamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.buttonY setValue:value];
+                [weakTarget.extendedGamepad.buttonY setValue:value];
             };
             controller.extendedGamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.leftShoulder setValue:value];
+                [weakTarget.extendedGamepad.leftShoulder setValue:value];
             };
             controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.rightShoulder setValue:value];
+                [weakTarget.extendedGamepad.rightShoulder setValue:value];
             };
             controller.extendedGamepad.leftTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.leftTrigger setValue:value];
+                [weakTarget.extendedGamepad.leftTrigger setValue:value];
             };
             controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.rightTrigger setValue:value];
+                [weakTarget.extendedGamepad.rightTrigger setValue:value];
             };
             controller.extendedGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
-                [touch_controller.extendedGamepad.dpad setValueForXAxis:xValue yAxis:yValue];
+                [weakTarget.extendedGamepad.dpad setValueForXAxis:xValue yAxis:yValue];
             };
             controller.extendedGamepad.leftThumbstick.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
-                [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
+                [weakTarget.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
             };
             controller.extendedGamepad.rightThumbstick.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
-                [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:xValue yAxis:yValue];
+                [weakTarget.extendedGamepad.rightThumbstick setValueForXAxis:xValue yAxis:yValue];
             };
             controller.extendedGamepad.leftThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.leftThumbstickButton setValue:value];
+                [weakTarget.extendedGamepad.leftThumbstickButton setValue:value];
             };
             controller.extendedGamepad.rightThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.rightThumbstickButton setValue:value];
+                [weakTarget.extendedGamepad.rightThumbstickButton setValue:value];
             };
             controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.buttonOptions setValue:value];
+                [weakTarget.extendedGamepad.buttonOptions setValue:value];
             };
             #if defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
             /// buttonMenu maps to START in RetroArch (RETRO_DEVICE_ID_JOYPAD_START)
-            /// Forward it to touch_controller for proper player 1 mapping
             controller.extendedGamepad.buttonMenu.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.buttonMenu setValue:value];
+                [weakTarget.extendedGamepad.buttonMenu setValue:value];
             };
             #endif
             #if defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
             controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [touch_controller.extendedGamepad.buttonHome setValue:value];
+                [weakTarget.extendedGamepad.buttonHome setValue:value];
                 /// Toggle RetroArch menu on HOME button press
                 if (pressed) {
                     command_event(CMD_EVENT_MENU_TOGGLE, NULL);
@@ -1109,10 +1127,19 @@ void *apple_gamecontroller_joypad_init(void *data) {
     if (@available(iOS 14, *))
         apple_gamecontroller_device_haptics_setup();
 #endif
+    /// Initialize virtual touch_controllers for each player slot
+    /// This allows each hardware controller to map to its own player correctly
+    for (int player = 0; player < MAX_USERS; player++) {
+        if (!touch_controllers[player]) {
+            touch_controllers[player] = [[GCController controllerWithExtendedGamepad] init];
+            touch_controllers[player].playerIndex = (GCControllerPlayerIndex)player;
+            apple_gamecontroller_joypad_connect(touch_controllers[player]);
+            ILOG(@"Initialized touch_controller for player %d\n", player);
+        }
+    }
+    /// Keep touch_controller as alias to player 0 for backwards compatibility with on-screen touch
     if (!touch_controller) {
-        touch_controller=[[GCController controllerWithExtendedGamepad] init];
-        touch_controller.playerIndex=(GCControllerPlayerIndex)0;
-        apple_gamecontroller_joypad_connect(touch_controller);
+        touch_controller = touch_controllers[0];
     }
     [_current refresh_gamecontrollers];
     return (void*)-1;
@@ -1127,7 +1154,11 @@ void apple_gamecontroller_joypad_destroy(void) {
     for (GCController *gc in mfiControllers)
         apple_gamecontroller_joypad_disconnect(gc);
      */
-    touch_controller=nil;
+    /// Clean up all virtual touch_controllers
+    for (int player = 0; player < MAX_USERS; player++) {
+        touch_controllers[player] = nil;
+    }
+    touch_controller = nil;
 }
 
 static int32_t apple_gamecontroller_joypad_button(
