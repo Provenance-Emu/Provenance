@@ -67,9 +67,99 @@ static NSMutableArray *mfiControllers;
 /// When true, hardware controllers are only accessed via bindControls forwarding to touch_controllers
 /// When false, RetroArch polls hardware controllers directly (standalone mode)
 static bool provenance_controller_mode = false;
+
+/// Flag to enable smart shoulder-to-start/select mapping for MFi controllers
+/// When true, L2→Select and R2→Start on controllers without dedicated start/select buttons
+/// Only applies to systems that don't natively use L2/R2 triggers
+static bool smart_shoulder_mapping_enabled = true;
+
+/// Per-player flag indicating if that player's controller needs shoulder mapping
+/// Set during bindControls based on the hardware controller's capabilities
+static bool player_needs_shoulder_mapping[MAX_USERS];
+
 void apple_gamecontroller_joypad_connect(GCController *controller);
 void refresh_gamecontrollers();
 void apple_gamecontroller_joypad_disconnect(GCController* controller);
+
+/// Check if a controller has dedicated Start/Select buttons (Options/Share on PS, Menu/View on Xbox)
+/// MFi controllers like Steelseries Nimbus only have Menu button, no Options/Share
+static bool controller_has_dedicated_start_select(GCController *controller) {
+    if (!controller || !controller.extendedGamepad) {
+        return false;
+    }
+    /// Check if buttonOptions exists and is functional
+    /// Controllers with buttonOptions have a dedicated Select button (Share/View/Options)
+    /// This is available on PS4/PS5/Xbox/Switch controllers but NOT on basic MFi controllers
+    if (@available(iOS 13.0, tvOS 13.0, *)) {
+        /// If buttonOptions is nil or not present, this is likely a basic MFi controller
+        if (controller.extendedGamepad.buttonOptions == nil) {
+            return false;
+        }
+        return true;
+    }
+    /// Before iOS 13, assume no dedicated buttons
+    return false;
+}
+
+/// Check if the current system natively uses L2/R2 triggers
+/// Systems like PS1, PS2, Saturn, Dreamcast, GameCube, N64 need all 4 shoulder buttons
+/// Systems like NES, SNES, Genesis, Game Boy don't use L2/R2 natively
+static bool system_needs_l2r2_triggers(void) {
+    if (!_current || !_current.systemIdentifier) {
+        return false;
+    }
+    NSString *sysId = _current.systemIdentifier;
+
+    /// Systems that natively use L2/R2 triggers - don't remap shoulders
+    static NSArray *systemsWithL2R2 = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        systemsWithL2R2 = @[
+            /// Sony systems with L2/R2
+            @"psx", @"ps1", @"playstation",
+            @"ps2", @"playstation2",
+            @"psp",
+            /// Sega systems with analog triggers
+            @"saturn",
+            @"dreamcast", @"dc",
+            /// Nintendo systems with analog triggers
+            @"gc", @"gamecube", @"ngc",
+            @"n64", @"nintendo64",
+            @"wii",
+            @"wiiu",
+            @"switch",
+            /// Other systems with L2/R2
+            @"3do",
+            @"jaguar"
+        ];
+    });
+
+    NSString *lowerSysId = [sysId lowercaseString];
+    for (NSString *system in systemsWithL2R2) {
+        if ([lowerSysId containsString:system]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/// Check if we should apply smart shoulder mapping for a given controller
+/// Returns true if:
+/// 1. Smart mapping is enabled
+/// 2. Controller lacks dedicated Start/Select buttons (basic MFi)
+/// 3. Current system doesn't natively use L2/R2 triggers
+static bool should_apply_shoulder_mapping(GCController *controller) {
+    if (!smart_shoulder_mapping_enabled) {
+        return false;
+    }
+    if (controller_has_dedicated_start_select(controller)) {
+        return false;
+    }
+    if (system_needs_l2r2_triggers()) {
+        return false;
+    }
+    return true;
+}
 
 #if TARGET_OS_IOS && !TARGET_OS_TV
 #define IPHONE_RUMBLE_AVAIL API_AVAILABLE(ios(14.0))
@@ -629,8 +719,14 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
                 targetController = touch_controller;
             }
 
-            ILOG(@"bindControls: Binding player %ld controller '%@' -> touch_controller with playerIndex=%ld\n",
-                 (long)player, controller.vendorName, (long)targetController.playerIndex);
+            /// Determine if this hardware controller needs smart shoulder mapping
+            /// Check the HARDWARE controller (not virtual) for buttonOptions capability
+            bool needsShoulderMapping = should_apply_shoulder_mapping(controller);
+            player_needs_shoulder_mapping[player] = needsShoulderMapping;
+
+            ILOG(@"bindControls: Binding player %ld controller '%@' -> touch_controller with playerIndex=%ld (shoulderMapping=%s)\n",
+                 (long)player, controller.vendorName, (long)targetController.playerIndex,
+                 needsShoulderMapping ? "YES" : "NO");
 
             /// Capture targetController in block to ensure correct player mapping
             /// Use strong reference since touch_controllers array retains them
@@ -829,15 +925,25 @@ static void apple_gamecontroller_joypad_poll_internal(GCController *controller)
 		}
 		bool leftTriggerActive = gp.leftTrigger.pressed || (isVirtualController && gp.leftTrigger.value >= triggerThreshold);
 		bool rightTriggerActive = gp.rightTrigger.pressed || (isVirtualController && gp.rightTrigger.value >= triggerThreshold);
-		// if (controller == touch_controller && gp.leftTrigger.value > 0.0f) {
-		// 	NSLog(@"Polling touch_controller: leftTrigger.pressed=%@, leftTrigger.value=%.2f, leftTriggerActive=%@, L2 bit will be %@",
-		// 		  gp.leftTrigger.pressed ? @"Yes" : @"No",
-		// 		  gp.leftTrigger.value,
-		// 		  leftTriggerActive ? @"Yes" : @"No",
-		// 		  leftTriggerActive ? @"set" : @"cleared");
-		// }
-		*buttons             |= leftTriggerActive         ? (1 << RETRO_DEVICE_ID_JOYPAD_L2)    : 0;
-		*buttons             |= rightTriggerActive        ? (1 << RETRO_DEVICE_ID_JOYPAD_R2)    : 0;
+
+		/// Smart shoulder mapping for MFi controllers without dedicated Start/Select buttons
+		/// On systems that don't use L2/R2 natively (NES, SNES, etc.), map:
+		/// - L2 → Select
+		/// - R2 → Start
+		/// This gives MFi controller users easy access to Start/Select without using Menu button combos
+		/// Use the per-player flag set during bindControls (checks the hardware controller's capabilities)
+		bool applyShoulderMapping = (slot < MAX_USERS) && player_needs_shoulder_mapping[slot];
+
+		if (applyShoulderMapping) {
+			/// Remap L2 to Select instead of L2
+			*buttons             |= leftTriggerActive         ? (1 << RETRO_DEVICE_ID_JOYPAD_SELECT) : 0;
+			/// Remap R2 to Start instead of R2
+			*buttons             |= rightTriggerActive        ? (1 << RETRO_DEVICE_ID_JOYPAD_START)  : 0;
+		} else {
+			/// Normal mapping - L2/R2 go to their native buttons
+			*buttons             |= leftTriggerActive         ? (1 << RETRO_DEVICE_ID_JOYPAD_L2)    : 0;
+			*buttons             |= rightTriggerActive        ? (1 << RETRO_DEVICE_ID_JOYPAD_R2)    : 0;
+		}
         // NSLog(@"leftTriggerActive: %@, rightTriggerActive: %@", leftTriggerActive ? @"Yes" : @"No",  rightTriggerActive ? @"Yes" : @"No");
         //printf("slot %d button %d extended\n", slot, *buttons);
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120100 || __TV_OS_VERSION_MAX_ALLOWED >= 120100
@@ -1222,6 +1328,11 @@ void apple_gamecontroller_joypad_destroy(void) {
     for (int i = 0; i < MAX_USERS; i++) {
         mfi_buttons[i] = 0;
         memset(mfi_axes[i], 0, sizeof(mfi_axes[0]));
+    }
+
+    /// Clear shoulder mapping flags
+    for (int i = 0; i < MAX_USERS; i++) {
+        player_needs_shoulder_mapping[i] = false;
     }
 }
 
