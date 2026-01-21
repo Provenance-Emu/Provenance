@@ -23,11 +23,15 @@ struct TVMediaGameTileView: View {
     @State private var artworkSize: CGSize?
     @State private var glowIntensity: Double = 0.0
     @State private var borderGlow: Double = 0.0
+    /// Blur artwork when obfuscation is enabled.
+    @Default(.obfuscateArtwork) private var obfuscateArtwork
 
     /// Base height for tiles - width adjusts based on artwork aspect ratio
     private let baseHeight: CGFloat = 220
     private let minWidth: CGFloat = 160
     private let maxWidth: CGFloat = 340
+    /// Blur radius for artwork obfuscation.
+    private let obfuscationBlurRadius: CGFloat = 6
 
     init(
         game: PVGame,
@@ -148,6 +152,7 @@ struct TVMediaGameTileView: View {
                 Image(uiImage: artwork)
                     .resizable()
                     .scaledToFit()
+                    .blur(radius: obfuscateArtwork ? obfuscationBlurRadius : 0)
                     .transition(.opacity.animation(.easeIn(duration: 0.2)))
             } else {
                 SMPTEColorBarsView()

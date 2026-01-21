@@ -778,6 +778,8 @@ private struct UserDefaultsSection: View {
     @Default(.useAppGroups) var useAppGroups
     @Default(.unsupportedCores) var unsupportedCores
     @Default(.iCloudSync) var iCloudSync
+    /// Blur game artwork for App Store screenshots.
+    @Default(.obfuscateArtwork) var obfuscateArtwork
 
     #if os(tvOS)
     var body: some View {
@@ -807,6 +809,13 @@ private struct UserDefaultsSection: View {
                 subtitle: "Sync save states and settings with iCloud",
                 isOn: $iCloudSync
             )
+
+            // Obfuscate artwork toggle
+            UserDefaultRow(
+                title: "obfuscateArtwork",
+                subtitle: "Blur game artwork for screenshots",
+                isOn: $obfuscateArtwork
+            )
         }
         .padding()
         .background(RetroTheme.retroDarkBlue.opacity(0.3))
@@ -833,6 +842,13 @@ private struct UserDefaultsSection: View {
                 title: "iCloudSync",
                 subtitle: "Sync save states and settings with iCloud",
                 isOn: $iCloudSync
+            )
+            .focusableIfAvailable()
+
+            UserDefaultToggle(
+                title: "obfuscateArtwork",
+                subtitle: "Blur game artwork for screenshots",
+                isOn: $obfuscateArtwork
             )
             .focusableIfAvailable()
         }

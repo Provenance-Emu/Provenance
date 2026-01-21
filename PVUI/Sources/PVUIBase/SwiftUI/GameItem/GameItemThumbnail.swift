@@ -9,15 +9,20 @@ import SwiftUI
 import PVThemes
 import PVMediaCache
 import struct PVUIBase.ArtworkImageBaseView
+import Defaults
 
 struct GameItemThumbnail: SwiftUI.View {
 
     @ObservedObject private var themeManager = ThemeManager.shared
+    /// When enabled, blur artwork for safe screenshots.
+    @Default(.obfuscateArtwork) private var obfuscateArtwork
 
     var artwork: SwiftImage?
     var gameTitle: String
     var boxartAspectRatio: PVGameBoxArtAspectRatio
     let radius: CGFloat = 3.0
+    /// Blur radius for artwork obfuscation.
+    private let obfuscationBlurRadius: CGFloat = 6
 
     var body: some SwiftUI.View {
         Group {
@@ -26,6 +31,7 @@ struct GameItemThumbnail: SwiftUI.View {
                 Image(uiImage: artwork)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .blur(radius: obfuscateArtwork ? obfuscationBlurRadius : 0)
             } else {
                 /// Fallback to text-based artwork with the specified aspect ratio
                 ArtworkImageBaseView(artwork: artwork, gameTitle: gameTitle, boxartAspectRatio: boxartAspectRatio)

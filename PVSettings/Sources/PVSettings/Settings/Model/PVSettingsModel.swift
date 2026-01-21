@@ -652,6 +652,9 @@ public final class PVSettingsWrapper: NSObject {
 public extension Defaults.Keys {
     static let showFavorites = Key<Bool>("showFavorites", default: true)
 
+    /// Obfuscate game artwork with a blur for screenshots.
+    static let obfuscateArtwork = Key<Bool>("obfuscateArtwork", default: false)
+
     /// Total number of game launches since installation
     static let gameLaunchCount = Key<Int>("gameLaunchCount", default: 0)
 
