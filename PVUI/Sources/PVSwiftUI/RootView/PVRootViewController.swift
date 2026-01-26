@@ -296,6 +296,10 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             .receive(on: DispatchQueue.main)
             .sink { [weak self] event in
                 guard let self = self else { return }
+                // Ignore UI navigation input while emulation is running
+                if AppState.shared.emulationUIState.core?.isOn == true {
+                    return
+                }
                 switch event {
                 case .menuToggle(let isPressed):
                     if isPressed {
