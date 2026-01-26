@@ -152,13 +152,14 @@ static bool should_apply_shoulder_mapping(GCController *controller) {
     if (!smart_shoulder_mapping_enabled) {
         return false;
     }
-    if (controller_has_dedicated_start_select(controller)) {
-        return false;
+    bool hasDedicated = controller_has_dedicated_start_select(controller);
+    bool needsL2R2 = system_needs_l2r2_triggers();
+    /// If the system needs L2/R2, only remap when the controller lacks Start/Select
+    if (needsL2R2) {
+        return !hasDedicated;
     }
-    if (system_needs_l2r2_triggers()) {
-        return false;
-    }
-    return true;
+    /// For systems without L2/R2, remap when Start/Select are missing
+    return !hasDedicated;
 }
 
 #if TARGET_OS_IOS && !TARGET_OS_TV
@@ -731,6 +732,29 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
             /// Capture targetController in block to ensure correct player mapping
             /// Use strong reference since touch_controllers array retains them
             GCController *strongTarget = targetController;
+
+            /// Disable system gestures for menu/options/home buttons so input is delivered to the app
+            if (@available(iOS 14.0, tvOS 14.0, *)) {
+                GCExtendedGamepad *gp = controller.extendedGamepad;
+                if (gp) {
+                    if (gp.buttonOptions) gp.buttonOptions.preferredSystemGestureState = GCSystemGestureStateDisabled;
+                    if (gp.buttonMenu) gp.buttonMenu.preferredSystemGestureState = GCSystemGestureStateDisabled;
+                    if (gp.buttonHome) gp.buttonHome.preferredSystemGestureState = GCSystemGestureStateDisabled;
+                }
+            }
+
+            /// Fallback: use valueChangedHandler to catch Options/Menu when pressedChangedHandler fails
+            GCExtendedGamepadValueChangedHandler previousHandler = controller.extendedGamepad.valueChangedHandler;
+            controller.extendedGamepad.valueChangedHandler = ^(GCExtendedGamepad *gamepad, GCControllerElement *element) {
+                if (element == gamepad.buttonOptions && gamepad.buttonOptions) {
+                    [strongTarget.extendedGamepad.buttonOptions setValue:gamepad.buttonOptions.value];
+                } else if (element == gamepad.buttonMenu && gamepad.buttonMenu) {
+                    [strongTarget.extendedGamepad.buttonMenu setValue:gamepad.buttonMenu.value];
+                }
+                if (previousHandler) {
+                    previousHandler(gamepad, element);
+                }
+            };
 
             controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 [strongTarget.extendedGamepad.buttonA setValue:value];
