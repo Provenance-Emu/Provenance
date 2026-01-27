@@ -1628,7 +1628,8 @@ public class CloudKitSyncer: SyncProvider {
                             } else {
                                 md5Prefix = ""
                             }
-                            let recordID = CKRecord.ID(recordName: "\(directory)_\(filename)\(md5Prefix)")
+                            let recordFilename = sanitizeRecordNameComponent(filename)
+                            let recordID = CKRecord.ID(recordName: "\(directory)_\(recordFilename)\(md5Prefix)")
                             record = CKRecord(recordType: self.recordType, recordID: recordID)
                             VLOG("Creating new record for \(filename) with ID: \(recordID.recordName)")
                         }
@@ -1791,6 +1792,11 @@ public class CloudKitSyncer: SyncProvider {
         return nil
     }
 
+    /// Normalize record name components for CloudKit record IDs
+    private func sanitizeRecordNameComponent(_ value: String) -> String {
+        value.replacingOccurrences(of: "/", with: "_")
+    }
+
     /// Find a CloudKit record for a local file
     /// - Parameter file: The local file URL
     /// - Returns: The corresponding CloudKit record, if found
@@ -1822,14 +1828,19 @@ public class CloudKitSyncer: SyncProvider {
         }
 
         let filename = relativePath
+        let sanitizedFilename = sanitizeRecordNameComponent(filename)
 
         // Try to find record by deterministic ID first (faster than query)
         // Try both with and without MD5 prefix since older uploads may not have it
         let baseRecordName = "\(directory)_\(filename)"
-        let deterministicID = CKRecord.ID(recordName: baseRecordName)
-        if let record = try? await privateDatabase.record(for: deterministicID) {
-            DLOG("Found existing record by deterministic ID: \(deterministicID.recordName)")
-            return record
+        let sanitizedBaseRecordName = "\(directory)_\(sanitizedFilename)"
+        let deterministicRecordNames = Array(Set([baseRecordName, sanitizedBaseRecordName]))
+        for recordName in deterministicRecordNames {
+            let deterministicID = CKRecord.ID(recordName: recordName)
+            if let record = try? await privateDatabase.record(for: deterministicID) {
+                DLOG("Found existing record by deterministic ID: \(deterministicID.recordName)")
+                return record
+            }
         }
 
         // Also try with MD5 prefix pattern (for files uploaded with the new format)
@@ -1839,10 +1850,13 @@ public class CloudKitSyncer: SyncProvider {
            fileData.count < 50_000_000 { // Only for files under 50MB
             let hash = Insecure.MD5.hash(data: fileData)
             let md5Prefix = "_" + hash.prefix(4).map { String(format: "%02hhx", $0) }.joined().uppercased()
-            let md5RecordID = CKRecord.ID(recordName: "\(baseRecordName)\(md5Prefix)")
-            if let record = try? await privateDatabase.record(for: md5RecordID) {
-                DLOG("Found existing record by MD5 ID: \(md5RecordID.recordName)")
-                return record
+            let md5RecordNames = deterministicRecordNames.map { "\($0)\(md5Prefix)" }
+            for recordName in md5RecordNames {
+                let md5RecordID = CKRecord.ID(recordName: recordName)
+                if let record = try? await privateDatabase.record(for: md5RecordID) {
+                    DLOG("Found existing record by MD5 ID: \(md5RecordID.recordName)")
+                    return record
+                }
             }
         }
 

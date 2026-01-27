@@ -767,6 +767,18 @@ public actor CloudKitInitialSyncer {
                     DLOG("[BIOS SYNC] Verifying CloudKit asset for: \(biosFilename) (recordID: \(existingRecordID))")
                     let hasValidAsset = await verifyBIOSCloudAsset(recordID: existingRecordID, filename: biosFilename)
                     if !hasValidAsset {
+                        let sanitizedRecordID = Self.sanitizeRecordNameComponent(existingRecordID)
+                        if sanitizedRecordID != existingRecordID,
+                           await verifyBIOSCloudAsset(recordID: sanitizedRecordID, filename: biosFilename) {
+                            ILOG("[BIOS SYNC] ✓ Found BIOS asset under sanitized recordID: \(sanitizedRecordID)")
+                            try? await realm.asyncWrite {
+                                bios.cloudRecordID = sanitizedRecordID
+                            }
+                            progress.biosCompleted += 1
+                            await MainActor.run { syncProgressSubject.send(progress) }
+                            syncedCount += 1
+                            continue
+                        }
                         WLOG("[BIOS SYNC] Record \(existingRecordID) missing asset, will re-upload: \(biosFilename)")
                         // Clear the recordID so it gets re-uploaded below
                         try? await realm.asyncWrite {
@@ -869,6 +881,11 @@ public actor CloudKitInitialSyncer {
             ELOG("[BIOS SYNC] Error verifying asset for \(filename): \(error.localizedDescription)")
             return false
         }
+    }
+
+    /// Normalize record name components for CloudKit record IDs
+    nonisolated private static func sanitizeRecordNameComponent(_ value: String) -> String {
+        value.replacingOccurrences(of: "/", with: "_")
     }
 
     /// Sync all non-database files to CloudKit (Battery States, Screenshots, DeltaSkins)
