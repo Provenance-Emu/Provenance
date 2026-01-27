@@ -97,11 +97,51 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
     }
 
+    /// Throttle concurrent record processing to reduce IO spikes during boot-time sync.
+    private let recordProcessingGate = AsyncSemaphore(value: 6)
+
+    /// Lightweight async semaphore for throttling concurrent work.
+    private actor AsyncSemaphore {
+        private var value: Int
+        private var waiters: [CheckedContinuation<Void, Never>] = []
+
+        init(value: Int) {
+            self.value = value
+        }
+
+        func acquire() async {
+            if value > 0 {
+                value -= 1
+                return
+            }
+            await withCheckedContinuation { continuation in
+                waiters.append(continuation)
+            }
+        }
+
+        func release() {
+            if !waiters.isEmpty {
+                let waiter = waiters.removeFirst()
+                waiter.resume()
+            } else {
+                value += 1
+            }
+        }
+    }
+
     @inline(__always)
     private func withRealm<T: Sendable>(
         _ work: @escaping (Realm) throws -> T
     ) async throws -> T {
-        try await RealmContext.withRealm(work)
+        /// Save-state sync runs in the background; avoid main-thread Realm writes.
+        try await RealmContext.withBackgroundRealm(work)
+    }
+
+    /// Process a record with concurrency throttling to avoid CPU/IO spikes.
+    private func processCloudRecordThrottled(_ record: CKRecord) async {
+        await recordProcessingGate.acquire()
+        defer { Task { await recordProcessingGate.release() } }
+        await processCloudRecord(record)
     }
 
     /// Initialize a new save states syncer
@@ -874,7 +914,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 await withTaskGroup(of: Void.self) { group in
                     for record in batch {
                         group.addTask { [self] in
-                            await self.processCloudRecord(record)
+                            await self.processCloudRecordThrottled(record)
                         }
                     }
                 }
@@ -1204,7 +1244,9 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         // If already downloaded and cloudRecordID matches, check if we're already in sync
         let cloudRecordID = cloudRecord.recordID.recordName
         let localRecordedDate = localSaveState.lastUploadedDate ?? localSaveState.date
+        /// Avoid repeated filesystem probes when we already recorded a local upload date.
         let localFileDate: Date? = {
+            guard localSaveState.lastUploadedDate == nil else { return nil }
             guard let fileURL = localSaveState.file?.url,
                   FileManager.default.fileExists(atPath: fileURL.path),
                   let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
