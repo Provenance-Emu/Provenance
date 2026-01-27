@@ -193,10 +193,25 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 
     internal func saveArtwork(image: UIImage, forGame game: PVGame) {
-        DLOG("GameContextMenu: Attempting to save artwork for game: \(game.title)")
+        /// Extract game info before any async operations (thread-safe)
+        guard !game.isInvalidated else {
+            ELOG("GameContextMenu: Cannot save artwork - game is invalidated")
+            rootDelegate?.showMessage("Cannot save artwork - game data is no longer valid.", title: "Error")
+            return
+        }
+
+        let gameTitle = game.title
+        let md5: String = game.md5Hash ?? ""
+
+        guard !md5.isEmpty else {
+            ELOG("GameContextMenu: Cannot save artwork - game has no MD5 hash")
+            rootDelegate?.showMessage("Cannot save artwork - game has no identifier.", title: "Error")
+            return
+        }
+
+        DLOG("GameContextMenu: Attempting to save artwork for game: \(gameTitle)")
 
         let uniqueID: String = UUID().uuidString
-        let md5: String = game.md5Hash ?? ""
         let key = "artwork_\(md5)_\(uniqueID)"
         DLOG("Generated key for image: \(key)")
 
@@ -206,27 +221,28 @@ extension ConsoleGamesView: GameContextMenuDelegate {
             DLOG("Image successfully written to disk")
 
             DLOG("Attempting to update game's customArtworkURL")
+            /// Use MD5-based lookup to get a live managed object on the current thread's Realm
+            /// This avoids issues with thaw() returning nil for frozen objects from different Realms
             try RomDatabase.sharedInstance.writeTransaction {
-                let thawedGame = game.thaw()
-                DLOG("Game thawed: \(thawedGame?.title ?? "Unknown")")
-                thawedGame?.customArtworkURL = key
+                guard let liveGame = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
+                    ELOG("Could not find game with MD5: \(md5) to update artwork")
+                    return
+                }
+                liveGame.customArtworkURL = key
                 DLOG("Game's customArtworkURL updated to: \(key)")
             }
             DLOG("Database transaction completed successfully")
-            rootDelegate?.showMessage("Artwork has been saved for \(game.title).", title: "Artwork Saved")
+            rootDelegate?.showMessage("Artwork has been saved for \(gameTitle).", title: "Artwork Saved")
 
-            // Sync artwork to CloudKit in background
+            /// Sync artwork to CloudKit in background using thread-safe MD5-based method
             let gameMD5 = md5.uppercased()
             Task.detached(priority: .utility) {
-                if let gameToSync = await MainActor.run(body: {
-                    RomDatabase.sharedInstance.game(withMD5: gameMD5)
-                }) {
-                    do {
-                        try await CloudSyncManager.shared.syncArtwork(for: gameToSync, artworkKey: key)
-                        ILOG("Artwork synced to CloudKit for game: \(gameToSync.title)")
-                    } catch {
-                        ELOG("Failed to sync artwork to CloudKit: \(error.localizedDescription)")
-                    }
+                do {
+                    /// Use syncArtwork(forMD5:artworkKey:) which handles thread-safety internally
+                    try await CloudSyncManager.shared.syncArtwork(forMD5: gameMD5, artworkKey: key)
+                    ILOG("Artwork synced to CloudKit for game MD5: \(gameMD5)")
+                } catch {
+                    ELOG("Failed to sync artwork to CloudKit: \(error.localizedDescription)")
                 }
             }
 
@@ -242,7 +258,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         } catch {
             DLOG("Failed to set custom artwork: \(error.localizedDescription)")
             DLOG("Error details: \(error)")
-            rootDelegate?.showMessage("Failed to set custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
+            rootDelegate?.showMessage("Failed to set custom artwork for \(gameTitle): \(error.localizedDescription)", title: "Error")
         }
     }
 
