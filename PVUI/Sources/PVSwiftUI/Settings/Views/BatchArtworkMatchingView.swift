@@ -376,7 +376,7 @@ public struct BatchArtworkMatchingView: View {
         defer { isLoading = false }
 
         do {
-            let frozenGames = try await RealmContext.withRealm { realm -> [PVGame] in
+            let frozenGames = try await RealmContext.withBackgroundRealm { realm -> [PVGame] in
                 var predicates: [NSPredicate] = []
                 if includeGamesWithOriginalArtwork {
                     predicates.append(NSPredicate(format: "customArtworkURL == ''"))
@@ -551,7 +551,7 @@ public struct BatchArtworkMatchingView: View {
                     let key = "artwork_\(md5)_\(uniqueID)"
                     let localURL = try PVMediaCache.writeImage(toDisk: image, withKey: key)
 
-                    let applyResult = try await RealmContext.withRealm { realm -> Bool in
+                    let applyResult = try await RealmContext.withBackgroundRealm { realm -> Bool in
                         guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
                             return false
                         }

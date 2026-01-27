@@ -1920,7 +1920,7 @@ public class CloudSyncManager {
         guard !md5s.isEmpty else { return }
 
         do {
-            try await RealmContext.withRealm { realm in
+            try await RealmContext.withBackgroundRealm { realm in
                 try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
                     try realm.write {
                         for md5 in md5s {

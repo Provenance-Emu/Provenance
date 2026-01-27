@@ -134,7 +134,7 @@ public actor CloudKitInitialSyncer {
         /// Determine initial sync necessity from LOCAL datastore state (Realm), not CloudKit state.
         /// If there are no local items that would be uploaded, skip initial sync to avoid heavy launch work.
         do {
-            return try await RealmContext.withRealm { realm in
+            return try await RealmContext.withBackgroundRealm { realm in
                 let hasUnsyncedROMs = !realm.objects(PVGame.self)
                     .filter("""
                         contentless == false AND

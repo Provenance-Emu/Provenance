@@ -2335,7 +2335,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             do {
                 // Step 1: Sync Realm work - get game info, move file, update database
-                let result: (destinationURL: URL, gameTitle: String)? = try await RealmContext.withRealm { realm in
+                let result: (destinationURL: URL, gameTitle: String)? = try await RealmContext.withBackgroundRealm { realm in
                     guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
                         ELOG("Cannot handle late associated file \(fileURL.lastPathComponent): PVGame with ID \(gameID) not found.")
                         return nil
@@ -3885,7 +3885,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         /// Fast-path: Quick duplicate check using file size (before expensive MD5)
         if let fileSize = try? FileManager.default.attributesOfItem(atPath: filePath)[.size] as? Int64 {
-            let duplicateFound = try! await RealmContext.withRealm { realm -> Bool in
+            let duplicateFound = try! await RealmContext.withBackgroundRealm { realm -> Bool in
                 let gamesWithSameSize = realm.objects(PVGame.self).filter("file.sizeCache == %@", Int(fileSize))
                 guard let gameWithSameSize = gamesWithSameSize.first else {
                     return false
@@ -3930,7 +3930,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             /// Check by MD5 for this system (fast lookup - primary key is very fast)
             if let md5 = item.md5?.uppercased() {
-                let md5Duplicate = try! await RealmContext.withRealm { realm -> Bool in
+                let md5Duplicate = try! await RealmContext.withBackgroundRealm { realm -> Bool in
                     if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
                        systemFromPath.rawValue == gameWithSameMD5.systemIdentifier,
                        gameWithSameMD5.file != nil {
@@ -3959,7 +3959,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         if needsPathCheck {
             /// Query Realm directly on current thread instead of iterating cache to avoid thread safety issues
-            let fileDuplicate = try! await RealmContext.withRealm { realm -> Bool in
+            let fileDuplicate = try! await RealmContext.withBackgroundRealm { realm -> Bool in
                 let fileURL = URL(fileURLWithPath: filePath)
                 let filename = fileURL.lastPathComponent
 
@@ -4057,7 +4057,7 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Fast filename-based duplicate check for files in imports folder
     /// Only checks if a game with the same filename already exists (no expensive MD5 calculation)
     private func quickFilenameDuplicateCheck(_ filename: String) async -> Bool {
-       try! await RealmContext.withRealm { realm in
+       try! await RealmContext.withBackgroundRealm { realm in
             let gamesWithMatchingFile = realm.objects(PVGame.self)
                 .filter("romPath ENDSWITH %@", filename)
 

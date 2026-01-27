@@ -177,7 +177,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
 
         // Fetch system data on main thread to get related file info
-        let (files, name) = try await RealmContext.withRealm { realm -> ([URL], String) in
+        let (files, name) = try await RealmContext.withBackgroundRealm { realm -> ([URL], String) in
             guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: systemID.rawValue) else {
                 throw GameImporterError.noSystemMatched
             }
@@ -364,7 +364,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             Task.detached(priority: .utility) {
                 do {
                     // Step 1: Fetch game from Realm (sync)
-                    let frozenGame: PVGame? = try await RealmContext.withRealm { realm in
+                    let frozenGame: PVGame? = try await RealmContext.withBackgroundRealm { realm in
                         realm.object(ofType: PVGame.self, forPrimaryKey: gameID)?.freeze()
                     }
                     guard let frozenGame = frozenGame else {
@@ -383,7 +383,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                     }
 
                     // Step 3: Write back to Realm (sync)
-                    try await RealmContext.withRealm { realm in
+                    try await RealmContext.withBackgroundRealm { realm in
                         try realm.write {
                             realm.add(finalGame, update: .modified)
                         }
@@ -406,7 +406,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             Task.detached(priority: .utility) {
                 do {
                     // Step 1: Fetch and validate game from Realm (sync)
-                    let frozenGame: PVGame? = try await RealmContext.withRealm { realm in
+                    let frozenGame: PVGame? = try await RealmContext.withBackgroundRealm { realm in
                         guard let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
                             DLOG("finishUpdateOrImport: Game \(gameID) not found for artwork download")
                             return nil
@@ -425,7 +425,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                     let updatedGame = await tempService.getArtwork(forGame: frozenGame)
 
                     // Step 3: Write back to Realm (sync)
-                    try await RealmContext.withRealm { realm in
+                    try await RealmContext.withBackgroundRealm { realm in
                         try realm.write {
                             realm.add(updatedGame, update: .modified)
                         }
@@ -789,7 +789,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     /// Saves a game to the database
     func saveGame(_ game: PVGame) async throws {
-        try await RealmContext.withRealm { realm in
+        try await RealmContext.withBackgroundRealm { realm in
             guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) else {
                 let systemIdentifier = game.systemIdentifier
                 ELOG("System not found in database: \(systemIdentifier)")

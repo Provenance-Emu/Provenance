@@ -495,7 +495,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
 
         do {
-            let frozenGames = try await RealmContext.withRealm { realm -> [PVGame] in
+            let frozenGames = try await RealmContext.withBackgroundRealm { realm -> [PVGame] in
                 let allGames = realm.objects(PVGame.self)
                 ILOG("Found \(allGames.count) games to process")
                 return allGames.map { $0.freeze() }
@@ -556,7 +556,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
     private func indexSaveStates(spotlightIndex: CSSearchableIndex) async {
         ILOG("Starting Spotlight indexing for save states")
 
-        let saveStatesWithGames: [(saveState: PVSaveState, game: PVGame)] = try! await RealmContext.withRealm { realm in
+        let saveStatesWithGames: [(saveState: PVSaveState, game: PVGame)] = try! await RealmContext.withBackgroundRealm { realm in
             let saveStates = realm.objects(PVSaveState.self)
             ILOG("Found \(saveStates.count) save states to process")
             var results: [(PVSaveState, PVGame)] = []
