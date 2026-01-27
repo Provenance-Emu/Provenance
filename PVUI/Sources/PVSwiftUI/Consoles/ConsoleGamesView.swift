@@ -845,7 +845,8 @@ struct ConsoleGamesView: SwiftUI.View {
                         SceneCoordinator.shared.launchGame(game.freeze())
                     }
                 }
-                .id(game.id)
+                /// Use compound ID so view recreates when artwork URL changes
+                .id("\(game.id)_\(game.trueArtworkURL)")
                 .focusableIfAvailable()
                 .contextMenu {
                     GameContextMenu(
@@ -881,7 +882,8 @@ struct ConsoleGamesView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                .id(model.id)
+                /// Use model hash as ID so view recreates when artwork URL changes
+                .id(model.hashValue)
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -926,7 +928,8 @@ struct ConsoleGamesView: SwiftUI.View {
                             SceneCoordinator.shared.launchGame(game.freeze())
                         }
                     }
-                    .id(game.id)
+                    /// Use compound ID so view recreates when artwork URL changes
+                    .id("\(game.id)_\(game.trueArtworkURL)")
                     .focusableIfAvailable()
                     .contextMenu {
                         GameContextMenu(
@@ -967,7 +970,8 @@ struct ConsoleGamesView: SwiftUI.View {
                         SceneCoordinator.shared.launchGame(game.freeze())
                     }
                 }
-                .id(game.id)
+                /// Use compound ID so view recreates when artwork URL changes
+                .id("\(game.id)_\(game.trueArtworkURL)")
                 .focusableIfAvailable()
                 .contextMenu {
                     GameContextMenu(
@@ -1005,7 +1009,8 @@ struct ConsoleGamesView: SwiftUI.View {
                 ) {
                     launchGame(md5: model.md5)
                 }
-                .id(model.id)
+                /// Use model hash as ID so view recreates when artwork URL changes
+                .id(model.hashValue)
                 .focusableIfAvailable()
                 .contextMenu {
                     if let live = liveGame(for: model) {
@@ -1040,6 +1045,8 @@ struct ConsoleGamesView: SwiftUI.View {
                 {
                     loadGame(game)
                 }
+                /// Use compound ID so view recreates when artwork URL changes
+                .id("\(game.id)_\(game.trueArtworkURL)")
                 .focusableIfAvailable()
                 .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate, contextMenuDelegate: self) }
             }
@@ -1158,7 +1165,8 @@ struct ConsoleGamesView: SwiftUI.View {
                         ) {
                             launchGame(md5: game.md5)
                         }
-                        .id(game.id)
+                        /// Use model hash as ID so view recreates when artwork URL changes
+                        .id(game.hashValue)
                         .focusableIfAvailable()
                         .contextMenu {
                             if let live = liveGame(for: game) {
@@ -1522,7 +1530,8 @@ extension ConsoleGamesView {
         ) {
             launchGame(md5: game.md5)
         }
-        .id(game.id)
+        /// Use model hash as ID so view recreates when artwork URL changes
+        .id(game.hashValue)
         .focusableIfAvailable()
         .contextMenu {
             if let live = liveGame(for: game) {

@@ -90,6 +90,11 @@ public struct GameItemView: SwiftUI.View {
                     loadArtworkWithPriority(.high)
                 }
             }
+            .onChange(of: game.trueArtworkURL) { _ in
+                /// Clear cached artwork and reload when URL changes (e.g., custom artwork set)
+                artwork = nil
+                loadArtworkIfNeeded()
+            }
             #if os(tvOS)
             /// On tvOS, use card button style for native focus effects (bloom/lift)
             .buttonStyle(.card)
@@ -217,6 +222,11 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
                 if newValue && artwork == nil {
                     loadArtworkWithPriority(.high)
                 }
+            }
+            .onChange(of: game.trueArtworkURL) { _ in
+                /// Clear cached artwork and reload when URL changes (e.g., custom artwork set)
+                artwork = nil
+                loadArtworkIfNeeded()
             }
             #if os(tvOS)
             .buttonStyle(.card)

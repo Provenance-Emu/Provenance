@@ -411,19 +411,41 @@ extension GameContextMenu {
 
     private func clearCustomArtwork(forGame game: PVGame) {
         guard !game.isInvalidated else { return }
-        DLOG("GameContextMenu: Attempting to clear custom artwork for game: \(game.title)")
+
+        let gameTitle = game.title
+        let md5 = game.md5Hash
+        let oldArtworkKey = game.customArtworkURL
+
+        guard !md5.isEmpty else {
+            ELOG("GameContextMenu: Cannot clear artwork - game has no MD5 hash")
+            return
+        }
+
+        DLOG("GameContextMenu: Attempting to clear custom artwork for game: \(gameTitle)")
+
         do {
+            /// Use MD5-based lookup to get a live managed object
+            /// This avoids issues with thaw() returning nil for frozen objects
             try RomDatabase.sharedInstance.writeTransaction {
-                let thawedGame = game.thaw()
-                thawedGame?.customArtworkURL = ""
+                guard let liveGame = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
+                    ELOG("Could not find game with MD5: \(md5) to clear artwork")
+                    return
+                }
+                liveGame.customArtworkURL = ""
+                DLOG("Game's customArtworkURL cleared")
             }
-            DLOG("Successfully cleared custom artwork for game: \(game.title)")
-            rootDelegate?.showMessage("Custom artwork has been cleared for \(game.title).", title: "Artwork Cleared")
-            try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
-            DLOG("Successfully deleted custom artowrk form game: \(game.title)")
+
+            DLOG("Successfully cleared custom artwork for game: \(gameTitle)")
+            rootDelegate?.showMessage("Custom artwork has been cleared for \(gameTitle).", title: "Artwork Cleared")
+
+            /// Delete the cached image using the OLD artwork key (captured before transaction)
+            if !oldArtworkKey.isEmpty {
+                try PVMediaCache.deleteImage(forKey: oldArtworkKey)
+                DLOG("Successfully deleted cached artwork for key: \(oldArtworkKey)")
+            }
         } catch {
             DLOG("Failed to clear custom artwork: \(error.localizedDescription)")
-            rootDelegate?.showMessage("Failed to clear custom artwork for \(game.title): \(error.localizedDescription)", title: "Error")
+            rootDelegate?.showMessage("Failed to clear custom artwork for \(gameTitle): \(error.localizedDescription)", title: "Error")
         }
     }
 
