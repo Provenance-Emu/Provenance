@@ -89,7 +89,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private func withRealm<T: Sendable>(
         _ work: @escaping (Realm) throws -> T
     ) async throws -> T {
-        try await RealmContext.withRealm(work)
+        /// ROM sync runs on background queues; avoid main-thread Realm writes.
+        try await RealmContext.withBackgroundRealm(work)
     }
 
     // MARK: - Initialization

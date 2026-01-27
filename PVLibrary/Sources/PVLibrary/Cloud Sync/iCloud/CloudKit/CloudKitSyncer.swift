@@ -246,6 +246,14 @@ public class CloudKitSyncer: SyncProvider {
         }
     }
 
+    @inline(__always)
+    private func withBackgroundRealm<T: Sendable>(
+        _ work: @escaping (Realm) throws -> T
+    ) async throws -> T {
+        /// Syncers run on background queues; avoid main-thread Realm writes.
+        try await RealmContext.withBackgroundRealm(work)
+    }
+
     /// Process records in batches to improve efficiency and reduce notifications
     /// - Parameter records: Array of CloudKit records to process
     private func processRecordsInBatches(_ records: [CKRecord]) async {
@@ -1137,7 +1145,7 @@ public class CloudKitSyncer: SyncProvider {
         let recordHasAsset = recordHasAssetFlag(record, assetKey: CloudKitSyncer.FileAttributes.fileData)
 
         do {
-            try await RealmContext.withRealm { realm in
+            try await withBackgroundRealm { realm in
                 try realm.write {
                     // Check if the game already exists
                     let recordID = record.recordID.recordName
@@ -1231,7 +1239,7 @@ public class CloudKitSyncer: SyncProvider {
         }
 
         do {
-            try await RealmContext.withRealm { realm in
+            try await withBackgroundRealm { realm in
                 try realm.write {
                     // Check if the save state already exists
                     var saveState: PVSaveState?
@@ -1324,7 +1332,7 @@ public class CloudKitSyncer: SyncProvider {
         let md5 = record["md5"] as? String ?? ""
 
         do {
-            try await RealmContext.withRealm { realm in
+            try await withBackgroundRealm { realm in
                 try realm.write {
                     // Check if the BIOS already exists
                     var bios: PVBIOS?
