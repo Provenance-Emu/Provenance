@@ -156,19 +156,15 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     var allGamesModels: [GameCellModel] {
-        sortedGames.map { GameCellModel(game: $0) }
+        gamesViewModel.allGamesModels
     }
 
     var favoritesModels: [GameCellModel] {
-        let models = favoritesSnapshot.filter { !$0.isInvalidated }.map { GameCellModel(game: $0) }
-        return sortModels(models)
+        gamesViewModel.favoritesModels
     }
 
     var recentlyPlayedModels: [GameCellModel] {
-        recentSnapshot
-            .compactMap { $0.game }
-            .filter { !$0.isInvalidated }
-            .map { GameCellModel(game: $0) }
+        gamesViewModel.recentlyPlayedModels
     }
 
     private var hasRecentSaveStates: Bool {
