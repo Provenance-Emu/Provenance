@@ -3107,7 +3107,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             var lookupItems: [(md5: String, title: String, filename: String, systemIdentifier: String)] = []
 
             try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
-                try realm.write {
+                let applySnapshots = {
                     for snap in snapshots {
                         if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
 
@@ -3196,6 +3196,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             realm.add(newGame, update: .modified)
                             created += 1
                         }
+                    }
+                }
+                if realm.isInWriteTransaction {
+                    applySnapshots()
+                } else {
+                    try realm.write {
+                        applySnapshots()
                     }
                 }
             }

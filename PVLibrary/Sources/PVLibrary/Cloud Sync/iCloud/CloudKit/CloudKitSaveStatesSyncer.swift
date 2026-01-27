@@ -1226,8 +1226,15 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 // Normalize lastUploadedDate to cloud mod date to prevent future drift
                 try? await self.withRealm { realm in
                     if let live = realm.object(ofType: PVSaveState.self, forPrimaryKey: localSaveState.id) {
-                        try realm.write {
+                        let applyUpdate = {
                             live.lastUploadedDate = cloudModificationDate
+                        }
+                        if realm.isInWriteTransaction {
+                            applyUpdate()
+                        } else {
+                            try realm.write {
+                                applyUpdate()
+                            }
                         }
                     }
                 }
@@ -1888,10 +1895,17 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             try replaceFileAtomically(from: assetFileURL, to: artworkURL)
 
             try await self.withRealm { realm in
-                try realm.write {
+                let applyUpdate = {
                     guard let liveSaveState = targetSaveState.thaw() else { return }
                     let imageFile = PVImageFile(withURL: artworkURL, relativeRoot: .documents)
                     liveSaveState.image = imageFile
+                }
+                if realm.isInWriteTransaction {
+                    applyUpdate()
+                } else {
+                    try realm.write {
+                        applyUpdate()
+                    }
                 }
             }
             DLOG("Cached artwork for save state \(targetSaveState.id)")
