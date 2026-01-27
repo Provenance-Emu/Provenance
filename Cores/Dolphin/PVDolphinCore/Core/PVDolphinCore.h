@@ -50,6 +50,8 @@
     UIViewController *m_view_controller;
     CAMetalLayer* m_metal_layer;
     CAEAGLLayer *m_gl_layer;
+    /// Externally-provided CAMetalLayer for direct Vulkan rendering (bypasses view.layer)
+    CAMetalLayer* m_external_render_layer;
 @public
     dispatch_queue_t _callbackQueue;
 }
@@ -131,6 +133,8 @@
 @property (nonatomic, assign) bool disableJoystickIRCursor;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
+/// Sets the CAMetalLayer directly for Vulkan rendering, bypassing view.layer access
+- (void) setRenderLayer:(CAMetalLayer *)layer;
 - (void) setupControllers;
 - (void) pollControllers;
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;

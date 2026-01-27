@@ -19,7 +19,10 @@ import PVPrimitives
 
 @objc public class DolphinVulkanViewController: UIViewController {
     private var core: PVDolphinCoreBridge!
-    private var metalView: DolphinFilterHostingView!
+    /// Host view for the render layer - uses a separate CAMetalLayer sublayer like native DolphiniOS
+    private var renderHostView: UIView!
+    /// Standalone CAMetalLayer for Vulkan/Metal rendering - NOT the view's backing layer
+    private var renderLayer: CAMetalLayer!
     private var dev: MTLDevice!
     private var filteredView: MTKView!
     private var commandQueue: MTLCommandQueue?
@@ -30,47 +33,49 @@ import PVPrimitives
     private var smoothingEnabled: Bool = Defaults[.imageSmoothing]
     private var currentFilterPixelFormat: MTLPixelFormat?
     private var isResuming: Bool = false
+    /// Tracks whether the VM has been started - delays VM start until after first layout
+    private var hasStartedVM: Bool = false
+    /// Tracks last drawable size to detect changes
+    private var lastDrawableSize: CGSize = .zero
 
 	@objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVDolphinCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
 		self.core = core;
 
-		// Use shared Metal device to avoid conflicts
+		/// Use shared Metal device
 		self.dev = MTLCreateSystemDefaultDevice()!
-
-		// Disable Metal validation to test if rendering works despite buffer size warnings
-		// This helps determine if it's a validation issue or actual rendering problem
-		if let device = self.dev {
-			// Note: Metal validation can only be disabled via environment variables or build settings
-			// For now, we'll proceed with validation enabled but log the issue
-			ILOG("Metal device created: \(device.name)")
-		}
+		ILOG("Metal device created: \(dev.name)")
 
         commandQueue = dev.makeCommandQueue()
         blitter = MetalBlitter(device: dev)
 
-        metalView = DolphinFilterHostingView(frame: UIScreen.main.bounds, device: dev)
-        metalView.filterDelegate = self
+        /// Create a regular host view - NOT using layerClass for CAMetalLayer
+        /// This matches the native DolphiniOS architecture
+        renderHostView = UIView(frame: .zero)
+        renderHostView.backgroundColor = .black
+        renderHostView.isUserInteractionEnabled = false
+        renderHostView.translatesAutoresizingMaskIntoConstraints = false
+        renderHostView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        // Configure hosting view/layer for Vulkan/Metal interop
-        metalView.isUserInteractionEnabled = false
-        metalView.contentMode = .scaleToFill
-        metalView.translatesAutoresizingMaskIntoConstraints = false
-        if let metalLayer = metalView.layer as? CAMetalLayer {
-            metalLayer.framebufferOnly = true
-            metalLayer.allowsNextDrawableTimeout = false
-            metalLayer.isOpaque = true
-            metalLayer.presentsWithTransaction = false
-            metalLayer.maximumDrawableCount = 3  // Triple buffering
-            metalLayer.pixelFormat = .bgra8Unorm
-            metalLayer.colorspace = CGColorSpaceCreateDeviceRGB()
-            metalLayer.contentsScale = UIScreen.main.scale
-            let scale = UIScreen.main.scale
-            metalLayer.drawableSize = CGSize(width: metalView.bounds.width * scale,
-                                             height: metalView.bounds.height * scale)
-        }
+        /// Create a standalone CAMetalLayer - NOT as the view's backing layer
+        /// This gives us full control over the layer's frame and drawableSize
+        renderLayer = CAMetalLayer()
+        renderLayer.device = dev
+        renderLayer.framebufferOnly = true
+        renderLayer.allowsNextDrawableTimeout = false
+        renderLayer.isOpaque = true
+        renderLayer.presentsWithTransaction = false
+        renderLayer.maximumDrawableCount = 3  // Triple buffering
+        renderLayer.pixelFormat = .bgra8Unorm
+        renderLayer.colorspace = CGColorSpaceCreateDeviceRGB()
+        renderLayer.contentsScale = UIScreen.main.scale
+        /// NOTE: Do NOT set drawableSize here - wait until viewDidLayoutSubviews
+        /// when we have correct bounds for the current orientation
 
-        filteredView = MTKView(frame: UIScreen.main.bounds, device: dev)
+        /// Add the metal layer as a sublayer of the host view's layer
+        renderHostView.layer.addSublayer(renderLayer)
+
+        filteredView = MTKView(frame: .zero, device: dev)
         filteredView.translatesAutoresizingMaskIntoConstraints = false
         filteredView.isUserInteractionEnabled = false
         filteredView.isPaused = true
@@ -101,20 +106,23 @@ import PVPrimitives
 	}
 
 	deinit {
-		// Critical: Clean up Metal resources to prevent GPU memory leaks
+		/// Clean up Metal resources to prevent GPU memory leaks
 		ILOG("DolphinVulkanViewController deinit - cleaning up Metal resources")
 
         filterObservationTask?.cancel()
         filterObservationTask = nil
 		NotificationCenter.default.removeObserver(self)
 
-        if let metalView = self.metalView {
-            // Remove from superview to break retain cycles
-            metalView.removeFromSuperview()
-            self.metalView = nil
+        /// Clean up render layer
+        renderLayer?.removeFromSuperlayer()
+        renderLayer = nil
+
+        if let hostView = self.renderHostView {
+            hostView.removeFromSuperview()
+            self.renderHostView = nil
         }
 
-		// Clear Metal device reference
+		/// Clear Metal device reference
         commandQueue = nil
         blitter = nil
 		self.dev = nil
@@ -122,17 +130,19 @@ import PVPrimitives
 
 		ILOG("DolphinVulkanViewController deinit complete")
 	}
+
 	@objc public override func viewDidLoad() {
 		ILOG("View Did Load\n")
-		self.view = metalView
+		self.view = renderHostView
         super.viewDidLoad()
 
         installFilteredView()
         configureFilterRendererIfNeeded(reason: "viewDidLoad")
         startFilterPreferenceObservation()
 
-        ILOG("Starting VM\n")
-		core.startVM(metalView)
+        /// VM start is deferred to viewDidLayoutSubviews to ensure
+        /// the CAMetalLayer has correct dimensions for the current orientation
+        ILOG("VM start deferred until first layout\n")
 
 		/// Observe window visibility changes to handle cases where sheets appear
 		/// without triggering view lifecycle methods
@@ -217,11 +227,8 @@ import PVPrimitives
 		core.setPauseEmulation(true)
 
         /// Get current state before manipulation
-        var originalDrawableSize = CGSize.zero
-        if let metalLayer = metalView.layer as? CAMetalLayer {
-            originalDrawableSize = metalLayer.drawableSize
-        }
-		var wasHidden = false
+        let originalDrawableSize = renderLayer.drawableSize
+		var wasHidden = renderLayer.isHidden
 
 		guard originalDrawableSize.width > 0 && originalDrawableSize.height > 0 else {
 			ILOG("DolphinVulkanViewController resumeRendering - invalid drawable size, skipping")
@@ -229,39 +236,32 @@ import PVPrimitives
 			return
 		}
 
-		if let metalLayer = metalView.layer as? CAMetalLayer {
-			metalLayer.removeAllAnimations()
-			wasHidden = metalLayer.isHidden
+        renderLayer.removeAllAnimations()
+        wasHidden = renderLayer.isHidden
 
-			/// Hide layer immediately to prevent any flickering
-			metalLayer.isHidden = true
+        /// Hide layer immediately to prevent any flickering
+        renderLayer.isHidden = true
 
-			/// Drastically change drawable size to force complete swapchain destruction
-			/// This mimics what happens during reset - forces Vulkan to completely destroy old swapchain
-			metalLayer.drawableSize = CGSize(width: 1, height: 1)
-		}
+        /// Drastically change drawable size to force complete swapchain destruction
+        renderLayer.drawableSize = CGSize(width: 1, height: 1)
 
 		/// Force immediate swapchain destruction
 		core.refreshScreenSize()
 
-		/// Wait longer to ensure swapchain is completely destroyed
-		/// Multiple frame delays ensure Vulkan has processed the destruction
+		/// Wait to ensure swapchain is completely destroyed
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
 			guard let self = self else { return }
 
 			/// Restore correct drawable size - this triggers new swapchain creation
-			if let metalLayer = self.metalView.layer as? CAMetalLayer {
-				metalLayer.drawableSize = originalDrawableSize
-			}
+            self.renderLayer.drawableSize = originalDrawableSize
 
 			/// Trigger swapchain recreation
 			self.core.refreshScreenSize()
 
-			/// Wait longer for swapchain to be fully recreated (similar to reset timing)
+			/// Wait for swapchain to be fully recreated
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
 				guard let self = self else { return }
 
-				/// Multiple refreshes to ensure swapchain is fully synchronized
 				self.core.refreshScreenSize()
 
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
@@ -269,17 +269,14 @@ import PVPrimitives
 
 					self.core.refreshScreenSize()
 
-					/// Now restore layer visibility after swapchain is fully recreated
-					if let metalLayer = self.metalView.layer as? CAMetalLayer {
-						metalLayer.isHidden = wasHidden
-					}
+					/// Restore layer visibility after swapchain is fully recreated
+                    self.renderLayer.isHidden = wasHidden
 
 					/// Final synchronization pass
 					DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
 						guard let self = self else { return }
 						self.core.refreshScreenSize()
 						self.isResuming = false
-						/// Resume emulation now that the swapchain is synchronized
 						self.core.setPauseEmulation(false)
 						ILOG("DolphinVulkanViewController resumeRendering - complete swapchain recreation finished")
 					}
@@ -289,31 +286,72 @@ import PVPrimitives
 	}
 
 	@objc public override func viewDidLayoutSubviews() {
-        ILOG("View Size Changed\n")
-		if let metalLayer = metalView.layer as? CAMetalLayer {
-			let scale = UIScreen.main.scale
-			metalLayer.contentsScale = scale
-			metalLayer.drawableSize = CGSize(width: metalView.bounds.width * scale,
-											height: metalView.bounds.height * scale)
-		}
-        if let displayLayer = filteredView.layer as? CAMetalLayer {
-            let scale = UIScreen.main.scale
-            filteredView.frame = metalView.bounds
-            filteredView.drawableSize = CGSize(width: metalView.bounds.width * scale,
-                                              height: metalView.bounds.height * scale)
-            displayLayer.drawableSize = filteredView.drawableSize
+        super.viewDidLayoutSubviews()
+
+        let viewBounds = view.bounds
+        let scale = UIScreen.main.scale
+
+        /// Update the standalone renderLayer to match view bounds and orientation
+        /// This is critical for correct landscape rendering
+        renderLayer.frame = viewBounds
+        renderLayer.contentsScale = scale
+
+        /// Calculate drawable size based on actual view bounds (respects current orientation)
+        let drawableWidth = viewBounds.width * scale
+        let drawableHeight = viewBounds.height * scale
+        let newDrawableSize = CGSize(width: drawableWidth, height: drawableHeight)
+
+        /// Only update if size actually changed
+        if newDrawableSize != lastDrawableSize {
+            renderLayer.drawableSize = newDrawableSize
+            lastDrawableSize = newDrawableSize
+            ILOG("viewDidLayoutSubviews: view.bounds=\(viewBounds), drawableSize=\(newDrawableSize)")
         }
-		core.refreshScreenSize()
+
+        if let displayLayer = filteredView.layer as? CAMetalLayer {
+            filteredView.frame = viewBounds
+            filteredView.drawableSize = newDrawableSize
+            displayLayer.drawableSize = newDrawableSize
+        }
+
+        /// Start VM on first layout when layer has correct dimensions for current orientation
+        if !hasStartedVM {
+            /// Verify we have valid dimensions before starting
+            guard viewBounds.width > 0 && viewBounds.height > 0 else {
+                ILOG("viewDidLayoutSubviews: skipping VM start - invalid bounds")
+                return
+            }
+
+            hasStartedVM = true
+            ILOG("Starting VM after first layout with bounds: \(viewBounds), drawableSize: \(renderLayer.drawableSize)\n")
+
+            /// Set the render layer directly - this bypasses view.layer and uses our standalone layer
+            /// with correct dimensions for the current orientation
+            core.setRenderLayer(renderLayer)
+
+            /// Start the VM (view parameter is now just for lifecycle management)
+            core.startVM(renderHostView)
+
+            /// Force a delayed swapchain refresh after VM initializes
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                guard let self = self else { return }
+                ILOG("Post-VM-start refresh: view.bounds=\(self.view.bounds), drawableSize=\(self.renderLayer.drawableSize)")
+                self.core.refreshScreenSize()
+            }
+        } else {
+            /// VM already running - just refresh screen size for the new dimensions
+            core.refreshScreenSize()
+        }
 	}
 
     private func installFilteredView() {
         guard filteredView.superview == nil else { return }
-        metalView.addSubview(filteredView)
+        renderHostView.addSubview(filteredView)
         NSLayoutConstraint.activate([
-            filteredView.topAnchor.constraint(equalTo: metalView.topAnchor),
-            filteredView.bottomAnchor.constraint(equalTo: metalView.bottomAnchor),
-            filteredView.leadingAnchor.constraint(equalTo: metalView.leadingAnchor),
-            filteredView.trailingAnchor.constraint(equalTo: metalView.trailingAnchor)
+            filteredView.topAnchor.constraint(equalTo: renderHostView.topAnchor),
+            filteredView.bottomAnchor.constraint(equalTo: renderHostView.bottomAnchor),
+            filteredView.leadingAnchor.constraint(equalTo: renderHostView.leadingAnchor),
+            filteredView.trailingAnchor.constraint(equalTo: renderHostView.trailingAnchor)
         ])
         filteredView.backgroundColor = .black
     }
@@ -468,7 +506,11 @@ fileprivate final class DolphinFilterHostingView: UIView {
         let scale = UIScreen.main.scale
         contentScaleFactor = scale
         metalLayer.contentsScale = scale
-        metalLayer.drawableSize = CGSize(width: bounds.width * scale, height: bounds.height * scale)
+        /// Only set drawableSize if we have valid bounds
+        /// Otherwise defer to viewDidLayoutSubviews when bounds are available
+        if bounds.width > 0 && bounds.height > 0 {
+            metalLayer.drawableSize = CGSize(width: bounds.width * scale, height: bounds.height * scale)
+        }
     }
 
     required init?(coder: NSCoder) {

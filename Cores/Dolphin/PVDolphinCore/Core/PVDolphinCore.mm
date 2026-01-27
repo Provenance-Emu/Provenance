@@ -689,6 +689,12 @@ static void ResetDolphinStaticState() {
         }
     }
 }
+- (void)setRenderLayer:(CAMetalLayer *)layer {
+    m_external_render_layer = layer;
+    NSLog(@"🐬 [DEBUG] External render layer set: %@, drawableSize: %.0fx%.0f",
+          layer, layer.drawableSize.width, layer.drawableSize.height);
+}
+
 - (void)startVM:(UIView *)view {
     NSLog(@"Starting VM\n");
     m_view=view;
@@ -707,10 +713,16 @@ static void ResetDolphinStaticState() {
     wsi.type = WindowSystemType::iOS;
     wsi.display_connection = nullptr;
     dispatch_sync(dispatch_get_main_queue(), ^{
-        // Always use the core-managed view layer as the render surface to avoid
-        // lifecycle interference from host MTKView instances
-        wsi.render_surface = (__bridge void*)m_view.layer;
-        NSLog(@"🐬 [DEBUG] Using core-managed view layer for rendering");
+        // Use externally-provided render layer if set, otherwise fall back to view.layer
+        // The external layer gives us full control over dimensions for proper orientation support
+        if (m_external_render_layer) {
+            wsi.render_surface = (__bridge void*)m_external_render_layer;
+            NSLog(@"🐬 [DEBUG] Using external render layer for rendering, drawableSize: %.0fx%.0f",
+                  m_external_render_layer.drawableSize.width, m_external_render_layer.drawableSize.height);
+        } else {
+            wsi.render_surface = (__bridge void*)m_view.layer;
+            NSLog(@"🐬 [DEBUG] Using view.layer for rendering");
+        }
     });
     wsi.render_surface_scale = [UIScreen mainScreen].scale;
     NSLog(@"🐬 [DEBUG] WindowSystemInfo configured for iOS");
