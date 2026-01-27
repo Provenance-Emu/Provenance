@@ -807,6 +807,23 @@ public class CloudSyncManager {
         }
     }
 
+    /// Sync custom artwork for a game by MD5 (safe for background threads)
+    @discardableResult
+    public func syncArtwork(forMD5 md5: String, artworkKey: String) async throws -> Bool {
+        guard !md5.isEmpty else {
+            ELOG("Cannot sync artwork: missing MD5")
+            return false
+        }
+        let frozenGame = await MainActor.run {
+            RomDatabase.sharedInstance.game(withMD5: md5)?.freeze()
+        }
+        guard let frozenGame else {
+            ELOG("Cannot sync artwork: game not found for MD5 \(md5)")
+            return false
+        }
+        return try await syncArtwork(for: frozenGame, artworkKey: artworkKey)
+    }
+
     /// Sync artwork for multiple games in batch
     /// - Parameter gameMD5s: Array of game MD5 hashes to sync artwork for
     /// - Returns: Number of games successfully synced
