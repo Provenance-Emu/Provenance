@@ -1416,8 +1416,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     do {
                         // IMPORTANT: This delete call must NOT trigger the PVGameWillBeDeleted notification
                         // or subsequent CloudKit update, otherwise it loops.
-                        // Ensure RomsDatastore.delete handles this context.
-                        try RomDatabase.sharedInstance.delete(game: localGame)
+                        // Use source: .cloudKitSync to prevent notification cascade.
+                        try RomDatabase.sharedInstance.delete(game: localGame, source: .cloudKitSync)
                         ILOG("Successfully deleted local game \(md5) based on remote flag.")
                     } catch {
                         ELOG("Failed to delete local game \(md5) after remote delete flag: \(error)")
@@ -1479,8 +1479,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 VLOG("Deleting local game \(localGame.title) because remote record was not found.")
                 do {
                     // Ensure this delete path also avoids triggering cloud sync again.
-                    // Ensure RomsDatastore.delete handles this context.
-                    try RomDatabase.sharedInstance.delete(game: localGame)
+                    // Use source: .cloudKitSync to prevent notification cascade.
+                    try RomDatabase.sharedInstance.delete(game: localGame, source: .cloudKitSync)
                     ILOG("Successfully deleted local game \(md5) because remote record was missing.")
                 } catch {
                     ELOG("Failed to delete local game \(md5) after remote record was missing: \(error)")
