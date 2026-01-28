@@ -14,12 +14,15 @@ import AsyncAlgorithms
 import RealmSwift
 
 public extension RomDatabase {
+    /// Guard flag to prevent concurrent execution of addContentlessCores
+    @MainActor
+    private static var isAddingContentlessCores = false
+
+    /// Clears all contentless PVGame entries from the database
     @MainActor
     static func clearContentlessCores() async throws {
-        /// Get the realm instance
         let realm = try await Realm()
 
-        /// Get all existing contentless games
         let existingContentlessGames = realm.objects(PVGame.self).filter("contentless == true")
         ILOG("Removing \(existingContentlessGames.count) existing contentless PVGames")
 
@@ -28,19 +31,23 @@ public extension RomDatabase {
         }
     }
 
+    /// Adds contentless PVGame entries for cores that support running without ROM files
+    /// Uses atomic transactions and upsert to prevent race condition crashes
     @MainActor
     static func addContentlessCores(overwrite: Bool = false) async throws {
-        /// Get the realm instance
+        /// Prevent concurrent execution to avoid race conditions
+        guard !isAddingContentlessCores else {
+            WLOG("addContentlessCores already in progress, skipping duplicate call")
+            return
+        }
+        isAddingContentlessCores = true
+        defer { isAddingContentlessCores = false }
+
         let realm = try await Realm()
 
         /// Get all contentless cores
         let contentlessCores = realm.objects(PVCore.self).filter("contentless == true")
         ILOG("Found \(contentlessCores.count) contentless cores: \(contentlessCores.map(\.identifier).joined(separator: ", "))")
-
-        /// If overwriting, first delete all existing contentless games
-        if overwrite {
-            try await clearContentlessCores()
-        }
 
         /// Create array to hold new games that need to be added
         var gamesToAdd: [PVGame] = []
@@ -50,7 +57,7 @@ public extension RomDatabase {
             /// Skip if game already exists and we're not overwriting
             if !overwrite {
                 if let _ = realm.object(ofType: PVGame.self, forPrimaryKey: core.identifier) {
-                    ILOG("Found exiting contentless PVGame for identifier \(core.identifier), skipping")
+                    ILOG("Found existing contentless PVGame for identifier \(core.identifier), skipping")
                     continue
                 }
             }
@@ -61,13 +68,24 @@ public extension RomDatabase {
             ILOG("Game to add: \(game.title)")
         }
 
-        /// Add all new games in a single transaction if we have any
-        if !gamesToAdd.isEmpty {
-            WLOG("Adding \(gamesToAdd.count) new contentless PVGame's...")
+        /// Perform clear and add in a single atomic transaction to prevent race conditions
+        if !gamesToAdd.isEmpty || overwrite {
+            WLOG("Processing \(gamesToAdd.count) contentless PVGame(s) (overwrite: \(overwrite))...")
 
             try await realm.asyncWrite {
-                realm.add(gamesToAdd)
+                /// Delete existing contentless games if overwriting (within same transaction)
+                if overwrite {
+                    let existingContentlessGames = realm.objects(PVGame.self).filter("contentless == true")
+                    ILOG("Deleting \(existingContentlessGames.count) existing contentless games in atomic transaction")
+                    realm.delete(existingContentlessGames)
+                }
+
+                /// Add games with .modified policy to upsert on primary key collision
+                for game in gamesToAdd {
+                    realm.add(game, update: .modified)
+                }
             }
+            ILOG("Successfully processed contentless PVGames")
         } else {
             WLOG("No contentless cores found to add PVGame's for.")
         }
