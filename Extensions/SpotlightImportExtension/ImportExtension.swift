@@ -15,6 +15,7 @@ import UniformTypeIdentifiers
 
 // https://developer.apple.com/documentation/corespotlight/csimportextension
 
+/// Errors that can occur during Spotlight import extension operations
 enum ImportExtensionError: Error {
     case appGroupsNotSupported
     case fileNotFound
@@ -22,55 +23,48 @@ enum ImportExtensionError: Error {
     case realmError(Error)
 }
 
+/// Spotlight import extension for indexing Provenance game files
+/// Note: CSImportExtension.update(_:forFileAt:) is synchronous, so we cannot use
+/// Swift actors for Realm access here. Instead, we create thread-local Realm instances
+/// with explicit configuration and freeze objects before use.
 class ImportExtension: CSImportExtension {
     
     /// Domain identifier for all Provenance items
     private let domainIdentifier = "org.provenance-emu.games"
     
-    /// Actor to isolate Realm database access safely
-    private actor RealmActor {
-        
-        /// Get a game by its MD5 hash using shared database instance
-        func getGame(byMD5 md5: String) throws -> PVGame? {
-            // Always use the shared RomDatabase instance to prevent corruption
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            
-            // Get the game and freeze it so it can be used across threads
-            let predicate = NSPredicate(format: "md5Hash == %@", md5)
-            return realm.objects(PVGame.self).filter(predicate).first?.freeze()
-        }
-        
-        /// Get all games using shared database instance
-        func getAllGames() throws -> [PVGame] {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            
-            // Get all games and freeze them for thread safety
-            return realm.objects(PVGame.self).map { $0.freeze() }
-        }
-    }
-    
-    /// Realm actor instance
-    private let realmActor = RealmActor()
+    /// Flag to track if Realm configuration has been set
+    private static var realmConfigured = false
     
     override init() {
         super.init()
         
-        ILOG("SpotlightImport: Initializing Import Extension")
+        // Set Realm configuration synchronously BEFORE any database access
+        // This must happen before update(_:forFileAt:) is called
+        Self.configureRealmIfNeeded()
         
-        // Ensure RomDatabase is properly initialized
-        // The shared instance will handle all configuration automatically
-        Task {
-            do {
-                // Verify the shared database is accessible
-                let database = RomDatabase.sharedInstance
-                let _ = database.realm // This will initialize if needed
-                ILOG("SpotlightImport: Successfully connected to shared Realm database")
-            } catch {
-                ELOG("SpotlightImport: Failed to connect to shared Realm database: \(error)")
-            }
-        }
+        ILOG("SpotlightImport: Initializing Import Extension")
+    }
+    
+    /// Configure Realm with the app group configuration
+    /// This is idempotent and safe to call multiple times
+    private static func configureRealmIfNeeded() {
+        guard !realmConfigured else { return }
+        
+        RealmConfiguration.setDefaultRealmConfig()
+        realmConfigured = true
+        ILOG("SpotlightImport: Realm configuration set")
+    }
+    
+    /// Create a properly configured Realm instance for the current thread
+    /// - Returns: A configured Realm instance
+    /// - Throws: RealmError if the database cannot be opened
+    private func createRealm() throws -> Realm {
+        // Ensure configuration is set (defensive check)
+        Self.configureRealmIfNeeded()
+        
+        // Use explicit configuration for clarity and safety
+        let config = RealmConfiguration.realmConfig
+        return try Realm(configuration: config)
     }
     
     override func update(_ attributes: CSSearchableItemAttributeSet, forFileAt fileURL: URL) throws {
@@ -119,21 +113,16 @@ class ImportExtension: CSImportExtension {
         ILOG("SpotlightImport: Generated MD5 hash: \(md5Hash)")
         
         do {
-            // This is a synchronous method, so we need to use a fully synchronous approach
-            // Get the configuration directly
-//            let config = RealmConfiguration.realmConfig
+            // Create Realm with proper configuration
+            let realm = try createRealm()
             
-            // Create a new Realm instance directly
-//            let realm = try Realm(configuration: config)
-            let realm = try Realm()
-
             let predicate = NSPredicate(format: "md5Hash == %@", md5Hash)
-            let game = realm.objects(PVGame.self).filter(predicate).first
             
-            if let game = game {
+            // Freeze the object for thread safety before passing to other methods
+            if let game = realm.objects(PVGame.self).filter(predicate).first?.freeze() {
                 ILOG("SpotlightImport: Found game: \(game.title) for MD5: \(md5Hash)")
                 
-                // Transfer game metadata to search attributes
+                // Transfer game metadata to search attributes (game is frozen, safe to use)
                 updateAttributesFromGame(attributes, game: game)
                 
                 // Add unique identifier for opening the game
@@ -170,25 +159,20 @@ class ImportExtension: CSImportExtension {
             let potentialMD5 = components[components.count - 2]
             
             do {
-                // This is a synchronous method, so we need to use a fully synchronous approach
-                // Get the configuration directly
-//                let config = RealmConfiguration.realmConfig
+                // Create Realm with proper configuration (no force unwrap)
+                let realm = try createRealm()
                 
-                // Create a new Realm instance directly
-//                let realm = try Realm(configuration: config)
-                let realm = try! Realm()
-
                 let predicate = NSPredicate(format: "md5Hash == %@", potentialMD5)
-                let game = realm.objects(PVGame.self).filter(predicate).first
                 
-                if let game = game {
+                // Freeze the object for thread safety
+                if let game = realm.objects(PVGame.self).filter(predicate).first?.freeze() {
                     ILOG("SpotlightImport: Found game for save state: \(game.title)")
                     
                     // Set save state specific attributes
                     attributes.displayName = "Save State: \(game.title)"
                     attributes.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
                     
-                    // Add game metadata
+                    // Add game metadata (game is frozen, safe to use)
                     updateAttributesFromGame(attributes, game: game)
                     
                     // Add save state specific keywords
@@ -215,13 +199,22 @@ class ImportExtension: CSImportExtension {
     }
     
     /// Update search attributes from a game object
+    /// - Parameters:
+    ///   - attributes: The searchable item attributes to update
+    ///   - game: A frozen PVGame object (must be frozen for thread safety)
     private func updateAttributesFromGame(_ attributes: CSSearchableItemAttributeSet, game: PVGame) {
+        // Defensive check: ensure the game object is still valid
+        guard !game.isInvalidated else {
+            WLOG("SpotlightImport: Game object is invalidated, skipping attribute update")
+            return
+        }
+        
         // Basic metadata
         attributes.displayName = game.title
         attributes.contentDescription = game.gameDescription ?? "Game for \(game.system?.name ?? "Unknown System")"
         
         // Content type
-        if let system = game.system {
+        if let system = game.system, !system.isInvalidated {
             attributes.contentType = "\(system.manufacturer) \(system.name)"
         } else {
             attributes.contentType = "org.provenance-emu.game"
@@ -231,7 +224,7 @@ class ImportExtension: CSImportExtension {
         if let publishDate = game.publishDate {
             // Convert string publish date to NSDate
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy" // Assuming the publish date is just a year
+            dateFormatter.dateFormat = "yyyy"
             if let date = dateFormatter.date(from: publishDate) {
                 attributes.contentCreationDate = date
             }
@@ -245,18 +238,20 @@ class ImportExtension: CSImportExtension {
         // Keywords for better searchability
         var keywords = ["rom", "game", "emulator", "provenance"]
         
-        // Add system name
-        if let systemName = game.system?.name {
+        // Add system name (with safety check)
+        if let system = game.system, !system.isInvalidated {
+            let systemName = system.name
             keywords.append(systemName)
             // Add system variations
             if systemName.contains(" ") {
                 keywords.append(contentsOf: systemName.components(separatedBy: " "))
             }
-        }
-        
-        // Add manufacturer
-        if let manufacturer = game.system?.manufacturer {
-            keywords.append(manufacturer)
+            
+            // Add manufacturer
+            let manufacturer = system.manufacturer
+            if !manufacturer.isEmpty {
+                keywords.append(manufacturer)
+            }
         }
         
         // Add genres
@@ -280,10 +275,12 @@ class ImportExtension: CSImportExtension {
             
             let imagePath = artworkURL.path
             // Try to load the image data
+            #if canImport(UIKit)
             if let image = UIImage(contentsOfFile: imagePath),
                let scaledImage = image.scaledImage(withMaxResolution: 300) {
                 attributes.thumbnailData = scaledImage.jpegData(compressionQuality: 0.9)
             }
+            #endif
         }
         
         // Rating for favorites
