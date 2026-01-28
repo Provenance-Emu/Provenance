@@ -16,6 +16,19 @@ public extension PVSaveState {
             // Temp store these URLs
             let fileURL = state.file?.url
             let imageURl = state.image?.url
+            
+            // Capture cloudRecordID before deletion for CloudKit sync
+            let cloudRecordID = state.cloudRecordID
+            let saveStateID = state.id
+            
+            // Post notification for CloudKit sync (before deletion)
+            if let cloudRecordID = cloudRecordID, !cloudRecordID.isEmpty {
+                NotificationCenter.default.post(
+                    name: .PVSaveStateWillBeDeleted,
+                    object: nil,
+                    userInfo: ["cloudRecordID": cloudRecordID, "saveStateID": saveStateID]
+                )
+            }
 
             let database = RomDatabase.sharedInstance
             try database.delete(state)

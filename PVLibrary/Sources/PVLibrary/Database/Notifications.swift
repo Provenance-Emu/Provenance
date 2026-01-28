@@ -39,6 +39,7 @@ public extension Notification.Name {
 
     // Save State Events
     static let PVSaveStateSaved = Notification.Name("PVSaveStateSavedNotification") // Added
+    static let PVSaveStateWillBeDeleted = Notification.Name("PVSaveStateWillBeDeletedNotification") // Added for CloudKit sync
 
     // CloudKit Sync Events
     static let cloudKitAccountStateDidChange = Notification.Name("CloudKitAccountStateDidChange")

@@ -1422,6 +1422,7 @@ public class CloudSyncManager {
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameAdded(_:)), name: Notification.Name.PVGameImported, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameWillBeDeleted(_:)), name: .PVGameWillBeDeleted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleSaveStateAdded(_:)), name: Notification.Name.PVSaveStateSaved, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleSaveStateWillBeDeleted(_:)), name: .PVSaveStateWillBeDeleted, object: nil)
     }
 
     /// Set up observers for sync setting changes and other relevant events
@@ -1443,6 +1444,7 @@ public class CloudSyncManager {
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameAdded(_:)), name: Notification.Name.PVGameImported, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameWillBeDeleted(_:)), name: .PVGameWillBeDeleted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleSaveStateAdded(_:)), name: Notification.Name.PVSaveStateSaved, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleSaveStateWillBeDeleted(_:)), name: .PVSaveStateWillBeDeleted, object: nil)
 
         // Add observer for app returning from background
         notificationTokens.append(
@@ -1732,6 +1734,21 @@ public class CloudSyncManager {
             } catch {
                 // Error already logged and status updated in uploadSaveState
                 // errorHandler.handle(error: error) // Potentially redundant if uploadSaveState handles it
+            }
+        }
+    }
+
+    @objc private func handleSaveStateWillBeDeleted(_ notification: Notification) {
+        guard Defaults[.iCloudSync],
+              let saveStatesSyncer = saveStatesSyncer as? CloudKitSaveStatesSyncer,
+              let cloudRecordID = notification.userInfo?["cloudRecordID"] as? String else { return }
+        DLOG("Save state will be deleted, removing from CloudKit: \(cloudRecordID)")
+        Task {
+            do {
+                try await saveStatesSyncer.deleteSaveStateFromCloudKit(cloudRecordID: cloudRecordID)
+            } catch {
+                ELOG("Failed to delete save state from CloudKit: \(error.localizedDescription)")
+                await errorHandler.handle(error: error)
             }
         }
     }

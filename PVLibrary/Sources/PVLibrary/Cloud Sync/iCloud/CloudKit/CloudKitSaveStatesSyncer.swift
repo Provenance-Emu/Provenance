@@ -1724,6 +1724,32 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
     }
 
+    // MARK: - CloudKit Record Deletion
+
+    /// Delete a save state record from CloudKit
+    /// - Parameter cloudRecordID: The CloudKit record ID to delete
+    /// - Returns: Completable that completes when deletion is done
+    public func deleteSaveStateFromCloudKit(cloudRecordID: String) async throws {
+        guard !cloudRecordID.isEmpty else {
+            WLOG("[SYNC] Cannot delete save state from CloudKit: empty cloudRecordID")
+            return
+        }
+
+        let recordID = CKRecord.ID(recordName: cloudRecordID)
+        ILOG("[SYNC] Deleting save state record from CloudKit: \(cloudRecordID)")
+
+        do {
+            try await privateDatabase.deleteRecord(withID: recordID)
+            ILOG("[SYNC] Successfully deleted save state record from CloudKit: \(cloudRecordID)")
+        } catch let error as CKError where error.code == .unknownItem {
+            // Record was already deleted or never existed - this is fine
+            VLOG("[SYNC] Save state record not found in CloudKit (already deleted?): \(cloudRecordID)")
+        } catch {
+            ELOG("[SYNC] Failed to delete save state record from CloudKit: \(cloudRecordID), error: \(error.localizedDescription)")
+            throw error
+        }
+    }
+
     // MARK: - Artwork and Metadata Helpers
 
     /// Prepare save state artwork asset for CloudKit upload
