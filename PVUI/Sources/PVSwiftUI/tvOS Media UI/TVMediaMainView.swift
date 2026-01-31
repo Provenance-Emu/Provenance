@@ -808,6 +808,108 @@ struct TVMediaEmptyStateView: View {
     }
 }
 
+// MARK: - Empty Library Action Buttons
+
+/// Focusable action buttons for the empty library state
+@available(tvOS 16.0, *)
+struct TVMediaEmptyLibraryActionButtons: View {
+    let onSettings: () -> Void
+    let onImportStatus: () -> Void
+
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+
+    private enum ButtonID: Hashable {
+        case settings
+        case importStatus
+    }
+
+    @FocusState private var focusedButton: ButtonID?
+
+    private var isAnyButtonFocused: Bool {
+        focusedButton != nil
+    }
+
+    var body: some View {
+        HStack(spacing: 24) {
+            actionButton(
+                id: .settings,
+                icon: "gearshape",
+                title: "SETTINGS",
+                accentColor: Color.retroPink,
+                action: onSettings
+            )
+
+            actionButton(
+                id: .importStatus,
+                icon: "tray.and.arrow.down",
+                title: "IMPORT STATUS",
+                accentColor: Color.retroBlue,
+                action: onImportStatus
+            )
+        }
+        .onMoveCommand { direction in
+            if direction == .left, focusedButton == .settings {
+                focusCoordinator.openSidebar()
+            }
+        }
+        .onAppear {
+            let focusID = "emptyLibraryButtons"
+            focusCoordinator.registerLeftEdgeItem(focusID)
+            focusCoordinator.contentItemFocused(id: focusID, isAtLeftEdge: true)
+        }
+        .onChange(of: focusedButton) { newValue in
+            if newValue != nil {
+                let isAtLeftEdge = newValue == .settings
+                focusCoordinator.contentItemFocused(id: "emptyLibraryButtons", isAtLeftEdge: isAtLeftEdge)
+            }
+        }
+        .onDisappear {
+            focusCoordinator.unregisterLeftEdgeItem("emptyLibraryButtons")
+        }
+    }
+
+    @ViewBuilder
+    private func actionButton(
+        id: ButtonID,
+        icon: String,
+        title: String,
+        accentColor: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        let isFocused = focusedButton == id
+
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: isFocused ? .semibold : .regular))
+                Text(title)
+                    .font(.system(size: 14, weight: .semibold))
+                    .tracking(1)
+            }
+            .foregroundStyle(isFocused ? .white : .white.opacity(0.8))
+            .padding(.horizontal, 28)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(accentColor.opacity(isFocused ? 0.35 : 0.2))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(
+                                accentColor.opacity(isFocused ? 0.8 : 0.4),
+                                lineWidth: isFocused ? 2 : 1
+                            )
+                    )
+            )
+            .shadow(color: isFocused ? accentColor.opacity(0.5) : .clear, radius: 12, x: 0, y: 4)
+            .scaleEffect(isFocused ? 1.05 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
+        .focused($focusedButton, equals: id)
+    }
+}
+
 // MARK: - Saves View (with empty state handling)
 
 @available(tvOS 16.0, *)
@@ -1384,7 +1486,6 @@ struct TVMediaHomeView: View {
     @ObservedObject var router: TVMediaRouter
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
-    @FocusState private var isEmptyStateFocused: Bool
     @State private var isLoading = true
 #if canImport(PVWebServer)
     @State private var webServerURL: String?
@@ -1392,7 +1493,8 @@ struct TVMediaHomeView: View {
 
     /// Check if we have any games at all
     private var hasAnyGames: Bool {
-        model.gamesBySystemIdentifier.values.contains { !$0.isEmpty }
+        if LaunchArgument.forceEmptyLibrary.isEnabled { return false }
+        return model.gamesBySystemIdentifier.values.contains { !$0.isEmpty }
     }
 
     var body: some View {
@@ -1406,8 +1508,7 @@ struct TVMediaHomeView: View {
                 } else if !hasAnyGames {
                     // Empty library state
                     emptyLibraryView
-                        .focusable()
-                        .focused($isEmptyStateFocused)
+                        .focusSection()
                 } else {
                     // Favorites section
                     let favorites = model.favoriteGames(limit: 40)
@@ -1464,11 +1565,6 @@ struct TVMediaHomeView: View {
             refreshWebServerURL()
         }
 #endif
-        .onAppear {
-            if !hasAnyGames && !isLoading {
-                isEmptyStateFocused = true
-            }
-        }
     }
 
     private var loadingView: some View {
@@ -1537,6 +1633,13 @@ struct TVMediaHomeView: View {
 #endif
             }
 
+            // Action buttons for first-time users
+            TVMediaEmptyLibraryActionButtons(
+                onSettings: { router.navigate(to: .settings) },
+                onImportStatus: { router.activeModal = .importStatus }
+            )
+            .padding(.top, 8)
+
             // Sync status hint
             VStack(spacing: 8) {
                 HStack(spacing: 8) {
@@ -1568,9 +1671,11 @@ struct TVMediaHomeView: View {
         }
         isLoading = false
 
-        // Focus empty state if still no games
+        // Auto-expand sidebar if no games to guide first-time users
         if !hasAnyGames {
-            isEmptyStateFocused = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                focusCoordinator.openSidebar()
+            }
         }
     }
 
