@@ -34,15 +34,6 @@ extension View {
     }
 }
 
-// generate a preview
-
-extension PVSystem {
-    var iconName: String {
-        // Take the last segment of identifier seperated by .
-        return self.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
-    }
-}
-
 @available(iOS 14, tvOS 14, *)
 public struct
 SideMenuView: SwiftUI.View {

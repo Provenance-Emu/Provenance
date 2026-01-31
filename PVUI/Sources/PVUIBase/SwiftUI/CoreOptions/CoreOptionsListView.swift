@@ -31,14 +31,6 @@ public  struct SystemDisplayData: Identifiable {
     }
 }
 
-fileprivate extension PVSystem {
-    /// Get the icon name from the identifier
-    var iconName: String {
-        // Take the last segment of identifier seperated by .
-        return self.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
-    }
-}
-
 /// A simple struct to hold core information for the list
 public struct CoreListItem: Identifiable {
     /// The identifier of the core

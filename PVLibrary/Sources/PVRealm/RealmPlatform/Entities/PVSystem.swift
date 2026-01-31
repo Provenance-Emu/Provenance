@@ -350,3 +350,10 @@ extension System: RealmRepresentable {
         })
     }
 }
+
+public extension PVSystem {
+    public var iconName: String {
+        // Take the last segment of identifier seperated by .
+        return self.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
+    }
+}
