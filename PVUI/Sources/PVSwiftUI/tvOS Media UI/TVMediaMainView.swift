@@ -910,6 +910,154 @@ struct TVMediaEmptyLibraryActionButtons: View {
     }
 }
 
+// MARK: - Scroll Index Rail
+
+/// A vertical rail showing system abbreviations for quick navigation
+@available(tvOS 16.0, *)
+struct TVMediaScrollIndexRail: View {
+    let systems: [PVSystem]
+    let hasFavorites: Bool
+    let onSelectSystem: (String) -> Void
+    let onSelectFavorites: () -> Void
+    let onSelectTop: () -> Void
+
+    private enum IndexItem: Hashable {
+        case top
+        case favorites
+        case system(String)
+    }
+
+    @FocusState private var focusedItem: IndexItem?
+    @State private var isExpanded = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 2) {
+                    // Top button
+                    indexButton(
+                        item: .top,
+                        label: "▲",
+                        fullLabel: "TOP",
+                        action: onSelectTop
+                    )
+
+                    // Favorites
+                    if hasFavorites {
+                        indexButton(
+                            item: .favorites,
+                            label: "★",
+                            fullLabel: "FAVS",
+                            action: onSelectFavorites
+                        )
+                    }
+
+                    // Divider
+                    if hasFavorites {
+                        Rectangle()
+                            .fill(Color.retroPink.opacity(0.3))
+                            .frame(width: isExpanded ? 50 : 24, height: 1)
+                            .padding(.vertical, 4)
+                    }
+
+                    // Systems
+                    ForEach(systems, id: \.identifier) { system in
+                        indexButton(
+                            item: .system(system.identifier),
+                            label: systemAbbreviation(system),
+                            fullLabel: system.shortName,
+                            action: { onSelectSystem(system.identifier) }
+                        )
+                    }
+                }
+                .padding(.vertical, 12)
+            }
+        }
+        .frame(width: isExpanded ? 80 : 44)
+        .background(railBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .onChange(of: focusedItem) { newValue in
+            withAnimation(.easeOut(duration: 0.2)) {
+                isExpanded = newValue != nil
+            }
+        }
+        .focusSection()
+    }
+
+    @ViewBuilder
+    private func indexButton(
+        item: IndexItem,
+        label: String,
+        fullLabel: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        let isFocused = focusedItem == item
+
+        Button(action: action) {
+            Text(isExpanded ? fullLabel : label)
+                .font(.system(size: isExpanded ? 11 : 10, weight: isFocused ? .bold : .medium, design: .monospaced))
+                .tracking(0.5)
+                .foregroundStyle(isFocused ? .white : .white.opacity(0.6))
+                .frame(width: isExpanded ? 70 : 34, height: 28)
+                .background(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(isFocused ? Color.retroPink.opacity(0.4) : Color.clear)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .strokeBorder(
+                            isFocused ? Color.retroPink.opacity(0.8) : Color.clear,
+                            lineWidth: 1
+                        )
+                )
+                .scaleEffect(isFocused ? 1.1 : 1.0)
+                .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 6)
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
+        .focused($focusedItem, equals: item)
+        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
+    }
+
+    /// Get a 2-3 character abbreviation for a system
+    private func systemAbbreviation(_ system: PVSystem) -> String {
+        let short = system.shortName
+        if short.count <= 3 {
+            return short.uppercased()
+        }
+        // Take first 3 characters
+        return String(short.prefix(3)).uppercased()
+    }
+
+    private var railBackground: some View {
+        ZStack {
+            // Dark base
+            Color.black.opacity(0.7)
+
+            // Subtle gradient
+            LinearGradient(
+                colors: [
+                    Color.retroPink.opacity(0.05),
+                    Color.retroBlue.opacity(0.03)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            // Left edge glow when expanded
+            if isExpanded {
+                HStack {
+                    Rectangle()
+                        .fill(Color.retroPink.opacity(0.2))
+                        .frame(width: 1)
+                        .blur(radius: 2)
+                    Spacer()
+                }
+            }
+        }
+    }
+}
+
 // MARK: - Saves View (with empty state handling)
 
 @available(tvOS 16.0, *)
@@ -1497,62 +1645,101 @@ struct TVMediaHomeView: View {
         return model.gamesBySystemIdentifier.values.contains { !$0.isEmpty }
     }
 
+    /// Systems that have games for the scroll index
+    private var systemsWithGames: [PVSystem] {
+        model.systems.filter { system in
+            let games = model.gamesBySystemIdentifier[system.identifier] ?? []
+            return !games.isEmpty
+        }
+    }
+
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 28) {
-                TVMediaTopBar(title: "Home")
+        ScrollViewReader { proxy in
+            ZStack(alignment: .trailing) {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 28) {
+                        TVMediaTopBar(title: "Home")
+                            .id("home_top")
 
-                if isLoading && model.gamesBySystemIdentifier.isEmpty {
-                    // Show loading state
-                    loadingView
-                } else if !hasAnyGames {
-                    // Empty library state
-                    emptyLibraryView
-                        .focusSection()
-                } else {
-                    // Favorites section
-                    let favorites = model.favoriteGames(limit: 40)
-                    if !favorites.isEmpty {
-                        TVMediaShelf(title: "Favorites", items: favorites, gameActions: gameActions)
-                    }
-
-                    // System shelves - iterate all systems, only show if they have games
-                    ForEach(model.systems, id: \.identifier) { system in
-                        let games = model.gamesBySystemIdentifier[system.identifier] ?? []
-
-                        if !games.isEmpty {
-                            TVMediaSystemShelfRow(
-                                system: system,
-                                games: games,
-                                gameActions: gameActions,
-                                onViewAll: {
-                                    focusCoordinator.closeSidebar()
-                                    router.navigateToSystem(system.identifier)
-                                },
-                                ensureLoaded: {
-                                    model.loadGamesIfNeeded(systemIdentifier: system.identifier)
-                                }
-                            )
-                            .task {
-                                _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 6)
+                        if isLoading && model.gamesBySystemIdentifier.isEmpty {
+                            // Show loading state
+                            loadingView
+                        } else if !hasAnyGames {
+                            // Empty library state
+                            emptyLibraryView
+                                .focusSection()
+                        } else {
+                            // Favorites section
+                            let favorites = model.favoriteGames(limit: 40)
+                            if !favorites.isEmpty {
+                                TVMediaShelf(title: "Favorites", items: favorites, gameActions: gameActions)
+                                    .id("favorites")
                             }
 
-                            if let recent = saveStatesStore.recentBySystem[system.identifier], !recent.isEmpty {
-                                TVMediaSaveStatesShelfRow(
-                                    title: "\(system.shortName) · SAVES",
-                                    items: recent,
-                                    store: saveStatesStore,
-                                    onViewAll: {
-                                        router.navigateToSaves(filterBySystem: system.identifier)
+                            // System shelves - iterate all systems, only show if they have games
+                            ForEach(model.systems, id: \.identifier) { system in
+                                let games = model.gamesBySystemIdentifier[system.identifier] ?? []
+
+                                if !games.isEmpty {
+                                    TVMediaSystemShelfRow(
+                                        system: system,
+                                        games: games,
+                                        gameActions: gameActions,
+                                        onViewAll: {
+                                            focusCoordinator.closeSidebar()
+                                            router.navigateToSystem(system.identifier)
+                                        },
+                                        ensureLoaded: {
+                                            model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+                                        }
+                                    )
+                                    .id("system_\(system.identifier)")
+                                    .task {
+                                        _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 6)
                                     }
-                                )
+
+                                    if let recent = saveStatesStore.recentBySystem[system.identifier], !recent.isEmpty {
+                                        TVMediaSaveStatesShelfRow(
+                                            title: "\(system.shortName) · SAVES",
+                                            items: recent,
+                                            store: saveStatesStore,
+                                            onViewAll: {
+                                                router.navigateToSaves(filterBySystem: system.identifier)
+                                            }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
+                    .padding(.horizontal, 60)
+                    .padding(.vertical, 40)
+                }
+
+                // Scroll index rail - only show when there are multiple systems
+                if systemsWithGames.count > 2 && !isLoading {
+                    TVMediaScrollIndexRail(
+                        systems: systemsWithGames,
+                        hasFavorites: !model.favoriteGames(limit: 1).isEmpty,
+                        onSelectSystem: { systemID in
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                proxy.scrollTo("system_\(systemID)", anchor: .top)
+                            }
+                        },
+                        onSelectFavorites: {
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                proxy.scrollTo("favorites", anchor: .top)
+                            }
+                        },
+                        onSelectTop: {
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                proxy.scrollTo("home_top", anchor: .top)
+                            }
+                        }
+                    )
+                    .padding(.trailing, 20)
                 }
             }
-            .padding(.horizontal, 60)
-            .padding(.vertical, 40)
         }
         .task {
             await loadAllGames()
