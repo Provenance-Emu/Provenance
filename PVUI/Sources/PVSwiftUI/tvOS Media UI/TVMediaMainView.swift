@@ -13,6 +13,80 @@ import PVWebServer
 
 #if os(tvOS)
 
+// MARK: - System Icon Loader
+
+/// Shared icon loader for system icons used throughout the tvOS Media UI
+@available(tvOS 16.0, *)
+@MainActor
+final class SystemIconLoader: ObservableObject {
+    static let shared = SystemIconLoader()
+
+    @Published private(set) var icons: [String: Image] = [:]
+    private var loadedSystems: Set<String> = []
+    private var isLoading = false
+
+    private init() {}
+
+    /// The correct bundle containing system icons (PVUIBase, not PVSwiftUI)
+    private let iconBundle: Bundle = PVUIBase.BundleLoader.myBundle
+
+    /// Load icons for the given systems
+    func loadIcons(for systems: [PVSystem]) async {
+        guard !isLoading else { return }
+        isLoading = true
+        defer { isLoading = false }
+
+        var newIcons: [String: Image] = [:]
+
+        for system in systems {
+            // Skip if already loaded
+            guard !loadedSystems.contains(system.identifier) else { continue }
+
+            let shortName = system.identifier.components(separatedBy: ".").last?.lowercased() ?? ""
+
+            // Try multiple naming patterns used in the app
+            let namesToTry = [
+                shortName,
+                system.iconName,
+                "prov_\(shortName)_icon",
+                "\(shortName)_icon",
+                system.shortName.lowercased()
+            ]
+
+            var foundIcon = false
+            for name in namesToTry {
+                // Try UIImage approach with PVUIBase bundle (where icons actually live)
+                if let uiImage = UIImage(named: name, in: iconBundle, compatibleWith: nil) {
+                    newIcons[system.identifier] = Image(uiImage: uiImage).renderingMode(.template)
+                    loadedSystems.insert(system.identifier)
+                    foundIcon = true
+                    break
+                }
+            }
+
+            // If UIImage failed, use SwiftUI Image with explicit bundle
+            if !foundIcon {
+                // Use first valid name pattern with SwiftUI Image
+                let imageName = shortName.isEmpty ? system.iconName : shortName
+                newIcons[system.identifier] = Image(imageName, bundle: iconBundle).renderingMode(.template)
+                loadedSystems.insert(system.identifier)
+            }
+        }
+
+        // Merge new icons with existing
+        if !newIcons.isEmpty {
+            for (key, value) in newIcons {
+                icons[key] = value
+            }
+        }
+    }
+
+    /// Get icon for a specific system
+    func icon(for systemIdentifier: String) -> Image? {
+        return icons[systemIdentifier]
+    }
+}
+
 @available(tvOS 16.0, *)
 struct TVMediaMainView: View {
     @EnvironmentObject private var appState: AppState
@@ -910,13 +984,35 @@ struct TVMediaEmptyLibraryActionButtons: View {
     }
 }
 
+// MARK: - Visible Section Preference Key
+
+/// Represents a section's visibility info for tracking scroll position
+@available(tvOS 16.0, *)
+struct VisibleSectionInfo: Equatable {
+    let id: String
+    let minY: CGFloat
+}
+
+/// Preference key for tracking which section is currently visible
+@available(tvOS 16.0, *)
+struct VisibleSectionPreferenceKey: PreferenceKey {
+    static var defaultValue: [VisibleSectionInfo] = []
+
+    static func reduce(value: inout [VisibleSectionInfo], nextValue: () -> [VisibleSectionInfo]) {
+        value.append(contentsOf: nextValue())
+    }
+}
+
 // MARK: - Scroll Index Rail
 
-/// A vertical rail showing system abbreviations for quick navigation
+/// A vertical rail showing system icons/abbreviations for quick navigation
+/// Also shows current scroll position indicator
 @available(tvOS 16.0, *)
 struct TVMediaScrollIndexRail: View {
     let systems: [PVSystem]
     let hasFavorites: Bool
+    /// Currently visible/focused section in the main content
+    @Binding var currentSection: String?
     let onSelectSystem: (String) -> Void
     let onSelectFavorites: () -> Void
     let onSelectTop: () -> Void
@@ -930,6 +1026,19 @@ struct TVMediaScrollIndexRail: View {
     @FocusState private var focusedItem: IndexItem?
     @State private var isExpanded = false
 
+    /// Check if an item is the current section (for position indicator)
+    private func isCurrentSection(_ item: IndexItem) -> Bool {
+        guard let current = currentSection else { return false }
+        switch item {
+        case .top:
+            return current == "home_top"
+        case .favorites:
+            return current == "favorites"
+        case .system(let id):
+            return current == "system_\(id)"
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView(.vertical, showsIndicators: false) {
@@ -937,8 +1046,8 @@ struct TVMediaScrollIndexRail: View {
                     // Top button
                     indexButton(
                         item: .top,
-                        label: "▲",
-                        fullLabel: "TOP",
+                        icon: Image(systemName: "chevron.up"),
+                        label: "TOP",
                         action: onSelectTop
                     )
 
@@ -946,8 +1055,8 @@ struct TVMediaScrollIndexRail: View {
                     if hasFavorites {
                         indexButton(
                             item: .favorites,
-                            label: "★",
-                            fullLabel: "FAVS",
+                            icon: Image(systemName: "heart.fill"),
+                            label: "FAVS",
                             action: onSelectFavorites
                         )
                     }
@@ -956,16 +1065,16 @@ struct TVMediaScrollIndexRail: View {
                     if hasFavorites {
                         Rectangle()
                             .fill(Color.retroPink.opacity(0.3))
-                            .frame(width: isExpanded ? 50 : 24, height: 1)
+                            .frame(width: isExpanded ? 60 : 28, height: 1)
                             .padding(.vertical, 4)
                     }
 
                     // Systems
                     ForEach(systems, id: \.identifier) { system in
-                        indexButton(
-                            item: .system(system.identifier),
-                            label: systemAbbreviation(system),
-                            fullLabel: system.shortName,
+                        let abbrev = systemAbbreviation(system)
+                        systemIndexButton(
+                            system: system,
+                            abbreviation: abbrev,
                             action: { onSelectSystem(system.identifier) }
                         )
                     }
@@ -973,7 +1082,7 @@ struct TVMediaScrollIndexRail: View {
                 .padding(.vertical, 12)
             }
         }
-        .frame(width: isExpanded ? 80 : 44)
+        .frame(width: isExpanded ? 90 : 48)
         .background(railBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .onChange(of: focusedItem) { newValue in
@@ -987,52 +1096,130 @@ struct TVMediaScrollIndexRail: View {
     @ViewBuilder
     private func indexButton(
         item: IndexItem,
+        icon: Image,
         label: String,
-        fullLabel: String,
         action: @escaping () -> Void
     ) -> some View {
         let isFocused = focusedItem == item
+        let isCurrent = isCurrentSection(item)
 
         Button(action: action) {
-            Text(isExpanded ? fullLabel : label)
-                .font(.system(size: isExpanded ? 11 : 10, weight: isFocused ? .bold : .medium, design: .monospaced))
-                .tracking(0.5)
-                .foregroundStyle(isFocused ? .white : .white.opacity(0.6))
-                .frame(width: isExpanded ? 70 : 34, height: 28)
-                .background(
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(isFocused ? Color.retroPink.opacity(0.4) : Color.clear)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .strokeBorder(
-                            isFocused ? Color.retroPink.opacity(0.8) : Color.clear,
-                            lineWidth: 1
-                        )
-                )
-                .scaleEffect(isFocused ? 1.1 : 1.0)
-                .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 6)
+            HStack(spacing: 6) {
+                // Position indicator dot
+                if isCurrent && !isFocused {
+                    Circle()
+                        .fill(Color.retroBlue)
+                        .frame(width: 4, height: 4)
+                }
+
+                icon
+                    .font(.system(size: 12, weight: isFocused || isCurrent ? .bold : .medium))
+                    .foregroundStyle(isFocused ? .white : (isCurrent ? Color.retroBlue : .white.opacity(0.7)))
+
+                if isExpanded {
+                    Text(label)
+                        .font(.system(size: 10, weight: isFocused || isCurrent ? .bold : .medium, design: .monospaced))
+                        .foregroundStyle(isFocused ? .white : (isCurrent ? Color.retroBlue : .white.opacity(0.6)))
+                        .lineLimit(1)
+                }
+            }
+            .frame(width: isExpanded ? 80 : 38, height: 28)
+            .background(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(isFocused ? Color.retroPink.opacity(0.4) : (isCurrent ? Color.retroBlue.opacity(0.15) : Color.clear))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(
+                        isFocused ? Color.retroPink.opacity(0.8) : (isCurrent ? Color.retroBlue.opacity(0.5) : Color.clear),
+                        lineWidth: 1
+                    )
+            )
+            .scaleEffect(isFocused ? 1.1 : 1.0)
+            .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 6)
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($focusedItem, equals: item)
         .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
+        .animation(.easeOut(duration: 0.2), value: isCurrent)
     }
 
-    /// Get a 2-3 character abbreviation for a system
+    @ViewBuilder
+    private func systemIndexButton(
+        system: PVSystem,
+        abbreviation: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        let item = IndexItem.system(system.identifier)
+        let isFocused = focusedItem == item
+        let isCurrent = isCurrentSection(item)
+
+        Button(action: action) {
+            HStack(spacing: 6) {
+                // Position indicator dot
+                if isCurrent && !isFocused {
+                    Circle()
+                        .fill(Color.retroBlue)
+                        .frame(width: 4, height: 4)
+                }
+
+                if isExpanded {
+                    // Expanded mode: show full short name
+                    Text(system.shortName.isEmpty ? system.name : system.shortName)
+                        .font(.system(size: 11, weight: isFocused || isCurrent ? .bold : .medium, design: .monospaced))
+                        .foregroundStyle(isFocused ? .white : (isCurrent ? Color.retroBlue : .white.opacity(0.7)))
+                        .lineLimit(1)
+                } else {
+                    // Compact mode: show abbreviation
+                    Text(abbreviation)
+                        .font(.system(size: 10, weight: isFocused || isCurrent ? .bold : .medium, design: .monospaced))
+                        .foregroundStyle(isFocused ? .white : (isCurrent ? Color.retroBlue : .white.opacity(0.7)))
+                        .frame(width: 32)
+                }
+            }
+            .frame(width: isExpanded ? 80 : 38, height: 28)
+            .background(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(isFocused ? Color.retroPink.opacity(0.4) : (isCurrent ? Color.retroBlue.opacity(0.15) : Color.clear))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(
+                        isFocused ? Color.retroPink.opacity(0.8) : (isCurrent ? Color.retroBlue.opacity(0.5) : Color.clear),
+                        lineWidth: 1
+                    )
+            )
+            .scaleEffect(isFocused ? 1.1 : 1.0)
+            .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 6)
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
+        .focused($focusedItem, equals: item)
+        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
+        .animation(.easeOut(duration: 0.2), value: isCurrent)
+    }
+
+    /// Extract short identifier from system (e.g., "gba" from "com.provenance.gba")
     private func systemAbbreviation(_ system: PVSystem) -> String {
+        // First try to get short form from identifier
+        let idShort = system.identifier.components(separatedBy: ".").last?.uppercased() ?? ""
+        if !idShort.isEmpty && idShort.count <= 5 {
+            return idShort
+        }
+        // Fallback to shortName
         let short = system.shortName
-        if short.count <= 3 {
+        if !short.isEmpty && short.count <= 5 {
             return short.uppercased()
         }
-        // Take first 3 characters
-        return String(short.prefix(3)).uppercased()
+        // Last resort: first 3 chars of name
+        return String(system.name.prefix(3)).uppercased()
     }
 
     private var railBackground: some View {
         ZStack {
             // Dark base
-            Color.black.opacity(0.7)
+            Color.black.opacity(0.75)
 
             // Subtle gradient
             LinearGradient(
@@ -1635,6 +1822,7 @@ struct TVMediaHomeView: View {
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @State private var isLoading = true
+    @State private var currentSection: String? = "home_top"
 #if canImport(PVWebServer)
     @State private var webServerURL: String?
 #endif
@@ -1660,6 +1848,7 @@ struct TVMediaHomeView: View {
                     LazyVStack(alignment: .leading, spacing: 28) {
                         TVMediaTopBar(title: "Home")
                             .id("home_top")
+                            .onAppear { currentSection = "home_top" }
 
                         if isLoading && model.gamesBySystemIdentifier.isEmpty {
                             // Show loading state
@@ -1674,11 +1863,20 @@ struct TVMediaHomeView: View {
                             if !favorites.isEmpty {
                                 TVMediaShelf(title: "Favorites", items: favorites, gameActions: gameActions)
                                     .id("favorites")
+                                    .background(
+                                        GeometryReader { geo in
+                                            Color.clear.preference(
+                                                key: VisibleSectionPreferenceKey.self,
+                                                value: [VisibleSectionInfo(id: "favorites", minY: geo.frame(in: .global).minY)]
+                                            )
+                                        }
+                                    )
                             }
 
                             // System shelves - iterate all systems, only show if they have games
                             ForEach(model.systems, id: \.identifier) { system in
                                 let games = model.gamesBySystemIdentifier[system.identifier] ?? []
+                                let sectionID = "system_\(system.identifier)"
 
                                 if !games.isEmpty {
                                     TVMediaSystemShelfRow(
@@ -1693,7 +1891,15 @@ struct TVMediaHomeView: View {
                                             model.loadGamesIfNeeded(systemIdentifier: system.identifier)
                                         }
                                     )
-                                    .id("system_\(system.identifier)")
+                                    .id(sectionID)
+                                    .background(
+                                        GeometryReader { geo in
+                                            Color.clear.preference(
+                                                key: VisibleSectionPreferenceKey.self,
+                                                value: [VisibleSectionInfo(id: sectionID, minY: geo.frame(in: .global).minY)]
+                                            )
+                                        }
+                                    )
                                     .task {
                                         _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 6)
                                     }
@@ -1715,23 +1921,39 @@ struct TVMediaHomeView: View {
                     .padding(.horizontal, 60)
                     .padding(.vertical, 40)
                 }
+                .onPreferenceChange(VisibleSectionPreferenceKey.self) { sections in
+                    // Find the section closest to the top of the screen (but still visible)
+                    // A section is "current" if its top is near or above the top of the visible area
+                    let threshold: CGFloat = 250 // Adjust based on header height
+                    if let topSection = sections
+                        .filter({ $0.minY < threshold })
+                        .max(by: { $0.minY < $1.minY }) {
+                        currentSection = topSection.id
+                    } else if let firstVisible = sections.min(by: { $0.minY < $1.minY }) {
+                        currentSection = firstVisible.id
+                    }
+                }
 
                 // Scroll index rail - only show when there are multiple systems
                 if systemsWithGames.count > 2 && !isLoading {
                     TVMediaScrollIndexRail(
                         systems: systemsWithGames,
                         hasFavorites: !model.favoriteGames(limit: 1).isEmpty,
+                        currentSection: $currentSection,
                         onSelectSystem: { systemID in
+                            currentSection = "system_\(systemID)"
                             withAnimation(.easeOut(duration: 0.3)) {
                                 proxy.scrollTo("system_\(systemID)", anchor: .top)
                             }
                         },
                         onSelectFavorites: {
+                            currentSection = "favorites"
                             withAnimation(.easeOut(duration: 0.3)) {
                                 proxy.scrollTo("favorites", anchor: .top)
                             }
                         },
                         onSelectTop: {
+                            currentSection = "home_top"
                             withAnimation(.easeOut(duration: 0.3)) {
                                 proxy.scrollTo("home_top", anchor: .top)
                             }
@@ -1886,7 +2108,7 @@ struct TVMediaSystemsView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var router: TVMediaRouter
 
-    @State private var icons: [String: Image] = [:]
+    @ObservedObject private var iconLoader = SystemIconLoader.shared
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
 
     /// Number of columns for calculating left edge
@@ -1914,7 +2136,7 @@ struct TVMediaSystemsView: View {
                         let isAtLeftEdge = index % columnsPerRow == 0
                         TVMediaSystemCard(
                             system: system,
-                            icon: icons[system.identifier],
+                            icon: iconLoader.icon(for: system.identifier),
                             gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count,
                             isAtLeftEdge: isAtLeftEdge,
                             focusCoordinator: focusCoordinator
@@ -1932,34 +2154,7 @@ struct TVMediaSystemsView: View {
             .padding(.vertical, 40)
         }
         .task {
-            await loadIcons()
-        }
-    }
-
-    private func loadIcons() async {
-        guard icons.isEmpty else { return }
-        var newIcons: [String: Image] = [:]
-        for system in model.systems {
-            // Try the short name first (like "snes", "nes")
-            let shortName = system.identifier.components(separatedBy: ".").last?.lowercased() ?? ""
-
-            // Try multiple naming patterns used in the app
-            let namesToTry = [
-                shortName,
-                "prov_\(shortName)_icon",
-                "\(shortName)_icon",
-                system.shortName.lowercased()
-            ]
-
-            for name in namesToTry {
-                if let uiImage = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) {
-                    newIcons[system.identifier] = Image(uiImage: uiImage).renderingMode(.template)
-                    break
-                }
-            }
-        }
-        await MainActor.run {
-            icons = newIcons
+            await iconLoader.loadIcons(for: systemsWithGames)
         }
     }
 }
@@ -2547,12 +2742,12 @@ struct TVMediaSystemGamesView: View {
 struct TVMediaSystemHeader: View {
     let system: PVSystem
 
-    @State private var icon: Image?
+    @ObservedObject private var iconLoader = SystemIconLoader.shared
 
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
             ZStack {
-                if let icon {
+                if let icon = iconLoader.icon(for: system.identifier) {
                     icon
                         .resizable()
                         .scaledToFit()
@@ -2580,7 +2775,7 @@ struct TVMediaSystemHeader: View {
             Spacer()
         }
         .task {
-            await loadIcon()
+            await iconLoader.loadIcons(for: [system])
         }
     }
 
@@ -2593,14 +2788,6 @@ struct TVMediaSystemHeader: View {
         if system.portableSystem { parts.append("Portable") }
         if system.supportsRumble { parts.append("Rumble") }
         return parts.joined(separator: " • ")
-    }
-
-    private func loadIcon() async {
-        guard icon == nil else { return }
-        let name = system.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
-        if let uiImage = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) {
-            icon = Image(uiImage: uiImage).renderingMode(.template)
-        }
     }
 }
 
@@ -3418,7 +3605,7 @@ struct TVMediaSystemShelfRow: View {
 
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
-    @State private var systemIcon: Image?
+    @ObservedObject private var iconLoader = SystemIconLoader.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -3443,7 +3630,7 @@ struct TVMediaSystemShelfRow: View {
                 }
 
                 // System icon with subtle glow
-                if let icon = systemIcon {
+                if let icon = iconLoader.icon(for: system.identifier) {
                     icon
                         .resizable()
                         .scaledToFit()
@@ -3502,20 +3689,7 @@ struct TVMediaSystemShelfRow: View {
         }
         .onAppear(perform: ensureLoaded)
         .task {
-            await loadSystemIcon()
-        }
-    }
-
-    private func loadSystemIcon() async {
-        let shortName = system.identifier.components(separatedBy: ".").last?.lowercased() ?? ""
-        let namesToTry = [shortName, "prov_\(shortName)_icon", "\(shortName)_icon", system.shortName.lowercased()]
-        for name in namesToTry {
-            if let uiImage = UIImage(named: name, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) {
-                await MainActor.run {
-                    systemIcon = Image(uiImage: uiImage).renderingMode(.template)
-                }
-                return
-            }
+            await iconLoader.loadIcons(for: [system])
         }
     }
 }
