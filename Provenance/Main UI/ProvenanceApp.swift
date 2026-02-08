@@ -116,7 +116,7 @@ struct ProvenanceApp: App {
 #endif
 
 #if canImport(FreemiumKit)
-#if targetEnvironment(simulator) || DEBUG || os(tvOS)
+#if targetEnvironment(simulator) || DEBUG
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
 #else
                     if !appDelegate.isAppStore {
