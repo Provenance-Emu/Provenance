@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
         "state": {
           "branch": null,
-          "revision": "3ba71311448d2c7f706b0b5e34b014999a1af856",
-          "version": "1.18.0"
+          "revision": "49ad4b299a96c412670696da311452b9db0d5b95",
+          "version": "1.18.3"
         }
       },
       {
@@ -188,15 +188,6 @@
           "branch": null,
           "revision": "040d087ac2267d2ddd4cca36c757d1c6a05fdbfe",
           "version": "101.0.0"
-        }
-      },
-      {
-        "package": "KeychainAccess",
-        "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess.git",
-        "state": {
-          "branch": null,
-          "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
-          "version": "4.2.2"
         }
       },
       {
