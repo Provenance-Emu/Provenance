@@ -1147,6 +1147,7 @@ private struct AppSection: View {
                             subtitle: "Unlock to change theme.",
                             icon: .sfSymbol("lock.fill"))
             }
+            .freemiumKitColorReset()
 
             #if !os(tvOS)
             /// App icon selection section
@@ -1181,6 +1182,7 @@ private struct AppSection: View {
                     )
                 }
             }
+            .freemiumKitColorReset()
             #endif
         }
     }
@@ -1552,6 +1554,7 @@ private struct AudioSection: View {
                             subtitle: "Unlock to configure advanced audio settings.",
                             icon: .sfSymbol("lock.fill"))
             }
+            .freemiumKitColorReset()
         }
     }
 }
@@ -1782,6 +1785,7 @@ private struct LibrarySection2: View {
                               subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
                               icon: .sfSymbol("lock.fill"))
                 }
+                .freemiumKitColorReset()
 //            }
             #endif
 
@@ -1821,6 +1825,7 @@ private struct AdvancedSection: View {
             Section(header: Text("Advanced")) {
                 #if canImport(FreemiumKit)
                 PaidStatusView(style: .decorative(icon: .star))
+                    .freemiumKitColorReset()
                     .listRowBackground(Color.accentColor)
                 #endif
                 AdvancedTogglesView()

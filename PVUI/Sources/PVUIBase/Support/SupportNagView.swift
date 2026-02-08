@@ -210,6 +210,7 @@ public struct SupportNagView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                     }
+                    .freemiumKitColorReset()
                     #endif
 
                     // Dismiss button

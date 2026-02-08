@@ -346,6 +346,7 @@ SideMenuView: SwiftUI.View {
                                 Divider()
                                     .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
                                 PaidStatusView(style: .plain)
+                                    .freemiumKitColorReset()
                                     .listRowBackground(Color.accentColor)
                                     .padding(.vertical, 10)
                                     .padding(.horizontal, 10)

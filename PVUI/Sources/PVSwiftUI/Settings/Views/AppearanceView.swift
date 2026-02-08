@@ -138,6 +138,7 @@ struct AppearanceView: View {
                                     icon: .sfSymbol("lock.fill")
                                 )
                             }
+                            .freemiumKitColorReset()
 
                             // Preview of current style
                             if !missingArtworkStyle.description.isEmpty {
@@ -218,6 +219,7 @@ internal struct AppearanceSection: View {
                             subtitle: "Unlock to customize missing artwork style.",
                             icon: .sfSymbol("lock.fill"))
             }
+            .freemiumKitColorReset()
         }
     }
 }

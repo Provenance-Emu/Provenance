@@ -30,6 +30,7 @@ struct PremiumNavigationLink<Label: View, Destination: View>: View {
                 .opacity(0.8)
             }
         }
+        .freemiumKitColorReset()
     }
 #else
     var body: some View {

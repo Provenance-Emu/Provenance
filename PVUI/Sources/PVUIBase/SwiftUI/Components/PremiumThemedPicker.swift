@@ -80,6 +80,7 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
                 .disabled(true)
             }
         }
+        .freemiumKitColorReset()
         #else
         PaidFeatureView {
             VStack(alignment: .leading) {
@@ -108,6 +109,7 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
                 .disabled(true)
             }
         }
+        .freemiumKitColorReset()
         #endif
     }
 #else
