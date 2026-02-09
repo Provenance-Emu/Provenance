@@ -3,7 +3,7 @@ import PVLibrary
 import PVThemes
 import PVUIBase
 
-#if os(tvOS)
+#if os(tvOS) || os(iOS)
 
 /// Premium Netflix-style sidebar with divine RetroWave aesthetics
 /// Icon-only rail that expands elegantly on focus
@@ -34,7 +34,7 @@ struct TVMediaSidebarRail: View {
             .frame(width: currentWidth)
             .frame(maxHeight: .infinity)
             .background(sidebarBackground)
-            .focusSection()
+            .tvMediaFocusSection()
             .animation(.spring(response: 0.32, dampingFraction: 0.82), value: focusCoordinator.isSidebarExpanded)
             .onChange(of: focusedItem) { newItem in
                 if newItem != nil {
@@ -57,7 +57,7 @@ struct TVMediaSidebarRail: View {
                     focusedItem = itemForDestination(destination)
                 }
             }
-            .onMoveCommand { direction in
+            .tvMediaOnMoveCommand { direction in
                 if direction == .right && focusCoordinator.isSidebarExpanded {
                     focusedItem = nil
                     focusCoordinator.closeSidebar()

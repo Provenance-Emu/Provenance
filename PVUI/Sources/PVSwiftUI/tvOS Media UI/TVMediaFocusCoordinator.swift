@@ -1,7 +1,81 @@
 import SwiftUI
 import Combine
 
+#if os(tvOS) || os(iOS)
+
 #if os(tvOS)
+/// Maps tvOS move commands directly.
+typealias TVMediaMoveCommandDirection = MoveCommandDirection
+#else
+/// Lightweight move command mirror for iOS builds.
+enum TVMediaMoveCommandDirection {
+    case left
+    case right
+    case up
+    case down
+}
+#endif
+
+extension View {
+    /// Adds a focus section on tvOS; no-op on iOS.
+    @ViewBuilder
+    func tvMediaFocusSection() -> some View {
+        #if os(tvOS)
+        self.focusSection()
+        #else
+        self
+        #endif
+    }
+
+    /// Adds a focus scope on tvOS; no-op on iOS.
+    @ViewBuilder
+    func tvMediaFocusScope(_ namespace: Namespace.ID) -> some View {
+        #if os(tvOS)
+        self.focusScope(namespace)
+        #else
+        self
+        #endif
+    }
+
+    /// Sets default focus on tvOS; no-op on iOS.
+    @ViewBuilder
+    func tvMediaPrefersDefaultFocus(_ prefers: Bool, in namespace: Namespace.ID) -> some View {
+        #if os(tvOS)
+        self.prefersDefaultFocus(prefers, in: namespace)
+        #else
+        self
+        #endif
+    }
+
+    /// Handles move commands on tvOS; no-op on iOS.
+    @ViewBuilder
+    func tvMediaOnMoveCommand(_ handler: @escaping (TVMediaMoveCommandDirection) -> Void) -> some View {
+        #if os(tvOS)
+        self.onMoveCommand(perform: handler)
+        #else
+        self
+        #endif
+    }
+
+    /// Handles exit commands on tvOS; no-op on iOS.
+    @ViewBuilder
+    func tvMediaOnExitCommand(_ handler: @escaping () -> Void) -> some View {
+        #if os(tvOS)
+        self.onExitCommand(perform: handler)
+        #else
+        self
+        #endif
+    }
+}
+
+#if os(iOS)
+extension View {
+    /// No-op replacement for tvOS focus effect disabling on iOS.
+    func tvOSDisableFocusEffect() -> some View {
+        self
+    }
+}
+#endif
 
 /// Modern tvOS focus coordination using best practices.
 /// Key principles:
@@ -204,9 +278,9 @@ struct TVMediaFocusAwareContent<Content: View>: View {
 
     var body: some View {
         content()
-            .focusSection()
+            .tvMediaFocusSection()
             .focused($isContentFocused)
-            .onMoveCommand { direction in
+            .tvMediaOnMoveCommand { direction in
                 handleMoveCommand(direction)
             }
             .onChange(of: isContentFocused) { focused in
@@ -216,7 +290,7 @@ struct TVMediaFocusAwareContent<Content: View>: View {
             }
     }
 
-    private func handleMoveCommand(_ direction: MoveCommandDirection) {
+    private func handleMoveCommand(_ direction: TVMediaMoveCommandDirection) {
         if direction == .left {
             // Only open sidebar if we're at the left edge
             if focusCoordinator.shouldNavigateToSidebar() {

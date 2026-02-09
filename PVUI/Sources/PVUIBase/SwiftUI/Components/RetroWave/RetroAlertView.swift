@@ -392,19 +392,33 @@ public struct RetroAlertButton: View {
     let subtitle: String?
     let style: RetroAlertButtonStyle
     let action: () -> Void
+    /// Optional externally-controlled focus state for custom navigation.
+    let isExternallyFocused: Bool?
 
-    #if os(tvOS)
+    #if os(tvOS) || os(iOS)
     @FocusState private var isFocused: Bool
     #endif
 
-    public init(title: String, subtitle: String? = nil, style: RetroAlertButtonStyle = .primary, action: @escaping () -> Void) {
+    public init(
+        title: String,
+        subtitle: String? = nil,
+        style: RetroAlertButtonStyle = .primary,
+        isExternallyFocused: Bool? = nil,
+        action: @escaping () -> Void
+    ) {
         self.title = title
         self.subtitle = subtitle
         self.style = style
+        self.isExternallyFocused = isExternallyFocused
         self.action = action
     }
 
     public var body: some View {
+        #if os(tvOS) || os(iOS)
+        let isHighlighted = isExternallyFocused ?? isFocused
+        #else
+        let isHighlighted = false
+        #endif
         Button(action: action) {
             VStack(spacing: 2) {
                 Text(title)
@@ -425,15 +439,13 @@ public struct RetroAlertButton: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(focusedBorderGradient, lineWidth: focusedBorderWidth)
             )
-            #if os(tvOS)
-            .scaleEffect(isFocused ? 1.08 : 1.0)
-            .shadow(color: isFocused ? focusedGlowColor.opacity(0.9) : shadowColor.opacity(0.4), radius: isFocused ? 15 : 5)
-            #else
-            .shadow(color: shadowColor.opacity(0.4), radius: 5)
-            #endif
+            .scaleEffect(isHighlighted ? 1.08 : 1.0)
+            .shadow(color: isHighlighted ? focusedGlowColor.opacity(0.9) : shadowColor.opacity(0.4), radius: isHighlighted ? 15 : 5)
         }
-        #if os(tvOS)
+        #if os(tvOS) || os(iOS)
         .focused($isFocused)
+        #endif
+        #if os(tvOS)
 //        .buttonStyle(PlainButtonStyle())
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
@@ -441,9 +453,9 @@ public struct RetroAlertButton: View {
         #endif
     }
 
-    #if os(tvOS)
+    #if os(tvOS) || os(iOS)
     private var focusedBorderGradient: LinearGradient {
-        if isFocused {
+        if isExternallyFocused ?? isFocused {
             return LinearGradient(
                 gradient: Gradient(colors: [.retroPink, .retroBlue, .retroPink]),
                 startPoint: .topLeading,
@@ -455,7 +467,7 @@ public struct RetroAlertButton: View {
     }
 
     private var focusedBorderWidth: CGFloat {
-        isFocused ? 3 : 1
+        (isExternallyFocused ?? isFocused) ? 3 : 1
     }
 
     private var focusedGlowColor: Color {
@@ -795,7 +807,7 @@ public class RetroAlertState: ObservableObject {
 public struct RetroAlertStateView: View {
     @ObservedObject var alertState: RetroAlertState
 
-    #if os(tvOS)
+    #if os(tvOS) || os(iOS)
     @FocusState private var focusedButton: AlertButton?
 
     private enum AlertButton: Hashable {
@@ -803,6 +815,11 @@ public struct RetroAlertStateView: View {
         case secondary
         case destructive
     }
+    #endif
+
+    #if os(iOS)
+    /// Gamepad input bridge for iOS controller navigation.
+    @StateObject private var gamepadManager = GamepadManager.shared
     #endif
 
     public init(alertState: RetroAlertState) {
@@ -828,32 +845,44 @@ public struct RetroAlertStateView: View {
                 ) {
                     VStack(spacing: 12) {
                         // Primary button
-                        RetroAlertButton(title: alertState.primaryButtonTitle, style: .primary) {
+                        RetroAlertButton(
+                            title: alertState.primaryButtonTitle,
+                            style: .primary,
+                            isExternallyFocused: isPrimaryFocused
+                        ) {
                             alertState.onPrimaryAction?()
                             alertState.hide()
                         }
-                        #if os(tvOS)
+                        #if os(tvOS) || os(iOS)
                         .focused($focusedButton, equals: .primary)
                         #endif
 
                         // Secondary button if provided
                         if let secondaryTitle = alertState.secondaryButtonTitle {
-                            RetroAlertButton(title: secondaryTitle, style: .secondary) {
+                            RetroAlertButton(
+                                title: secondaryTitle,
+                                style: .secondary,
+                                isExternallyFocused: isSecondaryFocused
+                            ) {
                                 alertState.onSecondaryAction?()
                                 alertState.hide()
                             }
-                            #if os(tvOS)
+                            #if os(tvOS) || os(iOS)
                             .focused($focusedButton, equals: .secondary)
                             #endif
                         }
 
                         // Destructive button if provided
                         if let destructiveTitle = alertState.destructiveButtonTitle {
-                            RetroAlertButton(title: destructiveTitle, style: .destructive) {
+                            RetroAlertButton(
+                                title: destructiveTitle,
+                                style: .destructive,
+                                isExternallyFocused: isDestructiveFocused
+                            ) {
                                 alertState.onDestructiveAction?()
                                 alertState.hide()
                             }
-                            #if os(tvOS)
+                            #if os(tvOS) || os(iOS)
                             .focused($focusedButton, equals: .destructive)
                             #endif
                         }
@@ -882,6 +911,29 @@ public struct RetroAlertStateView: View {
                 alertState.hide()
             }
             #endif
+            #if os(iOS)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    focusedButton = .primary
+                }
+            }
+            .onReceive(gamepadManager.eventPublisher) { event in
+                guard alertState.isPresented, gamepadManager.isControllerConnected else { return }
+                switch event {
+                case .verticalNavigation(let value, let isPressed):
+                    guard isPressed else { return }
+                    moveFocus(isNext: value < 0)
+                case .buttonPress(let isPressed):
+                    guard isPressed else { return }
+                    activateFocusedButton()
+                case .buttonB(let isPressed):
+                    guard isPressed else { return }
+                    dismissFromCancel()
+                default:
+                    break
+                }
+            }
+            #endif
             .transition(.opacity.combined(with: .scale(scale: 0.9)))
             .animation(.easeInOut(duration: 0.2), value: alertState.isPresented)
             .zIndex(2000)
@@ -890,6 +942,68 @@ public struct RetroAlertStateView: View {
 
     #if os(tvOS)
     @Namespace private var alertFocusNamespace
+    #endif
+
+    #if os(tvOS) || os(iOS)
+    private var isPrimaryFocused: Bool { focusedButton == .primary }
+    private var isSecondaryFocused: Bool { focusedButton == .secondary }
+    private var isDestructiveFocused: Bool { focusedButton == .destructive }
+    #else
+    private var isPrimaryFocused: Bool { false }
+    private var isSecondaryFocused: Bool { false }
+    private var isDestructiveFocused: Bool { false }
+    #endif
+
+    #if os(iOS)
+    /// Ordered list of focusable alert buttons for controller navigation.
+    private var availableButtons: [AlertButton] {
+        var buttons: [AlertButton] = [.primary]
+        if alertState.secondaryButtonTitle != nil {
+            buttons.append(.secondary)
+        }
+        if alertState.destructiveButtonTitle != nil {
+            buttons.append(.destructive)
+        }
+        return buttons
+    }
+
+    /// Moves focus up or down through the available buttons.
+    private func moveFocus(isNext: Bool) {
+        let buttons = availableButtons
+        guard !buttons.isEmpty else { return }
+        let current = focusedButton ?? .primary
+        guard let index = buttons.firstIndex(of: current) else {
+            focusedButton = buttons.first
+            return
+        }
+        let nextIndex = isNext ? min(index + 1, buttons.count - 1) : max(index - 1, 0)
+        focusedButton = buttons[nextIndex]
+    }
+
+    /// Triggers the action for the currently focused button.
+    private func activateFocusedButton() {
+        switch focusedButton ?? .primary {
+        case .primary:
+            alertState.onPrimaryAction?()
+            alertState.hide()
+        case .secondary:
+            alertState.onSecondaryAction?()
+            alertState.hide()
+        case .destructive:
+            alertState.onDestructiveAction?()
+            alertState.hide()
+        }
+    }
+
+    /// Dismisses the alert using the secondary action when available.
+    private func dismissFromCancel() {
+        if let secondaryAction = alertState.onSecondaryAction {
+            secondaryAction()
+        } else {
+            alertState.onDismiss?()
+        }
+        alertState.hide()
+    }
     #endif
 }
 
@@ -944,8 +1058,13 @@ public struct RetroSelectionAlertView: View {
     @Binding private var isPresented: Bool
     @State private var glowOpacity: Double = 0.7
 
-    #if os(tvOS)
+    #if os(tvOS) || os(iOS)
     @FocusState private var focusedItemId: String?
+    #endif
+
+    #if os(iOS)
+    /// Gamepad input bridge for iOS controller navigation.
+    @StateObject private var gamepadManager = GamepadManager.shared
     #endif
 
     public init(
@@ -999,12 +1118,13 @@ public struct RetroSelectionAlertView: View {
                                 RetroAlertButton(
                                     title: item.title,
                                     subtitle: item.subtitle,
-                                    style: .primary
+                                    style: .primary,
+                                    isExternallyFocused: isItemFocused(item.id)
                                 ) {
                                     isPresented = false
                                     onSelect(item.id)
                                 }
-                                #if os(tvOS)
+                                #if os(tvOS) || os(iOS)
                                 .focused($focusedItemId, equals: item.id)
                                 #endif
                             }
@@ -1016,12 +1136,13 @@ public struct RetroSelectionAlertView: View {
                                 RetroAlertButton(
                                     title: item.title,
                                     subtitle: item.subtitle,
-                                    style: .primary
+                                    style: .primary,
+                                    isExternallyFocused: isItemFocused(item.id)
                                 ) {
                                     isPresented = false
                                     onSelect(item.id)
                                 }
-                                #if os(tvOS)
+                                #if os(tvOS) || os(iOS)
                                 .focused($focusedItemId, equals: item.id)
                                 #endif
                             }
@@ -1031,7 +1152,11 @@ public struct RetroSelectionAlertView: View {
                 }
                 .frame(maxHeight: useGridLayout ? 400 : 300)
 
-                RetroAlertButton(title: "Cancel", style: .cancel) {
+                RetroAlertButton(
+                    title: "Cancel",
+                    style: .cancel,
+                    isExternallyFocused: isCancelFocused
+                ) {
                     isPresented = false
                     onCancel()
                 }
@@ -1072,7 +1197,7 @@ public struct RetroSelectionAlertView: View {
                 withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     glowOpacity = 0.3
                 }
-                #if os(tvOS)
+                #if os(tvOS) || os(iOS)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                     focusedItemId = items.first?.id
                 }
@@ -1084,9 +1209,127 @@ public struct RetroSelectionAlertView: View {
                 onCancel()
             }
             #endif
+            #if os(iOS)
+            .onReceive(gamepadManager.eventPublisher) { event in
+                guard isPresented, gamepadManager.isControllerConnected else { return }
+                switch event {
+                case .verticalNavigation(let value, let isPressed):
+                    guard isPressed else { return }
+                    moveSelectionVertical(value: value)
+                case .horizontalNavigation(let value, let isPressed):
+                    guard isPressed else { return }
+                    moveSelectionHorizontal(value: value)
+                case .buttonPress(let isPressed):
+                    guard isPressed else { return }
+                    activateFocusedItem()
+                case .buttonB(let isPressed):
+                    guard isPressed else { return }
+                    isPresented = false
+                    onCancel()
+                default:
+                    break
+                }
+            }
+            #endif
         }
         .transition(.opacity.combined(with: .scale(scale: 0.9)))
     }
+
+    /// Focus identifier used for the Cancel button in controller navigation.
+    private let cancelFocusID = "__retro_alert_cancel__"
+
+    #if os(tvOS) || os(iOS)
+    private func isItemFocused(_ id: String) -> Bool {
+        focusedItemId == id
+    }
+
+    private var isCancelFocused: Bool {
+        focusedItemId == cancelFocusID
+    }
+    #else
+    private func isItemFocused(_ id: String) -> Bool { false }
+    private var isCancelFocused: Bool { false }
+    #endif
+
+    #if os(iOS)
+    /// Moves focus vertically through the list/grid, falling back to Cancel when at the end.
+    private func moveSelectionVertical(value: Float) {
+        let isDown = value < 0
+        if focusedItemId == cancelFocusID {
+            if !isDown {
+                focusedItemId = items.last?.id
+            }
+            return
+        }
+        guard let currentID = focusedItemId else {
+            focusedItemId = items.first?.id
+            return
+        }
+        guard let index = items.firstIndex(where: { $0.id == currentID }) else {
+            focusedItemId = items.first?.id
+            return
+        }
+        if useGridLayout {
+            let stride = gridColumns.count
+            if isDown {
+                let nextIndex = index + stride
+                if nextIndex < items.count {
+                    focusedItemId = items[nextIndex].id
+                } else {
+                    focusedItemId = cancelFocusID
+                }
+            } else {
+                let prevIndex = index - stride
+                if prevIndex >= 0 {
+                    focusedItemId = items[prevIndex].id
+                }
+            }
+        } else {
+            if isDown {
+                if index + 1 < items.count {
+                    focusedItemId = items[index + 1].id
+                } else {
+                    focusedItemId = cancelFocusID
+                }
+            } else if index > 0 {
+                focusedItemId = items[index - 1].id
+            }
+        }
+    }
+
+    /// Moves focus horizontally within a grid row.
+    private func moveSelectionHorizontal(value: Float) {
+        guard useGridLayout else { return }
+        guard focusedItemId != cancelFocusID else { return }
+        let isRight = value > 0
+        guard let currentID = focusedItemId else {
+            focusedItemId = items.first?.id
+            return
+        }
+        guard let index = items.firstIndex(where: { $0.id == currentID }) else {
+            focusedItemId = items.first?.id
+            return
+        }
+        let nextIndex = isRight ? index + 1 : index - 1
+        guard nextIndex >= 0, nextIndex < items.count else { return }
+        if (nextIndex / gridColumns.count) == (index / gridColumns.count) {
+            focusedItemId = items[nextIndex].id
+        }
+    }
+
+    /// Activates the focused item or cancel action.
+    private func activateFocusedItem() {
+        if focusedItemId == cancelFocusID {
+            isPresented = false
+            onCancel()
+            return
+        }
+        let selectedID = focusedItemId ?? items.first?.id
+        guard let selectedID else { return }
+        isPresented = false
+        onSelect(selectedID)
+    }
+    #endif
 }
 
 // MARK: - Selection Alert View Modifier

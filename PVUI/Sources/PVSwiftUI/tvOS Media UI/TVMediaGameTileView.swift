@@ -5,7 +5,7 @@ import PVThemes
 import PVSettings
 import Defaults
 
-#if os(tvOS)
+#if os(tvOS) || os(iOS)
 
 /// Premium game tile with divine RetroWave aesthetics
 /// Scales elegantly on focus with neon glow effects

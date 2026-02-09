@@ -1,7 +1,7 @@
 import SwiftUI
 import PVLibrary
 
-#if os(tvOS)
+#if os(tvOS) || os(iOS)
 
 /// Protocol for experiences that can be presented in the tvOS Media UI
 @available(tvOS 16.0, *)

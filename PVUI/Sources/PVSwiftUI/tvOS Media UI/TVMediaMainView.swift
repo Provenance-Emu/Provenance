@@ -11,12 +11,12 @@ import PVPrimitives
 import PVWebServer
 #endif
 
-#if os(tvOS)
+#if os(tvOS) || os(iOS)
 
 // MARK: - System Icon Loader
 
 /// Shared icon loader for system icons used throughout the tvOS Media UI
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 @MainActor
 final class SystemIconLoader: ObservableObject {
     static let shared = SystemIconLoader()
@@ -87,7 +87,7 @@ final class SystemIconLoader: ObservableObject {
     }
 }
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaMainView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
@@ -112,7 +112,12 @@ struct TVMediaMainView: View {
 
     @Namespace private var mainNamespace
     @Namespace private var sidebarNamespace
+    #if os(tvOS)
     @Environment(\.resetFocus) private var resetFocus
+    #else
+    /// No-op focus reset on iOS where tvOS focus APIs are unavailable.
+    private let resetFocus: (Namespace.ID) -> Void = { _ in }
+    #endif
 
     /// Convenience flag for modal rename alert
     private var isRenamePresented: Bool {
@@ -120,29 +125,217 @@ struct TVMediaMainView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .leading) {
-            TVMediaBackground()
-                .ignoresSafeArea()
+        TVMediaMainRootView(
+            appState: appState,
+            lastDestinationRaw: $lastDestinationRaw,
+            lastSystemIdentifier: $lastSystemIdentifier,
+            settingsCanPop: $settingsCanPop, focusCoordinator: focusCoordinator,
+            router: router,
+            libraryModel: libraryModel,
+            gameActions: gameActions,
+            sidebarCollapsedWidth: sidebarCollapsedWidth,
+            mainNamespace: mainNamespace,
+            sidebarNamespace: sidebarNamespace,
+            resetFocus: resetFocus,
+            isRenamePresented: isRenamePresented,
+            contentArea: { contentArea },
+            overlays: { overlays },
+            modalContent: { modal in modalContent(for: modal) },
+            renameAlertContent: { renameAlertContent }
+        )
+    }
 
-            // Content area - wrapped in focus-aware container for edge-gated sidebar navigation.
-            // While inside Settings subpages, do not intercept LEFT (subpage controls may rely on left/right).
-            Group {
-                if (router.destination == .settings && settingsCanPop) || router.destination == .saves {
-                    contentArea
-                } else {
-                    TVMediaFocusAwareContent(focusCoordinator: focusCoordinator) { contentArea }
+    // MARK: - Main Layout Sections
+
+    private var renameAlertContent: some View {
+        VStack(spacing: 10) {
+            RetroButton(title: "Save", isPrimary: true) {
+                Task {
+                    let systemID = gameActions.renameGame?.systemIdentifier
+                    await gameActions.commitRenameIfPossible()
+                    if let systemID {
+                        await libraryModel.refreshAfterGameRename(systemIdentifier: systemID)
+                    } else {
+                        libraryModel.refresh()
+                    }
                 }
             }
+            RetroButton(title: "Cancel", isPrimary: false) {
+                gameActions.clearRename()
+            }
+        }
+    }
+
+    private struct TVMediaMainRootView<ContentArea: View, Overlays: View, ModalContent: View, RenameAlertContent: View>: View {
+        @ObservedObject var appState: AppState
+
+        @Binding var lastDestinationRaw: String
+        @Binding var lastSystemIdentifier: String
+        @Binding var settingsCanPop: Bool
+
+        @ObservedObject var focusCoordinator: TVMediaFocusCoordinator
+        @ObservedObject var router: TVMediaRouter
+        @ObservedObject var libraryModel: TVMediaLibraryModel
+        @ObservedObject var gameActions: TVMediaGameActions
+
+        let sidebarCollapsedWidth: CGFloat
+        let mainNamespace: Namespace.ID
+        let sidebarNamespace: Namespace.ID
+        let resetFocus: (Namespace.ID) -> Void
+        let isRenamePresented: Bool
+        let contentArea: () -> ContentArea
+        let overlays: () -> Overlays
+        let modalContent: (TVMediaModal) -> ModalContent
+        let renameAlertContent: () -> RenameAlertContent
+
+        var body: some View {
+            layoutWithRenameFocus
+        }
+
+        private var baseLayout: some View {
+            ZStack(alignment: .leading) {
+                TVMediaBackground()
+                    .ignoresSafeArea()
+
+                contentSection
+                sidebarSection
+                overlays()
+            }
+        }
+
+        private var layoutWithEnvironment: some View {
+            baseLayout
+                .environment(\.tvMediaFocusCoordinator, focusCoordinator)
+        }
+
+        private var layoutWithLifecycle: some View {
+            layoutWithEnvironment
+                .onAppear {
+                    gameActions.appState = appState
+                    router.destination = TVMediaDestination(rawValue: lastDestinationRaw) ?? .home
+                    router.selectedSystemID = lastSystemIdentifier
+                    libraryModel.startObservingLibraryChanges()
+                    libraryModel.refresh()
+                    if !lastSystemIdentifier.isEmpty {
+                        libraryModel.selectSystem(identifier: lastSystemIdentifier)
+                    }
+                }
+                .onChange(of: router.destination) { newValue in
+                    lastDestinationRaw = newValue.rawValue
+                    focusCoordinator.closeSidebar()
+                    focusCoordinator.clearEdgeRegistrations()
+                }
+                .onChange(of: focusCoordinator.isSidebarExpanded) { expanded in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        if expanded {
+                            resetFocus(sidebarNamespace)
+                        } else {
+                            resetFocus(mainNamespace)
+                        }
+                    }
+                }
+                .onChange(of: router.selectedSystemID) { newValue in
+                    lastSystemIdentifier = newValue
+                    libraryModel.selectSystem(identifier: newValue)
+                }
+                .onChange(of: gameActions.systemPickerGame) { newValue in
+                    if let game = newValue {
+                        router.activeModal = .systemPicker(game: game)
+                    } else if case .systemPicker = router.activeModal {
+                        router.dismissModal()
+                    }
+                }
+        }
+
+        private var layoutWithExitCommand: some View {
+            layoutWithLifecycle
+                .tvMediaOnExitCommand {
+                    if isRenamePresented {
+                        gameActions.clearRename()
+                        return
+                    }
+                    if focusCoordinator.isAlertPresented || focusCoordinator.isModalPresented {
+                        return
+                    }
+                    if router.handleBack() {
+                        return
+                    }
+                    if router.destination == .settings, settingsCanPop {
+                        return
+                    }
+                    focusCoordinator.toggleSidebar()
+                }
+        }
+
+        private var layoutWithModal: some View {
+            layoutWithExitCommand
+                .sheet(item: $router.activeModal) { modal in
+                    modalContent(modal)
+                }
+        }
+
+        private var layoutWithRenameAlert: some View {
+            layoutWithModal
+                .retroAlert(
+                    "Rename Game",
+                    message: "Enter a new name for \(gameActions.renameGame?.title ?? "")",
+                    isPresented: Binding(
+                        get: { gameActions.renameGame != nil },
+                        set: { if !$0 { gameActions.clearRename() } }
+                    ),
+                    textFieldBinding: Binding<String?>(
+                        get: { gameActions.renameText },
+                        set: { gameActions.renameText = $0 ?? "" }
+                    ),
+                    textFieldConfiguration: { textField in
+                        textField.placeholder = "Game name"
+                        textField.clearButtonMode = .whileEditing
+                        textField.autocapitalizationType = .words
+                    }
+                ) {
+                    renameAlertContent()
+                }
+        }
+
+        private var layoutWithAppearance: some View {
+            layoutWithRenameAlert
+                .preferredColorScheme(.dark)
+                .ignoresSafeArea(.all)
+                .hideHomeIndicator()
+        }
+
+        private var layoutWithRenameFocus: some View {
+            layoutWithAppearance
+                .onChange(of: gameActions.renameGame) { newValue in
+                    focusCoordinator.isAlertPresented = (newValue != nil)
+                    if newValue != nil {
+                        resetFocus(mainNamespace)
+                    }
+                }
+        }
+
+        private var contentSection: some View {
+            contentGroup
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.leading, sidebarCollapsedWidth)
                 .allowsHitTesting(!focusCoordinator.isAlertPresented && !isRenamePresented)
                 .disabled(focusCoordinator.isAlertPresented || isRenamePresented)
                 .animation(.easeInOut(duration: 0.25), value: router.destination)
-                .focusSection()
-                .focusScope(mainNamespace)
-                .prefersDefaultFocus(!focusCoordinator.isSidebarExpanded, in: mainNamespace)
+                .tvMediaFocusSection()
+                .tvMediaFocusScope(mainNamespace)
+                .tvMediaPrefersDefaultFocus(!focusCoordinator.isSidebarExpanded, in: mainNamespace)
+        }
 
-            // Sidebar
+        @ViewBuilder
+        private var contentGroup: some View {
+            if (router.destination == .settings && settingsCanPop) || router.destination == .saves {
+                contentArea()
+            } else {
+                TVMediaFocusAwareContent(focusCoordinator: focusCoordinator) { contentArea() }
+            }
+        }
+
+        private var sidebarSection: some View {
             TVMediaSidebarRail(
                 destination: $router.destination,
                 focusCoordinator: focusCoordinator,
@@ -157,116 +350,10 @@ struct TVMediaMainView: View {
                     router.activeModal = .importStatus
                 }
             )
-            .focusScope(sidebarNamespace)
-            .prefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
+            .tvMediaFocusScope(sidebarNamespace)
+            .tvMediaPrefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
             .allowsHitTesting(!focusCoordinator.isAlertPresented && !isRenamePresented)
             .disabled(!focusCoordinator.isSidebarExpanded || isRenamePresented)
-
-            overlays
-        }
-        .environment(\.tvMediaFocusCoordinator, focusCoordinator)
-        .onAppear {
-            gameActions.appState = appState
-            router.destination = TVMediaDestination(rawValue: lastDestinationRaw) ?? .home
-            router.selectedSystemID = lastSystemIdentifier
-            libraryModel.startObservingLibraryChanges()
-            libraryModel.refresh()
-            if !lastSystemIdentifier.isEmpty {
-                libraryModel.selectSystem(identifier: lastSystemIdentifier)
-            }
-        }
-        .onChange(of: router.destination) { newValue in
-            lastDestinationRaw = newValue.rawValue
-            // Close sidebar when navigating
-            focusCoordinator.closeSidebar()
-            focusCoordinator.clearEdgeRegistrations()
-        }
-        .onChange(of: focusCoordinator.isSidebarExpanded) { expanded in
-            // Reset focus to the appropriate namespace when sidebar state changes
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                if expanded {
-                    resetFocus(in: sidebarNamespace)
-                } else {
-                    resetFocus(in: mainNamespace)
-                }
-            }
-        }
-        .onChange(of: router.selectedSystemID) { newValue in
-            lastSystemIdentifier = newValue
-            libraryModel.selectSystem(identifier: newValue)
-        }
-        .onChange(of: gameActions.systemPickerGame) { newValue in
-            // Present the Move to System picker when requested from context menu
-            if let game = newValue {
-                router.activeModal = .systemPicker(game: game)
-            } else if case .systemPicker = router.activeModal {
-                router.dismissModal()
-            }
-        }
-        .onExitCommand {
-            // Menu/Back button: close rename/alerts first, then sidebar
-            if isRenamePresented {
-                gameActions.clearRename()
-                return
-            }
-            if focusCoordinator.isAlertPresented || focusCoordinator.isModalPresented {
-                return
-            }
-            if router.handleBack() {
-                return
-            }
-            if router.destination == .settings, settingsCanPop {
-                return
-            }
-            focusCoordinator.toggleSidebar()
-        }
-        .sheet(item: $router.activeModal) { modal in
-            modalContent(for: modal)
-        }
-        .retroAlert(
-            "Rename Game",
-            message: "Enter a new name for \(gameActions.renameGame?.title ?? "")",
-            isPresented: Binding(
-                get: { gameActions.renameGame != nil },
-                set: { if !$0 { gameActions.clearRename() } }
-            ),
-            textFieldBinding: Binding<String?>(
-                get: { gameActions.renameText },
-                set: { gameActions.renameText = $0 ?? "" }
-            ),
-            textFieldConfiguration: { textField in
-                textField.placeholder = "Game name"
-                textField.clearButtonMode = .whileEditing
-                textField.autocapitalizationType = .words
-            }
-        ) {
-            VStack(spacing: 10) {
-                RetroButton(title: "Save", isPrimary: true) {
-                    Task {
-                        let systemID = gameActions.renameGame?.systemIdentifier
-                        await gameActions.commitRenameIfPossible()
-                        if let systemID {
-                            await libraryModel.refreshAfterGameRename(systemIdentifier: systemID)
-                        } else {
-                            libraryModel.refresh()
-                        }
-                    }
-                }
-                RetroButton(title: "Cancel", isPrimary: false) {
-                    gameActions.clearRename()
-                }
-            }
-        }
-        .preferredColorScheme(.dark)
-        .ignoresSafeArea(.all)
-        .hideHomeIndicator()
-        .onChange(of: gameActions.renameGame) { newValue in
-            // Treat rename alert as a blocking alert for focus and hit testing
-            focusCoordinator.isAlertPresented = (newValue != nil)
-            // When showing, push focus to sidebar off
-            if newValue != nil {
-                resetFocus(in: mainNamespace)
-            }
         }
     }
 
@@ -325,23 +412,30 @@ struct TVMediaMainView: View {
                 )
             case .logs:
                 TVMediaLogsView()
-                    .onMoveCommand { direction in
+                    .tvMediaOnMoveCommand { direction in
                         if direction == .left {
                             focusCoordinator.openSidebar()
                         }
                     }
             case .settings:
                 // Settings view handles its own sidebar commands via tvMediaFocusCoordinator environment
+                #if os(tvOS)
                 SettingsWrapperView(canPop: $settingsCanPop)
                     .onAppear {
                         focusCoordinator.closeSidebar()
                     }
+                #else
+                SettingsWrapperView()
+                    .onAppear {
+                        focusCoordinator.closeSidebar()
+                    }
+                #endif
             case .status:
                 RetroStatusControlView()
                     .padding(.horizontal, 8)
                     .padding(.vertical, 6)
                     .focusable()
-                    .onMoveCommand { direction in
+                    .tvMediaOnMoveCommand { direction in
                         if direction == .left {
                             focusCoordinator.openSidebar()
                         }
@@ -435,7 +529,7 @@ struct TVMediaMainView: View {
 }
 
 /// Alert overlay that properly captures focus on tvOS
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaAlertOverlay: View {
     @ObservedObject var alertState: RetroAlertState
     @ObservedObject var focusCoordinator: TVMediaFocusCoordinator
@@ -446,7 +540,7 @@ struct TVMediaAlertOverlay: View {
         Group {
             if alertState.isPresented {
                 RetroAlertStateView(alertState: alertState)
-                    .focusSection()
+                    .tvMediaFocusSection()
                     .focused($isAlertFocused)
             }
         }
@@ -764,7 +858,7 @@ private func tvMediaAdaptiveColumnsPerRow(
 
 // MARK: - Logs View
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 16.0, *)
 struct TVMediaLogsView: View {
     @State private var isFullscreen = false
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
@@ -780,8 +874,8 @@ struct TVMediaLogsView: View {
                 RetroLogView(isFullscreen: $isFullscreen)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 6)
-                    .focusSection()
-                    .onMoveCommand { direction in
+                    .tvMediaFocusSection()
+                    .tvMediaOnMoveCommand { direction in
                         if direction == .left {
                             focusCoordinator.openSidebar()
                         }
@@ -795,7 +889,7 @@ struct TVMediaLogsView: View {
 }
 
 // MARK: - Empty State View
-
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaEmptyStateView: View {
     let title: String
     let subtitle: String
@@ -858,7 +952,7 @@ struct TVMediaEmptyStateView: View {
         .padding(40)
         .focusable()
         .focused($isFocused)
-        .onMoveCommand { direction in
+        .tvMediaOnMoveCommand { direction in
             if direction == .left, isFocused {
                 focusCoordinator.openSidebar()
             }
@@ -885,7 +979,7 @@ struct TVMediaEmptyStateView: View {
 // MARK: - Empty Library Action Buttons
 
 /// Focusable action buttons for the empty library state
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaEmptyLibraryActionButtons: View {
     let onSettings: () -> Void
     let onImportStatus: () -> Void
@@ -921,7 +1015,7 @@ struct TVMediaEmptyLibraryActionButtons: View {
                 action: onImportStatus
             )
         }
-        .onMoveCommand { direction in
+        .tvMediaOnMoveCommand { direction in
             if direction == .left, focusedButton == .settings {
                 focusCoordinator.openSidebar()
             }
@@ -976,7 +1070,7 @@ struct TVMediaEmptyLibraryActionButtons: View {
             )
             .shadow(color: isFocused ? accentColor.opacity(0.5) : .clear, radius: 12, x: 0, y: 4)
             .scaleEffect(isFocused ? 1.05 : 1.0)
-            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
@@ -987,14 +1081,14 @@ struct TVMediaEmptyLibraryActionButtons: View {
 // MARK: - Visible Section Preference Key
 
 /// Represents a section's visibility info for tracking scroll position
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct VisibleSectionInfo: Equatable {
     let id: String
     let minY: CGFloat
 }
 
 /// Preference key for tracking which section is currently visible
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct VisibleSectionPreferenceKey: PreferenceKey {
     static var defaultValue: [VisibleSectionInfo] = []
 
@@ -1007,7 +1101,7 @@ struct VisibleSectionPreferenceKey: PreferenceKey {
 
 /// A vertical rail showing system icons/abbreviations for quick navigation
 /// Also shows current scroll position indicator
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaScrollIndexRail: View {
     let systems: [PVSystem]
     let hasFavorites: Bool
@@ -1090,7 +1184,7 @@ struct TVMediaScrollIndexRail: View {
                 isExpanded = newValue != nil
             }
         }
-        .focusSection()
+        .tvMediaFocusSection()
     }
 
     @ViewBuilder
@@ -1141,8 +1235,8 @@ struct TVMediaScrollIndexRail: View {
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($focusedItem, equals: item)
-        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
-        .animation(.easeOut(duration: 0.2), value: isCurrent)
+        .animation(Animation.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.easeOut(duration: 0.2), value: isCurrent)
     }
 
     @ViewBuilder
@@ -1196,8 +1290,8 @@ struct TVMediaScrollIndexRail: View {
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($focusedItem, equals: item)
-        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
-        .animation(.easeOut(duration: 0.2), value: isCurrent)
+        .animation(Animation.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.easeOut(duration: 0.2), value: isCurrent)
     }
 
     /// Extract short identifier from system (e.g., "gba" from "com.provenance.gba")
@@ -1247,7 +1341,7 @@ struct TVMediaScrollIndexRail: View {
 
 // MARK: - Saves View (with empty state handling)
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSavesView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var saveStatesStore: RetroSaveStatesStore
@@ -1366,7 +1460,7 @@ struct TVMediaSavesView: View {
                     )
             )
             .scaleEffect(isFilterButtonFocused ? 1.03 : 1.0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isFilterButtonFocused)
+            .animation(Animation.spring(response: 0.2, dampingFraction: 0.7), value: isFilterButtonFocused)
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
@@ -1463,7 +1557,7 @@ struct TVMediaSavesView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .focusSection()
+        .tvMediaFocusSection()
         .tvMediaTrackWidth { gridWidth = $0 }
         .onChange(of: gridWidth) { _ in
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
@@ -1508,7 +1602,7 @@ struct TVMediaSavesView: View {
 }
 
 /// Multi-select system filter picker for saves
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemFilterPicker: View {
     let availableSystemIDs: [String]
     @Binding var selectedSystems: Set<String>
@@ -1538,11 +1632,11 @@ struct TVMediaSystemFilterPicker: View {
                     .padding(.horizontal, 60)
                     .padding(.bottom, 60)
                 }
-                .focusSection()
+                .tvMediaFocusSection()
             }
         }
-        .focusScope(pickerNamespace)
-        .onExitCommand {
+        .tvMediaFocusScope(pickerNamespace)
+        .tvMediaOnExitCommand {
             onDismiss()
         }
     }
@@ -1671,12 +1765,12 @@ struct TVMediaSystemFilterPicker: View {
         .tvOSDisableFocusEffect()
         .focused($focusedSystemID, equals: systemID)
         .scaleEffect(isFocused ? 1.01 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 }
 
 /// A consistent header button for filter overlays
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 private struct TVMediaFilterHeaderButton: View {
     let title: String
     var icon: String? = nil
@@ -1713,7 +1807,7 @@ private struct TVMediaFilterHeaderButton: View {
                     )
             )
             .scaleEffect(isFocused ? 1.05 : 1.0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isFocused)
+            .animation(Animation.spring(response: 0.2, dampingFraction: 0.7), value: isFocused)
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
@@ -1721,7 +1815,7 @@ private struct TVMediaFilterHeaderButton: View {
     }
 }
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 private struct TVMediaSaveStateTileButton: View {
     let item: RetroSaveStateItem
     @ObservedObject var store: RetroSaveStatesStore
@@ -1761,7 +1855,7 @@ private struct TVMediaSaveStateTileButton: View {
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($isFocused)
-        .onMoveCommand { direction in
+        .tvMediaOnMoveCommand { direction in
             if direction == .left, isFocused, isAtLeftEdge {
                 focusCoordinator?.openSidebar()
             }
@@ -1773,7 +1867,7 @@ private struct TVMediaSaveStateTileButton: View {
                 Label("Delete Save State", systemImage: "trash")
             }
         }
-        .task(id: item.id, priority: .utility) {
+        .task(id: item.id, priority: TaskPriority.utility) {
             // Load thumbnail with utility priority to avoid blocking scroll performance
             thumbnail = await store.thumbnail(for: item, targetSize: CGSize(width: 280, height: 180))
         }
@@ -1813,7 +1907,7 @@ private struct TVMediaSaveStateTileButton: View {
 
 // MARK: - Home View
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaHomeView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var saveStatesStore: RetroSaveStatesStore
@@ -1856,7 +1950,7 @@ struct TVMediaHomeView: View {
                         } else if !hasAnyGames {
                             // Empty library state
                             emptyLibraryView
-                                .focusSection()
+                                .tvMediaFocusSection()
                         } else {
                             // Favorites section
                             let favorites = model.favoriteGames(limit: 40)
@@ -2103,7 +2197,7 @@ struct TVMediaHomeView: View {
 
 // MARK: - Systems View
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemsView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var router: TVMediaRouter
@@ -2159,7 +2253,7 @@ struct TVMediaSystemsView: View {
     }
 }
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemCard: View {
     let system: PVSystem
     let icon: Image?
@@ -2320,7 +2414,7 @@ struct TVMediaSystemCard: View {
                 glowIntensity = focused ? 0.8 : 0
             }
         }
-        .onMoveCommand { direction in
+        .tvMediaOnMoveCommand { direction in
             // Open sidebar when at left edge and swiping left
             if direction == .left && isAtLeftEdge && isFocused {
                 focusCoordinator?.openSidebar()
@@ -2383,7 +2477,7 @@ struct TVMediaSystemCard: View {
 }
 
 /// System card button style
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemCardButtonStyle: ButtonStyle {
     let isFocused: Bool
 
@@ -2392,25 +2486,25 @@ struct TVMediaSystemCardButtonStyle: ButtonStyle {
             .scaleEffect(isFocused ? 1.02 : 1.0)
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
             .shadow(color: isFocused ? Color.retroPink.opacity(0.35) : .clear, radius: 20, x: 0, y: 6)
-            .animation(.spring(response: 0.28, dampingFraction: 0.78), value: isFocused)
-            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+            .animation(Animation.spring(response: 0.28, dampingFraction: 0.78), value: isFocused)
+            .animation(Animation.easeOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 
 /// Flat button style - no background, scale on focus
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaFlatButtonStyle: ButtonStyle {
     let isFocused: Bool
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(isFocused ? 1.04 : 1.0)
-            .animation(.spring(response: 0.22, dampingFraction: 0.85), value: isFocused)
+            .animation(Animation.spring(response: 0.22, dampingFraction: 0.85), value: isFocused)
     }
 }
 
 /// View All card that appears at the end of horizontal shelves
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaViewAllCard: View {
     let title: String
     let subtitle: String
@@ -2504,12 +2598,12 @@ struct TVMediaViewAllCard: View {
         .tvOSDisableFocusEffect()
         .focused($isFocused)
         .scaleEffect(isFocused ? 1.05 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 }
 
 /// View All card for save states shelf
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSaveStatesViewAllCard: View {
     let count: Int
     let action: () -> Void
@@ -2601,13 +2695,13 @@ struct TVMediaSaveStatesViewAllCard: View {
         .tvOSDisableFocusEffect()
         .focused($isFocused)
         .scaleEffect(isFocused ? 1.05 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 }
 
 // MARK: - System Games View
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemGamesView: View {
     let system: PVSystem
     @ObservedObject var model: TVMediaLibraryModel
@@ -2697,7 +2791,7 @@ struct TVMediaSystemGamesView: View {
                 .padding(.horizontal, 60)
                 .padding(.vertical, 40)
             }
-            .onMoveCommand { direction in
+            .tvMediaOnMoveCommand { direction in
                 if direction == .up {
                     // When at top of games grid and pressing up, scroll to header
                     withAnimation(.easeOut(duration: 0.3)) {
@@ -2738,7 +2832,7 @@ struct TVMediaSystemGamesView: View {
     }
 }
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemHeader: View {
     let system: PVSystem
 
@@ -2793,7 +2887,7 @@ struct TVMediaSystemHeader: View {
 
 // MARK: - All Games Grid
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaAllGamesGrid: View {
     let games: [PVGame]
     @ObservedObject var gameActions: TVMediaGameActions
@@ -2852,7 +2946,7 @@ struct TVMediaAllGamesGrid: View {
 
 // MARK: - Search View
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSearchView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var gameActions: TVMediaGameActions
@@ -3035,7 +3129,7 @@ struct TVMediaSearchView: View {
                 .tvOSDisableFocusEffect()
                 .focused($isRecentButtonFocused)
                 .scaleEffect(isRecentButtonFocused ? 1.05 : 1.0)
-                .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isRecentButtonFocused)
+                .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isRecentButtonFocused)
             }
 
             // Clear button
@@ -3062,7 +3156,7 @@ struct TVMediaSearchView: View {
         .padding(.vertical, 20)
         .padding(.horizontal, 24)
         .background(searchFieldBackground)
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isSearchFieldFocused)
+        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isSearchFieldFocused)
     }
 
     private var searchFieldBackground: some View {
@@ -3159,9 +3253,9 @@ struct TVMediaSearchView: View {
                 }
                 .padding(.vertical, 8)
             }
-            .focusSection()
+            .tvMediaFocusSection()
         }
-        .transition(.opacity.combined(with: .move(edge: .top)))
+        .transition(.opacity.combined(with: .move(edge: Edge.top)))
     }
 
     @ViewBuilder
@@ -3240,7 +3334,7 @@ struct TVMediaSearchView: View {
         .tvOSDisableFocusEffect()
         .focused($focusedRecentIndex, equals: index)
         .scaleEffect(isFocused ? 1.05 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 
     private var searchingIndicator: some View {
@@ -3416,7 +3510,7 @@ struct TVMediaSearchView: View {
 
 // MARK: - Favorites View
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaFavoritesView: View {
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var gameActions: TVMediaGameActions
@@ -3535,7 +3629,7 @@ struct TVMediaTopBar: View {
 
 // MARK: - Shelf Components
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaShelf: View {
     let title: String
     let items: [PVGame]
@@ -3590,12 +3684,12 @@ struct TVMediaShelf: View {
                 .padding(.vertical, 14)
             }
             // Use focusSection to ensure this shelf catches vertical focus navigation
-            .focusSection()
+            .tvMediaFocusSection()
         }
     }
 }
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemShelfRow: View {
     let system: PVSystem
     let games: [PVGame]
@@ -3685,7 +3779,7 @@ struct TVMediaSystemShelfRow: View {
                 .padding(.vertical, 12)
             }
             // Use focusSection to ensure this shelf catches vertical focus navigation
-            .focusSection()
+            .tvMediaFocusSection()
         }
         .onAppear(perform: ensureLoaded)
         .task {
@@ -3694,7 +3788,7 @@ struct TVMediaSystemShelfRow: View {
     }
 }
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSaveStatesShelfRow: View {
     let title: String
     let items: [RetroSaveStateItem]
@@ -3743,7 +3837,7 @@ struct TVMediaSaveStatesShelfRow: View {
                 .padding(.vertical, 12)
             }
             // Use focusSection to ensure this shelf catches vertical focus navigation
-            .focusSection()
+            .tvMediaFocusSection()
         }
         .onChange(of: focusedSaveID) { newValue in
             guard let id = newValue else { return }
@@ -3804,7 +3898,7 @@ struct TVMediaSaveStatesShelfRow: View {
 
 // MARK: - Search Results Grid
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSearchResultsGrid: View {
     let results: [PVGame]
     @ObservedObject var gameActions: TVMediaGameActions
@@ -3991,7 +4085,7 @@ struct TVMediaScanlines: View {
 }
 
 /// SMPTE color bars for save states without thumbnails - optimized for performance
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSaveStateSMPTE: View {
     private let colors: [Color] = [
         Color(red: 0.75, green: 0.75, blue: 0.75),
@@ -4033,7 +4127,7 @@ struct TVMediaSaveStateSMPTE: View {
 
 // MARK: - Save State Tile
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSaveStateTile: View {
     let title: String
     let subtitle: Date
@@ -4145,7 +4239,7 @@ struct TVMediaSaveStateTile: View {
         .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 20, x: 0, y: 8)
         .shadow(color: isFocused ? Color.retroBlue.opacity(0.3) : .clear, radius: 30, x: 0, y: 12)
         .scaleEffect(isFocused ? 1.05 : 1.0)
-        .animation(.spring(response: 0.28, dampingFraction: 0.75), value: isFocused)
+        .animation(Animation.spring(response: 0.28, dampingFraction: 0.75), value: isFocused)
     }
 
     private var focusBorder: some View {
@@ -4168,7 +4262,7 @@ struct TVMediaSaveStateTile: View {
 // MARK: - Import Status Toaster
 
 /// Compact import status toaster that appears in the bottom-right corner
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaImportStatusToaster: View {
     let gameImporter: any GameImporting
     @ObservedObject var updatesController: PVGameLibraryUpdatesController
@@ -4191,7 +4285,7 @@ struct TVMediaImportStatusToaster: View {
                 toasterContent
                     .focusable()
                     .focused($isFocused)
-                    .onMoveCommand { _ in }
+                    .tvMediaOnMoveCommand { _ in }
                     .onLongPressGesture(minimumDuration: 0.1) {
                         onTap()
                     }
@@ -4199,7 +4293,7 @@ struct TVMediaImportStatusToaster: View {
                         insertion: .opacity.combined(with: .move(edge: .trailing)),
                         removal: .opacity
                     ))
-                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.shouldShow)
+                    .animation(Animation.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.shouldShow)
             }
         }
     }
@@ -4258,7 +4352,7 @@ struct TVMediaImportStatusToaster: View {
         .background(toasterBackground)
         .overlay(focusBorder)
         .scaleEffect(isFocused ? 1.03 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 
     private var statusText: String {
@@ -4364,7 +4458,7 @@ struct TVMediaImportStatusToaster: View {
 // MARK: - Import Status Sheet (Full Screen)
 
 /// Full import queue management sheet with tvOS styling
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaImportStatusSheet: View {
     let gameImporter: any GameImporting
     @ObservedObject var updatesController: PVGameLibraryUpdatesController
@@ -4413,12 +4507,12 @@ struct TVMediaImportStatusSheet: View {
                         .padding(.horizontal, 60)
                         .padding(.bottom, 60)
                     }
-                    .focusSection()
+                    .tvMediaFocusSection()
                 }
             }
         }
-        .focusScope(sheetNamespace)
-        .onExitCommand {
+        .tvMediaFocusScope(sheetNamespace)
+        .tvMediaOnExitCommand {
             onDismiss()
         }
     }
@@ -4654,7 +4748,7 @@ struct TVMediaImportStatusSheet: View {
         .focusable()
         .focused($focusedItemID, equals: item.id.uuidString)
         .scaleEffect(isFocused ? 1.01 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 
     @ViewBuilder
