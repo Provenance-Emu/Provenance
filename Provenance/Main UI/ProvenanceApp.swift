@@ -54,6 +54,13 @@ struct ProvenanceApp: App {
         //        }
         //#endif
 
+        #if os(tvOS)
+        /// Force all sheet presentations to fullscreen on tvOS.
+        /// Works around a tvOS 26 regression where SwiftUI .sheet renders as
+        /// a tiny floating modal, breaking FreemiumKit's paywall UI.
+        TVOSSheetFullscreenFix.install()
+        #endif
+
         // Register for Spotlight background processing
         registerSpotlightBackgroundTask()
     }
@@ -1206,6 +1213,122 @@ extension ProvenanceApp: WhatsNewCollectionProvider {
                 hapticFeedback: .notification(.success)
             )
         )
+    }
+}
+#endif
+
+// MARK: - tvOS Sheet Fullscreen Fix
+
+#if os(tvOS)
+import ObjectiveC
+
+/// Forces all modal presentations on tvOS to display at fullscreen size.
+///
+/// tvOS 26 introduced a regression where SwiftUI `.sheet` presentations render
+/// as tiny floating modals instead of the expected full-screen sheets. This
+/// breaks third-party libraries like FreemiumKit whose paywall UI becomes
+/// unusable. This fix uses two strategies:
+///
+/// 1. **`present()` swizzle** — clears UIKit's cached `_presentationController`
+///    before setting `.fullScreen`, so the style change actually takes effect.
+/// 2. **`viewWillLayoutSubviews()` swizzle** — continuously forces the presented
+///    view's frame to fill the screen, overriding any layout the broken
+///    presentation controller tries to apply.
+///
+/// Safe to apply globally on tvOS since fullscreen modals are the standard
+/// TV interaction pattern.
+enum TVOSSheetFullscreenFix {
+    private static var installed = false
+
+    /// Installs the swizzles. Safe to call multiple times; only applies once.
+    static func install() {
+        guard !installed else { return }
+        installed = true
+
+        swizzle(
+            original: #selector(UIViewController.present(_:animated:completion:)),
+            replacement: #selector(UIViewController.pvr_present(_:animated:completion:))
+        )
+        swizzle(
+            original: #selector(UIViewController.viewWillLayoutSubviews),
+            replacement: #selector(UIViewController.pvr_viewWillLayoutSubviews)
+        )
+    }
+
+    private static func swizzle(original: Selector, replacement: Selector) {
+        guard
+            let originalMethod = class_getInstanceMethod(UIViewController.self, original),
+            let swizzledMethod = class_getInstanceMethod(UIViewController.self, replacement)
+        else { return }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+
+/// Associated-object key used to tag VCs that should be forced fullscreen
+private var pvrForceFullscreenKey: UInt8 = 0
+
+extension UIViewController {
+
+    /// Swizzled `present(_:animated:completion:)` — clears cached presentation
+    /// controller then forces `.fullScreen` style before calling original.
+    @objc dynamic func pvr_present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
+        let style = viewControllerToPresent.modalPresentationStyle
+        if style != .fullScreen && style != .overFullScreen {
+            /// Clear UIKit's cached `_presentationController` so the style
+            /// change below actually takes effect. The presentation controller
+            /// is lazily created on first access and then cached; once cached,
+            /// `modalPresentationStyle` changes are ignored (as the assert warns).
+            let clearSelector = NSSelectorFromString("_setPresentationController:")
+            if viewControllerToPresent.responds(to: clearSelector) {
+                viewControllerToPresent.perform(clearSelector, with: nil)
+            }
+            viewControllerToPresent.modalPresentationStyle = .fullScreen
+
+            /// Tag so `viewWillLayoutSubviews` can enforce fullscreen frame
+            objc_setAssociatedObject(
+                viewControllerToPresent,
+                &pvrForceFullscreenKey,
+                true,
+                .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
+        /// Calls original implementation (selectors are swapped)
+        pvr_present(viewControllerToPresent, animated: flag, completion: completion)
+    }
+
+    /// Swizzled `viewWillLayoutSubviews` — forces the presented view and its
+    /// container hierarchy to fill the screen, overriding the broken tvOS 26
+    /// sheet presentation controller's tiny frame.
+    @objc dynamic func pvr_viewWillLayoutSubviews() {
+        /// Call original first
+        pvr_viewWillLayoutSubviews()
+
+        /// Only act on VCs we tagged during presentation
+        guard objc_getAssociatedObject(self, &pvrForceFullscreenKey) as? Bool == true,
+              presentingViewController != nil,
+              let window = view.window
+        else { return }
+
+        let screenBounds = window.screen.bounds
+
+        /// Force our view to fill the screen
+        if view.frame != screenBounds {
+            view.frame = screenBounds
+        }
+
+        /// Walk up the superview chain inside the container and expand
+        /// every wrapper view the presentation controller may have inserted
+        var ancestor: UIView? = view.superview
+        while let sv = ancestor, sv !== window {
+            if sv.frame != screenBounds {
+                sv.frame = screenBounds
+            }
+            ancestor = sv.superview
+        }
     }
 }
 #endif
