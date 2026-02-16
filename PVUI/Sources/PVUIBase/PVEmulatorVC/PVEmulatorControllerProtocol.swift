@@ -142,17 +142,8 @@ public extension PVEmualatorControllerProtocol where Self: GCEventViewController
 
     @MainActor
     func enableControllerInput(_ enabled: Bool) {
-#if os(tvOS)
-        controllerUserInteractionEnabled = enabled
-#else
-        // Can enable when we change to iOS 10 base
-        // and change super class to GCEventViewController
-        //    if (@available(iOS 10, *)) {
-        //        self.controllerUserInteractionEnabled = enabled;
-        //    }
         controllerUserInteractionEnabled = enabled
         PVControllerManager.shared.controllerUserInteractionEnabled = enabled
-#endif
     }
 }
 
@@ -160,9 +151,7 @@ public extension PVEmualatorControllerProtocol {
 
     @MainActor
     func enableControllerInput(_ enabled: Bool) {
-#if !os(tvOS)
         PVControllerManager.shared.controllerUserInteractionEnabled = enabled
-#endif
     }
 }
 

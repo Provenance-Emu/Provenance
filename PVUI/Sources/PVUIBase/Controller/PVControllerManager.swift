@@ -561,47 +561,46 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
     // MARK: - Controller User Interaction (ie use controller to drive UX)
 
-#if !os(tvOS)
-    //
-    // make a *cheap* *simple* version of the FocusSystem
-    // get controller input and turn it into button presses menu,select,up,down,left,right
-    // NOTE we assume no cores or other parts of PV is using valueChangedHandler
-    // TODO: what happens if a controller get added/removed while controllerUserInteractionEnabled == true
-    //
+    private static var savedValueChangedHandlers: [ObjectIdentifier: GCExtendedGamepadValueChangedHandler?] = [:]
+
     var controllerUserInteractionEnabled: Bool = false {
         didSet {
             guard controllerUserInteractionEnabled else {
-                //controllers().forEach { $0.extendedGamepad?.valueChangedHandler = nil }
+                controllers.forEach { controller in
+                    if let gamepad = controller.extendedGamepad {
+                        let id = ObjectIdentifier(controller)
+                        gamepad.valueChangedHandler = Self.savedValueChangedHandlers[id] ?? nil
+                        Self.savedValueChangedHandlers.removeValue(forKey: id)
+                    } else {
+                        controller.extendedGamepad?.valueChangedHandler = nil
+                    }
+                }
                 return
             }
             controllers.forEach { controller in
+                guard let gamepad = controller.extendedGamepad else { return }
+                let id = ObjectIdentifier(controller)
+                Self.savedValueChangedHandlers[id] = gamepad.valueChangedHandler
                 var current_state = GCExtendedGamepad.ButtonState()
-                controller.extendedGamepad?.valueChangedHandler = { gamepad, element in
+                let originalHandler = Self.savedValueChangedHandlers[id] ?? nil
+                gamepad.valueChangedHandler = { gamepad, element in
                     let state = gamepad.readButtonState()
                     let changed_state = current_state.symmetricDifference(state)
                     let changed_state_pressed = changed_state.intersection(state)
 
                     let topVC = UIApplication.shared.windows.first { $0.isKeyWindow }?.topViewController
-
-                    // send button press(s) to the top bannana
                     if let top = topVC as? ControllerButtonPress {
-                        changed_state_pressed.forEach {
-                            top.controllerButtonPress($0)
-                        }
+                        changed_state_pressed.forEach { top.controllerButtonPress($0) }
                     }
-                    // also send button press(s) to the top bannana's navigation controller
                     if let nav = topVC?.navigationController {
-                        changed_state_pressed.forEach {
-                            nav.controllerButtonPress($0)
-                        }
+                        changed_state_pressed.forEach { nav.controllerButtonPress($0) }
                     }
-                    // remember state so we can only send changes
                     current_state = state
+                    originalHandler?(gamepad, element)
                 }
             }
         }
     }
-#endif
 }
 
 // MARK: - ControllerButtonPress protocol
@@ -637,10 +636,13 @@ extension UINavigationController : ControllerButtonPress {
             if self.navigationBar.backItem != nil {
                 self.popViewController(animated: true)
             }
-            // if there is a DONE button, press it
-            else if let bbi = self.navigationBar.topItem?.rightBarButtonItem {
-                if bbi.style == .done || bbi.action == NSSelectorFromString("done:") {
-                    _ = bbi.target?.perform(bbi.action, with:bbi)
+            // if there is a DONE button, press it (check both left and right bar items)
+            else if let topItem = self.navigationBar.topItem {
+                for bbi in [topItem.leftBarButtonItem, topItem.rightBarButtonItem].compactMap({ $0 }) {
+                    if bbi.style == .done || bbi.action == NSSelectorFromString("done:") {
+                        _ = bbi.target?.perform(bbi.action, with: bbi)
+                        break
+                    }
                 }
             }
         default:

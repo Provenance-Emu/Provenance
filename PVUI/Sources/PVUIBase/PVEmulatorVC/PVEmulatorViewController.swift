@@ -824,6 +824,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         ILOG("tvOS menu gestures configured: single tap = start button, double tap = pause menu")
     }
 
+    /// Re-establish controller pause handlers (Menu/Home) that post PauseGame. Call after closing modals that may have interfered with controller state.
+    @objc func reestablishPauseHandlers() {
+        for controller in PVControllerManager.shared.controllers {
+            controller.setupPauseHandler(onPause: {
+                NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
+            })
+        }
+    }
+
     /// Remove any existing menu-press recognizers and reinstall them (used after dismissing sub-sheets)
     @objc func resetTVOSMenuGestures() {
         // Remove existing menu-press gestures
@@ -1422,9 +1431,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             self.menuPresentationViewController = nil
             // Always clear the menu state when dismissing
             self.isShowingMenu = false
-            // If we're transitioning into another modal flow, keep emulation paused.
-            if self.core.isOn && !resumeEmulation {
-                self.core.setPauseEmulation(true)
+            // Keep core pause state consistent even when menu state was already false
+            // (e.g., dismissing Game Info after the pause menu was already dismissed).
+            if self.core.isOn {
+                self.core.setPauseEmulation(!resumeEmulation)
             }
             completion?()
         }

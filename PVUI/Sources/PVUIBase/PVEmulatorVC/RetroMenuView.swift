@@ -341,6 +341,7 @@ struct RetroMenuView: View {
             // Menu container
             menuContainer
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         // Listen for orientation changes
 #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
@@ -620,9 +621,16 @@ struct RetroMenuView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+                #if os(tvOS)
+                .fullScreenCover(isPresented: $showingFilterPicker, onDismiss: {
+                }) {
+                    filterPickerView
+                }
+                #else
                 .sheet(isPresented: $showingFilterPicker) {
                     filterPickerView
                 }
+                #endif
                 .onAppear {
                     syncSelectedFilterFromSettings()
                 }

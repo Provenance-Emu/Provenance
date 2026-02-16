@@ -123,20 +123,19 @@ extension PVEmulatorViewController {
         // Create navigation controller
         let newNav = UINavigationController(rootViewController: hostingController)
 
+        newNav.isModalInPresentation = true
+
 #if os(iOS)
-        // Add a done button
         hostingController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
+        self.present(newNav, animated: true) { () -> Void in }
 #else
-        // Add menu gesture for tvOS
+        hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.hideMoreInfo))
         tap.allowedPressTypes = [.menu]
         hostingController.view.addGestureRecognizer(tap)
+        newNav.preferredContentSize = CGSize(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.9)
+        self.present(TVFullscreenController(rootViewController: newNav), animated: true)
 #endif
-
-        // Disable iOS 13 swipe to dismiss
-        newNav.isModalInPresentation = true
-
-        self.present(newNav, animated: true) { () -> Void in }
         // hideMoreInfo will handle re-enabling controller input
     }
 }
