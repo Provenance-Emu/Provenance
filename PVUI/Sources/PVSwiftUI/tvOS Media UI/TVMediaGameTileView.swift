@@ -17,19 +17,41 @@ struct TVMediaGameTileView: View {
     let contextMenu: () -> AnyView
     let isAtLeftEdge: Bool
     var focusCoordinator: TVMediaFocusCoordinator?
+    let focusedGameID: FocusState<String?>.Binding?
 
-    @FocusState private var isFocused: Bool
+    @FocusState private var isFocusedInternal: Bool
     @State private var artwork: UIImage?
     @State private var artworkSize: CGSize?
     @State private var glowIntensity: Double = 0.0
     @State private var borderGlow: Double = 0.0
     /// Blur artwork when obfuscation is enabled.
     @Default(.obfuscateArtwork) private var obfuscateArtwork
+    #if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
 
     /// Base height for tiles - width adjusts based on artwork aspect ratio
-    private let baseHeight: CGFloat = 220
-    private let minWidth: CGFloat = 160
-    private let maxWidth: CGFloat = 340
+    private let baseHeight: CGFloat = {
+        #if os(iOS)
+        return 180
+        #else
+        return 220
+        #endif
+    }()
+    private let minWidth: CGFloat = {
+        #if os(iOS)
+        return 130
+        #else
+        return 160
+        #endif
+    }()
+    private let maxWidth: CGFloat = {
+        #if os(iOS)
+        return 300
+        #else
+        return 340
+        #endif
+    }()
     /// Blur radius for artwork obfuscation.
     private let obfuscationBlurRadius: CGFloat = 6
 
@@ -39,7 +61,8 @@ struct TVMediaGameTileView: View {
         onPlay: @escaping () -> Void,
         contextMenu: @escaping () -> AnyView,
         isAtLeftEdge: Bool = false,
-        focusCoordinator: TVMediaFocusCoordinator? = nil
+        focusCoordinator: TVMediaFocusCoordinator? = nil,
+        focusedGameID: FocusState<String?>.Binding? = nil
     ) {
         self.game = game
         self.titleFont = titleFont
@@ -47,6 +70,14 @@ struct TVMediaGameTileView: View {
         self.contextMenu = contextMenu
         self.isAtLeftEdge = isAtLeftEdge
         self.focusCoordinator = focusCoordinator
+        self.focusedGameID = focusedGameID
+    }
+
+    private var isFocused: Bool {
+        if let focusedGameID {
+            return focusedGameID.wrappedValue == game.id
+        }
+        return isFocusedInternal
     }
 
     private var tileWidth: CGFloat {
@@ -111,7 +142,8 @@ struct TVMediaGameTileView: View {
             }
         }
         .buttonStyle(TVMediaTileButtonStyle(isFocused: isFocused))
-        .focused($isFocused)
+        .tvMediaFocusable()
+        .applyGameFocus(focusedGameID: focusedGameID, fallback: $isFocusedInternal, id: game.id)
         .contextMenu { contextMenu() }
         .task(id: game.id) {
             await loadArtworkIfNeeded()
@@ -142,6 +174,15 @@ struct TVMediaGameTileView: View {
         .onDisappear {
             focusCoordinator?.unregisterLeftEdgeItem(game.id)
         }
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            guard isFocused else { return }
+            if case .buttonPress(let isPressed) = event, isPressed {
+                onPlay()
+            }
+        }
+        #endif
     }
 
     // MARK: - Artwork View
@@ -239,6 +280,21 @@ struct TVMediaTileButtonStyle: ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
             .animation(.spring(response: 0.28, dampingFraction: 0.7), value: isFocused)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func applyGameFocus(
+        focusedGameID: FocusState<String?>.Binding?,
+        fallback: FocusState<Bool>.Binding,
+        id: String
+    ) -> some View {
+        if let focusedGameID {
+            self.focused(focusedGameID, equals: id)
+        } else {
+            self.focused(fallback)
+        }
     }
 }
 

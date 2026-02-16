@@ -119,6 +119,16 @@ struct TVMediaMainView: View {
     private let resetFocus: (Namespace.ID) -> Void = { _ in }
     #endif
 
+    private var resetFocusCallback: (Namespace.ID) -> Void {
+        #if os(tvOS)
+        return { namespace in
+            resetFocus(in: namespace)
+        }
+        #else
+        return resetFocus
+        #endif
+    }
+
     /// Convenience flag for modal rename alert
     private var isRenamePresented: Bool {
         gameActions.renameGame != nil
@@ -136,7 +146,7 @@ struct TVMediaMainView: View {
             sidebarCollapsedWidth: sidebarCollapsedWidth,
             mainNamespace: mainNamespace,
             sidebarNamespace: sidebarNamespace,
-            resetFocus: resetFocus,
+            resetFocus: resetFocusCallback,
             isRenamePresented: isRenamePresented,
             contentArea: { contentArea },
             overlays: { overlays },
@@ -178,6 +188,10 @@ struct TVMediaMainView: View {
         @ObservedObject var libraryModel: TVMediaLibraryModel
         @ObservedObject var gameActions: TVMediaGameActions
 
+        #if os(iOS)
+        @StateObject private var gamepadManager = GamepadManager.shared
+        #endif
+
         let sidebarCollapsedWidth: CGFloat
         let mainNamespace: Namespace.ID
         let sidebarNamespace: Namespace.ID
@@ -212,6 +226,7 @@ struct TVMediaMainView: View {
             layoutWithEnvironment
                 .onAppear {
                     gameActions.appState = appState
+                    focusCoordinator.closeSidebar()
                     router.destination = TVMediaDestination(rawValue: lastDestinationRaw) ?? .home
                     router.selectedSystemID = lastSystemIdentifier
                     libraryModel.startObservingLibraryChanges()
@@ -245,6 +260,27 @@ struct TVMediaMainView: View {
                         router.dismissModal()
                     }
                 }
+                #if os(iOS)
+                .onReceive(gamepadManager.eventPublisher) { event in
+                    guard gamepadManager.isControllerConnected else { return }
+                    switch event {
+                    case .menuToggle(let isPressed):
+                        if isPressed {
+                            focusCoordinator.toggleSidebar()
+                        }
+                    case .start(let isPressed):
+                        if isPressed {
+                            focusCoordinator.toggleSidebar()
+                        }
+                    case .buttonB(let isPressed):
+                        if isPressed, focusCoordinator.isSidebarExpanded {
+                            focusCoordinator.closeSidebar()
+                        }
+                    default:
+                        break
+                    }
+                }
+                #endif
         }
 
         private var layoutWithExitCommand: some View {
@@ -862,6 +898,9 @@ private func tvMediaAdaptiveColumnsPerRow(
 struct TVMediaLogsView: View {
     @State private var isFullscreen = false
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    #if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
 
     var body: some View {
         Group {
@@ -885,6 +924,23 @@ struct TVMediaLogsView: View {
         .onAppear {
             focusCoordinator.closeSidebar()
         }
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            switch event {
+            case .menuToggle(let isPressed), .start(let isPressed):
+                if isPressed {
+                    focusCoordinator.toggleSidebar()
+                }
+            case .buttonB(let isPressed):
+                if isPressed {
+                    focusCoordinator.openSidebar()
+                }
+            default:
+                break
+            }
+        }
+        #endif
     }
 }
 
@@ -1349,6 +1405,10 @@ struct TVMediaSavesView: View {
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isEmptyStateFocused: Bool
+    @FocusState private var focusedSaveID: String?
+    #if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
     @State private var gridWidth: CGFloat = 0
     @State private var allSaves: [RetroSaveStateItem] = []
     @State private var filteredSaves: [RetroSaveStateItem] = []
@@ -1366,6 +1426,12 @@ struct TVMediaSavesView: View {
         }
         return "Save States"
     }
+
+    #if os(iOS)
+    private var tvMediaSavesFocusedSaveBinding: FocusState<String?>.Binding? { $focusedSaveID }
+    #else
+    private var tvMediaSavesFocusedSaveBinding: FocusState<String?>.Binding? { nil }
+    #endif
 
     var body: some View {
         ScrollView {
@@ -1545,6 +1611,7 @@ struct TVMediaSavesView: View {
                     store: saveStatesStore,
                     isAtLeftEdge: isAtLeftEdge,
                     focusCoordinator: focusCoordinator,
+                    focusedSaveID: tvMediaSavesFocusedSaveBinding,
                     onDeleteCompleted: { deletedID in
                         allSaves.removeAll { $0.id == deletedID }
                         filteredSaves.removeAll { $0.id == deletedID }
@@ -1559,6 +1626,44 @@ struct TVMediaSavesView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .tvMediaFocusSection()
         .tvMediaTrackWidth { gridWidth = $0 }
+        .onAppear {
+            if focusedSaveID == nil, let first = filteredSaves.first {
+                focusedSaveID = first.id
+            }
+        }
+        .onChange(of: filteredSaves) { _ in
+            if focusedSaveID == nil, let first = filteredSaves.first {
+                focusedSaveID = first.id
+            }
+        }
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected, !filteredSaves.isEmpty else { return }
+            switch event {
+            case .horizontalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveSaveFocus(horizontal: value > 0 ? 1 : -1, vertical: 0, columnsPerRow: columnsPerRow)
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveSaveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1, columnsPerRow: columnsPerRow)
+            case .buttonPress(let isPressed):
+                guard isPressed else { return }
+                if let id = focusedSaveID,
+                   let item = filteredSaves.first(where: { $0.id == id }) {
+                    Task { await saveStatesStore.openSaveState(id: item.id) }
+                }
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                focusCoordinator.openSidebar()
+            case .menuToggle(let isPressed):
+                if isPressed {
+                    focusCoordinator.toggleSidebar()
+                }
+            default:
+                break
+            }
+        }
+        #endif
         .onChange(of: gridWidth) { _ in
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
@@ -1573,6 +1678,32 @@ struct TVMediaSavesView: View {
         let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
         focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
     }
+
+    #if os(iOS)
+    private func moveSaveFocus(horizontal: Int, vertical: Int, columnsPerRow: Int) {
+        guard !filteredSaves.isEmpty else { return }
+        let ids = filteredSaves.map(\.id)
+        let currentID = focusedSaveID ?? ids[0]
+        guard let currentIndex = ids.firstIndex(of: currentID) else { return }
+        let currentCol = currentIndex % columnsPerRow
+        let currentRow = currentIndex / columnsPerRow
+        var newRow = currentRow + vertical
+        var newCol = currentCol + horizontal
+        if horizontal < 0, currentCol == 0 {
+            if currentRow == 0 {
+                focusCoordinator.openSidebar()
+                return
+            }
+            newRow = currentRow - 1
+            newCol = columnsPerRow - 1
+        }
+        let newIndex = (newRow * columnsPerRow) + newCol
+        guard newIndex >= 0, newIndex < ids.count else { return }
+        focusedSaveID = ids[newIndex]
+        let isAtLeftEdge = (newIndex % columnsPerRow) == 0
+        focusCoordinator.contentItemFocused(id: ids[newIndex], isAtLeftEdge: isAtLeftEdge)
+    }
+    #endif
 
     private func initializeFilters() async {
         availableSystemIDs = await saveStatesStore.systemIDsWithSaves()
@@ -1762,6 +1893,7 @@ struct TVMediaSystemFilterPicker: View {
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
+        .tvMediaFocusable()
         .tvOSDisableFocusEffect()
         .focused($focusedSystemID, equals: systemID)
         .scaleEffect(isFocused ? 1.01 : 1.0)
@@ -1810,6 +1942,7 @@ private struct TVMediaFilterHeaderButton: View {
             .animation(Animation.spring(response: 0.2, dampingFraction: 0.7), value: isFocused)
         }
         .buttonStyle(TVMediaCardButtonStyle())
+        .tvMediaFocusable()
         .tvOSDisableFocusEffect()
         .focused($isFocused)
     }
@@ -1821,22 +1954,32 @@ private struct TVMediaSaveStateTileButton: View {
     @ObservedObject var store: RetroSaveStatesStore
     let isAtLeftEdge: Bool
     var focusCoordinator: TVMediaFocusCoordinator?
+    var focusedSaveID: FocusState<String?>.Binding?
     let onDeleteCompleted: (String) -> Void
 
-    @FocusState private var isFocused: Bool
+    @FocusState private var isFocusedInternal: Bool
     @State private var thumbnail: UIImage?
+
+    private var isFocused: Bool {
+        if let focusedSaveID {
+            return focusedSaveID.wrappedValue == item.id
+        }
+        return isFocusedInternal
+    }
 
     init(
         item: RetroSaveStateItem,
         store: RetroSaveStatesStore,
         isAtLeftEdge: Bool = false,
         focusCoordinator: TVMediaFocusCoordinator? = nil,
+        focusedSaveID: FocusState<String?>.Binding? = nil,
         onDeleteCompleted: @escaping (String) -> Void = { _ in }
     ) {
         self.item = item
         self.store = store
         self.isAtLeftEdge = isAtLeftEdge
         self.focusCoordinator = focusCoordinator
+        self.focusedSaveID = focusedSaveID
         self.onDeleteCompleted = onDeleteCompleted
     }
 
@@ -1853,8 +1996,9 @@ private struct TVMediaSaveStateTileButton: View {
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
+        .tvMediaFocusable()
         .tvOSDisableFocusEffect()
-        .focused($isFocused)
+        .focused($isFocusedInternal)
         .tvMediaOnMoveCommand { direction in
             if direction == .left, isFocused, isAtLeftEdge {
                 focusCoordinator?.openSidebar()
@@ -2204,13 +2348,35 @@ struct TVMediaSystemsView: View {
 
     @ObservedObject private var iconLoader = SystemIconLoader.shared
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var focusedSystemID: String?
+    #if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
 
     /// Number of columns for calculating left edge
-    private let columnsPerRow: Int = 4
+    @State private var columnsPerRow: Int = 4
+    @State private var gridWidth: CGFloat = 0
+    private let gridSpacing: CGFloat = 20
 
-    private let columns = [
-        GridItem(.adaptive(minimum: 340, maximum: 420), spacing: 28)
-    ]
+    private var minCardWidth: CGFloat {
+        #if os(iOS)
+        return 200
+        #else
+        return 340
+        #endif
+    }
+
+    private var maxCardWidth: CGFloat {
+        #if os(iOS)
+        return 260
+        #else
+        return 420
+        #endif
+    }
+
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: minCardWidth, maximum: maxCardWidth), spacing: gridSpacing)]
+    }
 
     /// Only show systems that have games
     private var systemsWithGames: [PVSystem] {
@@ -2221,35 +2387,112 @@ struct TVMediaSystemsView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 28) {
-                TVMediaTopBar(title: "Systems")
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 28) {
+                    TVMediaTopBar(title: "Systems")
 
-                LazyVGrid(columns: columns, spacing: 28) {
-                    ForEach(Array(systemsWithGames.enumerated()), id: \.element.identifier) { index, system in
-                        let isAtLeftEdge = index % columnsPerRow == 0
-                        TVMediaSystemCard(
-                            system: system,
-                            icon: iconLoader.icon(for: system.identifier),
-                            gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count,
-                            isAtLeftEdge: isAtLeftEdge,
-                            focusCoordinator: focusCoordinator
-                        ) {
-                            focusCoordinator.closeSidebar()
-                            router.navigateToSystem(system.identifier)
-                        }
-                        .task {
-                            model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+                    LazyVGrid(columns: columns, spacing: gridSpacing) {
+                        ForEach(Array(systemsWithGames.enumerated()), id: \.element.identifier) { index, system in
+                            let isAtLeftEdge = index % columnsPerRow == 0
+                            TVMediaSystemCard(
+                                system: system,
+                                icon: iconLoader.icon(for: system.identifier),
+                                gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? system.games.count,
+                                isAtLeftEdge: isAtLeftEdge,
+                                focusCoordinator: focusCoordinator,
+                                focusedSystemID: $focusedSystemID
+                            ) {
+                                focusCoordinator.closeSidebar()
+                                router.navigateToSystem(system.identifier)
+                            }
+                            .id(system.identifier)
+                            .task {
+                                model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+                            }
                         }
                     }
                 }
+                .padding(.horizontal, 60)
+                .padding(.vertical, 40)
+                .tvMediaTrackWidth { width in
+                    gridWidth = width
+                    let availableWidth = max(width - 120, UIScreen.main.bounds.width - 120)
+                    columnsPerRow = max(1, tvMediaAdaptiveColumnsPerRow(
+                        availableWidth: availableWidth,
+                        minItemWidth: minCardWidth,
+                        maxItemWidth: maxCardWidth,
+                        spacing: gridSpacing
+                    ))
+                }
             }
-            .padding(.horizontal, 60)
-            .padding(.vertical, 40)
+            .onChange(of: focusedSystemID) { newValue in
+                guard let newValue else { return }
+                withAnimation(.easeOut(duration: 0.2)) {
+                    proxy.scrollTo(newValue, anchor: .center)
+                }
+            }
         }
         .task {
             await iconLoader.loadIcons(for: systemsWithGames)
         }
+        .onAppear {
+            if focusedSystemID == nil {
+                focusedSystemID = systemsWithGames.first?.identifier
+            }
+        }
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            switch event {
+            case .menuToggle(let isPressed):
+                if isPressed {
+                    focusCoordinator.toggleSidebar()
+                }
+            case .horizontalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveFocus(horizontal: value > 0 ? 1 : -1, vertical: 0)
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1)
+            case .buttonPress(let isPressed):
+                guard isPressed else { return }
+                if let id = focusedSystemID,
+                   let system = systemsWithGames.first(where: { $0.identifier == id }) {
+                    focusCoordinator.closeSidebar()
+                    router.navigateToSystem(system.identifier)
+                }
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                focusCoordinator.openSidebar()
+            default:
+                break
+            }
+        }
+        #endif
+    }
+
+    private func moveFocus(horizontal: Int, vertical: Int) {
+        let systems = systemsWithGames
+        guard !systems.isEmpty else { return }
+        let ids = systems.map { $0.identifier }
+        let currentID = focusedSystemID ?? ids[0]
+        guard let currentIndex = ids.firstIndex(of: currentID) else { return }
+        let currentCol = currentIndex % columnsPerRow
+        let currentRow = currentIndex / columnsPerRow
+        var newRow = currentRow + vertical
+        var newCol = currentCol + horizontal
+        if horizontal < 0, currentCol == 0 {
+            if currentRow == 0 {
+                focusCoordinator.openSidebar()
+                return
+            }
+            newRow = currentRow - 1
+            newCol = columnsPerRow - 1
+        }
+        let newIndex = (newRow * columnsPerRow) + newCol
+        guard newIndex >= 0, newIndex < ids.count else { return }
+        focusedSystemID = ids[newIndex]
     }
 }
 
@@ -2260,9 +2503,13 @@ struct TVMediaSystemCard: View {
     let gameCount: Int
     let isAtLeftEdge: Bool
     var focusCoordinator: TVMediaFocusCoordinator?
+    let focusedSystemID: FocusState<String?>.Binding
     let action: () -> Void
 
-    @FocusState private var isFocused: Bool
+    private var isFocused: Bool {
+        focusedSystemID.wrappedValue == system.identifier
+    }
+
     @State private var glowIntensity: Double = 0
 
     init(
@@ -2271,6 +2518,7 @@ struct TVMediaSystemCard: View {
         gameCount: Int,
         isAtLeftEdge: Bool = false,
         focusCoordinator: TVMediaFocusCoordinator? = nil,
+        focusedSystemID: FocusState<String?>.Binding,
         action: @escaping () -> Void
     ) {
         self.system = system
@@ -2278,6 +2526,7 @@ struct TVMediaSystemCard: View {
         self.gameCount = gameCount
         self.isAtLeftEdge = isAtLeftEdge
         self.focusCoordinator = focusCoordinator
+        self.focusedSystemID = focusedSystemID
         self.action = action
     }
 
@@ -2408,7 +2657,8 @@ struct TVMediaSystemCard: View {
             }
         }
         .buttonStyle(TVMediaSystemCardButtonStyle(isFocused: isFocused))
-        .focused($isFocused)
+        .tvMediaFocusable()
+        .focused(focusedSystemID, equals: system.identifier)
         .onChange(of: isFocused) { focused in
             withAnimation(.easeOut(duration: focused ? 0.3 : 0.15)) {
                 glowIntensity = focused ? 0.8 : 0
@@ -2894,6 +3144,10 @@ struct TVMediaAllGamesGrid: View {
 
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var focusedGameID: String?
+    #if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
 
     @State private var gridWidth: CGFloat = 0
 
@@ -2923,7 +3177,8 @@ struct TVMediaAllGamesGrid: View {
                     onPlay: { sceneCoordinator.launchGame(game) },
                     contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
                     isAtLeftEdge: isAtLeftEdge,
-                    focusCoordinator: focusCoordinator
+                    focusCoordinator: focusCoordinator,
+                    focusedGameID: $focusedGameID
                 )
             }
         }
@@ -2934,6 +3189,39 @@ struct TVMediaAllGamesGrid: View {
         .onChange(of: focusCoordinator.focusedContentID) { _ in
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
+        .onAppear {
+            if focusedGameID == nil {
+                focusedGameID = games.first?.id
+            }
+        }
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            switch event {
+            case .horizontalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveFocus(horizontal: value > 0 ? 1 : -1, vertical: 0, columnsPerRow: columnsPerRow)
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1, columnsPerRow: columnsPerRow)
+            case .buttonPress(let isPressed):
+                guard isPressed else { return }
+                if let id = focusedGameID,
+                   let game = games.first(where: { $0.id == id }) {
+                    sceneCoordinator.launchGame(game)
+                }
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                focusCoordinator.openSidebar()
+            case .menuToggle(let isPressed):
+                if isPressed {
+                    focusCoordinator.toggleSidebar()
+                }
+            default:
+                break
+            }
+        }
+        #endif
     }
 
     private func syncFocusedEdgeState(columnsPerRow: Int) {
@@ -2941,6 +3229,28 @@ struct TVMediaAllGamesGrid: View {
         guard let index = games.firstIndex(where: { $0.id == focusedID }) else { return }
         let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
         focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
+    }
+
+    private func moveFocus(horizontal: Int, vertical: Int, columnsPerRow: Int) {
+        guard !games.isEmpty else { return }
+        let ids = games.map { $0.id }
+        let currentID = focusedGameID ?? ids[0]
+        guard let currentIndex = ids.firstIndex(of: currentID) else { return }
+        let currentCol = currentIndex % columnsPerRow
+        let currentRow = currentIndex / columnsPerRow
+        var newRow = currentRow + vertical
+        var newCol = currentCol + horizontal
+        if horizontal < 0, currentCol == 0 {
+            if currentRow == 0 {
+                focusCoordinator.openSidebar()
+                return
+            }
+            newRow = currentRow - 1
+            newCol = columnsPerRow - 1
+        }
+        let newIndex = (newRow * columnsPerRow) + newCol
+        guard newIndex >= 0, newIndex < ids.count else { return }
+        focusedGameID = ids[newIndex]
     }
 }
 
@@ -3639,6 +3949,14 @@ struct TVMediaShelf: View {
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @Namespace private var shelfNamespace
 
+    private var itemSpacing: CGFloat {
+        #if os(iOS)
+        return 18
+        #else
+        return 26
+        #endif
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             // Premium shelf header
@@ -3669,7 +3987,7 @@ struct TVMediaShelf: View {
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 26) {
+                LazyHStack(spacing: itemSpacing) {
                     ForEach(Array(items.enumerated()), id: \.element.id) { index, game in
                         TVMediaGameTileView(
                             game: game,
@@ -3862,6 +4180,7 @@ struct TVMediaSaveStatesShelfRow: View {
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
+        .tvMediaFocusable()
         .tvOSDisableFocusEffect()
         .focused($focusedSaveID, equals: item.id)
         .contextMenu {
@@ -3906,6 +4225,11 @@ struct TVMediaSearchResultsGrid: View {
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
 
+    @FocusState private var focusedGameID: String?
+    #if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
+
     @State private var gridWidth: CGFloat = 0
 
     private let columns = [
@@ -3933,7 +4257,8 @@ struct TVMediaSearchResultsGrid: View {
                     onPlay: { sceneCoordinator.launchGame(game) },
                     contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
                     isAtLeftEdge: isAtLeftEdge,
-                    focusCoordinator: focusCoordinator
+                    focusCoordinator: focusCoordinator,
+                    focusedGameID: $focusedGameID
                 )
             }
         }
@@ -3945,6 +4270,39 @@ struct TVMediaSearchResultsGrid: View {
         .onChange(of: focusCoordinator.focusedContentID) { _ in
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
+        .onAppear {
+            if focusedGameID == nil, let first = results.first {
+                focusedGameID = first.id
+            }
+        }
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            switch event {
+            case .horizontalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveFocus(horizontal: value > 0 ? 1 : -1, vertical: 0, columnsPerRow: columnsPerRow)
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1, columnsPerRow: columnsPerRow)
+            case .buttonPress(let isPressed):
+                guard isPressed else { return }
+                if let id = focusedGameID,
+                   let game = results.first(where: { $0.id == id }) {
+                    sceneCoordinator.launchGame(game)
+                }
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                focusCoordinator.openSidebar()
+            case .menuToggle(let isPressed):
+                if isPressed {
+                    focusCoordinator.toggleSidebar()
+                }
+            default:
+                break
+            }
+        }
+        #endif
     }
 
     private func syncFocusedEdgeState(columnsPerRow: Int) {
@@ -3953,6 +4311,30 @@ struct TVMediaSearchResultsGrid: View {
         let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
         focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
     }
+
+    #if os(iOS)
+    private func moveFocus(horizontal: Int, vertical: Int, columnsPerRow: Int) {
+        guard !results.isEmpty else { return }
+        let ids = results.map(\.id)
+        let currentID = focusedGameID ?? ids[0]
+        guard let currentIndex = ids.firstIndex(of: currentID) else { return }
+        let currentCol = currentIndex % columnsPerRow
+        let currentRow = currentIndex / columnsPerRow
+        var newRow = currentRow + vertical
+        var newCol = currentCol + horizontal
+        if horizontal < 0, currentCol == 0 {
+            if currentRow == 0 {
+                focusCoordinator.openSidebar()
+                return
+            }
+            newRow = currentRow - 1
+            newCol = columnsPerRow - 1
+        }
+        let newIndex = (newRow * columnsPerRow) + newCol
+        guard newIndex >= 0, newIndex < ids.count else { return }
+        focusedGameID = ids[newIndex]
+    }
+    #endif
 }
 
 // MARK: - Background

@@ -7,7 +7,7 @@ import PVUIBase
 
 /// Premium Netflix-style sidebar with divine RetroWave aesthetics
 /// Icon-only rail that expands elegantly on focus
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSidebarRail: View {
     @Binding var destination: TVMediaDestination
     @ObservedObject var focusCoordinator: TVMediaFocusCoordinator
@@ -21,9 +21,32 @@ struct TVMediaSidebarRail: View {
     @ObservedObject private var iconManager = IconManager.shared
     @Namespace private var sidebarAnimation
     @State private var appIcon: UIImage?
+    #if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
 
-    private let collapsedWidth: CGFloat = 88
-    private let expandedWidth: CGFloat = 300
+    private let collapsedWidth: CGFloat = {
+        #if os(iOS)
+        return 72
+        #else
+        return 88
+        #endif
+    }()
+    private let expandedWidth: CGFloat = {
+        #if os(iOS)
+        return 240
+        #else
+        return 300
+        #endif
+    }()
+
+    private var iconFontSize: CGFloat {
+        #if os(iOS)
+        return 19
+        #else
+        return 22
+        #endif
+    }
 
     private var currentWidth: CGFloat {
         focusCoordinator.isSidebarExpanded ? expandedWidth : collapsedWidth
@@ -66,6 +89,30 @@ struct TVMediaSidebarRail: View {
             .onAppear {
                 loadAppIcon()
             }
+            #if os(iOS)
+            .onReceive(gamepadManager.eventPublisher) { event in
+                guard gamepadManager.isControllerConnected else { return }
+                switch event {
+                case .menuToggle(let isPressed):
+                    if isPressed {
+                        focusCoordinator.toggleSidebar()
+                    }
+                case .verticalNavigation(let value, let isPressed):
+                    guard isPressed else { return }
+                    moveSidebarFocus(isNext: value < 0)
+                case .buttonPress(let isPressed):
+                    guard isPressed else { return }
+                    activateFocusedSidebar()
+                case .buttonB(let isPressed):
+                    guard isPressed else { return }
+                    if focusCoordinator.isSidebarExpanded {
+                        focusCoordinator.closeSidebar()
+                    }
+                default:
+                    break
+                }
+            }
+            #endif
     }
 
     private func itemForDestination(_ dest: TVMediaDestination) -> SidebarItem {
@@ -79,14 +126,16 @@ struct TVMediaSidebarRail: View {
     // MARK: - Content
 
     private var sidebarContent: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 8) {
+        ScrollViewReader { proxy in
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 8) {
                 logoSection
                     .padding(.bottom, 24)
 
                 // All navigation items in a single VStack for proper focus flow
                 ForEach(SidebarItem.mainNavItems, id: \.self) { item in
                     sidebarButton(for: item)
+                        .id(item)
                 }
 
                 // Divider
@@ -108,13 +157,30 @@ struct TVMediaSidebarRail: View {
 
                 // Footer items
                 sidebarButton(for: .imports)
+                    .id(SidebarItem.imports)
                 sidebarButton(for: .settings)
+                    .id(SidebarItem.settings)
                 sidebarButton(for: .destination(.logs))
+                    .id(SidebarItem.destination(.logs))
                 sidebarButton(for: .status)
+                    .id(SidebarItem.status)
+                }
+                .padding(.horizontal, 14)
+                .padding(.top, 56)
+                .padding(.bottom, 40)
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 56)
-            .padding(.bottom, 40)
+            .onChange(of: destination) { _ in
+                let target = itemForDestination(destination)
+                withAnimation(.easeOut(duration: 0.15)) {
+                    proxy.scrollTo(target, anchor: .center)
+                }
+            }
+            .onChange(of: focusedItem) { newValue in
+                guard let newValue else { return }
+                withAnimation(.easeOut(duration: 0.15)) {
+                    proxy.scrollTo(newValue, anchor: .center)
+                }
+            }
         }
     }
 
@@ -256,7 +322,7 @@ struct TVMediaSidebarRail: View {
                     }
 
                     Image(systemName: item.systemImage)
-                        .font(.system(size: 22, weight: isFocused ? .medium : .light))
+                        .font(.system(size: iconFontSize, weight: isFocused ? .medium : .light))
                         .foregroundStyle(
                             isFocused ?
                                 AnyShapeStyle(LinearGradient(
@@ -304,6 +370,7 @@ struct TVMediaSidebarRail: View {
             .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
         }
         .buttonStyle(TVMediaSidebarButtonStyle())
+        .tvMediaFocusable()
         .focused($focusedItem, equals: item)
         .scaleEffect(isFocused ? 1.02 : 1.0)
         .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isFocused)
@@ -424,11 +491,37 @@ struct TVMediaSidebarRail: View {
             }
         }
     }
+
+    private var sidebarItems: [SidebarItem] {
+        SidebarItem.mainNavItems + [
+            .imports,
+            .settings,
+            .destination(.logs),
+            .status
+        ]
+    }
+
+    private func moveSidebarFocus(isNext: Bool) {
+        let items = sidebarItems
+        guard !items.isEmpty else { return }
+        let current = focusedItem ?? itemForDestination(destination)
+        guard let index = items.firstIndex(of: current) else {
+            focusedItem = items.first
+            return
+        }
+        let nextIndex = isNext ? min(index + 1, items.count - 1) : max(index - 1, 0)
+        focusedItem = items[nextIndex]
+    }
+
+    private func activateFocusedSidebar() {
+        guard let focusedItem else { return }
+        handleSelection(focusedItem)
+    }
 }
 
 // MARK: - Sidebar Item Enum
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 private enum SidebarItem: Hashable {
     case destination(TVMediaDestination)
     case settings
@@ -486,7 +579,7 @@ private enum SidebarItem: Hashable {
 
 // MARK: - Button Style
 
-@available(tvOS 16.0, *)
+@available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSidebarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

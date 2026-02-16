@@ -24,12 +24,19 @@ struct MainView: View {
     #if os(iOS)
     /// Shared gamepad state for controller-driven UI routing.
     @StateObject private var gamepadManager = GamepadManager.shared
+    /// Debounced TV media mode to avoid flicker on brief controller disconnect.
+    @State private var effectiveUseTVMedia: Bool = false
+    @State private var disconnectTask: Task<Void, Never>?
     #endif
 
     var body: some View {
         WithPerceptionTracking {
             GeometryReader { proxy in
                 let isLandscape = proxy.size.width > proxy.size.height
+                #if os(iOS)
+                let rawUseTVMedia = shouldUseTVMediaUI(isLandscape: isLandscape)
+                let useTVMedia = effectiveUseTVMedia
+                #endif
                 Group {
                     // Only show emulator if both the scene coordinator says to AND there's a game in EmulationUIState
                     if sceneCoordinator.currentScene == .emulator && sceneCoordinator.showEmulator && appState.emulationUIState.currentGame != nil {
@@ -45,14 +52,15 @@ struct MainView: View {
                         .hideHomeIndicator()
                     } else {
                         #if os(iOS)
-                        if shouldUseTVMediaUI(isLandscape: isLandscape),
-                           #available(iOS 17.0, *) {
-                            TVMediaMainView()
-                                .environmentObject(appDelegate)
-                                .environmentObject(ThemeManager.shared)
-                                .edgesIgnoringSafeArea(.all)
-                        } else {
-                            switch appState.mainUIMode {
+                        Group {
+                            if useTVMedia, #available(iOS 17.0, *) {
+                                TVMediaMainView()
+                                    .environmentObject(appDelegate)
+                                    .environmentObject(ThemeManager.shared)
+                                    .edgesIgnoringSafeArea(.all)
+                                    .transition(.opacity.combined(with: .scale(scale: 0.98)))
+                            } else {
+                                switch appState.mainUIMode {
 #if !os(tvOS)
                     case .paged:
                         SwiftUIHostedProvenanceMainView()
@@ -76,6 +84,24 @@ struct MainView: View {
                             .environmentObject(appDelegate)
                             .edgesIgnoringSafeArea(.all)
                     }
+                                .transition(.opacity.combined(with: .scale(scale: 0.98)))
+                            }
+                        }
+                        .animation(.easeInOut(duration: 0.32), value: useTVMedia)
+                        .onAppear { effectiveUseTVMedia = rawUseTVMedia }
+                        .onChange(of: rawUseTVMedia) { _, newValue in
+                            if newValue {
+                                disconnectTask?.cancel()
+                                disconnectTask = nil
+                                effectiveUseTVMedia = true
+                            } else {
+                                disconnectTask?.cancel()
+                                disconnectTask = Task {
+                                    try? await Task.sleep(nanoseconds: 450_000_000)
+                                    guard !Task.isCancelled else { return }
+                                    await MainActor.run { effectiveUseTVMedia = false }
+                                }
+                            }
                         }
                         #else
                         switch appState.mainUIMode {

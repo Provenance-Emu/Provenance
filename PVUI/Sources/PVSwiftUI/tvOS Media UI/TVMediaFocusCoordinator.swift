@@ -66,6 +66,20 @@ extension View {
         self
         #endif
     }
+
+    /// Enables focus on iOS where needed; no-op on tvOS.
+    @ViewBuilder
+    func tvMediaFocusable(_ enabled: Bool = true) -> some View {
+        #if os(iOS)
+        if #available(iOS 17.0, *) {
+            self.focusable(enabled)
+        } else {
+            self
+        }
+        #else
+        self
+        #endif
+    }
 }
 
 #if os(iOS)
