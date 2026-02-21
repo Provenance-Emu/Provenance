@@ -57,6 +57,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     public var game: PVGame!
     public internal(set) var autosaveTimer: Timer?
     public internal(set) var gameStartTime: Date?
+    /// Tracks KVO registration for core.isRunning to avoid double-removal crashes
+    private var isObservingRunning = false
     // Store a reference to the skin container view
     var skinContainerView: UIView?
 
@@ -291,6 +293,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Add KVO watcher for isRunning state so we can update play time
         core.addObserver(self, forKeyPath: "isRunning", options: .new, context: nil)
+        isObservingRunning = true
     }
 
     override public func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
@@ -312,6 +315,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 }
             }
         }
+    }
+
+    /// Safely removes the KVO observer for core.isRunning, guarded by `isObservingRunning`
+    private func removeRunningObserverIfNeeded() {
+        guard isObservingRunning else { return }
+        core.removeObserver(self, forKeyPath: "isRunning")
+        isObservingRunning = false
     }
 
     @MainActor
@@ -387,7 +397,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             PVControllerManager.shared.controllers.forEach { $0.clearPauseHandler() }
         }
         #endif
-        updatePlayedDuration()
+        // Safety net: only flush duration if quit() hasn't already done it
+        if gameStartTime != nil {
+            updatePlayedDuration()
+        }
         destroyAutosaveTimer()
         // Remove all menu-related gesture recognizers
         #if os(tvOS)
@@ -411,7 +424,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             emulationUIState.core = nil
             emulationUIState.emulator = nil
         }
-        core.removeObserver(self, forKeyPath: "isRunning")
+        removeRunningObserverIfNeeded()
 
         // Resume GameImporter if view controller is deallocated (safety net)
         GameImporter.shared.resume()
@@ -1339,6 +1352,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         CloudSyncManager.shared.resumeFromEmulation()
         GameImporter.shared.resumeFromEmulation()
 
+        // Remove KVO before stopping so the observer doesn't enqueue a redundant async updatePlayedDuration()
+        removeRunningObserverIfNeeded()
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)
         if let view = controllerViewController?.view {

@@ -23,7 +23,7 @@ extension GameplayDurationTrackerUtil {
             self.gameStartTime = nil
         }
         guard let gameStartTime = gameStartTime, let game = game else {
-        ELOG("Game start time or game is nil")
+            DLOG("Game start time or game is nil — already flushed or not yet started")
             return
         }
 
