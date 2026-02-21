@@ -23,6 +23,161 @@ private class CoreOptionsState: ObservableObject {
     }
 }
 
+// MARK: - tvOS Focusable Option Row
+
+#if os(tvOS)
+/// A focusable row container that provides retrowave focus styling matching the main settings UI.
+/// Renders gradient background, border, and glow shadow when focused via the d-pad.
+/// Pass an `action` closure for rows that need tap behavior (e.g. toggling a bool).
+private struct CoreOptionFocusableRow<Content: View>: View {
+    @FocusState private var isFocused: Bool
+    let action: () -> Void
+    let content: () -> Content
+
+    init(action: @escaping () -> Void = {}, @ViewBuilder content: @escaping () -> Content) {
+        self.action = action
+        self.content = content
+    }
+
+    var body: some View {
+        Button(action: action) {
+            content()
+        }
+        .focused($isFocused)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+        .padding(.vertical, 14)
+        .padding(.horizontal, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    isFocused
+                        ? LinearGradient(colors: [Color.retroPink.opacity(0.12), Color.retroBlue.opacity(0.08)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)], startPoint: .top, endPoint: .bottom)
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    isFocused
+                        ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)], startPoint: .top, endPoint: .bottom),
+                    lineWidth: isFocused ? 2 : 1
+                )
+        )
+        .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
+        .scaleEffect(isFocused ? 1.02 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isFocused)
+    }
+}
+
+/// NavigationLink variant with the same retrowave focus styling.
+private struct CoreOptionFocusableNavRow<Destination: View, Label: View>: View {
+    @FocusState private var isFocused: Bool
+    let destination: () -> Destination
+    let label: () -> Label
+
+    init(@ViewBuilder destination: @escaping () -> Destination, @ViewBuilder label: @escaping () -> Label) {
+        self.destination = destination
+        self.label = label
+    }
+
+    var body: some View {
+        NavigationLink(destination: destination) {
+            HStack(spacing: 12) {
+                label()
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(isFocused ? Color.retroPink : Color.white.opacity(0.3))
+            }
+        }
+        .focused($isFocused)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+        .padding(.vertical, 14)
+        .padding(.horizontal, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    isFocused
+                        ? LinearGradient(colors: [Color.retroPink.opacity(0.12), Color.retroBlue.opacity(0.08)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)], startPoint: .top, endPoint: .bottom)
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    isFocused
+                        ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)], startPoint: .top, endPoint: .bottom),
+                    lineWidth: isFocused ? 2 : 1
+                )
+        )
+        .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
+        .scaleEffect(isFocused ? 1.02 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isFocused)
+    }
+}
+
+/// Value badge used to show current selection in a retroBlue/retroPurple gradient pill.
+private struct CoreOptionValueBadge: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(
+                LinearGradient(colors: [.retroBlue, .retroPurple], startPoint: .leading, endPoint: .trailing)
+            )
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.white.opacity(0.05))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                LinearGradient(colors: [Color.retroBlue.opacity(0.5), Color.retroPurple.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
+                                lineWidth: 1
+                            )
+                    )
+            )
+    }
+}
+
+/// Stepper-style +/- button for adjusting range values on tvOS where sliders aren't usable.
+private struct CoreOptionStepper: View {
+    let systemName: String
+    let action: () -> Void
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .frame(width: 44, height: 44)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isFocused ? Color.white.opacity(0.12) : Color.white.opacity(0.05))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .strokeBorder(isFocused ? Color.retroPink.opacity(0.7) : Color.retroPink.opacity(0.3), lineWidth: isFocused ? 2 : 1)
+                        )
+                )
+                .scaleEffect(isFocused ? 1.1 : 1.0)
+                .animation(.easeInOut(duration: 0.15), value: isFocused)
+        }
+        .focused($isFocused)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+    }
+}
+#endif
+
+// MARK: - CoreOptionsDetailView
+
 /// View that displays and allows editing of core options for a specific core with RetroWave styling
 public struct CoreOptionsDetailView: View {
     let coreClass: CoreOptional.Type
@@ -31,7 +186,6 @@ public struct CoreOptionsDetailView: View {
     @StateObject private var state = CoreOptionsState()
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    // Animation states for retrowave effects
     @State private var isAnimating = false
     @State private var glowOpacity = 0.0
     @State private var scrollOffset: CGFloat = 0
@@ -60,23 +214,14 @@ public struct CoreOptionsDetailView: View {
     private var groupedOptions: [OptionGroup] {
         var rootOptions = [CoreOption]()
         var groups = [OptionGroup]()
-
-        /// Dictionary to track processed option keys to avoid duplicates
         var processedOptionKeys = Set<String>()
 
-        // Process options into groups
         coreClass.options.forEach { option in
-            /// Skip if we've already processed an option with this key
-            if processedOptionKeys.contains(option.key) {
-                return
-            }
-
-            /// Mark this option key as processed
+            if processedOptionKeys.contains(option.key) { return }
             processedOptionKeys.insert(option.key)
 
             switch option {
             case let .group(display, subOptions):
-                /// For groups, also mark all suboptions as processed
                 subOptions.forEach { processedOptionKeys.insert($0.key) }
                 groups.append(OptionGroup(title: display.title, options: subOptions))
             default:
@@ -84,7 +229,6 @@ public struct CoreOptionsDetailView: View {
             }
         }
 
-        // Add root options as first group if any exist
         if !rootOptions.isEmpty {
             groups.insert(OptionGroup(title: "General", options: rootOptions), at: 0)
         }
@@ -92,9 +236,8 @@ public struct CoreOptionsDetailView: View {
         return groups
     }
 
-    // MARK: - Background View
+    // MARK: - Background
 
-    /// Theme-aware background with grid
     private var backgroundView: some View {
         ZStack {
             Color(themeManager.currentPalette.gameLibraryBackground)
@@ -111,52 +254,55 @@ public struct CoreOptionsDetailView: View {
         }
     }
 
-    // MARK: - Title View
+    // MARK: - Title
 
-    /// Animated title for the core options
     private var titleView: some View {
         Text(title.uppercased())
             .font(.system(size: 28, weight: .bold, design: .rounded))
             .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
             .padding(.top, 20)
             .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 10, x: 0, y: 0)
-//            .onAppear {
-//                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-//                    glowOpacity = themeManager.currentPalette.dark ? 0.7 : 0.4
-//                    isAnimating = true
-//                }
-//            }
     }
 
-    // MARK: - Options List View
+    // MARK: - Options List
 
-    /// The main content view showing the list of options
     private var optionsListView: some View {
         ScrollViewWithOffset(axes: .vertical, offsetChanged: { offset in
             scrollOffset = offset
         }) {
-            VStack(spacing: 32) { // Increased spacing between sections
-                // Title
+            VStack(spacing: 32) {
                 titleView
 
-                // Option groups
                 ForEach(groupedOptions) { group in
                     VStack(alignment: .leading, spacing: 16) {
-                        // Group title with glow effect
                         Text(group.title)
-                            .font(.system(size: 20, weight: .bold, design: .rounded)) // Increased font size
+                            #if os(tvOS)
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(
+                                LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
+                            )
+                            .padding(.horizontal, 4)
+                            #else
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
                             .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
                             .padding(.horizontal)
-                            .shadow(color: (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.5), radius: 4, x: 0, y: 0) // Apply glow only to section titles
+                            .shadow(color: (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.5), radius: 4, x: 0, y: 0)
+                            #endif
 
-                        // Options in this group
-                        VStack(spacing: 16) { // Increased spacing between options
+                        #if os(tvOS)
+                        VStack(spacing: 4) {
                             ForEach(group.options) { identifiableOption in
                                 optionView(for: identifiableOption.option)
-                                    .padding(.horizontal, 20) // Increased horizontal padding
                             }
                         }
-                        .padding(.vertical, 16) // Increased vertical padding
+                        #else
+                        VStack(spacing: 16) {
+                            ForEach(group.options) { identifiableOption in
+                                optionView(for: identifiableOption.option)
+                                    .padding(.horizontal, 20)
+                            }
+                        }
+                        .padding(.vertical, 16)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(
@@ -176,11 +322,11 @@ public struct CoreOptionsDetailView: View {
                                             ),
                                             lineWidth: 1.5
                                         )
-                                        .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(glowOpacity * 0.3), radius: 6, x: 0, y: 0) // Apply glow only to borders
                                 )
                         )
+                        #endif
                     }
-                    .padding(.horizontal, 16) // Increased horizontal padding
+                    .padding(.horizontal, 16)
                 }
 
                 // Reset button
@@ -232,14 +378,11 @@ public struct CoreOptionsDetailView: View {
         }
     }
 
-    // MARK: - Main View
+    // MARK: - Body
 
     public var body: some View {
         ZStack {
-            // Background
             backgroundView
-
-            // Content
             optionsListView
         }
         .navigationTitle(title)
@@ -262,6 +405,8 @@ public struct CoreOptionsDetailView: View {
         }
     }
 
+    // MARK: - Data Helpers
+
     private func loadOptionValues() {
         for group in groupedOptions {
             for identifiableOption in group.options {
@@ -274,13 +419,8 @@ public struct CoreOptionsDetailView: View {
     }
 
     private func resetAllOptions() {
-        // Reset all options to their default values
         coreClass.resetAllOptions()
-
-        // Clear the state
         state.resetAllValues()
-
-        // Reload option values
         loadOptionValues()
     }
 
@@ -324,353 +464,408 @@ public struct CoreOptionsDetailView: View {
     }
 
     private func resetOption(_ option: CoreOption) {
-        // Reset the option to its default value
         if let defaultValue = option.defaultValue {
             setValue(defaultValue, for: option)
-
-            // Update the state
             state.optionValues[option.key] = defaultValue
             state.selectedValues[option.key] = defaultValue
         }
     }
 
+    // MARK: - Option Row Builders
+
     @ViewBuilder
     private func optionView(for option: CoreOption) -> some View {
         switch option {
-        case let .bool(display, defaultValue, valueHandler):
+        case let .bool(display, defaultValue, _):
+            boolOptionView(display: display, defaultValue: defaultValue, option: option)
+
+        case let .enumeration(display, values, defaultValue, _):
+            enumOptionView(display: display, values: values, defaultValue: defaultValue, option: option)
+
+        case let .range(display, range, defaultValue, _):
+            rangeOptionView(display: display, range: range, defaultValue: defaultValue, option: option)
+
+        case let .rangef(display, range, defaultValue, _):
+            rangefOptionView(display: display, range: range, defaultValue: defaultValue, option: option)
+
+        case let .multi(display, values, _):
+            multiOptionView(display: display, values: values, option: option)
+
+        case let .string(display, defaultValue, _):
+            stringOptionView(display: display, defaultValue: defaultValue, option: option)
+
+        case .group(_, _):
+            EmptyView()
+        }
+    }
+
+    // MARK: Bool
+
+    @ViewBuilder
+    private func boolOptionView(display: CoreOptionValueDisplay, defaultValue: Bool, option: CoreOption) -> some View {
+        #if os(tvOS)
+        CoreOptionFocusableRow(action: {
+            let current = state.optionValues[option.key] as? Bool ?? defaultValue
+            setValue(!current, for: option)
+        }) {
             HStack {
-                // Title and description with consistent width
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(display.title)
-                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(.system(size: 16, weight: .medium))
-                        .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-
-                    if let description = display.description {
-                        Text(description)
-                            .font(.caption)
-                            .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
-                            .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                    }
-                }
-                .frame(minWidth: 150, maxWidth: .infinity, alignment: .leading) // Use flexible width with minimum
-
+                optionLabel(title: display.title, description: display.description)
                 Spacer()
-
-                // Use ThemedToggle component
                 ThemedToggle(isOn: Binding(
                     get: { state.optionValues[option.key] as? Bool ?? defaultValue },
                     set: { setValue($0, for: option) }
                 )) {
                     EmptyView()
                 }
+                .allowsHitTesting(false)
+            }
+        }
+        #else
+        HStack {
+            optionLabel(title: display.title, description: display.description)
+                .frame(minWidth: 150, maxWidth: .infinity, alignment: .leading)
+            Spacer()
+            ThemedToggle(isOn: Binding(
+                get: { state.optionValues[option.key] as? Bool ?? defaultValue },
+                set: { setValue($0, for: option) }
+            )) {
+                EmptyView()
+            }
+            Button(action: { resetOption(option) }) {
+                Image(systemName: "arrow.counterclockwise")
+                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                    .font(.system(size: 14))
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.leading, 8)
+        }
+        .frame(maxWidth: .infinity)
+        #endif
+    }
 
-                #if !os(tvOS)
-                Button(action: {
-                    resetOption(option)
-                }) {
+    // MARK: Enumeration
+
+    @ViewBuilder
+    private func enumOptionView(display: CoreOptionValueDisplay, values: [CoreOptionEnumValue], defaultValue: Int, option: CoreOption) -> some View {
+        let selection = Binding(
+            get: { state.selectedValues[option.key] as? Int ?? state.optionValues[option.key] as? Int ?? defaultValue },
+            set: { newValue in
+                withAnimation {
+                    setValue(newValue, for: option)
+                    state.updateValue(newValue, forKey: option.key)
+                }
+            }
+        )
+
+        #if os(tvOS)
+        CoreOptionFocusableNavRow {
+            EnumerationSelectionList(values: values, selection: selection, title: display.title)
+        } label: {
+            HStack {
+                optionLabel(title: display.title, description: display.description)
+                Spacer()
+                CoreOptionValueBadge(text: values.first { $0.value == selection.wrappedValue }?.title ?? "")
+            }
+        }
+        #else
+        HStack {
+            NavigationLink {
+                EnumerationSelectionList(values: values, selection: selection, title: display.title)
+            } label: {
+                HStack {
+                    optionLabel(title: display.title, description: display.description)
+                        .frame(minWidth: 120, alignment: .leading)
+                    Spacer()
+                    Text(values.first { $0.value == selection.wrappedValue }?.title ?? "")
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                        .font(.system(size: 14))
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                        .font(.system(size: 14, weight: .bold))
+                }
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            Button(action: { resetOption(option) }) {
+                Image(systemName: "arrow.counterclockwise")
+                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                    .font(.system(size: 14))
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.leading, 8)
+        }
+        .frame(maxWidth: .infinity)
+        #endif
+    }
+
+    // MARK: Range (Int)
+
+    @ViewBuilder
+    private func rangeOptionView(display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int, option: CoreOption) -> some View {
+        let currentValue = state.optionValues[option.key] as? Int ?? defaultValue
+
+        #if os(tvOS)
+        HStack(spacing: 12) {
+            CoreOptionStepper(systemName: "minus") {
+                let newVal = max(range.min, currentValue - 1)
+                setValue(newVal, for: option)
+            }
+
+            CoreOptionFocusableRow {
+                HStack {
+                    optionLabel(title: display.title, description: display.description)
+                    Spacer()
+                    CoreOptionValueBadge(text: "\(currentValue)")
+                }
+            }
+
+            CoreOptionStepper(systemName: "plus") {
+                let newVal = min(range.max, currentValue + 1)
+                setValue(newVal, for: option)
+            }
+        }
+        #else
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                optionLabel(title: display.title, description: display.description)
+                    .frame(minWidth: 180, alignment: .leading)
+                Spacer()
+                Text("\(currentValue)")
+                    .font(.headline)
+                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                Button(action: { resetOption(option) }) {
                     Image(systemName: "arrow.counterclockwise")
                         .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                         .font(.system(size: 14))
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.leading, 8)
-                #endif
             }
-            .frame(maxWidth: .infinity) // Ensure row fills available width
 
-        case let .enumeration(display, values, defaultValue, valueHandler):
+            RetroWaveSlider(
+                value: Binding(
+                    get: { Double(currentValue) },
+                    set: { setValue(Int($0), for: option) }
+                ),
+                in: Double(range.min)...Double(range.max),
+                step: 1.0
+            )
+
             HStack {
-                let selection = Binding(
-                    get: {
-                        let value = state.selectedValues[option.key] as? Int ?? state.optionValues[option.key] as? Int ?? defaultValue
-                        return value
-                    },
-                    set: { newValue in
-                        withAnimation {
-                            setValue(newValue, for: option)
-                            state.updateValue(newValue, forKey: option.key)
-                        }
-                    }
-                )
+                Text("\(range.min)")
+                    .font(.caption)
+                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                Spacer()
+                Text("\(range.max)")
+                    .font(.caption)
+                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        #endif
+    }
 
-                NavigationLink {
-                    EnumerationSelectionList(
-                        values: values,
-                        selection: selection,
-                        title: display.title
-                    )
-                } label: {
-                    HStack {
-                        // Title and description with consistent width
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(display.title)
-                                .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                                .font(.system(size: 16, weight: .medium))
-                                .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
+    // MARK: Range (Float)
 
-                            if let description = display.description {
-                                Text(description)
-                                    .font(.caption)
-                                    .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
-                                    .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                            }
+    @ViewBuilder
+    private func rangefOptionView(display: CoreOptionValueDisplay, range: CoreOptionRange<Float>, defaultValue: Float, option: CoreOption) -> some View {
+        let currentValue = state.optionValues[option.key] as? Float ?? defaultValue
 
-                            Text(values.first { $0.value == selection.wrappedValue }?.title ?? "")
-                                .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                                .font(.system(size: 14))
-                                .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                        }
-                        .frame(minWidth: 120, alignment: .leading) // Ensure consistent minimum width
+        #if os(tvOS)
+        HStack(spacing: 12) {
+            CoreOptionStepper(systemName: "minus") {
+                let newVal = max(range.min, currentValue - 0.1)
+                setValue(newVal, for: option)
+            }
 
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                            .font(.system(size: 14, weight: .bold))
-                    }
-                    .padding(.vertical, 4)
+            CoreOptionFocusableRow {
+                HStack {
+                    optionLabel(title: display.title, description: display.description)
+                    Spacer()
+                    CoreOptionValueBadge(text: String(format: "%.1f", currentValue))
                 }
-                .buttonStyle(PlainButtonStyle())
+            }
 
-                #if !os(tvOS)
-                Button(action: {
-                    resetOption(option)
-                }) {
+            CoreOptionStepper(systemName: "plus") {
+                let newVal = min(range.max, currentValue + 0.1)
+                setValue(newVal, for: option)
+            }
+        }
+        #else
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                optionLabel(title: display.title, description: display.description)
+                    .frame(minWidth: 120, alignment: .leading)
+                Spacer()
+                Text(String(format: "%.1f", currentValue))
+                    .font(.headline)
+                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                Button(action: { resetOption(option) }) {
                     Image(systemName: "arrow.counterclockwise")
                         .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                         .font(.system(size: 14))
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.leading, 8)
-                #endif
             }
-            .frame(maxWidth: .infinity) // Ensure row fills available width
 
-        case let .range(display, range, defaultValue, valueHandler):
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    // Title and description with consistent width
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(display.title)
-                            .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                            .font(.system(size: 16, weight: .medium))
-                            .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
+            RetroWaveSlider(
+                value: Binding(
+                    get: { Double(currentValue) },
+                    set: { setValue(Float($0), for: option) }
+                ),
+                in: Double(range.min)...Double(range.max),
+                step: 0.1
+            )
 
-                        if let description = display.description {
-                            Text(description)
-                                .font(.caption)
-                                .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
-                                .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                        }
-                    }
-                    .frame(minWidth: 180, alignment: .leading) // Ensure consistent minimum width
-
-                    Spacer()
-
-                    Text("\(state.optionValues[option.key] as? Int ?? defaultValue)")
-                        .font(.headline)
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-
-                    #if !os(tvOS)
-                    Button(action: {
-                        resetOption(option)
-                    }) {
-                        Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                            .font(.system(size: 14))
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.leading, 8)
-                    #endif
-                }
-
-                #if !os(tvOS)
-                // Use RetroWaveSlider component directly
-                RetroWaveSlider(
-                    value: Binding(
-                        get: { Double(state.optionValues[option.key] as? Int ?? defaultValue) },
-                        set: { setValue(Int($0), for: option) }
-                    ),
-                    in: Double(range.min)...Double(range.max),
-                    step: 1.0
-                )
-
-                // Min and max labels
-                HStack {
-                    Text("\(range.min)")
-                        .font(.caption)
-                        .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-
-                    Spacer()
-
-                    Text("\(range.max)")
-                        .font(.caption)
-                        .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-                }
-                #endif
-            }
-            .frame(maxWidth: .infinity) // Ensure row fills available width
-
-        case let .rangef(display, range, defaultValue, valueHandler):
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    // Title and description with consistent width
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(display.title)
-                            .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                            .font(.system(size: 16, weight: .medium))
-                            .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-
-                        if let description = display.description {
-                            Text(description)
-                                .font(.caption)
-                                .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
-                                .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
-                        }
-                    }
-                    .frame(minWidth: 120, alignment: .leading) // Ensure consistent minimum width
-
-                    Spacer()
-
-                    Text(String(format: "%.1f", state.optionValues[option.key] as? Float ?? defaultValue))
-                        .font(.headline)
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-
-                    #if !os(tvOS)
-                    Button(action: {
-                        resetOption(option)
-                    }) {
-                        Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                            .font(.system(size: 14))
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.leading, 8)
-                    #endif
-                }
-
-                #if !os(tvOS)
-                // Use RetroWaveSlider component directly
-                RetroWaveSlider(
-                    value: Binding(
-                        get: { Double(state.optionValues[option.key] as? Float ?? defaultValue) },
-                        set: { setValue(Float($0), for: option) }
-                    ),
-                    in: Double(range.min)...Double(range.max),
-                    step: 0.1
-                )
-
-                // Min and max labels
-                HStack {
-                    Text(String(format: "%.1f", range.min))
-                        .font(.caption)
-                        .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-
-                    Spacer()
-
-                    Text(String(format: "%.1f", range.max))
-                        .font(.caption)
-                        .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-                }
-                #endif
-            }
-            .frame(maxWidth: .infinity) // Ensure row fills available width
-
-        case let .multi(display, values, valueHandler):
             HStack {
-                let selection = Binding(
-                    get: { state.selectedValues[option.key] as? String ?? state.optionValues[option.key] as? String ?? values.first?.title ?? "" },
-                    set: { newValue in
-                        withAnimation {
-                            setValue(newValue, for: option)
-                            state.updateValue(newValue, forKey: option.key)
-                        }
-                    }
-                )
+                Text(String(format: "%.1f", range.min))
+                    .font(.caption)
+                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                Spacer()
+                Text(String(format: "%.1f", range.max))
+                    .font(.caption)
+                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        #endif
+    }
 
-                NavigationLink {
-                    MultiSelectionList(
-                        values: values,
-                        selection: selection,
-                        title: display.title
-                    )
-                } label: {
-                    VStack(alignment: .leading) {
-                        Text(display.title)
-                            .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        if let description = display.description {
-                            Text(description)
-                                .font(.caption)
-                                .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-                        }
-                        Text(selection.wrappedValue)
+    // MARK: Multi
+
+    @ViewBuilder
+    private func multiOptionView(display: CoreOptionValueDisplay, values: [CoreOptionMultiValue], option: CoreOption) -> some View {
+        let selection = Binding(
+            get: { state.selectedValues[option.key] as? String ?? state.optionValues[option.key] as? String ?? values.first?.title ?? "" },
+            set: { newValue in
+                withAnimation {
+                    setValue(newValue, for: option)
+                    state.updateValue(newValue, forKey: option.key)
+                }
+            }
+        )
+
+        #if os(tvOS)
+        CoreOptionFocusableNavRow {
+            MultiSelectionList(values: values, selection: selection, title: display.title)
+        } label: {
+            HStack {
+                optionLabel(title: display.title, description: display.description)
+                Spacer()
+                CoreOptionValueBadge(text: selection.wrappedValue)
+            }
+        }
+        #else
+        HStack {
+            NavigationLink {
+                MultiSelectionList(values: values, selection: selection, title: display.title)
+            } label: {
+                VStack(alignment: .leading) {
+                    Text(display.title)
+                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    if let description = display.description {
+                        Text(description)
+                            .font(.caption)
                             .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
                     }
+                    Text(selection.wrappedValue)
+                        .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
                 }
-
-                #if !os(tvOS)
-                Spacer()
-
-                Button(action: {
-                    resetOption(option)
-                }) {
-                    Image(systemName: "arrow.counterclockwise")
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                }
-                .buttonStyle(.borderless)
-                #endif
             }
+            Spacer()
+            Button(action: { resetOption(option) }) {
+                Image(systemName: "arrow.counterclockwise")
+                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+            }
+            .buttonStyle(.borderless)
+        }
+        #endif
+    }
 
-        case let .string(display, defaultValue, valueHandler):
-            VStack(alignment: .leading) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(display.title)
-                            .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        if let description = display.description {
-                            Text(description)
-                                .font(.caption)
-                                .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-                        }
-                    }
+    // MARK: String
 
-                    #if !os(tvOS)
-                    Spacer()
-
-                    Button(action: {
-                        resetOption(option)
-                    }) {
-                        Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                    }
-                    .buttonStyle(.borderless)
-                    #endif
-                }
-
+    @ViewBuilder
+    private func stringOptionView(display: CoreOptionValueDisplay, defaultValue: String, option: CoreOption) -> some View {
+        #if os(tvOS)
+        CoreOptionFocusableRow {
+            HStack {
+                optionLabel(title: display.title, description: display.description)
+                Spacer()
                 TextField("Value", text: Binding(
                     get: { state.optionValues[option.key] as? String ?? defaultValue },
                     set: { setValue($0, for: option) }
                 ))
-                #if !os(tvOS)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                #endif
+                .frame(maxWidth: 300)
+                .multilineTextAlignment(.trailing)
+            }
+        }
+        #else
+        VStack(alignment: .leading) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(display.title)
+                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    if let description = display.description {
+                        Text(description)
+                            .font(.caption)
+                            .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
+                    }
+                }
+                Spacer()
+                Button(action: { resetOption(option) }) {
+                    Image(systemName: "arrow.counterclockwise")
+                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                }
+                .buttonStyle(.borderless)
             }
 
-        case .group(_, _):
-            EmptyView() // Groups are handled at the section level
+            TextField("Value", text: Binding(
+                get: { state.optionValues[option.key] as? String ?? defaultValue },
+                set: { setValue($0, for: option) }
+            ))
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+        }
+        #endif
+    }
+
+    // MARK: - Shared Label Builder
+
+    @ViewBuilder
+    private func optionLabel(title: String, description: String?) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                #if os(tvOS)
+                .font(.system(size: 20, weight: .medium))
+                #else
+                .font(.system(size: 16, weight: .medium))
+                #endif
+                .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let description = description {
+                Text(description)
+                    #if os(tvOS)
+                    .font(.system(size: 15))
+                    #else
+                    .font(.caption)
+                    #endif
+                    .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 }
 
-// MARK: - Helper Views
+// MARK: - Selection List Views
+
 private struct EnumerationSelectionList: View {
     let values: [CoreOptionEnumValue]
     @Binding var selection: Int
     let title: String
-
-    // Add state to force refresh
     @State private var selectedValue: Int
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     init(values: [CoreOptionEnumValue], selection: Binding<Int>, title: String) {
         self.values = values
@@ -680,6 +875,33 @@ private struct EnumerationSelectionList: View {
     }
 
     var body: some View {
+        #if os(tvOS)
+        ZStack {
+            Color(themeManager.currentPalette.gameLibraryBackground)
+                .edgesIgnoringSafeArea(.all)
+
+            ScrollView {
+                VStack(spacing: 4) {
+                    ForEach(values, id: \.value) { value in
+                        SelectionRowButton(
+                            title: value.title,
+                            description: value.description,
+                            isSelected: value.value == selectedValue
+                        ) {
+                            withAnimation {
+                                selectedValue = value.value
+                                selection = value.value
+                            }
+                        }
+                    }
+                }
+                .padding()
+            }
+        }
+        .navigationTitle(title)
+        .onAppear { selectedValue = selection }
+        .onChange(of: selection) { newValue in selectedValue = newValue }
+        #else
         List {
             ForEach(values, id: \.value) { value in
                 Button {
@@ -706,12 +928,9 @@ private struct EnumerationSelectionList: View {
             }
         }
         .navigationTitle(title)
-        .onAppear {
-            selectedValue = selection
-        }
-        .onChange(of: selection) { newValue in
-            selectedValue = newValue
-        }
+        .onAppear { selectedValue = selection }
+        .onChange(of: selection) { newValue in selectedValue = newValue }
+        #endif
     }
 }
 
@@ -719,14 +938,35 @@ private struct MultiSelectionList: View {
     let values: [CoreOptionMultiValue]
     @Binding var selection: String
     let title: String
+    @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
+        #if os(tvOS)
+        ZStack {
+            Color(themeManager.currentPalette.gameLibraryBackground)
+                .edgesIgnoringSafeArea(.all)
+
+            ScrollView {
+                VStack(spacing: 4) {
+                    ForEach(values, id: \.title) { value in
+                        SelectionRowButton(
+                            title: value.title,
+                            description: value.description,
+                            isSelected: value.title == selection
+                        ) {
+                            withAnimation { selection = value.title }
+                        }
+                    }
+                }
+                .padding()
+            }
+        }
+        .navigationTitle(title)
+        #else
         List {
             ForEach(values, id: \.title) { value in
                 Button {
-                    withAnimation {
-                        selection = value.title
-                    }
+                    withAnimation { selection = value.title }
                 } label: {
                     HStack {
                         VStack(alignment: .leading) {
@@ -746,5 +986,73 @@ private struct MultiSelectionList: View {
             }
         }
         .navigationTitle(title)
+        #endif
     }
 }
+
+// MARK: - tvOS Selection Row
+
+#if os(tvOS)
+/// A focusable selection row for enum/multi lists on tvOS with retrowave focus styling
+/// and a checkmark indicator for the currently selected value.
+private struct SelectionRowButton: View {
+    let title: String
+    let description: String?
+    let isSelected: Bool
+    let action: () -> Void
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundStyle(isFocused ? .white : Color.primary)
+
+                    if let description = description {
+                        Text(description)
+                            .font(.system(size: 15))
+                            .foregroundStyle(isFocused ? Color.white.opacity(0.8) : Color.secondary)
+                    }
+                }
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(
+                            LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                }
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 20)
+        }
+        .focused($isFocused)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    isFocused
+                        ? LinearGradient(colors: [Color.retroPink.opacity(0.12), Color.retroBlue.opacity(0.08)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [Color.white.opacity(isSelected ? 0.04 : 0.02), Color.white.opacity(0.01)], startPoint: .top, endPoint: .bottom)
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    isFocused
+                        ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [Color.white.opacity(isSelected ? 0.1 : 0.04), Color.white.opacity(0.02)], startPoint: .top, endPoint: .bottom),
+                    lineWidth: isFocused ? 2 : (isSelected ? 1.5 : 1)
+                )
+        )
+        .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
+        .scaleEffect(isFocused ? 1.02 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isFocused)
+    }
+}
+#endif
