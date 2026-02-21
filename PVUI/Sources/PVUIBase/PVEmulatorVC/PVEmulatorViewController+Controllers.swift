@@ -9,6 +9,7 @@ import SteamController
 
 extension PVEmulatorViewController {
     @objc func handlePause(_ note: Notification?) {
+        ILOG("handlePause: PauseGame notification received")
         self.controllerPauseButtonPressed(note)
     }
 

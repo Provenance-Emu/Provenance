@@ -565,6 +565,9 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
     var controllerUserInteractionEnabled: Bool = false {
         didSet {
+            /// Prevent redundant sets from corrupting savedValueChangedHandlers.
+            /// Setting false→false would restore nil and destroy game input handlers.
+            guard oldValue != controllerUserInteractionEnabled else { return }
             guard controllerUserInteractionEnabled else {
                 controllers.forEach { controller in
                     if let gamepad = controller.extendedGamepad {

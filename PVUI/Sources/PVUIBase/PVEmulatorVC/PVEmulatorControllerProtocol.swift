@@ -396,21 +396,32 @@ public extension PVEmualatorControllerProtocol {
 }
 
 extension PVEmualatorControllerProtocol {
-    // Event when "pause" aka `menu` button is pressed
+    /// Toggles the pause menu when the controller's pause/menu button is pressed.
+    ///
+    /// On tvOS there is no on-screen menu button, so the hardware controller must
+    /// always be able to open the pause menu. On iOS the behaviour is gated by the
+    /// `pauseButtonIsMenuButton` user preference.
     public func controllerPauseButtonPressed(_ sender: Any? = nil) {
-        // If option enabled, toggle the pause menu
-        if Defaults[.pauseButtonIsMenuButton] {
-            DispatchQueue.main.async(execute: { () -> Void in
-                // Prevent toggling menu if core is not running (e.g., during quit)
-                guard self.core.isOn else { return }
-
-                if !self.isShowingMenu {
-                    self.showMenu(self)
-                } else {
-                    self.hideMenu()
-                }
-            })
-        }
+        #if os(tvOS)
+        let shouldToggle = true
+        #else
+        let shouldToggle = Defaults[.pauseButtonIsMenuButton]
+        #endif
+        ILOG("controllerPauseButtonPressed: shouldToggle=\(shouldToggle), isShowingMenu=\(isShowingMenu)")
+        guard shouldToggle else { return }
+        DispatchQueue.main.async(execute: { () -> Void in
+            guard self.core.isOn else {
+                ILOG("controllerPauseButtonPressed: core not on, ignoring")
+                return
+            }
+            if !self.isShowingMenu {
+                ILOG("controllerPauseButtonPressed: calling showMenu")
+                self.showMenu(self)
+            } else {
+                ILOG("controllerPauseButtonPressed: calling hideMenu")
+                self.hideMenu()
+            }
+        })
     }
 }
 
