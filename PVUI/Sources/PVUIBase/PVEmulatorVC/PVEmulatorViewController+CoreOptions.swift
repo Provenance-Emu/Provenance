@@ -16,28 +16,27 @@ extension PVEmulatorViewController {
     public func showCoreOptions() {
         guard let coreClass = type(of: core) as? CoreOptional.Type else { return }
 
-        // Create the SwiftUI view
+        /// Enable controller-driven UI navigation so the d-pad and buttons
+        /// can navigate the options list via UIKit's focus system.
+        enableControllerInput(true)
+
         let coreOptionsView = CoreOptionsDetailView(
             coreClass: coreClass,
             title: "Core Options"
         )
 
-        // Create a hosting controller
         let hostingController = UIHostingController(rootView: coreOptionsView)
         let nav = UINavigationController(rootViewController: hostingController)
 
-        // Add done button for iOS
         #if os(iOS)
         hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .done,
             target: self,
             action: #selector(dismissCoreOptionsAndResume)
         )
-        // disable iOS 13 swipe to dismiss...
         nav.isModalInPresentation = true
         present(nav, animated: true)
         #else
-        // Add menu button gesture for tvOS
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissCoreOptionsAndResume))
         tap.allowedPressTypes = [.menu]
         hostingController.view.addGestureRecognizer(tap)
@@ -53,7 +52,8 @@ extension PVEmulatorViewController {
             self.isShowingMenu = false
             self.enableControllerInput(false)
             #if os(tvOS)
-            // Ensure the emulator view can receive gesture events again
+            self.resetTVOSMenuGestures()
+            self.reestablishPauseHandlers()
             self.view.becomeFirstResponder()
             #endif
         }
