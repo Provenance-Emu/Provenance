@@ -55,17 +55,20 @@ public struct CloudSyncSettingsView: View {
 
     public var body: some View {
         ZStack {
-            // Background
+            #if os(tvOS)
+            Color(red: 0.04, green: 0.04, blue: 0.12)
+                .edgesIgnoringSafeArea(.all)
+            RetroGrid(lineSpacing: 30, lineColor: Color.retroPink.opacity(0.04))
+                .edgesIgnoringSafeArea(.all)
+                .opacity(0.4)
+            #else
             Color.retroDarkBlue.edgesIgnoringSafeArea(.all)
+            #endif
 
             VStack(spacing: 0) {
-                // Header with status
                 statusHeader
-
-                // Tab selector
                 tabSelector
 
-                // Tab content
                 TabView(selection: $selectedTab) {
                     cloudKitTab.tag(0)
                     #if !os(tvOS)
@@ -76,7 +79,11 @@ public struct CloudSyncSettingsView: View {
                     recordsManagementTab.tag(4)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+                #if os(tvOS)
+                .background(Color.white.opacity(0.02))
+                #else
                 .background(Color.retroBlack.opacity(0.3))
+                #endif
                 .cornerRadius(10)
                 .padding(.horizontal)
                 .padding(.bottom)
@@ -115,24 +122,33 @@ public struct CloudSyncSettingsView: View {
 
     private var statusHeader: some View {
         VStack(spacing: 12) {
+            #if os(tvOS)
+            Text("CLOUD SYNC")
+                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .foregroundStyle(
+                    LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
+                )
+                .padding(.top)
+            #else
             Text("Cloud Sync")
                 .font(.title)
                 .foregroundColor(.retroPink)
                 .padding(.top)
+            #endif
 
             HStack(spacing: 12) {
-                // Status indicator
                 Circle()
                     .fill(viewModel.iCloudAvailable ? Color.green : Color.red)
                     .frame(width: 12, height: 12)
+                    #if os(tvOS)
+                    .shadow(color: viewModel.iCloudAvailable ? Color.green.opacity(0.6) : Color.red.opacity(0.6), radius: 6)
+                    #endif
 
-                // Status text
                 VStack(alignment: .leading, spacing: 4) {
                     Text(viewModel.syncStatus)
                         .font(.subheadline)
                         .foregroundColor(.white)
 
-                    // Show sync mode if enabled
                     if iCloudSyncEnabled && viewModel.iCloudAvailable {
                         Text("Mode: \(currentiCloudSyncMode.description)")
                             .font(.caption)
@@ -142,7 +158,6 @@ public struct CloudSyncSettingsView: View {
 
                 Spacer()
 
-                // Sync indicator
                 if viewModel.isSyncing {
                     HStack(spacing: 6) {
                         ProgressView()
@@ -179,10 +194,13 @@ public struct CloudSyncSettingsView: View {
     }
 
     private func tabButton(title: String, systemImage: String, tag: Int) -> some View {
+        #if os(tvOS)
+        CloudSyncFocusableTabButton(title: title, systemImage: systemImage, isSelected: selectedTab == tag) {
+            withAnimation { selectedTab = tag }
+        }
+        #else
         Button(action: {
-            withAnimation {
-                selectedTab = tag
-            }
+            withAnimation { selectedTab = tag }
         }) {
             VStack(spacing: 4) {
                 Image(systemName: systemImage)
@@ -203,10 +221,6 @@ public struct CloudSyncSettingsView: View {
             .cornerRadius(8)
             .foregroundColor(selectedTab == tag ? .white : .gray)
         }
-        #if os(tvOS)
-        .buttonStyle(PlainButtonStyle())
-        .retroThemedFocus(cornerRadius: 8)
-        #else
         .buttonStyle(PlainButtonStyle())
         #endif
     }
@@ -307,7 +321,7 @@ public struct CloudSyncSettingsView: View {
             }) {
                 HStack {
                     Text("Sync Logs")
-                        .retroSectionHeader()
+                        .cloudSyncSectionTitle()
 
                     Spacer()
 
@@ -365,8 +379,7 @@ public struct CloudSyncSettingsView: View {
     private var syncActivityChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Sync Activity (Uploads - Last 7 Days)")
-                .font(.headline)
-                .foregroundColor(.retroPink)
+                .cloudSyncSectionTitle()
 
             // Line chart visualization
             // This uses mock data - in a real implementation, this would use historical sync data
@@ -395,8 +408,7 @@ public struct CloudSyncSettingsView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Sync Status")
-                    .font(.headline)
-                    .foregroundColor(Color.retroPink)
+                    .cloudSyncSectionTitle()
                 Spacer()
                 Button(action: {
                     Task {
@@ -413,7 +425,8 @@ public struct CloudSyncSettingsView: View {
                     .cornerRadius(8)
                 }
                 #if os(tvOS)
-                .retroFocusButtonStyle(cornerRadius: 8, showBorder: false)
+                .buttonStyle(TVMediaPlainButtonStyle())
+                .tvOSDisableFocusEffect()
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
@@ -489,11 +502,12 @@ public struct CloudSyncSettingsView: View {
                             Image(systemName: "chevron.right")
                         }
                         .padding()
-                        .retroCard()
-                        .retroGlowingBorder(color: .retroBlue)
+                        .cloudSyncCard()
+                        .cloudSyncCard()
                     }
                     #if os(tvOS)
-                    .retroThemedFocus()
+                    .buttonStyle(TVMediaPlainButtonStyle())
+                    .tvOSDisableFocusEffect()
                     #else
                     .buttonStyle(PlainButtonStyle())
                     #endif
@@ -527,8 +541,7 @@ public struct CloudSyncSettingsView: View {
     private var recordCountsWithChartView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("CloudKit Records")
-                .font(.headline)
-                .foregroundColor(.retroPink)
+                .cloudSyncSectionTitle()
 
             if viewModel.isLoadingCloudKitRecords {
                 HStack {
@@ -541,7 +554,6 @@ public struct CloudSyncSettingsView: View {
                 .background(Color.retroBlack.opacity(0.3))
                 .cornerRadius(10)
             } else {
-                // Bar chart visualization
                 RetroCharts.BarChart(
                     values: [
                         Double(viewModel.cloudKitRecords.roms),
@@ -578,8 +590,7 @@ public struct CloudSyncSettingsView: View {
     private var storageDistributionView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Storage Distribution")
-                .font(.headline)
-                .foregroundColor(.retroPink)
+                .cloudSyncSectionTitle()
 
             // Pie chart visualization
             RetroCharts.PieChart(
@@ -600,12 +611,10 @@ public struct CloudSyncSettingsView: View {
     private var enhancedSyncProgressView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Sync Progress")
-                .font(.headline)
-                .foregroundColor(.retroPink)
+                .cloudSyncSectionTitle()
 
             VStack(alignment: .leading, spacing: 16) {
                 if let currentFile = viewModel.currentSyncFile {
-                    // Current file being synced
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Current File:")
                             .font(.caption)
@@ -771,8 +780,7 @@ public struct CloudSyncSettingsView: View {
     private var recordCountsView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("CloudKit Records")
-                .font(.headline)
-                .foregroundColor(.retroPink)
+                .cloudSyncSectionTitle()
 
             if viewModel.isLoadingCloudKitRecords {
                 HStack {
@@ -860,8 +868,7 @@ public struct CloudSyncSettingsView: View {
     private var syncProgressView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Sync Progress")
-                .font(.headline)
-                .foregroundColor(.retroPink)
+                .cloudSyncSectionTitle()
 
             VStack(alignment: .leading, spacing: 8) {
                 if let currentFile = viewModel.currentSyncFile {
@@ -897,8 +904,7 @@ public struct CloudSyncSettingsView: View {
     private var syncActionsView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Sync Actions")
-                .font(.headline)
-                .foregroundColor(.retroPink)
+                .cloudSyncSectionTitle()
 
             VStack(spacing: 10) {
                 Button(action: {
@@ -919,7 +925,8 @@ public struct CloudSyncSettingsView: View {
                     .foregroundColor(.white)
                 }
                 #if os(tvOS)
-                .retroFocusButtonStyle(cornerRadius: 8, showBorder: false)
+                .buttonStyle(TVMediaPlainButtonStyle())
+                .tvOSDisableFocusEffect()
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
@@ -944,7 +951,8 @@ public struct CloudSyncSettingsView: View {
                     .foregroundColor(.white)
                 }
                 #if os(tvOS)
-                .retroFocusButtonStyle(cornerRadius: 8, showBorder: false)
+                .buttonStyle(TVMediaPlainButtonStyle())
+                .tvOSDisableFocusEffect()
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
@@ -973,7 +981,8 @@ public struct CloudSyncSettingsView: View {
                             .foregroundColor(viewModel.currentPage > 0 ? .white : .gray)
                     }
                     #if os(tvOS)
-                    .retroThemedFocus(focusScale: 1.1)
+                    .buttonStyle(TVMediaPlainButtonStyle())
+                    .tvOSDisableFocusEffect()
                     #else
                     .buttonStyle(PlainButtonStyle())
                     #endif
@@ -1059,8 +1068,7 @@ public struct CloudSyncSettingsView: View {
     private var syncDifferencesView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Sync Differences (\(viewModel.syncDifferences.count))")
-                .font(.headline)
-                .foregroundColor(Color.retroPink)
+                .cloudSyncSectionTitle()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
@@ -1153,16 +1161,18 @@ public struct CloudSyncSettingsView: View {
 
     private var moreSettingsTab: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
-                // Network Settings Section
+            #if os(tvOS)
+            let sectionSpacing: CGFloat = 32
+            #else
+            let sectionSpacing: CGFloat = 16
+            #endif
+            LazyVStack(alignment: .leading, spacing: sectionSpacing) {
                 networkSettingsSection
                     .padding(.horizontal)
 
-                // Sync Frequency Section
                 syncFrequencySection
                     .padding(.horizontal)
 
-                // Content Type Section
                 contentTypeSection
                     .padding(.horizontal)
 
@@ -1190,10 +1200,42 @@ public struct CloudSyncSettingsView: View {
     // MARK: - Settings Sections
     /// Network conditions settings for CloudKit sync
     private var networkSettingsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Network Settings")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
+            #if os(tvOS)
+            Text("Sync Network Mode")
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.white)
+
+            VStack(spacing: 4) {
+                ForEach(CloudKitSyncNetworkMode.allCases, id: \.self) { mode in
+                    CloudSyncSelectionRow(
+                        title: mode.description,
+                        subtitle: mode.subtitle,
+                        isSelected: currentCloudKitSyncNetworkMode == mode
+                    ) {
+                        withAnimation { currentCloudKitSyncNetworkMode = mode }
+                    }
+                }
+            }
+
+            CloudSyncStepperRow(
+                title: "Max Cellular File Size",
+                value: "\(Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))) MB",
+                onDecrement: {
+                    let currentMB = Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))
+                    cloudKitMaxCellularFileSizeBytes = max(1, currentMB - 5) * 1024 * 1024
+                },
+                onIncrement: {
+                    let currentMB = Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))
+                    cloudKitMaxCellularFileSizeBytes = min(500, currentMB + 5) * 1024 * 1024
+                },
+                decrementDisabled: cloudKitMaxCellularFileSizeBytes <= 1024 * 1024,
+                incrementDisabled: cloudKitMaxCellularFileSizeBytes >= 500 * 1024 * 1024
+            )
+            #else
             VStack(alignment: .leading, spacing: 8) {
                 Text("Sync Network Mode")
                     .font(.subheadline)
@@ -1211,14 +1253,9 @@ public struct CloudSyncSettingsView: View {
                         .tag(mode)
                     }
                 }
-                #if os(tvOS)
-                .pickerStyle(.automatic)
-                #else
                 .pickerStyle(.menu)
-                #endif
-                .retroCard()
+                .cloudSyncCard()
 
-                // Max cellular file size
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Max Cellular File Size")
                         .font(.subheadline)
@@ -1227,29 +1264,7 @@ public struct CloudSyncSettingsView: View {
                     HStack {
                         Text("\(Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))) MB")
                             .foregroundColor(.retroBlue)
-
                         Spacer()
-
-                        #if os(tvOS)
-                        // tvOS alternative: Use button controls instead of slider
-                        HStack {
-                            Button("-") {
-                                let currentMB = Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))
-                                let newValue = max(1, currentMB - 5)
-                                cloudKitMaxCellularFileSizeBytes = newValue * 1024 * 1024
-                            }
-                            .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
-                            .disabled(cloudKitMaxCellularFileSizeBytes <= 1024 * 1024)
-
-                            Button("+") {
-                                let currentMB = Int(cloudKitMaxCellularFileSizeBytes / (1024 * 1024))
-                                let newValue = min(500, currentMB + 5)
-                                cloudKitMaxCellularFileSizeBytes = newValue * 1024 * 1024
-                            }
-                            .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
-                            .disabled(cloudKitMaxCellularFileSizeBytes >= 500 * 1024 * 1024)
-                        }
-                        #else
                         Slider(
                             value: Binding(
                                 get: { Double(cloudKitMaxCellularFileSizeBytes) / 1024.0 / 1024.0 },
@@ -1259,11 +1274,11 @@ public struct CloudSyncSettingsView: View {
                             step: 5
                         )
                         .accentColor(.retroBlue)
-                        #endif
                     }
                 }
-                .retroCard()
+                .cloudSyncCard()
             }
+            #endif
         }
     }
 
@@ -1271,10 +1286,27 @@ public struct CloudSyncSettingsView: View {
 
     /// Sync frequency and timing settings
     private var syncFrequencySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Sync Frequency")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
+            #if os(tvOS)
+            Text("Check for Changes")
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.white)
+
+            VStack(spacing: 4) {
+                ForEach(CloudKitSyncFrequency.allCases, id: \.self) { frequency in
+                    CloudSyncSelectionRow(
+                        title: frequency.description,
+                        subtitle: frequency.subtitle,
+                        isSelected: currentCloudKitSyncFrequency == frequency
+                    ) {
+                        withAnimation { currentCloudKitSyncFrequency = frequency }
+                    }
+                }
+            }
+            #else
             VStack(alignment: .leading, spacing: 8) {
                 Text("Check for Changes")
                     .font(.subheadline)
@@ -1292,22 +1324,36 @@ public struct CloudSyncSettingsView: View {
                         .tag(frequency)
                     }
                 }
-                #if os(tvOS)
-                .pickerStyle(.automatic)
-                #else
                 .pickerStyle(.menu)
-                #endif
-                .retroCard()
+                .cloudSyncCard()
             }
+            #endif
         }
     }
 
     /// Content type selection settings
     private var contentTypeSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Content Types")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
+            #if os(tvOS)
+            Text("What to Sync")
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.white)
+
+            VStack(spacing: 4) {
+                ForEach(CloudKitSyncContentType.allCases, id: \.self) { contentType in
+                    CloudSyncSelectionRow(
+                        title: contentType.description,
+                        subtitle: contentType.subtitle,
+                        isSelected: currentiCloudSyncContentType == contentType
+                    ) {
+                        withAnimation { currentiCloudSyncContentType = contentType }
+                    }
+                }
+            }
+            #else
             VStack(alignment: .leading, spacing: 8) {
                 Text("What to Sync")
                     .font(.subheadline)
@@ -1325,300 +1371,140 @@ public struct CloudSyncSettingsView: View {
                         .tag(contentType)
                     }
                 }
-                #if os(tvOS)
-                .pickerStyle(.automatic)
-                #else
                 .pickerStyle(.menu)
-                #endif
-                .retroCard()
+                .cloudSyncCard()
             }
+            #endif
         }
     }
 
     /// Power management and battery settings
     private var powerManagementSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Power Management")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
             VStack(spacing: 8) {
-                // Respect low power mode
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Respect Low Power Mode")
-                            .foregroundColor(.white)
-                        Text("Pause sync when iOS low power mode is enabled")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-
-                    Spacer()
-
-                    Toggle("", isOn: Binding(
+                CloudSyncToggleRow(
+                    title: "Respect Low Power Mode",
+                    subtitle: "Pause sync when iOS low power mode is enabled",
+                    isOn: Binding(
                         get: { Defaults[.cloudKitRespectLowPowerMode] },
                         set: { Defaults[.cloudKitRespectLowPowerMode] = $0 }
-                    ))
-                    .toggleStyle(RetroTheme.RetroToggleStyle())
-                }
-                .retroCard()
+                    )
+                )
 
-                // Sync only when charging
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Sync Only When Charging")
-                            .foregroundColor(.white)
-                        Text("Only sync when device is plugged in")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-
-                    Spacer()
-
-                    Toggle("", isOn: Binding(
+                CloudSyncToggleRow(
+                    title: "Sync Only When Charging",
+                    subtitle: "Only sync when device is plugged in",
+                    isOn: Binding(
                         get: { Defaults[.cloudKitSyncOnlyWhenCharging] },
                         set: { Defaults[.cloudKitSyncOnlyWhenCharging] = $0 }
-                    ))
-                    .toggleStyle(RetroTheme.RetroToggleStyle())
-                }
-                .retroCard()
+                    )
+                )
             }
         }
     }
 
     /// Performance and optimization settings
     private var performanceSettingsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Performance")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
             VStack(spacing: 8) {
-                // Background sync
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Background Sync")
-                            .foregroundColor(.white)
-                        Text("Continue syncing when app is in background")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-
-                    Spacer()
-
-                    Toggle("", isOn: Binding(
+                CloudSyncToggleRow(
+                    title: "Background Sync",
+                    subtitle: "Continue syncing when app is in background",
+                    isOn: Binding(
                         get: { Defaults[.cloudKitBackgroundSync] },
                         set: { Defaults[.cloudKitBackgroundSync] = $0 }
-                    ))
-                    .toggleStyle(RetroTheme.RetroToggleStyle())
-                }
-                .retroCard()
+                    )
+                )
 
-                // Compress files
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Compress Files")
-                            .foregroundColor(.white)
-                        Text("Reduce bandwidth usage by compressing files")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-
-                    Spacer()
-
-                    Toggle("", isOn: Binding(
+                CloudSyncToggleRow(
+                    title: "Compress Files",
+                    subtitle: "Reduce bandwidth usage by compressing files",
+                    isOn: Binding(
                         get: { Defaults[.cloudKitCompressFiles] },
                         set: { Defaults[.cloudKitCompressFiles] = $0 }
-                    ))
-                    .toggleStyle(RetroTheme.RetroToggleStyle())
-                }
-                .retroCard()
+                    )
+                )
 
-                // Max concurrent uploads
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Max Concurrent Uploads")
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-
-                    HStack {
-                        Text("\(Defaults[.cloudKitMaxConcurrentUploads])")
-                            .foregroundColor(.retroBlue)
-
-                        Spacer()
-
-                        #if os(tvOS)
-                        // tvOS alternative: Use button controls instead of slider
-                        HStack {
-                            Button("-") {
-                                let newValue = max(1, Defaults[.cloudKitMaxConcurrentUploads] - 1)
-                                Defaults[.cloudKitMaxConcurrentUploads] = newValue
-                            }
-                            .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
-                            .disabled(Defaults[.cloudKitMaxConcurrentUploads] <= 1)
-
-                            Button("+") {
-                                let newValue = min(10, Defaults[.cloudKitMaxConcurrentUploads] + 1)
-                                Defaults[.cloudKitMaxConcurrentUploads] = newValue
-                            }
-                            .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
-                            .disabled(Defaults[.cloudKitMaxConcurrentUploads] >= 10)
-                        }
-                        #else
-                        Slider(
-                            value: Binding(
-                                get: { Double(Defaults[.cloudKitMaxConcurrentUploads]) },
-                                set: { Defaults[.cloudKitMaxConcurrentUploads] = Int($0) }
-                            ),
-                            in: 1...10,
-                            step: 1
-                        )
-                        .accentColor(.retroBlue)
-                        #endif
-                    }
-                }
-                .retroCard()
+                CloudSyncStepperRow(
+                    title: "Max Concurrent Uploads",
+                    value: "\(Defaults[.cloudKitMaxConcurrentUploads])",
+                    onDecrement: {
+                        Defaults[.cloudKitMaxConcurrentUploads] = max(1, Defaults[.cloudKitMaxConcurrentUploads] - 1)
+                    },
+                    onIncrement: {
+                        Defaults[.cloudKitMaxConcurrentUploads] = min(10, Defaults[.cloudKitMaxConcurrentUploads] + 1)
+                    },
+                    decrementDisabled: Defaults[.cloudKitMaxConcurrentUploads] <= 1,
+                    incrementDisabled: Defaults[.cloudKitMaxConcurrentUploads] >= 10
+                )
             }
         }
     }
 
     /// Advanced settings for power users
     private var advancedSettingsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Advanced")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
             VStack(spacing: 8) {
-                // Auto resolve conflicts
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Auto Resolve Conflicts")
-                            .foregroundColor(.white)
-                        Text("Automatically choose most recent version")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-
-                    Spacer()
-
-                    Toggle("", isOn: Binding(
+                CloudSyncToggleRow(
+                    title: "Auto Resolve Conflicts",
+                    subtitle: "Automatically choose most recent version",
+                    isOn: Binding(
                         get: { Defaults[.cloudKitAutoResolveConflicts] },
                         set: { Defaults[.cloudKitAutoResolveConflicts] = $0 }
-                    ))
-                    .toggleStyle(RetroTheme.RetroToggleStyle())
-                }
-                .retroCard()
+                    )
+                )
 
-                // Show sync notifications
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Show Sync Notifications")
-                            .foregroundColor(.white)
-                        Text("Display notifications for sync status")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-
-                    Spacer()
-
-                    Toggle("", isOn: Binding(
+                CloudSyncToggleRow(
+                    title: "Show Sync Notifications",
+                    subtitle: "Display notifications for sync status",
+                    isOn: Binding(
                         get: { Defaults[.cloudKitShowSyncNotifications] },
                         set: { Defaults[.cloudKitShowSyncNotifications] = $0 }
-                    ))
-                    .toggleStyle(RetroTheme.RetroToggleStyle())
-                }
-                .retroCard()
+                    )
+                )
 
-                // Retry failed uploads
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Retry Failed Uploads")
-                            .foregroundColor(.white)
-                        Text("Automatically retry uploads that fail")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-
-                    Spacer()
-
-                    Toggle("", isOn: Binding(
+                CloudSyncToggleRow(
+                    title: "Retry Failed Uploads",
+                    subtitle: "Automatically retry uploads that fail",
+                    isOn: Binding(
                         get: { Defaults[.cloudKitRetryFailedUploads] },
                         set: { Defaults[.cloudKitRetryFailedUploads] = $0 }
-                    ))
-                    #if os(tvOS)
-                    .toggleStyle(.automatic)
-                    #else
-                    .toggleStyle(SwitchToggleStyle(tint: .retroBlue))
-                    #endif
-                }
-                .retroCard()
+                    )
+                )
 
-                // Max retry attempts
                 if Defaults[.cloudKitRetryFailedUploads] {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Max Retry Attempts")
-                            .font(.subheadline)
-                            .foregroundColor(.white)
-
-                        HStack {
-                            Text("\(Defaults[.cloudKitMaxRetryAttempts])")
-                                .foregroundColor(.retroBlue)
-
-                            Spacer()
-
-                            #if os(tvOS)
-                            // tvOS alternative: Use button controls instead of slider
-                            HStack {
-                                Button("-") {
-                                    let newValue = max(1, Defaults[.cloudKitMaxRetryAttempts] - 1)
-                                    Defaults[.cloudKitMaxRetryAttempts] = newValue
-                                }
-                                .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
-                                .disabled(Defaults[.cloudKitMaxRetryAttempts] <= 1)
-
-                                Button("+") {
-                                    let newValue = min(10, Defaults[.cloudKitMaxRetryAttempts] + 1)
-                                    Defaults[.cloudKitMaxRetryAttempts] = newValue
-                                }
-                                .retroThemedFocus(focusScale: 1.1, cornerRadius: 6)
-                                .disabled(Defaults[.cloudKitMaxRetryAttempts] >= 10)
-                            }
-                            #else
-                            Slider(
-                                value: Binding(
-                                    get: { Double(Defaults[.cloudKitMaxRetryAttempts]) },
-                                    set: { Defaults[.cloudKitMaxRetryAttempts] = Int($0) }
-                                ),
-                                in: 1...10,
-                                step: 1
-                            )
-                            .accentColor(.retroBlue)
-                            #endif
-                        }
-                    }
-                    .retroCard()
+                    CloudSyncStepperRow(
+                        title: "Max Retry Attempts",
+                        value: "\(Defaults[.cloudKitMaxRetryAttempts])",
+                        onDecrement: {
+                            Defaults[.cloudKitMaxRetryAttempts] = max(1, Defaults[.cloudKitMaxRetryAttempts] - 1)
+                        },
+                        onIncrement: {
+                            Defaults[.cloudKitMaxRetryAttempts] = min(10, Defaults[.cloudKitMaxRetryAttempts] + 1)
+                        },
+                        decrementDisabled: Defaults[.cloudKitMaxRetryAttempts] <= 1,
+                        incrementDisabled: Defaults[.cloudKitMaxRetryAttempts] >= 10
+                    )
                 }
 
-                // Delete local after upload (dangerous setting)
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Delete Local After Upload")
-                            .foregroundColor(.white)
-                        Text("⚠️ Remove local files after successful upload")
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                    }
-
-                    Spacer()
-
-                    Toggle("", isOn: Binding(
+                CloudSyncToggleRow(
+                    title: "Delete Local After Upload",
+                    subtitle: "⚠️ Remove local files after successful upload",
+                    subtitleColor: .orange,
+                    isOn: Binding(
                         get: { Defaults[.cloudKitDeleteLocalAfterUpload] },
                         set: { Defaults[.cloudKitDeleteLocalAfterUpload] = $0 }
-                    ))
-                    #if os(tvOS)
-                    .toggleStyle(.automatic)
-                    #else
-                    .toggleStyle(SwitchToggleStyle(tint: .orange))
-                    #endif
-                }
-                .retroCard()
+                    )
+                )
             }
         }
     }
@@ -1626,10 +1512,9 @@ public struct CloudSyncSettingsView: View {
     /// Displays detailed diagnostic information for troubleshooting cloud sync issues.
     /// Shows iCloud container info, entitlements, Info.plist configuration, and container info.
     private var diagnosticsView: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Diagnostics")
-                .font(.headline)
-                .foregroundColor(.retroPink)
+                .cloudSyncSectionTitle()
 
             VStack(alignment: .leading, spacing: 16) {
                 diagnosticSection(title: "iCloud Container", content: viewModel.iCloudDiagnostics)
@@ -1677,6 +1562,344 @@ public struct CloudSyncSettingsView: View {
         formatter.allowedUnits = [.useAll]
         formatter.countStyle = countStyle
         return formatter.string(fromByteCount: byteCount)
+    }
+}
+
+// MARK: - Styling Helpers
+
+/// Section title modifier: gradient text on tvOS, retroSectionHeader on iOS
+extension View {
+    func cloudSyncSectionTitle() -> some View {
+        #if os(tvOS)
+        self
+            .font(.system(size: 22, weight: .bold, design: .rounded))
+            .foregroundStyle(
+                LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
+            )
+        #else
+        self.retroSectionHeader()
+        #endif
+    }
+
+    /// Card modifier: translucent panel with gradient border on tvOS, retroCard on iOS
+    func cloudSyncCard() -> some View {
+        #if os(tvOS)
+        self
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.white.opacity(0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.2), Color.retroBlue.opacity(0.15)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .cornerRadius(12)
+        #else
+        self.retroCard()
+        #endif
+    }
+
+    /// Stepper button styling for +/- controls on tvOS
+    func cloudSyncStepperStyle() -> some View {
+        #if os(tvOS)
+        self
+            .buttonStyle(TVMediaPlainButtonStyle())
+            .tvOSDisableFocusEffect()
+        #else
+        self
+        #endif
+    }
+}
+
+#if os(tvOS)
+/// Focusable tab button with retrowave focus effects for tvOS
+private struct CloudSyncFocusableTabButton: View {
+    let title: String
+    let systemImage: String
+    let isSelected: Bool
+    let action: () -> Void
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 18))
+                Text(title)
+                    .font(.system(size: 13, weight: .medium))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+            .foregroundColor(isSelected || isFocused ? .white : .gray)
+        }
+        .focused($isFocused)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(
+                    isSelected
+                        ? LinearGradient(colors: [Color.retroPink.opacity(0.5), Color.retroPurple.opacity(0.4)], startPoint: .leading, endPoint: .trailing)
+                        : isFocused
+                            ? LinearGradient(colors: [Color.retroPink.opacity(0.15), Color.retroBlue.opacity(0.1)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            : LinearGradient(colors: [Color.clear, Color.clear], startPoint: .top, endPoint: .bottom)
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(
+                    isFocused
+                        ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : isSelected
+                            ? LinearGradient(colors: [Color.retroPink.opacity(0.3), Color.retroPurple.opacity(0.2)], startPoint: .leading, endPoint: .trailing)
+                            : LinearGradient(colors: [Color.clear, Color.clear], startPoint: .top, endPoint: .bottom),
+                    lineWidth: isFocused ? 2 : 1
+                )
+        )
+        .shadow(color: isFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 8, x: 0, y: 2)
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isFocused)
+    }
+}
+
+/// Focusable selection row for picker replacements on tvOS
+struct CloudSyncSelectionRow: View {
+    let title: String
+    let subtitle: String
+    let isSelected: Bool
+    let action: () -> Void
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.white)
+                    Text(subtitle)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(
+                            LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        isSelected
+                            ? Color.retroPink.opacity(0.12)
+                            : isFocused
+                                ? Color.white.opacity(0.06)
+                                : Color.white.opacity(0.03)
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        isFocused
+                            ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            : isSelected
+                                ? LinearGradient(colors: [Color.retroPink.opacity(0.3), Color.retroBlue.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                : LinearGradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.03)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                        lineWidth: isFocused ? 2 : 1
+                    )
+            )
+            .shadow(color: isFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 8, x: 0, y: 2)
+            .scaleEffect(isFocused ? 1.03 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: isFocused)
+        }
+        .focused($isFocused)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+    }
+}
+#endif
+
+/// Stepper row with -, value, + layout and platform-appropriate styling
+struct CloudSyncStepperRow: View {
+    let title: String
+    let value: String
+    let onDecrement: () -> Void
+    let onIncrement: () -> Void
+    var decrementDisabled: Bool = false
+    var incrementDisabled: Bool = false
+
+    #if os(tvOS)
+    @FocusState private var minusFocused: Bool
+    @FocusState private var plusFocused: Bool
+    #endif
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                #if os(tvOS)
+                .font(.system(size: 18, weight: .medium))
+                #else
+                .font(.subheadline)
+                #endif
+                .foregroundColor(.white)
+
+            HStack(spacing: 16) {
+                Button(action: onDecrement) {
+                    Image(systemName: "minus.circle.fill")
+                        #if os(tvOS)
+                        .font(.system(size: 32))
+                        .foregroundColor(decrementDisabled ? .gray.opacity(0.4) : (minusFocused ? .retroPink : .retroBlue))
+                        .scaleEffect(minusFocused ? 1.15 : 1.0)
+                        .animation(.easeInOut(duration: 0.15), value: minusFocused)
+                        #else
+                        .font(.system(size: 22))
+                        .foregroundColor(decrementDisabled ? .gray.opacity(0.4) : .retroBlue)
+                        #endif
+                }
+                #if os(tvOS)
+                .focused($minusFocused)
+                .buttonStyle(TVMediaPlainButtonStyle())
+                .tvOSDisableFocusEffect()
+                #else
+                .buttonStyle(PlainButtonStyle())
+                #endif
+                .disabled(decrementDisabled)
+
+                Text(value)
+                    #if os(tvOS)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    #else
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    #endif
+                    .foregroundColor(.retroBlue)
+                    .frame(minWidth: 40)
+
+                Button(action: onIncrement) {
+                    Image(systemName: "plus.circle.fill")
+                        #if os(tvOS)
+                        .font(.system(size: 32))
+                        .foregroundColor(incrementDisabled ? .gray.opacity(0.4) : (plusFocused ? .retroPink : .retroBlue))
+                        .scaleEffect(plusFocused ? 1.15 : 1.0)
+                        .animation(.easeInOut(duration: 0.15), value: plusFocused)
+                        #else
+                        .font(.system(size: 22))
+                        .foregroundColor(incrementDisabled ? .gray.opacity(0.4) : .retroBlue)
+                        #endif
+                }
+                #if os(tvOS)
+                .focused($plusFocused)
+                .buttonStyle(TVMediaPlainButtonStyle())
+                .tvOSDisableFocusEffect()
+                #else
+                .buttonStyle(PlainButtonStyle())
+                #endif
+                .disabled(incrementDisabled)
+
+                Spacer()
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.white.opacity(0.03))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.retroPink.opacity(0.2), Color.retroBlue.opacity(0.15)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .cornerRadius(12)
+    }
+}
+
+/// Toggle row with title, subtitle, and themed toggle with platform-appropriate styling
+struct CloudSyncToggleRow: View {
+    let title: String
+    let subtitle: String
+    var subtitleColor: Color = .gray
+    @Binding var isOn: Bool
+    #if os(tvOS)
+    @FocusState private var isFocused: Bool
+    #endif
+
+    var body: some View {
+        #if os(tvOS)
+        Button(action: { isOn.toggle() }) {
+            rowContent
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(isFocused ? Color.white.opacity(0.06) : Color.white.opacity(0.03))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(
+                            isFocused
+                                ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                : LinearGradient(colors: [Color.retroPink.opacity(0.2), Color.retroBlue.opacity(0.15)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            lineWidth: isFocused ? 2 : 1
+                        )
+                )
+                .shadow(color: isFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 8, x: 0, y: 2)
+                .scaleEffect(isFocused ? 1.02 : 1.0)
+                .animation(.easeInOut(duration: 0.15), value: isFocused)
+        }
+        .focused($isFocused)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+        #else
+        rowContent
+            .cloudSyncCard()
+        #endif
+    }
+
+    private var rowContent: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    #if os(tvOS)
+                    .font(.system(size: 20, weight: .medium))
+                    #endif
+                    .foregroundColor(.white)
+                Text(subtitle)
+                    #if os(tvOS)
+                    .font(.system(size: 14))
+                    #else
+                    .font(.caption)
+                    #endif
+                    .foregroundColor(subtitleColor)
+            }
+
+            Spacer()
+
+            ThemedToggle(isOn: $isOn) { EmptyView() }
+                #if os(tvOS)
+                .allowsHitTesting(false)
+                #endif
+        }
     }
 }
 

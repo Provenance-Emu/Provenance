@@ -148,6 +148,12 @@ struct TVMediaGameTileView: View {
         .task(id: game.id) {
             await loadArtworkIfNeeded()
         }
+        .onChange(of: game.trueArtworkURL) { _ in
+            artwork = nil
+            artworkSize = nil
+            ArtworkLoader.shared.cancelLoading(for: game.id)
+            Task { await loadArtworkIfNeeded(forceReload: true) }
+        }
         .onChange(of: isFocused) { focused in
             if focused {
                 Task { await loadArtworkIfNeeded(priority: .userInitiated) }
@@ -222,8 +228,8 @@ struct TVMediaGameTileView: View {
 
     // MARK: - Artwork Loading
 
-    private func loadArtworkIfNeeded(priority: TaskPriority = .utility) async {
-        guard artwork == nil else { return }
+    private func loadArtworkIfNeeded(priority: TaskPriority = .utility, forceReload: Bool = false) async {
+        guard forceReload || artwork == nil else { return }
         guard !game.isInvalidated else { return }
         let image = await ArtworkLoader.shared.loadArtwork(for: game, priority: priority, isVisible: true)
         if let image {

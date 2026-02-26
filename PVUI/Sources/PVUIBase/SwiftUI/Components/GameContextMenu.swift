@@ -131,6 +131,12 @@ public struct GameContextMenu: View {
                 Button {
                     pasteArtwork(forGame: game)
                 } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
+    #else
+                /// tvOS: skip the source alert and go directly to online artwork search
+                Button {
+                    DLOG("GameContextMenu: Choose Cover (tvOS) button tapped")
+                    contextMenuDelegate?.gameContextMenu(self, didRequestShowArtworkSearchFor: game)
+                } label: { Label("Search Artwork Online", systemImage: "photo.artframe") }
     #endif
                 if game.customArtworkURL != "" {
                     Button {

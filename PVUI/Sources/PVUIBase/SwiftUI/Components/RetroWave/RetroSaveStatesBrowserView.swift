@@ -60,6 +60,23 @@ public final class RetroSaveStatesStore: ObservableObject {
         return items
     }
 
+    /// Invalidates the cached recent saves for a system and re-fetches from Realm
+    @discardableResult
+    public func reloadRecent(forSystemID systemID: String, limit: Int = 8) async -> [RetroSaveStateItem] {
+        await MainActor.run { recentBySystem[systemID] = nil }
+        return await loadRecent(forSystemID: systemID, limit: limit)
+    }
+
+    /// Removes a single item from all cached lists by ID (immediate UI update)
+    @MainActor
+    public func removeFromCache(id: String, systemID: String) {
+        recentBySystem[systemID]?.removeAll { $0.id == id }
+        statesBySystem[systemID]?.removeAll { $0.id == id }
+        for key in statesByGame.keys {
+            statesByGame[key]?.removeAll { $0.id == id }
+        }
+    }
+
     /// Loads all save states for a system
     @discardableResult
     public func loadAll(forSystemID systemID: String) async -> [RetroSaveStateItem] {

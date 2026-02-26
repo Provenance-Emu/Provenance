@@ -6,6 +6,7 @@ import PVLibrary
 import RealmSwift
 import PVRealm
 import PVPrimitives
+import PVLogging
 
 #if canImport(PVWebServer)
 import PVWebServer
@@ -260,6 +261,20 @@ struct TVMediaMainView: View {
                         router.dismissModal()
                     }
                 }
+                .onChange(of: gameActions.artworkSearchGame) { newValue in
+                    if let game = newValue {
+                        router.activeModal = .artworkSearch(game: game)
+                    } else if case .artworkSearch = router.activeModal {
+                        router.dismissModal()
+                    }
+                }
+                .onChange(of: gameActions.imagePickerGame) { newValue in
+                    if let game = newValue {
+                        router.activeModal = .imagePicker(game: game)
+                    } else if case .imagePicker = router.activeModal {
+                        router.dismissModal()
+                    }
+                }
                 #if os(iOS)
                 .onReceive(gamepadManager.eventPublisher) { event in
                     guard gamepadManager.isControllerConnected else { return }
@@ -310,8 +325,43 @@ struct TVMediaMainView: View {
                 }
         }
 
-        private var layoutWithRenameAlert: some View {
+        private var layoutWithArtworkSourceAlert: some View {
             layoutWithModal
+                #if !os(tvOS)
+                .uiKitAlert(
+                    "Choose Artwork Source",
+                    message: "Select artwork from your photo library or search online sources",
+                    isPresented: $gameActions.showArtworkSourceAlert,
+                    buttons: {
+                        UIAlertAction(title: "Search Online", style: .default) { _ in
+                            Task { @MainActor in
+                                gameActions.showArtworkSourceAlert = false
+                                if let game = gameActions.gameForArtworkUpdate {
+                                    gameActions.artworkSearchGame = game
+                                }
+                            }
+                        }
+                        UIAlertAction(title: "Select from Photos", style: .default) { _ in
+                            Task { @MainActor in
+                                gameActions.showArtworkSourceAlert = false
+                                if let game = gameActions.gameForArtworkUpdate {
+                                    gameActions.imagePickerGame = game
+                                }
+                            }
+                        }
+                        UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
+                            Task { @MainActor in
+                                gameActions.showArtworkSourceAlert = false
+                                gameActions.gameForArtworkUpdate = nil
+                            }
+                        }
+                    }
+                )
+                #endif
+        }
+
+        private var layoutWithRenameAlert: some View {
+            layoutWithArtworkSourceAlert
                 .retroAlert(
                     "Rename Game",
                     message: "Enter a new name for \(gameActions.renameGame?.title ?? "")",
@@ -560,6 +610,74 @@ struct TVMediaMainView: View {
             } else {
                 EmptyView()
             }
+        case .artworkSearch(let game):
+            let actions = gameActions
+            NavigationStack {
+                ArtworkSearchView(
+                    initialSearch: game.title,
+                    initialSystem: game.system?.enumValue
+                ) { selection in
+                    Task { @MainActor in
+                        guard let targetGame = actions.gameForArtworkUpdate else { return }
+                        do {
+                            let (data, _) = try await URLSession.shared.data(from: selection.metadata.url)
+                            if let uiImage = UIImage(data: data) {
+                                self.saveArtwork(image: uiImage, forGame: targetGame)
+                            }
+                        } catch {
+                            DLOG("Failed to download artwork: \(error.localizedDescription)")
+                        }
+                        router.dismissModal()
+                        actions.artworkSearchGame = nil
+                        actions.gameForArtworkUpdate = nil
+                    }
+                }
+                .navigationTitle("Artwork Search")
+            }
+        case .imagePicker:
+            #if !os(tvOS)
+            let actions = gameActions
+            ImagePicker(sourceType: .photoLibrary) { image in
+                if let targetGame = actions.gameForArtworkUpdate {
+                    self.saveArtwork(image: image, forGame: targetGame)
+                }
+                router.dismissModal()
+                actions.imagePickerGame = nil
+                actions.gameForArtworkUpdate = nil
+            }
+            #else
+            EmptyView()
+            #endif
+        }
+    }
+
+    /// Persist a UIImage as custom artwork for the given game
+    private func saveArtwork(image: UIImage, forGame game: PVGame) {
+        guard !game.isInvalidated else {
+            DLOG("TVMediaMainView: Cannot save artwork - game is invalidated")
+            return
+        }
+
+        let md5: String = game.md5Hash ?? ""
+        guard !md5.isEmpty else {
+            DLOG("TVMediaMainView: Cannot save artwork - game has no MD5 hash")
+            return
+        }
+
+        let uniqueID = UUID().uuidString
+        let key = "artwork_\(md5)_\(uniqueID)"
+
+        do {
+            try PVMediaCache.writeImage(toDisk: image, withKey: key)
+            try RomDatabase.sharedInstance.writeTransaction {
+                guard let liveGame = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5) else {
+                    return
+                }
+                liveGame.customArtworkURL = key
+            }
+            DLOG("Artwork saved for \(game.title)")
+        } catch {
+            DLOG("Failed to set custom artwork: \(error.localizedDescription)")
         }
     }
 }
@@ -799,6 +917,11 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
     @Published var systemPickerGame: PVGame?
     @Published var renameGame: PVGame?
     @Published var renameText: String? = nil
+    @Published var artworkSearchGame: PVGame?
+    @Published var imagePickerGame: PVGame?
+    @Published var showArtworkSourceAlert = false
+    /// Tracks the game for artwork operations (set before alert or sheet)
+    @Published var gameForArtworkUpdate: PVGame?
 
     private let retroModel = RetroGameLibraryViewModel()
 
@@ -846,6 +969,35 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
         Task { @MainActor in
             guard let appState else { return }
             retroModel.showGameInfo(gameId: gameId, appState: appState)
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
+        Task { @MainActor in
+            let frozen = game.isFrozen ? game : game.freeze()
+            gameForArtworkUpdate = frozen
+            artworkSearchGame = frozen
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
+        Task { @MainActor in
+            let frozen = game.isFrozen ? game : game.freeze()
+            gameForArtworkUpdate = frozen
+            imagePickerGame = frozen
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
+        Task { @MainActor in
+            let frozen = game.isFrozen ? game : game.freeze()
+            gameForArtworkUpdate = frozen
+            #if os(tvOS)
+            /// tvOS has no photo picker -- go directly to online search
+            artworkSearchGame = frozen
+            #else
+            showArtworkSourceAlert = true
+            #endif
         }
     }
 }
@@ -2032,11 +2184,13 @@ private struct TVMediaSaveStateTileButton: View {
 
     private func deleteSaveState() async {
         let deletedID = item.id
+        let systemID = item.systemId
         await MainActor.run {
             let realm = RomDatabase.sharedInstance.realm
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: item.id) else { return }
             do {
                 try RomDatabase.sharedInstance.delete(saveState: saveState)
+                store.removeFromCache(id: deletedID, systemID: systemID)
                 onDeleteCompleted(deletedID)
             } catch {
                 SceneCoordinator.shared.alertState.show(
@@ -4203,6 +4357,7 @@ struct TVMediaSaveStatesShelfRow: View {
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: item.id) else { return }
             do {
                 try RomDatabase.sharedInstance.delete(saveState: saveState)
+                store.removeFromCache(id: item.id, systemID: item.systemId)
             } catch {
                 SceneCoordinator.shared.alertState.show(
                     title: "Delete Failed",
@@ -4211,7 +4366,7 @@ struct TVMediaSaveStatesShelfRow: View {
                 )
             }
         }
-        _ = await store.loadRecent(forSystemID: item.systemId, limit: 6)
+        _ = await store.reloadRecent(forSystemID: item.systemId, limit: 6)
     }
 }
 

@@ -158,27 +158,14 @@ public struct ArtworkSearchView: View {
                 .disabled(searchText.isEmpty)
             }
 
-            // System selector
-            HStack {
-                Text("System:")
-                Picker("System", selection: $selectedSystem) {
-                    Text("Any").tag(nil as SystemIdentifier?)
-                    ForEach(SystemIdentifier.allCases.filter{!$0.libretroDatabaseName.isEmpty}.sorted {
-                        $0.libretroDatabaseName < $1.libretroDatabaseName
-                    }, id: \.self) { system in
-                        Text(system.libretroDatabaseName)
-                            .tag(Optional(system))
+            systemSelector
+                .onChange(of: selectedSystem) { _ in
+                    if !searchText.isEmpty {
+                        Task {
+                            await performSearch()
+                        }
                     }
                 }
-                Spacer()
-            }
-            .onChange(of: selectedSystem) { _ in
-                if !searchText.isEmpty {
-                    Task {
-                        await performSearch()
-                    }
-                }
-            }
 
             // Artwork type selector
             ArtworkTypeSelector(selectedTypes: $selectedTypes)
@@ -193,13 +180,89 @@ public struct ArtworkSearchView: View {
         .padding()
     }
 
+    /// All systems with a non-empty libretro database name, sorted alphabetically
+    private var sortedSystems: [SystemIdentifier] {
+        SystemIdentifier.allCases
+            .filter { !$0.libretroDatabaseName.isEmpty }
+            .sorted { $0.libretroDatabaseName < $1.libretroDatabaseName }
+    }
+
+    /// Platform-adaptive system selector
+    @ViewBuilder
+    private var systemSelector: some View {
+        #if os(tvOS)
+        /// Horizontal pill-button row for tvOS -- focusable with Siri remote
+        VStack(alignment: .leading, spacing: 8) {
+            Text("System")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    systemPillButton(label: "Any", system: nil)
+                    ForEach(sortedSystems, id: \.self) { system in
+                        systemPillButton(label: system.libretroDatabaseName, system: system)
+                    }
+                }
+                .padding(.horizontal, 4)
+            }
+        }
+        #else
+        HStack {
+            Text("System:")
+            Picker("System", selection: $selectedSystem) {
+                Text("Any").tag(nil as SystemIdentifier?)
+                ForEach(sortedSystems, id: \.self) { system in
+                    Text(system.libretroDatabaseName)
+                        .tag(Optional(system))
+                }
+            }
+            Spacer()
+        }
+        #endif
+    }
+
+    /// Single pill-shaped button for a system filter option
+    private func systemPillButton(label: String, system: SystemIdentifier?) -> some View {
+        let isSelected = selectedSystem == system
+        return Button {
+            selectedSystem = system
+        } label: {
+            Text(label)
+                .font(.callout)
+                .lineLimit(1)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(isSelected ? Color.accentColor : Color.secondary.opacity(0.2))
+                .foregroundColor(isSelected ? .white : .primary)
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// Adaptive grid column sizing per platform
+    private var gridColumns: [GridItem] {
+        #if os(tvOS)
+        [GridItem(.adaptive(minimum: 300, maximum: 400), spacing: 40)]
+        #else
+        [GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 20)]
+        #endif
+    }
+
+    /// Thumbnail height scaled for platform
+    private var thumbnailHeight: CGFloat {
+        #if os(tvOS)
+        300
+        #else
+        150
+        #endif
+    }
+
     private var artworkGrid: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 20) {
                     ForEach(groupedResults, id: \.0) { source, artworks in
                         VStack(alignment: .leading, spacing: 8) {
-                            // Collapsible header
                             Button {
                                 withAnimation {
                                     if collapsedGroups.contains(source) {
@@ -220,11 +283,8 @@ public struct ArtworkSearchView: View {
                             .buttonStyle(.plain)
                             .padding(.horizontal)
 
-                            // Collapsible content - show if NOT collapsed
                             if !collapsedGroups.contains(source) {
-                                LazyVGrid(columns: [
-                                    GridItem(.adaptive(minimum: 150, maximum: 200))
-                                ], spacing: 20) {
+                                LazyVGrid(columns: gridColumns, spacing: 20) {
                                     ForEach(artworks, id: \.url) { artwork in
                                         artworkGridItem(artwork)
                                     }
@@ -244,6 +304,41 @@ public struct ArtworkSearchView: View {
                             proxy.scrollTo(artwork.url, anchor: .center)
                         }
                     }
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showDetail) {
+            if let lastViewed = lastViewedArtwork {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation {
+                        self.lastViewedArtwork = nil
+                    }
+                }
+            }
+        } content: {
+            if let artwork = selectedArtwork {
+                ArtworkDetailView(
+                    artworks: displayResults,
+                    initialArtwork: artwork,
+                    onSelect: { selection in
+                        showDetail = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            dismiss()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                onSelect(selection)
+                            }
+                        }
+                    },
+                    onPageChange: { artwork in
+                        lastViewedArtwork = artwork
+                    }
+                )
+            }
+        }
+        .onChange(of: showDetail) { isShown in
+            if !isShown {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    selectedArtwork = nil
                 }
             }
         }
@@ -324,110 +419,78 @@ public struct ArtworkSearchView: View {
 
     @ViewBuilder
     private func artworkGridItem(_ artwork: ArtworkMetadata) -> some View {
-        VStack {
-            Group {
-                if let loadingState = loadingStates[artwork.url] {
-                    switch loadingState {
-                    case .loading:
-                        ProgressView()
-                    case .loaded:
-                        if let image = previewImages[artwork.url] {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        }
-                    case .error(let error):
-                        VStack {
-                            Image(systemName: "exclamationmark.triangle")
-                                .foregroundColor(.red)
-                            Text(error.localizedDescription)
-                                .font(.caption)
-                                .foregroundColor(.red)
-                        }
-                    }
-                } else {
-                    Color.clear
-                        .onAppear {
-                            Task {
-                                await loadArtwork(from: artwork.url)
+        Button {
+            selectedArtwork = artwork
+            showDetail = true
+        } label: {
+            VStack {
+                Group {
+                    if let loadingState = loadingStates[artwork.url] {
+                        switch loadingState {
+                        case .loading:
+                            ProgressView()
+                        case .loaded:
+                            if let image = previewImages[artwork.url] {
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                            }
+                        case .error(let error):
+                            VStack {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .foregroundColor(.red)
+                                Text(error.localizedDescription)
+                                    .font(.caption)
+                                    .foregroundColor(.red)
                             }
                         }
-                }
-            }
-            .frame(height: 150)
-            .onTapGesture {
-                selectedArtwork = artwork
-                showDetail = true
-            }
-            .fullScreenCover(isPresented: $showDetail) {
-                /// When the detail view is dismissed, scroll to the last viewed artwork
-                if let lastViewed = lastViewedArtwork {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        withAnimation {
-                            self.lastViewedArtwork = nil
-                        }
-                    }
-                }
-            } content: {
-                if let artwork = selectedArtwork {
-                    ArtworkDetailView(
-                        artworks: displayResults,
-                        initialArtwork: artwork,
-                        onSelect: { selection in
-                            showDetail = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                dismiss()
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    onSelect(selection)
+                    } else {
+                        Color.clear
+                            .onAppear {
+                                Task {
+                                    await loadArtwork(from: artwork.url)
                                 }
                             }
-                        },
-                        onPageChange: { artwork in
-                            /// Store the last viewed artwork but don't scroll yet
-                            lastViewedArtwork = artwork
+                    }
+                }
+                .frame(height: thumbnailHeight)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    if let gameName = artwork.description {
+                        Text(gameName)
+                            .font(.caption)
+                            .lineLimit(1)
+                    }
+
+                    HStack {
+                        Text(artwork.type.displayName)
+                            .font(.caption)
+
+                        if let system = artwork.systemID?.libretroDatabaseName {
+                            Text("•")
+                                .font(.caption)
+                            Text(system)
+                                .font(.caption)
                         }
-                    )
-                }
-            }
-            .onChange(of: showDetail) { isShown in
-                if !isShown {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        selectedArtwork = nil
+                    }
+
+                    if let resolution = artwork.resolution {
+                        Text(resolution)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-
-            // Metadata section
-            VStack(alignment: .leading, spacing: 2) {
-                if let gameName = artwork.description {
-                    Text(gameName)
-                        .font(.caption)
-                        .lineLimit(1)
-                }
-
-                HStack {
-                    Text(artwork.type.displayName)
-                        .font(.caption)
-
-                    if let system = artwork.systemID?.libretroDatabaseName {
-                        Text("•")
-                            .font(.caption)
-                        Text(system)
-                            .font(.caption)
-                    }
-                }
-
-                if let resolution = artwork.resolution {
-                    Text(resolution)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(Color.secondary.opacity(0.1))
+            .cornerRadius(10)
         }
-        .padding()
-        .background(Color.secondary.opacity(0.1))
-        .cornerRadius(10)
+        #if os(tvOS)
+        .buttonStyle(.card)
+        #else
+        .buttonStyle(.plain)
+        #endif
     }
 
     private var loadingView: some View {
@@ -464,7 +527,7 @@ public struct ArtworkSearchView: View {
     }
 }
 
-// Grid item view
+/// Standalone grid item view for artwork results
 struct ArtworkGridItem: View {
     let artwork: ArtworkMetadata
     let allArtworks: [ArtworkMetadata]
@@ -477,59 +540,72 @@ struct ArtworkGridItem: View {
     @State private var showDetail = false
     @State private var shouldScrollOnDismiss = false
 
+    /// Thumbnail height scaled for platform
+    private var thumbnailHeight: CGFloat {
+        #if os(tvOS)
+        300
+        #else
+        150
+        #endif
+    }
+
     var body: some View {
-        VStack(spacing: 4) {
-            // Image section
-            Group {
-                if let image = image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } else if isLoading {
-                    ProgressView()
-                } else {
-                    Image(systemName: "photo")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.gray)
-                }
-            }
-            .frame(height: 150)
-            .onTapGesture {
-                showDetail = true
-            }
-
-            // Metadata section
-            VStack(alignment: .leading, spacing: 2) {
-                if let gameName = artwork.description {
-                    Text(gameName)
-                        .font(.caption)
-                        .lineLimit(1)
-                }
-
-                HStack {
-                    Text(artwork.type.displayName)
-                        .font(.caption)
-
-                    if showSystem, let system = artwork.systemID?.libretroDatabaseName {
-                        Text("•")
-                            .font(.caption)
-                        Text(system)
-                            .font(.caption)
+        Button {
+            showDetail = true
+        } label: {
+            VStack(spacing: 4) {
+                Group {
+                    if let image = image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    } else if isLoading {
+                        ProgressView()
+                    } else {
+                        Image(systemName: "photo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.gray)
                     }
                 }
+                .frame(height: thumbnailHeight)
 
-                if let resolution = artwork.resolution {
-                    Text(resolution)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    if let gameName = artwork.description {
+                        Text(gameName)
+                            .font(.caption)
+                            .lineLimit(1)
+                    }
+
+                    HStack {
+                        Text(artwork.type.displayName)
+                            .font(.caption)
+
+                        if showSystem, let system = artwork.systemID?.libretroDatabaseName {
+                            Text("•")
+                                .font(.caption)
+                            Text(system)
+                                .font(.caption)
+                        }
+                    }
+
+                    if let resolution = artwork.resolution {
+                        Text(resolution)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(Color.secondary.opacity(0.1))
+            .cornerRadius(10)
         }
-        .padding()
-        .background(Color.secondary.opacity(0.1))
-        .cornerRadius(10)
+        #if os(tvOS)
+        .buttonStyle(.card)
+        #else
+        .buttonStyle(.plain)
+        #endif
         .fullScreenCover(isPresented: $showDetail) {
             if shouldScrollOnDismiss {
                 onArtworkViewed(artwork)
@@ -554,8 +630,6 @@ struct ArtworkGridItem: View {
         isLoading = true
         defer { isLoading = false }
 
-        // TODO: Implement actual image loading
-        // This is just a placeholder
         do {
             let (data, _) = try await URLSession.shared.data(from: artwork.url)
             if let uiImage = UIImage(data: data) {

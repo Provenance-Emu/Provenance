@@ -28,12 +28,10 @@ struct ArtworkDetailView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Background
                 Color.black
                     .edgesIgnoringSafeArea(.all)
                     .opacity(1 - (abs(dragOffset.height) / 500.0))
 
-                // Main Content
                 TabView(selection: $currentPage) {
                     ForEach(Array(artworks.enumerated()), id: \.offset) { index, artwork in
                         ZoomableImageView(
@@ -56,16 +54,13 @@ struct ArtworkDetailView: View {
                 }
                 .tabViewStyle(.page)
 
-                // Overlay Controls
                 overlayControls
                     .opacity(1 - (abs(dragOffset.height) / 300.0))
             }
-            // Only allow vertical drag gesture for dismissal
 #if !os(tvOS)
             .gesture(
                 DragGesture()
                     .onChanged { value in
-                        // Only allow vertical dragging when not zoomed
                         if !isZoomed && abs(value.translation.width) < abs(value.translation.height) {
                             dragOffset = value.translation
                             isDragging = true
@@ -82,7 +77,7 @@ struct ArtworkDetailView: View {
                         }
                     }
             )
-            #endif
+#endif
             .offset(y: dragOffset.height)
             .animation(.interactiveSpring(), value: isDragging)
         }
@@ -104,22 +99,47 @@ struct ArtworkDetailView: View {
                     }
                 }
         )
-        #endif
+#endif
+#if os(tvOS)
+        /// Siri remote left/right for page navigation
+        .onMoveCommand { direction in
+            switch direction {
+            case .left:
+                withAnimation {
+                    currentPage = max(0, currentPage - 1)
+                }
+            case .right:
+                withAnimation {
+                    currentPage = min(artworks.count - 1, currentPage + 1)
+                }
+            default:
+                break
+            }
+        }
+        /// Menu button dismisses the detail view
+        .onExitCommand {
+            dismiss()
+        }
+        /// Play/pause selects the current artwork
+        .onPlayPauseCommand {
+            selectCurrentArtwork()
+        }
+#endif
         .onAppear {
             #if os(macOS)
             NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
                 switch event.keyCode {
-                case 123: // Left arrow
+                case 123:
                     withAnimation {
                         currentPage = max(0, currentPage - 1)
                     }
                     return nil
-                case 124: // Right arrow
+                case 124:
                     withAnimation {
                         currentPage = min(artworks.count - 1, currentPage + 1)
                     }
                     return nil
-                case 53: // Escape
+                case 53:
                     dismiss()
                     return nil
                 default:
@@ -130,22 +150,51 @@ struct ArtworkDetailView: View {
         }
     }
 
+    /// Select the currently displayed artwork
+    private func selectCurrentArtwork() {
+        guard let currentArtwork = artworks[safe: currentPage],
+              let image = previewImages[currentArtwork.url] else { return }
+        onSelect(ArtworkSelectionData(
+            metadata: currentArtwork,
+            previewImage: image
+        ))
+        dismiss()
+    }
+
     private var overlayControls: some View {
         VStack {
-            // Top Bar
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")
+                        #if os(tvOS)
+                        .font(.title)
+                        .padding(12)
+                        #else
                         .font(.title2)
+                        #endif
                         .foregroundColor(.white)
                 }
                 Spacer()
 
                 Text("\(currentPage + 1) of \(artworks.count)")
                     .foregroundColor(.white)
+                    #if os(tvOS)
+                    .font(.body)
+                    #else
                     .font(.caption)
+                    #endif
 
                 Spacer()
+
+                #if os(tvOS)
+                /// Navigation hint for tvOS users
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left.chevron.right")
+                    Text("Navigate")
+                }
+                .font(.caption)
+                .foregroundColor(.white.opacity(0.7))
+                #endif
             }
             .padding()
             .background(LinearGradient(colors: [.black.opacity(0.7), .clear],
@@ -154,13 +203,16 @@ struct ArtworkDetailView: View {
 
             Spacer()
 
-            // Bottom Info
             if let currentArtwork = artworks[safe: currentPage] {
                 VStack(spacing: 10) {
                     VStack(alignment: .leading, spacing: 4) {
                         if let description = currentArtwork.description {
                             Text(description)
+                                #if os(tvOS)
+                                .font(.title3)
+                                #else
                                 .font(.headline)
+                                #endif
                         }
                         Text("\(currentArtwork.type.displayName) • \(currentArtwork.source)")
                             .font(.subheadline)
@@ -172,7 +224,6 @@ struct ArtworkDetailView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal)
 
-                    // Select button
                     if let image = previewImages[currentArtwork.url] {
                         Button {
                             onSelect(ArtworkSelectionData(
@@ -190,9 +241,16 @@ struct ArtworkDetailView: View {
                                 .cornerRadius(10)
                         }
                         .padding(.horizontal)
+                        #if os(tvOS)
+                        .buttonStyle(.card)
+                        #endif
                     }
                 }
+                #if os(tvOS)
+                .padding(.bottom, 60)
+                #else
                 .padding(.bottom, 40)
+                #endif
                 .padding(.top)
                 .background {
                     Rectangle()
@@ -211,7 +269,6 @@ struct ArtworkDetailView: View {
     }
 
     private func loadInitialImages() async {
-        // Load current image and adjacent images
         let indicesToLoad = [
             max(0, currentPage - 1),
             currentPage,
@@ -313,13 +370,9 @@ struct ZoomableImageView: View {
                             }
                             .onEnded { _ in
                                 lastScale = 1.0
-                                #if !os(tvOS)
                                 HapticManager.impact(style: .light)
-                                #endif
                             }
                     )
-#endif
-#if !os(tvOS)
                     .simultaneousGesture(
                         DragGesture()
                             .onChanged { value in
@@ -331,12 +384,9 @@ struct ZoomableImageView: View {
                             }
                             .onEnded { _ in
                                 lastOffset = offset
-                                #if !os(tvOS)
                                 HapticManager.impact(style: .light)
-                                #endif
                             }
                     )
-#endif
                     .highPriorityGesture(
                         TapGesture(count: 2).onEnded {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -348,13 +398,11 @@ struct ZoomableImageView: View {
                                     scale = 2.0
                                 }
                             }
-#if !os(tvOS)
                             HapticManager.impact(style: .medium)
-                            #endif
                         }
                     )
+#endif
 
-                // Zoom indicator and reset button
                 if isImageZoomed {
                     VStack {
                         Text("\(Int(scale * 100))%")
@@ -393,7 +441,6 @@ struct ZoomableImageView: View {
     }
 }
 
-// Helper extension for safe array access
 extension Collection {
     subscript(safe index: Index) -> Self.Element? {
         indices.contains(index) ? self[index] : nil

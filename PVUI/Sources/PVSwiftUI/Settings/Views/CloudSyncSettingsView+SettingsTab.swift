@@ -17,23 +17,24 @@ extension CloudSyncSettingsView {
     /// The settings tab contains sync options, on-demand downloads, and other settings
     var settingsTab: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
-                // Sync options
+            #if os(tvOS)
+            let sectionSpacing: CGFloat = 32
+            #else
+            let sectionSpacing: CGFloat = 16
+            #endif
+            LazyVStack(alignment: .leading, spacing: sectionSpacing) {
                 syncOptionsView
                     .padding(.horizontal)
                     .transitionWithReducedMotion(.opacity)
 
-                // On-demand downloads
                 onDemandDownloadsView
                     .padding(.horizontal)
                     .transitionWithReducedMotion(.opacity)
 
-                // Reset sync
                 resetSyncView
                     .padding(.horizontal)
                     .transitionWithReducedMotion(.opacity)
-                
-                // Diagnostics
+
                 cloudKitDiagnosticsView
                     .padding(.horizontal)
                     .transitionWithReducedMotion(.opacity)
@@ -49,117 +50,107 @@ extension CloudSyncSettingsView {
 
     /// Sync options view with toggles for enabling/disabling sync features
     var syncOptionsView: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Sync Options")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
             VStack(spacing: 12) {
+                #if os(tvOS)
+                CloudSyncToggleRow(
+                    title: "Enable iCloud Sync",
+                    subtitle: "Sync data between devices via iCloud",
+                    isOn: $iCloudSyncEnabled
+                )
+                #else
                 Toggle("Enable iCloud Sync", isOn: $iCloudSyncEnabled)
                     .toggleStyle(RetroTheme.RetroToggleStyle())
-                
-                // Sync mode picker - only show when sync is enabled
+                #endif
+
                 if iCloudSyncEnabled {
                     syncModePickerView
                 }
-
-                // Toggle("Auto-sync on App Launch", isOn: $autoSyncOnLaunch)
-                //     .toggleStyle(RetroTheme.RetroToggleStyle())
-
-                // Toggle("Sync Screenshots", isOn: $syncScreenshots)
-                //     .toggleStyle(RetroTheme.RetroToggleStyle())
-
-                // Toggle("Sync Save States", isOn: $syncSaveStates)
-                //     .toggleStyle(RetroTheme.RetroToggleStyle())
             }
+            #if !os(tvOS)
             .padding()
             .background(Color.retroBlack.opacity(0.3))
             .cornerRadius(10)
+            #endif
         }
     }
 
     /// On-demand downloads view with buttons for downloading specific content
     var onDemandDownloadsView: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("On-Demand Downloads")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
             VStack(spacing: 12) {
-                Button(action: {
+                cloudSyncActionButton(
+                    title: "Download ROMs",
+                    icon: "arrow.down.circle",
+                    colors: [.retroBlue, .retroPurple]
+                ) {
                     viewModel.downloadRoms()
                     #if !os(tvOS)
                     HapticFeedbackService.shared.playSuccess()
                     #endif
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.down.circle")
-                        Text("Download ROMs")
-                        Spacer()
-                    }
-                    .padding()
                 }
-                .retroButton(colors: [.retroBlue, .retroPurple])
 
-                Button(action: {
+                cloudSyncActionButton(
+                    title: "Download Save States",
+                    icon: "arrow.down.circle",
+                    colors: [.retroPurple, .retroPink]
+                ) {
                     viewModel.downloadSaveStates()
                     #if !os(tvOS)
                     HapticFeedbackService.shared.playSuccess()
                     #endif
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.down.circle")
-                        Text("Download Save States")
-                        Spacer()
-                    }
-                    .padding()
                 }
-                .retroButton(colors: [.retroPurple, .retroPink])
 
-                Button(action: {
+                cloudSyncActionButton(
+                    title: "Download BIOS Files",
+                    icon: "arrow.down.circle",
+                    colors: [.retroPink, .retroBlue]
+                ) {
                     viewModel.downloadBios()
                     #if !os(tvOS)
                     HapticFeedbackService.shared.playSuccess()
                     #endif
-                }) {
-                    HStack {
-                        Image(systemName: "arrow.down.circle")
-                        Text("Download BIOS Files")
-                        Spacer()
-                    }
-                    .padding()
                 }
-                .retroButton(colors: [.retroPink, .retroBlue])
             }
+            #if !os(tvOS)
             .padding()
             .background(Color.retroBlack.opacity(0.3))
             .cornerRadius(10)
+            #endif
         }
     }
 
     /// Reset sync view with button for resetting cloud sync
     var resetSyncView: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Reset Sync")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
             VStack(spacing: 12) {
                 Text("If you're experiencing sync issues, you can reset the cloud sync data. This will not delete your local files, but will reset the sync state.")
+                    #if os(tvOS)
+                    .font(.system(size: 16))
+                    #else
                     .font(.caption)
+                    #endif
                     .foregroundColor(.gray)
 
-                Button(action: {
+                cloudSyncActionButton(
+                    title: "Reset Cloud Sync",
+                    icon: "exclamationmark.arrow.triangle.2.circlepath",
+                    colors: [.red.opacity(0.7), .orange.opacity(0.7)]
+                ) {
                     showingResetConfirmation = true
                     #if !os(tvOS)
                     HapticFeedbackService.shared.playWarning()
                     #endif
-                }) {
-                    HStack {
-                        Image(systemName: "exclamationmark.arrow.triangle.2.circlepath")
-                        Text("Reset Cloud Sync")
-                        Spacer()
-                    }
-                    .padding()
                 }
-                .retroButton(colors: [.red.opacity(0.7), .orange.opacity(0.7)])
                 .alert(isPresented: $showingResetConfirmation) {
                     Alert(
                         title: Text("Reset Cloud Sync"),
@@ -174,9 +165,11 @@ extension CloudSyncSettingsView {
                     )
                 }
             }
+            #if !os(tvOS)
             .padding()
             .background(Color.retroBlack.opacity(0.3))
             .cornerRadius(10)
+            #endif
         }
     }
     
@@ -184,41 +177,53 @@ extension CloudSyncSettingsView {
     var syncModePickerView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Sync Mode")
+                #if os(tvOS)
+                .font(.system(size: 18, weight: .medium))
+                #else
                 .font(.subheadline)
+                #endif
                 .foregroundColor(.white)
-            
-            VStack(spacing: 8) {
+
+            VStack(spacing: 4) {
                 ForEach(iCloudSyncMode.allCases, id: \.self) { mode in
+                    #if os(tvOS)
+                    CloudSyncSelectionRow(
+                        title: mode.description,
+                        subtitle: mode.subtitle,
+                        isSelected: currentiCloudSyncMode == mode
+                    ) {
+                        withAnimation { currentiCloudSyncMode = mode }
+                    }
+                    #else
                     syncModeOptionView(mode: mode)
+                    #endif
                 }
             }
         }
         .padding(.top, 8)
     }
-    
-    /// Individual sync mode option view
+
+    #if !os(tvOS)
+    /// Individual sync mode option view (iOS only)
     private func syncModeOptionView(mode: iCloudSyncMode) -> some View {
         Button(action: {
             currentiCloudSyncMode = mode
-            #if !os(tvOS)
             HapticFeedbackService.shared.playSelection()
-            #endif
         }) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(mode.description)
                         .font(.subheadline)
                         .foregroundColor(.white)
-                    
+
                     Text(mode.subtitle)
                         .font(.caption)
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.leading)
                 }
-                
+
                 Spacer()
-                
-                // Selection indicator
+
                 Image(systemName: currentiCloudSyncMode == mode ? "checkmark.circle.fill" : "circle")
                     .foregroundColor(currentiCloudSyncMode == mode ? .retroPink : .gray)
                     .font(.title2)
@@ -235,59 +240,94 @@ extension CloudSyncSettingsView {
         }
         .buttonStyle(PlainButtonStyle())
     }
+    #endif
     
     /// CloudKit diagnostics view with button for opening CloudKit diagnostic tools
     var cloudKitDiagnosticsView: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Diagnostics")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
             VStack(spacing: 12) {
                 Text("Advanced diagnostic tools for troubleshooting CloudKit sync issues.")
+                    #if os(tvOS)
+                    .font(.system(size: 16))
+                    #else
                     .font(.caption)
+                    #endif
                     .foregroundColor(.gray)
 
-                Button(action: {
+                cloudSyncActionButton(
+                    title: "CloudKit Diagnostics",
+                    icon: "stethoscope",
+                    colors: [.retroBlue.opacity(0.7), .retroPurple.opacity(0.7)],
+                    trailing: AnyView(
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    )
+                ) {
                     showDiagnostics = true
                     #if !os(tvOS)
                     HapticFeedbackService.shared.playSelection()
                     #endif
-                }) {
-                    HStack {
-                        Image(systemName: "stethoscope")
-                        Text("CloudKit Diagnostics")
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    .padding()
                 }
-                .retroButton(colors: [.retroBlue.opacity(0.7), .retroPurple.opacity(0.7)])
-                
-                Button(action: {
+
+                cloudSyncActionButton(
+                    title: "Force Initial Sync",
+                    icon: "icloud.and.arrow.up",
+                    colors: [.retroGreen.opacity(0.7), .retroBlue.opacity(0.7)],
+                    trailing: viewModel.isPerformingInitialSync ? AnyView(ProgressView().scaleEffect(0.8)) : nil
+                ) {
                     viewModel.forceInitialSync()
                     #if !os(tvOS)
                     HapticFeedbackService.shared.playSelection()
                     #endif
-                }) {
-                    HStack {
-                        Image(systemName: "icloud.and.arrow.up")
-                        Text("Force Initial Sync")
-                        Spacer()
-                        if viewModel.isPerformingInitialSync {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                        }
-                    }
-                    .padding()
                 }
-                .retroButton(colors: [.retroGreen.opacity(0.7), .retroBlue.opacity(0.7)])
                 .disabled(viewModel.isPerformingInitialSync)
             }
+            #if !os(tvOS)
             .padding()
             .background(Color.retroBlack.opacity(0.3))
             .cornerRadius(10)
+            #endif
         }
+    }
+
+    /// Reusable action button with retrowave gradient styling and tvOS focus support
+    func cloudSyncActionButton(
+        title: String,
+        icon: String,
+        colors: [Color],
+        trailing: AnyView? = nil,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack {
+                Image(systemName: icon)
+                Text(title)
+                    #if os(tvOS)
+                    .font(.system(size: 18, weight: .medium))
+                    #endif
+                Spacer()
+                if let trailing = trailing {
+                    trailing
+                }
+            }
+            .padding()
+            .background(LinearGradient(
+                gradient: Gradient(colors: colors),
+                startPoint: .leading,
+                endPoint: .trailing
+            ))
+            .cornerRadius(12)
+            .foregroundColor(.white)
+        }
+        #if os(tvOS)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+        #else
+        .buttonStyle(PlainButtonStyle())
+        #endif
     }
 }
