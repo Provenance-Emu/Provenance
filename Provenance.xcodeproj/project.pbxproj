@@ -15916,7 +15916,7 @@
 			repositoryURL = "https://github.com/FlineDev/FreemiumKit.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.11.0;
+				minimumVersion = 1.19.0;
 			};
 		};
 		B382362A2CC4623100DCE080 /* XCRemoteSwiftPackageReference "SiriusRating-iOS" */ = {

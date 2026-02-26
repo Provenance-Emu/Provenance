@@ -1,5 +1,5 @@
 {
-  "originHash" : "fcf8893b03b2d7c565fccc657dcf99f81c89b286322aed833f04b6756594d90e",
+  "originHash" : "331f50f5de03de6e4fef277f01444ad609a3d0328bc7a7b0493cb9ef309d6ecc",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/FlineDev/FreemiumKit.git",
       "state" : {
-        "revision" : "15e874e9ef7402e4ace0ebb2f66926bea2662ad3",
-        "version" : "1.16.1"
+        "revision" : "540652a0a0ba8b1a998e6022d944e42ee545d867",
+        "version" : "1.19.0"
       }
     },
     {
