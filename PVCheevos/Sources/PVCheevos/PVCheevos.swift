@@ -34,6 +34,16 @@ public struct PVCheevos {
         return RetroArchConfigManager.shared
     }
 
+    /// Create credentials with web API key
+    public static func credentials(username: String, webAPIKey: String) -> RetroCredentials {
+        return RetroCredentials.webAPIKey(username: username, webAPIKey: webAPIKey)
+    }
+
+    /// Create credentials with username and password
+    public static func credentialsWithPassword(username: String, password: String) -> RetroCredentials {
+        return RetroCredentials.usernamePassword(username: username, password: password)
+    }
+
     /// Create a new RetroAchievements API client with username and API key (legacy method)
     @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
     public static func client(username: String, webAPIKey: String, urlSession: URLSessionProtocol = URLSession.shared) -> RetroAchievementsClient {

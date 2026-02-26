@@ -2,6 +2,20 @@ import Testing
 import Foundation
 @testable import PVCheevos
 
+/// Thread-safe response queue for multi-request mock sequences
+private actor ResponseQueue {
+    private var queue: [(data: Data, statusCode: Int)] = []
+
+    func enqueue(data: Data, statusCode: Int) {
+        queue.append((data: data, statusCode: statusCode))
+    }
+
+    func dequeue() -> (data: Data, statusCode: Int)? {
+        guard !queue.isEmpty else { return nil }
+        return queue.removeFirst()
+    }
+}
+
 /// Mock URLSession for testing network requests
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 class MockURLSession: URLSessionProtocol, @unchecked Sendable {
@@ -9,9 +23,21 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     var mockResponse: HTTPURLResponse?
     var mockError: Error?
 
+    private let responseQueue = ResponseQueue()
+
     func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         if let error = mockError {
             throw error
+        }
+
+        if let next = await responseQueue.dequeue() {
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: next.statusCode,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (next.data, response)
         }
 
         let data = mockData ?? Data()
@@ -38,6 +64,11 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     func setMockError(_ error: Error) {
         self.mockError = error
     }
+
+    /// Enqueue ordered responses for multi-request flows
+    func enqueueResponse(data: Data, statusCode: Int = 200) async {
+        await responseQueue.enqueue(data: data, statusCode: statusCode)
+    }
 }
 
 // MARK: - Credentials Tests
@@ -48,7 +79,7 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     let passwordCredentials = RetroCredentials.usernamePassword(username: "testuser", password: "testpass")
     #expect(passwordCredentials.username == "testuser")
 
-    let authenticatedCredentials = RetroCredentials.authenticated(username: "testuser", token: "testtoken")
+    let authenticatedCredentials = RetroCredentials.token(username: "testuser", token: "testtoken")
     #expect(authenticatedCredentials.username == "testuser")
 }
 
@@ -68,8 +99,8 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
 // MARK: - Client Creation Tests
 @Test func testClientCreation() async {
     let client = PVCheevos.client(username: "testuser", webAPIKey: "testkey")
-    // Just testing that the client can be created without errors
-    #expect(client != nil)
+    let isAuth = await client.isAuthenticated
+    #expect(isAuth == false)
 }
 
 // MARK: - Error Tests
@@ -249,8 +280,12 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
 }
 
 // MARK: - Login Tests
-@Test func testUsernamePasswordLogin() async throws {
+
+/// Verifies that login followed by full profile fetch populates all profile fields
+@Test func testLoginPopulatesFullProfile() async throws {
+    RetroCredentialsManager.shared.clearAll()
     let mockSession = MockURLSession()
+
     let loginData = """
     {
         "Success": true,
@@ -263,22 +298,73 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     }
     """.data(using: .utf8)!
 
-    mockSession.setMockResponse(data: loginData)
+    let fullProfileData = """
+    {
+        "User": "testuser",
+        "UserPic": "/UserPic/testuser.png",
+        "MemberSince": "2019-03-15 10:30:00",
+        "TotalPoints": 1500,
+        "TotalSoftcorePoints": 800,
+        "TotalTruePoints": 4200,
+        "ContribCount": 5,
+        "ContribYield": 100,
+        "Permissions": 1,
+        "ID": 12345,
+        "Motto": "Retro gaming forever"
+    }
+    """.data(using: .utf8)!
 
-    let credentials = RetroCredentials.usernamePassword(username: "testuser", password: "testpass")
-    let client = RetroAchievementsClient(credentials: credentials, urlSession: mockSession)
+    await mockSession.enqueueResponse(data: loginData)
+    await mockSession.enqueueResponse(data: fullProfileData)
 
+    let client = RetroAchievementsClient(urlSession: mockSession)
     let session = try await client.login(username: "testuser", password: "testpass")
 
-    #expect(session.username == "testuser")
+    #expect(session.user.user == "testuser")
     #expect(session.token == "auth_token_12345")
-    #expect(session.score == 1500)
-    #expect(session.softcoreScore == 800)
-    #expect(session.permissions == 1)
-    #expect(session.accountType == "Registered")
+    #expect(session.user.totalPoints == 1500)
+    #expect(session.user.totalTruePoints == 4200)
+    #expect(session.user.memberSince == "2019-03-15 10:30:00")
+    #expect(session.user.contribCount == 5)
+    #expect(session.user.contribYield == 100)
+    #expect(session.user.motto == "Retro gaming forever")
+    #expect(session.user.id == 12345)
 }
 
+/// Verifies login still succeeds even if the full profile fetch fails,
+/// falling back to the partial profile from the login response
+@Test func testLoginFallsBackToPartialProfileOnFetchFailure() async throws {
+    RetroCredentialsManager.shared.clearAll()
+    let mockSession = MockURLSession()
+
+    let loginData = """
+    {
+        "Success": true,
+        "User": "testuser",
+        "Token": "auth_token_12345",
+        "Score": 500,
+        "SoftcoreScore": 200
+    }
+    """.data(using: .utf8)!
+
+    await mockSession.enqueueResponse(data: loginData)
+    await mockSession.enqueueResponse(data: Data(), statusCode: 500)
+
+    let client = RetroAchievementsClient(urlSession: mockSession)
+    let session = try await client.login(username: "testuser", password: "testpass")
+
+    #expect(session.user.user == "testuser")
+    #expect(session.user.totalPoints == 500)
+    #expect(session.user.totalSoftcorePoints == 200)
+    // These should be nil since the full profile fetch failed
+    #expect(session.user.memberSince == nil)
+    #expect(session.user.totalTruePoints == nil)
+    #expect(session.user.contribCount == nil)
+}
+
+/// Verifies login with wrong password throws authenticationFailed
 @Test func testLoginFailure() async {
+    RetroCredentialsManager.shared.clearAll()
     let mockSession = MockURLSession()
     let loginData = """
     {
@@ -290,25 +376,27 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
 
     mockSession.setMockResponse(data: loginData)
 
-    let credentials = RetroCredentials.usernamePassword(username: "testuser", password: "wrongpass")
-    let client = RetroAchievementsClient(credentials: credentials, urlSession: mockSession)
+    let client = RetroAchievementsClient(urlSession: mockSession)
 
     do {
         _ = try await client.login(username: "testuser", password: "wrongpass")
         #expect(Bool(false), "Should have thrown an error")
     } catch let error as RetroError {
-        if case .unauthorized = error {
+        if case .authenticationFailed = error {
             // Expected
         } else {
-            #expect(Bool(false), "Expected unauthorized error")
+            #expect(Bool(false), "Expected authenticationFailed error, got \(error)")
         }
     } catch {
         #expect(Bool(false), "Expected RetroError")
     }
 }
 
+/// Verifies the PVCheevos.login convenience method works
 @Test func testPVCheevosLoginMethod() async throws {
+    RetroCredentialsManager.shared.clearAll()
     let mockSession = MockURLSession()
+
     let loginData = """
     {
         "Success": true,
@@ -318,17 +406,82 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     }
     """.data(using: .utf8)!
 
-    mockSession.setMockResponse(data: loginData)
+    let fullProfileData = """
+    {
+        "User": "testuser",
+        "TotalPoints": 1500,
+        "MemberSince": "2020-06-01 00:00:00",
+        "TotalTruePoints": 3000
+    }
+    """.data(using: .utf8)!
 
-    let (client, session) = try await PVCheevos.login(
+    await mockSession.enqueueResponse(data: loginData)
+    await mockSession.enqueueResponse(data: fullProfileData)
+
+    let client = try await PVCheevos.login(
         username: "testuser",
         password: "testpass",
         urlSession: mockSession
     )
 
-    #expect(session.username == "testuser")
-    #expect(session.token == "auth_token_12345")
-    #expect(client != nil)
+    let isAuth = await client.isAuthenticated
+    #expect(isAuth == true)
+
+    let username = await client.currentUsername
+    #expect(username == "testuser")
+}
+
+// MARK: - Web API Key Auth Tests
+
+/// Verifies that a client created with web API key can call getUserProfile
+@Test func testWebAPIKeyAuthFetchesProfile() async throws {
+    let mockSession = MockURLSession()
+    let profileData = """
+    {
+        "User": "testuser",
+        "TotalPoints": 2500,
+        "TotalTruePoints": 7500,
+        "MemberSince": "2018-05-20 14:00:00",
+        "ContribCount": 0,
+        "ContribYield": 0,
+        "ID": 99999,
+        "Motto": "Hello world"
+    }
+    """.data(using: .utf8)!
+
+    mockSession.setMockResponse(data: profileData)
+
+    let client = PVCheevos.client(username: "testuser", webAPIKey: "my_api_key", urlSession: mockSession)
+    let profile = try await client.getUserProfile(username: "testuser")
+
+    #expect(profile.user == "testuser")
+    #expect(profile.totalPoints == 2500)
+    #expect(profile.totalTruePoints == 7500)
+    #expect(profile.memberSince == "2018-05-20 14:00:00")
+    #expect(profile.contribCount == 0)
+    #expect(profile.id == 99999)
+}
+
+/// Verifies that a client without any credentials throws authenticationFailed
+@Test func testNoCredentialsThrowsAuth() async {
+    RetroCredentialsManager.shared.clearAll()
+    let mockSession = MockURLSession()
+    mockSession.setMockResponse(data: Data())
+
+    let client = RetroAchievementsClient(urlSession: mockSession)
+
+    do {
+        _ = try await client.getUserProfile(username: "testuser")
+        #expect(Bool(false), "Should have thrown an error")
+    } catch let error as RetroError {
+        if case .authenticationFailed = error {
+            // Expected
+        } else {
+            #expect(Bool(false), "Expected authenticationFailed error, got \(error)")
+        }
+    } catch {
+        #expect(Bool(false), "Expected RetroError")
+    }
 }
 
 // MARK: - Model Tests
@@ -340,6 +493,9 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
         "MemberSince": "2020-01-01 12:00:00",
         "TotalPoints": 15000,
         "TotalSoftcorePoints": 5000,
+        "TotalTruePoints": 42000,
+        "ContribCount": 10,
+        "ContribYield": 250,
         "ID": 12345,
         "Motto": "Gaming is life"
     }
@@ -353,8 +509,31 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     #expect(profile.memberSince == "2020-01-01 12:00:00")
     #expect(profile.totalPoints == 15000)
     #expect(profile.totalSoftcorePoints == 5000)
+    #expect(profile.totalTruePoints == 42000)
+    #expect(profile.contribCount == 10)
+    #expect(profile.contribYield == 250)
     #expect(profile.id == 12345)
     #expect(profile.motto == "Gaming is life")
+}
+
+/// Verifies that a profile with minimal fields (like from login) decodes correctly
+@Test func testUserProfileDecodingPartial() throws {
+    let json = """
+    {
+        "User": "MinimalUser",
+        "TotalPoints": 100
+    }
+    """.data(using: .utf8)!
+
+    let decoder = JSONDecoder()
+    let profile = try decoder.decode(UserProfile.self, from: json)
+
+    #expect(profile.user == "MinimalUser")
+    #expect(profile.totalPoints == 100)
+    #expect(profile.memberSince == nil)
+    #expect(profile.totalTruePoints == nil)
+    #expect(profile.contribCount == nil)
+    #expect(profile.contribYield == nil)
 }
 
 @Test func testAchievementDecoding() throws {
@@ -434,6 +613,35 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     #expect(comment.commentText == "Great achievement!")
 }
 
+@Test func testLoginResponseDecoding() throws {
+    let json = """
+    {
+        "Success": true,
+        "User": "testuser",
+        "AvatarUrl": "/UserPic/testuser.png",
+        "Token": "abc123",
+        "Score": 9999,
+        "SoftcoreScore": 1234,
+        "Messages": 3,
+        "Permissions": 1,
+        "AccountType": "Registered"
+    }
+    """.data(using: .utf8)!
+
+    let decoder = JSONDecoder()
+    let response = try decoder.decode(LoginResponse.self, from: json)
+
+    #expect(response.success == true)
+    #expect(response.user == "testuser")
+    #expect(response.avatarUrl == "/UserPic/testuser.png")
+    #expect(response.token == "abc123")
+    #expect(response.score == 9999)
+    #expect(response.softcoreScore == 1234)
+    #expect(response.messages == 3)
+    #expect(response.permissions == 1)
+    #expect(response.accountType == "Registered")
+}
+
 // MARK: - Integration Tests
 @Test func testGetGameWithAchievements() async throws {
     let mockSession = MockURLSession()
@@ -474,4 +682,53 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     let firstAchievement = game.achievements?["1"]
     #expect(firstAchievement?.title == "First Achievement")
     #expect(firstAchievement?.points == 5)
+}
+
+/// Verifies the full login → profile fetch → session check round trip
+@Test func testLoginToSessionRoundTrip() async throws {
+    RetroCredentialsManager.shared.clearAll()
+    let mockSession = MockURLSession()
+
+    let loginData = """
+    {
+        "Success": true,
+        "User": "roundtrip_user",
+        "Token": "rt_token_abc",
+        "Score": 300,
+        "SoftcoreScore": 50
+    }
+    """.data(using: .utf8)!
+
+    let fullProfileData = """
+    {
+        "User": "roundtrip_user",
+        "TotalPoints": 300,
+        "TotalSoftcorePoints": 50,
+        "TotalTruePoints": 900,
+        "MemberSince": "2021-11-01 08:00:00",
+        "ContribCount": 0,
+        "ContribYield": 0,
+        "UserPic": "/UserPic/roundtrip_user.png",
+        "ID": 54321
+    }
+    """.data(using: .utf8)!
+
+    await mockSession.enqueueResponse(data: loginData)
+    await mockSession.enqueueResponse(data: fullProfileData)
+
+    let client = RetroAchievementsClient(urlSession: mockSession)
+
+    let isAuthBefore = await client.isAuthenticated
+    #expect(isAuthBefore == false)
+
+    let session = try await client.login(username: "roundtrip_user", password: "pass123")
+
+    let isAuthAfter = await client.isAuthenticated
+    #expect(isAuthAfter == true)
+
+    #expect(session.user.user == "roundtrip_user")
+    #expect(session.user.totalTruePoints == 900)
+    #expect(session.user.memberSince == "2021-11-01 08:00:00")
+    #expect(session.user.id == 54321)
+    #expect(session.token == "rt_token_abc")
 }

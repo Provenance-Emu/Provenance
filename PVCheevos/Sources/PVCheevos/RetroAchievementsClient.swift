@@ -6,12 +6,16 @@ public actor RetroAchievementsClient: Sendable {
     private let networkClient: RetroNetworkClient
     private let credentialsManager = RetroCredentialsManager.shared
 
+    /// Credentials provided at init for web API key fallback
+    private let initialCredentials: RetroCredentials?
+
     /// Current authenticated session
     @MainActor public private(set) var currentSession: UserSession?
 
     /// Initialize with optional credentials for backwards compatibility
     public init(credentials: RetroCredentials? = nil, urlSession: URLSessionProtocol = URLSession.shared) {
         self.networkClient = RetroNetworkClient(urlSession: urlSession)
+        self.initialCredentials = credentials
 
         // Try to restore session from storage on initialization
         Task {
@@ -19,25 +23,49 @@ public actor RetroAchievementsClient: Sendable {
         }
     }
 
-    /// Restore session from stored credentials
+    /// Restore session from stored credentials.
+    /// If a stored session exists with an incomplete profile (missing memberSince, etc.),
+    /// attempts to refresh the profile from the web API.
     @MainActor
     public func restoreSession() async {
-        // Try to load existing session first
         if let token = credentialsManager.loadSessionToken(),
            let profile = credentialsManager.loadUserProfile() {
             let credentials = RetroCredentials.token(username: profile.user, token: token)
             currentSession = UserSession(user: profile, token: token, credentials: credentials)
+
+            // If the stored profile is missing fields the login endpoint doesn't provide,
+            // fetch the full profile in the background
+            if profile.memberSince == nil || profile.totalTruePoints == nil {
+                Task {
+                    await refreshFullProfile(username: profile.user, token: token)
+                }
+            }
             return
         }
 
-        // If no session, try to auto-login with stored credentials
         if let storedCreds = credentialsManager.loadCredentials() {
             do {
                 _ = try await login(username: storedCreds.username, password: storedCreds.password)
             } catch {
-                // Clear invalid stored credentials
                 credentialsManager.clearAll()
             }
+        }
+    }
+
+    /// Fetch the full profile from the web API and update the session
+    @MainActor
+    private func refreshFullProfile(username: String, token: String) async {
+        do {
+            let fullProfile: UserProfile = try await networkClient.performRequest(
+                endpoint: "API_GetUserProfile.php",
+                parameters: ["z": username, "y": token, "u": username],
+                responseType: UserProfile.self
+            )
+            let credentials = RetroCredentials.token(username: username, token: token)
+            currentSession = UserSession(user: fullProfile, token: token, credentials: credentials)
+            credentialsManager.saveUserProfile(fullProfile)
+        } catch {
+            // Keep the partial profile if refresh fails
         }
     }
 
@@ -53,20 +81,27 @@ public actor RetroAchievementsClient: Sendable {
         return currentSession?.user.user
     }
 
-    /// Get authentication parameters based on current session
+    /// Get authentication parameters based on current session or stored credentials.
+    /// Session token auth uses z=username, y=token.
+    /// Web API key auth uses the same z=username, y=apiKey format.
     private var authParameters: [String: String] {
         get async throws {
-            // Check for current session first
             let session = await getCurrentSession()
-
             if let session = session {
-                return [
-                    "z": session.user.user,
-                    "y": session.token
-                ]
+                return ["z": session.user.user, "y": session.token]
             }
 
-            // If no session, throw authentication error
+            if let creds = initialCredentials {
+                switch creds.authMethod {
+                case .webAPIKey(let username, let apiKey):
+                    return ["z": username, "y": apiKey]
+                case .authenticated(let username, let token):
+                    return ["z": username, "y": token]
+                case .usernamePassword:
+                    break
+                }
+            }
+
             throw RetroError.authenticationFailed
         }
     }
@@ -79,7 +114,9 @@ public actor RetroAchievementsClient: Sendable {
         return authParams.merging(parameters) { _, new in new }
     }
 
-    /// Perform login and store session
+    /// Perform login and store session, then fetch the full profile
+    /// from the web API to populate fields the login endpoint doesn't return
+    /// (memberSince, totalTruePoints, contribCount, etc.)
     /// - Parameters:
     ///   - username: RetroAchievements username
     ///   - password: RetroAchievements password
@@ -91,9 +128,12 @@ public actor RetroAchievementsClient: Sendable {
             throw RetroError.authenticationFailed
         }
 
-        // Create user profile from login response
-        let userProfile = UserProfile(
-            user: loginResponse.user ?? username,
+        let resolvedUsername = loginResponse.user ?? username
+        let credentials = RetroCredentials.token(username: resolvedUsername, token: token)
+
+        // Build a partial profile from login response so we have a valid session
+        let partialProfile = UserProfile(
+            user: resolvedUsername,
             ulid: nil,
             userPic: loginResponse.avatarUrl,
             memberSince: nil,
@@ -111,19 +151,31 @@ public actor RetroAchievementsClient: Sendable {
             motto: nil
         )
 
-        let credentials = RetroCredentials.token(username: username, token: token)
-        let session = UserSession(user: userProfile, token: token, credentials: credentials)
+        let session = UserSession(user: partialProfile, token: token, credentials: credentials)
+        await MainActor.run { currentSession = session }
 
-        await MainActor.run {
-            currentSession = session
-        }
-
-        // Save credentials and session data
         credentialsManager.saveCredentials(username: username, password: password)
         credentialsManager.saveSessionToken(token)
-        credentialsManager.saveUserProfile(userProfile)
 
-        // Sync credentials to RetroArch config
+        // Fetch the full profile via the web API (has memberSince, truePoints, etc.)
+        let fullProfile: UserProfile
+        do {
+            fullProfile = try await networkClient.performRequest(
+                endpoint: "API_GetUserProfile.php",
+                parameters: ["z": resolvedUsername, "y": token, "u": resolvedUsername],
+                responseType: UserProfile.self
+            )
+        } catch {
+            // If full profile fetch fails, save what we have from login
+            credentialsManager.saveUserProfile(partialProfile)
+            RetroArchConfigManager.shared.updateCredentials(username: username, password: password)
+            return
+        }
+
+        let updatedSession = UserSession(user: fullProfile, token: token, credentials: credentials)
+        await MainActor.run { currentSession = updatedSession }
+
+        credentialsManager.saveUserProfile(fullProfile)
         RetroArchConfigManager.shared.updateCredentials(username: username, password: password)
     }
 
