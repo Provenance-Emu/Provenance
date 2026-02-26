@@ -210,8 +210,6 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Used for album artwork.</string>
-	<key>NSExtensionFileProviderSupportsEnumeration</key>
-	<true/>
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
