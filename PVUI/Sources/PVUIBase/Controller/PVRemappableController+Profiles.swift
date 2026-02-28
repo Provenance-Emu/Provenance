@@ -24,7 +24,7 @@ public extension PVRemappableController {
     ///
     /// **Must be called on the main actor** — this method mutates in-memory controller
     /// state and reads Realm objects, both of which require a consistent thread.
-    /// 
+    ///
     /// - Important: `profile` must be a *frozen* `PVControllerProfile` instance. Call
     ///   `profile.freeze()` on the creating thread/actor before passing it here.
     @MainActor public func apply(profile: PVControllerProfile) {

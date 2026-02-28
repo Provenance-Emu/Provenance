@@ -281,6 +281,7 @@ public final class RealmConfiguration {
                 // Realm handles new top-level object types automatically; no field migration needed.
                 ILOG("Migration to version 22 complete. (Added PVControllerProfile/PVControllerMapping)")
             }
+<<<<<<< HEAD
             if oldSchemaVersion < 23 {
                 // PVCore.supportedCheatTypeNames (List<String>) was added.
                 // Realm initializes new List properties as empty by default; no enumeration needed.
@@ -301,6 +302,8 @@ public final class RealmConfiguration {
                 }
                 ILOG("Migration to version 24 complete. (Split PVCheats.type into type + codeType)")
             }
+=======
+>>>>>>> 4c9c21328 (feat: add custom controller mapping data model and persistence)
         }
 
 #if DEBUG
