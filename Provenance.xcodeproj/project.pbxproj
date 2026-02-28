@@ -524,6 +524,8 @@
 		B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E42D2F8E560016E633 /* WhatsNewKit */; };
 		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
+		B3636EF72F087C6500C64AAD /* PVlibDolphin.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */; };
+		B3636EF82F087C6500C64AAD /* PVlibDolphin.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B364D1C82E2DC8C30038EB2A /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D1C72E2DC8C30038EB2A /* PVAzahar.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B364D1C92E2DC8C30038EB2A /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B364D1C72E2DC8C30038EB2A /* PVAzahar.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B364D1CE2E2DE6A90038EB2A /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D1CD2E2DE6A90038EB2A /* PVEmuThree.framework */; platformFilters = (ios, maccatalyst, ); };
@@ -544,8 +546,6 @@
 		B36C8E7C2C7ECE6200BD4377 /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */; };
 		B36C8E7F2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B371138A2E70AD14006C1ED7 /* PVlibDolphin.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */; };
-		B371138B2E70AD15006C1ED7 /* PVlibDolphin.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37228CA2CCDC7A700E6F627 /* FreemiumKit in Frameworks */ = {isa = PBXBuildFile; productRef = B37228C92CCDC7A700E6F627 /* FreemiumKit */; };
 		B37228CC2CCDC7D300E6F627 /* FreemiumKit in Frameworks */ = {isa = PBXBuildFile; productRef = B37228CB2CCDC7D300E6F627 /* FreemiumKit */; };
 		B37228D12CCDC80B00E6F627 /* AppStoreAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */; };
@@ -563,6 +563,7 @@
 		B377ECA92CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377ECC92CB3533C00E9B750 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
 		B377ECCA2CB3533C00E9B750 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B379CA022F00C7BB00C3D7A7 /* TopShelfv2.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B37CCD312E2FF36A00ABFCF5 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */; };
 		B37CCD322E2FF36A00ABFCF5 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
@@ -1161,6 +1162,13 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
+		B379CA032F00C7BB00C3D7A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B39B10AA2DAF3D16004EEF79;
+			remoteInfo = TopShelfv2;
+		};
 		B383226326ED9F080029D12F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1523,7 +1531,7 @@
 				B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */,
 				B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */,
 				B341AD922E2BF4BA00B18E76 /* PVMelonDS.framework in Embed Frameworks */,
-				B371138B2E70AD15006C1ED7 /* PVlibDolphin.xcframework in Embed Frameworks */,
+				B3636EF82F087C6500C64AAD /* PVlibDolphin.xcframework in Embed Frameworks */,
 				B318E27E2CAB4C4200D0E599 /* PVSNES.framework in Embed Frameworks */,
 				B318E2812CAB4C6400D0E599 /* PVFCEU.framework in Embed Frameworks */,
 				B318E2872CAB512F00D0E599 /* PVMupen64Plus.framework in Embed Frameworks */,
@@ -1546,6 +1554,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */,
+				B379CA022F00C7BB00C3D7A7 /* TopShelfv2.appex in Embed Foundation Extensions */,
 				B30D49C42E3809C10073B038 /* Spotlight.appex in Embed Foundation Extensions */,
 				B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 			);
@@ -3671,7 +3680,6 @@
 				B3EF26EC2BE7F8DD0066D4B6 /* libxml2.tbd in Frameworks */,
 				B3E0CF9F2C054DEB00F45074 /* RxDataSources in Frameworks */,
 				B37CCD312E2FF36A00ABFCF5 /* PVDolphin.framework in Frameworks */,
-				B371138A2E70AD14006C1ED7 /* PVlibDolphin.xcframework in Frameworks */,
 				B318E29A2CAB586800D0E599 /* snes9x.framework in Frameworks */,
 				B33BD1BF2C6A6212001E933A /* PVPicoDrive-Dynamic in Frameworks */,
 				B3FD98562D614E6E00397643 /* CoreLocationUI.framework in Frameworks */,
@@ -3681,6 +3689,7 @@
 				B3EF26EA2BE7F8BD0066D4B6 /* libz.tbd in Frameworks */,
 				B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */,
 				B382362C2CC4623100DCE080 /* SiriusRating in Frameworks */,
+				B3636EF72F087C6500C64AAD /* PVlibDolphin.xcframework in Frameworks */,
 				B318E2A02CAB5A2600D0E599 /* PVProSystem-Dynamic in Frameworks */,
 				B34A20152C62F96100E34059 /* PVPlists in Frameworks */,
 				B3E46CEE2E2C9ADA00657240 /* PVDesmume2015.framework in Frameworks */,
@@ -7683,6 +7692,7 @@
 				B3BD3A1E2D729008000FBB11 /* PBXTargetDependency */,
 				B30D49C62E3809C10073B038 /* PBXTargetDependency */,
 				B30D49C92E3809C10073B038 /* PBXTargetDependency */,
+				B379CA042F00C7BB00C3D7A7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -10684,6 +10694,14 @@
 			);
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B35EEF562C6C6D1A00EBD1A8 /* PBXContainerItemProxy */;
+		};
+		B379CA042F00C7BB00C3D7A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				tvos,
+			);
+			target = B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */;
+			targetProxy = B379CA032F00C7BB00C3D7A7 /* PBXContainerItemProxy */;
 		};
 		B383226426ED9F080029D12F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13733,7 +13751,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 16.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -13837,7 +13855,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 16.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -13940,7 +13958,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
-				TVOS_DEPLOYMENT_TARGET = 16.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
