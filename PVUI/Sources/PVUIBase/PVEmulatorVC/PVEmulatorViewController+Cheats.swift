@@ -169,6 +169,8 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             cheats: game.cheats,
             coreID: core.coreIdentifier,
             cheatTypes: getCheatTypes(),
+            gameMD5: game.md5Hash,
+            gameTitle: game.title,
             onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
                 guard let self = self else { return }
                 Task { @MainActor in
@@ -216,6 +218,8 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             cheatsViewController.cheats = game.cheats
             cheatsViewController.delegate = self
             cheatsViewController.coreID = core.coreIdentifier
+            cheatsViewController.gameMD5 = game.md5Hash
+            cheatsViewController.gameTitle = game.title
         }
         cheatsNavController.modalPresentationStyle = .overCurrentContext
 
