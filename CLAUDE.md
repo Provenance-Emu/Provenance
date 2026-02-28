@@ -103,3 +103,65 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - Each PV* module is a standalone Swift Package with its own `Package.swift`
 - The top-level `Package.swift` is minimal (legacy SPM support for PVLibrary only); the real build system is the Xcode workspace
 - Build variants (Lite/Standard/XL) differ in which cores are included; see `CoresRetro/RetroArch/Scripts/` for core lists per target
+
+## Agent Development Guidelines
+
+### Quick Validation Commands
+```bash
+# Lint changed Swift files
+swiftlint lint --path <file>
+
+# Build a standalone SPM module (Tier 0-2 only)
+cd PV<Module> && swift build
+
+# Test a standalone SPM module
+cd PV<Module> && swift test
+
+# Xcode simulator build (full app, slow)
+xcodebuild build -workspace Provenance.xcworkspace \
+  -scheme "Provenance-Lite (AppStore)" \
+  -destination "generic/platform=iOS Simulator" \
+  CODE_SIGNING_ALLOWED=NO | xcpretty
+```
+
+### Module Dependency Tiers
+Modules are organized by dependency depth. Agents should scope changes to the lowest tier possible.
+
+| Tier | Modules | Can `swift build` standalone? |
+|------|---------|------------------------------|
+| 0 | PVObjCUtils, PVFeatureFlags, PVCheevos | Yes |
+| 1 | PVLogging, PVPlists, PVHashing | Yes |
+| 2 | PVSettings, PVPrimitives | Yes |
+| 3 | PVSupport, PVAudio, PVCoreAudio | Needs Xcode |
+| 4 | PVCoreBridge, PVEmulatorCore, PVShaders | Needs Xcode |
+| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLookup, PVLibrary | Needs Xcode |
+| 6 | PVUI, App targets | Full workspace build |
+
+### Emulator Core Bridge Pattern
+Each core has a `PV<Core>CoreBridge+Controls.mm` file that maps controller input:
+```objc
+- (void)didMoveGamepad:(GCExtendedGamepad *)gamepad {
+    // Map GCController buttons to emulator-specific button constants
+    // Use PVCoreBridge protocol methods to forward input
+}
+```
+When modifying bridge files, ensure all controller types are handled (Extended, Micro, Keyboard).
+
+### What NOT to Modify
+- **Submodule source** — `Cores/<name>/<upstream-dir>/` contents are upstream code
+- **Generated files** — `Version.h`, `Version.swift`, files in `cmake/` build dirs
+- **CodeSigning.xcconfig** — contains developer-specific credentials
+- **project.pbxproj** — avoid when possible; prefer SPM Package.swift changes
+- **Upstream RetroArch** — `CoresRetro/RetroArch/RetroArch/` is a submodule
+
+### PR Requirements
+- Target the `develop` branch
+- Include test coverage for new logic (where testable)
+- Keep scope focused — one logical change per PR
+- Run `swiftlint` on changed files before submitting
+- Agent PRs should use the `[Agent]` prefix in title
+
+### Branch Naming & Commit Messages
+- Branches: `agent/issue-<N>` for agent work, `feature/<description>` for features
+- Commits: Use conventional commits (`fix:`, `feat:`, `chore:`, `build:`, `refactor:`, `test:`, `docs:`)
+- Keep commit messages concise (< 72 chars for subject line)
