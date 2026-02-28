@@ -8,6 +8,7 @@
 #import <PVEmuThree/CitraWrapper.h>
 
 @import PVCoreBridge;
+#import <PVCoreObjCBridge/GCController+PVShareButton.h>
 
 extern bool _isInitialized;
 
@@ -169,22 +170,8 @@ extern bool _isInitialized;
 
 - (void)gamepadEventOnPad:(int)pad button:(int)button action:(int)action
 {
-    GCControllerButtonInput *selectInput = self.controller1.extendedGamepad.buttonOptions;
-    if (@available(iOS 14.5, tvOS 14.5, *)) {
-        NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons = self.controller1.physicalInputProfile.buttons;
-        if ([profileButtons isKindOfClass:[NSDictionary class]]) {
-            GCControllerButtonInput *shareLikeInput = profileButtons[@"Button Share"];
-            if (!shareLikeInput) {
-                shareLikeInput = profileButtons[@"Button Create"];
-            }
-            if (!shareLikeInput) {
-                shareLikeInput = profileButtons[@"Button Capture"];
-            }
-            if (shareLikeInput) {
-                selectInput = shareLikeInput;
-            }
-        }
-    }
+    GCControllerButtonInput *shareLikeInput = PVShareLikeButtonForController(self.controller1);
+    GCControllerButtonInput *selectInput = shareLikeInput ?: self.controller1.extendedGamepad.buttonOptions;
 
     switch (button) {
         case(PV3DSButtonSelect):

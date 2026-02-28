@@ -9,6 +9,7 @@
 #import "PVFCEUEmulatorCore+Controls.h"
 #import "PVFCEUEmulatorCore.h"
 @import PVCoreBridge;
+#import <PVCoreObjCBridge/GCController+PVShareButton.h>
 
 
 #include "fceux/src/fceu.h"
@@ -69,17 +70,8 @@ static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B
             BOOL shareLikePressed = NO;
             BOOL psTouchpadPressed = NO;
 
-            NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons = controller.physicalInputProfile.buttons;
-            if ([profileButtons isKindOfClass:[NSDictionary class]]) {
-                // Some controllers expose Share/Create/Capture only through physical profile button names.
-                shareLikeButton = profileButtons[@"Button Share"];
-                if (!shareLikeButton) {
-                    shareLikeButton = profileButtons[@"Button Create"];
-                }
-                if (!shareLikeButton) {
-                    shareLikeButton = profileButtons[@"Button Capture"];
-                }
-            }
+            // Some controllers expose Share/Create/Capture only through physical profile button names.
+            shareLikeButton = PVShareLikeButtonForController(controller);
 
             if (@available(iOS 14.0, tvOS 14.0, *)) {
                 if (dualSense && dualSense.touchpadButton) {

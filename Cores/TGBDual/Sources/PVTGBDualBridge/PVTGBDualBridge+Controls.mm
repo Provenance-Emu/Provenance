@@ -9,6 +9,7 @@
 #import "PVTGBDualBridge+Controls.h"
 @import PVTGBDualCPP;
 #include "libretro.h"
+#import <PVCoreObjCBridge/GCController+PVShareButton.h>
 
 @implementation PVTGBDualBridge (Controls)
 
@@ -54,18 +55,7 @@ const int GBDualMap[] = {
             GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? (GCXboxGamepad *)gamepad : nil;
             GCControllerButtonInput *selectButton = nil;
             GCControllerButtonInput *startButton = nil;
-            GCControllerButtonInput *shareLikeButton = nil;
-
-            NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons = controller.physicalInputProfile.buttons;
-            if ([profileButtons isKindOfClass:[NSDictionary class]]) {
-                shareLikeButton = profileButtons[@"Button Share"];
-                if (!shareLikeButton) {
-                    shareLikeButton = profileButtons[@"Button Create"];
-                }
-                if (!shareLikeButton) {
-                    shareLikeButton = profileButtons[@"Button Capture"];
-                }
-            }
+            GCControllerButtonInput *shareLikeButton = PVShareLikeButtonForController(controller);
 
             if (dualSense || dualShock) {
                 selectButton = shareLikeButton;

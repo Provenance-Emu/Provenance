@@ -12,23 +12,7 @@
 @import MednafenGameCoreOptions;
 @import PVSettings;
 @import mednafen;
-
-static GCControllerButtonInput *MednafenShareLikeButtonForController(GCController *controller) {
-    NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons = controller.physicalInputProfile.buttons;
-    if (![profileButtons isKindOfClass:[NSDictionary class]]) {
-        return nil;
-    }
-
-    GCControllerButtonInput *shareLikeButton = profileButtons[@"Button Share"];
-    if (!shareLikeButton) {
-        shareLikeButton = profileButtons[@"Button Create"];
-    }
-    if (!shareLikeButton) {
-        shareLikeButton = profileButtons[@"Button Capture"];
-    }
-
-    return shareLikeButton;
-}
+#import <PVCoreObjCBridge/GCController+PVShareButton.h>
 
 @implementation MednafenGameCoreBridge (Controls)
 
@@ -629,7 +613,7 @@ static GCControllerButtonInput *MednafenShareLikeButtonForController(GCControlle
         GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
         GCControllerButtonInput *selectButton = nil;
         GCControllerButtonInput *startButton = nil;
-        GCControllerButtonInput *shareLikeButton = MednafenShareLikeButtonForController(controller);
+        GCControllerButtonInput *shareLikeButton = PVShareLikeButtonForController(controller);
 
         if (dualSense || dualShock) {
             selectButton = shareLikeButton;
@@ -764,7 +748,7 @@ static GCControllerButtonInput *MednafenShareLikeButtonForController(GCControlle
         GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
         GCControllerButtonInput *selectButton = nil;
         GCControllerButtonInput *startButton = nil;
-        GCControllerButtonInput *shareLikeButton = MednafenShareLikeButtonForController(controller);
+        GCControllerButtonInput *shareLikeButton = PVShareLikeButtonForController(controller);
 
         if (dualSense || dualShock) {
             selectButton = shareLikeButton;
@@ -882,7 +866,7 @@ static GCControllerButtonInput *MednafenShareLikeButtonForController(GCControlle
         GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
         GCControllerButtonInput *selectButton = nil;
         GCControllerButtonInput *startButton = nil;
-        GCControllerButtonInput *shareLikeButton = MednafenShareLikeButtonForController(controller);
+        GCControllerButtonInput *shareLikeButton = PVShareLikeButtonForController(controller);
 
         if (dualSense || dualShock) {
             selectButton = shareLikeButton;

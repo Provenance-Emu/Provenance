@@ -17,3 +17,4 @@ FOUNDATION_EXPORT const unsigned char PVCoreObjCBridgeVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <PVCoreObjCBridge/PublicHeader.h>
 #import <PVCoreObjCBridge/_PVCoreObjCBridge.h>
 #import <PVCoreObjCBridge/NSObject+PVAbstractAdditions.h>
+#import <PVCoreObjCBridge/GCController+PVShareButton.h>
