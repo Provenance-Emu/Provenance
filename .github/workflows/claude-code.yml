@@ -4,7 +4,7 @@ on:
   issue_comment:
     types: [created]
   issues:
-    types: [labeled]
+    types: [opened, labeled]
   pull_request_review_comment:
     types: [created]
 
@@ -19,12 +19,17 @@ jobs:
     # Run when:
     # 1. @claude is mentioned in issue/PR comments
     # 2. Issues are labeled with 'agent-work'
-    # 3. Comments on agent PRs (title starts with [Agent])
+    # 3. Issues are opened with 'agent-work' label
+    # 4. Comments on agent PRs (title starts with [Agent])
     if: |
       (github.event_name == 'issue_comment' &&
        contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'issues' &&
+       github.event.action == 'labeled' &&
        github.event.label.name == 'agent-work') ||
+      (github.event_name == 'issues' &&
+       github.event.action == 'opened' &&
+       contains(toJSON(github.event.issue.labels.*.name), 'agent-work')) ||
       (github.event_name == 'pull_request_review_comment' &&
        contains(github.event.comment.body, '@claude'))
     runs-on: ubuntu-latest
