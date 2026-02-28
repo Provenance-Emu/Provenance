@@ -8,6 +8,9 @@
 import SwiftUI
 import PVThemes
 import PVUIBase
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 // MARK: - Theme Button Style
 
@@ -443,8 +446,69 @@ struct ThemeSelectionView: View {
 
     // MARK: - CGA Themes Section
 
-    /// CGA themes section
+    /// CGA themes section — gated for Plus subscribers
     private var cgaThemesSection: some View {
+        #if canImport(FreemiumKit)
+        PaidFeatureView {
+            ThemeSection(title: "CGA THEMES", titleColor: RetroTheme.retroPink) {
+                ForEach(CGAThemes.allCases, id: \.self) { cgaTheme in
+                    let isSelected = (currentTheme == .cga(ThemeOptionsCGA(rawValue: cgaTheme.rawValue) ?? .blue))
+
+                    CGAThemeRow(
+                        cgaTheme: cgaTheme,
+                        isSelected: isSelected
+                    ) {
+                        applyCGATheme(cgaTheme)
+                    }
+                }
+            }
+        } lockedView: {
+            // Show themes but locked with overlay
+            ThemeSection(title: "CGA THEMES", titleColor: RetroTheme.retroPink) {
+                ForEach(CGAThemes.allCases.prefix(4), id: \.self) { cgaTheme in
+                    CGAThemeRow(
+                        cgaTheme: cgaTheme,
+                        isSelected: false
+                    ) { }
+                }
+
+                // "Plus" lock overlay badge
+                HStack {
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 12, weight: .semibold))
+                        Text("PLUS")
+                            .font(.system(size: 11, weight: .heavy))
+                        Text("— 9 CGA color themes")
+                            .font(.system(size: 11))
+                    }
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule()
+                            .fill(Color.retroPink.opacity(0.15))
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 0.5)
+                            )
+                    )
+                    Spacer()
+                }
+                .padding(.top, 4)
+            }
+            .opacity(0.7)
+            .disabled(true)
+        }
+        .freemiumKitColorReset()
+        #else
         ThemeSection(title: "CGA THEMES", titleColor: RetroTheme.retroPink) {
             ForEach(CGAThemes.allCases, id: \.self) { cgaTheme in
                 let isSelected = (currentTheme == .cga(ThemeOptionsCGA(rawValue: cgaTheme.rawValue) ?? .blue))
@@ -457,20 +521,66 @@ struct ThemeSelectionView: View {
                 }
             }
         }
+        #endif
     }
 
     // MARK: - RetroWave Theme Section
 
-    /// RetroWave theme section
+    /// RetroWave theme section — gated for Plus subscribers
     private var retroWaveThemeSection: some View {
-        ThemeSection(title: "RETROWAVE THEME", titleColor: RetroTheme.retroPurple) {
-            // Check if current theme is retrowave (using standard dark as fallback)
-            let isRetrowaveSelected = (currentTheme == .standard(.dark))
+        #if canImport(FreemiumKit)
+        PaidFeatureView {
+            ThemeSection(title: "RETROWAVE THEME", titleColor: RetroTheme.retroPurple) {
+                let isRetrowaveSelected = (currentTheme == .standard(.dark))
+                RetroWaveThemeRow(isSelected: isRetrowaveSelected) {
+                    applyRetroWaveTheme()
+                }
+            }
+        } lockedView: {
+            ThemeSection(title: "RETROWAVE THEME", titleColor: RetroTheme.retroPurple) {
+                RetroWaveThemeRow(isSelected: false) { }
 
+                HStack {
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 12, weight: .semibold))
+                        Text("PLUS")
+                            .font(.system(size: 11, weight: .heavy))
+                    }
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule()
+                            .fill(Color.retroPink.opacity(0.15))
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 0.5)
+                                )
+                    )
+                    Spacer()
+                }
+                .padding(.top, 4)
+            }
+            .opacity(0.7)
+            .disabled(true)
+        }
+        .freemiumKitColorReset()
+        #else
+        ThemeSection(title: "RETROWAVE THEME", titleColor: RetroTheme.retroPurple) {
+            let isRetrowaveSelected = (currentTheme == .standard(.dark))
             RetroWaveThemeRow(isSelected: isRetrowaveSelected) {
                 applyRetroWaveTheme()
             }
         }
+        #endif
     }
 
     // MARK: - Main Content

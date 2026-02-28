@@ -660,4 +660,7 @@ public extension Defaults.Keys {
 
     /// Last time the support nag screen was shown (to prevent spam)
     static let lastSupportNagShown = Key<Date?>("lastSupportNagShown", default: nil)
+
+    /// Number of times the user has dismissed the support nag screen
+    static let nagDismissCount = Key<Int>("nagDismissCount", default: 0)
 }

@@ -24,10 +24,37 @@ struct PremiumNavigationLink<Label: View, Destination: View>: View {
         } lockedView: {
             ZStack {
                 NavigationLink(destination: EmptyView()) {
-                    label
+                    HStack {
+                        label
+                        Spacer()
+                        // Lock icon + PLUS badge
+                        HStack(spacing: 3) {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("PLUS")
+                                .font(.system(size: 9, weight: .heavy))
+                        }
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(Color.retroPink.opacity(0.15))
+                                .overlay(
+                                    Capsule()
+                                        .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 0.5)
+                                )
+                        )
+                    }
                 }
                 .disabled(true)
-                .opacity(0.8)
+                .opacity(0.7)
             }
         }
         .freemiumKitColorReset()

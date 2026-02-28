@@ -3,6 +3,9 @@ import struct PVUIBase.IconImage
 import struct PVUIBase.NeumorphismView
 import PVThemes
 import PVLogging
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 // Helper type for gradients to avoid compiler issues
 typealias RetroGradient = LinearGradient
@@ -24,6 +27,16 @@ enum AppIconOption: String, CaseIterable {
     case purple = "AppIcon-Purple"
     case seafoam = "AppIcon-Seafoam"
     case yellow = "AppIcon-Yellow"
+
+    /// Whether this icon is available for free users
+    var isFree: Bool {
+        switch self {
+        case .default, .blue, .cyan:
+            return true
+        default:
+            return false
+        }
+    }
 
     /// User-friendly display name
     var displayName: String {
@@ -237,7 +250,7 @@ struct AppIconSelectorView: View {
     }
     
     // Single icon view to simplify the main grid
-    private func iconView(for option: AppIconOption, isSelected: Bool, isChanging: Bool) -> some View {
+    private func iconView(for option: AppIconOption, isSelected: Bool, isChanging: Bool, isLocked: Bool) -> some View {
         VStack(spacing: 12) {
             // Icon with retrowave border
             ZStack {
@@ -245,20 +258,20 @@ struct AppIconSelectorView: View {
                 Color.black.opacity(0.3)
                     .frame(width: 80, height: 80)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
-                
+
                 // Icon image
                 IconImage(
                     iconName: option.rawValue,
                     size: 64
                 )
-                
+
                 // Border
                 RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(
                         iconBorderGradient(isSelected: isSelected),
                         lineWidth: isSelected ? 2 : 1
                     )
-                
+
                 // Loading indicator
                 if isChanging {
                     ProgressView()
@@ -267,7 +280,7 @@ struct AppIconSelectorView: View {
                         .background(Color.black.opacity(0.5))
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
-                
+
                 // Selected indicator
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
@@ -275,6 +288,25 @@ struct AppIconSelectorView: View {
                         .foregroundColor(RetroTheme.retroBlue)
                         .shadow(color: RetroTheme.retroBlue.opacity(0.8), radius: 3)
                         .position(x: 64, y: 16)
+                }
+
+                // Lock overlay for premium icons
+                if isLocked {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.black.opacity(0.4))
+                    VStack(spacing: 2) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("PLUS")
+                            .font(.system(size: 8, weight: .heavy))
+                    }
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                 }
             }
             .frame(width: 80, height: 80)
@@ -299,11 +331,32 @@ struct AppIconSelectorView: View {
             ForEach(AppIconOption.allCases, id: \.self) { option in
                 let isSelected = option.rawValue == (iconManager.currentIconName ?? "AppIcon")
                 let isChanging = selectedOption == option && iconManager.isChangingIcon
-                
-                iconView(for: option, isSelected: isSelected, isChanging: isChanging)
-                    .onTapGesture {
-                        changeAppIcon(to: option)
+
+                if option.isFree {
+                    // Free icons — always tappable
+                    iconView(for: option, isSelected: isSelected, isChanging: isChanging, isLocked: false)
+                        .onTapGesture {
+                            changeAppIcon(to: option)
+                        }
+                } else {
+                    // Premium icons — gated behind Plus
+                    #if canImport(FreemiumKit)
+                    PaidFeatureView {
+                        iconView(for: option, isSelected: isSelected, isChanging: isChanging, isLocked: false)
+                            .onTapGesture {
+                                changeAppIcon(to: option)
+                            }
+                    } lockedView: {
+                        iconView(for: option, isSelected: isSelected, isChanging: isChanging, isLocked: true)
                     }
+                    .freemiumKitColorReset()
+                    #else
+                    iconView(for: option, isSelected: isSelected, isChanging: isChanging, isLocked: false)
+                        .onTapGesture {
+                            changeAppIcon(to: option)
+                        }
+                    #endif
+                }
             }
         }
         .padding(.horizontal)

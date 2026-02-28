@@ -62,8 +62,35 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
             ZStack {
                 Color(.clear)
                 VStack(alignment: .leading) {
-                    label
-                    
+                    HStack {
+                        label
+                        Spacer()
+                        // Lock icon + PLUS badge
+                        HStack(spacing: 3) {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("PLUS")
+                                .font(.system(size: 9, weight: .heavy))
+                        }
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(Color.retroPink.opacity(0.15))
+                                .overlay(
+                                    Capsule()
+                                        .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 0.5)
+                                )
+                        )
+                    }
+
                     // Retrowave-styled picker (disabled)
                     HStack(spacing: 12) {
                         ForEach(options) { option in
@@ -76,7 +103,7 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
                     }
                     .padding(.top, 8)
                 }
-                .opacity(0.6)
+                .opacity(0.7)
                 .disabled(true)
             }
         }
@@ -85,7 +112,7 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
         PaidFeatureView {
             VStack(alignment: .leading) {
                 label
-                
+
                 Picker("", selection: $selection) {
                     ForEach(options) { option in
                         Text(option.description).tag(option)
@@ -97,8 +124,34 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
             ZStack {
                 Color(.clear)
                 VStack(alignment: .leading) {
-                    label
-                    
+                    HStack {
+                        label
+                        Spacer()
+                        HStack(spacing: 3) {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("PLUS")
+                                .font(.system(size: 9, weight: .heavy))
+                        }
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(Color.retroPink.opacity(0.15))
+                                .overlay(
+                                    Capsule()
+                                        .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 0.5)
+                                )
+                        )
+                    }
+
                     Picker("", selection: $selection) {
                         ForEach(options) { option in
                             Text(option.description).tag(option)
@@ -106,6 +159,7 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
                     }
                     .pickerStyle(.segmented)
                 }
+                .opacity(0.7)
                 .disabled(true)
             }
         }

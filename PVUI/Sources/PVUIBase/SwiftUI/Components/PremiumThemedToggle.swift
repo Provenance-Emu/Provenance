@@ -48,7 +48,6 @@ public struct PremiumThemedToggle<Label: View>: View {
 
 #if canImport(FreemiumKit)
     public var body: some View {
-    #if !os(tvOS)
         PaidFeatureView {
             Toggle(isOn: $isOn) {
                 label
@@ -57,34 +56,44 @@ public struct PremiumThemedToggle<Label: View>: View {
         } lockedView: {
             ZStack {
                 Color(.clear)
-                Toggle(isOn: $isOn) {
-                    label
+                HStack {
+                    Toggle(isOn: $isOn) {
+                        label
+                    }
+                    .toggleStyle(RetroTheme.RetroToggleStyle())
+                    .disabled(true)
+
+                    Spacer().frame(width: 6)
+
+                    // Lock icon + PLUS badge
+                    HStack(spacing: 3) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text("PLUS")
+                            .font(.system(size: 9, weight: .heavy))
+                    }
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule()
+                            .fill(Color.retroPink.opacity(0.15))
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 0.5)
+                            )
+                    )
                 }
-                .toggleStyle(RetroTheme.RetroToggleStyle())
-                .opacity(0.6)
-                .disabled(true)
+                .opacity(0.7)
             }
         }
         .freemiumKitColorReset()
-        #else
-        PaidFeatureView {
-            Toggle(isOn: $isOn) {
-                label
-            }
-            .toggleStyle(RetroTheme.RetroToggleStyle())
-        } lockedView: {
-            ZStack {
-                Color(.clear)
-                Toggle(isOn: $isOn) {
-                    label
-                }
-                .toggleStyle(RetroTheme.RetroToggleStyle())
-                .opacity(0.6)
-                .disabled(true)
-            }
-        }
-        .freemiumKitColorReset()
-        #endif
     }
 #else
     public var body: some View {

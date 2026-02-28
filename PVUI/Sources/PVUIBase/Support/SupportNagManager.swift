@@ -16,11 +16,17 @@ import FreemiumKit
 
 /// Manages showing the support nag screen at appropriate intervals
 public struct SupportNagManager {
-    /// Number of game launches before showing the nag screen
-    public static let nagInterval = 25
+    /// First nag at launch 10 to catch engaged users earlier
+    private static let firstNagThreshold = 10
+
+    /// Second nag at launch 25
+    private static let secondNagThreshold = 25
+
+    /// After launch 25, nag every 15 launches
+    private static let recurringInterval = 15
 
     /// Minimum time between nag screens (to prevent spam)
-    private static let minimumTimeBetweenNags: TimeInterval = 7 * 24 * 60 * 60 // 7 days
+    private static let minimumTimeBetweenNags: TimeInterval = 4 * 24 * 60 * 60 // 4 days
 
     /// Increment the game launch counter and check if we should show the nag screen
     /// - Returns: True if the nag screen should be shown
@@ -42,11 +48,20 @@ public struct SupportNagManager {
         }
         #endif
 
-        // Check if we've hit the interval (25, 50, 75, etc.)
-        let shouldShow = launchCount % nagInterval == 0
+        // Determine if we should show based on adaptive schedule
+        let shouldShow: Bool
+        if launchCount == firstNagThreshold {
+            shouldShow = true
+        } else if launchCount == secondNagThreshold {
+            shouldShow = true
+        } else if launchCount > secondNagThreshold {
+            shouldShow = (launchCount - secondNagThreshold) % recurringInterval == 0
+        } else {
+            shouldShow = false
+        }
 
         if shouldShow {
-            // Check if we've shown the nag recently (within 7 days)
+            // Check if we've shown the nag recently
             if let lastShown = Defaults[.lastSupportNagShown] {
                 let timeSinceLastNag = Date().timeIntervalSince(lastShown)
                 if timeSinceLastNag < minimumTimeBetweenNags {
@@ -62,8 +77,18 @@ public struct SupportNagManager {
         return false
     }
 
+    /// Record that the user dismissed the nag screen
+    public static func recordDismissal() {
+        Defaults[.nagDismissCount] = Defaults[.nagDismissCount] + 1
+    }
+
     /// Get the current game launch count
     public static var currentLaunchCount: Int {
         Defaults[.gameLaunchCount]
+    }
+
+    /// Get the number of times the user has dismissed the nag
+    public static var dismissCount: Int {
+        Defaults[.nagDismissCount]
     }
 }

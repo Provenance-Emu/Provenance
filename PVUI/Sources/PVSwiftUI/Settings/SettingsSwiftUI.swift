@@ -598,6 +598,11 @@ public struct PVSettingsView: View {
                                 .padding(.top, 40)
                                 .padding(.bottom, 20)
 
+                            #if canImport(FreemiumKit)
+                            PlusStatusBanner()
+                                .padding(.bottom, 8)
+                            #endif
+
                             // Settings sections with premium styling
                             TVOSSettingsSection(title: "App", icon: "gearshape.fill") {
                                 AppSection(viewModel: viewModel)
@@ -728,6 +733,12 @@ public struct PVSettingsView: View {
                     .padding(.top, 20)
                     .padding(.bottom, 10)
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
+
+                #if canImport(FreemiumKit)
+                PlusStatusBanner()
+                    .padding(.horizontal)
+                    .padding(.bottom, 4)
+                #endif
 
                 VStack(spacing: 16) {
                     CollapsibleSection(title: "App") {
@@ -1136,40 +1147,17 @@ private struct AppSection: View {
                             icon: .sfSymbol("square.3.layers.3d.middle.filled"))
             }
 
-            PaidFeatureView {
-                NavigationLink(destination: ThemeSelectionView()) {
-                    SettingsRow(title: "Theme",
-                                value: themeManager.currentPalette.description,
-                                icon: .sfSymbol("paintpalette"))
-                }
-            } lockedView: {
+            NavigationLink(destination: ThemeSelectionView()) {
                 SettingsRow(title: "Theme",
-                            subtitle: "Unlock to change theme.",
-                            icon: .sfSymbol("lock.fill"))
+                            value: themeManager.currentPalette.description,
+                            icon: .sfSymbol("paintpalette"))
             }
-            .freemiumKitColorReset()
 
             #if !os(tvOS)
-            /// App icon selection section
-            PaidFeatureView {
-                NavigationLink(destination: AppIconSelectorView()) {
-                    HStack {
-                        Image(systemName: "app")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 22, height: 22)
-                        .foregroundColor(.accentColor)
-                        Text("Change App Icon")
-                        Spacer()
-                        IconImage(
-                            iconName: iconManager.currentIconName ?? "AppIcon",
-                            size: 24
-                        )
-                    }
-                }
-            } lockedView: {
+            /// App icon selection section — all users can browse, premium icons gated inside
+            NavigationLink(destination: AppIconSelectorView()) {
                 HStack {
-                    Image(systemName: "lock.fill")
+                    Image(systemName: "app")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 22, height: 22)
@@ -1182,7 +1170,6 @@ private struct AppSection: View {
                     )
                 }
             }
-            .freemiumKitColorReset()
             #endif
         }
     }
@@ -2125,3 +2112,125 @@ private struct RetroAchievementsSection: View {
         }
     }
 }
+
+// MARK: - Plus Status Banner
+
+#if canImport(FreemiumKit)
+@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
+struct PlusStatusBanner: View {
+    var body: some View {
+        PaidFeatureView {
+            // Subscriber view
+            HStack(spacing: 12) {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("PROVENANCE PLUS ACTIVE")
+                        .font(.system(size: 14, weight: .heavy, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                    Text("Thank you for your support!")
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(.retroBlue)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.black.opacity(0.5))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.retroPink.opacity(0.4),
+                                        Color.retroPurple.opacity(0.4),
+                                        Color.retroBlue.opacity(0.4)
+                                    ]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+            )
+        } lockedView: {
+            // Non-subscriber view — tapping shows paywall via PaidFeatureView
+            HStack(spacing: 12) {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("UPGRADE TO PROVENANCE PLUS")
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                    Text("Unlock cloud sync, premium themes & more")
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.retroPink)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.black.opacity(0.5))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.retroPink.opacity(0.6),
+                                        Color.retroPurple.opacity(0.6),
+                                        Color.retroBlue.opacity(0.6)
+                                    ]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+            )
+        }
+        .freemiumKitColorReset()
+    }
+}
+#endif

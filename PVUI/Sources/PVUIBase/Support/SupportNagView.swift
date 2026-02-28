@@ -12,6 +12,44 @@ import PVThemes
 import FreemiumKit
 #endif
 
+// MARK: - Feature Card
+
+/// A single feature card for the nag screen
+private struct PlusFeatureCard: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(
+                    LinearGradient(
+                        gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 36, height: 36)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.white)
+                Text(subtitle)
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+    }
+}
+
 /// A retrowave-styled nag screen that appears periodically to encourage users to support the project
 public struct SupportNagView: View {
     @Environment(\.dismiss) private var dismiss
@@ -35,7 +73,7 @@ public struct SupportNagView: View {
                 .opacity(0.2)
                 .ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 20) {
                 Spacer()
 
                 // Animated icon
@@ -53,7 +91,7 @@ public struct SupportNagView: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 120, height: 120)
+                        .frame(width: 100, height: 100)
                         .blur(radius: 20)
                         .opacity(glowOpacity)
                         .animation(
@@ -65,7 +103,7 @@ public struct SupportNagView: View {
                     // Icon circle
                     Circle()
                         .fill(Color.black.opacity(0.8))
-                        .frame(width: 100, height: 100)
+                        .frame(width: 80, height: 80)
                         .overlay(
                             Circle()
                                 .strokeBorder(
@@ -78,8 +116,8 @@ public struct SupportNagView: View {
                                 )
                         )
 
-                    Image(systemName: "heart.fill")
-                        .font(.system(size: 48, weight: .bold))
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 36, weight: .bold))
                         .foregroundStyle(
                             LinearGradient(
                                 gradient: Gradient(colors: [.retroPink, .retroPurple]),
@@ -88,11 +126,10 @@ public struct SupportNagView: View {
                             )
                         )
                 }
-                .padding(.bottom, 8)
 
                 // Title
-                Text("YOU'RE AN ACTIVE USER!")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                Text("UNLOCK ALL FEATURES")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
                             gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
@@ -103,33 +140,45 @@ public struct SupportNagView: View {
                     .multilineTextAlignment(.center)
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
-                // Stats
-                VStack(spacing: 8) {
-                    Text("You've launched \(gameLaunchCount) games!")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
+                // Subtitle
+                Text("You've launched \(gameLaunchCount) games — upgrade to get the most out of Provenance!")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
 
-                    Text("Thanks for being part of the Provenance community")
-                        .font(.system(size: 16))
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
+                // Feature cards
+                VStack(spacing: 0) {
+                    PlusFeatureCard(
+                        icon: "icloud",
+                        title: "Cloud Sync",
+                        subtitle: "Sync saves, ROMs & BIOS across devices"
+                    )
+
+                    Divider().background(Color.retroPurple.opacity(0.3))
+
+                    PlusFeatureCard(
+                        icon: "paintpalette",
+                        title: "Premium Themes",
+                        subtitle: "9 CGA colors + RetroWave theme"
+                    )
+
+                    Divider().background(Color.retroPurple.opacity(0.3))
+
+                    PlusFeatureCard(
+                        icon: "app.badge",
+                        title: "Custom App Icons",
+                        subtitle: "15+ exclusive icon designs"
+                    )
+
+                    Divider().background(Color.retroPurple.opacity(0.3))
+
+                    PlusFeatureCard(
+                        icon: "gearshape.2",
+                        title: "Advanced Controls",
+                        subtitle: "Power user settings & configurations"
+                    )
                 }
-                .padding(.horizontal)
-
-                // Message
-                VStack(spacing: 12) {
-                    Text("Support Provenance Plus")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-
-                    Text("Help us continue developing and improving Provenance by subscribing to Provenance Plus. Get access to premium features and support the project!")
-                        .font(.system(size: 15))
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                }
-                .padding(.horizontal, 32)
-                .padding(.vertical, 20)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.black.opacity(0.6))
@@ -149,6 +198,7 @@ public struct SupportNagView: View {
                                 )
                         )
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.horizontal, 24)
 
                 // Buttons
@@ -156,80 +206,34 @@ public struct SupportNagView: View {
                     // Support button
                     #if canImport(FreemiumKit)
                     PaidFeatureView {
-                        Button(action: {
-                            #if !os(tvOS)
-                            HapticFeedbackService.shared.playSuccess()
-                            #endif
-                            // PaidFeatureView will handle showing paywall when user taps
-                        }) {
-                            HStack {
-                                Image(systemName: "star.fill")
-                                    .font(.system(size: 18, weight: .semibold))
-                                Text("Support Provenance Plus")
-                                    .font(.system(size: 18, weight: .bold))
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                            .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 5)
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                        supportButton
                     } lockedView: {
-                        Button(action: {
-                            #if !os(tvOS)
-                            HapticFeedbackService.shared.playSuccess()
-                            #endif
-                            // PaidFeatureView will handle showing paywall when user taps
-                        }) {
-                            HStack {
-                                Image(systemName: "star.fill")
-                                    .font(.system(size: 18, weight: .semibold))
-                                Text("Support Provenance Plus")
-                                    .font(.system(size: 18, weight: .bold))
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                            .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 5)
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                        supportButton
                     }
                     .freemiumKitColorReset()
                     #endif
 
-                    // Dismiss button
-                    Button(action: {
-                        #if !os(tvOS)
-                        HapticFeedbackService.shared.playSelection()
-                        #endif
-                        onDismiss()
-                        dismiss()
-                    }) {
-                        Text("Maybe Later")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.gray)
-                            .padding(.vertical, 12)
+                    // Dismiss button - appears after delay
+                    if showDismiss {
+                        Button(action: {
+                            #if !os(tvOS)
+                            HapticFeedbackService.shared.playSelection()
+                            #endif
+                            SupportNagManager.recordDismissal()
+                            onDismiss()
+                            dismiss()
+                        }) {
+                            Text("Maybe Later")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.gray)
+                                .padding(.vertical, 12)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .transition(.opacity)
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 8)
+                .padding(.top, 4)
 
                 Spacer()
             }
@@ -237,10 +241,45 @@ public struct SupportNagView: View {
         }
         .onAppear {
             glowOpacity = 1.0
+            // Delay showing dismiss button by 2.5 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                withAnimation(.easeIn(duration: 0.3)) {
+                    showDismiss = true
+                }
+            }
         }
     }
 
+    private var supportButton: some View {
+        Button(action: {
+            #if !os(tvOS)
+            HapticFeedbackService.shared.playSuccess()
+            #endif
+        }) {
+            HStack {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                Text("Unlock All Features")
+                    .font(.system(size: 18, weight: .bold))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .foregroundColor(.white)
+            .cornerRadius(12)
+            .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 5)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
     @State private var glowOpacity: Double = 0.5
+    @State private var showDismiss: Bool = false
 }
 
 #if DEBUG
