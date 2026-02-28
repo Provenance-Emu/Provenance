@@ -127,3 +127,7 @@ build
 .sentryclirc
 *.code-workspace
 /Cores/Dolphin/venv
+
+# Claude Code
+.claude/
+memory-bank/
