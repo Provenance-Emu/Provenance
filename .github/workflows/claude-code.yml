@@ -1,0 +1,54 @@
+name: Claude Code Agent
+
+on:
+  issue_comment:
+    types: [created]
+  issues:
+    types: [labeled]
+  pull_request_review_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  claude:
+    # Run when:
+    # 1. @claude is mentioned in issue/PR comments
+    # 2. Issues are labeled with 'agent-work'
+    # 3. Comments on agent PRs (title starts with [Agent])
+    if: |
+      (github.event_name == 'issue_comment' &&
+       contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'issues' &&
+       github.event.label.name == 'agent-work') ||
+      (github.event_name == 'pull_request_review_comment' &&
+       contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Do NOT checkout submodules — saves ~15 min + GB of bandwidth
+          submodules: false
+          fetch-depth: 1
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          max_turns: 25
+          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
+          # Additional context for the agent
+          custom_instructions: |
+            You are working on the Provenance emulator app repository.
+            Read CLAUDE.md for project conventions and module structure.
+            Target all PRs to the 'develop' branch.
+            Prefix agent PR titles with '[Agent]'.
+            Do NOT modify submodule source code directly.
+            Do NOT modify project.pbxproj unless absolutely necessary.
+            Run swiftlint on changed files before submitting.
+            Keep changes focused — one logical change per PR.

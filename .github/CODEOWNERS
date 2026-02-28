@@ -1,2 +1,15 @@
 *       @JoeMatt @jasarien
 
+# Project files and build configuration
+Provenance.xcodeproj/       @JoeMatt
+*.xcworkspace               @JoeMatt
+CodeSigning.xcconfig*       @JoeMatt
+
+# CI/CD and automation
+.github/workflows/          @JoeMatt
+.github/CODEOWNERS          @JoeMatt
+
+# Agent configuration
+CLAUDE.md                   @JoeMatt
+.claude/                    @JoeMatt
+Scripts/ralph-loop.sh       @JoeMatt
