@@ -8,6 +8,9 @@ on:
     branches:
       - master
       - develop
+    # Agent PRs are validated by agent-validation.yml (Lite simulator build)
+    # Skip the full archive matrix to save CI time
+    types: [opened, synchronize, reopened]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
@@ -23,6 +26,10 @@ env:
 jobs:
   build:
     name: Build and upload Provenance
+    # Skip full builds for agent PRs — they use agent-validation.yml instead
+    if: >-
+      github.event_name == 'push' ||
+      !startsWith(github.event.pull_request.title, '[Agent]')
     strategy:
       fail-fast: false
       matrix:

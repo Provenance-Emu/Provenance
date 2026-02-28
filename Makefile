@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-.PHONY: help ios update tvos
+.PHONY: help ios update tvos lite
 
 RUBY := $(shell command -v ruby 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
@@ -157,6 +157,25 @@ test:
 	bundle exec fastlane test
 
 ## -- Building --
+
+## Fast Lite simulator build (no code signing, minimal cores)
+lite:
+	$(info Building Provenance-Lite for iOS Simulator…)
+
+	xcodebuild build \
+		-workspace Provenance.xcworkspace \
+		-scheme "Provenance-Lite (AppStore)" \
+		-destination "generic/platform=iOS Simulator" \
+		-skipPackagePluginValidation \
+		-skipMacroValidation \
+		CODE_SIGNING_ALLOWED=NO \
+		| xcbeautify || xcodebuild build \
+		-workspace Provenance.xcworkspace \
+		-scheme "Provenance-Lite (AppStore)" \
+		-destination "generic/platform=iOS Simulator" \
+		-skipPackagePluginValidation \
+		-skipMacroValidation \
+		CODE_SIGNING_ALLOWED=NO
 
 developer_ios:
 	$(info Building iOS for Developer profile…)

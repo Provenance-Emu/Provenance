@@ -105,14 +105,12 @@ jobs:
           cd ${{ matrix.module }}
           swift test 2>&1 | tail -40
 
-  # Job 3: Full smoke build (only for large changes or explicit label)
+  # Job 3: Fast Lite simulator build — validates that code compiles
+  # No code signing needed, Lite has minimal cores so builds in ~10-15 min
   smoke-build:
-    name: Smoke Build (Provenance-Lite)
+    name: Build (Provenance-Lite Simulator)
     runs-on: macos-15
-    timeout-minutes: 90
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'needs-smoke-build') ||
-      github.event.pull_request.changed_files > 10
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -123,12 +121,29 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
+      - name: Cache DerivedData
+        uses: actions/cache@v3
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-lite-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj', '**/Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-lite-deriveddata-
+
       - name: Build Provenance-Lite (iOS Simulator)
         run: |
+          start_time=$(date +%s)
           xcodebuild build \
             -workspace Provenance.xcworkspace \
             -scheme "Provenance-Lite (AppStore)" \
             -destination "generic/platform=iOS Simulator" \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO \
             -quiet \
             2>&1 | tail -50
+          end_time=$(date +%s)
+          duration=$((end_time - start_time))
+          minutes=$((duration / 60))
+          seconds=$((duration % 60))
+          echo "### Lite Build Time" >> $GITHUB_STEP_SUMMARY
+          echo "Duration: ${minutes}m ${seconds}s" >> $GITHUB_STEP_SUMMARY
