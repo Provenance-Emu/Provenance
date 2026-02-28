@@ -12,6 +12,7 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
+  id-token: write
 
 jobs:
   claude:
@@ -39,16 +40,29 @@ jobs:
       - name: Run Claude Code
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          max_turns: 25
-          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
-          # Additional context for the agent
-          custom_instructions: |
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          claude_args: "--allowedTools 'Bash(gh issue comment:*),Bash(gh pr comment:*),Bash(gh pr create:*),Bash(gh issue edit:*),Bash(git:*),Bash(swift:*),Bash(swiftlint:*),Read,Write,Edit,Glob,Grep'"
+          prompt: |
             You are working on the Provenance emulator app repository.
             Read CLAUDE.md for project conventions and module structure.
-            Target all PRs to the 'develop' branch.
-            Prefix agent PR titles with '[Agent]'.
-            Do NOT modify submodule source code directly.
-            Do NOT modify project.pbxproj unless absolutely necessary.
-            Run swiftlint on changed files before submitting.
-            Keep changes focused — one logical change per PR.
+
+            ## GitHub Context
+            - Repository: ${{ github.repository }}
+            - Event: ${{ github.event_name }}
+            - Actor: ${{ github.actor }}
+            - Issue/PR number: ${{ github.event.issue.number || github.event.pull_request.number }}
+            - Issue title: ${{ github.event.issue.title || github.event.pull_request.title }}
+
+            ## User Request
+            ${{ github.event.comment.body || github.event.issue.body }}
+
+            ## Instructions
+            1. Address the user's request above
+            2. Post your response as a comment on the issue/PR using:
+               gh issue comment ${{ github.event.issue.number || github.event.pull_request.number }} --body "YOUR RESPONSE"
+            3. Target all PRs to the 'develop' branch
+            4. Prefix agent PR titles with '[Agent]'
+            5. Do NOT modify submodule source code directly
+            6. Do NOT modify project.pbxproj unless absolutely necessary
+            7. Keep changes focused — one logical change per PR
