@@ -55,6 +55,8 @@
 #include "general.h"
 #include "msg_hash.h"
 #include "verbosity.h"
+#include "input/input_keyboard.h"
+#include "input/input_keymaps.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
@@ -3138,6 +3140,40 @@ unsigned retro_api_version(void)
         default:
             return 0;
     }
+}
+
+#pragma mark - Keyboard Event Forwarding
+
+// Sends a keyboard event to the libretro core via the registered keyboard callback.
+// hidCode corresponds to GCKeyCode.rawValue on iOS 14+ (HID USB usage page key codes).
+- (void)sendKeyboardEvent:(BOOL)down hidCode:(unsigned)hidCode character:(uint32_t)character {
+    // Ensure the Apple HID keycode lookup table is initialized before first use.
+    // This maps HID USB usage codes to RETRO_KEY values.
+    static dispatch_once_t keymapOnce;
+    dispatch_once(&keymapOnce, ^{
+        input_keymaps_init_keyboard_lut(rarch_key_map_apple_hid);
+    });
+
+    if (runloop_key_event) {
+        enum retro_key rk = input_keymaps_translate_keysym_to_rk(hidCode);
+        runloop_key_event((bool)down, rk, character, 0);
+    }
+}
+
+#pragma mark - Mouse State Management
+
+- (void)setMousePosition:(CGPoint)normalizedPoint {
+    currentTouchPosition.x = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.x));
+    currentTouchPosition.y = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.y));
+}
+
+- (void)setLeftMouseButtonPressed:(BOOL)pressed {
+    touchPressed = pressed;
+    leftMousePressed = pressed;
+}
+
+- (void)setRightMouseButtonPressed:(BOOL)pressed {
+    rightMousePressed = pressed;
 }
 
 @end

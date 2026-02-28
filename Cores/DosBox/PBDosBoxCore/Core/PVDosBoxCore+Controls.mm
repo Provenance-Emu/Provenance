@@ -8,6 +8,7 @@
 
 #import <PVDosBox/PVDosBox.h>
 #import <Foundation/Foundation.h>
+@import GameController;
 @import PVCoreBridge;
 
 #define DC_BTN_C        (1<<0)
@@ -261,6 +262,60 @@ s8 joyx[4], joyy[4];
     [self didReleaseDOSButton:(PVDOSButton)button forPlayer:player];
 }
 
+#pragma mark - Keyboard Support
+
+- (BOOL)gameSupportsKeyboard { return YES; }
+- (BOOL)requiresKeyboard { return NO; }
+
+- (void)keyDown:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    // GCKeyCode.rawValue is an HID USB usage page key code, matching the
+    // apple_key_map constants used by the libretro keyboard translation layer.
+    [self sendKeyboardEvent:YES hidCode:(unsigned)key character:0];
+}
+
+- (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    [self sendKeyboardEvent:NO hidCode:(unsigned)key character:0];
+}
+
+#pragma mark - Mouse Support
+
+- (BOOL)gameSupportsMouse { return YES; }
+- (BOOL)requiresMouse { return NO; }
+
+- (GCMouseMoved)mouseMovedHandler { return nil; }
+
+- (void)didScroll:(GCDeviceCursor *)cursor API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    // Mouse wheel scroll — DosBox-Pure maps scroll to configurable keyboard keys
+    // via the dosbox_pure_mouse_wheel setting; no additional handling needed here.
+}
+
+- (void)mouseMovedAt:(CGPoint)point {
+    [self setMousePosition:point];
+}
+
+- (void)mouseMovedAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
+}
+
+- (void)leftMouseDownAt:(CGPoint)point {
+    [self setLeftMouseButtonPressed:YES];
+}
+
+- (void)leftMouseDownAtPoint:(CGPoint)point {
+    [self setLeftMouseButtonPressed:YES];
+}
+
+- (void)leftMouseUp {
+    [self setLeftMouseButtonPressed:NO];
+}
+
+- (void)rightMouseDownAtPoint:(CGPoint)point {
+    [self setRightMouseButtonPressed:YES];
+}
+
+- (void)rightMouseUp {
+    [self setRightMouseButtonPressed:NO];
+}
 
 # pragma mark - Input Wii
 //- (oneway void)didMoveWiiJoystickDirection:(OEWiiButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player

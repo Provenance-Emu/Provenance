@@ -78,6 +78,17 @@ __attribute__((weak_import))
 #endif
 - (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
 
+// Keyboard event forwarding for libretro keyboard-based cores (e.g., DosBox, MSX)
+// hidCode: HID USB usage page key code (matches GCKeyCode.rawValue on iOS 14+)
+// character: Unicode character value (pass 0 if unknown)
+- (void)sendKeyboardEvent:(BOOL)down hidCode:(unsigned)hidCode character:(uint32_t)character;
+
+// Mouse state management for libretro mouse-based cores
+// normalizedPoint: coordinates in 0.0-1.0 range relative to the video surface
+- (void)setMousePosition:(CGPoint)normalizedPoint;
+- (void)setLeftMouseButtonPressed:(BOOL)pressed;
+- (void)setRightMouseButtonPressed:(BOOL)pressed;
+
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;
 @property (nonatomic, retain, nullable) NSString * romPath;
