@@ -169,9 +169,26 @@ extern bool _isInitialized;
 
 - (void)gamepadEventOnPad:(int)pad button:(int)button action:(int)action
 {
+    GCControllerButtonInput *selectInput = self.controller1.extendedGamepad.buttonOptions;
+    if (@available(iOS 14.5, tvOS 14.5, *)) {
+        NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons = self.controller1.physicalInputProfile.buttons;
+        if ([profileButtons isKindOfClass:[NSDictionary class]]) {
+            GCControllerButtonInput *shareLikeInput = profileButtons[@"Button Share"];
+            if (!shareLikeInput) {
+                shareLikeInput = profileButtons[@"Button Create"];
+            }
+            if (!shareLikeInput) {
+                shareLikeInput = profileButtons[@"Button Capture"];
+            }
+            if (shareLikeInput) {
+                selectInput = shareLikeInput;
+            }
+        }
+    }
+
     switch (button) {
         case(PV3DSButtonSelect):
-            [CitraWrapper.sharedInstance.m_buttonSelect valueChangedHandler:self.controller1.extendedGamepad.buttonOptions value:action pressed:action ? true : false];
+            [CitraWrapper.sharedInstance.m_buttonSelect valueChangedHandler:selectInput value:action pressed:action ? true : false];
             break;
         case(PV3DSButtonStart):
             [CitraWrapper.sharedInstance.m_buttonStart valueChangedHandler:self.controller1.extendedGamepad.buttonMenu value:action pressed:action ? true : false];

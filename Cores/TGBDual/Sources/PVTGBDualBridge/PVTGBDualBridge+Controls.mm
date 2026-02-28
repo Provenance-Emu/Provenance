@@ -54,15 +54,30 @@ const int GBDualMap[] = {
             GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? (GCXboxGamepad *)gamepad : nil;
             GCControllerButtonInput *selectButton = nil;
             GCControllerButtonInput *startButton = nil;
+            GCControllerButtonInput *shareLikeButton = nil;
+
+            NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons = controller.physicalInputProfile.buttons;
+            if ([profileButtons isKindOfClass:[NSDictionary class]]) {
+                shareLikeButton = profileButtons[@"Button Share"];
+                if (!shareLikeButton) {
+                    shareLikeButton = profileButtons[@"Button Create"];
+                }
+                if (!shareLikeButton) {
+                    shareLikeButton = profileButtons[@"Button Capture"];
+                }
+            }
 
             if (dualSense || dualShock) {
-                selectButton = gamepad.buttonOptions;
+                selectButton = shareLikeButton;
                 startButton = gamepad.buttonMenu;
             } else if (xbox) {
                 selectButton = xbox.buttonShare;
                 startButton = xbox.buttonMenu;
             } else {
                 startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
+                if (!selectButton) {
+                    selectButton = shareLikeButton;
+                }
             }
             
             _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed;
@@ -74,7 +89,7 @@ const int GBDualMap[] = {
             _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed || gamepad.buttonX.isPressed;
             
             _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftShoulder.isPressed || startButton.isPressed;
-            _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightShoulder.isPressed || selectButton.isPressed;
+            _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightShoulder.isPressed || (selectButton && selectButton.isPressed);
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {

@@ -64,15 +64,52 @@ static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B
             GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? (GCXboxGamepad *)gamepad : nil;
             GCControllerButtonInput *selectButton = nil;
             GCControllerButtonInput *startButton = nil;
+            GCControllerButtonInput *shareLikeButton = nil;
+            GCControllerButtonInput *psTouchpadButton = nil;
+            BOOL shareLikePressed = NO;
+            BOOL psTouchpadPressed = NO;
+
+            NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons = controller.physicalInputProfile.buttons;
+            if ([profileButtons isKindOfClass:[NSDictionary class]]) {
+                // Some controllers expose Share/Create/Capture only through physical profile button names.
+                shareLikeButton = profileButtons[@"Button Share"];
+                if (!shareLikeButton) {
+                    shareLikeButton = profileButtons[@"Button Create"];
+                }
+                if (!shareLikeButton) {
+                    shareLikeButton = profileButtons[@"Button Capture"];
+                }
+            }
+
+            if (@available(iOS 14.0, tvOS 14.0, *)) {
+                if (dualSense && dualSense.touchpadButton) {
+                    psTouchpadButton = dualSense.touchpadButton;
+                } else if (dualShock && dualShock.touchpadButton) {
+                    psTouchpadButton = dualShock.touchpadButton;
+                }
+            }
 
             if (dualSense || dualShock) {
-                selectButton = gamepad.buttonOptions;
+                selectButton = psTouchpadButton ? psTouchpadButton : shareLikeButton;
+                if (!selectButton) {
+                    selectButton = gamepad.buttonOptions;
+                }
                 startButton = gamepad.buttonMenu;
             } else if (xbox) {
                 selectButton = xbox.buttonShare;
                 startButton = xbox.buttonMenu;
             } else {
                 startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
+                if (!selectButton) {
+                    selectButton = shareLikeButton;
+                }
+            }
+
+            if (shareLikeButton) {
+                shareLikePressed = shareLikeButton.isPressed;
+            }
+            if (psTouchpadButton) {
+                psTouchpadPressed = psTouchpadButton.isPressed;
             }
 
 
@@ -84,7 +121,7 @@ static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B
             (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed) ? pad[playerIndex][0] |= JOY_B << playerShift : pad[playerIndex][0] &= ~JOY_B << playerShift;
             (gamepad.buttonX.isPressed || gamepad.buttonB.isPressed) ? pad[playerIndex][0] |= JOY_A << playerShift : pad[playerIndex][0] &= ~JOY_A << playerShift;
 
-            (gamepad.leftShoulder.isPressed || gamepad.leftTrigger.isPressed || selectButton.isPressed) ? pad[playerIndex][0] |= JOY_SELECT << playerShift : pad[playerIndex][0] &= ~JOY_SELECT << playerShift;
+            (gamepad.leftShoulder.isPressed || gamepad.leftTrigger.isPressed || (selectButton && selectButton.isPressed) || shareLikePressed || psTouchpadPressed) ? pad[playerIndex][0] |= JOY_SELECT << playerShift : pad[playerIndex][0] &= ~JOY_SELECT << playerShift;
             (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed || startButton.isPressed) ? pad[playerIndex][0] |= JOY_START << playerShift : pad[playerIndex][0] &= ~JOY_START << playerShift;
         }
 #if TARGET_OS_TV
