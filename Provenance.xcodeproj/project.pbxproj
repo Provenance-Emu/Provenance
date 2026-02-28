@@ -43,6 +43,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		044DDA96A5DEBCCDD8257271 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
+		0D478A01AB30FB0456F3826E /* snes9x.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B38436342C9FC2EC00E32EB1 /* snes9x.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		1180B3182492A94200636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31B2492A95400636C8A /* CoreServices.framework */; };
@@ -66,10 +68,38 @@
 		1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
+		21F0B16DB9D18D75212ADD19 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F9049D2C1FE9D8002283B3 /* libbz2.tbd */; };
+		2CED3789EFE4293BFCF034CB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; };
+		3517DB19FA9723965B285E5D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		37EEA2AB27BC81890070E222 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 37EEA2AA27BC81890070E222 /* Introspect */; };
+		38ACA2E4D781E99A8C193411 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
+		38DB0C856685068EE039CB7A /* libc.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EF2BE7F9690066D4B6 /* libc.tbd */; };
+		3B2C747A4EC0FF440E147CBA /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
+		3FCC6F1A64ED851929A20DBF /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
+		46CDBD343311A863262EBE9B /* AppStoreAssets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3E17E222CCF91B000732AEA /* AppStoreAssets-Lite.xcassets */; };
+		499AABDDD52E86AEF1363F50 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B306D7D82D3DDB6D00C71EBE /* GoogleService-Info.plist */; };
+		4AE7D65F9FF838656CBA6BF4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
+		512915984E5AB422C842AB14 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
+		53BC2CC2C5B7928C81B27656 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
+		54572C78FA4F716900DD4795 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
 		551DA2FC2ABF7E99004BA3E9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; platformFilters = (ios, maccatalyst, macos, xros, ); };
 		555454432AC09998006A065F /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; };
 		555454442AC09998006A065F /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; };
+		5CBF08B09AC3E2867B689B71 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
+		656961B7FDACA2BA52FE92C8 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
+		7294BE7865CFBA13735F06A4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
+		74599C7C1C20260E8677DC2D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
+		75DF205983F99653B8ECE4E1 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
+		77CCCC0E5B6CE9BA288E83F0 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
+		7B2B5E142ED14B00A48F2F2F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
+		7DA360DE1FB0DD316B047DB5 /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
+		8544F5BF401B6EF1B0D08DE9 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EB2BE7F8DD0066D4B6 /* libxml2.tbd */; };
+		866F7D323B24FAB11A8ACE97 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
+		88AA4E0D566A4B903BB22CA3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
+		8A2789E6074FF30425FF7736 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F9049D2C1FE9D8002283B3 /* libbz2.tbd */; };
+		8BC40327F78CE9F1251A5867 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26ED2BE7F8EC0066D4B6 /* libc++.tbd */; };
+		8D99A11845D34CE9952BDD67 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
+		91D1E1147A6900A19126291F /* Assets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */; };
 		9304999D2A93073800BF257F /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5D9EC2959837A00907CFB /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9304999E2A93073800BF257F /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		930499A22A93073800BF257F /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -144,6 +174,13 @@
 		93A728632AAF073B0052B279 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93A728622AAF073B0052B279 /* PVLogging */; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		97D397A09BCEFEAF56702A34 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
+		A38B326E0F0A1E4A134EA0A7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 928DA26E321AA76BBF48ABEC /* Foundation.framework */; };
+		A43C954DC7A6AC3AB80C97E6 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
+		AC527243DBAF4F4E263C987D /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
+		AEAED2818800815979907B65 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
+		B257200FB6AF3C38B35BBCE1 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
+		B2DF1479746E9442D3F5DD4F /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B300593D2C794D6B003010F5 /* Provenance Mini Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B300593C2C794D6B003010F5 /* Provenance Mini Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B30059732C794E09003010F5 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30059722C794E09003010F5 /* StoreKit.framework */; };
 		B30059752C7974C8003010F5 /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30059742C7974C8003010F5 /* PVVirtualJaguar-Dynamic */; };
@@ -337,7 +374,7 @@
 		B347B3182BC4CA98006A3B2D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B347B3252BC4CA98006A3B2D /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B347B32A2BC4CA98006A3B2D /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B347B2442BC4CA98006A3B2D /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B347B32B2BC4CA98006A3B2D /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B347B32B2BC4CA98006A3B2D /* BuildFile in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B347B3322BC4CA98006A3B2D /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B347B3372BC4CA98006A3B2D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61A219203AF009F4EDC /* libc++.tbd */; };
 		B347B33B2BC4CA98006A3B2D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C618219203A5009F4EDC /* libsqlite3.tbd */; };
@@ -733,31 +770,32 @@
 		B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF70652191733D000FA7F9 /* GameController.framework */; };
 		B3AFCF962977A80700A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF952977A80700A01010 /* PVLogging */; };
 		B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF972977A80C00A01010 /* PVLogging */; };
+		B3B4869DAA40685DB12005FD /* snes9x.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38436342C9FC2EC00E32EB1 /* snes9x.framework */; };
 		B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; };
 		B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3BD3A232D7298BB000FBB11 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD3A222D7298BB000FBB11 /* PVLibrary */; };
 		B3BD3A252D7298FA000FBB11 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD3A242D7298FA000FBB11 /* Defaults */; };
-		B3BDD4022D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD41A2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD41B2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD41C2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4022D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD41A2D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD41B2D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD41C2D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD41E2D349220005F5AF9 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 54925F9AB59542258A6A5CE9 /* Sentry */; };
-		B3BDD41F2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4202D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4212D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4222D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4232D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4242D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4252D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4262D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4272D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4282D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD4292D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD42A2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD42B2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD42C2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD42D2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD41F2D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4202D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4212D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4222D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4232D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4242D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4252D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4262D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4272D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4282D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD4292D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD42A2D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD42B2D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD42C2D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		B3BDD42D2D349220005F5AF9 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		B3BE9F9B2C79869F006D989E /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9A2C79869F006D989E /* PVSettings */; };
 		B3BE9F9D2C7986A4006D989E /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9C2C7986A4006D989E /* Defaults */; };
 		B3BE9F9F2C7986A9006D989E /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9E2C7986A9006D989E /* PVPlists */; };
@@ -1049,11 +1087,29 @@
 		B3FD98662D615C6B00397643 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
 		B3FE6DB22C93E60900792419 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FE6DB12C93E60900792419 /* PVO2EM.framework */; };
 		B3FE6DB32C93E60900792419 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FE6DB12C93E60900792419 /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B52444FC1589ACEFD6FC5FE6 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26E92BE7F8BC0066D4B6 /* libz.tbd */; };
+		B8EEDA1A0A1BEE75B4C65E4F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
+		BC37ED3AD96132DB0247F4A4 /* CONTRIBUTORS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
+		BF7274B82A9B8A4C7CC1BD86 /* libc.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EF2BE7F9690066D4B6 /* libc.tbd */; };
+		BFAF1364AC8BB9A8DCA6C009 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
+		C87ADA83B88DFFA2078E7480 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
+		C885E52E5278B83804A0BF61 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
+		C9EBACD7711CA8E02A22C0E2 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26ED2BE7F8EC0066D4B6 /* libc++.tbd */; };
+		CB2EFDFCA79271634BBD9426 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26E92BE7F8BC0066D4B6 /* libz.tbd */; };
+		D33C05D4591EC8D81E3D6700 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
+		D98C48D75C3DA4BF85D917D8 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
 		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
+		E22B0E00F5574462E3144436 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		E5EB2B28CA03479A91ABDF80 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 54925F9AB59542258A6A5CE9 /* Sentry */; };
+		ED964A0F70624EDFB0DAE912 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
+		F54AF57907923FAA7CBC2FB0 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EB2BE7F8DD0066D4B6 /* libxml2.tbd */; };
+		F8FF3887976EECF49995397E /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
+		FA238F54C40F350213B82181 /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
+		FDB4C87A5701DDBE32B4983E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
+		FE3FDA0FAF06ABA5B5CC386E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1372,6 +1428,16 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A6E60E77FC35AD9A40D71C5E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B30059642C794D6D003010F5 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1440,7 +1506,7 @@
 				B3A186952CBCBB3F00BB1FFE /* PVMupen64PlusBridge.framework in Embed Frameworks */,
 				B3FC973D2CB8B6D100C6DB31 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
 				B347B32A2BC4CA98006A3B2D /* PVLogging in Embed Frameworks */,
-				B347B32B2BC4CA98006A3B2D /* (null) in Embed Frameworks */,
+				B347B32B2BC4CA98006A3B2D /* BuildFile in Embed Frameworks */,
 				B347B3962BC4CD4C006A3B2D /* MoltenVK.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1740,6 +1806,9 @@
 		5525388625574D48004B00B6 /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		555454412AC09997006A065F /* LaunchImageTV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchImageTV.png; sourceTree = "<group>"; };
 		555454422AC09998006A065F /* LaunchScreenTV.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreenTV.storyboard; sourceTree = "<group>"; };
+		61D0A2BEE5E0D601A0F11C55 /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DAC5484FE40CAF061362758 /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		928DA26E321AA76BBF48ABEC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		930499EF2A93073800BF257F /* Provenance-UnderDevelopment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-UnderDevelopment.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		930499F12A9307BF00BF257F /* PVSnesticle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSnesticle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		930499F52A93084C00BF257F /* PVPCSXRearmed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPCSXRearmed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2663,31 +2732,33 @@
 		C13CC82823CABE2800463EDD /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC51A109C1C4AE07721D70ED /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B39B10B92DAF3D16004EEF79 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B39B10B92DAF3D16004EEF79 /* Exceptions for "TopShelfv2" folder in "TopShelfv2" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */;
 		};
-		B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3BE9FC12C7987B2006D989E /* Exceptions for "ROM File Provider" folder in "ROM File Provider" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = B3BE9FA32C7987B1006D989E /* ROM File Provider */;
 		};
-		B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3BE9FD82C7988BF006D989E /* Exceptions for "Provenance Stickers" folder in "Provenance Stickers" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = B3BE9FCF2C7988BD006D989E /* Provenance Stickers */;
 		};
-		B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD984A2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance-XL" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2702,7 +2773,7 @@
 			);
 			target = B3F7E422297736C200362B92 /* Provenance-XL */;
 		};
-		B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD984B2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2716,7 +2787,7 @@
 			);
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 		};
-		B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD984C2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance (AppStore)" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2741,7 +2812,7 @@
 			};
 			target = B394CC562BDEE53A006B63E8 /* Provenance (AppStore) */;
 		};
-		B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD984D2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance-Lite" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/libavcodec.xcframework,
@@ -2755,7 +2826,7 @@
 			);
 			target = B3F7E295297736BE00362B92 /* Provenance-Lite */;
 		};
-		B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD984E2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance-Lite (AppStore)" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2769,7 +2840,7 @@
 			);
 			target = B35EEF542C6C6D1A00EBD1A8 /* Provenance-Lite (AppStore) */;
 		};
-		B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD984F2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance-UnderDevelopment" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2784,7 +2855,7 @@
 			);
 			target = 930498BE2A93073800BF257F /* Provenance-UnderDevelopment */;
 		};
-		B3FD98502D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD98502D614E3E00397643 /* Exceptions for "Dependencies" folder in "ProvenanceTV" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2799,7 +2870,7 @@
 			);
 			target = 1AD481B31BA350A400FDA50A /* ProvenanceTV */;
 		};
-		B3FD98512D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD98512D614E3E00397643 /* Exceptions for "Dependencies" folder in "ProvenanceTV (AppStore)" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2814,7 +2885,7 @@
 			);
 			target = B341FCB72BE61EC100718929 /* ProvenanceTV (AppStore) */;
 		};
-		B3FD98522D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B3FD98522D614E3E00397643 /* Exceptions for "Dependencies" folder in "ProvennaceTV-Lite" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2832,42 +2903,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		B3FD98592D615C5100397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				FFMpeg/xcframeworks/ffmpegkit.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavcodec.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavdevice.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavfilter.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavformat.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavutil.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswresample.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswscale.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-			};
 			buildPhase = B394CD3B2BDEE53A006B63E8 /* Embed Frameworks */;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2886,42 +2923,8 @@
 				);
 			};
 		};
-		B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		B3FD986A2D615C7700397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				FFMpeg/xcframeworks/ffmpegkit.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavcodec.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavdevice.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavfilter.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavformat.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavutil.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswresample.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswscale.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-			};
 			buildPhase = 1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2934,42 +2937,8 @@
 				FFMpeg/xcframeworks/libswscale.xcframework,
 			);
 		};
-		B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		B3FD987B2D615C9400397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				FFMpeg/xcframeworks/ffmpegkit.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavcodec.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavdevice.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavfilter.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavformat.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavutil.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswresample.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswscale.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-			};
 			buildPhase = B3F7E574297736C200362B92 /* Embed Frameworks */;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -2982,42 +2951,8 @@
 				FFMpeg/xcframeworks/libswscale.xcframework,
 			);
 		};
-		B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		B3FD98912D615CF000397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				FFMpeg/xcframeworks/libavcodec.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavdevice.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavfilter.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavformat.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavutil.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswresample.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswscale.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				OpenSSL.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-			};
 			buildPhase = B3FD98902D615CF000397643 /* Embed Frameworks */;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/libavcodec.xcframework,
@@ -3030,42 +2965,8 @@
 				OpenSSL.xcframework,
 			);
 		};
-		B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		B3FD98A22D615D1300397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				FFMpeg/xcframeworks/ffmpegkit.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavcodec.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavdevice.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavfilter.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavformat.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavutil.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswresample.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswscale.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-			};
 			buildPhase = B35EEFA02C6C6D1A00EBD1A8 /* Embed Frameworks */;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -3078,42 +2979,8 @@
 				FFMpeg/xcframeworks/libswscale.xcframework,
 			);
 		};
-		B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		B3FD98C12D615D3300397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				FFMpeg/xcframeworks/ffmpegkit.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavcodec.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavdevice.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavfilter.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavformat.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavutil.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswresample.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswscale.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-			};
 			buildPhase = 9304999B2A93073800BF257F /* Embed Frameworks */;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -3126,42 +2993,8 @@
 				FFMpeg/xcframeworks/libswscale.xcframework,
 			);
 		};
-		B3FD98D22D615D5000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		B3FD98D22D615D5000397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				FFMpeg/xcframeworks/ffmpegkit.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavcodec.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavdevice.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavfilter.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavformat.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libavutil.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswresample.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-				FFMpeg/xcframeworks/libswscale.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
-			};
 			buildPhase = 1AACCAE61BB60DB500DC21AE /* Embed Frameworks */;
 			membershipExceptions = (
 				FFMpeg/xcframeworks/ffmpegkit.xcframework,
@@ -3177,14 +3010,113 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B30059402C794D6B003010F5 /* Provenance Mini Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch App"; sourceTree = "<group>"; };
-		B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppTests"; sourceTree = "<group>"; };
-		B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppUITests"; sourceTree = "<group>"; };
-		B39436502CCDEC9D004D5DFB /* Main UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Main UI"; sourceTree = "<group>"; };
-		B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B39B10B92DAF3D16004EEF79 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TopShelfv2; sourceTree = "<group>"; };
-		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
-		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
-		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD98502D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98D22D615D5000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD98512D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98522D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
+		B30059402C794D6B003010F5 /* Provenance Mini Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "Provenance Mini Watch App";
+			sourceTree = "<group>";
+		};
+		B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "Provenance Mini Watch AppTests";
+			sourceTree = "<group>";
+		};
+		B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "Provenance Mini Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		B39436502CCDEC9D004D5DFB /* Main UI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "Main UI";
+			sourceTree = "<group>";
+		};
+		B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B39B10B92DAF3D16004EEF79 /* Exceptions for "TopShelfv2" folder in "TopShelfv2" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = TopShelfv2;
+			sourceTree = "<group>";
+		};
+		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B3BE9FC12C7987B2006D989E /* Exceptions for "ROM File Provider" folder in "ROM File Provider" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "ROM File Provider";
+			sourceTree = "<group>";
+		};
+		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B3BE9FD82C7988BF006D989E /* Exceptions for "Provenance Stickers" folder in "Provenance Stickers" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "Provenance Stickers";
+			sourceTree = "<group>";
+		};
+		B3FD95D52D613D2B00397643 /* Dependencies */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B3FD984A2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance-XL" target */,
+				B3FD987B2D615C9400397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */,
+				B3FD984B2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance" target */,
+				B3FD986A2D615C7700397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */,
+				B3FD984C2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance (AppStore)" target */,
+				B3FD98592D615C5100397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */,
+				B3FD984D2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance-Lite" target */,
+				B3FD98912D615CF000397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */,
+				B3FD984E2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance-Lite (AppStore)" target */,
+				B3FD98A22D615D1300397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */,
+				B3FD984F2D614E3E00397643 /* Exceptions for "Dependencies" folder in "Provenance-UnderDevelopment" target */,
+				B3FD98C12D615D3300397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */,
+				B3FD98502D614E3E00397643 /* Exceptions for "Dependencies" folder in "ProvenanceTV" target */,
+				B3FD98D22D615D5000397643 /* Exceptions for "Dependencies" folder in "Embed Frameworks" build phase */,
+				B3FD98512D614E3E00397643 /* Exceptions for "Dependencies" folder in "ProvenanceTV (AppStore)" target */,
+				B3FD98522D614E3E00397643 /* Exceptions for "Dependencies" folder in "ProvennaceTV-Lite" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Dependencies;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3268,7 +3200,7 @@
 				B35AB4082CB6DBB5003273D4 /* PVPokeMini-Dynamic in Frameworks */,
 				B3FAC935292B451E005E8B11 /* PVGME.framework in Frameworks */,
 				B35AB41E2CB6DC9C003273D4 /* PVPicoDrive-Dynamic in Frameworks */,
-				B3BDD41C2D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD41C2D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3329,7 +3261,7 @@
 				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B3FAC9AA292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B346AED2297602210090E014 /* PVYabause.framework in Frameworks */,
-				B3BDD4222D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4222D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3339,7 +3271,7 @@
 			files = (
 				B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */,
 				B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */,
-				B3BDD4262D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4262D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3389,7 +3321,7 @@
 				930499C32A93073800BF257F /* Reachability in Frameworks */,
 				930499C42A93073800BF257F /* AltKit in Frameworks */,
 				930499C52A93073800BF257F /* Introspect in Frameworks */,
-				B3BDD4212D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4212D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3408,7 +3340,7 @@
 				B30059812C7974EB003010F5 /* PVCoreBridge in Frameworks */,
 				B30059732C794E09003010F5 /* StoreKit.framework in Frameworks */,
 				B3BE9F9F2C7986A9006D989E /* PVPlists in Frameworks */,
-				B3BDD42A2D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD42A2D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3416,7 +3348,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3BDD42B2D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD42B2D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3424,7 +3356,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3BDD42C2D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD42C2D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3488,7 +3420,7 @@
 				B341FDDB2BE61EC100718929 /* PVLogging in Frameworks */,
 				B35197CD2D1A5B2000D2B413 /* ZipArchive in Frameworks */,
 				B35197F42D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic in Frameworks */,
-				B3BDD4232D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4232D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3528,7 +3460,7 @@
 				B347B35F2BC4CA98006A3B2D /* GameController.framework in Frameworks */,
 				B347B3902BC4CCA6006A3B2D /* Metal.framework in Frameworks */,
 				B347B3602BC4CA98006A3B2D /* CoreServices.framework in Frameworks */,
-				B3BDD4242D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4242D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3537,7 +3469,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */,
-				B3BDD4272D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4272D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3552,7 +3484,7 @@
 				B39620942C66E1C70094F6F0 /* PVLogging in Frameworks */,
 				B32CEE3F2D20D40C0083552D /* PVFeatureFlags in Frameworks */,
 				B39620922C66E1BE0094F6F0 /* PVCoreBridge in Frameworks */,
-				B3BDD41B2D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD41B2D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3566,7 +3498,7 @@
 				B355E03A2920AC1A00E4C858 /* WidgetKit.framework in Frameworks */,
 				B39620A02C66E20B0094F6F0 /* PVCoreBridge in Frameworks */,
 				B396209E2C66E1FC0094F6F0 /* PVLogging in Frameworks */,
-				B3BDD4292D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4292D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3654,7 +3586,7 @@
 				B35EEFDF2C6C6D1A00EBD1A8 /* Introspect in Frameworks */,
 				B377ECA82CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B35EEFE02C6C6D1A00EBD1A8 /* PVCoreAudio in Frameworks */,
-				B3BDD4202D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4202D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3780,7 +3712,7 @@
 				B3BD3A252D7298FA000FBB11 /* Defaults in Frameworks */,
 				B3BD3A232D7298BB000FBB11 /* PVLibrary in Frameworks */,
 				B3BE9FA52C7987B1006D989E /* UniformTypeIdentifiers.framework in Frameworks */,
-				B3BDD4252D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4252D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3788,7 +3720,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3BDD42D2D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD42D2D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3814,7 +3746,7 @@
 			files = (
 				B3EEEDB42920B0D5008E2603 /* QuickLookThumbnailing.framework in Frameworks */,
 				B3EEEDB52920B0D5008E2603 /* Quartz.framework in Frameworks */,
-				B3BDD4282D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4282D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3860,7 +3792,7 @@
 				B3E88CBA2977AB5900C90E86 /* Reachability in Frameworks */,
 				B3F7E3BE297736BE00362B92 /* Introspect in Frameworks */,
 				B395958F2BF47033004C5AA9 /* RxDataSources in Frameworks */,
-				B3BDD41F2D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD41F2D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3946,7 +3878,35 @@
 				B3FC97462CB8C24600C6DB31 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B3F7E54D297736C200362B92 /* PVGME.framework in Frameworks */,
 				9348D7512A32093900CC7998 /* PVPPSSPP.framework in Frameworks */,
-				B3BDD4022D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD4022D349220005F5AF9 /* BuildFile in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B808316F529C2EB8801BE638 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A2789E6074FF30425FF7736 /* libbz2.tbd in Frameworks */,
+				BF7274B82A9B8A4C7CC1BD86 /* libc.tbd in Frameworks */,
+				8BC40327F78CE9F1251A5867 /* libc++.tbd in Frameworks */,
+				F54AF57907923FAA7CBC2FB0 /* libxml2.tbd in Frameworks */,
+				B52444FC1589ACEFD6FC5FE6 /* libz.tbd in Frameworks */,
+				5CBF08B09AC3E2867B689B71 /* CoreTelephony.framework in Frameworks */,
+				3B2C747A4EC0FF440E147CBA /* Photos.framework in Frameworks */,
+				AC527243DBAF4F4E263C987D /* GameController.framework in Frameworks */,
+				77CCCC0E5B6CE9BA288E83F0 /* MetalKit.framework in Frameworks */,
+				75DF205983F99653B8ECE4E1 /* CoreServices.framework in Frameworks */,
+				512915984E5AB422C842AB14 /* AVFoundation.framework in Frameworks */,
+				D98C48D75C3DA4BF85D917D8 /* CFNetwork.framework in Frameworks */,
+				C885E52E5278B83804A0BF61 /* Security.framework in Frameworks */,
+				FDB4C87A5701DDBE32B4983E /* SystemConfiguration.framework in Frameworks */,
+				97D397A09BCEFEAF56702A34 /* CoreData.framework in Frameworks */,
+				ED964A0F70624EDFB0DAE912 /* AudioToolbox.framework in Frameworks */,
+				74599C7C1C20260E8677DC2D /* UIKit.framework in Frameworks */,
+				B257200FB6AF3C38B35BBCE1 /* Metal.framework in Frameworks */,
+				FE3FDA0FAF06ABA5B5CC386E /* OpenGLES.framework in Frameworks */,
+				7294BE7865CFBA13735F06A4 /* Foundation.framework in Frameworks */,
+				3517DB19FA9723965B285E5D /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3962,7 +3922,7 @@
 				B32CEE432D20D45C0083552D /* PVFeatureFlags in Frameworks */,
 				B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */,
 				B35B17852CCCE0BB007059CA /* Defaults in Frameworks */,
-				B3BDD41A2D349220005F5AF9 /* (null) in Frameworks */,
+				B3BDD41A2D349220005F5AF9 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4069,6 +4029,10 @@
 				B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */,
 				B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */,
 				B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */,
+				FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */,
+				61D0A2BEE5E0D601A0F11C55 /* Provenance-CI.app */,
+				EC51A109C1C4AE07721D70ED /* Provenance-CI.app */,
+				6DAC5484FE40CAF061362758 /* Provenance-CI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4605,6 +4569,7 @@
 				1A4869DB17C8D60C0019F6D2 /* Security.framework */,
 				1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */,
 				1A3D409717B2DCE4004DFFFC /* UIKit.framework */,
+				928DA26E321AA76BBF48ABEC /* Foundation.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -4618,6 +4583,8 @@
 		};
 		1A51A4B32D72C23E00C8AD34 /* Products */ = {
 			isa = PBXGroup;
+			children = (
+			);
 			name = Products;
 			sourceTree = "<group>";
 		};
@@ -7329,6 +7296,52 @@
 			productReference = 1AD9AA351ACC988F00EC87A0 /* Provenance Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		34564105D5C5A21AF5C65E0A /* Provenance-CI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8D55B489DF10CE467B98FE7 /* Build configuration list for PBXNativeTarget "Provenance-CI" */;
+			buildPhases = (
+				1B74BCBEAA113E72A573F9D2 /* Sources */,
+				B808316F529C2EB8801BE638 /* Frameworks */,
+				C74572EB402077EE80053A9A /* Resources */,
+				A6E60E77FC35AD9A40D71C5E /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B39436502CCDEC9D004D5DFB /* Main UI */,
+			);
+			name = "Provenance-CI";
+			packageProductDependencies = (
+				27F19053F2C985B535A0CF20 /* SteamController */,
+				20E1EE14E80DB85C140E3A0A /* Introspect */,
+				C025805F5728378EEA610AA8 /* Reachability */,
+				A1F72DCB6CB0023526C35A4F /* RxDataSources */,
+				FCEB17E3F96B3B796927378C /* ZipArchive */,
+				855FAFEACE11956CEF62A156 /* PVEmulatorCore */,
+				ED84A99FC9CA95BB3BDF047D /* PVCoreAudio */,
+				245CBAC51A0F1090FA578A80 /* PVWebServer */,
+				F295BF10148E4848062B0AE9 /* PVLibrary */,
+				A7AA149D0B0EFCD373BA5D27 /* PVLogging */,
+				FE9169EE1BE0492603B0C002 /* MBProgressHUD */,
+				AEE88833F3661EF422619DF3 /* RealmSwift */,
+				68BFA96F7C00F9335C5E5782 /* PVThemes */,
+				21B1155DF69D6E4AC6779A41 /* PVPlists */,
+				EC3973475423A71BFE0C679F /* PVSettings */,
+				7902E5076F0952ED82025C5E /* PVUI */,
+				FF0F320B7D5932470770B65E /* Defaults */,
+				4D15F087BB2592ED2DD7EE8D /* SiriusRating */,
+				BF22FE93F78CC6239039CD8F /* FreemiumKit */,
+				8D5923F5D6B5F80152BC7B4C /* Perception */,
+				9C4E9B7E289A972E85DD3226 /* PVFeatureFlags */,
+				7D3C80A17BC5A8B6EB08E8D8 /* WhatsNewKit */,
+				53040F2E23B73F97BE1CAB5D /* OpenSSL */,
+			);
+			productName = "Provenance-CI";
+			productReference = 6DAC5484FE40CAF061362758 /* Provenance-CI.app */;
+			productType = "com.apple.product-type.application";
+		};
 		930498BE2A93073800BF257F /* Provenance-UnderDevelopment */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 930499EB2A93073800BF257F /* Build configuration list for PBXNativeTarget "Provenance-UnderDevelopment" */;
@@ -7382,8 +7395,6 @@
 				B300593F2C794D6B003010F5 /* PBXTargetDependency */,
 			);
 			name = "Provenance Mini";
-			packageProductDependencies = (
-			);
 			productName = "Provenance Mini";
 			productReference = B30059372C794D6A003010F5 /* Provenance Mini.app */;
 			productType = "com.apple.product-type.application.watchapp2-container";
@@ -7438,8 +7449,6 @@
 				B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */,
 			);
 			name = "Provenance Mini Watch AppTests";
-			packageProductDependencies = (
-			);
 			productName = "Provenance Mini Watch AppTests";
 			productReference = B300594E2C794D6C003010F5 /* Provenance Mini Watch AppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -7461,8 +7470,6 @@
 				B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */,
 			);
 			name = "Provenance Mini Watch AppUITests";
-			packageProductDependencies = (
-			);
 			productName = "Provenance Mini Watch AppUITests";
 			productReference = B30059582C794D6C003010F5 /* Provenance Mini Watch AppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -7814,8 +7821,6 @@
 			dependencies = (
 			);
 			name = "ROM File ProviderUI";
-			packageProductDependencies = (
-			);
 			productName = "ROM File ProviderUI";
 			productReference = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -7834,8 +7839,6 @@
 				B3BE9FD12C7988BE006D989E /* Provenance Stickers */,
 			);
 			name = "Provenance Stickers";
-			packageProductDependencies = (
-			);
 			productName = "Provenance Stickers";
 			productReference = B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */;
 			productType = "com.apple.product-type.app-extension.messages-sticker-pack";
@@ -8144,7 +8147,7 @@
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
-				B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */,
+				B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability.swift" */,
 				B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */,
 				B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */,
 				B395958D2BF47033004C5AA9 /* XCRemoteSwiftPackageReference "RxDataSources" */,
@@ -8158,30 +8161,30 @@
 				B33B4F3B2C198EB8007371C5 /* XCLocalSwiftPackageReference "PVmemcpy" */,
 				B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
 				B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */,
-				B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */,
-				B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */,
+				B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Atari800" */,
+				B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "CrabEMU" */,
 				B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */,
-				B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */,
-				B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */,
-				B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */,
-				B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */,
-				B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */,
+				B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "TGBDual" */,
+				B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "PokeMini" */,
+				B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "PicoDrive" */,
+				B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Stella" */,
+				B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "VirtualJaguar" */,
 				B34A20132C62F96100E34059 /* XCLocalSwiftPackageReference "PVPlists" */,
 				B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */,
 				B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */,
 				B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */,
-				B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */,
-				B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "Cores/4DO" */,
+				B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Mednafen" */,
+				B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "4DO" */,
 				B383D5232C96680700469713 /* XCLocalSwiftPackageReference "PVCoreObjCBridge" */,
-				B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */,
-				B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */,
-				B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */,
-				B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */,
+				B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "ProSystem" */,
+				B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Bliss" */,
+				B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "mGBA" */,
+				B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */,
 				B382362A2CC4623100DCE080 /* XCRemoteSwiftPackageReference "SiriusRating-iOS" */,
 				B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */,
 				B35B177D2CCCDFC7007059CA /* XCLocalSwiftPackageReference "PVAudio" */,
 				B37228C82CCDC7A700E6F627 /* XCRemoteSwiftPackageReference "FreemiumKit" */,
-				B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
+				B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "VisualBoyAdvance-M" */,
 				B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */,
 				B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */,
 				B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
@@ -9599,6 +9602,7 @@
 				B3BE9FA32C7987B1006D989E /* ROM File Provider */,
 				B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */,
 				B3BE9FCF2C7988BD006D989E /* Provenance Stickers */,
+				34564105D5C5A21AF5C65E0A /* Provenance-CI */,
 			);
 		};
 /* End PBXProject section */
@@ -9899,6 +9903,23 @@
 				B3F7E55A297736C200362B92 /* Settings.bundle in Resources */,
 				B32C08E92D0539230024A3E2 /* AppStoreAssets.xcassets in Resources */,
 				B3F7E566297736C200362B92 /* licenses.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C74572EB402077EE80053A9A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				88AA4E0D566A4B903BB22CA3 /* InfoPlist.strings in Resources */,
+				38ACA2E4D781E99A8C193411 /* Strings.strings in Resources */,
+				499AABDDD52E86AEF1363F50 /* GoogleService-Info.plist in Resources */,
+				46CDBD343311A863262EBE9B /* AppStoreAssets-Lite.xcassets in Resources */,
+				7DA360DE1FB0DD316B047DB5 /* ColoredIcons.xcassets in Resources */,
+				B2DF1479746E9442D3F5DD4F /* Settings.bundle in Resources */,
+				A43C954DC7A6AC3AB80C97E6 /* licenses.html in Resources */,
+				91D1E1147A6900A19126291F /* Assets-Lite.xcassets in Resources */,
+				BC37ED3AD96132DB0247F4A4 /* CONTRIBUTORS.md in Resources */,
+				FA238F54C40F350213B82181 /* SYSTEMS.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10450,6 +10471,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1AD9AA311ACC988F00EC87A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1B74BCBEAA113E72A573F9D2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -11388,6 +11416,299 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance.app/Provenance";
 			};
 			name = Release;
+		};
+		5BCF70194B858F1D6129D28E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				APP_DISPLAY_NAME = Provenance;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-AppStore.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_HARDENED_RUNTIME = YES;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Cores/emuThree/lib",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"APP_STORE=1",
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "Provenance/Provenance-Lite (AppStore)-Info.plist";
+				"INFOPLIST_FILE[sdk=appletvos*]" = "Provenance/Provenance-Lite (AppStore)-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
+				INFOPLIST_KEY_NSStickerSharingLevel = OS;
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/Frameworks/MoltenVK.framework",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks/MoltenVK.framework",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
+					"$(PROJECT_DIR)/Cores/Play/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
+					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
+					"$(PROJECT_DIR)/Cores/emuThree/lib",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-Wno-deprecated-declarations",
+				);
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200 -DAPP_STORE -DAPPSTORE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ci";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvos*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				PRODUCT_NAME = "Provenance CI";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
+				VALIDATE_PRODUCT = YES;
+				WARNING_LDFLAGS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		62ACB4A07CDD0A7012A48AE7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				APP_DISPLAY_NAME = Provenance;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-AppStore.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_HARDENED_RUNTIME = YES;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Cores/emuThree/lib",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"APP_STORE=1",
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "Provenance/Provenance-Lite (AppStore)-Info.plist";
+				"INFOPLIST_FILE[sdk=appletvos*]" = "Provenance/Provenance-Lite (AppStore)-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
+				INFOPLIST_KEY_NSStickerSharingLevel = OS;
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/Frameworks/MoltenVK.framework",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks/MoltenVK.framework",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
+					"$(PROJECT_DIR)/Cores/Play/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
+					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
+					"$(PROJECT_DIR)/Cores/emuThree/lib",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-Wno-deprecated-declarations",
+				);
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200 -DAPP_STORE -DAPPSTORE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ci";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvos*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				PRODUCT_NAME = "Provenance CI";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
+				VALIDATE_PRODUCT = YES;
+				WARNING_LDFLAGS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Archive;
+		};
+		68924679E576F1D2FA3C72C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				APP_DISPLAY_NAME = "Prov Debug";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletv*]" = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-AppStore.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_HARDENED_RUNTIME = YES;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Cores/emuThree/lib",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"APP_STORE=1",
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "Provenance/Provenance-Lite (AppStore)-Info.plist";
+				"INFOPLIST_FILE[sdk=appletvos*]" = "Provenance/Provenance-Lite (AppStore)-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
+				INFOPLIST_KEY_NSStickerSharingLevel = OS;
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/Frameworks/MoltenVK.framework",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks/MoltenVK.framework",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
+					"$(PROJECT_DIR)/Cores/Play/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
+					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
+					"$(PROJECT_DIR)/Cores/emuThree/lib",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-Wno-deprecated-declarations";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200 -DAPP_STORE -DAPPSTORE";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ci";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvos*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "$(PRODUCT_BUNDLE_IDENTIFIER_LITE)";
+				PRODUCT_NAME = "Provenance CI";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 16.6;
+				VALIDATE_PRODUCT = NO;
+				WARNING_LDFLAGS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
 		};
 		930499EC2A93073800BF257F /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -15611,6 +15932,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		D8D55B489DF10CE467B98FE7 /* Build configuration list for PBXNativeTarget "Provenance-CI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68924679E576F1D2FA3C72C5 /* Debug */,
+				5BCF70194B858F1D6129D28E /* Release */,
+				62ACB4A07CDD0A7012A48AE7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -15622,7 +15953,7 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVJIT;
 		};
-		B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */ = {
+		B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "mGBA" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/mGBA;
 		};
@@ -15634,7 +15965,7 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVSupport;
 		};
-		B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */ = {
+		B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Gambatte;
 		};
@@ -15666,11 +15997,11 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVCoreObjCBridge;
 		};
-		B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "Cores/4DO" */ = {
+		B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "4DO" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/4DO;
 		};
-		B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */ = {
+		B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "VisualBoyAdvance-M" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "Cores/VisualBoyAdvance-M";
 		};
@@ -15682,19 +16013,19 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVSettings;
 		};
-		B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */ = {
+		B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Atari800" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Atari800;
 		};
-		B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */ = {
+		B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "CrabEMU" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/CrabEMU;
 		};
-		B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */ = {
+		B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "VirtualJaguar" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/VirtualJaguar;
 		};
-		B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */ = {
+		B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Mednafen" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Mednafen;
 		};
@@ -15702,19 +16033,19 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = MoltenVK;
 		};
-		B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */ = {
+		B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "TGBDual" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/TGBDual;
 		};
-		B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */ = {
+		B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "PokeMini" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/PokeMini;
 		};
-		B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */ = {
+		B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "PicoDrive" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/PicoDrive;
 		};
-		B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */ = {
+		B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Stella" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Stella;
 		};
@@ -15726,11 +16057,11 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVCoreAudio;
 		};
-		B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */ = {
+		B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "ProSystem" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/ProSystem;
 		};
-		B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */ = {
+		B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Bliss" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Bliss;
 		};
@@ -15777,7 +16108,7 @@
 				kind = branch;
 			};
 		};
-		930498CC2A93073800BF257F /* XCRemoteSwiftPackageReference "Reachability" */ = {
+		930498CC2A93073800BF257F /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
 			requirement = {
@@ -15817,7 +16148,7 @@
 				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
 			};
 		};
-		B341FCC52BE61EC100718929 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+		B341FCC52BE61EC100718929 /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
 			requirement = {
@@ -15841,7 +16172,7 @@
 				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
 			};
 		};
-		B347B2432BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "Reachability" */ = {
+		B347B2432BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
 			requirement = {
@@ -15873,7 +16204,7 @@
 				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
 			};
 		};
-		B35EEF642C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+		B35EEF642C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
 			requirement = {
@@ -15961,7 +16292,7 @@
 				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
 			};
 		};
-		B394CC642BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+		B394CC642BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
 			requirement = {
@@ -16017,7 +16348,7 @@
 				minimumVersion = 3.3.2000;
 			};
 		};
-		B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+		B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
 			requirement = {
@@ -16076,15 +16407,65 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		20E1EE14E80DB85C140E3A0A /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF622C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
+		21B1155DF69D6E4AC6779A41 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		245CBAC51A0F1090FA578A80 /* PVWebServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVWebServer;
+		};
+		27F19053F2C985B535A0CF20 /* SteamController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF602C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "SteamController" */;
+			productName = SteamController;
+		};
 		37EEA2AA27BC81890070E222 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
 		};
+		4D15F087BB2592ED2DD7EE8D /* SiriusRating */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B382362A2CC4623100DCE080 /* XCRemoteSwiftPackageReference "SiriusRating-iOS" */;
+			productName = SiriusRating;
+		};
+		53040F2E23B73F97BE1CAB5D /* OpenSSL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */;
+			productName = OpenSSL;
+		};
 		54925F9AB59542258A6A5CE9 /* Sentry */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
 			productName = Sentry;
+		};
+		68BFA96F7C00F9335C5E5782 /* PVThemes */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVThemes;
+		};
+		7902E5076F0952ED82025C5E /* PVUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVUI;
+		};
+		7D3C80A17BC5A8B6EB08E8D8 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
+		};
+		855FAFEACE11956CEF62A156 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		8D5923F5D6B5F80152BC7B4C /* Perception */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B39680472CE720E300E1AB6D /* XCRemoteSwiftPackageReference "swift-perception" */;
+			productName = Perception;
 		};
 		930498C52A93073800BF257F /* AltKit */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -16103,26 +16484,45 @@
 		};
 		930498CB2A93073800BF257F /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 930498CC2A93073800BF257F /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = 930498CC2A93073800BF257F /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		93A728622AAF073B0052B279 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
 		};
+		9C4E9B7E289A972E85DD3226 /* PVFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */;
+			productName = PVFeatureFlags;
+		};
+		A1F72DCB6CB0023526C35A4F /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF662C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
+		A7AA149D0B0EFCD373BA5D27 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+		AEE88833F3661EF422619DF3 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF722C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		B30059742C7974C8003010F5 /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */;
+			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "VirtualJaguar" */;
 			productName = "PVVirtualJaguar-Dynamic";
 		};
 		B30059782C7974D6003010F5 /* PVStella-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Stella" */;
 			productName = "PVStella-Dynamic";
 		};
 		B300597B2C7974DD003010F5 /* PVPokeMini-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "PokeMini" */;
 			productName = "PVPokeMini-Dynamic";
 		};
 		B300597E2C7974E4003010F5 /* PVEmulatorCore */ = {
@@ -16176,22 +16576,22 @@
 		};
 		B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
+			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Mednafen" */;
 			productName = "PVCoreMednafen-Dynamic";
 		};
 		B30ED0D92CFD3C5200AFCFCE /* PVCoreMednafen-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
+			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Mednafen" */;
 			productName = "PVCoreMednafen-Dynamic";
 		};
 		B318E2942CAB571100D0E599 /* PVBliss-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */;
+			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Bliss" */;
 			productName = "PVBliss-Dynamic";
 		};
 		B318E29F2CAB5A2600D0E599 /* PVProSystem-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */;
+			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "ProSystem" */;
 			productName = "PVProSystem-Dynamic";
 		};
 		B323B0082BF46D2800CEA3CF /* PVLibrary */ = {
@@ -16245,32 +16645,32 @@
 		};
 		B32D45C02CB730FB006B76C2 /* PVGambatte */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */;
 			productName = PVGambatte;
 		};
 		B32D45C22CB73101006B76C2 /* PVGambatte */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */;
 			productName = PVGambatte;
 		};
 		B32D45C42CB73106006B76C2 /* PVGambatte */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */;
 			productName = PVGambatte;
 		};
 		B32D45C62CB7310C006B76C2 /* PVGambatte */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */;
 			productName = PVGambatte;
 		};
 		B32D45C82CB73112006B76C2 /* PVGambatte */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */;
 			productName = PVGambatte;
 		};
 		B32D45CC2CB7311C006B76C2 /* PVGambatte */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */;
 			productName = PVGambatte;
 		};
 		B33A09332D2D0B0C00BFB6C9 /* PVJIT */ = {
@@ -16295,32 +16695,32 @@
 		};
 		B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Atari800" */;
 			productName = "PVAtari800-Dynamic";
 		};
 		B33BD1BB2C6A6204001E933A /* PVCrabEmu-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */;
+			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "CrabEMU" */;
 			productName = "PVCrabEmu-Dynamic";
 		};
 		B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
+			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "PicoDrive" */;
 			productName = "PVPicoDrive-Dynamic";
 		};
 		B33BD1C12C6A621A001E933A /* PVPokeMini-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "PokeMini" */;
 			productName = "PVPokeMini-Dynamic";
 		};
 		B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
+			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "TGBDual" */;
 			productName = "PVTGBDual-Dynamic";
 		};
 		B33BD1C72C6A6261001E933A /* PVStella-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Stella" */;
 			productName = "PVStella-Dynamic";
 		};
 		B341FCC02BE61EC100718929 /* SteamController */ = {
@@ -16335,7 +16735,7 @@
 		};
 		B341FCC42BE61EC100718929 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B341FCC52BE61EC100718929 /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = B341FCC52BE61EC100718929 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		B341FCC62BE61EC100718929 /* PVLogging */ = {
@@ -16354,7 +16754,7 @@
 		};
 		B347B2422BC4CA98006A3B2D /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B347B2432BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = B347B2432BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		B347B2442BC4CA98006A3B2D /* PVLogging */ = {
@@ -16405,47 +16805,47 @@
 		};
 		B35197D62D1A5BF800D2B413 /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */;
+			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "VirtualJaguar" */;
 			productName = "PVVirtualJaguar-Dynamic";
 		};
 		B35197D92D1A5C2500D2B413 /* PVCrabEmu-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */;
+			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "CrabEMU" */;
 			productName = "PVCrabEmu-Dynamic";
 		};
 		B35197DC2D1A5C6A00D2B413 /* PVPokeMini-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "PokeMini" */;
 			productName = "PVPokeMini-Dynamic";
 		};
 		B35197DF2D1A5C6F00D2B413 /* PVProSystem-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */;
+			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "ProSystem" */;
 			productName = "PVProSystem-Dynamic";
 		};
 		B35197E22D1A5C7C00D2B413 /* PVPicoDrive-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
+			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "PicoDrive" */;
 			productName = "PVPicoDrive-Dynamic";
 		};
 		B35197E52D1A5C9200D2B413 /* PVTGBDual-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
+			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "TGBDual" */;
 			productName = "PVTGBDual-Dynamic";
 		};
 		B35197E82D1A5CC000D2B413 /* PVBliss-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */;
+			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Bliss" */;
 			productName = "PVBliss-Dynamic";
 		};
 		B35197EB2D1A5D4100D2B413 /* PVStella-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Stella" */;
 			productName = "PVStella-Dynamic";
 		};
 		B35197EE2D1A5DD700D2B413 /* PVAtari800-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Atari800" */;
 			productName = "PVAtari800-Dynamic";
 		};
 		B35197F12D1A5E0B00D2B413 /* PVLibrary */ = {
@@ -16455,7 +16855,7 @@
 		};
 		B35197F32D1A5E3E00D2B413 /* PVCoreMednafen-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
+			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Mednafen" */;
 			productName = "PVCoreMednafen-Dynamic";
 		};
 		B35197F62D1A5E7600D2B413 /* PVSupport */ = {
@@ -16465,7 +16865,7 @@
 		};
 		B35197F82D1A5ED600D2B413 /* PVCoremGBA-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
+			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "mGBA" */;
 			productName = "PVCoremGBA-Dynamic";
 		};
 		B35197FE2D1A5F5300D2B413 /* Defaults */ = {
@@ -16490,47 +16890,47 @@
 		};
 		B35AB4012CB6D975003273D4 /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */;
+			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "VirtualJaguar" */;
 			productName = "PVVirtualJaguar-Dynamic";
 		};
 		B35AB4042CB6DA6A003273D4 /* PVCrabEmu-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */;
+			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "CrabEMU" */;
 			productName = "PVCrabEmu-Dynamic";
 		};
 		B35AB4072CB6DBB5003273D4 /* PVPokeMini-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "PokeMini" */;
 			productName = "PVPokeMini-Dynamic";
 		};
 		B35AB40A2CB6DBEC003273D4 /* PVAtari800-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Atari800" */;
 			productName = "PVAtari800-Dynamic";
 		};
 		B35AB40D2CB6DBF4003273D4 /* PVBliss-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */;
+			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Bliss" */;
 			productName = "PVBliss-Dynamic";
 		};
 		B35AB4102CB6DC14003273D4 /* PVFreeDO-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "Cores/4DO" */;
+			package = B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "4DO" */;
 			productName = "PVFreeDO-Dynamic";
 		};
 		B35AB4132CB6DC20003273D4 /* PVTGBDual-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
+			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "TGBDual" */;
 			productName = "PVTGBDual-Dynamic";
 		};
 		B35AB4162CB6DC46003273D4 /* PVStella-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Stella" */;
 			productName = "PVStella-Dynamic";
 		};
 		B35AB4192CB6DC52003273D4 /* PVCoreMednafen */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
+			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Mednafen" */;
 			productName = PVCoreMednafen;
 		};
 		B35AB41B2CB6DC6B003273D4 /* PVEmulatorCore */ = {
@@ -16540,7 +16940,7 @@
 		};
 		B35AB41D2CB6DC9C003273D4 /* PVPicoDrive-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
+			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "PicoDrive" */;
 			productName = "PVPicoDrive-Dynamic";
 		};
 		B35AB4202CB6DCB1003273D4 /* PVPlists */ = {
@@ -16550,7 +16950,7 @@
 		};
 		B35AB4292CB6E185003273D4 /* PVProSystem-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */;
+			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "ProSystem" */;
 			productName = "PVProSystem-Dynamic";
 		};
 		B35AB42C2CB6E1AC003273D4 /* Defaults */ = {
@@ -16599,7 +16999,7 @@
 		};
 		B35D52812C96C83E006BE5BF /* PVFreeDO-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "Cores/4DO" */;
+			package = B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "4DO" */;
 			productName = "PVFreeDO-Dynamic";
 		};
 		B35EEF5F2C6C6D1A00EBD1A8 /* SteamController */ = {
@@ -16614,7 +17014,7 @@
 		};
 		B35EEF632C6C6D1A00EBD1A8 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B35EEF642C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = B35EEF642C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		B35EEF652C6C6D1A00EBD1A8 /* RxDataSources */ = {
@@ -16736,12 +17136,12 @@
 		};
 		B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Stella" */;
 			productName = "PVStella-Dynamic";
 		};
 		B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "PokeMini" */;
 			productName = "PVPokeMini-Dynamic";
 		};
 		B37228C92CCDC7A700E6F627 /* FreemiumKit */ = {
@@ -16756,22 +17156,22 @@
 		};
 		B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
+			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "PicoDrive" */;
 			productName = "PVPicoDrive-Dynamic";
 		};
 		B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Atari800" */;
 			productName = "PVAtari800-Dynamic";
 		};
 		B37321A32C900A9F00CF59EF /* PVCrabEmu-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */;
+			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "CrabEMU" */;
 			productName = "PVCrabEmu-Dynamic";
 		};
 		B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
+			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "TGBDual" */;
 			productName = "PVTGBDual-Dynamic";
 		};
 		B382362B2CC4623100DCE080 /* SiriusRating */ = {
@@ -16813,7 +17213,7 @@
 		};
 		B394CC632BDEE53A006B63E8 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B394CC642BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = B394CC642BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		B3952F552C697A02000B0308 /* PVUI */ = {
@@ -16911,7 +17311,7 @@
 		};
 		B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */;
+			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "VirtualJaguar" */;
 			productName = "PVVirtualJaguar-Dynamic";
 		};
 		B3A1867C2CBCB78C00BB1FFE /* PVLibrary */ = {
@@ -16936,67 +17336,67 @@
 		};
 		B3A610022CB885BD001D99C2 /* PVCoremGBA-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
+			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "mGBA" */;
 			productName = "PVCoremGBA-Dynamic";
 		};
 		B3A610052CB885D5001D99C2 /* PVGambatte-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Gambatte" */;
 			productName = "PVGambatte-Dynamic";
 		};
 		B3A610082CB885EB001D99C2 /* PVAtari800-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Atari800" */;
 			productName = "PVAtari800-Dynamic";
 		};
 		B3A6100B2CB885F2001D99C2 /* PVBliss-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Cores/Bliss" */;
+			package = B3E1BF922C96F21400EB4238 /* XCLocalSwiftPackageReference "Bliss" */;
 			productName = "PVBliss-Dynamic";
 		};
 		B3A6100E2CB885FD001D99C2 /* PVCoreMednafen */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */;
+			package = B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Mednafen" */;
 			productName = PVCoreMednafen;
 		};
 		B3A610102CB88610001D99C2 /* PVProSystem-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */;
+			package = B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "ProSystem" */;
 			productName = "PVProSystem-Dynamic";
 		};
 		B3A610132CB88619001D99C2 /* PVCrabEmu-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */;
+			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "CrabEMU" */;
 			productName = "PVCrabEmu-Dynamic";
 		};
 		B3A610162CB88621001D99C2 /* PVFreeDO-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "Cores/4DO" */;
+			package = B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "4DO" */;
 			productName = "PVFreeDO-Dynamic";
 		};
 		B3A610192CB88633001D99C2 /* PVPicoDrive-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
+			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "PicoDrive" */;
 			productName = "PVPicoDrive-Dynamic";
 		};
 		B3A6101C2CB8863C001D99C2 /* PVPokeMini-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "PokeMini" */;
 			productName = "PVPokeMini-Dynamic";
 		};
 		B3A6101F2CB88646001D99C2 /* PVStella-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Stella" */;
 			productName = "PVStella-Dynamic";
 		};
 		B3A610222CB8864F001D99C2 /* PVTGBDual-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
+			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "TGBDual" */;
 			productName = "PVTGBDual-Dynamic";
 		};
 		B3A610252CB8865C001D99C2 /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */;
+			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "VirtualJaguar" */;
 			productName = "PVVirtualJaguar-Dynamic";
 		};
 		B3AFCF952977A80700A01010 /* PVLogging */ = {
@@ -17043,7 +17443,7 @@
 		};
 		B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
+			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "mGBA" */;
 			productName = "PVCoremGBA-Dynamic";
 		};
 		B3D30FC026F0BCE60064603F /* SteamController */ = {
@@ -17128,22 +17528,22 @@
 		};
 		B3E88CB72977AB4400C90E86 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		B3E88CB92977AB5900C90E86 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		B3E88CBB2977AB6C00C90E86 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		B3E88CBD2977AB7C00C90E86 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */;
+			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
 		B3EE55DD2C66EBC0004D06E4 /* PVSettings */ = {
@@ -17236,6 +17636,44 @@
 		B3FC973E2CB8BDB900C6DB31 /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		BF22FE93F78CC6239039CD8F /* FreemiumKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37228C82CCDC7A700E6F627 /* XCRemoteSwiftPackageReference "FreemiumKit" */;
+			productName = FreemiumKit;
+		};
+		C025805F5728378EEA610AA8 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF642C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
+			productName = Reachability;
+		};
+		EC3973475423A71BFE0C679F /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		ED84A99FC9CA95BB3BDF047D /* PVCoreAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreAudio;
+		};
+		F295BF10148E4848062B0AE9 /* PVLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF6D2C6C6D1A00EBD1A8 /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVLibrary;
+		};
+		FCEB17E3F96B3B796927378C /* ZipArchive */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF682C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "ZipArchive" */;
+			productName = ZipArchive;
+		};
+		FE9169EE1BE0492603B0C002 /* MBProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF702C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "MBProgressHUD" */;
+			productName = MBProgressHUD;
+		};
+		FF0F320B7D5932470770B65E /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B35EEF792C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
 /* End XCSwiftPackageProductDependency section */

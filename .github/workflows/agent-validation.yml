@@ -105,17 +105,17 @@ jobs:
           cd ${{ matrix.module }}
           swift test 2>&1 | tail -40
 
-  # Job 3: Fast Lite simulator build — validates that code compiles
-  # No code signing needed, Lite has minimal cores so builds in ~10-15 min
+  # Job 3: Fast CI simulator build — validates that code compiles
+  # Uses Provenance-CI target (no emulator cores) for fastest possible build
   smoke-build:
-    name: Build (Provenance-Lite Simulator)
+    name: Build (Provenance-CI Simulator)
     runs-on: macos-15
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
           fetch-depth: 1
 
       - name: Select Xcode
@@ -125,16 +125,16 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-lite-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj', '**/Package.swift') }}
+          key: ${{ runner.os }}-ci-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj', '**/Package.swift') }}
           restore-keys: |
-            ${{ runner.os }}-lite-deriveddata-
+            ${{ runner.os }}-ci-deriveddata-
 
-      - name: Build Provenance-Lite (iOS Simulator)
+      - name: Build Provenance-CI (iOS Simulator)
         run: |
           start_time=$(date +%s)
           xcodebuild build \
             -workspace Provenance.xcworkspace \
-            -scheme "Provenance-Lite (AppStore)" \
+            -scheme "Provenance-CI" \
             -destination "generic/platform=iOS Simulator" \
             -skipPackagePluginValidation \
             -skipMacroValidation \
@@ -145,5 +145,5 @@ jobs:
           duration=$((end_time - start_time))
           minutes=$((duration / 60))
           seconds=$((duration % 60))
-          echo "### Lite Build Time" >> $GITHUB_STEP_SUMMARY
+          echo "### CI Build Time" >> $GITHUB_STEP_SUMMARY
           echo "Duration: ${minutes}m ${seconds}s" >> $GITHUB_STEP_SUMMARY
