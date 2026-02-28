@@ -1,0 +1,134 @@
+name: Agent Validation
+
+on:
+  pull_request:
+    branches: [develop]
+    paths-ignore:
+      - '*.md'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PRD_TEMPLATE.md'
+
+concurrency:
+  group: agent-validation-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: Fast lint on ubuntu (~1 min)
+  lint:
+    name: SwiftLint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Get changed Swift files
+        id: changed
+        run: |
+          FILES=$(gh pr diff ${{ github.event.pull_request.number }} --name-only | grep '\.swift$' || true)
+          if [ -z "$FILES" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "$FILES" > changed_files.txt
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Install SwiftLint
+        if: steps.changed.outputs.skip == 'false'
+        run: |
+          SWIFTLINT_VERSION="0.54.0"
+          curl -sL "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/swiftlint_linux.zip" -o swiftlint.zip
+          unzip -q swiftlint.zip -d swiftlint
+          chmod +x swiftlint/swiftlint
+          sudo mv swiftlint/swiftlint /usr/local/bin/
+
+      - name: Run SwiftLint on changed files
+        if: steps.changed.outputs.skip == 'false'
+        run: |
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              swiftlint lint --path "$file" --config .swiftlint.yml --reporter github-actions-logging || true
+            fi
+          done < changed_files.txt
+
+  # Job 2: SPM Build/Test for leaf modules (~5-10 min)
+  spm-test:
+    name: SPM Test (${{ matrix.module }})
+    runs-on: macos-15
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - PVLogging
+          - PVSettings
+          - PVHashing
+          - PVPlists
+          - PVFeatureFlags
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Check if module changed
+        id: check
+        run: |
+          CHANGED=$(gh pr diff ${{ github.event.pull_request.number }} --name-only | grep -c "^${{ matrix.module }}/" || true)
+          if [ "$CHANGED" -gt 0 ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Select Xcode
+        if: steps.check.outputs.changed == 'true'
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+
+      - name: Build module
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          cd ${{ matrix.module }}
+          swift build 2>&1 | tail -20
+
+      - name: Test module
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          cd ${{ matrix.module }}
+          swift test 2>&1 | tail -40
+
+  # Job 3: Full smoke build (only for large changes or explicit label)
+  smoke-build:
+    name: Smoke Build (Provenance-Lite)
+    runs-on: macos-15
+    timeout-minutes: 90
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'needs-smoke-build') ||
+      github.event.pull_request.changed_files > 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+
+      - name: Build Provenance-Lite (iOS Simulator)
+        run: |
+          xcodebuild build \
+            -workspace Provenance.xcworkspace \
+            -scheme "Provenance-Lite (AppStore)" \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet \
+            2>&1 | tail -50
