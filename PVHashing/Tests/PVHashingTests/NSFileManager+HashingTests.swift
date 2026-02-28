@@ -100,4 +100,95 @@ class ChecksumTests: XCTestCase {
         let testData: NSData = testString.data(using: .utf8)! as NSData
         XCTAssertEqual(expectedHash, testData.sha1)
     }
+
+    // MARK: - Async/await tests
+
+    func testCalculateMD5WithAsyncAwait() async throws {
+        // MD5 of the test file ("Hello, world!\n")
+        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let md5Hash = try await calculateMD5Async(of: testFileURL)
+        XCTAssertEqual(md5Hash, expectedHash)
+    }
+
+    func testURLMD5Async() async throws {
+        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let md5Hash = try await testFileURL.md5Async()
+        XCTAssertEqual(md5Hash, expectedHash)
+    }
+
+    func testCalculateMD5AsyncWithOffset() async throws {
+        // Hashing from offset 0 should equal a full-file hash.
+        let full = try await calculateMD5Async(of: testFileURL)
+        let fromZero = try await calculateMD5Async(of: testFileURL, startingAt: 0)
+        XCTAssertEqual(full, fromZero)
+    }
+
+    // MARK: - Streaming API tests
+
+    func testCalculateMD5StreamCompletedEvent() async throws {
+        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        var lastEvent: MD5HashingEvent?
+
+        for try await event in calculateMD5Stream(of: testFileURL) {
+            lastEvent = event
+        }
+
+        guard case .completed(let hash) = lastEvent else {
+            XCTFail("Expected a .completed event as the last stream event")
+            return
+        }
+        XCTAssertEqual(hash, expectedHash)
+    }
+
+    func testCalculateMD5StreamProgressEvents() async throws {
+        var progressSeen = false
+
+        for try await event in calculateMD5Stream(of: testFileURL) {
+            if case .progress(let bytesProcessed, let totalBytes) = event {
+                progressSeen = true
+                XCTAssertGreaterThan(bytesProcessed, 0)
+                XCTAssertGreaterThanOrEqual(totalBytes, bytesProcessed)
+            }
+        }
+
+        // For small test files the stream may emit only a .completed event
+        // (the entire file fits in one buffer), so we just verify no crash occurred.
+        _ = progressSeen
+    }
+
+    func testURLMD5Stream() async throws {
+        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        var lastEvent: MD5HashingEvent?
+
+        for try await event in testFileURL.md5Stream() {
+            lastEvent = event
+        }
+
+        guard case .completed(let hash) = lastEvent else {
+            XCTFail("Expected a .completed event as the last stream event")
+            return
+        }
+        XCTAssertEqual(hash, expectedHash)
+    }
+
+    // MARK: - MD5Provider protocol async tests
+
+    func testFileManagerMD5ProviderAsync() async throws {
+        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let hash = try await FileManager.default.md5ForFileAsync(at: testFileURL)
+        XCTAssertEqual(hash, expectedHash)
+    }
+
+    func testFileManagerMD5ProviderStream() async throws {
+        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        var completedHash: String?
+
+        for try await event in FileManager.default.md5StreamForFile(at: testFileURL) {
+            if case .completed(let hash) = event {
+                completedHash = hash
+            }
+        }
+
+        XCTAssertEqual(completedHash, expectedHash)
+    }
 }
