@@ -8,9 +8,18 @@ on:
     branches:
       - master
       - develop
-    # Agent PRs are validated by agent-validation.yml (Lite simulator build)
-    # Skip the full archive matrix to save CI time
+    # Full archive matrix only runs on PRs that touch cores, project config, or build infra.
+    # All other PRs are validated by agent-validation.yml (Provenance-CI simulator build).
     types: [opened, synchronize, reopened]
+    paths:
+      - 'Cores/**'
+      - 'CoresRetro/**'
+      - 'Provenance.xcodeproj/**'
+      - 'Provenance.xcworkspace/**'
+      - 'Package.swift'
+      - 'Package.resolved'
+      - '*.xcconfig'
+      - '.github/workflows/build.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
