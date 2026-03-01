@@ -49,23 +49,13 @@ jobs:
             APP_NAME: "Provenance Lite"
             IPA_NAME: "Provenance-Lite-iOS"
 
-          - target: "Provenance-Lite-tvOS"
-            sdk: appletvos
-            scheme: "Provenance-Lite (AppStore) (Release)"
-            APP_NAME: "Provenance Lite"
-            IPA_NAME: "Provenance-Lite-tvOS"
-
           - target: "Provenance-iOS"
             sdk: iphoneos
             scheme: "Provenance (AppStore) (Release)"
             APP_NAME: "Provenance"
             IPA_NAME: "Provenance-iOS"
-
-          - target: "Provenance-tvOS"
-            sdk: appletvos
-            scheme: "Provenance (AppStore) (Release)"
-            APP_NAME: "Provenance"
-            IPA_NAME: "Provenance-tvOS"
+          # tvOS targets removed — iOS validates compilation sufficiently.
+          # Re-add for release workflow when tvOS IPAs are needed.
 
     runs-on: 'macos-latest'
     timeout-minutes: 300
@@ -226,3 +216,56 @@ jobs:
         run: |
           rm -rf .git
           rm -rf .build
+
+  # Update rolling alpha release on successful develop pushes
+  alpha-release:
+    name: Update Alpha Release
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Update alpha release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="alpha"
+          REPO="${{ github.repository }}"
+          SHA="${{ github.sha }}"
+          SHORT_SHA="${SHA:0:7}"
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+
+          # Create or update the alpha tag
+          gh api repos/$REPO/git/refs/tags/$TAG \
+            -X PATCH -f sha="$SHA" -f force=true 2>/dev/null || \
+          gh api repos/$REPO/git/refs \
+            -X POST -f ref="refs/tags/$TAG" -f sha="$SHA"
+
+          # Delete existing alpha release if it exists
+          gh release delete $TAG --repo $REPO --yes 2>/dev/null || true
+
+          # Collect IPA files
+          find artifacts -name "*.ipa" -exec mv {} . \;
+
+          # Create new pre-release with IPAs
+          gh release create $TAG \
+            --repo $REPO \
+            --title "Alpha Build ($SHORT_SHA)" \
+            --notes "$(cat <<EOF
+          **Automated alpha build from \`develop\` branch**
+
+          - Commit: $SHA
+          - Built: $DATE
+          - These builds are unsigned and intended for sideloading via AltStore/SideStore
+
+          > This release is automatically updated on every successful develop push.
+          EOF
+          )" \
+            --prerelease \
+            *.ipa 2>/dev/null || echo "::warning::No IPA files to attach"

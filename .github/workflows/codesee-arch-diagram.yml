@@ -11,6 +11,10 @@ name: CodeSee
 
 permissions: read-all
 
+concurrency:
+  group: codesee-${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   codesee:
     runs-on: ubuntu-latest
