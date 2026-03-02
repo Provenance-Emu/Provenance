@@ -36,41 +36,4 @@ extension PVAppDelegate {
 #endif
     }
 
-    func _initLogging() {
-        // Initialize logging
-        _ = PVLogging.shared
-
-//        fileLogger.maximumFileSize = (1024 * 64) // 64 KByte
-//        fileLogger.logFileManager.maximumNumberOfLogFiles = 1
-//        fileLogger.rollLogFile(withCompletion: nil)
-//        DDLog.add(fileLogger)
-
-        #if os(iOS)
-            // Debug view logger
-//            DDLog.add(PVUIForLumberJack.sharedInstance(), with: .info)
-//            window?.addLogViewerGesture()
-        #endif
-
-//        DDOSLogger.sharedInstance.logFormatter = PVTTYFormatter()
-    }
-
-    func setDefaultsFromSettingsBundle() {
-        // Read PreferenceSpecifiers from Root.plist in Settings.Bundle
-        if let settingsURL = Bundle.main.url(forResource: "Root", withExtension: "plist", subdirectory: "Settings.bundle"),
-            let settingsPlist = NSDictionary(contentsOf: settingsURL),
-            let preferences = settingsPlist["PreferenceSpecifiers"] as? [NSDictionary] {
-            for prefSpecification in preferences {
-                if let key = prefSpecification["Key"] as? String, let value = prefSpecification["DefaultValue"] {
-                    // If key doesn't exists in userDefaults then register it, else keep original value
-                    if UserDefaults.standard.value(forKey: key) == nil {
-                        UserDefaults.standard.set(value, forKey: key)
-                        ILOG("registerDefaultsFromSettingsBundle: Set following to UserDefaults - (key: \(key), value: \(value), type: \(type(of: value)))")
-                    }
-                }
-            }
-        } else {
-            ELOG("registerDefaultsFromSettingsBundle: Could not find Settings.bundle")
-        }
-    }
-   
 }
