@@ -8,6 +8,7 @@ import PVSupport
 import RealmSwift
 import PVRealm
 import PVLogging
+import PVFeatureFlags
 
 #if canImport(UIKit)
 import UIKit
@@ -210,26 +211,71 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         #endif
 
         #if os(iOS)
-        guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
-            return
-        }
+        if PVFeatureFlagsManager.shared.cheatsUseSwiftUI {
+            // SwiftUI cheats view — default path when cheatsUseSwiftUI is enabled.
+            let cheatsVC = iOSCheatsHostingController(
+                cheats: game.cheats,
+                coreID: core.coreIdentifier,
+                cheatTypes: getCheatTypes(),
+                gameMD5: game.md5Hash,
+                gameTitle: game.title,
+                onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
+                    guard let self = self else { return }
+                    Task { @MainActor in
+                        await self.setCheatState(code: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) { result in
+                            switch result {
+                            case .success:
+                                DLOG("Cheat saved successfully")
+                            case let .error(error):
+                                ELOG("Error saving cheat: \(error)")
+                            }
+                        }
+                    }
+                },
+                onUpdateCheat: { [weak self] cheat, cheatIndex in
+                    guard let self = self else { return }
+                    self.cheatsViewControllerUpdateState(self, cheat: cheat, cheatIndex: cheatIndex) { result in
+                        switch result {
+                        case .success:
+                            DLOG("Cheat updated successfully")
+                        case let .error(error):
+                            ELOG("Error updating cheat: \(error)")
+                        }
+                    }
+                },
+                onDone: { [weak self] in
+                    guard let self = self else { return }
+                    self.core.setPauseEmulation(false)
+                    self.isShowingMenu = false
+                    self.enableControllerInput(false)
+                }
+            )
+            cheatsVC.modalPresentationStyle = traitCollection.userInterfaceIdiom == .pad ? .formSheet : .pageSheet
+            self.enableControllerInput(false)
+            present(cheatsVC, animated: true)
+        } else {
+            // Legacy UIKit storyboard cheats view.
+            guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
+                return
+            }
 
-        if let cheatsViewController = cheatsNavController.viewControllers.first as? PVCheatsViewController {
-            cheatsViewController.cheats = game.cheats
-            cheatsViewController.delegate = self
-            cheatsViewController.coreID = core.coreIdentifier
-            cheatsViewController.gameMD5 = game.md5Hash
-            cheatsViewController.gameTitle = game.title
-        }
-        cheatsNavController.modalPresentationStyle = .overCurrentContext
+            if let cheatsViewController = cheatsNavController.viewControllers.first as? PVCheatsViewController {
+                cheatsViewController.cheats = game.cheats
+                cheatsViewController.delegate = self
+                cheatsViewController.coreID = core.coreIdentifier
+                cheatsViewController.gameMD5 = game.md5Hash
+                cheatsViewController.gameTitle = game.title
+            }
+            cheatsNavController.modalPresentationStyle = .overCurrentContext
 
-        if traitCollection.userInterfaceIdiom == .pad {
-            cheatsNavController.modalPresentationStyle = .formSheet
+            if traitCollection.userInterfaceIdiom == .pad {
+                cheatsNavController.modalPresentationStyle = .formSheet
+            }
+            self.enableControllerInput(false)
+            let ui = UIViewController()
+            ui.addChildViewController(cheatsNavController, toContainerView: ui.view)
+            present(ui, animated: true)
         }
-        self.enableControllerInput(false)
-        let ui=UIViewController()
-        ui.addChildViewController(cheatsNavController, toContainerView: ui.view)
-        present(ui, animated: true)
         #endif
     }
 
