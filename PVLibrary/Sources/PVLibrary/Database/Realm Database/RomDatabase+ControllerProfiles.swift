@@ -15,6 +15,11 @@ public extension RomDatabase {
 
     // MARK: - Fetch
 
+    /// Fetch a single profile by its primary key.
+    func controllerProfile(withID id: String) -> PVControllerProfile? {
+        realm.object(ofType: PVControllerProfile.self, forPrimaryKey: id)
+    }
+
     /// All profiles for a given controller vendor name, ordered by name.
     func controllerProfiles(forVendor vendorName: String) -> Results<PVControllerProfile> {
         realm.objects(PVControllerProfile.self)
