@@ -21,21 +21,31 @@ public extension PVRemappableController {
     ///
     /// Clears any previously-active mappings first, then applies the profile's
     /// mappings and re-saves via UserDefaults so the remapping system picks them up.
+    ///
+    /// The profile is frozen before access so it can be safely read from any thread.
     func apply(profile: PVControllerProfile) {
+        // Freeze the Realm object so it can be accessed safely from any thread.
+        let frozenProfile = profile.isFrozen ? profile : profile.freeze()
+        let profileName = frozenProfile.name
+        // Snapshot the raw mapping values before clearing so we don't lose them.
+        let rawMappings: [(source: String, destination: String)] = frozenProfile.mappings.map {
+            (source: $0.sourceButton, destination: $0.destinationButton)
+        }
+
         clearAllMappings()
-        for mapping in profile.mappings {
+        for raw in rawMappings {
             guard
-                let source = ButtonIdentifier(rawValue: mapping.sourceButton),
-                let destination = ButtonIdentifier(rawValue: mapping.destinationButton)
+                let source = ButtonIdentifier(rawValue: raw.source),
+                let destination = ButtonIdentifier(rawValue: raw.destination)
             else {
-                WLOG("Skipping unknown button mapping: \(mapping.sourceButton) → \(mapping.destinationButton)")
+                WLOG("Skipping unknown button mapping: \(raw.source) → \(raw.destination)")
                 continue
             }
             remap(button: source, to: destination)
         }
         // Persist via UserDefaults for the remapping system
         saveMappings()
-        ILOG("Applied controller profile '\(profile.name)' (\(profile.mappings.count) mappings)")
+        ILOG("Applied controller profile '\(profileName)' (\(rawMappings.count) mappings)")
     }
 
     // MARK: Save current mappings as a profile
@@ -124,21 +134,5 @@ public extension PVRemappableController {
             }
         }
         return result
-    }
-}
-
-// ButtonIdentifier must conform to CaseIterable so we can enumerate all cases.
-extension ButtonIdentifier: CaseIterable {
-    public static var allCases: [ButtonIdentifier] {
-        [
-            .buttonA, .buttonB, .buttonX, .buttonY,
-            .leftShoulder, .rightShoulder, .leftTrigger, .rightTrigger,
-            .dpadUp, .dpadDown, .dpadLeft, .dpadRight,
-            .menu, .options, .home,
-            .leftThumbstickButton, .rightThumbstickButton, .share,
-            .touchpad, .touchpadButton, .micButton, .createButton,
-            .paddleOne, .paddleTwo, .paddleThree, .paddleFour, .shareButton,
-            .capture, .plusButton, .minusButton, .leftSL, .leftSR, .rightSL, .rightSR
-        ]
     }
 }
