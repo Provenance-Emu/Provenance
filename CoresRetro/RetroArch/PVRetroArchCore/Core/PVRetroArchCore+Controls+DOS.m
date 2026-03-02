@@ -125,7 +125,7 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 // without a second lookup, or NULL if the input driver is not yet initialised.
 static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
-    if (!apple) return nil;
+    if (!apple) return NULL;
     apple->window_pos_x = (int16_t)point.x;
     apple->window_pos_y = (int16_t)point.y;
     return apple;
