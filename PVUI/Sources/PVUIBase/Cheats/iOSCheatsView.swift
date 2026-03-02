@@ -279,7 +279,7 @@ struct iOSAddCheatView: View {
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.characters)
                         .focused($focusedField, equals: .code)
-                        .onChange(of: cheatCode) { _, newValue in
+                        .onChange(of: cheatCode) { newValue in
                             cheatCode = newValue.uppercased()
                         }
                 } header: {
