@@ -89,9 +89,8 @@ public extension PVRemappableController {
         }
 
         let currentMappings = exportMappings()
-        guard !currentMappings.isEmpty else {
-            WLOG("No mappings to save for profile '\(name)'")
-            return nil
+        if currentMappings.isEmpty {
+            WLOG("Saving empty controller profile '\(name)' (no custom mappings; acts as a defaults override for this scope)")
         }
 
         let db = RomDatabase.sharedInstance
