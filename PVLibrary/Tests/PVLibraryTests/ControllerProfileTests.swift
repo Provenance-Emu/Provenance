@@ -25,8 +25,12 @@ final class ControllerProfileTests: XCTestCase {
 
     // MARK: - Setup / Teardown
 
+    private var previousRealmConfiguration: Realm.Configuration?
+
     override func setUp() {
         super.setUp()
+        // Save the existing default so we can restore it after the test.
+        previousRealmConfiguration = Realm.Configuration.defaultConfiguration
         // Point every `try! Realm()` call in this test process at an isolated in-memory store.
         Realm.Configuration.defaultConfiguration = Realm.Configuration(
             inMemoryIdentifier: "ControllerProfileTests-\(name)"
@@ -37,6 +41,10 @@ final class ControllerProfileTests: XCTestCase {
         // Wipe all objects so state never leaks between tests.
         if let realm = try? Realm() {
             try? realm.write { realm.deleteAll() }
+        }
+        // Restore the previous default configuration so other tests are unaffected.
+        if let previous = previousRealmConfiguration {
+            Realm.Configuration.defaultConfiguration = previous
         }
         super.tearDown()
     }

@@ -40,18 +40,30 @@ public extension RomDatabase {
 
         // 1. Game + Core-specific match
         if let gameID, let coreIdentifier {
-            if let profile = allProfiles
-                .filter("gameID == %@ AND coreIdentifier == %@", gameID, coreIdentifier)
-                .first {
+            let predicate: String
+            var args: [Any] = [gameID, coreIdentifier]
+            if let systemIdentifier {
+                predicate = "gameID == %@ AND coreIdentifier == %@ AND (systemIdentifier == nil OR systemIdentifier == %@)"
+                args.append(systemIdentifier)
+            } else {
+                predicate = "gameID == %@ AND coreIdentifier == %@ AND systemIdentifier == nil"
+            }
+            if let profile = allProfiles.filter(predicate, argumentArray: args).first {
                 return profile
             }
         }
 
         // 2. Game-specific match (any core)
         if let gameID {
-            if let profile = allProfiles
-                .filter("gameID == %@ AND coreIdentifier == nil", gameID)
-                .first {
+            let predicate: String
+            var args: [Any] = [gameID]
+            if let systemIdentifier {
+                predicate = "gameID == %@ AND coreIdentifier == nil AND (systemIdentifier == nil OR systemIdentifier == %@)"
+                args.append(systemIdentifier)
+            } else {
+                predicate = "gameID == %@ AND coreIdentifier == nil AND systemIdentifier == nil"
+            }
+            if let profile = allProfiles.filter(predicate, argumentArray: args).first {
                 return profile
             }
         }

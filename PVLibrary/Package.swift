@@ -143,6 +143,7 @@ let package = Package(
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
+                .product(name: "RealmSwift", package: "realm-swift"),
                 .product(name: "ZipArchive", package: "ZipArchive"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ]),
