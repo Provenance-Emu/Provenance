@@ -72,9 +72,7 @@ public func calculateMD5Stream(
                 // Determine total bytes for progress reporting.
                 let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey])
                 let fileSize = resourceValues.fileSize.map { Int64($0) } ?? 0
-                let fileSizeUInt = fileSize > 0 ? UInt64(fileSize) : 0
-                let remainingBytesUInt = offset >= fileSizeUInt ? 0 : (fileSizeUInt - offset)
-                let totalBytes = remainingBytesUInt > UInt64(Int64.max) ? Int64.max : Int64(remainingBytesUInt)
+                let totalBytes = max(0, fileSize - Int64(clamping: offset))
 
                 var hasher = Insecure.MD5()
                 var bytesProcessed: Int64 = 0
