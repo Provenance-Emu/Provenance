@@ -73,11 +73,10 @@ public extension RomDatabase {
             systemIdentifier: systemIdentifier,
             gameID: gameID
         )
-        let realmMappings = mappings.map { PVControllerMapping(source: $0.source, destination: $0.destination) }
-        profile.mappings.append(objectsIn: realmMappings)
-
         try realm.write {
             realm.add(profile)
+            let realmMappings = mappings.map { PVControllerMapping(source: $0.source, destination: $0.destination) }
+            profile.mappings.append(objectsIn: realmMappings)
         }
         return profile
     }

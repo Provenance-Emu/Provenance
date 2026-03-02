@@ -32,7 +32,7 @@ public final class PVControllerProfile: RealmSwift.Object, Identifiable {
     @Persisted public var name: String = ""
 
     /// The `GCController.vendorName` this profile was created for (e.g. "DualSense Wireless Controller")
-    @Persisted public var controllerVendorName: String = ""
+    @Persisted(indexed: true) public var controllerVendorName: String = ""
 
     // MARK: - Scope
 
@@ -68,7 +68,5 @@ public final class PVControllerProfile: RealmSwift.Object, Identifiable {
         self.controllerVendorName = controllerVendorName
         self.systemIdentifier = systemIdentifier
         self.gameID = gameID
-        self.createdDate = Date()
-        self.lastModifiedDate = Date()
     }
 }
