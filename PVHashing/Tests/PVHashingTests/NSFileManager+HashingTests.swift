@@ -143,6 +143,11 @@ class ChecksumTests: XCTestCase {
     func testCalculateMD5StreamProgressEvents() async throws {
         var progressSeen = false
 
+        // Check file size to determine if progress events are expected
+        let attributes = try FileManager.default.attributesOfItem(atPath: testFileURL.path)
+        let fileSize = attributes[.size] as? UInt64 ?? 0
+        let bufferSize: UInt64 = 1024 * 1024 // 1 MB
+
         for try await event in calculateMD5Stream(of: testFileURL) {
             if case .progress(let bytesProcessed, let totalBytes) = event {
                 progressSeen = true
@@ -151,10 +156,11 @@ class ChecksumTests: XCTestCase {
             }
         }
 
-        // For small test files the stream may emit only a .completed event
-        // (the entire file fits in one buffer), so we just verify no crash occurred.
-        // If the test fixture is large enough to emit progress, validate that it did.
-        XCTAssertTrue(progressSeen, "Expected at least one .progress event for test fixture")
+        // Only assert progress for files larger than buffer size
+        if fileSize >= bufferSize {
+            XCTAssertTrue(progressSeen, "Expected progress events for file larger than 1 MB")
+        }
+        // For small files, at least verify the stream completed without crash
     }
 
     func testURLMD5Stream() async throws {
