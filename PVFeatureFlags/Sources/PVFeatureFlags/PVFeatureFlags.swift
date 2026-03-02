@@ -404,11 +404,14 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
             if let stale = fetcher.loadCached() {
                 featureFlags.setConfiguration(stale)
                 updateFeatureStates()
-            } else {
-                // 4. Bundled fallback
-                featureFlags.loadBundledConfiguration()
-                updateFeatureStates()
+                return
             }
+            // 4. Bundled fallback
+            if featureFlags.loadBundledConfiguration() {
+                updateFeatureStates()
+                return
+            }
+            // All fallbacks failed — propagate the original error
             throw error
         }
     }
