@@ -107,14 +107,28 @@ public extension RomDatabase {
     /// Activate a profile, deactivating any other active profile for the same
     /// (vendor, system, game) combination first.
     func activateControllerProfile(_ profile: PVControllerProfile) throws {
-        // Deactivate existing active profiles with same scope
+        // Build a nil-safe predicate for scope matching.
+        // Passing `nil as Any` through `%@` in NSPredicate does not reliably produce
+        // a `== nil` (NULL) comparison in Realm — build the predicate string dynamically instead.
+        var format = "controllerVendorName == %@ AND isActive == true"
+        var args: [Any] = [profile.controllerVendorName]
+
+        if let systemID = profile.systemIdentifier {
+            format += " AND systemIdentifier == %@"
+            args.append(systemID)
+        } else {
+            format += " AND systemIdentifier == nil"
+        }
+
+        if let gameID = profile.gameID {
+            format += " AND gameID == %@"
+            args.append(gameID)
+        } else {
+            format += " AND gameID == nil"
+        }
+
         let existing = realm.objects(PVControllerProfile.self)
-            .filter(
-                "controllerVendorName == %@ AND isActive == true AND systemIdentifier == %@ AND gameID == %@",
-                profile.controllerVendorName,
-                profile.systemIdentifier as Any,
-                profile.gameID as Any
-            )
+            .filter(NSPredicate(format: format, argumentArray: args))
 
         try realm.write {
             for p in existing { p.isActive = false }
