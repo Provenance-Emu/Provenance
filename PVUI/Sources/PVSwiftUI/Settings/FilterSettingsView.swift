@@ -2,6 +2,7 @@ import SwiftUI
 import PVSettings
 import Defaults
 import PVThemes
+import PVUIBase
 
 struct FilterSettingsView: View {
     @Default(.metalFilterMode) var metalFilterMode
@@ -116,7 +117,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPurple)
                 #endif
-                .onChange(of: selectedCRTFilter) { _, newValue in
+                .onChange(of: selectedCRTFilter) { newValue in
                     metalFilterMode = .auto(crt: newValue, lcd: selectedLCDFilter)
                 }
 
@@ -128,7 +129,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPurple)
                 #endif
-                .onChange(of: selectedLCDFilter) { _, newValue in
+                .onChange(of: selectedLCDFilter) { newValue in
                     metalFilterMode = .auto(crt: selectedCRTFilter, lcd: newValue)
                 }
 
@@ -141,7 +142,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPink)
                 #endif
-                .onChange(of: selectedAlwaysFilter) { _, newValue in
+                .onChange(of: selectedAlwaysFilter) { newValue in
                     metalFilterMode = .always(filter: newValue)
                 }
 
@@ -291,15 +292,9 @@ private struct ShaderSliderRow: View {
                     .foregroundColor(.secondary)
             }
             if let step = step {
-                Slider(value: $value, in: range, step: step)
-                    #if os(tvOS)
-                    .tint(.retroBlue)
-                    #endif
+                RetroWaveSlider(value: $value, in: range, step: Float.Stride(step))
             } else {
-                Slider(value: $value, in: range)
-                    #if os(tvOS)
-                    .tint(.retroBlue)
-                    #endif
+                RetroWaveSlider(value: $value, in: range)
             }
         }
         .padding(.vertical, 2)
