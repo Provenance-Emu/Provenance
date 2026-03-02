@@ -239,10 +239,10 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
             padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
 
                 //fallback for non-dual sense only if the R3 button exists on the controller
-            padData[playerIndex][PVN64ButtonStart] = gamepad.rightThumbstickButton.isPressed || startButton.isPressed;
+            padData[playerIndex][PVN64ButtonStart] = gamepad.rightThumbstickButton.isPressed || (startButton && startButton.isPressed);
         } else {
             // MFi-R2 → Start
-            padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed || startButton.isPressed;
+            padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed || (startButton && startButton.isPressed);
 
             // MFi-L2 → Z
             padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
