@@ -38,9 +38,6 @@ static inline GCControllerButtonInput * _Nullable
 PVShareLikeButtonForController(GCController * _Nonnull controller) {
     NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons =
         controller.physicalInputProfile.buttons;
-    if (![profileButtons isKindOfClass:[NSDictionary class]]) {
-        return nil;
-    }
     GCControllerButtonInput *button = profileButtons[@"Button Share"];
     if (!button) { button = profileButtons[@"Button Create"]; }
     if (!button) { button = profileButtons[@"Button Capture"]; }
@@ -59,7 +56,7 @@ PVShareLikeButtonForController(GCController * _Nonnull controller) {
  @return The touchpad GCControllerButtonInput, or nil for non-PlayStation controllers.
  */
 static inline GCControllerButtonInput * _Nullable
-PVTouchpadButtonForController(GCController * _Nonnull controller) API_AVAILABLE(ios(14.5), tvos(14.5)) {
+PVTouchpadButtonForController(GCController * _Nonnull controller) {
     GCExtendedGamepad *gamepad = controller.extendedGamepad;
     if (!gamepad) { return nil; }
     if ([gamepad isKindOfClass:[GCDualSenseGamepad class]]) {
@@ -143,7 +140,7 @@ PVResolveStartSelectButtons(GCController * _Nonnull controller,
  for systems that benefit from alternative Select inputs (NES, GB, SNES, etc.).
 
  For PlayStation controllers, Select priority:
-   1. PlayStation touchpad (DualSense/DualShock only, iOS 14+)
+   1. PlayStation touchpad (DualSense/DualShock only)
    2. buttonOptions (logical Share/Create button)
    3. Physical profile Share/Create button (fallback via PVShareLikeButtonForController)
 
