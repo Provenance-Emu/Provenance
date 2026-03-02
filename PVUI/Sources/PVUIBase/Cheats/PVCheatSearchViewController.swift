@@ -11,7 +11,6 @@ import PVLogging
 
 /// Displayed when the user taps "Search Database" in the cheats list.
 /// Allows filtering the local cheat database by the current game's MD5 or
-/// title and selecting codes to import.
 final class PVCheatSearchViewController: UIViewController {
 
     // MARK: - Properties
