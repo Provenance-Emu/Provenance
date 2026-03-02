@@ -70,8 +70,7 @@ public extension PVRemappableController {
     ///   - gameID: Optional game MD5 scope (nil = applies to all games).
     ///   - makeActive: If `true`, immediately activates the new profile.
     /// - Returns: The persisted `PVControllerProfile`, or `nil` if persistence failed.
-    @discardableResult
-    func saveCurrentMappingsAsProfile(
+    @discardableResult public func saveCurrentMappingsAsProfile(
         name: String,
         systemIdentifier: String? = nil,
         gameID: String? = nil,
