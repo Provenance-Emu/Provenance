@@ -105,13 +105,13 @@ class ChecksumTests: XCTestCase {
 
     func testCalculateMD5WithAsyncAwait() async throws {
         // MD5 of the test file ("Hello, world!\n")
-        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let expectedHash = "746308829575E17C3331BBCB00C0898B"
         let md5Hash = try await calculateMD5Async(of: testFileURL)
         XCTAssertEqual(md5Hash, expectedHash)
     }
 
     func testURLMD5Async() async throws {
-        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let expectedHash = "746308829575E17C3331BBCB00C0898B"
         let md5Hash = try await testFileURL.md5Async()
         XCTAssertEqual(md5Hash, expectedHash)
     }
@@ -126,7 +126,7 @@ class ChecksumTests: XCTestCase {
     // MARK: - Streaming API tests
 
     func testCalculateMD5StreamCompletedEvent() async throws {
-        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let expectedHash = "746308829575E17C3331BBCB00C0898B"
         var lastEvent: MD5HashingEvent?
 
         for try await event in calculateMD5Stream(of: testFileURL) {
@@ -153,11 +153,12 @@ class ChecksumTests: XCTestCase {
 
         // For small test files the stream may emit only a .completed event
         // (the entire file fits in one buffer), so we just verify no crash occurred.
-        _ = progressSeen
+        // If the test fixture is large enough to emit progress, validate that it did.
+        XCTAssertTrue(progressSeen, "Expected at least one .progress event for test fixture")
     }
 
     func testURLMD5Stream() async throws {
-        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let expectedHash = "746308829575E17C3331BBCB00C0898B"
         var lastEvent: MD5HashingEvent?
 
         for try await event in testFileURL.md5Stream() {
@@ -174,13 +175,13 @@ class ChecksumTests: XCTestCase {
     // MARK: - MD5Provider protocol async tests
 
     func testFileManagerMD5ProviderAsync() async throws {
-        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let expectedHash = "746308829575E17C3331BBCB00C0898B"
         let hash = try await FileManager.default.md5ForFileAsync(at: testFileURL)
         XCTAssertEqual(hash, expectedHash)
     }
 
     func testFileManagerMD5ProviderStream() async throws {
-        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let expectedHash = "746308829575E17C3331BBCB00C0898B"
         var completedHash: String?
 
         for try await event in FileManager.default.md5StreamForFile(at: testFileURL) {
