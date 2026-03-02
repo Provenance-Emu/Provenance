@@ -76,6 +76,8 @@ let package = Package(
         /// https://github.com/mtgto/Unrar.swift
         .package(url: "https://github.com/mtgto/Unrar.swift.git",
                     .upToNextMajor(from: "0.3.16")),
+        .package(url: "https://github.com/realm/realm-swift.git",
+                 from: "10.0.0"),
     ],
 
     targets: [
@@ -141,6 +143,7 @@ let package = Package(
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
+                .product(name: "RealmSwift", package: "realm-swift"),
                 .product(name: "ZipArchive", package: "ZipArchive"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ]),
@@ -218,7 +221,8 @@ let package = Package(
             dependencies: [
                 "PVLibrary",
                 "PVLookup",
-                "PVPrimitives"
+                "PVPrimitives",
+                .product(name: "RealmSwift", package: "realm-swift"),
             ]
         ),
     ],
