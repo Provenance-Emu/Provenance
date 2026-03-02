@@ -19,24 +19,76 @@ public struct FreeROMsView: View {
         .TIC80,
         .Vectrex
     ]
-    
-    // Animation states for retrowave effects
+
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
     @State private var selectedSystemId: String? = nil
-    
+
     /// Callback when a ROM is downloaded
     let onROMDownloaded: (ROM, URL) -> Void
     /// Optional callback when view is dismissed
     let onDismiss: (() -> Void)?
-    
+
     @StateObject private var downloadManager = ROMDownloadManager()
     @State private var searchText = ""
     @State private var expandedSystems: Set<String> = Set()
     @State private var systems: [(id: String, name: String, roms: [ROM])] = []
     @State private var loadingError: Error?
     @State private var isLoading = false
-    
+
+    #if os(tvOS)
+    @FocusState private var focusedSystemId: String?
+    #endif
+
+    /// Platform-adaptive font sizes for 10-foot (tvOS) vs handheld (iOS) UI
+    private var systemNameFontSize: CGFloat {
+        #if os(tvOS)
+        return 28
+        #else
+        return 18
+        #endif
+    }
+
+    private var systemRomCountFontSize: CGFloat {
+        #if os(tvOS)
+        return 20
+        #else
+        return 14
+        #endif
+    }
+
+    private var headerVerticalPadding: CGFloat {
+        #if os(tvOS)
+        return 18
+        #else
+        return 12
+        #endif
+    }
+
+    private var headerHorizontalPadding: CGFloat {
+        #if os(tvOS)
+        return 24
+        #else
+        return 16
+        #endif
+    }
+
+    private var downloadAllIconSize: CGFloat {
+        #if os(tvOS)
+        return 30
+        #else
+        return 22
+        #endif
+    }
+
+    private var chevronIconSize: CGFloat {
+        #if os(tvOS)
+        return 22
+        #else
+        return 16
+        #endif
+    }
+
     public init(
         onROMDownloaded: @escaping (ROM, URL) -> Void,
         onDismiss: (() -> Void)? = nil
@@ -44,7 +96,7 @@ public struct FreeROMsView: View {
         self.onROMDownloaded = onROMDownloaded
         self.onDismiss = onDismiss
     }
-    
+
     private var filteredSystems: [(id: String, name: String, roms: [ROM])] {
         systems.filter { system in
             guard let systemIdentifier = SystemIdentifier(rawValue: system.id) else {
@@ -53,185 +105,23 @@ public struct FreeROMsView: View {
             return !Self.unsupportedSystems.contains(systemIdentifier)
         }
     }
-    
+
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
-                // RetroWave background
                 RetroTheme.retroBackground
-                
-                // Grid overlay
                 RetroGrid()
                     .opacity(0.3)
-                
+
                 Group {
                     if let error = loadingError {
-                        VStack(spacing: 16) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.system(size: 50))
-                                .foregroundColor(.red)
-                            
-                            Text("Failed to Load ROMs")
-                                .font(.headline)
-                            
-                            Text(error.localizedDescription)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
-                            
-                            Button("Retry") {
-                                loadROMs()
-                            }
-                            .buttonStyle(.borderedProminent)
-                        }
+                        errorView(error)
                     } else if isLoading {
-                        VStack {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
-                                .scaleEffect(1.5)
-                            
-                            Text("LOADING ROMS...")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(RetroTheme.retroPink)
-                                .padding(.top, 16)
-                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                        }
+                        loadingView
                     } else if !systems.isEmpty {
-                        ScrollView {
-                            LazyVStack(spacing: 16) {
-                                ForEach(filteredSystems, id: \.id) { system in
-                                    VStack(spacing: 0) {
-                                        if expandedSystems.contains(system.id) {
-                                            ForEach(filteredROMs(system.roms)) { rom in
-                                                ROMRowView(rom: rom,
-                                                           systemId: system.id,
-                                                           downloadManager: downloadManager,
-                                                           onDownloaded: onROMDownloaded)
-                                            }
-                                        }
-                                        // System header with retrowave styling
-                                        Button(action: {
-#if !os(tvOS)
-                                            Haptics.impact(style: .rigid)
-#endif
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                if expandedSystems.contains(system.id) {
-                                                    expandedSystems.remove(system.id)
-                                                } else {
-                                                    expandedSystems.insert(system.id)
-                                                }
-                                            }
-                                        }) {
-                                            HStack {
-                                                VStack(alignment: .leading) {
-                                                    Text(system.name)
-                                                        .font(.system(size: 18, weight: .bold))
-                                                        .foregroundColor(.white)
-                                                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
-                                                    
-                                                    Text("\(system.roms.count) ROMs")
-                                                        .font(.system(size: 14))
-                                                        .foregroundColor(RetroTheme.retroPurple)
-                                                        .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
-                                                }
-                                                
-                                                Spacer()
-                                                
-                                                HStack(spacing: 12) {
-                                                    Button {
-                                                        downloadAllROMs(for: system)
-                                                    } label: {
-                                                        Image(systemName: "arrow.down.circle.fill")
-                                                            .foregroundColor(RetroTheme.retroPink)
-                                                            .font(.system(size: 22))
-                                                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 2, x: 0, y: 0)
-                                                    }
-                                                    
-                                                    Image(systemName: expandedSystems.contains(system.id) ? "chevron.up" : "chevron.down")
-                                                        .foregroundColor(RetroTheme.retroBlue)
-                                                        .font(.system(size: 16, weight: .bold))
-                                                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
-                                                }
-                                            }
-                                            .padding(.vertical, 12)
-                                            .padding(.horizontal, 16)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color.black.opacity(0.7))
-                                                    .overlay(
-                                                        RoundedRectangle(cornerRadius: 10)
-                                                            .strokeBorder(
-                                                                LinearGradient(
-                                                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                                                    startPoint: .leading,
-                                                                    endPoint: .trailing
-                                                                ),
-                                                                lineWidth: selectedSystemId == system.id ? 2.0 : 1.0
-                                                            )
-                                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity),
-                                                                    radius: selectedSystemId == system.id ? 5 : 2,
-                                                                    x: 0,
-                                                                    y: 0)
-                                                    )
-                                            )
-                                        }
-                                        .buttonStyle(PlainButtonStyle())
-#if os(tvOS)
-                                        .focusable(true)
-//                                        .onFocusChange { focused in
-//                                            if focused {
-//                                                selectedSystemId = system.id
-//                                            }
-//                                        }
-#endif
-                                        
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        systemListView
                     } else {
-                        VStack(spacing: 16) {
-                            Image(systemName: "gamecontroller.fill")
-                                .font(.system(size: 50))
-                                .foregroundColor(RetroTheme.retroPink)
-                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
-                            
-                            Text("NO ROMS FOUND")
-                                .font(.system(size: 22, weight: .bold))
-                                .foregroundColor(RetroTheme.retroBlue)
-                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                            
-                            Text("Try checking your internet connection and retry.")
-                                .font(.system(size: 16))
-                                .foregroundColor(.white)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 32)
-                            
-                            Button(action: {
-                                loadROMs()
-                            }) {
-                                Text("RETRY")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(RetroTheme.retroPurple)
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 12)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(LinearGradient(
-                                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
-                                                startPoint: .leading,
-                                                endPoint: .trailing
-                                            ), lineWidth: 1.5)
-                                    )
-                                    .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
-                            }
-#if os(tvOS)
-                            .focusable(true)
-#endif
-                        }
+                        emptyView
                     }
                 }
             }
@@ -242,46 +132,13 @@ public struct FreeROMsView: View {
             .searchable(text: $searchText, prompt: "SEARCH ROMS")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            if expandedSystems.count == filteredSystems.count {
-                                expandedSystems.removeAll()
-                            } else {
-                                expandedSystems = Set(filteredSystems.map(\.id))
-                            }
-                        }
-                    } label: {
-                        HStack {
-                            Text(expandedSystems.count == filteredSystems.count ? "COLLAPSE ALL" : "EXPAND ALL")
-                                .font(.system(size: 14, weight: .bold))
-                            
-                            Image(systemName: expandedSystems.count == filteredSystems.count ? "chevron.up" : "chevron.down")
-                                .font(.system(size: 12))
-                        }
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ), lineWidth: 1.5)
-                        )
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
-                    }
-#if os(tvOS)
-                    .focusable(true)
-#endif
+                    expandCollapseButton
                 }
             }
             .onAppear {
                 if systems.isEmpty && loadingError == nil {
                     loadROMs()
                 }
-                
-                // Start retrowave animations
                 withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                     glowOpacity = 1.0
                 }
@@ -291,14 +148,237 @@ public struct FreeROMsView: View {
             }
         }
     }
-    
+
+    // MARK: - Subviews
+
+    private func errorView(_ error: Error) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 50))
+                .foregroundColor(.red)
+
+            Text("Failed to Load ROMs")
+                .font(.headline)
+
+            Text(error.localizedDescription)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
+            Button("Retry") {
+                loadROMs()
+            }
+            .buttonStyle(.borderedProminent)
+        }
+    }
+
+    private var loadingView: some View {
+        VStack {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: RetroTheme.retroPink))
+                .scaleEffect(1.5)
+
+            Text("LOADING ROMS...")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(RetroTheme.retroPink)
+                .padding(.top, 16)
+                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+        }
+    }
+
+    private var systemListView: some View {
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(filteredSystems, id: \.id) { system in
+                    VStack(spacing: 0) {
+                        if expandedSystems.contains(system.id) {
+                            ForEach(filteredROMs(system.roms)) { rom in
+                                ROMRowView(rom: rom,
+                                           systemId: system.id,
+                                           downloadManager: downloadManager,
+                                           onDownloaded: onROMDownloaded)
+                            }
+                        }
+                        systemHeaderButton(for: system)
+                    }
+                }
+            }
+        }
+        #if os(tvOS)
+        .padding(.horizontal, 40)
+        .padding(.vertical, 16)
+        #else
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        #endif
+    }
+
+    /// System header button with retrowave styling and proper tvOS focus support
+    @ViewBuilder
+    private func systemHeaderButton(for system: (id: String, name: String, roms: [ROM])) -> some View {
+        #if os(tvOS)
+        let isFocused = focusedSystemId == system.id
+        #else
+        let isFocused = false
+        #endif
+
+        Button(action: {
+            #if !os(tvOS)
+            Haptics.impact(style: .rigid)
+            #endif
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                if expandedSystems.contains(system.id) {
+                    expandedSystems.remove(system.id)
+                } else {
+                    expandedSystems.insert(system.id)
+                }
+            }
+        }) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(system.name)
+                        .font(.system(size: systemNameFontSize, weight: .bold))
+                        .foregroundColor(.white)
+                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+
+                    Text("\(system.roms.count) ROMs")
+                        .font(.system(size: systemRomCountFontSize))
+                        .foregroundColor(RetroTheme.retroPurple)
+                        .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                }
+
+                Spacer()
+
+                HStack(spacing: 12) {
+                    Button {
+                        downloadAllROMs(for: system)
+                    } label: {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .foregroundColor(RetroTheme.retroPink)
+                            .font(.system(size: downloadAllIconSize))
+                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                    }
+
+                    Image(systemName: expandedSystems.contains(system.id) ? "chevron.up" : "chevron.down")
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .font(.system(size: chevronIconSize, weight: .bold))
+                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                }
+            }
+            .padding(.vertical, headerVerticalPadding)
+            .padding(.horizontal, headerHorizontalPadding)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.black.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: isFocused ? 3.0 : (selectedSystemId == system.id ? 2.0 : 1.0)
+                            )
+                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity),
+                                    radius: isFocused ? 8 : (selectedSystemId == system.id ? 5 : 2),
+                                    x: 0,
+                                    y: 0)
+                    )
+            )
+        }
+        #if os(tvOS)
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
+        .focused($focusedSystemId, equals: system.id)
+        .scaleEffect(isFocused ? 1.03 : 1.0)
+        .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isFocused)
+        #else
+        .buttonStyle(PlainButtonStyle())
+        #endif
+    }
+
+    private var emptyView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "gamecontroller.fill")
+                .font(.system(size: 50))
+                .foregroundColor(RetroTheme.retroPink)
+                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
+
+            Text("NO ROMS FOUND")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(RetroTheme.retroBlue)
+                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+
+            Text("Try checking your internet connection and retry.")
+                .font(.system(size: 16))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+
+            Button(action: {
+                loadROMs()
+            }) {
+                Text("RETRY")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(RetroTheme.retroPurple)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ), lineWidth: 1.5)
+                    )
+                    .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+            }
+        }
+    }
+
+    private var expandCollapseButton: some View {
+        Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                if expandedSystems.count == filteredSystems.count {
+                    expandedSystems.removeAll()
+                } else {
+                    expandedSystems = Set(filteredSystems.map(\.id))
+                }
+            }
+        } label: {
+            HStack {
+                Text(expandedSystems.count == filteredSystems.count ? "COLLAPSE ALL" : "EXPAND ALL")
+                    .font(.system(size: 14, weight: .bold))
+
+                Image(systemName: expandedSystems.count == filteredSystems.count ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 12))
+            }
+            .foregroundColor(RetroTheme.retroBlue)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(LinearGradient(
+                        gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ), lineWidth: 1.5)
+            )
+            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+        }
+    }
+
+    // MARK: - Data
+
     private func filteredROMs(_ roms: [ROM]) -> [ROM] {
         if searchText.isEmpty {
             return roms
         }
         return roms.filter { $0.file.localizedCaseInsensitiveContains(searchText) }
     }
-    
+
     private func loadROMs() {
         guard let url = URL(string: "https://data.provenance-emu.com/roms_mapping.json") else {
             loadingError = NSError(domain: "FreeROMs",
@@ -306,29 +386,28 @@ public struct FreeROMsView: View {
                                    userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
             return
         }
-        
+
         isLoading = true
         loadingError = nil
-        
+
         URLSession.shared.dataTask(with: url) { data, response, error in
             DispatchQueue.main.async {
                 isLoading = false
-                
+
                 if let error = error {
                     loadingError = error
                     return
                 }
-                
+
                 guard let data = data else {
                     loadingError = NSError(domain: "FreeROMs",
                                            code: -1,
                                            userInfo: [NSLocalizedDescriptionKey: "No data received"])
                     return
                 }
-                
+
                 do {
                     let mapping = try JSONDecoder().decode(ROMMapping.self, from: data)
-                    // Transform the mapping into our simpler array structure without filtering
                     self.systems = mapping.systems.compactMap { key, value in
                         if let systemIdentifier = SystemIdentifier(rawValue: key) {
                             return (id: key,
@@ -337,8 +416,7 @@ public struct FreeROMsView: View {
                         }
                         return nil
                     }.sorted { $0.name < $1.name }
-                    
-                    // Expand all sections by default
+
                     self.expandedSystems = Set(self.systems.map(\.id))
                 } catch {
                     loadingError = error
@@ -346,39 +424,72 @@ public struct FreeROMsView: View {
             }
         }.resume()
     }
-    
+
     private func downloadAllROMs(for system: (id: String, name: String, roms: [ROM])) {
 #if !os(tvOS)
         Haptics.notification(type: .success)
 #endif
-        // Queue all ROMs for download
         for rom in system.roms {
             guard let url = URL(string: "https://data.provenance-emu.com/ROMs/\(system.id)/\(rom.file)") else {
                 downloadManager.setError(.invalidURL, for: rom.id)
                 continue
             }
-            
             downloadManager.download(rom: rom, from: url) { _ in }
         }
     }
 }
 
-/// Individual ROM row view
+/// Individual ROM row view with tvOS focus support
 struct ROMRowView: View {
     let rom: ROM
     let systemId: String
     @ObservedObject var downloadManager: ROMDownloadManager
     let onDownloaded: (ROM, URL) -> Void
-    
-    // Animation states for retrowave effects
+
     @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
-    
     @State private var selectedArtwork: URL?
-    
+
+    #if os(tvOS)
+    @FocusState private var isFocused: Bool
+    #endif
+
+    /// Platform-adaptive row height for 10-foot UI
+    private var rowHeight: CGFloat {
+        #if os(tvOS)
+        return 100
+        #else
+        return 70
+        #endif
+    }
+
+    private var nameFontSize: CGFloat {
+        #if os(tvOS)
+        return 22
+        #else
+        return 16
+        #endif
+    }
+
+    private var sizeFontSize: CGFloat {
+        #if os(tvOS)
+        return 18
+        #else
+        return 14
+        #endif
+    }
+
+    /// Whether this row is visually highlighted (focused on tvOS, hovered on iOS/macOS)
+    private var isHighlighted: Bool {
+        #if os(tvOS)
+        return isFocused
+        #else
+        return isHovered
+        #endif
+    }
+
     var body: some View {
         ZStack {
-            // Background with retrowave styling
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black.opacity(0.7))
                 .overlay(
@@ -389,29 +500,28 @@ struct ROMRowView: View {
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
-                            lineWidth: isHovered ? 2.0 : 1.5
+                            lineWidth: isHighlighted ? 2.5 : 1.5
                         )
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: isHovered ? 5 : 3, x: 0, y: 0)
+                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: isHighlighted ? 6 : 3, x: 0, y: 0)
                 )
-            
-            // Content
+
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(rom.file)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: nameFontSize, weight: .bold))
                         .foregroundColor(.white)
                         .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                         .lineLimit(1)
-                    
+
                     Text(ByteCountFormatter.string(fromByteCount: Int64(rom.size), countStyle: .file))
-                        .font(.system(size: 14))
+                        .font(.system(size: sizeFontSize))
                         .foregroundColor(RetroTheme.retroPurple)
                         .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                 }
                 .padding(.leading, 4)
-                
+
                 Spacer()
-                
+
                 if let artwork = rom.artwork {
                     HStack(spacing: 10) {
                         if let coverPath = artwork.cover,
@@ -429,7 +539,7 @@ struct ROMRowView: View {
                                     .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                             )
                         }
-                        
+
                         if let screenshotPath = artwork.screenshot,
                            let screenshotURL = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(screenshotPath)") {
                             ArtworkThumbnail(url: screenshotURL) {
@@ -448,7 +558,7 @@ struct ROMRowView: View {
                     }
                     .padding(.trailing, 12)
                 }
-                
+
                 DownloadButton(rom: rom,
                                systemId: systemId,
                                downloadManager: downloadManager,
@@ -458,26 +568,22 @@ struct ROMRowView: View {
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
         }
-        .frame(height: 70)
+        .frame(height: rowHeight)
         .padding(.vertical, 4)
         .padding(.horizontal, 4)
-#if !os(tvOS)
+        #if os(tvOS)
+        .focusable(true)
+        .focused($isFocused)
+        .scaleEffect(isFocused ? 1.03 : 1.0)
+        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
+        #else
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering
             }
         }
-#endif
-#if os(tvOS)
-        .focusable(true)
-//        .onFocusChange { focused in
-//            withAnimation(.easeInOut(duration: 0.2)) {
-//                isHovered = focused
-//            }
-//        }
-#endif
+        #endif
         .onAppear {
-            // Start animations
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
             }
@@ -499,10 +605,17 @@ struct DownloadButton: View {
     let systemId: String
     @ObservedObject var downloadManager: ROMDownloadManager
     let onDownloaded: (ROM, URL) -> Void
-    
-    // Animation states for retrowave effects
+
     @State private var glowOpacity: Double = 0.7
-    
+
+    private var iconSize: CGFloat {
+        #if os(tvOS)
+        return 32
+        #else
+        return 24
+        #endif
+    }
+
     var body: some View {
         Group {
             if let status = downloadManager.activeDownloads[rom.id] {
@@ -533,7 +646,7 @@ struct DownloadButton: View {
                 case .completed(let localURL):
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(RetroTheme.retroBlue)
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: iconSize, weight: .bold))
                         .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                         .onAppear {
                             onDownloaded(rom, localURL)
@@ -550,16 +663,17 @@ struct DownloadButton: View {
                 Button(action: startDownload) {
                     Image(systemName: "arrow.down.circle.fill")
                         .foregroundColor(RetroTheme.retroPink)
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: iconSize, weight: .bold))
                         .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 }
-#if os(tvOS)
-                .focusable(true)
-#endif
+                #if os(tvOS)
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                #endif
             }
         }
     }
-    
+
     private func startDownload() {
         guard let url = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(rom.file)") else {
             downloadManager.setError(.invalidURL, for: rom.id)
@@ -570,8 +684,7 @@ struct DownloadButton: View {
 #endif
         downloadManager.download(rom: rom, from: url) { _ in }
     }
-    
-    // Start animations when view appears
+
     private var animationEffect: some View {
         Color.clear
             .onAppear {

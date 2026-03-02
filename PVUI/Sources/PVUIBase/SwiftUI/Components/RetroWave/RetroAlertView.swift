@@ -592,6 +592,10 @@ public struct RetroAlertModifier<AlertContent: View>: ViewModifier {
     let textFieldConfiguration: ((UITextField) -> Void)?
     let alertContent: () -> AlertContent
 
+    #if os(tvOS)
+    @Namespace private var alertFocusNamespace
+    #endif
+
     public init(
         title: String,
         message: String,
@@ -613,6 +617,8 @@ public struct RetroAlertModifier<AlertContent: View>: ViewModifier {
     public func body(content: Content) -> some View {
         ZStack {
             content
+                .disabled(isPresented)
+                .allowsHitTesting(!isPresented)
 
             if isPresented {
                 RetroAlertView(
@@ -626,9 +632,12 @@ public struct RetroAlertModifier<AlertContent: View>: ViewModifier {
                 )
                 .transition(.opacity)
                 .animation(.easeInOut(duration: 0.2), value: isPresented)
-                .zIndex(1000) // Ensure alert is on top
+                .zIndex(1000)
             }
         }
+        #if os(tvOS)
+        .focusScope(alertFocusNamespace)
+        #endif
     }
 }
 
@@ -892,14 +901,9 @@ public struct RetroAlertStateView: View {
             #if os(tvOS)
             .focusScope(alertFocusNamespace)
             .onAppear {
-                // Force focus to primary button when alert appears
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                     focusedButton = .primary
                 }
-            }
-            .onMoveCommand { _ in
-                // Intercept all move commands to keep focus in alert
-                // Focus will still move between buttons within the alert
             }
             .onExitCommand {
                 // Handle Menu/Back button press on tvOS - dismiss alert
@@ -1020,6 +1024,8 @@ public struct RetroAlertStateModifier: ViewModifier {
     public func body(content: Content) -> some View {
         ZStack {
             content
+                .disabled(alertState.isPresented)
+                .allowsHitTesting(!alertState.isPresented)
             RetroAlertStateView(alertState: alertState)
         }
     }
@@ -1060,6 +1066,10 @@ public struct RetroSelectionAlertView: View {
 
     #if os(tvOS) || os(iOS)
     @FocusState private var focusedItemId: String?
+    #endif
+
+    #if os(tvOS)
+    @Namespace private var selectionAlertFocusNamespace
     #endif
 
     #if os(iOS)
@@ -1232,6 +1242,9 @@ public struct RetroSelectionAlertView: View {
             }
             #endif
         }
+        #if os(tvOS)
+        .focusScope(selectionAlertFocusNamespace)
+        #endif
         .transition(.opacity.combined(with: .scale(scale: 0.9)))
     }
 
@@ -1343,6 +1356,10 @@ public struct RetroSelectionAlertModifier: ViewModifier {
     let onSelect: (String) -> Void
     let onCancel: () -> Void
 
+    #if os(tvOS)
+    @Namespace private var selectionFocusNamespace
+    #endif
+
     public init(
         title: String,
         message: String,
@@ -1362,6 +1379,8 @@ public struct RetroSelectionAlertModifier: ViewModifier {
     public func body(content: Content) -> some View {
         ZStack {
             content
+                .disabled(isPresented)
+                .allowsHitTesting(!isPresented)
 
             if isPresented {
                 RetroSelectionAlertView(
@@ -1376,6 +1395,9 @@ public struct RetroSelectionAlertModifier: ViewModifier {
                 .zIndex(1000)
             }
         }
+        #if os(tvOS)
+        .focusScope(selectionFocusNamespace)
+        #endif
     }
 }
 

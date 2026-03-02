@@ -3,6 +3,7 @@ import Combine
 import PVUIBase
 import PVThemes
 import PVLibrary
+import PVFeatureFlags
 import RealmSwift
 import PVRealm
 import PVPrimitives
@@ -193,6 +194,9 @@ struct TVMediaMainView: View {
         @StateObject private var gamepadManager = GamepadManager.shared
         #endif
 
+        @State private var showingImportsAlert = false
+        @StateObject private var featureFlagsManager = PVFeatureFlagsManager.shared
+
         let sidebarCollapsedWidth: CGFloat
         let mainNamespace: Namespace.ID
         let sidebarNamespace: Namespace.ID
@@ -325,8 +329,42 @@ struct TVMediaMainView: View {
                 }
         }
 
-        private var layoutWithArtworkSourceAlert: some View {
+        /// Dynamic selection items for the imports alert, conditionally including Free ROMs
+        private var importsAlertItems: [RetroSelectionItem] {
+            var items = [
+                RetroSelectionItem(id: "importQueue", title: "Import Queue", subtitle: "View active and completed imports")
+            ]
+            if featureFlagsManager.featureStates[.inAppFreeROMs] ?? false {
+                items.append(RetroSelectionItem(id: "freeROMs", title: "Free ROMs", subtitle: "Browse open-source and public domain ROMs"))
+            }
+            items.append(RetroSelectionItem(id: "romInstructions", title: "How to Add ROMs", subtitle: "Web server, AirDrop, and more"))
+            return items
+        }
+
+        private var layoutWithImportsAlert: some View {
             layoutWithModal
+                .retroSelectionAlert(
+                    title: "IMPORTS",
+                    message: "Choose an option",
+                    items: importsAlertItems,
+                    isPresented: $showingImportsAlert,
+                    onSelect: { selectedId in
+                        switch selectedId {
+                        case "importQueue":
+                            router.activeModal = .importQueue
+                        case "freeROMs":
+                            router.activeModal = .freeROMs
+                        case "romInstructions":
+                            router.activeModal = .romInstructions
+                        default:
+                            break
+                        }
+                    }
+                )
+        }
+
+        private var layoutWithArtworkSourceAlert: some View {
+            layoutWithImportsAlert
                 #if !os(tvOS)
                 .uiKitAlert(
                     "Choose Artwork Source",
@@ -433,7 +471,7 @@ struct TVMediaMainView: View {
                     router.navigate(to: .status)
                 },
                 onSelectImports: {
-                    router.activeModal = .importStatus
+                    showingImportsAlert = true
                 }
             )
             .tvMediaFocusScope(sidebarNamespace)
@@ -609,6 +647,21 @@ struct TVMediaMainView: View {
                 }
             } else {
                 EmptyView()
+            }
+        case .freeROMs:
+            NavigationStack {
+                FreeROMsView(
+                    onROMDownloaded: { rom, tempURL in
+                        appState.libraryUpdatesController?.handlePickedDocuments([tempURL])
+                    },
+                    onDismiss: {
+                        router.dismissModal()
+                    }
+                )
+            }
+        case .romInstructions:
+            NavigationStack {
+                TVMediaROMInstructionsView(onDismiss: { router.dismissModal() })
             }
         case .artworkSearch(let game):
             let actions = gameActions
@@ -4990,6 +5043,383 @@ struct TVMediaImportStatusToaster: View {
                 lineWidth: isFocused ? 2.5 : 0
             )
     }
+}
+
+// MARK: - ROM Instructions View
+
+/// RetroWave-themed view showing how to add ROMs via various methods
+@available(tvOS 16.0, iOS 17.0, *)
+struct TVMediaROMInstructionsView: View {
+    let onDismiss: () -> Void
+
+    #if canImport(PVWebServer)
+    @State private var webServerURL: String?
+    #endif
+
+    #if os(tvOS)
+    @FocusState private var focusedCard: String?
+    #endif
+
+    private let wikiURL = "https://wiki.provenance-emu.com/"
+
+    /// Platform-adaptive sizing for 10-foot vs handheld UI
+    private var titleFontSize: CGFloat {
+        #if os(tvOS)
+        return 38
+        #else
+        return 24
+        #endif
+    }
+
+    private var subtitleFontSize: CGFloat {
+        #if os(tvOS)
+        return 24
+        #else
+        return 16
+        #endif
+    }
+
+    private var cardTitleFontSize: CGFloat {
+        #if os(tvOS)
+        return 28
+        #else
+        return 18
+        #endif
+    }
+
+    private var cardSubtitleFontSize: CGFloat {
+        #if os(tvOS)
+        return 20
+        #else
+        return 13
+        #endif
+    }
+
+    private var cardDescriptionFontSize: CGFloat {
+        #if os(tvOS)
+        return 22
+        #else
+        return 15
+        #endif
+    }
+
+    private var cardIconSize: CGFloat {
+        #if os(tvOS)
+        return 36
+        #else
+        return 24
+        #endif
+    }
+
+    private var cardPadding: CGFloat {
+        #if os(tvOS)
+        return 30
+        #else
+        return 20
+        #endif
+    }
+
+    private var sectionSpacing: CGFloat {
+        #if os(tvOS)
+        return 36
+        #else
+        return 28
+        #endif
+    }
+
+    private var horizontalPadding: CGFloat {
+        #if os(tvOS)
+        return 80
+        #else
+        return 40
+        #endif
+    }
+
+    var body: some View {
+        ZStack {
+            Color(red: 0.04, green: 0.04, blue: 0.08)
+                .ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: sectionSpacing) {
+                    headerSection
+                    webServerSection
+                    #if os(iOS)
+                    filesAppSection
+                    #endif
+                    airdropSection
+                    cloudKitSection
+                    wikiSection
+                }
+                .padding(.horizontal, horizontalPadding)
+                .padding(.vertical, 30)
+            }
+        }
+        #if os(tvOS)
+        .onExitCommand { onDismiss() }
+        #else
+        .navigationTitle("HOW TO ADD ROMS")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Done") { onDismiss() }
+            }
+        }
+        #endif
+        #if canImport(PVWebServer)
+        .onAppear { refreshWebServerURL() }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("WebServerStatusChanged"))) { _ in
+            refreshWebServerURL()
+        }
+        #endif
+    }
+
+    // MARK: - Sections
+
+    private var headerSection: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "tray.and.arrow.down.fill")
+                .font(.system(size: titleFontSize * 1.5))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.retroPink, .retroBlue],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .shadow(color: .retroPink.opacity(0.6), radius: 12)
+
+            Text("ADDING ROMS")
+                .font(.system(size: titleFontSize, weight: .bold))
+                .foregroundStyle(.white)
+                .shadow(color: .retroBlue.opacity(0.6), radius: 8)
+
+            Text("There are several ways to add ROMs to Provenance")
+                .font(.system(size: subtitleFontSize))
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+        }
+        .padding(.bottom, 8)
+    }
+
+    private var webServerSection: some View {
+        instructionCard(
+            id: "webserver",
+            icon: "network",
+            title: "WEB SERVER",
+            subtitle: "Recommended",
+            description: "Upload ROMs from any device on your local network using the built-in web server.",
+            accentColor: .retroPink
+        ) {
+            #if canImport(PVWebServer)
+            if let url = webServerURL {
+                Text(url)
+                    .font(.system(size: cardDescriptionFontSize, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(Color.retroBlue)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.5))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.retroBlue.opacity(0.3), lineWidth: 1)
+                            )
+                    )
+            } else {
+                Text("Start the web server from Settings to see the URL")
+                    .font(.system(size: cardSubtitleFontSize))
+                    .foregroundStyle(.white.opacity(0.5))
+                    .italic()
+            }
+            #endif
+        }
+    }
+
+    #if os(iOS)
+    private var filesAppSection: some View {
+        instructionCard(
+            id: "files",
+            icon: "folder",
+            title: "FILES APP",
+            subtitle: "iOS",
+            description: "Use the iOS Files app or iTunes File Sharing to copy ROMs directly into Provenance's documents folder.",
+            accentColor: .retroBlue
+        )
+    }
+    #endif
+
+    private var airdropSection: some View {
+        instructionCard(
+            id: "airdrop",
+            icon: "airplayaudio",
+            title: "AIRDROP",
+            subtitle: platformAirdropSubtitle,
+            description: platformAirdropDescription,
+            accentColor: .retroPurple
+        )
+    }
+
+    private var cloudKitSection: some View {
+        instructionCard(
+            id: "icloud",
+            icon: "icloud.and.arrow.down",
+            title: "ICLOUD SYNC",
+            subtitle: "All Devices",
+            description: platformCloudKitDescription,
+            accentColor: .cyan
+        )
+    }
+
+    private var platformCloudKitDescription: String {
+        #if os(tvOS)
+        return "Add ROMs on one device and they automatically sync to all your Apple devices signed into the same iCloud account. iCloud sync is included free on Apple TV. On iOS, Provenance Plus is required."
+        #else
+        return "Add ROMs on one device and they automatically sync to all your Apple devices signed into the same iCloud account. Requires Provenance Plus on iOS. Included free on Apple TV."
+        #endif
+    }
+
+    private var wikiSection: some View {
+        VStack(spacing: 16) {
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [.retroPink.opacity(0.3), .retroBlue.opacity(0.2), .clear],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 1)
+
+            HStack(spacing: 16) {
+                Image(systemName: "book.closed.fill")
+                    .font(.system(size: cardIconSize))
+                    .foregroundStyle(Color.retroBlue)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("FULL DOCUMENTATION")
+                        .font(.system(size: cardTitleFontSize, weight: .bold))
+                        .foregroundStyle(.white)
+
+                    Text(wikiURL)
+                        .font(.system(size: cardSubtitleFontSize, design: .monospaced))
+                        .foregroundStyle(Color.retroBlue.opacity(0.8))
+                }
+
+                Spacer()
+            }
+            .padding(.vertical, 12)
+            #if os(tvOS)
+            .focusable(true)
+            #endif
+        }
+    }
+
+    // MARK: - Helpers
+
+    private var platformAirdropSubtitle: String {
+        #if os(tvOS)
+        if #available(tvOS 17.0, *) {
+            return "tvOS 17+"
+        }
+        return "Not Available"
+        #else
+        return "iOS"
+        #endif
+    }
+
+    private var platformAirdropDescription: String {
+        #if os(tvOS)
+        if #available(tvOS 17.0, *) {
+            return "AirDrop ROM files from a nearby iPhone, iPad, or Mac directly to your Apple TV. Requires tvOS 17 or later."
+        }
+        return "AirDrop is not available on this version of tvOS. Use the web server or iCloud sync instead."
+        #else
+        return "AirDrop ROM files from a nearby Mac or iOS device. Provenance will automatically import them."
+        #endif
+    }
+
+    /// Instruction card with tvOS focus support for scrolling
+    @ViewBuilder
+    private func instructionCard<Content: View>(
+        id: String,
+        icon: String,
+        title: String,
+        subtitle: String,
+        description: String,
+        accentColor: Color,
+        @ViewBuilder extras: () -> Content = { EmptyView() }
+    ) -> some View {
+        #if os(tvOS)
+        let isFocused = focusedCard == id
+        #else
+        let isFocused = false
+        #endif
+
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 16) {
+                Image(systemName: icon)
+                    .font(.system(size: cardIconSize))
+                    .foregroundStyle(accentColor)
+                    .shadow(color: accentColor.opacity(0.5), radius: 6)
+                    .frame(width: cardIconSize + 12)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: cardTitleFontSize, weight: .bold))
+                        .foregroundStyle(.white)
+                        .shadow(color: accentColor.opacity(0.4), radius: 4)
+
+                    Text(subtitle)
+                        .font(.system(size: cardSubtitleFontSize, weight: .medium))
+                        .foregroundStyle(accentColor.opacity(0.8))
+                }
+
+                Spacer()
+            }
+
+            Text(description)
+                .font(.system(size: cardDescriptionFontSize))
+                .foregroundStyle(.white.opacity(0.75))
+                .lineSpacing(4)
+
+            extras()
+        }
+        .padding(cardPadding)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.black.opacity(isFocused ? 0.7 : 0.5))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [accentColor.opacity(isFocused ? 0.8 : 0.4), accentColor.opacity(isFocused ? 0.4 : 0.15)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: isFocused ? 2 : 1
+                        )
+                )
+        )
+        .shadow(color: isFocused ? accentColor.opacity(0.3) : .clear, radius: 12, x: 0, y: 4)
+        .scaleEffect(isFocused ? 1.02 : 1.0)
+        #if os(tvOS)
+        .focusable(true)
+        .focused($focusedCard, equals: id)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        #endif
+    }
+
+    #if canImport(PVWebServer)
+    private func refreshWebServerURL() {
+        let webServer = PVWebServer.shared
+        guard webServer.isWWWUploadServerRunning else {
+            webServerURL = nil
+            return
+        }
+        webServerURL = webServer.urlString
+    }
+    #endif
 }
 
 // MARK: - Import Status Sheet (Full Screen)
