@@ -9,6 +9,7 @@
 #import <PVFlycast/PVFlycast.h>
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -88,6 +89,11 @@ s8 joyx[4], joyy[4];
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
 
+            // Resolve Start button for Dreamcast (DC has no Select — only Start).
+            // Maps buttonMenu (Options/Menu/+) to DC_BTN_START on all modern controllers.
+            GCControllerButtonInput *startButton = nil;
+            PVResolveStartSelectButtons(controller, &startButton, NULL);
+
             dpad.up.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_UP) : kcode[playerIndex] |= (DC_DPAD_UP);
             dpad.down.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_DOWN) : kcode[playerIndex] |= (DC_DPAD_DOWN);
             dpad.left.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_LEFT) : kcode[playerIndex] |= (DC_DPAD_LEFT);
@@ -102,7 +108,8 @@ s8 joyx[4], joyy[4];
             gamepad.rightShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_RT) : kcode[playerIndex] |= (DC_AXIS_RT);
 
             gamepad.leftTrigger.isPressed ? kcode[playerIndex] &= ~(DC_BTN_Z) : kcode[playerIndex] |= (DC_BTN_Z);
-            gamepad.rightTrigger.isPressed ? kcode[playerIndex] &= ~(DC_BTN_START) : kcode[playerIndex] |= (DC_BTN_START);
+            // DC Start: right trigger OR buttonMenu (Options/Menu/+ on modern controllers)
+            (gamepad.rightTrigger.isPressed || (startButton && startButton.isPressed)) ? kcode[playerIndex] &= ~(DC_BTN_START) : kcode[playerIndex] |= (DC_BTN_START);
 
 
             float xvalue = gamepad.leftThumbstick.xAxis.value;

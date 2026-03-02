@@ -49,36 +49,10 @@ const int GBDualMap[] = {
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
             
-            GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ?  (GCDualSenseGamepad *)gamepad : nil;
-            GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ?  (GCDualShockGamepad *)gamepad : nil;
-            GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? (GCXboxGamepad *)gamepad : nil;
             GCControllerButtonInput *selectButton = nil;
             GCControllerButtonInput *startButton = nil;
-            GCControllerButtonInput *shareLikeButton = nil;
-
-            NSDictionary<NSString *, GCControllerButtonInput *> *profileButtons = controller.physicalInputProfile.buttons;
-            if ([profileButtons isKindOfClass:[NSDictionary class]]) {
-                shareLikeButton = profileButtons[@"Button Share"];
-                if (!shareLikeButton) {
-                    shareLikeButton = profileButtons[@"Button Create"];
-                }
-                if (!shareLikeButton) {
-                    shareLikeButton = profileButtons[@"Button Capture"];
-                }
-            }
-
-            if (dualSense || dualShock) {
-                selectButton = shareLikeButton;
-                startButton = gamepad.buttonMenu;
-            } else if (xbox) {
-                selectButton = xbox.buttonShare;
-                startButton = xbox.buttonMenu;
-            } else {
-                startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
-                if (!selectButton) {
-                    selectButton = shareLikeButton;
-                }
-            }
+            // GB/GBC has Start and Select. Resolve via shared utility with PS touchpad support.
+            PVResolveStartSelectShareButtons(controller, &startButton, &selectButton, nil);
             
             _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed;
             _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed;
@@ -88,7 +62,7 @@ const int GBDualMap[] = {
             _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonB.isPressed || gamepad.buttonY.isPressed;
             _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed || gamepad.buttonX.isPressed;
             
-            _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftShoulder.isPressed || startButton.isPressed;
+            _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftShoulder.isPressed || (startButton && startButton.isPressed);
             _gb_pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightShoulder.isPressed || (selectButton && selectButton.isPressed);
         }
 #if TARGET_OS_TV

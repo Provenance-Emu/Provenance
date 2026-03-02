@@ -212,21 +212,9 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
         GCExtendedGamepad *gamepad     = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         
-        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
-        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
-        GCControllerButtonInput *selectButton = nil;
         GCControllerButtonInput *startButton = nil;
-
-        if (dualSense || dualShock) {
-            selectButton = gamepad.buttonOptions;
-            startButton = gamepad.buttonMenu;
-        } else if (xbox) {
-            selectButton = xbox.buttonShare;
-            startButton = xbox.buttonMenu;
-        } else {
-            startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
-        }
+        // N64 has Start but no Select. Resolve Start only via shared utility.
+        PVResolveStartSelectButtons(controller, &startButton, NULL);
 
         
         BOOL dualModeOverrides = self.dualJoystick && (playerIndex == 0 || playerIndex == 2);
@@ -249,10 +237,10 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
             padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
 
                 //fallback for non-dual sense only if the R3 button exists on the controller
-            padData[playerIndex][PVN64ButtonStart] = gamepad.rightThumbstickButton.isPressed || startButton.isPressed;
+            padData[playerIndex][PVN64ButtonStart] = gamepad.rightThumbstickButton.isPressed || (startButton && startButton.isPressed);
         } else {
             // MFi-R2 → Start
-            padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed || startButton.isPressed;
+            padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed || (startButton && startButton.isPressed);
 
             // MFi-L2 → Z
             padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
