@@ -142,11 +142,16 @@ PVResolveStartSelectButtons(GCController * _Nonnull controller,
  profile (Share/Create/Capture buttons) and PlayStation touchpad. Prefer this variant
  for systems that benefit from alternative Select inputs (NES, GB, SNES, etc.).
 
- Priority for Select:
+ For PlayStation controllers, Select priority:
    1. PlayStation touchpad (DualSense/DualShock only, iOS 14+)
-   2. buttonOptions (logical Share/Create/View/− button)
-   3. Physical profile Share/Create/Capture button (fallback)
+   2. buttonOptions (logical Share/Create button)
+   3. Physical profile Share/Create button (fallback via PVShareLikeButtonForController)
 
+ For Xbox controllers, Select is effectively:
+   - buttonOptions (View button), then physical profile "Button Share" (if present).
+
+ For Nintendo Switch Pro, Select is:
+   - buttonOptions (− button) only; no additional share-like or touchpad input exists.
  @param controller   The GCController to inspect.
  @param outStart     Written with the resolved Start button input, or nil.
  @param outSelect    Written with the resolved Select button input, or nil.
