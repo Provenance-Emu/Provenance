@@ -425,8 +425,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         guard remoteFetcher != nil else {
             throw PVFeatureFlagsFetcherError.notConfigured
         }
-        // Clear the fetcher's in-memory validity by using a temporary zero-duration fetcher check
-        // The actual fetch ignores cache validity
+        // Perform a remote fetch that does not consult cache freshness.
         guard let fetcher = remoteFetcher else { return }
         do {
             let config = try await fetcher.fetchWithRetry()
