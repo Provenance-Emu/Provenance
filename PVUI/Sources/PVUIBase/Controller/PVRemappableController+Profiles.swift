@@ -22,12 +22,13 @@ public extension PVRemappableController {
     /// Clears any previously-active mappings first, then applies the profile's
     /// mappings and re-saves via UserDefaults so the remapping system picks them up.
     ///
-    /// The profile is frozen before access so it can be safely read from any thread.
-    public func apply(profile: PVControllerProfile) {
+    /// **Must be called on the main actor** — this method mutates in-memory controller
+    /// state and reads Realm objects, both of which require a consistent thread.
+    @MainActor public func apply(profile: PVControllerProfile) {
         // Resolve a safe-to-use profile instance.
         // - If already frozen, use as-is.
-        // - If managed, freeze so it can be read safely from any thread.
-        // - If unmanaged, skip freezing to avoid Realm traps and just use the in-memory object.
+        // - If managed (and accessed here on the main thread), freeze for snapshot access.
+        // - If unmanaged, use as-is.
         let resolvedProfile: PVControllerProfile
         if profile.isFrozen {
             resolvedProfile = profile
@@ -76,7 +77,7 @@ public extension PVRemappableController {
     ///   - gameID: Optional game MD5 scope (nil = applies to all games).
     ///   - makeActive: If `true`, immediately activates the new profile.
     /// - Returns: The persisted `PVControllerProfile`, or `nil` if persistence failed.
-    @discardableResult public func saveCurrentMappingsAsProfile(
+    @discardableResult @MainActor public func saveCurrentMappingsAsProfile(
         name: String,
         systemIdentifier: String? = nil,
         coreIdentifier: String? = nil,
@@ -122,11 +123,14 @@ public extension PVRemappableController {
     /// game+core > game > system+core > system > global.
     /// Falls back to UserDefaults-based mappings if no profile is found.
     ///
+    /// **Must be called on the main actor** — reads Realm objects and mutates
+    /// in-memory controller state.
+    ///
     /// - Parameters:
     ///   - systemIdentifier: Current system identifier (optional).
     ///   - coreIdentifier: Current emulator core identifier (optional).
     ///   - gameID: Current game MD5 hash (optional).
-    public func loadActiveProfile(systemIdentifier: String? = nil, coreIdentifier: String? = nil, gameID: String? = nil) {
+    @MainActor public func loadActiveProfile(systemIdentifier: String? = nil, coreIdentifier: String? = nil, gameID: String? = nil) {
         guard let vendorName = self.vendorName else { return }
 
         let db = RomDatabase.sharedInstance
