@@ -5,6 +5,8 @@ import CoreGraphics
 import QuartzCore
 import PVLogging
 import PVPrimitives
+import PVSettings
+import Defaults
 
 @objcMembers
 public final class PVMetalFilterRenderer: NSObject {
@@ -187,16 +189,18 @@ public final class PVMetalFilterRenderer: NSObject {
 
         switch shaderName {
         case "Simple CRT":
+            // TODO: Cache these values when the dynamic shader parameter system is adopted;
+            // reading Defaults per frame is acceptable for now given infrequent user changes.
             var uniforms = SimpleCRTUniforms(
                 dstRect: SIMD4<Float>(textureWidth, textureHeight, drawableWidth, drawableHeight),
                 srcRect: SIMD4<Float>(0, 0, sourceWidth, sourceHeight),
-                curvVert: 5.0,
-                curvHoriz: 4.0,
-                curvStrength: 0.25,
-                lightBoost: 1.3,
-                vignStrength: 0.05,
-                zoomOut: 1.1,
-                brightness: 1.0
+                curvVert: Defaults[.simpleCRTCurvVert],
+                curvHoriz: Defaults[.simpleCRTCurvHoriz],
+                curvStrength: Defaults[.simpleCRTCurvStrength],
+                lightBoost: Defaults[.simpleCRTLightBoost],
+                vignStrength: Defaults[.simpleCRTVignStrength],
+                zoomOut: Defaults[.simpleCRTZoomOut],
+                brightness: Defaults[.simpleCRTBrightness]
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<SimpleCRTUniforms>.stride, index: 0)
 
@@ -204,7 +208,18 @@ public final class PVMetalFilterRenderer: NSObject {
             var uniforms = CRTUniforms(
                 displayRect: SIMD4<Float>(0, 0, sourceWidth, sourceHeight),
                 emulatedImageSize: SIMD2<Float>(textureWidth, textureHeight),
-                finalRes: SIMD2<Float>(drawableWidth, drawableHeight)
+                finalRes: SIMD2<Float>(drawableWidth, drawableHeight),
+                bloomAmount: Defaults[.complexCRTBloomAmount],
+                scanlineHardness: Defaults[.complexCRTScanlineHardness],
+                shadowMaskHardness: Defaults[.complexCRTShadowMaskHardness],
+                rowsOfResolution: Defaults[.complexCRTRowsOfResolution],
+                tvl: Defaults[.complexCRTTVL],
+                warpX: Defaults[.complexCRTWarpX],
+                warpY: Defaults[.complexCRTWarpY],
+                displayGamma: Defaults[.complexCRTDisplayGamma],
+                useScanlines: Defaults[.complexCRTUseScanlines] ? 1 : 0,
+                useShadowMask: Defaults[.complexCRTUseShadowMask] ? 1 : 0,
+                useWarp: Defaults[.complexCRTUseWarp] ? 1 : 0
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<CRTUniforms>.stride, index: 0)
 
@@ -308,10 +323,23 @@ private struct SimpleCRTUniforms {
     var brightness: Float
 }
 
+/// Must match `CRT_Data` struct layout in crt_filter_ps.metal exactly.
+/// All fields are 4-byte aligned; Int32 maps to Metal's `int`.
 private struct CRTUniforms {
     var displayRect: SIMD4<Float>
     var emulatedImageSize: SIMD2<Float>
     var finalRes: SIMD2<Float>
+    var bloomAmount: Float
+    var scanlineHardness: Float
+    var shadowMaskHardness: Float
+    var rowsOfResolution: Float
+    var tvl: Float
+    var warpX: Float
+    var warpY: Float
+    var displayGamma: Float
+    var useScanlines: Int32
+    var useShadowMask: Int32
+    var useWarp: Int32
 }
 
 private struct LCDFilterUniforms {

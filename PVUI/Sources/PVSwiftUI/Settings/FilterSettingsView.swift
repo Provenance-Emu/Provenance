@@ -66,6 +66,28 @@ private struct MetalFilterSection: View {
         }
     }
 
+    /// Returns the active CRT filter selection, if any.
+    private var activeCRTFilter: MetalFilterSelectionOption? {
+        switch metalFilterMode {
+        case .auto(let crt, _):
+            switch crt {
+            case .simpleCRT, .complexCRT:
+                return crt
+            default:
+                return nil
+            }
+        case .always(let filter):
+            switch filter {
+            case .simpleCRT, .complexCRT:
+                return filter
+            default:
+                return nil
+            }
+        case .none:
+            return nil
+        }
+    }
+
     var body: some View {
         Section(header:
             Text("Metal Filters")
@@ -94,7 +116,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPurple)
                 #endif
-                .onChange(of: selectedCRTFilter) { newValue in
+                .onChange(of: selectedCRTFilter) { _, newValue in
                     metalFilterMode = .auto(crt: newValue, lcd: selectedLCDFilter)
                 }
 
@@ -106,7 +128,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPurple)
                 #endif
-                .onChange(of: selectedLCDFilter) { newValue in
+                .onChange(of: selectedLCDFilter) { _, newValue in
                     metalFilterMode = .auto(crt: selectedCRTFilter, lcd: newValue)
                 }
 
@@ -119,7 +141,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPink)
                 #endif
-                .onChange(of: selectedAlwaysFilter) { newValue in
+                .onChange(of: selectedAlwaysFilter) { _, newValue in
                     metalFilterMode = .always(filter: newValue)
                 }
 
@@ -127,6 +149,160 @@ private struct MetalFilterSection: View {
                 EmptyView()
             }
         }
+
+        // Show CRT parameter controls when a CRT filter is active
+        if let crtFilter = activeCRTFilter {
+            if crtFilter == .simpleCRT {
+                SimpleCRTParametersSection()
+            } else {
+                ComplexCRTParametersSection()
+            }
+        }
+    }
+}
+
+// MARK: - Simple CRT Parameters
+
+private struct SimpleCRTParametersSection: View {
+    @Default(.simpleCRTCurvVert) var curvVert
+    @Default(.simpleCRTCurvHoriz) var curvHoriz
+    @Default(.simpleCRTCurvStrength) var curvStrength
+    @Default(.simpleCRTLightBoost) var lightBoost
+    @Default(.simpleCRTVignStrength) var vignStrength
+    @Default(.simpleCRTZoomOut) var zoomOut
+    @Default(.simpleCRTBrightness) var brightness
+
+    var body: some View {
+        Section(header:
+            Text("Simple CRT Parameters")
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                .font(.headline)
+                #endif
+        ) {
+            ShaderSliderRow(label: "Curvature (Vertical)", value: $curvVert, range: 1.0...10.0)
+            ShaderSliderRow(label: "Curvature (Horizontal)", value: $curvHoriz, range: 1.0...10.0)
+            ShaderSliderRow(label: "Curvature Strength", value: $curvStrength, range: 0.0...1.0)
+            ShaderSliderRow(label: "Light Boost", value: $lightBoost, range: 0.1...3.0)
+            ShaderSliderRow(label: "Vignette", value: $vignStrength, range: 0.0...1.0)
+            ShaderSliderRow(label: "Zoom Out", value: $zoomOut, range: 0.5...2.0)
+            ShaderSliderRow(label: "Brightness", value: $brightness, range: 0.5...1.5)
+
+            Button("Reset to Defaults") {
+                Defaults.reset(
+                    .simpleCRTCurvVert, .simpleCRTCurvHoriz, .simpleCRTCurvStrength,
+                    .simpleCRTLightBoost, .simpleCRTVignStrength, .simpleCRTZoomOut,
+                    .simpleCRTBrightness
+                )
+            }
+            .foregroundColor(.red)
+        }
+    }
+}
+
+// MARK: - Complex CRT Parameters
+
+private struct ComplexCRTParametersSection: View {
+    @Default(.complexCRTUseScanlines) var useScanlines
+    @Default(.complexCRTUseShadowMask) var useShadowMask
+    @Default(.complexCRTUseWarp) var useWarp
+    @Default(.complexCRTBloomAmount) var bloomAmount
+    @Default(.complexCRTScanlineHardness) var scanlineHardness
+    @Default(.complexCRTShadowMaskHardness) var shadowMaskHardness
+    @Default(.complexCRTRowsOfResolution) var rowsOfResolution
+    @Default(.complexCRTTVL) var tvl
+    @Default(.complexCRTWarpX) var warpX
+    @Default(.complexCRTWarpY) var warpY
+    @Default(.complexCRTDisplayGamma) var displayGamma
+
+    var body: some View {
+        Section(header:
+            Text("Complex CRT Parameters")
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                .font(.headline)
+                #endif
+        ) {
+            Toggle("Scanlines", isOn: $useScanlines)
+            Toggle("Shadow Mask", isOn: $useShadowMask)
+            Toggle("Screen Warp", isOn: $useWarp)
+
+            ShaderSliderRow(label: "Bloom Amount", value: $bloomAmount, range: 0.0...6.0)
+
+            if useScanlines {
+                ShaderSliderRow(label: "Scanline Hardness", value: $scanlineHardness, range: 1.0...12.0)
+                ShaderSliderRow(label: "CRT Resolution (lines)", value: $rowsOfResolution, range: 240.0...1080.0, step: 1.0)
+            }
+
+            if useShadowMask {
+                ShaderSliderRow(label: "Shadow Mask Hardness", value: $shadowMaskHardness, range: 4.0...32.0)
+                ShaderSliderRow(label: "TV Lines (mask density)", value: $tvl, range: 400.0...1200.0, step: 1.0)
+            }
+
+            if useWarp {
+                ShaderSliderRow(label: "Warp Horizontal", value: $warpX, range: 0.0...0.05)
+                ShaderSliderRow(label: "Warp Vertical", value: $warpY, range: 0.0...0.1)
+            }
+
+            ShaderSliderRow(label: "Display Gamma", value: $displayGamma, range: 1.8...2.6)
+
+            Button("Reset to Defaults") {
+                Defaults.reset(
+                    .complexCRTUseScanlines, .complexCRTUseShadowMask, .complexCRTUseWarp,
+                    .complexCRTBloomAmount, .complexCRTScanlineHardness, .complexCRTShadowMaskHardness,
+                    .complexCRTRowsOfResolution, .complexCRTTVL,
+                    .complexCRTWarpX, .complexCRTWarpY, .complexCRTDisplayGamma
+                )
+            }
+            .foregroundColor(.red)
+        }
+    }
+}
+
+// MARK: - Shared Slider Row
+
+/// A reusable row showing a label, a value readout, and a slider.
+private struct ShaderSliderRow: View {
+    let label: String
+    @Binding var value: Float
+    let range: ClosedRange<Float>
+    var step: Float? = nil
+
+    private var formattedValue: String {
+        if let step = step, step >= 1.0 {
+            return String(format: "%.0f", value)
+        } else if range.upperBound - range.lowerBound >= 10 {
+            return String(format: "%.0f", value)
+        } else if range.upperBound - range.lowerBound >= 1 {
+            return String(format: "%.2f", value)
+        } else {
+            return String(format: "%.3f", value)
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(label)
+                    .font(.subheadline)
+                Spacer()
+                Text(formattedValue)
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundColor(.secondary)
+            }
+            if let step = step {
+                Slider(value: $value, in: range, step: step)
+                    #if os(tvOS)
+                    .tint(.retroBlue)
+                    #endif
+            } else {
+                Slider(value: $value, in: range)
+                    #if os(tvOS)
+                    .tint(.retroBlue)
+                    #endif
+            }
+        }
+        .padding(.vertical, 2)
     }
 }
 
