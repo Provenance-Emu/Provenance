@@ -146,8 +146,8 @@ PVResolveStartSelectButtons(GCController * _Nonnull controller,
    2. buttonOptions (logical Share/Create button)
    3. Physical profile Share/Create button (fallback via PVShareLikeButtonForController)
 
- For Xbox controllers, Select is effectively:
-   - buttonOptions (View button), then physical profile "Button Share" (if present).
+ For Xbox controllers, Select is:
+   - buttonOptions (View button) only; the physical "Button Share" is exposed via outShareLike.
 
  For Nintendo Switch Pro, Select is:
    - buttonOptions (− button) only; no additional share-like or touchpad input exists.
