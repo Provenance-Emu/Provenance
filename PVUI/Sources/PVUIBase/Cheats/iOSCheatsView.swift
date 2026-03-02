@@ -268,39 +268,9 @@ struct iOSAddCheatView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Name") {
-                    TextField("e.g. Infinite Lives", text: $cheatName)
-                        .focused($focusedField, equals: .name)
-                }
-
-                Section {
-                    TextField(formatHint ?? "Enter cheat code", text: $cheatCode)
-                        .font(.system(.body, design: .monospaced))
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.characters)
-                        .focused($focusedField, equals: .code)
-                        .onChange(of: cheatCode) { newValue in
-                            cheatCode = newValue.uppercased()
-                        }
-                } header: {
-                    Text("Cheat Code")
-                } footer: {
-                    if let hint = formatHint {
-                        Text("Expected format: \(hint)")
-                            .font(.caption)
-                    }
-                }
-
-                if cheatTypes.count > 1 {
-                    Section("Code Type") {
-                        Picker("Code Type", selection: $selectedTypeIndex) {
-                            ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, type in
-                                Text(type).tag(index)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    }
-                }
+                nameSection
+                codeSection
+                typeSection
             }
             .navigationTitle("Add Cheat Code")
             .navigationBarTitleDisplayMode(.inline)
@@ -314,6 +284,49 @@ struct iOSAddCheatView: View {
                 }
             }
             .onAppear { focusedField = .name }
+        }
+    }
+
+    @ViewBuilder
+    private var nameSection: some View {
+        SwiftUI.Section("Name") {
+            TextField("e.g. Infinite Lives", text: $cheatName)
+                .focused($focusedField, equals: .name)
+        }
+    }
+
+    @ViewBuilder
+    private var codeSection: some View {
+        SwiftUI.Section {
+            TextField(formatHint ?? "Enter cheat code", text: $cheatCode)
+                .font(.system(.body, design: .monospaced))
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.characters)
+                .focused($focusedField, equals: .code)
+                .onChangeCompat(of: cheatCode) {
+                    cheatCode = cheatCode.uppercased()
+                }
+        } header: {
+            Text("Cheat Code")
+        } footer: {
+            if let hint = formatHint {
+                Text("Expected format: \(hint)")
+                    .font(.caption)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var typeSection: some View {
+        if cheatTypes.count > 1 {
+            SwiftUI.Section("Code Type") {
+                Picker("Code Type", selection: $selectedTypeIndex) {
+                    ForEach(0..<cheatTypes.count, id: \.self) { index in
+                        Text(cheatTypes[index]).tag(index)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
         }
     }
 
@@ -492,6 +505,20 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
 
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - onChange Compatibility
+
+private extension View {
+    /// Bridges the iOS 14–16 `onChange(of:perform:)` and iOS 17+ `onChange(of:_:)` APIs.
+    @ViewBuilder
+    func onChangeCompat<V: Equatable>(of value: V, perform action: @escaping () -> Void) -> some View {
+        if #available(iOS 17.0, *) {
+            self.onChange(of: value) { _, _ in action() }
+        } else {
+            self.onChange(of: value) { _ in action() }
+        }
     }
 }
 #endif
