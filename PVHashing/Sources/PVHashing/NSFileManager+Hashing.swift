@@ -162,8 +162,19 @@ func calculateMD5Synchronously(of fileURL: URL, startingAt offset: UInt64 = 0) t
 }
 
 public extension URL {
+    /// Returns a Combine publisher that emits the MD5 hash of the file.
     func calculateMD5(startingAt offset: UInt64 = 0) -> AnyPublisher<String, Error> {
         return PVHashing.calculateMD5(of: self, startingAt: offset)
+    }
+
+    /// Asynchronously computes the MD5 hash of the file using Swift structured concurrency.
+    func md5Async(startingAt offset: UInt64 = 0) async throws -> String {
+        try await calculateMD5Async(of: self, startingAt: offset)
+    }
+
+    /// Streams progress events and the final MD5 hash via `AsyncThrowingStream`.
+    func md5Stream(startingAt offset: UInt64 = 0) -> AsyncThrowingStream<MD5HashingEvent, Error> {
+        calculateMD5Stream(of: self, startingAt: offset)
     }
 }
 
