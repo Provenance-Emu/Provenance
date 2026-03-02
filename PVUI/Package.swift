@@ -10,7 +10,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [
         .iOS(.v16),
-        .tvOS(.v16),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v14),
         .macCatalyst(.v17),
