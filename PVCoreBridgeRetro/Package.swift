@@ -104,6 +104,7 @@ let package = Package(
                 "retro/cores/dynamic_dummy.c",
                 "retro/input/drivers/nullinput.c",
                 "retro/input/input_driver.c",
+                "retro/input/input_keymaps.c",
                 "retro/input/input_keyboard.c",
                 "retro/msg_hash.c",
                 "retro/performance_counters.c",

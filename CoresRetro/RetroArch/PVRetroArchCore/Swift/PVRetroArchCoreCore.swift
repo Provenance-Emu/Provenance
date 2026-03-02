@@ -162,15 +162,6 @@ extension PVRetroArchCoreCore: PV5200SystemResponderClient {
 }
 // MARK: Atari 7800
 extension PVRetroArchCoreCore: PV7800SystemResponderClient {
-    public func mouseMoved(at point: CGPoint) {
-        (_bridge as! PV7800SystemResponderClient).mouseMoved(at: point)
-    }
-    public func leftMouseDown(at point: CGPoint) {
-        (_bridge as! PV7800SystemResponderClient).leftMouseDown(at: point)
-    }
-    public func leftMouseUp() {
-        (_bridge as! PV7800SystemResponderClient).leftMouseUp()
-    }
     public func didPush(_ button: PVCoreBridge.PV7800Button, forPlayer player: Int) {
         (_bridge as! PV7800SystemResponderClient).didPush(button, forPlayer: player)
     }

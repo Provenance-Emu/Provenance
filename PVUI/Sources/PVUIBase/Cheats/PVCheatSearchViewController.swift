@@ -52,7 +52,9 @@ final class PVCheatSearchViewController: UIViewController {
         tv.delegate = self
         tv.register(PVCheatSearchCell.self, forCellReuseIdentifier: PVCheatSearchCell.reuseID)
         tv.backgroundColor = .retroBlack
+        #if !os(tvOS)
         tv.separatorColor = UIColor.retroBlue.withAlphaComponent(0.3)
+        #endif
         tv.rowHeight = UITableView.automaticDimension
         tv.estimatedRowHeight = 80
         return tv
@@ -65,9 +67,11 @@ final class PVCheatSearchViewController: UIViewController {
         sb.delegate = self
         sb.backgroundColor = .retroBlack
         sb.barTintColor = .retroBlack
+        #if !os(tvOS)
         sb.searchTextField.backgroundColor = UIColor.retroBlack.withAlphaComponent(0.7)
         sb.searchTextField.textColor = .white
         sb.searchTextField.tintColor = .retroBlue
+        #endif
         return sb
     }()
 

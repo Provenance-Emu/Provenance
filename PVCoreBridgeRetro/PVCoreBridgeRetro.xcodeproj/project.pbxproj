@@ -15,6 +15,7 @@
 		B32299422878CB3C00585AD8 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
 		B32299462878CF2C00585AD8 /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC7072867202D00B60497 /* rthreads.c */; };
 		B322994A2878CF6200585AD8 /* input_keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54A28671EFF00B60497 /* input_keyboard.c */; };
+		B322994B2878CF6200585AD8 /* input_keymaps.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC52B28671EFF00B60497 /* input_keymaps.c */; };
 		B32299512878D46F00585AD8 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
 		B32299672878DBE000585AD8 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B322996C28792B4000585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
@@ -2999,6 +3000,7 @@
 				B32299422878CB3C00585AD8 /* input_driver.c in Sources */,
 				B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */,
 				B322994A2878CF6200585AD8 /* input_keyboard.c in Sources */,
+				B322994B2878CF6200585AD8 /* input_keymaps.c in Sources */,
 				B322996E28792BA000585AD8 /* nullinput.c in Sources */,
 				B32299512878D46F00585AD8 /* performance_counters.c in Sources */,
 			);

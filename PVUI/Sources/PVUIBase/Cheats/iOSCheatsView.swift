@@ -376,7 +376,7 @@ struct iOSCheatSearchView: View {
                     if #available(iOS 17.0, *) {
                         ContentUnavailableView.search(text: filterText)
                     } else {
-                        Text(filterText.isEmpty ? "No cheat codes found" : "No results for "\(filterText)"")
+                        Text(filterText.isEmpty ? "No cheat codes found" : "No results for \"\(filterText)\"")
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
