@@ -4,14 +4,14 @@
 // iOS view controller for searching the local cheatbase.sqlite and
 // importing selected cheat codes into the current game.
 
+#if canImport(UIKit)
 import UIKit
 import PVLibrary
 import PVLogging
 
-#if canImport(UIKit)
-
 /// Displayed when the user taps "Search Database" in the cheats list.
 /// Allows filtering the local cheat database by the current game's MD5 or
+/// title and selecting codes to import.
 /// title and selecting codes to import.
 final class PVCheatSearchViewController: UIViewController {
 
