@@ -248,7 +248,7 @@ extension GameImporter {
 
     /// Find a game by MD5 and system identifier
     private func findGameByMD5AndSystem(primaryGameItem: ImportQueueItem, realm: Realm) async throws -> PVGame? {
-        guard let md5 = primaryGameItem.md5, !primaryGameItem.systems.isEmpty else {
+        guard let md5 = await primaryGameItem.md5Async(), !primaryGameItem.systems.isEmpty else {
             return nil
         }
 

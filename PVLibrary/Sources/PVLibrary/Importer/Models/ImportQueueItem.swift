@@ -209,6 +209,16 @@ public class ImportQueueItem: Identifiable, ObservableObject {
         }
     }
 
+    /// Non-blocking async variant that computes MD5 off the main thread
+    public func md5Async() async -> String? {
+        if let cached = cache.md5 {
+            return cached
+        }
+        let computed = try? await md5Provider.md5ForFileAsync(at: url, fromOffset: 0)
+        cache.md5 = computed
+        return computed
+    }
+
     // Store a cache in a nested class.
     // The struct only contains a reference to the class, not the class itself,
     // so the struct cannot prevent the class from mutating.

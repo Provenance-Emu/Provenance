@@ -162,9 +162,12 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         let hasKnownExtension = !fileExtension.isEmpty && !systemIdentifiers.isEmpty
         let hasLimitedSystems = systemIdentifiers.count <= 3 /// Consider "limited" if 3 or fewer systems
 
+        /// Pre-compute MD5 asynchronously (off main thread) for use in lookup steps
+        let itemMd5 = await item.md5Async()
+
         /// Step 3: If we have limited systems from extension, search PVLookup within those systems only
         if hasLimitedSystems && !systemIdentifiers.isEmpty {
-            if let md5 = item.md5 {
+            if let md5 = itemMd5 {
                 /// Try MD5 lookup constrained to extension-matched systems (with filename fallback)
                 if let systemID = try await lookup.systemIdentifier(
                     forRomMD5: md5,
@@ -206,7 +209,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
             }
 
             /// If we still have multiple systems but MD5 available, try constrained MD5 search
-            if let md5 = item.md5 {
+            if let md5 = itemMd5 {
                 if let systemID = try await lookup.systemIdentifier(
                     forRomMD5: md5,
                     or: nil, /// Don't use filename for multi-system matches
@@ -223,7 +226,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         }
 
         /// Step 6: No extension match - if MD5 available, do wider MD5-only search (no filename)
-        if systemIdentifiers.isEmpty, let md5 = item.md5 {
+        if systemIdentifiers.isEmpty, let md5 = itemMd5 {
             DLOG("No extension match, trying wider MD5-only search")
             if let systemID = try await lookup.systemIdentifier(
                 forRomMD5: md5,

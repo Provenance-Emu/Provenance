@@ -2195,7 +2195,8 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             ILOG("GameImportQueue - performImport completed for: \(itemName) in \(String(format: "%.2f", duration))s")
 
-            // Set success status and post notification on main actor
+            // Compute MD5 off the main thread before posting notification
+            let md5Value = await item.md5Async()
             await MainActor.run {
                 if let finalSystem = item.userChosenSystem ?? item.resolvedSystem ?? item.targetSystem() {
                     item.resolvedSystem = finalSystem
@@ -2204,14 +2205,14 @@ public final class GameImporter: GameImporting, ObservableObject {
                 item.userChosenSystem = nil
                 let userInfo = [
                     PVNotificationUserInfoKeys.fileNameKey: itemName,
-                    PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),
+                    PVNotificationUserInfoKeys.md5Key: md5Value as Any,
                 ]
                 NotificationCenter.default.post(name: .PVGameImported, object: nil, userInfo: userInfo)
             }
             updateImporterStatus("Completed \(itemName)")
             ILOG("GameImportQueue - processing item in queue: \(itemName) completed successfully.")
         } catch let error as GameImporterError {
-            // Handle specific GameImporter errors with proper status updates
+            let errorMd5 = await item.md5Async()
             await MainActor.run {
                 switch error {
                 case .conflictDetected:
@@ -2232,29 +2233,27 @@ public final class GameImporter: GameImporting, ObservableObject {
                     ELOG("GameImportQueue - processing item in queue: \(itemName) failed. Error: \(error.localizedDescription)")
                 }
 
-                // Post notification for failures and conflicts (but not for partial status)
                 if case .waitingForAssociatedFiles = error {
-                    // Don't post failure notification for partial status
                 } else {
-                    let userInfo = [
+                    let userInfo: [String: Any] = [
                         PVNotificationUserInfoKeys.fileNameKey: itemName,
-                        PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),
+                        PVNotificationUserInfoKeys.md5Key: errorMd5 as Any,
                         PVNotificationUserInfoKeys.errorKey: error.localizedDescription
                     ]
                     NotificationCenter.default.post(name: .GameImporterFileDidFail, object: nil, userInfo: userInfo)
                 }
             }
         } catch {
-            // Handle unexpected errors
             ELOG("GameImportQueue - processing item in queue: \(itemName) caught unexpected error: \(error.localizedDescription)")
 
+            let errorMd5 = await item.md5Async()
             await MainActor.run {
                 item.status = .failure(error: error)
                 updateImporterStatus("Failed \(itemName) with error: \(error.localizedDescription)")
 
-                let userInfo = [
+                let userInfo: [String: Any] = [
                     PVNotificationUserInfoKeys.fileNameKey: itemName,
-                    PVNotificationUserInfoKeys.md5Key: item.md5 ?? FileManager.default.md5ForFile(at: item.url),
+                    PVNotificationUserInfoKeys.md5Key: errorMd5 as Any,
                     PVNotificationUserInfoKeys.errorKey: error.localizedDescription
                 ]
                 NotificationCenter.default.post(name: .GameImporterFileDidFail, object: nil, userInfo: userInfo)

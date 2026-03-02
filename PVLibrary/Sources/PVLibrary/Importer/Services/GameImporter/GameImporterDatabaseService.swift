@@ -123,8 +123,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
             return
         } else {
-            // Check if this is a duplicate by MD5 hash
-            if let md5 = queueItem.md5?.uppercased() {
+            // Check if this is a duplicate by MD5 hash (async to avoid blocking)
+            if let md5 = (await queueItem.md5Async())?.uppercased() {
                 let matchingGame: PVGame? = try? await RealmContext.withRealm { realm in
                     realm.objects(PVGame.self)
                         .filter("md5Hash == %@", md5)
