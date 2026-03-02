@@ -15,13 +15,15 @@ import PVLogging
 /// Usage:
 /// ```swift
 /// let orchestrator = BootstrapOrchestrator()
-/// orchestrator.register(LoggingBootstrapTask())
-/// orchestrator.register(FirebaseBootstrapTask())
-/// try await orchestrator.run()
+///     .with(LoggingBootstrapTask())
+///     .with(FirebaseBootstrapTask())
+/// await orchestrator.run()
 /// ```
 ///
 /// - Note: If any task throws, the error is logged but the orchestrator
 ///   continues with remaining tasks so the app always launches.
+///   A failed task's provisions are **not** marked as satisfied, so any
+///   tasks that depend on them will be skipped with a dependency error.
 public final class BootstrapOrchestrator: Sendable {
     private let tasks: [any BootstrapTask]
 
@@ -70,10 +72,13 @@ public final class BootstrapOrchestrator: Sendable {
                         do {
                             try await task.execute()
                             ILOG("BootstrapOrchestrator: Completed '\(task.name)'")
+                            // Only return provisions on success so that dependents are
+                            // not unblocked when a prerequisite task failed.
+                            return (task.name, task.provisions)
                         } catch {
                             ELOG("BootstrapOrchestrator: '\(task.name)' failed — \(error.localizedDescription)")
+                            return (task.name, [])
                         }
-                        return (task.name, task.provisions)
                     }
                 }
 
