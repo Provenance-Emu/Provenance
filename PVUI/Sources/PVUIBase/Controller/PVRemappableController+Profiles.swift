@@ -118,7 +118,7 @@ public extension PVRemappableController {
     /// - Parameters:
     ///   - systemIdentifier: Current system identifier (optional).
     ///   - gameID: Current game MD5 hash (optional).
-    func loadActiveProfile(systemIdentifier: String? = nil, gameID: String? = nil) {
+    public func loadActiveProfile(systemIdentifier: String? = nil, gameID: String? = nil) {
         guard let vendorName = self.vendorName else { return }
 
         let db = RomDatabase.sharedInstance
