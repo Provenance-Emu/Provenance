@@ -212,21 +212,11 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
         GCExtendedGamepad *gamepad     = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         
-        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
-        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
         GCControllerButtonInput *selectButton = nil;
         GCControllerButtonInput *startButton = nil;
-
-        if (dualSense || dualShock) {
-            selectButton = gamepad.buttonOptions;
-            startButton = gamepad.buttonMenu;
-        } else if (xbox) {
-            selectButton = xbox.buttonShare;
-            startButton = xbox.buttonMenu;
-        } else {
-            startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
-        }
+        // N64 has Start but no Select. Resolve Start using shared utility.
+        // For N64, the share-like button (Create/Share/Capture) is unused; Start=buttonMenu.
+        PVResolveStartSelectButtons(controller, &startButton, &selectButton);
 
         
         BOOL dualModeOverrides = self.dualJoystick && (playerIndex == 0 || playerIndex == 2);
