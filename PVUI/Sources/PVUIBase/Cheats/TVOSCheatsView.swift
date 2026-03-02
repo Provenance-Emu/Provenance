@@ -589,6 +589,10 @@ struct TVOSCheatSearchView: View {
 
     let gameMD5: String?
     let gameTitle: String?
+    /// Available cheat code types passed through from the parent view.
+    /// Currently unused by the tvOS cheat database search UI, but kept to
+    /// support future code-type selection/filtering when importing cheats
+    /// and to maintain API consistency with other cheat views.
     let cheatTypes: [String]
     let cheatIndex: UInt8
     let onImport: (String, String, String, UInt8, Bool) -> Void
