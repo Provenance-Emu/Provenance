@@ -36,6 +36,10 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
     return (cocoa_input_data_t *)input_state_get_ptr()->current_data;
 }
 
+// Mouse button bitmasks matching cocoa_input_data_t.mouse_buttons bit layout.
+#define COCOA_MOUSE_BTN_LEFT  (1u)
+#define COCOA_MOUSE_BTN_RIGHT (2u)
+
 @interface PVRetroArchCoreBridge (DOSControls) <PVDOSSystemResponderClient>
 - (void)handleDOSButton:(PVDOSButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed;
 @end
@@ -117,39 +121,36 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 
 // Update the cocoa input driver's absolute mouse position (in view logical points).
 // RetroArch computes relative deltas from these on each poll.
-static void dos_ra_set_mouse_pos(CGPoint point) {
+// Returns the cocoa input state pointer so callers can perform additional updates
+// without a second lookup, or NULL if the input driver is not yet initialised.
+static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
-    if (!apple) return;
-    apple->window_pos_x = (int32_t)point.x;
-    apple->window_pos_y = (int32_t)point.y;
+    if (!apple) return nil;
+    apple->window_pos_x = (int16_t)point.x;
+    apple->window_pos_y = (int16_t)point.y;
+    return apple;
 }
 
-- (void)mouseMovedAt:(CGPoint)point { dos_ra_set_mouse_pos(point); }
-- (void)mouseMovedAtPoint:(CGPoint)point { dos_ra_set_mouse_pos(point); }
+- (void)mouseMovedAt:(CGPoint)point { dos_ra_update_mouse_pos(point); }
+- (void)mouseMovedAtPoint:(CGPoint)point { [self mouseMovedAt:point]; }
 
 - (void)leftMouseDownAt:(CGPoint)point {
-    dos_ra_set_mouse_pos(point);
-    cocoa_input_data_t *apple = dos_get_cocoa_input();
-    if (apple) apple->mouse_buttons |= 1;
+    cocoa_input_data_t *apple = dos_ra_update_mouse_pos(point);
+    if (apple) apple->mouse_buttons |= COCOA_MOUSE_BTN_LEFT;
 }
-- (void)leftMouseDownAtPoint:(CGPoint)point {
-    dos_ra_set_mouse_pos(point);
-    cocoa_input_data_t *apple = dos_get_cocoa_input();
-    if (apple) apple->mouse_buttons |= 1;
-}
+- (void)leftMouseDownAtPoint:(CGPoint)point { [self leftMouseDownAt:point]; }
 - (void)leftMouseUp {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
-    if (apple) apple->mouse_buttons &= ~1;
+    if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_LEFT;
 }
 
 - (void)rightMouseDownAtPoint:(CGPoint)point {
-    dos_ra_set_mouse_pos(point);
-    cocoa_input_data_t *apple = dos_get_cocoa_input();
-    if (apple) apple->mouse_buttons |= 2;
+    cocoa_input_data_t *apple = dos_ra_update_mouse_pos(point);
+    if (apple) apple->mouse_buttons |= COCOA_MOUSE_BTN_RIGHT;
 }
 - (void)rightMouseUp {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
-    if (apple) apple->mouse_buttons &= ~2;
+    if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_RIGHT;
 }
 
 @end
