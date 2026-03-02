@@ -301,6 +301,70 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
     fetcher.clearCache()
 }
 
+@MainActor @Test func testManagerLoadRemoteFromValidCache() async throws {
+    // Pre-seed the cache via a temporary fetcher, then verify the manager hits it
+    let cacheURL = URL(string: "https://example.com/manager-valid-cache-hit.json")!
+    let config = try makeConfig()
+
+    let seedFetcher = PVFeatureFlagsFetcher(url: cacheURL, maxRetries: 0, cacheDuration: 3600)
+    seedFetcher.clearCache()
+    seedFetcher.saveToCache(config)
+
+    let flags = PVFeatureFlags(appType: .standard, buildNumber: "101", appVersion: "1.1.0")
+    let manager = PVFeatureFlagsManager(featureFlags: flags)
+    manager.configureRemote(url: cacheURL, cacheDuration: 3600, maxRetries: 0)
+
+    // Cache is valid — no network call is made; config should be applied from cache
+    try await manager.loadRemoteConfiguration()
+
+    #expect(manager.inAppFreeROMs == true)
+    #expect(manager.romPathMigrator == true)
+
+    seedFetcher.clearCache()
+}
+
+@MainActor @Test func testManagerLoadRemoteStaleCacheFallback() async throws {
+    // Use a file:// URL that doesn't exist so the remote fetch fails immediately
+    let failURL = URL(string: "file:///nonexistent/stale-cache-fallback-test.json")!
+    let config = try makeConfig()
+
+    // Pre-seed cache with 0-duration (immediately stale)
+    let seedFetcher = PVFeatureFlagsFetcher(url: failURL, maxRetries: 0, cacheDuration: 0)
+    seedFetcher.clearCache()
+    seedFetcher.saveToCache(config)
+    #expect(seedFetcher.isCacheValid() == false, "Cache should be stale immediately with 0-duration")
+
+    let flags = PVFeatureFlags(appType: .standard, buildNumber: "101", appVersion: "1.1.0")
+    let manager = PVFeatureFlagsManager(featureFlags: flags)
+    manager.configureRemote(url: failURL, cacheDuration: 0, maxRetries: 0)
+
+    // Stale cache → remote fails → falls back to stale cache data
+    try await manager.loadRemoteConfiguration()
+
+    #expect(manager.inAppFreeROMs == true)
+
+    seedFetcher.clearCache()
+}
+
+@MainActor @Test func testManagerLoadRemoteBundledFallback() async throws {
+    // Use a file:// URL that doesn't exist so the remote fetch fails
+    let failURL = URL(string: "file:///nonexistent/bundled-fallback-test.json")!
+
+    // Ensure no cache for this URL
+    let tempFetcher = PVFeatureFlagsFetcher(url: failURL, maxRetries: 0, cacheDuration: 3600)
+    tempFetcher.clearCache()
+
+    let flags = PVFeatureFlags(appType: .standard, buildNumber: "200", appVersion: "3.0.5")
+    let manager = PVFeatureFlagsManager(featureFlags: flags)
+    manager.configureRemote(url: failURL, cacheDuration: 3600, maxRetries: 0)
+
+    // No cache, remote fails → falls back to bundled features.json
+    try await manager.loadRemoteConfiguration()
+
+    // Bundled config should define inAppFreeROMs
+    #expect(flags.configuration?.features["inAppFreeROMs"] != nil)
+}
+
 @MainActor @Test func testManagerNotConfiguredThrows() async {
     let flags = PVFeatureFlags(appType: .standard, buildNumber: "101", appVersion: "1.1.0")
     let manager = PVFeatureFlagsManager(featureFlags: flags)
