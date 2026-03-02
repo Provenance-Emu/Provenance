@@ -79,7 +79,7 @@ private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escapin
     DispatchQueue.global(qos: .utility).async { // Perform file IO on a background thread
         do {
             let fileHandle = try FileHandle(forReadingFrom: fileURL)
-            defer { fileHandle.closeFile() }
+            defer { try? fileHandle.close() }
             
             if offset > 0 {
                 // Recommended way for macOS 10.15.4+ and iOS 13.4+
@@ -181,7 +181,7 @@ public extension URL {
 // MARK: - Error Handling Helpers
 
 /// Determine the type of error for better user feedback
-func determineErrorType(_ error: NSError) -> String {
+private func determineErrorType(_ error: NSError) -> String {
     // Check for timeout errors
     if error.domain == NSPOSIXErrorDomain && error.code == 60 {
         return "timeout"
@@ -207,7 +207,7 @@ func determineErrorType(_ error: NSError) -> String {
 }
 
 /// Determine if an error is retryable
-func isRetryableError(_ error: NSError) -> Bool {
+private func isRetryableError(_ error: NSError) -> Bool {
     // Timeout errors are retryable
     if error.domain == NSPOSIXErrorDomain && error.code == 60 {
         return true

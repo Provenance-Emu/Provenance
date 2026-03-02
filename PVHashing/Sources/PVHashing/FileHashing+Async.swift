@@ -26,16 +26,9 @@ public enum MD5HashingEvent: Sendable {
 /// - Returns: Uppercase hex MD5 string (consistent with synchronous API).
 /// - Throws: Any `FileHandle` or file-system error encountered during reading.
 public func calculateMD5Async(of fileURL: URL, startingAt offset: UInt64 = 0) async throws -> String {
-    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in
-        DispatchQueue.global(qos: .utility).async {
-            do {
-                let hash = try _computeMD5(of: fileURL, startingAt: offset)
-                continuation.resume(returning: hash)
-            } catch {
-                continuation.resume(throwing: error)
-            }
-        }
-    }
+    try await Task.detached(priority: .utility) {
+        try computeMD5(of: fileURL, startingAt: offset)
+    }.value
 }
 
 // MARK: - Streaming API
@@ -118,8 +111,8 @@ public func calculateMD5Stream(
 /// Core blocking MD5 computation used by `calculateMD5Async`.
 ///
 /// This helper performs synchronous file I/O on the calling thread and is
-/// intended to be dispatched to a background queue by its callers.
-func _computeMD5(of fileURL: URL, startingAt offset: UInt64) throws -> String {
+/// intended to be run on a background task by its callers.
+private func computeMD5(of fileURL: URL, startingAt offset: UInt64) throws -> String {
     let fileHandle = try FileHandle(forReadingFrom: fileURL)
     defer { try? fileHandle.close() }
 
