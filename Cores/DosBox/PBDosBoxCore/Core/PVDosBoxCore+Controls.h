@@ -8,7 +8,7 @@
 
 #import <PVDosBox/PVDosBoxCore.h>
 @import GameController;
-@protocol PVDSSystemResponderClient;
+@protocol PVDOSSystemResponderClient;
 typedef enum PVDOSButton: NSInteger PVDOSButton;
 
 NS_ASSUME_NONNULL_BEGIN
