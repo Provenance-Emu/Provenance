@@ -1,0 +1,14 @@
+steps:
+  - name: Select Xcode 16.2
+    run: sudo xcode-select -s /Applications/Xcode_16.2.app
+
+  - name: Install SwiftLint
+    run: |
+      SWIFTLINT_VERSION="0.54.0"
+      curl -sL "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip" -o /tmp/swiftlint.zip
+      unzip -q /tmp/swiftlint.zip -d /tmp/swiftlint
+      chmod +x /tmp/swiftlint/swiftlint
+      sudo mv /tmp/swiftlint/swiftlint /usr/local/bin/swiftlint
+
+  - name: Install Ruby gems
+    run: bundle install
