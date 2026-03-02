@@ -213,7 +213,7 @@ final class PVCheatsViewController: UITableViewController {
     }
 
     private func importCheatEntry(_ entry: CheatDatabaseEntry) {
-        let cheatIndex = UInt8(allCheats?.count ?? 0)
+        let cheatIndex = UInt8(min(allCheats?.count ?? 0, Int(UInt8.max)))
         saveCheatCode(
             code: entry.cheatCode,
             type: entry.cheatName,
