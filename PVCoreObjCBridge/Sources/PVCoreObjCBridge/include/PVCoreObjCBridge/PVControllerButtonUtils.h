@@ -59,7 +59,7 @@ PVShareLikeButtonForController(GCController * _Nonnull controller) {
  @return The touchpad GCControllerButtonInput, or nil for non-PlayStation controllers.
  */
 static inline GCControllerButtonInput * _Nullable
-PVTouchpadButtonForController(GCController * _Nonnull controller) API_AVAILABLE(ios(14.0), tvos(14.0)) {
+PVTouchpadButtonForController(GCController * _Nonnull controller) API_AVAILABLE(ios(14.5), tvos(14.5)) {
     GCExtendedGamepad *gamepad = controller.extendedGamepad;
     if (!gamepad) { return nil; }
     if ([gamepad isKindOfClass:[GCDualSenseGamepad class]]) {
