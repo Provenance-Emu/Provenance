@@ -3,7 +3,7 @@ import Foundation
 import PVLogging
 
 /// Identifies which button on a controller
-public enum ButtonIdentifier: String, Codable {
+public enum ButtonIdentifier: String, Codable, CaseIterable {
     // Standard buttons
     case buttonA
     case buttonB
