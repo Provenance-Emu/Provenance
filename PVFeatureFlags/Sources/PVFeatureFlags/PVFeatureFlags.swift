@@ -207,8 +207,33 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 
     /// Check whether a feature is enabled by its raw string key.
     public func isEnabled(_ featureKey: String) -> Bool {
-        guard let feature = PVFeature(rawValue: featureKey) else { return false }
-        return isEnabled(feature)
+        // If this key matches a known PVFeature, use the enum-based evaluation (including debug overrides).
+        if let feature = PVFeature(rawValue: featureKey) {
+            return isEnabled(feature)
+        }
+
+        // Otherwise, evaluate directly from the configuration using the raw key.
+        guard let featureConfig = configuration?.features[featureKey] else {
+            return false
+        }
+
+        if let allowedTypes = featureConfig.allowedAppTypes,
+           !allowedTypes.contains(appType.rawValue) {
+            return false
+        }
+
+        if let minBuild = featureConfig.minBuildNumber,
+           let currentBuild = buildNumber,
+           compareVersions(currentBuild, minBuild) < 0 {
+            return false
+        }
+
+        if let minVersion = featureConfig.minVersion,
+           compareVersions(appVersion, minVersion) < 0 {
+            return false
+        }
+
+        return featureConfig.enabled
     }
 
     /// Returns an array of restriction reasons for a feature (empty = no restrictions / feature not found).
