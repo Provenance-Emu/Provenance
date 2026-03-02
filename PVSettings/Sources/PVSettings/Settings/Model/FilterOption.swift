@@ -146,6 +146,15 @@ public enum MetalFilterSelectionOption: String, CustomStringConvertible, CaseIte
         case .vhs: return "VHS"
         }
     }
+
+    /// Whether this filter exposes user-adjustable CRT shader parameters.
+    /// Only `simpleCRT` and `complexCRT` have dedicated parameter UIs.
+    public var hasCRTParameters: Bool {
+        switch self {
+        case .simpleCRT, .complexCRT: return true
+        default: return false
+        }
+    }
 }
 
 extension MetalFilterSelectionOption: Hashable {
