@@ -23,7 +23,7 @@ public extension PVRemappableController {
     /// mappings and re-saves via UserDefaults so the remapping system picks them up.
     ///
     /// The profile is frozen before access so it can be safely read from any thread.
-    func apply(profile: PVControllerProfile) {
+    public func apply(profile: PVControllerProfile) {
         // Resolve a safe-to-use profile instance.
         // - If already frozen, use as-is.
         // - If managed, freeze so it can be read safely from any thread.
