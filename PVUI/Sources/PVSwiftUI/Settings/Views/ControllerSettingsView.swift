@@ -10,6 +10,8 @@ import PVUIBase
 import PVHelp
 import GameController
 import PVThemes
+import PVLibrary
+import PVRealm
 import MarkdownView
 #if canImport(PVUI_IOS)
 import PVUI_IOS
@@ -453,6 +455,11 @@ struct ButtonRemappingView: View {
     @State private var selectedButton: ButtonIdentifier?
     @State private var showingDestinationPicker = false
 
+    // Profile management
+    @State private var activeProfileName: String?
+    @State private var showSaveProfileAlert = false
+    @State private var newProfileName = ""
+
     private var accentColor: Color {
         themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
     }
@@ -468,6 +475,34 @@ struct ButtonRemappingView: View {
 
     var body: some View {
         List {
+            // MARK: Profiles section
+            Section {
+                HStack {
+                    Label("Active Profile", systemImage: "person.crop.rectangle")
+                    Spacer()
+                    Text(activeProfileName ?? "None")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+                NavigationLink(destination: ControllerProfilesView(controller: controller)
+                    .onDisappear { loadActiveProfileName() }
+                ) {
+                    Label("Manage Profiles", systemImage: "list.bullet.rectangle.portrait")
+                        .foregroundColor(accentColor)
+                }
+
+                Button(action: { showSaveProfileAlert = true }) {
+                    Label("Save Current Mappings\u{2026}", systemImage: "square.and.arrow.down")
+                        .foregroundColor(accentColor)
+                }
+            } header: {
+                Text("Profiles")
+            } footer: {
+                Text("Profiles let you save and switch between different button layouts.")
+                    .font(.caption)
+            }
+
             Section {
                 ForEach(standardButtons, id: \.self) { button in
                     Button(action: {
@@ -540,6 +575,21 @@ struct ButtonRemappingView: View {
         .onAppear {
             setupRemappableController()
             loadCurrentMappings()
+            loadActiveProfileName()
+        }
+        .alert("Save Profile", isPresented: $showSaveProfileAlert) {
+            TextField("Profile name", text: $newProfileName)
+            Button("Save") {
+                let name = newProfileName.trimmingCharacters(in: .whitespacesAndNewlines)
+                newProfileName = ""
+                guard !name.isEmpty else { return }
+                let wrapper = getRemappableControllerWrapper(for: controller)
+                wrapper.saveCurrentMappingsAsProfile(name: name, makeActive: true)
+                loadActiveProfileName()
+            }
+            Button("Cancel", role: .cancel) { newProfileName = "" }
+        } message: {
+            Text("Save your current button mappings as a named profile.")
         }
         .confirmationDialog(
             "Map \(selectedButton.map { buttonDisplayName($0) } ?? "button") to:",
@@ -573,6 +623,13 @@ struct ButtonRemappingView: View {
     private func loadRemappableController() {
         /// Access remappable controller through PVControllerManager's public function
         remappableController = getRemappableControllerWrapper(for: controller)
+    }
+
+    /// Refresh the active profile name label from Realm.
+    private func loadActiveProfileName() {
+        guard let vendorName = controller.vendorName else { return }
+        let db = RomDatabase.sharedInstance
+        activeProfileName = db.activeControllerProfile(forVendor: vendorName)?.name
     }
 
     private func loadCurrentMappings() {
