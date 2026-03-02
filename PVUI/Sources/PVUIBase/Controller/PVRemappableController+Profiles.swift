@@ -53,6 +53,11 @@ public extension PVRemappableController {
                 WLOG("Skipping unknown button mapping: \(raw.source) → \(raw.destination)")
                 continue
             }
+            // Self-mappings are effectively no-ops but can cause handlers to be invoked twice.
+            if source == destination {
+                VLOG("Skipping self-mapping for button \(source)")
+                continue
+            }
             remap(button: source, to: destination)
         }
         // Persist via UserDefaults for the remapping system
