@@ -412,11 +412,20 @@ extension PVRetroArchCoreCore: PVDOSSystemResponderClient {
     public var mouseMovedHandler: GCMouseMoved? {
         (_bridge as! PVDOSSystemResponderClient).mouseMovedHandler
     }
+    public func mouseMoved(at point: CGPoint) {
+        (_bridge as! PVDOSSystemResponderClient).mouseMoved(at: point)
+    }
     public func mouseMoved(atPoint point: CGPoint) {
         (_bridge as! PVDOSSystemResponderClient).mouseMoved(at: point)
     }
+    public func leftMouseDown(at point: CGPoint) {
+        (_bridge as! PVDOSSystemResponderClient).leftMouseDown(at: point)
+    }
     public func leftMouseDown(atPoint point: CGPoint) {
         (_bridge as! PVDOSSystemResponderClient).leftMouseDown(at: point)
+    }
+    public func leftMouseUp() {
+        (_bridge as! PVDOSSystemResponderClient).leftMouseUp()
     }
     public func rightMouseDown(atPoint point: CGPoint) {
         (_bridge as! PVDOSSystemResponderClient).rightMouseDown(atPoint: point)

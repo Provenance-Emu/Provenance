@@ -298,10 +298,12 @@ s8 joyx[4], joyy[4];
 }
 
 - (void)leftMouseDownAt:(CGPoint)point {
+    [self setMousePosition:point];
     [self setLeftMouseButtonPressed:YES];
 }
 
 - (void)leftMouseDownAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
     [self setLeftMouseButtonPressed:YES];
 }
 
@@ -310,6 +312,7 @@ s8 joyx[4], joyy[4];
 }
 
 - (void)rightMouseDownAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
     [self setRightMouseButtonPressed:YES];
 }
 

@@ -3168,6 +3168,8 @@ unsigned retro_api_version(void)
 }
 
 - (void)setLeftMouseButtonPressed:(BOOL)pressed {
+    // Update both: touchPressed drives RETRO_DEVICE_POINTER press state,
+    // leftMousePressed drives RETRO_DEVICE_ID_MOUSE_LEFT specifically.
     touchPressed = pressed;
     leftMousePressed = pressed;
 }

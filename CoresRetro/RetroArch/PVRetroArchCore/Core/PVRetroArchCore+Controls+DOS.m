@@ -30,11 +30,20 @@
 #include "../ui_companion_driver.h"
 
 extern GCController *touch_controller;
+
+// Helper: get the cocoa input driver state (may be NULL before core init)
+static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
+    return (cocoa_input_data_t *)input_state_get_ptr()->current_data;
+}
+
 @interface PVRetroArchCoreBridge (DOSControls) <PVDOSSystemResponderClient>
+- (void)handleDOSButton:(PVDOSButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed;
 @end
 
 @implementation PVRetroArchCoreBridge (DOSControls)
-#pragma mark - Control
+
+#pragma mark - Gamepad
+
 - (void)didPushDOSButton:(PVDOSButton)button forPlayer:(NSInteger)player {
     [self handleDOSButton:button forPlayer:player pressed:true];
 }
@@ -79,4 +88,68 @@ extern GCController *touch_controller;
             break;
     }
 }
+
+#pragma mark - Keyboard Support
+
+- (BOOL)gameSupportsKeyboard { return YES; }
+- (BOOL)requiresKeyboard { return NO; }
+
+// GCKeyCode.rawValue matches HID USB usage page key codes, which apple_input_keyboard_event
+// expects. It translates them to RETRO_KEY values via rarch_keysym_lut internally.
+- (void)keyDown:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    apple_input_keyboard_event(true, (unsigned)key, 0, 0, RETRO_DEVICE_KEYBOARD);
+}
+
+- (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    apple_input_keyboard_event(false, (unsigned)key, 0, 0, RETRO_DEVICE_KEYBOARD);
+}
+
+#pragma mark - Mouse Support
+
+- (BOOL)gameSupportsMouse { return YES; }
+- (BOOL)requiresMouse { return NO; }
+
+- (GCMouseMoved)mouseMovedHandler { return nil; }
+
+- (void)didScroll:(GCDeviceCursor *)cursor API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    // RetroArch handles scroll via its own input driver; no extra forwarding needed here.
+}
+
+// Update the cocoa input driver's absolute mouse position (in view logical points).
+// RetroArch computes relative deltas from these on each poll.
+static void dos_ra_set_mouse_pos(CGPoint point) {
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (!apple) return;
+    apple->window_pos_x = (int32_t)point.x;
+    apple->window_pos_y = (int32_t)point.y;
+}
+
+- (void)mouseMovedAt:(CGPoint)point { dos_ra_set_mouse_pos(point); }
+- (void)mouseMovedAtPoint:(CGPoint)point { dos_ra_set_mouse_pos(point); }
+
+- (void)leftMouseDownAt:(CGPoint)point {
+    dos_ra_set_mouse_pos(point);
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (apple) apple->mouse_buttons |= 1;
+}
+- (void)leftMouseDownAtPoint:(CGPoint)point {
+    dos_ra_set_mouse_pos(point);
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (apple) apple->mouse_buttons |= 1;
+}
+- (void)leftMouseUp {
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (apple) apple->mouse_buttons &= ~1;
+}
+
+- (void)rightMouseDownAtPoint:(CGPoint)point {
+    dos_ra_set_mouse_pos(point);
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (apple) apple->mouse_buttons |= 2;
+}
+- (void)rightMouseUp {
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (apple) apple->mouse_buttons &= ~2;
+}
+
 @end
