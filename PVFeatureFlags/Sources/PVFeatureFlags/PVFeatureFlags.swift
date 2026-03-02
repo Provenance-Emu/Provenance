@@ -218,19 +218,19 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
         var restrictions: [String] = []
 
         if let allowedTypes = feature.allowedAppTypes,
-           !allowedTypes.contains(PVFeatureFlags.getCurrentAppType().rawValue) {
-            restrictions.append("App type \(PVFeatureFlags.getCurrentAppType().rawValue) not allowed")
+           !allowedTypes.contains(appType.rawValue) {
+            restrictions.append("App type \(appType.rawValue) not allowed")
         }
 
         if let minBuild = feature.minBuildNumber,
-           let currentBuild = PVFeatureFlags.getCurrentBuildNumber(),
+           let currentBuild = buildNumber,
            compareVersions(currentBuild, minBuild) < 0 {
             restrictions.append("Build \(currentBuild) below minimum \(minBuild)")
         }
 
         if let minVersion = feature.minVersion,
-           compareVersions(PVFeatureFlags.getCurrentAppVersion(), minVersion) < 0 {
-            restrictions.append("Version \(PVFeatureFlags.getCurrentAppVersion()) below minimum \(minVersion)")
+           compareVersions(appVersion, minVersion) < 0 {
+            restrictions.append("Version \(appVersion) below minimum \(minVersion)")
         }
 
         return restrictions

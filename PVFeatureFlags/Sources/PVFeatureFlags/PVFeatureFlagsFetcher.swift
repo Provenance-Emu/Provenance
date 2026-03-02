@@ -92,9 +92,11 @@ public struct PVFeatureFlagsFetcher: Sendable {
                 lastError = error
 
                 if attempt < maxRetries {
-                    // Exponential backoff: delay = baseDelay * 2^attempt
+                    // Exponential backoff: delay = baseDelay * 2^attempt, clamped to prevent overflow when converting to nanoseconds
                     let delay = retryBaseDelay * pow(2.0, Double(attempt))
-                    try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                    let maxDelaySeconds = Double(UInt64.max) / 1_000_000_000.0
+                    let safeDelay = delay.isFinite && delay > 0 ? min(delay, maxDelaySeconds) : 0
+                    try await Task.sleep(nanoseconds: UInt64(safeDelay * 1_000_000_000))
                 }
             }
         }
@@ -104,7 +106,13 @@ public struct PVFeatureFlagsFetcher: Sendable {
 
     /// Performs a single HTTP fetch without retry.
     private func fetchOnce() async throws -> FeatureFlagsConfiguration {
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await URLSession.shared.data(from: url)
+        } catch {
+            throw PVFeatureFlagsFetcherError.networkError(error)
+        }
 
         if let httpResponse = response as? HTTPURLResponse,
            !(200...299).contains(httpResponse.statusCode) {
@@ -127,9 +135,17 @@ public struct PVFeatureFlagsFetcher: Sendable {
         return try? JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
     }
 
-    /// Returns `true` if a cached configuration exists and has not yet expired.
+    /// Returns `true` if a cached configuration exists, decodes successfully, and has not yet expired.
     public func isCacheValid() -> Bool {
         guard let timestamp = UserDefaults.standard.object(forKey: cacheTimestampKey) as? Date else {
+            return false
+        }
+        guard let data = UserDefaults.standard.data(forKey: cacheDataKey) else {
+            clearCache()
+            return false
+        }
+        guard (try? JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)) != nil else {
+            clearCache()
             return false
         }
         return Date().timeIntervalSince(timestamp) < cacheDuration
