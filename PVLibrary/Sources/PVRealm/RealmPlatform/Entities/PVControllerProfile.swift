@@ -12,14 +12,16 @@ import RealmSwift
 /// A named set of custom button mappings for a particular controller type.
 ///
 /// Profiles are scoped by `controllerVendorName` (the value of `GCController.vendorName`)
-/// and can optionally be narrowed to a specific system or game by storing
-/// the system identifier or game MD5.  A `nil` scope means the profile is a global default
-/// for that controller type.
+/// and can optionally be narrowed to a specific system, core, or game by storing
+/// the system identifier, core identifier, or game MD5.  A `nil` scope means the profile is
+/// a global default for that controller type.
 ///
 /// Profile resolution priority (highest to lowest):
-///   1. Game-specific  (`gameID` is set)
-///   2. System-specific (`systemIdentifier` is set, `gameID` is nil)
-///   3. Controller default (both `gameID` and `systemIdentifier` are nil)
+///   1. Game + Core-specific (`gameID` and `coreIdentifier` are set)
+///   2. Game-specific  (`gameID` is set, `coreIdentifier` is nil)
+///   3. System + Core-specific (`systemIdentifier` and `coreIdentifier` are set, `gameID` is nil)
+///   4. System-specific (`systemIdentifier` is set, `coreIdentifier` and `gameID` are nil)
+///   5. Controller default (all scope fields are nil)
 @objcMembers
 public final class PVControllerProfile: RealmSwift.Object, Identifiable {
     // MARK: - Primary key
@@ -38,6 +40,9 @@ public final class PVControllerProfile: RealmSwift.Object, Identifiable {
 
     /// System identifier this profile applies to (nil = all systems)
     @Persisted public var systemIdentifier: String?
+
+    /// Core identifier this profile applies to (nil = all cores for the given system/game)
+    @Persisted public var coreIdentifier: String?
 
     /// MD5 hash of the game this profile applies to (nil = all games in scope)
     @Persisted public var gameID: String?
@@ -61,12 +66,14 @@ public final class PVControllerProfile: RealmSwift.Object, Identifiable {
         name: String,
         controllerVendorName: String,
         systemIdentifier: String? = nil,
+        coreIdentifier: String? = nil,
         gameID: String? = nil
     ) {
         self.init()
         self.name = name
         self.controllerVendorName = controllerVendorName
         self.systemIdentifier = systemIdentifier
+        self.coreIdentifier = coreIdentifier
         self.gameID = gameID
     }
 }
