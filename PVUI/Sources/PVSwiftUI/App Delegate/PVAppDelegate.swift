@@ -30,12 +30,6 @@ import PVFeatureFlags
 import BackgroundTasks
 import PVWebServer
 
-#if canImport(Firebase)
-import Firebase
-import FirebaseCrashlyticsSwift
-import FirebaseAnalytics
-#endif
-
 // Conditionally import PVJIT and JITManager if available
 #if canImport(PVJIT)
 import PVJIT
@@ -369,10 +363,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     private var autoLockTask: Task<Void, Never>?
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        #if canImport(Firebase)
-        FirebaseApp.configure()
-        #endif
-
         ILOG("PVAppDelegate: Application did finish launching")
 
         #if !os(tvOS)
@@ -383,7 +373,9 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
         #endif
 
-        initializeAppComponents()
+        Task { @MainActor in
+            await initializeAppComponents()
+        }
         configureApplication(application, launchOptions: launchOptions)
 
         // Register BGTaskScheduler handlers at app launch
@@ -413,24 +405,21 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     // TODO: Move to ProvenanceApp
     @MainActor
-    private func initializeAppComponents() {
+    private func initializeAppComponents() async {
         loadRocketSimConnect()
-        _initLogging()
-        _initAppCenter()
-        setDefaultsFromSettingsBundle()
-        PVEmulatorConfiguration.initICloud()
-        _initUITheme()
-        _initThemeListener()
 
-        #if canImport(PVWebServer)
-        // Initialize web server notifications
-        setupWebServerNotifications()
-        #if os(tvOS)
-        // Start webdav for tvos, only way to get files on
-        PVWebServer.shared.startWWWUploadServer()
-        PVWebServer.shared.startWebDavServer()
-        #endif
-        #endif
+        let orchestrator = BootstrapOrchestrator()
+            .with(LoggingBootstrapTask())
+            .with(FirebaseBootstrapTask())
+            .with(AppCenterBootstrapTask(isAppStore: isAppStore))
+            .with(SettingsBundleBootstrapTask())
+            .with(ThemeBootstrapTask())
+            .with(iCloudBootstrapTask())
+            .with(WebServerBootstrapTask(delegate: self))
+
+        await orchestrator.run()
+
+        _initThemeListener()
 
         // Register intent handler for Siri shortcuts
         #if os(iOS)
