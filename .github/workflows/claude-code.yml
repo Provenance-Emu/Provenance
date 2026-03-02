@@ -7,6 +7,8 @@ on:
     types: [opened, labeled]
   pull_request_review_comment:
     types: [created]
+  pull_request_review:
+    types: [submitted]
 
 permissions:
   contents: write
@@ -24,10 +26,15 @@ jobs:
     # 1. @claude is mentioned in issue/PR comments
     # 2. Issues are labeled with 'agent-work'
     # 3. Issues are opened with 'agent-work' label
-    # 4. Comments on agent PRs (title starts with [Agent])
+    # 4. @claude is mentioned in PR review comments
+    # 5. PR review requests changes on an [Agent] PR (auto-fix)
+    # 6. Label 'claude-fix' added to a PR comment (trigger fix of all review comments)
     if: |
       (github.event_name == 'issue_comment' &&
        contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       contains(github.event.comment.body, '/claude-fix')) ||
       (github.event_name == 'issues' &&
        github.event.action == 'labeled' &&
        github.event.label.name == 'agent-work') ||
@@ -35,7 +42,10 @@ jobs:
        github.event.action == 'opened' &&
        contains(toJSON(github.event.issue.labels.*.name), 'agent-work')) ||
       (github.event_name == 'pull_request_review_comment' &&
-       contains(github.event.comment.body, '@claude'))
+       contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' &&
+       github.event.review.state == 'changes_requested' &&
+       startsWith(github.event.pull_request.title, '[Agent]'))
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -63,15 +73,23 @@ jobs:
             - Issue/PR number: ${{ github.event.issue.number || github.event.pull_request.number }}
             - Issue title: ${{ github.event.issue.title || github.event.pull_request.title }}
 
+            ## Trigger Context
+            ${{ github.event_name == 'pull_request_review' && 'A reviewer requested changes on this PR. Read all review comments and fix them.' || '' }}
+            ${{ contains(github.event.comment.body || '', '/claude-fix') && 'Fix all pending review comments on this PR. Read the full review, address each comment, commit fixes, and push.' || '' }}
+
             ## User Request
-            ${{ github.event.comment.body || github.event.issue.body }}
+            ${{ github.event.comment.body || github.event.review.body || github.event.issue.body }}
 
             ## Instructions
             1. Address the user's request above
             2. Post your response as a comment on the issue/PR using:
                gh issue comment ${{ github.event.issue.number || github.event.pull_request.number }} --body "YOUR RESPONSE"
+               or for PRs:
+               gh pr comment ${{ github.event.pull_request.number || github.event.issue.number }} --body "YOUR RESPONSE"
             3. Target all PRs to the 'develop' branch
             4. Prefix agent PR titles with '[Agent]'
             5. Do NOT modify submodule source code directly
             6. Do NOT modify project.pbxproj unless absolutely necessary
             7. Keep changes focused — one logical change per PR
+            8. When fixing review comments, address ALL comments in a single commit
+            9. After fixing, push the changes and comment with a summary of what was fixed

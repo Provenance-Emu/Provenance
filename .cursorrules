@@ -1,0 +1,36 @@
+You are working on Provenance, a multi-platform emulator frontend for iOS/tvOS.
+
+## Key Rules
+- Read CLAUDE.md for full project conventions, module tiers, and architecture
+- Target the `develop` branch for all PRs
+- Use conventional commits: fix:, feat:, chore:, build:, refactor:, test:, docs:
+- Do NOT modify submodule source in Cores/<name>/<upstream-dir>/
+- Do NOT modify project.pbxproj unless absolutely necessary
+- Do NOT modify CodeSigning.xcconfig
+- Prefer SPM Package.swift changes over Xcode project changes
+- Keep changes focused — one logical change per PR
+
+## Swift Conventions
+- 4-space indent, no indent for case in switch
+- Line length: 200 chars max
+- Prefer async/await over Combine for new code
+- Use guard let / if let, avoid force unwraps in production code
+- Realm objects are thread-confined — pass Object IDs across threads
+
+## Build
+- Open Provenance.xcworkspace (not .xcodeproj)
+- Start with Provenance-Lite scheme for fastest builds
+- Initial builds may fail due to lazy code generation — retry once
+- Never build iOS/tvOS from command line unless explicitly asked
+
+## Module Tiers (lowest = fewest dependencies)
+- Tier 0: PVObjCUtils, PVFeatureFlags, PVCheevos
+- Tier 1: PVLogging, PVPlists, PVHashing
+- Tier 2: PVSettings, PVPrimitives
+- Tier 3+: PVSupport, PVAudio, PVCoreBridge, etc.
+- Scope changes to the lowest tier possible
+
+## Testing
+- swift test in standalone SPM modules (Tier 0-2)
+- Xcode workspace build for higher-tier modules
+- Run swiftlint on changed files before submitting
