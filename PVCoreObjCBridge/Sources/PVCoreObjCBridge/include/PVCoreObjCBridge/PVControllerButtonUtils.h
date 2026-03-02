@@ -190,13 +190,11 @@ PVResolveStartSelectShareButtons(GCController * _Nonnull controller,
             *outSelect = shareLike;
         }
     } else if (isXbox) {
-        // Xbox: Menu→Start, View(buttonOptions)→Select, Share(buttonShare/physical)→extra
+        // Xbox: Menu→Start, View(buttonOptions)→Select.
+        // Share(buttonShare/physical) is treated as an extra, non-Select button and
+        // is exposed only via the outShareLike parameter above.
         *outStart  = gamepad.buttonMenu;
         *outSelect = gamepad.buttonOptions;   // View button
-        // For Xbox Series controllers, buttonShare is an extra button beyond View
-        if (!*outSelect) {
-            *outSelect = [(GCXboxGamepad *)gamepad buttonShare];
-        }
     } else if (gamepad.buttonMenu) {
         // Switch Pro and other controllers with dedicated menu+options buttons
         // Switch: +=Start, -=Select, Capture=physical only (don't use as Select)
