@@ -48,12 +48,12 @@ public struct PVFeatureFlagsFetcher: Sendable {
 
     /// UserDefaults key for cached configuration data (unique per remote URL).
     private var cacheDataKey: String {
-        "PVFeatureFlagsRemoteConfig_\(abs(url.absoluteString.hashValue))"
+        "PVFeatureFlagsRemoteConfig_\(url.absoluteString)"
     }
 
     /// UserDefaults key for cache timestamp (unique per remote URL).
     private var cacheTimestampKey: String {
-        "PVFeatureFlagsRemoteConfigTimestamp_\(abs(url.absoluteString.hashValue))"
+        "PVFeatureFlagsRemoteConfigTimestamp_\(url.absoluteString)"
     }
 
     /// Initialize a new fetcher.
