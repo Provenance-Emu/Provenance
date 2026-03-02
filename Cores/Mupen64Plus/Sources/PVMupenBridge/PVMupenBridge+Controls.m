@@ -212,11 +212,9 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
         GCExtendedGamepad *gamepad     = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         
-        GCControllerButtonInput *selectButton = nil;
         GCControllerButtonInput *startButton = nil;
-        // N64 has Start but no Select. Resolve Start using shared utility.
-        // For N64, the share-like button (Create/Share/Capture) is unused; Start=buttonMenu.
-        PVResolveStartSelectButtons(controller, &startButton, &selectButton);
+        // N64 has Start but no Select. Resolve Start only via shared utility.
+        PVResolveStartSelectButtons(controller, &startButton, NULL);
 
         
         BOOL dualModeOverrides = self.dualJoystick && (playerIndex == 0 || playerIndex == 2);

@@ -84,52 +84,54 @@ PVTouchpadButtonForController(GCController * _Nonnull controller) {
  | Generic MFi       | buttonOptions | nil (map shoulders instead)     |
 
  On systems that have distinct Start+Select (NES, Game Boy, SNES, etc.), pass both
- outStart and outSelect. On systems with only a Start button (Dreamcast), only use
- outStart and ignore outSelect.
+ outStart and outSelect. On systems with only a Start button (Dreamcast, N64), pass
+ NULL for outSelect — the parameter is optional and skipped when NULL.
 
  @param controller The GCController to inspect.
- @param outStart   Written with the resolved Start button input, or nil.
- @param outSelect  Written with the resolved Select button input, or nil.
+ @param outStart   Written with the resolved Start button input, or nil. Pass NULL to ignore.
+ @param outSelect  Written with the resolved Select button input, or nil. Pass NULL to ignore.
  */
 static inline void
 PVResolveStartSelectButtons(GCController * _Nonnull controller,
-                             GCControllerButtonInput * _Nullable * _Nonnull outStart,
-                             GCControllerButtonInput * _Nullable * _Nonnull outSelect) {
-    *outStart  = nil;
-    *outSelect = nil;
+                             GCControllerButtonInput * _Nullable * _Nullable outStart,
+                             GCControllerButtonInput * _Nullable * _Nullable outSelect) {
+    GCControllerButtonInput *resolvedStart  = nil;
+    GCControllerButtonInput *resolvedSelect = nil;
 
     GCExtendedGamepad *gamepad = controller.extendedGamepad;
-    if (!gamepad) { return; }
+    if (gamepad) {
+        BOOL isDualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]];
+        BOOL isDualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]];
+        BOOL isXbox      = [gamepad isKindOfClass:[GCXboxGamepad class]];
 
-    BOOL isDualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]];
-    BOOL isDualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]];
-    BOOL isXbox      = [gamepad isKindOfClass:[GCXboxGamepad class]];
-
-    if (isDualSense || isDualShock) {
-        // PlayStation controllers:
-        //   buttonMenu    → Options button  (≡ / hamburger)  → Start
-        //   buttonOptions → Create (PS5) / Share (PS4) button → Select
-        *outStart  = gamepad.buttonMenu;
-        *outSelect = gamepad.buttonOptions;
-    } else if (isXbox) {
-        // Xbox controllers:
-        //   buttonMenu    → Menu button  (≡)  → Start
-        //   buttonOptions → View button  (⊡)  → Select
-        *outStart  = gamepad.buttonMenu;
-        *outSelect = gamepad.buttonOptions;
-    } else if (gamepad.buttonMenu) {
-        // Switch Pro and other controllers with a dedicated menu/home button:
-        //   buttonMenu    → + button → Start
-        //   buttonOptions → − button → Select (may be nil on some controllers)
-        *outStart  = gamepad.buttonMenu;
-        *outSelect = gamepad.buttonOptions;
-    } else if (gamepad.buttonOptions) {
-        // Basic MFi controllers with only a single menu/pause button:
-        //   buttonOptions → Single menu button → Start only
-        //   (Select mapped via shoulder buttons in the calling core)
-        *outStart  = gamepad.buttonOptions;
-        *outSelect = nil;
+        if (isDualSense || isDualShock) {
+            // PlayStation controllers:
+            //   buttonMenu    → Options button  (≡ / hamburger)  → Start
+            //   buttonOptions → Create (PS5) / Share (PS4) button → Select
+            resolvedStart  = gamepad.buttonMenu;
+            resolvedSelect = gamepad.buttonOptions;
+        } else if (isXbox) {
+            // Xbox controllers:
+            //   buttonMenu    → Menu button  (≡)  → Start
+            //   buttonOptions → View button  (⊡)  → Select
+            resolvedStart  = gamepad.buttonMenu;
+            resolvedSelect = gamepad.buttonOptions;
+        } else if (gamepad.buttonMenu) {
+            // Switch Pro and other controllers with a dedicated menu/home button:
+            //   buttonMenu    → + button → Start
+            //   buttonOptions → − button → Select (may be nil on some controllers)
+            resolvedStart  = gamepad.buttonMenu;
+            resolvedSelect = gamepad.buttonOptions;
+        } else if (gamepad.buttonOptions) {
+            // Basic MFi controllers with only a single menu/pause button:
+            //   buttonOptions → Single menu button → Start only
+            //   (Select mapped via shoulder buttons in the calling core)
+            resolvedStart  = gamepad.buttonOptions;
+        }
     }
+
+    if (outStart)  { *outStart  = resolvedStart; }
+    if (outSelect) { *outSelect = resolvedSelect; }
 }
 
 /**
