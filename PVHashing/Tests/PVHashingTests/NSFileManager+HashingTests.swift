@@ -44,7 +44,7 @@ class ChecksumTests: XCTestCase {
                     XCTFail("Failed with error: \(error)")
                 }
             }, receiveValue: { md5Hash in
-                XCTAssertEqual(md5Hash, "746308829575e17c3331bbcb00c0898b")
+                XCTAssertEqual(md5Hash, "746308829575E17C3331BBCB00C0898B")
                 expectation.fulfill()
             })
 
@@ -53,7 +53,7 @@ class ChecksumTests: XCTestCase {
 
     func testCalculateMD5Synchronously() {
         // This hash corresponds to "Hello, world!" with MD5
-        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        let expectedHash = "746308829575E17C3331BBCB00C0898B"
         do {
             let md5Hash = try calculateMD5Synchronously(of: testFileURL)
             XCTAssertEqual(md5Hash, expectedHash, "The MD5 hash did not match the expected value.")
