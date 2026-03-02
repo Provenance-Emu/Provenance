@@ -92,7 +92,7 @@ s8 joyx[4], joyy[4];
             // Resolve Start button for Dreamcast (DC has no Select — only Start).
             // Maps buttonMenu (Options/Menu/+) to DC_BTN_START on all modern controllers.
             GCControllerButtonInput *startButton = nil;
-            GCControllerButtonInput *unusedSelect = nil;
+            __unused GCControllerButtonInput *unusedSelect = nil;
             PVResolveStartSelectButtons(controller, &startButton, &unusedSelect);
 
             dpad.up.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_UP) : kcode[playerIndex] |= (DC_DPAD_UP);
