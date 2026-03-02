@@ -24,11 +24,23 @@ public extension PVRemappableController {
     ///
     /// The profile is frozen before access so it can be safely read from any thread.
     func apply(profile: PVControllerProfile) {
-        // Freeze the Realm object so it can be accessed safely from any thread.
-        let frozenProfile = profile.isFrozen ? profile : profile.freeze()
-        let profileName = frozenProfile.name
+        // Resolve a safe-to-use profile instance.
+        // - If already frozen, use as-is.
+        // - If managed, freeze so it can be read safely from any thread.
+        // - If unmanaged, skip freezing to avoid Realm traps and just use the in-memory object.
+        let resolvedProfile: PVControllerProfile
+        if profile.isFrozen {
+            resolvedProfile = profile
+        } else if profile.realm != nil {
+            resolvedProfile = profile.freeze()
+        } else {
+            WLOG("Attempted to apply unmanaged controller profile '\(profile.name)'; skipping freeze")
+            resolvedProfile = profile
+        }
+
+        let profileName = resolvedProfile.name
         // Snapshot the raw mapping values before clearing so we don't lose them.
-        let rawMappings: [(source: String, destination: String)] = frozenProfile.mappings.map {
+        let rawMappings: [(source: String, destination: String)] = resolvedProfile.mappings.map {
             (source: $0.sourceButton, destination: $0.destinationButton)
         }
 
