@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import SwiftUI
+import GameController
 import PVLogging
 import PVLibrary
 import PVFileSystem
@@ -409,6 +410,9 @@ public class SceneCoordinator: ObservableObject {
                 ILOG("SceneCoordinator: Core set: \(core.projectName)")
             }
 
+            // Load per-game / per-system controller profiles for all connected controllers.
+            loadControllerProfiles(for: currentGame)
+
             // Open the emulator scene - errors will be handled by PVEmulatorViewController
             openEmulatorScene()
         } else {
@@ -419,6 +423,21 @@ public class SceneCoordinator: ObservableObject {
                 message: "Could not prepare the game for launch. This may be due to:\n\n• Missing or corrupted game file\n• Core not available or failed to load\n• Insufficient memory\n\nTry restarting the app, or remove and re-import the game if the problem persists."
             )
         }
+    }
+
+    // MARK: - Controller Profile Loading
+
+    /// Load the best-matching controller profile for every connected controller
+    /// before launching `game`.  Profiles are scoped (game → system → global).
+    private func loadControllerProfiles(for game: PVGame) {
+        let systemIdentifier = game.systemIdentifier.isEmpty ? nil : game.systemIdentifier
+        let gameID = game.md5Hash.isEmpty ? nil : game.md5Hash
+
+        for controller in PVControllerManager.shared.controllers {
+            let wrapper = getRemappableControllerWrapper(for: controller)
+            wrapper.loadActiveProfile(systemIdentifier: systemIdentifier, gameID: gameID)
+        }
+        ILOG("SceneCoordinator: Loaded controller profiles for \(PVControllerManager.shared.controllers.count) controller(s)")
     }
 
     // MARK: - Pre-Download Validation
