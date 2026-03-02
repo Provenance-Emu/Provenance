@@ -29,6 +29,7 @@ final class PVCheatsViewController: UITableViewController {
     var coreID: String?
     /// The game for which cheats are being managed; used for database auto-lookup.
     var gameMD5: String?
+    /// The title of the game for which cheats are being managed; used for database auto-lookup.
     var gameTitle: String?
 
     private var allCheats: Results<PVCheats>?
