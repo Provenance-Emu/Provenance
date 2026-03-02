@@ -425,19 +425,12 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 
     /// Force a fresh fetch from remote, ignoring cache freshness.
     public func forceRefresh() async throws {
-        guard remoteFetcher != nil else {
+        guard let fetcher = remoteFetcher else {
             throw PVFeatureFlagsFetcherError.notConfigured
         }
-        // Perform a remote fetch that does not consult cache freshness.
-        guard let fetcher = remoteFetcher else { return }
-        do {
-            let config = try await fetcher.fetchWithRetry()
-            featureFlags.setConfiguration(config)
-            updateFeatureStates()
-        } catch {
-            // On force-refresh failure, keep whatever config is loaded
-            throw error
-        }
+        let config = try await fetcher.fetchWithRetry()
+        featureFlags.setConfiguration(config)
+        updateFeatureStates()
     }
 
     // MARK: - Debug Overrides

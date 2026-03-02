@@ -208,7 +208,7 @@ private func makeConfig() throws -> FeatureFlagsConfiguration {
 }
 
 @Test func testFetcherExpiredCacheIsInvalid() throws {
-    let url = URL(string: "https://example.com/features.json")!
+    let url = URL(string: "https://example.com/expired-test-features.json")!
     // Use 0-second cache duration to immediately expire
     let fetcher = PVFeatureFlagsFetcher(url: url, maxRetries: 0, cacheDuration: 0)
     fetcher.clearCache()
