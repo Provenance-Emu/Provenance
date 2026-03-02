@@ -174,10 +174,8 @@ struct ControllerProfilesView: View {
     private func toggleActive(_ profile: PVControllerProfile) {
         let db = RomDatabase.sharedInstance
         do {
-            // Work with the live (unfrozen) object from Realm.
-            guard let live = db.realm.object(ofType: PVControllerProfile.self, forPrimaryKey: profile.id) else {
-                return
-            }
+            // Resolve the live (unfrozen) object via the RomDatabase helper.
+            guard let live = db.controllerProfile(withID: profile.id) else { return }
             if live.isActive {
                 try db.deactivateControllerProfile(live)
             } else {
@@ -195,10 +193,7 @@ struct ControllerProfilesView: View {
     private func deleteProfiles(at offsets: IndexSet) {
         let db = RomDatabase.sharedInstance
         for index in offsets {
-            let frozen = profiles[index]
-            guard let live = db.realm.object(ofType: PVControllerProfile.self, forPrimaryKey: frozen.id) else {
-                continue
-            }
+            guard let live = db.controllerProfile(withID: profiles[index].id) else { continue }
             do {
                 try db.deleteControllerProfile(live)
             } catch {
@@ -237,9 +232,7 @@ struct ControllerProfilesView: View {
         }
         profileToRename = nil
         let db = RomDatabase.sharedInstance
-        guard let live = db.realm.object(ofType: PVControllerProfile.self, forPrimaryKey: frozen.id) else {
-            return
-        }
+        guard let live = db.controllerProfile(withID: frozen.id) else { return }
         do {
             try db.renameControllerProfile(live, to: name)
             reloadProfiles()
