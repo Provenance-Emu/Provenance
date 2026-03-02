@@ -442,6 +442,8 @@ struct ButtonRemappingView: View {
     @State private var activeProfileName: String?
     @State private var showSaveProfileAlert = false
     @State private var newProfileName = ""
+    @State private var showSaveProfileError = false
+    @State private var saveProfileErrorMessage = ""
 
     private var remappableController: PVRemappableController {
         getRemappableControllerWrapper(for: controller)
@@ -569,12 +571,21 @@ struct ButtonRemappingView: View {
                 let name = newProfileName.trimmingCharacters(in: .whitespacesAndNewlines)
                 newProfileName = ""
                 guard !name.isEmpty else { return }
-                remappableController.saveCurrentMappingsAsProfile(name: name, makeActive: true)
-                loadActiveProfileName()
+                if remappableController.saveCurrentMappingsAsProfile(name: name, makeActive: true) != nil {
+                    loadActiveProfileName()
+                } else {
+                    saveProfileErrorMessage = "No button mappings are configured. Remap at least one button before saving a profile."
+                    showSaveProfileError = true
+                }
             }
             Button("Cancel", role: .cancel) { newProfileName = "" }
         } message: {
             Text("Save your current button mappings as a named profile.")
+        }
+        .alert("Save Failed", isPresented: $showSaveProfileError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(saveProfileErrorMessage)
         }
         .confirmationDialog(
             "Map \(selectedButton.map { buttonDisplayName($0) } ?? "button") to:",

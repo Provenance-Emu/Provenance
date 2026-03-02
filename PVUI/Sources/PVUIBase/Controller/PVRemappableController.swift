@@ -174,24 +174,13 @@ public final class PVRemappableController: NSObject {
     @available(iOS 14.0, tvOS 14.0, *)
     private func setupXboxFeatures(_ xbox: GCXboxGamepad) {
         if #available(iOS 14.5, tvOS 14.5, *) {
-            // Paddle buttons
-            xbox.buttonA.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.paddleOne) }
-            }
-            xbox.buttonB.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.paddleTwo) }
-            }
-            xbox.buttonX.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.paddleThree) }
-            }
-            xbox.buttonY.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.paddleFour) }
-            }
-
-            // Share button
+            // Share button (buttonOptions maps to Xbox Share on Elite/Series X controllers)
             xbox.buttonOptions?.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
                 if pressed { self?.handleSpecialButton(.shareButton) }
             }
+            // Note: Xbox Elite paddle buttons (P1–P4) are not individually accessible via
+            // GCXboxGamepad in the current GCController API. They surface through the
+            // standard button inputs, so no additional setup is needed here.
         }
     }
 
@@ -369,16 +358,8 @@ public final class PVRemappableController: NSObject {
             }
             return nil
         case .paddleOne, .paddleTwo, .paddleThree, .paddleFour:
-            if #available(iOS 14.5, tvOS 14.5, *),
-               let xbox = gamepad as? GCXboxGamepad {
-                switch id {
-                case .paddleOne: return xbox.buttonA
-                case .paddleTwo: return xbox.buttonB
-                case .paddleThree: return xbox.buttonX
-                case .paddleFour: return xbox.buttonY
-                default: return nil
-                }
-            }
+            // Xbox Elite paddle buttons are not individually accessible as
+            // GCControllerButtonInput via the GCController API.
             return nil
         case .shareButton:
             if #available(iOS 14.5, tvOS 14.5, *),
@@ -536,17 +517,11 @@ public final class PVRemappableController: NSObject {
                     switch element {
                     case dualSense.buttonOptions: return .share
                     case dualSense.touchpadButton: return .touchpadButton
-                    case dualSense.buttonOptions: return .micButton
-                    case dualSense.buttonOptions: return .createButton
                     default: break
                     }
                 }
                 if let xbox = gamepad as? GCXboxGamepad {
                     switch element {
-                    case xbox.buttonA: return .paddleOne
-                    case xbox.buttonB: return .paddleTwo
-                    case xbox.buttonX: return .paddleThree
-                    case xbox.buttonY: return .paddleFour
                     case xbox.buttonOptions: return .shareButton
                     default: break
                     }
