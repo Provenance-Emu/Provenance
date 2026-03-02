@@ -70,9 +70,19 @@ private struct MetalFilterSection: View {
     private var activeCRTFilter: MetalFilterSelectionOption? {
         switch metalFilterMode {
         case .auto(let crt, _):
-            return crt.hasCRTParameters ? crt : nil
+            switch crt {
+            case .simpleCRT, .complexCRT:
+                return crt
+            default:
+                return nil
+            }
         case .always(let filter):
-            return filter.hasCRTParameters ? filter : nil
+            switch filter {
+            case .simpleCRT, .complexCRT:
+                return filter
+            default:
+                return nil
+            }
         case .none:
             return nil
         }
