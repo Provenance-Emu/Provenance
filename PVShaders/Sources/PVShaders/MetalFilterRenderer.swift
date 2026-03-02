@@ -189,6 +189,8 @@ public final class PVMetalFilterRenderer: NSObject {
 
         switch shaderName {
         case "Simple CRT":
+            // TODO: Cache these values when the dynamic shader parameter system is adopted;
+            // reading Defaults per frame is acceptable for now given infrequent user changes.
             var uniforms = SimpleCRTUniforms(
                 dstRect: SIMD4<Float>(textureWidth, textureHeight, drawableWidth, drawableHeight),
                 srcRect: SIMD4<Float>(0, 0, sourceWidth, sourceHeight),
@@ -321,6 +323,8 @@ private struct SimpleCRTUniforms {
     var brightness: Float
 }
 
+/// Must match `CRT_Data` struct layout in crt_filter_ps.metal exactly.
+/// All fields are 4-byte aligned; Int32 maps to Metal's `int`.
 private struct CRTUniforms {
     var displayRect: SIMD4<Float>
     var emulatedImageSize: SIMD2<Float>

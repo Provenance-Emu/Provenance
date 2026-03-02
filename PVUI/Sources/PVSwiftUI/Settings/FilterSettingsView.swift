@@ -142,13 +142,10 @@ private struct MetalFilterSection: View {
 
         // Show CRT parameter controls when a CRT filter is active
         if let crtFilter = activeCRTFilter {
-            switch crtFilter {
-            case .simpleCRT:
+            if crtFilter == .simpleCRT {
                 SimpleCRTParametersSection()
-            case .complexCRT:
+            } else {
                 ComplexCRTParametersSection()
-            default:
-                EmptyView()
             }
         }
     }
@@ -173,57 +170,20 @@ private struct SimpleCRTParametersSection: View {
                 .font(.headline)
                 #endif
         ) {
-            ShaderSliderRow(
-                label: "Curvature (Vertical)",
-                value: $curvVert,
-                range: 1.0...10.0,
-                defaultValue: 5.0
-            )
-            ShaderSliderRow(
-                label: "Curvature (Horizontal)",
-                value: $curvHoriz,
-                range: 1.0...10.0,
-                defaultValue: 4.0
-            )
-            ShaderSliderRow(
-                label: "Curvature Strength",
-                value: $curvStrength,
-                range: 0.0...1.0,
-                defaultValue: 0.25
-            )
-            ShaderSliderRow(
-                label: "Light Boost",
-                value: $lightBoost,
-                range: 0.1...3.0,
-                defaultValue: 1.3
-            )
-            ShaderSliderRow(
-                label: "Vignette",
-                value: $vignStrength,
-                range: 0.0...1.0,
-                defaultValue: 0.05
-            )
-            ShaderSliderRow(
-                label: "Zoom Out",
-                value: $zoomOut,
-                range: 0.5...2.0,
-                defaultValue: 1.1
-            )
-            ShaderSliderRow(
-                label: "Brightness",
-                value: $brightness,
-                range: 0.5...1.5,
-                defaultValue: 1.0
-            )
+            ShaderSliderRow(label: "Curvature (Vertical)", value: $curvVert, range: 1.0...10.0)
+            ShaderSliderRow(label: "Curvature (Horizontal)", value: $curvHoriz, range: 1.0...10.0)
+            ShaderSliderRow(label: "Curvature Strength", value: $curvStrength, range: 0.0...1.0)
+            ShaderSliderRow(label: "Light Boost", value: $lightBoost, range: 0.1...3.0)
+            ShaderSliderRow(label: "Vignette", value: $vignStrength, range: 0.0...1.0)
+            ShaderSliderRow(label: "Zoom Out", value: $zoomOut, range: 0.5...2.0)
+            ShaderSliderRow(label: "Brightness", value: $brightness, range: 0.5...1.5)
 
             Button("Reset to Defaults") {
-                curvVert = 5.0
-                curvHoriz = 4.0
-                curvStrength = 0.25
-                lightBoost = 1.3
-                vignStrength = 0.05
-                zoomOut = 1.1
-                brightness = 1.0
+                Defaults.reset(
+                    .simpleCRTCurvVert, .simpleCRTCurvHoriz, .simpleCRTCurvStrength,
+                    .simpleCRTLightBoost, .simpleCRTVignStrength, .simpleCRTZoomOut,
+                    .simpleCRTBrightness
+                )
             }
             .foregroundColor(.red)
         }
@@ -257,77 +217,32 @@ private struct ComplexCRTParametersSection: View {
             Toggle("Shadow Mask", isOn: $useShadowMask)
             Toggle("Screen Warp", isOn: $useWarp)
 
-            ShaderSliderRow(
-                label: "Bloom Amount",
-                value: $bloomAmount,
-                range: 0.0...6.0,
-                defaultValue: 2.0
-            )
+            ShaderSliderRow(label: "Bloom Amount", value: $bloomAmount, range: 0.0...6.0)
 
             if useScanlines {
-                ShaderSliderRow(
-                    label: "Scanline Hardness",
-                    value: $scanlineHardness,
-                    range: 1.0...12.0,
-                    defaultValue: 4.0
-                )
-                ShaderSliderRow(
-                    label: "CRT Resolution (lines)",
-                    value: $rowsOfResolution,
-                    range: 240.0...1080.0,
-                    defaultValue: 480.0
-                )
+                ShaderSliderRow(label: "Scanline Hardness", value: $scanlineHardness, range: 1.0...12.0)
+                ShaderSliderRow(label: "CRT Resolution (lines)", value: $rowsOfResolution, range: 240.0...1080.0)
             }
 
             if useShadowMask {
-                ShaderSliderRow(
-                    label: "Shadow Mask Hardness",
-                    value: $shadowMaskHardness,
-                    range: 4.0...32.0,
-                    defaultValue: 16.0
-                )
-                ShaderSliderRow(
-                    label: "TV Lines (mask density)",
-                    value: $tvl,
-                    range: 400.0...1200.0,
-                    defaultValue: 800.0
-                )
+                ShaderSliderRow(label: "Shadow Mask Hardness", value: $shadowMaskHardness, range: 4.0...32.0)
+                ShaderSliderRow(label: "TV Lines (mask density)", value: $tvl, range: 400.0...1200.0)
             }
 
             if useWarp {
-                ShaderSliderRow(
-                    label: "Warp Horizontal",
-                    value: $warpX,
-                    range: 0.0...0.05,
-                    defaultValue: 1.0 / 96.0
-                )
-                ShaderSliderRow(
-                    label: "Warp Vertical",
-                    value: $warpY,
-                    range: 0.0...0.1,
-                    defaultValue: 1.0 / 36.0
-                )
+                ShaderSliderRow(label: "Warp Horizontal", value: $warpX, range: 0.0...0.05)
+                ShaderSliderRow(label: "Warp Vertical", value: $warpY, range: 0.0...0.1)
             }
 
-            ShaderSliderRow(
-                label: "Display Gamma",
-                value: $displayGamma,
-                range: 1.8...2.6,
-                defaultValue: 2.2
-            )
+            ShaderSliderRow(label: "Display Gamma", value: $displayGamma, range: 1.8...2.6)
 
             Button("Reset to Defaults") {
-                useScanlines = true
-                useShadowMask = true
-                useWarp = true
-                bloomAmount = 2.0
-                scanlineHardness = 4.0
-                shadowMaskHardness = 16.0
-                rowsOfResolution = 480.0
-                tvl = 800.0
-                warpX = 1.0 / 96.0
-                warpY = 1.0 / 36.0
-                displayGamma = 2.2
+                Defaults.reset(
+                    .complexCRTUseScanlines, .complexCRTUseShadowMask, .complexCRTUseWarp,
+                    .complexCRTBloomAmount, .complexCRTScanlineHardness, .complexCRTShadowMaskHardness,
+                    .complexCRTRowsOfResolution, .complexCRTTVL,
+                    .complexCRTWarpX, .complexCRTWarpY, .complexCRTDisplayGamma
+                )
             }
             .foregroundColor(.red)
         }
@@ -341,7 +256,6 @@ private struct ShaderSliderRow: View {
     let label: String
     @Binding var value: Float
     let range: ClosedRange<Float>
-    let defaultValue: Float
 
     private var formattedValue: String {
         if range.upperBound - range.lowerBound >= 10 {

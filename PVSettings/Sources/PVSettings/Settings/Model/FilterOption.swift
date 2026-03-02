@@ -200,8 +200,13 @@ public extension Defaults.Keys {
     static let complexCRTWarpX = Key<Float>("complexCRTWarpX", default: 1.0 / 96.0)
     /// Vertical warp amount (range: 0.0–0.1, default: ~0.0278)
     static let complexCRTWarpY = Key<Float>("complexCRTWarpY", default: 1.0 / 36.0)
-    /// Display gamma (range: 1.8–2.6, default: 2.2)
+    /// Display gamma (range: 1.8–2.6)
+    /// tvOS defaults to 2.4 per ITU-R BT.1886; iOS defaults to 2.2 (measured OLED response)
+    #if os(tvOS)
+    static let complexCRTDisplayGamma = Key<Float>("complexCRTDisplayGamma", default: 2.4)
+    #else
     static let complexCRTDisplayGamma = Key<Float>("complexCRTDisplayGamma", default: 2.2)
+    #endif
     /// Enable CRT scanlines
     static let complexCRTUseScanlines = Key<Bool>("complexCRTUseScanlines", default: true)
     /// Enable phosphor shadow mask pattern
