@@ -375,9 +375,16 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     // MARK: - Feature Queries
 
     /// Check whether a feature is enabled by its raw string key.
+    /// - Parameter featureKey: The raw string key for the feature.
+    /// - Returns: `true` if the feature is enabled. For keys that map to a `PVFeature` case,
+    ///            the precomputed `featureStates` are used; otherwise, this falls back to
+    ///            the underlying `featureFlags` configuration.
     public func isEnabled(_ featureKey: String) -> Bool {
-        guard let feature = PVFeature(rawValue: featureKey) else { return false }
-        return featureStates[feature] ?? false
+        if let feature = PVFeature(rawValue: featureKey) {
+            return featureStates[feature] ?? false
+        }
+
+        return featureFlags.isEnabled(featureKey)
     }
 
     // MARK: - Remote Configuration
