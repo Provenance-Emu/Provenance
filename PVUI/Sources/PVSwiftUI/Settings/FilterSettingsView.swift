@@ -70,9 +70,9 @@ private struct MetalFilterSection: View {
     private var activeCRTFilter: MetalFilterSelectionOption? {
         switch metalFilterMode {
         case .auto(let crt, _):
-            return crt == .none ? nil : crt
+            return crt.hasCRTParameters ? crt : nil
         case .always(let filter):
-            return (filter == .simpleCRT || filter == .complexCRT) ? filter : nil
+            return filter.hasCRTParameters ? filter : nil
         case .none:
             return nil
         }
@@ -106,7 +106,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPurple)
                 #endif
-                .onChange(of: selectedCRTFilter) { newValue in
+                .onChange(of: selectedCRTFilter) { _, newValue in
                     metalFilterMode = .auto(crt: newValue, lcd: selectedLCDFilter)
                 }
 
@@ -118,7 +118,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPurple)
                 #endif
-                .onChange(of: selectedLCDFilter) { newValue in
+                .onChange(of: selectedLCDFilter) { _, newValue in
                     metalFilterMode = .auto(crt: selectedCRTFilter, lcd: newValue)
                 }
 
@@ -131,7 +131,7 @@ private struct MetalFilterSection: View {
                 #if os(tvOS)
                 .tint(.retroPink)
                 #endif
-                .onChange(of: selectedAlwaysFilter) { newValue in
+                .onChange(of: selectedAlwaysFilter) { _, newValue in
                     metalFilterMode = .always(filter: newValue)
                 }
 
@@ -221,12 +221,12 @@ private struct ComplexCRTParametersSection: View {
 
             if useScanlines {
                 ShaderSliderRow(label: "Scanline Hardness", value: $scanlineHardness, range: 1.0...12.0)
-                ShaderSliderRow(label: "CRT Resolution (lines)", value: $rowsOfResolution, range: 240.0...1080.0)
+                ShaderSliderRow(label: "CRT Resolution (lines)", value: $rowsOfResolution, range: 240.0...1080.0, step: 1.0)
             }
 
             if useShadowMask {
                 ShaderSliderRow(label: "Shadow Mask Hardness", value: $shadowMaskHardness, range: 4.0...32.0)
-                ShaderSliderRow(label: "TV Lines (mask density)", value: $tvl, range: 400.0...1200.0)
+                ShaderSliderRow(label: "TV Lines (mask density)", value: $tvl, range: 400.0...1200.0, step: 1.0)
             }
 
             if useWarp {
@@ -256,9 +256,12 @@ private struct ShaderSliderRow: View {
     let label: String
     @Binding var value: Float
     let range: ClosedRange<Float>
+    var step: Float? = nil
 
     private var formattedValue: String {
-        if range.upperBound - range.lowerBound >= 10 {
+        if let step = step, step >= 1.0 {
+            return String(format: "%.0f", value)
+        } else if range.upperBound - range.lowerBound >= 10 {
             return String(format: "%.0f", value)
         } else if range.upperBound - range.lowerBound >= 1 {
             return String(format: "%.2f", value)
@@ -277,10 +280,17 @@ private struct ShaderSliderRow: View {
                     .font(.subheadline.monospacedDigit())
                     .foregroundColor(.secondary)
             }
-            Slider(value: $value, in: range)
-                #if os(tvOS)
-                .tint(.retroBlue)
-                #endif
+            if let step = step {
+                Slider(value: $value, in: range, step: step)
+                    #if os(tvOS)
+                    .tint(.retroBlue)
+                    #endif
+            } else {
+                Slider(value: $value, in: range)
+                    #if os(tvOS)
+                    .tint(.retroBlue)
+                    #endif
+            }
         }
         .padding(.vertical, 2)
     }

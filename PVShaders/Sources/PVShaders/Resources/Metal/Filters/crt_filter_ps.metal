@@ -121,7 +121,7 @@ float3 getShadowMaskRGB( constant CRT_Data& cbData, float2 uv )
 }
 
 INLINE
-float3 sampleRGB( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv, float2 warpedUV )
+float3 sampleRGB( texture2d<float> EmulatedImage, constant CRT_Data& cbData, float2 uv, float2 warpedUV )
 {
     constexpr sampler SamplerF(address::clamp_to_zero, filter::linear);
     float3 inputSample = ToLinear( EmulatedImage.sample(SamplerF, UV_TO_INPUTCOORD( warpedUV, cbData )).rgb, cbData.DisplayGamma );
@@ -138,23 +138,23 @@ float3 sampleRGB( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_
 }
 
 INLINE
-float3 sampleRow( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv, float3 centerTap )
+float3 sampleRow( texture2d<float> EmulatedImage, constant CRT_Data& cbData, float2 uv, float3 centerTap )
 {
     float2 leftUV = uv + float2( -1.0 / FINAL_RES.x, 0.0 );
     float2 rightUV = uv + float2( 1.0 / FINAL_RES.x, 0.0 );
     return centerTap * 0.5
-    + sampleRGB( EmulatedImage, Sampler, cbData, leftUV, Warp( cbData, leftUV ) ) * 0.25
-    + sampleRGB( EmulatedImage, Sampler, cbData, rightUV, Warp( cbData, rightUV ) ) * 0.25;
+    + sampleRGB( EmulatedImage, cbData, leftUV, Warp( cbData, leftUV ) ) * 0.25
+    + sampleRGB( EmulatedImage, cbData, rightUV, Warp( cbData, rightUV ) ) * 0.25;
 }
 
 INLINE
-float3 sampleCol( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv, float3 centerTap )
+float3 sampleCol( texture2d<float> EmulatedImage, constant CRT_Data& cbData, float2 uv, float3 centerTap )
 {
-    return sampleRow( EmulatedImage, Sampler, cbData, uv, centerTap );
+    return sampleRow( EmulatedImage, cbData, uv, centerTap );
 }
 
 INLINE
-float3 crtFilter( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv )
+float3 crtFilter( texture2d<float> EmulatedImage, constant CRT_Data& cbData, float2 uv )
 {
     float2 warpedUV = Warp( cbData, uv );
     float edgeMask = clamp( 1.0 - exp2( ( 1.0 - max( abs( warpedUV.x - 0.5 ), abs( warpedUV.y - 0.5 ) ) / 0.5 ) * -WARP_EDGE_HARDNESS ), 0.0, 1.0);
@@ -162,14 +162,14 @@ float3 crtFilter( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_
     if (cbData.UseScanlines) {
         bloomAmount *= 2.0;
     }
-    float3 centerTap = sampleRGB( EmulatedImage, Sampler, cbData, uv, warpedUV );
-    return ToDispGamma( ( centerTap + sampleCol( EmulatedImage, Sampler, cbData, uv, centerTap ) * bloomAmount ) * edgeMask, cbData.DisplayGamma );
+    float3 centerTap = sampleRGB( EmulatedImage, cbData, uv, warpedUV );
+    return ToDispGamma( ( centerTap + sampleCol( EmulatedImage, cbData, uv, centerTap ) * bloomAmount ) * edgeMask, cbData.DisplayGamma );
 }
 
-fragment float4 crt_filter_ps(Inputs I [[stage_in]], texture2d<float> EmulatedImage [[texture(0)]], sampler Sampler [[sampler(0)]], constant CRT_Data& cbData [[buffer(0)]])
+fragment float4 crt_filter_ps(Inputs I [[stage_in]], texture2d<float> EmulatedImage [[texture(0)]], constant CRT_Data& cbData [[buffer(0)]])
 {
     float4 output;
-    output.rgb = crtFilter( EmulatedImage, Sampler, cbData, INPUTCOORD_TO_UV( I.fTexCoord, cbData ) );
+    output.rgb = crtFilter( EmulatedImage, cbData, INPUTCOORD_TO_UV( I.fTexCoord, cbData ) );
     output.a = 1.0;
     return output;
 }
