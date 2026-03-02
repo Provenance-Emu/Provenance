@@ -38,6 +38,7 @@ public struct FreeROMsView: View {
 
     #if os(tvOS)
     @FocusState private var focusedSystemId: String?
+    @FocusState private var isSearchFieldFocused: Bool
     #endif
 
     /// Platform-adaptive font sizes for 10-foot (tvOS) vs handheld (iOS) UI
@@ -128,13 +129,17 @@ public struct FreeROMsView: View {
             .navigationTitle("FREE ROMS")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .searchable(text: $searchText, prompt: "SEARCH ROMS")
+            #endif
+            #if os(tvOS)
+            .toolbar(.hidden, for: .navigationBar)
+            #else
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     expandCollapseButton
                 }
             }
+            #endif
             .onAppear {
                 if systems.isEmpty && loadingError == nil {
                     loadROMs()
@@ -190,6 +195,10 @@ public struct FreeROMsView: View {
     private var systemListView: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
+                #if os(tvOS)
+                tvHeaderBar
+                tvSearchField
+                #endif
                 ForEach(filteredSystems, id: \.id) { system in
                     VStack(spacing: 0) {
                         if expandedSystems.contains(system.id) {
@@ -213,6 +222,126 @@ public struct FreeROMsView: View {
         .padding(.vertical, 8)
         #endif
     }
+
+    #if os(tvOS)
+    /// Themed header bar for tvOS with close, title, and expand/collapse
+    private var tvHeaderBar: some View {
+        HStack(spacing: 20) {
+            tvThemedButton(
+                title: "Close",
+                icon: "xmark.circle.fill",
+                accentColor: RetroTheme.retroPink
+            ) {
+                onDismiss?()
+            }
+
+            Spacer()
+
+            Text("FREE ROMS")
+                .font(.system(size: 38, weight: .black))
+                .foregroundColor(RetroTheme.retroBlue)
+                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 6)
+
+            Spacer()
+
+            tvThemedButton(
+                title: expandedSystems.count == filteredSystems.count ? "Collapse All" : "Expand All",
+                icon: expandedSystems.count == filteredSystems.count ? "chevron.up" : "chevron.down",
+                accentColor: RetroTheme.retroBlue
+            ) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    if expandedSystems.count == filteredSystems.count {
+                        expandedSystems.removeAll()
+                    } else {
+                        expandedSystems = Set(filteredSystems.map(\.id))
+                    }
+                }
+            }
+        }
+    }
+
+    /// Reusable retrowave-styled button for tvOS toolbar replacements
+    private func tvThemedButton(title: String, icon: String, accentColor: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 22, weight: .bold))
+                Text(title)
+                    .font(.system(size: 22, weight: .bold))
+            }
+            .foregroundColor(accentColor)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.black.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [accentColor, accentColor.opacity(0.5)]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+            )
+            .shadow(color: accentColor.opacity(glowOpacity * 0.5), radius: 3)
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
+    }
+
+    /// Inline search field for tvOS
+    private var tvSearchField: some View {
+        HStack(spacing: 16) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundColor(isSearchFieldFocused ? RetroTheme.retroBlue : RetroTheme.retroPurple)
+                .shadow(color: (isSearchFieldFocused ? RetroTheme.retroBlue : RetroTheme.retroPurple).opacity(glowOpacity), radius: 4)
+
+            TextField("SEARCH ROMS", text: $searchText)
+                .font(.system(size: 28, weight: .medium))
+                .foregroundColor(.white)
+                .focused($isSearchFieldFocused)
+                .autocorrectionDisabled()
+
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(RetroTheme.retroPink)
+                }
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+            }
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 18)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            lineWidth: isSearchFieldFocused ? 2.5 : 1.0
+                        )
+                        .shadow(color: RetroTheme.retroBlue.opacity(isSearchFieldFocused ? glowOpacity : 0.3),
+                                radius: isSearchFieldFocused ? 8 : 2)
+                )
+        )
+        .scaleEffect(isSearchFieldFocused ? 1.02 : 1.0)
+        .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isSearchFieldFocused)
+    }
+    #endif
 
     /// System header button with retrowave styling and proper tvOS focus support
     @ViewBuilder

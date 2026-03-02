@@ -324,9 +324,15 @@ struct TVMediaMainView: View {
 
         private var layoutWithModal: some View {
             layoutWithExitCommand
+                #if os(tvOS)
+                .fullScreenCover(item: $router.activeModal) { modal in
+                    modalContent(modal)
+                }
+                #else
                 .sheet(item: $router.activeModal) { modal in
                     modalContent(modal)
                 }
+                #endif
         }
 
         /// Dynamic selection items for the imports alert, conditionally including Free ROMs
@@ -649,16 +655,19 @@ struct TVMediaMainView: View {
                 EmptyView()
             }
         case .freeROMs:
-            NavigationStack {
-                FreeROMsView(
-                    onROMDownloaded: { rom, tempURL in
-                        appState.libraryUpdatesController?.handlePickedDocuments([tempURL])
-                    },
-                    onDismiss: {
-                        router.dismissModal()
-                    }
-                )
+            FreeROMsView(
+                onROMDownloaded: { rom, tempURL in
+                    appState.libraryUpdatesController?.handlePickedDocuments([tempURL])
+                },
+                onDismiss: {
+                    router.dismissModal()
+                }
+            )
+            #if os(tvOS)
+            .onExitCommand {
+                router.dismissModal()
             }
+            #endif
         case .romInstructions:
             NavigationStack {
                 TVMediaROMInstructionsView(onDismiss: { router.dismissModal() })
