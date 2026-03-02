@@ -43,11 +43,11 @@ public actor CheatDatabase {
 
     /// Search for cheat codes by exact ROM MD5 hash.
     /// Uses a parameterized query to prevent SQL injection.
-    /// - Parameter md5: The MD5 hash of the ROM file (case-insensitive).
+    /// - Parameter md5: The MD5 hash of the ROM file (uppercase expected; normalized internally).
     /// - Returns: Array of matching cheat entries, empty if none found.
     public func searchCheats(byMD5 md5: String) throws -> [CheatDatabaseEntry] {
         let conn = try connect()
-        return try executeQuery(Self.queryByMD5, on: conn, binding: md5)
+        return try executeQuery(Self.queryByMD5, on: conn, binding: md5.uppercased())
     }
 
     /// Search for cheat codes by game title (case-insensitive fuzzy match).
@@ -87,7 +87,7 @@ public actor CheatDatabase {
 
     private static let queryByMD5 = selectClause + """
 
-        WHERE LOWER(r.romHashMD5) = LOWER(?)
+        WHERE UPPER(r.romHashMD5) = ?
         ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
         """
 
