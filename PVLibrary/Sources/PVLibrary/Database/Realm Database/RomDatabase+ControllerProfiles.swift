@@ -22,37 +22,61 @@ public extension RomDatabase {
             .sorted(byKeyPath: "name", ascending: true)
     }
 
-    /// Active profile for a given controller, optionally scoped to a system and game.
-    /// Resolution order: game-specific → system-specific → global controller default.
+    /// Active profile for a given controller, optionally scoped to a system, core, and game.
+    /// Resolution order:
+    ///   1. Game + Core-specific (gameID + coreIdentifier)
+    ///   2. Game-specific (gameID only)
+    ///   3. System + Core-specific (systemIdentifier + coreIdentifier)
+    ///   4. System-specific (systemIdentifier only)
+    ///   5. Global controller default.
     func activeControllerProfile(
         forVendor vendorName: String,
         systemIdentifier: String? = nil,
+        coreIdentifier: String? = nil,
         gameID: String? = nil
     ) -> PVControllerProfile? {
         let allProfiles = realm.objects(PVControllerProfile.self)
             .filter("controllerVendorName == %@ AND isActive == true", vendorName)
 
-        // 1. Game-specific match
+        // 1. Game + Core-specific match
+        if let gameID, let coreIdentifier {
+            if let profile = allProfiles
+                .filter("gameID == %@ AND coreIdentifier == %@", gameID, coreIdentifier)
+                .first {
+                return profile
+            }
+        }
+
+        // 2. Game-specific match (any core)
         if let gameID {
             if let profile = allProfiles
-                .filter("gameID == %@", gameID)
+                .filter("gameID == %@ AND coreIdentifier == nil", gameID)
                 .first {
                 return profile
             }
         }
 
-        // 2. System-specific match
+        // 3. System + Core-specific match
+        if let systemIdentifier, let coreIdentifier {
+            if let profile = allProfiles
+                .filter("systemIdentifier == %@ AND coreIdentifier == %@ AND gameID == nil", systemIdentifier, coreIdentifier)
+                .first {
+                return profile
+            }
+        }
+
+        // 4. System-specific match (any core)
         if let systemIdentifier {
             if let profile = allProfiles
-                .filter("systemIdentifier == %@ AND gameID == nil", systemIdentifier)
+                .filter("systemIdentifier == %@ AND coreIdentifier == nil AND gameID == nil", systemIdentifier)
                 .first {
                 return profile
             }
         }
 
-        // 3. Global controller default
+        // 5. Global controller default
         return allProfiles
-            .filter("systemIdentifier == nil AND gameID == nil")
+            .filter("systemIdentifier == nil AND coreIdentifier == nil AND gameID == nil")
             .first
     }
 
@@ -64,6 +88,7 @@ public extension RomDatabase {
         name: String,
         controllerVendorName: String,
         systemIdentifier: String? = nil,
+        coreIdentifier: String? = nil,
         gameID: String? = nil,
         mappings: [(source: String, destination: String)] = []
     ) throws -> PVControllerProfile {
@@ -71,6 +96,7 @@ public extension RomDatabase {
             name: name,
             controllerVendorName: controllerVendorName,
             systemIdentifier: systemIdentifier,
+            coreIdentifier: coreIdentifier,
             gameID: gameID
         )
         try realm.write {
@@ -104,7 +130,7 @@ public extension RomDatabase {
     // MARK: - Activation
 
     /// Activate a profile, deactivating any other active profile for the same
-    /// (vendor, system, game) combination first.
+    /// (vendor, system, core, game) combination first.
     func activateControllerProfile(_ profile: PVControllerProfile) throws {
         // Build a nil-safe predicate for scope matching.
         // Passing `nil as Any` through `%@` in NSPredicate does not reliably produce
@@ -117,6 +143,13 @@ public extension RomDatabase {
             args.append(systemID)
         } else {
             format += " AND systemIdentifier == nil"
+        }
+
+        if let coreID = profile.coreIdentifier {
+            format += " AND coreIdentifier == %@"
+            args.append(coreID)
+        } else {
+            format += " AND coreIdentifier == nil"
         }
 
         if let gameID = profile.gameID {

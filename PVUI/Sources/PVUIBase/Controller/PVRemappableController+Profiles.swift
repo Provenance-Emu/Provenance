@@ -67,12 +67,14 @@ public extension PVRemappableController {
     /// - Parameters:
     ///   - name: Human-readable profile name.
     ///   - systemIdentifier: Optional system scope (nil = applies to all systems).
+    ///   - coreIdentifier: Optional core scope (nil = applies to all cores in scope).
     ///   - gameID: Optional game MD5 scope (nil = applies to all games).
     ///   - makeActive: If `true`, immediately activates the new profile.
     /// - Returns: The persisted `PVControllerProfile`, or `nil` if persistence failed.
     @discardableResult public func saveCurrentMappingsAsProfile(
         name: String,
         systemIdentifier: String? = nil,
+        coreIdentifier: String? = nil,
         gameID: String? = nil,
         makeActive: Bool = false
     ) -> PVControllerProfile? {
@@ -93,6 +95,7 @@ public extension PVRemappableController {
                 name: name,
                 controllerVendorName: vendorName,
                 systemIdentifier: systemIdentifier,
+                coreIdentifier: coreIdentifier,
                 gameID: gameID,
                 mappings: currentMappings
             )
@@ -111,19 +114,22 @@ public extension PVRemappableController {
 
     /// Load and apply the active Realm profile for this controller.
     ///
-    /// Looks up the best matching active profile (game > system > global).
+    /// Looks up the best matching active profile using the resolution order:
+    /// game+core > game > system+core > system > global.
     /// Falls back to UserDefaults-based mappings if no profile is found.
     ///
     /// - Parameters:
     ///   - systemIdentifier: Current system identifier (optional).
+    ///   - coreIdentifier: Current emulator core identifier (optional).
     ///   - gameID: Current game MD5 hash (optional).
-    public func loadActiveProfile(systemIdentifier: String? = nil, gameID: String? = nil) {
+    public func loadActiveProfile(systemIdentifier: String? = nil, coreIdentifier: String? = nil, gameID: String? = nil) {
         guard let vendorName = self.vendorName else { return }
 
         let db = RomDatabase.sharedInstance
         guard let profile = db.activeControllerProfile(
             forVendor: vendorName,
             systemIdentifier: systemIdentifier,
+            coreIdentifier: coreIdentifier,
             gameID: gameID
         ) else {
             // No Realm profile — keep UserDefaults-loaded mappings
