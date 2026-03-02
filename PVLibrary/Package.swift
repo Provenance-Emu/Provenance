@@ -77,7 +77,7 @@ let package = Package(
         .package(url: "https://github.com/mtgto/Unrar.swift.git",
                     .upToNextMajor(from: "0.3.16")),
         .package(url: "https://github.com/realm/realm-swift.git",
-                 from: "10.0.0"),
+                 from: "20.0.0"),
     ],
 
     targets: [
