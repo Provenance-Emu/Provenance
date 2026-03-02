@@ -12,7 +12,6 @@ import PVLogging
 /// Displayed when the user taps "Search Database" in the cheats list.
 /// Allows filtering the local cheat database by the current game's MD5 or
 /// title and selecting codes to import.
-/// title and selecting codes to import.
 final class PVCheatSearchViewController: UIViewController {
 
     // MARK: - Properties
@@ -25,8 +24,25 @@ final class PVCheatSearchViewController: UIViewController {
     var onImport: ((CheatDatabaseEntry) -> Void)?
 
     private var allResults: [CheatDatabaseEntry] = []
-    private var filteredResults: [CheatDatabaseEntry] = []
+    private var filterText: String = ""
+
+    /// Filtered view of `allResults`; derived rather than stored to avoid duplication.
+    private var filteredResults: [CheatDatabaseEntry] {
+        guard !filterText.isEmpty else { return allResults }
+        let lower = filterText.lowercased()
+        return allResults.filter {
+            $0.cheatName.lowercased().contains(lower) ||
+            $0.category.lowercased().contains(lower) ||
+            $0.deviceName.lowercased().contains(lower)
+        }
+    }
+
     private var isLoading = false
+    private var loadingTask: Task<Void, Never>?
+
+    // Debounce timer for search-bar input
+    private var filterDebounceTimer: Timer?
+    private let filterDebounceInterval: TimeInterval = 0.3
 
     // MARK: - UI
 
@@ -88,6 +104,11 @@ final class PVCheatSearchViewController: UIViewController {
         loadCheats()
     }
 
+    deinit {
+        loadingTask?.cancel()
+        filterDebounceTimer?.invalidate()
+    }
+
     // MARK: - Layout
 
     private func setupLayout() {
@@ -117,11 +138,15 @@ final class PVCheatSearchViewController: UIViewController {
     // MARK: - Data Loading
 
     private func loadCheats() {
+        guard !isLoading else { return }
         isLoading = true
         activityIndicator.startAnimating()
         emptyLabel.isHidden = true
 
-        Task {
+        // Cancel any in-flight task before starting a new one.
+        loadingTask?.cancel()
+        loadingTask = Task { [weak self] in
+            guard let self else { return }
             do {
                 var results: [CheatDatabaseEntry] = []
 
@@ -137,15 +162,16 @@ final class PVCheatSearchViewController: UIViewController {
                     DLOG("CheatSearch: \(results.count) results by title '\(title)'")
                 }
 
+                guard !Task.isCancelled else { return }
                 await MainActor.run {
                     self.allResults = results
-                    self.filteredResults = results
                     self.isLoading = false
                     self.activityIndicator.stopAnimating()
                     self.emptyLabel.isHidden = !results.isEmpty
                     self.tableView.reloadData()
                 }
             } catch {
+                guard !Task.isCancelled else { return }
                 ELOG("CheatSearch error: \(error.localizedDescription)")
                 await MainActor.run {
                     self.isLoading = false
@@ -160,16 +186,7 @@ final class PVCheatSearchViewController: UIViewController {
     // MARK: - Filtering
 
     private func applyFilter(_ text: String) {
-        if text.isEmpty {
-            filteredResults = allResults
-        } else {
-            let lower = text.lowercased()
-            filteredResults = allResults.filter {
-                $0.cheatName.lowercased().contains(lower) ||
-                $0.category.lowercased().contains(lower) ||
-                $0.deviceName.lowercased().contains(lower)
-            }
-        }
+        filterText = text
         tableView.reloadData()
         emptyLabel.isHidden = !filteredResults.isEmpty
     }
@@ -216,10 +233,16 @@ extension PVCheatSearchViewController: UITableViewDelegate {
 
 extension PVCheatSearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        applyFilter(searchText)
+        // Debounce rapid keystrokes to avoid per-keystroke table reloads.
+        filterDebounceTimer?.invalidate()
+        filterDebounceTimer = Timer.scheduledTimer(withTimeInterval: filterDebounceInterval, repeats: false) { [weak self] _ in
+            self?.applyFilter(searchText)
+        }
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        filterDebounceTimer?.invalidate()
+        applyFilter(searchBar.text ?? "")
         searchBar.resignFirstResponder()
     }
 }

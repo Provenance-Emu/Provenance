@@ -17,6 +17,9 @@ public actor CheatDatabase {
 
     private var connection: SQLite.Connection?
 
+    /// Lazily resolved bundle URL, computed once at load time.
+    private static let databaseURL: URL? = Bundle.module.url(forResource: "cheatbase", withExtension: "sqlite")
+
     private init() {}
 
     // MARK: - Setup
@@ -26,7 +29,7 @@ public actor CheatDatabase {
         if let existing = connection {
             return existing
         }
-        guard let dbURL = Bundle.module.url(forResource: "cheatbase", withExtension: "sqlite") else {
+        guard let dbURL = Self.databaseURL else {
             ELOG("CheatDatabase: cheatbase.sqlite not found in bundle")
             throw CheatDatabaseError.databaseNotFound
         }
@@ -44,12 +47,7 @@ public actor CheatDatabase {
     /// - Returns: Array of matching cheat entries, empty if none found.
     public func searchCheats(byMD5 md5: String) throws -> [CheatDatabaseEntry] {
         let conn = try connect()
-        let query = Self.baseQuery + """
-
-            WHERE LOWER(r.romHashMD5) = LOWER(?)
-            ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
-            """
-        return try executeQuery(query, on: conn, binding: md5.uppercased())
+        return try executeQuery(Self.queryByMD5, on: conn, binding: md5)
     }
 
     /// Search for cheat codes by game title (case-insensitive fuzzy match).
@@ -60,24 +58,17 @@ public actor CheatDatabase {
     /// - Returns: Array of matching cheat entries.
     public func searchCheats(byTitle title: String, limit: Int = 200) throws -> [CheatDatabaseEntry] {
         let conn = try connect()
-        let escapedTitle = title
+        let pattern = "%" + title
             .replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "%", with: "\\%")
-            .replacingOccurrences(of: "_", with: "\\_")
-        let pattern = "%\(escapedTitle)%"
-        // LIMIT uses the Swift Int directly (not user-supplied raw string), safe to interpolate.
-        let query = Self.baseQuery + """
-
-            WHERE rel.releaseTitleName LIKE ? ESCAPE '\\' COLLATE NOCASE
-            ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
-            LIMIT \(limit)
-            """
+            .replacingOccurrences(of: "_", with: "\\_") + "%"
+        let query = Self.queryByTitleBase + " LIMIT \(limit)"
         return try executeQuery(query, on: conn, binding: pattern)
     }
 
-    // MARK: - Private Helpers
+    // MARK: - Private Queries
 
-    private static let baseQuery = """
+    private static let selectClause = """
         SELECT
             c.cheatID,
             c.cheatName,
@@ -94,22 +85,39 @@ public actor CheatDatabase {
         JOIN CHEAT_CATEGORIES cc ON c.cheatCategoryID = cc.cheatCategoryID
         """
 
+    private static let queryByMD5 = selectClause + """
+
+        WHERE LOWER(r.romHashMD5) = LOWER(?)
+        ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
+        """
+
+    /// Base query for title search — caller appends " LIMIT N".
+    private static let queryByTitleBase = selectClause + """
+
+        WHERE rel.releaseTitleName LIKE ? ESCAPE '\\' COLLATE NOCASE
+        ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
+        """
+
+    // MARK: - Private Helpers
+
     /// Executes a parameterized query with a single bound string value.
     private func executeQuery(_ query: String, on conn: SQLite.Connection, binding: String) throws -> [CheatDatabaseEntry] {
-        var results: [CheatDatabaseEntry] = []
         // conn.prepare(_:_:) binds the parameter safely, preventing SQL injection.
         let stmt = try conn.prepare(query, binding)
+        var results: [CheatDatabaseEntry] = []
         for row in stmt {
             guard
                 let cheatID    = row[0] as? Int64,
                 let cheatName  = row[1] as? String,
                 let cheatCode  = row[2] as? String,
+                // row[3] is optional cheatDescription
                 let deviceName = row[4] as? String,
+                // row[5] is optional cheatDeviceFormat
                 let category   = row[6] as? String,
                 let romTitle   = row[7] as? String
             else { continue }
 
-            let entry = CheatDatabaseEntry(
+            results.append(CheatDatabaseEntry(
                 id: Int(cheatID),
                 cheatName: cheatName,
                 cheatCode: cheatCode,
@@ -118,8 +126,7 @@ public actor CheatDatabase {
                 deviceFormat: row[5] as? String,
                 category: category,
                 romTitle: romTitle
-            )
-            results.append(entry)
+            ))
         }
         return results
     }
@@ -129,14 +136,11 @@ public actor CheatDatabase {
 
 public enum CheatDatabaseError: Error, LocalizedError {
     case databaseNotFound
-    case queryFailed(Error)
 
     public var errorDescription: String? {
         switch self {
         case .databaseNotFound:
             return "The cheat code database could not be found in the app bundle."
-        case .queryFailed(let error):
-            return "Cheat database query failed: \(error.localizedDescription)"
         }
     }
 }
