@@ -39,61 +39,62 @@ public actor CheatDatabase {
     // MARK: - Public Search API
 
     /// Search for cheat codes by exact ROM MD5 hash.
+    /// Uses a parameterized query to prevent SQL injection.
     /// - Parameter md5: The MD5 hash of the ROM file (case-insensitive).
     /// - Returns: Array of matching cheat entries, empty if none found.
     public func searchCheats(byMD5 md5: String) throws -> [CheatDatabaseEntry] {
         let conn = try connect()
-        let sanitized = md5.uppercased().replacingOccurrences(of: "'", with: "''")
-        let query = Self.cheatsQuery(where: "LOWER(r.romHashMD5) = LOWER('\(sanitized)')")
-        return try executeQuery(query, on: conn)
+        let query = Self.baseQuery + """
+
+            WHERE LOWER(r.romHashMD5) = LOWER(?)
+            ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
+            """
+        return try executeQuery(query, on: conn, binding: md5.uppercased())
     }
 
     /// Search for cheat codes by game title (case-insensitive fuzzy match).
+    /// Uses a parameterized query to prevent SQL injection.
     /// - Parameters:
     ///   - title: The game title to search for.
     ///   - limit: Maximum number of results to return (default: 200).
     /// - Returns: Array of matching cheat entries.
     public func searchCheats(byTitle title: String, limit: Int = 200) throws -> [CheatDatabaseEntry] {
         let conn = try connect()
-        let sanitized = title.replacingOccurrences(of: "'", with: "''")
-        let pattern = "%\(sanitized)%"
-        let query = Self.cheatsQuery(
-            where: "rel.releaseTitleName LIKE '\(pattern)' COLLATE NOCASE",
-            limit: limit
-        )
-        return try executeQuery(query, on: conn)
+        let pattern = "%\(title)%"
+        // LIMIT uses the Swift Int directly (not user-supplied raw string), safe to interpolate.
+        let query = Self.baseQuery + """
+
+            WHERE rel.releaseTitleName LIKE ? COLLATE NOCASE
+            ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
+            LIMIT \(limit)
+            """
+        return try executeQuery(query, on: conn, binding: pattern)
     }
 
     // MARK: - Private Helpers
 
-    private static func cheatsQuery(where predicate: String, limit: Int? = nil) -> String {
-        var q = """
-            SELECT
-                c.cheatID,
-                c.cheatName,
-                c.cheatCode,
-                c.cheatDescription,
-                cd.cheatDeviceName,
-                cd.cheatDeviceFormat,
-                cc.cheatCategory,
-                rel.releaseTitleName
-            FROM CHEATS c
-            JOIN ROMS r         ON c.romID          = r.romID
-            JOIN RELEASES rel   ON r.romID           = rel.romID
-            JOIN CHEAT_DEVICES cd ON c.cheatDeviceID = cd.cheatDeviceID
-            JOIN CHEAT_CATEGORIES cc ON c.cheatCategoryID = cc.cheatCategoryID
-            WHERE \(predicate)
-            ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
-            """
-        if let limit = limit {
-            q += "\n            LIMIT \(limit)"
-        }
-        return q
-    }
+    private static let baseQuery = """
+        SELECT
+            c.cheatID,
+            c.cheatName,
+            c.cheatCode,
+            c.cheatDescription,
+            cd.cheatDeviceName,
+            cd.cheatDeviceFormat,
+            cc.cheatCategory,
+            rel.releaseTitleName
+        FROM CHEATS c
+        JOIN ROMS r           ON c.romID          = r.romID
+        JOIN RELEASES rel     ON r.romID           = rel.romID
+        JOIN CHEAT_DEVICES cd ON c.cheatDeviceID   = cd.cheatDeviceID
+        JOIN CHEAT_CATEGORIES cc ON c.cheatCategoryID = cc.cheatCategoryID
+        """
 
-    private func executeQuery(_ query: String, on conn: SQLite.Connection) throws -> [CheatDatabaseEntry] {
+    /// Executes a parameterized query with a single bound string value.
+    private func executeQuery(_ query: String, on conn: SQLite.Connection, binding: String) throws -> [CheatDatabaseEntry] {
         var results: [CheatDatabaseEntry] = []
-        let stmt = try conn.prepare(query)
+        // conn.prepare(_:_:) binds the parameter safely, preventing SQL injection.
+        let stmt = try conn.prepare(query, binding)
         for row in stmt {
             guard
                 let cheatID    = row[0] as? Int64,

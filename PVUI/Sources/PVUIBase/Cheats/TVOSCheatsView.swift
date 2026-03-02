@@ -95,7 +95,7 @@ public struct TVOSCheatsView: View {
         .sheet(isPresented: $showingAddCheat) {
             TVOSAddCheatView(
                 cheatTypes: cheatTypes,
-                cheatIndex: UInt8(allCheats.count),
+                cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
                 onSave: { code, type, codeType, index, enabled in
                     onSaveCheat(code, type, codeType, index, enabled)
                     loadCheats()
@@ -107,7 +107,7 @@ public struct TVOSCheatsView: View {
                 gameMD5: gameMD5,
                 gameTitle: gameTitle,
                 cheatTypes: cheatTypes,
-                cheatIndex: UInt8(allCheats.count),
+                cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
                 onImport: { code, name, deviceName, index, enabled in
                     onSaveCheat(code, name, deviceName, index, enabled)
                     loadCheats()
@@ -230,7 +230,7 @@ public struct TVOSCheatsView: View {
                 ForEach(Array(allCheats.enumerated()), id: \.element.id) { index, cheat in
                     CheatRowView(
                         cheat: cheat,
-                        index: UInt8(index),
+                        index: UInt8(min(index, Int(UInt8.max))),
                         accentColor: accentColor,
                         onToggle: { toggleCheat(cheat, at: index) },
                         onDelete: {
@@ -263,7 +263,7 @@ public struct TVOSCheatsView: View {
             try realm.write {
                 cheat.enabled.toggle()
             }
-            onUpdateCheat(cheat, UInt8(index))
+            onUpdateCheat(cheat, UInt8(min(index, Int(UInt8.max))))
             loadCheats()
         } catch {
             ELOG("Error toggling cheat: \(error)")

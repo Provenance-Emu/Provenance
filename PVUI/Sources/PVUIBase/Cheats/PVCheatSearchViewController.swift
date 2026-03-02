@@ -183,7 +183,9 @@ extension PVCheatSearchViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: PVCheatSearchCell.reuseID, for: indexPath) as! PVCheatSearchCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PVCheatSearchCell.reuseID, for: indexPath) as? PVCheatSearchCell else {
+            return UITableViewCell()
+        }
         cell.configure(with: filteredResults[indexPath.row])
         return cell
     }
