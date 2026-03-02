@@ -201,6 +201,7 @@ public struct FreeROMsView: View {
                 #endif
                 ForEach(filteredSystems, id: \.id) { system in
                     VStack(spacing: 0) {
+                        systemHeaderButton(for: system)
                         if expandedSystems.contains(system.id) {
                             ForEach(filteredROMs(system.roms)) { rom in
                                 ROMRowView(rom: rom,
@@ -209,7 +210,6 @@ public struct FreeROMsView: View {
                                            onDownloaded: onROMDownloaded)
                             }
                         }
-                        systemHeaderButton(for: system)
                     }
                 }
             }
@@ -343,15 +343,112 @@ public struct FreeROMsView: View {
     }
     #endif
 
-    /// System header button with retrowave styling and proper tvOS focus support
+    /// Shared background for system header cards
+    private func systemHeaderBackground(isFocused: Bool, systemId: String) -> some View {
+        RoundedRectangle(cornerRadius: 10)
+            .fill(Color.black.opacity(0.7))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(
+                        LinearGradient(
+                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: isFocused ? 3.0 : (selectedSystemId == systemId ? 2.0 : 1.0)
+                    )
+                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity),
+                            radius: isFocused ? 8 : (selectedSystemId == systemId ? 5 : 2),
+                            x: 0, y: 0)
+            )
+    }
+
+    /// System header with retrowave styling and proper tvOS focus support
     @ViewBuilder
     private func systemHeaderButton(for system: (id: String, name: String, roms: [ROM])) -> some View {
         #if os(tvOS)
-        let isFocused = focusedSystemId == system.id
+        tvSystemHeader(for: system)
         #else
-        let isFocused = false
+        iosSystemHeader(for: system)
         #endif
+    }
 
+    #if os(tvOS)
+    /// tvOS: separate focusable buttons for expand/collapse and download all
+    @FocusState private var focusedHeaderAction: String?
+
+    private func tvSystemHeader(for system: (id: String, name: String, roms: [ROM])) -> some View {
+        HStack(spacing: 0) {
+            Button {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    if expandedSystems.contains(system.id) {
+                        expandedSystems.remove(system.id)
+                    } else {
+                        expandedSystems.insert(system.id)
+                    }
+                }
+            } label: {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(system.name)
+                            .font(.system(size: systemNameFontSize, weight: .bold))
+                            .foregroundColor(.white)
+                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2)
+
+                        Text("\(system.roms.count) ROMs")
+                            .font(.system(size: systemRomCountFontSize))
+                            .foregroundColor(RetroTheme.retroPurple)
+                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: expandedSystems.contains(system.id) ? "chevron.up" : "chevron.down")
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .font(.system(size: chevronIconSize, weight: .bold))
+                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2)
+                }
+                .padding(.vertical, headerVerticalPadding)
+                .padding(.horizontal, headerHorizontalPadding)
+                .background(systemHeaderBackground(isFocused: focusedSystemId == system.id, systemId: system.id))
+            }
+            .buttonStyle(TVMediaCardButtonStyle())
+            .tvOSDisableFocusEffect()
+            .focused($focusedSystemId, equals: system.id)
+            .scaleEffect(focusedSystemId == system.id ? 1.03 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.75), value: focusedSystemId == system.id)
+
+            Button {
+                downloadAllROMs(for: system)
+            } label: {
+                Image(systemName: "arrow.down.circle.fill")
+                    .foregroundColor(RetroTheme.retroPink)
+                    .font(.system(size: downloadAllIconSize))
+                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 2)
+                    .padding(.vertical, headerVerticalPadding)
+                    .padding(.horizontal, 20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.black.opacity(0.7))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .strokeBorder(RetroTheme.retroPink.opacity(0.6), lineWidth: focusedHeaderAction == "dl-\(system.id)" ? 2.5 : 1.0)
+                                    .shadow(color: RetroTheme.retroPink.opacity(focusedHeaderAction == "dl-\(system.id)" ? glowOpacity : 0.2), radius: focusedHeaderAction == "dl-\(system.id)" ? 6 : 1)
+                            )
+                    )
+            }
+            .buttonStyle(TVMediaCardButtonStyle())
+            .tvOSDisableFocusEffect()
+            .focused($focusedHeaderAction, equals: "dl-\(system.id)")
+            .scaleEffect(focusedHeaderAction == "dl-\(system.id)" ? 1.1 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.75), value: focusedHeaderAction == "dl-\(system.id)")
+            .padding(.leading, 8)
+        }
+    }
+    #endif
+
+    /// iOS: single button wrapping the entire header with nested download button
+    private func iosSystemHeader(for system: (id: String, name: String, roms: [ROM])) -> some View {
         Button(action: {
             #if !os(tvOS)
             Haptics.impact(style: .rigid)
@@ -397,35 +494,9 @@ public struct FreeROMsView: View {
             }
             .padding(.vertical, headerVerticalPadding)
             .padding(.horizontal, headerHorizontalPadding)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.black.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
-                                lineWidth: isFocused ? 3.0 : (selectedSystemId == system.id ? 2.0 : 1.0)
-                            )
-                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity),
-                                    radius: isFocused ? 8 : (selectedSystemId == system.id ? 5 : 2),
-                                    x: 0,
-                                    y: 0)
-                    )
-            )
+            .background(systemHeaderBackground(isFocused: false, systemId: system.id))
         }
-        #if os(tvOS)
-        .buttonStyle(TVMediaCardButtonStyle())
-        .tvOSDisableFocusEffect()
-        .focused($focusedSystemId, equals: system.id)
-        .scaleEffect(isFocused ? 1.03 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.75), value: isFocused)
-        #else
         .buttonStyle(PlainButtonStyle())
-        #endif
     }
 
     private var emptyView: some View {
@@ -617,7 +688,8 @@ struct ROMRowView: View {
         #endif
     }
 
-    var body: some View {
+    /// Row content shared by both platforms
+    private var rowContent: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black.opacity(0.7))
@@ -652,40 +724,8 @@ struct ROMRowView: View {
                 Spacer()
 
                 if let artwork = rom.artwork {
-                    HStack(spacing: 10) {
-                        if let coverPath = artwork.cover,
-                           let coverURL = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(coverPath)") {
-                            ArtworkThumbnail(url: coverURL) {
-#if !os(tvOS)
-                                Haptics.impact(style: .light)
-#endif
-                                selectedArtwork = coverURL
-                            }
-                            .transition(.scale.combined(with: .opacity))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .stroke(RetroTheme.retroBlue, lineWidth: 1)
-                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
-                            )
-                        }
-
-                        if let screenshotPath = artwork.screenshot,
-                           let screenshotURL = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(screenshotPath)") {
-                            ArtworkThumbnail(url: screenshotURL) {
-#if !os(tvOS)
-                                Haptics.impact(style: .light)
-#endif
-                                selectedArtwork = screenshotURL
-                            }
-                            .transition(.scale.combined(with: .opacity))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .stroke(RetroTheme.retroBlue, lineWidth: 1)
-                                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
-                            )
-                        }
-                    }
-                    .padding(.trailing, 12)
+                    artworkThumbnails(artwork: artwork)
+                        .padding(.trailing, 12)
                 }
 
                 DownloadButton(rom: rom,
@@ -698,20 +738,58 @@ struct ROMRowView: View {
             .padding(.horizontal, 16)
         }
         .frame(height: rowHeight)
-        .padding(.vertical, 4)
-        .padding(.horizontal, 4)
+    }
+
+    private func artworkThumbnails(artwork: ROMArtwork) -> some View {
+        HStack(spacing: 10) {
+            if let coverPath = artwork.cover,
+               let coverURL = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(coverPath)") {
+                ArtworkThumbnail(url: coverURL) {
+#if !os(tvOS)
+                    Haptics.impact(style: .light)
+#endif
+                    selectedArtwork = coverURL
+                }
+                .transition(.scale.combined(with: .opacity))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(RetroTheme.retroBlue, lineWidth: 1)
+                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                )
+            }
+
+            if let screenshotPath = artwork.screenshot,
+               let screenshotURL = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(screenshotPath)") {
+                ArtworkThumbnail(url: screenshotURL) {
+#if !os(tvOS)
+                    Haptics.impact(style: .light)
+#endif
+                    selectedArtwork = screenshotURL
+                }
+                .transition(.scale.combined(with: .opacity))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(RetroTheme.retroBlue, lineWidth: 1)
+                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
+                )
+            }
+        }
+    }
+
+    var body: some View {
         #if os(tvOS)
-        .focusable(true)
+        Button {
+            startDownload()
+        } label: {
+            rowContent
+        }
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
         .focused($isFocused)
         .scaleEffect(isFocused ? 1.03 : 1.0)
         .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
-        #else
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isHovered = hovering
-            }
-        }
-        #endif
+        .padding(.vertical, 4)
+        .padding(.horizontal, 4)
         .onAppear {
             withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 1.0
@@ -720,6 +798,33 @@ struct ROMRowView: View {
         .fullScreenCover(item: $selectedArtwork) { url in
             ArtworkFullscreenView(imageURL: url)
         }
+        #else
+        rowContent
+        .padding(.vertical, 4)
+        .padding(.horizontal, 4)
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovered = hovering
+            }
+        }
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowOpacity = 1.0
+            }
+        }
+        .fullScreenCover(item: $selectedArtwork) { url in
+            ArtworkFullscreenView(imageURL: url)
+        }
+        #endif
+    }
+
+    private func startDownload() {
+        guard downloadManager.activeDownloads[rom.id] == nil else { return }
+        guard let url = URL(string: "https://data.provenance-emu.com/ROMs/\(systemId)/\(rom.file)") else {
+            downloadManager.setError(.invalidURL, for: rom.id)
+            return
+        }
+        downloadManager.download(rom: rom, from: url) { _ in }
     }
 }
 
@@ -749,6 +854,11 @@ struct DownloadButton: View {
         Group {
             if let status = downloadManager.activeDownloads[rom.id] {
                 switch status {
+                case .queued:
+                    Image(systemName: "clock.fill")
+                        .foregroundColor(RetroTheme.retroPurple)
+                        .font(.system(size: iconSize, weight: .bold))
+                        .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 case .downloading(let progress):
                     VStack(spacing: 2) {
                         ProgressView()
@@ -789,15 +899,18 @@ struct DownloadButton: View {
                     }
                 }
             } else {
+                #if os(tvOS)
+                Image(systemName: "arrow.down.circle.fill")
+                    .foregroundColor(RetroTheme.retroPink)
+                    .font(.system(size: iconSize, weight: .bold))
+                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                #else
                 Button(action: startDownload) {
                     Image(systemName: "arrow.down.circle.fill")
                         .foregroundColor(RetroTheme.retroPink)
                         .font(.system(size: iconSize, weight: .bold))
                         .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 }
-                #if os(tvOS)
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
                 #endif
             }
         }

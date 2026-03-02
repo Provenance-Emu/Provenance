@@ -1,24 +1,19 @@
 import Foundation
 import PVLogging
 
-/// Manages concurrent downloads of ROMs
+/// Manages concurrent ROM downloads with a bounded queue
 class ROMDownloadManager: ObservableObject {
     /// Maximum number of concurrent downloads
-    private let maxConcurrentDownloads = 3
+    private let maxConcurrent = 3
 
-    /// Active downloads
     @Published private(set) var activeDownloads: [String: DownloadStatus] = [:]
 
-    /// Queue of pending downloads
-    private var pendingDownloads: [(ROM, URL, (Result<URL, Error>) -> Void)] = []
-
-    /// Semaphore to control concurrent downloads
-    private let semaphore = DispatchSemaphore(value: 3)
-
-    /// Queue for managing download operations
-    private let downloadQueue = DispatchQueue(label: "com.provenance.downloads", qos: .userInitiated)
+    private var runningCount = 0
+    private var queue: [(rom: ROM, url: URL, onComplete: (Result<URL, Error>) -> Void)] = []
+    private var observations: [String: NSKeyValueObservation] = [:]
 
     enum DownloadStatus {
+        case queued
         case downloading(progress: Double)
         case completed(localURL: URL)
         case failed(error: DownloadError)
@@ -44,105 +39,100 @@ class ROMDownloadManager: ObservableObject {
         }
     }
 
-    private var observations = Set<NSKeyValueObservation>()
-
-    /// Start downloading a ROM
+    /// Enqueue a ROM for download
     func download(rom: ROM, from url: URL, completion: @escaping (Result<URL, Error>) -> Void) {
         guard activeDownloads[rom.id] == nil else { return }
 
-        downloadQueue.async { [weak self] in
-            guard let self = self else { return }
+        activeDownloads[rom.id] = .queued
+        queue.append((rom: rom, url: url, onComplete: completion))
+        drainQueue()
+    }
 
-            // Wait for a semaphore slot
-            self.semaphore.wait()
-
-            DispatchQueue.main.async {
-                self.activeDownloads[rom.id] = .downloading(progress: 0.0)
-            }
-
-            self.startDownload(rom: rom, from: url) { result in
-                // Signal semaphore after download completes
-                self.semaphore.signal()
-
-                DispatchQueue.main.async {
-                    // Process next download if any
-                    if !self.pendingDownloads.isEmpty {
-                        let next = self.pendingDownloads.removeFirst()
-                        self.download(rom: next.0, from: next.1, completion: next.2)
-                    }
-                }
-
-                completion(result)
-            }
+    /// Start queued downloads up to the concurrency limit
+    private func drainQueue() {
+        while runningCount < maxConcurrent, !queue.isEmpty {
+            let item = queue.removeFirst()
+            runningCount += 1
+            startDownload(rom: item.rom, from: item.url, completion: item.onComplete)
         }
+    }
+
+    private func downloadDidFinish() {
+        runningCount -= 1
+        drainQueue()
     }
 
     private func startDownload(rom: ROM, from url: URL, completion: @escaping (Result<URL, Error>) -> Void) {
         DLOG("Starting download of \(rom.id) at \(url.absoluteString)")
+
+        activeDownloads[rom.id] = .downloading(progress: 0.0)
 
         let downloadTask = URLSession.shared.downloadTask(with: url) { [weak self] tempURL, response, error in
             guard let self = self else { return }
 
             if let error = error {
                 DispatchQueue.main.async {
+                    self.observations.removeValue(forKey: rom.id)
                     self.activeDownloads[rom.id] = .failed(error: .networkError(error))
+                    completion(.failure(error))
+                    self.downloadDidFinish()
                 }
-                completion(.failure(error))
                 return
             }
 
             if let httpResponse = response as? HTTPURLResponse,
                !(200...299).contains(httpResponse.statusCode) {
-                let error = DownloadStatus.DownloadError.invalidResponse(httpResponse.statusCode)
+                let dlError = DownloadStatus.DownloadError.invalidResponse(httpResponse.statusCode)
                 DispatchQueue.main.async {
-                    self.activeDownloads[rom.id] = .failed(error: error)
+                    self.observations.removeValue(forKey: rom.id)
+                    self.activeDownloads[rom.id] = .failed(error: dlError)
+                    completion(.failure(dlError))
+                    self.downloadDidFinish()
                 }
-                completion(.failure(error))
                 return
             }
 
             guard let tempURL = tempURL else {
                 DispatchQueue.main.async {
+                    self.observations.removeValue(forKey: rom.id)
                     self.activeDownloads[rom.id] = .failed(error: .noData)
+                    completion(.failure(DownloadStatus.DownloadError.noData))
+                    self.downloadDidFinish()
                 }
-                completion(.failure(DownloadStatus.DownloadError.noData))
                 return
             }
 
-            // Create a new temporary URL with the correct filename
-            let tempDir = FileManager.default.temporaryDirectory
-            let destinationURL = tempDir.appendingPathComponent(rom.file)
+            // Move file immediately -- tempURL is only valid for the duration of this callback
+            let destinationURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString + "_" + rom.file)
 
             do {
-                if FileManager.default.fileExists(atPath: destinationURL.path) {
-                    try FileManager.default.removeItem(at: destinationURL)
-                }
-
                 try FileManager.default.moveItem(at: tempURL, to: destinationURL)
 
                 DispatchQueue.main.async {
+                    self.observations.removeValue(forKey: rom.id)
                     self.activeDownloads[rom.id] = .completed(localURL: destinationURL)
+                    completion(.success(destinationURL))
+                    self.downloadDidFinish()
                 }
-                completion(.success(destinationURL))
             } catch {
                 DispatchQueue.main.async {
+                    self.observations.removeValue(forKey: rom.id)
                     self.activeDownloads[rom.id] = .failed(error: .networkError(error))
+                    completion(.failure(error))
+                    self.downloadDidFinish()
                 }
-                completion(.failure(error))
             }
         }
 
-        // Observe download progress
-        let observation = downloadTask.progress.observe(
-            \.fractionCompleted,
-            options: [.new],
-            changeHandler: { [weak self] (progress: Progress, _) in
-                DispatchQueue.main.async {
+        let observation = downloadTask.progress.observe(\.fractionCompleted, options: [.new]) { [weak self] progress, _ in
+            DispatchQueue.main.async {
+                if case .downloading = self?.activeDownloads[rom.id] {
                     self?.activeDownloads[rom.id] = .downloading(progress: progress.fractionCompleted)
                 }
             }
-        )
-        observations.insert(observation)
+        }
+        observations[rom.id] = observation
 
         downloadTask.resume()
     }
