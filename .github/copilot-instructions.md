@@ -47,7 +47,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVSettings** — User preferences
 - **PVCoreAudio / PVAudio** — Audio engine and playback
 - **PVSupport** — Shared utilities
-- **PVLogging** — Logging infrastructure (CocoaLumberjack-based)
+- **PVLogging** — Logging infrastructure (OSLog-based; use `DLOG`/`ILOG`/`ELOG`/`WLOG`)
 - **PVPrimitives** — Base data types shared across modules
 - **PVCheevos** — RetroAchievements integration
 - **PVHashing** — ROM file hashing for identification
@@ -104,6 +104,71 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - All controller types must be handled: Extended, Micro, Keyboard
 - Button mappings must match upstream emulator constants
 - Never modify upstream submodule source in `Cores/<name>/<upstream-dir>/`
+
+## Common Patterns
+
+### Logging
+Use PVLogging functions — never `print` or `NSLog`:
+```swift
+import PVLogging
+DLOG("Debug: \(value)")    // Debug builds only
+ILOG("Info: \(message)")   // Info
+WLOG("Warning: \(msg)")    // Warning
+ELOG("Error: \(error)")    // Error
+VLOG("Verbose detail")     // Debug builds only (verbose)
+```
+
+### Realm Threading
+Realm objects are thread-confined — never pass them across threads:
+```swift
+// Wrong — crashes across threads:
+let game = realm.objects(PVGame.self).first!
+Task.detached { _ = game.title } // CRASH
+
+// Right — pass primary key and re-fetch on new thread:
+let gameID = game.id
+Task.detached {
+    let realm = try await Realm()
+    let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID)
+}
+
+// Or freeze for read-only cross-thread access:
+let frozenGame = game.freeze()
+```
+
+### Feature Flags
+Gate new features behind `PVFeatureFlags` (Tier 0, importable anywhere):
+```swift
+import PVFeatureFlags
+
+// Check at runtime (PVFeatureFlags is @MainActor):
+if await PVFeatureFlags.shared.isEnabled(.myFeature) { ... }
+
+// In SwiftUI views via environment:
+@Environment(\.featureFlags) var featureFlags
+if featureFlags.myFeature { ... }
+```
+
+### Actor Isolation
+UI updates must happen on the main actor:
+```swift
+@MainActor
+class MyViewModel: ObservableObject { ... }
+
+// From an async context:
+Task { @MainActor in
+    self.isLoading = false
+}
+```
+
+### Platform-Specific Code
+```swift
+#if os(tvOS)
+    // tvOS: no touch input; use Focus Engine and game controllers as primary input
+#elseif os(iOS)
+    // iOS: touch gestures + game controllers
+#endif
+```
 
 ## Important Conventions
 
