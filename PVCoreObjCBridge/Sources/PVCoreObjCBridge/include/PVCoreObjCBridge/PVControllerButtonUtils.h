@@ -178,9 +178,7 @@ PVResolveStartSelectShareButtons(GCController * _Nonnull controller,
         *outStart = gamepad.buttonMenu;
 
         // Prefer touchpad for Select (most ergonomic on PS4/PS5 for NES-era games)
-        if (@available(iOS 14.0, tvOS 14.0, *)) {
-            *outSelect = PVTouchpadButtonForController(controller);
-        }
+        *outSelect = PVTouchpadButtonForController(controller);
         // Fall back to logical Share/Create (buttonOptions)
         if (!*outSelect) {
             *outSelect = gamepad.buttonOptions;
