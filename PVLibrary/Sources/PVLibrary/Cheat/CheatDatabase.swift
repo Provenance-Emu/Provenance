@@ -60,11 +60,15 @@ public actor CheatDatabase {
     /// - Returns: Array of matching cheat entries.
     public func searchCheats(byTitle title: String, limit: Int = 200) throws -> [CheatDatabaseEntry] {
         let conn = try connect()
-        let pattern = "%\(title)%"
+        let escapedTitle = title
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "%", with: "\\%")
+            .replacingOccurrences(of: "_", with: "\\_")
+        let pattern = "%\(escapedTitle)%"
         // LIMIT uses the Swift Int directly (not user-supplied raw string), safe to interpolate.
         let query = Self.baseQuery + """
 
-            WHERE rel.releaseTitleName LIKE ? COLLATE NOCASE
+            WHERE rel.releaseTitleName LIKE ? ESCAPE '\\' COLLATE NOCASE
             ORDER BY rel.releaseTitleName, cc.cheatCategory, c.cheatName
             LIMIT \(limit)
             """
