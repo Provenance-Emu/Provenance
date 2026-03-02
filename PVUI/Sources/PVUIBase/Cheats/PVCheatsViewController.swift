@@ -27,6 +27,10 @@ final class PVCheatsViewController: UITableViewController {
     var screenshot: UIImage?
 
     var coreID: String?
+    /// The game for which cheats are being managed; used for database auto-lookup.
+    var gameMD5: String?
+    /// The title of the game for which cheats are being managed; used for database auto-lookup.
+    var gameTitle: String?
 
     private var allCheats: Results<PVCheats>?
 
@@ -45,6 +49,19 @@ final class PVCheatsViewController: UITableViewController {
         
         // Add retrowave grid background
         RetroWaveGridBackground.createGridBackground(for: view, gridColor: .retroPurple.withAlphaComponent(0.3))
+
+        // Search Database button (right side of nav bar)
+        #if os(iOS)
+        let searchButton = UIBarButtonItem(
+            image: UIImage(systemName: "magnifyingglass"),
+            style: .plain,
+            target: self,
+            action: #selector(searchDatabaseTapped)
+        )
+        searchButton.tintColor = .retroBlue
+        navigationItem.rightBarButtonItem = searchButton
+        #endif
+
         var isFirstLoad: Bool=true
         if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
             isFirstLoad=emulatorViewController.getIsFirstLoad()
@@ -182,6 +199,31 @@ final class PVCheatsViewController: UITableViewController {
         guard let delegate = delegate else { return [] }
         return delegate.getCheatTypes()
     }
+
+    // MARK: - Cheat Database Search
+
+    #if os(iOS)
+    @objc private func searchDatabaseTapped() {
+        let searchVC = PVCheatSearchViewController()
+        searchVC.gameMD5 = gameMD5
+        searchVC.gameTitle = gameTitle
+        searchVC.onImport = { [weak self] entry in
+            self?.importCheatEntry(entry)
+        }
+        navigationController?.pushViewController(searchVC, animated: true)
+    }
+
+    private func importCheatEntry(_ entry: CheatDatabaseEntry) {
+        let cheatIndex = UInt8(min(allCheats?.count ?? 0, Int(UInt8.max)))
+        saveCheatCode(
+            code: entry.cheatCode,
+            type: entry.cheatName,
+            codeType: entry.deviceName,
+            cheatIndex: cheatIndex,
+            enabled: true
+        )
+    }
+    #endif
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return allCheats?.count ?? 0

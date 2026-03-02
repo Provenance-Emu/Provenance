@@ -12,7 +12,7 @@
             "description": "Enables the ROM path migration tool."
         },
         "cheatsUseSwiftUI": {
-            "enabled": false,
+            "enabled": true,
             "minVersion": "3.0.5",
             "description": "Use SwiftUI for the cheats interface."
         },

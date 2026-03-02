@@ -22,12 +22,15 @@ public struct TVOSCheatsView: View {
     let cheats: LinkingObjects<PVCheats>
     let coreID: String?
     let cheatTypes: [String]
+    let gameMD5: String?
+    let gameTitle: String?
     let onSaveCheat: (String, String, String, UInt8, Bool) -> Void
     let onUpdateCheat: (PVCheats, UInt8) -> Void
     let onDone: () -> Void
 
     @State private var allCheats: [PVCheats] = []
     @State private var showingAddCheat = false
+    @State private var showingSearchDB = false
     @State private var showingDeleteAlert = false
     @State private var cheatToDelete: PVCheats?
     @FocusState private var focusedCheatId: String?
@@ -44,6 +47,8 @@ public struct TVOSCheatsView: View {
         cheats: LinkingObjects<PVCheats>,
         coreID: String?,
         cheatTypes: [String],
+        gameMD5: String? = nil,
+        gameTitle: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
@@ -51,6 +56,8 @@ public struct TVOSCheatsView: View {
         self.cheats = cheats
         self.coreID = coreID
         self.cheatTypes = cheatTypes
+        self.gameMD5 = gameMD5
+        self.gameTitle = gameTitle
         self.onSaveCheat = onSaveCheat
         self.onUpdateCheat = onUpdateCheat
         self.onDone = onDone
@@ -88,9 +95,21 @@ public struct TVOSCheatsView: View {
         .sheet(isPresented: $showingAddCheat) {
             TVOSAddCheatView(
                 cheatTypes: cheatTypes,
-                cheatIndex: UInt8(allCheats.count),
+                cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
                 onSave: { code, type, codeType, index, enabled in
                     onSaveCheat(code, type, codeType, index, enabled)
+                    loadCheats()
+                }
+            )
+        }
+        .sheet(isPresented: $showingSearchDB) {
+            TVOSCheatSearchView(
+                gameMD5: gameMD5,
+                gameTitle: gameTitle,
+                cheatTypes: cheatTypes,
+                cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
+                onImport: { code, name, deviceName, index, enabled in
+                    onSaveCheat(code, name, deviceName, index, enabled)
                     loadCheats()
                 }
             )
@@ -140,28 +159,49 @@ public struct TVOSCheatsView: View {
 
             Spacer()
 
-            Button(action: {
-                showingAddCheat = true
-            }) {
-                HStack(spacing: 8) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 24, weight: .bold))
-                    Text("ADD")
-                        .font(.system(size: 24, weight: .bold))
+            HStack(spacing: 16) {
+                Button(action: {
+                    showingSearchDB = true
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 24, weight: .bold))
+                        Text("SEARCH")
+                            .font(.system(size: 24, weight: .bold))
+                    }
+                    .foregroundColor(accentColor)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(accentColor, lineWidth: 2)
+                    )
                 }
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(LinearGradient(
-                            colors: [accentColor, accentColor.opacity(0.7)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ))
-                )
+                .buttonStyle(.plain)
+
+                Button(action: {
+                    showingAddCheat = true
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 24, weight: .bold))
+                        Text("ADD")
+                            .font(.system(size: 24, weight: .bold))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LinearGradient(
+                                colors: [accentColor, accentColor.opacity(0.7)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ))
+                    )
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
         .padding(.horizontal, 80)
         .padding(.vertical, 40)
@@ -190,7 +230,7 @@ public struct TVOSCheatsView: View {
                 ForEach(Array(allCheats.enumerated()), id: \.element.id) { index, cheat in
                     CheatRowView(
                         cheat: cheat,
-                        index: UInt8(index),
+                        index: UInt8(min(index, Int(UInt8.max))),
                         accentColor: accentColor,
                         onToggle: { toggleCheat(cheat, at: index) },
                         onDelete: {
@@ -223,7 +263,7 @@ public struct TVOSCheatsView: View {
             try realm.write {
                 cheat.enabled.toggle()
             }
-            onUpdateCheat(cheat, UInt8(index))
+            onUpdateCheat(cheat, UInt8(min(index, Int(UInt8.max))))
             loadCheats()
         } catch {
             ELOG("Error toggling cheat: \(error)")
@@ -516,6 +556,8 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
         cheats: LinkingObjects<PVCheats>,
         coreID: String?,
         cheatTypes: [String],
+        gameMD5: String? = nil,
+        gameTitle: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
@@ -524,6 +566,8 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
             cheats: cheats,
             coreID: coreID,
             cheatTypes: cheatTypes,
+            gameMD5: gameMD5,
+            gameTitle: gameTitle,
             onSaveCheat: onSaveCheat,
             onUpdateCheat: onUpdateCheat,
             onDone: onDone
@@ -535,4 +579,204 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+// MARK: - Cheat Database Search View (tvOS)
+
+/// SwiftUI sheet shown when the user taps "SEARCH" in the cheat codes screen on tvOS.
+struct TVOSCheatSearchView: View {
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    let gameMD5: String?
+    let gameTitle: String?
+    /// Available cheat code types passed through from the parent view.
+    /// Currently unused by the tvOS cheat database search UI, but kept to
+    /// support future code-type selection/filtering when importing cheats
+    /// and to maintain API consistency with other cheat views.
+    let cheatTypes: [String]
+    let cheatIndex: UInt8
+    let onImport: (String, String, String, UInt8, Bool) -> Void
+
+    @State private var results: [CheatDatabaseEntry] = []
+    @State private var isLoading = false
+    @State private var errorMessage: String?
+    @State private var filterText = ""
+    @FocusState private var focusedID: Int?
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor
+    }
+
+    private var backgroundColor: Color {
+        Color(themeManager.currentPalette.gameLibraryBackground)
+    }
+
+    private var filtered: [CheatDatabaseEntry] {
+        guard !filterText.isEmpty else { return results }
+        let lower = filterText.lowercased()
+        return results.filter {
+            $0.cheatName.lowercased().contains(lower) ||
+            $0.category.lowercased().contains(lower) ||
+            $0.deviceName.lowercased().contains(lower)
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            backgroundColor.ignoresSafeArea()
+            RetroGrid(lineSpacing: 30, lineColor: accentColor.opacity(0.1))
+                .opacity(0.3)
+
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    Button(action: { dismiss() }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "xmark")
+                            Text("CLOSE")
+                        }
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(accentColor)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 12)
+                        .background(RoundedRectangle(cornerRadius: 12).stroke(accentColor, lineWidth: 2))
+                    }
+                    .buttonStyle(.plain)
+
+                    Spacer()
+
+                    Text("CHEAT DATABASE")
+                        .font(.system(size: 38, weight: .bold, design: .rounded))
+                        .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                        .shadow(color: accentColor.opacity(0.8), radius: 10)
+
+                    Spacer()
+
+                    // Filter field
+                    TextField("Filter...", text: $filterText)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 22))
+                        .foregroundColor(.white)
+                        .padding(12)
+                        .frame(width: 300)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.black.opacity(0.5))
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(accentColor.opacity(0.4), lineWidth: 2))
+                        )
+                }
+                .padding(.horizontal, 80)
+                .padding(.vertical, 32)
+
+                // Content
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(accentColor)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let error = errorMessage {
+                    Text(error)
+                        .foregroundColor(.red.opacity(0.8))
+                        .font(.system(size: 24))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if filtered.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 60))
+                            .foregroundColor(accentColor.opacity(0.4))
+                        Text("No cheat codes found")
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.6))
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(filtered) { entry in
+                                TVOSCheatSearchRow(
+                                    entry: entry,
+                                    accentColor: accentColor,
+                                    onImport: {
+                                        onImport(entry.cheatCode, entry.cheatName, entry.deviceName, cheatIndex, true)
+                                        dismiss()
+                                    }
+                                )
+                                .focused($focusedID, equals: entry.id)
+                            }
+                        }
+                        .padding(.horizontal, 80)
+                        .padding(.bottom, 40)
+                    }
+                }
+            }
+        }
+        .task { await loadCheats() }
+    }
+
+    private func loadCheats() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            var found: [CheatDatabaseEntry] = []
+            if let md5 = gameMD5, !md5.isEmpty {
+                found = try await CheatDatabase.shared.searchCheats(byMD5: md5)
+            }
+            if found.isEmpty, let title = gameTitle, !title.isEmpty {
+                found = try await CheatDatabase.shared.searchCheats(byTitle: title)
+            }
+            results = found
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+}
+
+private struct TVOSCheatSearchRow: View {
+    let entry: CheatDatabaseEntry
+    let accentColor: Color
+    let onImport: () -> Void
+
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        Button(action: onImport) {
+            HStack(spacing: 24) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(entry.cheatName)
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    Text(entry.cheatCode)
+                        .font(.system(size: 20, weight: .medium, design: .monospaced))
+                        .foregroundColor(accentColor)
+                        .lineLimit(2)
+                    Text("\(entry.deviceName)  ·  \(entry.category)")
+                        .font(.system(size: 18))
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.55))
+                }
+                Spacer()
+                Image(systemName: "arrow.down.circle")
+                    .font(.system(size: 32))
+                    .foregroundColor(accentColor)
+            }
+            .padding(.horizontal, 32)
+            .padding(.vertical, 20)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.black.opacity(0.3))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(isFocused ? accentColor : accentColor.opacity(0.3), lineWidth: isFocused ? 3 : 1.5)
+                    )
+            )
+            .scaleEffect(isFocused ? 1.02 : 1.0)
+            .shadow(color: isFocused ? accentColor.opacity(0.5) : .clear, radius: 15)
+            .animation(.easeOut(duration: 0.15), value: isFocused)
+        }
+        .buttonStyle(.plain)
+        .focused($isFocused)
+    }
+}
+
 #endif
