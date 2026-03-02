@@ -72,11 +72,11 @@ public enum AdaptiveTriggerMode {
 /// Represents a button mapping configuration
 public struct ButtonMapping: Codable, Equatable {
     /// The original button input
-    let sourceId: ButtonIdentifier
+    public let sourceId: ButtonIdentifier
     /// The button to map to
-    let destinationId: ButtonIdentifier
+    public let destinationId: ButtonIdentifier
 
-    init(source: ButtonIdentifier, destination: ButtonIdentifier) {
+    public init(source: ButtonIdentifier, destination: ButtonIdentifier) {
         self.sourceId = source
         self.destinationId = destination
     }
