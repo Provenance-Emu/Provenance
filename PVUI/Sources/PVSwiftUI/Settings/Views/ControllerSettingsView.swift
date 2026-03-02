@@ -316,7 +316,7 @@ struct ControllerSettingsView: View {
                 #endif
             }
 
-            /// Button Remapping Section
+            // Button Remapping Section
             if !controllerManager.controllers.isEmpty {
                 Section {
                     ForEach(controllerManager.controllers, id: \.self) { controller in
