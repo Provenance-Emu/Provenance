@@ -1,13 +1,2 @@
-//
-//  Test.swift
-//  PVSupport
-//
-//  Created by Joseph Mattiello on 8/6/24.
-//
-
-import Testing
-@testable import PVSupport
-
-struct Test {
-
-}
+// This file intentionally left empty.
+// See PVSupportTests.swift for the test suite.

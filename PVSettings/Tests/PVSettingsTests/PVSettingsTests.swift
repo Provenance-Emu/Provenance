@@ -1,6 +1,6 @@
 //
-//  Test.swift
-//  PVSupport
+//  PVSettingsTests.swift
+//  PVSettings
 //
 //  Created by Joseph Mattiello on 8/6/24.
 //
@@ -9,29 +9,810 @@ import Testing
 @testable import PVSettings
 import Foundation
 
-struct Test {
+// MARK: - Defaults Keys Tests
 
-    @Test func testSettings() async throws {
-        #expect(Defaults[.askToAutoLoad])
-        #expect(Defaults[.buttonTints])
+@Suite("Defaults Keys")
+struct DefaultsKeysTests {
+
+    @Test("askToAutoLoad default is true")
+    func askToAutoLoadDefault() {
+        // Reset to default first
+        Defaults.reset(.askToAutoLoad)
+        #expect(Defaults[.askToAutoLoad] == true)
+    }
+
+    @Test("imageSmoothing default is false")
+    func imageSmoothingDefault() {
+        Defaults.reset(.imageSmoothing)
+        #expect(Defaults[.imageSmoothing] == false)
+    }
+
+    @Test("vsyncEnabled default is true")
+    func vsyncEnabledDefault() {
+        Defaults.reset(.vsyncEnabled)
+        #expect(Defaults[.vsyncEnabled] == true)
+    }
+
+    @Test("volume default is 1.0")
+    func volumeDefault() {
+        Defaults.reset(.volume)
+        #expect(Defaults[.volume] == 1.0)
+    }
+
+    @Test("timedAutoSaveInterval default is 10 minutes")
+    func timedAutoSaveIntervalDefault() {
+        Defaults.reset(.timedAutoSaveInterval)
         #expect(Defaults[.timedAutoSaveInterval] == minutes(10))
-        
-        Defaults[.askToAutoLoad] = false
+    }
 
-        #expect(!Defaults[.askToAutoLoad])
+    @Test("Boolean setting can be toggled")
+    func booleanSettingToggle() {
+        Defaults[.imageSmoothing] = false
+        #expect(Defaults[.imageSmoothing] == false)
+        Defaults[.imageSmoothing].toggle()
+        #expect(Defaults[.imageSmoothing] == true)
+        Defaults.reset(.imageSmoothing)
+    }
 
-        Defaults[.askToAutoLoad].toggle()
-        #expect(Defaults[.askToAutoLoad])
-        let icValue = UserDefaults.standard.bool(forKey: "askToAutoLoad")
-        #expect(icValue)
+    @Test("Setting persists to UserDefaults")
+    func settingPersistsToUserDefaults() {
+        Defaults[.showFPSCount] = true
+        let raw = UserDefaults.standard.bool(forKey: "showFPSCount")
+        #expect(raw == true)
+        Defaults.reset(.showFPSCount)
+    }
+}
 
-        #expect(!Defaults[.iCloudSync])
-        Defaults[.iCloudSync] = true
-        #expect(Defaults[.iCloudSync])
-        let icValue2 = UserDefaults.standard.bool(forKey: "iCloudSync")
-        #expect(icValue2)
+// MARK: - ButtonPressEffect Tests
 
-        Defaults[.iCloudSync].toggle()
-        #expect(!Defaults[.iCloudSync])
+@Suite("ButtonPressEffect")
+struct ButtonPressEffectTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(ButtonPressEffect.allCases.count == 3)
+    }
+
+    @Test("RawValues are correct")
+    func rawValues() {
+        #expect(ButtonPressEffect.bubble.rawValue == "bubble")
+        #expect(ButtonPressEffect.ring.rawValue == "ring")
+        #expect(ButtonPressEffect.glow.rawValue == "glow")
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for effect in ButtonPressEffect.allCases {
+            let reconstructed = ButtonPressEffect(rawValue: effect.rawValue)
+            #expect(reconstructed == effect)
+        }
+    }
+
+    @Test("Descriptions are non-empty")
+    func descriptionsNonEmpty() {
+        for effect in ButtonPressEffect.allCases {
+            #expect(!effect.description.isEmpty)
+        }
+    }
+
+    @Test("Descriptions are correct")
+    func descriptions() {
+        #expect(ButtonPressEffect.bubble.description == "Bubble + Ring")
+        #expect(ButtonPressEffect.ring.description == "Ring Only")
+        #expect(ButtonPressEffect.glow.description == "Radial Glow")
+    }
+
+    @Test("Subtitles are non-empty")
+    func subtitlesNonEmpty() {
+        for effect in ButtonPressEffect.allCases {
+            #expect(!effect.subtitle.isEmpty)
+        }
+    }
+
+    @Test("Equality works correctly")
+    func equality() {
+        #expect(ButtonPressEffect.bubble == .bubble)
+        #expect(ButtonPressEffect.bubble != .ring)
+    }
+}
+
+// MARK: - ButtonSound Tests
+
+@Suite("ButtonSound")
+struct ButtonSoundTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(ButtonSound.allCases.count == 9)
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for sound in ButtonSound.allCases {
+            let reconstructed = ButtonSound(rawValue: sound.rawValue)
+            #expect(reconstructed == sound)
+        }
+    }
+
+    @Test("Descriptions are non-empty")
+    func descriptionsNonEmpty() {
+        for sound in ButtonSound.allCases {
+            #expect(!sound.description.isEmpty)
+        }
+    }
+
+    @Test("Filenames for none and generated are empty")
+    func emptyFilenames() {
+        #expect(ButtonSound.none.filename.isEmpty)
+        #expect(ButtonSound.generated.filename.isEmpty)
+    }
+
+    @Test("Filenames for sound effects are non-empty")
+    func nonEmptyFilenames() {
+        let soundsWithFiles: [ButtonSound] = [.click, .tap, .pop, .click2, .tap2, .click3, .switch]
+        for sound in soundsWithFiles {
+            #expect(!sound.filename.isEmpty, "Expected non-empty filename for \(sound)")
+        }
+    }
+
+    @Test("Filename values are correct")
+    func filenameValues() {
+        #expect(ButtonSound.click.filename == "button-click")
+        #expect(ButtonSound.tap.filename == "button-tap")
+        #expect(ButtonSound.pop.filename == "button-pop")
+        #expect(ButtonSound.click2.filename == "button-click2")
+        #expect(ButtonSound.click3.filename == "button-click3")
+        #expect(ButtonSound.tap2.filename == "button-tap2")
+        #expect(ButtonSound.switch.filename == "button-switch")
+    }
+
+    @Test("HasReleaseSample is true for click, pop, switch")
+    func hasReleaseSampleTrue() {
+        #expect(ButtonSound.click.hasReleaseSample)
+        #expect(ButtonSound.pop.hasReleaseSample)
+        #expect(ButtonSound.switch.hasReleaseSample)
+    }
+
+    @Test("HasReleaseSample is false for none, generated, tap, click2, tap2, click3")
+    func hasReleaseSampleFalse() {
+        let falseOnes: [ButtonSound] = [.none, .generated, .tap, .click2, .tap2, .click3]
+        for sound in falseOnes {
+            #expect(!sound.hasReleaseSample, "Expected hasReleaseSample == false for \(sound)")
+        }
+    }
+}
+
+// MARK: - CloudKitSyncNetworkMode Tests
+
+@Suite("CloudKitSyncNetworkMode")
+struct CloudKitSyncNetworkModeTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(CloudKitSyncNetworkMode.allCases.count == 3)
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for mode in CloudKitSyncNetworkMode.allCases {
+            let reconstructed = CloudKitSyncNetworkMode(rawValue: mode.rawValue)
+            #expect(reconstructed == mode)
+        }
+    }
+
+    @Test("Descriptions are correct")
+    func descriptions() {
+        #expect(CloudKitSyncNetworkMode.wifiAndCellular.description == "Wi-Fi & Cellular")
+        #expect(CloudKitSyncNetworkMode.wifiOnly.description == "Wi-Fi Only")
+        #expect(CloudKitSyncNetworkMode.cellularOnly.description == "Cellular Only")
+    }
+
+    @Test("Subtitles are non-empty")
+    func subtitlesNonEmpty() {
+        for mode in CloudKitSyncNetworkMode.allCases {
+            #expect(!mode.subtitle.isEmpty)
+        }
+    }
+}
+
+// MARK: - CloudKitSyncFrequency Tests
+
+@Suite("CloudKitSyncFrequency")
+struct CloudKitSyncFrequencyTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(CloudKitSyncFrequency.allCases.count == 5)
+    }
+
+    @Test("Immediate timeInterval is nil")
+    func immediateTimeIntervalIsNil() {
+        #expect(CloudKitSyncFrequency.immediate.timeInterval == nil)
+    }
+
+    @Test("Manual timeInterval is nil")
+    func manualTimeIntervalIsNil() {
+        #expect(CloudKitSyncFrequency.manual.timeInterval == nil)
+    }
+
+    @Test("FiveMinutes timeInterval is 300")
+    func fiveMinutesTimeInterval() {
+        #expect(CloudKitSyncFrequency.fiveMinutes.timeInterval == 300)
+    }
+
+    @Test("FifteenMinutes timeInterval is 900")
+    func fifteenMinutesTimeInterval() {
+        #expect(CloudKitSyncFrequency.fifteenMinutes.timeInterval == 900)
+    }
+
+    @Test("Hourly timeInterval is 3600")
+    func hourlyTimeInterval() {
+        #expect(CloudKitSyncFrequency.hourly.timeInterval == 3600)
+    }
+
+    @Test("Descriptions are correct")
+    func descriptions() {
+        #expect(CloudKitSyncFrequency.immediate.description == "Immediate")
+        #expect(CloudKitSyncFrequency.fiveMinutes.description == "Every 5 Minutes")
+        #expect(CloudKitSyncFrequency.fifteenMinutes.description == "Every 15 Minutes")
+        #expect(CloudKitSyncFrequency.hourly.description == "Hourly")
+        #expect(CloudKitSyncFrequency.manual.description == "Manual Only")
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for freq in CloudKitSyncFrequency.allCases {
+            let reconstructed = CloudKitSyncFrequency(rawValue: freq.rawValue)
+            #expect(reconstructed == freq)
+        }
+    }
+}
+
+// MARK: - CloudKitSyncContentType Tests
+
+@Suite("CloudKitSyncContentType")
+struct CloudKitSyncContentTypeTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(CloudKitSyncContentType.allCases.count == 4)
+    }
+
+    @Test("Descriptions are correct")
+    func descriptions() {
+        #expect(CloudKitSyncContentType.all.description == "Everything")
+        #expect(CloudKitSyncContentType.saveStatesOnly.description == "Save States Only")
+        #expect(CloudKitSyncContentType.romsOnly.description == "ROMs Only")
+        #expect(CloudKitSyncContentType.metadataOnly.description == "Metadata Only")
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for type_ in CloudKitSyncContentType.allCases {
+            let reconstructed = CloudKitSyncContentType(rawValue: type_.rawValue)
+            #expect(reconstructed == type_)
+        }
+    }
+
+    @Test("Subtitles are non-empty")
+    func subtitlesNonEmpty() {
+        for type_ in CloudKitSyncContentType.allCases {
+            #expect(!type_.subtitle.isEmpty)
+        }
+    }
+}
+
+// MARK: - MetalFilterModeOption Tests
+
+@Suite("MetalFilterModeOption")
+struct MetalFilterModeOptionTests {
+
+    @Test("None rawValue is 'None'")
+    func noneRawValue() {
+        #expect(MetalFilterModeOption.none.rawValue == "None")
+    }
+
+    @Test("Auto rawValue has correct format")
+    func autoRawValueFormat() {
+        let option = MetalFilterModeOption.auto(crt: .simpleCRT, lcd: .lcd)
+        #expect(option.rawValue.hasPrefix("Auto("))
+        #expect(option.rawValue.contains("simpleCRT"))
+        #expect(option.rawValue.contains("lcd"))
+    }
+
+    @Test("Always rawValue has correct format")
+    func alwaysRawValueFormat() {
+        let option = MetalFilterModeOption.always(filter: .complexCRT)
+        #expect(option.rawValue.hasPrefix("Always("))
+        #expect(option.rawValue.contains("complexCRT"))
+    }
+
+    @Test("None parses from rawValue")
+    func noneParseFromRawValue() {
+        let parsed = MetalFilterModeOption(rawValue: "None")
+        #expect(parsed == .none)
+    }
+
+    @Test("Auto parses from rawValue")
+    func autoParseFromRawValue() {
+        let rawValue = "Auto(simpleCRT, lcd)"
+        let parsed = MetalFilterModeOption(rawValue: rawValue)
+        #expect(parsed != nil)
+        if case .auto(let crt, let lcd) = parsed! {
+            #expect(crt == .simpleCRT)
+            #expect(lcd == .lcd)
+        } else {
+            Issue.record("Expected .auto case")
+        }
+    }
+
+    @Test("Always parses from rawValue")
+    func alwaysParseFromRawValue() {
+        let rawValue = "Always(complexCRT)"
+        let parsed = MetalFilterModeOption(rawValue: rawValue)
+        #expect(parsed != nil)
+        if case .always(let filter) = parsed! {
+            #expect(filter == .complexCRT)
+        } else {
+            Issue.record("Expected .always case")
+        }
+    }
+
+    @Test("Invalid rawValue returns nil")
+    func invalidRawValueReturnsNil() {
+        #expect(MetalFilterModeOption(rawValue: "invalid") == nil)
+        #expect(MetalFilterModeOption(rawValue: "") == nil)
+        #expect(MetalFilterModeOption(rawValue: "Auto()") == nil)
+    }
+
+    @Test("RawValue round-trip for all allCases")
+    func rawValueRoundTrip() {
+        for option in MetalFilterModeOption.allCases {
+            let rawValue = option.rawValue
+            let parsed = MetalFilterModeOption(rawValue: rawValue)
+            #expect(parsed != nil, "Expected non-nil parse for \(rawValue)")
+            #expect(parsed?.rawValue == rawValue)
+        }
+    }
+
+    @Test("Description equals rawValue")
+    func descriptionEqualsRawValue() {
+        for option in MetalFilterModeOption.allCases {
+            #expect(option.description == option.rawValue)
+        }
+    }
+
+    @Test("Equality based on rawValue")
+    func equalityBasedOnRawValue() {
+        #expect(MetalFilterModeOption.none == .none)
+        #expect(MetalFilterModeOption.none != .always(filter: .simpleCRT))
+        let a1 = MetalFilterModeOption.auto(crt: .simpleCRT, lcd: .lcd)
+        let a2 = MetalFilterModeOption.auto(crt: .simpleCRT, lcd: .lcd)
+        #expect(a1 == a2)
+    }
+}
+
+// MARK: - MetalFilterSelectionOption Tests
+
+@Suite("MetalFilterSelectionOption")
+struct MetalFilterSelectionOptionTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        // none, simpleCRT, complexCRT, lcd, megaTron, ulTron, gameBoy, vhs
+        #expect(MetalFilterSelectionOption.allCases.count == 8)
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for option in MetalFilterSelectionOption.allCases {
+            let reconstructed = MetalFilterSelectionOption(rawValue: option.rawValue)
+            #expect(reconstructed == option)
+        }
+    }
+
+    @Test("LCD screenType is .lcd")
+    func lcdScreenType() {
+        #expect(MetalFilterSelectionOption.lcd.screenType == .lcd)
+    }
+
+    @Test("Non-LCD screenTypes are .crt")
+    func crtScreenTypes() {
+        let crtOptions: [MetalFilterSelectionOption] = [
+            .none, .simpleCRT, .complexCRT, .megaTron, .ulTron, .gameBoy, .vhs
+        ]
+        for option in crtOptions {
+            #expect(option.screenType == .crt, "Expected .crt screenType for \(option)")
+        }
+    }
+
+    @Test("hasCRTParameters is true only for simpleCRT and complexCRT")
+    func hasCRTParameters() {
+        #expect(MetalFilterSelectionOption.simpleCRT.hasCRTParameters)
+        #expect(MetalFilterSelectionOption.complexCRT.hasCRTParameters)
+
+        let others: [MetalFilterSelectionOption] = [.none, .lcd, .megaTron, .ulTron, .gameBoy, .vhs]
+        for option in others {
+            #expect(!option.hasCRTParameters, "Expected hasCRTParameters == false for \(option)")
+        }
+    }
+
+    @Test("Descriptions are non-empty")
+    func descriptionsNonEmpty() {
+        for option in MetalFilterSelectionOption.allCases {
+            #expect(!option.description.isEmpty)
+        }
+    }
+
+    @Test("Descriptions are correct")
+    func descriptions() {
+        #expect(MetalFilterSelectionOption.none.description == "None")
+        #expect(MetalFilterSelectionOption.simpleCRT.description == "Simple CRT")
+        #expect(MetalFilterSelectionOption.complexCRT.description == "Complex CRT")
+        #expect(MetalFilterSelectionOption.lcd.description == "LCD")
+        #expect(MetalFilterSelectionOption.gameBoy.description == "Game Boy")
+    }
+
+    @Test("Default value is none")
+    func defaultValue() {
+        #expect(MetalFilterSelectionOption.defaultValue == .none)
+    }
+}
+
+// MARK: - OpenGLFilterModeOption Tests
+
+@Suite("OpenGLFilterModeOption")
+struct OpenGLFilterModeOptionTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(OpenGLFilterModeOption.allCases.count == 2)
+    }
+
+    @Test("Default value is none")
+    func defaultValue() {
+        #expect(OpenGLFilterModeOption.defaultValue == .none)
+    }
+
+    @Test("Description equals capitalized rawValue")
+    func description() {
+        #expect(OpenGLFilterModeOption.none.description == "None")
+        #expect(OpenGLFilterModeOption.CRT.description == "Crt")
+    }
+
+    @Test("Equality works")
+    func equality() {
+        #expect(OpenGLFilterModeOption.none == .none)
+        #expect(OpenGLFilterModeOption.none != .CRT)
+    }
+}
+
+// MARK: - ThemeOption Tests
+
+@Suite("ThemeOption")
+struct ThemeOptionTests {
+
+    @Test("allCases includes standard and CGA themes")
+    func allCasesCount() {
+        let cases = ThemeOption.allCases
+        let standardCount = ThemeOptionsStandard.allCases.count
+        let cgaCount = ThemeOptionsCGA.allCases.count
+        #expect(cases.count == standardCount + cgaCount)
+    }
+
+    @Test("Standard theme description is correct")
+    func standardDescription() {
+        #expect(ThemeOption.standard(.dark).description == "Standard Dark")
+        #expect(ThemeOption.standard(.light).description == "Standard Light")
+        #expect(ThemeOption.standard(.auto).description == "Standard Auto")
+    }
+
+    @Test("CGA theme description is correct")
+    func cgaDescription() {
+        #expect(ThemeOption.cga(.blue).description == "CGA Blue")
+        #expect(ThemeOption.cga(.red).description == "CGA Red")
+    }
+
+    @Test("Equality: same cases are equal")
+    func equalitySame() {
+        #expect(ThemeOption.standard(.dark) == ThemeOption.standard(.dark))
+        #expect(ThemeOption.cga(.blue) == ThemeOption.cga(.blue))
+    }
+
+    @Test("Equality: different cases are not equal")
+    func equalityDifferent() {
+        #expect(ThemeOption.standard(.dark) != ThemeOption.standard(.light))
+        #expect(ThemeOption.standard(.dark) != ThemeOption.cga(.blue))
+    }
+
+    @Test("ThemeOptionBridge serializes standard theme")
+    func bridgeSerializesStandard() {
+        let bridge = ThemeOptionBridge()
+        let serialized = bridge.serialize(.standard(.dark))
+        #expect(serialized != nil)
+        #expect(serialized?["type"] == "standard")
+        #expect(serialized?["value"] == "dark")
+    }
+
+    @Test("ThemeOptionBridge serializes CGA theme")
+    func bridgeSerializesCGA() {
+        let bridge = ThemeOptionBridge()
+        let serialized = bridge.serialize(.cga(.green))
+        #expect(serialized != nil)
+        #expect(serialized?["type"] == "cga")
+        #expect(serialized?["value"] == "green")
+    }
+
+    @Test("ThemeOptionBridge deserializes standard theme")
+    func bridgeDeserializesStandard() {
+        let bridge = ThemeOptionBridge()
+        let dict = ["type": "standard", "value": "light"]
+        let result = bridge.deserialize(dict)
+        #expect(result == .standard(.light))
+    }
+
+    @Test("ThemeOptionBridge deserializes CGA theme")
+    func bridgeDeserializesCGA() {
+        let bridge = ThemeOptionBridge()
+        let dict = ["type": "cga", "value": "magenta"]
+        let result = bridge.deserialize(dict)
+        #expect(result == .cga(.magenta))
+    }
+
+    @Test("ThemeOptionBridge round-trips all standard themes")
+    func bridgeRoundTripStandard() {
+        let bridge = ThemeOptionBridge()
+        for theme in ThemeOptionsStandard.allCases {
+            let option = ThemeOption.standard(theme)
+            let serialized = bridge.serialize(option)
+            let deserialized = bridge.deserialize(serialized)
+            #expect(deserialized == option)
+        }
+    }
+
+    @Test("ThemeOptionBridge round-trips all CGA themes")
+    func bridgeRoundTripCGA() {
+        let bridge = ThemeOptionBridge()
+        for theme in ThemeOptionsCGA.allCases {
+            let option = ThemeOption.cga(theme)
+            let serialized = bridge.serialize(option)
+            let deserialized = bridge.deserialize(serialized)
+            #expect(deserialized == option)
+        }
+    }
+
+    @Test("ThemeOptionBridge deserialize with nil returns nil")
+    func bridgeDeserializeNil() {
+        let bridge = ThemeOptionBridge()
+        #expect(bridge.deserialize(nil) == nil)
+    }
+
+    @Test("ThemeOptionBridge deserialize with unknown type returns nil")
+    func bridgeDeserializeUnknownType() {
+        let bridge = ThemeOptionBridge()
+        let dict = ["type": "unknown", "value": "dark"]
+        #expect(bridge.deserialize(dict) == nil)
+    }
+
+    @Test("ThemeOptionBridge falls back to .dark for unknown standard rawValue")
+    func bridgeStandardFallback() {
+        let bridge = ThemeOptionBridge()
+        let dict = ["type": "standard", "value": "nonexistent"]
+        let result = bridge.deserialize(dict)
+        #expect(result == .standard(.dark))
+    }
+
+    @Test("ThemeOptionBridge falls back to .blue for unknown CGA rawValue")
+    func bridgeCGAFallback() {
+        let bridge = ThemeOptionBridge()
+        let dict = ["type": "cga", "value": "nonexistent"]
+        let result = bridge.deserialize(dict)
+        #expect(result == .cga(.blue))
+    }
+
+    @Test("ThemeOptionsStandard descriptions are capitalized rawValues")
+    func standardDescriptions() {
+        for theme in ThemeOptionsStandard.allCases {
+            #expect(theme.description == theme.rawValue.capitalized)
+        }
+    }
+
+    @Test("ThemeOptionsCGA descriptions are capitalized rawValues")
+    func cgaDescriptions() {
+        for theme in ThemeOptionsCGA.allCases {
+            #expect(theme.description == theme.rawValue.capitalized)
+        }
+    }
+}
+
+// MARK: - SortOptions Tests
+
+@Suite("SortOptions")
+struct SortOptionsTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(SortOptions.allCases.count == 4)
+        #expect(SortOptions.count == 4)
+    }
+
+    @Test("Descriptions are correct")
+    func descriptions() {
+        #expect(SortOptions.title.description == "Title")
+        #expect(SortOptions.importDate.description == "Imported")
+        #expect(SortOptions.lastPlayed.description == "Last Played")
+        #expect(SortOptions.mostPlayed.description == "Most Played")
+    }
+
+    @Test("Row equals rawValue")
+    func rowEqualsRawValue() {
+        for option in SortOptions.allCases {
+            #expect(option.row == option.rawValue)
+        }
+    }
+
+    @Test("optionForRow returns correct cases")
+    func optionForRow() {
+        #expect(SortOptions.optionForRow(0) == .title)
+        #expect(SortOptions.optionForRow(1) == .importDate)
+        #expect(SortOptions.optionForRow(2) == .lastPlayed)
+        #expect(SortOptions.optionForRow(3) == .mostPlayed)
+    }
+
+    @Test("optionForRow with invalid row returns title")
+    func optionForRowInvalid() {
+        #expect(SortOptions.optionForRow(99) == .title)
+    }
+
+    @Test("Identifiable id equals row")
+    func identifiableId() {
+        for option in SortOptions.allCases {
+            #expect(option.id == option.row)
+        }
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for option in SortOptions.allCases {
+            let reconstructed = SortOptions(rawValue: option.rawValue)
+            #expect(reconstructed == option)
+        }
+    }
+}
+
+// MARK: - BoolSetting Tests
+
+@Suite("BoolSetting")
+struct BoolSettingTests {
+
+    @Test("Init with true preserves defaultValue")
+    func initWithTrue() {
+        let setting = BoolSetting(true, title: "Test Setting")
+        #expect(setting.defaultValue == true)
+        #expect(setting.value == true)
+    }
+
+    @Test("Init with false preserves defaultValue")
+    func initWithFalse() {
+        let setting = BoolSetting(false, title: "Another Setting")
+        #expect(setting.defaultValue == false)
+        #expect(setting.value == false)
+    }
+
+    @Test("Title is stored correctly")
+    func titleStored() {
+        let setting = BoolSetting(true, title: "My Title")
+        #expect(setting.title == "My Title")
+    }
+
+    @Test("Info is stored correctly")
+    func infoStored() {
+        let setting = BoolSetting(true, title: "Test", info: "Some info")
+        #expect(setting.info == "Some info")
+    }
+
+    @Test("Info defaults to nil")
+    func infoDefaultsToNil() {
+        let setting = BoolSetting(true, title: "Test")
+        #expect(setting.info == nil)
+    }
+
+    @Test("Value can be mutated")
+    func valueMutable() {
+        var setting = BoolSetting(true, title: "Mutable")
+        #expect(setting.value == true)
+        setting.value = false
+        #expect(setting.value == false)
+        #expect(setting.defaultValue == true, "defaultValue should not change")
+    }
+
+    @Test("defaultsValue returns current value as Any")
+    func defaultsValue() {
+        let setting = BoolSetting(true, title: "Test")
+        let defaultsValue = setting.defaultsValue
+        guard let boolValue = defaultsValue as? Bool else {
+            Issue.record("Expected Bool from defaultsValue")
+            return
+        }
+        #expect(boolValue == true)
+    }
+
+    @Test("valueType is Bool")
+    func valueType() {
+        let setting = BoolSetting(true, title: "Test")
+        #expect(setting.valueType == Bool.self)
+    }
+}
+
+// MARK: - SkinMode Tests
+
+@Suite("SkinMode")
+struct SkinModeTests {
+
+    @Test("All cases present")
+    func allCasesCount() {
+        #expect(SkinMode.allCases.count == 3)
+    }
+
+    @Test("RawValue round-trip")
+    func rawValueRoundTrip() {
+        for mode in SkinMode.allCases {
+            let reconstructed = SkinMode(rawValue: mode.rawValue)
+            #expect(reconstructed == mode)
+        }
+    }
+
+    @Test("Identifiable id equals rawValue")
+    func identifiableId() {
+        for mode in SkinMode.allCases {
+            #expect(mode.id == mode.rawValue)
+        }
+    }
+
+    @Test("Descriptions are non-empty")
+    func descriptionsNonEmpty() {
+        for mode in SkinMode.allCases {
+            #expect(!mode.description.isEmpty)
+        }
+    }
+
+    @Test("Subtitles are non-empty")
+    func subtitlesNonEmpty() {
+        for mode in SkinMode.allCases {
+            #expect(!mode.subtitle.isEmpty)
+        }
+    }
+}
+
+// MARK: - iCloudSyncMode Tests
+
+@Suite("iCloudSyncMode")
+struct iCloudSyncModeTests {
+
+    @Test("CloudKit is isCloudKit")
+    func cloudKitIsCloudKit() {
+        #expect(iCloudSyncMode.cloudKit.isCloudKit)
+    }
+
+    @Test("CloudKit isICloudDrive is false")
+    func cloudKitIsNotICloudDrive() {
+        #expect(!iCloudSyncMode.cloudKit.isICloudDrive)
+    }
+
+    @Test("CloudKit description is 'CloudKit'")
+    func cloudKitDescription() {
+        #expect(iCloudSyncMode.cloudKit.description == "CloudKit")
+    }
+
+    @Test("CloudKit subtitle is non-empty")
+    func cloudKitSubtitleNonEmpty() {
+        #expect(!iCloudSyncMode.cloudKit.subtitle.isEmpty)
+    }
+
+    @Test("RawValue round-trip for cloudKit")
+    func rawValueRoundTrip() {
+        let mode = iCloudSyncMode.cloudKit
+        let reconstructed = iCloudSyncMode(rawValue: mode.rawValue)
+        #expect(reconstructed == mode)
     }
 }
