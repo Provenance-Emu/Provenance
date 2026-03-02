@@ -25,8 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
  - Xbox Series controllers:     "Button Share"
  - Nintendo Switch Pro:         "Button Capture"
 
- These are separate from `buttonOptions` (which is the View/Create/Share logical button)
- and are only meaningful on controllers that expose an additional dedicated sharing button.
+ On PlayStation, these physical inputs correspond to the same Share/Create button that is already
+ exposed logically as `buttonOptions`, so this lookup is effectively a redundant but harmless
+ fallback. On Xbox Series (and Switch Pro), the physical entries represent an additional
+ capture/share-style button beyond the `buttonOptions` logical button (View / + / −), so this
+ helper is required to access those extra controls.
 
  @param controller The GCController to inspect.
  @return The share-like GCControllerButtonInput, or nil if unavailable.
