@@ -173,6 +173,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
     @package
     NSMutableDictionary <NSString *, id> *_displayModes;
+    NSMutableSet <NSString *> *_enabledCheats;
 }
 
 + (void)initialize {
@@ -191,6 +192,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
             //        Log::SetFilterLevel(LOGLEVEL_TRACE);
         Log::RegisterCallback(OELogFunc, NULL);
+        _enabledCheats = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -534,18 +536,33 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError **)error
 {
-    if (!enabled) {
+    // Normalize the code
+    NSString *trimmedCode = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    // Update the enabled cheats tracking set
+    if (enabled) {
+        [_enabledCheats addObject:trimmedCode];
+    } else {
+        [_enabledCheats removeObject:trimmedCode];
+    }
+
+    // If no cheats are enabled, clear the cheat list
+    if (_enabledCheats.count == 0) {
         System::SetCheatList(nullptr);
         return YES;
     }
+
+    // Rebuild the full cheat list from all currently-enabled cheats
     auto list = std::make_unique<CheatList>();
-    if (!list->LoadFromPCSXRString(code.UTF8String)) {
-        if (error) {
-            *error = [NSError errorWithDomain:OEGameCoreErrorDomain
-                                         code:OEGameCoreCouldNotSetCheatError
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Failed to parse cheat code"}];
+    for (NSString *cheatCode in _enabledCheats) {
+        if (!list->LoadFromPCSXRString(cheatCode.UTF8String)) {
+            if (error) {
+                *error = [NSError errorWithDomain:OEGameCoreErrorDomain
+                                             code:OEGameCoreCouldNotSetCheatError
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Failed to parse cheat code"}];
+            }
+            return NO;
         }
-        return NO;
     }
     System::SetCheatList(std::move(list));
     return YES;
