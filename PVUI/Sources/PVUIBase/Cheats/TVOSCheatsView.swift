@@ -394,6 +394,14 @@ struct TVOSAddCheatView: View {
         Color(themeManager.currentPalette.gameLibraryBackground)
     }
 
+    private var selectedCodeTypeString: String {
+        cheatTypes.isEmpty ? "" : cheatTypes[selectedCodeType]
+    }
+
+    private var validationResult: CheatCodeValidator.ValidationResult {
+        CheatCodeValidator.validate(cheatCode, for: selectedCodeTypeString)
+    }
+
     var body: some View {
         ZStack {
             backgroundColor.ignoresSafeArea()
@@ -442,25 +450,49 @@ struct TVOSAddCheatView: View {
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(accentColor)
 
-                        TextField("Enter cheat code", text: $cheatCode)
-                            .textFieldStyle(.plain)
-                            .font(.system(size: 28, design: .monospaced))
-                            .foregroundColor(.white)
-                            .autocapitalization(.allCharacters)
-                            .padding(20)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.black.opacity(0.5))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
-                                    )
-                            )
-                            .focused($focusedField, equals: .code)
+                        HStack(alignment: .center, spacing: 16) {
+                            TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
+                                .textFieldStyle(.plain)
+                                .font(.system(size: 28, design: .monospaced))
+                                .foregroundColor(.white)
+                                .autocorrectionDisabled()
+                                .padding(20)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.black.opacity(0.5))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                        )
+                                )
+                                .focused($focusedField, equals: .code)
+                                .onChangeCompat(of: cheatCode) {
+                                    cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedCodeTypeString)
+                                }
+
+                            if !cheatCode.isEmpty {
+                                Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                                    .font(.system(size: 40))
+                                    .foregroundColor(validationResult.isValid ? .green : .red)
+                                    .transition(.opacity)
+                            }
+                        }
+
+                        if let hint = CheatCodeValidator.formatHint(for: selectedCodeTypeString) {
+                            Text(hint)
+                                .font(.system(size: 20))
+                                .foregroundColor(accentColor.opacity(0.7))
+                        }
+
+                        if case .invalid(let errorHint) = validationResult, !cheatCode.isEmpty {
+                            Text(errorHint)
+                                .font(.system(size: 20))
+                                .foregroundColor(.red.opacity(0.8))
+                        }
                     }
 
-                    // Code type selector (if available)
-                    if !cheatTypes.isEmpty {
+                    // Code type selector (hidden when only one type is supported)
+                    if cheatTypes.count > 1 {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("CODE TYPE")
                                 .font(.system(size: 20, weight: .bold))
@@ -542,9 +574,8 @@ struct TVOSAddCheatView: View {
     }
 
     private func saveCheat() {
-        let codeType = cheatTypes.isEmpty ? "" : cheatTypes[selectedCodeType]
         let name = cheatName.isEmpty ? "Cheat Code" : cheatName
-        onSave(cheatCode, name, codeType, cheatIndex, true)
+        onSave(cheatCode, name, selectedCodeTypeString, cheatIndex, true)
         dismiss()
     }
 }
