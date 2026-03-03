@@ -27,7 +27,6 @@ extension PVmGBACore: GameWithCheat {
     public var cheatCodeTypes: [String] {
         return CheatCodeTypesMakeStringArray([
             .gameShark,
-            .gameGenie,
             .codeBreaker,
             .proActionReplay
         ])
