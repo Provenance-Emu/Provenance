@@ -25,7 +25,10 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     public let supportedCheatTypes: [String]
     public let subCores:  [EmulatorCoreInfoPlist]?
 
-    public init(identifier: String, principleClass: String, supportedSystems: [String], projectName: String, projectURL: String, projectVersion: String, disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false, supportedCheatTypes: [String] = [], subCores: [EmulatorCoreInfoPlist]? = nil) {
+    public init(identifier: String, principleClass: String, supportedSystems: [String],
+                projectName: String, projectURL: String, projectVersion: String,
+                disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false,
+                supportedCheatTypes: [String] = [], subCores: [EmulatorCoreInfoPlist]? = nil) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -117,7 +120,19 @@ public extension EmulatorCoreInfoPlist {
     convenience init(_ corePlistEntry: CorePlistEntry) {
         let e = corePlistEntry
         let subCores = corePlistEntry.PVCores?.map { EmulatorCoreInfoPlist($0) }
-        self.init(identifier: e.PVCoreIdentifier, principleClass: e.PVPrincipleClass, supportedSystems: e.PVSupportedSystems, projectName: e.PVProjectName, projectURL: e.PVProjectURL, projectVersion: e.PVProjectVersion, disabled: e.PVDisabled ?? false, contentless: e.PVContentless ?? false, appStoreDisabled: e.PVAppStoreDisabled ?? false, supportedCheatTypes: e.PVSupportedCheatTypes ?? [], subCores: subCores)
+        self.init(
+            identifier: e.PVCoreIdentifier,
+            principleClass: e.PVPrincipleClass,
+            supportedSystems: e.PVSupportedSystems,
+            projectName: e.PVProjectName,
+            projectURL: e.PVProjectURL,
+            projectVersion: e.PVProjectVersion,
+            disabled: e.PVDisabled ?? false,
+            contentless: e.PVContentless ?? false,
+            appStoreDisabled: e.PVAppStoreDisabled ?? false,
+            supportedCheatTypes: e.PVSupportedCheatTypes ?? [],
+            subCores: subCores
+        )
     }
 }
 

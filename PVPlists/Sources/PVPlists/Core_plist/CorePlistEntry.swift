@@ -22,7 +22,19 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
 public extension CorePlistEntry {
     init(_ plist: EmulatorCoreInfoPlist) {
         let subCores = plist.subCores?.map { CorePlistEntry($0) }
-        self.init(PVCoreIdentifier: plist.identifier, PVPrincipleClass: plist.principleClass, PVSupportedSystems: plist.supportedSystems, PVProjectName: plist.projectName, PVProjectURL: plist.projectURL, PVProjectVersion: plist.projectVersion, PVDisabled: plist.disabled, PVContentless: plist.contentless, PVAppStoreDisabled: plist.appStoreDisabled, PVSupportedCheatTypes: plist.supportedCheatTypes.isEmpty ? nil : plist.supportedCheatTypes, PVCores: subCores)
+        self.init(
+            PVCoreIdentifier: plist.identifier,
+            PVPrincipleClass: plist.principleClass,
+            PVSupportedSystems: plist.supportedSystems,
+            PVProjectName: plist.projectName,
+            PVProjectURL: plist.projectURL,
+            PVProjectVersion: plist.projectVersion,
+            PVDisabled: plist.disabled,
+            PVContentless: plist.contentless,
+            PVAppStoreDisabled: plist.appStoreDisabled,
+            PVSupportedCheatTypes: plist.supportedCheatTypes.isEmpty ? nil : plist.supportedCheatTypes,
+            PVCores: subCores
+        )
     }
 }
 
