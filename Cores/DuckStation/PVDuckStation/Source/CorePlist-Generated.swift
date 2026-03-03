@@ -22,6 +22,7 @@ public enum CorePlist {
   public static let pvProjectVersion: String = "2023.01.11"
   public static let pvSupportedSystems: [String] = ["com.provenance.psx"]
   public static let pvDisabled: Bool = false
+  public static let pvSupportedCheatTypes: [String] = ["Game Shark"]
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
