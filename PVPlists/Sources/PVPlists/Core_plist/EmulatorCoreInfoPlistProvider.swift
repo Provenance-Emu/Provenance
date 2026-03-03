@@ -24,4 +24,5 @@ public extension EmulatorCoreInfoProvider where Self: EmulatorCoreInfoPlistProvi
     var projectName: String { Self.corePlist.projectName }
     var projectURL: String { Self.corePlist.projectURL }
     var projectVersion: String { Self.corePlist.projectVersion }
+    var supportedCheatTypes: [String] { Self.corePlist.supportedCheatTypes }
 }

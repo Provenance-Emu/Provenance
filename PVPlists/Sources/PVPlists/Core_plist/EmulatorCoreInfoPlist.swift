@@ -22,9 +22,10 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     public let disabled: Bool
     public let contentless: Bool
     public let appStoreDisabled: Bool
+    public let supportedCheatTypes: [String]
     public let subCores:  [EmulatorCoreInfoPlist]?
 
-    public init(identifier: String, principleClass: String, supportedSystems: [String], projectName: String, projectURL: String, projectVersion: String, disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false, subCores: [EmulatorCoreInfoPlist]? = nil) {
+    public init(identifier: String, principleClass: String, supportedSystems: [String], projectName: String, projectURL: String, projectVersion: String, disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false, supportedCheatTypes: [String] = [], subCores: [EmulatorCoreInfoPlist]? = nil) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -34,6 +35,7 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.disabled = disabled
         self.contentless = contentless
         self.appStoreDisabled = appStoreDisabled
+        self.supportedCheatTypes = supportedCheatTypes
         self.subCores = subCores
     }
 
@@ -83,6 +85,9 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         /// AppStore Disabled
         self.appStoreDisabled = dict["PVAppStoreDisabled"] as? Bool ?? false
 
+        /// Supported cheat types
+        self.supportedCheatTypes = dict["PVSupportedCheatTypes"] as? [String] ?? []
+
         /// Subcores
         if let subCores = dict["PVCores"] as? [[String:Any]] {
             self.subCores = subCores.compactMap {
@@ -112,7 +117,7 @@ public extension EmulatorCoreInfoPlist {
     convenience init(_ corePlistEntry: CorePlistEntry) {
         let e = corePlistEntry
         let subCores = corePlistEntry.PVCores?.map { EmulatorCoreInfoPlist($0) }
-        self.init(identifier: e.PVCoreIdentifier, principleClass: e.PVPrincipleClass, supportedSystems: e.PVSupportedSystems, projectName: e.PVProjectName, projectURL: e.PVProjectURL, projectVersion: e.PVProjectVersion, disabled: e.PVDisabled ?? false, contentless: e.PVContentless ?? false, appStoreDisabled: e.PVAppStoreDisabled ?? false, subCores: subCores)
+        self.init(identifier: e.PVCoreIdentifier, principleClass: e.PVPrincipleClass, supportedSystems: e.PVSupportedSystems, projectName: e.PVProjectName, projectURL: e.PVProjectURL, projectVersion: e.PVProjectVersion, disabled: e.PVDisabled ?? false, contentless: e.PVContentless ?? false, appStoreDisabled: e.PVAppStoreDisabled ?? false, supportedCheatTypes: e.PVSupportedCheatTypes ?? [], subCores: subCores)
     }
 }
 
@@ -128,5 +133,6 @@ func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     && lhs.disabled == rhs.PVDisabled
     && lhs.contentless == rhs.PVContentless
     && lhs.appStoreDisabled == rhs.PVAppStoreDisabled
+    && lhs.supportedCheatTypes == (rhs.PVSupportedCheatTypes ?? [])
     && lhs.subCores == subCores
 }

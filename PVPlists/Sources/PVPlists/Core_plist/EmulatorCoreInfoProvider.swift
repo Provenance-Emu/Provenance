@@ -20,6 +20,7 @@ public protocol EmulatorCoreInfoProvider {
     var disabled: Bool { get }
     var contentless: Bool { get }
     var appStoreDisabled: Bool { get }
+    var supportedCheatTypes: [String] { get }
     var subCores: [Self]? { get }
 }
 
@@ -36,5 +37,6 @@ extension CorePlistEntry: EmulatorCoreInfoProvider {
     public var disabled: Bool { PVDisabled ?? false }
     public var contentless: Bool { PVContentless ?? false }
     public var appStoreDisabled: Bool { PVAppStoreDisabled ?? false }
-    public var subCores: [CorePlistEntry]? { subCores }
+    public var supportedCheatTypes: [String] { PVSupportedCheatTypes ?? [] }
+    public var subCores: [CorePlistEntry]? { PVCores }
 }

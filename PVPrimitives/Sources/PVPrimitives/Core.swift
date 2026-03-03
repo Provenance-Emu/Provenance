@@ -29,16 +29,20 @@ public struct Core: Codable, Sendable {
     
     /// Is the core a contentless core, can it run without a rom?
     public let contentless: Bool
-    
-    public init(identifier: String, principleClass: String, disabled: Bool = false, systems: [System], project: CoreProject, contentless: Bool = false) {
+
+    /// The cheat code types supported by this core
+    public let supportedCheatTypes: [String]
+
+    public init(identifier: String, principleClass: String, disabled: Bool = false, systems: [System], project: CoreProject, contentless: Bool = false, supportedCheatTypes: [String] = []) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.disabled = disabled
         self.systems = systems
         self.project = project
         self.contentless = contentless
+        self.supportedCheatTypes = supportedCheatTypes
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.identifier = try container.decode(String.self, forKey: .identifier)
@@ -47,6 +51,7 @@ public struct Core: Codable, Sendable {
         self.systems = try container.decode([System].self, forKey: .systems)
         self.project = try container.decode(CoreProject.self, forKey: .project)
         self.contentless = try container.decodeIfPresent(Bool.self, forKey: .contentless) ?? false
+        self.supportedCheatTypes = try container.decodeIfPresent([String].self, forKey: .supportedCheatTypes) ?? []
     }
 }
 

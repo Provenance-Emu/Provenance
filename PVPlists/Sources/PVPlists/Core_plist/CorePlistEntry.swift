@@ -15,13 +15,14 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
     public let PVDisabled: Bool?
     public let PVContentless: Bool?
     public let PVAppStoreDisabled: Bool?
+    public let PVSupportedCheatTypes: [String]?
     public let PVCores: [CorePlistEntry]? // SubCoreEntry
 }
 
 public extension CorePlistEntry {
     init(_ plist: EmulatorCoreInfoPlist) {
         let subCores = plist.subCores?.map { CorePlistEntry($0) }
-        self.init(PVCoreIdentifier: plist.identifier, PVPrincipleClass: plist.principleClass, PVSupportedSystems: plist.supportedSystems, PVProjectName: plist.projectName, PVProjectURL: plist.projectURL, PVProjectVersion: plist.projectVersion, PVDisabled: plist.disabled, PVContentless: plist.contentless, PVAppStoreDisabled: plist.appStoreDisabled, PVCores: subCores)
+        self.init(PVCoreIdentifier: plist.identifier, PVPrincipleClass: plist.principleClass, PVSupportedSystems: plist.supportedSystems, PVProjectName: plist.projectName, PVProjectURL: plist.projectURL, PVProjectVersion: plist.projectVersion, PVDisabled: plist.disabled, PVContentless: plist.contentless, PVAppStoreDisabled: plist.appStoreDisabled, PVSupportedCheatTypes: plist.supportedCheatTypes.isEmpty ? nil : plist.supportedCheatTypes, PVCores: subCores)
     }
 }
 
@@ -35,5 +36,6 @@ func ==(lhs: CorePlistEntry, rhs: EmulatorCoreInfoPlist) -> Bool {
     rhs.projectVersion == lhs.PVProjectVersion &&
     rhs.disabled == lhs.PVDisabled &&
     rhs.contentless == lhs.contentless &&
+    rhs.supportedCheatTypes == (lhs.PVSupportedCheatTypes ?? []) &&
     subCores == lhs.PVCores
 }
