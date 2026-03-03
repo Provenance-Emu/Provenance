@@ -22,7 +22,7 @@ public struct iOSCheatsView: View {
 
     let cheats: LinkingObjects<PVCheats>
     let coreID: String?
-    let cheatTypes: [CheatCodeTypes]
+    let cheatTypes: [String]
     let gameMD5: String?
     let gameTitle: String?
     let onSaveCheat: (String, String, String, UInt8, Bool) -> Void
@@ -36,7 +36,7 @@ public struct iOSCheatsView: View {
     public init(
         cheats: LinkingObjects<PVCheats>,
         coreID: String?,
-        cheatTypes: [CheatCodeTypes],
+        cheatTypes: [String],
         gameMD5: String? = nil,
         gameTitle: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
@@ -231,7 +231,7 @@ private struct iOSCheatRow: View {
 struct iOSAddCheatView: View {
     @Environment(\.dismiss) private var dismiss
 
-    let cheatTypes: [CheatCodeTypes]
+    let cheatTypes: [String]
     let cheatIndex: UInt8
     let onSave: (String, String, String, UInt8, Bool) -> Void
 
@@ -243,7 +243,7 @@ struct iOSAddCheatView: View {
     private enum Field { case name, code }
 
     private var selectedType: String {
-        cheatTypes.isEmpty ? "" : cheatTypes[selectedTypeIndex].stringValue
+        cheatTypes.isEmpty ? "" : cheatTypes[selectedTypeIndex]
     }
 
     /// Real-time validation result for the current code and selected type.
@@ -320,7 +320,7 @@ struct iOSAddCheatView: View {
             SwiftUI.Section("Code Type") {
                 Picker("Code Type", selection: $selectedTypeIndex) {
                     ForEach(0..<cheatTypes.count, id: \.self) { index in
-                        Text(cheatTypes[index].stringValue).tag(index)
+                        Text(CheatCodeTypes(string: cheatTypes[index])?.stringValue ?? cheatTypes[index]).tag(index)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -481,7 +481,7 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
     public init(
         cheats: LinkingObjects<PVCheats>,
         coreID: String?,
-        cheatTypes: [CheatCodeTypes],
+        cheatTypes: [String],
         gameMD5: String? = nil,
         gameTitle: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,

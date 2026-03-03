@@ -270,7 +270,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         }
 
         let types = delegate.getCheatTypes()
-        codeTypeText = types[sender.tag].stringValue
+        codeTypeText = types[sender.tag]
         for button in codeTypeButtons {
             let codeTypeButton:UIButton = button
             if codeTypeButton.tag == sender.tag {
@@ -298,10 +298,10 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         if (types.count < 1) {
             return
         }
-        codeTypeText = types[0].stringValue
+        codeTypeText = types[0]
         for type in types {
             let codeTypeButton = MenuButton(type: UIButton.ButtonType.roundedRect)
-            let title = type.stringValue
+            let title = CheatCodeTypes(string: type)?.stringValue ?? type
             #if os(tvOS)
             let buttonHeight: CGFloat = 70
             codeTypeButton.addTarget(self, action: #selector(self.codeTypeSelected(_:)), for: .primaryActionTriggered)

@@ -151,4 +151,8 @@ import PVPrimitives
             "Action Replay v1 should parse to .proActionReplayV1")
     #expect(CheatCodeTypes(string: "Action Replay v2") == .proActionReplayV2,
             "Action Replay v2 should parse to .proActionReplayV2")
+    #expect(CheatCodeTypes(string: "Action Replay v1/v2") == .proActionReplayV2,
+            "Action Replay v1/v2 (slash variant used by VisualBoyAdvance) should parse to .proActionReplayV2")
+    #expect(CheatCodeTypes(string: "Action Replay v3") == .proActionReplayV2,
+            "Action Replay v3 should map to .proActionReplayV2 (closest available)")
 }

@@ -22,7 +22,7 @@ public struct TVOSCheatsView: View {
 
     let cheats: LinkingObjects<PVCheats>
     let coreID: String?
-    let cheatTypes: [CheatCodeTypes]
+    let cheatTypes: [String]
     let gameMD5: String?
     let gameTitle: String?
     let onSaveCheat: (String, String, String, UInt8, Bool) -> Void
@@ -47,7 +47,7 @@ public struct TVOSCheatsView: View {
     public init(
         cheats: LinkingObjects<PVCheats>,
         coreID: String?,
-        cheatTypes: [CheatCodeTypes],
+        cheatTypes: [String],
         gameMD5: String? = nil,
         gameTitle: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
@@ -374,7 +374,7 @@ struct TVOSAddCheatView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    let cheatTypes: [CheatCodeTypes]
+    let cheatTypes: [String]
     let cheatIndex: UInt8
     let onSave: (String, String, String, UInt8, Bool) -> Void
 
@@ -396,7 +396,7 @@ struct TVOSAddCheatView: View {
     }
 
     private var selectedCodeTypeString: String {
-        cheatTypes.isEmpty ? "" : cheatTypes[selectedCodeType].stringValue
+        cheatTypes.isEmpty ? "" : cheatTypes[selectedCodeType]
     }
 
     private var validationResult: CheatCodeValidator.ValidationResult {
@@ -504,7 +504,7 @@ struct TVOSAddCheatView: View {
                                     Button(action: {
                                         selectedCodeType = index
                                     }) {
-                                        Text(type.stringValue)
+                                        Text(CheatCodeTypes(string: type)?.stringValue ?? type)
                                             .font(.system(size: 22, weight: .bold))
                                             .foregroundColor(selectedCodeType == index ? .white : .gray)
                                             .padding(.horizontal, 24)
@@ -590,7 +590,7 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
     public init(
         cheats: LinkingObjects<PVCheats>,
         coreID: String?,
-        cheatTypes: [CheatCodeTypes],
+        cheatTypes: [String],
         gameMD5: String? = nil,
         gameTitle: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
@@ -628,7 +628,7 @@ struct TVOSCheatSearchView: View {
     /// Currently unused by the tvOS cheat database search UI, but kept to
     /// support future code-type selection/filtering when importing cheats
     /// and to maintain API consistency with other cheat views.
-    let cheatTypes: [CheatCodeTypes]
+    let cheatTypes: [String]
     let cheatIndex: UInt8
     let onImport: (String, String, String, UInt8, Bool) -> Void
 

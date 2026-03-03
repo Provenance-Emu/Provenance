@@ -57,11 +57,13 @@ public enum CheatCodeTypes: Int, CaseIterable, Sendable {
         let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
         let lowercased = trimmed.lowercased()
 
-        // Remove spaces and underscores for more tolerant matching. This
-        // allows variants like "GameShark", "game_shark", etc.
+        // Strip all non-alphanumeric characters (spaces, underscores, slashes,
+        // parentheses, colons, etc.) for maximum tolerance. This allows variants
+        // like "GameShark", "game_shark", "Action Replay v1/v2", etc.
         let compact = lowercased
-            .replacingOccurrences(of: " ", with: "")
-            .replacingOccurrences(of: "_", with: "")
+            .unicodeScalars
+            .filter { CharacterSet.alphanumerics.contains($0) }
+            .reduce("") { $0 + String($1) }
 
         switch compact {
         case "codebreaker":
@@ -92,9 +94,9 @@ public enum CheatCodeTypes: Int, CaseIterable, Sendable {
              "actionreplayv1", "actionreplay1":
             self = .proActionReplayV1
 
-        // "Action Replay v1/v2" normalizes to "actionreplayv1/v2" in `lowercased`;
-        // in `compact` (spaces/underscores removed) it becomes "actionreplayv1/v2".
-        // We also accept "actionreplayv1v2" explicitly for safety.
+        // "Action Replay v1/v2" is a combined format label (e.g. from VisualBoyAdvance).
+        // The "/" is stripped by normalization, giving "actionreplayv1v2".
+        // Map to v2 since the format encompasses the v2 superset.
         case "proactionreplayv2", "proactionreplay2",
              "actionreplayv2", "actionreplay2",
              "actionreplayv1v2":
@@ -111,10 +113,11 @@ public enum CheatCodeTypes: Int, CaseIterable, Sendable {
         case "rawcode":
             self = .rawCode
 
-        // "Raw Address Value Pairs (PPSSPP CwCheat)" (emitted by PPSSPP core) normalizes to
-        // "rawaddressvaluepairs(ppssppcwcheat)" — spaces removed, parentheses preserved.
-        case "rawmemaddress:valuepairs", "rawmemaddressvaluepairs",
-             "rawaddressvaluepairs(ppssppcwcheat)":
+        // "Raw Address Value Pairs (PPSSPP CwCheat)" (emitted by PPSSPP core):
+        // After stripping all non-alphanumerics, becomes "rawaddressvaluepairsppssppcwcheat".
+        // "Raw MemAddress:Value Pairs" becomes "rawmemaddressvaluepairs".
+        case "rawmemaddressvaluepairs",
+             "rawaddressvaluepairsppssppcwcheat":
             self = .rawMemAddress
 
         default:
