@@ -531,13 +531,26 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     //    return toRet;
     //}
 
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError **)error
 {
-        //TODO: implement
     auto list = std::make_unique<CheatList>();
-    list->LoadFromPCSXRString(code.UTF8String);
-        //list->Apply();
-        //System::SetCheatList(std::move(list));
+    if (!list->LoadFromPCSXRString(code.UTF8String)) {
+        if (error) {
+            *error = [NSError errorWithDomain:OEGameCoreErrorDomain
+                                         code:OEGameCoreCouldNotLoadROMError
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Failed to parse cheat code"}];
+        }
+        return NO;
+    }
+    if (enabled) {
+        System::SetCheatList(std::move(list));
+    }
+    return YES;
+}
+
+- (BOOL)getCheatSupport
+{
+    return YES;
 }
 
 - (NSUInteger)discCount
