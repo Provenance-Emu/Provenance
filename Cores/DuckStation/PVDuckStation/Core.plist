@@ -18,5 +18,9 @@
 	<string>2023.01.11</string>
 	<key>PVDisabled</key>
 	<false/>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Game Shark</string>
+	</array>
 </dict>
 </plist>
