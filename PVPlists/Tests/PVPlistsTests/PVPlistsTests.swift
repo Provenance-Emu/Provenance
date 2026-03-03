@@ -130,3 +130,25 @@ import PVPrimitives
     #expect(CheatCodeTypes(string: "Unknown Format XYZ") == nil)
     #expect(CheatCodeTypes(string: "") == nil)
 }
+
+@Test func testCheatCodeTypes_CoreAliases() {
+    // "Gateway" is emitted by 3DS cores (Azahar, emuThree)
+    #expect(CheatCodeTypes(string: "Gateway") == .gateway,
+            "Gateway alias should parse to .gateway")
+
+    // "Raw Address Value Pairs (PPSSPP CwCheat)" is emitted by the PPSSPP core
+    #expect(CheatCodeTypes(string: "Raw Address Value Pairs (PPSSPP CwCheat)") == .rawMemAddress,
+            "PPSSPP CwCheat alias should parse to .rawMemAddress")
+
+    // "GameShark" (no space) is a common alias across multiple cores
+    #expect(CheatCodeTypes(string: "GameShark") == .gameShark,
+            "GameShark (no space) should parse to .gameShark")
+
+    // "Action Replay" variants emitted by Mednafen and other cores
+    #expect(CheatCodeTypes(string: "Action Replay") == .proActionReplay,
+            "Action Replay should parse to .proActionReplay")
+    #expect(CheatCodeTypes(string: "Action Replay v1") == .proActionReplayV1,
+            "Action Replay v1 should parse to .proActionReplayV1")
+    #expect(CheatCodeTypes(string: "Action Replay v2") == .proActionReplayV2,
+            "Action Replay v2 should parse to .proActionReplayV2")
+}
