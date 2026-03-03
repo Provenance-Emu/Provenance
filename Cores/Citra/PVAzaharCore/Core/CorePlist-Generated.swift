@@ -22,7 +22,8 @@ public enum CorePlist {
   public static let pvProjectVersion: String = "git"
   public static let pvSupportedSystems: [String] = ["com.provenance.3ds"]
   public static let pvDisabled: Bool = true
-    
+  public static let pvSupportedCheatTypes: [String] = ["Gateway"]
+
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
         .init(
@@ -32,7 +33,8 @@ public enum CorePlist {
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
             projectVersion: CorePlist.pvProjectVersion,
-            disabled: CorePlist.pvDisabled)
+            disabled: CorePlist.pvDisabled,
+            supportedCheatTypes: CorePlist.pvSupportedCheatTypes.compactMap { CheatCodeTypes(string: $0) })
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

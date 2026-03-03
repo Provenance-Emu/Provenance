@@ -16,5 +16,10 @@
 	<string>https://stella-emu.github.io</string>
 	<key>PVProjectVersion</key>
 	<string>3.4.1</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Game Genie</string>
+		<string>Pro Action Replay</string>
+	</array>
 </dict>
 </plist>

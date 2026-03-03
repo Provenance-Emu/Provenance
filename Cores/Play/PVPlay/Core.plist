@@ -16,5 +16,13 @@
 	<string>https://github.com/jpd002/Play-</string>
 	<key>PVProjectVersion</key>
 	<string>0.58</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Code Breaker</string>
+		<string>Game Shark V3</string>
+		<string>Pro Action Replay V1</string>
+		<string>Pro Action Replay V2</string>
+		<string>Raw MemAddress:Value Pairs</string>
+	</array>
 </dict>
 </plist>

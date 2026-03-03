@@ -19,5 +19,10 @@
 	<string>4.1.0b5</string>
 	<key>PVAppStoreDisabled</key>
 	<false/>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Gecko</string>
+		<string>Pro Action Replay</string>
+	</array>
 </dict>
 </plist>

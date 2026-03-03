@@ -16,5 +16,9 @@
 	<string>https://github.com/hrydgard/ppsspp.git</string>
 	<key>PVProjectVersion</key>
 	<string>v1.13.2-2467</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Raw MemAddress:Value Pairs</string>
+	</array>
 </dict>
 </plist>

@@ -33,7 +33,8 @@ public enum CorePlist {
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
             projectVersion: CorePlist.pvProjectVersion,
-            disabled: CorePlist.pvDisabled)
+            disabled: CorePlist.pvDisabled,
+            supportedCheatTypes: CorePlist.pvSupportedCheatTypes.compactMap { CheatCodeTypes(string: $0) })
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

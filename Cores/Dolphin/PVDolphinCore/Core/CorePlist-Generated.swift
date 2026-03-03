@@ -22,6 +22,7 @@ public enum CorePlist {
   public static let pvProjectVersion: String = "3.2.0b2 (186)"
   public static let pvSupportedSystems: [String] = ["com.provenance.gamecube", "com.provenance.wii"]
   public static let pvAppStoreDisabled: Bool = false
+  public static let pvSupportedCheatTypes: [String] = ["Gecko", "Pro Action Replay"]
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
@@ -32,7 +33,8 @@ public enum CorePlist {
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
             projectVersion: CorePlist.pvProjectVersion,
-            appStoreDisabled: CorePlist.pvAppStoreDisabled)
+            appStoreDisabled: CorePlist.pvAppStoreDisabled,
+            supportedCheatTypes: CorePlist.pvSupportedCheatTypes.compactMap { CheatCodeTypes(string: $0) })
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

@@ -16,5 +16,9 @@
 	<string>https://github.com/emuPlace/emuThreeDS</string>
 	<key>PVProjectVersion</key>
 	<string>1.0.6</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Gateway</string>
+	</array>
 </dict>
 </plist>

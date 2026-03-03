@@ -16,5 +16,12 @@
 	<string>http://www.snes9x.com</string>
 	<key>PVProjectVersion</key>
 	<string>1.60</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Game Genie</string>
+		<string>Pro Action Replay</string>
+		<string>Gold Finger</string>
+		<string>Raw Code</string>
+	</array>
 </dict>
 </plist>

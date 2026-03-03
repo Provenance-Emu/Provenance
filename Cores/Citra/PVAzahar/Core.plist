@@ -18,5 +18,9 @@
 	<string>git</string>
 	<key>PVDisabled</key>
 	<true/>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Gateway</string>
+	</array>
 </dict>
 </plist>

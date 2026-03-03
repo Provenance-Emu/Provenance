@@ -21,6 +21,7 @@ public enum CorePlist {
   public static let pvProjectURL: String = "http://www.snes9x.com"
   public static let pvProjectVersion: String = "1.60"
   public static let pvSupportedSystems: [String] = ["com.provenance.snes"]
+  public static let pvSupportedCheatTypes: [String] = ["Game Genie", "Pro Action Replay", "Gold Finger", "Raw Code"]
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
@@ -30,7 +31,8 @@ public enum CorePlist {
             supportedSystems: CorePlist.pvSupportedSystems,
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
-            projectVersion: CorePlist.pvProjectVersion)
+            projectVersion: CorePlist.pvProjectVersion,
+            supportedCheatTypes: CorePlist.pvSupportedCheatTypes.compactMap { CheatCodeTypes(string: $0) })
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

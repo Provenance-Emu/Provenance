@@ -21,6 +21,7 @@ public enum CorePlist {
   public static let pvProjectURL: String = "https://github.com/hrydgard/ppsspp.git"
   public static let pvProjectVersion: String = "v1.13.2-2467"
   public static let pvSupportedSystems: [String] = ["com.provenance.psp"]
+  public static let pvSupportedCheatTypes: [String] = ["Raw MemAddress:Value Pairs"]
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
@@ -30,7 +31,8 @@ public enum CorePlist {
             supportedSystems: CorePlist.pvSupportedSystems,
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
-            projectVersion: CorePlist.pvProjectVersion)
+            projectVersion: CorePlist.pvProjectVersion,
+            supportedCheatTypes: CorePlist.pvSupportedCheatTypes.compactMap { CheatCodeTypes(string: $0) })
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }
