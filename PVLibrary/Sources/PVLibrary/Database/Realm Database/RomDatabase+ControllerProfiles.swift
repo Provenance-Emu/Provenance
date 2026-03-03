@@ -48,7 +48,7 @@ public extension RomDatabase {
             } else {
                 predicate = "gameID == %@ AND coreIdentifier == %@ AND systemIdentifier == nil"
             }
-            if let profile = allProfiles.filter(predicate, argumentArray: args).first {
+            if let profile = allProfiles.filter(predicate, args).first {
                 return profile
             }
         }
@@ -63,7 +63,7 @@ public extension RomDatabase {
             } else {
                 predicate = "gameID == %@ AND coreIdentifier == nil AND systemIdentifier == nil"
             }
-            if let profile = allProfiles.filter(predicate, argumentArray: args).first {
+            if let profile = allProfiles.filter(predicate, args).first {
                 return profile
             }
         }
