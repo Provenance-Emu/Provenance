@@ -245,24 +245,9 @@ struct iOSAddCheatView: View {
         cheatTypes.isEmpty ? "" : cheatTypes[selectedTypeIndex]
     }
 
-    private var isCodeValid: Bool {
-        !cheatCode.trimmingCharacters(in: .whitespaces).isEmpty
-    }
-
-    /// Expected format hint for the selected code type.
-    private var formatHint: String? {
-        guard !selectedType.isEmpty else { return nil }
-        // Common format hints keyed by partial device name match.
-        let hints: [(String, String)] = [
-            ("Game Genie", "XXXX-XXXX"),
-            ("GameShark", "XXXXXXXX YYYYYYYY"),
-            ("Action Replay", "XXXXXXXX YYYYYYYY"),
-            ("Code Breaker", "XXXXXXXX YYYY"),
-            ("Pro Action Replay", "XXXXXXXX YYYYYYYY"),
-            ("Codemaster", "XXXXXXXXXX"),
-        ]
-        let lower = selectedType.lowercased()
-        return hints.first { lower.contains($0.0.lowercased()) }?.1
+    /// Real-time validation result for the current code and selected type.
+    private var validationResult: CheatCodeValidator.ValidationResult {
+        CheatCodeValidator.validate(cheatCode, for: selectedType)
     }
 
     var body: some View {
@@ -280,7 +265,7 @@ struct iOSAddCheatView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveCheat() }
-                        .disabled(!isCodeValid)
+                        .disabled(validationResult == .empty)
                 }
             }
             .onAppear { focusedField = .name }
@@ -298,19 +283,31 @@ struct iOSAddCheatView: View {
     @ViewBuilder
     private var codeSection: some View {
         SwiftUI.Section {
-            TextField(formatHint ?? "Enter cheat code", text: $cheatCode)
-                .font(.system(.body, design: .monospaced))
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.characters)
-                .focused($focusedField, equals: .code)
-                .onChangeCompat(of: cheatCode) {
-                    cheatCode = cheatCode.uppercased()
+            HStack {
+                TextField(CheatCodeValidator.placeholder(for: selectedType), text: $cheatCode)
+                    .font(.system(.body, design: .monospaced))
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.characters)
+                    .focused($focusedField, equals: .code)
+                    .onChangeCompat(of: cheatCode) {
+                        cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedType)
+                    }
+
+                if !cheatCode.isEmpty {
+                    Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                        .foregroundStyle(validationResult.isValid ? Color.green : Color.red)
+                        .transition(.opacity)
                 }
+            }
         } header: {
             Text("Cheat Code")
         } footer: {
-            if let hint = formatHint {
-                Text("Expected format: \(hint)")
+            if let error = validationResult.errorHint, !cheatCode.isEmpty {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(Color.red)
+            } else if let hint = CheatCodeValidator.formatHint(for: selectedType) {
+                Text("Format: \(hint)")
                     .font(.caption)
             }
         }
@@ -508,17 +505,5 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
     }
 }
 
-// MARK: - onChange Compatibility
 
-private extension View {
-    /// Bridges the iOS 14–16 `onChange(of:perform:)` and iOS 17+ `onChange(of:_:)` APIs.
-    @ViewBuilder
-    func onChangeCompat<V: Equatable>(of value: V, perform action: @escaping () -> Void) -> some View {
-        if #available(iOS 17.0, *) {
-            self.onChange(of: value) { _, _ in action() }
-        } else {
-            self.onChange(of: value) { _ in action() }
-        }
-    }
-}
 #endif
