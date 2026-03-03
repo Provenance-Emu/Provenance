@@ -83,6 +83,7 @@
 #define OEGameCoreCouldNotLoadStateError 420
 #define OEGameCoreCouldNotLoadROMError 69
 #define OEGameCoreCouldNotSaveStateError 42069
+#define OEGameCoreCouldNotSetCheatError 99
 
 static void updateAnalogAxis(PVPSXButton button, int player, CGFloat amount);
 static void updateAnalogControllerButton(PVPSXButton button, int player, bool down);
@@ -172,6 +173,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
     @package
     NSMutableDictionary <NSString *, id> *_displayModes;
+    NSMutableSet <NSString *> *_enabledCheats;
 }
 
 + (void)initialize {
@@ -190,6 +192,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
             //        Log::SetFilterLevel(LOGLEVEL_TRACE);
         Log::RegisterCallback(OELogFunc, NULL);
+        _enabledCheats = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -531,13 +534,43 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     //    return toRet;
     //}
 
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError **)error
 {
-        //TODO: implement
+    // Normalize the code
+    NSString *trimmedCode = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    // Update the enabled cheats tracking set
+    if (enabled) {
+        [_enabledCheats addObject:trimmedCode];
+    } else {
+        [_enabledCheats removeObject:trimmedCode];
+    }
+
+    // If no cheats are enabled, clear the cheat list
+    if (_enabledCheats.count == 0) {
+        System::SetCheatList(nullptr);
+        return YES;
+    }
+
+    // Rebuild the full cheat list from all currently-enabled cheats
     auto list = std::make_unique<CheatList>();
-    list->LoadFromPCSXRString(code.UTF8String);
-        //list->Apply();
-        //System::SetCheatList(std::move(list));
+    for (NSString *cheatCode in _enabledCheats) {
+        if (!list->LoadFromPCSXRString(cheatCode.UTF8String)) {
+            if (error) {
+                *error = [NSError errorWithDomain:OEGameCoreErrorDomain
+                                             code:OEGameCoreCouldNotSetCheatError
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Failed to parse cheat code"}];
+            }
+            return NO;
+        }
+    }
+    System::SetCheatList(std::move(list));
+    return YES;
+}
+
+- (BOOL)getCheatSupport
+{
+    return YES;
 }
 
 - (NSUInteger)discCount
