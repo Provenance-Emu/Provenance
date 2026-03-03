@@ -4,6 +4,14 @@
 /* RetroArch Includes */
 #include "core.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+bool core_reset_cheat(void);
+#ifdef __cplusplus
+}
+#endif
+
 @implementation PVRetroArchCoreBridge (Cheats)
 #pragma mark - Cheats
 const char* cheatCode;
@@ -15,5 +23,8 @@ const char* cheatCode;
 	cheat_info.code    = code.UTF8String;
 	core_set_cheat(&cheat_info);
 	return true;
+}
+- (void)resetCheatCodes {
+	core_reset_cheat();
 }
 @end

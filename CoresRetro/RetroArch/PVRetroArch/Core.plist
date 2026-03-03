@@ -35,6 +35,12 @@
 			<string>https://github.com/libretro/beetle-psx-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>0.9.44.1</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Shark</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -51,6 +57,12 @@
 			<string>https://github.com/libretro/beetle-psx-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>0.9.44.1</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Shark</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -67,6 +79,12 @@
 			<string>https://docs.libretro.com/library/snes9x/</string>
 			<key>PVProjectVersion</key>
 			<string>1.61</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -83,6 +101,12 @@
 			<string>https://docs.libretro.com/library/bsnes/</string>
 			<key>PVProjectVersion</key>
 			<string>nightly</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -99,6 +123,12 @@
 			<string>https://docs.libretro.com/library/bsnes/</string>
 			<key>PVProjectVersion</key>
 			<string>nightly</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -115,6 +145,12 @@
 			<string>https://docs.libretro.com/library/bsnes/</string>
 			<key>PVProjectVersion</key>
 			<string>nightly</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -131,6 +167,12 @@
 			<string>https://docs.libretro.com/library/bsnes/</string>
 			<key>PVProjectVersion</key>
 			<string>nightly</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -185,6 +227,11 @@
 			<string>Nightly</string>
 			<key>PVAppStoreDisabled</key>
 			<true/>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Shark</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -203,6 +250,11 @@
 			<string>2024.10.29</string>
 			<key>PVAppStoreDisabled</key>
 			<false/>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Shark</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -222,6 +274,11 @@
 			<string>2025.11.13</string>
 			<key>PVAppStoreDisabled</key>
 			<true/>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Gecko</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -275,6 +332,10 @@
 			<string>https://melonds.kuribo64.net</string>
 			<key>PVProjectVersion</key>
 			<string>0.9.4</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -294,6 +355,10 @@
 			<string>git</string>
 			<key>PVContentless</key>
 			<false/>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -313,6 +378,10 @@
 			<string>git</string>
 			<key>PVContentless</key>
 			<true/>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -329,6 +398,10 @@
 			<string>https://docs.libretro.com/library/desmume/</string>
 			<key>PVProjectVersion</key>
 			<string>git</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -397,6 +470,12 @@
 			<string>Nestopia (RetroArch)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/nestopia</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 			<key>PVProjectVersion</key>
 			<string>v1.51.1</string>
 		</dict>
@@ -416,6 +495,12 @@
 			<string>https://github.com/libretro/fceumm</string>
 			<key>PVProjectVersion</key>
 			<string>nightly</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -432,6 +517,12 @@
 			<string>https://github.com/libretro/beetle-saturn-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>v0.9.45.1</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Pro Action Replay</string>
+				<string>Game Shark</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -448,6 +539,12 @@
 			<string>https://github.com/libretro/yabause</string>
 			<key>PVProjectVersion</key>
 			<string>v0.9.15</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Pro Action Replay</string>
+				<string>Game Shark</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -468,6 +565,12 @@
 			<string>https://github.com/libretro/Genesis-Plus-GX</string>
 			<key>PVProjectVersion</key>
 			<string>1.7.4</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -488,6 +591,12 @@
 			<string>https://github.com/libretro/Genesis-Plus-GX-Wide</string>
 			<key>PVProjectVersion</key>
 			<string>nightly</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -591,6 +700,12 @@
 			<string>https://github.com/libretro/beetle-gba-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>v0.9.36</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Shark</string>
+				<string>Code Breaker</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -625,6 +740,13 @@
 			<string>https://github.com/libretro/mgba</string>
 			<key>PVProjectVersion</key>
 			<string>v0.10-dev</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Game Shark</string>
+				<string>Code Breaker</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -643,6 +765,13 @@
 			<string>https://docs.libretro.com/library/vba_m/</string>
 			<key>PVProjectVersion</key>
 			<string>nightly</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Game Shark</string>
+				<string>Code Breaker</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -660,6 +789,12 @@
 			<string>https://github.com/libretro/SameBoy</string>
 			<key>PVProjectVersion</key>
 			<string>v0.14.7</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Game Shark</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -761,6 +896,12 @@
 			<string>https://docs.libretro.com/library/pcsx_rearmed/</string>
 			<key>PVProjectVersion</key>
 			<string>r21</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Shark</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -795,6 +936,10 @@
 			<string>https://docs.libretro.com/library/ppsspp/</string>
 			<key>PVProjectVersion</key>
 			<string>Git</string>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -1460,6 +1605,12 @@
 			<true/>
 			<key>PVContentless</key>
 			<false/>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
@@ -1482,6 +1633,13 @@
 			<true/>
 			<key>PVContentless</key>
 			<false/>
+			<key>PVSupportedCheatTypes</key>
+			<array>
+				<string>Game Genie</string>
+				<string>Pro Action Replay</string>
+				<string>Game Shark</string>
+				<string>Raw Code</string>
+			</array>
 		</dict>
 	</array>
 </dict>

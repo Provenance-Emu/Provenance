@@ -765,10 +765,79 @@ extension PVRetroArchCoreCore: GameWithCheat {
 			return false
 		}
 	}
+
+    @objc public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
+    }
+
     @objc
     public var supportsCheatCode: Bool { return true }
+
     @objc
-    public var cheatCodeTypes: [String] { return [] }
+    public var cheatCodeTypes: [String] {
+        guard let coreId = _bridge.coreIdentifier?.lowercased() else {
+            return ["Raw Code"]
+        }
+        return PVRetroArchCoreCore.cheatCodeTypes(forCoreIdentifier: coreId)
+    }
+
+    /// Returns the appropriate cheat code types for a given RetroArch sub-core identifier.
+    internal static func cheatCodeTypes(forCoreIdentifier coreId: String) -> [String] {
+        // SNES cores — Game Genie, Pro Action Replay
+        if coreId.contains("snes9x") || coreId.contains("bsnes") || coreId.contains("mesen-s") {
+            return ["Game Genie", "Pro Action Replay", "Raw Code"]
+        }
+        // NES / FDS cores — Game Genie, Pro Action Replay
+        if coreId.contains("nestopia") || coreId.contains("fceumm") || coreId.contains("mesen") {
+            return ["Game Genie", "Pro Action Replay", "Raw Code"]
+        }
+        // Game Boy / Game Boy Color cores — Game Genie, Game Shark
+        if coreId.contains("sameboy") || coreId.contains("gambatte") {
+            return ["Game Genie", "Game Shark", "Raw Code"]
+        }
+        // mGBA / VBA-M — cover GB, GBC, and GBA
+        if coreId.contains("mgba") || coreId.contains("vbam") {
+            return ["Game Genie", "Game Shark", "Code Breaker", "Raw Code"]
+        }
+        // Beetle GBA (GBA only)
+        if coreId.contains("mednafen") && coreId.contains("gba") {
+            return ["Game Shark", "Code Breaker", "Raw Code"]
+        }
+        // N64 cores — GameShark
+        if coreId.contains("mupen64") || coreId.contains("parallel") && coreId.contains("n64") {
+            return ["Game Shark", "Raw Code"]
+        }
+        // PlayStation cores — GameShark, Pro Action Replay
+        if (coreId.contains("mednafen") && coreId.contains("psx")) || coreId.contains("pcsx") {
+            return ["Game Shark", "Pro Action Replay", "Raw Code"]
+        }
+        // Genesis / Mega Drive / Sega CD / Game Gear / Master System
+        if coreId.contains("genesis") {
+            return ["Game Genie", "Pro Action Replay", "Raw Code"]
+        }
+        // Sega Saturn cores
+        if (coreId.contains("mednafen") && coreId.contains("saturn")) || coreId.contains("yabause") {
+            return ["Pro Action Replay", "Game Shark", "Raw Code"]
+        }
+        // Nintendo DS cores — Action Replay
+        if coreId.contains("melonds") || coreId.contains("desmume") || coreId.contains("noods") {
+            return ["Raw Code"]
+        }
+        // GameCube / Wii — Gecko codes
+        if coreId.contains("dolphin") {
+            return ["Gecko", "Raw Code"]
+        }
+        // PSP — CWCheat / raw
+        if coreId.contains("ppsspp") {
+            return ["Raw Code"]
+        }
+        // PS2
+        if coreId.contains("play") {
+            return ["Raw Code"]
+        }
+        // Default — raw code passthrough for any other core
+        return ["Raw Code"]
+    }
 }
 
 @objc public extension PVRetroArchCoreBridge {
