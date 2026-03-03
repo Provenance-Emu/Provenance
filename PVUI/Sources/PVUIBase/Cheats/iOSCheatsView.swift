@@ -7,6 +7,7 @@
 
 #if os(iOS)
 import SwiftUI
+import PVCoreBridge
 import PVLibrary
 import PVRealm
 import RealmSwift
@@ -319,7 +320,7 @@ struct iOSAddCheatView: View {
             SwiftUI.Section("Code Type") {
                 Picker("Code Type", selection: $selectedTypeIndex) {
                     ForEach(0..<cheatTypes.count, id: \.self) { index in
-                        Text(cheatTypes[index]).tag(index)
+                        Text(CheatCodeTypes(string: cheatTypes[index])?.stringValue ?? cheatTypes[index]).tag(index)
                     }
                 }
                 .pickerStyle(.segmented)

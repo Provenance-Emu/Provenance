@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVPrimitives
 
 @objc public protocol EmulatorCoreInfoPlistProvider {
     static var corePlist: EmulatorCoreInfoPlist { get }
@@ -24,4 +25,5 @@ public extension EmulatorCoreInfoProvider where Self: EmulatorCoreInfoPlistProvi
     var projectName: String { Self.corePlist.projectName }
     var projectURL: String { Self.corePlist.projectURL }
     var projectVersion: String { Self.corePlist.projectVersion }
+    var supportedCheatTypes: [CheatCodeTypes] { Self.corePlist.supportedCheatTypes }
 }

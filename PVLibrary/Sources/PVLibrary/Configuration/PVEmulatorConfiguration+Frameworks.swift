@@ -47,7 +47,8 @@ public extension PVEmulatorConfiguration {
                                  version: core.projectVersion,
                                  disabled: core.disabled,
                                  appStoreDisabled: core.appStoreDisabled,
-                                 contentless: core.contentless)
+                                 contentless: core.contentless,
+                                 supportedCheatTypes: core.supportedCheatTypes)
             //            database.refresh()
             try newCore.add(update: true)
         }
@@ -64,7 +65,8 @@ public extension PVEmulatorConfiguration {
                                         version: subCore.projectVersion,
                                         disabled: subCore.disabled,
                                         appStoreDisabled: subCore.appStoreDisabled,
-                                        contentless: subCore.contentless
+                                        contentless: subCore.contentless,
+                                        supportedCheatTypes: subCore.supportedCheatTypes
                 )
                 //                database.refresh()
                 try newSubCore.add(update: true)

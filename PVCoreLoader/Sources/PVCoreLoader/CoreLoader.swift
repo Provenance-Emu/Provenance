@@ -260,6 +260,7 @@ private extension EmulatorCoreInfoPlist {
             disabled: disabled,
             contentless: contentless,
             appStoreDisabled: appStoreDisabled,
+            supportedCheatTypes: supportedCheatTypes,
             subCores: subCores ?? self.subCores
         )
     }

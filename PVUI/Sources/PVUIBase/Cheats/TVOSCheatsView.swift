@@ -7,6 +7,7 @@
 
 #if os(tvOS)
 import SwiftUI
+import PVCoreBridge
 import PVLibrary
 import PVRealm
 import RealmSwift
@@ -503,7 +504,7 @@ struct TVOSAddCheatView: View {
                                     Button(action: {
                                         selectedCodeType = index
                                     }) {
-                                        Text(type)
+                                        Text(CheatCodeTypes(string: type)?.stringValue ?? type)
                                             .font(.system(size: 22, weight: .bold))
                                             .foregroundColor(selectedCodeType == index ? .white : .gray)
                                             .padding(.horizontal, 24)
