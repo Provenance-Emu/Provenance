@@ -191,7 +191,7 @@ public struct CheatCodeValidator {
     }()
 
     private static func matchesFull(_ string: String, _ pattern: String) -> Bool {
-        guard let regex = compiledPatterns[pattern] else { return false }
+        guard let regex = compiledPatterns[pattern] ?? (try? NSRegularExpression(pattern: pattern)) else { return false }
         let range = NSRange(string.startIndex..., in: string)
         return regex.firstMatch(in: string, range: range) != nil
     }
@@ -208,7 +208,7 @@ public struct CheatCodeValidator {
 
 // MARK: - onChange Compatibility
 
-extension View {
+internal extension View {
     /// Bridges `onChange(of:perform:)` (iOS/tvOS ≤ 16) with `onChange(of:_:)` (17+).
     @ViewBuilder
     func onChangeCompat<V: Equatable>(of value: V, perform action: @escaping () -> Void) -> some View {
