@@ -32,8 +32,9 @@ public extension GameWithCheat {
     /// Type-safe Swift accessor equivalent to `cheatCodeTypes`.
     ///
     /// Converts the string array returned by `cheatCodeTypes` into `[CheatCodeTypes]`,
-    /// silently dropping any strings that do not match a known case.
+    /// falling back to `.rawCode` for any strings that do not match a known case so
+    /// that cheats remain usable even for cores with custom type names.
     var cheatCodeTypeEnums: [CheatCodeTypes] {
-        cheatCodeTypes.compactMap { CheatCodeTypes(string: $0) }
+        cheatCodeTypes.map { CheatCodeTypes(string: $0) ?? .rawCode }
     }
 }
