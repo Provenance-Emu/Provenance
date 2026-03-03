@@ -196,7 +196,7 @@ final class PVCheatsViewController: UITableViewController {
         }
     }
 
-    func getCheatTypes() -> [CheatCodeTypes] {
+    func getCheatTypes() -> [String] {
         guard let delegate = delegate else { return [] }
         return delegate.getCheatTypes()
     }

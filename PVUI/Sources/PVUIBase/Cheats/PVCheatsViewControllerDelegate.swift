@@ -23,5 +23,5 @@ protocol PVCheatsViewControllerDelegate: AnyObject {
                                          cheatIndex: UInt8,
                                          completion: @escaping CheatsCompletion)
     func cheatsViewController(_ cheatsViewController: PVCheatsViewController, load state: PVCheats)
-    func getCheatTypes() -> [CheatCodeTypes]
+    func getCheatTypes() -> [String]
 }

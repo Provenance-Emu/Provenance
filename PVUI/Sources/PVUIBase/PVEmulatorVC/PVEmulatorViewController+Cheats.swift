@@ -279,11 +279,11 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         #endif
     }
 
-    func getCheatTypes() -> [CheatCodeTypes] {
+    func getCheatTypes() -> [String] {
         guard let gameWithCheat = core as? GameWithCheat else {
             return []
         }
-        return gameWithCheat.cheatCodeTypeEnums
+        return gameWithCheat.cheatCodeTypes
     }
 
     func recoverCheatCodes() async {
