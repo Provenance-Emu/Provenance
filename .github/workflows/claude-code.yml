@@ -5,8 +5,11 @@ on:
     types: [created]
   issues:
     types: [opened, labeled]
-  pull_request_review_comment:
-    types: [created]
+  # NOTE: pull_request_review_comment removed — it caused every Copilot
+  # review comment to create an action_required run (GitHub requires
+  # approval for bot-triggered PR review events before evaluating the
+  # job's `if` condition). Users can still @claude in normal PR comments
+  # via issue_comment, which covers the same use case without the noise.
   pull_request_review:
     types: [submitted]
 
@@ -26,9 +29,8 @@ jobs:
     # 1. @claude is mentioned in issue/PR comments
     # 2. Issues are labeled with 'agent-work'
     # 3. Issues are opened with 'agent-work' label
-    # 4. @claude is mentioned in PR review comments
-    # 5. PR review requests changes on an [Agent] PR (auto-fix)
-    # 6. Label 'claude-fix' added to a PR comment (trigger fix of all review comments)
+    # 4. /claude-fix in a PR comment (trigger fix of all review comments)
+    # 5. A human reviewer requests changes on an [Agent] PR (auto-fix)
     if: |
       (github.event_name == 'issue_comment' &&
        contains(github.event.comment.body, '@claude')) ||
@@ -41,11 +43,10 @@ jobs:
       (github.event_name == 'issues' &&
        github.event.action == 'opened' &&
        contains(toJSON(github.event.issue.labels.*.name), 'agent-work')) ||
-      (github.event_name == 'pull_request_review_comment' &&
-       contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' &&
        github.event.review.state == 'changes_requested' &&
-       startsWith(github.event.pull_request.title, '[Agent]'))
+       startsWith(github.event.pull_request.title, '[Agent]') &&
+       github.event.review.user.type != 'Bot')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
