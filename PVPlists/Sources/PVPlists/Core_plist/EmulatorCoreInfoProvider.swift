@@ -24,6 +24,9 @@ public protocol EmulatorCoreInfoProvider {
     var subCores: [Self]? { get }
 }
 
+public extension EmulatorCoreInfoProvider {
+    var supportedCheatTypes: [String] { [] }
+}
 extension EmulatorCoreInfoPlist: EmulatorCoreInfoProvider { }
 
 extension CorePlistEntry: EmulatorCoreInfoProvider {
