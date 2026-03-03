@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 22
+public let schemaVersion: UInt64 = 23
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -286,6 +286,11 @@ public final class RealmConfiguration {
                 // PVControllerProfile and PVControllerMapping are new objects.
                 // Realm handles new top-level object types automatically; no field migration needed.
                 ILOG("Migration to version 22 complete. (Added PVControllerProfile/PVControllerMapping)")
+            }
+            if oldSchemaVersion < 23 {
+                // PVCore.supportedCheatTypeNames (List<String>) was added.
+                // Realm initializes new List properties as empty by default; no enumeration needed.
+                ILOG("Migration to version 23 complete. (Added PVCore.supportedCheatTypeNames)")
             }
         }
 
