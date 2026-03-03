@@ -1,5 +1,6 @@
 import Testing
 @testable import PVPlists
+import PVPrimitives
 
 @Test func testEmulatorCoreInfoPlist_To_CorePlistEntry() async throws {
     let lhs = EmulatorCoreInfoPlist(identifier: "a", principleClass: "b", supportedSystems: ["c", "d"], projectName: "e", projectURL: "f", projectVersion: "g")
@@ -12,17 +13,19 @@ import Testing
     #expect(lhs.projectName == rhs.PVProjectName)
     #expect(lhs.projectURL == rhs.PVProjectURL)
     #expect(lhs.projectVersion == rhs.PVProjectVersion)
-    #expect(lhs.disabled == rhs.PVDisabled)
-    #expect(lhs.contentless == rhs.PVContentless)
-    #expect(lhs.appStoreDisabled == rhs.PVAppStoreDisabled)
-    #expect(lhs.supportedCheatTypes == (rhs.PVSupportedCheatTypes ?? []))
+    #expect(lhs.disabled == (rhs.PVDisabled ?? false))
+    #expect(lhs.contentless == (rhs.PVContentless ?? false))
+    #expect(lhs.appStoreDisabled == (rhs.PVAppStoreDisabled ?? false))
+    // supportedCheatTypes round-trips through string representation
+    let rhsCheatTypes = (rhs.PVSupportedCheatTypes ?? []).compactMap { CheatCodeTypes(string: $0) }
+    #expect(lhs.supportedCheatTypes == rhsCheatTypes)
 //    #expect(lhs.subCores == rhs.PVCores)
 
     #expect(lhs == rhs)
 }
 
 @Test func testCorePlistEntry_To_EmulatorCoreInfoPlist() async throws {
-    let lhs = CorePlistEntry(PVCoreIdentifier: "a", PVPrincipleClass: "b", PVSupportedSystems: ["c", "d"], PVProjectName: "e", PVProjectURL: "f", PVProjectVersion: "g", PVDisabled: true, PVAppStoreDisabled: false, PVCores: nil)
+    let lhs = CorePlistEntry(PVCoreIdentifier: "a", PVPrincipleClass: "b", PVSupportedSystems: ["c", "d"], PVProjectName: "e", PVProjectURL: "f", PVProjectVersion: "g", PVDisabled: true, PVContentless: nil, PVAppStoreDisabled: false, PVSupportedCheatTypes: nil, PVCores: nil)
 
     let rhs = EmulatorCoreInfoPlist(lhs)
 
@@ -32,10 +35,11 @@ import Testing
     #expect(rhs.projectName == lhs.PVProjectName)
     #expect(rhs.projectURL == lhs.PVProjectURL)
     #expect(rhs.projectVersion == lhs.PVProjectVersion)
-    #expect(rhs.disabled == lhs.PVDisabled)
-    #expect(rhs.contentless == lhs.PVContentless)
-    #expect(rhs.appStoreDisabled == lhs.PVAppStoreDisabled)
-    #expect(rhs.supportedCheatTypes == (lhs.PVSupportedCheatTypes ?? []))
+    #expect(rhs.disabled == (lhs.PVDisabled ?? false))
+    #expect(rhs.contentless == (lhs.PVContentless ?? false))
+    #expect(rhs.appStoreDisabled == (lhs.PVAppStoreDisabled ?? false))
+    let lhsCheatTypes = (lhs.PVSupportedCheatTypes ?? []).compactMap { CheatCodeTypes(string: $0) }
+    #expect(rhs.supportedCheatTypes == lhsCheatTypes)
 
     #expect(rhs == lhs)
 }
@@ -55,8 +59,7 @@ import Testing
 }
 
 @Test func testEmulatorCoreInfoPlist_CheatTypes_ParsedFromDict() throws {
-    // When PVSupportedCheatTypes is present, it should be parsed correctly
-    let cheatTypes = ["Game Genie", "Pro Action Replay", "Game Shark"]
+    // When PVSupportedCheatTypes is present, it should be parsed correctly into typed values
     let dict: [String: Any] = [
         "PVCoreIdentifier": "com.provenance.test",
         "PVPrincipleClass": "TestCore",
@@ -64,15 +67,15 @@ import Testing
         "PVProjectName": "Test Core",
         "PVProjectURL": "https://example.com",
         "PVProjectVersion": "1.0",
-        "PVSupportedCheatTypes": cheatTypes
+        "PVSupportedCheatTypes": ["Game Genie", "Pro Action Replay", "Game Shark"]
     ]
     let plist = try #require(EmulatorCoreInfoPlist(fromInfoDictionary: dict))
-    #expect(plist.supportedCheatTypes == cheatTypes)
+    #expect(plist.supportedCheatTypes == [.gameGenie, .proActionReplay, .gameShark])
 }
 
 @Test func testCorePlistEntry_CheatTypes_RoundTrip() {
     // Create a plist with cheat types and verify round-trip conversion preserves them
-    let cheatTypes = ["Code Breaker", "Game Genie", "Raw Code"]
+    let cheatTypes: [CheatCodeTypes] = [.codeBreaker, .gameGenie, .rawCode]
     let plist = EmulatorCoreInfoPlist(
         identifier: "com.provenance.test",
         principleClass: "TestCore",
@@ -84,8 +87,10 @@ import Testing
     )
 
     let entry = CorePlistEntry(plist)
-    #expect(entry.PVSupportedCheatTypes == cheatTypes)
+    // CorePlistEntry stores display-name strings
+    #expect(entry.PVSupportedCheatTypes == cheatTypes.map { $0.stringValue })
 
+    // Round-trip back to typed values
     let backToPlist = EmulatorCoreInfoPlist(entry)
     #expect(backToPlist.supportedCheatTypes == cheatTypes)
 }
@@ -109,4 +114,19 @@ import Testing
 
     let backToPlist = EmulatorCoreInfoPlist(entry)
     #expect(backToPlist.supportedCheatTypes == [])
+}
+
+@Test func testCheatCodeTypes_StringRoundTrip() {
+    // Every known case should survive a string round-trip
+    for cheatType in CheatCodeTypes.allCases {
+        let string = cheatType.stringValue
+        let parsed = CheatCodeTypes(string: string)
+        #expect(parsed != nil, "Failed to parse '\(string)'")
+        #expect(parsed == cheatType, "Round-trip mismatch for \(cheatType): got \(String(describing: parsed))")
+    }
+}
+
+@Test func testCheatCodeTypes_UnknownStringReturnsNil() {
+    #expect(CheatCodeTypes(string: "Unknown Format XYZ") == nil)
+    #expect(CheatCodeTypes(string: "") == nil)
 }

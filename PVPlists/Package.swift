@@ -20,7 +20,8 @@ let package = Package(
             targets: ["PVPlists"]),
     ],
     dependencies: [
-        .package(path: "../PVLogging")
+        .package(path: "../PVLogging"),
+        .package(path: "../PVPrimitives")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -28,12 +29,16 @@ let package = Package(
         .target(
             name: "PVPlists",
             dependencies: [
-                "PVLogging"
+                "PVLogging",
+                .product(name: "PVPrimitives", package: "PVPrimitives")
             ]
         ),
         .testTarget(
             name: "PVPlistsTests",
-            dependencies: ["PVPlists"]
+            dependencies: [
+                "PVPlists",
+                .product(name: "PVPrimitives", package: "PVPrimitives")
+            ]
         ),
     ],
     swiftLanguageModes: [.v5, .v6]

@@ -10,6 +10,10 @@ import Foundation
 
 /// A Core is a collection of systems and metadata that are used to run a game
 public struct Core: Codable, Sendable {
+    private enum CodingKeys: String, CodingKey {
+        case identifier, principleClass, disabled, systems, project, contentless, supportedCheatTypes
+    }
+
 
 
     /// Unique Identifier form a lookup table
@@ -30,14 +34,10 @@ public struct Core: Codable, Sendable {
     /// Is the core a contentless core, can it run without a rom?
     public let contentless: Bool
 
-    /// The cheat code types supported by this core.
-    ///
-    /// Each value must match the string representation of a case in the `CheatCodeTypes`
-    /// enum (for example, the case's `rawValue`). Refer to the `CheatCodeTypes` definition
-    /// for the complete list of supported cheat code types.
-    public let supportedCheatTypes: [String]
+    /// The cheat code formats supported by this core.
+    public let supportedCheatTypes: [CheatCodeTypes]
 
-    public init(identifier: String, principleClass: String, disabled: Bool = false, systems: [System], project: CoreProject, contentless: Bool = false, supportedCheatTypes: [String] = []) {
+    public init(identifier: String, principleClass: String, disabled: Bool = false, systems: [System], project: CoreProject, contentless: Bool = false, supportedCheatTypes: [CheatCodeTypes] = []) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.disabled = disabled
@@ -55,7 +55,21 @@ public struct Core: Codable, Sendable {
         self.systems = try container.decode([System].self, forKey: .systems)
         self.project = try container.decode(CoreProject.self, forKey: .project)
         self.contentless = try container.decodeIfPresent(Bool.self, forKey: .contentless) ?? false
-        self.supportedCheatTypes = try container.decodeIfPresent([String].self, forKey: .supportedCheatTypes) ?? []
+        // Decode stored display-name strings and convert to typed enum values.
+        let strings = try container.decodeIfPresent([String].self, forKey: .supportedCheatTypes) ?? []
+        self.supportedCheatTypes = strings.compactMap { CheatCodeTypes(string: $0) }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(identifier, forKey: .identifier)
+        try container.encode(principleClass, forKey: .principleClass)
+        try container.encode(disabled, forKey: .disabled)
+        try container.encode(systems, forKey: .systems)
+        try container.encode(project, forKey: .project)
+        try container.encode(contentless, forKey: .contentless)
+        // Encode as display-name strings for forward/backward compatibility.
+        try container.encode(supportedCheatTypes.map { $0.stringValue }, forKey: .supportedCheatTypes)
     }
 }
 

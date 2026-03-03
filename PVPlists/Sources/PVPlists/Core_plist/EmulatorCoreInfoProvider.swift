@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import PVPlists
+import PVPrimitives
 
 public protocol EmulatorCoreInfoProvider {
     var identifier: String { get }
@@ -20,12 +20,13 @@ public protocol EmulatorCoreInfoProvider {
     var disabled: Bool { get }
     var contentless: Bool { get }
     var appStoreDisabled: Bool { get }
-    var supportedCheatTypes: [String] { get }
+    /// The cheat code formats declared as supported by this core.
+    var supportedCheatTypes: [CheatCodeTypes] { get }
     var subCores: [Self]? { get }
 }
 
 public extension EmulatorCoreInfoProvider {
-    var supportedCheatTypes: [String] { [] }
+    var supportedCheatTypes: [CheatCodeTypes] { [] }
 }
 extension EmulatorCoreInfoPlist: EmulatorCoreInfoProvider { }
 
@@ -40,6 +41,9 @@ extension CorePlistEntry: EmulatorCoreInfoProvider {
     public var disabled: Bool { PVDisabled ?? false }
     public var contentless: Bool { PVContentless ?? false }
     public var appStoreDisabled: Bool { PVAppStoreDisabled ?? false }
-    public var supportedCheatTypes: [String] { PVSupportedCheatTypes ?? [] }
+    /// Converts the raw plist string values to typed `CheatCodeTypes`, silently dropping unknowns.
+    public var supportedCheatTypes: [CheatCodeTypes] {
+        (PVSupportedCheatTypes ?? []).compactMap { CheatCodeTypes(string: $0) }
+    }
     public var subCores: [CorePlistEntry]? { PVCores }
 }

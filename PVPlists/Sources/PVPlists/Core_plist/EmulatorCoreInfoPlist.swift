@@ -7,6 +7,7 @@
 
 import Foundation
 import PVLogging
+import PVPrimitives
 
 @objc
 @objcMembers
@@ -22,13 +23,14 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     public let disabled: Bool
     public let contentless: Bool
     public let appStoreDisabled: Bool
-    public let supportedCheatTypes: [String]
+    /// The cheat code formats supported by this core, parsed from `PVSupportedCheatTypes`.
+    public let supportedCheatTypes: [CheatCodeTypes]
     public let subCores:  [EmulatorCoreInfoPlist]?
 
     public init(identifier: String, principleClass: String, supportedSystems: [String],
                 projectName: String, projectURL: String, projectVersion: String,
                 disabled: Bool = false, contentless: Bool = false, appStoreDisabled: Bool = false,
-                supportedCheatTypes: [String] = [], subCores: [EmulatorCoreInfoPlist]? = nil) {
+                supportedCheatTypes: [CheatCodeTypes] = [], subCores: [EmulatorCoreInfoPlist]? = nil) {
         self.identifier = identifier
         self.principleClass = principleClass
         self.supportedSystems = supportedSystems
@@ -88,13 +90,21 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         /// AppStore Disabled
         self.appStoreDisabled = dict["PVAppStoreDisabled"] as? Bool ?? false
 
-        /// Supported cheat types
+        /// Supported cheat types — parse display-name strings into typed enum values.
         if let rawCheatTypes = dict["PVSupportedCheatTypes"] as? [Any] {
             let stringCheatTypes = rawCheatTypes.compactMap { $0 as? String }
             if stringCheatTypes.count != rawCheatTypes.count {
                 ELOG("Ignoring non-string PVSupportedCheatTypes elements for core \(identifier)")
             }
-            self.supportedCheatTypes = stringCheatTypes
+            var parsed: [CheatCodeTypes] = []
+            for string in stringCheatTypes {
+                if let type = CheatCodeTypes(string: string) {
+                    parsed.append(type)
+                } else {
+                    ELOG("Unknown PVSupportedCheatTypes value '\(string)' for core \(identifier)")
+                }
+            }
+            self.supportedCheatTypes = parsed
         } else {
             self.supportedCheatTypes = []
         }
@@ -128,6 +138,10 @@ public extension EmulatorCoreInfoPlist {
     convenience init(_ corePlistEntry: CorePlistEntry) {
         let e = corePlistEntry
         let subCores = corePlistEntry.PVCores?.map { EmulatorCoreInfoPlist($0) }
+        // Convert raw plist strings back to typed enum values.
+        let cheatTypes: [CheatCodeTypes] = (e.PVSupportedCheatTypes ?? []).compactMap {
+            CheatCodeTypes(string: $0)
+        }
         self.init(
             identifier: e.PVCoreIdentifier,
             principleClass: e.PVPrincipleClass,
@@ -138,7 +152,7 @@ public extension EmulatorCoreInfoPlist {
             disabled: e.PVDisabled ?? false,
             contentless: e.PVContentless ?? false,
             appStoreDisabled: e.PVAppStoreDisabled ?? false,
-            supportedCheatTypes: e.PVSupportedCheatTypes ?? [],
+            supportedCheatTypes: cheatTypes,
             subCores: subCores
         )
     }
@@ -146,7 +160,9 @@ public extension EmulatorCoreInfoPlist {
 
 func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     let subCores: [EmulatorCoreInfoPlist]? = rhs.PVCores?.map { EmulatorCoreInfoPlist($0) }
-
+    let rhsCheatTypes: [CheatCodeTypes] = (rhs.PVSupportedCheatTypes ?? []).compactMap {
+        CheatCodeTypes(string: $0)
+    }
     return lhs.identifier == rhs.PVCoreIdentifier
     && lhs.principleClass == rhs.PVPrincipleClass
     && lhs.supportedSystems == rhs.PVSupportedSystems
@@ -156,6 +172,6 @@ func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     && lhs.disabled == rhs.PVDisabled
     && lhs.contentless == rhs.PVContentless
     && lhs.appStoreDisabled == rhs.PVAppStoreDisabled
-    && lhs.supportedCheatTypes == (rhs.PVSupportedCheatTypes ?? [])
+    && lhs.supportedCheatTypes == rhsCheatTypes
     && lhs.subCores == subCores
 }
