@@ -8,14 +8,16 @@
 
 import Foundation
 import PVCoreBridge
-import PVLogging
 import PVmGBABridge
 
 extension PVmGBACore: GameWithCheat {
 
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
-        _bridge.setCheat(code, setType: type, setEnabled: enabled)
-        return true
+        return _bridge.setCheat(code, setType: type, setEnabled: enabled)
+    }
+
+    public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
     }
 
     @objc public var supportsCheatCode: Bool {
