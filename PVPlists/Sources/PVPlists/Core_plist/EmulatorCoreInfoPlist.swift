@@ -169,9 +169,9 @@ func ==(lhs: EmulatorCoreInfoPlist, rhs: CorePlistEntry) -> Bool {
     && lhs.projectName == rhs.PVProjectName
     && lhs.projectURL == rhs.PVProjectURL
     && lhs.projectVersion == rhs.PVProjectVersion
-    && lhs.disabled == rhs.PVDisabled
-    && lhs.contentless == rhs.PVContentless
-    && lhs.appStoreDisabled == rhs.PVAppStoreDisabled
+    && lhs.disabled == (rhs.PVDisabled ?? false)
+    && lhs.contentless == (rhs.PVContentless ?? false)
+    && lhs.appStoreDisabled == (rhs.PVAppStoreDisabled ?? false)
     && lhs.supportedCheatTypes == rhsCheatTypes
     && lhs.subCores == subCores
 }
