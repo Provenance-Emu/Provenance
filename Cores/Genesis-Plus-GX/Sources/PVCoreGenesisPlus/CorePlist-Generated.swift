@@ -26,6 +26,7 @@ public enum CorePlist {
     "com.provenance.mastersystem",
     "com.provenance.sg1000",
     "com.provenance.segacd"]
+  public static let pvSupportedCheatTypes: [String] = ["Game Genie", "Pro Action Replay"]
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {

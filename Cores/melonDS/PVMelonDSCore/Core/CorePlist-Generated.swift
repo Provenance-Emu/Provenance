@@ -22,6 +22,7 @@ public enum CorePlist {
   public static let pvProjectVersion: String = "0.9.4"
   public static let pvSupportedSystems: [String] = ["com.provenance.ds"]
   public static let pvDisabled: Bool = true
+  public static let pvSupportedCheatTypes: [String] = ["Action Replay"]
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {

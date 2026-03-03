@@ -18,5 +18,9 @@
 	<string>https://github.com/libretro/mupen64plus-libretro-nx</string>
 	<key>PVProjectVersion</key>
 	<string>0</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Game Shark</string>
+	</array>
 </dict>
 </plist>

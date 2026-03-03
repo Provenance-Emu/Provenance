@@ -19,4 +19,10 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 - (void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 @end
+
+@interface PVPicoDriveBridge (Cheats)
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
+        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error;
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)

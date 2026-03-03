@@ -43,6 +43,8 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 -(enum GBPalette)currentDisplayMode;
 -(void)changeDisplayMode:(NSInteger)displayMode;
+
+- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)
