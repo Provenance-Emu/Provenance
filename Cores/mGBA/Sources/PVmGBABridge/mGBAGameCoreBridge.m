@@ -370,7 +370,7 @@ static struct mLogger logger = { .log = _log };
 
 #pragma mark - Cheats
 
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
 {
     code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -379,33 +379,38 @@ static struct mLogger logger = { .log = _log };
     struct mCheatSet* cheatSet = [[cheatSets objectForKey:codeId] pointerValue];
     if (cheatSet) {
         cheatSet->enabled = enabled;
-        return;
+        return YES;
     }
     struct mCheatDevice* cheats = core->cheatDevice(core);
+    if (!cheats) {
+        return NO;
+    }
     cheatSet = cheats->createSet(cheats, [codeId UTF8String]);
+    if (!cheatSet) {
+        return NO;
+    }
     size_t size = mCheatSetsSize(&cheats->cheats);
     if (size) {
         cheatSet->copyProperties(cheatSet, *mCheatSetsGetPointer(&cheats->cheats, size - 1));
     }
     int codeType = GBA_CHEAT_AUTODETECT;
-    // NOTE: This is deprecated and was only meant to test cheats with the UI using cheats-database.xml
-    // Will be replaced with a sqlite database in the future.
-    //    if ([type isEqual:@"GameShark"]) {
-    //        codeType = GBA_CHEAT_GAMESHARK;
-    //    } else if ([type isEqual:@"Action Replay"]) {
-    //        codeType = GBA_CHEAT_PRO_ACTION_REPLAY;
-    //    }
     NSArray *codeSet = [code componentsSeparatedByString:@"+"];
     for (id c in codeSet) {
-        //        if ([c length] == 12)
-        //            codeType = GBA_CHEAT_CODEBREAKER;
-        //        if ([c length] == 16) // default to GS/AR v1/v2 code (can't determine GS/AR v1/v2 vs AR v3 because same length)
-        //            codeType = GBA_CHEAT_GAMESHARK;
         mCheatAddLine(cheatSet, [c UTF8String], codeType);
     }
     cheatSet->enabled = enabled;
     [cheatSets setObject:[NSValue valueWithPointer:cheatSet] forKey:codeId];
     mCheatAddSet(cheats, cheatSet);
+    return YES;
+}
+
+- (void)resetCheatCodes
+{
+    struct mCheatDevice* cheats = core->cheatDevice(core);
+    if (cheats) {
+        mCheatDeviceClear(cheats);
+    }
+    [cheatSets removeAllObjects];
 }
 
 @end
