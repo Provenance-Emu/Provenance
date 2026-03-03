@@ -249,12 +249,17 @@
 		<key>TVTopShelfPrimary|mageWide</key>
 		<string>Top Shelf Image Wide</string>
 	</dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.provenance-emu.provenance.cloudkit-sync</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
 		<string>bluetooth-central</string>
 		<string>fetch</string>
 		<string>location</string>
+		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
