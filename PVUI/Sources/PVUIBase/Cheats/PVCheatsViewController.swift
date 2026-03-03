@@ -3,7 +3,6 @@
 //  Provenance
 //
 
-import PVCoreBridge
 import PVLibrary
 import PVSupport
 import RealmSwift
