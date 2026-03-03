@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import PVEmulatorCore
+import PVCoreBridge
 import PVGambatteBridge
 import PVGambatteOptions
 import PVLogging
@@ -39,6 +40,18 @@ extension PVGBEmulatorCore: PVGBSystemResponderClient {
     
     public func didRelease(_ button: PVCoreBridge.PVGBButton, forPlayer player: Int) {
         (_bridge as! PVGBSystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
+
+extension PVGBEmulatorCore: GameWithCheat {
+    public var supportsCheatCode: Bool { true }
+
+    public var cheatCodeTypes: [String] {
+        return CheatCodeTypesMakeStringArray([.gameGenie, .gameShark])
+    }
+
+    public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
+        return _bridge.setCheat(code, setType: type, setEnabled: enabled)
     }
 }
 

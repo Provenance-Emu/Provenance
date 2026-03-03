@@ -17,5 +17,9 @@
 	<string>http://sourceforge.net/projects/fceultra/</string>
 	<key>PVProjectVersion</key>
 	<string>2.6.2</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Game Genie</string>
+	</array>
 </dict>
 </plist>

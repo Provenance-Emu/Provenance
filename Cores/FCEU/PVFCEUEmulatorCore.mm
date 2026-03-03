@@ -397,3 +397,47 @@ void FCEUD_Message(const char *s)
 }
 
 @end
+
+#pragma mark - Cheats
+
+@implementation PVFCEUEmulatorCoreBridge (Cheats)
+
+static NSMutableDictionary *fceu_cheatList = nil;
+
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
+    // Lazy initialise cheat dictionary
+    if (!fceu_cheatList) {
+        fceu_cheatList = [[NSMutableDictionary alloc] init];
+    }
+
+    // Sanitize
+    code = [[code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
+    code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
+
+    if (enabled) {
+        [fceu_cheatList setObject:@YES forKey:code];
+    } else {
+        [fceu_cheatList removeObjectForKey:code];
+    }
+
+    // Delete all existing FCEU cheats then re-apply the enabled set
+    while (FCEUI_DelCheat(0)) {}
+
+    BOOL anyAdded = NO;
+    for (NSString *cheatCode in fceu_cheatList) {
+        if (![[fceu_cheatList objectForKey:cheatCode] isEqual:@YES]) {
+            continue;
+        }
+
+        int addr = 0, val = 0, compare = -1;
+        if (FCEUI_DecodeGG([cheatCode UTF8String], &addr, &val, &compare)) {
+            // Game Genie code: type 1 = substitute (only triggers on matching read)
+            FCEUI_AddCheat([cheatCode UTF8String], (uint32)addr, (uint8)val, compare, 1);
+            anyAdded = YES;
+        }
+    }
+
+    return anyAdded || [fceu_cheatList count] == 0;
+}
+
+@end

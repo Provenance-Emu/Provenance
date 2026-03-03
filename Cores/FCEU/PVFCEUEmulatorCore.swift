@@ -96,6 +96,18 @@ open class PVFCEUEmulatorCore: PVEmulatorCore, @unchecked Sendable {
     }
 }
 
+extension PVFCEUEmulatorCore: GameWithCheat {
+    public var supportsCheatCode: Bool { true }
+
+    public var cheatCodeTypes: [String] {
+        return CheatCodeTypesMakeStringArray([.gameGenie])
+    }
+
+    public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
+        return (bridge as! PVFCEUEmulatorCoreBridge).setCheat(code, setType: type, setEnabled: enabled)
+    }
+}
+
 extension PVFCEUEmulatorCore: PVNESSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVNESButton, forPlayer player: Int) {
         (bridge as! PVNESSystemResponderClient).didPush(button, forPlayer: player)

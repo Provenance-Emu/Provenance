@@ -74,6 +74,18 @@ open class PVVisualBoyAdvanceCore: PVEmulatorCore {
     }
 }
 
+extension PVVisualBoyAdvanceCore: GameWithCheat {
+    public var supportsCheatCode: Bool { true }
+
+    public var cheatCodeTypes: [String] {
+        return CheatCodeTypesMakeStringArray([.gameShark, .codeBreaker])
+    }
+
+    public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
+        return _bridge.setCheat(withCode: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled)
+    }
+}
+
 extension PVVisualBoyAdvanceCore: CoreOptional {
     public static var options: [CoreOption] {
         return VisualBoyAdvanceOptions.options
