@@ -175,8 +175,23 @@ public struct CheatCodeValidator {
         return lines.allSatisfy { line in patterns.contains { matchesFull(line, $0) } }
     }
 
+    /// Pre-compiled regex cache so patterns are not recompiled on every keystroke.
+    private static let compiledPatterns: [String: NSRegularExpression] = {
+        let patterns = [
+            "^[A-F0-9]{8} [A-F0-9]{8}$",
+            "^[A-Z]{6,8}$",
+            "^[A-Z0-9]{4}-[A-Z0-9]{4}$",
+            "^[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3}$",
+            "^[A-F0-9]{8} [A-F0-9]{4}$",
+            "^[A-F0-9]{10}$",
+        ]
+        return patterns.reduce(into: [:]) { dict, p in
+            dict[p] = try? NSRegularExpression(pattern: p)
+        }
+    }()
+
     private static func matchesFull(_ string: String, _ pattern: String) -> Bool {
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return false }
+        guard let regex = compiledPatterns[pattern] else { return false }
         let range = NSRange(string.startIndex..., in: string)
         return regex.firstMatch(in: string, range: range) != nil
     }
@@ -187,7 +202,7 @@ public struct CheatCodeValidator {
         guard digits.count > firstLen else { return String(digits) }
         let p1 = String(digits.prefix(firstLen))
         let p2 = String(digits.dropFirst(firstLen).prefix(firstLen))
-        return p2.isEmpty ? p1 : "\(p1) \(p2)"
+        return "\(p1) \(p2)"
     }
 }
 

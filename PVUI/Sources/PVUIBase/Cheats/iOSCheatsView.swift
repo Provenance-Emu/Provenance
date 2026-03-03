@@ -245,10 +245,6 @@ struct iOSAddCheatView: View {
         cheatTypes.isEmpty ? "" : cheatTypes[selectedTypeIndex]
     }
 
-    private var isCodeValid: Bool {
-        !cheatCode.trimmingCharacters(in: .whitespaces).isEmpty
-    }
-
     /// Real-time validation result for the current code and selected type.
     private var validationResult: CheatCodeValidator.ValidationResult {
         CheatCodeValidator.validate(cheatCode, for: selectedType)
@@ -269,7 +265,7 @@ struct iOSAddCheatView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveCheat() }
-                        .disabled(!isCodeValid)
+                        .disabled(validationResult == .empty)
                 }
             }
             .onAppear { focusedField = .name }

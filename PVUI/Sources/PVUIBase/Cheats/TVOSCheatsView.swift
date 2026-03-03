@@ -562,8 +562,8 @@ struct TVOSAddCheatView: View {
                             )
                     }
                     .buttonStyle(.plain)
-                    .disabled(cheatCode.isEmpty)
-                    .opacity(cheatCode.isEmpty ? 0.5 : 1.0)
+                    .disabled(validationResult == .empty)
+                    .opacity(validationResult == .empty ? 0.5 : 1.0)
                 }
                 .padding(.bottom, 60)
             }
