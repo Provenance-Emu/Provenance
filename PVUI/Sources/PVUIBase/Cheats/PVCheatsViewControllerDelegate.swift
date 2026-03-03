@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 8/10/24.
 //
 
+import PVCoreBridge
 import PVLibrary
 import PVRealm
 
@@ -22,5 +23,5 @@ protocol PVCheatsViewControllerDelegate: AnyObject {
                                          cheatIndex: UInt8,
                                          completion: @escaping CheatsCompletion)
     func cheatsViewController(_ cheatsViewController: PVCheatsViewController, load state: PVCheats)
-    func getCheatTypes() -> [String]
+    func getCheatTypes() -> [CheatCodeTypes]
 }

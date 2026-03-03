@@ -3,6 +3,7 @@
 //  Provenance
 //
 
+import PVCoreBridge
 import PVLibrary
 import PVSupport
 import RealmSwift
@@ -195,7 +196,7 @@ final class PVCheatsViewController: UITableViewController {
         }
     }
 
-    func getCheatTypes() -> [String] {
+    func getCheatTypes() -> [CheatCodeTypes] {
         guard let delegate = delegate else { return [] }
         return delegate.getCheatTypes()
     }

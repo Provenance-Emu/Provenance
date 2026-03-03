@@ -3,6 +3,7 @@
 //  Provenance
 //
 
+import PVCoreBridge
 import PVLibrary
 import PVSupport
 import RealmSwift
@@ -268,8 +269,8 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
             return
         }
 
-        let types = delegate.getCheatTypes();
-        codeTypeText=String(describing:types[sender.tag])
+        let types = delegate.getCheatTypes()
+        codeTypeText = types[sender.tag].stringValue
         for button in codeTypeButtons {
             let codeTypeButton:UIButton = button
             if codeTypeButton.tag == sender.tag {
@@ -286,7 +287,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
             return
         }
 
-        let types = delegate.getCheatTypes();
+        let types = delegate.getCheatTypes()
         var typeIdx:Int = 0;
         var anchorObject = self.view!
         #if os(tvOS)
@@ -297,10 +298,10 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         if (types.count < 1) {
             return
         }
-        codeTypeText=String(describing:types[0])
-        for case let type as NSString in types {
+        codeTypeText = types[0].stringValue
+        for type in types {
             let codeTypeButton = MenuButton(type: UIButton.ButtonType.roundedRect)
-            let title = String(describing: type)
+            let title = type.stringValue
             #if os(tvOS)
             let buttonHeight: CGFloat = 70
             codeTypeButton.addTarget(self, action: #selector(self.codeTypeSelected(_:)), for: .primaryActionTriggered)

@@ -6,6 +6,7 @@
 
 import Foundation
 import SwiftUI
+import PVCoreBridge
 
 // MARK: - CheatCodeValidator
 
@@ -140,9 +141,19 @@ public struct CheatCodeValidator {
         descriptor(for: type)?.placeholder ?? "Enter cheat code"
     }
 
+    /// TextField placeholder for the given cheat type.
+    public static func placeholder(for type: CheatCodeTypes) -> String {
+        placeholder(for: type.stringValue)
+    }
+
     /// Human-readable format hint for the given type, or `nil` for unknown types.
     public static func formatHint(for type: String) -> String? {
         descriptor(for: type)?.exampleHint
+    }
+
+    /// Human-readable format hint for the given type, or `nil` for unknown types.
+    public static func formatHint(for type: CheatCodeTypes) -> String? {
+        formatHint(for: type.stringValue)
     }
 
     /// Validates `code` against the expected format for `type`.
@@ -155,10 +166,21 @@ public struct CheatCodeValidator {
         return desc.validate(upper) ? .valid : .invalid(hint: desc.exampleHint)
     }
 
+    /// Validates `code` against the expected format for `type`.
+    /// Returns `.empty` for blank input, `.valid` on success, or `.invalid(hint:)` on mismatch.
+    public static func validate(_ code: String, for type: CheatCodeTypes) -> ValidationResult {
+        validate(code, for: type.stringValue)
+    }
+
     /// Returns `code` uppercased with format-specific separators auto-inserted.
     public static func autoFormat(_ code: String, for type: String) -> String {
         let upper = code.uppercased()
         return descriptor(for: type)?.autoFormat?(upper) ?? upper
+    }
+
+    /// Returns `code` uppercased with format-specific separators auto-inserted.
+    public static func autoFormat(_ code: String, for type: CheatCodeTypes) -> String {
+        autoFormat(code, for: type.stringValue)
     }
 
     // MARK: - Private Helpers
