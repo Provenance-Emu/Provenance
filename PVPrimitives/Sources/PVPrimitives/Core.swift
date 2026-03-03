@@ -10,23 +10,23 @@ import Foundation
 
 /// A Core is a collection of systems and metadata that are used to run a game
 public struct Core: Codable, Sendable {
-    
-    
+
+
     /// Unique Identifier form a lookup table
     public let identifier: String
-    
+
     /// The class name of the principle `Class`
     public let principleClass: String
-    
+
     /// Is the core disabled
     public let disabled: Bool
 
     /// The systems that are provided to by this core
     public var systems: [System]
-    
+
     /// The project that this core is associated
     public let project: CoreProject
-    
+
     /// Is the core a contentless core, can it run without a rom?
     public let contentless: Bool
 
