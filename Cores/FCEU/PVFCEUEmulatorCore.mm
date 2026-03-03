@@ -425,10 +425,6 @@ static NSMutableDictionary *fceu_cheatList = nil;
 
     BOOL anyAdded = NO;
     for (NSString *cheatCode in fceu_cheatList) {
-        if (![[fceu_cheatList objectForKey:cheatCode] isEqual:@YES]) {
-            continue;
-        }
-
         int addr = 0, val = 0, compare = -1;
         if (FCEUI_DecodeGG([cheatCode UTF8String], &addr, &val, &compare)) {
             // Game Genie code: type 1 = substitute (only triggers on matching read)

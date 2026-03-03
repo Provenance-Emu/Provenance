@@ -404,11 +404,10 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
     {
         if ([[gb_cheatlist valueForKey:key] isEqual:@YES])
         {
-            // GameShark
+            // GameShark (no hyphen) vs Game Genie (contains hyphen)
             if ([key rangeOfString:@"-"].location == NSNotFound)
                 [combinedGameSharkCodes addObject:key];
-            // Game Genie
-            else if ([key rangeOfString:@"-"].location != NSNotFound)
+            else
                 [combinedGameGenieCodes addObject:key];
         }
     }

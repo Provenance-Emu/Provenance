@@ -849,16 +849,16 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     
     // Concat address/value pairs
     NSArray *multipleCodes = [code componentsSeparatedByString:@"+"];
-    for (int i=0; i < multipleCodes.count; i++) {
-        NSString* code = multipleCodes[i];
-        if (multipleCodes.count > i+1 && code.length <= 8) {
-            code = [code stringByAppendingString:multipleCodes[i+1]];
+    for (NSUInteger i = 0; i < multipleCodes.count; i++) {
+        NSString *singleCode = multipleCodes[i];
+        if (i + 1 < multipleCodes.count && singleCode.length <= 8) {
+            singleCode = [singleCode stringByAppendingString:multipleCodes[i + 1]];
             i++;
         }
         if (enabled)
-            [cheatList setValue:@YES forKey:code];
+            [cheatList setValue:@YES forKey:singleCode];
         else
-            [cheatList removeObjectForKey:code];
+            [cheatList removeObjectForKey:singleCode];
     }
     
     cheatsDeleteAll(false); // Old values not restored by default. Dunno if matters much to cheaters
