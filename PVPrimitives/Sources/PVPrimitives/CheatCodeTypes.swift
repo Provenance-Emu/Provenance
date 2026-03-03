@@ -22,6 +22,7 @@ public enum CheatCodeTypes: Int, CaseIterable, Sendable {
     case proActionReplay
     case proActionReplayV1
     case proActionReplayV2
+    case gateway
     case rawCode
     case rawMemAddress
 
@@ -38,6 +39,7 @@ public enum CheatCodeTypes: Int, CaseIterable, Sendable {
         case .proActionReplay: return "Pro Action Replay"
         case .proActionReplayV1: return "Pro Action Replay V1"
         case .proActionReplayV2: return "Pro Action Replay V2"
+        case .gateway: return "Gateway"
         case .rawCode: return "Raw Code"
         case .rawMemAddress: return "Raw MemAddress:Value Pairs"
         }
@@ -103,10 +105,16 @@ public enum CheatCodeTypes: Int, CaseIterable, Sendable {
              "actionreplayv3", "actionreplay3":
             self = .proActionReplayV2
 
+        case "gateway":
+            self = .gateway
+
         case "rawcode":
             self = .rawCode
 
-        case "rawmemaddress:valuepairs", "rawmemaddressvaluepairs":
+        // "Raw Address Value Pairs (PPSSPP CwCheat)" (emitted by PPSSPP core) normalizes to
+        // "rawaddressvaluepairs(ppssppcwcheat)" — spaces removed, parentheses preserved.
+        case "rawmemaddress:valuepairs", "rawmemaddressvaluepairs",
+             "rawaddressvaluepairs(ppssppcwcheat)":
             self = .rawMemAddress
 
         default:
@@ -127,6 +135,8 @@ public enum CheatCodeTypes: Int, CaseIterable, Sendable {
                 self = .gecko
             case "Gold Finger":
                 self = .goldFinger
+            case "Gateway":
+                self = .gateway
             case "Pro Action Replay":
                 self = .proActionReplay
             case "Pro Action Replay V1":
