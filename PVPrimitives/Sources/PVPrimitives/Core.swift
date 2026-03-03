@@ -37,6 +37,10 @@ public struct Core: Codable, Sendable {
     /// The cheat code formats supported by this core.
     public let supportedCheatTypes: [CheatCodeTypes]
 
+    /// Raw strings preserved from the decoded payload so that unrecognized
+    /// future values survive encode/decode round-trips without being dropped.
+    private let rawSupportedCheatTypeStrings: [String]
+
     public init(identifier: String, principleClass: String, disabled: Bool = false, systems: [System], project: CoreProject, contentless: Bool = false, supportedCheatTypes: [CheatCodeTypes] = []) {
         self.identifier = identifier
         self.principleClass = principleClass
@@ -45,6 +49,7 @@ public struct Core: Codable, Sendable {
         self.project = project
         self.contentless = contentless
         self.supportedCheatTypes = supportedCheatTypes
+        self.rawSupportedCheatTypeStrings = supportedCheatTypes.map { $0.stringValue }
     }
 
     public init(from decoder: any Decoder) throws {
@@ -55,8 +60,11 @@ public struct Core: Codable, Sendable {
         self.systems = try container.decode([System].self, forKey: .systems)
         self.project = try container.decode(CoreProject.self, forKey: .project)
         self.contentless = try container.decodeIfPresent(Bool.self, forKey: .contentless) ?? false
-        // Decode stored display-name strings and convert to typed enum values.
+        // Preserve the original raw strings so unknown future values survive re-encoding.
+        // The typed array is derived via compactMap; unrecognized strings are dropped from
+        // it but kept in rawSupportedCheatTypeStrings for lossless round-trip encoding.
         let strings = try container.decodeIfPresent([String].self, forKey: .supportedCheatTypes) ?? []
+        self.rawSupportedCheatTypeStrings = strings
         self.supportedCheatTypes = strings.compactMap { CheatCodeTypes(string: $0) }
     }
 
@@ -68,8 +76,9 @@ public struct Core: Codable, Sendable {
         try container.encode(systems, forKey: .systems)
         try container.encode(project, forKey: .project)
         try container.encode(contentless, forKey: .contentless)
-        // Encode as display-name strings for forward/backward compatibility.
-        try container.encode(supportedCheatTypes.map { $0.stringValue }, forKey: .supportedCheatTypes)
+        // Re-encode the original raw strings (not the typed enum's stringValue) so that
+        // any unrecognized future values decoded from disk are not silently discarded.
+        try container.encode(rawSupportedCheatTypeStrings, forKey: .supportedCheatTypes)
     }
 }
 
