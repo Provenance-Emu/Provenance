@@ -30,7 +30,11 @@ public struct Core: Codable, Sendable {
     /// Is the core a contentless core, can it run without a rom?
     public let contentless: Bool
 
-    /// The cheat code types supported by this core
+    /// The cheat code types supported by this core.
+    ///
+    /// Each value must match the string representation of a case in the `CheatCodeTypes`
+    /// enum (for example, the case's `rawValue`). Refer to the `CheatCodeTypes` definition
+    /// for the complete list of supported cheat code types.
     public let supportedCheatTypes: [String]
 
     public init(identifier: String, principleClass: String, disabled: Bool = false, systems: [System], project: CoreProject, contentless: Bool = false, supportedCheatTypes: [String] = []) {
