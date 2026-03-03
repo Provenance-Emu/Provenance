@@ -24,6 +24,14 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     @Persisted public var appStoreDisabled = false
     @Persisted public var contentless = false
 
+    /// Stored as display-name strings for Realm/ObjC compatibility.
+    @Persisted public var supportedCheatTypeNames: List<String>
+
+    /// Type-safe Swift accessor for the supported cheat code formats.
+    public var supportedCheatTypes: [CheatCodeTypes] {
+        supportedCheatTypeNames.compactMap { CheatCodeTypes(string: $0) }
+    }
+
     public var hasCoreClass: Bool {
         let _class: AnyClass? = NSClassFromString(principleClass)
         DLOG("Class: \(String(describing: _class)) for \(principleClass)")
@@ -33,7 +41,7 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     // Reverse links
     @Persisted(originProperty: "core") public var saveStates: LinkingObjects<PVSaveState>
 
-    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false, appStoreDisabled: Bool = false, contentless:Bool = false) {
+    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool = false, appStoreDisabled: Bool = false, contentless: Bool = false, supportedCheatTypes: [CheatCodeTypes] = []) {
         self.init()
         self.identifier = identifier
         self.principleClass = principleClass
@@ -45,12 +53,14 @@ public final class PVCore: RealmSwift.Object, Identifiable {
         self.disabled = disabled
         self.appStoreDisabled = appStoreDisabled
         self.contentless = contentless
+        self.supportedCheatTypeNames.removeAll()
+        self.supportedCheatTypeNames.append(objectsIn: supportedCheatTypes.map { $0.stringValue })
     }
 
     public override class func ignoredProperties() -> [String] {
-        ["hasCoreClass", "id"]
+        ["hasCoreClass", "id", "supportedCheatTypes"]
     }
-    
+
     public var id: String {
         return identifier
     }
