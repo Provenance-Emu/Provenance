@@ -224,6 +224,10 @@
 	<string>lite</string>
 	<key>Revision</key>
 	<string>f9c61252</string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.provenance-emu.provenance.cloudkit-sync</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
