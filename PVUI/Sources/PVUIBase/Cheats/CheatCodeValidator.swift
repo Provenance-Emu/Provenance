@@ -177,7 +177,10 @@ public struct CheatCodeValidator {
 
     /// `true` if every non-empty line of `code` matches at least one of the given patterns.
     private static func linesMatch(_ code: String, patterns: [String]) -> Bool {
-        let lines = code.components(separatedBy: .newlines).filter { !$0.isEmpty }
+        let lines = code
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
         guard !lines.isEmpty else { return false }
         return lines.allSatisfy { line in patterns.contains { matchesFull(line, $0) } }
     }
