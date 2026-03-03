@@ -87,7 +87,7 @@ extension PVDuckStationCore: GameWithCheat {
 
     @objc
     public var supportsCheatCode: Bool {
-        return true
+        return _bridge.getCheatSupport()
     }
 }
 
