@@ -163,9 +163,16 @@ public struct CheatCodeValidator {
 
     // MARK: - Private Helpers
 
+    /// Normalizes a type string for matching by lowercasing and removing non-alphanumeric characters.
+    private static func normalizedTypeKey(_ string: String) -> String {
+        string.lowercased().filter { $0.isLetter || $0.isNumber }
+    }
+
     private static func descriptor(for type: String) -> FormatDescriptor? {
-        let lower = type.lowercased()
-        return formats.first { lower.contains($0.matchKey) }
+        let normalizedType = normalizedTypeKey(type)
+        return formats.first { format in
+            normalizedType.contains(normalizedTypeKey(format.matchKey))
+        }
     }
 
     /// `true` if every non-empty line of `code` matches at least one of the given patterns.
