@@ -83,6 +83,7 @@
 #define OEGameCoreCouldNotLoadStateError 420
 #define OEGameCoreCouldNotLoadROMError 69
 #define OEGameCoreCouldNotSaveStateError 42069
+#define OEGameCoreCouldNotSetCheatError 99
 
 static void updateAnalogAxis(PVPSXButton button, int player, CGFloat amount);
 static void updateAnalogControllerButton(PVPSXButton button, int player, bool down);
@@ -533,18 +534,20 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError **)error
 {
+    if (!enabled) {
+        System::SetCheatList(nullptr);
+        return YES;
+    }
     auto list = std::make_unique<CheatList>();
     if (!list->LoadFromPCSXRString(code.UTF8String)) {
         if (error) {
             *error = [NSError errorWithDomain:OEGameCoreErrorDomain
-                                         code:OEGameCoreCouldNotLoadROMError
+                                         code:OEGameCoreCouldNotSetCheatError
                                      userInfo:@{NSLocalizedDescriptionKey: @"Failed to parse cheat code"}];
         }
         return NO;
     }
-    if (enabled) {
-        System::SetCheatList(std::move(list));
-    }
+    System::SetCheatList(std::move(list));
     return YES;
 }
 
