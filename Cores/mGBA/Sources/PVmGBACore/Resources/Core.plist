@@ -19,7 +19,6 @@
 	<key>PVSupportedCheatTypes</key>
 	<array>
 		<string>Game Shark</string>
-		<string>Game Genie</string>
 		<string>Code Breaker</string>
 		<string>Pro Action Replay</string>
 	</array>
