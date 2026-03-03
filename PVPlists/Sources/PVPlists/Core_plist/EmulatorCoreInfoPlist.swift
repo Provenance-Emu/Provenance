@@ -89,7 +89,15 @@ public final class EmulatorCoreInfoPlist: NSObject, Sendable {
         self.appStoreDisabled = dict["PVAppStoreDisabled"] as? Bool ?? false
 
         /// Supported cheat types
-        self.supportedCheatTypes = dict["PVSupportedCheatTypes"] as? [String] ?? []
+        if let rawCheatTypes = dict["PVSupportedCheatTypes"] as? [Any] {
+            let stringCheatTypes = rawCheatTypes.compactMap { $0 as? String }
+            if stringCheatTypes.count != rawCheatTypes.count {
+                ELOG("Ignoring non-string PVSupportedCheatTypes elements for core \(identifier)")
+            }
+            self.supportedCheatTypes = stringCheatTypes
+        } else {
+            self.supportedCheatTypes = []
+        }
 
         /// Subcores
         if let subCores = dict["PVCores"] as? [[String:Any]] {
