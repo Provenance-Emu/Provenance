@@ -379,7 +379,7 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
 NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
 
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
 {
     // Sanitize
     code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -416,6 +416,8 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
     // Apply combined cheats or force a final reset if all cheats are disabled
     [self applyCheat:[combinedGameSharkCodes count] != 0 ? [combinedGameSharkCodes componentsJoinedByString:@"+"] : @"0"];
     [self applyCheat:[combinedGameGenieCodes count] != 0 ? [combinedGameGenieCodes componentsJoinedByString:@"+"] : @"0-"];
+
+    return YES;
 }
 
 # pragma mark - Display Mode

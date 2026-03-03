@@ -78,7 +78,7 @@ extension PVVisualBoyAdvanceCore: GameWithCheat {
     public var supportsCheatCode: Bool { true }
 
     public var cheatCodeTypes: [String] {
-        return CheatCodeTypesMakeStringArray([.gameShark, .codeBreaker])
+        return _bridge.cheatCodeTypes()
     }
 
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {

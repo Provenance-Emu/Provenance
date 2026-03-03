@@ -824,7 +824,7 @@ void systemMessage(int, const char * str, ...) {
 
 #pragma mark - Cheats
 
-@implementation PVVisualBoyAdvanceBridge (GameWithCheat)
+@implementation PVVisualBoyAdvanceBridge (Cheats)
 NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 
 - (NSArray*)cheatCodeTypes {
@@ -862,11 +862,13 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     }
     
     cheatsDeleteAll(false); // Old values not restored by default. Dunno if matters much to cheaters
-    
+
+    BOOL anyAdded = NO;
+
     // Apply enabled cheats found in dictionary
     for (id key in cheatList)
     {
-        NSLog(@"Processing %@ %@", key, codeType);
+        DLOG(@"VBA: Processing cheat %@ type %@", key, codeType);
         if ([[cheatList valueForKey:key] isEqual:@YES])
         {
             NSString* singleCode = key;
@@ -874,6 +876,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
             {
                 // XXXXXXXX:YY || XXXXXXXX:YYYY || XXXXXXXX:YYYYYYYY
                 cheatsAddCheatCode([singleCode UTF8String], "code");
+                anyAdded = YES;
             }
 
             if ([singleCode length] == 12) // Codebreaker/GameShark SP/Xploder code
@@ -883,6 +886,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
                 [formattedCode insertString:@" " atIndex:8];
 
                 cheatsAddCBACode([formattedCode UTF8String], "code");
+                anyAdded = YES;
             }
 
             if ([singleCode length] == 16) // GameShark Advance/Action Replay (v1/v2) and Action Replay v3
@@ -897,11 +901,14 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 
                 else // default to GS/AR v1/v2 code (can't determine GS/AR v1/v2 vs AR v3 because same length)
                     cheatsAddGSACode([singleCode UTF8String], "code", false);
+
+                anyAdded = YES;
             }
         }
     }
-    // TODO: Make this a real return
-    return YES;
+
+    // Return YES if cheats were applied or if all cheats were disabled (empty list = success)
+    return anyAdded || [cheatList count] == 0;
 }
 
 -(BOOL)supportsCheatCode { return YES; }
