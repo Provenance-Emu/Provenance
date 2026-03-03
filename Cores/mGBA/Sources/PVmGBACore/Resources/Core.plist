@@ -16,5 +16,12 @@
 	<string>https://mgba.io/</string>
 	<key>PVProjectVersion</key>
 	<string>0.10.3</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Game Shark</string>
+		<string>Game Genie</string>
+		<string>Code Breaker</string>
+		<string>Pro Action Replay</string>
+	</array>
 </dict>
 </plist>

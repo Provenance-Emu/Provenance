@@ -25,3 +25,9 @@ typedef enum PVGBAButton: NSInteger PVGBAButton;
 - (oneway void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSUInteger)player;
 
 @end
+
+@interface PVmGBAGameCoreBridge (Cheats)
+
+- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
+
+@end
