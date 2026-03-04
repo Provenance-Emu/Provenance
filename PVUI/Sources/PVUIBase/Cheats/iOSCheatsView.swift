@@ -97,19 +97,23 @@ public struct iOSCheatsView: View {
                         dismiss()
                     }
                 }
-                ToolbarItemGroup(placement: .primaryAction) {
-                    NavigationLink(destination: WikiPageView(path: "info/cheats.md", title: "Cheats Guide")) {
-                        Image(systemName: "questionmark.circle")
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showingAddCheat = true
+                    } label: {
+                        Image(systemName: "plus")
                     }
+                }
+                ToolbarItem(placement: .primaryAction) {
                     Button {
                         showingSearchDB = true
                     } label: {
                         Image(systemName: "magnifyingglass")
                     }
-                    Button {
-                        showingAddCheat = true
-                    } label: {
-                        Image(systemName: "plus")
+                }
+                ToolbarItem(placement: .secondaryAction) {
+                    NavigationLink(destination: WikiPageView(path: "info/cheats.md", title: "Cheats Guide")) {
+                        Label("Cheats Guide", systemImage: "questionmark.circle")
                     }
                 }
             }
