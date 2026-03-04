@@ -23,6 +23,8 @@ extension PVMelonDSCore: GameWithCheat {
     }
 
     public var cheatCodeTypes: [String] {
-        return CheatCodeTypesMakeStringArray([.proActionReplay])
+        // NDS uses "Action Replay" as the cheat device name (not "Pro Action Replay").
+        // CheatCodeTypes.init(string:) maps "Action Replay" → .proActionReplay for processing.
+        return ["Action Replay"]
     }
 }

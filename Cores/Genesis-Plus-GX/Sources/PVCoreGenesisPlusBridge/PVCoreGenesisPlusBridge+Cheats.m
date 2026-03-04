@@ -30,7 +30,7 @@ void retro_cheat_set(unsigned index, bool enabled, const char *code);
         }
         return NO;
     }
-    retro_cheat_set((unsigned)cheatIndex, enabled, cCode);
+    retro_cheat_set((unsigned)cheatIndex, (bool)enabled, cCode);
     return YES;
 }
 
