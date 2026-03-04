@@ -13,6 +13,7 @@ import PVCoreBridgeRetro
 extension PVMelonDSCore: GameWithCheat {
 
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
+        // codeType and cheatIndex are not used by the libretro bridge's cheat API.
         _bridge.setCheat(code, setType: type, setEnabled: enabled)
         return true
     }

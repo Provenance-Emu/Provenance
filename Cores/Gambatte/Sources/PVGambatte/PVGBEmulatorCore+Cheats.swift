@@ -13,6 +13,7 @@ import PVGambatteBridge
 extension PVGBEmulatorCore: GameWithCheat {
 
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
+        // codeType and cheatIndex are not used; Gambatte manages its cheat list keyed by code internally.
         _bridge.setCheat(code, setType: type, setEnabled: enabled)
         return true
     }
