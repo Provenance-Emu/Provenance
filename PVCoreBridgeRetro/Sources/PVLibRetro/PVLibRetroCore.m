@@ -2932,18 +2932,6 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 //
 @end
 
-@implementation PVLibRetroCoreBridge (Cheats)
-
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
-    unsigned index = 0;
-    const char* cCode = [code cStringUsingEncoding:NSUTF8StringEncoding];
-    core->retro_cheat_set(index, enabled, cCode);
-    // void retro_cheat_reset(void) { }
-    //    void retro_cheat_set(unsigned index, bool enabled, const char *code) { (void)index; (void)enabled; (void)code; }
-}
-
-@end
-
 unsigned retro_api_version(void)
 {
     return RETRO_API_VERSION;
