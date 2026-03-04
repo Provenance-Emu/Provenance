@@ -48,4 +48,5 @@ typedef enum PVGBAButton: NSInteger PVGBAButton;
 - (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type codeType:(NSString *)codeType cheatIndex:(uint8_t)cheatIndex enabled:(BOOL)enabled;
 - (NSArray<NSString *> *)cheatCodeTypes;
 - (BOOL)supportsCheatCode;
+- (void)resetCheatCodes;
 @end

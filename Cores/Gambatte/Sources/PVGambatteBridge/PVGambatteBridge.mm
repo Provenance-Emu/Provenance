@@ -587,4 +587,15 @@ static NSMutableDictionary *gb_cheatlist = nil;
     return YES;
 }
 
+- (void)resetCheatCodes
+{
+    if (gb_cheatlist) {
+        [gb_cheatlist removeAllObjects];
+    }
+    // Gambatte clears its internal cheat lists by applying sentinel values:
+    // "0" clears all GameShark (GS) codes; "0-" clears all Game Genie (GG) codes.
+    [self applyCheat:@"0"];
+    [self applyCheat:@"0-"];
+}
+
 @end

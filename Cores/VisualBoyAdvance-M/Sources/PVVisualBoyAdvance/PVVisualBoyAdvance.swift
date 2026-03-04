@@ -42,6 +42,10 @@ extension PVVisualBoyAdvanceCore: GameWithCheat {
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
         return _bridge.setCheat(withCode: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled)
     }
+
+    public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
+    }
 }
 
 extension PVVisualBoyAdvanceCore: CoreOptional {
