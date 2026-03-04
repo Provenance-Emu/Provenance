@@ -355,6 +355,7 @@
 		B37A79552D91C9FA0013D7E1 /* extra_hid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EA37B2A736317000B90A3 /* extra_hid.cpp */; };
 		B37CDBAC2CAA6A950026E901 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDBAB2CAA6A950026E901 /* PVCoreObjCBridge */; };
 		B37CDBAF2CAA6AF90026E901 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDBAE2CAA6AF90026E901 /* PVPlists */; };
+		B3A483422F569BD6004A995B /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B3A483412F569BD6004A995B /* PVPrimitives */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3CC2E232CBC245F00D90EB1 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B3CC2E222CBC245F00D90EB1 /* MoltenVK */; };
 		B3FD97CA2D6145BF00397643 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FD97C92D6145BF00397643 /* libavformat.xcframework */; };
@@ -17040,6 +17041,7 @@
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */,
 				B3FD97CF2D6145D200397643 /* libavcodec.xcframework in Frameworks */,
+				B3A483422F569BD6004A995B /* PVPrimitives in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B31DDCF32D82A10100D6525B /* CoreBluetooth.framework in Frameworks */,
@@ -44695,6 +44697,7 @@
 				B37CDBAE2CAA6AF90026E901 /* PVPlists */,
 				B3CC2E222CBC245F00D90EB1 /* MoltenVK */,
 				B36A16012D90D24100420484 /* OpenSSL */,
+				B3A483412F569BD6004A995B /* PVPrimitives */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVEmuThree.framework */;
@@ -44753,6 +44756,7 @@
 				B31DDD172D8351C100D6525B /* XCLocalSwiftPackageReference "../../PVUI" */,
 				B31DDD1A2D83537900D6525B /* XCLocalSwiftPackageReference "../../PVThemes" */,
 				B36A16002D90D24100420484 /* XCRemoteSwiftPackageReference "OpenSSL" */,
+				B3A483402F569BD5004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -45700,6 +45704,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
 		};
+		B3A483402F569BD5004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 		B3CC2E182CBC141200D90EB1 /* XCLocalSwiftPackageReference "../../MoltenVK" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../MoltenVK;
@@ -45746,6 +45754,10 @@
 		B37CDBAE2CAA6AF90026E901 /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPlists;
+		};
+		B3A483412F569BD6004A995B /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 		B3CC2E222CBC245F00D90EB1 /* MoltenVK */ = {
 			isa = XCSwiftPackageProductDependency;

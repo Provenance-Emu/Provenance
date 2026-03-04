@@ -30,6 +30,7 @@
 		B380C2592894E846007B76FD /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19B2894D32900CF98C7 /* libretro.c */; };
 		B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C2682894EB37007B76FD /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B39768F82859E23200558958 /* libvecx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libvecx-libretro.a */; };
+		B3A4834E2F569EB7004A995B /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B3A4834D2F569EB7004A995B /* PVPrimitives */; };
 		B3AFCF842977A72900A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF832977A72900A01010 /* PVLogging */; };
 		B3B498092D0D72BE00CB02D4 /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B498072D0D72B700CB02D4 /* glsm.c */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
@@ -196,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B3A4834E2F569EB7004A995B /* PVPrimitives in Frameworks */,
 				B377ECC62CB3519300E9B750 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B30E99C02C6F002100C1431E /* PVSupport in Frameworks */,
@@ -520,6 +522,7 @@
 				B377ECBD2CB34FA900E9B750 /* PVPlists */,
 				B377ECC02CB34FE200E9B750 /* PVCoreObjCBridge */,
 				B377ECC32CB3518900E9B750 /* PVEmulatorCore */,
+				B3A4834D2F569EB7004A995B /* PVPrimitives */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVVecX.framework */;
@@ -572,6 +575,7 @@
 				B377ECBC2CB34FA900E9B750 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 				B377ECBF2CB34FE200E9B750 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B377ECC22CB3518900E9B750 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3A4834C2F569EB7004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -1171,6 +1175,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVEmulatorCore;
 		};
+		B3A4834C2F569EB7004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1193,6 +1201,10 @@
 		B377ECC32CB3518900E9B750 /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
+		};
+		B3A4834D2F569EB7004A995B /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 		B3AFCF832977A72900A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;

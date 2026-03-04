@@ -232,12 +232,12 @@ public extension PVEmualatorControllerProtocol {
          }
          */
 
-        guard game.lastAutosaveAge == nil || game.lastAutosaveAge! > minutes(1) else {
+        guard game.lastAutosaveAge == nil || game.lastAutosaveAge! > PVPrimitives.minutes(1) else {
             ILOG("Last autosave is too new to make new one")
             throw SaveStateError.ineligibleError
         }
 
-        if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last, (latestManualSaveState.date.timeIntervalSinceNow * -1) < minutes(1) {
+        if let latestManualSaveState = game.saveStates.sorted(byKeyPath: "date", ascending: true).last, (latestManualSaveState.date.timeIntervalSinceNow * -1) < PVPrimitives.minutes(1) {
             ILOG("Latest manual save state is too recent to make a new auto save")
             throw SaveStateError.ineligibleError
         }

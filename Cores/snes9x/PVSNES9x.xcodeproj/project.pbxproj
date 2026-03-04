@@ -97,6 +97,7 @@
 		B3A478FA2C964C6A0052500A /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3A478F92C964C6A0052500A /* PVLogging */; };
 		B3A478FC2C964C720052500A /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3A478FB2C964C720052500A /* PVLogging */; };
 		B3A478FF2C964D220052500A /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A478FE2C964D220052500A /* CorePlist-Generated.swift */; };
+		B3A483392F569B7C004A995B /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B3A483382F569B7C004A995B /* PVPrimitives */; };
 		B3AFCF7C2977A6F800A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF7B2977A6F800A01010 /* PVLogging */; };
 		B3C9D5361DEA83DE0068D057 /* PVSNES.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D5341DEA83DE0068D057 /* PVSNES.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91317F75FAF0031B1C9 /* AudioToolbox.framework */; };
@@ -325,6 +326,7 @@
 				B30E99272C6EF29B00C1431E /* PVSupport in Frameworks */,
 				B3AFCF7C2977A6F800A01010 /* PVLogging in Frameworks */,
 				B3A478FA2C964C6A0052500A /* PVLogging in Frameworks */,
+				B3A483392F569B7C004A995B /* PVPrimitives in Frameworks */,
 				B30E9AD82C6FB24900C1431E /* PVCoreBridge in Frameworks */,
 				B365107E21782E95008FDB7B /* libz.tbd in Frameworks */,
 				B3D270DD2C967013004C0A92 /* PVPlists in Frameworks */,
@@ -675,6 +677,7 @@
 				B3A478F62C964C590052500A /* PVCoreObjCBridge */,
 				B3A478F92C964C6A0052500A /* PVLogging */,
 				B3D270DC2C967013004C0A92 /* PVPlists */,
+				B3A483382F569B7C004A995B /* PVPrimitives */,
 			);
 			productName = PVSNES;
 			productReference = B3C9D5321DEA83DE0068D057 /* PVSNES.framework */;
@@ -720,6 +723,7 @@
 				B3A478F52C964C590052500A /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B3A478F82C964C6A0052500A /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3D270DB2C967013004C0A92 /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B3A483372F569B7C004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 			);
 			productRefGroup = 1ACEA8E517F75F350031B1C9 /* Products */;
 			projectDirPath = "";
@@ -1635,6 +1639,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVLogging;
 		};
+		B3A483372F569B7C004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 		B3D270DB2C967013004C0A92 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
@@ -1666,6 +1674,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3A478F82C964C6A0052500A /* XCLocalSwiftPackageReference "../../PVLogging" */;
 			productName = PVLogging;
+		};
+		B3A483382F569B7C004A995B /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 		B3AFCF7B2977A6F800A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;

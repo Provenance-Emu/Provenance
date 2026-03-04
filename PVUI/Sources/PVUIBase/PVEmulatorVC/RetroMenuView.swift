@@ -391,23 +391,27 @@ struct RetroMenuView: View {
         (emulatorVC.core as? CoreActions)?.coreActions != nil
     }
 
+    /// Whether the game qualifies for a save on quit based on play time and auto-save settings.
+    private var shouldSaveOnQuit: Bool {
+        guard let game = emulatorVC.game else { return false }
+
+        let lastPlayed: Date = game.lastPlayed ?? Date()
+        let minimumPlayTimeToMakeAutosave: TimeInterval = 60 * 2
+
+        let twoMinutes: TimeInterval = 120
+        let oneMinute: TimeInterval = 60
+        var result: Bool = Defaults[.autoSave]
+        result = result && abs(lastPlayed.timeIntervalSinceNow) > minimumPlayTimeToMakeAutosave
+        result = result && (game.lastAutosaveAge ?? twoMinutes) > oneMinute
+        result = result && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? twoMinutes) > oneMinute
+        result = result && emulatorVC.core.supportsSaveStates
+
+        return result
+    }
+
     // Main menu buttons - essential game controls only
     private var mainMenuButtons: some View {
-        // Calculate if we should show the save & quit option
-        let shouldSave: Bool = {
-            guard let game = emulatorVC.game else { return false }
-
-            let lastPlayed = game.lastPlayed ?? Date()
-            let minimumPlayTimeToMakeAutosave: TimeInterval = 60 * 2 // 2 minutes
-
-            var shouldSave = Defaults[.autoSave]
-            shouldSave = shouldSave && abs(lastPlayed.timeIntervalSinceNow) > minimumPlayTimeToMakeAutosave
-            shouldSave = shouldSave && (game.lastAutosaveAge ?? minutes(2)) > minutes(1)
-            shouldSave = shouldSave && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
-            shouldSave = shouldSave && emulatorVC.core.supportsSaveStates
-
-            return shouldSave
-        }()
+        let shouldSave: Bool = shouldSaveOnQuit
 
         return VStack(spacing: menuSpacing) {
             // Resume game button

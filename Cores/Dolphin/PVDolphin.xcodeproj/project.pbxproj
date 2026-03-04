@@ -78,6 +78,7 @@
 		B364588F2EDD16530020354E /* PVShaders in Frameworks */ = {isa = PBXBuildFile; productRef = B364588E2EDD16530020354E /* PVShaders */; };
 		B36458D82EDD1A160020354E /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B36458D72EDD1A160020354E /* Defaults */; };
 		B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */; };
+		B3A4832D2F569AC7004A995B /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B3A4832C2F569AC7004A995B /* PVPrimitives */; };
 		B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB322949F26800CC8234 /* CoreGraphics.framework */; };
 		B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB382949F2DC00CC8234 /* GameController.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
@@ -770,6 +771,7 @@
 				B3F8E0FD2CB3C83600017D1B /* PVCoreObjCBridge in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B30E9B1C2C6FD20400C1431E /* PVCoreBridge in Frameworks */,
+				B3A4832D2F569AC7004A995B /* PVPrimitives in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
@@ -1065,6 +1067,7 @@
 				B3F8E1022CB3C95600017D1B /* PVLogging */,
 				B364588E2EDD16530020354E /* PVShaders */,
 				B36458D72EDD1A160020354E /* Defaults */,
+				B3A4832C2F569AC7004A995B /* PVPrimitives */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDolphin.framework */;
@@ -1120,6 +1123,7 @@
 				B3F8E1012CB3C95600017D1B /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B364588D2EDD16530020354E /* XCLocalSwiftPackageReference "../../PVShaders" */,
 				B36458D62EDD1A160020354E /* XCRemoteSwiftPackageReference "Defaults" */,
+				B3A4832B2F569AC7004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2325,6 +2329,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVShaders;
 		};
+		B3A4832B2F569AC7004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 		B3F8E0F82CB3C7E600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
@@ -2371,6 +2379,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B36458D62EDD1A160020354E /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		B3A4832C2F569AC7004A995B /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 		B3F8E0F92CB3C7E600017D1B /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
