@@ -10,3 +10,6 @@ public enum CheatsResult {
     case success
     case error(CheatsStateError)
 }
+
+public typealias CheatsCompletion = (CheatsResult) -> Void
+public typealias NoCheatCompletion = CheatsCompletion

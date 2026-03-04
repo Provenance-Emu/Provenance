@@ -33,6 +33,13 @@ public struct iOSCheatsView: View {
     @State private var allCheats: [PVCheats] = []
     @State private var showingAddCheat = false
     @State private var showingSearchDB = false
+    @State private var cheatToEdit: CheatEditContext?
+
+    private struct CheatEditContext: Identifiable {
+        let id: String
+        let cheat: PVCheats
+        let index: Int
+    }
 
     public init(
         cheats: LinkingObjects<PVCheats>,
@@ -85,6 +92,14 @@ public struct iOSCheatsView: View {
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
+                                }
+                                .swipeActions(edge: .leading) {
+                                    Button {
+                                        cheatToEdit = CheatEditContext(id: cheat.id, cheat: cheat, index: index)
+                                    } label: {
+                                        Label("Edit", systemImage: "pencil")
+                                    }
+                                    .tint(.blue)
                                 }
                         }
                     }
@@ -139,6 +154,9 @@ public struct iOSCheatsView: View {
                         onSaveCheat(code, name, deviceName, index, enabled)
                     }
                 )
+            }
+            .sheet(item: $cheatToEdit, onDismiss: { delayedReload() }) { ctx in
+                iOSEditCheatView(cheat: ctx.cheat, cheatTypes: cheatTypes)
             }
         }
         .onAppear { loadCheats() }
@@ -300,20 +318,35 @@ struct iOSAddCheatView: View {
     @ViewBuilder
     private var codeSection: some View {
         SwiftUI.Section {
-            HStack {
-                TextField(CheatCodeValidator.placeholder(for: selectedType), text: $cheatCode)
-                    .font(.system(.body, design: .monospaced))
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.characters)
-                    .focused($focusedField, equals: .code)
-                    .onChangeCompat(of: cheatCode) {
-                        cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedType)
+            if CheatCodeValidator.supportsMultiLine(for: selectedType) {
+                HStack(alignment: .top) {
+                    TextEditor(text: $cheatCode)
+                        .font(.system(.body, design: .monospaced))
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.characters)
+                        .focused($focusedField, equals: .code)
+                        .frame(minHeight: 80)
+                    if !cheatCode.isEmpty {
+                        Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                            .foregroundStyle(validationResult.isValid ? Color.green : Color.red)
+                            .transition(.opacity)
                     }
-
-                if !cheatCode.isEmpty {
-                    Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
-                        .foregroundStyle(validationResult.isValid ? Color.green : Color.red)
-                        .transition(.opacity)
+                }
+            } else {
+                HStack {
+                    TextField(CheatCodeValidator.placeholder(for: selectedType), text: $cheatCode)
+                        .font(.system(.body, design: .monospaced))
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.characters)
+                        .focused($focusedField, equals: .code)
+                        .onChangeCompat(of: cheatCode) {
+                            cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedType)
+                        }
+                    if !cheatCode.isEmpty {
+                        Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                            .foregroundStyle(validationResult.isValid ? Color.green : Color.red)
+                            .transition(.opacity)
+                    }
                 }
             }
         } header: {
@@ -485,6 +518,134 @@ private struct iOSCheatSearchRow: View {
                 .foregroundStyle(.tertiary)
         }
         .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Edit Cheat View
+
+/// Form sheet for editing an existing cheat code's name, code, and type.
+/// Pre-populated from the saved `PVCheats` values and writes changes to Realm on save.
+struct iOSEditCheatView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let cheat: PVCheats
+    let cheatTypes: [String]
+
+    @State private var cheatName: String
+    @State private var cheatCode: String
+    @State private var selectedTypeIndex: Int
+    @FocusState private var focusedField: Field?
+
+    private enum Field { case name, code }
+
+    init(cheat: PVCheats, cheatTypes: [String]) {
+        self.cheat = cheat
+        self.cheatTypes = cheatTypes
+        let rawType = cheat.type ?? ""
+        let parts = rawType.components(separatedBy: "-~-")
+        _cheatName = State(initialValue: parts.first ?? "Cheat Code")
+        _cheatCode = State(initialValue: cheat.code ?? "")
+        let savedCodeType = parts.count > 1 ? parts[1] : ""
+        _selectedTypeIndex = State(initialValue: cheatTypes.firstIndex(of: savedCodeType) ?? 0)
+    }
+
+    private var selectedType: String {
+        cheatTypes.isEmpty ? "" : cheatTypes[selectedTypeIndex]
+    }
+
+    private var validationResult: CheatCodeValidator.ValidationResult {
+        CheatCodeValidator.validate(cheatCode, for: selectedType)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                SwiftUI.Section("Name") {
+                    TextField("e.g. Infinite Lives", text: $cheatName)
+                        .focused($focusedField, equals: .name)
+                }
+
+                SwiftUI.Section {
+                    if CheatCodeValidator.supportsMultiLine(for: selectedType) {
+                        HStack(alignment: .top) {
+                            TextEditor(text: $cheatCode)
+                                .font(.system(.body, design: .monospaced))
+                                .autocorrectionDisabled()
+                                .textInputAutocapitalization(.characters)
+                                .focused($focusedField, equals: .code)
+                                .frame(minHeight: 80)
+                            if !cheatCode.isEmpty {
+                                Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                                    .foregroundStyle(validationResult.isValid ? Color.green : Color.red)
+                            }
+                        }
+                    } else {
+                        HStack {
+                            TextField(CheatCodeValidator.placeholder(for: selectedType), text: $cheatCode)
+                                .font(.system(.body, design: .monospaced))
+                                .autocorrectionDisabled()
+                                .textInputAutocapitalization(.characters)
+                                .focused($focusedField, equals: .code)
+                                .onChangeCompat(of: cheatCode) {
+                                    cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedType)
+                                }
+                            if !cheatCode.isEmpty {
+                                Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                                    .foregroundStyle(validationResult.isValid ? Color.green : Color.red)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Cheat Code")
+                } footer: {
+                    if let error = validationResult.errorHint, !cheatCode.isEmpty {
+                        Text(error).font(.caption).foregroundStyle(Color.red)
+                    } else if let hint = CheatCodeValidator.formatHint(for: selectedType) {
+                        Text("Format: \(hint)").font(.caption)
+                    }
+                }
+
+                if cheatTypes.count > 1 {
+                    SwiftUI.Section("Code Type") {
+                        Picker("Code Type", selection: $selectedTypeIndex) {
+                            ForEach(0..<cheatTypes.count, id: \.self) { index in
+                                Text(CheatCodeTypes(string: cheatTypes[index])?.stringValue ?? cheatTypes[index]).tag(index)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                }
+            }
+            .navigationTitle("Edit Cheat Code")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { saveCheat() }
+                        .disabled(validationResult == .empty)
+                }
+            }
+        }
+    }
+
+    private func saveCheat() {
+        let name = cheatName.trimmingCharacters(in: .whitespaces).isEmpty
+            ? "Cheat Code" : cheatName.trimmingCharacters(in: .whitespaces)
+        let code = cheatCode.trimmingCharacters(in: .whitespaces)
+        guard !code.isEmpty else { return }
+        let newType = selectedType.isEmpty ? name : "\(name)-~-\(selectedType)"
+        do {
+            let realm = try Realm()
+            try realm.write {
+                cheat.code = code
+                cheat.type = newType
+            }
+        } catch {
+            ELOG("Error saving edited cheat: \(error)")
+        }
+        dismiss()
     }
 }
 
