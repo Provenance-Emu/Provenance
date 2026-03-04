@@ -53,11 +53,37 @@ static NSMutableDictionary *mupen_cheatList = nil;
     // Parse GameShark N64 codes separated by '+'
     // GameShark N64 format: XXXXXXXX YYYY (8 hex address + 4 hex value, space removed = 12 chars)
     NSArray<NSString *> *parts = [code componentsSeparatedByString:@"+"];
-    NSMutableArray<NSValue *> *codeValues = [NSMutableArray arrayWithCapacity:parts.count];
 
-    for (NSString *part in parts) {
+    // Normalize segments:
+    // - Accept full 12-char segments as-is
+    // - Combine adjacent 8-char and 4-char segments (e.g., "XXXXXXXX+YYYY") into one 12-char segment
+    NSMutableArray<NSString *> *normalizedParts = [NSMutableArray arrayWithCapacity:parts.count];
+    for (NSUInteger i = 0; i < parts.count; i++) {
+        NSString *part = parts[i];
+
+        if (part.length == 12) {
+            [normalizedParts addObject:part];
+            continue;
+        }
+
+        if (part.length == 8 && i + 1 < parts.count) {
+            NSString *nextPart = parts[i + 1];
+            if (nextPart.length == 4) {
+                NSString *combined = [part stringByAppendingString:nextPart];
+                [normalizedParts addObject:combined];
+                i++; // Skip the 4-char value segment we just consumed
+                continue;
+            }
+        }
+
+        DLOG(@"Mupen: Skipping unsupported cheat code segment before parsing (length %lu): %@", (unsigned long)part.length, part);
+    }
+
+    NSMutableArray<NSValue *> *codeValues = [NSMutableArray arrayWithCapacity:normalizedParts.count];
+
+    for (NSString *part in normalizedParts) {
         if (part.length != 12) {
-            DLOG(@"Mupen: Skipping unsupported cheat code segment (length %lu): %@", (unsigned long)part.length, part);
+            DLOG(@"Mupen: Skipping unsupported normalized cheat code segment (length %lu): %@", (unsigned long)part.length, part);
             continue;
         }
 
