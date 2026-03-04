@@ -152,7 +152,7 @@ public struct TVOSCheatsView: View {
                     Text("DONE")
                         .font(.system(size: 24, weight: .bold))
                 }
-                .foregroundColor(accentColor)
+                .foregroundStyle(accentColor)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
                 .background(
@@ -166,7 +166,7 @@ public struct TVOSCheatsView: View {
 
             Text("CHEAT CODES")
                 .font(.system(size: 42, weight: .bold, design: .rounded))
-                .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                 .shadow(color: accentColor.opacity(0.8), radius: 10)
 
             Spacer()
@@ -179,7 +179,7 @@ public struct TVOSCheatsView: View {
                         Text("HELP")
                             .font(.system(size: 24, weight: .bold))
                     }
-                    .foregroundColor(accentColor)
+                    .foregroundStyle(accentColor)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
@@ -198,7 +198,7 @@ public struct TVOSCheatsView: View {
                         Text("SEARCH")
                             .font(.system(size: 24, weight: .bold))
                     }
-                    .foregroundColor(accentColor)
+                    .foregroundStyle(accentColor)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
@@ -217,7 +217,7 @@ public struct TVOSCheatsView: View {
                         Text("ADD")
                             .font(.system(size: 24, weight: .bold))
                     }
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
@@ -240,15 +240,15 @@ public struct TVOSCheatsView: View {
         VStack(spacing: 24) {
             Image(systemName: "wand.and.stars")
                 .font(.system(size: 80))
-                .foregroundColor(accentColor.opacity(0.5))
+                .foregroundStyle(accentColor.opacity(0.5))
 
             Text("NO CHEAT CODES")
                 .font(.system(size: 32, weight: .bold))
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
 
             Text("Add a cheat code to get started")
                 .font(.system(size: 24))
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
+                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -289,8 +289,8 @@ public struct TVOSCheatsView: View {
 
     private func loadCheats() {
         if let coreID = coreID {
-            let filter = "core.identifier == \"\(coreID)\""
-            allCheats = cheats.filter(filter).sorted(byKeyPath: "date", ascending: true).map { $0 }
+            let predicate = NSPredicate(format: "core.identifier == %@", coreID)
+            allCheats = cheats.filter(predicate).sorted(byKeyPath: "date", ascending: true).map { $0 }
         } else {
             allCheats = cheats.sorted(byKeyPath: "date", ascending: true).map { $0 }
         }
@@ -353,11 +353,11 @@ struct CheatRowView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(cheatType)
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
                     Text(cheat.code ?? "")
                         .font(.system(size: 22, weight: .medium, design: .monospaced))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
                         .lineLimit(1)
                 }
 
@@ -366,13 +366,13 @@ struct CheatRowView: View {
                 // Status text
                 Text(cheat.enabled ? "ENABLED" : "DISABLED")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(cheat.enabled ? .green : .gray)
+                    .foregroundStyle(cheat.enabled ? .green : .gray)
 
                 // Edit button
                 Button(action: onEdit) {
                     Image(systemName: "pencil")
                         .font(.system(size: 24))
-                        .foregroundColor(accentColor.opacity(0.8))
+                        .foregroundStyle(accentColor.opacity(0.8))
                         .padding(12)
                         .background(
                             Circle()
@@ -385,7 +385,7 @@ struct CheatRowView: View {
                 Button(action: onDelete) {
                     Image(systemName: "trash")
                         .font(.system(size: 24))
-                        .foregroundColor(.red.opacity(0.8))
+                        .foregroundStyle(.red.opacity(0.8))
                         .padding(12)
                         .background(
                             Circle()
@@ -465,7 +465,7 @@ struct TVOSAddCheatView: View {
                 // Header
                 Text("ADD CHEAT CODE")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                    .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                     .shadow(color: accentColor.opacity(0.8), radius: 10)
                     .padding(.top, 40)
 
@@ -475,12 +475,12 @@ struct TVOSAddCheatView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("NAME")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(accentColor)
+                            .foregroundStyle(accentColor)
 
                         TextField("e.g. Infinite Lives", text: $cheatName)
                             .textFieldStyle(.plain)
                             .font(.system(size: 28))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(20)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
@@ -497,13 +497,13 @@ struct TVOSAddCheatView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("CHEAT CODE")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(accentColor)
+                            .foregroundStyle(accentColor)
 
                         HStack(alignment: .center, spacing: 16) {
                             if CheatCodeValidator.supportsMultiLine(for: selectedCodeTypeString) {
                                 TextEditor(text: $cheatCode)
                                     .font(.system(size: 24, design: .monospaced))
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .autocorrectionDisabled()
                                     .frame(minHeight: 100)
                                     .padding(20)
@@ -520,7 +520,7 @@ struct TVOSAddCheatView: View {
                                 TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
                                     .textFieldStyle(.plain)
                                     .font(.system(size: 28, design: .monospaced))
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .autocorrectionDisabled()
                                     .padding(20)
                                     .background(
@@ -540,7 +540,7 @@ struct TVOSAddCheatView: View {
                             if !cheatCode.isEmpty {
                                 Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
                                     .font(.system(size: 40))
-                                    .foregroundColor(validationResult.isValid ? .green : .red)
+                                    .foregroundStyle(validationResult.isValid ? .green : .red)
                                     .transition(.opacity)
                             }
                         }
@@ -548,13 +548,13 @@ struct TVOSAddCheatView: View {
                         if let hint = CheatCodeValidator.formatHint(for: selectedCodeTypeString) {
                             Text(hint)
                                 .font(.system(size: 20))
-                                .foregroundColor(accentColor.opacity(0.7))
+                                .foregroundStyle(accentColor.opacity(0.7))
                         }
 
                         if case .invalid(let errorHint) = validationResult, !cheatCode.isEmpty {
                             Text(errorHint)
                                 .font(.system(size: 20))
-                                .foregroundColor(.red.opacity(0.8))
+                                .foregroundStyle(.red.opacity(0.8))
                         }
                     }
 
@@ -563,7 +563,7 @@ struct TVOSAddCheatView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("CODE TYPE")
                                 .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(accentColor)
+                                .foregroundStyle(accentColor)
 
                             HStack(spacing: 16) {
                                 ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, type in
@@ -572,7 +572,7 @@ struct TVOSAddCheatView: View {
                                     }) {
                                         Text(CheatCodeTypes(string: type)?.stringValue ?? type)
                                             .font(.system(size: 22, weight: .bold))
-                                            .foregroundColor(selectedCodeType == index ? .white : .gray)
+                                            .foregroundStyle(selectedCodeType == index ? .white : .gray)
                                             .padding(.horizontal, 24)
                                             .padding(.vertical, 16)
                                             .background(
@@ -601,7 +601,7 @@ struct TVOSAddCheatView: View {
                     }) {
                         Text("CANCEL")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.gray)
+                            .foregroundStyle(.gray)
                             .padding(.horizontal, 60)
                             .padding(.vertical, 20)
                             .background(
@@ -616,7 +616,7 @@ struct TVOSAddCheatView: View {
                     }) {
                         Text("SAVE")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 60)
                             .padding(.vertical, 20)
                             .background(
@@ -698,7 +698,7 @@ struct TVOSEditCheatView: View {
             VStack(spacing: 40) {
                 Text("EDIT CHEAT CODE")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                    .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                     .shadow(color: accentColor.opacity(0.8), radius: 10)
                     .padding(.top, 40)
 
@@ -707,11 +707,11 @@ struct TVOSEditCheatView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("NAME")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(accentColor)
+                            .foregroundStyle(accentColor)
                         TextField("e.g. Infinite Lives", text: $cheatName)
                             .textFieldStyle(.plain)
                             .font(.system(size: 28))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(20)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
@@ -728,13 +728,13 @@ struct TVOSEditCheatView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("CHEAT CODE")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(accentColor)
+                            .foregroundStyle(accentColor)
 
                         HStack(alignment: .center, spacing: 16) {
                             if CheatCodeValidator.supportsMultiLine(for: selectedCodeTypeString) {
                                 TextEditor(text: $cheatCode)
                                     .font(.system(size: 24, design: .monospaced))
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .autocorrectionDisabled()
                                     .frame(minHeight: 100)
                                     .padding(20)
@@ -751,7 +751,7 @@ struct TVOSEditCheatView: View {
                                 TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
                                     .textFieldStyle(.plain)
                                     .font(.system(size: 28, design: .monospaced))
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(.white)
                                     .autocorrectionDisabled()
                                     .padding(20)
                                     .background(
@@ -771,7 +771,7 @@ struct TVOSEditCheatView: View {
                             if !cheatCode.isEmpty {
                                 Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
                                     .font(.system(size: 40))
-                                    .foregroundColor(validationResult.isValid ? .green : .red)
+                                    .foregroundStyle(validationResult.isValid ? .green : .red)
                                     .transition(.opacity)
                             }
                         }
@@ -779,13 +779,13 @@ struct TVOSEditCheatView: View {
                         if let hint = CheatCodeValidator.formatHint(for: selectedCodeTypeString) {
                             Text(hint)
                                 .font(.system(size: 20))
-                                .foregroundColor(accentColor.opacity(0.7))
+                                .foregroundStyle(accentColor.opacity(0.7))
                         }
 
                         if case .invalid(let errorHint) = validationResult, !cheatCode.isEmpty {
                             Text(errorHint)
                                 .font(.system(size: 20))
-                                .foregroundColor(.red.opacity(0.8))
+                                .foregroundStyle(.red.opacity(0.8))
                         }
                     }
 
@@ -794,13 +794,13 @@ struct TVOSEditCheatView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("CODE TYPE")
                                 .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(accentColor)
+                                .foregroundStyle(accentColor)
                             HStack(spacing: 16) {
                                 ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, type in
                                     Button(action: { selectedCodeType = index }) {
                                         Text(CheatCodeTypes(string: type)?.stringValue ?? type)
                                             .font(.system(size: 22, weight: .bold))
-                                            .foregroundColor(selectedCodeType == index ? .white : .gray)
+                                            .foregroundStyle(selectedCodeType == index ? .white : .gray)
                                             .padding(.horizontal, 24)
                                             .padding(.vertical, 16)
                                             .background(
@@ -826,7 +826,7 @@ struct TVOSEditCheatView: View {
                     Button(action: { dismiss() }) {
                         Text("CANCEL")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.gray)
+                            .foregroundStyle(.gray)
                             .padding(.horizontal, 60)
                             .padding(.vertical, 20)
                             .background(
@@ -839,7 +839,7 @@ struct TVOSEditCheatView: View {
                     Button(action: { saveCheat() }) {
                         Text("SAVE")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 60)
                             .padding(.vertical, 20)
                             .background(
@@ -873,10 +873,10 @@ struct TVOSEditCheatView: View {
                 cheat.code = code
                 cheat.type = newType
             }
+            dismiss()
         } catch {
             ELOG("Error saving edited cheat: \(error)")
         }
-        dismiss()
     }
 }
 
@@ -970,7 +970,7 @@ struct TVOSCheatSearchView: View {
                             Text("CLOSE")
                         }
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(accentColor)
+                        .foregroundStyle(accentColor)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 12)
                         .background(RoundedRectangle(cornerRadius: 12).stroke(accentColor, lineWidth: 2))
@@ -981,7 +981,7 @@ struct TVOSCheatSearchView: View {
 
                     Text("CHEAT DATABASE")
                         .font(.system(size: 38, weight: .bold, design: .rounded))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                         .shadow(color: accentColor.opacity(0.8), radius: 10)
 
                     Spacer()
@@ -990,7 +990,7 @@ struct TVOSCheatSearchView: View {
                     TextField("Filter...", text: $filterText)
                         .textFieldStyle(.plain)
                         .font(.system(size: 22))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .padding(12)
                         .frame(width: 300)
                         .background(
@@ -1010,17 +1010,17 @@ struct TVOSCheatSearchView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let error = errorMessage {
                     Text(error)
-                        .foregroundColor(.red.opacity(0.8))
+                        .foregroundStyle(.red.opacity(0.8))
                         .font(.system(size: 24))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if filtered.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: 60))
-                            .foregroundColor(accentColor.opacity(0.4))
+                            .foregroundStyle(accentColor.opacity(0.4))
                         Text("No cheat codes found")
                             .font(.system(size: 28, weight: .medium))
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.6))
+                            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.6))
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -1080,19 +1080,19 @@ private struct TVOSCheatSearchRow: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(entry.cheatName)
                         .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     Text(entry.cheatCode)
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
-                        .foregroundColor(accentColor)
+                        .foregroundStyle(accentColor)
                         .lineLimit(2)
                     Text("\(entry.deviceName)  ·  \(entry.category)")
                         .font(.system(size: 18))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.55))
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.55))
                 }
                 Spacer()
                 Image(systemName: "arrow.down.circle")
                     .font(.system(size: 32))
-                    .foregroundColor(accentColor)
+                    .foregroundStyle(accentColor)
             }
             .padding(.horizontal, 32)
             .padding(.vertical, 20)
