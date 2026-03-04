@@ -93,17 +93,16 @@ public struct TVOSCheatsView: View {
         .onAppear {
             loadCheats()
         }
-        .sheet(isPresented: $showingAddCheat) {
+        .sheet(isPresented: $showingAddCheat, onDismiss: { delayedReload() }) {
             TVOSAddCheatView(
                 cheatTypes: cheatTypes,
                 cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
                 onSave: { code, type, codeType, index, enabled in
                     onSaveCheat(code, type, codeType, index, enabled)
-                    loadCheats()
                 }
             )
         }
-        .sheet(isPresented: $showingSearchDB) {
+        .sheet(isPresented: $showingSearchDB, onDismiss: { delayedReload() }) {
             TVOSCheatSearchView(
                 gameMD5: gameMD5,
                 gameTitle: gameTitle,
@@ -111,7 +110,6 @@ public struct TVOSCheatsView: View {
                 cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
                 onImport: { code, name, deviceName, index, enabled in
                     onSaveCheat(code, name, deviceName, index, enabled)
-                    loadCheats()
                 }
             )
         }
@@ -265,6 +263,13 @@ public struct TVOSCheatsView: View {
     }
 
     // MARK: - Actions
+
+    /// Reload the cheats list after a short delay to allow the async Realm write to complete.
+    private func delayedReload() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            loadCheats()
+        }
+    }
 
     private func loadCheats() {
         if let coreID = coreID {

@@ -113,24 +113,22 @@ public struct iOSCheatsView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingAddCheat) {
+            .sheet(isPresented: $showingAddCheat, onDismiss: { delayedReload() }) {
                 iOSAddCheatView(
                     cheatTypes: cheatTypes,
                     cheatIndex: nextCheatIndex,
                     onSave: { code, name, codeType, index, enabled in
                         onSaveCheat(code, name, codeType, index, enabled)
-                        loadCheats()
                     }
                 )
             }
-            .sheet(isPresented: $showingSearchDB) {
+            .sheet(isPresented: $showingSearchDB, onDismiss: { delayedReload() }) {
                 iOSCheatSearchView(
                     gameMD5: gameMD5,
                     gameTitle: gameTitle,
                     cheatIndex: nextCheatIndex,
                     onImport: { code, name, deviceName, index, enabled in
                         onSaveCheat(code, name, deviceName, index, enabled)
-                        loadCheats()
                     }
                 )
             }
@@ -157,6 +155,13 @@ public struct iOSCheatsView: View {
     }
 
     // MARK: - Helpers
+
+    /// Reload the cheats list after a short delay to allow the async Realm write to complete.
+    private func delayedReload() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            loadCheats()
+        }
+    }
 
     private func loadCheats() {
         if let coreID = coreID {
