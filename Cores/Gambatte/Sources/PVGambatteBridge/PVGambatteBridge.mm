@@ -377,10 +377,15 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 
 #pragma mark - Cheats
 
-NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
+static NSMutableDictionary *gb_cheatlist = nil;
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
 {
+    // Lazy-initialise cheat dictionary
+    if (!gb_cheatlist) {
+        gb_cheatlist = [[NSMutableDictionary alloc] init];
+    }
+
     // Sanitize
     code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 

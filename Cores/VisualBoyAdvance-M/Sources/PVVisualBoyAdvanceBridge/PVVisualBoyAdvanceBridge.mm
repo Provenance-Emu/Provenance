@@ -825,9 +825,10 @@ void systemMessage(int, const char * str, ...) {
 #pragma mark - Cheats
 
 @implementation PVVisualBoyAdvanceBridge (Cheats)
-NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 
-- (NSArray*)cheatCodeTypes {
+static NSMutableDictionary *cheatList = nil;
+
+- (NSArray<NSString *> *)cheatCodeTypes {
     return @[
         @"Action Replay v3",
         @"GameShark",
@@ -836,8 +837,13 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     ];
 }
 
-- (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type codeType: (NSString *)codeType
+- (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type codeType:(NSString *)codeType
           cheatIndex:(UInt8)cheatIndex enabled:(BOOL)enabled {
+    // Lazy-initialise cheat dictionary
+    if (!cheatList) {
+        cheatList = [[NSMutableDictionary alloc] init];
+    }
+
     // Sanitize
     code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
@@ -871,15 +877,14 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
         DLOG(@"VBA: Processing cheat %@ type %@", key, codeType);
         if ([[cheatList valueForKey:key] isEqual:@YES])
         {
-            NSString* singleCode = key;
+            NSString *singleCode = key;
             if ([singleCode length] == 11 || [singleCode length] == 13 || [singleCode length] == 17) // Code with Address:Value
             {
                 // XXXXXXXX:YY || XXXXXXXX:YYYY || XXXXXXXX:YYYYYYYY
                 cheatsAddCheatCode([singleCode UTF8String], "code");
                 anyAdded = YES;
             }
-
-            if ([singleCode length] == 12) // Codebreaker/GameShark SP/Xploder code
+            else if ([singleCode length] == 12) // Codebreaker/GameShark SP/Xploder code
             {
                 // VBA expects 12-character Codebreaker/GameShark SP codes in format: XXXXXXXX YYYY
                 NSMutableString *formattedCode = [NSMutableString stringWithString:singleCode];
@@ -888,15 +893,14 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
                 cheatsAddCBACode([formattedCode UTF8String], "code");
                 anyAdded = YES;
             }
-
-            if ([singleCode length] == 16) // GameShark Advance/Action Replay (v1/v2) and Action Replay v3
+            else if ([singleCode length] == 16) // GameShark Advance/Action Replay (v1/v2) and Action Replay v3
             {
                 // Note: GameShark and Action Replay were synonymous until AR v3. Same codes and devices, but different names by region
-                if ([codeType isEqual: @"GameShark"])
+                if ([codeType isEqualToString:@"GameShark"])
                     cheatsAddGSACode([singleCode UTF8String], "code", false); // false = GS/AR v1/v2 (not AR v3)
 
                 // AR v3 was an entirely different device from GS/AR v1/v2, with different code types and encryption
-                else if ([codeType isEqual: @"Action Replay v3"])
+                else if ([codeType isEqualToString:@"Action Replay v3"])
                     cheatsAddGSACode([singleCode UTF8String], "code", true); // true = AR v3 code
 
                 else // default to GS/AR v1/v2 code (can't determine GS/AR v1/v2 vs AR v3 because same length)
