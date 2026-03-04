@@ -12,4 +12,3 @@ public enum CheatsResult {
 }
 
 public typealias CheatsCompletion = (CheatsResult) -> Void
-public typealias NoCheatCompletion = CheatsCompletion
