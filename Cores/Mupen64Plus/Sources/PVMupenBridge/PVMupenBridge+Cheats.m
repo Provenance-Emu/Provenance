@@ -23,6 +23,9 @@ static NSMutableDictionary *mupen_cheatList = nil;
 }
 
 - (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type codeType:(NSString *)codeType cheatIndex:(uint8_t)cheatIndex enabled:(BOOL)enabled {
+    (void)codeType;   // Only GameShark is supported; codeType is not used
+    (void)cheatIndex; // cheatIndex not used by the Mupen64Plus cheat API
+
     if (!mupen_cheatList) {
         mupen_cheatList = [[NSMutableDictionary alloc] init];
     }
@@ -33,9 +36,18 @@ static NSMutableDictionary *mupen_cheatList = nil;
     code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
 
     if (!enabled) {
-        [mupen_cheatList removeObjectForKey:code];
-        CoreCheatEnabled([code UTF8String], 0);
+        // Only call CoreCheatEnabled if the cheat was actually registered
+        if ([mupen_cheatList objectForKey:code]) {
+            [mupen_cheatList removeObjectForKey:code];
+            CoreCheatEnabled([code UTF8String], 0);
+        }
         return YES;
+    }
+
+    // If this cheat is already registered, disable it first before re-adding
+    if ([mupen_cheatList objectForKey:code]) {
+        CoreCheatEnabled([code UTF8String], 0);
+        [mupen_cheatList removeObjectForKey:code];
     }
 
     // Parse GameShark N64 codes separated by '+'
@@ -53,8 +65,12 @@ static NSMutableDictionary *mupen_cheatList = nil;
         NSString *valueStr   = [part substringWithRange:NSMakeRange(8, 4)];
 
         unsigned int address = 0, value = 0;
-        [[NSScanner scannerWithString:addressStr] scanHexInt:&address];
-        [[NSScanner scannerWithString:valueStr]   scanHexInt:&value];
+        BOOL addressOK = [[NSScanner scannerWithString:addressStr] scanHexInt:&address];
+        BOOL valueOK   = [[NSScanner scannerWithString:valueStr]   scanHexInt:&value];
+        if (!addressOK || !valueOK) {
+            DLOG(@"Mupen: Failed to parse hex in cheat segment: %@", part);
+            continue;
+        }
 
         m64p_cheat_code gsCode;
         gsCode.address = address;
@@ -68,6 +84,10 @@ static NSMutableDictionary *mupen_cheatList = nil;
     }
 
     m64p_cheat_code *codes = (m64p_cheat_code *)malloc(sizeof(m64p_cheat_code) * codeValues.count);
+    if (!codes) {
+        DLOG(@"Mupen: malloc failed allocating cheat code array");
+        return NO;
+    }
     for (NSUInteger i = 0; i < codeValues.count; i++) {
         [codeValues[i] getValue:&codes[i]];
     }
