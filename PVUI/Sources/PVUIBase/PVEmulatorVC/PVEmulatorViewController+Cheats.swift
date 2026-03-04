@@ -44,7 +44,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             range = NSRange(location: 0, length: modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
             NSLog("Formatted CheatCode \(modString)")
-            if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, cheatIndex: cheatIndex, enabled:enabled)) {
+            if gameWithCheat.setCheat(code: modString, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
                 guard let realm = try? await Realm() else {
                     ELOG("Realm() failed")
@@ -126,10 +126,11 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats, cheatIndex: UInt8,
         completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core as? GameWithCheat {
+            let cheatCode = cheat.code ?? ""
             let cheatType = cheat.type ?? ""
             let codeType = cheat.codeType
-            if gameWithCheat.setCheat(code: cheat.code, type: cheatType, codeType: codeType, cheatIndex: cheatIndex, enabled: cheat.enabled) {
-                ILOG("Succeeded applying cheat: \(cheat.code ?? "null") \(cheat.type ?? "null") \(cheat.enabled)")
+            if gameWithCheat.setCheat(code: cheatCode, type: cheatType, codeType: codeType, cheatIndex: cheatIndex, enabled: cheat.enabled) {
+                ILOG("Succeeded applying cheat: \(cheatCode) \(cheatType) \(cheat.enabled)")
                 completion(.success)
             } else {
                 let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])

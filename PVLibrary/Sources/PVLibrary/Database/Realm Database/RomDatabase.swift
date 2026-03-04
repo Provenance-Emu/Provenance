@@ -303,7 +303,9 @@ public final class RealmConfiguration {
                     }
                     let parts = combinedType.components(separatedBy: "-~-")
                     newObject?["type"] = parts[0]
-                    newObject?["codeType"] = parts.count > 1 ? parts[1] : ""
+                    // parts always has ≥ 2 elements here because the guard confirmed "-~-" is present.
+                    // Join any extra segments (should not occur in practice) back into codeType.
+                    newObject?["codeType"] = parts.dropFirst().joined(separator: "-~-")
                 }
                 ILOG("Migration to version 24 complete. (Split PVCheats.type into type + codeType)")
             }
