@@ -9,25 +9,13 @@ import PVPrimitives
 import RealmSwift
 import PVRealm
 import PVLogging
-import PVFeatureFlags
 
 #if canImport(UIKit)
 import UIKit
 #endif
 import PVEmulatorCore
 
-extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
-
-    struct CheatLoadState {
-        static var isFirstLoad:Bool = true
-    }
-
-    func getIsFirstLoad() -> Bool {
-        return CheatLoadState.isFirstLoad
-    }
-    func setIsFirstLoad(isFirstLoad:Bool) {
-        CheatLoadState.isFirstLoad=isFirstLoad
-    }
+extension PVEmulatorViewController {
 
     func setCheatState(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool, completion: @escaping CheatsCompletion) async {
         if let gameWithCheat = core as? GameWithCheat {
@@ -90,39 +78,6 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         }
     }
 
-    func cheatsViewControllerDone(_: PVCheatsViewController) {
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.core.setPauseEmulation(false)
-            self.isShowingMenu = false
-            self.enableControllerInput(false)
-            #if os(tvOS)
-            // Ensure the emulator view can receive gesture events again
-            self.view.becomeFirstResponder()
-            #endif
-        }
-    }
-
-    func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
-                                            code: String,
-                                            type: String,
-                                            codeType: String,
-                                            cheatIndex: UInt8,
-                                            enabled: Bool,
-                                            completion: @escaping CheatsCompletion) {
-        Task{ @MainActor [weak self] in
-            guard let self = self else { return }
-            await self.setCheatState(
-                code: code,
-                type: type,
-                codeType: codeType,
-                cheatIndex: cheatIndex,
-                enabled: enabled,
-                completion: completion
-            )
-        }
-    }
-
     func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats, cheatIndex: UInt8,
         completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core as? GameWithCheat {
@@ -141,10 +96,6 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             completion(.error(.cheatsUnsupportedByCore))
             return
         }
-    }
-
-    func cheatsViewController(_: PVCheatsViewController, load state: PVCheats) {
-        dismiss(animated: true, completion: nil)
     }
 
     /// Resolve the libretro database name for the current game's system.
@@ -210,73 +161,47 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         #endif
 
         #if os(iOS)
-        if PVFeatureFlagsManager.shared.cheatsUseSwiftUI {
-            // SwiftUI cheats view — default path when cheatsUseSwiftUI is enabled.
-            let cheatsVC = iOSCheatsHostingController(
-                cheats: game.cheats,
-                coreID: core.coreIdentifier,
-                cheatTypes: getCheatTypes(),
-                gameMD5: game.md5Hash,
-                gameTitle: game.title,
-                gameSystemIdentifier: gameLibretroDatabaseName,
-                onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
-                    guard let self = self else { return }
-                    Task { @MainActor in
-                        await self.setCheatState(code: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) { result in
-                            switch result {
-                            case .success:
-                                DLOG("Cheat saved successfully")
-                            case let .error(error):
-                                ELOG("Error saving cheat: \(error)")
-                            }
-                        }
-                    }
-                },
-                onUpdateCheat: { [weak self] cheat, cheatIndex in
-                    guard let self = self else { return }
-                    self.cheatsViewControllerUpdateState(self, cheat: cheat, cheatIndex: cheatIndex) { result in
+        let cheatsVC = iOSCheatsHostingController(
+            cheats: game.cheats,
+            coreID: core.coreIdentifier,
+            cheatTypes: getCheatTypes(),
+            gameMD5: game.md5Hash,
+            gameTitle: game.title,
+            gameSystemIdentifier: gameLibretroDatabaseName,
+            onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    await self.setCheatState(code: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) { result in
                         switch result {
                         case .success:
-                            DLOG("Cheat updated successfully")
+                            DLOG("Cheat saved successfully")
                         case let .error(error):
-                            ELOG("Error updating cheat: \(error)")
+                            ELOG("Error saving cheat: \(error)")
                         }
                     }
-                },
-                onDone: { [weak self] in
-                    guard let self = self else { return }
-                    self.core.setPauseEmulation(false)
-                    self.isShowingMenu = false
-                    self.enableControllerInput(false)
                 }
-            )
-            cheatsVC.modalPresentationStyle = traitCollection.userInterfaceIdiom == .pad ? .formSheet : .pageSheet
-            self.enableControllerInput(false)
-            present(cheatsVC, animated: true)
-        } else {
-            // Legacy UIKit storyboard cheats view.
-            guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
-                return
+            },
+            onUpdateCheat: { [weak self] cheat, cheatIndex in
+                guard let self = self else { return }
+                self.cheatsViewControllerUpdateState(self, cheat: cheat, cheatIndex: cheatIndex) { result in
+                    switch result {
+                    case .success:
+                        DLOG("Cheat updated successfully")
+                    case let .error(error):
+                        ELOG("Error updating cheat: \(error)")
+                    }
+                }
+            },
+            onDone: { [weak self] in
+                guard let self = self else { return }
+                self.core.setPauseEmulation(false)
+                self.isShowingMenu = false
+                self.enableControllerInput(false)
             }
-
-            if let cheatsViewController = cheatsNavController.viewControllers.first as? PVCheatsViewController {
-                cheatsViewController.cheats = game.cheats
-                cheatsViewController.delegate = self
-                cheatsViewController.coreID = core.coreIdentifier
-                cheatsViewController.gameMD5 = game.md5Hash
-                cheatsViewController.gameTitle = game.title
-                cheatsViewController.gameSystemIdentifier = gameLibretroDatabaseName
-            }
-            cheatsNavController.modalPresentationStyle = .overCurrentContext
-
-            if traitCollection.userInterfaceIdiom == .pad {
-                cheatsNavController.modalPresentationStyle = .formSheet
-            }
-            self.enableControllerInput(false)
-            let ui = UIViewController()
-            ui.addChildViewController(cheatsNavController, toContainerView: ui.view)
-            present(ui, animated: true)
-        }
+        )
+        cheatsVC.modalPresentationStyle = traitCollection.userInterfaceIdiom == .pad ? .formSheet : .pageSheet
+        self.enableControllerInput(false)
+        present(cheatsVC, animated: true)
         #endif
     }
 

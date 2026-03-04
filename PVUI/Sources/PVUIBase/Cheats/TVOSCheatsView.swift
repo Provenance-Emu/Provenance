@@ -35,7 +35,13 @@ public struct TVOSCheatsView: View {
     @State private var showingSearchDB = false
     @State private var showingDeleteAlert = false
     @State private var cheatToDelete: PVCheats?
+    @State private var cheatToEdit: CheatEditContext?
     @FocusState private var focusedCheatId: String?
+
+    private struct CheatEditContext: Identifiable {
+        let id: String
+        let cheat: PVCheats
+    }
 
     private var accentColor: Color {
         themeManager.currentPalette.defaultTintColor.swiftUIColor
@@ -116,6 +122,9 @@ public struct TVOSCheatsView: View {
                     onSaveCheat(code, name, deviceName, index, enabled)
                 }
             )
+        }
+        .sheet(item: $cheatToEdit, onDismiss: { delayedReload() }) { ctx in
+            TVOSEditCheatView(cheat: ctx.cheat, cheatTypes: cheatTypes)
         }
         .alert("Delete Cheat Code?", isPresented: $showingDeleteAlert) {
             Button("Delete", role: .destructive) {
@@ -253,6 +262,9 @@ public struct TVOSCheatsView: View {
                         index: UInt8(min(index, Int(UInt8.max))),
                         accentColor: accentColor,
                         onToggle: { toggleCheat(cheat, at: index) },
+                        onEdit: {
+                            cheatToEdit = CheatEditContext(id: cheat.id, cheat: cheat)
+                        },
                         onDelete: {
                             cheatToDelete = cheat
                             showingDeleteAlert = true
@@ -314,6 +326,7 @@ struct CheatRowView: View {
     let index: UInt8
     let accentColor: Color
     let onToggle: () -> Void
+    let onEdit: () -> Void
     let onDelete: () -> Void
 
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -354,6 +367,19 @@ struct CheatRowView: View {
                 Text(cheat.enabled ? "ENABLED" : "DISABLED")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(cheat.enabled ? .green : .gray)
+
+                // Edit button
+                Button(action: onEdit) {
+                    Image(systemName: "pencil")
+                        .font(.system(size: 24))
+                        .foregroundColor(accentColor.opacity(0.8))
+                        .padding(12)
+                        .background(
+                            Circle()
+                                .stroke(accentColor.opacity(0.5), lineWidth: 2)
+                        )
+                }
+                .buttonStyle(.plain)
 
                 // Delete button
                 Button(action: onDelete) {
@@ -474,24 +500,42 @@ struct TVOSAddCheatView: View {
                             .foregroundColor(accentColor)
 
                         HStack(alignment: .center, spacing: 16) {
-                            TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
-                                .textFieldStyle(.plain)
-                                .font(.system(size: 28, design: .monospaced))
-                                .foregroundColor(.white)
-                                .autocorrectionDisabled()
-                                .padding(20)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.black.opacity(0.5))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
-                                        )
-                                )
-                                .focused($focusedField, equals: .code)
-                                .onChangeCompat(of: cheatCode) {
-                                    cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedCodeTypeString)
-                                }
+                            if CheatCodeValidator.supportsMultiLine(for: selectedCodeTypeString) {
+                                TextEditor(text: $cheatCode)
+                                    .font(.system(size: 24, design: .monospaced))
+                                    .foregroundColor(.white)
+                                    .autocorrectionDisabled()
+                                    .frame(minHeight: 100)
+                                    .padding(20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                            )
+                                    )
+                                    .focused($focusedField, equals: .code)
+                            } else {
+                                TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 28, design: .monospaced))
+                                    .foregroundColor(.white)
+                                    .autocorrectionDisabled()
+                                    .padding(20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                            )
+                                    )
+                                    .focused($focusedField, equals: .code)
+                                    .onChangeCompat(of: cheatCode) {
+                                        cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedCodeTypeString)
+                                    }
+                            }
 
                             if !cheatCode.isEmpty {
                                 Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
@@ -602,6 +646,236 @@ struct TVOSAddCheatView: View {
         let trimmedName = cheatName.trimmingCharacters(in: .whitespaces)
         let name = trimmedName.isEmpty ? "Cheat Code" : trimmedName
         onSave(code, name, selectedCodeTypeString, cheatIndex, true)
+        dismiss()
+    }
+}
+
+// MARK: - Edit Cheat View (tvOS)
+
+/// Full-screen form for editing an existing cheat code on tvOS.
+/// Pre-populated with the saved values; writes updates to Realm on save.
+struct TVOSEditCheatView: View {
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    let cheat: PVCheats
+    let cheatTypes: [String]
+
+    @State private var cheatName: String
+    @State private var cheatCode: String
+    @State private var selectedCodeType: Int
+    @FocusState private var focusedField: Field?
+
+    private enum Field { case name, code }
+
+    private var accentColor: Color { themeManager.currentPalette.defaultTintColor.swiftUIColor }
+    private var backgroundColor: Color { Color(themeManager.currentPalette.gameLibraryBackground) }
+
+    init(cheat: PVCheats, cheatTypes: [String]) {
+        self.cheat = cheat
+        self.cheatTypes = cheatTypes
+        let rawType = cheat.type ?? ""
+        let parts = rawType.components(separatedBy: "-~-")
+        _cheatName = State(initialValue: parts.first ?? "Cheat Code")
+        _cheatCode = State(initialValue: cheat.code ?? "")
+        let savedCodeType = parts.count > 1 ? parts[1] : ""
+        _selectedCodeType = State(initialValue: cheatTypes.firstIndex(of: savedCodeType) ?? 0)
+    }
+
+    private var selectedCodeTypeString: String {
+        cheatTypes.isEmpty ? "" : cheatTypes[selectedCodeType]
+    }
+
+    private var validationResult: CheatCodeValidator.ValidationResult {
+        CheatCodeValidator.validate(cheatCode, for: selectedCodeTypeString)
+    }
+
+    var body: some View {
+        ZStack {
+            backgroundColor.ignoresSafeArea()
+            RetroGrid(lineSpacing: 30, lineColor: accentColor.opacity(0.1)).opacity(0.3)
+
+            VStack(spacing: 40) {
+                Text("EDIT CHEAT CODE")
+                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                    .shadow(color: accentColor.opacity(0.8), radius: 10)
+                    .padding(.top, 40)
+
+                VStack(spacing: 32) {
+                    // Name field
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("NAME")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(accentColor)
+                        TextField("e.g. Infinite Lives", text: $cheatName)
+                            .textFieldStyle(.plain)
+                            .font(.system(size: 28))
+                            .foregroundColor(.white)
+                            .padding(20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.black.opacity(0.5))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(focusedField == .name ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                    )
+                            )
+                            .focused($focusedField, equals: .name)
+                    }
+
+                    // Code field
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("CHEAT CODE")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(accentColor)
+
+                        HStack(alignment: .center, spacing: 16) {
+                            if CheatCodeValidator.supportsMultiLine(for: selectedCodeTypeString) {
+                                TextEditor(text: $cheatCode)
+                                    .font(.system(size: 24, design: .monospaced))
+                                    .foregroundColor(.white)
+                                    .autocorrectionDisabled()
+                                    .frame(minHeight: 100)
+                                    .padding(20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                            )
+                                    )
+                                    .focused($focusedField, equals: .code)
+                            } else {
+                                TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 28, design: .monospaced))
+                                    .foregroundColor(.white)
+                                    .autocorrectionDisabled()
+                                    .padding(20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                            )
+                                    )
+                                    .focused($focusedField, equals: .code)
+                                    .onChangeCompat(of: cheatCode) {
+                                        cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedCodeTypeString)
+                                    }
+                            }
+
+                            if !cheatCode.isEmpty {
+                                Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                                    .font(.system(size: 40))
+                                    .foregroundColor(validationResult.isValid ? .green : .red)
+                                    .transition(.opacity)
+                            }
+                        }
+
+                        if let hint = CheatCodeValidator.formatHint(for: selectedCodeTypeString) {
+                            Text(hint)
+                                .font(.system(size: 20))
+                                .foregroundColor(accentColor.opacity(0.7))
+                        }
+
+                        if case .invalid(let errorHint) = validationResult, !cheatCode.isEmpty {
+                            Text(errorHint)
+                                .font(.system(size: 20))
+                                .foregroundColor(.red.opacity(0.8))
+                        }
+                    }
+
+                    // Code type selector
+                    if cheatTypes.count > 1 {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("CODE TYPE")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(accentColor)
+                            HStack(spacing: 16) {
+                                ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, type in
+                                    Button(action: { selectedCodeType = index }) {
+                                        Text(CheatCodeTypes(string: type)?.stringValue ?? type)
+                                            .font(.system(size: 22, weight: .bold))
+                                            .foregroundColor(selectedCodeType == index ? .white : .gray)
+                                            .padding(.horizontal, 24)
+                                            .padding(.vertical, 16)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(selectedCodeType == index ? accentColor : Color.black.opacity(0.5))
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .stroke(accentColor.opacity(0.5), lineWidth: 1)
+                                                    )
+                                            )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 200)
+
+                Spacer()
+
+                HStack(spacing: 40) {
+                    Button(action: { dismiss() }) {
+                        Text("CANCEL")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 60)
+                            .padding(.vertical, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                            )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button(action: { saveCheat() }) {
+                        Text("SAVE")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 60)
+                            .padding(.vertical, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(LinearGradient(
+                                        colors: [accentColor, accentColor.opacity(0.7)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(validationResult == .empty)
+                    .opacity(validationResult == .empty ? 0.5 : 1.0)
+                }
+                .padding(.bottom, 60)
+            }
+        }
+        .onAppear { focusedField = .name }
+    }
+
+    private func saveCheat() {
+        let code = cheatCode.trimmingCharacters(in: .whitespaces)
+        guard !code.isEmpty else { return }
+        let name = cheatName.trimmingCharacters(in: .whitespaces).isEmpty
+            ? "Cheat Code" : cheatName.trimmingCharacters(in: .whitespaces)
+        let newType = selectedCodeTypeString.isEmpty ? name : "\(name)-~-\(selectedCodeTypeString)"
+        do {
+            let realm = try Realm()
+            try realm.write {
+                cheat.code = code
+                cheat.type = newType
+            }
+        } catch {
+            ELOG("Error saving edited cheat: \(error)")
+        }
         dismiss()
     }
 }
@@ -757,7 +1031,8 @@ struct TVOSCheatSearchView: View {
                                     entry: entry,
                                     accentColor: accentColor,
                                     onImport: {
-                                        onImport(entry.cheatCode, entry.cheatName, entry.deviceName, cheatIndex, true)
+                                        let mappedType = CheatCodeTypes(string: entry.deviceName)?.stringValue ?? entry.deviceName
+                                        onImport(entry.cheatCode, entry.cheatName, mappedType, cheatIndex, true)
                                         dismiss()
                                     }
                                 )
