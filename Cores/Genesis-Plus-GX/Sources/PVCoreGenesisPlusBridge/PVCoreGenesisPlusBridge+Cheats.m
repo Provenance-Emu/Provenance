@@ -7,10 +7,8 @@
 //
 
 #import "PVCoreGenesisPlusBridge.h"
-#import <Foundation/Foundation.h>
 
 // Forward-declare the libretro cheat API used by Genesis Plus GX
-void retro_cheat_reset(void);
 void retro_cheat_set(unsigned index, bool enabled, const char *code);
 
 @implementation PVCoreGenesisPlusBridge (Cheats)
@@ -19,10 +17,13 @@ void retro_cheat_set(unsigned index, bool enabled, const char *code);
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
         setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error {
-    NSLog(@"Genesis Plus GX setCheat: %@ type: %@ codeType: %@ index: %d enabled: %d",
+    NSLog(@"Genesis Plus GX setCheat: %@ type: %@ codeType: %@ index: %hhu enabled: %d",
           code, type, codeType, cheatIndex, enabled);
 
     const char *cCode = [code cStringUsingEncoding:NSUTF8StringEncoding];
+    if (!cCode) {
+        return NO;
+    }
     retro_cheat_set((unsigned)cheatIndex, enabled, cCode);
     return YES;
 }
