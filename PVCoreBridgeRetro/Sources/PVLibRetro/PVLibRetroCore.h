@@ -105,6 +105,9 @@ __attribute__((weak_import))
 
 @interface PVLibRetroCoreBridge (Cheats)
 - (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
+        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error;
+- (void)resetCheatCodes;
 @end
 
 #define SYMBOL(x) \
