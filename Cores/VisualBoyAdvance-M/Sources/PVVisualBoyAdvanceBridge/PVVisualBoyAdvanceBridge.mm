@@ -61,7 +61,7 @@ uint32_t pad[PVGBAButtonCount];
 
 static __weak PVVisualBoyAdvanceBridge *_current;
 
-@interface PVVisualBoyAdvanceBridge () <GameWithCheat>
+@interface PVVisualBoyAdvanceBridge ()
 {
     uint8_t *videoBuffer;
     int32_t *soundBuffer;
@@ -826,7 +826,10 @@ void systemMessage(int, const char * str, ...) {
 
 @implementation PVVisualBoyAdvanceBridge (Cheats)
 
+// Maps sanitized code -> user-provided label
 static NSMutableDictionary *cheatList = nil;
+// Maps sanitized code -> codeType (e.g. "GameShark", "Action Replay v3") for per-code dispatch
+static NSMutableDictionary *cheatCodeTypeList = nil;
 
 - (NSArray<NSString *> *)cheatCodeTypes {
     return @[
@@ -839,9 +842,12 @@ static NSMutableDictionary *cheatList = nil;
 
 - (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type codeType:(NSString *)codeType
           cheatIndex:(UInt8)cheatIndex enabled:(BOOL)enabled {
-    // Lazy-initialise cheat dictionary
+    // Lazy-initialise cheat dictionaries
     if (!cheatList) {
         cheatList = [[NSMutableDictionary alloc] init];
+    }
+    if (!cheatCodeTypeList) {
+        cheatCodeTypeList = [[NSMutableDictionary alloc] init];
     }
 
     // Sanitize
@@ -852,7 +858,7 @@ static NSMutableDictionary *cheatList = nil;
 
     // Remove any spaces
     code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
-    
+
     // Concat address/value pairs
     NSArray *multipleCodes = [code componentsSeparatedByString:@"+"];
     for (NSUInteger i = 0; i < multipleCodes.count; i++) {
@@ -861,13 +867,18 @@ static NSMutableDictionary *cheatList = nil;
             singleCode = [singleCode stringByAppendingString:multipleCodes[i + 1]];
             i++;
         }
-        if (enabled)
+        if (enabled) {
             // Store the user-provided label (type) so it can be passed to the VBA cheat engine
             [cheatList setValue:type ?: singleCode forKey:singleCode];
-        else
+            // Store per-code codeType so 16-char codes are dispatched correctly
+            // even when cheats of different types are mixed together
+            [cheatCodeTypeList setValue:codeType ?: @"" forKey:singleCode];
+        } else {
             [cheatList removeObjectForKey:singleCode];
+            [cheatCodeTypeList removeObjectForKey:singleCode];
+        }
     }
-    
+
     cheatsDeleteAll(false); // Old values not restored by default. Dunno if matters much to cheaters
 
     BOOL anyAdded = NO;
@@ -876,7 +887,8 @@ static NSMutableDictionary *cheatList = nil;
     for (NSString *singleCode in cheatList)
     {
         NSString *label = cheatList[singleCode] ?: @"cheat";
-        DLOG(@"VBA: Processing cheat %@ type %@", singleCode, codeType);
+        NSString *storedCodeType = cheatCodeTypeList[singleCode] ?: codeType;
+        DLOG(@"VBA: Processing cheat %@ codeType %@", singleCode, storedCodeType);
         if ([singleCode length] == 11 || [singleCode length] == 13 || [singleCode length] == 17) // Code with Address:Value
         {
             // XXXXXXXX:YY || XXXXXXXX:YYYY || XXXXXXXX:YYYYYYYY
@@ -895,11 +907,11 @@ static NSMutableDictionary *cheatList = nil;
         else if ([singleCode length] == 16) // GameShark Advance/Action Replay (v1/v2) and Action Replay v3
         {
             // Note: GameShark and Action Replay were synonymous until AR v3. Same codes and devices, but different names by region
-            if ([codeType isEqualToString:@"GameShark"])
+            if ([storedCodeType isEqualToString:@"GameShark"])
                 cheatsAddGSACode([singleCode UTF8String], [label UTF8String], false); // false = GS/AR v1/v2 (not AR v3)
 
             // AR v3 was an entirely different device from GS/AR v1/v2, with different code types and encryption
-            else if ([codeType isEqualToString:@"Action Replay v3"])
+            else if ([storedCodeType isEqualToString:@"Action Replay v3"])
                 cheatsAddGSACode([singleCode UTF8String], [label UTF8String], true); // true = AR v3 code
 
             else // default to GS/AR v1/v2 code (can't determine GS/AR v1/v2 vs AR v3 because same length)
@@ -916,6 +928,9 @@ static NSMutableDictionary *cheatList = nil;
 - (void)resetCheatCodes {
     if (cheatList) {
         [cheatList removeAllObjects];
+    }
+    if (cheatCodeTypeList) {
+        [cheatCodeTypeList removeAllObjects];
     }
     cheatsDeleteAll(false);
 }
