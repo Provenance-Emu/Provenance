@@ -191,8 +191,8 @@ public struct iOSCheatsView: View {
 
     private func loadCheats() {
         if let coreID = coreID {
-            let filter = "core.identifier == \"\(coreID)\""
-            allCheats = cheats.filter(filter).sorted(byKeyPath: "date", ascending: true).map { $0 }
+            let predicate = NSPredicate(format: "core.identifier == %@", coreID)
+            allCheats = cheats.filter(predicate).sorted(byKeyPath: "date", ascending: true).map { $0 }
         } else {
             allCheats = cheats.sorted(byKeyPath: "date", ascending: true).map { $0 }
         }
@@ -642,10 +642,10 @@ struct iOSEditCheatView: View {
                 cheat.code = code
                 cheat.type = newType
             }
+            dismiss()
         } catch {
             ELOG("Error saving edited cheat: \(error)")
         }
-        dismiss()
     }
 }
 

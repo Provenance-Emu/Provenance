@@ -17,22 +17,32 @@ import PVEmulatorCore
 
 extension PVEmulatorViewController {
 
+    /// Pre-compiled regex patterns used to normalize cheat code strings.
+    private static let cheatNormalizeRegex: NSRegularExpression = {
+        // swiftlint:disable:next force_try
+        try! NSRegularExpression(pattern: "[^a-zA-Z0-9-\\[\\]:+]+|[\\s]+", options: .caseInsensitive)
+    }()
+    private static let cheatMultiPlusRegex: NSRegularExpression = {
+        // swiftlint:disable:next force_try
+        try! NSRegularExpression(pattern: "[+]+|[\\s]+", options: .caseInsensitive)
+    }()
+    private static let cheatLeadTrailPlusRegex: NSRegularExpression = {
+        // swiftlint:disable:next force_try
+        try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: .caseInsensitive)
+    }()
+
     func setCheatState(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool, completion: @escaping CheatsCompletion) async {
         if let gameWithCheat = core as? GameWithCheat {
-            // convert space to +
-            var regex = try! NSRegularExpression(pattern: "[^a-zA-Z0-9-\\[\\]:+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
-            var range = NSRange(location: 0, length: code.count)
-            var modString = regex.stringByReplacingMatches(in: code.uppercased(), options: [], range: range, withTemplate: "+")
-            // clean +++
-            regex = try! NSRegularExpression(pattern: "[+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
-            range = NSRange(location: 0, length: modString.count)
-            modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "+")
-            // clean + at front and back of code
-            regex = try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
-            range = NSRange(location: 0, length: modString.count)
-            modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
-            NSLog("Formatted CheatCode \(modString)")
-            if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, cheatIndex: cheatIndex, enabled:enabled)) {
+            // Normalize code: replace non-alphanumeric separators with '+', collapse multiples, strip leading/trailing
+            let upper = code.uppercased()
+            var range = NSRange(upper.startIndex..., in: upper)
+            var modString = Self.cheatNormalizeRegex.stringByReplacingMatches(in: upper, range: range, withTemplate: "+")
+            range = NSRange(modString.startIndex..., in: modString)
+            modString = Self.cheatMultiPlusRegex.stringByReplacingMatches(in: modString, range: range, withTemplate: "+")
+            range = NSRange(modString.startIndex..., in: modString)
+            modString = Self.cheatLeadTrailPlusRegex.stringByReplacingMatches(in: modString, range: range, withTemplate: "")
+            DLOG("Formatted CheatCode \(modString)")
+            if gameWithCheat.setCheat(code: modString, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
                 guard let realm = try? await Realm() else {
                     ELOG("Realm() failed")
@@ -46,26 +56,26 @@ extension PVEmulatorViewController {
                     let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
                     let saveURL = await saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
                     let saveFile = await PVFile(withURL: saveURL, relativeRoot: .iCloud)
-                    var saveType = type;
                     /* In order to avoid modifying realm schema the codeType is added in the
                        type field next to cheat code name with -~- separator */
-                    if codeType.count > 0 {
-                        saveType += "-~-" + codeType
-                    }
-                    var cheatsState: PVCheats!
+                    let saveType = codeType.isEmpty ? type : "\(type)-~-\(codeType)"
+                    var cheatsState: PVCheats?
                     try realm.write {
-                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: false, file: saveFile)
-                        realm.add(cheatsState)
+                        let cs = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: false, file: saveFile)
+                        realm.add(cs)
+                        cheatsState = cs
                     }
-                    Task {
-                       await LibrarySerializer.storeMetadata(cheatsState, completion: { result in
-                            switch result {
-                            case let .success(url):
-                                ILOG("Serialized cheats state metadata to (\(url.path))")
-                            case let .error(error):
-                                ELOG("Failed to serialize cheats metadata. \(error)")
-                            }
-                        })
+                    if let cheatsState {
+                        Task {
+                            await LibrarySerializer.storeMetadata(cheatsState, completion: { result in
+                                switch result {
+                                case let .success(url):
+                                    ILOG("Serialized cheats state metadata to (\(url.path))")
+                                case let .error(error):
+                                    ELOG("Failed to serialize cheats metadata. \(error)")
+                                }
+                            })
+                        }
                     }
                 } catch {
                     completion(.error(.realmWriteError(error)))
@@ -237,25 +247,27 @@ extension PVEmulatorViewController {
 
             let realm = try await Realm()
 
-            var cheats:[String:Bool]=[:]
+            var cheats: [String: Bool] = [:]
             game.realm?.refresh()
             for code in game.cheats {
-                await cheats[code.file!.url!.lastPathComponent.lowercased()] = true
-                cheats[code.id]=true;
+                if let fileURL = code.file?.url {
+                    cheats[fileURL.lastPathComponent.lowercased()] = true
+                }
+                cheats[code.id] = true
             }
             for url in directoryContents {
                 let file = url.lastPathComponent.lowercased()
-                if (fileManager.fileExists(atPath: url.path) &&
+                if fileManager.fileExists(atPath: url.path) &&
                     file.contains("svc.json") &&
-                    cheats.index(forKey: file.replacingOccurrences(of: "svc.json", with: "svc")) == nil) {
+                    cheats.index(forKey: file.replacingOccurrences(of: "svc.json", with: "svc")) == nil {
                     do {
                         guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
                             presentError("No core in database with id \(self.core.coreIdentifier ?? "null")", source: self.view)
                             return
                         }
                         let cheat = try LibrarySerializer.retrieve(url, as: PVCheats.DomainType.self)
-                        if cheat.id.count > 0,
-                           let _ = realm.object(ofType: PVCheats.self, forPrimaryKey: cheat.id) {
+                        if !cheat.id.isEmpty,
+                           realm.object(ofType: PVCheats.self, forPrimaryKey: cheat.id) != nil {
                             continue
                         } else {
                             @ThreadSafe var cheat: PVCheats? = await cheat.asRealm()
@@ -266,12 +278,12 @@ extension PVEmulatorViewController {
                             }
                         }
                     } catch {
-                        NSLog(error.localizedDescription)
+                        ELOG("Error recovering cheat: \(error.localizedDescription)")
                     }
                 }
             }
         } catch {
-            print(error)
+            ELOG("Error recovering cheat codes: \(error)")
         }
     }
 }
