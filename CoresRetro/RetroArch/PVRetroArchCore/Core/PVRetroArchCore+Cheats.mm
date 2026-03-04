@@ -16,4 +16,8 @@ const char* cheatCode;
 	core_set_cheat(&cheat_info);
 	return true;
 }
+
+- (void)resetCheatCodes {
+    core_reset_cheat();
+}
 @end
