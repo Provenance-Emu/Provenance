@@ -375,55 +375,6 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 #endif
 }
 
-#pragma mark - Cheats
-
-static NSMutableDictionary *gb_cheatlist = nil;
-
-- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
-{
-    // Lazy-initialise cheat dictionary
-    if (!gb_cheatlist) {
-        gb_cheatlist = [[NSMutableDictionary alloc] init];
-    }
-
-    // Sanitize
-    code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-
-    // Gambatte expects cheats UPPERCASE
-    code = [code uppercaseString];
-
-    // Remove any spaces
-    code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
-
-    if (enabled)
-        [gb_cheatlist setValue:@YES forKey:code];
-    else
-        [gb_cheatlist removeObjectForKey:code];
-
-    NSMutableArray *combinedGameSharkCodes = [[NSMutableArray alloc] init];
-    NSMutableArray *combinedGameGenieCodes = [[NSMutableArray alloc] init];
-
-    // Gambatte expects all cheats in one combined string per-type e.g. 01xxxxxx+01xxxxxx
-    // Add enabled per-type cheats to arrays and later join them all by a '+' separator
-    for (id key in gb_cheatlist)
-    {
-        if ([[gb_cheatlist valueForKey:key] isEqual:@YES])
-        {
-            // GameShark (no hyphen) vs Game Genie (contains hyphen)
-            if ([key rangeOfString:@"-"].location == NSNotFound)
-                [combinedGameSharkCodes addObject:key];
-            else
-                [combinedGameGenieCodes addObject:key];
-        }
-    }
-
-    // Apply combined cheats or force a final reset if all cheats are disabled
-    [self applyCheat:[combinedGameSharkCodes count] != 0 ? [combinedGameSharkCodes componentsJoinedByString:@"+"] : @"0"];
-    [self applyCheat:[combinedGameGenieCodes count] != 0 ? [combinedGameGenieCodes componentsJoinedByString:@"+"] : @"0-"];
-
-    return YES;
-}
-
 # pragma mark - Display Mode
 
 - (void)changeDisplayMode:(GBPalette)displayMode {
@@ -581,6 +532,59 @@ static NSMutableDictionary *gb_cheatlist = nil;
             gb.setDmgPaletteColor(palnum, colornum, rgb32);
         }
     }
+}
+
+@end
+
+#pragma mark - Cheats
+
+static NSMutableDictionary *gb_cheatlist = nil;
+
+@implementation PVGBEmulatorCoreBridge (Cheats)
+
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
+{
+    // Lazy-initialise cheat dictionary
+    if (!gb_cheatlist) {
+        gb_cheatlist = [[NSMutableDictionary alloc] init];
+    }
+
+    // Sanitize
+    code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    // Gambatte expects cheats UPPERCASE
+    code = [code uppercaseString];
+
+    // Remove any spaces
+    code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
+
+    if (enabled)
+        [gb_cheatlist setValue:@YES forKey:code];
+    else
+        [gb_cheatlist removeObjectForKey:code];
+
+    NSMutableArray *combinedGameSharkCodes = [[NSMutableArray alloc] init];
+    NSMutableArray *combinedGameGenieCodes = [[NSMutableArray alloc] init];
+
+    // Gambatte expects all cheats in one combined string per-type e.g. 01xxxxxx+01xxxxxx
+    // Add enabled per-type cheats to arrays and later join them all by a '+' separator
+    for (id key in gb_cheatlist)
+    {
+        if ([[gb_cheatlist valueForKey:key] isEqual:@YES])
+        {
+            // GameShark (no hyphen) vs Game Genie (contains hyphen)
+            if ([key rangeOfString:@"-"].location == NSNotFound)
+                [combinedGameSharkCodes addObject:key];
+            else
+                [combinedGameGenieCodes addObject:key];
+        }
+    }
+
+    // Apply combined cheats or force a final reset if all cheats are disabled
+    [self applyCheat:[combinedGameSharkCodes count] != 0 ? [combinedGameSharkCodes componentsJoinedByString:@"+"] : @"0"];
+    [self applyCheat:[combinedGameGenieCodes count] != 0 ? [combinedGameGenieCodes componentsJoinedByString:@"+"] : @"0-"];
+
+    return YES;
 }
 
 @end
