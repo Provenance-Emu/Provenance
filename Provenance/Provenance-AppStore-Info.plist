@@ -348,7 +348,6 @@
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>metal</string>
 		<string>arm64</string>
 	</array>
 	<key>UIStatusBarHidden</key>
