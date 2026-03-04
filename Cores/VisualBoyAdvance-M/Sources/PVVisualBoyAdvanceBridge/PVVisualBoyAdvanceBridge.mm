@@ -893,7 +893,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
             {
                 // Note: GameShark and Action Replay were synonymous until AR v3. Same codes and devices, but different names by region
                 if ([codeType isEqual: @"GameShark"])
-                    cheatsAddGSACode([singleCode UTF8String], "code", true);
+                    cheatsAddGSACode([singleCode UTF8String], "code", false); // false = GS/AR v1/v2 (not AR v3)
 
                 // AR v3 was an entirely different device from GS/AR v1/v2, with different code types and encryption
                 else if ([codeType isEqual: @"Action Replay v3"])
