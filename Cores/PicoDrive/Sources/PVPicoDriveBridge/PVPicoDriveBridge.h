@@ -23,6 +23,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 @interface PVPicoDriveBridge (Cheats)
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
         setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error;
+- (void)resetCheatCodes;
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

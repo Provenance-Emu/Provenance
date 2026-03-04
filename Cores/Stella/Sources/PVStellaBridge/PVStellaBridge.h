@@ -80,4 +80,9 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 - (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
 @end
 
+@interface PVStellaBridge (Cheats)
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError **)error;
+- (void)resetCheatCodes;
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)

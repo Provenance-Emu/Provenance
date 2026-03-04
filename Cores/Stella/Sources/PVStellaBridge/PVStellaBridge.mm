@@ -693,8 +693,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (BOOL)setCheatWithCode:(NSString * _Nonnull)code type:(NSString * _Nonnull)type codeType:(NSString * _Nonnull)codeType cheatIndex:(uint8_t)cheatIndex enabled:(BOOL)enabled {
-    // TODO: This is probably wrong @JoeMatt 5/30/24
-    [self setCheat:code setType:type setEnabled:YES error:nil];
+    return [self setCheat:code setType:type setEnabled:enabled error:nil];
 }
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error {
@@ -713,6 +712,14 @@ static void writeSaveFile(const char* path, int type) {
         ILOG(@"Applied Cheat Code %@ %@ %@", code, type, cheatListSuccessfull ? @"Success" : @"Failed");
 
         return cheatListSuccessfull;
+    }
+}
+
+- (void)resetCheatCodes {
+    @synchronized(self) {
+        [self.cheats removeAllObjects];
+        retro_cheat_reset();
+        ILOG(@"Stella resetCheatCodes");
     }
 }
 

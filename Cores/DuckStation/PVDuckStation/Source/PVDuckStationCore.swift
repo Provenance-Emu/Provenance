@@ -89,5 +89,9 @@ extension PVDuckStationCore: GameWithCheat {
     public var supportsCheatCode: Bool {
         return _bridge.getCheatSupport()
     }
+
+    public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
+    }
 }
 

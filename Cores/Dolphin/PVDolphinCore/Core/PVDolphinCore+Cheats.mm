@@ -133,4 +133,20 @@ std::map<int, ActionReplay::ARCode> arcodes{};
     }
     return true;
 }
+
+- (void)resetCheatCodes {
+    // Clear all stored Gecko and Action Replay codes, then apply empty lists.
+    gcodes.clear();
+    arcodes.clear();
+
+    const std::string game_id = SConfig::GetInstance().GetGameID();
+    std::vector<Gecko::GeckoCode> emptyGecko;
+    Gecko::SetActiveCodes(emptyGecko, game_id);
+
+    std::vector<ActionReplay::ARCode> emptyAR;
+    ActionReplay::ApplyCodes(emptyAR, game_id);
+
+    ILOG(@"Dolphin resetCheatCodes: cleared %zu gecko + %zu AR codes", gcodes.size(), arcodes.size());
+}
+
 @end
