@@ -48,6 +48,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @interface PVGBEmulatorCoreBridge (Cheats)
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
+- (void)resetCheatCodes;
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

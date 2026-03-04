@@ -53,6 +53,10 @@ extension PVGBEmulatorCore: GameWithCheat {
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
         return _bridge.setCheat(code, setType: type, setEnabled: enabled)
     }
+
+    public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
+    }
 }
 
 extension PVGBEmulatorCore: CoreActions {
