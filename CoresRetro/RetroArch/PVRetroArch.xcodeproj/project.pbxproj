@@ -163,6 +163,7 @@
 		B36B5BC32D7A779200BABCA3 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 932A5CBE29686A8D0032C168 /* libretro.h */; };
 		B36B5BC72D7A95F500BABCA3 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B36B5BC52D7A95F500BABCA3 /* GCDWebDAVServer.m */; };
 		B36CEE8B2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m in Sources */ = {isa = PBXBuildFile; fileRef = B36CEE8A2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m */; };
+		B3740A732F580F1D00BCD1E2 /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B3740A722F580F1D00BCD1E2 /* PVPrimitives */; };
 		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
 		B39D853C2ED67EC500896E92 /* PVShaders in Frameworks */ = {isa = PBXBuildFile; productRef = B39D853B2ED67EC500896E92 /* PVShaders */; };
 		B39D855C2ED6801300896E92 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B39D855B2ED6801300896E92 /* Defaults */; };
@@ -623,6 +624,7 @@
 				B3EEFB632D66BA3F0080CA51 /* Unrar in Frameworks */,
 				93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */,
 				B39FAC422D6013F50065B66B /* SDL2.xcframework in Frameworks */,
+				B3740A732F580F1D00BCD1E2 /* PVPrimitives in Frameworks */,
 				93B716E12965921000F4CDC7 /* CoreText.framework in Frameworks */,
 				93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */,
 				B3EEFB9C2D66C9560080CA51 /* OpenAL.framework in Frameworks */,
@@ -1192,6 +1194,7 @@
 				B33CFF072ED2DEC40029101B /* PVCheevos */,
 				B39D853B2ED67EC500896E92 /* PVShaders */,
 				B39D855B2ED6801300896E92 /* Defaults */,
+				B3740A722F580F1D00BCD1E2 /* PVPrimitives */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -1260,6 +1263,7 @@
 				B33CFF062ED2DEC40029101B /* XCLocalSwiftPackageReference "../../PVCheevos" */,
 				B39D853A2ED67EC500896E92 /* XCLocalSwiftPackageReference "../../PVShaders" */,
 				B39D855A2ED6801300896E92 /* XCRemoteSwiftPackageReference "Defaults" */,
+				B3740A712F580F1D00BCD1E2 /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2327,6 +2331,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCheevos;
 		};
+		B3740A712F580F1D00BCD1E2 /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 		B37C00572BFF6A1000FEC6AC /* XCLocalSwiftPackageReference "../../MoltenVK" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../MoltenVK;
@@ -2392,6 +2400,10 @@
 		B33CFF072ED2DEC40029101B /* PVCheevos */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCheevos;
+		};
+		B3740A722F580F1D00BCD1E2 /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 		B37C00582BFF6A1000FEC6AC /* MoltenVK */ = {
 			isa = XCSwiftPackageProductDependency;
