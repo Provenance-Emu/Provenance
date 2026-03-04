@@ -103,6 +103,10 @@ __attribute__((weak_import))
 
 @end
 
+@interface PVLibRetroCoreBridge (Cheats)
+- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
+@end
+
 #define SYMBOL(x) \
 do { \
     function_t func = dylib_proc(lib_handle, #x); \

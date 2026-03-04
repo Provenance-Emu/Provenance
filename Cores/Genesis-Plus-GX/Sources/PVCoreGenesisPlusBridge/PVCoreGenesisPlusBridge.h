@@ -30,4 +30,9 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)didReleaseSG1000Button:(PVSG1000Button)button forPlayer:(NSInteger)player;
 @end
 
+@interface PVCoreGenesisPlusBridge (Cheats)
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
+        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error;
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)

@@ -18,5 +18,9 @@
 	<string>0.9.4</string>
 	<key>PVDisabled</key>
 	<true/>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Action Replay</string>
+	</array>
 </dict>
 </plist>
