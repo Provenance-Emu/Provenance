@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-.PHONY: help ios update tvos lite ci
+.PHONY: help ios update tvos lite ci update-cheatdb
 
 RUBY := $(shell command -v ruby 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
@@ -199,6 +199,15 @@ tvos: | update developer_tvos
 ## Open the workspace
 open:
 	open Provenance.xcworkspace
+
+## Generate libretro cheat database from libretro-database repo
+update-cheatdb:
+	$(info Generating libretro cheat database…)
+	rm -rf /tmp/libretro-database
+	git clone --depth=1 https://github.com/libretro/libretro-database.git /tmp/libretro-database
+	python3 Scripts/generate_cheatdb.py /tmp/libretro-database/cht/ \
+		--output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
+	rm -rf /tmp/libretro-database
 
 ## tag and release to github
 release: | _var_VERSION

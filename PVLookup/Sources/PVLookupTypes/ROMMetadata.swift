@@ -75,7 +75,7 @@ public struct ROMMetadata: Codable, Sendable, Equatable {
     }
 
     /// Creates a copy with a new title
-    func copy(gameTitle: String) -> ROMMetadata {
+    public func copy(gameTitle: String) -> ROMMetadata {
         return ROMMetadata(
             gameTitle: gameTitle,
             boxImageURL: self.boxImageURL,

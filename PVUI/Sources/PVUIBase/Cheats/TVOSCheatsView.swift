@@ -25,6 +25,7 @@ public struct TVOSCheatsView: View {
     let cheatTypes: [String]
     let gameMD5: String?
     let gameTitle: String?
+    let gameSystemIdentifier: String?
     let onSaveCheat: (String, String, String, UInt8, Bool) -> Void
     let onUpdateCheat: (PVCheats, UInt8) -> Void
     let onDone: () -> Void
@@ -50,6 +51,7 @@ public struct TVOSCheatsView: View {
         cheatTypes: [String],
         gameMD5: String? = nil,
         gameTitle: String? = nil,
+        gameSystemIdentifier: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
@@ -59,6 +61,7 @@ public struct TVOSCheatsView: View {
         self.cheatTypes = cheatTypes
         self.gameMD5 = gameMD5
         self.gameTitle = gameTitle
+        self.gameSystemIdentifier = gameSystemIdentifier
         self.onSaveCheat = onSaveCheat
         self.onUpdateCheat = onUpdateCheat
         self.onDone = onDone
@@ -106,6 +109,7 @@ public struct TVOSCheatsView: View {
             TVOSCheatSearchView(
                 gameMD5: gameMD5,
                 gameTitle: gameTitle,
+                gameSystemIdentifier: gameSystemIdentifier,
                 cheatTypes: cheatTypes,
                 cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
                 onImport: { code, name, deviceName, index, enabled in
@@ -615,6 +619,7 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
         cheatTypes: [String],
         gameMD5: String? = nil,
         gameTitle: String? = nil,
+        gameSystemIdentifier: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
@@ -625,6 +630,7 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
             cheatTypes: cheatTypes,
             gameMD5: gameMD5,
             gameTitle: gameTitle,
+            gameSystemIdentifier: gameSystemIdentifier,
             onSaveCheat: onSaveCheat,
             onUpdateCheat: onUpdateCheat,
             onDone: onDone
@@ -646,6 +652,7 @@ struct TVOSCheatSearchView: View {
 
     let gameMD5: String?
     let gameTitle: String?
+    let gameSystemIdentifier: String?
     /// Available cheat code types passed through from the parent view.
     /// Currently unused by the tvOS cheat database search UI, but kept to
     /// support future code-type selection/filtering when importing cheats
@@ -774,13 +781,12 @@ struct TVOSCheatSearchView: View {
         isLoading = true
         errorMessage = nil
         do {
-            var found: [CheatDatabaseEntry] = []
-            if let md5 = gameMD5, !md5.isEmpty {
-                found = try await CheatDatabase.shared.searchCheats(byMD5: md5)
-            }
-            if found.isEmpty, let title = gameTitle, !title.isEmpty {
-                found = try await CheatDatabase.shared.searchCheats(byTitle: title)
-            }
+            let found = try await CheatDatabase.shared.searchAllCheats(
+                byMD5: gameMD5,
+                title: gameTitle,
+                systemIdentifier: gameSystemIdentifier
+            )
+            DLOG("TVOSCheatSearch: \(found.count) results (unified search)")
             results = found
         } catch {
             errorMessage = error.localizedDescription

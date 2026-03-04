@@ -99,6 +99,7 @@ let package = Package(
                 "PVHashing",
                 "PVPlists",
                 "PVLookup",
+                .product(name: "LibretroCheatDB", package: "PVLookup"),
                 "PVPrimitives",
                 "PVRealm",
                 "PVFeatureFlags",

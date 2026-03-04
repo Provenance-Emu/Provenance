@@ -31,6 +31,8 @@ final class PVCheatsViewController: UITableViewController {
     var gameMD5: String?
     /// The title of the game for which cheats are being managed; used for database auto-lookup.
     var gameTitle: String?
+    /// The libretro system name for filtering cheat database results.
+    var gameSystemIdentifier: String?
 
     private var allCheats: Results<PVCheats>?
 
@@ -50,8 +52,16 @@ final class PVCheatsViewController: UITableViewController {
         // Add retrowave grid background
         RetroWaveGridBackground.createGridBackground(for: view, gridColor: .retroPurple.withAlphaComponent(0.3))
 
-        // Search Database button (right side of nav bar)
+        // Right side nav bar: Add + Search buttons
         #if os(iOS)
+        let addButton = UIBarButtonItem(
+            image: UIImage(systemName: "plus"),
+            style: .plain,
+            target: self,
+            action: #selector(addCheatTapped)
+        )
+        addButton.tintColor = .retroBlue
+
         let searchButton = UIBarButtonItem(
             image: UIImage(systemName: "magnifyingglass"),
             style: .plain,
@@ -59,7 +69,9 @@ final class PVCheatsViewController: UITableViewController {
             action: #selector(searchDatabaseTapped)
         )
         searchButton.tintColor = .retroBlue
-        navigationItem.rightBarButtonItem = searchButton
+
+        // Use rightBarButtonItems (plural) so both appear
+        navigationItem.rightBarButtonItems = [addButton, searchButton]
         #endif
 
         var isFirstLoad: Bool=true
@@ -200,6 +212,14 @@ final class PVCheatsViewController: UITableViewController {
         return delegate.getCheatTypes()
     }
 
+    // MARK: - Add Cheat
+
+    #if os(iOS)
+    @objc private func addCheatTapped() {
+        performSegue(withIdentifier: "cheatCodeInfo", sender: self)
+    }
+    #endif
+
     // MARK: - Cheat Database Search
 
     #if os(iOS)
@@ -207,6 +227,7 @@ final class PVCheatsViewController: UITableViewController {
         let searchVC = PVCheatSearchViewController()
         searchVC.gameMD5 = gameMD5
         searchVC.gameTitle = gameTitle
+        searchVC.gameSystemIdentifier = gameSystemIdentifier
         searchVC.onImport = { [weak self] entry in
             self?.importCheatEntry(entry)
         }

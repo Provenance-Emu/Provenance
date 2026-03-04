@@ -25,6 +25,7 @@ public struct iOSCheatsView: View {
     let cheatTypes: [String]
     let gameMD5: String?
     let gameTitle: String?
+    let gameSystemIdentifier: String?
     let onSaveCheat: (String, String, String, UInt8, Bool) -> Void
     let onUpdateCheat: (PVCheats, UInt8) -> Void
     let onDone: () -> Void
@@ -39,6 +40,7 @@ public struct iOSCheatsView: View {
         cheatTypes: [String],
         gameMD5: String? = nil,
         gameTitle: String? = nil,
+        gameSystemIdentifier: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
@@ -48,6 +50,7 @@ public struct iOSCheatsView: View {
         self.cheatTypes = cheatTypes
         self.gameMD5 = gameMD5
         self.gameTitle = gameTitle
+        self.gameSystemIdentifier = gameSystemIdentifier
         self.onSaveCheat = onSaveCheat
         self.onUpdateCheat = onUpdateCheat
         self.onDone = onDone
@@ -98,17 +101,17 @@ public struct iOSCheatsView: View {
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showingAddCheat = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showingSearchDB = true
-                    } label: {
-                        Image(systemName: "magnifyingglass")
+                    HStack(spacing: 16) {
+                        Button {
+                            showingSearchDB = true
+                        } label: {
+                            Image(systemName: "magnifyingglass")
+                        }
+                        Button {
+                            showingAddCheat = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
                 ToolbarItem(placement: .secondaryAction) {
@@ -130,6 +133,7 @@ public struct iOSCheatsView: View {
                 iOSCheatSearchView(
                     gameMD5: gameMD5,
                     gameTitle: gameTitle,
+                    gameSystemIdentifier: gameSystemIdentifier,
                     cheatIndex: nextCheatIndex,
                     onImport: { code, name, deviceName, index, enabled in
                         onSaveCheat(code, name, deviceName, index, enabled)
@@ -358,6 +362,7 @@ struct iOSCheatSearchView: View {
 
     let gameMD5: String?
     let gameTitle: String?
+    let gameSystemIdentifier: String?
     let cheatIndex: UInt8
     let onImport: (String, String, String, UInt8, Bool) -> Void
 
@@ -444,20 +449,18 @@ struct iOSCheatSearchView: View {
     private func loadCheats() async {
         isLoading = true
         errorMessage = nil
+        DLOG("iOSCheatSearch: Starting search md5=\(gameMD5 ?? "nil") title=\(gameTitle ?? "nil") system=\(gameSystemIdentifier ?? "nil")")
         do {
-            var found: [CheatDatabaseEntry] = []
-            if let md5 = gameMD5, !md5.isEmpty {
-                found = try await CheatDatabase.shared.searchCheats(byMD5: md5)
-                DLOG("iOSCheatSearch: \(found.count) results by MD5")
-            }
-            if found.isEmpty, let title = gameTitle, !title.isEmpty {
-                found = try await CheatDatabase.shared.searchCheats(byTitle: title)
-                DLOG("iOSCheatSearch: \(found.count) results by title '\(title)'")
-            }
+            let found = try await CheatDatabase.shared.searchAllCheats(
+                byMD5: gameMD5,
+                title: gameTitle,
+                systemIdentifier: gameSystemIdentifier
+            )
+            DLOG("iOSCheatSearch: \(found.count) results (unified search)")
             results = found
         } catch {
-            ELOG("iOSCheatSearch error: \(error.localizedDescription)")
-            errorMessage = error.localizedDescription
+            ELOG("iOSCheatSearch error: \(error)")
+            errorMessage = "\(error)"
         }
         isLoading = false
     }
@@ -496,6 +499,7 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
         cheatTypes: [String],
         gameMD5: String? = nil,
         gameTitle: String? = nil,
+        gameSystemIdentifier: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
@@ -506,6 +510,7 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
             cheatTypes: cheatTypes,
             gameMD5: gameMD5,
             gameTitle: gameTitle,
+            gameSystemIdentifier: gameSystemIdentifier,
             onSaveCheat: onSaveCheat,
             onUpdateCheat: onUpdateCheat,
             onDone: onDone

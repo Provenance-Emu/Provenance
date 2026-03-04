@@ -23,6 +23,9 @@ public struct CheatDatabaseEntry: Sendable, Identifiable {
     public let category: String
     /// The ROM title this cheat is associated with
     public let romTitle: String
+    /// The system name this cheat is for (e.g. "Nintendo - Super Nintendo Entertainment System").
+    /// Only populated for entries from the libretro cheat database.
+    public let systemName: String?
 
     public init(
         id: Int,
@@ -32,7 +35,8 @@ public struct CheatDatabaseEntry: Sendable, Identifiable {
         deviceName: String,
         deviceFormat: String?,
         category: String,
-        romTitle: String
+        romTitle: String,
+        systemName: String? = nil
     ) {
         self.id = id
         self.cheatName = cheatName
@@ -42,5 +46,6 @@ public struct CheatDatabaseEntry: Sendable, Identifiable {
         self.deviceFormat = deviceFormat
         self.category = category
         self.romTitle = romTitle
+        self.systemName = systemName
     }
 }

@@ -8,6 +8,7 @@
 import Foundation
 import SQLite
 import PVLogging
+import LibretroCheatDB
 
 /// Actor-based service for querying the bundled cheatbase.sqlite database.
 /// Supports lookup by ROM MD5 hash and by game title.
@@ -64,6 +65,104 @@ public actor CheatDatabase {
             .replacingOccurrences(of: "_", with: "\\_") + "%"
         let query = Self.queryByTitleBase + " LIMIT \(limit)"
         return try executeQuery(query, on: conn, binding: pattern)
+    }
+
+    // MARK: - Unified Search (both databases)
+
+    /// Search both the existing DS cheatbase AND the libretro cheat database.
+    ///
+    /// - Parameters:
+    ///   - md5: The MD5 hash of the ROM (for exact match in DS cheatbase).
+    ///   - title: The game title for fuzzy search across both databases.
+    ///   - systemIdentifier: The libretro system directory name (e.g. "Nintendo - Super Nintendo Entertainment System").
+    ///   - limit: Maximum number of results to return.
+    /// - Returns: Combined, deduplicated array of cheat entries from both databases.
+    public func searchAllCheats(
+        byMD5 md5: String? = nil,
+        title: String? = nil,
+        systemIdentifier: String? = nil,
+        limit: Int = 300
+    ) async throws -> [CheatDatabaseEntry] {
+        var results: [CheatDatabaseEntry] = []
+        var seenCodes = Set<String>()
+        var lastError: Error?
+
+        // 1. Try MD5 exact match on existing cheatbase.sqlite (DS data — high precision)
+        if let md5 = md5, !md5.isEmpty {
+            do {
+                let md5Results = try searchCheats(byMD5: md5)
+                for entry in md5Results {
+                    let key = entry.cheatCode.lowercased()
+                    if seenCodes.insert(key).inserted {
+                        results.append(entry)
+                    }
+                }
+                DLOG("CheatDatabase: \(md5Results.count) results from cheatbase by MD5")
+            } catch {
+                ELOG("CheatDatabase: MD5 search error: \(error)")
+                lastError = error
+            }
+        }
+
+        // 2. Query LibretroCheatDatabase by title + system
+        if let title = title, !title.isEmpty {
+            DLOG("CheatDatabase: Querying libretro DB for title='\(title)' system=\(systemIdentifier ?? "any")")
+            do {
+                let libretroResults = try await LibretroCheatDatabase.shared.searchCheats(
+                    byTitle: title,
+                    systemName: systemIdentifier,
+                    limit: limit
+                )
+                DLOG("CheatDatabase: \(libretroResults.count) results from libretro DB")
+
+                for entry in libretroResults {
+                    let key = entry.cheatCode.lowercased()
+                    if seenCodes.insert(key).inserted {
+                        results.append(CheatDatabaseEntry(
+                            id: entry.id + 1_000_000, // Offset to avoid ID collision
+                            cheatName: entry.cheatName,
+                            cheatCode: entry.cheatCode,
+                            cheatDescription: nil,
+                            deviceName: entry.deviceName,
+                            deviceFormat: nil,
+                            category: "General",
+                            romTitle: entry.gameTitle,
+                            systemName: entry.systemName
+                        ))
+                    }
+                }
+            } catch {
+                ELOG("CheatDatabase: LibretroCheatDatabase error: \(error)")
+                lastError = error
+            }
+        }
+
+        // 3. If libretro returned nothing, also try title on old DS cheatbase
+        if results.isEmpty, let title = title, !title.isEmpty {
+            do {
+                let titleResults = try searchCheats(byTitle: title, limit: limit)
+                for entry in titleResults {
+                    let key = entry.cheatCode.lowercased()
+                    if seenCodes.insert(key).inserted {
+                        results.append(entry)
+                    }
+                }
+                DLOG("CheatDatabase: \(titleResults.count) results from cheatbase by title '\(title)'")
+            } catch {
+                ELOG("CheatDatabase: Title search error: \(error)")
+                lastError = error
+            }
+        }
+
+        DLOG("CheatDatabase: searchAllCheats total=\(results.count) for md5=\(md5 ?? "nil") title=\(title ?? "nil") system=\(systemIdentifier ?? "nil")")
+
+        // If all searches failed and we have no results, propagate the last error
+        // so the UI can display it instead of just showing "No results"
+        if results.isEmpty, let error = lastError {
+            throw error
+        }
+
+        return results
     }
 
     // MARK: - Private Queries

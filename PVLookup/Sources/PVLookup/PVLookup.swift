@@ -222,7 +222,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
     internal func ensureDatabasesInitialized() async throws {
         if isInitializing {
             // Wait a bit for initialization to complete
-            try await Task.sleep(for: .seconds(1))
+            try await Task.sleep(nanoseconds: 1_000_000_000)
         }
 
         // If any database isn't initialized, do it now

@@ -5,6 +5,7 @@
 
 import PVLibrary
 import PVSupport
+import PVPrimitives
 import RealmSwift
 import PVRealm
 import PVLogging
@@ -156,6 +157,13 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         dismiss(animated: true, completion: nil)
     }
 
+    /// Resolve the libretro database name for the current game's system.
+    private var gameLibretroDatabaseName: String? {
+        guard let sysID = SystemIdentifier(rawValue: game.systemIdentifier) else { return nil }
+        let name = sysID.libretroDatabaseName
+        return name == "Unknown" ? nil : name
+    }
+
     @objc func showCheatsMenu() {
         Task.detached { [weak self ] in
             guard let self = self else { return }
@@ -172,6 +180,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             cheatTypes: getCheatTypes(),
             gameMD5: game.md5Hash,
             gameTitle: game.title,
+            gameSystemIdentifier: gameLibretroDatabaseName,
             onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
                 guard let self = self else { return }
                 Task { @MainActor in
@@ -219,6 +228,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 cheatTypes: getCheatTypes(),
                 gameMD5: game.md5Hash,
                 gameTitle: game.title,
+                gameSystemIdentifier: gameLibretroDatabaseName,
                 onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
                     guard let self = self else { return }
                     Task { @MainActor in
@@ -265,6 +275,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 cheatsViewController.coreID = core.coreIdentifier
                 cheatsViewController.gameMD5 = game.md5Hash
                 cheatsViewController.gameTitle = game.title
+                cheatsViewController.gameSystemIdentifier = gameLibretroDatabaseName
             }
             cheatsNavController.modalPresentationStyle = .overCurrentContext
 

@@ -1,5 +1,5 @@
 {
-  "originHash" : "e82b22e0dda7fcbfc19f09feed4609e5f75579b895952910e7ddbad253415083",
+  "originHash" : "6ff46a339ed9c93ecba2da78fdfbaecd23f15422d0e51fc707dce94933de3389",
   "pins" : [
     {
       "identity" : "checksum",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "ef1b2318fb549002bb533bec3a8ad98ae09f2cb6"
+        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
+        "version" : "9.0.2"
       }
     },
     {

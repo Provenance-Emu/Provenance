@@ -28,6 +28,10 @@ let package = Package(
             type: .dynamic,
             targets: ["PVLookup"]
         ),
+        .library(
+            name: "LibretroCheatDB",
+            targets: ["LibretroCheatDB"]
+        ),
     ],
     dependencies: [
         .package(path: "../PVLogging"),
@@ -108,6 +112,20 @@ let package = Package(
              plugins: [
 //                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator"),
          ]),
+
+        // MARK:  LibretroCheatDB
+
+        .target(
+            name: "LibretroCheatDB",
+            dependencies: [
+                "PVLogging",
+                "PVSQLiteDatabase",
+                .product(name: "SQLite", package: "sqlite.swift"),
+            ],
+            resources: [
+                .copy("Resources/libretro_cheats.sqlite.zip"),
+            ]
+        ),
 
         // MARK:  libretrodb
 
@@ -206,6 +224,13 @@ let package = Package(
         .testTarget(
             name: "TheGamesDBTests",
             dependencies: ["TheGamesDB", "PVLookup", "PVLogging"]
+        ),
+
+        // MARK: LibretroCheatDB tests
+
+        .testTarget(
+            name: "LibretroCheatDBTests",
+            dependencies: ["LibretroCheatDB", "PVLogging"]
         ),
     ],
     swiftLanguageModes: [.v5, .v6],

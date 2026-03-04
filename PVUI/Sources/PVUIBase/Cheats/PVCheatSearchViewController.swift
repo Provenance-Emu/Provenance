@@ -19,6 +19,8 @@ final class PVCheatSearchViewController: UIViewController {
     var gameMD5: String?
     /// Title of the current game, used as a fallback search term.
     var gameTitle: String?
+    /// The libretro system name for filtering cheat database results.
+    var gameSystemIdentifier: String?
     /// Called with each cheat entry the user chooses to import.
     var onImport: ((CheatDatabaseEntry) -> Void)?
 
@@ -150,20 +152,14 @@ final class PVCheatSearchViewController: UIViewController {
         loadingTask?.cancel()
         loadingTask = Task { [weak self] in
             guard let self else { return }
+            DLOG("CheatSearch: Starting unified search md5=\(gameMD5 ?? "nil") title=\(gameTitle ?? "nil") system=\(gameSystemIdentifier ?? "nil")")
             do {
-                var results: [CheatDatabaseEntry] = []
-
-                // Try exact MD5 match first
-                if let md5 = gameMD5, !md5.isEmpty {
-                    results = try await CheatDatabase.shared.searchCheats(byMD5: md5)
-                    DLOG("CheatSearch: \(results.count) results by MD5")
-                }
-
-                // Fall back to title search if MD5 returned nothing
-                if results.isEmpty, let title = gameTitle, !title.isEmpty {
-                    results = try await CheatDatabase.shared.searchCheats(byTitle: title)
-                    DLOG("CheatSearch: \(results.count) results by title '\(title)'")
-                }
+                let results = try await CheatDatabase.shared.searchAllCheats(
+                    byMD5: gameMD5,
+                    title: gameTitle,
+                    systemIdentifier: gameSystemIdentifier
+                )
+                DLOG("CheatSearch: \(results.count) results (unified search)")
 
                 guard !Task.isCancelled else { return }
                 await MainActor.run {
@@ -175,11 +171,11 @@ final class PVCheatSearchViewController: UIViewController {
                 }
             } catch {
                 guard !Task.isCancelled else { return }
-                ELOG("CheatSearch error: \(error.localizedDescription)")
+                ELOG("CheatSearch error: \(error)")
                 await MainActor.run {
                     self.isLoading = false
                     self.activityIndicator.stopAnimating()
-                    self.emptyLabel.text = "Error loading database"
+                    self.emptyLabel.text = "Error: \(error.localizedDescription)"
                     self.emptyLabel.isHidden = false
                 }
             }
