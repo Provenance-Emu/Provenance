@@ -10,6 +10,7 @@
 @import PVLoggingObjC;
 
 // Forward-declare the libretro cheat API used by PicoDrive
+void retro_cheat_reset(void);
 void retro_cheat_set(unsigned index, bool enabled, const char *code);
 
 @implementation PVPicoDriveBridge (Cheats)
@@ -32,6 +33,11 @@ void retro_cheat_set(unsigned index, bool enabled, const char *code);
     }
     retro_cheat_set((unsigned)cheatIndex, (bool)enabled, cCode);
     return YES;
+}
+
+- (void)resetCheatCodes {
+    DLOG(@"PicoDrive resetCheatCodes");
+    retro_cheat_reset();
 }
 
 @end

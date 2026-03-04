@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 # pragma CheatCodeSupport
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError**)error;
 - (BOOL)getCheatSupport;
+- (void)resetCheatCodes;
 @end
 
 __weak static PVDuckStationCoreBridge * _current;

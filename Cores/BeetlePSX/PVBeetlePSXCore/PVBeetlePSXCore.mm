@@ -66,8 +66,7 @@
 //	NSString *batterySavesDirectory = self.batterySavesPath;
 //	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
 //                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:NULL];
+//                                               attributes:NULL];
 //
 //    return YES;
 //}
@@ -114,14 +113,8 @@
 //	[self.frontBufferCondition unlock];
 //}
 
-//# pragma mark - Cheats
-//- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
-//}
-//
-
 - (BOOL)supportsSaveStates { return NO; }
 - (BOOL)supportsRumble { return YES; }
-- (BOOL)supportsCheatCode { return YES; }
 
 //- (NSTimeInterval)frameInterval {
 /*
@@ -187,8 +180,8 @@
 #pragma mark - Options
 - (void *)getVariable:(const char *)variable {
     ILOG(@"%s", variable);
-    
-    
+
+
 #define V(x) strcmp(variable, x) == 0
     if (V(BEETLE_OPT(hw_renderer))) {
         // hardware, hardware_gl, hardware_vk, software
@@ -214,7 +207,39 @@
         return nil;
     }
 #undef V
-    return NULL;
 }
+
+@end
+
+#pragma mark - GameWithCheat
+
+/// BeetlePSX inherits from PVLibRetroGLESCore → PVLibRetroCoreBridge, which already provides
+/// setCheat:setType:setCodeType:setIndex:setEnabled:error: and resetCheatCodes via the
+/// libretro retro_cheat_set / retro_cheat_reset APIs.
+/// This category declares GameWithCheat conformance and wires up the missing cheatCodeTypes and
+/// the required protocol selector setCheatWithCode:type:codeType:cheatIndex:enabled:.
+@interface PVBeetlePSXCore (Cheats) <GameWithCheat>
+@end
+
+@implementation PVBeetlePSXCore (Cheats)
+
+- (BOOL)supportsCheatCode {
+    return YES;
+}
+
+- (NSArray<NSString *> *)cheatCodeTypes {
+    // Beetle PSX HW (Mednafen) supports PlayStation Game Shark / Action Replay codes.
+    return @[@"Game Shark"];
+}
+
+- (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type codeType:(NSString *)codeType
+            cheatIndex:(uint8_t)cheatIndex enabled:(BOOL)enabled {
+    // Delegates to the inherited PVLibRetroCoreBridge implementation, which calls
+    // core->retro_cheat_set() with the provided index, enabled flag, and code string.
+    return [self setCheat:code setType:type setCodeType:codeType setIndex:cheatIndex setEnabled:enabled error:nil];
+}
+
+// resetCheatCodes is inherited from PVLibRetroCoreBridge (calls core->retro_cheat_reset())
+// and does not need to be re-implemented here.
 
 @end
