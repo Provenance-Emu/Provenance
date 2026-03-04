@@ -25,6 +25,7 @@ let package = Package(
     dependencies: [
         .package(path: "../PVAudio"),
         .package(path: "../PVFeatureFlags"),
+        .package(path: "../PVHelp"),
         .package(path: "../PVCoreAudio"),
         .package(path: "../PVCoreBridge"),
         .package(path: "../PVEmulatorCore"),
@@ -101,6 +102,7 @@ let package = Package(
                 "PVCoreBridge",
                 "PVEmulatorCore",
                 "PVFeatureFlags",
+                "PVHelp",
                 "PVLibrary",
                 "PVLogging",
                 "PVSupport",
@@ -220,6 +222,7 @@ let package = Package(
                 "PVShaders",
                 "PVLibrary",
                 "PVThemes",
+                "PVHelp",
                 "MBProgressHUD",
                 "FreemiumKit",
                 "AnimatedGradient",

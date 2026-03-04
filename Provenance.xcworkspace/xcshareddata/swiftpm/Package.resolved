@@ -164,15 +164,6 @@
         }
       },
       {
-        "package": "HexColors",
-        "repositoryURL": "https://github.com/JoeMatt/HexColors.git",
-        "state": {
-          "branch": "main",
-          "revision": "96bcc8d806e58cf31ee32d419cabccd827ce6550",
-          "version": null
-        }
-      },
-      {
         "package": "Highlightr",
         "repositoryURL": "https://github.com/raspu/Highlightr.git",
         "state": {
@@ -455,9 +446,9 @@
         "package": "swift-perception",
         "repositoryURL": "https://github.com/pointfreeco/swift-perception.git",
         "state": {
-          "branch": "main",
-          "revision": "7efae7948b8de33ee2aa73f910daaf254a502d3b",
-          "version": null
+          "branch": null,
+          "revision": "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
+          "version": "2.0.9"
         }
       },
       {

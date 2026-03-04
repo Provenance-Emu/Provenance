@@ -1,5 +1,5 @@
 {
-  "originHash" : "331f50f5de03de6e4fef277f01444ad609a3d0328bc7a7b0493cb9ef309d6ecc",
+  "originHash" : "9a49b288230701182abda820bdedbbfcece730a474e75f49449013e4acd7c41c",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "ef1b2318fb549002bb533bec3a8ad98ae09f2cb6"
+        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
+        "version" : "9.0.2"
       }
     },
     {
@@ -80,15 +80,6 @@
       "state" : {
         "revision" : "540652a0a0ba8b1a998e6022d944e42ee545d867",
         "version" : "1.19.0"
-      }
-    },
-    {
-      "identity" : "hexcolors",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/HexColors.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "96bcc8d806e58cf31ee32d419cabccd827ce6550"
       }
     },
     {
@@ -312,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "8d52279b9809ef27eabe7d5420f03734528f19da"
+        "revision" : "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
+        "version" : "2.0.9"
       }
     },
     {
@@ -375,8 +366,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "a3f634d1a409c7979cabc0a71b3f26ffa9fc8af1",
-        "version" : "1.4.3"
+        "revision" : "dfd70507def84cb5fb821278448a262c6ff2bbad",
+        "version" : "1.9.0"
       }
     },
     {

@@ -21,7 +21,7 @@ let package = Package(
         .package(path: "../PVPrimitives"),
         .package(path: "../PVLogging"),
         .package(path: "../PVSettings"),
-        .package(url: "https://github.com/sindresorhus/Defaults.git", branch: "main")
+        .package(url: "https://github.com/sindresorhus/Defaults.git", exact: "9.0.2")
     ],
     targets: [
         .target(

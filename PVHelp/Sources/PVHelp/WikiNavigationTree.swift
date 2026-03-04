@@ -1,0 +1,152 @@
+import Foundation
+
+public struct WikiSection: Codable, Identifiable, Sendable {
+    public let id: String
+    public let title: String
+    public var items: [WikiNavItem]
+
+    public init(id: String? = nil, title: String, items: [WikiNavItem] = []) {
+        self.id = id ?? title.lowercased().replacingOccurrences(of: " ", with: "-")
+        self.title = title
+        self.items = items
+    }
+}
+
+public struct WikiNavItem: Codable, Identifiable, Sendable {
+    public let id: String
+    public let title: String
+    public let path: String
+    public var children: [WikiNavItem]
+
+    public init(title: String, path: String, children: [WikiNavItem] = []) {
+        self.id = path.isEmpty ? title.lowercased().replacingOccurrences(of: " ", with: "-") : path
+        self.title = title
+        self.path = path
+        self.children = children
+    }
+}
+
+public struct WikiNavigationTree: Codable, Sendable {
+    public let sections: [WikiSection]
+
+    public init(sections: [WikiSection]) {
+        self.sections = sections
+    }
+
+    /// Parse a GitBook SUMMARY.md into a navigation tree.
+    public static func parse(markdown: String) -> WikiNavigationTree {
+        var sections: [WikiSection] = []
+        var currentSection: WikiSection?
+        // Stack of (indentLevel, itemIndex in parent's children array)
+        // We track items at each indent level to support nesting
+        var itemStack: [(indent: Int, items: [WikiNavItem])] = []
+
+        func flushStack() -> [WikiNavItem] {
+            // Collapse the stack into a flat list of top-level items
+            while itemStack.count > 1 {
+                let child = itemStack.removeLast()
+                if var parent = itemStack.last, !parent.items.isEmpty {
+                    let lastIndex = parent.items.count - 1
+                    parent.items[lastIndex].children.append(contentsOf: child.items)
+                    itemStack[itemStack.count - 1] = parent
+                }
+            }
+            return itemStack.first?.items ?? []
+        }
+
+        for line in markdown.components(separatedBy: "\n") {
+            // Section header: ## Title
+            if line.hasPrefix("## ") {
+                // Flush previous section
+                if var sec = currentSection {
+                    sec.items = flushStack()
+                    sections.append(sec)
+                    itemStack = []
+                }
+                let title = String(line.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+                currentSection = WikiSection(title: title)
+                continue
+            }
+
+            // Nav item: * [Title](path.md) or  * [Title](path.md) (indented)
+            guard let match = parseNavLine(line) else { continue }
+
+            let item = WikiNavItem(title: match.title, path: match.path)
+            let indent = match.indent
+
+            if currentSection == nil {
+                // Items before first ## header go into a root section
+                currentSection = WikiSection(id: "root", title: "")
+            }
+
+            if itemStack.isEmpty {
+                itemStack.append((indent: indent, items: [item]))
+            } else if indent > itemStack.last!.indent {
+                // Deeper nesting
+                itemStack.append((indent: indent, items: [item]))
+            } else if indent == itemStack.last!.indent {
+                // Same level
+                itemStack[itemStack.count - 1].items.append(item)
+            } else {
+                // Shallower — collapse deeper levels
+                while itemStack.count > 1 && itemStack.last!.indent > indent {
+                    let child = itemStack.removeLast()
+                    if !itemStack.isEmpty && !itemStack.last!.items.isEmpty {
+                        let lastIndex = itemStack[itemStack.count - 1].items.count - 1
+                        itemStack[itemStack.count - 1].items[lastIndex].children.append(contentsOf: child.items)
+                    }
+                }
+                if itemStack.last?.indent == indent {
+                    itemStack[itemStack.count - 1].items.append(item)
+                } else {
+                    itemStack.append((indent: indent, items: [item]))
+                }
+            }
+        }
+
+        // Flush last section
+        if var sec = currentSection {
+            sec.items = flushStack()
+            sections.append(sec)
+        }
+
+        return WikiNavigationTree(sections: sections)
+    }
+
+    private struct ParsedNavLine {
+        let indent: Int
+        let title: String
+        let path: String
+    }
+
+    private static func parseNavLine(_ line: String) -> ParsedNavLine? {
+        // Match: optional whitespace + * + space + [Title](path)
+        // Count leading spaces for indent level
+        let stripped = line.replacingOccurrences(of: "\t", with: "  ")
+        let leadingSpaces = stripped.prefix(while: { $0 == " " }).count
+
+        let trimmed = stripped.trimmingCharacters(in: .whitespaces)
+        guard trimmed.hasPrefix("* ") || trimmed.hasPrefix("- ") else { return nil }
+
+        let afterBullet = String(trimmed.dropFirst(2))
+
+        // Parse [Title](path)
+        guard afterBullet.hasPrefix("["),
+              let closeBracket = afterBullet.firstIndex(of: "]"),
+              afterBullet[afterBullet.index(after: closeBracket)] == "(" else {
+            return nil
+        }
+
+        let title = String(afterBullet[afterBullet.index(after: afterBullet.startIndex)..<closeBracket])
+        let afterParen = afterBullet[afterBullet.index(closeBracket, offsetBy: 2)...]
+        guard let closeParen = afterParen.firstIndex(of: ")") else { return nil }
+        let path = String(afterParen[..<closeParen])
+
+        // Skip external links
+        if path.hasPrefix("http://") || path.hasPrefix("https://") {
+            return nil
+        }
+
+        return ParsedNavLine(indent: leadingSpaces, title: title, path: path)
+    }
+}

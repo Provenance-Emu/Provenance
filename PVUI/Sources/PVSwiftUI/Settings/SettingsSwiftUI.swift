@@ -1376,20 +1376,15 @@ private struct SocialLinksSection: View {
 private struct DocumentationSection: View {
     var body: some View {
         Section(header: Text("Documentation")) {
+            NavigationLink(destination: WikiHelpView()) {
+                SettingsRow(title: "Help & Wiki",
+                            subtitle: "Browse the Provenance wiki for guides, FAQs, and tips.",
+                            icon: .sfSymbol("books.vertical.fill"))
+            }
             Link(destination: URL(string: "https://provenance-emu.com/blog/")!) {
                 SettingsRow(title: "Blog",
                             subtitle: "Release announcements and full changelogs and screenshots posted to our blog.",
                             icon: .sfSymbol("square.and.pencil"))
-            }
-            Link(destination: URL(string: "https://wiki.provenance-emu.com/faqs")!) {
-                SettingsRow(title: "FAQ",
-                            subtitle: "Frequently asked questions.",
-                            icon: .sfSymbol("questionmark.folder.fill"))
-            }
-            Link(destination: URL(string: "https://wiki.provenance-emu.com/")!) {
-                SettingsRow(title: "Wiki",
-                            subtitle: "Full usage documentation, tips and tricks on our Wiki.",
-                            icon: .sfSymbol("books.vertical.fill"))
             }
         }
     }

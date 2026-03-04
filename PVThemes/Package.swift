@@ -32,11 +32,11 @@ let package = Package(
 
         /// Macros
 
-        /// https://github.com/alvmo/HexColors
-        .package(url: "https://github.com/JoeMatt/HexColors.git", branch: "main"),
+        /// Local fork aligned with swift-syntax 600.x
+        .package(path: "../Dependencies/HexColors"),
         .package(url: "https://github.com/JoeMatt/SwiftMacros.git", branch: "main"),
         .package(url: "https://github.com/pointfreeco/swift-perception.git",
-                 branch:("main"))
+                 from: "2.0.9")
     ],
 
     // MARK: - Targets

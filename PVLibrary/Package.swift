@@ -72,7 +72,7 @@ let package = Package(
         .package(url: "https://github.com/stephencelis/SQLite.swift.git",
                  .upToNextMajor(from: "0.15.3")),
         .package(url: "https://github.com/pointfreeco/swift-perception.git",
-                 branch:("main")),
+                 from: "2.0.9"),
         /// https://github.com/mtgto/Unrar.swift
         .package(url: "https://github.com/mtgto/Unrar.swift.git",
                     .upToNextMajor(from: "0.3.16")),

@@ -1,22 +1,13 @@
 {
-  "originHash" : "1c88f5eac570903cf7ab7bacb91086c27f7f7f62609c570af2b8ca9da1917f7b",
+  "originHash" : "0a77dfeba7b5baedcf3d497ad6d50ceeffaca126568b31751e703c0718e135f4",
   "pins" : [
     {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "a89f799930c92a85aa04b72131849d46c0833ab3"
-      }
-    },
-    {
-      "identity" : "hexcolors",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/HexColors.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "96bcc8d806e58cf31ee32d419cabccd827ce6550"
+        "revision" : "cc938ecf0bed848dc80a9726ac5455104e3f9dae",
+        "version" : "9.0.2"
       }
     },
     {
@@ -24,14 +15,14 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "7335e4aab6136e42adeb7545a10570e543336d11"
+        "revision" : "4f47ebafed5f0b0172cf5c661454fa8e28fb2ac4",
+        "version" : "2.0.9"
       }
     },
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "location" : "https://github.com/swiftlang/swift-syntax",
       "state" : {
         "revision" : "0687f71944021d616d34d922343dcef086855920",
         "version" : "600.0.1"
@@ -51,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "770f990d3e4eececb57ac04a6076e22f8c97daeb",
-        "version" : "1.4.2"
+        "revision" : "dfd70507def84cb5fb821278448a262c6ff2bbad",
+        "version" : "1.9.0"
       }
     }
   ],
