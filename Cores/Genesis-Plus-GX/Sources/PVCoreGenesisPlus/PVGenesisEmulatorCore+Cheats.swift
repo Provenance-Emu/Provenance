@@ -9,7 +9,6 @@
 import Foundation
 import PVCoreBridge
 import PVLogging
-import PVCoreGenesisPlusBridge
 
 extension PVCoreGenesisPlus: GameWithCheat {
 
