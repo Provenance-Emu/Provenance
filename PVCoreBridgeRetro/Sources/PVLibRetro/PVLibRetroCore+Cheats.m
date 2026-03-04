@@ -27,13 +27,27 @@
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
         setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error {
-    const char* cCode = [code cStringUsingEncoding:NSUTF8StringEncoding];
+    if (!core) {
+        if (error) {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSKeyValueValidationError userInfo:@{NSLocalizedDescriptionKey: @"Core is not initialised"}];
+        }
+        return NO;
+    }
+    const char* cCode = code ? [code cStringUsingEncoding:NSUTF8StringEncoding] : NULL;
+    if (!cCode) {
+        if (error) {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSKeyValueValidationError userInfo:@{NSLocalizedDescriptionKey: @"Cheat code must not be nil or non-UTF8"}];
+        }
+        return NO;
+    }
     core->retro_cheat_set((unsigned)cheatIndex, enabled, cCode);
     return YES;
 }
 
 - (void)resetCheatCodes {
-    core->retro_cheat_reset();
+    if (core) {
+        core->retro_cheat_reset();
+    }
 }
 
 @end

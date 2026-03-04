@@ -778,18 +778,18 @@ extension PVRetroArchCoreCore: GameWithCheat {
         let coreID = (coreIdentifier ?? "").lowercased()
         let sysID  = (systemIdentifier ?? "").lowercased()
 
-        // SNES – snes9x / bsnes
+        // SNES – snes9x / bsnes  (must precede NES: "snes" contains "nes")
         if coreID.contains("snes9x") || coreID.contains("bsnes") || sysID.contains("snes") {
+            return CheatCodeTypesMakeStringArray([.gameGenie, .proActionReplay])
+        }
+        // Genesis / Mega Drive / SMS / Game Gear  (must precede NES: "genesis" contains "nes")
+        if coreID.contains("genesis_plus") || coreID.contains("picodrive") ||
+           sysID.contains("genesis") || sysID.contains("megadrive") ||
+           sysID.contains("gamegear") || sysID.contains("mastersystem") {
             return CheatCodeTypesMakeStringArray([.gameGenie, .proActionReplay])
         }
         // NES – fceumm / nestopia
         if coreID.contains("fceumm") || coreID.contains("nestopia") || sysID.contains("nes") {
-            return CheatCodeTypesMakeStringArray([.gameGenie, .proActionReplay])
-        }
-        // Genesis / Mega Drive / SMS / Game Gear
-        if coreID.contains("genesis_plus") || coreID.contains("picodrive") ||
-           sysID.contains("genesis") || sysID.contains("megadrive") ||
-           sysID.contains("gamegear") || sysID.contains("mastersystem") {
             return CheatCodeTypesMakeStringArray([.gameGenie, .proActionReplay])
         }
         // Game Boy / Game Boy Color – gambatte / sameboy
