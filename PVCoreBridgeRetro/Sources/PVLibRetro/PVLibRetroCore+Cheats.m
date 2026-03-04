@@ -22,11 +22,32 @@
 @implementation PVLibRetroCoreBridge (Cheats)
 
 - (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
-    unsigned index = 0;
-    const char* cCode = [code cStringUsingEncoding:NSUTF8StringEncoding];
-    core->retro_cheat_set(index, enabled, cCode);
-    // void retro_cheat_reset(void) { }
-    //    void retro_cheat_set(unsigned index, bool enabled, const char *code) { (void)index; (void)enabled; (void)code; }
+    [self setCheat:code setType:type setCodeType:type setIndex:0 setEnabled:enabled error:nil];
+}
+
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
+        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error {
+    if (!core) {
+        if (error) {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSKeyValueValidationError userInfo:@{NSLocalizedDescriptionKey: @"Core is not initialised"}];
+        }
+        return NO;
+    }
+    const char* cCode = code ? [code cStringUsingEncoding:NSUTF8StringEncoding] : NULL;
+    if (!cCode) {
+        if (error) {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSKeyValueValidationError userInfo:@{NSLocalizedDescriptionKey: @"Cheat code must not be nil or non-UTF8"}];
+        }
+        return NO;
+    }
+    core->retro_cheat_set((unsigned)cheatIndex, enabled, cCode);
+    return YES;
+}
+
+- (void)resetCheatCodes {
+    if (core) {
+        core->retro_cheat_reset();
+    }
 }
 
 @end

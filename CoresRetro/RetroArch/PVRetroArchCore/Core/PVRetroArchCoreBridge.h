@@ -99,6 +99,7 @@
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
 - (void) gamepadEventIrRecenter:(int)action;
 - (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
+- (void) resetCheatCodes;
 - (void) useRetroArchController:(BOOL)flag;
 - (void) controllerConnected:(NSNotification *)notification;
 - (void) controllerDisconnected:(NSNotification *)notification;
