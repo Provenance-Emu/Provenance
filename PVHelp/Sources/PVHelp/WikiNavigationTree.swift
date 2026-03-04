@@ -33,6 +33,39 @@ public struct WikiNavigationTree: Codable, Sendable {
         self.sections = sections
     }
 
+    /// Paths that must not appear in the in-app wiki to comply with
+    /// App Store guidelines (sideloading instructions, external payment
+    /// references, UDID provisioning, virtualisation for dev-signing, etc.).
+    private static let blockedPaths: Set<String> = [
+        "installation-and-usage/installing-provenance/sideloading.md",
+        "installation-and-usage/installing-provenance/building-from-source.md",
+        "installation-and-usage/installing-provenance/advanced.md",
+        "installation-and-usage/installing-provenance/faqs-advanced.md",
+        "info/miscellaneous/virtualizing-macos.md",
+        "help/udid.md",
+    ]
+
+    /// Keywords in page paths that signal App Store-unsafe content.
+    private static let blockedKeywords: [String] = [
+        "sideload", "jailbreak", "altstore", "signing-service",
+    ]
+
+    private static func isBlocked(path: String) -> Bool {
+        let lower = path.lowercased()
+        if blockedPaths.contains(lower) { return true }
+        return blockedKeywords.contains(where: { lower.contains($0) })
+    }
+
+    /// Recursively strip blocked items from a list of nav items.
+    private static func filterItems(_ items: [WikiNavItem]) -> [WikiNavItem] {
+        items.compactMap { item in
+            guard !isBlocked(path: item.path) else { return nil }
+            var filtered = item
+            filtered.children = filterItems(item.children)
+            return filtered
+        }
+    }
+
     /// Parse a GitBook SUMMARY.md into a navigation tree.
     public static func parse(markdown: String) -> WikiNavigationTree {
         var sections: [WikiSection] = []
@@ -110,7 +143,14 @@ public struct WikiNavigationTree: Codable, Sendable {
             sections.append(sec)
         }
 
-        return WikiNavigationTree(sections: sections)
+        // Strip App Store-unsafe pages and drop empty sections
+        let filtered = sections.compactMap { section -> WikiSection? in
+            var s = section
+            s.items = filterItems(s.items)
+            return s.items.isEmpty && !s.title.isEmpty ? nil : s
+        }
+
+        return WikiNavigationTree(sections: filtered)
     }
 
     private struct ParsedNavLine {

@@ -8,9 +8,6 @@
 * [Getting Started](installation-and-usage/getting-started.md)
 * [Installing Provenance](installation-and-usage/installing-provenance/README.md)
   * [App Store (Recommended)](installation-and-usage/installing-provenance/app-store.md)
-  * [Alternative Installation Methods](installation-and-usage/installing-provenance/advanced.md)
-    * [Sideloading](installation-and-usage/installing-provenance/sideloading.md)
-    * [Building from Source](installation-and-usage/installing-provenance/building-from-source.md)
   * [Updating Provenance](installation-and-usage/installing-provenance/updating.md)
 * [BIOS Requirements](installation-and-usage/bios-requirements.md)
 
@@ -51,13 +48,10 @@
 
 ## Advanced
 
-* [Virtualizing macOS](info/miscellaneous/virtualizing-macos.md)
 * [Launch ROMs via URL](info/miscellaneous/launch-roms-via-url.md)
 * [Restoring Files](info/miscellaneous/restoring-files.md)
-* [Advanced Installation FAQ](installation-and-usage/installing-provenance/faqs-advanced.md)
 
 ## Help & Community
 
 * [Troubleshooting](help/troubleshooting.md)
 * [Contributing](help/contribute.md)
-* [UDID Registration](help/udid.md)
