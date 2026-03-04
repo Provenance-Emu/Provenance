@@ -320,11 +320,7 @@ struct CheatRowView: View {
     @FocusState private var isFocused: Bool
 
     private var cheatType: String {
-        var type = cheat.type ?? ""
-        if type.contains("-~-") {
-            type = type.components(separatedBy: "-~-").first ?? type
-        }
-        return type
+        cheat.type ?? ""
     }
 
     var body: some View {
