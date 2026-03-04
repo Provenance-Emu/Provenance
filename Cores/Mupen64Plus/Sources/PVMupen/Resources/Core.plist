@@ -16,5 +16,9 @@
 	<string>https://github.com/mupen64plus</string>
 	<key>PVProjectVersion</key>
 	<string>2.5</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Game Shark</string>
+	</array>
 </dict>
 </plist>

@@ -564,6 +564,22 @@ extension MupenGameCore: CoreOptional {
     }
 }
 
+extension MupenGameCore: GameWithCheat {
+    public var supportsCheatCode: Bool { true }
+
+    public var cheatCodeTypes: [String] {
+        return _bridge.cheatCodeTypes()
+    }
+
+    public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
+        return _bridge.setCheat(withCode: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled)
+    }
+
+    public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
+    }
+}
+
 //
 //#if !os(macOS)
 //extension MupenGameCore: GLKViewDelegate {
