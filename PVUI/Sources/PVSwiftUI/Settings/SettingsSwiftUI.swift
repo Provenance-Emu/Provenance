@@ -1266,55 +1266,70 @@ private struct SavesSection: View {
         "\(timedAutoSaveInterval/60.0) minutes between timed auto saves."
     }
 
+    private static let oneMinute: TimeInterval = 60
+    private static let thirtyMinutes: TimeInterval = 1800
+
     var body: some View {
-        Section(header: Text("Saves")) {
-            ThemedToggle(isOn: $autoSave) {
-                SettingsRow(title: "Auto Save",
-                            subtitle: "Auto-save game state on close. Must be playing for 30 seconds more.",
-                            icon: .sfSymbol("autostartstop"))
-            }
-            ThemedToggle(isOn: $timedAutoSaves) {
-                SettingsRow(title: "Timed Auto Saves",
-                            subtitle: "Periodically create save states while you play.",
-                            icon: .sfSymbol("clock.badge"))
-            }
-            ThemedToggle(isOn: $autoLoadSaves) {
-                SettingsRow(title: "Auto Load Saves",
-                            subtitle: "Automatically load the last save of a game if one exists. Disables the load prompt.",
-                            icon: .sfSymbol("autostartstop"))
-            }
-            ThemedToggle(isOn: $askToAutoLoad) {
-                SettingsRow(title: "Ask to Load Saves",
-                            subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.",
-                            icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
-            }
+        SwiftUI.Section(header: Text("Saves")) {
+            savesToggles
 #if !os(tvOS)
-            HStack {
-                Text("Auto-save Time")
-                RetroWaveSlider(value: $timedAutoSaveInterval,
-                               in: minutes(1)...minutes(30),
-                               step: minutes(1),
-                               onEditingChanged: { _ in },
-                               label: { Text("Auto-save Time") },
-                               minimumValueLabel: { Text("1m") },
-                               maximumValueLabel: { Text("30m") },
-                               leadingIcon: {
-                                   Image(systemName: "hare")
-                                       .foregroundColor(RetroTheme.retroBlue)
-                               },
-                               trailingIcon: {
-                                   Image(systemName: "tortoise")
-                                       .foregroundColor(RetroTheme.retroBlue)
-                               })
-            }
-            Text(timedAutosaveLabelText)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            timedAutosaveSlider
 #else
             // TODO: TVOS Selection of autosave time
 #endif
         }
     }
+
+    @ViewBuilder
+    private var savesToggles: some View {
+        ThemedToggle(isOn: $autoSave) {
+            SettingsRow(title: "Auto Save",
+                        subtitle: "Auto-save game state on close. Must be playing for 30 seconds more.",
+                        icon: .sfSymbol("autostartstop"))
+        }
+        ThemedToggle(isOn: $timedAutoSaves) {
+            SettingsRow(title: "Timed Auto Saves",
+                        subtitle: "Periodically create save states while you play.",
+                        icon: .sfSymbol("clock.badge"))
+        }
+        ThemedToggle(isOn: $autoLoadSaves) {
+            SettingsRow(title: "Auto Load Saves",
+                        subtitle: "Automatically load the last save of a game if one exists. Disables the load prompt.",
+                        icon: .sfSymbol("autostartstop"))
+        }
+        ThemedToggle(isOn: $askToAutoLoad) {
+            SettingsRow(title: "Ask to Load Saves",
+                        subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.",
+                        icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
+        }
+    }
+
+#if !os(tvOS)
+    @ViewBuilder
+    private var timedAutosaveSlider: some View {
+        HStack {
+            Text("Auto-save Time")
+            RetroWaveSlider(value: $timedAutoSaveInterval,
+                           in: Self.oneMinute...Self.thirtyMinutes,
+                           step: Self.oneMinute,
+                           onEditingChanged: { _ in },
+                           label: { Text("Auto-save Time") },
+                           minimumValueLabel: { Text("1m") },
+                           maximumValueLabel: { Text("30m") },
+                           leadingIcon: {
+                               Image(systemName: "hare")
+                                   .foregroundColor(RetroTheme.retroBlue)
+                           },
+                           trailingIcon: {
+                               Image(systemName: "tortoise")
+                                   .foregroundColor(RetroTheme.retroBlue)
+                           })
+        }
+        Text(timedAutosaveLabelText)
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+    }
+#endif
 }
 
 private struct SocialLinksSection: View {
