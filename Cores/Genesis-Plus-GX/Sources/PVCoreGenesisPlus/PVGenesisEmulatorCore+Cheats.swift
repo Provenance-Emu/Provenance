@@ -8,6 +8,7 @@
 
 import Foundation
 import PVCoreBridge
+import PVLogging
 import PVCoreGenesisPlusBridge
 
 extension PVCoreGenesisPlus: GameWithCheat {
@@ -17,7 +18,7 @@ extension PVCoreGenesisPlus: GameWithCheat {
             try _bridge.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
             return true
         } catch let error {
-            NSLog("Error setCheat: \(error)")
+            ELOG("Error setCheat: \(error)")
             return false
         }
     }

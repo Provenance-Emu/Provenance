@@ -7,6 +7,7 @@
 //
 
 #import "PVPicoDriveBridge.h"
+@import PVLoggingObjC;
 
 // Forward-declare the libretro cheat API used by PicoDrive
 void retro_cheat_set(unsigned index, bool enabled, const char *code);
@@ -17,11 +18,16 @@ void retro_cheat_set(unsigned index, bool enabled, const char *code);
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
         setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error {
-    NSLog(@"PicoDrive setCheat: %@ type: %@ codeType: %@ index: %hhu enabled: %d",
+    DLOG(@"PicoDrive setCheat: %@ type: %@ codeType: %@ index: %hhu enabled: %d",
           code, type, codeType, cheatIndex, enabled);
 
     const char *cCode = [code cStringUsingEncoding:NSUTF8StringEncoding];
     if (!cCode) {
+        if (error) {
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain
+                                         code:NSFileWriteInapplicableStringEncodingError
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Cheat code could not be encoded as UTF-8"}];
+        }
         return NO;
     }
     retro_cheat_set((unsigned)cheatIndex, enabled, cCode);

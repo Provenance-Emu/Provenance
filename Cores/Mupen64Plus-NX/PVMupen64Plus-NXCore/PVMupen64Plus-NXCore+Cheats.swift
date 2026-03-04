@@ -13,7 +13,9 @@ import PVCoreBridgeRetro
 extension PVMupen64PlusNXCore: GameWithCheat {
 
     public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
-        setCheat(code, setType: type, setEnabled: enabled)
+        // Calls inherited PVLibRetroCoreBridge.setCheat(_:setType:setEnabled:) — not self-recursive.
+        // cheatIndex and codeType are not used by this libretro core's cheat API.
+        (self as PVLibRetroGLESCoreBridge).setCheat(code, setType: type, setEnabled: enabled)
         return true
     }
 
