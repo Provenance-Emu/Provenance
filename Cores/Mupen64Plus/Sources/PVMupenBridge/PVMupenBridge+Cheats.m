@@ -96,7 +96,7 @@ static NSMutableDictionary *mupen_cheatList = nil;
     free(codes);
 
     if (result == M64ERR_SUCCESS) {
-        [mupen_cheatList setValue:type ?: code forKey:code];
+        [mupen_cheatList setObject:(type ?: code) forKey:code];
         DLOG(@"Mupen: Added cheat '%@' (%lu segments)", code, (unsigned long)codeValues.count);
         return YES;
     }
