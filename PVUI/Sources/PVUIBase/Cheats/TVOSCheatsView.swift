@@ -161,6 +161,23 @@ public struct TVOSCheatsView: View {
             Spacer()
 
             HStack(spacing: 16) {
+                NavigationLink(destination: WikiPageView(path: "info/cheats.md", title: "Cheats Guide")) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "questionmark.circle")
+                            .font(.system(size: 24, weight: .bold))
+                        Text("HELP")
+                            .font(.system(size: 24, weight: .bold))
+                    }
+                    .foregroundColor(accentColor)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(accentColor, lineWidth: 2)
+                    )
+                }
+                .buttonStyle(.plain)
+
                 Button(action: {
                     showingSearchDB = true
                 }) {

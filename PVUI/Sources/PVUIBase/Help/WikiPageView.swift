@@ -1,6 +1,5 @@
 import SwiftUI
 import PVHelp
-import PVUIBase
 import MarkdownView
 
 public struct WikiPageView: View {

@@ -4,6 +4,7 @@ import PVUIBase
 import PVThemes
 import PVLibrary
 import PVFeatureFlags
+import PVHelp
 import RealmSwift
 import PVRealm
 import PVPrimitives
@@ -1259,6 +1260,7 @@ struct TVMediaEmptyLibraryActionButtons: View {
     private enum ButtonID: Hashable {
         case settings
         case importStatus
+        case helpWiki
     }
 
     @FocusState private var focusedButton: ButtonID?
@@ -1284,6 +1286,36 @@ struct TVMediaEmptyLibraryActionButtons: View {
                 accentColor: Color.retroBlue,
                 action: onImportStatus
             )
+
+            NavigationLink(destination: WikiHelpView()) {
+                HStack(spacing: 10) {
+                    Image(systemName: "books.vertical.fill")
+                        .font(.system(size: 18, weight: focusedButton == .helpWiki ? .semibold : .regular))
+                    Text("HELP & WIKI")
+                        .font(.system(size: 14, weight: .semibold))
+                        .tracking(1)
+                }
+                .foregroundStyle(focusedButton == .helpWiki ? .white : .white.opacity(0.8))
+                .padding(.horizontal, 28)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(Color.retroPurple.opacity(focusedButton == .helpWiki ? 0.35 : 0.2))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .strokeBorder(
+                                    Color.retroPurple.opacity(focusedButton == .helpWiki ? 0.8 : 0.4),
+                                    lineWidth: focusedButton == .helpWiki ? 2 : 1
+                                )
+                        )
+                )
+                .shadow(color: focusedButton == .helpWiki ? Color.retroPurple.opacity(0.5) : .clear, radius: 12, x: 0, y: 4)
+                .scaleEffect(focusedButton == .helpWiki ? 1.05 : 1.0)
+                .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: focusedButton == .helpWiki)
+            }
+            .buttonStyle(TVMediaCardButtonStyle())
+            .tvOSDisableFocusEffect()
+            .focused($focusedButton, equals: .helpWiki)
         }
         .tvMediaOnMoveCommand { direction in
             if direction == .left, focusedButton == .settings {

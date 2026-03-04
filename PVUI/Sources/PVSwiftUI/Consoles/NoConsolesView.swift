@@ -9,6 +9,7 @@
 import SwiftUI
 import PVThemes
 import PVUIBase
+import PVHelp
 import AnimatedGradient
 
 /// Animated gradient background for the NoConsolesView
@@ -122,6 +123,38 @@ public struct NoConsolesView: SwiftUI.View {
                     )
                     .cornerRadius(8)
                     .shadow(color: Color.retroBlue.opacity(glowOpacity), radius: 10, x: 0, y: 0)
+                }
+
+                NavigationLink(destination: WikiHelpView()) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "books.vertical.fill")
+                            .font(.system(size: 18))
+                        Text("HELP & WIKI")
+                            .font(.system(size: 18, weight: .bold, design: .monospaced))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 24)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPurple, .retroPink]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 2
+                            )
+                    )
+                    .cornerRadius(8)
+                    .shadow(color: Color.retroPurple.opacity(glowOpacity), radius: 10, x: 0, y: 0)
                 }
 
                 CloudSyncUpsellView(

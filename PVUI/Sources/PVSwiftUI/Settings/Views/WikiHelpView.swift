@@ -74,28 +74,33 @@ public struct WikiHelpView: View {
         #endif
     }
 
-    @ViewBuilder
-    private func navItemRow(_ item: WikiNavItem) -> some View {
+    private func navItemRow(_ item: WikiNavItem) -> AnyView {
         if item.children.isEmpty {
-            NavigationLink(destination: WikiPageView(path: item.path, title: item.title)) {
-                Label(item.title, systemImage: iconForPath(item.path))
-            }
-        } else {
-            #if os(tvOS)
-            // tvOS: navigate to an intermediate list for items with children
-            NavigationLink(destination: wikiSubList(item: item)) {
-                Label(item.title, systemImage: iconForPath(item.path))
-            }
-            #else
-            DisclosureGroup {
-                ForEach(item.children) { child in
-                    navItemRow(child)
-                }
-            } label: {
+            return AnyView(
                 NavigationLink(destination: WikiPageView(path: item.path, title: item.title)) {
                     Label(item.title, systemImage: iconForPath(item.path))
                 }
-            }
+            )
+        } else {
+            #if os(tvOS)
+            // tvOS: navigate to an intermediate list for items with children
+            return AnyView(
+                NavigationLink(destination: wikiSubList(item: item)) {
+                    Label(item.title, systemImage: iconForPath(item.path))
+                }
+            )
+            #else
+            return AnyView(
+                DisclosureGroup {
+                    ForEach(item.children) { child in
+                        navItemRow(child)
+                    }
+                } label: {
+                    NavigationLink(destination: WikiPageView(path: item.path, title: item.title)) {
+                        Label(item.title, systemImage: iconForPath(item.path))
+                    }
+                }
+            )
             #endif
         }
     }

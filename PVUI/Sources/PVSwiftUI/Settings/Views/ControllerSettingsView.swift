@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVUIBase
+import PVHelp
 import GameController
 import PVThemes
 import MarkdownView
@@ -297,6 +298,21 @@ struct ControllerSettingsView: View {
                 #endif
             }
 //            }
+
+            Section {
+                NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls")) {
+                    Label("Full Controller Guide", systemImage: "books.vertical.fill")
+                }
+            } header: {
+                HStack {
+                    Image(systemName: "questionmark.circle")
+                    Text("Help")
+                }
+                .font(.headline)
+                #if os(tvOS)
+                .foregroundColor(.retroPink)
+                #endif
+            }
 
             /// Button Remapping Section
             if !controllerManager.controllers.isEmpty {

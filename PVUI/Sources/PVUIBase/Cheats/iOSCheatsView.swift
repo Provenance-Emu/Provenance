@@ -98,6 +98,9 @@ public struct iOSCheatsView: View {
                     }
                 }
                 ToolbarItemGroup(placement: .primaryAction) {
+                    NavigationLink(destination: WikiPageView(path: "info/cheats.md", title: "Cheats Guide")) {
+                        Image(systemName: "questionmark.circle")
+                    }
                     Button {
                         showingSearchDB = true
                     } label: {
