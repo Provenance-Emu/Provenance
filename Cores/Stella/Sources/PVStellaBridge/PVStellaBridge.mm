@@ -254,6 +254,7 @@ static void writeSaveFile(const char* path, int type) {
     if((self = [super init])) {
         _current = self;
         self.optionHandler = optionHandler;
+        self.cheats = [[NSMutableArray alloc] init];
     }
 
 	return self;
@@ -698,20 +699,31 @@ static void writeSaveFile(const char* path, int type) {
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error {
     @synchronized(self) {
-
-        BOOL cheatListSuccessfull = NO;
-
-        NSUInteger foundIndex = [self.cheats indexOfObjectIdenticalTo:code];
-        NSUInteger index = foundIndex != NSNotFound ?: self.cheats.count;
-
-        [self.cheats insertObject:code atIndex:index];
-
         const char* _Nullable code_c = [code cStringUsingEncoding:NSUTF8StringEncoding];
-        retro_cheat_set((unsigned int) index, enabled, code_c);
+        if (!code_c) {
+            if (error) {
+                *error = [NSError errorWithDomain:NSCocoaErrorDomain
+                                             code:NSFileWriteInapplicableStringEncodingError
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Cheat code could not be encoded as UTF-8"}];
+            }
+            return NO;
+        }
 
-        ILOG(@"Applied Cheat Code %@ %@ %@", code, type, cheatListSuccessfull ? @"Success" : @"Failed");
+        NSUInteger foundIndex = [self.cheats indexOfObject:code];
+        NSUInteger index;
+        if (foundIndex != NSNotFound) {
+            index = foundIndex;
+            [self.cheats replaceObjectAtIndex:index withObject:code];
+        } else {
+            index = self.cheats.count;
+            [self.cheats addObject:code];
+        }
 
-        return cheatListSuccessfull;
+        retro_cheat_set((unsigned int)index, enabled, code_c);
+
+        ILOG(@"Applied Cheat Code %@ %@", code, type);
+
+        return YES;
     }
 }
 

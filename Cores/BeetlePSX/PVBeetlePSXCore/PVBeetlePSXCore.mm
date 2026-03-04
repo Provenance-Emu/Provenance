@@ -207,7 +207,6 @@
         return nil;
     }
 #undef V
-    return NULL;
 }
 
 @end
