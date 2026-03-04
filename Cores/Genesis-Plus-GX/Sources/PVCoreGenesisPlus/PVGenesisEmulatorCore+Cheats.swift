@@ -29,4 +29,8 @@ extension PVCoreGenesisPlus: GameWithCheat {
     public var cheatCodeTypes: [String] {
         return CheatCodeTypesMakeStringArray([.gameGenie, .proActionReplay])
     }
+
+    public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
+    }
 }

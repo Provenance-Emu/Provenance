@@ -27,12 +27,7 @@ import GameController
 @objcMembers
 public final class PVStellaGameCore: PVEmulatorCore {
     
-    // MARK: Cheats
-//    @objc
-//    public let cheats: NSMutableArray = .init()
-
-    @objc
-    public var supportsCheatCode: Bool { true }
+    // MARK: Cheats — GameWithCheat conformance is in PVStellaGameCore+Cheats.swift
 
     // Stella
     @objc
