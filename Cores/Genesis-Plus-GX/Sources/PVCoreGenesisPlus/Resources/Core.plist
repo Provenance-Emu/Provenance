@@ -20,5 +20,10 @@
 	<string>https://github.com/ekeeke/Genesis-Plus-GX</string>
 	<key>PVProjectVersion</key>
 	<string>1.7.4 12.13.2020</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>Game Genie</string>
+		<string>Pro Action Replay</string>
+	</array>
 </dict>
 </plist>
