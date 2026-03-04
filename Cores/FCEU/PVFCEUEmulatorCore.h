@@ -44,4 +44,9 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @end
 
+@interface PVFCEUEmulatorCoreBridge (Cheats)
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
+- (void)resetCheatCodes;
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)

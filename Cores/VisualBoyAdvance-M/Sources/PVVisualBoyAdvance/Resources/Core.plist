@@ -16,5 +16,12 @@
 	<string>https://sourceforge.net/projects/vba/</string>
 	<key>PVProjectVersion</key>
 	<string>1.8.0</string>
+	<key>PVSupportedCheatTypes</key>
+	<array>
+		<string>GameShark</string>
+		<string>Code Breaker</string>
+		<string>Action Replay v3</string>
+		<string>Action Replay v1/v2</string>
+	</array>
 </dict>
 </plist>
