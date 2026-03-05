@@ -1159,7 +1159,7 @@ struct TVOSCheatSearchView: View {
             hasSearchedOnline = true
         } catch {
             ELOG("TVOSCheatSearch online error: \(error)")
-            errorMessage = error.localizedDescription
+            errorMessage = "Online search failed: \(error.localizedDescription)"
         }
     }
 }
