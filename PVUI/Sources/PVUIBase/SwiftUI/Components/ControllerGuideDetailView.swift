@@ -44,7 +44,7 @@ public struct ControllerGuideDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
-                        .foregroundColor(.retroPink)
+                        .foregroundStyle(.retroPink)
                         .font(.system(size: 15, weight: .semibold, design: .monospaced))
                 }
             }
@@ -58,16 +58,16 @@ public struct ControllerGuideDetailView: View {
         VStack(spacing: 8) {
             Image(systemName: "gamecontroller.fill")
                 .font(.system(size: 48))
-                .foregroundColor(.retroPink)
+                .foregroundStyle(.retroPink)
                 .shadow(color: .retroPink.opacity(0.7), radius: 8)
 
             Text("SUPPORTED CONTROLLERS")
                 .font(.system(size: 20, weight: .bold, design: .monospaced))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
 
             Text("Tap a controller to see pairing steps.")
                 .font(.system(size: 13, design: .monospaced))
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundStyle(.white.opacity(0.6))
         }
         .padding(.vertical, 12)
     }
@@ -75,7 +75,7 @@ public struct ControllerGuideDetailView: View {
     private var footerNote: some View {
         Text("After pairing, open Provenance > Settings > Controllers to assign players and customize button mappings.")
             .font(.system(size: 12, design: .monospaced))
-            .foregroundColor(.white.opacity(0.45))
+            .foregroundStyle(.white.opacity(0.45))
             .multilineTextAlignment(.center)
             .padding(.top, 8)
             .padding(.bottom, 24)
@@ -97,16 +97,16 @@ public struct ControllerGuideDetailView: View {
                 HStack(spacing: 12) {
                     Image(systemName: controller.symbolName)
                         .font(.system(size: 22))
-                        .foregroundColor(isExpanded ? .retroPink : .retroBlue)
+                        .foregroundStyle(isExpanded ? .retroPink : .retroBlue)
                         .frame(width: 32)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(controller.name)
                             .font(.system(size: 15, weight: .semibold, design: .monospaced))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                         Text(controller.tagline)
                             .font(.system(size: 11, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.55))
+                            .foregroundStyle(.white.opacity(0.55))
                             .lineLimit(2)
                     }
 
@@ -114,12 +114,14 @@ public struct ControllerGuideDetailView: View {
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.retroBlue)
+                        .foregroundStyle(.retroBlue)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(isExpanded ? "Collapse \(controller.name)" : "Expand \(controller.name)")
+            .accessibilityHint(isExpanded ? "Hides pairing steps" : "Shows pairing steps")
 
             // Expandable pairing steps
             if isExpanded {
@@ -129,20 +131,20 @@ public struct ControllerGuideDetailView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("PAIRING STEPS")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(.retroBlue)
+                        .foregroundStyle(.retroBlue)
                         .padding(.bottom, 2)
 
                     ForEach(controller.pairingSteps) { step in
                         HStack(alignment: .top, spacing: 10) {
                             Text("\(step.id)")
                                 .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                .foregroundColor(.retroPink)
+                                .foregroundStyle(.retroPink)
                                 .frame(width: 18, alignment: .center)
                                 .padding(.top, 1)
 
                             Text(step.description)
                                 .font(.system(size: 13, design: .monospaced))
-                                .foregroundColor(.white.opacity(0.85))
+                                .foregroundStyle(.white.opacity(0.85))
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
