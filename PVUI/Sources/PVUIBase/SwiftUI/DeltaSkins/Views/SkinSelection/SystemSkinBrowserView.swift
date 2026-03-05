@@ -14,7 +14,6 @@ public struct SystemSkinBrowserView: View {
     @State private var systemSkinCounts: [SystemIdentifier: Int] = [:]
     @State private var isLoading = true
     @State private var loadingProgress: Double = 0
-    @State private var selectedSystem: SystemIdentifier?
 
     // Environment properties
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -122,7 +121,8 @@ public struct SystemSkinBrowserView: View {
             }
 
             // Load skins with a slight delay for animation
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            Task {
+                try? await Task.sleep(nanoseconds: 300_000_000)
                 loadSkins()
             }
         }
@@ -534,12 +534,13 @@ public struct SystemSkinBrowserView: View {
         await MainActor.run {
             self.systemSkinCounts = counts
             self.loadingProgress = 1.0
+        }
 
-            // Slight delay before hiding loading screen for smoother transition
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(.easeOut(duration: 0.3)) {
-                    self.isLoading = false
-                }
+        // Slight delay before hiding loading screen for smoother transition
+        try? await Task.sleep(nanoseconds: 300_000_000)
+        await MainActor.run {
+            withAnimation(.easeOut(duration: 0.3)) {
+                self.isLoading = false
             }
         }
     }
