@@ -193,6 +193,9 @@
 [submodule "Cores/Citra/emuThreeDS"]
 	path = Cores/Citra/azahar
 	url = https://github.com/Provenance-Emu/emuThreeDS.git
+[submodule "Dependencies/HexColors"]
+	path = Dependencies/HexColors
+	url = https://github.com/JoeMatt/HexColors.git
 [submodule "Cores/Mednafen/ThirdParty/libchdr"]
 	path = Cores/Mednafen/ThirdParty/libchdr
 	url = https://github.com/rtissera/libchdr
