@@ -43,8 +43,8 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             regex = try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
             range = NSRange(location: 0, length: modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
-            NSLog("Formatted CheatCode \(modString)")
-            if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, cheatIndex: cheatIndex, enabled:enabled)) {
+            DLOG("Formatted CheatCode \(modString)")
+            if gameWithCheat.setCheat(code: modString, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
                 guard let realm = try? await Realm() else {
                     ELOG("Realm() failed")
@@ -58,15 +58,9 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                     let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
                     let saveURL = await saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
                     let saveFile = await PVFile(withURL: saveURL, relativeRoot: .iCloud)
-                    var saveType = type;
-                    /* In order to avoid modifying realm schema the codeType is added in the
-                       type field next to cheat code name with -~- separator */
-                    if codeType.count > 0 {
-                        saveType += "-~-" + codeType
-                    }
                     var cheatsState: PVCheats!
                     try realm.write {
-                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: false, file: saveFile)
+                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: type, codeType: codeType, enabled: false, file: saveFile)
                         realm.add(cheatsState)
                     }
                     Task {
@@ -132,15 +126,11 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats, cheatIndex: UInt8,
         completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core as? GameWithCheat {
-            var cheatType = cheat.type ?? ""
-            var codeType = ""
-            if cheatType.contains("-~-") {
-                let types = cheatType.components(separatedBy: "-~-")
-                cheatType = types[0]
-                codeType = types[1]
-            }
-            if gameWithCheat.setCheat(code: cheat.code, type:cheatType, codeType: codeType, cheatIndex: cheatIndex, enabled:cheat.enabled) {
-                ILOG("Succeeded applying cheat: \(cheat.code ?? "null") \(cheat.type ?? "null") \(cheat.enabled)")
+            let cheatCode = cheat.code ?? ""
+            let cheatType = cheat.type ?? ""
+            let codeType = cheat.codeType
+            if gameWithCheat.setCheat(code: cheatCode, type: cheatType, codeType: codeType, cheatIndex: cheatIndex, enabled: cheat.enabled) {
+                ILOG("Succeeded applying cheat: \(cheatCode) \(cheatType) \(cheat.enabled)")
                 completion(.success)
             } else {
                 let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])

@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 23
+public let schemaVersion: UInt64 = 24
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -291,6 +291,23 @@ public final class RealmConfiguration {
                 // PVCore.supportedCheatTypeNames (List<String>) was added.
                 // Realm initializes new List properties as empty by default; no enumeration needed.
                 ILOG("Migration to version 23 complete. (Added PVCore.supportedCheatTypeNames)")
+            }
+            if oldSchemaVersion < 24 {
+                // PVCheats.codeType (String) was added as a dedicated field.
+                // Previously, codeType was appended to the `type` field using a "-~-" separator
+                // (e.g. "Infinite Lives-~-Game Shark"). Split existing records and populate the new field.
+                migration.enumerateObjects(ofType: PVCheats.className()) { oldObject, newObject in
+                    guard let combinedType = oldObject?["type"] as? String, combinedType.contains("-~-") else {
+                        newObject?["codeType"] = ""
+                        return
+                    }
+                    let parts = combinedType.components(separatedBy: "-~-")
+                    newObject?["type"] = parts[0]
+                    // parts always has ≥ 2 elements here because the guard confirmed "-~-" is present.
+                    // Join any extra segments (should not occur in practice) back into codeType.
+                    newObject?["codeType"] = parts.dropFirst().joined(separator: "-~-")
+                }
+                ILOG("Migration to version 24 complete. (Split PVCheats.type into type + codeType)")
             }
         }
 

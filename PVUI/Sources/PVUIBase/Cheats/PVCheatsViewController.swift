@@ -266,13 +266,9 @@ final class PVCheatsViewController: UITableViewController {
         
         // Set selection style
         cell.selectionStyle = .none
-        var cheatType = cheat.type ?? ""
-        if cheatType.contains("-~-") {
-            let types = cheatType.components(separatedBy: "-~-")
-            cheatType = types[0]
-        }
-        cell.codeText.text=cheat.code
-        cell.typeText.text=cheatType
+        let cheatType = cheat.type ?? ""
+        cell.codeText.text = cheat.code ?? ""
+        cell.typeText.text = cheatType
         
         // Apply retrowave styling to the text labels
         cell.codeText.applyRetroWaveTextStyle(color: .white, fontSize: 16, weight: .regular)

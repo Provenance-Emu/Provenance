@@ -11,6 +11,8 @@ public protocol CheatsInfoProvider {
     var core: Core { get }
     var code: String { get }
     var type: String { get }
+    /// The emulator-specific code format identifier (e.g. "Game Shark", "Action Replay").
+    var codeType: String { get }
     var date: Date { get }
     var lastOpened: Date? { get }
     var enabled: Bool { get }
@@ -23,17 +25,20 @@ public struct Cheats: CheatsInfoProvider, Codable {
     public let core: Core
     public let code: String
     public let type: String
+    /// The emulator-specific code format identifier (e.g. "Game Shark", "Action Replay").
+    public let codeType: String = ""
     public let date: Date
     public let lastOpened: Date?
     public let enabled: Bool
     public let file: FileInfo
-    
-    public init(id: String, game: Game, core: Core, code: String, type: String, date: Date, lastOpened: Date?, enabled: Bool, file: FileInfo) {
+
+    public init(id: String, game: Game, core: Core, code: String, type: String, codeType: String = "", date: Date, lastOpened: Date?, enabled: Bool, file: FileInfo) {
         self.id = id
         self.game = game
         self.core = core
         self.code = code
         self.type = type
+        self.codeType = codeType
         self.date = date
         self.lastOpened = lastOpened
         self.enabled = enabled

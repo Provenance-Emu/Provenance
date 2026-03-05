@@ -207,10 +207,7 @@ private struct iOSCheatRow: View {
     let cheat: PVCheats
 
     private var displayName: String {
-        var type = cheat.type ?? ""
-        if type.contains("-~-") {
-            type = type.components(separatedBy: "-~-").first ?? type
-        }
+        let type = cheat.type ?? ""
         return type.isEmpty ? "Cheat Code" : type
     }
 

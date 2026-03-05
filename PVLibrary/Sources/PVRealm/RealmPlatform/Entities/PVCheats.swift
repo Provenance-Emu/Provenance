@@ -19,15 +19,19 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
     public dynamic var date: Date = Date()
     public dynamic var lastOpened: Date?
     public dynamic var type: String!
+    /// The emulator-specific code format identifier (e.g. "Game Shark", "Action Replay").
+    /// Stored as a dedicated field since schema version 24; previously encoded in `type` with a `-~-` separator.
+    public dynamic var codeType: String = ""
     public dynamic var enabled: Bool = false
 
     public dynamic var createdWithCoreVersion: String!
 
-    public convenience init(withGame game: PVGame, core: PVCore, code: String, type: String, enabled: Bool = false, file: PVFile ) {
+    public convenience init(withGame game: PVGame, core: PVCore, code: String, type: String, codeType: String = "", enabled: Bool = false, file: PVFile) {
         self.init()
         self.game = game
         self.code = code
         self.type = type
+        self.codeType = codeType
         self.enabled = enabled
         self.core = core
         self.file = file
@@ -35,7 +39,7 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
     }
 
     public static func == (lhs: PVCheats, rhs: PVCheats) -> Bool {
-        return lhs.code == rhs.code && lhs.type == rhs.type && lhs.enabled == rhs.enabled
+        return lhs.code == rhs.code && lhs.type == rhs.type && lhs.codeType == rhs.codeType && lhs.enabled == rhs.enabled
     }
 
     public override static func primaryKey() -> String? {
@@ -52,12 +56,13 @@ public extension Cheats {
         let core = cheat.core.asDomain()
         let code = cheat.code!
         let type = cheat.type!
+        let codeType = cheat.codeType
         let date = cheat.date
         let lastOpened = cheat.lastOpened
         let enabled = cheat.enabled
         let file = FileInfo(fileName: cheat.file?.fileName ?? "", size: cheat.file?.size ?? 0, md5: cheat.file?.md5 ?? "", online: cheat.file?.online ?? true, local: true)
 
-        self.init(id: id, game: game, core: core, code: code, type: type, date: date, lastOpened: lastOpened, enabled: enabled, file: file)
+        self.init(id: id, game: game, core: core, code: code, type: type, codeType: codeType, date: date, lastOpened: lastOpened, enabled: enabled, file: file)
     }
 }
 
@@ -92,9 +97,10 @@ extension Cheats: RealmRepresentable {
             let path = game.file.fileName.saveStatePath.appendingPathComponent(file.fileName)
             object.file = PVFile(withURL: path)
             object.lastOpened = lastOpened
-            object.code=code
-            object.type=type
-            object.enabled=false
+            object.code = code
+            object.type = type
+            object.codeType = codeType
+            object.enabled = enabled
         }
     }
 }

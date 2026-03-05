@@ -21,6 +21,8 @@ public class Cheats_Data {
     public var date: Date = Date()
     public var lastOpened: Date?
     public var type: String!
+    /// The emulator-specific code format identifier (e.g. "Game Shark", "Action Replay").
+    public var codeType: String = ""
     public var createdWithCoreVersion: String!
 
     // References
@@ -36,6 +38,7 @@ public class Cheats_Data {
          date: Date = Date(),
          lastOpened: Date? = nil,
          type: String,
+         codeType: String = "",
          createdWithCoreVersion: String,
          game: Game_Data,
          core: Core_Data,
@@ -46,6 +49,7 @@ public class Cheats_Data {
         self.date = date
         self.lastOpened = lastOpened
         self.type = type
+        self.codeType = codeType
         self.createdWithCoreVersion = createdWithCoreVersion
         self.game = game
         self.core = core
