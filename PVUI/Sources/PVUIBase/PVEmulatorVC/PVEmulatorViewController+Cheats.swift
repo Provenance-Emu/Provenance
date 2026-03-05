@@ -90,7 +90,6 @@ extension PVEmulatorViewController {
         } else {
             WLOG("Core \(core.description) doesn't support cheats states.")
             completion(.error(.cheatsUnsupportedByCore))
-            return
         }
     }
 
@@ -114,7 +113,6 @@ extension PVEmulatorViewController {
         } else {
             WLOG("Core \(core.description) doesn't support cheats states.")
             completion(.error(.cheatsUnsupportedByCore))
-            return
         }
     }
 
@@ -240,8 +238,8 @@ extension PVEmulatorViewController {
                 includingPropertiesForKeys:[.contentModificationDateKey]
             ).filter { $0.lastPathComponent.hasSuffix(".svc.json") }
             .sorted(by: {
-                let date0 = try $0.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
-                let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
+                let date0 = try $0.promisedItemResourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
+                let date1 = try $1.promisedItemResourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
                 return date0.compare(date1) == .orderedAscending
             })
 
