@@ -69,23 +69,29 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
     private var continuousNavigationTask: Task<Void, Never>?
 
-    /// Shared SwiftData ModelContainer stored as `Any?` to avoid `@available`
-    /// restrictions on stored properties. Nil on iOS < 17 or when creation fails.
-    private lazy var sharedModelContainer: Any? = {
-        #if canImport(SwiftData)
-        if #available(iOS 17, tvOS 17, *) {
-            return try? PVSwiftDataSchema.makePVModelContainer()
+    #if canImport(SwiftData)
+    /// Shared SwiftData ModelContainer. Nil on iOS < 17 or when creation fails.
+    @available(iOS 17, tvOS 17, *)
+    private lazy var sharedModelContainer: ModelContainer? = {
+        do {
+            return try PVSwiftDataSchema.makePVModelContainer()
+        } catch {
+            ELOG("Failed to create SwiftData ModelContainer: \(error)")
+            return nil
         }
-        #endif
-        return nil
     }()
+    #else
+    /// Stub for platforms where SwiftData is unavailable.
+    private let sharedModelContainer: Any? = nil
+    #endif
 
     /// Creates a UIHostingController whose root view has the shared ModelContainer
     /// injected (when available), so every hosted SwiftUI hierarchy can use @Query.
-    func makeHostingController<V: View>(_ rootView: V) -> UIHostingController<AnyView> {
+    /// Must be called on the main actor as it creates UIKit objects.
+    @MainActor private func makeHostingController<V: View>(_ rootView: V) -> UIHostingController<AnyView> {
         #if canImport(SwiftData)
         if #available(iOS 17, tvOS 17, *),
-           let container = sharedModelContainer as? ModelContainer {
+           let container = sharedModelContainer {
             return UIHostingController(rootView: AnyView(rootView.modelContainer(container)))
         }
         #endif

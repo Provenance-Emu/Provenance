@@ -121,6 +121,12 @@ import SwiftData
 /// The FetchDescriptor's `fetchLimit` is set **before** fetching so SwiftData
 /// never loads more rows than needed into memory (unlike the Realm driver's
 /// post-fetch `.prefix(500)` cap).
+///
+/// - Note: Unlike `RealmContinuesDataDriver`, this driver performs a **one-shot**
+///   fetch and immediately finishes the stream. It does not observe SwiftData
+///   change notifications for live updates. This is intentional for the current
+///   migration phase; observe-based updates can be layered on once the full
+///   SwiftData migration is complete.
 @available(iOS 17, tvOS 17, *)
 final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
     private let modelContainer: ModelContainer
@@ -131,7 +137,7 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
 
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
         AsyncStream { continuation in
-            let task = Task.detached(priority: .userInitiated) { [modelContainer] in
+            let task = Task(priority: .userInitiated) { [modelContainer] in
                 let context = ModelContext(modelContainer)
 
                 // Build the predicate first, then set fetchLimit so SwiftData
@@ -159,18 +165,19 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
                     let results = try context.fetch(descriptor)
                     let models: [ContinueItemModel] = results.compactMap { state in
                         guard let game = state.game else { return nil }
-                        let primaryKey = state.id
+                        // Capture id by value so the resolver closure does not
+                        // retain the SwiftData model object past its context lifetime.
                         return ContinueItemModel(
                             id: state.id,
                             gameTitle: game.title,
                             imageURL: nil, // partialPath → full URL wiring deferred
                             date: state.date,
                             systemIdentifier: game.systemIdentifier,
-                            resolver: {
+                            resolver: { [id = state.id] in
                                 // Bridge back to Realm until full SwiftData migration.
                                 RomDatabase.sharedInstance.object(
                                     ofType: PVSaveState.self,
-                                    wherePrimaryKeyEquals: primaryKey
+                                    wherePrimaryKeyEquals: id
                                 )
                             }
                         )
