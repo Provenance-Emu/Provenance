@@ -197,8 +197,16 @@ public struct ControllerGuideView: View {
 
     @ViewBuilder
     private var pairingGuideSection: some View {
+        // Start from the platform-appropriate catalog so iOS-only entries (e.g. iCade)
+        // are excluded on tvOS and tvOS-only entries (e.g. Siri Remote) are excluded on iOS.
+        #if os(tvOS)
+        let platformControllers = ControllerCatalog.tvOSControllers
+        #else
+        let platformControllers = ControllerCatalog.iOSControllers
+        #endif
+
         // Recommended hardware controllers
-        let recommended = ControllerCatalog.all.filter { $0.isRecommended }
+        let recommended = platformControllers.filter { $0.isRecommended }
         if !recommended.isEmpty {
             Section {
                 ForEach(recommended) { controller in
@@ -210,7 +218,7 @@ public struct ControllerGuideView: View {
         }
 
         // Legacy / alternative hardware controllers
-        let legacy = ControllerCatalog.all.filter { !$0.isRecommended && $0.controllerType != .siriRemote }
+        let legacy = platformControllers.filter { !$0.isRecommended }
         if !legacy.isEmpty {
             Section {
                 ForEach(legacy) { controller in
