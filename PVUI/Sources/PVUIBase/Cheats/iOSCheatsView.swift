@@ -538,21 +538,10 @@ struct iOSEditCheatView: View {
         self.cheat = cheat
         self.cheatTypes = cheatTypes
         let rawType = cheat.type ?? ""
-        // Use the dedicated codeType field (schema v24+). Fall back to parsing the legacy
-        // "-~-" separator in type for any pre-migration records where codeType is empty.
-        let savedCodeType: String
-        let cheatName: String
-        if cheat.codeType.isEmpty, rawType.contains("-~-") {
-            let parts = rawType.components(separatedBy: "-~-")
-            cheatName = parts.first ?? "Cheat Code"
-            savedCodeType = parts.dropFirst().joined(separator: "-~-")
-        } else {
-            cheatName = rawType.isEmpty ? "Cheat Code" : rawType
-            savedCodeType = cheat.codeType
-        }
+        let cheatName = rawType.isEmpty ? "Cheat Code" : rawType
         _cheatName = State(initialValue: cheatName)
         _cheatCode = State(initialValue: cheat.code ?? "")
-        _selectedTypeIndex = State(initialValue: cheatTypes.firstIndex(of: savedCodeType) ?? 0)
+        _selectedTypeIndex = State(initialValue: cheatTypes.firstIndex(of: cheat.codeType) ?? 0)
     }
 
     private var selectedType: String {
