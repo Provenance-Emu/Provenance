@@ -1,0 +1,603 @@
+//
+//  SkinCatalogBrowserView.swift
+//  PVUIBase
+//
+//  Created for Provenance (GitHub issue #2545)
+//
+
+import SwiftUI
+import PVPrimitives
+import PVLogging
+
+/// View for browsing and downloading skins from the remote skin catalog.
+///
+/// Displays a searchable, filterable grid of available skins from `SkinCatalogService`.
+/// Tapping a skin opens `SkinCatalogDetailView` for download and installation.
+public struct SkinCatalogBrowserView: View {
+
+    // MARK: - State
+
+    @State private var entries: [SkinCatalogEntry] = []
+    @State private var isLoading = true
+    @State private var errorMessage: String?
+    @State private var searchText = ""
+    @State private var selectedSystem: String?
+    @State private var selectedDevice: String?
+    @State private var sortOption: SkinSortOption = .popular
+    @State private var availableSystems: [String] = []
+    @State private var glowIntensity: CGFloat = 0.5
+    @State private var showingFilters = false
+    @State private var isRefreshing = false
+
+    // MARK: - Filter Options
+
+    private let deviceOptions: [(label: String, value: String?)] = [
+        ("All Devices", nil),
+        ("iPhone", "iphone"),
+        ("iPad", "ipad"),
+        ("Apple TV", "tv")
+    ]
+
+    // MARK: - Environment
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    // MARK: - Init
+
+    /// Create the catalog browser, optionally pre-filtered to a system.
+    public init(preselectedSystem: String? = nil) {
+        _selectedSystem = State(initialValue: preselectedSystem)
+    }
+
+    // MARK: - Body
+
+    public var body: some View {
+        ZStack {
+            RetroTheme.retroBackground
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                headerView
+                searchBarView
+                filterBarView
+
+                if isLoading {
+                    loadingView
+                } else if let error = errorMessage {
+                    errorView(message: error)
+                } else if entries.isEmpty {
+                    emptyView
+                } else {
+                    catalogGridView
+                }
+            }
+        }
+        .navigationTitle("Skin Catalog")
+        #if !os(tvOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    withAnimation {
+                        showingFilters.toggle()
+                    }
+                } label: {
+                    Image(systemName: showingFilters ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                }
+            }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    Task { await refreshCatalog() }
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .rotationEffect(.degrees(isRefreshing ? 360 : 0))
+                        .animation(isRefreshing ? .linear(duration: 0.8).repeatForever(autoreverses: false) : .default, value: isRefreshing)
+                }
+                .disabled(isRefreshing)
+            }
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                glowIntensity = 0.8
+            }
+            Task { await loadCatalog() }
+        }
+        .onChange(of: searchText) { _ in
+            Task { await applyFilters() }
+        }
+        .onChange(of: selectedSystem) { _ in
+            Task { await applyFilters() }
+        }
+        .onChange(of: selectedDevice) { _ in
+            Task { await applyFilters() }
+        }
+        .onChange(of: sortOption) { _ in
+            Task { await applyFilters() }
+        }
+    }
+
+    // MARK: - UI Components
+
+    private var headerView: some View {
+        VStack(spacing: 6) {
+            Text("BROWSE SKINS")
+                .font(.system(size: 26, weight: .bold, design: .rounded))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .padding(.top, 16)
+                .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.5), radius: 3)
+
+            Text("Download skins from the community catalog")
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.7))
+                .padding(.bottom, 10)
+        }
+        .frame(maxWidth: .infinity)
+        .background(
+            Rectangle()
+                .fill(Color.black.opacity(0.3))
+                .overlay(
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .blur(radius: 0.5)
+                        .opacity(glowIntensity),
+                    alignment: .bottom
+                )
+        )
+    }
+
+    private var searchBarView: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+
+            TextField("Search by name, author, or tag...", text: $searchText)
+                .foregroundColor(.white)
+                .tint(RetroTheme.retroPink)
+            #if !os(tvOS)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+            #endif
+
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.white.opacity(0.5))
+                }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.black.opacity(0.4))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
+                )
+        )
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+    }
+
+    @ViewBuilder
+    private var filterBarView: some View {
+        if showingFilters {
+            VStack(spacing: 8) {
+                // System filter
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        filterChip("All Systems", isSelected: selectedSystem == nil) {
+                            selectedSystem = nil
+                        }
+                        ForEach(availableSystems, id: \.self) { system in
+                            filterChip(system.uppercased(), isSelected: selectedSystem == system) {
+                                selectedSystem = (selectedSystem == system) ? nil : system
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+
+                // Device filter
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(deviceOptions, id: \.label) { option in
+                            filterChip(option.label, isSelected: selectedDevice == option.value) {
+                                selectedDevice = option.value
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+
+                // Sort picker
+                HStack {
+                    Text("SORT:")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.6))
+                        .tracking(1)
+
+                    ForEach(SkinSortOption.allCases, id: \.self) { option in
+                        filterChip(option.displayName, isSelected: sortOption == option) {
+                            sortOption = option
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal)
+            }
+            .padding(.vertical, 8)
+            .background(Color.black.opacity(0.3))
+            .transition(.move(edge: .top).combined(with: .opacity))
+        }
+    }
+
+    private func filterChip(_ title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .tracking(0.5)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .foregroundColor(isSelected ? .white : .white.opacity(0.6))
+                .background(
+                    Capsule()
+                        .fill(isSelected ? Color.black.opacity(0.7) : Color.black.opacity(0.3))
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(
+                                    isSelected ? RetroTheme.retroGradient : AnyShapeStyle(Color.white.opacity(0.2)),
+                                    lineWidth: isSelected ? 1.5 : 0.5
+                                )
+                        )
+                )
+                .shadow(color: isSelected ? RetroTheme.retroPink.opacity(0.4) : .clear, radius: 4)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
+    private var catalogGridView: some View {
+        ScrollView {
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: horizontalSizeClass == .regular ? 200 : 160), spacing: 16)],
+                spacing: 20
+            ) {
+                ForEach(entries) { entry in
+                    NavigationLink(destination: SkinCatalogDetailView(entry: entry)) {
+                        CatalogSkinCard(entry: entry, glowIntensity: glowIntensity)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+            .padding()
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    private var loadingView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .stroke(RetroTheme.retroHorizontalGradient, lineWidth: 4)
+                    .frame(width: 70, height: 70)
+                    .blur(radius: 2 * glowIntensity)
+
+                Circle()
+                    .trim(from: 0, to: 0.7)
+                    .stroke(RetroTheme.retroHorizontalGradient, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    .frame(width: 70, height: 70)
+                    .rotationEffect(.degrees(-90))
+                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
+                    .animation(.linear(duration: 1.0).repeatForever(autoreverses: false), value: glowIntensity)
+            }
+
+            Text("LOADING CATALOG")
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .tracking(2)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func errorView(message: String) -> some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "wifi.slash")
+                .font(.system(size: 50))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
+
+            Text("CATALOG UNAVAILABLE")
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .tracking(2)
+
+            Text(message)
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 30)
+
+            Button {
+                Task { await loadCatalog() }
+            } label: {
+                Text("TRY AGAIN")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 24)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                            )
+                    )
+                    .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+            }
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+    }
+
+    private var emptyView: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "gamecontroller")
+                .font(.system(size: 50))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
+
+            Text("NO SKINS FOUND")
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .tracking(2)
+
+            Text(searchText.isEmpty ? "The catalog has no skins matching your filters." : "No skins match \"\(searchText)\".")
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 30)
+
+            if !searchText.isEmpty || selectedSystem != nil || selectedDevice != nil {
+                Button {
+                    searchText = ""
+                    selectedSystem = nil
+                    selectedDevice = nil
+                    Task { await applyFilters() }
+                } label: {
+                    Text("CLEAR FILTERS")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 24)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.black.opacity(0.6))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                                )
+                        )
+                        .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+                }
+            }
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+    }
+
+    // MARK: - Data Loading
+
+    private func loadCatalog() async {
+        await MainActor.run {
+            isLoading = true
+            errorMessage = nil
+        }
+
+        do {
+            let systems = try await SkinCatalogService.shared.availableSystems()
+            await MainActor.run {
+                availableSystems = systems
+            }
+
+            await applyFilters()
+
+            await MainActor.run {
+                isLoading = false
+            }
+        } catch {
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+                isLoading = false
+            }
+        }
+    }
+
+    private func refreshCatalog() async {
+        await MainActor.run { isRefreshing = true }
+        do {
+            _ = try await SkinCatalogService.shared.fetchCatalog(forceRefresh: true)
+            let systems = try await SkinCatalogService.shared.availableSystems()
+            await MainActor.run {
+                availableSystems = systems
+            }
+            await applyFilters()
+        } catch {
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+            }
+        }
+        await MainActor.run { isRefreshing = false }
+    }
+
+    private func applyFilters() async {
+        do {
+            let results: [SkinCatalogEntry]
+
+            if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                let deviceFilter = selectedDevice.map { [$0] }
+                results = try await SkinCatalogService.shared.filterSkins(
+                    system: selectedSystem,
+                    deviceSupport: deviceFilter,
+                    sortBy: sortOption
+                )
+            } else {
+                results = try await SkinCatalogService.shared.searchSkins(
+                    query: searchText,
+                    system: selectedSystem
+                )
+            }
+
+            await MainActor.run {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    entries = results
+                }
+            }
+        } catch {
+            ELOG("SkinCatalogBrowserView: Filter error: \(error)")
+        }
+    }
+}
+
+// MARK: - CatalogSkinCard
+
+/// A grid card representing a single skin catalog entry.
+private struct CatalogSkinCard: View {
+    let entry: SkinCatalogEntry
+    let glowIntensity: CGFloat
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Thumbnail
+            thumbnailView
+                .aspectRatio(1.4, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+
+            // Info
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.name)
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+
+                Text("by \(entry.author)")
+                    .font(.system(size: 11))
+                    .foregroundColor(.white.opacity(0.6))
+                    .lineLimit(1)
+
+                HStack(spacing: 6) {
+                    // System tags (max 2)
+                    ForEach(entry.systems.prefix(2), id: \.self) { system in
+                        Text(system.uppercased())
+                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .tracking(0.5)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule()
+                                    .fill(Color.black.opacity(0.5))
+                                    .overlay(Capsule().strokeBorder(RetroTheme.retroGradient, lineWidth: 0.5))
+                            )
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+
+                    Spacer()
+
+                    // Download count
+                    if let count = entry.downloadCount, count > 0 {
+                        HStack(spacing: 2) {
+                            Image(systemName: "arrow.down.circle")
+                                .font(.system(size: 9))
+                            Text(formatCount(count))
+                                .font(.system(size: 9, weight: .medium))
+                        }
+                        .foregroundColor(.white.opacity(0.5))
+                    }
+                }
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.4))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
+                )
+                .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 6)
+        )
+    }
+
+    @ViewBuilder
+    private var thumbnailView: some View {
+        if let thumbnailURL = entry.thumbnailURL {
+            AsyncImage(url: thumbnailURL) { phase in
+                switch phase {
+                case .empty:
+                    placeholderThumbnail
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                case .failure:
+                    placeholderThumbnail
+                @unknown default:
+                    placeholderThumbnail
+                }
+            }
+        } else {
+            placeholderThumbnail
+        }
+    }
+
+    private var placeholderThumbnail: some View {
+        ZStack {
+            Color.black.opacity(0.3)
+            Image(systemName: "gamecontroller.fill")
+                .font(.system(size: 32))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 4)
+        }
+    }
+
+    private func formatCount(_ count: Int) -> String {
+        if count >= 1_000 {
+            return String(format: "%.1fk", Double(count) / 1_000.0)
+        }
+        return "\(count)"
+    }
+}
+
+// MARK: - SkinSortOption Display
+
+private extension SkinSortOption {
+    var displayName: String {
+        switch self {
+        case .popular:     return "Popular"
+        case .recent:      return "Recent"
+        case .alphabetical: return "A–Z"
+        case .rating:      return "Rating"
+        }
+    }
+}
