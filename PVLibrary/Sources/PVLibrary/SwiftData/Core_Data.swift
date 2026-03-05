@@ -21,7 +21,7 @@ public class Core_Data {
     public var disabled: Bool = false
 
     // Many-to-many: cores support multiple systems (inverse declared on System_Data.cores)
-    @Relationship public var supportedSystems: [System_Data] = []
+    public var supportedSystems: [System_Data] = []
 
     // One-to-many: save states that used this core (inverse on SaveState_Data.core)
     @Relationship(deleteRule: .nullify, inverse: \SaveState_Data.core)
