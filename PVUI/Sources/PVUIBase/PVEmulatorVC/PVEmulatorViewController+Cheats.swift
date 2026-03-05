@@ -57,8 +57,8 @@ extension PVEmulatorViewController {
                 }
                 do {
                     let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
-                    let saveURL = await saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
-                    let saveFile = await PVFile(withURL: saveURL, relativeRoot: .iCloud)
+                    let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
+                    let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
                     var cheatsState: PVCheats?
                     try realm.write {
                         let cs = PVCheats(withGame: self.game, core: core, code: modString, type: type, codeType: codeType, enabled: enabled, file: saveFile)
@@ -116,7 +116,7 @@ extension PVEmulatorViewController {
     }
 
     @objc func showCheatsMenu() {
-        Task.detached { [weak self ] in
+        Task { @MainActor [weak self] in
             guard let self = self else { return }
             await self.recoverCheatCodes()
         }
@@ -222,6 +222,7 @@ extension PVEmulatorViewController {
         return gameWithCheat.cheatCodeTypes
     }
 
+    @MainActor
     func recoverCheatCodes() async {
         do {
             let fileManager = FileManager.default
