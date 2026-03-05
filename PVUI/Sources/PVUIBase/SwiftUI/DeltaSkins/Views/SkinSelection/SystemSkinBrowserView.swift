@@ -121,7 +121,7 @@ public struct SystemSkinBrowserView: View {
             }
 
             // Load skins with a slight delay for animation
-            Task {
+            Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 300_000_000)
                 loadSkins()
             }
