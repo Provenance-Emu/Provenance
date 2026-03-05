@@ -1,11 +1,11 @@
 // CheatDatabaseEntry.swift
 // PVLibrary
 //
-// Model for cheat code entries returned from the local cheatbase.sqlite database.
+// Model for cheat code entries returned from the bundled cheat database or an online source.
 
 import Foundation
 
-/// A cheat code entry retrieved from the local cheatbase database or an online source.
+/// A cheat code entry retrieved from the bundled cheat database or an online source.
 public struct CheatDatabaseEntry: Sendable, Identifiable {
     /// Unique cheat ID from the database
     public let id: Int

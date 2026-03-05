@@ -196,9 +196,11 @@ public actor CheatOnlineLookup {
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let http = response as? HTTPURLResponse else { return nil }
-        guard http.statusCode == 200 else {
+        // 404 means no cheat directory for this system — treat as "no results" not an error.
+        if http.statusCode == 404 { return nil }
+        guard (200..<300).contains(http.statusCode) else {
             WLOG("CheatOnlineLookup: GitHub API returned \(http.statusCode) for system '\(system)'")
-            return nil
+            throw URLError(.badServerResponse)
         }
 
         let files = try JSONDecoder().decode([GitHubFileEntry].self, from: data)
@@ -210,7 +212,7 @@ public actor CheatOnlineLookup {
         }
 
         DLOG("CheatOnlineLookup: matched '\(best.name)' for title '\(title)'")
-        return try? await fetchRawCht(system: system, filename: String(best.name.dropLast(4)))
+        return try await fetchRawCht(system: system, filename: String(best.name.dropLast(4)))
     }
 
     // MARK: - Rate Limiting
@@ -226,19 +228,6 @@ public actor CheatOnlineLookup {
             try? await Task.sleep(nanoseconds: UInt64(wait * 1_000_000_000))
         }
         lastAPIRequestDate = Date()
-    }
-
-    // MARK: - HTTP
-
-    private func httpGet(url: URL) async throws -> Data {
-        var request = URLRequest(url: url)
-        request.setValue("Provenance-Emu/Provenance", forHTTPHeaderField: "User-Agent")
-        request.timeoutInterval = 15
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
-        return data
     }
 
     // MARK: - .cht Parser

@@ -936,6 +936,7 @@ struct TVOSCheatSearchView: View {
     @State private var isLoading = false
     @State private var isOnlineSearching = false
     @State private var errorMessage: String?
+    @State private var onlineErrorMessage: String?
     @State private var filterText = ""
     @State private var hasSearchedOnline = false
     @FocusState private var focusedID: Int?
@@ -1122,6 +1123,14 @@ struct TVOSCheatSearchView: View {
             }
         }
         .task { await loadCheats() }
+        .alert(
+            "Online Search Failed",
+            isPresented: Binding(get: { onlineErrorMessage != nil }, set: { if !$0 { onlineErrorMessage = nil } })
+        ) {
+            Button("OK", role: .cancel) { onlineErrorMessage = nil }
+        } message: {
+            Text(onlineErrorMessage ?? "")
+        }
     }
 
     private func loadCheats() async {
@@ -1159,7 +1168,7 @@ struct TVOSCheatSearchView: View {
             hasSearchedOnline = true
         } catch {
             ELOG("TVOSCheatSearch online error: \(error)")
-            errorMessage = "Online search failed: \(error.localizedDescription)"
+            onlineErrorMessage = error.localizedDescription
         }
     }
 }

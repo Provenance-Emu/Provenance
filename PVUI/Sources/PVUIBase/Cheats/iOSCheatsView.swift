@@ -556,7 +556,8 @@ struct iOSCheatSearchView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, !results.isEmpty, filterText.isEmpty {
+            if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, !results.isEmpty, filterText.isEmpty,
+               let sysID = gameSystemIdentifier, !sysID.isEmpty {
                 Button {
                     Task { await searchOnline() }
                 } label: {
