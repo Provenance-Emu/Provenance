@@ -56,9 +56,12 @@ public struct SystemSkinBrowserView: View {
                         } else {
                             systemsGridView
 
+                            // Browse online catalog
+                            catalogBrowsePromo
+
                             // DeltaStyles link component
                             DeltaStylesLinkView()
-                                .padding(.top, 8)
+                                .padding(.top, 4)
                         }
                     }
                     .padding(.horizontal)
@@ -72,6 +75,17 @@ public struct SystemSkinBrowserView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink(destination: SkinCatalogBrowserView()) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.down.circle")
+                        Text("Get More")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    }
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                }
+            }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     showingDocumentPicker = true
@@ -254,14 +268,35 @@ public struct SystemSkinBrowserView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Button {
-                showingDocumentPicker = true
-            } label: {
-                Text("ADD SKINS")
+            HStack(spacing: 12) {
+                Button {
+                    showingDocumentPicker = true
+                } label: {
+                    Text("ADD SKINS")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 24)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.black.opacity(0.6))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                                )
+                        )
+                        .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+                }
+
+                NavigationLink(destination: SkinCatalogBrowserView()) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.down.circle.fill")
+                        Text("BROWSE CATALOG")
+                    }
                     .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding(.vertical, 12)
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 24)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.black.opacity(0.6))
@@ -271,6 +306,7 @@ public struct SystemSkinBrowserView: View {
                             )
                     )
                     .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+                }
             }
 
             Spacer()
@@ -349,6 +385,45 @@ public struct SystemSkinBrowserView: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
+    }
+
+    /// Promo banner that links to the remote skin catalog.
+    private var catalogBrowsePromo: some View {
+        NavigationLink(destination: SkinCatalogBrowserView()) {
+            HStack(spacing: 12) {
+                Image(systemName: "arrow.down.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("GET MORE SKINS")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .tracking(1)
+                    Text("Browse the community skin catalog")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.white.opacity(0.4))
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.black.opacity(0.4))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5)
+                    )
+            )
+            .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 6)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.top, 8)
     }
 
     // MARK: - Data Handling
