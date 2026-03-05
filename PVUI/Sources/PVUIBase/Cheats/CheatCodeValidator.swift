@@ -183,6 +183,21 @@ public struct CheatCodeValidator {
         autoFormat(code, for: type.stringValue)
     }
 
+    /// Set of format keys that accept multiple address+value pairs, one per line.
+    private static let multiLineFormatKeys: Set<String> = ["gecko", "game shark", "action replay", "code breaker"]
+
+    /// Returns `true` when the cheat format expects multiple address+value pairs,
+    /// one per line. Use a `TextEditor` instead of a `TextField` for these types.
+    public static func supportsMultiLine(for type: String) -> Bool {
+        guard let desc = descriptor(for: type) else { return false }
+        return multiLineFormatKeys.contains(desc.matchKey)
+    }
+
+    /// Returns `true` when the cheat format expects multiple lines of input.
+    public static func supportsMultiLine(for type: CheatCodeTypes) -> Bool {
+        supportsMultiLine(for: type.stringValue)
+    }
+
     // MARK: - Private Helpers
 
     /// Normalizes a type string for matching by lowercasing and removing non-alphanumeric characters.

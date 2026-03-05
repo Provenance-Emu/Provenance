@@ -35,7 +35,13 @@ public struct TVOSCheatsView: View {
     @State private var showingSearchDB = false
     @State private var showingDeleteAlert = false
     @State private var cheatToDelete: PVCheats?
+    @State private var cheatToEdit: CheatEditContext?
     @FocusState private var focusedCheatId: String?
+
+    private struct CheatEditContext: Identifiable {
+        let id: String
+        let cheat: PVCheats
+    }
 
     private var accentColor: Color {
         themeManager.currentPalette.defaultTintColor.swiftUIColor
@@ -68,7 +74,7 @@ public struct TVOSCheatsView: View {
     }
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 // Background
                 backgroundColor.ignoresSafeArea()
@@ -91,7 +97,7 @@ public struct TVOSCheatsView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
         }
         .onAppear {
             loadCheats()
@@ -116,6 +122,9 @@ public struct TVOSCheatsView: View {
                     onSaveCheat(code, name, deviceName, index, enabled)
                 }
             )
+        }
+        .sheet(item: $cheatToEdit, onDismiss: { delayedReload() }) { ctx in
+            TVOSEditCheatView(cheat: ctx.cheat, cheatTypes: cheatTypes)
         }
         .alert("Delete Cheat Code?", isPresented: $showingDeleteAlert) {
             Button("Delete", role: .destructive) {
@@ -143,7 +152,7 @@ public struct TVOSCheatsView: View {
                     Text("DONE")
                         .font(.system(size: 24, weight: .bold))
                 }
-                .foregroundColor(accentColor)
+                .foregroundStyle(accentColor)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
                 .background(
@@ -157,7 +166,7 @@ public struct TVOSCheatsView: View {
 
             Text("CHEAT CODES")
                 .font(.system(size: 42, weight: .bold, design: .rounded))
-                .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                 .shadow(color: accentColor.opacity(0.8), radius: 10)
 
             Spacer()
@@ -170,7 +179,7 @@ public struct TVOSCheatsView: View {
                         Text("HELP")
                             .font(.system(size: 24, weight: .bold))
                     }
-                    .foregroundColor(accentColor)
+                    .foregroundStyle(accentColor)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
@@ -189,7 +198,7 @@ public struct TVOSCheatsView: View {
                         Text("SEARCH")
                             .font(.system(size: 24, weight: .bold))
                     }
-                    .foregroundColor(accentColor)
+                    .foregroundStyle(accentColor)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
@@ -208,7 +217,7 @@ public struct TVOSCheatsView: View {
                         Text("ADD")
                             .font(.system(size: 24, weight: .bold))
                     }
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(
@@ -231,15 +240,15 @@ public struct TVOSCheatsView: View {
         VStack(spacing: 24) {
             Image(systemName: "wand.and.stars")
                 .font(.system(size: 80))
-                .foregroundColor(accentColor.opacity(0.5))
+                .foregroundStyle(accentColor.opacity(0.5))
 
             Text("NO CHEAT CODES")
                 .font(.system(size: 32, weight: .bold))
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
 
             Text("Add a cheat code to get started")
                 .font(.system(size: 24))
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
+                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -253,6 +262,9 @@ public struct TVOSCheatsView: View {
                         index: UInt8(min(index, Int(UInt8.max))),
                         accentColor: accentColor,
                         onToggle: { toggleCheat(cheat, at: index) },
+                        onEdit: {
+                            cheatToEdit = CheatEditContext(id: cheat.id, cheat: cheat)
+                        },
                         onDelete: {
                             cheatToDelete = cheat
                             showingDeleteAlert = true
@@ -277,8 +289,8 @@ public struct TVOSCheatsView: View {
 
     private func loadCheats() {
         if let coreID = coreID {
-            let filter = "core.identifier == \"\(coreID)\""
-            allCheats = cheats.filter(filter).sorted(byKeyPath: "date", ascending: true).map { $0 }
+            let predicate = NSPredicate(format: "core.identifier == %@", coreID)
+            allCheats = cheats.filter(predicate).sorted(byKeyPath: "date", ascending: true).map { $0 }
         } else {
             allCheats = cheats.sorted(byKeyPath: "date", ascending: true).map { $0 }
         }
@@ -314,6 +326,7 @@ struct CheatRowView: View {
     let index: UInt8
     let accentColor: Color
     let onToggle: () -> Void
+    let onEdit: () -> Void
     let onDelete: () -> Void
 
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -340,11 +353,11 @@ struct CheatRowView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(cheatType)
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
                     Text(cheat.code ?? "")
                         .font(.system(size: 22, weight: .medium, design: .monospaced))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
                         .lineLimit(1)
                 }
 
@@ -353,13 +366,26 @@ struct CheatRowView: View {
                 // Status text
                 Text(cheat.enabled ? "ENABLED" : "DISABLED")
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(cheat.enabled ? .green : .gray)
+                    .foregroundStyle(cheat.enabled ? .green : .gray)
+
+                // Edit button
+                Button(action: onEdit) {
+                    Image(systemName: "pencil")
+                        .font(.system(size: 24))
+                        .foregroundStyle(accentColor.opacity(0.8))
+                        .padding(12)
+                        .background(
+                            Circle()
+                                .stroke(accentColor.opacity(0.5), lineWidth: 2)
+                        )
+                }
+                .buttonStyle(.plain)
 
                 // Delete button
                 Button(action: onDelete) {
                     Image(systemName: "trash")
                         .font(.system(size: 24))
-                        .foregroundColor(.red.opacity(0.8))
+                        .foregroundStyle(.red.opacity(0.8))
                         .padding(12)
                         .background(
                             Circle()
@@ -439,7 +465,7 @@ struct TVOSAddCheatView: View {
                 // Header
                 Text("ADD CHEAT CODE")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                    .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                     .shadow(color: accentColor.opacity(0.8), radius: 10)
                     .padding(.top, 40)
 
@@ -449,12 +475,12 @@ struct TVOSAddCheatView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("NAME")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(accentColor)
+                            .foregroundStyle(accentColor)
 
                         TextField("e.g. Infinite Lives", text: $cheatName)
                             .textFieldStyle(.plain)
                             .font(.system(size: 28))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(20)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
@@ -471,32 +497,50 @@ struct TVOSAddCheatView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("CHEAT CODE")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(accentColor)
+                            .foregroundStyle(accentColor)
 
                         HStack(alignment: .center, spacing: 16) {
-                            TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
-                                .textFieldStyle(.plain)
-                                .font(.system(size: 28, design: .monospaced))
-                                .foregroundColor(.white)
-                                .autocorrectionDisabled()
-                                .padding(20)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.black.opacity(0.5))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
-                                        )
-                                )
-                                .focused($focusedField, equals: .code)
-                                .onChangeCompat(of: cheatCode) {
-                                    cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedCodeTypeString)
-                                }
+                            if CheatCodeValidator.supportsMultiLine(for: selectedCodeTypeString) {
+                                TextEditor(text: $cheatCode)
+                                    .font(.system(size: 24, design: .monospaced))
+                                    .foregroundStyle(.white)
+                                    .autocorrectionDisabled()
+                                    .frame(minHeight: 100)
+                                    .padding(20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                            )
+                                    )
+                                    .focused($focusedField, equals: .code)
+                            } else {
+                                TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 28, design: .monospaced))
+                                    .foregroundStyle(.white)
+                                    .autocorrectionDisabled()
+                                    .padding(20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                            )
+                                    )
+                                    .focused($focusedField, equals: .code)
+                                    .onChangeCompat(of: cheatCode) {
+                                        cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedCodeTypeString)
+                                    }
+                            }
 
                             if !cheatCode.isEmpty {
                                 Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
                                     .font(.system(size: 40))
-                                    .foregroundColor(validationResult.isValid ? .green : .red)
+                                    .foregroundStyle(validationResult.isValid ? .green : .red)
                                     .transition(.opacity)
                             }
                         }
@@ -504,13 +548,13 @@ struct TVOSAddCheatView: View {
                         if let hint = CheatCodeValidator.formatHint(for: selectedCodeTypeString) {
                             Text(hint)
                                 .font(.system(size: 20))
-                                .foregroundColor(accentColor.opacity(0.7))
+                                .foregroundStyle(accentColor.opacity(0.7))
                         }
 
                         if case .invalid(let errorHint) = validationResult, !cheatCode.isEmpty {
                             Text(errorHint)
                                 .font(.system(size: 20))
-                                .foregroundColor(.red.opacity(0.8))
+                                .foregroundStyle(.red.opacity(0.8))
                         }
                     }
 
@@ -519,16 +563,16 @@ struct TVOSAddCheatView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("CODE TYPE")
                                 .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(accentColor)
+                                .foregroundStyle(accentColor)
 
                             HStack(spacing: 16) {
-                                ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, type in
+                                ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, codeType in
                                     Button(action: {
                                         selectedCodeType = index
                                     }) {
-                                        Text(CheatCodeTypes(string: type)?.stringValue ?? type)
+                                        Text(CheatCodeTypes(string: codeType)?.stringValue ?? codeType)
                                             .font(.system(size: 22, weight: .bold))
-                                            .foregroundColor(selectedCodeType == index ? .white : .gray)
+                                            .foregroundStyle(selectedCodeType == index ? .white : .gray)
                                             .padding(.horizontal, 24)
                                             .padding(.vertical, 16)
                                             .background(
@@ -557,7 +601,7 @@ struct TVOSAddCheatView: View {
                     }) {
                         Text("CANCEL")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.gray)
+                            .foregroundStyle(.gray)
                             .padding(.horizontal, 60)
                             .padding(.vertical, 20)
                             .background(
@@ -572,7 +616,7 @@ struct TVOSAddCheatView: View {
                     }) {
                         Text("SAVE")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 60)
                             .padding(.vertical, 20)
                             .background(
@@ -603,6 +647,246 @@ struct TVOSAddCheatView: View {
         let name = trimmedName.isEmpty ? "Cheat Code" : trimmedName
         onSave(code, name, selectedCodeTypeString, cheatIndex, true)
         dismiss()
+    }
+}
+
+// MARK: - Edit Cheat View (tvOS)
+
+/// Full-screen form for editing an existing cheat code on tvOS.
+/// Pre-populated with the saved values; writes updates to Realm on save.
+struct TVOSEditCheatView: View {
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    let cheat: PVCheats
+    let cheatTypes: [String]
+
+    @State private var cheatName: String
+    @State private var cheatCode: String
+    @State private var selectedCodeType: Int
+    @FocusState private var focusedField: Field?
+
+    private enum Field { case name, code }
+
+    private var accentColor: Color { themeManager.currentPalette.defaultTintColor.swiftUIColor }
+    private var backgroundColor: Color { Color(themeManager.currentPalette.gameLibraryBackground) }
+
+    init(cheat: PVCheats, cheatTypes: [String]) {
+        self.cheat = cheat
+        self.cheatTypes = cheatTypes
+        let rawType = cheat.type ?? ""
+        // Use the dedicated codeType field (schema v24+). Fall back to parsing the legacy
+        // "-~-" separator in type for any pre-migration records where codeType is empty.
+        let savedCodeType: String
+        let cheatName: String
+        if cheat.codeType.isEmpty, rawType.contains("-~-") {
+            let parts = rawType.components(separatedBy: "-~-")
+            cheatName = parts.first ?? "Cheat Code"
+            savedCodeType = parts.dropFirst().joined(separator: "-~-")
+        } else {
+            cheatName = rawType.isEmpty ? "Cheat Code" : rawType
+            savedCodeType = cheat.codeType
+        }
+        _cheatName = State(initialValue: cheatName)
+        _cheatCode = State(initialValue: cheat.code ?? "")
+        _selectedCodeType = State(initialValue: cheatTypes.firstIndex(of: savedCodeType) ?? 0)
+    }
+
+    private var selectedCodeTypeString: String {
+        cheatTypes.isEmpty ? "" : cheatTypes[selectedCodeType]
+    }
+
+    private var validationResult: CheatCodeValidator.ValidationResult {
+        CheatCodeValidator.validate(cheatCode, for: selectedCodeTypeString)
+    }
+
+    var body: some View {
+        ZStack {
+            backgroundColor.ignoresSafeArea()
+            RetroGrid(lineSpacing: 30, lineColor: accentColor.opacity(0.1)).opacity(0.3)
+
+            VStack(spacing: 40) {
+                Text("EDIT CHEAT CODE")
+                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                    .shadow(color: accentColor.opacity(0.8), radius: 10)
+                    .padding(.top, 40)
+
+                VStack(spacing: 32) {
+                    // Name field
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("NAME")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(accentColor)
+                        TextField("e.g. Infinite Lives", text: $cheatName)
+                            .textFieldStyle(.plain)
+                            .font(.system(size: 28))
+                            .foregroundStyle(.white)
+                            .padding(20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.black.opacity(0.5))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(focusedField == .name ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                    )
+                            )
+                            .focused($focusedField, equals: .name)
+                    }
+
+                    // Code field
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("CHEAT CODE")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(accentColor)
+
+                        HStack(alignment: .center, spacing: 16) {
+                            if CheatCodeValidator.supportsMultiLine(for: selectedCodeTypeString) {
+                                TextEditor(text: $cheatCode)
+                                    .font(.system(size: 24, design: .monospaced))
+                                    .foregroundStyle(.white)
+                                    .autocorrectionDisabled()
+                                    .frame(minHeight: 100)
+                                    .padding(20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                            )
+                                    )
+                                    .focused($focusedField, equals: .code)
+                            } else {
+                                TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 28, design: .monospaced))
+                                    .foregroundStyle(.white)
+                                    .autocorrectionDisabled()
+                                    .padding(20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.black.opacity(0.5))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
+                                            )
+                                    )
+                                    .focused($focusedField, equals: .code)
+                                    .onChangeCompat(of: cheatCode) {
+                                        cheatCode = CheatCodeValidator.autoFormat(cheatCode, for: selectedCodeTypeString)
+                                    }
+                            }
+
+                            if !cheatCode.isEmpty {
+                                Image(systemName: validationResult.isValid ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
+                                    .font(.system(size: 40))
+                                    .foregroundStyle(validationResult.isValid ? .green : .red)
+                                    .transition(.opacity)
+                            }
+                        }
+
+                        if let hint = CheatCodeValidator.formatHint(for: selectedCodeTypeString) {
+                            Text(hint)
+                                .font(.system(size: 20))
+                                .foregroundStyle(accentColor.opacity(0.7))
+                        }
+
+                        if case .invalid(let errorHint) = validationResult, !cheatCode.isEmpty {
+                            Text(errorHint)
+                                .font(.system(size: 20))
+                                .foregroundStyle(.red.opacity(0.8))
+                        }
+                    }
+
+                    // Code type selector
+                    if cheatTypes.count > 1 {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("CODE TYPE")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundStyle(accentColor)
+                            HStack(spacing: 16) {
+                                ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, codeType in
+                                    Button(action: { selectedCodeType = index }) {
+                                        Text(CheatCodeTypes(string: codeType)?.stringValue ?? codeType)
+                                            .font(.system(size: 22, weight: .bold))
+                                            .foregroundStyle(selectedCodeType == index ? .white : .gray)
+                                            .padding(.horizontal, 24)
+                                            .padding(.vertical, 16)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(selectedCodeType == index ? accentColor : Color.black.opacity(0.5))
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .stroke(accentColor.opacity(0.5), lineWidth: 1)
+                                                    )
+                                            )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 200)
+
+                Spacer()
+
+                HStack(spacing: 40) {
+                    Button(action: { dismiss() }) {
+                        Text("CANCEL")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(.gray)
+                            .padding(.horizontal, 60)
+                            .padding(.vertical, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                            )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button(action: { saveCheat() }) {
+                        Text("SAVE")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 60)
+                            .padding(.vertical, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(LinearGradient(
+                                        colors: [accentColor, accentColor.opacity(0.7)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(validationResult == .empty)
+                    .opacity(validationResult == .empty ? 0.5 : 1.0)
+                }
+                .padding(.bottom, 60)
+            }
+        }
+        .onAppear { focusedField = .name }
+    }
+
+    private func saveCheat() {
+        let code = cheatCode.trimmingCharacters(in: .whitespaces)
+        guard !code.isEmpty else { return }
+        let trimmedName = cheatName.trimmingCharacters(in: .whitespaces)
+        let name = trimmedName.isEmpty ? "Cheat Code" : trimmedName
+        do {
+            let realm = try Realm()
+            try realm.write {
+                cheat.code = code
+                cheat.type = name
+                cheat.codeType = selectedCodeTypeString
+            }
+            dismiss()
+        } catch {
+            ELOG("Error saving edited cheat: \(error)")
+        }
     }
 }
 
@@ -696,7 +980,7 @@ struct TVOSCheatSearchView: View {
                             Text("CLOSE")
                         }
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(accentColor)
+                        .foregroundStyle(accentColor)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 12)
                         .background(RoundedRectangle(cornerRadius: 12).stroke(accentColor, lineWidth: 2))
@@ -707,7 +991,7 @@ struct TVOSCheatSearchView: View {
 
                     Text("CHEAT DATABASE")
                         .font(.system(size: 38, weight: .bold, design: .rounded))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
                         .shadow(color: accentColor.opacity(0.8), radius: 10)
 
                     Spacer()
@@ -716,7 +1000,7 @@ struct TVOSCheatSearchView: View {
                     TextField("Filter...", text: $filterText)
                         .textFieldStyle(.plain)
                         .font(.system(size: 22))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .padding(12)
                         .frame(width: 300)
                         .background(
@@ -736,17 +1020,17 @@ struct TVOSCheatSearchView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let error = errorMessage {
                     Text(error)
-                        .foregroundColor(.red.opacity(0.8))
+                        .foregroundStyle(.red.opacity(0.8))
                         .font(.system(size: 24))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if filtered.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: 60))
-                            .foregroundColor(accentColor.opacity(0.4))
+                            .foregroundStyle(accentColor.opacity(0.4))
                         Text("No cheat codes found")
                             .font(.system(size: 28, weight: .medium))
-                            .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.6))
+                            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.6))
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -757,7 +1041,8 @@ struct TVOSCheatSearchView: View {
                                     entry: entry,
                                     accentColor: accentColor,
                                     onImport: {
-                                        onImport(entry.cheatCode, entry.cheatName, entry.deviceName, cheatIndex, true)
+                                        let mappedType = CheatCodeTypes(string: entry.deviceName)?.stringValue ?? entry.deviceName
+                                        onImport(entry.cheatCode, entry.cheatName, mappedType, cheatIndex, true)
                                         dismiss()
                                     }
                                 )
@@ -805,19 +1090,19 @@ private struct TVOSCheatSearchRow: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(entry.cheatName)
                         .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     Text(entry.cheatCode)
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
-                        .foregroundColor(accentColor)
+                        .foregroundStyle(accentColor)
                         .lineLimit(2)
                     Text("\(entry.deviceName)  ·  \(entry.category)")
                         .font(.system(size: 18))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.55))
+                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.55))
                 }
                 Spacer()
                 Image(systemName: "arrow.down.circle")
                     .font(.system(size: 32))
-                    .foregroundColor(accentColor)
+                    .foregroundStyle(accentColor)
             }
             .padding(.horizontal, 32)
             .padding(.vertical, 20)
