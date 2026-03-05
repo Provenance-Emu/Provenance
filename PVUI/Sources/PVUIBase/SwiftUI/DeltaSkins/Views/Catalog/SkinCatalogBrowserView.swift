@@ -28,6 +28,8 @@ public struct SkinCatalogBrowserView: View {
     @State private var glowIntensity: CGFloat = 0.5
     @State private var showingFilters = false
     @State private var isRefreshing = false
+    @State private var spinnerRotation: Double = 0
+    @State private var filterTask: Task<Void, Never>?
 
     // MARK: - Filter Options
 
@@ -86,6 +88,7 @@ public struct SkinCatalogBrowserView: View {
                     Image(systemName: showingFilters ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
                         .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 }
+                .accessibilityLabel(showingFilters ? "Hide filters" : "Show filters")
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -98,6 +101,7 @@ public struct SkinCatalogBrowserView: View {
                         .animation(isRefreshing ? .linear(duration: 0.8).repeatForever(autoreverses: false) : .default, value: isRefreshing)
                 }
                 .disabled(isRefreshing)
+                .accessibilityLabel("Refresh catalog")
             }
         }
         .onAppear {
@@ -107,16 +111,16 @@ public struct SkinCatalogBrowserView: View {
             Task { await loadCatalog() }
         }
         .onChange(of: searchText) { _, _ in
-            Task { await applyFilters() }
+            scheduleFilterUpdate()
         }
         .onChange(of: selectedSystem) { _, _ in
-            Task { await applyFilters() }
+            scheduleFilterUpdate()
         }
         .onChange(of: selectedDevice) { _, _ in
-            Task { await applyFilters() }
+            scheduleFilterUpdate()
         }
         .onChange(of: sortOption) { _, _ in
-            Task { await applyFilters() }
+            scheduleFilterUpdate()
         }
     }
 
@@ -295,9 +299,13 @@ public struct SkinCatalogBrowserView: View {
                     .trim(from: 0, to: 0.7)
                     .stroke(RetroTheme.retroHorizontalGradient, style: StrokeStyle(lineWidth: 4, lineCap: .round))
                     .frame(width: 70, height: 70)
-                    .rotationEffect(.degrees(-90))
+                    .rotationEffect(.degrees(spinnerRotation))
                     .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
-                    .animation(.linear(duration: 1.0).repeatForever(autoreverses: false), value: glowIntensity)
+                    .onAppear {
+                        withAnimation(.linear(duration: 1.0).repeatForever(autoreverses: false)) {
+                            spinnerRotation = 360
+                        }
+                    }
             }
 
             Text("LOADING CATALOG")
@@ -449,9 +457,23 @@ public struct SkinCatalogBrowserView: View {
         await MainActor.run { isRefreshing = false }
     }
 
+    private func scheduleFilterUpdate() {
+        filterTask?.cancel()
+        filterTask = Task { await applyFilters() }
+    }
+
+    private func sortLocally(_ entries: [SkinCatalogEntry], by option: SkinSortOption) -> [SkinCatalogEntry] {
+        switch option {
+        case .popular:      return entries.sorted { ($0.downloadCount ?? 0) > ($1.downloadCount ?? 0) }
+        case .recent:       return entries.sorted { ($0.lastUpdated ?? .distantPast) > ($1.lastUpdated ?? .distantPast) }
+        case .alphabetical: return entries.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        case .rating:       return entries.sorted { ($0.rating ?? 0) > ($1.rating ?? 0) }
+        }
+    }
+
     private func applyFilters() async {
         do {
-            let results: [SkinCatalogEntry]
+            var results: [SkinCatalogEntry]
 
             if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 let deviceFilter = selectedDevice.map { [$0] }
@@ -465,7 +487,14 @@ public struct SkinCatalogBrowserView: View {
                     query: searchText,
                     system: selectedSystem
                 )
+                // Apply device filter and sort locally on search results
+                if let device = selectedDevice {
+                    results = results.filter { $0.deviceSupport?.contains(device) == true }
+                }
+                results = sortLocally(results, by: sortOption)
             }
+
+            guard !Task.isCancelled else { return }
 
             await MainActor.run {
                 withAnimation(.easeOut(duration: 0.2)) {
@@ -474,6 +503,13 @@ public struct SkinCatalogBrowserView: View {
             }
         } catch {
             ELOG("SkinCatalogBrowserView: Filter error: \(error)")
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+                withAnimation(.easeOut(duration: 0.2)) {
+                    entries = []
+                }
+            }
         }
     }
 }

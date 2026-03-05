@@ -23,8 +23,7 @@ public struct SkinCatalogDetailView: View {
     @State private var downloadState: DownloadState = .idle
     @State private var screenshotIndex = 0
     @State private var glowIntensity: CGFloat = 0.5
-
-    @Environment(\.dismiss) private var dismiss
+    @State private var downloadTask: Task<Void, Never>?
 
     // MARK: - Types
 
@@ -66,6 +65,9 @@ public struct SkinCatalogDetailView: View {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
             }
+        }
+        .onDisappear {
+            downloadTask?.cancel()
         }
     }
 
@@ -273,7 +275,8 @@ public struct SkinCatalogDetailView: View {
 
     private var downloadButton: some View {
         Button {
-            Task { await downloadAndInstall() }
+            downloadTask?.cancel()
+            downloadTask = Task { await downloadAndInstall() }
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: "arrow.down.circle.fill")
@@ -469,6 +472,7 @@ public struct SkinCatalogDetailView: View {
         do {
             // Download the skin file with progress
             let localURL = try await downloadSkin()
+            defer { try? FileManager.default.removeItem(at: localURL) }
 
             // Install via DeltaSkinManager
             await MainActor.run {
@@ -476,9 +480,6 @@ public struct SkinCatalogDetailView: View {
             }
 
             try await DeltaSkinManager.shared.importSkin(from: localURL)
-
-            // Clean up temp file
-            try? FileManager.default.removeItem(at: localURL)
 
             await MainActor.run {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
@@ -495,64 +496,82 @@ public struct SkinCatalogDetailView: View {
         }
     }
 
-    /// Downloads the skin file to a temporary location, reporting progress.
+    /// Downloads the skin file to a temporary location using URLSessionDownloadTask for efficiency.
     private func downloadSkin() async throws -> URL {
-        let (asyncBytes, response) = try await URLSession.shared.bytes(from: entry.downloadURL)
-
-        if let httpResponse = response as? HTTPURLResponse,
-           !(200...299).contains(httpResponse.statusCode) {
-            throw URLError(.badServerResponse)
-        }
-
-        let totalBytes = response.expectedContentLength
-        var downloadedBytes: Int64 = 0
-
-        // Determine file name from download URL or entry id
-        let fileName = entry.downloadURL.lastPathComponent.isEmpty
+        let downloadURL = entry.downloadURL
+        let fileName = downloadURL.lastPathComponent.isEmpty
             ? "\(entry.id).deltaskin"
-            : entry.downloadURL.lastPathComponent
+            : downloadURL.lastPathComponent
+        let destURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
 
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
-
-        // Stream to disk
-        FileManager.default.createFile(atPath: tempURL.path, contents: nil)
-        let fileHandle = try FileHandle(forWritingTo: tempURL)
-        defer { try? fileHandle.close() }
-
-        // Buffer writes to avoid per-byte syscall overhead
-        let bufferSize = 65_536
-        var buffer: [UInt8] = []
-        buffer.reserveCapacity(bufferSize)
-
-        for try await byte in asyncBytes {
-            buffer.append(byte)
-            downloadedBytes += 1
-
-            if buffer.count >= bufferSize {
-                try fileHandle.write(contentsOf: buffer)
-                buffer.removeAll(keepingCapacity: true)
-            }
-
-            // Update progress periodically (every 64KB)
-            if downloadedBytes % 65_536 == 0 {
-                let progress = totalBytes > 0 ? Double(downloadedBytes) / Double(totalBytes) : 0
-                await MainActor.run {
-                    downloadState = .downloading(progress: progress)
+        return try await withCheckedThrowingContinuation { continuation in
+            let delegate = SkinDownloadDelegate(
+                progressHandler: { [self] progress in
+                    Task { @MainActor in
+                        downloadState = .downloading(progress: progress)
+                    }
+                },
+                completion: { result in
+                    switch result {
+                    case .success(let location):
+                        do {
+                            if FileManager.default.fileExists(atPath: destURL.path) {
+                                try FileManager.default.removeItem(at: destURL)
+                            }
+                            try FileManager.default.moveItem(at: location, to: destURL)
+                            continuation.resume(returning: destURL)
+                        } catch {
+                            continuation.resume(throwing: error)
+                        }
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
                 }
+            )
+            let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
+            session.downloadTask(with: downloadURL).resume()
+        }
+    }
+
+    // MARK: - URLSessionDownloadDelegate helper
+
+    private final class SkinDownloadDelegate: NSObject, URLSessionDownloadDelegate {
+        private let progressHandler: (Double) -> Void
+        private let completion: (Result<URL, Error>) -> Void
+        private var downloadedURL: URL?
+
+        init(progressHandler: @escaping (Double) -> Void, completion: @escaping (Result<URL, Error>) -> Void) {
+            self.progressHandler = progressHandler
+            self.completion = completion
+        }
+
+        func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
+                        didWriteData bytesWritten: Int64, totalBytesWritten: Int64,
+                        totalBytesExpectedToWrite: Int64) {
+            guard totalBytesExpectedToWrite > 0 else { return }
+            progressHandler(Double(totalBytesWritten) / Double(totalBytesExpectedToWrite))
+        }
+
+        func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
+                        didFinishDownloadingTo location: URL) {
+            downloadedURL = location
+        }
+
+        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+            if let error = error {
+                completion(.failure(error))
+                return
             }
+            if let http = task.response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                completion(.failure(URLError(.badServerResponse)))
+                return
+            }
+            guard let url = downloadedURL else {
+                completion(.failure(URLError(.unknown)))
+                return
+            }
+            completion(.success(url))
         }
-
-        // Flush remaining buffered bytes
-        if !buffer.isEmpty {
-            try fileHandle.write(contentsOf: buffer)
-        }
-
-        // Mark as 100%
-        await MainActor.run {
-            downloadState = .downloading(progress: 1.0)
-        }
-
-        return tempURL
     }
 
     // MARK: - Helpers
@@ -573,11 +592,15 @@ public struct SkinCatalogDetailView: View {
         return String(format: "%.0f KB", kb)
     }
 
-    private func formatDate(_ date: Date) -> String {
+    private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .none
-        return formatter.string(from: date)
+        return formatter
+    }()
+
+    private func formatDate(_ date: Date) -> String {
+        Self.dateFormatter.string(from: date)
     }
 
     private func deviceIcon(for device: String) -> String {
