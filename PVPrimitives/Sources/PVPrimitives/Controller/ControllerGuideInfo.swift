@@ -26,6 +26,8 @@ public enum ControllerType: String, CaseIterable, Codable, Sendable {
     case iCade = "iCade"
     /// Apple Siri Remote (tvOS)
     case siriRemote = "Siri Remote"
+    /// Bluetooth or USB keyboard used as a game controller
+    case keyboard = "Keyboard"
 
     /// Human-readable display name
     public var displayName: String { rawValue }
@@ -34,7 +36,7 @@ public enum ControllerType: String, CaseIterable, Codable, Sendable {
     public var isModern: Bool {
         switch self {
         case .dualSense, .xbox, .switchPro, .dualShock4: return true
-        case .mfi, .iCade, .siriRemote: return false
+        case .mfi, .iCade, .siriRemote, .keyboard: return false
         }
     }
 }
