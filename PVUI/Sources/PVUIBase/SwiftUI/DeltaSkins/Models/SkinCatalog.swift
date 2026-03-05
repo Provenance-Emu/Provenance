@@ -41,8 +41,8 @@ public struct SkinCatalogEntry: Codable, Sendable, Identifiable, Hashable {
     /// Human-readable skin name
     public let name: String
 
-    /// The skin author / creator
-    public let author: String
+    /// The skin author / creator (nil when unknown)
+    public let author: String?
 
     /// System short codes this skin supports (e.g. "gba", "snes", "nes")
     public let systems: [String]
@@ -86,7 +86,7 @@ public struct SkinCatalogEntry: Codable, Sendable, Identifiable, Hashable {
     public init(
         id: String,
         name: String,
-        author: String,
+        author: String? = nil,
         systems: [String],
         gameTypeIdentifier: String? = nil,
         version: String? = nil,

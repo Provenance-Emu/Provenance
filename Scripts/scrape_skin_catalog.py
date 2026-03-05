@@ -21,6 +21,7 @@ Usage:
 
 import argparse
 import hashlib
+import html.parser
 import json
 import os
 import sys
@@ -38,6 +39,24 @@ try:
     from bs4 import BeautifulSoup
 except ImportError:
     BeautifulSoup = None
+
+
+# ---------------------------------------------------------------------------
+# Stdlib HTML parser fallback (used when beautifulsoup4 is not installed)
+# ---------------------------------------------------------------------------
+
+class _ImgDataExtractor(html.parser.HTMLParser):
+    """Minimal HTMLParser to extract data-* attributes from <img> tags."""
+
+    def __init__(self):
+        super().__init__()
+        self.imgs = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "img":
+            d = dict(attrs)
+            if "data-download" in d:
+                self.imgs.append(d)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -74,6 +93,7 @@ SYSTEM_MAP = {
 DELTA_SKINS_PAGES = ["gba", "gbc", "nes", "snes", "n64", "nds", "unofficial"]
 
 DELTA_SKINS_BASE = "https://raw.githubusercontent.com/delta-skins/delta-skins.github.io/master"
+DELTA_SKINS_SITE_BASE = "https://delta-skins.github.io"
 DELTA_SKINS_REPO_RAW = "https://github.com/delta-skins/delta-skins.github.io/raw/master"
 
 BROANK_REPO = "Polyphian/deltaEmu"
@@ -198,20 +218,39 @@ def lookup_system(raw_name):
 # Source: delta-skins.github.io
 # ---------------------------------------------------------------------------
 
+def _parse_delta_skins_html(html_text, page_name):
+    """Extract img tag attribute dicts from delta-skins HTML.
+
+    Uses BeautifulSoup when available, falling back to stdlib html.parser.
+    Returns a list of dicts (one per skin img tag with data-download).
+    """
+    if BeautifulSoup is not None:
+        soup = BeautifulSoup(html_text, "html.parser")
+        imgs = soup.find_all("img", attrs={"data-download": True})
+        return [
+            {k: img.get(k, "") for k in ["data-download", "data-console", "data-maker",
+                                          "data-supports", "data-added", "alt", "src"]}
+            for img in imgs
+        ]
+    else:
+        extractor = _ImgDataExtractor()
+        extractor.feed(html_text)
+        return extractor.imgs
+
+
 def scrape_delta_skins(dry_run=False):
     """Scrape delta-skins.github.io HTML pages for skin entries.
 
     Each page (gba.html, gbc.html, ...) contains <img> tags with data
     attributes: data-console, data-maker, data-supports, data-download,
     data-added.
-    """
-    if BeautifulSoup is None and not dry_run:
-        log("ERROR: beautifulsoup4 is required for delta-skins scraping.")
-        log("       Install with: pip3 install beautifulsoup4")
-        return []
 
+    Uses BeautifulSoup when available; falls back to stdlib html.parser.
+    """
     source_name = "delta-skins.github.io"
     log(f"\n=== Scraping {source_name} ===")
+    if BeautifulSoup is None:
+        log("  NOTE: beautifulsoup4 not found, using stdlib html.parser fallback")
     skins = []
 
     for page_name in DELTA_SKINS_PAGES:
@@ -222,26 +261,24 @@ def scrape_delta_skins(dry_run=False):
             log(f"  [DRY RUN] Would fetch {url}")
             continue
 
-        html = _get(url)
-        if html is None:
+        html_text = _get(url)
+        if html_text is None:
             log(f"  Skipping {page_name}.html (fetch failed)")
             continue
 
-        soup = BeautifulSoup(html, "html.parser")
-        imgs = soup.find_all("img", attrs={"data-download": True})
-        log(f"  Found {len(imgs)} skin entries")
+        img_dicts = _parse_delta_skins_html(html_text, page_name)
+        log(f"  Found {len(img_dicts)} skin entries")
 
-        for img in imgs:
+        for img in img_dicts:
             download_url = img.get("data-download", "").strip()
             if not download_url:
                 continue
 
-            console = img.get("data-console", page_name).strip()
-            maker = img.get("data-maker", "").strip()
-            supports = img.get("data-supports", "").strip()
-            alt_text = img.get("alt", "").strip()
-            src = img.get("src", "").strip()
-            added_order = img.get("data-added", "").strip()
+            console = (img.get("data-console") or page_name).strip()
+            maker = (img.get("data-maker") or "").strip()
+            supports = (img.get("data-supports") or "").strip()
+            alt_text = (img.get("alt") or "").strip()
+            src = (img.get("src") or "").strip()
 
             # Derive name from alt text, or from filename
             if alt_text:
@@ -254,11 +291,11 @@ def scrape_delta_skins(dry_run=False):
             short_code, game_type_id = lookup_system(console)
             systems = [short_code] if short_code != "unofficial" else []
 
-            # Build thumbnail URL from src attribute
+            # Build thumbnail URL using the github.io CDN (better caching than raw.githubusercontent)
             thumbnail_url = None
             if src:
                 # src is relative like "gba/someimage.png"
-                thumbnail_url = f"{DELTA_SKINS_BASE}/{src}"
+                thumbnail_url = f"{DELTA_SKINS_SITE_BASE}/{src}"
 
             # Parse device support into tags
             device_support = []
@@ -271,7 +308,7 @@ def scrape_delta_skins(dry_run=False):
             skin_entry = {
                 "id": make_id(source_name, download_url),
                 "name": name,
-                "author": maker if maker else None,
+                "author": maker or None,
                 "systems": systems,
                 "gameTypeIdentifier": game_type_id,
                 "version": None,
@@ -740,7 +777,12 @@ Examples:
   python3 Scripts/scrape_skin_catalog.py --source delta-skins --output catalog.json
   python3 Scripts/scrape_skin_catalog.py --source all --output catalog.json
   python3 Scripts/scrape_skin_catalog.py --validate catalog.json
+  python3 Scripts/scrape_skin_catalog.py --validate-urls --output catalog.json
   python3 Scripts/scrape_skin_catalog.py --dry-run --source all
+
+Quickstart (no extra packages needed):
+  python3 Scripts/scrape_skin_catalog.py --output Scripts/catalog_seed.json
+  cp Scripts/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json
         """,
     )
 
@@ -767,10 +809,20 @@ Examples:
     parser.add_argument(
         "--skip-validation",
         action="store_true",
-        help="Skip URL validation step (faster, but may include broken links)",
+        default=True,
+        help="Skip URL validation step (default: True; use --validate-urls to enable)",
+    )
+    parser.add_argument(
+        "--validate-urls",
+        action="store_true",
+        help="Enable download URL HEAD-check validation (slow; checks every skin URL)",
     )
 
     args = parser.parse_args()
+
+    # --validate-urls overrides --skip-validation
+    if args.validate_urls:
+        args.skip_validation = False
 
     # Validate mode
     if args.validate:
@@ -782,9 +834,7 @@ Examples:
         if requests is None:
             log("WARNING: 'requests' package not found, using urllib fallback")
         if BeautifulSoup is None and args.source in ("delta-skins", "all"):
-            log("ERROR: beautifulsoup4 is required for delta-skins scraping.")
-            log("       Install with: pip3 install -r Scripts/requirements-scraper.txt")
-            sys.exit(1)
+            log("  NOTE: beautifulsoup4 not found; using stdlib html.parser fallback for delta-skins")
 
     # Run scrapers
     catalog = run_scrapers(
