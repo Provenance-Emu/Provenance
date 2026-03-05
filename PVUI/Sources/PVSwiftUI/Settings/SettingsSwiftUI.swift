@@ -1619,6 +1619,11 @@ private struct ControllerSection: View {
     var body: some View {
         Group {
             Section(header: Text("Controllers")) {
+                NavigationLink(destination: ControllerGuideView()) {
+                    SettingsRow(title: "Controller Guide",
+                                subtitle: "Supported controllers, pairing steps, and platform notes.",
+                                icon: .sfSymbol("books.vertical.fill"))
+                }
                 NavigationLink(destination: ControllerSettingsView()) {
                     SettingsRow(title: "Controller Selection",
                                 subtitle: "Configure external controller mappings.",

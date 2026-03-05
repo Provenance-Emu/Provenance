@@ -157,6 +157,38 @@ public struct NoConsolesView: SwiftUI.View {
                     .shadow(color: Color.retroPurple.opacity(glowOpacity), radius: 10, x: 0, y: 0)
                 }
 
+                NavigationLink(destination: ControllerGuideView()) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "gamecontroller.fill")
+                            .font(.system(size: 18))
+                        Text("CONTROLLER GUIDE")
+                            .font(.system(size: 18, weight: .bold, design: .monospaced))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 24)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 2
+                            )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .shadow(color: Color.retroBlue.opacity(glowOpacity), radius: 10, x: 0, y: 0)
+                }
+
                 CloudSyncUpsellView(
                     hasCachedCloudData: CloudSyncUpsellView.detectCachedCloudData(),
                     onOpenSettings: {
