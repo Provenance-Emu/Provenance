@@ -202,8 +202,6 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
        default:
             return GL_RGBA;
     }
-
-    return GL_RGBA;
 }
 
 - (GLenum)pixelType {
@@ -211,12 +209,19 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
     switch (pix_fmt)
     {
        case RETRO_PIXEL_FORMAT_XRGB8888:
-            // Each pixel is a packed uint32 — one byte per BGRA component.
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+            // Desktop GL: read BGRA from XRGB8888 as a packed 32-bit int
+            // in host (little-endian) byte order.
+            return GL_UNSIGNED_INT_8_8_8_8_REV;
+#else
+            // GLES: read BGRA as four individual byte components.
             return GL_UNSIGNED_BYTE;
+#endif
+       case RETRO_PIXEL_FORMAT_0RGB1555:
+            return GL_UNSIGNED_SHORT;
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_UNSIGNED_SHORT_5_6_5;
        default:
-            // 0RGB1555 and unknown formats keep the legacy 16-bit type.
             return GL_UNSIGNED_SHORT;
     }
 }
