@@ -15,11 +15,21 @@ import UIKit
 #endif
 import PVEmulatorCore
 
+private let cheatErrorDomain = "com.provenance-emu.cheats"
+
 extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
 
     struct CheatLoadState {
         static var isFirstLoad:Bool = true
     }
+
+    // Pre-compiled regex patterns for cheat code normalization (known-valid patterns).
+    // swiftlint:disable:next force_try
+    private static let cheatNormalizeRegex = try! NSRegularExpression(pattern: "[^a-zA-Z0-9-\\[\\]:+]+|[\\s]+", options: .caseInsensitive)
+    // swiftlint:disable:next force_try
+    private static let cheatMultiPlusRegex = try! NSRegularExpression(pattern: "[+]+|[\\s]+", options: .caseInsensitive)
+    // swiftlint:disable:next force_try
+    private static let cheatLeadTrailPlusRegex = try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: .caseInsensitive)
 
     func getIsFirstLoad() -> Bool {
         return CheatLoadState.isFirstLoad
@@ -30,19 +40,15 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
 
     func setCheatState(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool, completion: @escaping CheatsCompletion) async {
         if let gameWithCheat = core as? GameWithCheat {
-            // convert space to +
-            var regex = try! NSRegularExpression(pattern: "[^a-zA-Z0-9-\\[\\]:+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
-            var range = NSRange(location: 0, length: code.count)
-            var modString = regex.stringByReplacingMatches(in: code.uppercased(), options: [], range: range, withTemplate: "+")
-            // clean +++
-            regex = try! NSRegularExpression(pattern: "[+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
-            range = NSRange(location: 0, length: modString.count)
-            modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "+")
-            // clean + at front and back of code
-            regex = try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
-            range = NSRange(location: 0, length: modString.count)
-            modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
-            NSLog("Formatted CheatCode \(modString)")
+            // Normalize code: replace non-alphanumeric separators with '+', collapse multiples, strip leading/trailing
+            let upper = code.uppercased()
+            var range = NSRange(upper.startIndex..., in: upper)
+            var modString = Self.cheatNormalizeRegex.stringByReplacingMatches(in: upper, range: range, withTemplate: "+")
+            range = NSRange(modString.startIndex..., in: modString)
+            modString = Self.cheatMultiPlusRegex.stringByReplacingMatches(in: modString, range: range, withTemplate: "+")
+            range = NSRange(modString.startIndex..., in: modString)
+            modString = Self.cheatLeadTrailPlusRegex.stringByReplacingMatches(in: modString, range: range, withTemplate: "")
+            DLOG("Formatted CheatCode \(modString)")
             if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, cheatIndex: cheatIndex, enabled:enabled)) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
                 guard let realm = try? await Realm() else {
@@ -63,20 +69,23 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                     if codeType.count > 0 {
                         saveType += "-~-" + codeType
                     }
-                    var cheatsState: PVCheats!
+                    var cheatsState: PVCheats?
                     try realm.write {
-                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: false, file: saveFile)
-                        realm.add(cheatsState)
+                        let cs = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: false, file: saveFile)
+                        realm.add(cs)
+                        cheatsState = cs
                     }
-                    Task {
-                       await LibrarySerializer.storeMetadata(cheatsState, completion: { result in
-                            switch result {
-                            case let .success(url):
-                                ILOG("Serialized cheats state metadata to (\(url.path))")
-                            case let .error(error):
-                                ELOG("Failed to serialize cheats metadata. \(error)")
-                            }
-                        })
+                    if let cheatsState {
+                        Task {
+                            await LibrarySerializer.storeMetadata(cheatsState, completion: { result in
+                                switch result {
+                                case let .success(url):
+                                    ILOG("Serialized cheats state metadata to (\(url.path))")
+                                case let .error(error):
+                                    ELOG("Failed to serialize cheats metadata. \(error)")
+                                }
+                            })
+                        }
                     }
                 } catch {
                     completion(.error(.realmWriteError(error)))
@@ -85,7 +94,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 // All done successfully
                 completion(.success)
             } else {
-                let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
+                let error = NSError(domain: cheatErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
                 completion(.error(.coreCheatsError(error)))
             }
         } else {
@@ -142,7 +151,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 ILOG("Succeeded applying cheat: \(cheat.code ?? "null") \(cheat.type ?? "null") \(cheat.enabled)")
                 completion(.success)
             } else {
-                let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
+                let error = NSError(domain: cheatErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
                 completion(.error(.coreCheatsError(error)))
             }
         } else {
@@ -294,8 +303,8 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 includingPropertiesForKeys:[.contentModificationDateKey]
             ).filter { $0.lastPathComponent.hasSuffix(".svc.json") }
             .sorted(by: {
-                let date0 = try $0.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
-                let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
+                let date0 = try $0.promisedItemResourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
+                let date1 = try $1.promisedItemResourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
                 return date0.compare(date1) == .orderedAscending
             })
 
@@ -304,8 +313,10 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             var cheats:[String:Bool]=[:]
             game.realm?.refresh()
             for code in game.cheats {
-                await cheats[code.file!.url!.lastPathComponent.lowercased()] = true
-                cheats[code.id]=true;
+                if let fileURL = code.file?.url {
+                    cheats[fileURL.lastPathComponent.lowercased()] = true
+                }
+                cheats[code.id] = true
             }
             for url in directoryContents {
                 let file = url.lastPathComponent.lowercased()
@@ -330,12 +341,12 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                             }
                         }
                     } catch {
-                        NSLog(error.localizedDescription)
+                        ELOG("Error recovering cheat: \(error.localizedDescription)")
                     }
                 }
             }
         } catch {
-            print(error)
+            ELOG("Error recovering cheat codes: \(error)")
         }
     }
 }
