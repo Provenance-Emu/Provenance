@@ -21,8 +21,10 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        try driver.deleteAll()
-        driver = nil
+        if let driver {
+            try driver.deleteAll()
+            self.driver = nil
+        }
         try super.tearDownWithError()
     }
 
@@ -39,7 +41,7 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
         let game = Game_Data(title: "Test Game", md5Hash: "abc123")
         try driver.insert(game: game)
 
-        let fetched = driver.game(identifier: game.id)
+        let fetched = driver.game(identifier: game.md5Hash)
         XCTAssertNotNil(fetched)
         XCTAssertEqual(fetched?.title, "Test Game")
         XCTAssertEqual(fetched?.md5Hash, "abc123")
@@ -49,22 +51,22 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
         let game = Game_Data(title: "Metroid", md5Hash: "deadbeef")
         try driver.insert(game: game)
 
-        let fetched = driver.game(identifier: game.id)
-        XCTAssertEqual(fetched?.id, game.id)
+        let fetched = driver.game(identifier: game.md5Hash)
+        XCTAssertEqual(fetched?.md5Hash, game.md5Hash)
     }
 
     func testFetchGameMissing() {
-        let result = driver.game(identifier: "nonexistent-id")
+        let result = driver.game(identifier: "nonexistent-md5hash")
         XCTAssertNil(result)
     }
 
     func testDeleteGame() throws {
         let game = Game_Data(title: "Deletable", md5Hash: "del01")
         try driver.insert(game: game)
-        XCTAssertNotNil(driver.game(identifier: game.id))
+        XCTAssertNotNil(driver.game(identifier: game.md5Hash))
 
         try driver.delete(game: game)
-        XCTAssertNil(driver.game(identifier: game.id))
+        XCTAssertNil(driver.game(identifier: game.md5Hash))
     }
 
     func testAllGames() throws {
@@ -84,7 +86,7 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
         game.title = "Updated"
         try driver.save()
 
-        let fetched = driver.game(identifier: game.id)
+        let fetched = driver.game(identifier: game.md5Hash)
         XCTAssertEqual(fetched?.title, "Updated")
     }
 
@@ -263,7 +265,7 @@ final class SwiftDataDatabaseActorTests: XCTestCase {
         let game = Game_Data(title: "Async Game", md5Hash: "async1")
         try await actor.insert(game: game)
 
-        let fetched = try await actor.game(identifier: game.id)
+        let fetched = try await actor.game(identifier: game.md5Hash)
         XCTAssertNotNil(fetched)
         XCTAssertEqual(fetched?.title, "Async Game")
     }
@@ -296,10 +298,10 @@ final class SwiftDataDatabaseActorTests: XCTestCase {
     func testActorDeleteGame() async throws {
         let game = Game_Data(title: "Will Delete", md5Hash: "wd1")
         try await actor.insert(game: game)
-        XCTAssertNotNil(try await actor.game(identifier: game.id))
+        XCTAssertNotNil(try await actor.game(identifier: game.md5Hash))
 
         try await actor.delete(game: game)
-        XCTAssertNil(try await actor.game(identifier: game.id))
+        XCTAssertNil(try await actor.game(identifier: game.md5Hash))
     }
 }
 #endif

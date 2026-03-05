@@ -34,7 +34,11 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
     // MARK: Storage
 
     public let modelContainer: ModelContainer
-    /// Main-thread model context for synchronous operations.
+    /// Model context for synchronous operations.
+    ///
+    /// - Important: `ModelContext` is not thread-safe. All accesses must happen on the
+    ///   thread that created this driver (typically the main thread for UI code).
+    ///   Use `SwiftDataDatabaseActor` for concurrent/background access.
     public let modelContext: ModelContext
 
     // MARK: Init
@@ -47,8 +51,16 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
             self.modelContainer = container
             self.modelContext = ModelContext(container)
         } catch {
-            ELOG("SwiftDataDatabaseDriver: failed to create ModelContainer — \(error)")
-            fatalError("SwiftDataDatabaseDriver: failed to create ModelContainer: \(error)")
+            ELOG("SwiftDataDatabaseDriver: failed to create persistent ModelContainer — \(error)")
+            // Non-fatal fallback: use an in-memory container so the app can continue.
+            if let inMemoryContainer = try? PVSwiftDataSchema.makePVModelContainer(inMemory: true) {
+                WLOG("SwiftDataDatabaseDriver: falling back to in-memory ModelContainer")
+                self.modelContainer = inMemoryContainer
+                self.modelContext = ModelContext(inMemoryContainer)
+            } else {
+                // All fallback attempts failed; crash with a clear diagnostic.
+                fatalError("SwiftDataDatabaseDriver: unable to create any ModelContainer: \(error)")
+            }
         }
     }
 
@@ -62,10 +74,11 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     // MARK: - DatabaseDriver protocol
 
-    /// Fetch a game by its unique identifier.
+    /// Fetch a game by its MD5 hash identifier, matching the Realm driver semantics.
+    /// - Parameter identifier: The game's `md5Hash` value.
     public func game(identifier: String) -> Game_Data? {
         var descriptor = FetchDescriptor<Game_Data>(
-            predicate: #Predicate { $0.id == identifier }
+            predicate: #Predicate { $0.md5Hash == identifier }
         )
         descriptor.fetchLimit = 1
         do {
@@ -99,28 +112,28 @@ public extension SwiftDataDatabaseDriver {
     // MARK: Insert
 
     /// Insert a new `Game_Data` record and save immediately.
-    func insert(game: Game_Data) throws {
+    public func insert(game: Game_Data) throws {
         modelContext.insert(game)
         try modelContext.save()
         DLOG("SwiftDataDatabaseDriver: inserted game '\(game.title)' (\(game.id))")
     }
 
     /// Insert a new `System_Data` record and save immediately.
-    func insert(system: System_Data) throws {
+    public func insert(system: System_Data) throws {
         modelContext.insert(system)
         try modelContext.save()
         DLOG("SwiftDataDatabaseDriver: inserted system '\(system.name)' (\(system.identifier))")
     }
 
     /// Insert a new `SaveState_Data` record and save immediately.
-    func insert(saveState: SaveState_Data) throws {
+    public func insert(saveState: SaveState_Data) throws {
         modelContext.insert(saveState)
         try modelContext.save()
         DLOG("SwiftDataDatabaseDriver: inserted save state \(saveState.id)")
     }
 
     /// Insert a new `RecentGame_Data` record and save immediately.
-    func insert(recentGame: RecentGame_Data) throws {
+    public func insert(recentGame: RecentGame_Data) throws {
         modelContext.insert(recentGame)
         try modelContext.save()
         DLOG("SwiftDataDatabaseDriver: inserted recent game \(recentGame.id)")
@@ -129,25 +142,25 @@ public extension SwiftDataDatabaseDriver {
     // MARK: Fetch all
 
     /// Fetch all games, optionally sorted by a key path.
-    func allGames(sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = []) throws -> [Game_Data] {
+    public func allGames(sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = []) throws -> [Game_Data] {
         let descriptor = FetchDescriptor<Game_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
 
     /// Fetch all systems, optionally sorted.
-    func allSystems(sortedBy sortDescriptors: [SortDescriptor<System_Data>] = []) throws -> [System_Data] {
+    public func allSystems(sortedBy sortDescriptors: [SortDescriptor<System_Data>] = []) throws -> [System_Data] {
         let descriptor = FetchDescriptor<System_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
 
     /// Fetch all save states, optionally sorted.
-    func allSaveStates(sortedBy sortDescriptors: [SortDescriptor<SaveState_Data>] = []) throws -> [SaveState_Data] {
+    public func allSaveStates(sortedBy sortDescriptors: [SortDescriptor<SaveState_Data>] = []) throws -> [SaveState_Data] {
         let descriptor = FetchDescriptor<SaveState_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
 
     /// Fetch all recent games, optionally sorted.
-    func allRecentGames(sortedBy sortDescriptors: [SortDescriptor<RecentGame_Data>] = []) throws -> [RecentGame_Data] {
+    public func allRecentGames(sortedBy sortDescriptors: [SortDescriptor<RecentGame_Data>] = []) throws -> [RecentGame_Data] {
         let descriptor = FetchDescriptor<RecentGame_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
@@ -155,14 +168,14 @@ public extension SwiftDataDatabaseDriver {
     // MARK: Filtered fetch
 
     /// Fetch games matching a predicate.
-    func games(matching predicate: Predicate<Game_Data>,
+    public func games(matching predicate: Predicate<Game_Data>,
                sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = []) throws -> [Game_Data] {
         let descriptor = FetchDescriptor<Game_Data>(predicate: predicate, sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
 
     /// Fetch games for a given system identifier.
-    func games(forSystemIdentifier systemIdentifier: String) throws -> [Game_Data] {
+    public func games(forSystemIdentifier systemIdentifier: String) throws -> [Game_Data] {
         try games(
             matching: #Predicate { $0.systemIdentifier == systemIdentifier },
             sortedBy: [SortDescriptor(\.title)]
@@ -170,7 +183,7 @@ public extension SwiftDataDatabaseDriver {
     }
 
     /// Fetch favorite games sorted by title.
-    func favoriteGames() throws -> [Game_Data] {
+    public func favoriteGames() throws -> [Game_Data] {
         try games(
             matching: #Predicate { $0.isFavorite == true },
             sortedBy: [SortDescriptor(\.title)]
@@ -178,7 +191,7 @@ public extension SwiftDataDatabaseDriver {
     }
 
     /// Search for games whose title contains `searchText` (case-insensitive).
-    func searchGames(for searchText: String) throws -> [Game_Data] {
+    public func searchGames(for searchText: String) throws -> [Game_Data] {
         if searchText.isEmpty {
             return try allGames(sortedBy: [SortDescriptor(\.title)])
         }
@@ -192,35 +205,35 @@ public extension SwiftDataDatabaseDriver {
     // MARK: Update
 
     /// Save any pending context changes.
-    func save() throws {
+    public func save() throws {
         try modelContext.save()
     }
 
     // MARK: Delete
 
     /// Delete a `Game_Data` record and save.
-    func delete(game: Game_Data) throws {
+    public func delete(game: Game_Data) throws {
         modelContext.delete(game)
         try modelContext.save()
         DLOG("SwiftDataDatabaseDriver: deleted game \(game.id)")
     }
 
     /// Delete a `System_Data` record and save.
-    func delete(system: System_Data) throws {
+    public func delete(system: System_Data) throws {
         modelContext.delete(system)
         try modelContext.save()
         DLOG("SwiftDataDatabaseDriver: deleted system \(system.identifier)")
     }
 
     /// Delete a `SaveState_Data` record and save.
-    func delete(saveState: SaveState_Data) throws {
+    public func delete(saveState: SaveState_Data) throws {
         modelContext.delete(saveState)
         try modelContext.save()
         DLOG("SwiftDataDatabaseDriver: deleted save state \(saveState.id)")
     }
 
     /// Delete a `RecentGame_Data` record and save.
-    func delete(recentGame: RecentGame_Data) throws {
+    public func delete(recentGame: RecentGame_Data) throws {
         modelContext.delete(recentGame)
         try modelContext.save()
         DLOG("SwiftDataDatabaseDriver: deleted recent game \(recentGame.id)")
@@ -229,7 +242,7 @@ public extension SwiftDataDatabaseDriver {
     // MARK: Delete all
 
     /// Delete all objects of all tracked model types and save.
-    func deleteAll() throws {
+    public func deleteAll() throws {
         try modelContext.delete(model: Game_Data.self)
         try modelContext.delete(model: System_Data.self)
         try modelContext.delete(model: SaveState_Data.self)
@@ -251,17 +264,19 @@ public extension SwiftDataDatabaseDriver {
 /// Thread-safe async actor wrapping a `ModelContainer` for concurrent use.
 ///
 /// Use this actor when you need to access the SwiftData store from background tasks
-/// or concurrently from multiple callers.
+/// or concurrently from multiple callers. The API mirrors `SwiftDataDatabaseDriver`
+/// with `async throws` signatures for actor-isolated access.
 @available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
 @ModelActor
 public actor SwiftDataDatabaseActor {
 
     // MARK: - Query
 
-    /// Fetch a game by identifier.
+    /// Fetch a game by its MD5 hash identifier, matching the Realm driver semantics.
+    /// - Parameter identifier: The game's `md5Hash` value.
     public func game(identifier: String) throws -> Game_Data? {
         var descriptor = FetchDescriptor<Game_Data>(
-            predicate: #Predicate { $0.id == identifier }
+            predicate: #Predicate { $0.md5Hash == identifier }
         )
         descriptor.fetchLimit = 1
         return try modelContext.fetch(descriptor).first
@@ -276,16 +291,63 @@ public actor SwiftDataDatabaseActor {
         return try modelContext.fetch(descriptor).first
     }
 
-    /// Fetch all games sorted by title.
-    public func allGames() throws -> [Game_Data] {
-        let descriptor = FetchDescriptor<Game_Data>(sortBy: [SortDescriptor(\.title)])
+    /// Fetch all games, optionally sorted.
+    public func allGames(sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = [SortDescriptor(\.title)]) throws -> [Game_Data] {
+        let descriptor = FetchDescriptor<Game_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
 
-    /// Fetch all systems sorted by name.
-    public func allSystems() throws -> [System_Data] {
-        let descriptor = FetchDescriptor<System_Data>(sortBy: [SortDescriptor(\.name)])
+    /// Fetch all systems, optionally sorted.
+    public func allSystems(sortedBy sortDescriptors: [SortDescriptor<System_Data>] = [SortDescriptor(\.name)]) throws -> [System_Data] {
+        let descriptor = FetchDescriptor<System_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
+    }
+
+    /// Fetch all save states, optionally sorted.
+    public func allSaveStates(sortedBy sortDescriptors: [SortDescriptor<SaveState_Data>] = []) throws -> [SaveState_Data] {
+        let descriptor = FetchDescriptor<SaveState_Data>(sortBy: sortDescriptors)
+        return try modelContext.fetch(descriptor)
+    }
+
+    /// Fetch all recent games, optionally sorted.
+    public func allRecentGames(sortedBy sortDescriptors: [SortDescriptor<RecentGame_Data>] = []) throws -> [RecentGame_Data] {
+        let descriptor = FetchDescriptor<RecentGame_Data>(sortBy: sortDescriptors)
+        return try modelContext.fetch(descriptor)
+    }
+
+    /// Fetch games matching a predicate.
+    public func games(matching predicate: Predicate<Game_Data>,
+                      sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = []) throws -> [Game_Data] {
+        let descriptor = FetchDescriptor<Game_Data>(predicate: predicate, sortBy: sortDescriptors)
+        return try modelContext.fetch(descriptor)
+    }
+
+    /// Fetch games for a given system identifier.
+    public func games(forSystemIdentifier systemIdentifier: String) throws -> [Game_Data] {
+        try games(
+            matching: #Predicate { $0.systemIdentifier == systemIdentifier },
+            sortedBy: [SortDescriptor(\.title)]
+        )
+    }
+
+    /// Fetch favorite games sorted by title.
+    public func favoriteGames() throws -> [Game_Data] {
+        try games(
+            matching: #Predicate { $0.isFavorite == true },
+            sortedBy: [SortDescriptor(\.title)]
+        )
+    }
+
+    /// Search for games whose title contains `searchText` (case-insensitive).
+    public func searchGames(for searchText: String) throws -> [Game_Data] {
+        if searchText.isEmpty {
+            return try allGames()
+        }
+        let lower = searchText.lowercased()
+        return try games(
+            matching: #Predicate { $0.title.lowercased().contains(lower) },
+            sortedBy: [SortDescriptor(\.title)]
+        )
     }
 
     // MARK: - Write
@@ -308,6 +370,12 @@ public actor SwiftDataDatabaseActor {
         try modelContext.save()
     }
 
+    /// Insert and persist a recent-game record.
+    public func insert(recentGame: RecentGame_Data) throws {
+        modelContext.insert(recentGame)
+        try modelContext.save()
+    }
+
     /// Persist any pending changes.
     public func save() throws {
         try modelContext.save()
@@ -327,12 +395,33 @@ public actor SwiftDataDatabaseActor {
         try modelContext.save()
     }
 
-    /// Delete all tracked objects and persist.
+    /// Delete a save-state record and persist.
+    public func delete(saveState: SaveState_Data) throws {
+        modelContext.delete(saveState)
+        try modelContext.save()
+    }
+
+    /// Delete a recent-game record and persist.
+    public func delete(recentGame: RecentGame_Data) throws {
+        modelContext.delete(recentGame)
+        try modelContext.save()
+    }
+
+    /// Delete all objects of all tracked model types and persist.
+    ///
+    /// Covers the same set of model types as `SwiftDataDatabaseDriver.deleteAll()`.
     public func deleteAll() throws {
         try modelContext.delete(model: Game_Data.self)
         try modelContext.delete(model: System_Data.self)
         try modelContext.delete(model: SaveState_Data.self)
         try modelContext.delete(model: RecentGame_Data.self)
+        try modelContext.delete(model: Core_Data.self)
+        try modelContext.delete(model: BIOS_Data.self)
+        try modelContext.delete(model: Cheats_Data.self)
+        try modelContext.delete(model: File_Data.self)
+        try modelContext.delete(model: ImageFile_Data.self)
+        try modelContext.delete(model: Library_Data.self)
+        try modelContext.delete(model: User_Data.self)
         try modelContext.save()
     }
 }
