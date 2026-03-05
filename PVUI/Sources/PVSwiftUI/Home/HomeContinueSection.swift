@@ -1146,11 +1146,10 @@ extension ContinueItemModel {
         let systemIdentifier = state.game?.systemIdentifier
 
         // Resolve the artwork URL from the partial path stored in ImageFile_Data.
-        // The full URL is constructed by appending the partial path to the saves directory.
+        // The full URL is constructed by appending the partial path to the shared save‑states directory.
         let imageURL: URL? = state.image.flatMap { img -> URL? in
             guard !img.partialPath.isEmpty else { return nil }
-            let savesDir = URL.documentsDirectory
-                .appendingPathComponent("saves", isDirectory: true)
+            let savesDir = Paths.saveSavesPath
             return savesDir.appendingPathComponent(img.partialPath)
         }
 
