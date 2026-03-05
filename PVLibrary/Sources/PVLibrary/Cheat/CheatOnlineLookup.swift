@@ -75,7 +75,6 @@ public actor CheatOnlineLookup {
         // 2. Disk cache
         if let diskHit = loadDiskCache(forKey: key) {
             DLOG("CheatOnlineLookup: disk cache hit for '\(title)'")
-            memoryCache[key] = (Date(), diskHit)
             return diskHit
         }
 
