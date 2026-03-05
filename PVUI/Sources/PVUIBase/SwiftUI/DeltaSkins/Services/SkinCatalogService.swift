@@ -141,6 +141,14 @@ public actor SkinCatalogService {
                 return diskCatalog
             }
 
+            // Fall back to bundled seed catalog
+            if let bundledCatalog = loadBundledSeed() {
+                WLOG("SkinCatalogService: Falling back to bundled seed catalog (\(bundledCatalog.skins.count) skins)")
+                cachedCatalog = bundledCatalog
+                lastFetchDate = Date()
+                return bundledCatalog
+            }
+
             // No cache available at all
             throw SkinCatalogError.networkError(error)
         }
@@ -354,13 +362,33 @@ public actor SkinCatalogService {
         try? FileManager.default.removeItem(at: path)
     }
 
+    // MARK: - Bundled Seed Catalog
+
+    /// Load the bundled seed catalog from the app bundle as the ultimate fallback.
+    private func loadBundledSeed() -> SkinCatalog? {
+        guard let url = Bundle.module.url(forResource: "catalog_seed", withExtension: "json") else {
+            DLOG("SkinCatalogService: No bundled catalog_seed.json found")
+            return nil
+        }
+
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = Self.makeDecoder()
+            let catalog = try decoder.decode(SkinCatalog.self, from: data)
+            DLOG("SkinCatalogService: Loaded \(catalog.skins.count) skins from bundled seed")
+            return catalog
+        } catch {
+            ELOG("SkinCatalogService: Failed to load bundled seed: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
     // MARK: - JSON Coding
 
     /// Create a JSONDecoder configured with ISO 8601 date strategy.
     private static func makeDecoder() -> JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }
 
@@ -368,7 +396,6 @@ public actor SkinCatalogService {
     private static func makeEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        encoder.keyEncodingStrategy = .convertToSnakeCase
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         return encoder
     }

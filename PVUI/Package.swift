@@ -127,6 +127,7 @@ let package = Package(
                 .process("Resources/SystemIcons.xcassets"),
                 .process("Resources/Assets.xcassets"),
                 .copy("Resources/PrivacyInfo.xcprivacy"),
+                .copy("Resources/catalog_seed.json"),
             ],
             cSettings: [
                 .define("GL_SILENCE_DEPRECATION", to: "1"),

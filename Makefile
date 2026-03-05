@@ -219,7 +219,8 @@ update-skin-catalog:
 	/tmp/scraper-venv/bin/python3 Scripts/scrape_skin_catalog.py \
 		--source all \
 		--skip-validation \
-		--output PVLookup/Sources/PVLookup/Resources/skin_catalog.json
+		--output Scripts/catalog_seed.json
+	cp Scripts/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json
 
 ## tag and release to github
 release: | _var_VERSION
