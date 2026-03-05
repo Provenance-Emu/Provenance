@@ -16,13 +16,15 @@ import Foundation
 /// for filtered subsets.
 ///
 /// ### Why modern controllers are preferred
-/// Modern controllers (DualSense, Xbox Wireless, Switch Pro) expose a full
-/// button layout including two analog sticks, two analog triggers (L2/R2),
-/// four face buttons, two shoulder buttons, Start/Select equivalents, and
-/// clickable thumbsticks (L3/R3). This maps 1:1 with many 5th- and 6th-
-/// generation console layouts and enables accurate emulation of games that
-/// require analog input. They also benefit from lower Bluetooth latency and
-/// richer haptic feedback compared to older MFi or iCade accessories.
+/// Modern controllers like DualSense and Xbox Wireless expose a full button
+/// layout including two analog sticks, analog triggers (L2/R2), four face
+/// buttons, two shoulder buttons, Start/Select equivalents, and clickable
+/// thumbsticks (L3/R3). The Nintendo Switch Pro Controller offers a similar
+/// layout but with digital ZL/ZR triggers instead of analog. This maps 1:1
+/// with many 5th- and 6th-generation console layouts and enables accurate
+/// emulation of games that require analog input. They also benefit from lower
+/// Bluetooth latency and richer haptic feedback compared to older MFi or
+/// iCade accessories.
 ///
 /// ### Siri Remote limitations
 /// The Siri Remote (1st–3rd generation) has only a directional-pad / touch
