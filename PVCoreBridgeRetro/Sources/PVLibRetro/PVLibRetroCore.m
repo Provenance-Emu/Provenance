@@ -2472,7 +2472,10 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
              return GL_UNSIGNED_SHORT_5_6_5;
 #endif
        case RETRO_PIXEL_FORMAT_XRGB8888:
-            return GL_RGBA8; // GL_RGBA8
+            // XRGB8888 stores pixels as 32-bit little-endian values:
+            // in memory the bytes are B, G, R, X — use GL_BGRA so the
+            // Metal/GL texture loader interprets channels correctly.
+            return GL_BGRA;
        default:
             return GL_RGBA;
     }
@@ -2495,14 +2498,27 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
        default:
             return GL_RGBA;
     }
-
-    return GL_RGBA;
 }
 
 - (GLenum)pixelType {
-    // GL_UNSIGNED_SHORT_5_6_5
-    // GL_UNSIGNED_BYTE
-    return GL_UNSIGNED_SHORT;
+    // Return the correct GL pixel type for each libretro pixel format.
+    switch (pix_fmt)
+    {
+       case RETRO_PIXEL_FORMAT_XRGB8888:
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+            // Desktop GL: read BGRA from XRGB8888 as a packed 32-bit int
+            // in host (little-endian) byte order.
+            return GL_UNSIGNED_INT_8_8_8_8_REV;
+#else
+            // GLES: read BGRA as four individual byte components.
+            return GL_UNSIGNED_BYTE;
+#endif
+       case RETRO_PIXEL_FORMAT_RGB565:
+            return GL_UNSIGNED_SHORT_5_6_5;
+       default:
+            // Covers RETRO_PIXEL_FORMAT_0RGB1555 and unknown formats.
+            return GL_UNSIGNED_SHORT;
+    }
 }
 
 # pragma mark - Audio
