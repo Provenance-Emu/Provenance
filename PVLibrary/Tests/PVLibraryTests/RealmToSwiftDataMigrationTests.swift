@@ -20,19 +20,10 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
         try PVSwiftDataSchema.makePVModelContainer(inMemory: true)
     }
 
-    /// Creates a fresh in-memory Realm with a random identifier so tests are isolated.
-    private func makeInMemoryRealm() throws -> Realm {
-        let config = Realm.Configuration(
-            inMemoryIdentifier: UUID().uuidString,
-            schemaVersion: schemaVersion
-        )
-        return try Realm(configuration: config)
-    }
-
     // MARK: - Migration flag tests
 
     func testMigrationFlagDefaultFalse() async throws {
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
         let container = try makeInMemoryContainer()
         let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
         let completed = await migrator.isMigrationCompleted
@@ -40,7 +31,7 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
     }
 
     func testResetMigrationFlag() async throws {
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
         defaults.set(true, forKey: "PVRealmToSwiftDataMigrationCompleted")
         let container = try makeInMemoryContainer()
         let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
@@ -55,7 +46,7 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
     // MARK: - Empty Realm migration (no data)
 
     func testMigrationWithEmptyRealm() async throws {
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
         let container = try makeInMemoryContainer()
         let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
 
@@ -70,7 +61,7 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
     // MARK: - Idempotency
 
     func testMigrationIsIdempotent() async throws {
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
         let container = try makeInMemoryContainer()
         let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
 
@@ -233,7 +224,7 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
     // MARK: - Progress reporting
 
     func testProgressHandlerIsCalled() async throws {
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
         let container = try makeInMemoryContainer()
         let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
 

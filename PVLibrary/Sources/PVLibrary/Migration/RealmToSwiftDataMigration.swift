@@ -43,7 +43,6 @@ public enum RealmToSwiftDataMigrationError: Error, LocalizedError {
     case realmUnavailable(underlying: Error)
     case swiftDataContextError(underlying: Error)
     case countMismatch(entity: String, realm: Int, swiftData: Int)
-    case alreadyMigrated
 
     public var errorDescription: String? {
         switch self {
@@ -53,8 +52,6 @@ public enum RealmToSwiftDataMigrationError: Error, LocalizedError {
             return "SwiftData context error: \(e.localizedDescription)"
         case .countMismatch(let entity, let realm, let swiftData):
             return "Count mismatch for \(entity): Realm had \(realm) records but SwiftData has \(swiftData)"
-        case .alreadyMigrated:
-            return "Migration has already been completed."
         }
     }
 }
@@ -186,7 +183,7 @@ public actor RealmToSwiftDataMigration {
         }
 
         // --- Validation ---
-        try validateCounts(snapshot: snapshot, context: context)
+        validateCounts(snapshot: snapshot, context: context)
 
         ILOG("[Migration] All phases complete.")
     }
@@ -650,7 +647,7 @@ public actor RealmToSwiftDataMigration {
 
     // MARK: - Validation
 
-    private func validateCounts(snapshot: RealmSnapshot, context: ModelContext) throws {
+    private func validateCounts(snapshot: RealmSnapshot, context: ModelContext) {
         let realmCounts: [(String, Int)] = [
             ("Game",       snapshot.games.count),
             ("System",     snapshot.systems.count),
