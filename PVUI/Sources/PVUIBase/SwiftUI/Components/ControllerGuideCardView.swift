@@ -20,12 +20,14 @@ public struct ControllerGuideCardView: View {
     public init() {}
 
     public var body: some View {
-        if !dismissed {
-            cardContent
-                .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                .sheet(isPresented: $showDetail) {
-                    ControllerGuideDetailView()
-                }
+        Group {
+            if !dismissed {
+                cardContent
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
+            }
+        }
+        .sheet(isPresented: $showDetail) {
+            ControllerGuideDetailView()
         }
     }
 

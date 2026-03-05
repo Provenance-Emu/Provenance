@@ -62,7 +62,7 @@ extension ControllerGuideInfo {
         .xboxOne,
         .nintendoSwitch,
         .steelSeriesNimbus,
-        .raizerKishi,
+        .razerKishi,
         .backbone,
         .snackboxMicro,
         .keyboard,
@@ -164,7 +164,7 @@ extension ControllerGuideInfo {
         ]
     )
 
-    public static let raizerKishi = ControllerGuideInfo(
+    public static let razerKishi = ControllerGuideInfo(
         id: "kishi",
         name: "Razer Kishi",
         symbolName: "iphone",
