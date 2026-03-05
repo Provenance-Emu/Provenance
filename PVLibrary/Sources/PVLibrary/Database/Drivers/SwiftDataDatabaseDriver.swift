@@ -41,7 +41,7 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     /// Designated initialiser. The `database` parameter is ignored — SwiftData manages
     /// its own container independently from Realm.
-    public required init(database: RomDatabase) {
+    public required init(database _: RomDatabase) {
         do {
             let container = try PVSwiftDataSchema.makePVModelContainer()
             self.modelContainer = container
@@ -172,7 +172,7 @@ public extension SwiftDataDatabaseDriver {
     /// Fetch favorite games sorted by title.
     func favoriteGames() throws -> [Game_Data] {
         try games(
-            matching: #Predicate { $0.isFavorite == true },
+            matching: #Predicate { $0.isFavorite },
             sortedBy: [SortDescriptor(\.title)]
         )
     }
@@ -182,9 +182,8 @@ public extension SwiftDataDatabaseDriver {
         if searchText.isEmpty {
             return try allGames(sortedBy: [SortDescriptor(\.title)])
         }
-        let lower = searchText.lowercased()
         return try games(
-            matching: #Predicate { $0.title.lowercased().contains(lower) },
+            matching: #Predicate { $0.title.localizedStandardContains(searchText) },
             sortedBy: [SortDescriptor(\.title)]
         )
     }
@@ -333,6 +332,13 @@ public actor SwiftDataDatabaseActor {
         try modelContext.delete(model: System_Data.self)
         try modelContext.delete(model: SaveState_Data.self)
         try modelContext.delete(model: RecentGame_Data.self)
+        try modelContext.delete(model: Core_Data.self)
+        try modelContext.delete(model: BIOS_Data.self)
+        try modelContext.delete(model: Cheats_Data.self)
+        try modelContext.delete(model: File_Data.self)
+        try modelContext.delete(model: ImageFile_Data.self)
+        try modelContext.delete(model: Library_Data.self)
+        try modelContext.delete(model: User_Data.self)
         try modelContext.save()
     }
 }
