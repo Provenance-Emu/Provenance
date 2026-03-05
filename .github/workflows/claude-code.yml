@@ -31,6 +31,7 @@ jobs:
     # 3. Issues are opened with 'agent-work' label
     # 4. /claude-fix in a PR comment (trigger fix of all review comments)
     # 5. A human reviewer requests changes on an [Agent] PR (auto-fix)
+    # 6. Copilot reviews an [Agent] PR (auto-fix review comments)
     if: |
       (github.event_name == 'issue_comment' &&
        contains(github.event.comment.body, '@claude')) ||
@@ -46,7 +47,10 @@ jobs:
       (github.event_name == 'pull_request_review' &&
        github.event.review.state == 'changes_requested' &&
        startsWith(github.event.pull_request.title, '[Agent]') &&
-       github.event.review.user.type != 'Bot')
+       github.event.review.user.type != 'Bot') ||
+      (github.event_name == 'pull_request_review' &&
+       startsWith(github.event.pull_request.title, '[Agent]') &&
+       github.event.review.user.login == 'copilot-pull-request-reviewer')
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -75,7 +79,8 @@ jobs:
             - Issue title: ${{ github.event.issue.title || github.event.pull_request.title }}
 
             ## Trigger Context
-            ${{ github.event_name == 'pull_request_review' && 'A reviewer requested changes on this PR. Read all review comments and fix them.' || '' }}
+            ${{ github.event_name == 'pull_request_review' && github.event.review.user.login == 'copilot-pull-request-reviewer' && 'Copilot left review comments on this Agent PR. Read ALL review comments from Copilot, address each one with code fixes, commit and push. After pushing, re-request review from Copilot by running: gh api repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/requested_reviewers -f "reviewers[]=copilot-pull-request-reviewer"' || '' }}
+            ${{ github.event_name == 'pull_request_review' && github.event.review.user.login != 'copilot-pull-request-reviewer' && 'A reviewer requested changes on this PR. Read all review comments and fix them.' || '' }}
             ${{ contains(github.event.comment.body || '', '/claude-fix') && 'Fix all pending review comments on this PR. Read the full review, address each comment, commit fixes, and push.' || '' }}
 
             ## User Request
