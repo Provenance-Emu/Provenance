@@ -690,7 +690,9 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 -(BOOL)supportsCheatCode {
-    return YES;
+    // Stella's libretro core implements retro_cheat_set/retro_cheat_reset as empty no-ops.
+    // Cheat support is disabled until those hooks are implemented upstream.
+    return NO;
 }
 
 - (BOOL)setCheatWithCode:(NSString * _Nonnull)code type:(NSString * _Nonnull)type codeType:(NSString * _Nonnull)codeType cheatIndex:(uint8_t)cheatIndex enabled:(BOOL)enabled {

@@ -24,7 +24,9 @@ extension PVStellaGameCore: GameWithCheat {
     }
 
     @objc public var supportsCheatCode: Bool {
-        return true
+        // Stella's libretro core implements retro_cheat_set/retro_cheat_reset as empty no-ops.
+        // Cheat support is disabled until those hooks are implemented upstream.
+        return false
     }
 
     public var cheatCodeTypes: [String] {
