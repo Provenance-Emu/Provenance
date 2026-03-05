@@ -12,7 +12,7 @@ import SwiftData
 public class Game_Data {
     public var title: String = ""
 
-    @Attribute(.unique) public var id: String = NSUUID().uuidString
+    @Attribute(.unique) public var id: String = UUID().uuidString
 
     // TODO: This is a 'partial path' meaning it's something like {system id}.filename
     // We should make this an absolute path but would need a migration and modifying
@@ -103,7 +103,7 @@ public class Game_Data {
         }
     }
 
-    public init(title: String = "", id: String = NSUUID().uuidString as String,
+    public init(title: String = "", id: String = UUID().uuidString,
                 romPath: String = "", file: File_Data? = nil,
                 relatedFiles: [File_Data] = [], customArtworkURL: String = "",
                 originalArtworkURL: String = "", originalArtworkFile: ImageFile_Data? = nil,
