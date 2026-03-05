@@ -43,7 +43,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             regex = try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
             range = NSRange(location: 0, length: modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
-            NSLog("Formatted CheatCode \(modString)")
+            DLOG("Formatted CheatCode \(modString)")
             if gameWithCheat.setCheat(code: modString, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
                 guard let realm = try? await Realm() else {
