@@ -40,7 +40,6 @@ public struct SkinCatalogBrowserView: View {
 
     // MARK: - Environment
 
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     // MARK: - Init
@@ -107,16 +106,16 @@ public struct SkinCatalogBrowserView: View {
             }
             Task { await loadCatalog() }
         }
-        .onChange(of: searchText) { _ in
+        .onChange(of: searchText) { _, _ in
             Task { await applyFilters() }
         }
-        .onChange(of: selectedSystem) { _ in
+        .onChange(of: selectedSystem) { _, _ in
             Task { await applyFilters() }
         }
-        .onChange(of: selectedDevice) { _ in
+        .onChange(of: selectedDevice) { _, _ in
             Task { await applyFilters() }
         }
-        .onChange(of: sortOption) { _ in
+        .onChange(of: sortOption) { _, _ in
             Task { await applyFilters() }
         }
     }

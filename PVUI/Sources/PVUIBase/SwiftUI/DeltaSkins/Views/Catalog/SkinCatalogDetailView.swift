@@ -23,7 +23,6 @@ public struct SkinCatalogDetailView: View {
     @State private var downloadState: DownloadState = .idle
     @State private var screenshotIndex = 0
     @State private var glowIntensity: CGFloat = 0.5
-    @State private var showingSourceLink = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -269,7 +268,7 @@ public struct SkinCatalogDetailView: View {
         }
         .padding(.horizontal, 20)
         .padding(.top, 20)
-        .animation(.easeInOut(duration: 0.3), value: downloadState == .idle)
+        .animation(.easeInOut(duration: 0.3), value: downloadState)
     }
 
     private var downloadButton: some View {
@@ -520,17 +519,32 @@ public struct SkinCatalogDetailView: View {
         let fileHandle = try FileHandle(forWritingTo: tempURL)
         defer { try? fileHandle.close() }
 
+        // Buffer writes to avoid per-byte syscall overhead
+        let bufferSize = 65_536
+        var buffer: [UInt8] = []
+        buffer.reserveCapacity(bufferSize)
+
         for try await byte in asyncBytes {
-            try fileHandle.write(contentsOf: [byte])
+            buffer.append(byte)
             downloadedBytes += 1
 
-            // Update progress periodically (every 4KB)
-            if downloadedBytes % 4096 == 0 {
+            if buffer.count >= bufferSize {
+                try fileHandle.write(contentsOf: buffer)
+                buffer.removeAll(keepingCapacity: true)
+            }
+
+            // Update progress periodically (every 64KB)
+            if downloadedBytes % 65_536 == 0 {
                 let progress = totalBytes > 0 ? Double(downloadedBytes) / Double(totalBytes) : 0
                 await MainActor.run {
                     downloadState = .downloading(progress: progress)
                 }
             }
+        }
+
+        // Flush remaining buffered bytes
+        if !buffer.isEmpty {
+            try fileHandle.write(contentsOf: buffer)
         }
 
         // Mark as 100%
