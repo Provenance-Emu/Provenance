@@ -297,8 +297,7 @@ public final class RealmConfiguration {
                 // Previously, codeType was appended to the `type` field using a "-~-" separator
                 // (e.g. "Infinite Lives-~-Game Shark"). Split existing records and populate the new field.
                 migration.enumerateObjects(ofType: PVCheats.className()) { oldObject, newObject in
-                    let combinedType = oldObject?["type"] as? String
-                    guard combinedType?.contains("-~-") == true else {
+                    guard let combinedType = oldObject?["type"] as? String, combinedType.contains("-~-") else {
                         newObject?["codeType"] = ""
                         return
                     }
