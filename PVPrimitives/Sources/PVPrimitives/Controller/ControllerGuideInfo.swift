@@ -42,7 +42,7 @@ public enum ControllerType: String, CaseIterable, Codable, Sendable {
 // MARK: - Supported Platform
 
 /// The Apple platform a controller can be used on.
-public struct ControllerPlatformSupport: OptionSet, Codable, Sendable {
+public struct ControllerPlatformSupport: OptionSet, Codable, Hashable, Sendable {
     public let rawValue: Int
     public init(rawValue: Int) { self.rawValue = rawValue }
 
@@ -57,12 +57,18 @@ public struct ControllerPlatformSupport: OptionSet, Codable, Sendable {
 ///
 /// This is a value-type data model intended for the Controller Guide UI. It is
 /// not persisted to disk – populate it from `ControllerCatalog.all`.
-public struct ControllerGuideInfo: Identifiable, Equatable, Sendable {
+public struct ControllerGuideInfo: Identifiable, Hashable, Sendable {
 
     // MARK: Properties
 
-    /// Stable identifier derived from the controller name
-    public var id: String { name.lowercased().replacingOccurrences(of: " ", with: "-") }
+    /// Stable identifier derived from the controller name.
+    /// Lowercased, with all non-alphanumeric characters replaced by hyphens.
+    public var id: String {
+        name.lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+            .joined(separator: "-")
+    }
 
     /// Full marketing name (e.g. "DualSense Wireless Controller")
     public let name: String

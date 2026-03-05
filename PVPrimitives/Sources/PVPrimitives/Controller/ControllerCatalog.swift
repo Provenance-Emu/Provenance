@@ -234,9 +234,8 @@ public extension ControllerCatalog {
     }
 
     /// Controllers grouped by type
-    static var byType: [ControllerType: [ControllerGuideInfo]] {
+    static let byType: [ControllerType: [ControllerGuideInfo]] =
         Dictionary(grouping: all, by: { $0.controllerType })
-    }
 
     /// Lookup a controller by its stable `id`
     static func controller(withID id: String) -> ControllerGuideInfo? {
