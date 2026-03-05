@@ -577,7 +577,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 {
     [_enabledCheats removeAllObjects];
     System::SetCheatList(nullptr);
-    NSLog(@"DuckStation resetCheatCodes: cleared all cheats");
+    ILOG(@"DuckStation resetCheatCodes: cleared all cheats");
 }
 
 - (NSUInteger)discCount
