@@ -46,6 +46,7 @@ public enum ControllerCatalog {
         mfiStandard,
         siriRemote,
         iCade,
+        keyboard,
     ]
 
     // MARK: - Individual entries
@@ -213,6 +214,28 @@ public enum ControllerCatalog {
         ],
         isRecommended: false,
         imageAssetName: "controller-icade"
+    )
+
+    /// Bluetooth or USB keyboard (legacy/alternative input)
+    public static let keyboard = ControllerGuideInfo(
+        name: "Bluetooth / USB Keyboard",
+        controllerType: .keyboard,
+        supportedPlatforms: .all,
+        pairingInstructions: [
+            "Put the keyboard in Bluetooth pairing mode (or connect via USB adapter).",
+            "On iPhone/iPad open Settings > Bluetooth; on Apple TV open Settings > Remotes and Devices > Bluetooth.",
+            "Select the keyboard name when it appears.",
+            "In Provenance open Settings > Controllers to view the key mapping.",
+        ],
+        featureNotes: [
+            "WASD or arrow keys for directional input; letter keys map to game buttons.",
+            "No analog sticks or triggers — digital key input only.",
+            "Ideal for puzzle, strategy, and text-heavy games.",
+            "Works on iPad with Smart Keyboard Folio (no pairing needed).",
+            "Key mappings are configurable in Settings > Controllers.",
+        ],
+        isRecommended: false,
+        imageAssetName: nil
     )
 }
 
