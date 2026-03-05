@@ -297,15 +297,14 @@ public final class RealmConfiguration {
                 // Previously, codeType was appended to the `type` field using a "-~-" separator
                 // (e.g. "Infinite Lives-~-Game Shark"). Split existing records and populate the new field.
                 migration.enumerateObjects(ofType: PVCheats.className()) { oldObject, newObject in
-                    guard let combinedType = oldObject?["type"] as? String, combinedType.contains("-~-") else {
+                    let combinedType = oldObject?["type"] as? String
+                    guard combinedType?.contains("-~-") == true else {
                         newObject?["codeType"] = ""
                         return
                     }
-                    let parts = combinedType.components(separatedBy: "-~-")
-                    newObject?["type"] = parts[0]
-                    // parts always has ≥ 2 elements here because the guard confirmed "-~-" is present.
-                    // Join any extra segments (should not occur in practice) back into codeType.
-                    newObject?["codeType"] = parts.dropFirst().joined(separator: "-~-")
+                    let split = PVCheats.splitLegacyCombinedType(combinedType)
+                    newObject?["type"] = split.type
+                    newObject?["codeType"] = split.codeType
                 }
                 ILOG("Migration to version 24 complete. (Split PVCheats.type into type + codeType)")
             }

@@ -221,6 +221,7 @@ let package = Package(
             name: "PVLibraryTests",
             dependencies: [
                 "PVLibrary",
+                "PVRealm",
                 "PVLookup",
                 "PVPrimitives",
                 .product(name: "RealmSwift", package: "realm-swift"),
