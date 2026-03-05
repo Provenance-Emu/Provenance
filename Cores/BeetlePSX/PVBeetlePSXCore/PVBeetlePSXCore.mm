@@ -66,7 +66,8 @@
 //	NSString *batterySavesDirectory = self.batterySavesPath;
 //	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
 //                              withIntermediateDirectories:YES
-//                                               attributes:NULL];
+//                                               attributes:nil
+//                                                    error:nil];
 //
 //    return YES;
 //}
