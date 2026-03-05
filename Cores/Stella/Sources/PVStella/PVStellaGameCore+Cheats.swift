@@ -13,7 +13,7 @@ import PVStellaBridge
 
 extension PVStellaGameCore: GameWithCheat {
 
-    public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
+    public func setCheat(code: String, type: String, codeType _: String, cheatIndex _: UInt8, enabled: Bool) -> Bool {
         do {
             try _bridge.setCheat(code, setType: type, setEnabled: enabled)
             return true
