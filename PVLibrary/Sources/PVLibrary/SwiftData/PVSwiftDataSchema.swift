@@ -95,7 +95,7 @@ public enum PVSwiftDataSchema {
     /// - Returns: A `ModelContainer` configured with CloudKit sync.
     /// - Throws: If the container cannot be created (e.g. entitlement missing).
     public static func makePVModelContainerWithCloudKit(
-        cloudKitContainerIdentifier: String = "iCloud.org.provenance-emu.provenance",
+        cloudKitContainerIdentifier: String = CloudKitModelContainerConfiguration.containerIdentifier,
         inMemory: Bool = false
     ) throws -> ModelContainer {
         let config = ModelConfiguration(
