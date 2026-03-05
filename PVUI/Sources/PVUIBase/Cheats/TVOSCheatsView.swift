@@ -1046,11 +1046,7 @@ struct TVOSCheatSearchView: View {
                                 Task { await searchOnline() }
                             } label: {
                                 HStack(spacing: 12) {
-                                    if isOnlineSearching {
-                                        ProgressView().tint(.white)
-                                    } else {
-                                        Image(systemName: "globe")
-                                    }
+                                    Image(systemName: "globe")
                                     Text("SEARCH ONLINE")
                                 }
                                 .font(.system(size: 26, weight: .bold))
@@ -1142,6 +1138,7 @@ struct TVOSCheatSearchView: View {
     private func searchOnline() async {
         guard let title = gameTitle, !title.isEmpty else { return }
         isOnlineSearching = true
+        defer { isOnlineSearching = false }
         DLOG("TVOSCheatSearch: online lookup for title='\(title)'")
         do {
             let online = try await CheatDatabase.shared.searchCheatsOnline(
@@ -1153,11 +1150,11 @@ struct TVOSCheatSearchView: View {
             for entry in online where seen.insert(entry.cheatCode.lowercased()).inserted {
                 results.append(entry)
             }
+            hasSearchedOnline = true
         } catch {
             ELOG("TVOSCheatSearch online error: \(error)")
+            errorMessage = error.localizedDescription
         }
-        hasSearchedOnline = true
-        isOnlineSearching = false
     }
 }
 

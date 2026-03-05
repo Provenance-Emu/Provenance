@@ -41,8 +41,10 @@ public actor CheatOnlineLookup {
 
     // MARK: - State
 
-    /// In-memory LRU-style cache keyed by `makeCacheKey`.
+    /// In-memory cache keyed by `makeCacheKey`. Bounded to `maxMemoryCacheEntries`.
     private var memoryCache: [String: (fetchedAt: Date, entries: [CheatDatabaseEntry])] = [:]
+    /// Maximum number of entries kept in the in-memory cache before oldest are evicted.
+    private static let maxMemoryCacheEntries = 50
     /// Timestamp of the last GitHub API directory-listing request (for rate limiting).
     private var lastAPIRequestDate: Date?
 
@@ -82,6 +84,11 @@ public actor CheatOnlineLookup {
         let results = try await fetchOnline(title: title, systemIdentifier: systemIdentifier)
 
         // Cache even empty results so we don't hammer the API for unknown games
+        // Evict oldest entries when we exceed the capacity limit
+        if memoryCache.count >= Self.maxMemoryCacheEntries {
+            let oldest = memoryCache.min { $0.value.fetchedAt < $1.value.fetchedAt }?.key
+            if let oldest { memoryCache.removeValue(forKey: oldest) }
+        }
         memoryCache[key] = (Date(), results)
         saveDiskCache(results, forKey: key)
 
@@ -91,26 +98,48 @@ public actor CheatOnlineLookup {
 
     // MARK: - Fetch Logic
 
+    private enum LookupError: LocalizedError {
+        case missingSystemIdentifier
+        var errorDescription: String? {
+            switch self {
+            case .missingSystemIdentifier:
+                return "System identifier is required for online cheat lookup."
+            }
+        }
+    }
+
     private func fetchOnline(title: String, systemIdentifier: String?) async throws -> [CheatDatabaseEntry] {
         guard let system = systemIdentifier, !system.isEmpty else {
-            // Without a system identifier we can't construct a useful path
-            return []
+            throw LookupError.missingSystemIdentifier
         }
+
+        var lastError: Error?
 
         // Strategy 1: Try direct raw URL using sanitised title (no API quota consumed)
         let sanitised = sanitiseFilename(title)
-        if let entries = try? await fetchRawCht(system: system, filename: sanitised),
-           !entries.isEmpty {
-            DLOG("CheatOnlineLookup: direct raw URL hit for '\(title)'")
-            return entries
+        do {
+            if let entries = try await fetchRawCht(system: system, filename: sanitised),
+               !entries.isEmpty {
+                DLOG("CheatOnlineLookup: direct raw URL hit for '\(title)'")
+                return entries
+            }
+        } catch {
+            lastError = error
         }
 
         // Strategy 2: Use GitHub directory-listing API to fuzzy-match a filename
-        if let entries = try? await fetchViaDirectoryListing(title: title, system: system),
-           !entries.isEmpty {
-            return entries
+        do {
+            if let entries = try await fetchViaDirectoryListing(title: title, system: system),
+               !entries.isEmpty {
+                return entries
+            }
+        } catch {
+            lastError = error
         }
 
+        if let error = lastError {
+            throw error
+        }
         return []
     }
 
@@ -221,7 +250,10 @@ public actor CheatOnlineLookup {
             }
         }
 
-        return descs.keys.sorted().compactMap { n -> CheatDatabaseEntry? in
+        // Iterate the union of desc and code indices so entries with a code but no description are
+        // still included (and vice versa), rather than silently dropping them.
+        let allIndices = Set(descs.keys).union(codes.keys).sorted()
+        return allIndices.compactMap { n -> CheatDatabaseEntry? in
             guard let code = codes[n], !code.isEmpty else { return nil }
             let desc = descs[n] ?? "Cheat \(n)"
             return CheatDatabaseEntry(
@@ -293,20 +325,36 @@ public actor CheatOnlineLookup {
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    /// Sørensen–Dice similarity coefficient over character bigrams.
+    /// Sørensen–Dice similarity coefficient over character bigrams (multiset).
+    ///
+    /// Uses frequency dictionaries so repeated bigrams are counted correctly,
+    /// matching the standard Dice coefficient definition for multisets.
     private func diceSimilarity(_ a: String, _ b: String) -> Double {
         if a == b { return 1.0 }
         let aGrams = bigrams(a)
         let bGrams = bigrams(b)
         guard !aGrams.isEmpty && !bGrams.isEmpty else { return 0 }
-        let intersection = aGrams.intersection(bGrams).count
-        return 2.0 * Double(intersection) / Double(aGrams.count + bGrams.count)
+        var intersectionCount = 0
+        for (gram, aCount) in aGrams {
+            if let bCount = bGrams[gram] {
+                intersectionCount += min(aCount, bCount)
+            }
+        }
+        let aTotal = aGrams.values.reduce(0, +)
+        let bTotal = bGrams.values.reduce(0, +)
+        return 2.0 * Double(intersectionCount) / Double(aTotal + bTotal)
     }
 
-    private func bigrams(_ s: String) -> Set<String> {
+    /// Returns a frequency dictionary of all character bigrams in `s`.
+    private func bigrams(_ s: String) -> [String: Int] {
         let chars = Array(s)
-        guard chars.count >= 2 else { return [] }
-        return Set((0..<chars.count - 1).map { String([chars[$0], chars[$0 + 1]]) })
+        guard chars.count >= 2 else { return [:] }
+        var frequencies: [String: Int] = [:]
+        for i in 0..<(chars.count - 1) {
+            let gram = String([chars[i], chars[i + 1]])
+            frequencies[gram, default: 0] += 1
+        }
+        return frequencies
     }
 
     // MARK: - Cache Key
@@ -323,11 +371,17 @@ public actor CheatOnlineLookup {
     }
 
     private func diskCacheFileURL(forKey key: String) -> URL? {
-        var safe = key
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: " ", with: "_")
-        if safe.count > 200 { safe = String(safe.prefix(200)) }
-        return cacheDirectoryURL?.appendingPathComponent("\(safe).json")
+        // Hash the key to a fixed-length, filesystem-safe filename.
+        // This avoids collisions from truncation and removes any chars
+        // that are invalid in filenames (slashes, colons, etc.).
+        let data = Data(key.utf8)
+        var hash: UInt64 = 14695981039346656037 // FNV-1a offset basis
+        for byte in data {
+            hash ^= UInt64(byte)
+            hash &*= 1099511628211 // FNV prime
+        }
+        let filename = String(format: "%016llx", hash)
+        return cacheDirectoryURL?.appendingPathComponent("\(filename).json")
     }
 
     private func loadDiskCache(forKey key: String) -> [CheatDatabaseEntry]? {

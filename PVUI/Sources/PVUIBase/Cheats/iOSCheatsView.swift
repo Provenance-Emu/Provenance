@@ -438,7 +438,7 @@ struct iOSCheatSearchView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if filtered.isEmpty && !isOnlineSearching {
+                } else if filtered.isEmpty {
                     emptyStateView
                 } else {
                     listView
@@ -494,7 +494,8 @@ struct iOSCheatSearchView: View {
                 }
             }
 
-            if onlineLookupEnabled, !hasSearchedOnline, filterText.isEmpty {
+            if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty,
+               let sysID = gameSystemIdentifier, !sysID.isEmpty {
                 Button {
                     Task { await searchOnline() }
                 } label: {
@@ -555,7 +556,7 @@ struct iOSCheatSearchView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if onlineLookupEnabled, !hasSearchedOnline, !results.isEmpty, filterText.isEmpty {
+            if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, !results.isEmpty, filterText.isEmpty {
                 Button {
                     Task { await searchOnline() }
                 } label: {
@@ -595,6 +596,7 @@ struct iOSCheatSearchView: View {
     private func searchOnline() async {
         guard let title = gameTitle, !title.isEmpty else { return }
         isOnlineSearching = true
+        defer { isOnlineSearching = false }
         onlineErrorMessage = nil
         DLOG("iOSCheatSearch: online lookup for title='\(title)' system=\(gameSystemIdentifier ?? "nil")")
         do {
@@ -608,12 +610,11 @@ struct iOSCheatSearchView: View {
             for entry in online where seen.insert(entry.cheatCode.lowercased()).inserted {
                 results.append(entry)
             }
+            hasSearchedOnline = true
         } catch {
             ELOG("iOSCheatSearch online error: \(error)")
             onlineErrorMessage = error.localizedDescription
         }
-        hasSearchedOnline = true
-        isOnlineSearching = false
     }
 }
 
