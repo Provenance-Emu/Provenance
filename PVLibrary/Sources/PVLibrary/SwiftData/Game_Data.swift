@@ -164,7 +164,7 @@ public class Game_Data {
 
 public extension Game_Data {
     var genresArray: [String] {
-        genres?.components(separatedBy: ",") ?? []
+        genres?.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } ?? []
     }
 }
 #endif
