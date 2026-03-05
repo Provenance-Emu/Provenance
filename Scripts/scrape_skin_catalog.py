@@ -193,10 +193,13 @@ def log(msg):
 # ---------------------------------------------------------------------------
 
 def make_id(source, download_url):
-    """Generate a deterministic skin ID from source name + download URL."""
+    """Generate a deterministic 16-char hex skin ID from source + download URL.
+
+    Uses a 16-character hex digest (64 bits of SHA-256) — compact, stable,
+    and consistent with the existing catalog_seed.json ID format.
+    """
     key = f"{source}:{download_url}"
-    h = hashlib.sha256(key.encode("utf-8")).hexdigest()[:12]
-    return f"{source}-{h}"
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()[:16]
 
 
 # ---------------------------------------------------------------------------
@@ -273,6 +276,13 @@ def scrape_delta_skins(dry_run=False):
             download_url = img.get("data-download", "").strip()
             if not download_url:
                 continue
+
+            # Make download URL absolute if it's relative (HTML may use relative paths
+            # intended for the GitHub Pages host, not raw.githubusercontent.com)
+            if download_url.startswith("/"):
+                download_url = f"{DELTA_SKINS_REPO_RAW}{download_url}"
+            elif not download_url.startswith("http"):
+                download_url = f"{DELTA_SKINS_REPO_RAW}/{download_url}"
 
             console = (img.get("data-console") or page_name).strip()
             maker = (img.get("data-maker") or "").strip()
