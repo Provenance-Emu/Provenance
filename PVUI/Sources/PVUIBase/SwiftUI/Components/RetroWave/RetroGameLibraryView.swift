@@ -780,6 +780,10 @@ public struct RetroGameLibraryView: View {
                 )
                 .padding(.horizontal)
 
+                // Controller pairing guide recommendation
+                ControllerGuideCardView()
+                    .padding(.horizontal)
+
                 // Web server status - show when server is running
                 if isWebServerRunning {
                     webServerStatusView()

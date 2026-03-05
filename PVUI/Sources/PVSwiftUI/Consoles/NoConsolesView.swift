@@ -201,6 +201,10 @@ public struct NoConsolesView: SwiftUI.View {
                     }
                 )
                 .padding(.horizontal)
+
+                // Controller pairing guide recommendation
+                ControllerGuideCardView()
+                    .padding(.horizontal)
             }
             .padding(30)
             .onAppear {
