@@ -59,7 +59,10 @@ public actor CheatOnlineLookup {
     ///   - systemIdentifier: Libretro system folder name
     ///     (e.g. `"Nintendo - Super Nintendo Entertainment System"`).
     /// - Returns: Array of `CheatDatabaseEntry` values with `isOnlineResult == true`.
-    ///   Returns an empty array when no results are found; does **not** throw on a cache hit.
+    ///   Returns an empty array when no cheats are found for the title.
+    /// - Throws: `LookupError.missingSystemIdentifier` when `systemIdentifier` is nil/empty.
+    ///   Network or decoding errors from both lookup strategies are propagated so callers
+    ///   can distinguish a genuine failure from "no results found".
     public func searchCheats(
         title: String,
         systemIdentifier: String? = nil
@@ -72,10 +75,16 @@ public actor CheatOnlineLookup {
             return hit.entries
         }
 
-        // 2. Disk cache
+        // 2. Disk cache — populate memory cache with the original fetchedAt so the TTL isn't
+        //    inadvertently extended by using Date() on a near-expired entry.
         if let diskHit = loadDiskCache(forKey: key) {
             DLOG("CheatOnlineLookup: disk cache hit for '\(title)'")
-            return diskHit
+            if memoryCache.count >= Self.maxMemoryCacheEntries {
+                let oldest = memoryCache.min { $0.value.fetchedAt < $1.value.fetchedAt }?.key
+                if let oldest { memoryCache.removeValue(forKey: oldest) }
+            }
+            memoryCache[key] = (fetchedAt: diskHit.fetchedAt, entries: diskHit.entries)
+            return diskHit.entries
         }
 
         // 3. Fetch from network
@@ -143,13 +152,28 @@ public actor CheatOnlineLookup {
     }
 
     /// Fetch a `.cht` file directly using a known/guessed raw URL.
+    ///
+    /// Returns `nil` when the file is not found (HTTP 404) — a guessed URL frequently won't
+    /// match the exact libretro filename, so a 404 is treated as "no result" rather than an
+    /// error.  Other non-2xx responses (e.g. 500) are propagated as errors.
     private func fetchRawCht(system: String, filename: String) async throws -> [CheatDatabaseEntry]? {
         guard let encoded = "\(system)/\(filename).cht"
             .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
               let url = URL(string: "\(Self.rawBase)/\(encoded)")
         else { return nil }
 
-        let data = try await httpGet(url: url)
+        var request = URLRequest(url: url)
+        request.setValue("Provenance-Emu/Provenance", forHTTPHeaderField: "User-Agent")
+        request.timeoutInterval = 15
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else { return nil }
+
+        // 404 means the guessed filename didn't match — not an error, just no result.
+        if http.statusCode == 404 { return nil }
+        guard (200..<300).contains(http.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+
         guard let text = String(data: data, encoding: .utf8), !text.isEmpty else { return nil }
 
         let parsed = parseCht(text, romTitle: filename, systemName: system)
@@ -383,14 +407,14 @@ public actor CheatOnlineLookup {
         return cacheDirectoryURL?.appendingPathComponent("\(filename).json")
     }
 
-    private func loadDiskCache(forKey key: String) -> [CheatDatabaseEntry]? {
+    private func loadDiskCache(forKey key: String) -> (fetchedAt: Date, entries: [CheatDatabaseEntry])? {
         guard let fileURL = diskCacheFileURL(forKey: key),
               let data = try? Data(contentsOf: fileURL),
               let cache = try? JSONDecoder().decode(DiskCache.self, from: data),
               Date().timeIntervalSince(cache.fetchedAt) < Self.cacheTTL
         else { return nil }
 
-        return cache.entries.map {
+        let entries = cache.entries.map {
             CheatDatabaseEntry(
                 id: $0.id,
                 cheatName: $0.cheatName,
@@ -404,6 +428,7 @@ public actor CheatOnlineLookup {
                 isOnlineResult: true
             )
         }
+        return (fetchedAt: cache.fetchedAt, entries: entries)
     }
 
     private func saveDiskCache(_ entries: [CheatDatabaseEntry], forKey key: String) {

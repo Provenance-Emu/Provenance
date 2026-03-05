@@ -1100,7 +1100,8 @@ struct TVOSCheatSearchView: View {
                         .padding(.bottom, 40)
                     }
                     .safeAreaInset(edge: .bottom) {
-                        if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty {
+                        if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty,
+                           let systemID = gameSystemIdentifier, !systemID.isEmpty {
                             Button {
                                 Task { await searchOnline() }
                             } label: {
