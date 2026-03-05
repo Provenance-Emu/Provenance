@@ -34,10 +34,12 @@ public class Cheats_Data {
     @Relationship(deleteRule: .cascade)
     public var file: File_Data?
 
-    public init(code: String, enabled: Bool = false, date: Date = Date(),
+    public init(id: String = UUID().uuidString,
+                code: String, enabled: Bool = false, date: Date = Date(),
                 lastOpened: Date? = nil, type: String = "", codeType: String = "",
                 createdWithCoreVersion: String = "",
                 game: Game_Data? = nil, core: Core_Data? = nil, file: File_Data? = nil) {
+        self.id = id
         self.code = code
         self.enabled = enabled
         self.date = date
