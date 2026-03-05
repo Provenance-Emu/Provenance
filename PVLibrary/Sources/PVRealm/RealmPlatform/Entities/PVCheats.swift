@@ -100,7 +100,7 @@ extension Cheats: RealmRepresentable {
             object.code = code
             object.type = type
             object.codeType = codeType
-            object.enabled = false
+            object.enabled = enabled
         }
     }
 }
