@@ -67,7 +67,15 @@ public final class CloudKitSwiftDataSyncManager: @unchecked Sendable {
 
     // MARK: - Properties
 
-    private(set) var isStarted = false
+    private let lock = NSLock()
+    private var _isStarted = false
+
+    /// Whether `start(container:)` has already been called.
+    ///
+    /// Thread-safe: guarded by an internal `NSLock`.
+    public var isStarted: Bool {
+        lock.withLock { _isStarted }
+    }
 
     // MARK: - Init
 
@@ -87,11 +95,15 @@ public final class CloudKitSwiftDataSyncManager: @unchecked Sendable {
     ///     result of `PVSwiftDataSchema.makePVModelContainerWithCloudKit()`.
     ///     For testing pass the result of `PVSwiftDataSchema.makePVModelContainer(inMemory:true)`.
     public func start(container: ModelContainer) async {
-        guard !isStarted else {
+        let alreadyStarted = lock.withLock {
+            if _isStarted { return true }
+            _isStarted = true
+            return false
+        }
+        guard !alreadyStarted else {
             WLOG("CloudKitSwiftDataSyncManager.start called more than once — ignoring.")
             return
         }
-        isStarted = true
         await ModelContextActor.shared.configure(container: container)
         ILOG("CloudKitSwiftDataSyncManager started. Native SwiftData CloudKit sync active if container is CloudKit-backed.")
     }

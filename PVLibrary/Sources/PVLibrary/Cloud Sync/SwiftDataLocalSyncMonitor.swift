@@ -38,6 +38,12 @@ import PVLogging
 /// `CloudKitSaveStatesSyncer` so it doesn't prevent them from being released.
 public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
 
+    // MARK: - Constants
+
+    private static let contextDidSaveObjectIDsNotification = NSNotification.Name(
+        "NSManagedObjectContextDidSaveObjectIDsNotification"
+    )
+
     // MARK: - Properties
 
     private weak var romsSyncer: CloudKitRomsSyncer?
@@ -51,7 +57,7 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
     }
 
     deinit {
-        stopMonitoring()
+        cancellables.removeAll()
     }
 
     // MARK: - Lifecycle
@@ -67,7 +73,7 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
         //   NSInsertedObjectIDsKey, NSUpdatedObjectIDsKey, NSDeletedObjectIDsKey
         // Each value is a Set<NSManagedObjectID>.
         NotificationCenter.default
-            .publisher(for: NSNotification.Name("NSManagedObjectContextDidSaveObjectIDsNotification"))
+            .publisher(for: SwiftDataLocalSyncMonitor.contextDidSaveObjectIDsNotification)
             .receive(on: DispatchQueue.global(qos: .utility))
             .sink { [weak self] notification in
                 self?.handleContextSave(notification)

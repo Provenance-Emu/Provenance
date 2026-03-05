@@ -84,7 +84,7 @@ public actor ModelContextActor: GlobalActor {
     /// insert, delete, and save models.  Any thrown error propagates to the caller.
     @discardableResult
     public func perform<T: Sendable>(
-        _ operation: @escaping (ModelContext) throws -> T
+        _ operation: (ModelContext) throws -> T
     ) async throws -> T {
         let ctx = try context()
         return try operation(ctx)

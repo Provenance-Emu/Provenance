@@ -106,13 +106,18 @@ public actor SwiftDataSyncActor {
     }
 
     /// Fetch all save states for a given game that have not yet been uploaded.
+    ///
+    /// Note: optional-chaining (`state.game?.id`) is not reliably supported in
+    /// SwiftData `#Predicate` expressions, so we fetch all unsynced save states
+    /// and filter by game ID in memory.
     public func fetchSaveStatesNeedingUpload(gameID: String) throws -> [SaveState_Data] {
         let descriptor = FetchDescriptor<SaveState_Data>(
-            predicate: #Predicate { state in
-                state.game?.id == gameID && state.cloudRecordID == nil
+            predicate: #Predicate<SaveState_Data> { state in
+                state.cloudRecordID == nil
             }
         )
-        return try modelContext.fetch(descriptor)
+        let unsynced = try modelContext.fetch(descriptor)
+        return unsynced.filter { $0.game?.id == gameID }
     }
 
     /// Mark a save state as fully synced to CloudKit.

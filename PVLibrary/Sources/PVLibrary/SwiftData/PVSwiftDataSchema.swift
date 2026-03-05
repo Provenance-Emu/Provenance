@@ -103,7 +103,7 @@ public enum PVSwiftDataSchema {
             isStoredInMemoryOnly: inMemory,
             cloudKitDatabase: inMemory ? .none : .private(cloudKitContainerIdentifier)
         )
-        return try ModelContainer(configurations: config)
+        return try ModelContainer(for: v1Schema, configurations: config)
     }
 
     /// Delete all objects for every tracked model type from the given context and save.
