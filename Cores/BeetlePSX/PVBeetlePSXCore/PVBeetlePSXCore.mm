@@ -228,7 +228,7 @@
 }
 
 - (NSArray<NSString *> *)cheatCodeTypes {
-    // Beetle PSX HW (Mednafen) supports PlayStation Game Shark / Action Replay codes.
+    // Beetle PSX HW (Mednafen) supports PlayStation GameShark codes.
     return @[@"Game Shark"];
 }
 
