@@ -375,8 +375,8 @@ struct iOSAddCheatView: View {
     }
 
     private func saveCheat() {
-        let name = cheatName.trimmingCharacters(in: .whitespaces).isEmpty
-            ? "Cheat Code" : cheatName.trimmingCharacters(in: .whitespaces)
+        let trimmedName = cheatName.trimmingCharacters(in: .whitespaces)
+        let name = trimmedName.isEmpty ? "Cheat Code" : trimmedName
         let code = cheatCode.trimmingCharacters(in: .whitespaces)
         guard !code.isEmpty else { return }
         onSave(code, name, selectedType, cheatIndex, true)
@@ -638,8 +638,8 @@ struct iOSEditCheatView: View {
     }
 
     private func saveCheat() {
-        let name = cheatName.trimmingCharacters(in: .whitespaces).isEmpty
-            ? "Cheat Code" : cheatName.trimmingCharacters(in: .whitespaces)
+        let trimmedName = cheatName.trimmingCharacters(in: .whitespaces)
+        let name = trimmedName.isEmpty ? "Cheat Code" : trimmedName
         let code = cheatCode.trimmingCharacters(in: .whitespaces)
         guard !code.isEmpty else { return }
         do {

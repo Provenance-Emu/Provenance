@@ -256,15 +256,15 @@ extension PVEmulatorViewController {
                             presentError("No core in database with id \(self.core.coreIdentifier ?? "null")", source: self.view)
                             return
                         }
-                        let cheat = try LibrarySerializer.retrieve(url, as: PVCheats.DomainType.self)
-                        if !cheat.id.isEmpty,
-                           realm.object(ofType: PVCheats.self, forPrimaryKey: cheat.id) != nil {
+                        let cheatInfo = try LibrarySerializer.retrieve(url, as: PVCheats.DomainType.self)
+                        if !cheatInfo.id.isEmpty,
+                           realm.object(ofType: PVCheats.self, forPrimaryKey: cheatInfo.id) != nil {
                             continue
                         } else {
-                            @ThreadSafe var cheat: PVCheats? = await cheat.asRealm()
-                            if let cheat = cheat {
+                            @ThreadSafe var realmCheat: PVCheats? = await cheatInfo.asRealm()
+                            if let realmCheat = realmCheat {
                                 realm.writeAsync {
-                                    realm.add(cheat)
+                                    realm.add(realmCheat)
                                 }
                             }
                         }
