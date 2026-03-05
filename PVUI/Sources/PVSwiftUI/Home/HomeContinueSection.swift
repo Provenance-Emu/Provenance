@@ -1128,4 +1128,92 @@ private struct EmptyContinuesView: View {
     }
 }
 
+// MARK: - SwiftData Support
+
+#if canImport(SwiftData)
+import SwiftData
+
+/// Extends `ContinueItemModel` to be initialised from a SwiftData `SaveState_Data` record.
+///
+/// During the Realm → SwiftData migration the `resolver` closure still falls back to Realm
+/// so that the game-launch codepath continues to work until the full action layer is migrated.
+@available(iOS 17, tvOS 17, *)
+extension ContinueItemModel {
+    init(saveState_data state: SaveState_Data) {
+        let saveId = state.id
+        let gameTitle = state.game?.title
+        let date = state.date
+        let systemIdentifier = state.game?.systemIdentifier
+
+        // Resolve the artwork URL from the partial path stored in ImageFile_Data.
+        // The full URL is constructed by appending the partial path to the saves directory.
+        let imageURL: URL? = state.image.flatMap { img -> URL? in
+            guard !img.partialPath.isEmpty else { return nil }
+            let savesDir = URL.documentsDirectory
+                .appendingPathComponent("saves", isDirectory: true)
+            return savesDir.appendingPathComponent(img.partialPath)
+        }
+
+        self.init(
+            id: saveId,
+            gameTitle: gameTitle,
+            imageURL: imageURL,
+            date: date,
+            systemIdentifier: systemIdentifier,
+            resolver: {
+                // Hybrid resolver: fetch from Realm during migration so that
+                // game-launch actions keep working before the action layer is
+                // fully migrated to SwiftData.
+                RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: saveId)
+            }
+        )
+    }
+}
+
+/// SwiftData-backed implementation of `ContinuesDataDriver`.
+///
+/// Fetches `SaveState_Data` records from the shared `ModelContainer` and maps
+/// them to `ContinueItemModel` values for display in `HomeContinueSection`.
+///
+/// This is a **one-shot** driver: it yields a single snapshot of the data and
+/// finishes.  Live updates are a future enhancement (tracked in #2555) that
+/// will use SwiftData's `withChanges(in:)` API (iOS 18+) or periodic polling.
+/// In the interim the Realm driver (`RealmContinuesDataDriver`) remains active.
+@available(iOS 17, tvOS 17, *)
+final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
+    private let modelContainer: ModelContainer
+
+    init(modelContainer: ModelContainer) {
+        self.modelContainer = modelContainer
+    }
+
+    func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
+        AsyncStream { continuation in
+            let container = modelContainer
+            let task = Task { @MainActor in
+                let context = ModelContext(container)
+                let descriptor = FetchDescriptor<SaveState_Data>(
+                    sortBy: [SortDescriptor(\.date, order: .reverse)]
+                )
+                do {
+                    var results = try context.fetch(descriptor)
+                    // Filter: game and system must both be present.
+                    results = results.filter { $0.game != nil && $0.game?.system != nil }
+                    if let consoleIdentifier {
+                        results = results.filter { $0.game?.systemIdentifier == consoleIdentifier }
+                    }
+                    let models = results.prefix(500).map { ContinueItemModel(saveState_data: $0) }
+                    continuation.yield(Array(models))
+                } catch {
+                    ELOG("SwiftDataContinuesDataDriver: fetch failed: \(error)")
+                    continuation.yield([])
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
+    }
+}
+#endif
+
 #endif
