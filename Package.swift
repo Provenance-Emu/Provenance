@@ -15,8 +15,8 @@ let cSettings: [CSetting] = [
 let package = Package(
 	name: "Provenance",
 	platforms: [
-		.iOS(.v11),
-		.tvOS(.v11),
+		.iOS(.v17),
+		.tvOS(.v17),
         .watchOS(.v7),
 		.macOS(.v10_13)
 	],

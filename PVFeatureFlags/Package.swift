@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "PVFeatureFlags",
     platforms: [
-        .iOS(.v16),
+        .iOS(.v17),
         .macOS(.v13),
-        .tvOS(.v16),
+        .tvOS(.v17),
         .watchOS(.v9),
         .visionOS(.v1),
         .macCatalyst(.v16)

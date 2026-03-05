@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "PVPatreon",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v17),
+        .tvOS(.v17),
         .watchOS(.v7),
         .macOS(.v11),
         .macCatalyst(.v14)

@@ -9,7 +9,7 @@ let package = Package(
     name: "PVUI",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v16),
+        .iOS(.v17),
         .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v14),

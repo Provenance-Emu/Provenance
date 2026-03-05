@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "PVCheevos",
     platforms: [
-        .iOS(.v15),
-        .tvOS(.v15),
+        .iOS(.v17),
+        .tvOS(.v17),
         .macOS(.v12)
     ],
     products: [

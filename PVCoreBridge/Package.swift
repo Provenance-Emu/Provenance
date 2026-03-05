@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "PVCoreBridge",
     platforms: [
-        .iOS(.v16),
-        .tvOS(.v16),
+        .iOS(.v17),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v12),
         .macCatalyst(.v17),
