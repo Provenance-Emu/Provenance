@@ -31,22 +31,25 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
 
     // MARK: - Migration flag tests
 
-    func testMigrationFlagDefaultFalse() throws {
+    func testMigrationFlagDefaultFalse() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let container = try makeInMemoryContainer()
         let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
-        XCTAssertFalse(migrator.isMigrationCompleted)
+        let completed = await migrator.isMigrationCompleted
+        XCTAssertFalse(completed)
     }
 
-    func testResetMigrationFlag() throws {
+    func testResetMigrationFlag() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         defaults.set(true, forKey: "PVRealmToSwiftDataMigrationCompleted")
         let container = try makeInMemoryContainer()
         let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
-        XCTAssertTrue(migrator.isMigrationCompleted)
+        var completed = await migrator.isMigrationCompleted
+        XCTAssertTrue(completed)
 
-        migrator.resetMigrationFlag()
-        XCTAssertFalse(migrator.isMigrationCompleted)
+        await migrator.resetMigrationFlag()
+        completed = await migrator.isMigrationCompleted
+        XCTAssertFalse(completed)
     }
 
     // MARK: - Empty Realm migration (no data)
@@ -60,7 +63,8 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
         await XCTAssertNoThrowAsync {
             try await migrator.migrateIfNeeded()
         }
-        XCTAssertTrue(migrator.isMigrationCompleted)
+        let completed = await migrator.isMigrationCompleted
+        XCTAssertTrue(completed)
     }
 
     // MARK: - Idempotency
@@ -240,7 +244,8 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
 
         // Even with an empty Realm the handler may be called for entities with 0 records;
         // the key assertion is that migration completed without error.
-        XCTAssertTrue(migrator.isMigrationCompleted)
+        let completed = await migrator.isMigrationCompleted
+        XCTAssertTrue(completed)
     }
 }
 
