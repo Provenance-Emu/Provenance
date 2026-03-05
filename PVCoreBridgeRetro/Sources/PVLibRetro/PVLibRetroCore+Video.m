@@ -164,65 +164,51 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
 }
 
 - (GLenum)pixelFormat {
+    // Returns the OpenGL base (unsized) format for the 'format' parameter of
+    // glTexImage2D / glTexSubImage2D.  video_callback expands all pixel data
+    // to 32-bit before writing to videoBuffer, so the upload format depends
+    // only on the in-memory byte order after expansion.
     switch (pix_fmt)
     {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-#else
+        case RETRO_PIXEL_FORMAT_0RGB1555:
         case RETRO_PIXEL_FORMAT_RGB565:
-             return GL_UNSIGNED_SHORT_5_6_5;
-#endif
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            // XRGB8888 stores pixels as 32-bit little-endian values:
-            // in memory the bytes are B, G, R, X — use GL_BGRA so the
-            // Metal/GL texture loader interprets channels correctly.
+            // Both 16-bit formats are expanded to RGBA8 in video_callback.
+            return GL_RGBA;
+        case RETRO_PIXEL_FORMAT_XRGB8888:
+            // Little-endian memory layout after copy: [B][G][R][A].
+            // GL_BGRA_EXT maps byte[0]→B, byte[1]→G, byte[2]→R, byte[3]→A.
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+            return GL_BGRA_EXT;
+#else
             return GL_BGRA;
-       default:
+#endif
+        default:
             return GL_RGBA;
     }
 }
 
 - (GLenum)internalPixelFormat {
+    // On OpenGL ES 2.0, internalformat must match format in glTexImage2D.
+    // Mirror the logic in -pixelFormat so the pair is always consistent.
     switch (pix_fmt)
     {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1;
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-#else
+        case RETRO_PIXEL_FORMAT_0RGB1555:
         case RETRO_PIXEL_FORMAT_RGB565:
-             return GL_UNSIGNED_SHORT_5_6_5;
+            return GL_RGBA;
+        case RETRO_PIXEL_FORMAT_XRGB8888:
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+            return GL_BGRA_EXT;
+#else
+            return GL_BGRA;
 #endif
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            return GL_RGBA8;
-       default:
+        default:
             return GL_RGBA;
     }
 }
 
 - (GLenum)pixelType {
-    // Return the correct GL pixel type for each libretro pixel format.
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-            // Desktop GL: read BGRA from XRGB8888 as a packed 32-bit int
-            // in host (little-endian) byte order.
-            return GL_UNSIGNED_INT_8_8_8_8_REV;
-#else
-            // GLES: read BGRA as four individual byte components.
-            return GL_UNSIGNED_BYTE;
-#endif
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_UNSIGNED_SHORT_5_6_5;
-       default:
-            // Covers RETRO_PIXEL_FORMAT_0RGB1555 and unknown formats.
-            return GL_UNSIGNED_SHORT;
-    }
+    // video_callback writes all formats as packed 8-bit-per-channel data.
+    return GL_UNSIGNED_BYTE;
 }
 
 @end

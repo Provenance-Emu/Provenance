@@ -72,6 +72,13 @@
     BOOL mousePressed;
     BOOL leftMousePressed;
     BOOL rightMousePressed;
+    // Accumulated relative mouse deltas for RETRO_DEVICE_MOUSE X/Y queries.
+    // Protected by @synchronized(self) since setMousePosition: (UI thread)
+    // and getPointerState: (emulator thread) access these concurrently.
+    float mouseDeltaX;
+    float mouseDeltaY;
+    CGPoint lastMousePosition;
+    BOOL lastMousePositionValid;
 }
 @property (nonatomic, strong) NSData *currentRomData;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -2138,27 +2145,70 @@ static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t fr
 
 static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
-//    if (!video_driver_is_active())
-//       return;
+    // NULL means "duplicate the previous frame"; RETRO_HW_FRAME_BUFFER_VALID
+    // (-1 cast to pointer) means a hardware-rendered frame is ready in the
+    // framebuffer.  In both cases keep videoBuffer unchanged and return.
+    if (!data || data == (const void *)(uintptr_t)-1) return;
 
     __strong PVLibRetroCoreBridge *strongCurrent = _current;
+    if (!strongCurrent) return;
 
-    static dispatch_queue_t serialQueue;
+    static dispatch_queue_t concurrentQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
-        serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
-
-        DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
+        concurrentQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
     });
 
-    dispatch_apply(height, serialQueue, ^(size_t y){
-        const uint8_t *src_row = (const uint8_t*)data + (y * pitch);
-        const uint32_t *src = (const uint32_t*)src_row;
-        uint32_t *dst = strongCurrent->videoBuffer + y * width;
+    const enum retro_pixel_format fmt = strongCurrent->pix_fmt;
 
-        memcpy(dst, src, sizeof(uint32_t) * width);
-    });
+    if (fmt == RETRO_PIXEL_FORMAT_XRGB8888) {
+        // Source: 32-bit XRGB little-endian [B][G][R][X].
+        // Force alpha=0xFF so the texture is fully opaque (X byte is unused).
+        dispatch_apply(height, concurrentQueue, ^(size_t y) {
+            const uint32_t *src_row = (const uint32_t *)((const uint8_t *)data + y * pitch);
+            uint32_t *dst = strongCurrent->videoBuffer + y * width;
+            for (size_t x = 0; x < width; x++) {
+                dst[x] = src_row[x] | 0xFF000000u;
+            }
+        });
+    } else if (fmt == RETRO_PIXEL_FORMAT_RGB565) {
+        // Source: 16-bit RGB565 — RRRRRGGGGGGBBBBB.
+        // Expand each pixel to 32-bit RGBA8 for uniform GL_RGBA upload.
+        dispatch_apply(height, concurrentQueue, ^(size_t y) {
+            const uint16_t *src_row = (const uint16_t *)((const uint8_t *)data + y * pitch);
+            uint32_t *dst = strongCurrent->videoBuffer + y * width;
+            for (size_t x = 0; x < width; x++) {
+                uint16_t px = src_row[x];
+                uint8_t r5 = (px >> 11) & 0x1F;
+                uint8_t g6 = (px >> 5)  & 0x3F;
+                uint8_t b5 =  px        & 0x1F;
+                // Scale to 8-bit using bit-replication for full range.
+                uint8_t r8 = (r5 << 3) | (r5 >> 2);
+                uint8_t g8 = (g6 << 2) | (g6 >> 4);
+                uint8_t b8 = (b5 << 3) | (b5 >> 2);
+                // RGBA in memory: [r8][g8][b8][FF] as little-endian uint32.
+                dst[x] = ((uint32_t)0xFF << 24) | ((uint32_t)b8 << 16) | ((uint32_t)g8 << 8) | r8;
+            }
+        });
+    } else {
+        // RETRO_PIXEL_FORMAT_0RGB1555: X[1] R[5] G[5] B[5].
+        // Expand each pixel to 32-bit RGBA8 for uniform GL_RGBA upload.
+        dispatch_apply(height, concurrentQueue, ^(size_t y) {
+            const uint16_t *src_row = (const uint16_t *)((const uint8_t *)data + y * pitch);
+            uint32_t *dst = strongCurrent->videoBuffer + y * width;
+            for (size_t x = 0; x < width; x++) {
+                uint16_t px = src_row[x];
+                uint8_t r5 = (px >> 10) & 0x1F;
+                uint8_t g5 = (px >> 5)  & 0x1F;
+                uint8_t b5 =  px        & 0x1F;
+                uint8_t r8 = (r5 << 3) | (r5 >> 2);
+                uint8_t g8 = (g5 << 3) | (g5 >> 2);
+                uint8_t b8 = (b5 << 3) | (b5 >> 2);
+                dst[x] = ((uint32_t)0xFF << 24) | ((uint32_t)b8 << 16) | ((uint32_t)g8 << 8) | r8;
+            }
+        });
+    }
 
     strongCurrent = nil;
 }
@@ -2457,68 +2507,6 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     unsigned width = av_info.geometry.max_width;
 
     return CGSizeMake(width, height);
-}
-
-- (GLenum)pixelFormat {
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-#else
-        case RETRO_PIXEL_FORMAT_RGB565:
-             return GL_UNSIGNED_SHORT_5_6_5;
-#endif
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            // XRGB8888 stores pixels as 32-bit little-endian values:
-            // in memory the bytes are B, G, R, X — use GL_BGRA so the
-            // Metal/GL texture loader interprets channels correctly.
-            return GL_BGRA;
-       default:
-            return GL_RGBA;
-    }
-}
-
-- (GLenum)internalPixelFormat {
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1;
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-#else
-        case RETRO_PIXEL_FORMAT_RGB565:
-             return GL_UNSIGNED_SHORT_5_6_5;
-#endif
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            return GL_RGBA8;
-       default:
-            return GL_RGBA;
-    }
-}
-
-- (GLenum)pixelType {
-    // Return the correct GL pixel type for each libretro pixel format.
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-            // Desktop GL: read BGRA from XRGB8888 as a packed 32-bit int
-            // in host (little-endian) byte order.
-            return GL_UNSIGNED_INT_8_8_8_8_REV;
-#else
-            // GLES: read BGRA as four individual byte components.
-            return GL_UNSIGNED_BYTE;
-#endif
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_UNSIGNED_SHORT_5_6_5;
-       default:
-            // Covers RETRO_PIXEL_FORMAT_0RGB1555 and unknown formats.
-            return GL_UNSIGNED_SHORT;
-    }
 }
 
 # pragma mark - Audio
@@ -3119,20 +3107,27 @@ unsigned retro_api_version(void)
 
         case RETRO_DEVICE_MOUSE: {
             switch (id) {
-                case RETRO_DEVICE_ID_MOUSE_X:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    // For touch, return relative movement (simplified)
-                    return (int16_t)((currentTouchPosition.x * 2.0 - 1.0) * 100);
-#else
-                    return (int16_t)((currentMousePosition.x * 2.0 - 1.0) * 100);
-#endif
+                case RETRO_DEVICE_ID_MOUSE_X: {
+                    // RETRO_DEVICE_ID_MOUSE_X/Y report relative movement since
+                    // the last poll (delta pixels), not an absolute position.
+                    // Consume the accumulated delta under @synchronized so no
+                    // deltas are lost if setMousePosition: fires concurrently.
+                    int16_t dx;
+                    @synchronized(self) {
+                        dx = (int16_t)MAX((float)INT16_MIN, MIN((float)INT16_MAX, mouseDeltaX));
+                        mouseDeltaX = 0;
+                    }
+                    return dx;
+                }
 
-                case RETRO_DEVICE_ID_MOUSE_Y:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    return (int16_t)((currentTouchPosition.y * 2.0 - 1.0) * 100);
-#else
-                    return (int16_t)((currentMousePosition.y * 2.0 - 1.0) * 100);
-#endif
+                case RETRO_DEVICE_ID_MOUSE_Y: {
+                    int16_t dy;
+                    @synchronized(self) {
+                        dy = (int16_t)MAX((float)INT16_MIN, MIN((float)INT16_MAX, mouseDeltaY));
+                        mouseDeltaY = 0;
+                    }
+                    return dy;
+                }
 
                 case RETRO_DEVICE_ID_MOUSE_LEFT:
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -3142,11 +3137,7 @@ unsigned retro_api_version(void)
 #endif
 
                 case RETRO_DEVICE_ID_MOUSE_RIGHT:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    return 0; // Touch doesn't have right click
-#else
                     return rightMousePressed ? 1 : 0;
-#endif
 
                 default:
                     return 0;
@@ -3179,8 +3170,22 @@ unsigned retro_api_version(void)
 #pragma mark - Mouse State Management
 
 - (void)setMousePosition:(CGPoint)normalizedPoint {
-    currentTouchPosition.x = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.x));
-    currentTouchPosition.y = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.y));
+    @synchronized(self) {
+        float nx = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.x));
+        float ny = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.y));
+        // Update absolute position for RETRO_DEVICE_POINTER queries.
+        currentTouchPosition.x = nx;
+        currentTouchPosition.y = ny;
+        // Accumulate relative delta for RETRO_DEVICE_MOUSE X/Y queries.
+        // Scale factor: 1000 units per normalized unit gives responsive
+        // movement at typical DOS/retro resolutions.
+        if (lastMousePositionValid) {
+            mouseDeltaX += (nx - lastMousePosition.x) * 1000.0f;
+            mouseDeltaY += (ny - lastMousePosition.y) * 1000.0f;
+        }
+        lastMousePosition = CGPointMake(nx, ny);
+        lastMousePositionValid = YES;
+    }
 }
 
 - (void)setLeftMouseButtonPressed:(BOOL)pressed {
