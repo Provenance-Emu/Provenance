@@ -9,21 +9,6 @@
 import SwiftData
 
 @Model
-public class RecentGame_Data {
-    // Many-to-one: the game played
-    public var game: Game_Data?
-    public var lastPlayedDate: Date = Date()
-    // Many-to-one: core used for this play session
-    public var core: Core_Data?
-
-    public init(game: Game_Data? = nil, lastPlayedDate: Date = Date(), core: Core_Data? = nil) {
-        self.game = game
-        self.lastPlayedDate = lastPlayedDate
-        self.core = core
-    }
-}
-
-@Model
 public class Game_Data {
     public var title: String = ""
 
@@ -64,7 +49,7 @@ public class Game_Data {
     // Many-to-one: the system this game belongs to (inverse of System_Data.games)
     public var system: System_Data?
 
-    @Attribute(.unique) public var md5Hash: String = ""
+    @Attribute(.unique) public var md5Hash: String
     public var crc: String = ""
 
     // If the user has set 'always use' for a specific core
@@ -110,7 +95,12 @@ public class Game_Data {
     public var language: String?
 
     public var artworkURL: String {
-        customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+        get {
+            customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+        }
+        set {
+            customArtworkURL = newValue
+        }
     }
 
     public init(title: String = "", id: String = NSUUID().uuidString as String,
@@ -120,7 +110,7 @@ public class Game_Data {
                 requiresSync: Bool = true, isFavorite: Bool = false,
                 romSerial: String? = nil, romHeader: String? = nil,
                 importDate: Date = Date(), systemIdentifier: String = "",
-                system: System_Data? = nil, md5Hash: String = "", crc: String = "",
+                system: System_Data? = nil, md5Hash: String, crc: String = "",
                 userPreferredCoreID: String? = nil, saveStates: [SaveState_Data] = [],
                 cheats: [Cheats_Data] = [], screenShots: [ImageFile_Data] = [],
                 libraries: [Library_Data] = [], lastPlayed: Date? = nil,

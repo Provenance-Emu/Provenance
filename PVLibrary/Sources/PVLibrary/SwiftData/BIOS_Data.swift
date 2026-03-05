@@ -11,8 +11,8 @@ import PVPrimitives
 
 @Model
 public class BIOS_Data {
-    @Attribute(.unique) public var expectedFilename: String = ""
-    @Attribute(.unique) public var expectedMD5: String = ""
+    @Attribute(.unique) public var expectedFilename: String
+    @Attribute(.unique) public var expectedMD5: String
     public var expectedSize: Int = 0
     public var optional: Bool = false
 

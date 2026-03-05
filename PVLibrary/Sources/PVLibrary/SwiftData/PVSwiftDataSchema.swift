@@ -13,8 +13,8 @@ import SwiftData
 
 /// The full schema for Provenance's SwiftData store — version 1.
 ///
-/// All @Model types must be listed here. The container is configured in
-/// `PVSwiftDataContainer`.
+/// All @Model types must be listed here. The container is configured via
+/// `makePVModelContainer`.
 public enum PVSwiftDataSchema {
     /// Schema v1: initial SwiftData migration from Realm.
     public static let v1Schema = Schema([
@@ -30,20 +30,17 @@ public enum PVSwiftDataSchema {
         RecentGame_Data.self,
         User_Data.self,
     ])
-}
 
-/// Creates and returns the shared `ModelContainer` for the Provenance library.
-///
-/// - Parameter inMemory: When `true` the container uses an in-memory store
-///   (useful for previews and unit tests).
-public func makePVModelContainer(inMemory: Bool = false) throws -> ModelContainer {
-    let config = ModelConfiguration(
-        schema: PVSwiftDataSchema.v1Schema,
-        isStoredInMemoryOnly: inMemory
-    )
-    return try ModelContainer(
-        for: PVSwiftDataSchema.v1Schema,
-        configurations: config
-    )
+    /// Creates and returns the shared `ModelContainer` for the Provenance library.
+    ///
+    /// - Parameter inMemory: When `true` the container uses an in-memory store
+    ///   (useful for previews and unit tests).
+    public static func makePVModelContainer(inMemory: Bool = false) throws -> ModelContainer {
+        let config = ModelConfiguration(
+            schema: v1Schema,
+            isStoredInMemoryOnly: inMemory
+        )
+        return try ModelContainer(configurations: config)
+    }
 }
 #endif
