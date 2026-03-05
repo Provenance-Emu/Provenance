@@ -20,7 +20,8 @@ public final class LibrarySerializer {
 
     // MARK: - Metadata
 
-    
+    /// Stores object metadata as a JSON sidecar file next to the object's file URL.
+    /// Calls `completion` on an unspecified background thread.
     public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) where O.DomainType: Sendable {
         guard let directory = object.url?.deletingLastPathComponent() else {
             completion(.error(LibrarySerializerError.noFile))
@@ -31,7 +32,7 @@ public final class LibrarySerializer {
 
         LibrarySerializer.serializeQueue.async {
             let jsonFilename = fileName + ".json"
-            let saveURL = directory.appendingPathComponent(jsonFilename, isDirectory: true)
+            let saveURL = directory.appendingPathComponent(jsonFilename, isDirectory: false)
             do {
                 try store(data, to: saveURL)
                 completion(.success(saveURL))
@@ -39,6 +40,23 @@ public final class LibrarySerializer {
                 completion(.error(error))
             }
         }
+    }
+
+    /// Async/throws variant of `storeMetadata(_:completion:)`.
+    /// Writes the JSON sidecar file on a background task and returns the saved URL.
+    @discardableResult
+    public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O) async throws -> URL where O.DomainType: Sendable {
+        guard let directory = object.url?.deletingLastPathComponent() else {
+            throw LibrarySerializerError.noFile
+        }
+        let fileName = object.fileName
+        let data = object.asDomain()
+        return try await Task.detached(priority: .background) {
+            let jsonFilename = fileName + ".json"
+            let saveURL = directory.appendingPathComponent(jsonFilename, isDirectory: false)
+            try store(data, to: saveURL)
+            return saveURL
+        }.value
     }
 
     // MARK: - Packaging
