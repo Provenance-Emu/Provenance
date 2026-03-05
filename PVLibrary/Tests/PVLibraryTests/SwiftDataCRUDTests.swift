@@ -110,9 +110,27 @@ final class SwiftDataGameCRUDTests: XCTestCase {
         context.insert(game2)
         // SwiftData enforces @Attribute(.unique) at the store level; inserting a duplicate
         // should upsert or throw — either way only one record with that md5 should remain.
-        // We intentionally allow failure here: SwiftData may merge or raise on duplicate
-        // unique keys; the important thing is no crash.
-        try? context.save()
+        var saveError: Error?
+        do {
+            try context.save()
+        } catch {
+            saveError = error
+        }
+
+        // Regardless of whether the save merged or threw, at most one record with this md5
+        // should exist in the store.
+        let descriptor = FetchDescriptor<Game_Data>(
+            predicate: #Predicate { $0.md5Hash == "same-md5" }
+        )
+        let results = try context.fetch(descriptor)
+        XCTAssertLessThanOrEqual(results.count, 1,
+            "Expected at most one Game_Data with md5Hash \"same-md5\" after enforcing uniqueness.")
+
+        if let nsError = saveError as NSError? {
+            // If a failure occurred, ensure it's a persistence/validation-style error.
+            XCTAssertEqual(nsError.domain, NSCocoaErrorDomain,
+                "Expected a Cocoa persistence error for unique-constraint violation.")
+        }
     }
 }
 
@@ -529,21 +547,30 @@ final class SwiftDataMigrationSimulationTests: XCTestCase {
         }
     }
 
-    /// Verifies that all games have a non-empty md5Hash (data integrity check).
-    func testAllGamesMD5NonEmpty() throws {
-        for i in 0..<10 {
-            let game = Game_Data(title: "MD5 Test \(i)",
-                                 id: "md5-test-\(i)",
-                                 md5Hash: "hash-\(i)")
-            context.insert(game)
-        }
+    /// Verifies that a game saved with an empty md5Hash retains it as-is
+    /// (i.e., no automatic population), while a game saved with a non-empty
+    /// md5Hash round-trips correctly. This checks actual persistence fidelity
+    /// rather than asserting on values we explicitly set.
+    func testMD5HashPersistenceFidelity() throws {
+        let gameWithHash = Game_Data(title: "Has Hash", id: "md5-fidelity-1", md5Hash: "abc123")
+        let gameNoHash = Game_Data(title: "No Hash", id: "md5-fidelity-2", md5Hash: "")
+        context.insert(gameWithHash)
+        context.insert(gameNoHash)
         try context.save()
 
-        let descriptor = FetchDescriptor<Game_Data>()
-        let games = try context.fetch(descriptor)
-        for game in games {
-            XCTAssertFalse(game.md5Hash.isEmpty, "Game '\(game.title)' should have a non-empty MD5 hash")
-        }
+        let descriptorWithHash = FetchDescriptor<Game_Data>(
+            predicate: #Predicate { $0.id == "md5-fidelity-1" }
+        )
+        let descriptorNoHash = FetchDescriptor<Game_Data>(
+            predicate: #Predicate { $0.id == "md5-fidelity-2" }
+        )
+        let withHashResult = try XCTUnwrap(try context.fetch(descriptorWithHash).first)
+        let noHashResult = try XCTUnwrap(try context.fetch(descriptorNoHash).first)
+
+        XCTAssertEqual(withHashResult.md5Hash, "abc123",
+            "md5Hash should persist exactly as stored.")
+        XCTAssertTrue(noHashResult.md5Hash.isEmpty,
+            "md5Hash stored as empty should remain empty — no auto-population expected.")
     }
 }
 
@@ -565,13 +592,16 @@ final class SwiftDataPerformanceTests: XCTestCase {
     }
 
     func testInsert1000GamesPerformance() throws {
+        // Each measure iteration uses a fresh in-memory container so that
+        // data from prior iterations does not accumulate and skew results.
         measure {
             do {
-                let localContext = ModelContext(container)
+                let freshContainer = try makeInMemoryContainer()
+                let localContext = ModelContext(freshContainer)
                 for i in 0..<1000 {
                     let game = Game_Data(title: "Perf Game \(i)",
-                                         id: "perf-\(i)-\(UUID().uuidString)",
-                                         md5Hash: UUID().uuidString)
+                                         id: "perf-\(i)",
+                                         md5Hash: "perf-hash-\(i)")
                     localContext.insert(game)
                 }
                 try localContext.save()
