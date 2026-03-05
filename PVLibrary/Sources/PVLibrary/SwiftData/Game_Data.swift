@@ -93,6 +93,26 @@ public class Game_Data {
     public var systemShortName: String?
     public var language: String?
 
+    // MARK: - CloudKit Sync Fields
+
+    /// CloudKit record ID once the ROM has been confirmed in the private database.
+    /// Uses deterministic format "rom_<md5>" — see CloudKitSchema.RecordIDGenerator.
+    public var cloudRecordID: String?
+
+    /// Whether the ROM file is stored locally on this device.
+    public var isDownloaded: Bool = true
+
+    /// Whether CloudKit holds a verified CKAsset for this game's ROM file.
+    public var hasCloudAssets: Bool = false
+
+    /// Cached ROM file size in bytes (avoids stat(2) calls during sync batching).
+    public var fileSize: Int = 0
+
+    /// Date of the last successful CloudKit sync round-trip for this game.
+    public var lastCloudSyncDate: Date?
+
+    // MARK: - Computed helpers
+
     public var artworkURL: String {
         get {
             customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL

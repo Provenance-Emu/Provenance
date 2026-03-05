@@ -42,7 +42,11 @@ public enum PVSwiftDataSchema {
         User_Data.self,
     ])
 
-    /// Creates and returns the shared `ModelContainer` for the Provenance library.
+    /// Creates and returns the shared `ModelContainer` for the Provenance library
+    /// **without** CloudKit sync (local storage only).
+    ///
+    /// For a CloudKit-enabled container use `CloudKitModelContainerConfiguration`
+    /// or the convenience overload `makePVModelContainer(cloudKit:inMemory:)`.
     ///
     /// - Parameter inMemory: When `true` the container uses an in-memory store
     ///   (useful for previews and unit tests).
@@ -51,7 +55,29 @@ public enum PVSwiftDataSchema {
             schema: v1Schema,
             isStoredInMemoryOnly: inMemory
         )
-        return try ModelContainer(configurations: config)
+        return try ModelContainer(for: v1Schema, configurations: config)
+    }
+
+    /// Creates the production `ModelContainer`, optionally enabling CloudKit
+    /// metadata sync via `NSPersistentCloudKitContainer`.
+    ///
+    /// When `cloudKit` is `true`, SwiftData automatically syncs model *properties*
+    /// (titles, ratings, play counts, etc.) to the user's private CloudKit database.
+    /// Binary file payloads (ROMs, BIOS, save states) still require the separate
+    /// custom `CloudKitSyncer` pipeline regardless of this flag.
+    ///
+    /// - Parameters:
+    ///   - cloudKit: Enable SwiftData native CloudKit metadata sync.
+    ///   - inMemory: Use an in-memory store (disables CloudKit implicitly).
+    public static func makePVModelContainer(
+        cloudKit: Bool,
+        inMemory: Bool = false
+    ) throws -> ModelContainer {
+        if cloudKit {
+            return try CloudKitModelContainerConfiguration.makeCloudKitEnabledContainer(inMemory: inMemory)
+        } else {
+            return try makePVModelContainer(inMemory: inMemory)
+        }
     }
 
     /// Creates a `ModelContainer` backed by CloudKit for automatic metadata sync.

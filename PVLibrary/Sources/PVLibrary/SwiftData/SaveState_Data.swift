@@ -32,10 +32,20 @@ public class SaveState_Data {
     @Relationship(deleteRule: .cascade)
     public var image: ImageFile_Data?
 
+    // MARK: - CloudKit Sync Fields
+
+    /// CloudKit record ID once this save state has been confirmed in the private database.
+    /// Uses deterministic format "savestate_<gameID>_<filename>" (CloudKitSchema.RecordIDGenerator).
+    public var cloudRecordID: String?
+
+    /// Date of the last successful CloudKit sync for this save state.
+    public var lastCloudSyncDate: Date?
+
     public init(id: String = UUID().uuidString, date: Date = Date(), isAutosave: Bool = false,
                 createdWithCoreVersion: String = "", lastOpened: Date? = nil,
                 game: Game_Data? = nil, core: Core_Data? = nil,
-                file: File_Data? = nil, image: ImageFile_Data? = nil) {
+                file: File_Data? = nil, image: ImageFile_Data? = nil,
+                cloudRecordID: String? = nil, lastCloudSyncDate: Date? = nil) {
         self.id = id
         self.date = date
         self.isAutosave = isAutosave
@@ -45,5 +55,7 @@ public class SaveState_Data {
         self.core = core
         self.file = file
         self.image = image
+        self.cloudRecordID = cloudRecordID
+        self.lastCloudSyncDate = lastCloudSyncDate
     }
 }
