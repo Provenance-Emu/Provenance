@@ -23,6 +23,9 @@ import PVLibrary
 import PVRealm
 import PVLogging
 import PVThemes
+#if canImport(SwiftData)
+import SwiftData
+#endif
 
 @_exported import PVUIBase
 
@@ -65,6 +68,28 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     private var controllerObserver: Any?
 
     private var continuousNavigationTask: Task<Void, Never>?
+
+    /// Shared SwiftData ModelContainer.  Nil on iOS < 17 or when creation fails.
+    private lazy var sharedModelContainer: (any AnyObject)? = {
+        #if canImport(SwiftData)
+        if #available(iOS 17, tvOS 17, *) {
+            return try? PVSwiftDataSchema.makePVModelContainer()
+        }
+        #endif
+        return nil
+    }()
+
+    /// Creates a UIHostingController whose root view has the shared ModelContainer
+    /// injected (when available), so every hosted SwiftUI hierarchy can use @Query.
+    func makeHostingController<V: View>(_ rootView: V) -> UIHostingController<AnyView> {
+        #if canImport(SwiftData)
+        if #available(iOS 17, tvOS 17, *),
+           let container = sharedModelContainer as? ModelContainer {
+            return UIHostingController(rootView: AnyView(rootView.modelContainer(container)))
+        }
+        #endif
+        return UIHostingController(rootView: AnyView(rootView))
+    }
 
     public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary<RealmDatabaseDriver>, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
@@ -161,7 +186,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
     public func determineInitialView() {
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
-        loadIntoContainer(.home, newVC: UIHostingController(rootView: consolesView))
+        loadIntoContainer(.home, newVC: makeHostingController(consolesView))
 
         // Add observer for title updates
         selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab
@@ -513,7 +538,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                                     }
                                 }
                             }
-        let hostingController = UIHostingController(rootView: continuesView)
+        let hostingController = makeHostingController(continuesView)
 
         // Present as a sheet
         #if os(tvOS)
@@ -571,7 +596,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                     viewModel.gameUIImage = image
                 }
             }
-        let hostingController = UIHostingController(rootView: continuesView)
+        let hostingController = makeHostingController(continuesView)
 
         // Present as a sheet
         #if os(tvOS)

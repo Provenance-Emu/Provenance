@@ -55,7 +55,7 @@ extension PVRootViewController: PVMenuDelegate {
             }
         }
 
-        let hostingController = UIHostingController(rootView: settingsView)
+        let hostingController = makeHostingController(settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
 
         self.closeMenu()
@@ -76,7 +76,7 @@ extension PVRootViewController: PVMenuDelegate {
 #endif
             .environmentObject(SettingsNavigator.shared)
 
-        let hostingController = UIHostingController(rootView: settingsView)
+        let hostingController = makeHostingController(settingsView)
         let navigationController = UINavigationController(rootViewController: hostingController)
 
         self.closeMenu()
@@ -147,7 +147,7 @@ extension PVRootViewController: PVMenuDelegate {
                             }
                         )
 
-                        let hostingController = UIHostingController(rootView: freeROMsView)
+                        let hostingController = self?.makeHostingController(freeROMsView) ?? UIHostingController(rootView: AnyView(freeROMsView))
                         let navigationController = UINavigationController(rootViewController: hostingController)
                         self?.present(navigationController, animated: true)
                     }
@@ -210,7 +210,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
                         await gameImporter.clearCompleted()
                     }
                 }
-                let hostingController = UIHostingController(rootView: settingsView)
+                let hostingController = self.makeHostingController(settingsView)
                 let navigationController = UINavigationController(rootViewController: hostingController)
                 self.present(navigationController, animated: true)
             }
