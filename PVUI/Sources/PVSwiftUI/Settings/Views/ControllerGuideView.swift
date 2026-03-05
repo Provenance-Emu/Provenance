@@ -83,7 +83,7 @@ private struct OnScreenControllerEntry {
     ]
     let pairingSteps: [String] = [
         "No pairing needed — the on-screen controller appears automatically.",
-        "Adjust opacity in Settings > Controller > On-Screen Controller.",
+        "Adjust opacity in Settings > Controllers > On-Screen Controller.",
         "Tap with 3 fingers 3 times to toggle moveable button layout.",
     ]
     let iOSNote: String? = "Available on iPhone and iPad. Appears when no physical controller is connected."
