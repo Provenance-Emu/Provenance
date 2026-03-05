@@ -69,8 +69,9 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
     private var continuousNavigationTask: Task<Void, Never>?
 
-    /// Shared SwiftData ModelContainer.  Nil on iOS < 17 or when creation fails.
-    private lazy var sharedModelContainer: (any AnyObject)? = {
+    /// Shared SwiftData ModelContainer stored as `Any?` to avoid `@available`
+    /// restrictions on stored properties. Nil on iOS < 17 or when creation fails.
+    private lazy var sharedModelContainer: Any? = {
         #if canImport(SwiftData)
         if #available(iOS 17, tvOS 17, *) {
             return try? PVSwiftDataSchema.makePVModelContainer()

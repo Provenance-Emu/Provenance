@@ -131,25 +131,29 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
 
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
         AsyncStream { continuation in
-            Task.detached(priority: .userInitiated) { [modelContainer] in
+            let task = Task.detached(priority: .userInitiated) { [modelContainer] in
                 let context = ModelContext(modelContainer)
 
-                // Build descriptor with fetchLimit set upfront so SwiftData
-                // avoids materializing a potentially large result set.
-                var descriptor = FetchDescriptor<SaveState_Data>(
-                    sortBy: [SortDescriptor(\.date, order: .reverse)]
-                )
-                descriptor.fetchLimit = 500
-
+                // Build the predicate first, then set fetchLimit so SwiftData
+                // applies the limit to the already-filtered result set.
+                let predicate: Predicate<SaveState_Data>
                 if let id = consoleIdentifier {
-                    descriptor.predicate = #Predicate<SaveState_Data> { state in
+                    predicate = #Predicate<SaveState_Data> { state in
                         state.game?.systemIdentifier == id
                     }
                 } else {
-                    descriptor.predicate = #Predicate<SaveState_Data> { state in
+                    predicate = #Predicate<SaveState_Data> { state in
                         state.game != nil
                     }
                 }
+
+                var descriptor = FetchDescriptor<SaveState_Data>(
+                    predicate: predicate,
+                    sortBy: [SortDescriptor(\.date, order: .reverse)]
+                )
+                // Set fetchLimit after predicate so SwiftData never materializes
+                // more rows than needed.
+                descriptor.fetchLimit = 500
 
                 do {
                     let results = try context.fetch(descriptor)
@@ -177,6 +181,8 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
                 }
                 continuation.finish()
             }
+            // Cancel the fetch task if the consumer stops listening.
+            continuation.onTermination = { _ in task.cancel() }
         }
     }
 }

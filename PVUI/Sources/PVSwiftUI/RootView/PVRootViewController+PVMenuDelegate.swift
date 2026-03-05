@@ -134,22 +134,24 @@ extension PVRootViewController: PVMenuDelegate {
             if isEnabled {
                 // Add Free ROMs option
                 actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { [weak self] _ in
-                    self?.dismiss(animated: true) {
+                    guard let self = self else { return }
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
                         let freeROMsView = FreeROMsView(
-                            onROMDownloaded: { rom, tempURL in
+                            onROMDownloaded: { [weak self] rom, tempURL in
                                 // Handle the downloaded ROM
                                 DLOG("Recieved downloaded file at: \(tempURL)")
                                 self?.updatesController.handlePickedDocuments([tempURL])
                             },
-                            onDismiss: {
+                            onDismiss: { [weak self] in
                                 // Optional: Handle dismiss if needed
                                 self?.didTapImports()
                             }
                         )
 
-                        let hostingController = self?.makeHostingController(freeROMsView) ?? UIHostingController(rootView: AnyView(freeROMsView))
+                        let hostingController = self.makeHostingController(freeROMsView)
                         let navigationController = UINavigationController(rootViewController: hostingController)
-                        self?.present(navigationController, animated: true)
+                        self.present(navigationController, animated: true)
                     }
                 }))
             }
