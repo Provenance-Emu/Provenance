@@ -49,7 +49,7 @@ private extension ControllerType {
         case .xbox: return "Requires iOS 13+ (original Xbox One: iOS 14.5+)."
         case .switchPro: return "Requires iOS 16+. Button labels may differ from MFi layout."
         case .mfi: return "Best native support on iOS — all buttons map perfectly."
-        case .iCade: return "Configure in Settings > Controller > iCade / 8Bitdo."
+        case .iCade: return "Configure in Settings > Controllers > iCade / 8Bitdo."
         case .siriRemote: return nil
         case .keyboard: return "Available on iPhone and iPad. See key map in Controller Settings."
         }
