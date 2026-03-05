@@ -78,13 +78,13 @@ private struct OnScreenControllerEntry {
     let features: [String] = [
         "No hardware required",
         "Customizable opacity",
-        "Moveable buttons",
+        "Movable buttons",
         "Joystick pad for analog systems",
     ]
     let pairingSteps: [String] = [
         "No pairing needed — the on-screen controller appears automatically.",
-        "Adjust opacity in Settings > Controllers > On-Screen Controller.",
-        "Tap with 3 fingers 3 times to toggle moveable button layout.",
+        "Adjust opacity in Settings > Controller > On-Screen Controller.",
+        "Tap with 3 fingers 3 times to toggle movable button layout.",
     ]
     let iOSNote: String? = "Available on iPhone and iPad. Appears when no physical controller is connected."
     let tvOSNote: String? = nil
