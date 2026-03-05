@@ -7,13 +7,25 @@
 //  Defines the SwiftData ModelContainer schema and versioned migration plan
 //  for the Provenance game library.
 //
+//  CloudKit Integration Notes:
+//  - SwiftData uses NSPersistentCloudKitContainer under the hood when
+//    `cloudKitContainerIdentifier` is set on ModelConfiguration.
+//  - This automatically syncs @Model metadata (game info, favorites, ratings,
+//    save state metadata) between devices via CloudKit's private database.
+//  - Binary file assets (ROM files, save state files, BIOS files) are NOT
+//    synced via SwiftData CloudKit — those continue to use the per-directory
+//    file syncers (CloudKitRomsSyncer, CloudKitSaveStatesSyncer, etc.).
+//  - Merge conflict strategy: SwiftData CloudKit sync uses field-level
+//    last-write-wins semantics for model properties.
+//  - The `cloudKitContainerIdentifier` must match the entitlement in the app
+//    target (e.g. "iCloud.org.provenance-emu.provenance").
 
 import SwiftData
 
 /// The full schema for Provenance's SwiftData store — version 1.
 ///
 /// All @Model types must be listed here. The container is configured via
-/// `makePVModelContainer`.
+/// `makePVModelContainer` or `makePVModelContainerWithCloudKit`.
 public enum PVSwiftDataSchema {
     /// Schema v1: initial SwiftData migration from Realm.
     public static let v1Schema = Schema([
@@ -38,6 +50,32 @@ public enum PVSwiftDataSchema {
         let config = ModelConfiguration(
             schema: v1Schema,
             isStoredInMemoryOnly: inMemory
+        )
+        return try ModelContainer(configurations: config)
+    }
+
+    /// Creates a `ModelContainer` backed by CloudKit for automatic metadata sync.
+    ///
+    /// SwiftData's built-in CloudKit support (via `NSPersistentCloudKitContainer`)
+    /// automatically syncs model metadata between devices. Only structured model
+    /// data is synced; binary ROM/save-state files still use the file-based syncers.
+    ///
+    /// - Parameters:
+    ///   - cloudKitContainerIdentifier: The CloudKit container identifier, e.g.
+    ///     `"iCloud.org.provenance-emu.provenance"`. Defaults to the standard
+    ///     Provenance container.
+    ///   - inMemory: When `true` returns an in-memory store (useful for unit tests).
+    ///
+    /// - Returns: A `ModelContainer` configured with CloudKit sync.
+    /// - Throws: If the container cannot be created (e.g. entitlement missing).
+    public static func makePVModelContainerWithCloudKit(
+        cloudKitContainerIdentifier: String = "iCloud.org.provenance-emu.provenance",
+        inMemory: Bool = false
+    ) throws -> ModelContainer {
+        let config = ModelConfiguration(
+            schema: v1Schema,
+            isStoredInMemoryOnly: inMemory,
+            cloudKitDatabase: inMemory ? .none : .private(cloudKitContainerIdentifier)
         )
         return try ModelContainer(configurations: config)
     }
