@@ -46,7 +46,7 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
             return (type: combined ?? "", codeType: "")
         }
         let parts = combined.components(separatedBy: "-~-")
-        return (type: parts[0], codeType: parts.dropFirst().joined(separator: "-~-"))
+        return (type: parts.first ?? "", codeType: parts.dropFirst().joined(separator: "-~-"))
     }
 
     public static func == (lhs: PVCheats, rhs: PVCheats) -> Bool {
