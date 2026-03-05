@@ -24,8 +24,6 @@ public struct SkinCatalogDetailView: View {
     @State private var screenshotIndex = 0
     @State private var glowIntensity: CGFloat = 0.5
 
-    @Environment(\.dismiss) private var dismiss
-
     // MARK: - Types
 
     private enum DownloadState: Equatable {
@@ -466,19 +464,21 @@ public struct SkinCatalogDetailView: View {
             downloadState = .downloading(progress: 0)
         }
 
+        var localURL: URL?
         do {
             // Download the skin file with progress
-            let localURL = try await downloadSkin()
+            let downloadedURL = try await downloadSkin()
+            localURL = downloadedURL
 
             // Install via DeltaSkinManager
             await MainActor.run {
                 downloadState = .installing
             }
 
-            try await DeltaSkinManager.shared.importSkin(from: localURL)
+            try await DeltaSkinManager.shared.importSkin(from: downloadedURL)
 
-            // Clean up temp file
-            try? FileManager.default.removeItem(at: localURL)
+            // Clean up temp file after successful install
+            try? FileManager.default.removeItem(at: downloadedURL)
 
             await MainActor.run {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
@@ -488,6 +488,10 @@ public struct SkinCatalogDetailView: View {
 
             ILOG("SkinCatalogDetailView: Successfully installed skin '\(entry.name)'")
         } catch {
+            // Clean up temp file if it was created before the error
+            if let url = localURL {
+                try? FileManager.default.removeItem(at: url)
+            }
             ELOG("SkinCatalogDetailView: Failed to install skin '\(entry.name)': \(error)")
             await MainActor.run {
                 downloadState = .failed(error.localizedDescription)

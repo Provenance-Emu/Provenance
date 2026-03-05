@@ -28,6 +28,7 @@ public struct SkinCatalogBrowserView: View {
     @State private var glowIntensity: CGFloat = 0.5
     @State private var showingFilters = false
     @State private var isRefreshing = false
+    @State private var filterTask: Task<Void, Never>?
 
     // MARK: - Filter Options
 
@@ -107,16 +108,20 @@ public struct SkinCatalogBrowserView: View {
             Task { await loadCatalog() }
         }
         .onChange(of: searchText) { _, _ in
-            Task { await applyFilters() }
+            filterTask?.cancel()
+            filterTask = Task { await applyFilters() }
         }
         .onChange(of: selectedSystem) { _, _ in
-            Task { await applyFilters() }
+            filterTask?.cancel()
+            filterTask = Task { await applyFilters() }
         }
         .onChange(of: selectedDevice) { _, _ in
-            Task { await applyFilters() }
+            filterTask?.cancel()
+            filterTask = Task { await applyFilters() }
         }
         .onChange(of: sortOption) { _, _ in
-            Task { await applyFilters() }
+            filterTask?.cancel()
+            filterTask = Task { await applyFilters() }
         }
     }
 
