@@ -466,6 +466,14 @@ struct iOSCheatSearchView: View {
         } message: { entry in
             Text("\"\(entry.cheatName)\"\n\(entry.cheatCode)")
         }
+        .alert(
+            "Online Search Failed",
+            isPresented: Binding(get: { onlineErrorMessage != nil }, set: { if !$0 { onlineErrorMessage = nil } })
+        ) {
+            Button("OK", role: .cancel) { onlineErrorMessage = nil }
+        } message: {
+            Text(onlineErrorMessage ?? "")
+        }
         .task { await loadCheats() }
     }
 
@@ -478,7 +486,7 @@ struct iOSCheatSearchView: View {
                 ContentUnavailableView.search(text: filterText)
             } else {
                 VStack(spacing: 12) {
-                    Image(systemName: filterText.isEmpty ? "magnifyingglass" : "magnifyingglass")
+                    Image(systemName: "magnifyingglass")
                         .font(.system(size: 48))
                         .foregroundStyle(.secondary)
                     Text(filterText.isEmpty ? "No local cheat codes found" : "No results for \"\(filterText)\"")

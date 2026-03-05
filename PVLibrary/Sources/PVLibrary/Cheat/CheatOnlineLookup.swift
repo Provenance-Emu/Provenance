@@ -298,7 +298,7 @@ public actor CheatOnlineLookup {
         if a == b { return 1.0 }
         let aGrams = bigrams(a)
         let bGrams = bigrams(b)
-        guard !aGrams.isEmpty || !bGrams.isEmpty else { return 0 }
+        guard !aGrams.isEmpty && !bGrams.isEmpty else { return 0 }
         let intersection = aGrams.intersection(bGrams).count
         return 2.0 * Double(intersection) / Double(aGrams.count + bGrams.count)
     }
