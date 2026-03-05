@@ -1,0 +1,2794 @@
+{
+  "version": 1,
+  "lastUpdated": "2026-03-04T00:00:00Z",
+  "skins": [
+    {
+      "id": "39d4631a01be0ed5",
+      "name": "Dark Mode GBA",
+      "author": "Vustom",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Dark%20Mode%20GBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/darkmodegba%20pic.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "b90daac165f7ace3",
+      "name": "Grey Standard GBA",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Standard%20GBA%20Gray.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/grey%20standard%20gba.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "12f8fd570e2485d5",
+      "name": "Switch GBA",
+      "author": "Zeskotzo#9575",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Switch.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/switch%20gba.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "867ca545bb8b6f25",
+      "name": "White Gold GBA",
+      "author": "Ruben#7767",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/WhiteGold%20GBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/whitegold%20gba.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "f2f9e65db0ea8a47",
+      "name": "Purple SP GBA",
+      "author": "felix#6506",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/PurpleSP.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/Purple%20SP%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "50cc28c59b0fe03c",
+      "name": "Standard cyan GBA",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Standard%20GBA%20Cyan.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/cyan%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "e5c9d16a4eae7446",
+      "name": "Standard gold GBA",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Standard%20GBA%20Gold.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/gold%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "67d5bcf650d271c1",
+      "name": "Standard green GBA",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Standard%20GBA%20Green.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/green%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "5c81bc573c9bbf6f",
+      "name": "Standard orange GBA",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Standard%20GBA%20Orange.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/orange%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "4b33ede0252b5ea1",
+      "name": "Standard red GBA",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Standard%20GBA%20Red.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/red%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "c61ece3afa642481",
+      "name": "Standard yellow GBA",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Standard%20GBA%20Yellow.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/yellow%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "0444168a13b16bc4",
+      "name": "Standard blue GBA",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Standard%20GBA%20Blue.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/blue%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ac488ba9a0f45f8e",
+      "name": "Minimal GBA",
+      "author": "Circa#5806",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/com.circa.minimal.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/minimal%20GBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "99cb9a7cab528a22",
+      "name": "Standard Teal GBA",
+      "author": "Hornet#1944",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Teal_GBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/tealGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "a3dcf57c4b7f1b95",
+      "name": "Squirtle GBA",
+      "author": "felix#6506",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/SquirtleGBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/squirtleGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "99883b7174cffd4d",
+      "name": "Bulbasaur GBA",
+      "author": "felix#6506",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/BulbasaurGBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/bulbasaurGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "4c10e29cd6d68048",
+      "name": "Charmander GBA",
+      "author": "felix#6506",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/CharmanderGBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/charmanderGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "4b87709f0efa453c",
+      "name": "Pikachu SP GBA",
+      "author": "felix#6506",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/PikachuSP.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/pikachuGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "c277943ab7332ebd",
+      "name": "Ahegao GBA",
+      "author": "Drowsii#9929",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/ahegaoGBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/ahegaoGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "173b6085896c4989",
+      "name": "Original Gameboy GBA",
+      "author": "itephra#1717",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/itephra_GBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/originalGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "424d556f85c933de",
+      "name": "Nighthawks GBA",
+      "author": "Hornet#1944",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/NighthawksGBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/nighthawksGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ca5c3980d45abec1",
+      "name": "80s GBA",
+      "author": "Hornet#1944",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/80sGBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/80sGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "bc53a6b9e311bf52",
+      "name": "Dark SP GBA",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/DarkSP.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/darksp.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "7d0086ac109de1fc",
+      "name": "Unbound GBA",
+      "author": "LifeOfRAD#5469",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Unbound_GBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/unboundGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "bb2f0ec17eeba470",
+      "name": "Sketch GBA",
+      "author": "LifeOfRAD#5469",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Sketch_GBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/SketchGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "cdf61ee6656cf247",
+      "name": "Simple GBA",
+      "author": "felix#6506",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/SimpleGBA.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/SimpleGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "7bc7cfb65dd87106",
+      "name": "Thumbstick GBA",
+      "author": "Ruben#7767",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/GBAThumbstick.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/thumbstickGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "093ec2fd12388971",
+      "name": "Riley on Acid GBA",
+      "author": "felix#6506",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/rileyonacid.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/rileyonacid.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "21c2e0adba5f939b",
+      "name": "Zelda GBA",
+      "author": "mason.runs#8434",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/zeldaskin.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/zeldagba.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "824856ccb572bd99",
+      "name": "DBZ GBA",
+      "author": "mason.runs#8434",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/dbz.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/dbzGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ba4de7c2d841f593",
+      "name": "Overlord GBA",
+      "author": "Expandedtrout79#0917",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/overlord.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/overlordGBA.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "0a43a0a3eccea525",
+      "name": "Code 002 GBA",
+      "author": "Expandedtrout79#0917",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Code002.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/code002.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "afbcdc926ec7271a",
+      "name": "Bitches Be Crazy GBA",
+      "author": "Expandedtrout79#0917",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/BitchesBeCrazy.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/bitchesbecrazy.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "28d2784629a4e685",
+      "name": "Marine Observer GBA",
+      "author": "Expandedtrout79#0917",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/MarineObserver.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/marineobserver.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "566712a8ae68345d",
+      "name": "American Splendor GBA",
+      "author": "yunginternet#6280",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/AmericanSplendor.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/americansplendor.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "d769db518c9255cf",
+      "name": "Wolverine GBA",
+      "author": "Expandedtrout79#0917",
+      "systems": [
+        "gba"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gba",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gba/Wolverine.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gba/wolverine.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "e52e335d29cc4591",
+      "name": "Standard White Buttons GBC",
+      "author": "Zeskotzo#9575",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/Standard%20GBA%20for%20GBC%202.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/standard%20white%20buttons%20GBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "86133f2d7bc11787",
+      "name": "Charmander GBC",
+      "author": "felix#6506",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/CharmanderGBC.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/charmander%20GBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "fe1804d7d70dede5",
+      "name": "Pikachu GBC",
+      "author": "Hornet#1944",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/Pikachu_Editon_GBC_Ver._2.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/poke_GBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "adb5accc2728666b",
+      "name": "Bulbasaur GBC",
+      "author": "felix#6506",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/BulbasaurGBC.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/bulbGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ac7f5c51a9b82349",
+      "name": "Squirtle GBC",
+      "author": "felix#6506",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/SquirtleGBC.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/squirtleGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "b4b966c9b522295f",
+      "name": "Awakening GBC",
+      "author": "Hornet#1944",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/Awakening_GBC.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/awakeningGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "f9d623c6644b1257",
+      "name": "Pika Power GBC",
+      "author": "Hornet#1944",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/Pika_Power_GBC.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/PikaPowerGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "dc52db015ba040a9",
+      "name": "Pichu Color GBC",
+      "author": "Hornet#1944",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/Pichu_Color.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/pichuGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "79738770f39cc688",
+      "name": "DMG 01 GBC",
+      "author": "yunginternet#6280",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/DMG_01.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/DMG-01_ORIGINAL.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "aca8da2923104677",
+      "name": "Original Gameboy GBC",
+      "author": "itephra#1717",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/itephra#1717_GBC.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/originalGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "65aa6dbf9dd5b4cd",
+      "name": "The Great Wave GBC",
+      "author": "Hornet#1944",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/The%20Great%20WaveGBC.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/thegreatwaveGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "4e4347104a577295",
+      "name": "Quag Gang GBC",
+      "author": "Zeskotzo#9575",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/Quag%20Gang.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/quaggangGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "f263c244bbfba237",
+      "name": "DMG 01 Fullscreen GBC",
+      "author": "yunginternet#6280",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/DMG_01_4GBC_FULLSCREEN.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/DMG-FULLSCREEN.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "e0cfa6402c34f609",
+      "name": "Analogue Pocket Dark GBC",
+      "author": "ellenich#9244",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/AnaloguePocketGBCDark.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/analoguedarkgbc.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "b92da0cc554cb034",
+      "name": "Analogue Pocket Light GBC",
+      "author": "ellenich#9244",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/AnaloguePocketGBCLight.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/analoguelightgbc.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "aa99a83630008d55",
+      "name": "Thumbstick GBC",
+      "author": "Ruben#7767",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBCThumbstick.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/thumbstickgbc.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "58689f784756627b",
+      "name": "Atomic Pink GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-AtomicPink.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/preview-portrait-atomicpink.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "a5c9b14d4ea530e7",
+      "name": "Atomic Purple GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-AtomicPurple.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/preview-portrait-atomicpurple.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "cb0fb28dcdd9c71c",
+      "name": "Berry GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-Berry.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/preview-portrait-berry.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "34af9af7b270c354",
+      "name": "Clear GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-Clear.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/preview-portrait-clear.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "090a2fd9eccc07c9",
+      "name": "Dandelion GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-Dandelion.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/preview-portrait-dandelion.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "b83801e2a15872cb",
+      "name": "Grape GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-Grape.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/preview-portrait-grape.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "3716de4f6b0712c6",
+      "name": "Kiwi GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-Kiwi.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/preview-portrait-kiwi.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "a7797893dd01401f",
+      "name": "Teal GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-Teal.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/preview-portrait-teal.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "c08013b3499f4ac2",
+      "name": "Horror GBC",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/gbc/GBC-Horror.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/gbc/horrorGBC.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "b81c611cbb8b4761",
+      "name": "Purple SNES",
+      "author": "Pixel Miku",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/Purple_SNES.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/purple%20snes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "405d00ea8235d783",
+      "name": "Purple Power SNES",
+      "author": "Hornet#1944",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/PowerPurpleSNES.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/purplepower.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ed24f3ef7af55520",
+      "name": "Sunflower SNES",
+      "author": "Hornet#1944",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/SunflowersSNES.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/sunflowersSNES.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "70c3a5355987d19c",
+      "name": "Dark SNES",
+      "author": "Anonymaus#9917",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/DarkSN.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/darkSNES.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "95aae7e8a59b160a",
+      "name": "Kirby SNES",
+      "author": "felix#6506",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/kirbySNES.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/kirbySNES.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "81a6359e808e6a8f",
+      "name": "NA SNES",
+      "author": "felix#6506",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/snesna.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/snesna.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "3eef3aeb904adf25",
+      "name": "Thumbstick SNES",
+      "author": "Ruben#7767",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/SNESthumbstick.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/snesthumbstick.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "60a41f627846a33d",
+      "name": "Mario SNES",
+      "author": "mason.runs#8434",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/mariosnes.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/mariosnes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "1eeb014a83a661f0",
+      "name": "Simple SNES",
+      "author": "mason.runs#8434",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/simplifiedsnes.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/simplesnes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "11c96f8760a44b4e",
+      "name": "Nightmare SNES",
+      "author": "felix#6506",
+      "systems": [
+        "snes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.snes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/snes/nightmareSNES.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/snes/nightmaresnes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "9accf9bacb8fd0dc",
+      "name": "Tetris NES",
+      "author": "Ruben#7767",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/Tetris%20Theme.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/tetris%20nes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "f1642b6cc22aed1d",
+      "name": "NESimple NES",
+      "author": "Ruben#7767",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/NESimple.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/nesimpleNES.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "3a59aaa857ac92d6",
+      "name": "Impression Sunrise NES",
+      "author": "Hornet#1944",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/Impression%20SunriseNES.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/impressionsunriseNES.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "7f4d280afef68c0d",
+      "name": "DMG 01 NES",
+      "author": "yunginternet#6280",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/DMG_01_4NES.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/DMG_01_4NES.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "47144826090a8311",
+      "name": "Zelda NES",
+      "author": "Ruben#7767",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/Zelda%20NES.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/zeldaNES.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "b6dc112331f60f55",
+      "name": "Famicom Red NES",
+      "author": "yunginternet#6280",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/FAMICOM_RED___PORTRAIT_ONLY.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/famREDnes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "f987346f97dbdadb",
+      "name": "Famicom Nevermind NES",
+      "author": "yunginternet#6280",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/FAMICOM_NEVER_MIND_PORTRAIT_ONLY.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/famnvmnes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "af245e3806b599e2",
+      "name": "Famicom Green Buddha NES",
+      "author": "yunginternet#6280",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/FAMICOM_GREEN_BUDDHA_PORTRAIT_ONLY.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/GREEN_BUDDHAnes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "9cf039dddef942ba",
+      "name": "Famicom White Ranger NES",
+      "author": "yunginternet#6280",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/FAMICOM_WHITE_RANGER_PORTRAIT_ONLY.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/WHITE_RANGERnes.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "7baab257e64a681a",
+      "name": "Thumbstick NES",
+      "author": "Ruben#7767",
+      "systems": [
+        "nes"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.nes",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nes/NESThumbstick.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nes/nesthumbstick.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "9183bfdba7565a9f",
+      "name": "Dark Purple N64",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/Standard_n64.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/dark%20purple%20n64.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "62cc3e1ba9fe38a9",
+      "name": "Witches Brew N64",
+      "author": "spaz",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/WitchesBrew64.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/black%20and%20green%20N64.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "2a84c89cfdc37997",
+      "name": "Dirty Green N64",
+      "author": "Thatdud#2036",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/dirty_green_n64_i.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/dirtygreenN64.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "0d15b8374b849242",
+      "name": "Refraction N64",
+      "author": "Hornet#1944",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/refraction.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/refractionN64.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "2eb156702bf18fb3",
+      "name": "Got the Blues N64",
+      "author": "Hornet#1944",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/Got_The_Blues_N64_3.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/gotthebluesN64.jpg",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ddb494cda4831988",
+      "name": "Falling Leaves N64",
+      "author": "Hornet#1944",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/Falling_Leaves_N64.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/fallingleavesN64.jpg",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "4f21c22955ecb8cc",
+      "name": "Green N64",
+      "author": "Hornet#1944",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/Green64.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/greenN64.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ac43633fa872d391",
+      "name": "Blue N64",
+      "author": "Circa#5806",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/com.Circa#5806.n64.blue.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/blueN64.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ef6a63adbaf86c08",
+      "name": "Thumbstick and Dpad swap N64",
+      "author": "Ruben#7767",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/ThumbstickDPadSwap.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/thumbstickdpadswap.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "b675b79edc01d1a0",
+      "name": "Double Thumbstick N64",
+      "author": "Ruben#7767",
+      "systems": [
+        "n64"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.n64",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/n64/N64DoubleThumbstick.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/n64/n64cthumbstick.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ec0c7e4a703dbc97",
+      "name": "Buttonless NDS",
+      "author": "Pixel Miku",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/Pokemon_Ranger_Edge_To_Edge_Optimized.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/buttonless%20NDS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "72bccc3b51fcea3b",
+      "name": "PinkJoystick",
+      "author": "Raj Sodhi",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/rajsodhinyu/deltaskins/raw/main/PinkWithJoystick/Joystick_Pink.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/PinkJoystick.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "fca4b76daa473de7",
+      "name": "Rhythm Heaven NDS",
+      "author": "Pixel Miku",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/Rhythm%20Heaven%20E2E.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/rhythm%20heaven%20NDS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "9c39878952c7d1a2",
+      "name": "Dark Classic NDS",
+      "author": "tedmosby#7997",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/NDS_v7.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/dark%20NDS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "2a0e12f671e32831",
+      "name": "Red Classic NDS",
+      "author": "Hornet#1944",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/NDS_v9.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/red%20NDS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "ba2e958f860aa4d6",
+      "name": "Night Candy NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/NDSNightCandy.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/NDS_Night_Candy.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "c631780a87e15a03",
+      "name": "iNDS NDS",
+      "author": "Helbrecht#5158",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/NDS_iNDS.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/iNDSNDS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "bc0a9c7cf6acd7c1",
+      "name": "Mystic Mew NDS",
+      "author": "Hornet#1944",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/mystic_mew_ds.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/mysticmewDS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "f201341544cd8e7e",
+      "name": "Buttonless4All NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/buttonless4all.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/buttonlessNDS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "d18271b844560fb8",
+      "name": "Vivid NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/VividDS.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/vivid_ds.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "e2eff1c95a5faf71",
+      "name": "Simple NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDS.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/Simple_DS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "080e0515eb164f38",
+      "name": "Simple Yellow NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDSyellow.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/Simple_DS_Yellow.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "0a79420afb89c4ed",
+      "name": "Simple Red NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDSred.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/Simple_DS_Red.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "7b96fc2c007afc30",
+      "name": "Simple Pink NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDSpink.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/Simple_DS_Pink.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "32687c8571995b2a",
+      "name": "Simple Grey NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDSgrey.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/Simple_DS_Grey.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "991d57cf0cd8fd93",
+      "name": "Simple Green NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDSgreen.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/Simple_DS_Green.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "d347463fdde351ca",
+      "name": "Simple Blue NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDSblue.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/Simple_DS_Blue.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "2fd4d89125b1dc24",
+      "name": "Simple White NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDSwhite.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/simpledswhite.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "f5e61497ce4a2388",
+      "name": "Simple White Thumbstick NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/SimpleDSwhite_Thumbstick.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/simpledswhitethumb.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "6b5d2afa9361ba20",
+      "name": "Nightmare NDS",
+      "author": "felix#6506",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/nds/nightmareDS.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/nds/nightmareDS.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "501c30d4f421abab",
+      "name": "Sega Game Gear",
+      "author": "felix#6506",
+      "systems": [
+        "unofficial"
+      ],
+      "gameTypeIdentifier": null,
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/unofficial/SEGAgamegear.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/unofficial/segagamegear.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "d143f7c3c8313b3a",
+      "name": "SMS Dpad",
+      "author": "felix#6506",
+      "systems": [
+        "unofficial"
+      ],
+      "gameTypeIdentifier": null,
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/unofficial/SEGAsmsDPAD.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/unofficial/SMSdpad.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "aef9dcd8ddf06ddd",
+      "name": "SMS Thumbstick",
+      "author": "felix#6506",
+      "systems": [
+        "unofficial"
+      ],
+      "gameTypeIdentifier": null,
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/unofficial/SEGAsms.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/unofficial/SMSthumbstick.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "27142316e1ac9953",
+      "name": "SEGA SG-1000 Thumbstick",
+      "author": "felix#6506",
+      "systems": [
+        "unofficial"
+      ],
+      "gameTypeIdentifier": null,
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/unofficial/SEGAsg1000.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/unofficial/sg1000.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "b88c501e8689debb",
+      "name": "Sharp X1",
+      "author": "felix#6506",
+      "systems": [
+        "unofficial"
+      ],
+      "gameTypeIdentifier": null,
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/unofficial/SharpX1.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/unofficial/sharpx1.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "f9bbd2e1e12d478b",
+      "name": "Turbo Grafx 16",
+      "author": "felix#6506",
+      "systems": [
+        "unofficial"
+      ],
+      "gameTypeIdentifier": null,
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/unofficial/TurboGrafx16.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/unofficial/turbegrafx16.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "cfae75de96c6fe75",
+      "name": "Turbo Grafx 16 DPAD",
+      "author": "felix#6506",
+      "systems": [
+        "unofficial"
+      ],
+      "gameTypeIdentifier": null,
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/unofficial/TurboGrafx16_DPAD.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/unofficial/turbografx16dpad.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy",
+        "landscape"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    },
+    {
+      "id": "67d260708ffa7d09",
+      "name": "Mini Mame",
+      "author": "felix#6506",
+      "systems": [
+        "unofficial"
+      ],
+      "gameTypeIdentifier": null,
+      "version": null,
+      "downloadURL": "https://github.com/delta-skins/delta-skins.github.io/raw/master/unofficial/MiniMame.deltaskin",
+      "thumbnailURL": "https://delta-skins.github.io/unofficial/minimame.png",
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [
+        "iphone-x",
+        "iphone-legacy"
+      ],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": null,
+      "source": "delta-skins.github.io"
+    }
+  ]
+}

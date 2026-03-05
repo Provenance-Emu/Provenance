@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-.PHONY: help ios update tvos lite ci update-cheatdb
+.PHONY: help ios update tvos lite ci update-cheatdb update-skin-catalog
 
 RUBY := $(shell command -v ruby 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
@@ -208,6 +208,18 @@ update-cheatdb:
 	python3 Scripts/generate_cheatdb.py /tmp/libretro-database/cht/ \
 		--output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
 	rm -rf /tmp/libretro-database
+
+## Scrape community Delta skin sites and generate catalog.json
+update-skin-catalog:
+	$(info Scraping Delta skin catalogs…)
+	@if [ ! -d /tmp/scraper-venv ]; then \
+		python3 -m venv /tmp/scraper-venv; \
+	fi
+	/tmp/scraper-venv/bin/pip install -q -r Scripts/requirements-scraper.txt
+	/tmp/scraper-venv/bin/python3 Scripts/scrape_skin_catalog.py \
+		--source all \
+		--skip-validation \
+		--output PVLookup/Sources/PVLookup/Resources/skin_catalog.json
 
 ## tag and release to github
 release: | _var_VERSION
