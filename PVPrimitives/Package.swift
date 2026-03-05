@@ -44,6 +44,11 @@ let package = Package(
         .target(
             name: "PVSystems",
             dependencies: ["PVSupport", "PVLogging", "PVHashing"]
+        ),
+        // MARK: ------------ Tests ------------
+        .testTarget(
+            name: "PVPrimitivesTests",
+            dependencies: ["PVPrimitives"]
         )
     ],
     swiftLanguageModes: [.v5, .v6],
