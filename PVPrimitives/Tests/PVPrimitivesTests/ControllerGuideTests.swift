@@ -21,6 +21,7 @@ final class ControllerGuideInfoTests: XCTestCase {
         XCTAssertEqual(ControllerType.switchPro.displayName, "Nintendo Switch Pro")
         XCTAssertEqual(ControllerType.iCade.displayName, "iCade")
         XCTAssertEqual(ControllerType.siriRemote.displayName, "Siri Remote")
+        XCTAssertEqual(ControllerType.keyboard.displayName, "Keyboard")
     }
 
     func testModernControllerTypes() {
@@ -34,6 +35,7 @@ final class ControllerGuideInfoTests: XCTestCase {
         XCTAssertFalse(ControllerType.mfi.isModern)
         XCTAssertFalse(ControllerType.iCade.isModern)
         XCTAssertFalse(ControllerType.siriRemote.isModern)
+        XCTAssertFalse(ControllerType.keyboard.isModern)
     }
 
     // MARK: - ControllerPlatformSupport
@@ -132,6 +134,7 @@ final class ControllerCatalogTests: XCTestCase {
         XCTAssertTrue(names.contains("MFi Game Controller"))
         XCTAssertTrue(names.contains("Siri Remote"))
         XCTAssertTrue(names.contains("iCade Arcade Cabinet"))
+        XCTAssertTrue(names.contains("Bluetooth / USB Keyboard"))
     }
 
     func testRecommendedControllersAreModernTypes() {
@@ -178,6 +181,15 @@ final class ControllerCatalogTests: XCTestCase {
 
     func testLookupByUnknownIDReturnsNil() {
         XCTAssertNil(ControllerCatalog.controller(withID: "nonexistent-controller"))
+    }
+
+    func testKeyboardSupportsAllPlatforms() {
+        XCTAssertTrue(ControllerCatalog.keyboard.supportsIOS)
+        XCTAssertTrue(ControllerCatalog.keyboard.supportsTVOS)
+    }
+
+    func testKeyboardIsNotRecommended() {
+        XCTAssertFalse(ControllerCatalog.keyboard.isRecommended)
     }
 
     func testByTypeGroupingCoversAllControllers() {

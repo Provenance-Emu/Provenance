@@ -1,203 +1,96 @@
 import SwiftUI
+import PVPrimitives
 import PVUIBase
 import PVThemes
 
-// MARK: - Inline Data Model
-// This will be replaced by ControllerGuideInfo from the sibling ticket when merged.
+// MARK: - Private view-display extensions
 
-/// Category grouping for controller types
-enum ControllerCategory: String, CaseIterable {
-    case recommended = "Recommended"
-    case legacy = "Legacy"
-    case touch = "Touch / On-Screen"
+/// Maps each ControllerType to the SF Symbol name best representing it in the guide.
+private extension ControllerType {
+    var sfSymbolName: String {
+        switch self {
+        case .dualSense, .dualShock4: return "gamecontroller.fill"
+        case .xbox: return "gamecontroller.fill"
+        case .switchPro: return "gamecontroller"
+        case .mfi: return "gamecontroller"
+        case .iCade: return "keyboard"
+        case .siriRemote: return "appletv.remote.gen2"
+        case .keyboard: return "keyboard.fill"
+        }
+    }
+
+    var connectionBadgeLabel: String {
+        switch self {
+        case .keyboard: return "BT / USB"
+        default: return "Bluetooth"
+        }
+    }
+
+    var connectionBadgeIcon: String {
+        switch self {
+        case .iCade, .keyboard: return "keyboard"
+        case .siriRemote: return "appletv.remote.gen2"
+        default: return "dot.radiowaves.left.and.right"
+        }
+    }
+
+    var connectionBadgeColor: Color {
+        switch self {
+        case .iCade, .keyboard: return .retroPink
+        case .siriRemote: return .secondary
+        default: return .blue
+        }
+    }
+
+    var iOSNote: String? {
+        switch self {
+        case .dualSense: return "Works with iOS 14.5+. All buttons fully mapped."
+        case .dualShock4: return "Works with iOS 13+."
+        case .xbox: return "Requires iOS 13+ (original Xbox One: iOS 14.5+)."
+        case .switchPro: return "Requires iOS 16+. Button labels may differ from MFi layout."
+        case .mfi: return "Best native support on iOS — all buttons map perfectly."
+        case .iCade: return "Configure in Settings > Controller > iCade / 8Bitdo."
+        case .siriRemote: return nil
+        case .keyboard: return "Available on iPhone and iPad. See key map in Controller Settings."
+        }
+    }
+
+    var tvOSNote: String? {
+        switch self {
+        case .dualSense: return "Works with tvOS 14.5+. Home button opens Apple TV menu."
+        case .dualShock4: return "Works with tvOS 13+."
+        case .xbox: return "Requires tvOS 13+."
+        case .switchPro: return "Requires tvOS 16+."
+        case .mfi: return "Works with tvOS. Siri Remote still required for some Apple TV interactions."
+        case .iCade: return "Limited support on tvOS — use MFi or modern Bluetooth controllers for best experience."
+        case .siriRemote: return "Always available on Apple TV. Limited to 1–2 button games only."
+        case .keyboard: return "Keyboard input supported on Apple TV with USB-C adapter."
+        }
+    }
 }
 
-/// How a controller connects to the device
-enum ControllerConnectionType: String {
-    case bluetooth = "Bluetooth"
-    case usb = "USB / Wired"
-    case lightning = "Lightning"
-    case wifi = "Wi-Fi / Network"
-    case builtin = "Built-in"
+// MARK: - On-Screen Controller (view-only, not a hardware peripheral)
+
+private struct OnScreenControllerEntry {
+    let id = "on-screen"
+    let name = "On-Screen Controller"
+    let subtitle = "Touch overlay buttons"
+    let features: [String] = [
+        "No hardware required",
+        "Customizable opacity",
+        "Moveable buttons",
+        "Joystick pad for analog systems",
+    ]
+    let pairingSteps: [String] = [
+        "No pairing needed — the on-screen controller appears automatically.",
+        "Adjust opacity in Settings > Controller > On-Screen Controller.",
+        "Tap with 3 fingers 3 times to toggle moveable button layout.",
+    ]
+    let iOSNote: String? = "Available on iPhone and iPad. Appears when no physical controller is connected."
+    let tvOSNote: String? = nil
 }
 
-/// Platform-specific notes for a controller
-struct ControllerPlatformNotes {
-    let iOS: String?
-    let tvOS: String?
-}
-
-/// Represents a single supported controller type with associated guidance
-struct ControllerInfo: Identifiable {
-    var id: String { name }
-    let name: String
-    let subtitle: String
-    let category: ControllerCategory
-    let connectionType: ControllerConnectionType
-    let features: [String]
-    let pairingSteps: [String]
-    let systemImageName: String
-    let wikiPath: String?
-    let platformNotes: ControllerPlatformNotes?
-}
-
-// MARK: - Built-in Controller Data
-
-private let supportedControllers: [ControllerInfo] = [
-    // MARK: Recommended
-    ControllerInfo(
-        name: "PlayStation DualSense",
-        subtitle: "PS5 Controller",
-        category: .recommended,
-        connectionType: .bluetooth,
-        features: ["Full analog sticks", "Haptic feedback", "Adaptive triggers", "Motion sensor", "Touchpad"],
-        pairingSteps: [
-            "Press and hold the PS button + Create button until the light bar flashes.",
-            "Open Settings > Bluetooth on your device.",
-            "Select \"DualSense Wireless Controller\" from the list.",
-            "The light bar will stop flashing when connected."
-        ],
-        systemImageName: "gamecontroller.fill",
-        wikiPath: "info/controllers-and-controls/README.md",
-        platformNotes: ControllerPlatformNotes(
-            iOS: "Works with iOS 14.5+. All buttons fully mapped.",
-            tvOS: "Works with tvOS 14.5+. Home button opens Apple TV menu."
-        )
-    ),
-    ControllerInfo(
-        name: "PlayStation DualShock 4",
-        subtitle: "PS4 Controller",
-        category: .recommended,
-        connectionType: .bluetooth,
-        features: ["Full analog sticks", "Rumble / haptic", "Motion sensor", "Touchpad as button"],
-        pairingSteps: [
-            "Press and hold the PS button + Share button until the light bar flashes rapidly.",
-            "Open Settings > Bluetooth on your device.",
-            "Select \"DUALSHOCK 4 Wireless Controller\" from the list.",
-            "The light bar will turn solid blue when connected."
-        ],
-        systemImageName: "gamecontroller.fill",
-        wikiPath: "info/controllers-and-controls/README.md",
-        platformNotes: ControllerPlatformNotes(
-            iOS: "Works with iOS 13+.",
-            tvOS: "Works with tvOS 13+."
-        )
-    ),
-    ControllerInfo(
-        name: "Xbox Wireless Controller",
-        subtitle: "Xbox One / Series X|S",
-        category: .recommended,
-        connectionType: .bluetooth,
-        features: ["Full analog sticks", "Rumble / haptic", "Share button (Series X|S)", "USB-C charging"],
-        pairingSteps: [
-            "Press and hold the Bluetooth/pair button on the back of the controller.",
-            "Open Settings > Bluetooth on your device.",
-            "Select \"Xbox Wireless Controller\" from the list.",
-            "The Xbox button will stop flashing when connected."
-        ],
-        systemImageName: "gamecontroller.fill",
-        wikiPath: "info/controllers-and-controls/README.md",
-        platformNotes: ControllerPlatformNotes(
-            iOS: "Requires iOS 13+ (original Xbox One: iOS 14.5+).",
-            tvOS: "Requires tvOS 13+."
-        )
-    ),
-    ControllerInfo(
-        name: "Nintendo Switch Pro Controller",
-        subtitle: "MFi-compatible via Bluetooth",
-        category: .recommended,
-        connectionType: .bluetooth,
-        features: ["Full analog sticks", "Rumble", "NFC", "Motion sensor", "USB-C charging"],
-        pairingSteps: [
-            "Press and hold the Sync button on the top of the controller.",
-            "Open Settings > Bluetooth on your device.",
-            "Select \"Pro Controller\" from the list.",
-            "The player LEDs will stop flashing when connected."
-        ],
-        systemImageName: "gamecontroller.fill",
-        wikiPath: "info/controllers-and-controls/README.md",
-        platformNotes: ControllerPlatformNotes(
-            iOS: "Requires iOS 16+. Button labels may differ from MFi layout.",
-            tvOS: "Requires tvOS 16+."
-        )
-    ),
-    ControllerInfo(
-        name: "MFi Game Controller",
-        subtitle: "Made for iPhone/iPad certified",
-        category: .recommended,
-        connectionType: .bluetooth,
-        features: ["Full MFi button set", "Lightning or Bluetooth", "Designed for iOS"],
-        pairingSteps: [
-            "Put the controller in pairing mode per its manual (usually hold a pairing button).",
-            "Open Settings > Bluetooth on your device.",
-            "Select the controller from the list.",
-            "Some MFi controllers clip onto your device."
-        ],
-        systemImageName: "gamecontroller",
-        wikiPath: "info/controllers-and-controls/README.md",
-        platformNotes: ControllerPlatformNotes(
-            iOS: "Best native support on iOS — all buttons map perfectly.",
-            tvOS: "Works with tvOS. Siri Remote still required for some Apple TV interactions."
-        )
-    ),
-    // MARK: Legacy
-    ControllerInfo(
-        name: "iCade / 8Bitdo (iCade Mode)",
-        subtitle: "Bluetooth HID keyboard-based controllers",
-        category: .legacy,
-        connectionType: .bluetooth,
-        features: ["Works via Bluetooth keyboard HID", "Wide compatibility", "Arcade-style layouts available"],
-        pairingSteps: [
-            "Pair the controller as a Bluetooth keyboard in Settings > Bluetooth.",
-            "In Provenance, go to Settings > Controller > iCade / 8Bitdo.",
-            "Select your controller type from the list.",
-            "Follow any on-screen prompts to complete setup."
-        ],
-        systemImageName: "keyboard",
-        wikiPath: "info/controllers-and-controls/README.md",
-        platformNotes: ControllerPlatformNotes(
-            iOS: "Configure in Settings > Controller > iCade / 8Bitdo.",
-            tvOS: "Limited support on tvOS — use MFi or modern Bluetooth controllers for best experience."
-        )
-    ),
-    ControllerInfo(
-        name: "Keyboard",
-        subtitle: "Hardware Bluetooth or USB keyboard",
-        category: .legacy,
-        connectionType: .bluetooth,
-        features: ["WASD / arrow key movement", "Configurable button mapping", "Works on iPad with Smart Keyboard"],
-        pairingSteps: [
-            "Pair a Bluetooth keyboard via Settings > Bluetooth, or connect a USB keyboard via adapter.",
-            "Provenance automatically detects a connected keyboard.",
-            "See the Keyboard Controls section in Settings > Controller for the key mapping."
-        ],
-        systemImageName: "keyboard.fill",
-        wikiPath: "info/controllers-and-controls/README.md",
-        platformNotes: ControllerPlatformNotes(
-            iOS: "Available on iPhone and iPad. See key map in Controller Settings.",
-            tvOS: "Keyboard input supported on Apple TV with USB-C adapter."
-        )
-    ),
-    // MARK: Touch
-    ControllerInfo(
-        name: "On-Screen Controller",
-        subtitle: "Touch overlay buttons",
-        category: .touch,
-        connectionType: .builtin,
-        features: ["No hardware required", "Customizable opacity", "Moveable buttons", "Joystick pad for analog systems"],
-        pairingSteps: [
-            "No pairing needed — the on-screen controller appears automatically.",
-            "Adjust opacity in Settings > Controller > On-Screen Controller.",
-            "Tap with 3 fingers 3 times to toggle moveable button layout."
-        ],
-        systemImageName: "hand.point.up.left",
-        wikiPath: nil,
-        platformNotes: ControllerPlatformNotes(
-            iOS: "Available on iPhone and iPad. Appears when no physical controller is connected.",
-            tvOS: nil
-        )
-    )
-]
+private let onScreenEntry = OnScreenControllerEntry()
 
 // MARK: - ControllerGuideView
 
@@ -304,22 +197,42 @@ public struct ControllerGuideView: View {
 
     @ViewBuilder
     private var pairingGuideSection: some View {
-        ForEach(ControllerCategory.allCases, id: \.self) { category in
-            let controllers = supportedControllers.filter { $0.category == category }
-            if !controllers.isEmpty {
-                Section {
-                    ForEach(controllers) { controller in
-                        controllerRow(controller)
-                    }
-                } header: {
-                    sectionHeader(icon: iconForCategory(category), title: category.rawValue)
+        // Recommended hardware controllers
+        let recommended = ControllerCatalog.all.filter { $0.isRecommended }
+        if !recommended.isEmpty {
+            Section {
+                ForEach(recommended) { controller in
+                    catalogControllerRow(controller)
                 }
+            } header: {
+                sectionHeader(icon: "star.fill", title: "Recommended")
             }
         }
+
+        // Legacy / alternative hardware controllers
+        let legacy = ControllerCatalog.all.filter { !$0.isRecommended && $0.controllerType != .siriRemote }
+        if !legacy.isEmpty {
+            Section {
+                ForEach(legacy) { controller in
+                    catalogControllerRow(controller)
+                }
+            } header: {
+                sectionHeader(icon: "clock.fill", title: "Legacy")
+            }
+        }
+
+        // Touch / software input (on-screen only — not a hardware device)
+        #if !os(tvOS)
+        Section {
+            onScreenControllerRow
+        } header: {
+            sectionHeader(icon: "hand.point.up.left.fill", title: "Touch / On-Screen")
+        }
+        #endif
     }
 
     @ViewBuilder
-    private func controllerRow(_ controller: ControllerInfo) -> some View {
+    private func catalogControllerRow(_ controller: ControllerGuideInfo) -> some View {
         let isExpanded = expandedController == controller.id
         Button(action: {
             withAnimation(.easeInOut(duration: 0.25)) {
@@ -329,7 +242,7 @@ public struct ControllerGuideView: View {
             VStack(alignment: .leading, spacing: 8) {
                 // Header row
                 HStack(spacing: 12) {
-                    Image(systemName: controller.systemImageName)
+                    Image(systemName: controller.controllerType.sfSymbolName)
                         .font(.title2)
                         .foregroundColor(accentColor)
                         .frame(width: 36, height: 36)
@@ -344,15 +257,18 @@ public struct ControllerGuideView: View {
                             #if os(tvOS)
                             .foregroundColor(.white)
                             #endif
-                        Text(controller.subtitle)
+                        Text(controller.controllerType.displayName)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
 
                     Spacer()
 
-                    // Connection type badge
-                    connectionBadge(controller.connectionType)
+                    connectionBadge(
+                        label: controller.controllerType.connectionBadgeLabel,
+                        icon: controller.controllerType.connectionBadgeIcon,
+                        color: controller.controllerType.connectionBadgeColor
+                    )
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.caption)
@@ -363,14 +279,14 @@ public struct ControllerGuideView: View {
                     Divider()
 
                     // Features
-                    if !controller.features.isEmpty {
+                    if !controller.featureNotes.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Features")
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(accentColor)
                                 .textCase(.uppercase)
-                            ForEach(controller.features, id: \.self) { feature in
+                            ForEach(controller.featureNotes, id: \.self) { feature in
                                 HStack(alignment: .top, spacing: 8) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.caption)
@@ -385,14 +301,14 @@ public struct ControllerGuideView: View {
                     }
 
                     // Pairing steps
-                    if !controller.pairingSteps.isEmpty {
+                    if !controller.pairingInstructions.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Pairing Steps")
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(accentColor)
                                 .textCase(.uppercase)
-                            ForEach(Array(controller.pairingSteps.enumerated()), id: \.offset) { index, step in
+                            ForEach(Array(controller.pairingInstructions.enumerated()), id: \.offset) { index, step in
                                 HStack(alignment: .top, spacing: 8) {
                                     Text("\(index + 1).")
                                         .font(.caption)
@@ -410,10 +326,11 @@ public struct ControllerGuideView: View {
                     }
 
                     // Platform notes
-                    if let notes = controller.platformNotes {
-                        platformNotesView(notes: notes)
-                            .padding(.top, 4)
-                    }
+                    platformNotesInlineView(
+                        iOSNote: controller.controllerType.iOSNote,
+                        tvOSNote: controller.controllerType.tvOSNote
+                    )
+                    .padding(.top, 4)
                 }
             }
             .padding(.vertical, 4)
@@ -428,12 +345,97 @@ public struct ControllerGuideView: View {
     }
 
     @ViewBuilder
-    private func connectionBadge(_ type: ControllerConnectionType) -> some View {
-        let (icon, color) = badgeStyle(for: type)
+    private var onScreenControllerRow: some View {
+        let isExpanded = expandedController == onScreenEntry.id
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.25)) {
+                expandedController = isExpanded ? nil : onScreenEntry.id
+            }
+        }) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 12) {
+                    Image(systemName: "hand.point.up.left")
+                        .font(.title2)
+                        .foregroundColor(accentColor)
+                        .frame(width: 36, height: 36)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(onScreenEntry.name)
+                            .font(.headline)
+                        Text(onScreenEntry.subtitle)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+
+                    Spacer()
+
+                    connectionBadge(label: "Built-in", icon: "hand.point.up.left.fill", color: accentColor)
+
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                if isExpanded {
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Features")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(accentColor)
+                            .textCase(.uppercase)
+                        ForEach(onScreenEntry.features, id: \.self) { feature in
+                            HStack(alignment: .top, spacing: 8) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.green)
+                                Text(feature)
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .padding(.top, 2)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Setup")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(accentColor)
+                            .textCase(.uppercase)
+                        ForEach(Array(onScreenEntry.pairingSteps.enumerated()), id: \.offset) { index, step in
+                            HStack(alignment: .top, spacing: 8) {
+                                Text("\(index + 1).")
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(accentColor)
+                                    .frame(width: 18, alignment: .leading)
+                                Text(step)
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+                    .padding(.top, 4)
+
+                    platformNotesInlineView(iOSNote: onScreenEntry.iOSNote, tvOSNote: onScreenEntry.tvOSNote)
+                        .padding(.top, 4)
+                }
+            }
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func connectionBadge(label: String, icon: String, color: Color) -> some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
                 .font(.caption2)
-            Text(type.rawValue)
+            Text(label)
                 .font(.caption2)
                 .lineLimit(1)
         }
@@ -442,16 +444,6 @@ public struct ControllerGuideView: View {
         .background(color.opacity(0.15))
         .foregroundColor(color)
         .clipShape(Capsule())
-    }
-
-    private func badgeStyle(for type: ControllerConnectionType) -> (String, Color) {
-        switch type {
-        case .bluetooth: return ("dot.radiowaves.left.and.right", .blue)
-        case .usb: return ("cable.connector", .gray)
-        case .lightning: return ("bolt.fill", .yellow)
-        case .wifi: return ("wifi", .green)
-        case .builtin: return ("hand.point.up.left.fill", accentColor)
-        }
     }
 
     // MARK: Platform Notes
@@ -496,38 +488,47 @@ public struct ControllerGuideView: View {
     }
 
     @ViewBuilder
-    private func platformNotesView(notes: ControllerPlatformNotes) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Platform Notes")
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(accentColor)
-                .textCase(.uppercase)
+    private func platformNotesInlineView(iOSNote: String?, tvOSNote: String?) -> some View {
+        let hasNote: Bool = {
             #if os(tvOS)
-            if let tvNote = notes.tvOS {
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "appletv")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Text(tvNote)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
+            return tvOSNote != nil
             #else
-            if let iosNote = notes.iOS {
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "iphone")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Text(iosNote)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
+            return iOSNote != nil
             #endif
+        }()
+        if hasNote {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Platform Notes")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(accentColor)
+                    .textCase(.uppercase)
+                #if os(tvOS)
+                if let note = tvOSNote {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "appletv")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text(note)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                #else
+                if let note = iOSNote {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "iphone")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Text(note)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                #endif
+            }
         }
     }
 
@@ -564,14 +565,6 @@ public struct ControllerGuideView: View {
         #if os(tvOS)
         .foregroundColor(.retroPink)
         #endif
-    }
-
-    private func iconForCategory(_ category: ControllerCategory) -> String {
-        switch category {
-        case .recommended: return "star.fill"
-        case .legacy: return "clock.fill"
-        case .touch: return "hand.point.up.left.fill"
-        }
     }
 }
 
