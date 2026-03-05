@@ -21,7 +21,7 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        try driver.deleteAll()
+        try driver?.deleteAll()
         driver = nil
         try super.tearDownWithError()
     }
@@ -335,6 +335,52 @@ final class SwiftDataDatabaseActorTests: XCTestCase {
 
         try await actor.delete(recentGame: recent)
         XCTAssertEqual(try await actor.allRecentGames().count, 0)
+    }
+
+    func testActorGamesForSystem() async throws {
+        let sysID = "com.provenance.nes"
+        let g1 = Game_Data(title: "NES Game 1", md5Hash: "nes1", systemIdentifier: sysID)
+        let g2 = Game_Data(title: "NES Game 2", md5Hash: "nes2", systemIdentifier: sysID)
+        let g3 = Game_Data(title: "SNES Game",  md5Hash: "snes1", systemIdentifier: "com.provenance.snes")
+        try await actor.insert(game: g1)
+        try await actor.insert(game: g2)
+        try await actor.insert(game: g3)
+
+        let results = try await actor.games(forSystemIdentifier: sysID)
+        XCTAssertEqual(results.count, 2)
+        XCTAssertTrue(results.allSatisfy { $0.systemIdentifier == sysID })
+    }
+
+    func testActorFavoriteGames() async throws {
+        let fav    = Game_Data(title: "Fav",    md5Hash: "fav1", isFavorite: true)
+        let notFav = Game_Data(title: "NotFav", md5Hash: "nfav1")
+        try await actor.insert(game: fav)
+        try await actor.insert(game: notFav)
+
+        let favorites = try await actor.favoriteGames()
+        XCTAssertEqual(favorites.count, 1)
+        XCTAssertEqual(favorites.first?.id, fav.id)
+    }
+
+    func testActorSearchGames() async throws {
+        let g1 = Game_Data(title: "Super Mario",        md5Hash: "sm1")
+        let g2 = Game_Data(title: "Sonic the Hedgehog", md5Hash: "sh1")
+        try await actor.insert(game: g1)
+        try await actor.insert(game: g2)
+
+        let results = try await actor.searchGames(for: "mario")
+        XCTAssertEqual(results.count, 1)
+        XCTAssertEqual(results.first?.title, "Super Mario")
+    }
+
+    func testActorSearchGamesEmptyReturnsAll() async throws {
+        let g1 = Game_Data(title: "A", md5Hash: "a1")
+        let g2 = Game_Data(title: "B", md5Hash: "b1")
+        try await actor.insert(game: g1)
+        try await actor.insert(game: g2)
+
+        let results = try await actor.searchGames(for: "")
+        XCTAssertEqual(results.count, 2)
     }
 }
 #endif

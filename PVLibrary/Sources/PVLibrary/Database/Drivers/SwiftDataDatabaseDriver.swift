@@ -47,8 +47,14 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
             self.modelContainer = container
             self.modelContext = ModelContext(container)
         } catch {
-            ELOG("SwiftDataDatabaseDriver: failed to create ModelContainer — \(error)")
-            fatalError("SwiftDataDatabaseDriver: failed to create ModelContainer: \(error)")
+            ELOG("SwiftDataDatabaseDriver: failed to create persistent ModelContainer — \(error). Falling back to in-memory store.")
+            // Avoid crashing; fall back to in-memory storage so the app remains usable.
+            // Data will not be persisted across launches while in this degraded state.
+            guard let fallback = try? PVSwiftDataSchema.makePVModelContainer(inMemory: true) else {
+                fatalError("SwiftDataDatabaseDriver: unable to create even an in-memory ModelContainer")
+            }
+            self.modelContainer = fallback
+            self.modelContext = ModelContext(fallback)
         }
     }
 
@@ -275,16 +281,64 @@ public actor SwiftDataDatabaseActor {
         return try modelContext.fetch(descriptor).first
     }
 
-    /// Fetch all games sorted by title.
-    public func allGames() throws -> [Game_Data] {
-        let descriptor = FetchDescriptor<Game_Data>(sortBy: [SortDescriptor(\.title)])
+    /// Fetch all games, optionally sorted.
+    public func allGames(sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = [SortDescriptor(\.title)]) throws -> [Game_Data] {
+        let descriptor = FetchDescriptor<Game_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
 
-    /// Fetch all systems sorted by name.
-    public func allSystems() throws -> [System_Data] {
-        let descriptor = FetchDescriptor<System_Data>(sortBy: [SortDescriptor(\.name)])
+    /// Fetch all systems, optionally sorted.
+    public func allSystems(sortedBy sortDescriptors: [SortDescriptor<System_Data>] = [SortDescriptor(\.name)]) throws -> [System_Data] {
+        let descriptor = FetchDescriptor<System_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
+    }
+
+    /// Fetch all save states, optionally sorted.
+    public func allSaveStates(sortedBy sortDescriptors: [SortDescriptor<SaveState_Data>] = []) throws -> [SaveState_Data] {
+        let descriptor = FetchDescriptor<SaveState_Data>(sortBy: sortDescriptors)
+        return try modelContext.fetch(descriptor)
+    }
+
+    /// Fetch all recent games, optionally sorted.
+    public func allRecentGames(sortedBy sortDescriptors: [SortDescriptor<RecentGame_Data>] = []) throws -> [RecentGame_Data] {
+        let descriptor = FetchDescriptor<RecentGame_Data>(sortBy: sortDescriptors)
+        return try modelContext.fetch(descriptor)
+    }
+
+    // MARK: - Filtered fetch
+
+    /// Fetch games matching a predicate.
+    public func games(matching predicate: Predicate<Game_Data>,
+                      sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = []) throws -> [Game_Data] {
+        let descriptor = FetchDescriptor<Game_Data>(predicate: predicate, sortBy: sortDescriptors)
+        return try modelContext.fetch(descriptor)
+    }
+
+    /// Fetch games for a given system identifier.
+    public func games(forSystemIdentifier systemIdentifier: String) throws -> [Game_Data] {
+        try games(
+            matching: #Predicate { $0.systemIdentifier == systemIdentifier },
+            sortedBy: [SortDescriptor(\.title)]
+        )
+    }
+
+    /// Fetch favorite games sorted by title.
+    public func favoriteGames() throws -> [Game_Data] {
+        try games(
+            matching: #Predicate { $0.isFavorite },
+            sortedBy: [SortDescriptor(\.title)]
+        )
+    }
+
+    /// Search for games whose title contains `searchText` (case-insensitive).
+    public func searchGames(for searchText: String) throws -> [Game_Data] {
+        if searchText.isEmpty {
+            return try allGames(sortedBy: [SortDescriptor(\.title)])
+        }
+        return try games(
+            matching: #Predicate { $0.title.localizedStandardContains(searchText) },
+            sortedBy: [SortDescriptor(\.title)]
+        )
     }
 
     // MARK: - Write
@@ -311,18 +365,6 @@ public actor SwiftDataDatabaseActor {
     public func insert(recentGame: RecentGame_Data) throws {
         modelContext.insert(recentGame)
         try modelContext.save()
-    }
-
-    /// Fetch all save states.
-    public func allSaveStates() throws -> [SaveState_Data] {
-        let descriptor = FetchDescriptor<SaveState_Data>()
-        return try modelContext.fetch(descriptor)
-    }
-
-    /// Fetch all recent games.
-    public func allRecentGames() throws -> [RecentGame_Data] {
-        let descriptor = FetchDescriptor<RecentGame_Data>()
-        return try modelContext.fetch(descriptor)
     }
 
     /// Persist any pending changes.
