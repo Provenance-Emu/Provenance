@@ -2,8 +2,7 @@
 // PVUI
 //
 // SwiftUI-based cheats management view for iOS.
-// Replaces the storyboard-based PVCheatsViewController when the
-// `cheatsUseSwiftUI` feature flag is enabled.
+// Replaces the legacy storyboard-based PVCheatsViewController.
 
 #if os(iOS)
 import SwiftUI
