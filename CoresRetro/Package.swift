@@ -46,11 +46,11 @@ let cSettings_retroarch: [CSetting] = [[
 let package = Package(
     name: "PVRetroArch",
     platforms: [
-        .iOS("15.5"),
-        .tvOS("15.4"),
+        .iOS(.v17),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
-        .macCatalyst(.v14),
+        .macCatalyst(.v17),
         .visionOS(.v1)
     ],
     products: [

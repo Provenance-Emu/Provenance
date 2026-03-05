@@ -44,7 +44,7 @@ public struct ControllerGuideDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
-                        .foregroundStyle(.retroPink)
+                        .foregroundStyle(Color.retroPink)
                         .font(.system(size: 15, weight: .semibold, design: .monospaced))
                 }
             }
@@ -58,8 +58,8 @@ public struct ControllerGuideDetailView: View {
         VStack(spacing: 8) {
             Image(systemName: "gamecontroller.fill")
                 .font(.system(size: 48))
-                .foregroundStyle(.retroPink)
-                .shadow(color: .retroPink.opacity(0.7), radius: 8)
+                .foregroundStyle(Color.retroPink)
+                .shadow(color: Color.retroPink.opacity(0.7), radius: 8)
 
             Text("SUPPORTED CONTROLLERS")
                 .font(.system(size: 20, weight: .bold, design: .monospaced))
@@ -97,7 +97,7 @@ public struct ControllerGuideDetailView: View {
                 HStack(spacing: 12) {
                     Image(systemName: controller.symbolName)
                         .font(.system(size: 22))
-                        .foregroundStyle(isExpanded ? .retroPink : .retroBlue)
+                        .foregroundStyle(isExpanded ? Color.retroPink : Color.retroBlue)
                         .frame(width: 32)
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -114,7 +114,7 @@ public struct ControllerGuideDetailView: View {
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.retroBlue)
+                        .foregroundStyle(Color.retroBlue)
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
@@ -131,14 +131,14 @@ public struct ControllerGuideDetailView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("PAIRING STEPS")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundStyle(.retroBlue)
+                        .foregroundStyle(Color.retroBlue)
                         .padding(.bottom, 2)
 
                     ForEach(controller.pairingSteps) { step in
                         HStack(alignment: .top, spacing: 10) {
                             Text("\(step.id)")
                                 .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                .foregroundStyle(.retroPink)
+                                .foregroundStyle(Color.retroPink)
                                 .frame(width: 18, alignment: .center)
                                 .padding(.top, 1)
 
@@ -162,8 +162,8 @@ public struct ControllerGuideDetailView: View {
                         .strokeBorder(
                             LinearGradient(
                                 gradient: Gradient(colors: isExpanded
-                                    ? [.retroPink, .retroBlue]
-                                    : [.retroBlue.opacity(0.5), .retroPurple.opacity(0.5)]),
+                                    ? [Color.retroPink, Color.retroBlue]
+                                    : [Color.retroBlue.opacity(0.5), Color.retroPurple.opacity(0.5)]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),

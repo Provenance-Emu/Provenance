@@ -11,7 +11,7 @@ let package = Package(
         .tvOS(.v17),
         .watchOS(.v9),
         .visionOS(.v1),
-        .macCatalyst(.v16)
+        .macCatalyst(.v17)
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.

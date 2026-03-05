@@ -46,7 +46,7 @@ public struct ControllerGuideCardView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
                             LinearGradient(
-                                gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                gradient: Gradient(colors: [Color.retroBlue, Color.retroPurple]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             ),
@@ -54,13 +54,13 @@ public struct ControllerGuideCardView: View {
                         )
                 )
         )
-        .shadow(color: .retroBlue.opacity(0.35), radius: 6, x: 0, y: 0)
+        .shadow(color: Color.retroBlue.opacity(0.35), radius: 6, x: 0, y: 0)
     }
 
     private var headerRow: some View {
         HStack(spacing: 8) {
             Image(systemName: "gamecontroller.fill")
-                .foregroundStyle(.retroBlue)
+                .foregroundStyle(Color.retroBlue)
             Text("Pair a Controller")
                 .font(.headline)
                 .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
@@ -101,14 +101,14 @@ public struct ControllerGuideCardView: View {
             .buttonStyle(.plain)
             .background(
                 LinearGradient(
-                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                    gradient: Gradient(colors: [Color.retroBlue, Color.retroPurple]),
                     startPoint: .leading,
                     endPoint: .trailing
                 )
             )
             .foregroundStyle(.white)
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .shadow(color: .retroBlue.opacity(0.35), radius: 4, x: 0, y: 2)
+            .shadow(color: Color.retroBlue.opacity(0.35), radius: 4, x: 0, y: 2)
             .accessibilityLabel("View controller pairing guide")
 
             Spacer()
