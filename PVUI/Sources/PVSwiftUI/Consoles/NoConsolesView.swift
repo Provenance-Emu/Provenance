@@ -185,7 +185,7 @@ public struct NoConsolesView: SwiftUI.View {
                                 lineWidth: 2
                             )
                     )
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .shadow(color: Color.retroBlue.opacity(glowOpacity), radius: 10, x: 0, y: 0)
                 }
 

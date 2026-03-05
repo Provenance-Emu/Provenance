@@ -29,7 +29,7 @@ struct ControllerPlatformNotes {
 
 /// Represents a single supported controller type with associated guidance
 struct ControllerInfo: Identifiable {
-    let id = UUID()
+    var id: String { name }
     let name: String
     let subtitle: String
     let category: ControllerCategory
@@ -205,7 +205,7 @@ private let supportedControllers: [ControllerInfo] = [
 /// controller type differences, and links to the wiki.
 public struct ControllerGuideView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var expandedController: UUID?
+    @State private var expandedController: String?
 
     private var accentColor: Color {
         themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
@@ -578,7 +578,7 @@ public struct ControllerGuideView: View {
 #if DEBUG
 struct ControllerGuideView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             ControllerGuideView()
         }
         .preferredColorScheme(.dark)
