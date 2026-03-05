@@ -146,38 +146,38 @@ public actor RealmToSwiftDataMigration {
         do {
             // --- Phase 1: independent leaf objects ---
             try migrateUsers(snapshot: snapshot, context: context, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             let systemMap = try migrateSystems(snapshot: snapshot, context: context, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             let coreMap = try migrateCores(snapshot: snapshot, context: context, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             // --- Phase 2: objects that depend on systems/cores ---
             try migrateBIOSes(snapshot: snapshot, context: context, systemMap: systemMap, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             // Wire core ↔ system many-to-many after both are persisted.
             wireCoreSystems(snapshot: snapshot, coreMap: coreMap, systemMap: systemMap)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             // --- Phase 3: games (most complex object) ---
             let gameMap = try migrateGames(snapshot: snapshot, context: context, systemMap: systemMap, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             // --- Phase 4: child objects of games ---
             try migrateSaveStates(snapshot: snapshot, context: context, gameMap: gameMap, coreMap: coreMap, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             try migrateCheats(snapshot: snapshot, context: context, gameMap: gameMap, coreMap: coreMap, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             try migrateRecentGames(snapshot: snapshot, context: context, gameMap: gameMap, coreMap: coreMap, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
             try migrateLibraries(snapshot: snapshot, context: context, gameMap: gameMap, progress: progressHandler)
-            try saveBatch(context: context)
+            try saveBatch(context)
 
         } catch let error as RealmToSwiftDataMigrationError {
             throw error
@@ -239,9 +239,7 @@ public actor RealmToSwiftDataMigration {
 
         for (idx, s) in systems.enumerated() {
             let identifier = s.identifier
-            if let cached = map[identifier] {
-                _ = cached; continue
-            }
+            if map[identifier] != nil { continue }
             // Idempotency: look up existing
             let existing = try? context.fetch(FetchDescriptor<System_Data>(
                 predicate: #Predicate { $0.identifier == identifier }
@@ -294,7 +292,7 @@ public actor RealmToSwiftDataMigration {
 
         for (idx, c) in cores.enumerated() {
             let identifier = c.identifier
-            if let cached = map[identifier] { _ = cached; continue }
+            if map[identifier] != nil { continue }
             let existing = try? context.fetch(FetchDescriptor<Core_Data>(
                 predicate: #Predicate { $0.identifier == identifier }
             ))
@@ -392,7 +390,7 @@ public actor RealmToSwiftDataMigration {
 
         for (idx, g) in games.enumerated() {
             let md5 = g.md5Hash
-            if let cached = map[md5] { _ = cached; continue }
+            if map[md5] != nil { continue }
             let existing = try? context.fetch(FetchDescriptor<Game_Data>(
                 predicate: #Predicate { $0.md5Hash == md5 }
             ))
