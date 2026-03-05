@@ -182,7 +182,7 @@ public actor SkinCatalogService {
 
             // Text search across name, author, tags, source
             if entry.name.lowercased().contains(lowercasedQuery) { return true }
-            if entry.author.lowercased().contains(lowercasedQuery) { return true }
+            if let author = entry.author, author.lowercased().contains(lowercasedQuery) { return true }
             if let tags = entry.tags, tags.contains(where: { $0.lowercased().contains(lowercasedQuery) }) { return true }
             if let source = entry.source, source.lowercased().contains(lowercasedQuery) { return true }
 
