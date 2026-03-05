@@ -1,11 +1,16 @@
-# https://github.com/marketplace/actions/automatic-rebase
-name: Automatic Rebase
+# Manual rebase via PR comment: comment "/rebase" on any PR to trigger.
+# For automatic rebase on develop push, see auto-rebase-on-develop.yml.
+name: Manual Rebase
 on:
   issue_comment:
     types: [created]
 concurrency:
   group: rebase-${{ github.event.issue.number }}
   cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   rebase:
@@ -14,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+          token: ${{ github.token }}
+          fetch-depth: 0
       - name: Automatic Rebase
-        uses: cirrus-actions/rebase@1.7
+        uses: cirrus-actions/rebase@1.8
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}

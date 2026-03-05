@@ -1,0 +1,121 @@
+name: Auto-rebase PRs on develop push
+
+# When develop receives new commits, automatically rebase all open PRs
+# targeting develop so they stay current and merge conflicts surface early.
+#
+# Only rebases PRs from the same repo (not forks — we can't push to those).
+# Skips draft PRs and PRs that are already up to date.
+# Comments on PRs with rebase conflicts so owners can resolve manually.
+
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-rebase-develop
+  cancel-in-progress: false   # Queue — don't drop rebases during rapid pushes
+
+jobs:
+  rebase:
+    name: Rebase open PRs onto develop
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ github.token }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Rebase open PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Develop was pushed to. Looking for PRs to rebase..."
+
+          # Fetch all open PRs targeting develop from the same repo (not forks)
+          prs=$(gh api "repos/$REPO/pulls?base=develop&state=open&per_page=100" \
+            --jq '.[] | select(
+              .draft == false and
+              .head.repo.full_name == .base.repo.full_name
+            ) | {number: .number, branch: .head.ref}' \
+            | jq -s '.')
+
+          count=$(echo "$prs" | jq length)
+          echo "Found $count eligible open PR(s) targeting develop."
+          [ "$count" -eq 0 ] && exit 0
+
+          git fetch origin develop
+          rebased=0
+          skipped_uptodate=0
+          failed=0
+
+          while IFS=$'\t' read -r pr_num branch; do
+            echo ""
+            echo "=== PR #$pr_num  branch: $branch ==="
+
+            # Fetch the PR branch (may not be locally present)
+            if ! git fetch origin "$branch" 2>/dev/null; then
+              echo "  Cannot fetch '$branch' — skipping (branch may be deleted)"
+              continue
+            fi
+
+            # Skip if already rebased onto develop (develop is already an ancestor)
+            if git merge-base --is-ancestor origin/develop "origin/$branch" 2>/dev/null; then
+              echo "  Already up to date — skipping"
+              skipped_uptodate=$((skipped_uptodate + 1))
+              continue
+            fi
+
+            # Attempt rebase
+            git checkout -B "$branch" "origin/$branch"
+
+            if git rebase origin/develop; then
+              # Push rebased branch
+              if git push --force-with-lease origin "$branch"; then
+                echo "  ✅ Rebased and pushed successfully"
+                rebased=$((rebased + 1))
+              else
+                echo "  ⚠️  Rebase succeeded but push was rejected (branch protection?)"
+                git rebase --abort 2>/dev/null || true
+                failed=$((failed + 1))
+              fi
+            else
+              echo "  ❌ Rebase conflict — commenting on PR and skipping"
+              git rebase --abort 2>/dev/null || true
+              failed=$((failed + 1))
+
+              gh pr comment "$pr_num" --repo "$REPO" --body "$(cat <<'MSG'
+⚠️ **Auto-rebase conflict**
+
+This PR could not be automatically rebased onto \`develop\` due to merge conflicts. Please rebase manually:
+
+\`\`\`bash
+git fetch origin
+git checkout <your-branch>
+git rebase origin/develop
+# resolve conflicts, then:
+git push --force-with-lease
+\`\`\`
+
+Or comment \`/rebase\` here to retry once conflicts are resolved on develop.
+MSG
+)"
+            fi
+          done < <(echo "$prs" | jq -r '.[] | [.number, .branch] | @tsv')
+
+          echo ""
+          echo "=== Summary ==="
+          echo "  Rebased:       $rebased"
+          echo "  Already up to date: $skipped_uptodate"
+          echo "  Conflicts/errors: $failed"
