@@ -1197,8 +1197,8 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
                 )
                 do {
                     var results = try context.fetch(descriptor)
-                    // Filter: game and system must both be present.
-                    results = results.filter { $0.game != nil && $0.game?.system != nil }
+                    // Filter: both game and its system must be present.
+                    results = results.filter { $0.game?.system != nil }
                     if let consoleIdentifier {
                         results = results.filter { $0.game?.systemIdentifier == consoleIdentifier }
                     }
@@ -1210,7 +1210,7 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
                 }
                 continuation.finish()
             }
-            continuation.onTermination = { _ in task.cancel() }
+            continuation.onTermination = { @Sendable _ in task.cancel() }
         }
     }
 }
