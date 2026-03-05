@@ -1041,7 +1041,12 @@ struct TVOSCheatSearchView: View {
                             .font(.system(size: 28, weight: .medium))
                             .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.6))
 
-                        if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty {
+                        if onlineLookupEnabled,
+                           !hasSearchedOnline,
+                           !isOnlineSearching,
+                           filterText.isEmpty,
+                           let systemID = gameSystemIdentifier,
+                           !systemID.isEmpty {
                             Button {
                                 Task { await searchOnline() }
                             } label: {
