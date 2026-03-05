@@ -566,11 +566,11 @@ struct TVOSAddCheatView: View {
                                 .foregroundStyle(accentColor)
 
                             HStack(spacing: 16) {
-                                ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, type in
+                                ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, codeType in
                                     Button(action: {
                                         selectedCodeType = index
                                     }) {
-                                        Text(CheatCodeTypes(string: type)?.stringValue ?? type)
+                                        Text(CheatCodeTypes(string: codeType)?.stringValue ?? codeType)
                                             .font(.system(size: 22, weight: .bold))
                                             .foregroundStyle(selectedCodeType == index ? .white : .gray)
                                             .padding(.horizontal, 24)
@@ -806,9 +806,9 @@ struct TVOSEditCheatView: View {
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundStyle(accentColor)
                             HStack(spacing: 16) {
-                                ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, type in
+                                ForEach(Array(cheatTypes.enumerated()), id: \.offset) { index, codeType in
                                     Button(action: { selectedCodeType = index }) {
-                                        Text(CheatCodeTypes(string: type)?.stringValue ?? type)
+                                        Text(CheatCodeTypes(string: codeType)?.stringValue ?? codeType)
                                             .font(.system(size: 22, weight: .bold))
                                             .foregroundStyle(selectedCodeType == index ? .white : .gray)
                                             .padding(.horizontal, 24)
@@ -874,8 +874,8 @@ struct TVOSEditCheatView: View {
     private func saveCheat() {
         let code = cheatCode.trimmingCharacters(in: .whitespaces)
         guard !code.isEmpty else { return }
-        let name = cheatName.trimmingCharacters(in: .whitespaces).isEmpty
-            ? "Cheat Code" : cheatName.trimmingCharacters(in: .whitespaces)
+        let trimmedName = cheatName.trimmingCharacters(in: .whitespaces)
+        let name = trimmedName.isEmpty ? "Cheat Code" : trimmedName
         do {
             let realm = try Realm()
             try realm.write {
