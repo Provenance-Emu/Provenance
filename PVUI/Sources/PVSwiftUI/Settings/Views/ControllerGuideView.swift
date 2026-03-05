@@ -240,7 +240,7 @@ public struct ControllerGuideView: View {
     }
 
     @ViewBuilder
-    private func catalogControllerRow(_ controller: ControllerGuideInfo) -> some View {
+    private func catalogControllerRow(_ controller: PVPrimitives.ControllerGuideInfo) -> some View {
         let isExpanded = expandedController == controller.id
         Button(action: {
             withAnimation(.easeInOut(duration: 0.25)) {
