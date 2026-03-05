@@ -254,7 +254,6 @@
 		B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; };
 		B3296EC326CABFB00088AC32 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; };
 		B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; };
-		B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; };
 		B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B32987CE2B66193F00728996 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
 		B32987CF2B66194900728996 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
@@ -262,7 +261,6 @@
 		B32987D12B66198300728996 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B32987D22B66198300728996 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B32987D32B66198300728996 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
-		B32987D42B66198700728996 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; platformFilters = (tvos, ); };
 		B32987D72B661C7A00728996 /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32987D62B661C7A00728996 /* TVUIKit.framework */; platformFilters = (tvos, ); };
 		B32C08E62D0538240024A3E2 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B32C08E52D0538240024A3E2 /* MoltenVK */; };
 		B32C08E82D05382F0024A3E2 /* MoltenVK-Catalyst in Frameworks */ = {isa = PBXBuildFile; platformFilter = maccatalyst; productRef = B32C08E72D05382F0024A3E2 /* MoltenVK-Catalyst */; };
@@ -349,7 +347,6 @@
 		B341FDEC2BE61EC100718929 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
 		B341FDF22BE61EC100718929 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B341FDF72BE61EC100718929 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
-		B341FDF82BE61EC100718929 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; platformFilters = (tvos, ); };
 		B341FDF92BE61EC100718929 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B341FDFA2BE61EC100718929 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B341FDFC2BE61EC100718929 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
@@ -384,7 +381,6 @@
 		B347B3602BC4CA98006A3B2D /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31B2492A95400636C8A /* CoreServices.framework */; };
 		B347B3662BC4CA98006A3B2D /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; };
 		B347B36F2BC4CA98006A3B2D /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
-		B347B3722BC4CA98006A3B2D /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; };
 		B347B3732BC4CA98006A3B2D /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; };
 		B347B3772BC4CA98006A3B2D /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B347B3792BC4CA98006A3B2D /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; };
@@ -536,7 +532,6 @@
 		B35EEFEF2C6C6D1A00EBD1A8 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
 		B35EEFF22C6C6D1A00EBD1A8 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B35EEFF52C6C6D1A00EBD1A8 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
-		B35EEFF62C6C6D1A00EBD1A8 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF82C6C6D1A00EBD1A8 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
@@ -761,7 +756,6 @@
 		B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B3AED2F82BE355BB003A9290 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B3AED2F92BE355C3003A9290 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
-		B3AED2FA2BE355C3003A9290 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; platformFilters = (tvos, ); };
 		B3AED2FB2BE355C3003A9290 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B3AED2FC2BE355C3003A9290 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B3AED3002BE355DE003A9290 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
@@ -1997,13 +1991,6 @@
 		B31B36242959763200E5AA3C /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/SaveStates.strings; sourceTree = "<group>"; };
 		B31B36252959763900E5AA3C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/SaveStates.strings; sourceTree = "<group>"; };
 		B31B36272959764700E5AA3C /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/SaveStates.strings"; sourceTree = "<group>"; };
-		B31B36282959765100E5AA3C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B36292959765900E5AA3C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B362A2959765F00E5AA3C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B362B2959766500E5AA3C /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B362C2959766B00E5AA3C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B31B362D2959767000E5AA3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats.strings"; sourceTree = "<group>"; };
-		B31B362F2959767600E5AA3C /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Cheats.strings"; sourceTree = "<group>"; };
 		B31D831E2D826BA300D6525B /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
 		B31D83BA2D826BA300D6525B /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
 		B31D83D82D826BA300D6525B /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
@@ -2094,7 +2081,6 @@
 		B3296EC226CABFA70088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Provenance.strings"; sourceTree = "<group>"; };
 		B3296EC426CABFB00088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B3296EC726CABFB90088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings.strings"; sourceTree = "<group>"; };
-		B3296ED026CABFDE0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Cheats.storyboard; sourceTree = "<group>"; };
 		B3296EDC26CAC2220088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B3296EE926CAC3ED0088AC32 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Strings.strings; sourceTree = "<group>"; };
 		B3296EEB26CAC3F00088AC32 /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Strings.strings"; sourceTree = "<group>"; };
@@ -5529,7 +5515,6 @@
 				B3296EC026CABF9F0088AC32 /* Provenance.storyboard */,
 				B3296EC526CABFB00088AC32 /* Settings.storyboard */,
 				B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */,
-				B3296ED126CABFDE0088AC32 /* Cheats.storyboard */,
 			);
 			path = "Story Boards";
 			sourceTree = "<group>";
@@ -9819,7 +9804,6 @@
 				B32C08EA2D0539230024A3E2 /* AppStoreAssets.xcassets in Resources */,
 				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
 				B39FAC1F2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
-				B32987D42B66198700728996 /* Cheats.storyboard in Resources */,
 				B39FAC262D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
 				B32987D22B66198300728996 /* Provenance.storyboard in Resources */,
@@ -9833,7 +9817,6 @@
 				555454432AC09998006A065F /* LaunchImageTV.png in Resources */,
 				B3DF8EDF2CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
-				B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */,
 				B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */,
 				B39FAC202D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */,
@@ -9916,7 +9899,6 @@
 				B341FDEC2BE61EC100718929 /* TVAssets.xcassets in Resources */,
 				B341FDF22BE61EC100718929 /* licenses.html in Resources */,
 				B341FDF72BE61EC100718929 /* SaveStates.storyboard in Resources */,
-				B341FDF82BE61EC100718929 /* Cheats.storyboard in Resources */,
 				B39FAC212D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B341FDF92BE61EC100718929 /* Settings.storyboard in Resources */,
 				B39FAC2A2D5E7F630065B66B /* SYSTEMS.md in Resources */,
@@ -9935,7 +9917,6 @@
 				B347B36F2BC4CA98006A3B2D /* licenses.html in Resources */,
 				B3E17E2B2CCF91B000732AEA /* AppStoreAssets-Lite.xcassets in Resources */,
 				B39FAC1B2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
-				B347B3722BC4CA98006A3B2D /* Cheats.storyboard in Resources */,
 				B347B3732BC4CA98006A3B2D /* Provenance.storyboard in Resources */,
 				B347B3772BC4CA98006A3B2D /* Strings.strings in Resources */,
 				B347B3792BC4CA98006A3B2D /* SaveStates.storyboard in Resources */,
@@ -9983,7 +9964,6 @@
 				B35EEFF22C6C6D1A00EBD1A8 /* licenses.html in Resources */,
 				B39D8F092D0CEC5300577667 /* Assets-Lite.xcassets in Resources */,
 				B35EEFF52C6C6D1A00EBD1A8 /* SaveStates.storyboard in Resources */,
-				B35EEFF62C6C6D1A00EBD1A8 /* Cheats.storyboard in Resources */,
 				B39FAC1D2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B35EEFF72C6C6D1A00EBD1A8 /* Settings.storyboard in Resources */,
 				B39FAC282D5E7F630065B66B /* SYSTEMS.md in Resources */,
@@ -10007,7 +9987,6 @@
 				B3AED3002BE355DE003A9290 /* TVAssets.xcassets in Resources */,
 				B394CDCC2BDEE53A006B63E8 /* licenses.html in Resources */,
 				B3AED2F92BE355C3003A9290 /* SaveStates.storyboard in Resources */,
-				B3AED2FA2BE355C3003A9290 /* Cheats.storyboard in Resources */,
 				B39FAC1E2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B3AED2FB2BE355C3003A9290 /* Settings.storyboard in Resources */,
 				B39FAC2B2D5E7F630065B66B /* SYSTEMS.md in Resources */,
@@ -11054,21 +11033,6 @@
 				B31B36272959764700E5AA3C /* pt-BR */,
 			);
 			name = SaveStates.storyboard;
-			sourceTree = "<group>";
-		};
-		B3296ED126CABFDE0088AC32 /* Cheats.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B3296ED026CABFDE0088AC32 /* en */,
-				B31B36282959765100E5AA3C /* ru */,
-				B31B36292959765900E5AA3C /* es */,
-				B31B362A2959765F00E5AA3C /* ja */,
-				B31B362B2959766500E5AA3C /* it */,
-				B31B362C2959766B00E5AA3C /* nl */,
-				B31B362D2959767000E5AA3C /* zh-Hans */,
-				B31B362F2959767600E5AA3C /* pt-BR */,
-			);
-			name = Cheats.storyboard;
 			sourceTree = "<group>";
 		};
 		B3296EEA26CAC3ED0088AC32 /* Strings.strings */ = {
