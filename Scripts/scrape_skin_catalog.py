@@ -49,7 +49,7 @@ class _ImgDataExtractor(html.parser.HTMLParser):
     """Minimal HTMLParser to extract data-* attributes from <img> tags."""
 
     def __init__(self):
-        super().__init__()
+        super().__init__(convert_charrefs=True)
         self.imgs = []
 
     def handle_starttag(self, tag, attrs):
@@ -221,7 +221,7 @@ def lookup_system(raw_name):
 # Source: delta-skins.github.io
 # ---------------------------------------------------------------------------
 
-def _parse_delta_skins_html(html_text, page_name):
+def _parse_delta_skins_html(html_text):
     """Extract img tag attribute dicts from delta-skins HTML.
 
     Uses BeautifulSoup when available, falling back to stdlib html.parser.
@@ -232,7 +232,7 @@ def _parse_delta_skins_html(html_text, page_name):
         imgs = soup.find_all("img", attrs={"data-download": True})
         return [
             {k: img.get(k, "") for k in ["data-download", "data-console", "data-maker",
-                                          "data-supports", "data-added", "alt", "src"]}
+                                          "data-supports", "alt", "src"]}
             for img in imgs
         ]
     else:
@@ -269,7 +269,7 @@ def scrape_delta_skins(dry_run=False):
             log(f"  Skipping {page_name}.html (fetch failed)")
             continue
 
-        img_dicts = _parse_delta_skins_html(html_text, page_name)
+        img_dicts = _parse_delta_skins_html(html_text)
         log(f"  Found {len(img_dicts)} skin entries")
 
         for img in img_dicts:
