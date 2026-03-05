@@ -26,7 +26,7 @@ public struct Cheats: CheatsInfoProvider, Codable {
     public let code: String
     public let type: String
     /// The emulator-specific code format identifier (e.g. "Game Shark", "Action Replay").
-    public let codeType: String = ""
+    public let codeType: String
     public let date: Date
     public let lastOpened: Date?
     public let enabled: Bool
