@@ -2234,7 +2234,6 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2292,7 +2291,6 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -2318,7 +2316,6 @@
 					"\"$(SRCROOT)/cmake/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2354,7 +2351,6 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Release;
 		};
@@ -2381,7 +2377,6 @@
 					"\"$(SRCROOT)/libretro_ppsspp/ext/glslang/glslang/MachineIndependent\"",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib\"",
 					"\"$(SRCROOT)/lib\"",
@@ -2406,7 +2401,6 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -2470,14 +2464,14 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = "$(SRCROOT)/lib/ppsspp/$(CONFIGURATION)/$(EFFECTIVE_PLATFORM_NAME)";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2507,7 +2501,6 @@
 					"\"$(SRCROOT)/cmake/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2543,7 +2536,6 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 16.6;
 			};
 			name = Debug;
 		};
@@ -2570,7 +2562,6 @@
 					"\"$(SRCROOT)/libretro_ppsspp/ext/glslang/glslang/MachineIndependent\"",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib\"",
 					"\"$(SRCROOT)/lib\"",
@@ -2595,7 +2586,6 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -2676,7 +2666,6 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2734,7 +2723,6 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -2797,7 +2785,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = auto;
@@ -2805,7 +2793,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SYMROOT = "$(SRCROOT)/lib/ppsspp/$(CONFIGURATION)/$(EFFECTIVE_PLATFORM_NAME)";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";

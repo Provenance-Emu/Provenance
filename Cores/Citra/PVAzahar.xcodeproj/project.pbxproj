@@ -45314,7 +45314,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVAzahar/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -45349,7 +45349,7 @@
 				SYMROOT = "$(SRCROOT)/lib/azahar";
 				"SYSTEM_FRAMEWORK_SEARCH_PATHS[arch=*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2,4,6";
-				TVOS_DEPLOYMENT_TARGET = 16.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
@@ -45582,7 +45582,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVAzahar/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -45617,7 +45617,7 @@
 				SYMROOT = "$(SRCROOT)/lib/azahar";
 				"SYSTEM_FRAMEWORK_SEARCH_PATHS[arch=*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2,4,6";
-				TVOS_DEPLOYMENT_TARGET = 16.0;
+				TVOS_DEPLOYMENT_TARGET = 17.6;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Release;
