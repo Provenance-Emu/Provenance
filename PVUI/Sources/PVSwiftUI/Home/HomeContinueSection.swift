@@ -1191,18 +1191,27 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
             let container = modelContainer
             let task = Task { @MainActor in
                 let context = ModelContext(container)
-                let descriptor = FetchDescriptor<SaveState_Data>(
+                // Build the descriptor with sort, optional system predicate, and a fetch cap.
+                // The consoleIdentifier filter is pushed into the store-level predicate so
+                // SwiftData can skip irrelevant rows without loading them into memory.
+                var descriptor = FetchDescriptor<SaveState_Data>(
                     sortBy: [SortDescriptor(\.date, order: .reverse)]
                 )
-                do {
-                    var results = try context.fetch(descriptor)
-                    // Filter: both game and its system must be present.
-                    results = results.filter { $0.game?.system != nil }
-                    if let consoleIdentifier {
-                        results = results.filter { $0.game?.systemIdentifier == consoleIdentifier }
+                if let consoleIdentifier {
+                    descriptor.predicate = #Predicate<SaveState_Data> { state in
+                        state.game?.systemIdentifier == consoleIdentifier
                     }
-                    let models = results.prefix(500).map { ContinueItemModel(saveState_data: $0) }
-                    continuation.yield(Array(models))
+                }
+                // Cap the fetch at the store level to avoid loading a large result set
+                // into memory; game/system presence is validated in the post-fetch filter.
+                descriptor.fetchLimit = 500
+                do {
+                    let results = try context.fetch(descriptor)
+                    // Filter: both game and its system must be present.
+                    let models = results
+                        .filter { $0.game?.system != nil }
+                        .map { ContinueItemModel(saveState_data: $0) }
+                    continuation.yield(models)
                 } catch {
                     ELOG("SwiftDataContinuesDataDriver: fetch failed: \(error)")
                     continuation.yield([])
