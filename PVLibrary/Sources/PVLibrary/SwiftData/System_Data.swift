@@ -41,7 +41,7 @@ public class System_Data {
 
     public var userPreferredCoreID: String?
 
-    @Attribute(.unique) public var identifier: String = ""
+    @Attribute(.unique) public var identifier: String
 
     // Controller layout stored as JSON-encoded Data
     public var controlLayoutData: Data?
@@ -84,7 +84,12 @@ public class System_Data {
         }
         set {
             guard let newValue else { controlLayoutData = nil; return }
-            controlLayoutData = try? JSONEncoder().encode(newValue)
+            do {
+                controlLayoutData = try JSONEncoder().encode(newValue)
+            } catch {
+                ELOG("Failed to encode controller layout: \(error)")
+                controlLayoutData = nil
+            }
         }
     }
 
@@ -96,7 +101,7 @@ public class System_Data {
                 screenType: String = ScreenType.unknown.rawValue,
                 supportedExtensions: [String] = [], bioses: [BIOS_Data] = [],
                 games: [Game_Data] = [], cores: [Core_Data] = [],
-                userPreferredCoreID: String? = nil, identifier: String = "",
+                userPreferredCoreID: String? = nil, identifier: String,
                 controlLayoutData: Data? = nil) {
         self.name = name
         self.shortName = shortName
@@ -138,7 +143,10 @@ public extension System_Data {
     }
 
     var missingBIOSes: [BIOS_Data]? {
-        // TODO: filter by BIOS file absence
+        // TODO: filter by BIOS file absence — currently always returns nil,
+        // so hasAllRequiredBIOSes will always be true until this is implemented.
+        // WARNING: any launch-gating code relying on hasAllRequiredBIOSes will
+        // behave as if all BIOSes are present until this stub is completed.
         return nil
     }
 

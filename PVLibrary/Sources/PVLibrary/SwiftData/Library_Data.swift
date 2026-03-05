@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 public class Library_Data {
-    @Attribute(.unique) public var uuid: String = ""
+    @Attribute(.unique) public var uuid: String = UUID().uuidString
     public var name: String = ""
 
     // Meta Data

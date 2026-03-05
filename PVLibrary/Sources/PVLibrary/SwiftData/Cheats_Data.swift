@@ -38,7 +38,6 @@ public class Cheats_Data {
                 lastOpened: Date? = nil, type: String = "", codeType: String = "",
                 createdWithCoreVersion: String = "",
                 game: Game_Data? = nil, core: Core_Data? = nil, file: File_Data? = nil) {
-        self.id = UUID().uuidString
         self.code = code
         self.enabled = enabled
         self.date = date
