@@ -5,40 +5,36 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData) && !os(tvOS)
+#if canImport(SwiftData)
 import SwiftData
 import PVPrimitives
 
-//#if !os(tvOS)
-//@Model
-//#endif
+@Model
 public class BIOS_Data {
-    // Attributes
-//#if !os(tvOS)
-//    @Attribute(.unique)
-//#endif
-    public var expectedFilename: String = ""
-//#if !os(tvOS)
-//    @Attribute(.unique)
-//#endif
-    public var expectedMD5: String = ""
+    @Attribute(.unique) public var expectedFilename: String
+    @Attribute(.unique) public var expectedMD5: String
     public var expectedSize: Int = 0
     public var optional: Bool = false
 
     // Metadata
     public var descriptionText: String = ""
+    // RegionOptions is Codable (OptionSet<Int>) — stored as Codable attribute
     public var regions: RegionOptions = RegionOptions.unknown
     public var version: String = ""
 
-    // Files
+    // One-to-one: BIOS file on disk (BIOS owns the file record)
+    @Relationship(deleteRule: .cascade)
     public var file: File_Data?
-    public var fileInfo: File_Data? { return file }
 
-    // Links
-//    @Reference(to: System_Data.self)
-    var system: System_Data!
-    
-    init(expectedFilename: String, expectedMD5: String, expectedSize: Int, optional: Bool, descriptionText: String, regions: RegionOptions, version: String, file: File_Data? = nil, system: System_Data!) {
+    // Many-to-one: inverse of System_Data.bioses
+    public var system: System_Data?
+
+    /// Alias for `file` matching existing API
+    public var fileInfo: File_Data? { file }
+
+    public init(expectedFilename: String, expectedMD5: String, expectedSize: Int,
+                optional: Bool, descriptionText: String, regions: RegionOptions,
+                version: String, file: File_Data? = nil, system: System_Data? = nil) {
         self.expectedFilename = expectedFilename
         self.expectedMD5 = expectedMD5.uppercased()
         self.expectedSize = expectedSize

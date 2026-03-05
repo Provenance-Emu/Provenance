@@ -5,18 +5,17 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData) && !os(tvOS)
+#if canImport(SwiftData)
 import SwiftData
 
-//@Model
+@Model
 public class File_Data {
     // Data
-    internal var partialPath: String = ""
+    public var partialPath: String = ""
+    public var md5Cache: String?
+    public var createdDate: Date = Date()
 
-    internal var md5Cache: String?
-    public private(set) var createdDate: Date = Date()
-    
-    init(partialPath: String, md5Cache: String? = nil, createdDate: Date) {
+    public init(partialPath: String, md5Cache: String? = nil, createdDate: Date = Date()) {
         self.partialPath = partialPath
         self.md5Cache = md5Cache
         self.createdDate = createdDate

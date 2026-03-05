@@ -5,25 +5,16 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData) && !os(tvOS)
+#if canImport(SwiftData)
 import SwiftData
 
-//#if !os(tvOS)
-//@Model
-//#endif
+@Model
 public class User_Data {
-    // Data
-//#if !os(tvOS)
-//    @Attribute(.unique)
-//#endif
-    public var uuid: String = UUID().uuidString
-    
+    @Attribute(.unique) public var uuid: String = UUID().uuidString
     public var name: String = ""
-
-    // Meta data
     public var lastSeen: Date = Date()
-    
-    init(uuid: String, name: String, lastSeen: Date) {
+
+    public init(uuid: String = UUID().uuidString, name: String = "", lastSeen: Date = Date()) {
         self.uuid = uuid
         self.name = name
         self.lastSeen = lastSeen
