@@ -11,7 +11,6 @@
 
 #if canImport(SwiftData)
 import SwiftData
-import Foundation
 import PVLogging
 
 // MARK: - SwiftDataDatabaseDriver
@@ -35,7 +34,8 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     public let modelContainer: ModelContainer
     /// Main-thread model context for synchronous operations.
-    public let modelContext: ModelContext
+    /// - Warning: `ModelContext` is not thread-safe. Access only from the thread this driver was created on.
+    let modelContext: ModelContext
 
     // MARK: Init
 
@@ -307,6 +307,24 @@ public actor SwiftDataDatabaseActor {
         try modelContext.save()
     }
 
+    /// Insert and persist a recent-game record.
+    public func insert(recentGame: RecentGame_Data) throws {
+        modelContext.insert(recentGame)
+        try modelContext.save()
+    }
+
+    /// Fetch all save states.
+    public func allSaveStates() throws -> [SaveState_Data] {
+        let descriptor = FetchDescriptor<SaveState_Data>()
+        return try modelContext.fetch(descriptor)
+    }
+
+    /// Fetch all recent games.
+    public func allRecentGames() throws -> [RecentGame_Data] {
+        let descriptor = FetchDescriptor<RecentGame_Data>()
+        return try modelContext.fetch(descriptor)
+    }
+
     /// Persist any pending changes.
     public func save() throws {
         try modelContext.save()
@@ -323,6 +341,18 @@ public actor SwiftDataDatabaseActor {
     /// Delete a system record and persist.
     public func delete(system: System_Data) throws {
         modelContext.delete(system)
+        try modelContext.save()
+    }
+
+    /// Delete a save-state record and persist.
+    public func delete(saveState: SaveState_Data) throws {
+        modelContext.delete(saveState)
+        try modelContext.save()
+    }
+
+    /// Delete a recent-game record and persist.
+    public func delete(recentGame: RecentGame_Data) throws {
+        modelContext.delete(recentGame)
         try modelContext.save()
     }
 

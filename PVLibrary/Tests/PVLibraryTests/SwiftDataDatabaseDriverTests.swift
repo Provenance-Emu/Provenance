@@ -301,5 +301,40 @@ final class SwiftDataDatabaseActorTests: XCTestCase {
         try await actor.delete(game: game)
         XCTAssertNil(try await actor.game(identifier: game.id))
     }
+
+    func testActorInsertAndFetchSaveState() async throws {
+        let saveState = SaveState_Data(isAutosave: true)
+        try await actor.insert(saveState: saveState)
+
+        let all = try await actor.allSaveStates()
+        XCTAssertEqual(all.count, 1)
+        XCTAssertTrue(all.first?.isAutosave == true)
+    }
+
+    func testActorDeleteSaveState() async throws {
+        let saveState = SaveState_Data()
+        try await actor.insert(saveState: saveState)
+        XCTAssertEqual(try await actor.allSaveStates().count, 1)
+
+        try await actor.delete(saveState: saveState)
+        XCTAssertEqual(try await actor.allSaveStates().count, 0)
+    }
+
+    func testActorInsertAndFetchRecentGame() async throws {
+        let recent = RecentGame_Data()
+        try await actor.insert(recentGame: recent)
+
+        let all = try await actor.allRecentGames()
+        XCTAssertEqual(all.count, 1)
+    }
+
+    func testActorDeleteRecentGame() async throws {
+        let recent = RecentGame_Data()
+        try await actor.insert(recentGame: recent)
+        XCTAssertEqual(try await actor.allRecentGames().count, 1)
+
+        try await actor.delete(recentGame: recent)
+        XCTAssertEqual(try await actor.allRecentGames().count, 0)
+    }
 }
 #endif
