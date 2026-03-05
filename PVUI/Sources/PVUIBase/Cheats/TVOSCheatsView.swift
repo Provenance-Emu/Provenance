@@ -13,6 +13,7 @@ import PVRealm
 import RealmSwift
 import PVThemes
 import PVLogging
+import PVFeatureFlags
 
 /// SwiftUI-based Cheats View for tvOS
 /// This replaces the storyboard-based PVCheatsViewController on tvOS
@@ -917,6 +918,7 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
 /// SwiftUI sheet shown when the user taps "SEARCH" in the cheat codes screen on tvOS.
 struct TVOSCheatSearchView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.featureFlags) private var featureFlags
     @ObservedObject private var themeManager = ThemeManager.shared
 
     let gameMD5: String?
@@ -932,8 +934,10 @@ struct TVOSCheatSearchView: View {
 
     @State private var results: [CheatDatabaseEntry] = []
     @State private var isLoading = false
+    @State private var isOnlineSearching = false
     @State private var errorMessage: String?
     @State private var filterText = ""
+    @State private var hasSearchedOnline = false
     @FocusState private var focusedID: Int?
 
     private var accentColor: Color {
@@ -943,6 +947,9 @@ struct TVOSCheatSearchView: View {
     private var backgroundColor: Color {
         Color(themeManager.currentPalette.gameLibraryBackground)
     }
+
+    private var onlineLookupEnabled: Bool { featureFlags.cheatsOnlineLookup }
+    private var hasOnlineResults: Bool { results.contains { $0.isOnlineResult } }
 
     private var filtered: [CheatDatabaseEntry] {
         guard !filterText.isEmpty else { return results }
@@ -1001,6 +1008,19 @@ struct TVOSCheatSearchView: View {
                 .padding(.horizontal, 80)
                 .padding(.vertical, 32)
 
+                // Online results banner
+                if hasOnlineResults {
+                    HStack(spacing: 10) {
+                        Image(systemName: "globe")
+                            .foregroundStyle(.blue)
+                        Text("Some results are from the internet. Globe icon indicates online results.")
+                            .font(.system(size: 20))
+                            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                    }
+                    .padding(.horizontal, 80)
+                    .padding(.bottom, 8)
+                }
+
                 // Content
                 if isLoading {
                     ProgressView()
@@ -1013,13 +1033,50 @@ struct TVOSCheatSearchView: View {
                         .font(.system(size: 24))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if filtered.isEmpty {
-                    VStack(spacing: 16) {
+                    VStack(spacing: 24) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: 60))
                             .foregroundStyle(accentColor.opacity(0.4))
                         Text("No cheat codes found")
                             .font(.system(size: 28, weight: .medium))
                             .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.6))
+
+                        if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty {
+                            Button {
+                                Task { await searchOnline() }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    if isOnlineSearching {
+                                        ProgressView().tint(.white)
+                                    } else {
+                                        Image(systemName: "globe")
+                                    }
+                                    Text("SEARCH ONLINE")
+                                }
+                                .font(.system(size: 26, weight: .bold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 48)
+                                .padding(.vertical, 20)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(LinearGradient(
+                                            colors: [.blue, .blue.opacity(0.7)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ))
+                                )
+                            }
+                            .buttonStyle(.plain)
+
+                            Text("Fetches from libretro cheat database on GitHub")
+                                .font(.system(size: 20))
+                                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
+                        }
+
+                        if isOnlineSearching {
+                            ProgressView("Searching online…")
+                                .tint(accentColor)
+                        }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -1040,6 +1097,24 @@ struct TVOSCheatSearchView: View {
                         }
                         .padding(.horizontal, 80)
                         .padding(.bottom, 40)
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty {
+                            Button {
+                                Task { await searchOnline() }
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "globe")
+                                    Text("ALSO SEARCH ONLINE")
+                                }
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundStyle(.blue)
+                                .padding(.vertical, 16)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.black.opacity(0.5))
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
                 }
             }
@@ -1063,6 +1138,27 @@ struct TVOSCheatSearchView: View {
         }
         isLoading = false
     }
+
+    private func searchOnline() async {
+        guard let title = gameTitle, !title.isEmpty else { return }
+        isOnlineSearching = true
+        DLOG("TVOSCheatSearch: online lookup for title='\(title)'")
+        do {
+            let online = try await CheatDatabase.shared.searchCheatsOnline(
+                title: title,
+                systemIdentifier: gameSystemIdentifier
+            )
+            DLOG("TVOSCheatSearch: \(online.count) online results")
+            var seen = Set(results.map { $0.cheatCode.lowercased() })
+            for entry in online where seen.insert(entry.cheatCode.lowercased()).inserted {
+                results.append(entry)
+            }
+        } catch {
+            ELOG("TVOSCheatSearch online error: \(error)")
+        }
+        hasSearchedOnline = true
+        isOnlineSearching = false
+    }
 }
 
 private struct TVOSCheatSearchRow: View {
@@ -1077,9 +1173,16 @@ private struct TVOSCheatSearchRow: View {
         Button(action: onImport) {
             HStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(entry.cheatName)
-                        .font(.system(size: 26, weight: .bold))
-                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                    HStack(spacing: 8) {
+                        Text(entry.cheatName)
+                            .font(.system(size: 26, weight: .bold))
+                            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        if entry.isOnlineResult {
+                            Image(systemName: "globe")
+                                .font(.system(size: 18))
+                                .foregroundStyle(.blue)
+                        }
+                    }
                     Text(entry.cheatCode)
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                         .foregroundStyle(accentColor)

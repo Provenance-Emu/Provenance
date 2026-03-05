@@ -12,6 +12,7 @@ import PVRealm
 import RealmSwift
 import PVThemes
 import PVLogging
+import PVFeatureFlags
 
 // MARK: - Main Cheats View
 
@@ -388,6 +389,7 @@ struct iOSAddCheatView: View {
 /// Sheet for searching the bundled cheat database and importing entries.
 struct iOSCheatSearchView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.featureFlags) private var featureFlags
 
     let gameMD5: String?
     let gameTitle: String?
@@ -397,10 +399,15 @@ struct iOSCheatSearchView: View {
 
     @State private var results: [CheatDatabaseEntry] = []
     @State private var isLoading = false
+    @State private var isOnlineSearching = false
     @State private var errorMessage: String?
+    @State private var onlineErrorMessage: String?
     @State private var filterText = ""
     @State private var pendingEntry: CheatDatabaseEntry?
     @State private var showingConfirm = false
+    @State private var hasSearchedOnline = false
+
+    private var onlineLookupEnabled: Bool { featureFlags.cheatsOnlineLookup }
 
     private var filtered: [CheatDatabaseEntry] {
         guard !filterText.isEmpty else { return results }
@@ -411,6 +418,8 @@ struct iOSCheatSearchView: View {
             $0.deviceName.lowercased().contains(lower)
         }
     }
+
+    private var hasOnlineResults: Bool { results.contains { $0.isOnlineResult } }
 
     var body: some View {
         NavigationStack {
@@ -429,25 +438,10 @@ struct iOSCheatSearchView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if filtered.isEmpty {
-                    if #available(iOS 17.0, *) {
-                        ContentUnavailableView.search(text: filterText)
-                    } else {
-                        Text(filterText.isEmpty ? "No cheat codes found" : "No results for \"\(filterText)\"")
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
+                } else if filtered.isEmpty && !isOnlineSearching {
+                    emptyStateView
                 } else {
-                    List(filtered) { entry in
-                        Button {
-                            pendingEntry = entry
-                            showingConfirm = true
-                        } label: {
-                            iOSCheatSearchRow(entry: entry)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .listStyle(.plain)
+                    listView
                 }
             }
             .navigationTitle("Cheat Database")
@@ -475,6 +469,102 @@ struct iOSCheatSearchView: View {
         .task { await loadCheats() }
     }
 
+    // MARK: - Subviews
+
+    @ViewBuilder
+    private var emptyStateView: some View {
+        VStack(spacing: 20) {
+            if #available(iOS 17.0, *), !filterText.isEmpty {
+                ContentUnavailableView.search(text: filterText)
+            } else {
+                VStack(spacing: 12) {
+                    Image(systemName: filterText.isEmpty ? "magnifyingglass" : "magnifyingglass")
+                        .font(.system(size: 48))
+                        .foregroundStyle(.secondary)
+                    Text(filterText.isEmpty ? "No local cheat codes found" : "No results for \"\(filterText)\"")
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if onlineLookupEnabled, !hasSearchedOnline, filterText.isEmpty {
+                Button {
+                    Task { await searchOnline() }
+                } label: {
+                    Label("Search Online", systemImage: "globe")
+                        .font(.headline)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 10)
+                }
+                .buttonStyle(.borderedProminent)
+
+                Text("Fetches from libretro cheat database on GitHub")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .center) {
+            if isOnlineSearching {
+                ProgressView("Searching online…")
+                    .padding()
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var listView: some View {
+        List {
+            if hasOnlineResults {
+                Section {
+                    HStack(spacing: 8) {
+                        Image(systemName: "globe")
+                            .foregroundStyle(.blue)
+                        Text("Some results are from the internet. Review before importing.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            ForEach(filtered) { entry in
+                Button {
+                    pendingEntry = entry
+                    showingConfirm = true
+                } label: {
+                    iOSCheatSearchRow(entry: entry)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .listStyle(.plain)
+        .overlay(alignment: .bottom) {
+            if isOnlineSearching {
+                ProgressView("Searching online…")
+                    .padding()
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    .padding()
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            if onlineLookupEnabled, !hasSearchedOnline, !results.isEmpty, filterText.isEmpty {
+                Button {
+                    Task { await searchOnline() }
+                } label: {
+                    Label("Also Search Online", systemImage: "globe")
+                        .font(.subheadline)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .padding()
+                .background(.regularMaterial)
+            }
+        }
+    }
+
+    // MARK: - Data Loading
+
     private func loadCheats() async {
         isLoading = true
         errorMessage = nil
@@ -493,6 +583,30 @@ struct iOSCheatSearchView: View {
         }
         isLoading = false
     }
+
+    private func searchOnline() async {
+        guard let title = gameTitle, !title.isEmpty else { return }
+        isOnlineSearching = true
+        onlineErrorMessage = nil
+        DLOG("iOSCheatSearch: online lookup for title='\(title)' system=\(gameSystemIdentifier ?? "nil")")
+        do {
+            let online = try await CheatDatabase.shared.searchCheatsOnline(
+                title: title,
+                systemIdentifier: gameSystemIdentifier
+            )
+            DLOG("iOSCheatSearch: \(online.count) online results")
+            // Merge, deduplicating by cheat code
+            var seen = Set(results.map { $0.cheatCode.lowercased() })
+            for entry in online where seen.insert(entry.cheatCode.lowercased()).inserted {
+                results.append(entry)
+            }
+        } catch {
+            ELOG("iOSCheatSearch online error: \(error)")
+            onlineErrorMessage = error.localizedDescription
+        }
+        hasSearchedOnline = true
+        isOnlineSearching = false
+    }
 }
 
 // MARK: - Search Result Row
@@ -502,9 +616,17 @@ private struct iOSCheatSearchRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(entry.cheatName)
-                .font(.headline)
-                .lineLimit(1)
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text(entry.cheatName)
+                    .font(.headline)
+                    .lineLimit(1)
+                if entry.isOnlineResult {
+                    Image(systemName: "globe")
+                        .font(.caption2)
+                        .foregroundStyle(.blue)
+                        .help("From online database")
+                }
+            }
             Text(entry.cheatCode)
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(.secondary)

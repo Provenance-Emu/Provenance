@@ -5,7 +5,7 @@
 
 import Foundation
 
-/// A cheat code entry retrieved from the local cheatbase database.
+/// A cheat code entry retrieved from the local cheatbase database or an online source.
 public struct CheatDatabaseEntry: Sendable, Identifiable {
     /// Unique cheat ID from the database
     public let id: Int
@@ -26,6 +26,9 @@ public struct CheatDatabaseEntry: Sendable, Identifiable {
     /// The system name this cheat is for (e.g. "Nintendo - Super Nintendo Entertainment System").
     /// Only populated for entries from the libretro cheat database.
     public let systemName: String?
+    /// Whether this entry was fetched from an online source rather than the bundled database.
+    /// Online results should be shown with an indicator in the UI so users know they came from the internet.
+    public let isOnlineResult: Bool
 
     public init(
         id: Int,
@@ -36,7 +39,8 @@ public struct CheatDatabaseEntry: Sendable, Identifiable {
         deviceFormat: String?,
         category: String,
         romTitle: String,
-        systemName: String? = nil
+        systemName: String? = nil,
+        isOnlineResult: Bool = false
     ) {
         self.id = id
         self.cheatName = cheatName
@@ -47,5 +51,6 @@ public struct CheatDatabaseEntry: Sendable, Identifiable {
         self.category = category
         self.romTitle = romTitle
         self.systemName = systemName
+        self.isOnlineResult = isOnlineResult
     }
 }
