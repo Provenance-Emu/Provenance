@@ -63,15 +63,11 @@ extension PVEmulatorViewController {
                         cheatsState = cs
                     }
                     if let cheatsState {
-                        Task {
-                            await LibrarySerializer.storeMetadata(cheatsState, completion: { result in
-                                switch result {
-                                case let .success(url):
-                                    ILOG("Serialized cheats state metadata to (\(url.path))")
-                                case let .error(error):
-                                    ELOG("Failed to serialize cheats metadata. \(error)")
-                                }
-                            })
+                        do {
+                            let url = try await LibrarySerializer.storeMetadata(cheatsState)
+                            ILOG("Serialized cheats state metadata to (\(url.path))")
+                        } catch {
+                            ELOG("Failed to serialize cheats metadata. \(error)")
                         }
                     }
                 } catch {
