@@ -115,7 +115,7 @@ struct TVControllerGuideSection: View {
                     )
                     .focusable()
                     .focused($focusedID, equals: entry.id)
-                    .onLongPressGesture(minimumDuration: 0) { }
+                    .onLongPressGesture(minimumDuration: 0) { _ in }
                     perform: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
                             if selectedEntry?.id == entry.id {
