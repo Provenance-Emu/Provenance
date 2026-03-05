@@ -9,11 +9,14 @@ import PVPrimitives
 import RealmSwift
 import PVRealm
 import PVLogging
+import PVCoreBridge
 
 #if canImport(UIKit)
 import UIKit
 #endif
 import PVEmulatorCore
+
+private let cheatErrorDomain = "com.provenance-emu.cheats"
 
 extension PVEmulatorViewController {
 
@@ -77,7 +80,7 @@ extension PVEmulatorViewController {
                 // All done successfully
                 completion(.success)
             } else {
-                let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
+                let error = NSError(domain: cheatErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
                 completion(.error(.coreCheatsError(error)))
             }
         } else {
@@ -96,7 +99,7 @@ extension PVEmulatorViewController {
                 ILOG("Succeeded applying cheat: \(cheatCode) \(cheatType) \(cheat.enabled)")
                 completion(.success)
             } else {
-                let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
+                let error = NSError(domain: cheatErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid cheat code"])
                 completion(.error(.coreCheatsError(error)))
             }
         } else {
@@ -275,9 +278,6 @@ extension PVEmulatorViewController {
     }
 }
 
-import PVEmulatorCore
-import PVCoreBridge
-
 @objc extension PVEmulatorCore {
     @objc public func setCheat(code: String, type: String, enabled: Bool) -> Bool {
         return false
@@ -287,7 +287,7 @@ import PVCoreBridge
     }
     /* This is list of cheat code types (will be passed to codeType) */
     @objc public var cheatCodeTypes: [String] {
-        return [];
+        return []
     }
     /* This is always called, with blank codeType if none is provided */
     @objc public func setCheat(
@@ -296,7 +296,7 @@ import PVCoreBridge
         codeType: String,
         cheatIndex: UInt8,
         enabled: Bool) -> Bool {
-        return self.setCheat(code:code, type:type, enabled:enabled)
+        return self.setCheat(code: code, type: type, enabled: enabled)
     }
     @objc public func resetCheatCodes() {
     }
