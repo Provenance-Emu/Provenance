@@ -71,7 +71,7 @@ extension PVDuckStationCore: DiscSwappable {
 }
 
 extension PVDuckStationCore: GameWithCheat {
-    public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
+    public func setCheat(code: String, type: String, codeType _: String, cheatIndex _: UInt8, enabled: Bool) -> Bool {
         do {
             try self._bridge.setCheat(code, setType: type, setEnabled: enabled)
             return true
@@ -88,6 +88,10 @@ extension PVDuckStationCore: GameWithCheat {
     @objc
     public var supportsCheatCode: Bool {
         return _bridge.getCheatSupport()
+    }
+
+    public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
     }
 }
 

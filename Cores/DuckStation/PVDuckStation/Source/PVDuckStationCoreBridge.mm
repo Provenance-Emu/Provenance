@@ -573,6 +573,13 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     return YES;
 }
 
+- (void)resetCheatCodes
+{
+    [_enabledCheats removeAllObjects];
+    System::SetCheatList(nullptr);
+    ILOG(@"DuckStation resetCheatCodes: cleared all cheats");
+}
+
 - (NSUInteger)discCount
 {
     return self.maxDiscs ?: 1;

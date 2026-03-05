@@ -89,7 +89,11 @@ extension PVDolphinCore: GameWithCheat {
         return [
             "Gecko",
             "Pro Action Replay",
-        ];
+        ]
+    }
+
+    public func resetCheatCodes() {
+        _bridge.resetCheatCodes()
     }
 }
 

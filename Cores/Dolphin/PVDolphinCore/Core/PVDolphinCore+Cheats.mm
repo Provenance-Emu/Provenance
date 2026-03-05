@@ -105,8 +105,7 @@ std::map<int, ActionReplay::ARCode> arcodes{};
                 activate.push_back(value);
         }
         const std::string game_id = SConfig::GetInstance().GetGameID();
-        const u16 revision = SConfig::GetInstance().GetRevision();
-        Gecko::SetActiveCodes(activate, game_id);  // ,revision);
+        Gecko::SetActiveCodes(activate, game_id);
     }
     if ([codeType isEqualToString:@"Pro Action Replay"]) {
         if (arcode_encrypted_lines.size())
@@ -127,10 +126,27 @@ std::map<int, ActionReplay::ARCode> arcodes{};
                .size(), arcode.enabled);
         // They are auto applied when activated
         const std::string game_id = SConfig::GetInstance().GetGameID();
-        const u16 revision = SConfig::GetInstance().GetRevision();
-        ActionReplay::ApplyCodes(activate, game_id); // , revision);
+        ActionReplay::ApplyCodes(activate, game_id);
 
     }
     return true;
 }
+
+- (void)resetCheatCodes {
+    // Clear all stored Gecko and Action Replay codes, then apply empty lists.
+    const size_t geckoCount = gcodes.size();
+    const size_t arCount = arcodes.size();
+    gcodes.clear();
+    arcodes.clear();
+
+    const std::string game_id = SConfig::GetInstance().GetGameID();
+    std::vector<Gecko::GeckoCode> emptyGecko;
+    Gecko::SetActiveCodes(emptyGecko, game_id);
+
+    std::vector<ActionReplay::ARCode> emptyAR;
+    ActionReplay::ApplyCodes(emptyAR, game_id);
+
+    ILOG(@"Dolphin resetCheatCodes: cleared %zu gecko + %zu AR codes", geckoCount, arCount);
+}
+
 @end
