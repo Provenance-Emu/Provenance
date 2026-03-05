@@ -110,13 +110,9 @@ final class SwiftDataGameCRUDTests: XCTestCase {
         context.insert(game2)
         // SwiftData enforces @Attribute(.unique) at the store level; inserting a duplicate
         // should upsert or throw — either way only one record with that md5 should remain.
-        // We intentionally don't assert exact behavior here because SwiftData may merge or
-        // raise on duplicate unique keys; the important thing is no crash.
-        do {
-            try context.save()
-        } catch {
-            // Expected: duplicate unique key violation
-        }
+        // We intentionally allow failure here: SwiftData may merge or raise on duplicate
+        // unique keys; the important thing is no crash.
+        try? context.save()
     }
 }
 
@@ -223,7 +219,8 @@ final class SwiftDataSaveStateCRUDTests: XCTestCase {
         )
         let results = try context.fetch(descriptor)
         XCTAssertEqual(results.count, 1)
-        XCTAssertFalse(results.first!.isAutosave)
+        let saveState = try XCTUnwrap(results.first)
+        XCTAssertFalse(saveState.isAutosave)
     }
 
     func testAutosaveFlagRoundtrip() throws {
@@ -237,7 +234,8 @@ final class SwiftDataSaveStateCRUDTests: XCTestCase {
             predicate: #Predicate { $0.id == "ss-auto" }
         )
         let results = try context.fetch(descriptor)
-        XCTAssertTrue(results.first!.isAutosave)
+        let saveState = try XCTUnwrap(results.first)
+        XCTAssertTrue(saveState.isAutosave)
     }
 
     func testDeleteSaveState() throws {
@@ -304,7 +302,8 @@ final class SwiftDataCoreCRUDTests: XCTestCase {
             predicate: #Predicate { $0.identifier == "com.provenance.disabled" }
         )
         let results = try context.fetch(descriptor)
-        XCTAssertTrue(results.first!.disabled)
+        let core = try XCTUnwrap(results.first)
+        XCTAssertTrue(core.disabled)
     }
 }
 
@@ -594,7 +593,7 @@ final class SwiftDataPerformanceTests: XCTestCase {
         measure {
             do {
                 let descriptor = FetchDescriptor<Game_Data>()
-                let _ = try context.fetch(descriptor)
+                _ = try context.fetch(descriptor)
             } catch {
                 XCTFail("Fetch performance test failed with error: \(error)")
             }
