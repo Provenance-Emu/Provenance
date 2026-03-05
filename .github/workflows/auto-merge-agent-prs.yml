@@ -1,13 +1,12 @@
 name: Auto-merge Agent PRs
 
-# Automatically merge Agent PRs when a human approves them and CI passes.
+# Automatically enable auto-merge on Agent PRs when a human approves them.
+# GitHub's own auto-merge handles the actual merge once CI passes.
 # Only triggers on human approvals (not bot reviews) to prevent accidental merges.
 
 on:
   pull_request_review:
     types: [submitted]
-  check_suite:
-    types: [completed]
 
 permissions:
   contents: write
@@ -17,7 +16,6 @@ jobs:
   auto-merge:
     # Only run when a human approves an [Agent] PR
     if: |
-      github.event_name == 'pull_request_review' &&
       github.event.review.state == 'approved' &&
       startsWith(github.event.pull_request.title, '[Agent]') &&
       github.event.review.user.type != 'Bot'
@@ -27,43 +25,10 @@ jobs:
       - name: Enable auto-merge
         run: |
           echo "Enabling auto-merge (squash) for PR #${{ github.event.pull_request.number }}"
+          echo "Approved by: ${{ github.event.review.user.login }}"
           gh pr merge "${{ github.event.pull_request.number }}" \
             --squash \
             --auto \
             --repo "${{ github.repository }}"
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-  # Also check if any approved Agent PRs can now be merged after CI passes
-  merge-on-ci-pass:
-    if: |
-      github.event_name == 'check_suite' &&
-      github.event.check_suite.conclusion == 'success'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Find approved Agent PRs ready to merge
-        run: |
-          # List open Agent PRs that are approved and mergeable
-          APPROVED_PRS=$(gh pr list \
-            --repo "${{ github.repository }}" \
-            --state open \
-            --search "[Agent] in:title review:approved" \
-            --json number,title,mergeable,mergeStateStatus \
-            --jq '.[] | select(.mergeStateStatus == "CLEAN") | .number')
-
-          if [ -z "$APPROVED_PRS" ]; then
-            echo "No approved Agent PRs ready to merge"
-            exit 0
-          fi
-
-          for PR in $APPROVED_PRS; do
-            echo "Auto-merging approved Agent PR #$PR"
-            gh pr merge "$PR" \
-              --squash \
-              --auto \
-              --repo "${{ github.repository }}" \
-              || echo "Warning: Could not merge PR #$PR"
-          done
         env:
           GH_TOKEN: ${{ github.token }}

@@ -99,3 +99,8 @@ jobs:
             7. Keep changes focused — one logical change per PR
             8. When fixing review comments, address ALL comments in a single commit
             9. After fixing, push the changes and comment with a summary of what was fixed
+            10. CRITICAL: Never use "Closes #N" or "Fixes #N" for EPIC or parent issues
+                in PR bodies or commit messages. Only use "Closes" for the specific
+                sub-task issue your PR fully completes. If an issue has sub-tasks or
+                is labeled as an epic, reference it with "Part of #N" instead.
+                Premature closure of epics destroys tracking.
