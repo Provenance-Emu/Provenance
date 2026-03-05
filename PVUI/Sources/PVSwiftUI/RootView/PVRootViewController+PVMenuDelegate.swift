@@ -134,8 +134,7 @@ extension PVRootViewController: PVMenuDelegate {
             if isEnabled {
                 // Add Free ROMs option
                 actionSheet.addAction(UIAlertAction(title: "Free ROMs", style: .default, handler: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.dismiss(animated: true) { [weak self] in
+                    self?.dismiss(animated: true) { [weak self] in
                         guard let self = self else { return }
                         let freeROMsView = FreeROMsView(
                             onROMDownloaded: { [weak self] rom, tempURL in
