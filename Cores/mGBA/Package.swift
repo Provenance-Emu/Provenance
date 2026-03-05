@@ -33,8 +33,8 @@ let libmGBACSettings: [PackageDescription.CSetting] = [
 let package = Package(
     name: "PVCoremGBA",
     platforms: [
-        .iOS(.v16),
-        .tvOS(.v16),
+        .iOS(.v17),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v10_13),
         .macCatalyst(.v17),

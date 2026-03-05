@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "PVStella",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v17),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v14),

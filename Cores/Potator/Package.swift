@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "PVPotator",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v17),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v10_13),
         .macCatalyst(.v14)

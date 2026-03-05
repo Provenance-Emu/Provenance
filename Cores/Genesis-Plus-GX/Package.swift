@@ -7,7 +7,7 @@ let package = Package(
     name: "PVCoreGenesisPlus",
     platforms: [
         .iOS(.v17),
-        .tvOS(.v13),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v14),

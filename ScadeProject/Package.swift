@@ -9,7 +9,7 @@ let package = Package(
     name: "ScadeProject",
     platforms: [
         .macOS(.v11),
-        .iOS(.v16)
+        .iOS(.v17)
     ],
     products: [
         .library(

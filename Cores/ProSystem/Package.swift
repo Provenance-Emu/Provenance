@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "PVCoreProSystem",
     platforms: [
-        .iOS(.v16),
-        .tvOS(.v16),
+        .iOS(.v17),
+        .tvOS(.v17),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v17),
