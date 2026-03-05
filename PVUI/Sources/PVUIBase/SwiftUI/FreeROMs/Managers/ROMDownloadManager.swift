@@ -103,8 +103,13 @@ class ROMDownloadManager: ObservableObject {
             }
 
             // Move file immediately -- tempURL is only valid for the duration of this callback
-            let destinationURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent(UUID().uuidString + "_" + rom.file)
+            // Use a UUID subdirectory (not prefix) to avoid polluting the filename,
+            // which persists through the import pipeline and confuses users
+            let tempDir = FileManager.default.temporaryDirectory
+                .appendingPathComponent("PVDownloads")
+                .appendingPathComponent(UUID().uuidString)
+            try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+            let destinationURL = tempDir.appendingPathComponent(rom.file)
 
             do {
                 try FileManager.default.moveItem(at: tempURL, to: destinationURL)

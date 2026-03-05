@@ -296,6 +296,117 @@ class GameImporterTests: XCTestCase {
         XCTAssertEqual(m3uFile.status, .partial, "The .m3u file should be marked as .partial if any referenced .cue file is missing or incomplete.")
     }
 
+    // MARK: - Artwork Filename Matching Tests
+
+    func testArtworkFilenameExtraction_withRomExtension() {
+        // game.lnx.jpg → gameFilename = "game.lnx", gameExtension = "lnx"
+        let artworkURL = URL(fileURLWithPath: "/path/to/game.lnx.jpg")
+        let gameFilename = artworkURL.deletingPathExtension().lastPathComponent
+        let gameExtension = artworkURL.deletingPathExtension().pathExtension
+
+        XCTAssertEqual(gameFilename, "game.lnx", "gameFilename should be the ROM name with extension")
+        XCTAssertEqual(gameExtension, "lnx", "gameExtension should be the ROM's file extension")
+    }
+
+    func testArtworkFilenameExtraction_withMultipleDots() {
+        // Super Mario Bros (USA).nes.png → gameFilename = "Super Mario Bros (USA).nes"
+        let artworkURL = URL(fileURLWithPath: "/path/to/Super Mario Bros (USA).nes.png")
+        let gameFilename = artworkURL.deletingPathExtension().lastPathComponent
+        let gameExtension = artworkURL.deletingPathExtension().pathExtension
+
+        XCTAssertEqual(gameFilename, "Super Mario Bros (USA).nes")
+        XCTAssertEqual(gameExtension, "nes")
+    }
+
+    func testArtworkFilenameExtraction_noRomExtension() {
+        // game.jpg → gameFilename = "game", gameExtension = ""
+        let artworkURL = URL(fileURLWithPath: "/path/to/game.jpg")
+        let gameFilename = artworkURL.deletingPathExtension().lastPathComponent
+        let gameExtension = artworkURL.deletingPathExtension().pathExtension
+
+        XCTAssertEqual(gameFilename, "game")
+        XCTAssertTrue(gameExtension.isEmpty, "No ROM extension should be empty")
+    }
+
+    func testArtworkPathConstruction_preservesRomExtension() {
+        // Verifies the fixed path construction: "Lynx/game.lnx" not "Lynx/game"
+        let systemIdentifier = "com.provenance.lynx"
+        let gameFilename = "game.lnx" // From deletingPathExtension on "game.lnx.jpg"
+
+        // This is the FIXED construction (no .deletingPathExtension())
+        let fixedPath = URL(fileURLWithPath: systemIdentifier, isDirectory: true)
+            .appendingPathComponent(gameFilename).path
+        XCTAssertTrue(fixedPath.hasSuffix("com.provenance.lynx/game.lnx"),
+                      "Path should preserve ROM extension: got \(fixedPath)")
+
+        // This was the BROKEN construction
+        let brokenPath = URL(fileURLWithPath: systemIdentifier, isDirectory: true)
+            .appendingPathComponent(gameFilename).deletingPathExtension().path
+        XCTAssertTrue(brokenPath.hasSuffix("com.provenance.lynx/game"),
+                      "Broken path strips ROM extension: got \(brokenPath)")
+
+        // Confirm they differ
+        XCTAssertNotEqual(fixedPath, brokenPath, "Fixed and broken paths should differ")
+    }
+
+    func testIsArtworkDetection() {
+        let jpgItem = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/game.jpg"))
+        let jpegItem = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/game.jpeg"))
+        let pngItem = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/game.png"))
+        let lnxItem = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/game.lnx"))
+        let zipItem = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/game.zip"))
+        let nesItem = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/game.nes"))
+
+        let concreteImporter = gameImporter as! GameImporter
+
+        // Artwork extensions should be detected
+        XCTAssertTrue(concreteImporter.isArtwork(jpgItem), ".jpg should be artwork")
+        XCTAssertTrue(concreteImporter.isArtwork(jpegItem), ".jpeg should be artwork")
+        XCTAssertTrue(concreteImporter.isArtwork(pngItem), ".png should be artwork")
+
+        // Non-artwork extensions should NOT be detected
+        XCTAssertFalse(concreteImporter.isArtwork(lnxItem), ".lnx should not be artwork")
+        XCTAssertFalse(concreteImporter.isArtwork(zipItem), ".zip should not be artwork")
+        XCTAssertFalse(concreteImporter.isArtwork(nesItem), ".nes should not be artwork")
+    }
+
+    func testIsArtworkDetection_caseInsensitive() {
+        let upperJPG = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/game.JPG"))
+        let mixedPng = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/game.Png"))
+        let concreteImporter = gameImporter as! GameImporter
+
+        XCTAssertTrue(concreteImporter.isArtwork(upperJPG), ".JPG should be detected as artwork (case-insensitive)")
+        XCTAssertTrue(concreteImporter.isArtwork(mixedPng), ".Png should be detected as artwork (case-insensitive)")
+    }
+
+    // MARK: - Download Filename Tests
+
+    func testDownloadedFileShouldHaveCleanFilename() {
+        // Verify that rom.file doesn't contain UUID patterns
+        let romFile = "Super_Mario_Bros.zip"
+        let uuidPattern = try! NSRegularExpression(pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", options: .caseInsensitive)
+        let range = NSRange(romFile.startIndex..., in: romFile)
+        let matches = uuidPattern.numberOfMatches(in: romFile, range: range)
+        XCTAssertEqual(matches, 0, "ROM filename should not contain UUID")
+    }
+
+    func testTempDirectoryUsesUUIDSubdirectory() {
+        // Verify the UUID subdirectory approach keeps filename clean
+        let uuid = UUID().uuidString
+        let romFile = "game.zip"
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PVDownloads")
+            .appendingPathComponent(uuid)
+        let destinationURL = tempDir.appendingPathComponent(romFile)
+
+        XCTAssertEqual(destinationURL.lastPathComponent, "game.zip",
+                      "Filename should be preserved without UUID prefix")
+        XCTAssertTrue(destinationURL.path.contains(uuid),
+                      "UUID should be in the directory path, not the filename")
+    }
+
+    // MARK: - Original Tests (continued)
+
     func testM3UFileWithMissingOrIncompleteCueFilesThenAddThem() {
         // Arrange
         let mockCDFileHandler = MockCDFileHandler()

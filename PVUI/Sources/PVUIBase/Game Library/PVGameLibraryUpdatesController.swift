@@ -821,10 +821,10 @@ public extension PVGameLibraryUpdatesController {
 
             ILOG("Copied file from \(sourceURL.path) to \(destinationURL.path)")
 
-            // Immediately enqueue the copied file for import to avoid relying solely on watchers
-            Task {
-                await GameImporter.shared.addImports(forPaths: [destinationURL])
-            }
+            // Let DirectoryWatcher handle import queue addition — it has proper file stability
+            // detection (waits for writes to complete) that prevents race conditions.
+            // Previously, both this explicit call AND the watcher would fire, causing
+            // double-processing of zip files and GUID-related import errors.
 
         } catch {
             // Mark as failed

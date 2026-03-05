@@ -138,7 +138,10 @@ class ArtworkImporter : ArtworkImporting {
             return nil
         }
 
-        var gamePartialPath: String = URL(fileURLWithPath: system.identifier, isDirectory: true).appendingPathComponent(gameFilename).deletingPathExtension().path
+        // gameFilename is already the ROM name with its extension (e.g., "game.lnx" from "game.lnx.jpg")
+        // Do NOT call .deletingPathExtension() — it would strip the ROM extension,
+        // producing "Lynx/game" instead of the correct "Lynx/game.lnx"
+        var gamePartialPath: String = URL(fileURLWithPath: system.identifier, isDirectory: true).appendingPathComponent(gameFilename).path
         if gamePartialPath.first == "/" {
             gamePartialPath.removeFirst()
         }
