@@ -74,7 +74,7 @@ public struct TVOSCheatsView: View {
     }
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 // Background
                 backgroundColor.ignoresSafeArea()
@@ -97,7 +97,7 @@ public struct TVOSCheatsView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
         }
         .onAppear {
             loadCheats()

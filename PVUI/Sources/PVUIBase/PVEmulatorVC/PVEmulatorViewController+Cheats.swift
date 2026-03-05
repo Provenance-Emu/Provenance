@@ -58,7 +58,7 @@ extension PVEmulatorViewController {
                     let saveFile = await PVFile(withURL: saveURL, relativeRoot: .iCloud)
                     var cheatsState: PVCheats?
                     try realm.write {
-                        let cs = PVCheats(withGame: self.game, core: core, code: modString, type: type, codeType: codeType, enabled: false, file: saveFile)
+                        let cs = PVCheats(withGame: self.game, core: core, code: modString, type: type, codeType: codeType, enabled: enabled, file: saveFile)
                         realm.add(cs)
                         cheatsState = cs
                     }
