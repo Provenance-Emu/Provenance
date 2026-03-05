@@ -522,7 +522,8 @@ struct TVMediaMainView: View {
                 } else {
                     TVMediaEmptyStateView(
                         title: "Select a System",
-                        subtitle: "Choose a system to browse games."
+                        subtitle: "Choose a system to browse games.",
+                        showControllerTip: true
                     )
                 }
             case .search:
@@ -1164,6 +1165,8 @@ struct TVMediaLogsView: View {
 struct TVMediaEmptyStateView: View {
     let title: String
     let subtitle: String
+    /// When true a compact controller-tip row is shown below the subtitle.
+    var showControllerTip: Bool = false
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isFocused: Bool
@@ -1209,6 +1212,11 @@ struct TVMediaEmptyStateView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 520)
 
+            if showControllerTip {
+                TVControllerTipBanner()
+                    .padding(.top, 8)
+            }
+
             // Navigation hint with subtle styling
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.circle")
@@ -1217,7 +1225,7 @@ struct TVMediaEmptyStateView: View {
                     .font(.caption)
             }
             .foregroundStyle(.white.opacity(0.35))
-            .padding(.top, 16)
+            .padding(.top, showControllerTip ? 8 : 16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(40)
@@ -2554,6 +2562,14 @@ struct TVMediaHomeView: View {
                 .foregroundStyle(.white.opacity(0.35))
             }
             .padding(.top, 16)
+
+            // Controller guide — hardware controller is required for most games
+            Divider()
+                .background(Color.retroBlue.opacity(0.2))
+                .padding(.vertical, 8)
+
+            TVControllerGuideSection()
+                .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 60)
