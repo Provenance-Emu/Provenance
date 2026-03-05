@@ -115,7 +115,7 @@ public final class CloudKitSwiftDataSyncManager: @unchecked Sendable {
     /// Native SwiftData CloudKit sync is gated on account availability; calling
     /// this before `start(container:)` is not required but can be used in the
     /// UI to show the sync status.
-    public static func checkiCloudAccountAvailability() async -> Bool {
+    public static func checkICloudAccountAvailability() async -> Bool {
         await withCheckedContinuation { continuation in
             CKContainer.default().accountStatus { status, error in
                 if let error {
@@ -136,24 +136,46 @@ public final class CloudKitSwiftDataSyncManager: @unchecked Sendable {
 /// file-based syncers can use when creating `CKRecord`s for binary assets,
 /// ensuring that the metadata record and the file asset record reference the
 /// same logical entity.
+///
+/// All record name formats are delegated to `CloudKitSchema.RecordIDGenerator`
+/// so they remain consistent with the existing custom sync pipeline.
 public enum SwiftDataCloudKitRecordID {
 
     /// Returns a stable CloudKit record name for a `Game_Data` model.
     ///
-    /// The record name is derived from the MD5 hash (which is unique per ROM)
-    /// so the same game maps to the same CloudKit record across installs.
+    /// Delegates to `CloudKitSchema.RecordIDGenerator.romRecordID(md5:)` to
+    /// produce the canonical "rom_<md5>" format used by `CloudKitRomsSyncer`.
     public static func recordName(for game: Game_Data) -> String {
-        "ROM.\(game.md5Hash.uppercased())"
+        CloudKitSchema.RecordIDGenerator.romRecordID(md5: game.md5Hash).recordName
     }
 
     /// Returns a stable CloudKit record name for a `SaveState_Data` model.
+    ///
+    /// Delegates to `CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID:filename:)`
+    /// when both the game relationship and file path are available, producing the canonical
+    /// "savestate_<gameID>_<sanitizedFilename>" format used by `CloudKitSaveStatesSyncer`.
+    /// Falls back to a unique ID-based name when relationships are not populated.
     public static func recordName(for saveState: SaveState_Data) -> String {
-        "SaveState.\(saveState.id)"
+        if let gameID = saveState.game?.id,
+           let filename = saveState.file?.partialPath.split(separator: "/").last.map(String.init) {
+            return CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: gameID, filename: filename).recordName
+        }
+        // Fallback: unique but not legacy-compatible. Relationships must be loaded
+        // (e.g. via a ModelContext fetch with prefetching) for the canonical name.
+        return "savestate_\(saveState.id)"
     }
 
     /// Returns a stable CloudKit record name for a `BIOS_Data` model.
+    ///
+    /// Delegates to `CloudKitSchema.RecordIDGenerator.biosRecordID(systemID:md5:)` when
+    /// the system relationship is populated, producing the canonical
+    /// "bios_<systemID>_<md5>" format. Falls back to "bios_<md5>" otherwise.
     public static func recordName(for bios: BIOS_Data) -> String {
-        "BIOS.\(bios.expectedMD5.uppercased())"
+        if let systemID = bios.system?.identifier {
+            return CloudKitSchema.RecordIDGenerator.biosRecordID(systemID: systemID, md5: bios.expectedMD5).recordName
+        }
+        // Fallback: md5-only name when system relationship is not loaded.
+        return "bios_\(bios.expectedMD5)"
     }
 }
 #endif

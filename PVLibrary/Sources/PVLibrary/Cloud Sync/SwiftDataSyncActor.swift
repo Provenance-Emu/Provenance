@@ -43,10 +43,14 @@ public actor SwiftDataSyncActor {
     // MARK: - Game queries
 
     /// Fetch a `Game_Data` model by its ROM MD5 hash.
+    ///
+    /// The input is normalised to uppercase before comparison to match
+    /// the storage convention (hashes are stored uppercased on insert).
     /// - Returns: The matching game or `nil` if not found.
     public func fetchGame(md5: String) throws -> Game_Data? {
+        let normalizedMD5 = md5.uppercased()
         var descriptor = FetchDescriptor<Game_Data>(
-            predicate: #Predicate { $0.md5Hash == md5 }
+            predicate: #Predicate { $0.md5Hash == normalizedMD5 }
         )
         descriptor.fetchLimit = 1
         return try modelContext.fetch(descriptor).first

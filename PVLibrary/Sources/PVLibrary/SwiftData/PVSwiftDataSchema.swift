@@ -9,7 +9,8 @@
 //
 //  CloudKit Integration Notes:
 //  - SwiftData uses NSPersistentCloudKitContainer under the hood when
-//    `cloudKitContainerIdentifier` is set on ModelConfiguration.
+//    `cloudKitDatabase` is configured on ModelConfiguration
+//    (e.g. `.private(cloudKitContainerIdentifier)`).
 //  - This automatically syncs @Model metadata (game info, favorites, ratings,
 //    save state metadata) between devices via CloudKit's private database.
 //  - Binary file assets (ROM files, save state files, BIOS files) are NOT

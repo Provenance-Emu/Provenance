@@ -26,6 +26,7 @@
 
 #if canImport(SwiftData)
 import SwiftData
+import CoreData
 import Foundation
 import CloudKit
 import Combine
@@ -40,14 +41,23 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
 
     // MARK: - Constants
 
-    private static let contextDidSaveObjectIDsNotification = NSNotification.Name(
-        "NSManagedObjectContextDidSaveObjectIDsNotification"
-    )
+    /// Typed `Notification.Name` for the CoreData "did save object IDs" notification posted
+    /// by `NSPersistentCloudKitContainer`. Using the SDK constant prevents typo-related bugs
+    /// and will pick up any future SDK renames automatically.
+    private static let contextDidSaveObjectIDsNotification = NSManagedObjectContext.didSaveObjectIDsNotification
 
     // MARK: - Properties
 
     private weak var romsSyncer: CloudKitRomsSyncer?
     private var cancellables = Set<AnyCancellable>()
+
+    /// Serial queue used to serialise notification callbacks and the debounce work item,
+    /// preventing races on `pendingSyncWork`.
+    private let queue = DispatchQueue(label: "com.provenance-emu.SwiftDataLocalSyncMonitor", qos: .utility)
+
+    /// Pending debounced sync work item. Cancelled and replaced on each new save notification
+    /// to coalesce rapid consecutive saves into a single `fetchAndApplyRemoteChanges()` call.
+    private var pendingSyncWork: DispatchWorkItem?
 
     // MARK: - Init
 
@@ -74,7 +84,7 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
         // Each value is a Set<NSManagedObjectID>.
         NotificationCenter.default
             .publisher(for: SwiftDataLocalSyncMonitor.contextDidSaveObjectIDsNotification)
-            .receive(on: DispatchQueue.global(qos: .utility))
+            .receive(on: queue)   // serial queue — safe to mutate pendingSyncWork here
             .sink { [weak self] notification in
                 self?.handleContextSave(notification)
             }
@@ -111,14 +121,22 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
         // A more granular approach (passing specific game IDs) can be added when
         // the CloudKit file syncers expose per-record update APIs.
 
-        Task { [weak self] in
+        // Debounce: coalesce rapid consecutive saves into a single sync call.
+        // This prevents excessive network traffic when many records are saved
+        // in quick succession (e.g. during a bulk ROM import).
+        pendingSyncWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in
             guard let syncer = self?.romsSyncer else { return }
             VLOG("SwiftDataLocalSyncMonitor: context saved, scheduling ROM sync consistency check.")
             // `fetchAndApplyRemoteChanges` reconciles the local CloudKit change
             // token with the server, uploading any new local ROM records that
             // were not yet pushed.
-            await syncer.fetchAndApplyRemoteChanges()
+            Task {
+                await syncer.fetchAndApplyRemoteChanges()
+            }
         }
+        pendingSyncWork = work
+        queue.asyncAfter(deadline: .now() + 2.0, execute: work)
     }
 }
 #endif

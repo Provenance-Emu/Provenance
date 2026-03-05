@@ -91,12 +91,16 @@ public actor ModelContextActor: GlobalActor {
     }
 
     /// Convenience: perform a read-only fetch without calling `save()`.
+    ///
+    /// Accesses the actor's context directly rather than routing through
+    /// `perform(_:)`, which requires the return type to be `Sendable`.
+    /// `@Model` reference types do not conform to `Sendable`, so this
+    /// approach avoids the constraint while remaining actor-isolated.
     public func fetch<T: PersistentModel>(
         _ descriptor: FetchDescriptor<T>
     ) async throws -> [T] {
-        try await perform { ctx in
-            try ctx.fetch(descriptor)
-        }
+        let ctx = try context()
+        return try ctx.fetch(descriptor)
     }
 }
 
