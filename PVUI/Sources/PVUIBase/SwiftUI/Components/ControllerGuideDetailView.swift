@@ -11,7 +11,6 @@ import PVThemes
 /// Full-page guide showing all supported controllers and pairing steps.
 public struct ControllerGuideDetailView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var expandedID: String?
 
@@ -43,7 +42,7 @@ public struct ControllerGuideDetailView: View {
             .navigationTitle("Controller Guide")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
                         .foregroundColor(.retroPink)
                         .font(.system(size: 15, weight: .semibold, design: .monospaced))

@@ -15,7 +15,7 @@ public struct ControllerGuideCardView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     @State private var showDetail = false
-    @State private var dismissed = false
+    @State private var dismissed = UserDefaults.standard.bool(forKey: ControllerGuideCardView.dismissedKey)
 
     private static let dismissedKey = "PVControllerGuideCardDismissed"
 
