@@ -38,6 +38,17 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
         createdWithCoreVersion = core.projectVersion
     }
 
+    /// Splits a legacy combined type string (pre-schema-v24) into separate type and codeType components.
+    /// The legacy format encoded both as `"cheatName-~-codeType"`; schema v24 migrates these to dedicated fields.
+    /// This is the single source of truth used by the Realm v24 migration block and its unit tests.
+    public static func splitLegacyCombinedType(_ combined: String?) -> (type: String, codeType: String) {
+        guard let combined, combined.contains("-~-") else {
+            return (type: combined ?? "", codeType: "")
+        }
+        let parts = combined.components(separatedBy: "-~-")
+        return (type: parts[0], codeType: parts.dropFirst().joined(separator: "-~-"))
+    }
+
     public static func == (lhs: PVCheats, rhs: PVCheats) -> Bool {
         return lhs.code == rhs.code && lhs.type == rhs.type && lhs.codeType == rhs.codeType && lhs.enabled == rhs.enabled
     }
