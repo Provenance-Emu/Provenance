@@ -15,7 +15,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  workflows: write   # Required to push to branches containing workflow files
 
 concurrency:
   group: auto-rebase-develop
