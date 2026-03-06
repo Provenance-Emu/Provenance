@@ -542,7 +542,7 @@ private struct CatalogSkinCard: View {
                     .foregroundColor(.white)
                     .lineLimit(1)
 
-                Text("by \(entry.author)")
+                Text("by \(entry.author ?? "Unknown")")
                     .font(.system(size: 11))
                     .foregroundColor(.white.opacity(0.6))
                     .lineLimit(1)
