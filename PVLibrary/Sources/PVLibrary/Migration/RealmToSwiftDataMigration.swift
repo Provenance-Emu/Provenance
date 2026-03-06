@@ -128,7 +128,13 @@ public actor RealmToSwiftDataMigration {
         // Mark the flag and skip to prevent creating duplicates when the flag is reset
         // (e.g. via resetMigrationFlag() in debug) against an already-populated store.
         let context = ModelContext(modelContainer)
-        let existingGameCount = (try? context.fetchCount(FetchDescriptor<Game_Data>())) ?? 0
+        let existingGameCount: Int
+        do {
+            existingGameCount = try context.fetchCount(FetchDescriptor<Game_Data>())
+        } catch {
+            ELOG("[Migration] Preflight fetch failed — proceeding with migration: \(error)")
+            existingGameCount = 0
+        }
         if existingGameCount > 0 {
             WLOG("[Migration] SwiftData store already contains \(existingGameCount) games. Marking migration complete to avoid duplicates. Call resetMigrationFlag() on an empty store to force a full re-run.")
             defaults.set(true, forKey: Self.migrationCompletedKey)
@@ -731,7 +737,13 @@ public actor RealmToSwiftDataMigration {
             guard !existingIDs.contains(id) else { continue }
 
             let fileData: File_Data? = c.filePartialPath.map {
-                getOrCreateFile(partialPath: $0, context: context, cache: &fileCache)
+                getOrCreateFile(
+                    partialPath: $0,
+                    md5Cache: c.fileMD5Cache,
+                    createdDate: c.fileCreatedDate ?? Date(),
+                    context: context,
+                    cache: &fileCache
+                )
             }
 
             let obj = Cheats_Data(
@@ -1154,6 +1166,8 @@ struct CheatSnapshot {
     let gameMD5: String?
     let coreIdentifier: String?
     let filePartialPath: String?
+    let fileMD5Cache: String?
+    let fileCreatedDate: Date?
 
     init(_ c: PVCheats) {
         id                    = c.id
@@ -1166,7 +1180,15 @@ struct CheatSnapshot {
         createdWithCoreVersion = c.createdWithCoreVersion
         gameMD5               = c.game?.isInvalidated == false ? c.game?.md5Hash : nil
         coreIdentifier        = c.core?.isInvalidated == false ? c.core?.identifier : nil
-        filePartialPath       = c.file?.isInvalidated == false ? c.file?.partialPath : nil
+        if let f = c.file, !f.isInvalidated {
+            filePartialPath  = f.partialPath
+            fileMD5Cache     = f.md5Cache
+            fileCreatedDate  = f.createdDate
+        } else {
+            filePartialPath  = nil
+            fileMD5Cache     = nil
+            fileCreatedDate  = nil
+        }
     }
 }
 
