@@ -159,14 +159,20 @@ public enum SwiftDataCloudKitRecordID {
     /// Delegates to `CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID:filename:)`
     /// when both the game relationship and file path are available, producing the canonical
     /// "savestate_<gameID>_<sanitizedFilename>" format used by `CloudKitSaveStatesSyncer`.
-    /// Falls back to a unique ID-based name when relationships are not populated.
+    ///
+    /// - Important: Call this only after fetching `saveState` from a `ModelContext` that
+    ///   has the `game` and `file` relationships loaded. If relationships are not populated
+    ///   the fallback ID-based name is **not compatible** with the legacy syncer and will
+    ///   produce orphan CloudKit records.
     public static func recordName(for saveState: SaveState_Data) -> String {
         if let gameID = saveState.game?.id,
            let filename = saveState.file?.partialPath.split(separator: "/").last.map(String.init) {
             return CloudKitSchema.RecordIDGenerator.saveStateRecordID(gameID: gameID, filename: filename).recordName
         }
-        // Fallback: unique but not legacy-compatible. Relationships must be loaded
-        // (e.g. via a ModelContext fetch with prefetching) for the canonical name.
+        // Relationships were not loaded — produce a unique name but warn loudly in debug
+        // builds so callers can fix their fetch descriptors before shipping.
+        assertionFailure("[CloudKit] recordName(for:SaveState_Data) called with unloaded relationships. " +
+                         "Fetch with relationships prefetched to produce a legacy-compatible record name.")
         return "savestate_\(saveState.id)"
     }
 
@@ -174,12 +180,17 @@ public enum SwiftDataCloudKitRecordID {
     ///
     /// Delegates to `CloudKitSchema.RecordIDGenerator.biosRecordID(systemID:md5:)` when
     /// the system relationship is populated, producing the canonical
-    /// "bios_<systemID>_<md5>" format. Falls back to "bios_<md5>" otherwise.
+    /// "bios_<systemID>_<md5>" format used by the legacy BIOS syncer.
+    ///
+    /// - Important: Call this only after fetching `bios` with the `system` relationship
+    ///   loaded. The md5-only fallback name is **not compatible** with the legacy syncer.
     public static func recordName(for bios: BIOS_Data) -> String {
         if let systemID = bios.system?.identifier {
             return CloudKitSchema.RecordIDGenerator.biosRecordID(systemID: systemID, md5: bios.expectedMD5).recordName
         }
-        // Fallback: md5-only name when system relationship is not loaded.
+        // System relationship not loaded — warn in debug builds.
+        assertionFailure("[CloudKit] recordName(for:BIOS_Data) called with unloaded system relationship. " +
+                         "Fetch with the system relationship prefetched to produce a legacy-compatible record name.")
         return "bios_\(bios.expectedMD5)"
     }
 }

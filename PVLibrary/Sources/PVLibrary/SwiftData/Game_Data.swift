@@ -114,9 +114,10 @@ public class Game_Data {
 
     /// Cached ROM file size in bytes (avoids stat(2) calls during sync batching).
     ///
-    /// `@Transient` — device-local state derived from the filesystem; never synced
-    /// via CloudKit. Optional so existing rows without this value don't require a
-    /// migration default.
+    /// `@Transient` — device-local, per-run cache only. Not persisted to the SwiftData
+    /// store and not synced via CloudKit. The value is lost on app launch or whenever
+    /// the `ModelContext` is refreshed. Populate it before a sync batch and discard
+    /// after. Optional so callers that haven't populated it yet get `nil` (not zero).
     @Transient public var fileSize: Int? = nil
 
     /// Date of the last successful CloudKit sync round-trip for this game.
