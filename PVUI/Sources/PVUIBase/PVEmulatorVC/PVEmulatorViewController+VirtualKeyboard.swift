@@ -60,7 +60,7 @@ extension PVEmulatorViewController {
         }
     }
 
-    // MARK: - Public interface
+    // MARK: - Capability Checks
 
     /// Whether the emulator core reports keyboard support.
     public var coreSupportsVirtualKeyboard: Bool {
@@ -72,6 +72,8 @@ extension PVEmulatorViewController {
         (core as? KeyboardResponder)?.requiresKeyboard == true
     }
 
+    // MARK: - Lifecycle
+
     /// Whether the virtual keyboard overlay is currently visible.
     public var isVirtualKeyboardVisible: Bool {
         virtualKeyboardHostingVC != nil
@@ -79,6 +81,7 @@ extension PVEmulatorViewController {
 
     /// Call this after the core has started and the view hierarchy is ready.
     /// Auto-shows the keyboard if the core requires it.
+    /// Mouse cursor overlay is handled separately by `setupVirtualMouseIfNeeded()`.
     public func setupVirtualInputOverlaysIfNeeded() {
         if coreRequiresVirtualKeyboard {
             showVirtualKeyboard()
