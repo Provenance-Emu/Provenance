@@ -8,7 +8,9 @@
 #if canImport(SwiftUI)
 import Foundation
 import SwiftUI
+#if canImport(SwiftData)
 import SwiftData
+#endif
 import RealmSwift
 import PVLibrary
 import PVThemes
@@ -1178,7 +1180,7 @@ extension ContinueItemModel {
 /// finishes.  Live updates are a future enhancement (tracked in #2555) that
 /// will use SwiftData's `withChanges(in:)` API (iOS 18+) or periodic polling.
 /// In the interim the Realm driver (`RealmContinuesDataDriver`) remains active.
-final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
+final class SwiftDataContinuesDataDriver: ContinuesDataDriver, @unchecked Sendable {
     private let modelContainer: ModelContainer
 
     init(modelContainer: ModelContainer) {
@@ -1209,7 +1211,7 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
                     // Filter: both game and its system must be present.
                     let models = results
                         .filter { $0.game?.system != nil }
-                        .map { ContinueItemModel(saveState_data: $0) }
+                        .map { ContinueItemModel(saveStateData: $0) }
                     continuation.yield(models)
                 } catch {
                     ELOG("SwiftDataContinuesDataDriver: fetch failed: \(error)")
