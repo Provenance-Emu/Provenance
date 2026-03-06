@@ -73,6 +73,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
+          allowed_bots: 'github-actions[bot]'
           claude_args: "--allowedTools 'Bash(gh issue comment:*),Bash(gh pr comment:*),Bash(gh pr create:*),Bash(gh pr edit:*),Bash(gh pr view:*),Bash(gh pr merge:*),Bash(gh issue edit:*),Bash(gh label:*),Bash(gh api:*),Bash(git:*),Bash(swift:*),Bash(swiftlint:*),Read,Write,Edit,Glob,Grep'"
           prompt: |
             You are working on the Provenance emulator app repository.
@@ -118,34 +119,44 @@ jobs:
               Then: `git fetch origin && git checkout <branch> && git pull origin <branch>`
               Make fixes, commit, push to THAT branch. Never create a new branch or PR.
 
+            ## PR Labels (lifecycle — always keep these current)
+            Labels: agent-work | ai-reviewing | needs-fixes | ready-for-review
+            - agent-work:       set when PR is created; keep for its lifetime
+            - ai-reviewing:     set when AI review is running; remove when review posts
+            - needs-fixes:      set when AI requests changes; remove when fixes pushed
+            - ready-for-review: set when AI approves; stays until human merges
+
             ## Review Pipeline (for [Agent] PRs)
 
             **After creating a new PR:**
-            9.  Enable auto-merge immediately: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
-            10. Add the 'agent-work' label: `gh pr edit <number> --add-label agent-work`
-            11. Post a comment: "🤖 PR created. Auto-merge enabled. AI review will start automatically."
+            9.  Enable auto-merge: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
+            10. Set initial labels: `gh pr edit <number> --add-label "agent-work,ai-reviewing"`
+            11. Post a comment: "🤖 PR created. AI review starting automatically."
             NOTE: Do NOT manually request a review — ai-review.yml fires automatically on the push.
 
             **When fixing AI review comments (fix_ai_review):**
-            12. Get the PR branch: `gh pr view <number> --json headRefName --jq .headRefName`
-            13. Checkout the branch: `git fetch origin && git checkout <branch> && git pull origin <branch>`
-            14. Fetch the latest AI review body:
+            12. Update label — fixer is working:
+                `gh pr edit <number> --add-label "needs-fixes" --remove-label "ai-reviewing,ready-for-review"`
+            13. Get the PR branch: `gh pr view <number> --json headRefName --jq .headRefName`
+            14. Checkout the branch: `git fetch origin && git checkout <branch> && git pull origin <branch>`
+            15. Fetch the latest AI review body:
                 `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/reviews \
                   --jq '[.[] | select(.user.login == "github-actions[bot]")] | sort_by(.submitted_at) | last | .body'`
-            15. Also fetch inline comments from the review:
+            16. Also fetch inline review comments:
                 `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/comments \
                   --jq '[.[] | select(.user.login == "github-actions[bot]")] | .[] | {path, line: .original_line, body}'`
-            16. Fix every CRITICAL and MAJOR issue. Fix MINOR issues where trivial.
-            17. Commit with message: `fix: address AI review — <brief summary of changes>`
-            18. Push to the EXISTING branch (never create a new branch or PR):
+            17. Fix every CRITICAL and MAJOR issue. Fix MINOR issues where trivial.
+            18. Commit: `fix: address AI review — <brief summary>`
+            19. Push to EXISTING branch (never create a new branch or PR):
                 `git push origin <branch>`
-            19. Post a marker comment:
-                `gh pr comment <number> --body "<!-- ai-review-processed -->\n✅ Addressed AI review: <summary>"`
-            NOTE: Do NOT manually re-request a review. The push to the branch automatically
-                  triggers ai-review.yml for the next review cycle.
+            20. Update label — fixes pushed, review incoming:
+                `gh pr edit <number> --add-label "ai-reviewing" --remove-label "needs-fixes"`
+            21. Post marker: `gh pr comment <number> --body "<!-- ai-review-processed -->\n✅ Fixes pushed: <summary>"`
+            NOTE: Do NOT re-request review. The push auto-triggers ai-review.yml for the next cycle.
 
             **When AI review approves (ai_approved):**
-            20. Enable auto-merge if not already: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
-            21. Add the 'ready-for-review' label: `gh pr edit <number> --add-label ready-for-review`
-            22. Assign for final human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
-            23. Post a summary comment: "✅ AI review passed. Auto-merge enabled. Ready for @JoeMatt's final review."
+            22. Enable auto-merge if not already: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
+            23. Set final labels:
+                `gh pr edit <number> --add-label "ready-for-review" --remove-label "ai-reviewing,needs-fixes"`
+            24. Assign for human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
+            25. Post comment: "✅ AI review passed. Ready for @JoeMatt's final review."

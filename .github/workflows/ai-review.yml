@@ -116,6 +116,15 @@ jobs:
           fetch-depth: 0
           submodules: false
 
+      - name: Set ai-reviewing label
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr edit "${{ needs.triage.outputs.pr_number }}" \
+            --add-label "ai-reviewing" \
+            --remove-label "needs-fixes" \
+            --repo "${{ github.repository }}" 2>/dev/null || true
+
       - name: Run AI Reviewer
         uses: anthropics/claude-code-action@v1
         with:
