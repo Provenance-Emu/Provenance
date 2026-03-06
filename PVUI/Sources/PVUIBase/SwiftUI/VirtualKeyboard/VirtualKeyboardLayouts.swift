@@ -94,7 +94,7 @@ public enum VirtualKeyboardLayouts {
     public static let fullLayout: [[VirtualKey]] = [
         // Number row
         [
-            .init(label: "ESC",  keyCode: .escape,             symbolName: "escape"),
+            .init(label: "ESC",  keyCode: .escape,           symbolName: "escape"),
             .init(label: "1",    keyCode: .one),
             .init(label: "2",    keyCode: .two),
             .init(label: "3",    keyCode: .three),
@@ -260,8 +260,8 @@ public enum VirtualKeyboardLayouts {
             .init(label: "0",         keyCode: .zero),
             .init(label: "+",         keyCode: .equalSign),
             .init(label: "-",         keyCode: .hyphen),
-            .init(label: "GBP",       keyCode: .scrollLock),
-            .init(label: "CLR HOME",  keyCode: .home,              widthMultiplier: 1.5),
+            .init(label: "£",         keyCode: .scrollLock),            // £ — proxy: scrollLock (HID 0x47); remap in core bridge
+            .init(label: "CLR HOME",  keyCode: .home,               widthMultiplier: 1.5),
             .init(label: "INST DEL",  keyCode: .deleteOrBackspace,  widthMultiplier: 1.5, symbolName: "delete.left"),
         ],
         // Row 2
@@ -277,14 +277,15 @@ public enum VirtualKeyboardLayouts {
             .init(label: "I",        keyCode: .keyI),
             .init(label: "O",        keyCode: .keyO),
             .init(label: "P",        keyCode: .keyP),
-            .init(label: "@",        keyCode: .openBracket),
-            .init(label: "*",        keyCode: .closeBracket),
-            .init(label: "UP",       keyCode: .upArrow,     symbolName: "arrow.up"),
-            .init(label: "RESTORE",  keyCode: .printScreen,  widthMultiplier: 1.5),
+            .init(label: "@",        keyCode: .openBracket),            // @ = [ position on HID
+            .init(label: "*",        keyCode: .closeBracket),           // * = ] position on HID
+            .init(label: "↑",        keyCode: .upArrow,    symbolName: "arrow.up"),
+            // RESTORE triggers NMI — proxied to Print Screen key
+            .init(label: "RESTORE",  keyCode: .printScreen, widthMultiplier: 1.5),
         ],
         // Row 3
         [
-            .init(label: "RUN STOP", keyCode: .escape,        widthMultiplier: 1.5),
+            .init(label: "RUN STOP", keyCode: .escape,    widthMultiplier: 1.5),    // RUN/STOP → RETROK_ESCAPE in VICE
             .init(label: "A",        keyCode: .keyA),
             .init(label: "S",        keyCode: .keyS),
             .init(label: "D",        keyCode: .keyD),
@@ -391,12 +392,13 @@ public enum VirtualKeyboardLayouts {
         ],
         // Row 5: Arrow keys + BREAK
         [
-            .init(label: "LT",    keyCode: .leftArrow,       symbolName: "arrow.left"),
-            .init(label: "DN",    keyCode: .downArrow,       symbolName: "arrow.down"),
-            .init(label: "UP",    keyCode: .upArrow,         symbolName: "arrow.up"),
-            .init(label: "RT",    keyCode: .rightArrow,      symbolName: "arrow.right"),
-            .init(label: "DEL",   keyCode: .deleteOrBackspace, symbolName: "delete.left"),
-            .init(label: "BREAK", keyCode: .pause,           widthMultiplier: 1.5),
+            .init(label: "←",    keyCode: .leftArrow,         symbolName: "arrow.left"),   // CAPS+5
+            .init(label: "↓",    keyCode: .downArrow,         symbolName: "arrow.down"),   // CAPS+6
+            .init(label: "↑",    keyCode: .upArrow,           symbolName: "arrow.up"),     // CAPS+7
+            .init(label: "→",    keyCode: .rightArrow,        symbolName: "arrow.right"),  // CAPS+8
+            .init(label: "DEL",  keyCode: .deleteOrBackspace, symbolName: "delete.left"),  // CAPS+0
+            // BREAK: CAPS SHIFT + SPACE hardware combo, proxied to Pause key
+            .init(label: "BREAK", keyCode: .pause, widthMultiplier: 1.5),
         ],
     ]
 
@@ -419,11 +421,11 @@ public enum VirtualKeyboardLayouts {
             .init(label: "-",    keyCode: .hyphen),
             .init(label: "=",    keyCode: .equalSign),
             .init(label: "DEL",  keyCode: .deleteForward,  widthMultiplier: 1.5, symbolName: "delete.forward"),
-            .init(label: "CLR",  keyCode: .home,           widthMultiplier: 1.5),
+            .init(label: "CLR",  keyCode: .home,            widthMultiplier: 1.5),
         ],
         // Row 2
         [
-            .init(label: "TAB",    keyCode: .tab,          widthMultiplier: 1.5, symbolName: "arrow.right.to.line"),
+            .init(label: "TAB",    keyCode: .tab,           widthMultiplier: 1.5, symbolName: "arrow.right.to.line"),
             .init(label: "Q",      keyCode: .keyQ),
             .init(label: "W",      keyCode: .keyW),
             .init(label: "E",      keyCode: .keyE),
@@ -436,12 +438,13 @@ public enum VirtualKeyboardLayouts {
             .init(label: "P",      keyCode: .keyP),
             .init(label: "[",      keyCode: .openBracket),
             .init(label: "]",      keyCode: .closeBracket),
-            .init(label: "RETURN", keyCode: .returnOrEnter, widthMultiplier: 1.5, symbolName: "return"),
+            .init(label: "RETURN", keyCode: .returnOrEnter,  widthMultiplier: 1.5, symbolName: "return"),
+            // CPY (Copy) — no direct HID equivalent; proxied to Page Up
             .init(label: "CPY",    keyCode: .pageUp),
         ],
         // Row 3
         [
-            .init(label: "CAPS",   keyCode: .capsLock,     isModifier: true, widthMultiplier: 1.5, symbolName: "capslock"),
+            .init(label: "CAPS",   keyCode: .capsLock,    isModifier: true, widthMultiplier: 1.5, symbolName: "capslock"),
             .init(label: "A",      keyCode: .keyA),
             .init(label: "S",      keyCode: .keyS),
             .init(label: "D",      keyCode: .keyD),
@@ -452,12 +455,12 @@ public enum VirtualKeyboardLayouts {
             .init(label: "K",      keyCode: .keyK),
             .init(label: "L",      keyCode: .keyL),
             .init(label: ";",      keyCode: .semicolon),
-            .init(label: ":",      keyCode: .quote),
-            .init(label: "@",      keyCode: .backslash),
+            .init(label: ":",      keyCode: .quote),       // : is at quote position
+            .init(label: "@",      keyCode: .backslash),   // @ is at backslash position on CPC
         ],
         // Row 4
         [
-            .init(label: "SHIFT",  keyCode: .leftShift,  isModifier: true, widthMultiplier: 1.75, symbolName: "shift"),
+            .init(label: "SHIFT",  keyCode: .leftShift,   isModifier: true, widthMultiplier: 1.75, symbolName: "shift"),
             .init(label: "Z",      keyCode: .keyZ),
             .init(label: "X",      keyCode: .keyX),
             .init(label: "C",      keyCode: .keyC),
@@ -468,9 +471,9 @@ public enum VirtualKeyboardLayouts {
             .init(label: ",",      keyCode: .comma),
             .init(label: ".",      keyCode: .period),
             .init(label: "/",      keyCode: .slash),
-            .init(label: "BSLSH",  keyCode: .nonUSBackslash),
-            .init(label: "SHIFT",  keyCode: .rightShift, isModifier: true, widthMultiplier: 1.75, symbolName: "shift"),
-            .init(label: "UP",     keyCode: .upArrow,    symbolName: "arrow.up"),
+            .init(label: "\\",     keyCode: .nonUSBackslash),
+            .init(label: "SHIFT",  keyCode: .rightShift,  isModifier: true, widthMultiplier: 1.75, symbolName: "shift"),
+            .init(label: "↑",      keyCode: .upArrow,     symbolName: "arrow.up"),
         ],
         // Row 5
         [

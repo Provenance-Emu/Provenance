@@ -91,6 +91,12 @@ extension Defaults.Keys {
 #endif
 }
 
+// MARK: Virtual Keyboard
+public extension Defaults.Keys {
+    /// Preferred virtual keyboard layout variant, stored as the raw string value of `KeyboardVariant`.
+    static let preferredKeyboardVariant = Key<String>("preferredKeyboardVariant", default: "full")
+}
+
 // MARK: Controls
 public extension Defaults.Keys {
 #if canImport(UIKit)

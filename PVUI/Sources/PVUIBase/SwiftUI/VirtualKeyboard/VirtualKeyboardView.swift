@@ -547,6 +547,20 @@ private struct VirtualKeyButton: View {
     }
     .preferredColorScheme(.dark)
 }
+
+#Preview("Compact Layout") {
+    let vm = VirtualKeyboardViewModel(layout: .compact)
+    return VirtualKeyboardView(viewModel: vm)
+        .padding()
+        .background(Color.gray)
+}
+
+#Preview("Function Row") {
+    let vm = VirtualKeyboardViewModel(layout: .functionRow)
+    return VirtualKeyboardView(viewModel: vm)
+        .padding()
+        .background(Color.gray)
+}
 #endif
 
 #endif // os(tvOS)
