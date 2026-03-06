@@ -5,7 +5,7 @@
 // Supports platform-specific layouts (C64, ZX Spectrum, Amstrad CPC, etc.)
 // and fires GCKeyCode events consumed by the emulator core.
 //
-// Copyright © 2024 Provenance Emu. All rights reserved.
+// Copyright © 2026 Provenance Emu. All rights reserved.
 
 import SwiftUI
 import GameController
@@ -262,12 +262,10 @@ public struct VirtualKeyboardOverlayModifier: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .overlay(alignment: .bottomLeading) {
-                if !viewModel.activeModifiers.isEmpty || true {
-                    VirtualKeyboardView(viewModel: viewModel, delegate: delegate)
-                        .frame(maxWidth: 420)
-                        .padding(.bottom, 8)
-                        .padding(.leading, 8)
-                }
+                VirtualKeyboardView(viewModel: viewModel, delegate: delegate)
+                    .frame(maxWidth: 420)
+                    .padding(.bottom, 8)
+                    .padding(.leading, 8)
             }
     }
 }

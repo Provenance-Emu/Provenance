@@ -4,7 +4,7 @@
 // Platform-specific virtual keyboard layouts for home computer emulation.
 // Supports standard QWERTY, Commodore 64, ZX Spectrum, and Amstrad CPC layouts.
 //
-// Copyright © 2024 Provenance Emu. All rights reserved.
+// Copyright © 2026 Provenance Emu. All rights reserved.
 
 import GameController
 
