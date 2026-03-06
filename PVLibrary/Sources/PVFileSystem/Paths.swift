@@ -126,6 +126,11 @@ public struct Paths {
     public static var biosesPath: URL { get {
         return URL.documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true)
     }}
+
+    /// Should be called on BG Thread, iCloud blocks
+    public static var cheatsPath: URL { get {
+        return URL.documentsiCloudOrLocalPath.appendingPathComponent("Cheats", isDirectory: true)
+    }}
 }
 
 public extension Paths {
@@ -174,6 +179,35 @@ public extension Paths {
         return saveSavesPath
     }
     
+    static func cheatsPath(forROM romPath: URL?) -> URL {
+        guard let romPath = romPath else {
+            return Paths.cheatsPath.appendingPathComponent("NULL", isDirectory: true)
+        }
+
+        let romName: String = romPath.deletingPathExtension().lastPathComponent
+        let cheatsDirectory = Paths.cheatsPath.appendingPathComponent(romName, isDirectory: true)
+
+        do {
+            try FileManager.default.createDirectory(at: cheatsDirectory, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            ELOG("Error creating cheats directory: \(cheatsDirectory.path) : \(error.localizedDescription)")
+        }
+
+        return cheatsDirectory
+    }
+
+    static func cheatsPath(forROMFilename romName: String) -> URL {
+        let cheatsDirectory = Paths.cheatsPath.appendingPathComponent(romName, isDirectory: true)
+
+        do {
+            try FileManager.default.createDirectory(at: cheatsDirectory, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            ELOG("Error creating cheats directory: \(cheatsDirectory.path) : \(error.localizedDescription)")
+        }
+
+        return cheatsDirectory
+    }
+
     static func romsPath(forSystemIdentifier systemIdentifier: String) -> URL {
         return Paths.romsPath.appendingPathComponent(systemIdentifier, isDirectory: true)
     }
@@ -186,8 +220,10 @@ public extension Paths {
 public extension URL {
     var batterySavesPath: URL  { return Paths.batterySavesPath(forROM: self) }
     var saveStatePath: URL { return Paths.saveStatePath(forROM: self) }
+    var cheatsPath: URL { return Paths.cheatsPath(forROM: self) }
 }
 
 public extension String {
     var saveStatePath: URL { return Paths.saveStatePath(forROMFilename: self) }
+    var cheatsPath: URL { return Paths.cheatsPath(forROMFilename: self) }
 }

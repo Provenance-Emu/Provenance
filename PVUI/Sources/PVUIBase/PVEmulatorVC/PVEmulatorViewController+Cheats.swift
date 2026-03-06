@@ -57,7 +57,7 @@ extension PVEmulatorViewController {
                 }
                 do {
                     let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
-                    let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
+                    let saveURL = cheatsPath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
                     let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
                     var cheatsState: PVCheats?
                     try realm.write {
@@ -227,7 +227,7 @@ extension PVEmulatorViewController {
         do {
             let fileManager = FileManager.default
             let directoryContents = try await fileManager.contentsOfDirectory(
-                at: saveStatePath,
+                at: cheatsPath,
                 includingPropertiesForKeys:[.contentModificationDateKey]
             ).filter { $0.lastPathComponent.hasSuffix(".svc.json") }
             .sorted(by: {
