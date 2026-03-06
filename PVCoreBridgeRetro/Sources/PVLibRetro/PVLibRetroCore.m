@@ -72,6 +72,13 @@
     BOOL mousePressed;
     BOOL leftMousePressed;
     BOOL rightMousePressed;
+    // Accumulated relative mouse deltas for RETRO_DEVICE_MOUSE X/Y queries.
+    // Protected by @synchronized(self) since setMousePosition: (UI thread)
+    // and getPointerState: (emulator thread) access these concurrently.
+    float mouseDeltaX;
+    float mouseDeltaY;
+    CGPoint lastMousePosition;
+    BOOL lastMousePositionValid;
 }
 @property (nonatomic, strong) NSData *currentRomData;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -2138,27 +2145,76 @@ static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t fr
 
 static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
-//    if (!video_driver_is_active())
-//       return;
+    // NULL means "duplicate the previous frame"; RETRO_HW_FRAME_BUFFER_VALID
+    // (-1 cast to pointer) means a hardware-rendered frame is ready in the
+    // framebuffer.  In both cases keep videoBuffer unchanged and return.
+    if (!data || data == (const void *)(uintptr_t)-1) return;
 
     __strong PVLibRetroCoreBridge *strongCurrent = _current;
+    if (!strongCurrent) return;
 
-    static dispatch_queue_t serialQueue;
+    static dispatch_queue_t concurrentQueue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
-        serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
-
-        DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
+        concurrentQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
     });
 
-    dispatch_apply(height, serialQueue, ^(size_t y){
-        const uint8_t *src_row = (const uint8_t*)data + (y * pitch);
-        const uint32_t *src = (const uint32_t*)src_row;
-        uint32_t *dst = strongCurrent->videoBuffer + y * width;
+    const enum retro_pixel_format fmt = strongCurrent->pix_fmt;
 
-        memcpy(dst, src, sizeof(uint32_t) * width);
-    });
+    // Use max_width as the destination row stride so that videoBuffer row layout
+    // matches what -bufferSize reports (max_width × max_height).  When a core
+    // renders at a resolution narrower than max_width the remaining pixels in
+    // each row are left unchanged; the renderer clips to base_width/base_height.
+    const size_t dstStride = strongCurrent->av_info.geometry.max_width;
+
+    if (fmt == RETRO_PIXEL_FORMAT_XRGB8888) {
+        // Source: 32-bit XRGB little-endian [B][G][R][X].
+        // Force alpha=0xFF so the texture is fully opaque (X byte is unused).
+        dispatch_apply(height, concurrentQueue, ^(size_t y) {
+            const uint32_t *src_row = (const uint32_t *)((const uint8_t *)data + y * pitch);
+            uint32_t *dst = strongCurrent->videoBuffer + y * dstStride;
+            for (size_t x = 0; x < width; x++) {
+                dst[x] = src_row[x] | 0xFF000000u;
+            }
+        });
+    } else if (fmt == RETRO_PIXEL_FORMAT_RGB565) {
+        // Source: 16-bit RGB565 — RRRRRGGGGGGBBBBB.
+        // Expand each pixel to 32-bit RGBA8 for uniform GL_RGBA upload.
+        dispatch_apply(height, concurrentQueue, ^(size_t y) {
+            const uint16_t *src_row = (const uint16_t *)((const uint8_t *)data + y * pitch);
+            uint32_t *dst = strongCurrent->videoBuffer + y * dstStride;
+            for (size_t x = 0; x < width; x++) {
+                uint16_t px = src_row[x];
+                uint8_t r5 = (px >> 11) & 0x1F;
+                uint8_t g6 = (px >> 5)  & 0x3F;
+                uint8_t b5 =  px        & 0x1F;
+                // Scale to 8-bit using bit-replication for full range.
+                uint8_t r8 = (r5 << 3) | (r5 >> 2);
+                uint8_t g8 = (g6 << 2) | (g6 >> 4);
+                uint8_t b8 = (b5 << 3) | (b5 >> 2);
+                // RGBA in memory: [r8][g8][b8][FF] as little-endian uint32.
+                dst[x] = ((uint32_t)0xFF << 24) | ((uint32_t)b8 << 16) | ((uint32_t)g8 << 8) | r8;
+            }
+        });
+    } else {
+        // RETRO_PIXEL_FORMAT_0RGB1555: X[1] R[5] G[5] B[5].
+        // Expand each pixel to 32-bit RGBA8 for uniform GL_RGBA upload.
+        dispatch_apply(height, concurrentQueue, ^(size_t y) {
+            const uint16_t *src_row = (const uint16_t *)((const uint8_t *)data + y * pitch);
+            uint32_t *dst = strongCurrent->videoBuffer + y * dstStride;
+            for (size_t x = 0; x < width; x++) {
+                uint16_t px = src_row[x];
+                uint8_t r5 = (px >> 10) & 0x1F;
+                uint8_t g5 = (px >> 5)  & 0x1F;
+                uint8_t b5 =  px        & 0x1F;
+                uint8_t r8 = (r5 << 3) | (r5 >> 2);
+                uint8_t g8 = (g5 << 3) | (g5 >> 2);
+                uint8_t b8 = (b5 << 3) | (b5 >> 2);
+                dst[x] = ((uint32_t)0xFF << 24) | ((uint32_t)b8 << 16) | ((uint32_t)g8 << 8) | r8;
+            }
+        });
+    }
 
     strongCurrent = nil;
 }
@@ -2384,141 +2440,15 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 //    core->retro_deinit();
 }
 
-- (NSTimeInterval)frameInterval {
-    NSTimeInterval fps = av_info.timing.fps ?: 60;
-    VLOG(@"%f", fps);
-    return fps;
-}
-
-# pragma mark - Video
-- (void)swapBuffers {
-    if (videoBuffer == videoBufferA) {
-        videoBuffer = videoBufferB;
-    } else {
-        videoBuffer = videoBufferA;
-    }
-}
+// frameInterval, swapBuffers, videoWidth, videoHeight, screenRect, aspectSize, bufferSize
+// are implemented in PVLibRetroCore+Video.m (PVLibRetroCoreBridge (Audio) category).
 
 -(BOOL)isDoubleBuffered {
     return YES;
 }
 
-- (CGFloat)videoWidth {
-    return av_info.geometry.base_width;
-}
-
-- (CGFloat)videoHeight {
-    return av_info.geometry.base_height;
-}
-
 - (const void *)videoBuffer {
     return videoBuffer;
-}
-
-- (CGRect)screenRect {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    unsigned height = av_info.geometry.base_height;
-    unsigned width = av_info.geometry.base_width;
-
-//    unsigned height = _videoHeight;
-//    unsigned width = _videoWidth;
-
-    return CGRectMake(0, 0, width, height);
-}
-
-- (CGSize)aspectSize {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    float aspect_ratio = av_info.geometry.aspect_ratio;
-    //    unsigned height = av_info.geometry.max_height;
-    //    unsigned width = av_info.geometry.max_width;
-    if (aspect_ratio == 1.0) {
-        return CGSizeMake(1, 1);
-    } else if (aspect_ratio < 1.2 && aspect_ratio > 1.1) {
-        return CGSizeMake(10, 9);
-    } else if (aspect_ratio < 1.26 && aspect_ratio > 1.24) {
-        return CGSizeMake(5, 4);
-    } else if (aspect_ratio < 1.4 && aspect_ratio > 1.3) {
-        return CGSizeMake(4, 3);
-    } else if (aspect_ratio < 1.6 && aspect_ratio > 1.4) {
-        return CGSizeMake(3, 2);
-    } else if (aspect_ratio < 1.7 && aspect_ratio > 1.6) {
-        return CGSizeMake(16, 9);
-    } else {
-        return CGSizeMake(4, 3);
-    }
-}
-
-- (CGSize)bufferSize {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    unsigned height = av_info.geometry.max_height;
-    unsigned width = av_info.geometry.max_width;
-
-    return CGSizeMake(width, height);
-}
-
-- (GLenum)pixelFormat {
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-#else
-        case RETRO_PIXEL_FORMAT_RGB565:
-             return GL_UNSIGNED_SHORT_5_6_5;
-#endif
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            // XRGB8888 stores pixels as 32-bit little-endian values:
-            // in memory the bytes are B, G, R, X — use GL_BGRA so the
-            // Metal/GL texture loader interprets channels correctly.
-            return GL_BGRA;
-       default:
-            return GL_RGBA;
-    }
-}
-
-- (GLenum)internalPixelFormat {
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1;
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-#else
-        case RETRO_PIXEL_FORMAT_RGB565:
-             return GL_UNSIGNED_SHORT_5_6_5;
-#endif
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            return GL_RGBA8;
-       default:
-            return GL_RGBA;
-    }
-}
-
-- (GLenum)pixelType {
-    // Return the correct GL pixel type for each libretro pixel format.
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-            // Desktop GL: read BGRA from XRGB8888 as a packed 32-bit int
-            // in host (little-endian) byte order.
-            return GL_UNSIGNED_INT_8_8_8_8_REV;
-#else
-            // GLES: read BGRA as four individual byte components.
-            return GL_UNSIGNED_BYTE;
-#endif
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_UNSIGNED_SHORT_5_6_5;
-       default:
-            // Covers RETRO_PIXEL_FORMAT_0RGB1555 and unknown formats.
-            return GL_UNSIGNED_SHORT;
-    }
 }
 
 # pragma mark - Audio
@@ -3003,22 +2933,28 @@ unsigned retro_api_version(void)
     CGFloat normalizedX = location.x / viewSize.width;
     CGFloat normalizedY = location.y / viewSize.height;
 
-    currentTouchPosition.x = MAX(0.0, MIN(1.0, normalizedX));
-    currentTouchPosition.y = MAX(0.0, MIN(1.0, normalizedY));
-
-    switch (touch.phase) {
-        case UITouchPhaseBegan:
-        case UITouchPhaseMoved:
-        case UITouchPhaseStationary:
-            touchPressed = YES;
-            break;
-        case UITouchPhaseEnded:
-        case UITouchPhaseCancelled:
-            touchPressed = NO;
-            self.activeStylusTouch = nil;
-            break;
-        default:
-            break;
+    @synchronized(self) {
+        currentTouchPosition.x = MAX(0.0, MIN(1.0, normalizedX));
+        currentTouchPosition.y = MAX(0.0, MIN(1.0, normalizedY));
+        switch (touch.phase) {
+            case UITouchPhaseBegan:
+            case UITouchPhaseMoved:
+            case UITouchPhaseStationary:
+                touchPressed = YES;
+                break;
+            case UITouchPhaseEnded:
+            case UITouchPhaseCancelled:
+                touchPressed = NO;
+                // Reset last mouse position so the next touch doesn't generate a
+                // spurious large delta from the previous session's final position.
+                lastMousePositionValid = NO;
+                break;
+            default:
+                break;
+        }
+    }
+    if (touch.phase == UITouchPhaseCancelled || touch.phase == UITouchPhaseEnded) {
+        self.activeStylusTouch = nil;
     }
 }
 #else
@@ -3038,40 +2974,54 @@ unsigned retro_api_version(void)
         // Normalize coordinates to 0.0-1.0 range
         NSSize viewSize = view.bounds.size;
         if (viewSize.width > 0 && viewSize.height > 0) {
-            currentMousePosition.x = location.x / viewSize.width;
-            currentMousePosition.y = location.y / viewSize.height;
-
-            // Clamp to valid range
-            currentMousePosition.x = MAX(0.0, MIN(1.0, currentMousePosition.x));
-            currentMousePosition.y = MAX(0.0, MIN(1.0, currentMousePosition.y));
+            float nx = (float)MAX(0.0, MIN(1.0, location.x / viewSize.width));
+            float ny = (float)MAX(0.0, MIN(1.0, location.y / viewSize.height));
+            @synchronized(self) {
+                currentMousePosition.x = nx;
+                currentMousePosition.y = ny;
+                // Accumulate relative delta for RETRO_DEVICE_MOUSE X/Y queries,
+                // mirroring the iOS/touch path in setMousePosition:.
+                if (lastMousePositionValid) {
+                    mouseDeltaX += (nx - lastMousePosition.x) * 1000.0f;
+                    mouseDeltaY += (ny - lastMousePosition.y) * 1000.0f;
+                }
+                lastMousePosition = CGPointMake(nx, ny);
+                lastMousePositionValid = YES;
+            }
         }
     }
 
-    // Update mouse button state based on event type
-    switch ([event type]) {
-        case NSEventTypeLeftMouseDown:
-            leftMousePressed = YES;
-            mousePressed = YES;
-            break;
-        case NSEventTypeLeftMouseUp:
-            leftMousePressed = NO;
-            mousePressed = leftMousePressed || rightMousePressed;
-            break;
-        case NSEventTypeRightMouseDown:
-            rightMousePressed = YES;
-            mousePressed = YES;
-            break;
-        case NSEventTypeRightMouseUp:
-            rightMousePressed = NO;
-            mousePressed = leftMousePressed || rightMousePressed;
-            break;
-        case NSEventTypeMouseMoved:
-        case NSEventTypeLeftMouseDragged:
-        case NSEventTypeRightMouseDragged:
-            // Position already updated above
-            break;
-        default:
-            break;
+    // Update mouse button state based on event type.
+    // Guard under @synchronized so getPointerState: (emulator thread) sees
+    // a consistent view of all button flags alongside position/delta.
+    @synchronized(self) {
+        switch ([event type]) {
+            case NSEventTypeLeftMouseDown:
+                leftMousePressed = YES;
+                mousePressed = YES;
+                break;
+            case NSEventTypeLeftMouseUp:
+                leftMousePressed = NO;
+                mousePressed = rightMousePressed;
+                // Reset last position so the next drag doesn't generate a spurious delta.
+                lastMousePositionValid = NO;
+                break;
+            case NSEventTypeRightMouseDown:
+                rightMousePressed = YES;
+                mousePressed = YES;
+                break;
+            case NSEventTypeRightMouseUp:
+                rightMousePressed = NO;
+                mousePressed = leftMousePressed;
+                break;
+            case NSEventTypeMouseMoved:
+            case NSEventTypeLeftMouseDragged:
+            case NSEventTypeRightMouseDragged:
+                // Position and deltas already updated above.
+                break;
+            default:
+                break;
+        }
     }
 
     DLOG(@"Mouse event: position (%.3f, %.3f), left: %d, right: %d",
@@ -3088,29 +3038,47 @@ unsigned retro_api_version(void)
     switch (device) {
         case RETRO_DEVICE_POINTER: {
             switch (id) {
-                case RETRO_DEVICE_ID_POINTER_X:
+                case RETRO_DEVICE_ID_POINTER_X: {
+                    // Guard with @synchronized: setMousePosition: (UI thread) writes
+                    // currentTouchPosition/currentMousePosition while this runs on the
+                    // libretro polling thread, so reads must be protected to avoid tears.
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    float px;
+                    @synchronized(self) { px = currentTouchPosition.x; }
                     // Convert 0.0-1.0 range to libretro's -32768 to 32767 range
-                    return (int16_t)((currentTouchPosition.x * 2.0 - 1.0) * 32767);
+                    return (int16_t)((px * 2.0 - 1.0) * 32767);
 #else
-                    return (int16_t)((currentMousePosition.x * 2.0 - 1.0) * 32767);
+                    float px;
+                    @synchronized(self) { px = currentMousePosition.x; }
+                    return (int16_t)((px * 2.0 - 1.0) * 32767);
 #endif
+                }
 
-                case RETRO_DEVICE_ID_POINTER_Y:
+                case RETRO_DEVICE_ID_POINTER_Y: {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    float py;
+                    @synchronized(self) { py = currentTouchPosition.y; }
                     // Convert 0.0-1.0 range to libretro's -32768 to 32767 range
                     // Note: libretro uses inverted Y (top = -32768, bottom = 32767)
-                    return (int16_t)((currentTouchPosition.y * 2.0 - 1.0) * 32767);
+                    return (int16_t)((py * 2.0 - 1.0) * 32767);
 #else
-                    return (int16_t)((currentMousePosition.y * 2.0 - 1.0) * 32767);
+                    float py;
+                    @synchronized(self) { py = currentMousePosition.y; }
+                    return (int16_t)((py * 2.0 - 1.0) * 32767);
 #endif
+                }
 
-                case RETRO_DEVICE_ID_POINTER_PRESSED:
+                case RETRO_DEVICE_ID_POINTER_PRESSED: {
+                    BOOL pressed;
+                    @synchronized(self) {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    return touchPressed ? 1 : 0;
+                        pressed = touchPressed;
 #else
-                    return mousePressed ? 1 : 0;
+                        pressed = mousePressed;
 #endif
+                    }
+                    return pressed ? 1 : 0;
+                }
 
                 default:
                     return 0;
@@ -3119,34 +3087,45 @@ unsigned retro_api_version(void)
 
         case RETRO_DEVICE_MOUSE: {
             switch (id) {
-                case RETRO_DEVICE_ID_MOUSE_X:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    // For touch, return relative movement (simplified)
-                    return (int16_t)((currentTouchPosition.x * 2.0 - 1.0) * 100);
-#else
-                    return (int16_t)((currentMousePosition.x * 2.0 - 1.0) * 100);
-#endif
+                case RETRO_DEVICE_ID_MOUSE_X: {
+                    // RETRO_DEVICE_ID_MOUSE_X/Y report relative movement since
+                    // the last poll (delta pixels), not an absolute position.
+                    // Consume the accumulated delta under @synchronized so no
+                    // deltas are lost if setMousePosition: fires concurrently.
+                    int16_t dx;
+                    @synchronized(self) {
+                        dx = (int16_t)MAX((float)INT16_MIN, MIN((float)INT16_MAX, mouseDeltaX));
+                        mouseDeltaX = 0;
+                    }
+                    return dx;
+                }
 
-                case RETRO_DEVICE_ID_MOUSE_Y:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    return (int16_t)((currentTouchPosition.y * 2.0 - 1.0) * 100);
-#else
-                    return (int16_t)((currentMousePosition.y * 2.0 - 1.0) * 100);
-#endif
+                case RETRO_DEVICE_ID_MOUSE_Y: {
+                    int16_t dy;
+                    @synchronized(self) {
+                        dy = (int16_t)MAX((float)INT16_MIN, MIN((float)INT16_MAX, mouseDeltaY));
+                        mouseDeltaY = 0;
+                    }
+                    return dy;
+                }
 
-                case RETRO_DEVICE_ID_MOUSE_LEFT:
+                case RETRO_DEVICE_ID_MOUSE_LEFT: {
+                    BOOL pressed;
+                    @synchronized(self) {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    return touchPressed ? 1 : 0;
+                        pressed = touchPressed;
 #else
-                    return leftMousePressed ? 1 : 0;
+                        pressed = leftMousePressed;
 #endif
+                    }
+                    return pressed ? 1 : 0;
+                }
 
-                case RETRO_DEVICE_ID_MOUSE_RIGHT:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    return 0; // Touch doesn't have right click
-#else
-                    return rightMousePressed ? 1 : 0;
-#endif
+                case RETRO_DEVICE_ID_MOUSE_RIGHT: {
+                    BOOL pressed;
+                    @synchronized(self) { pressed = rightMousePressed; }
+                    return pressed ? 1 : 0;
+                }
 
                 default:
                     return 0;
@@ -3179,19 +3158,45 @@ unsigned retro_api_version(void)
 #pragma mark - Mouse State Management
 
 - (void)setMousePosition:(CGPoint)normalizedPoint {
-    currentTouchPosition.x = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.x));
-    currentTouchPosition.y = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.y));
+    @synchronized(self) {
+        float nx = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.x));
+        float ny = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.y));
+        // Update absolute position for RETRO_DEVICE_POINTER queries.
+        currentTouchPosition.x = nx;
+        currentTouchPosition.y = ny;
+        // Accumulate relative delta for RETRO_DEVICE_MOUSE X/Y queries.
+        // Scale factor: 1000 units per normalized unit gives responsive
+        // movement at typical DOS/retro resolutions.
+        if (lastMousePositionValid) {
+            mouseDeltaX += (nx - lastMousePosition.x) * 1000.0f;
+            mouseDeltaY += (ny - lastMousePosition.y) * 1000.0f;
+        }
+        lastMousePosition = CGPointMake(nx, ny);
+        lastMousePositionValid = YES;
+    }
 }
 
 - (void)setLeftMouseButtonPressed:(BOOL)pressed {
     // Update both: touchPressed drives RETRO_DEVICE_POINTER press state,
     // leftMousePressed drives RETRO_DEVICE_ID_MOUSE_LEFT specifically.
-    touchPressed = pressed;
-    leftMousePressed = pressed;
+    @synchronized(self) {
+        touchPressed = pressed;
+        leftMousePressed = pressed;
+        if (!pressed) {
+            // Reset delta baseline so the next press doesn't generate a
+            // spurious large delta from the previous touch session's position.
+            lastMousePositionValid = NO;
+        }
+    }
 }
 
 - (void)setRightMouseButtonPressed:(BOOL)pressed {
-    rightMousePressed = pressed;
+    @synchronized(self) {
+        rightMousePressed = pressed;
+        if (!pressed) {
+            lastMousePositionValid = NO;
+        }
+    }
 }
 
 @end
