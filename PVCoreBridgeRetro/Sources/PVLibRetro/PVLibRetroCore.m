@@ -649,7 +649,8 @@ bool core_get_system_av_info(struct retro_system_av_info *av_info) {
     GET_CURRENT_OR_RETURN(false);
     if (!av_info)
         return false;
-    current->core->retro_get_system_av_info(av_info);
+    /// Use cached av_info — avoids calling retro_get_system_av_info before core is ready
+    *av_info = current->av_info;
     return true;
 }
 
@@ -2369,10 +2370,6 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         loaded = core_load_game(&info2);
     }
 
-    if(loaded) {
-        core->retro_reset();
-    }
-
     self->loaded = loaded;
 
     if(!loaded) {
@@ -2454,8 +2451,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 # pragma mark - Audio
 
 - (double)audioSampleRate {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
+    /// Use cached av_info — avoids calling retro_get_system_av_info before core is ready
     double sample_rate = av_info.timing.sample_rate;
     return sample_rate ?: 44100;
 }

@@ -120,23 +120,15 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
 }
 
 - (CGRect)screenRect {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
+    /// Use cached av_info (updated by core_load_game and RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO)
     unsigned height = av_info.geometry.base_height;
     unsigned width = av_info.geometry.base_width;
-
-//    unsigned height = _videoHeight;
-//    unsigned width = _videoWidth;
-    
     return CGRectMake(0, 0, width, height);
 }
 
 - (CGSize)aspectSize {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
+    /// Use cached av_info — avoids calling retro_get_system_av_info before core is ready
     float aspect_ratio = av_info.geometry.aspect_ratio;
-    //    unsigned height = av_info.geometry.max_height;
-    //    unsigned width = av_info.geometry.max_width;
     if (aspect_ratio == 1.0) {
         return CGSizeMake(1, 1);
     } else if (aspect_ratio < 1.2 && aspect_ratio > 1.1) {
@@ -155,11 +147,9 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
 }
 
 - (CGSize)bufferSize {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
+    /// Use cached av_info — avoids calling retro_get_system_av_info before core is ready
     unsigned height = av_info.geometry.max_height;
     unsigned width = av_info.geometry.max_width;
-    
     return CGSizeMake(width, height);
 }
 
