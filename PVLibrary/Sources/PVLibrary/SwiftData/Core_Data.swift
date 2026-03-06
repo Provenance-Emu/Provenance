@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData)
 import SwiftData
 import PVLogging
 
@@ -48,4 +47,3 @@ extension Core_Data {
         return _class != nil
     }
 }
-#endif

@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData)
 import SwiftData
 
 @Model
@@ -42,4 +41,3 @@ public class Library_Data {
         self.games = games
     }
 }
-#endif

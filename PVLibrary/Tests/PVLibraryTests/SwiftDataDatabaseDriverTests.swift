@@ -5,12 +5,10 @@
 //  Created by Agent on 2026-03-05.
 //
 
-#if canImport(SwiftData)
 import SwiftData
 import XCTest
 @testable import PVLibrary
 
-@available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
 final class SwiftDataDatabaseDriverTests: XCTestCase {
 
     var driver: SwiftDataDatabaseDriver!
@@ -243,7 +241,6 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
 
 // MARK: - SwiftDataDatabaseActor Tests
 
-@available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
 final class SwiftDataDatabaseActorTests: XCTestCase {
 
     var container: ModelContainer!
@@ -304,4 +301,3 @@ final class SwiftDataDatabaseActorTests: XCTestCase {
         XCTAssertNil(try await actor.game(identifier: game.md5Hash))
     }
 }
-#endif

@@ -32,7 +32,6 @@
 //  - Progress is logged via PVLogging
 //
 
-#if canImport(SwiftData)
 import SwiftData
 import Foundation
 import RealmSwift
@@ -1212,5 +1211,3 @@ struct UserSnapshot {
         lastSeen = u.lastSeen
     }
 }
-
-#endif
