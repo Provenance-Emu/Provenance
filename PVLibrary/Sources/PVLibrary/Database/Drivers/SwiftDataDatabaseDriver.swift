@@ -46,14 +46,27 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     // MARK: Init
 
-    /// Designated initialiser. The `database` parameter is ignored — SwiftData manages
-    /// its own container independently from Realm.
-    public required init(database _: RomDatabase) {
+    /// Designated initialiser: wraps an existing `ModelContainer`.
+    ///
+    /// Used by `GameImporterSwiftDataBridge.shared` (which manages the container
+    /// lifecycle externally) and by the convenience initialisers below.
+    ///
+    /// - Parameters:
+    ///   - container: The `ModelContainer` to back this driver.
+    ///   - isUsingPersistentStore: Pass `false` when `container` is in-memory only.
+    public init(container: ModelContainer, isUsingPersistentStore: Bool = true) {
+        self.modelContainer = container
+        self.modelContext = ModelContext(container)
+        self.isUsingPersistentStore = isUsingPersistentStore
+    }
+
+    /// Satisfies the `DatabaseDriver` protocol. The `database` parameter is ignored —
+    /// SwiftData manages its own container independently of Realm.
+    /// Falls back to an in-memory container if the persistent store cannot be opened.
+    public required convenience init(database _: RomDatabase) {
         do {
             let container = try PVSwiftDataSchema.makePVModelContainer()
-            self.modelContainer = container
-            self.modelContext = ModelContext(container)
-            self.isUsingPersistentStore = true
+            self.init(container: container, isUsingPersistentStore: true)
         } catch {
             let persistentError = error
             ELOG("SwiftDataDatabaseDriver: failed to create persistent ModelContainer — \(persistentError)")
@@ -62,9 +75,7 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
             do {
                 let inMemoryContainer = try PVSwiftDataSchema.makePVModelContainer(inMemory: true)
                 WLOG("SwiftDataDatabaseDriver: falling back to in-memory ModelContainer; data will not be persisted across launches")
-                self.modelContainer = inMemoryContainer
-                self.modelContext = ModelContext(inMemoryContainer)
-                self.isUsingPersistentStore = false
+                self.init(container: inMemoryContainer, isUsingPersistentStore: false)
             } catch {
                 let inMemoryError = error
                 ELOG("SwiftDataDatabaseDriver: failed to create in-memory ModelContainer — \(inMemoryError)")
@@ -79,11 +90,9 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     /// Convenience initialiser for testing or standalone use.
     /// - Parameter inMemory: When `true`, data is stored only in memory (useful for tests).
-    public init(inMemory: Bool = false) throws {
+    public convenience init(inMemory: Bool = false) throws {
         let container = try PVSwiftDataSchema.makePVModelContainer(inMemory: inMemory)
-        self.modelContainer = container
-        self.modelContext = ModelContext(container)
-        self.isUsingPersistentStore = !inMemory
+        self.init(container: container, isUsingPersistentStore: !inMemory)
     }
 
     // MARK: - DatabaseDriver protocol
@@ -292,6 +301,44 @@ public extension SwiftDataDatabaseDriver {
     public func deleteAll() throws {
         try PVSwiftDataSchema.deleteAll(from: modelContext)
         DLOG("SwiftDataDatabaseDriver: deleted all objects")
+    }
+
+    // MARK: Background context (importer bridge)
+
+    /// Creates a fresh `ModelContext` suitable for use on a background task.
+    ///
+    /// SwiftData's `ModelContext` is not thread-safe; callers must create one context
+    /// per task and never share it across threads or actors.
+    public func newBackgroundContext() -> ModelContext {
+        ModelContext(modelContainer)
+    }
+
+    // MARK: Context-scoped fetch helpers (importer bridge)
+
+    /// Returns all `Game_Data` records whose `md5Hash` matches (case-insensitive).
+    public func games(withMD5 md5: String, in context: ModelContext) throws -> [Game_Data] {
+        let upper = md5.uppercased()
+        let descriptor = FetchDescriptor<Game_Data>(
+            predicate: #Predicate { $0.md5Hash == upper }
+        )
+        return try context.fetch(descriptor)
+    }
+
+    /// Returns all `Game_Data` records whose `romPath` starts with the given prefix.
+    public func games(romPathPrefix prefix: String, in context: ModelContext) throws -> [Game_Data] {
+        let descriptor = FetchDescriptor<Game_Data>(
+            predicate: #Predicate { $0.romPath.hasPrefix(prefix) }
+        )
+        return try context.fetch(descriptor)
+    }
+
+    /// Returns the `System_Data` for the given system identifier, fetched in the provided context.
+    public func system(identifier: String, in context: ModelContext) throws -> System_Data? {
+        var descriptor = FetchDescriptor<System_Data>(
+            predicate: #Predicate { $0.identifier == identifier }
+        )
+        descriptor.fetchLimit = 1
+        return try context.fetch(descriptor).first
     }
 }
 
