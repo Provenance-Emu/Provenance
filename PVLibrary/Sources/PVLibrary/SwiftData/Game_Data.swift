@@ -93,6 +93,38 @@ public class Game_Data {
     public var systemShortName: String?
     public var language: String?
 
+    // MARK: - CloudKit Sync Fields
+
+    /// CloudKit record ID once the ROM has been confirmed in the private database.
+    /// Uses deterministic format "rom_<md5>" — see CloudKitSchema.RecordIDGenerator.
+    public var cloudRecordID: String?
+
+    /// Whether the ROM file is stored locally on this device.
+    ///
+    /// `@Transient` — device-local state only, never synced via CloudKit.
+    /// Receiving `isDownloaded == true` from another device would be incorrect
+    /// since the ROM file may not be present on this device.
+    @Transient public var isDownloaded: Bool = true
+
+    /// Whether CloudKit holds a verified CKAsset for this game's ROM file.
+    ///
+    /// Optional so that existing rows without this field don't require an explicit
+    /// migration default (nil is treated the same as false by sync logic).
+    public var hasCloudAssets: Bool?
+
+    /// Cached ROM file size in bytes (avoids stat(2) calls during sync batching).
+    ///
+    /// `@Transient` — device-local, per-run cache only. Not persisted to the SwiftData
+    /// store and not synced via CloudKit. The value is lost on app launch or whenever
+    /// the `ModelContext` is refreshed. Populate it before a sync batch and discard
+    /// after. Optional so callers that haven't populated it yet get `nil` (not zero).
+    @Transient public var fileSize: Int? = nil
+
+    /// Date of the last successful CloudKit sync round-trip for this game.
+    public var lastCloudSyncDate: Date?
+
+    // MARK: - Computed helpers
+
     public var artworkURL: String {
         get {
             customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
