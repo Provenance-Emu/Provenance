@@ -327,7 +327,7 @@ public extension SwiftDataDatabaseDriver {
     /// Returns all `Game_Data` records whose `romPath` starts with the given prefix.
     public func games(romPathPrefix prefix: String, in context: ModelContext) throws -> [Game_Data] {
         let descriptor = FetchDescriptor<Game_Data>(
-            predicate: #Predicate { $0.romPath.hasPrefix(prefix) }
+            predicate: #Predicate { $0.romPath.starts(with: prefix) }
         )
         return try context.fetch(descriptor)
     }

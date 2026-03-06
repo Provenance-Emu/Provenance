@@ -173,7 +173,7 @@ public final class GameImporterSwiftDataBridge {
             requiresSync: pvGame.requiresSync,
             isFavorite: pvGame.isFavorite,
             romSerial: pvGame.romSerial,
-            importDate: pvGame.importDate,
+            romHeader: pvGame.romHeader, importDate: pvGame.importDate,
             systemIdentifier: pvGame.systemIdentifier,
             system: system,
             md5Hash: pvGame.md5Hash.uppercased(),
@@ -194,7 +194,6 @@ public final class GameImporterSwiftDataBridge {
             regionName: pvGame.regionName,
             regionID: pvGame.regionID,
             systemShortName: pvGame.systemShortName,
-            romHeader: pvGame.romHeader,
             language: pvGame.language
         )
     }
