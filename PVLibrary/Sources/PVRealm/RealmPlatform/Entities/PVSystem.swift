@@ -106,7 +106,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     // Hack to store controller layout because I don't want to make
     // all the complex objects it would require. Just store the plist dictionary data
 
-    @Persisted internal dynamic var controlLayoutData: Data?
+    @Persisted public internal(set) dynamic var controlLayoutData: Data?
     public var controllerLayout: [ControlLayoutEntry]? {
         get {
             guard let controlLayoutData = controlLayoutData else {

@@ -24,7 +24,7 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     nonisolated(unsafe)
     public dynamic var partialPath: String = ""
     nonisolated(unsafe)
-    internal dynamic var md5Cache: String?
+    public internal(set) dynamic var md5Cache: String?
     //    @objc private dynamic var crcCache: String?
     nonisolated(unsafe)
     public private(set) dynamic var createdDate = Date()

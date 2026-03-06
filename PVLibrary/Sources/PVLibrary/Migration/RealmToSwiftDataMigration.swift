@@ -36,7 +36,7 @@
 
 import SwiftData
 import Foundation
-import RealmSwift
+@preconcurrency import RealmSwift
 import PVLogging
 import PVPrimitives
 import PVRealm
@@ -164,16 +164,16 @@ public actor RealmToSwiftDataMigration {
     private func runMigration(
         progressHandler: (@Sendable (MigrationProgress) -> Void)?
     ) async throws {
-        // Open Realm on this actor context.
-        // Realm objects must NOT cross actor isolation boundaries; we snapshot each entity
-        // type one at a time so that peak memory is bounded by the largest single collection
-        // rather than the entire database.
+        let config = realmConfiguration
+        /// Frozen Realm is thread-safe and read-only — safe to use across actor boundaries
         let realm: Realm
         do {
-            if let config = realmConfiguration {
-                realm = try Realm(configuration: config)
-            } else {
-                realm = try Realm()
+            realm = try await MainActor.run {
+                if let config {
+                    return try Realm(configuration: config).freeze()
+                } else {
+                    return try Realm().freeze()
+                }
             }
         } catch {
             throw RealmToSwiftDataMigrationError.realmUnavailable(underlying: error)
@@ -223,15 +223,15 @@ public actor RealmToSwiftDataMigration {
             // Each phase snapshots its own entity type inline and releases the array
             // after the phase is done, keeping peak memory bounded.
 
-            let users = realm.objects(PVUser.self).map(UserSnapshot.init)
+            let users = Array(realm.objects(PVUser.self).map(UserSnapshot.init))
             try migrateUsers(users: users, context: context, progress: progressHandler)
             try saveBatch(context)
 
-            let systems = realm.objects(PVSystem.self).map(SystemSnapshot.init)
+            let systems = Array(realm.objects(PVSystem.self).map(SystemSnapshot.init))
             let systemMap = try migrateSystems(systems: systems, context: context, progress: progressHandler)
             try saveBatch(context)
 
-            let cores = realm.objects(PVCore.self).map(CoreSnapshot.init)
+            let cores = Array(realm.objects(PVCore.self).map(CoreSnapshot.init))
             let coreMap = try migrateCores(cores: cores, context: context, progress: progressHandler)
             try saveBatch(context)
 
@@ -240,29 +240,29 @@ public actor RealmToSwiftDataMigration {
             try saveBatch(context)
 
             // --- Phase 2: objects that depend on systems/cores ---
-            let bioses = realm.objects(PVBIOS.self).map(BIOSSnapshot.init)
+            let bioses = Array(realm.objects(PVBIOS.self).map(BIOSSnapshot.init))
             try migrateBIOSes(bioses: bioses, context: context, systemMap: systemMap, fileCache: &fileCache, progress: progressHandler)
             try saveBatch(context)
 
             // --- Phase 3: games (most complex object) ---
-            let games = realm.objects(PVGame.self).map(GameSnapshot.init)
+            let games = Array(realm.objects(PVGame.self).map(GameSnapshot.init))
             let gameMap = try migrateGames(games: games, context: context, systemMap: systemMap, fileCache: &fileCache, imageCache: &imageCache, progress: progressHandler)
             try saveBatch(context)
 
             // --- Phase 4: child objects of games ---
-            let saveStates = realm.objects(PVSaveState.self).map(SaveStateSnapshot.init)
+            let saveStates = Array(realm.objects(PVSaveState.self).map(SaveStateSnapshot.init))
             try migrateSaveStates(saveStates: saveStates, context: context, gameMap: gameMap, coreMap: coreMap, fileCache: &fileCache, imageCache: &imageCache, progress: progressHandler)
             try saveBatch(context)
 
-            let cheats = realm.objects(PVCheats.self).map(CheatSnapshot.init)
+            let cheats = Array(realm.objects(PVCheats.self).map(CheatSnapshot.init))
             try migrateCheats(cheats: cheats, context: context, gameMap: gameMap, coreMap: coreMap, fileCache: &fileCache, progress: progressHandler)
             try saveBatch(context)
 
-            let recentGames = realm.objects(PVRecentGame.self).map(RecentGameSnapshot.init)
+            let recentGames = Array(realm.objects(PVRecentGame.self).map(RecentGameSnapshot.init))
             try migrateRecentGames(recentGames: recentGames, context: context, gameMap: gameMap, coreMap: coreMap, progress: progressHandler)
             try saveBatch(context)
 
-            let libraries = realm.objects(PVLibrary.self).map(LibrarySnapshot.init)
+            let libraries = Array(realm.objects(PVLibrary.self).map(LibrarySnapshot.init))
             try migrateLibraries(libraries: libraries, context: context, gameMap: gameMap, progress: progressHandler)
             try saveBatch(context)
 
