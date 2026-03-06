@@ -7,9 +7,15 @@ on:
       - '*.md'
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/PRD_TEMPLATE.md'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to validate (used after auto-rebase)'
+        required: false
+        type: string
 
 concurrency:
-  group: agent-validation-${{ github.head_ref }}
+  group: agent-validation-${{ github.head_ref || github.event.inputs.branch }}
   cancel-in-progress: true
 
 jobs:
@@ -132,7 +138,8 @@ jobs:
             Cores/4DO \
             Cores/Bliss \
             Cores/CrabEMU \
-            Cores/VirtualJaguar
+            Cores/VirtualJaguar \
+            Dependencies/ZipArchive
 
       - name: Cache DerivedData
         uses: actions/cache@v3
