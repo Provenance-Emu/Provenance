@@ -86,4 +86,17 @@
     func didPush(_ button: PVDSButton, forPlayer player: Int)
     @objc(didReleaseDSButton:forPlayer:)
     func didRelease(_ button: PVDSButton, forPlayer player: Int)
+
+    /// Forward a stylus/touch event to the DS touchscreen.
+    ///
+    /// - Parameter point: DS touchscreen coordinates.
+    ///   `x` is clamped to 0–255, `y` is clamped to 0–191.
+    ///
+    /// Conformers in `.mm` bridge files should implement this to route the
+    /// coordinates to the emulator's touchscreen input register.
+    /// The default no-op allows existing bridges to compile until they add support.
+    @objc optional func touchScreenAtPoint(_ point: CGPoint)
+
+    /// Release the DS touchscreen (stylus lifted).
+    @objc optional func releaseScreenTouch()
 }

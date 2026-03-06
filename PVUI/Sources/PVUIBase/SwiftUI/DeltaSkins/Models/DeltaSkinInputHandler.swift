@@ -332,6 +332,47 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
     }
 
+    // MARK: - DS Touchscreen
+
+    /// Forward a touch on the NDS bottom screen to the emulator core.
+    ///
+    /// - Parameter normalizedPoint: Touch position normalised to the bottom screen's
+    ///   output frame (0,0 = top-left of the bottom screen, 1,1 = bottom-right).
+    ///
+    /// The method translates the normalised position into DS touchscreen coordinates
+    /// (x: 0–255, y: 0–191) and calls `PVDSSystemResponderClient.touchScreenAtPoint(_:)`
+    /// on the emulator core when it conforms to the protocol.
+    @MainActor
+    func ndsBottomScreenTouched(at normalizedPoint: CGPoint) {
+        guard let core = emulatorCore else {
+            ELOG("DS touch: no emulator core available")
+            return
+        }
+
+        // DS touchscreen native resolution: 256 × 192
+        let dsX = max(0, min(255, normalizedPoint.x * 255))
+        let dsY = max(0, min(191, normalizedPoint.y * 191))
+        let dsPoint = CGPoint(x: dsX, y: dsY)
+
+        DLOG("DS bottom screen touch: normalized=\(normalizedPoint) → ds=\(dsPoint)")
+
+        guard let responder = core as? PVDSSystemResponderClient else {
+            ELOG("DS touch: core does not conform to PVDSSystemResponderClient")
+            return
+        }
+        responder.touchScreenAtPoint?(dsPoint)
+    }
+
+    /// Notify the emulator core that the DS touchscreen stylus was lifted.
+    @MainActor
+    func ndsBottomScreenTouchReleased() {
+        guard let core = emulatorCore,
+              let responder = core as? PVDSSystemResponderClient else { return }
+        responder.releaseScreenTouch?()
+    }
+
+    // MARK: - Analog stick
+
     /// Handle analog stick movement
     func analogStickMoved(_ stickId: String, x: Float, y: Float) {
         ILOG("🔵 analogStickMoved called: stickId=\(stickId), x=\(x), y=\(y)")
