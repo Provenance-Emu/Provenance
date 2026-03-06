@@ -8,6 +8,7 @@
 #if canImport(SwiftUI)
 import Foundation
 import SwiftUI
+import SwiftData
 import RealmSwift
 import PVLibrary
 import PVThemes
@@ -1130,14 +1131,13 @@ private struct EmptyContinuesView: View {
 
 // MARK: - SwiftData Support
 
-#if canImport(SwiftData)
-import SwiftData
+/// Maximum number of save-state records fetched by the SwiftData continues driver.
+private let maxContinuesFetchCount = 500
 
 /// Extends `ContinueItemModel` to be initialised from a SwiftData `SaveState_Data` record.
 ///
 /// During the Realm → SwiftData migration the `resolver` closure still falls back to Realm
 /// so that the game-launch codepath continues to work until the full action layer is migrated.
-@available(iOS 17, tvOS 17, *)
 extension ContinueItemModel {
     init(saveState_data state: SaveState_Data) {
         let saveId = state.id
@@ -1178,7 +1178,6 @@ extension ContinueItemModel {
 /// finishes.  Live updates are a future enhancement (tracked in #2555) that
 /// will use SwiftData's `withChanges(in:)` API (iOS 18+) or periodic polling.
 /// In the interim the Realm driver (`RealmContinuesDataDriver`) remains active.
-@available(iOS 17, tvOS 17, *)
 final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
     private let modelContainer: ModelContainer
 
@@ -1189,7 +1188,7 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
         AsyncStream { continuation in
             let container = modelContainer
-            let task = Task { @MainActor in
+            let task = Task.detached {
                 let context = ModelContext(container)
                 // Build the descriptor with sort, optional system predicate, and a fetch cap.
                 // The consoleIdentifier filter is pushed into the store-level predicate so
@@ -1204,7 +1203,7 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
                 }
                 // Cap the fetch at the store level to avoid loading a large result set
                 // into memory; game/system presence is validated in the post-fetch filter.
-                descriptor.fetchLimit = 500
+                descriptor.fetchLimit = maxContinuesFetchCount
                 do {
                     let results = try context.fetch(descriptor)
                     // Filter: both game and its system must be present.
@@ -1222,6 +1221,5 @@ final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
         }
     }
 }
-#endif
 
 #endif

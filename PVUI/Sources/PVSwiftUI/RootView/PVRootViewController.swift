@@ -23,9 +23,7 @@ import PVLibrary
 import PVRealm
 import PVLogging
 import PVThemes
-#if canImport(SwiftData)
 import SwiftData
-#endif
 
 @_exported import PVUIBase
 
