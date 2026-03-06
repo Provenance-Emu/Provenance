@@ -3139,20 +3139,89 @@ unsigned retro_api_version(void)
 
 #pragma mark - Keyboard Event Forwarding
 
+// ---------------------------------------------------------------------------
+// Pending key-event queue
+//
+// Virtual-keyboard (or any UI) events may arrive before the libretro core has
+// registered its keyboard callback via RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK.
+// Rather than silently dropping them we buffer up to PV_KEY_QUEUE_CAPACITY
+// events and replay them the next time sendKeyboardEvent:hidCode:character: is
+// called with a live callback.  If the queue overflows the excess event is
+// dropped with an error log.
+//
+// Thread safety: sPendingKeyLock (os_unfair_lock) guards sPendingKey*.
+// The callback itself is invoked outside the lock to avoid potential re-entry
+// deadlocks.
+// ---------------------------------------------------------------------------
+#include <os/lock.h>
+
+#define PV_KEY_QUEUE_CAPACITY 64
+
+typedef struct {
+    BOOL     down;
+    unsigned hidCode;
+    uint32_t character;
+} PVPendingKeyEvent;
+
+static PVPendingKeyEvent sPendingKeyEvents[PV_KEY_QUEUE_CAPACITY];
+static NSUInteger        sPendingKeyCount = 0;
+static os_unfair_lock    sPendingKeyLock  = OS_UNFAIR_LOCK_INIT;
+
 // Sends a keyboard event to the libretro core via the registered keyboard callback.
 // hidCode corresponds to GCKeyCode.rawValue on iOS 14+ (HID USB usage page key codes).
+// If the core callback is not yet registered, the event is queued and replayed
+// on the next call once the callback becomes available.
 - (void)sendKeyboardEvent:(BOOL)down hidCode:(unsigned)hidCode character:(uint32_t)character {
-    // Ensure the Apple HID keycode lookup table is initialized before first use.
-    // This maps HID USB usage codes to RETRO_KEY values.
+    // Initialise the Apple HID → RETRO_KEY lookup table exactly once.
+    // dispatch_once is process-scoped and therefore survives core reload/restart
+    // because rarch_key_map_apple_hid is a fixed compile-time table that never
+    // changes between invocations.
     static dispatch_once_t keymapOnce;
     dispatch_once(&keymapOnce, ^{
         input_keymaps_init_keyboard_lut(rarch_key_map_apple_hid);
     });
 
-    if (runloop_key_event) {
-        enum retro_key rk = input_keymaps_translate_keysym_to_rk(hidCode);
-        runloop_key_event((bool)down, rk, character, 0);
+    os_unfair_lock_lock(&sPendingKeyLock);
+    retro_keyboard_event_t cb = runloop_key_event; // snapshot under lock
+
+    if (!cb) {
+        // The core has not yet registered a keyboard callback via
+        // RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK.  Queue the event so it
+        // is replayed once the callback becomes available.
+        WLOG(@"[PVLibRetro] sendKeyboardEvent: runloop_key_event is NULL — "
+              "queuing event (down=%d hidCode=0x%02X) [%lu/%d queued]",
+              (int)down, hidCode, (unsigned long)(sPendingKeyCount + 1),
+              PV_KEY_QUEUE_CAPACITY);
+        if (sPendingKeyCount < PV_KEY_QUEUE_CAPACITY) {
+            sPendingKeyEvents[sPendingKeyCount++] =
+                (PVPendingKeyEvent){ .down = down, .hidCode = hidCode, .character = character };
+        } else {
+            ELOG(@"[PVLibRetro] sendKeyboardEvent: pending key queue full "
+                  "(%d events); dropping event (down=%d hidCode=0x%02X).",
+                  PV_KEY_QUEUE_CAPACITY, (int)down, hidCode);
+        }
+        os_unfair_lock_unlock(&sPendingKeyLock);
+        return;
     }
+
+    // Snapshot and drain any events queued before the callback was ready.
+    NSUInteger pendingCount = sPendingKeyCount;
+    PVPendingKeyEvent pendingCopy[PV_KEY_QUEUE_CAPACITY];
+    if (pendingCount > 0) {
+        memcpy(pendingCopy, sPendingKeyEvents, pendingCount * sizeof(PVPendingKeyEvent));
+        sPendingKeyCount = 0;
+    }
+    os_unfair_lock_unlock(&sPendingKeyLock);
+
+    // Replay queued events (lock released to avoid re-entry deadlock).
+    for (NSUInteger i = 0; i < pendingCount; i++) {
+        enum retro_key rk = input_keymaps_translate_keysym_to_rk(pendingCopy[i].hidCode);
+        cb((bool)pendingCopy[i].down, rk, pendingCopy[i].character, 0);
+    }
+
+    // Deliver the current event.
+    enum retro_key rk = input_keymaps_translate_keysym_to_rk(hidCode);
+    cb((bool)down, rk, character, 0);
 }
 
 #pragma mark - Mouse State Management
