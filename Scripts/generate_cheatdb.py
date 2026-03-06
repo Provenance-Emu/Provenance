@@ -9,6 +9,11 @@ Usage:
     python3 Scripts/generate_cheatdb.py /path/to/libretro-database/cht/ \
         --output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
 
+    # With MD5 cross-reference (recommended):
+    python3 Scripts/generate_cheatdb.py /path/to/libretro-database/cht/ \
+        --dat-dir /path/to/libretro-database \
+        --output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
+
 The cht/ directory has the structure:
     cht/
       Nintendo - Game Boy Advance/
@@ -24,6 +29,9 @@ Each .cht file is INI-style:
     cheat0_code = "01FF00C5"
     cheat0_enable = false
     cheat1_desc = ...
+
+MD5 cross-reference uses CLRMamePro DAT files (from metadat/no-intro/,
+metadat/redump/, and dat/) to add ROM MD5 hashes to each game entry.
 """
 
 import argparse
@@ -43,6 +51,7 @@ SYSTEM_SHORT_NAMES = {
     "Atari - 7800": "7800",
     "Atari - 8-bit": "Atari8bit",
     "Atari - Jaguar": "Jaguar",
+    "Atari - Jaguar CD": "JaguarCD",
     "Atari - Lynx": "Lynx",
     "Atari - ST": "AtariST",
     "Bandai - WonderSwan": "WonderSwan",
@@ -68,10 +77,14 @@ SYSTEM_SHORT_NAMES = {
     "Nintendo - Nintendo DS": "DS",
     "Nintendo - Nintendo Entertainment System": "NES",
     "Nintendo - Pokemon Mini": "PokemonMini",
+    # Satellaview is a SNES peripheral; map its cheats to the SNES system.
+    "Nintendo - Satellaview": "SNES",
     "Nintendo - Super Nintendo Entertainment System": "SNES",
     "Nintendo - Virtual Boy": "VirtualBoy",
     "Nintendo - Wii": "Wii",
     "Nintendo - Nintendo 3DS": "3DS",
+    # PrBoom runs Doom WADs; map to the DOOM system identifier.
+    "PrBoom": "DOOM",
     "Sega - 32X": "Sega32X",
     "Sega - Dreamcast": "Dreamcast",
     "Sega - Game Gear": "GameGear",
@@ -80,6 +93,9 @@ SYSTEM_SHORT_NAMES = {
     "Sega - Mega-CD - Sega CD": "SegaCD",
     "Sega - SG-1000": "SG1000",
     "Sega - Saturn": "Saturn",
+    # Both ZX Spectrum variants map to the same Provenance system.
+    "Sinclair - ZX Spectrum": "ZXSpectrum",
+    "Sinclair - ZX Spectrum +3": "ZXSpectrum",
     "SNK - Neo Geo": "NeoGeo",
     "SNK - Neo Geo Pocket": "NGP",
     "SNK - Neo Geo Pocket Color": "NGPC",
@@ -87,9 +103,9 @@ SYSTEM_SHORT_NAMES = {
     "Sony - PlayStation 2": "PS2",
     "Sony - PlayStation Portable": "PSP",
     "The 3DO Company - 3DO": "3DO",
+    "TIC-80": "TIC80",
     "MAME": "MAME",
     "Watara - Supervision": "Supervision",
-    "Sinclair - ZX Spectrum": "ZXSpectrum",
     "Philips - CD-i": "CDi",
 }
 
@@ -109,6 +125,11 @@ DEVICE_SUFFIXES = [
     "Goldfinger",
 ]
 DEVICE_RE = re.compile(r"\((" + "|".join(re.escape(d) for d in DEVICE_SUFFIXES) + r")\)", re.IGNORECASE)
+
+# CLRMamePro DAT parsing patterns
+_DAT_GAME_NAME_RE = re.compile(r'^\s*name\s+"([^"]+)"', re.MULTILINE)
+_DAT_ROM_MD5_RE = re.compile(r'rom\s*\([^)]*\bmd5\s+([0-9a-fA-F]{32})', re.IGNORECASE)
+_DAT_ROM_NAME_RE = re.compile(r'rom\s*\([^)]*\bname\s+"([^"]+)"', re.IGNORECASE)
 
 
 def parse_cht_file(filepath):
@@ -179,6 +200,106 @@ def extract_device_name(filename_stem):
     return match.group(1) if match else "RetroArch"
 
 
+def _stem_without_device(filename_stem):
+    """Return the cht stem with device suffix removed (for DAT lookup)."""
+    return DEVICE_RE.sub("", filename_stem).strip()
+
+
+def parse_dat_file(dat_path):
+    """Parse a CLRMamePro DAT file and return a dict mapping game_name_stem -> md5.
+
+    The DAT format is:
+        game (
+            name "Game Name (Region)"
+            ...
+            rom ( name "Game Name (Region).ext" size 12345 crc XXXXXXXX md5 YYYYYYYY sha1 ... )
+        )
+
+    Returns: {filename_stem: md5_lowercase}
+    where filename_stem is the rom name without its extension.
+    """
+    result = {}
+
+    try:
+        # DAT files may contain non-UTF-8 bytes; use errors='replace'
+        with open(dat_path, "r", encoding="utf-8", errors="replace") as f:
+            content = f.read()
+    except Exception as e:
+        print(f"  Warning: Could not read DAT {dat_path}: {e}", file=sys.stderr)
+        return result
+
+    # Split on game-record boundaries to avoid cross-game matches
+    # Each record starts with "game (" and ends with the matching ")"
+    # Simple approach: split on game blocks
+    game_block_re = re.compile(r'\bgame\s*\(', re.IGNORECASE)
+    positions = [m.start() for m in game_block_re.finditer(content)]
+
+    for i, start in enumerate(positions):
+        end = positions[i + 1] if i + 1 < len(positions) else len(content)
+        block = content[start:end]
+
+        # Extract the rom entry's name and md5
+        rom_md5_m = _DAT_ROM_MD5_RE.search(block)
+        rom_name_m = _DAT_ROM_NAME_RE.search(block)
+
+        if not rom_md5_m or not rom_name_m:
+            continue
+
+        md5 = rom_md5_m.group(1).lower()
+        rom_filename = rom_name_m.group(1)  # e.g. "Game Name (USA).sfc"
+
+        # Strip file extension to get the lookup stem
+        stem = Path(rom_filename).stem  # e.g. "Game Name (USA)"
+        result[stem] = md5
+
+    return result
+
+
+def build_md5_map(db_root):
+    """Build a mapping from (system_name, file_title) -> md5 using DAT files.
+
+    Scans metadat/no-intro/, metadat/redump/, and dat/ subdirectories of
+    db_root for CLRMamePro DAT files. Matches them to cht system names by
+    filename.
+
+    Returns: {system_name: {file_title_stem: md5}}
+    """
+    if db_root is None:
+        return {}
+
+    db_root = Path(db_root)
+    # Directories to search for DAT files, in priority order
+    search_dirs = [
+        db_root / "metadat" / "no-intro",
+        db_root / "metadat" / "redump",
+        db_root / "dat",
+    ]
+
+    # Build system_name -> dat_stem mapping for the systems we care about
+    # A DAT file named "Nintendo - Game Boy.dat" matches system "Nintendo - Game Boy"
+    system_to_stems: dict[str, dict] = {}
+
+    for search_dir in search_dirs:
+        if not search_dir.exists():
+            continue
+        for dat_file in sorted(search_dir.glob("*.dat")):
+            dat_stem = dat_file.stem  # e.g. "Nintendo - Game Boy"
+            # Check if this matches any of our known system names
+            if dat_stem not in SYSTEM_SHORT_NAMES:
+                continue
+            system_name = dat_stem
+            if system_name not in system_to_stems:
+                print(f"  Loading MD5 map: {dat_file.name} ({system_name})")
+                system_to_stems[system_name] = parse_dat_file(dat_file)
+            # If already loaded from a higher-priority dir, skip lower-priority
+
+    total_md5 = sum(len(v) for v in system_to_stems.values())
+    if total_md5 > 0:
+        print(f"  MD5 map: {total_md5} entries across {len(system_to_stems)} systems")
+
+    return system_to_stems
+
+
 def create_database(db_path):
     """Create the SQLite database with the cheat schema."""
     conn = sqlite3.connect(db_path)
@@ -200,7 +321,8 @@ def create_database(db_path):
             system_id INTEGER NOT NULL REFERENCES systems(system_id),
             game_title TEXT NOT NULL,
             file_title TEXT NOT NULL,
-            region TEXT
+            region TEXT,
+            md5 TEXT
         );
 
         CREATE TABLE cheats (
@@ -213,6 +335,7 @@ def create_database(db_path):
 
         CREATE INDEX idx_games_title ON games(game_title COLLATE NOCASE);
         CREATE INDEX idx_games_system ON games(system_id);
+        CREATE INDEX idx_games_md5 ON games(md5);
         CREATE INDEX idx_cheats_game ON cheats(game_id);
         CREATE INDEX idx_systems_name ON systems(system_name);
     """)
@@ -221,14 +344,16 @@ def create_database(db_path):
     return conn
 
 
-def process_cht_directory(cht_root, db_path):
+def process_cht_directory(cht_root, db_path, md5_map=None):
     """Walk the cht directory and populate the database."""
     conn = create_database(db_path)
     c = conn.cursor()
+    md5_map = md5_map or {}
 
     system_cache = {}  # system_name -> system_id
     total_games = 0
     total_cheats = 0
+    total_md5_hits = 0
     skipped_systems = set()
 
     for system_dir in sorted(Path(cht_root).iterdir()):
@@ -255,6 +380,10 @@ def process_cht_directory(cht_root, db_path):
         system_id = system_cache[system_name]
         system_games = 0
         system_cheats = 0
+        system_md5_hits = 0
+
+        # Get MD5 lookup dict for this system (may be None)
+        sys_md5 = md5_map.get(system_name, {})
 
         for cht_file in sorted(system_dir.glob("*.cht")):
             stem = cht_file.stem
@@ -266,9 +395,15 @@ def process_cht_directory(cht_root, db_path):
             title, region = extract_title_and_region(stem)
             device = extract_device_name(stem)
 
+            # MD5 lookup: strip device suffix from stem to get the No-Intro name
+            lookup_stem = _stem_without_device(stem)
+            md5 = sys_md5.get(lookup_stem)
+            if md5:
+                system_md5_hits += 1
+
             c.execute(
-                "INSERT INTO games (system_id, game_title, file_title, region) VALUES (?, ?, ?, ?)",
-                (system_id, title, stem, region),
+                "INSERT INTO games (system_id, game_title, file_title, region, md5) VALUES (?, ?, ?, ?, ?)",
+                (system_id, title, stem, region, md5),
             )
             game_id = c.lastrowid
             system_games += 1
@@ -282,14 +417,18 @@ def process_cht_directory(cht_root, db_path):
 
         total_games += system_games
         total_cheats += system_cheats
+        total_md5_hits += system_md5_hits
 
         if system_games > 0:
-            print(f"  {system_name}: {system_games} games, {system_cheats} cheats")
+            md5_info = f", {system_md5_hits}/{system_games} with MD5" if sys_md5 else ""
+            print(f"  {system_name}: {system_games} games, {system_cheats} cheats{md5_info}")
 
     conn.commit()
 
     # Print summary
     print(f"\nTotal: {total_games} games, {total_cheats} cheats across {len(system_cache)} systems")
+    if md5_map:
+        print(f"MD5 hashes found: {total_md5_hits}/{total_games} games ({100*total_md5_hits//max(total_games,1)}%)")
 
     if skipped_systems:
         print(f"\nSystems without short name mapping ({len(skipped_systems)}):")
@@ -337,6 +476,16 @@ def main():
         help="Output SQLite database path (default: libretro_cheats.sqlite)",
     )
     parser.add_argument(
+        "--dat-dir",
+        default=None,
+        metavar="PATH",
+        help=(
+            "Root of the libretro-database repo (contains metadat/ and dat/ dirs). "
+            "When provided, MD5 hashes are cross-referenced from CLRMamePro DAT files "
+            "and stored in the games.md5 column."
+        ),
+    )
+    parser.add_argument(
         "--no-compress",
         action="store_true",
         help="Skip creating the .zip compressed version",
@@ -356,7 +505,17 @@ def main():
     print(f"Processing .cht files from: {cht_dir}")
     print(f"Output: {args.output}\n")
 
-    total_games, total_cheats = process_cht_directory(cht_dir, args.output)
+    # Build MD5 map if dat-dir provided
+    md5_map = {}
+    if args.dat_dir:
+        if not os.path.isdir(args.dat_dir):
+            print(f"Warning: --dat-dir '{args.dat_dir}' is not a directory; skipping MD5 lookup", file=sys.stderr)
+        else:
+            print(f"Building MD5 map from DAT files in: {args.dat_dir}")
+            md5_map = build_md5_map(args.dat_dir)
+            print()
+
+    total_games, total_cheats = process_cht_directory(cht_dir, args.output, md5_map)
 
     if total_cheats == 0:
         print("Warning: No cheats were found!", file=sys.stderr)
