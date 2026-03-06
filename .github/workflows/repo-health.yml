@@ -1,0 +1,303 @@
+name: Automation Health Monitor
+
+# Runs every 4 hours to check for stuck/broken automation state.
+# Posts a rolling report to a pinned "Automation Health" issue.
+# Also dispatches auto-fixes where possible (re-dispatch stuck reviews, etc.).
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'   # Every 4 hours
+  workflow_dispatch:          # Manual trigger for testing
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: write
+
+jobs:
+  health-check:
+    name: Check automation health
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+
+    steps:
+      - name: Run health checks
+        id: health
+        run: |
+          set -e
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          echo "=== Automation Health Check — $TIMESTAMP ==="
+
+          # ── Check 1: Stuck AI reviews ─────────────────────────────────────────
+          # PRs with ai-reviewing label where the latest ai-review.yml run is >2h old
+          echo ""
+          echo "--- Check 1: Stuck AI reviews ---"
+
+          stuck_reviews=""
+          stuck_review_count=0
+
+          reviewing_prs=$(gh api "repos/$REPO/pulls?state=open&per_page=100" \
+            --jq '[.[] | select(.labels[].name == "ai-reviewing")] | .[].number' \
+            2>/dev/null || echo "")
+
+          for pr_num in $reviewing_prs; do
+            # Find the latest ai-review.yml run
+            latest_run=$(gh run list --workflow=ai-review.yml --repo "$REPO" --limit 20 \
+              --json databaseId,createdAt,status,conclusion \
+              --jq "sort_by(.createdAt) | reverse | first" \
+              2>/dev/null || echo "")
+
+            if [ -z "$latest_run" ]; then
+              continue
+            fi
+
+            run_status=$(echo "$latest_run" | jq -r '.status')
+            created_at=$(echo "$latest_run" | jq -r '.createdAt')
+            age_seconds=$(( $(date -u +%s) - $(date -u -d "$created_at" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$created_at" +%s 2>/dev/null || echo "0") ))
+            age_hours=$(( age_seconds / 3600 ))
+
+            if [ "$run_status" != "completed" ] && [ "$age_hours" -ge 2 ]; then
+              echo "  PR #$pr_num: stuck in ai-reviewing for ${age_hours}h — re-dispatching"
+              gh workflow run ai-review.yml --repo "$REPO" -f pr_number="$pr_num" 2>/dev/null || true
+              stuck_reviews="$stuck_reviews PR #$pr_num (${age_hours}h, re-dispatched)"
+              stuck_review_count=$((stuck_review_count + 1))
+            elif [ "$run_status" = "completed" ] && [ "$age_hours" -ge 1 ]; then
+              # Review completed but label not cleared — remove stale label
+              echo "  PR #$pr_num: ai-review completed but label stale — clearing"
+              gh pr edit "$pr_num" --repo "$REPO" --remove-label "ai-reviewing" 2>/dev/null || true
+            fi
+          done
+
+          if [ "$stuck_review_count" -eq 0 ]; then
+            check1_status="✅ None"
+            check1_detail=""
+          else
+            check1_status="⚠️ $stuck_review_count found"
+            check1_detail="$stuck_reviews"
+          fi
+
+          # ── Check 2: Stuck AI fixers ──────────────────────────────────────────
+          # claude-code.yml runs with fix_ai_review action queued/in_progress for >1h
+          echo ""
+          echo "--- Check 2: Stuck AI fixers ---"
+
+          stuck_fixers=$(gh run list --workflow=claude-code.yml --repo "$REPO" --limit 30 \
+            --json databaseId,status,createdAt,displayTitle \
+            --jq '[.[] | select(.status == "queued" or .status == "in_progress")]' \
+            2>/dev/null || echo "[]")
+
+          stuck_fixer_count=0
+          stuck_fixer_detail=""
+
+          while IFS= read -r run; do
+            run_id=$(echo "$run" | jq -r '.databaseId')
+            created_at=$(echo "$run" | jq -r '.createdAt')
+            title=$(echo "$run" | jq -r '.displayTitle')
+            age_seconds=$(( $(date -u +%s) - $(date -u -d "$created_at" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$created_at" +%s 2>/dev/null || echo "0") ))
+            age_minutes=$(( age_seconds / 60 ))
+            if [ "$age_minutes" -ge 60 ]; then
+              echo "  Run #$run_id stuck for ${age_minutes}min: $title"
+              stuck_fixer_count=$((stuck_fixer_count + 1))
+              stuck_fixer_detail="$stuck_fixer_detail Run #$run_id (${age_minutes}min)"
+            fi
+          done < <(echo "$stuck_fixers" | jq -c '.[]' 2>/dev/null || true)
+
+          if [ "$stuck_fixer_count" -eq 0 ]; then
+            check2_status="✅ None"
+            check2_detail=""
+          else
+            check2_status="⚠️ $stuck_fixer_count found"
+            check2_detail="$stuck_fixer_detail"
+          fi
+
+          # ── Check 3: Unresolved rebase conflicts ──────────────────────────────
+          # PRs with bot "Rebase conflict detected" comment but no push in last 6h
+          echo ""
+          echo "--- Check 3: Unresolved rebase conflicts ---"
+
+          conflict_count=0
+          conflict_detail=""
+
+          open_prs=$(gh api "repos/$REPO/pulls?state=open&per_page=100" \
+            --jq '.[].number' 2>/dev/null || echo "")
+
+          for pr_num in $open_prs; do
+            # Check for unresolved conflict comment in last 6 hours
+            conflict_comment=$(gh api "repos/$REPO/issues/${pr_num}/comments" \
+              --jq '[.[] | select(.body | test("Rebase conflict detected";"")) | select(.user.login == "github-actions[bot]")] | sort_by(.created_at) | last' \
+              2>/dev/null || echo "")
+
+            if [ -z "$conflict_comment" ] || [ "$conflict_comment" = "null" ]; then
+              continue
+            fi
+
+            conflict_at=$(echo "$conflict_comment" | jq -r '.created_at // empty')
+            if [ -z "$conflict_at" ]; then
+              continue
+            fi
+
+            age_seconds=$(( $(date -u +%s) - $(date -u -d "$conflict_at" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$conflict_at" +%s 2>/dev/null || echo "0") ))
+            age_hours=$(( age_seconds / 3600 ))
+
+            if [ "$age_hours" -ge 6 ]; then
+              echo "  PR #$pr_num has unresolved conflict for ${age_hours}h"
+              conflict_count=$((conflict_count + 1))
+              conflict_detail="$conflict_detail PR #$pr_num (${age_hours}h)"
+              # Nudge with a comment if last nudge was >24h ago
+              last_nudge=$(gh api "repos/$REPO/issues/${pr_num}/comments" \
+                --jq '[.[] | select(.body | test("health-nudge";""))] | last | .created_at // empty' \
+                2>/dev/null || echo "")
+              nudge_age=999999
+              if [ -n "$last_nudge" ]; then
+                nudge_age=$(( ($(date -u +%s) - $(date -u -d "$last_nudge" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$last_nudge" +%s 2>/dev/null || echo "0")) / 3600 ))
+              fi
+              if [ "$nudge_age" -ge 24 ]; then
+                gh pr comment "$pr_num" --repo "$REPO" \
+                  --body "<!-- health-nudge -->
+          ⏰ **Health check reminder**: This PR has an unresolved rebase conflict for ${age_hours}h. Comment \`/rebase\` to retry automatic resolution." \
+                  2>/dev/null || true
+              fi
+            fi
+          done
+
+          if [ "$conflict_count" -eq 0 ]; then
+            check3_status="✅ None"
+            check3_detail=""
+          else
+            check3_status="⚠️ $conflict_count found"
+            check3_detail="$conflict_detail"
+          fi
+
+          # ── Check 4: Orphaned agent-work issues ───────────────────────────────
+          # Issues with agent-work label but no open PR for >24h
+          echo ""
+          echo "--- Check 4: Orphaned agent-work issues ---"
+
+          orphan_count=0
+          orphan_detail=""
+
+          agent_issues=$(gh api "repos/$REPO/issues?labels=agent-work&state=open&per_page=100" \
+            --jq '.[] | select(.pull_request == null) | {number: .number, title: .title, created_at: .created_at}' \
+            2>/dev/null || echo "")
+
+          while IFS= read -r issue; do
+            issue_num=$(echo "$issue" | jq -r '.number')
+            issue_title=$(echo "$issue" | jq -r '.title')
+            created_at=$(echo "$issue" | jq -r '.created_at')
+
+            age_seconds=$(( $(date -u +%s) - $(date -u -d "$created_at" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$created_at" +%s 2>/dev/null || echo "0") ))
+            age_hours=$(( age_seconds / 3600 ))
+
+            if [ "$age_hours" -ge 24 ]; then
+              # Check if there's actually a PR for this issue (linked or branch named agent/issue-N)
+              linked_pr=$(gh pr list --repo "$REPO" --search "agent/issue-${issue_num}" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+              if [ -z "$linked_pr" ]; then
+                echo "  Issue #$issue_num orphaned for ${age_hours}h: $issue_title"
+                orphan_count=$((orphan_count + 1))
+                orphan_detail="$orphan_detail #$issue_num (${age_hours}h)"
+              fi
+            fi
+          done < <(echo "$agent_issues" | jq -c '.' 2>/dev/null | grep -v '^$' || true)
+
+          if [ "$orphan_count" -eq 0 ]; then
+            check4_status="✅ None"
+            check4_detail=""
+          else
+            check4_status="⚠️ $orphan_count found"
+            check4_detail="$orphan_detail"
+          fi
+
+          # ── Check 5: Workflow failure rate (last 24h) ─────────────────────────
+          echo ""
+          echo "--- Check 5: Workflow failure rate ---"
+
+          check5_status="✅ OK"
+          check5_detail=""
+
+          for workflow in agent-validation.yml ai-review.yml claude-code.yml auto-rebase-on-develop.yml; do
+            failures=$(gh run list --workflow="$workflow" --repo "$REPO" --limit 50 \
+              --json conclusion,createdAt \
+              --jq "now as \$now | [.[] | select(.conclusion == \"failure\" and (\$now - (.createdAt | fromdateiso8601)) < 86400)] | length" \
+              2>/dev/null || echo "0")
+            echo "  $workflow: $failures failure(s) in 24h"
+            if [ "${failures:-0}" -gt 3 ]; then
+              check5_status="⚠️ High failure rate"
+              check5_detail="$check5_detail $workflow: ${failures}/24h"
+            else
+              check5_detail="$check5_detail $workflow: ${failures:-0}/24h"
+            fi
+          done
+
+          # ── Write outputs for report step ─────────────────────────────────────
+          {
+            echo "timestamp=$TIMESTAMP"
+            echo "check1_status=$check1_status"
+            echo "check1_detail=$check1_detail"
+            echo "check2_status=$check2_status"
+            echo "check2_detail=$check2_detail"
+            echo "check3_status=$check3_status"
+            echo "check3_detail=$check3_detail"
+            echo "check4_status=$check4_status"
+            echo "check4_detail=$check4_detail"
+            echo "check5_status=$check5_status"
+            echo "check5_detail=$check5_detail"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post health report to pinned issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TIMESTAMP: ${{ steps.health.outputs.timestamp }}
+          CHECK1_STATUS: ${{ steps.health.outputs.check1_status }}
+          CHECK1_DETAIL: ${{ steps.health.outputs.check1_detail }}
+          CHECK2_STATUS: ${{ steps.health.outputs.check2_status }}
+          CHECK2_DETAIL: ${{ steps.health.outputs.check2_detail }}
+          CHECK3_STATUS: ${{ steps.health.outputs.check3_status }}
+          CHECK3_DETAIL: ${{ steps.health.outputs.check3_detail }}
+          CHECK4_STATUS: ${{ steps.health.outputs.check4_status }}
+          CHECK4_DETAIL: ${{ steps.health.outputs.check4_detail }}
+          CHECK5_STATUS: ${{ steps.health.outputs.check5_status }}
+          CHECK5_DETAIL: ${{ steps.health.outputs.check5_detail }}
+        run: |
+          # Build report body
+          cat > /tmp/health_report.md << REPORTEOF
+          <!-- automation-health-report -->
+          ## Automation Health Report — ${TIMESTAMP}
+
+          | Check | Status | Details |
+          |-------|--------|---------|
+          | Stuck AI reviews | ${CHECK1_STATUS} | ${CHECK1_DETAIL} |
+          | Stuck fixers | ${CHECK2_STATUS} | ${CHECK2_DETAIL} |
+          | Rebase conflicts | ${CHECK3_STATUS} | ${CHECK3_DETAIL} |
+          | Orphaned agent-work | ${CHECK4_STATUS} | ${CHECK4_DETAIL} |
+          | Workflow failures (24h) | ${CHECK5_STATUS} | ${CHECK5_DETAIL} |
+
+          ---
+          *Auto-generated every 4h by [repo-health.yml](../actions/workflows/repo-health.yml). Trigger manually via [Actions tab](../actions/workflows/repo-health.yml).*
+          REPORTEOF
+
+          # Find or create the pinned Automation Health issue
+          HEALTH_ISSUE=$(gh issue list --repo "$REPO" \
+            --search "Automation Health Monitor in:title" \
+            --state open --limit 1 \
+            --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          if [ -z "$HEALTH_ISSUE" ]; then
+            echo "Creating Automation Health issue..."
+            HEALTH_ISSUE=$(gh issue create \
+              --repo "$REPO" \
+              --title "Automation Health Monitor" \
+              --label "automation,monitoring" \
+              --body-file /tmp/health_report.md \
+              --jq '.number' 2>/dev/null || echo "")
+            echo "Created issue #$HEALTH_ISSUE"
+          else
+            echo "Updating issue #$HEALTH_ISSUE..."
+            gh issue edit "$HEALTH_ISSUE" --repo "$REPO" \
+              --body-file /tmp/health_report.md 2>/dev/null || true
+          fi
+
+          echo "Health report posted to issue #${HEALTH_ISSUE:-unknown}"

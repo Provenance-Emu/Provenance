@@ -184,6 +184,7 @@ jobs:
             ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'ai_approved' && format('The AI reviewer has approved PR #{0} (or max review cycles reached). Enable auto-merge, add the ready-for-review label, and assign @JoeMatt for final review.', github.event.inputs.pr_number) || '' }}
             ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_rebase_conflict' && format('PR #{0} has rebase conflicts that must be resolved. Follow the conflict resolution instructions below.', github.event.inputs.pr_number) || '' }}
             ${{ contains(github.event.comment.body || '', '/claude-fix') && 'Fix all pending review comments on this PR. Read the full review, address each comment, commit fixes, and push.' || '' }}
+            ${{ github.event_name == 'issue_comment' && github.event.issue.pull_request.url != '' && '⚠️ @claude COMMENT ON EXISTING PR: You are responding to a comment on an EXISTING open PR. You MUST work on that PR branch directly — NEVER create a new branch or open a new PR. Steps: 1) Get the branch: `gh pr view $PR_NUM --json headRefName --jq .headRefName` (where PR_NUM is the issue/PR number from GitHub Context above) 2) Checkout it: `git fetch origin && git checkout <branch> && git pull origin <branch>` 3) Make all requested changes 4) Commit and push to SAME branch: `git push origin <branch>` 5) The existing PR updates automatically — you are done. Never use `gh pr create`.' || '' }}
 
             ## User Request
             ${{ github.event.comment.body || github.event.review.body || github.event.issue.body || '' }}
@@ -202,6 +203,11 @@ jobs:
             8. CRITICAL: Never use "Closes #N" or "Fixes #N" for EPIC or parent issues.
                Only use "Closes" for the specific sub-task issue your PR fully completes.
                Reference epics/parent issues with "Part of #N" to prevent premature closure.
+            9. EPIC ORDERING: When creating multiple sub-task PRs for the same epic that
+               touch overlapping files, add a "Depends on: #N" line to the PR body for PRs
+               that should merge AFTER another PR. Example body footer:
+               `Depends on: #2551` — this tells the dependency checker the merge order.
+               Only add this when there's a real ordering dependency (shared file changes).
 
             ## NO DUPLICATE PRs — CRITICAL
             Before creating any PR or branch:

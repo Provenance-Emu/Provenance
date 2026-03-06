@@ -54,6 +54,17 @@ jobs:
             exit 0
           fi
 
+          # Dedup guard: skip if ai-review.yml was already dispatched in the last 60 seconds.
+          # Prevents double-dispatch when concurrent events fire (e.g. synchronize + explicit dispatch).
+          RECENT=$(gh run list --workflow=ai-review.yml --repo "$REPO" --limit 10 \
+            --json createdAt \
+            --jq "now as \$now | [.[] | select(\$now - (.createdAt | fromdateiso8601) < 60)] | length" \
+            2>/dev/null || echo "0")
+          if [ "${RECENT:-0}" -gt 0 ]; then
+            echo "ai-review.yml dispatched within last 60s — skipping to prevent duplicate review"
+            exit 0
+          fi
+
           echo "Dispatching AI review for PR #$PR_NUMBER ($PR_TITLE)"
           gh workflow run ai-review.yml \
             --repo "$REPO" \

@@ -193,3 +193,52 @@ jobs:
           echo "### CI Build Time" >> $GITHUB_STEP_SUMMARY
           echo "Duration: ${minutes}m ${seconds}s" >> $GITHUB_STEP_SUMMARY
           exit $build_exit
+
+  # Job 4: Check PR dependency ordering (lightweight, ubuntu)
+  dependency-check:
+    name: Check PR dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Only makes sense when we have a PR number
+    if: github.event.pull_request.number != 0 || github.event.inputs.pr_number != ''
+    steps:
+      - name: Check Depends-on links
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+          REPO: ${{ github.repository }}
+        run: |
+          body=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json body --jq '.body // ""' 2>/dev/null || echo "")
+          deps=$(echo "$body" | grep -oP 'Depends on: #\K\d+' || true)
+
+          if [ -z "$deps" ]; then
+            echo "No 'Depends on: #N' dependencies found — OK"
+            exit 0
+          fi
+
+          blocked=false
+          for dep in $deps; do
+            state=$(gh pr view "$dep" --repo "$REPO" --json state --jq '.state' 2>/dev/null || echo "UNKNOWN")
+            echo "Dependency PR #$dep: $state"
+            if [ "$state" = "OPEN" ]; then
+              echo "::warning::PR #$dep is still open — this PR depends on it merging first"
+              blocked=true
+            fi
+          done
+
+          if [ "$blocked" = "true" ]; then
+            # Post a warning comment (idempotent — check for existing blocked comment)
+            EXISTING=$(gh api "repos/$REPO/issues/${PR_NUMBER}/comments" \
+              --jq '[.[] | select(.body | test("<!-- dep-blocked -->";""))] | length' \
+              2>/dev/null || echo "0")
+            if [ "${EXISTING:-0}" -eq 0 ]; then
+              gh pr comment "$PR_NUMBER" --repo "$REPO" \
+                --body "<!-- dep-blocked -->
+          ⚠️ **Merge dependency not yet satisfied** — this PR has a \`Depends on: #N\` link to an open PR. Merge order matters to avoid conflicts. The dependency check is advisory only — merging is still allowed." \
+                2>/dev/null || true
+            fi
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "blocked" 2>/dev/null || true
+          else
+            # All deps merged — remove blocked label if present
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "blocked" 2>/dev/null || true
+          fi

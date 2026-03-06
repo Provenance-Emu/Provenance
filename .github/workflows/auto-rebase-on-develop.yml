@@ -112,11 +112,7 @@ jobs:
                 # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events
                 gh workflow run agent-validation.yml --repo "$REPO" --ref "$branch" \
                   -f branch="$branch" -f pr_number="$pr_num" 2>/dev/null || true
-                # Re-trigger AI review for [Agent] PRs
-                pr_title=$(gh pr view "$pr_num" --repo "$REPO" --json title --jq '.title' 2>/dev/null || echo "")
-                if echo "$pr_title" | grep -q "^\[Agent\]"; then
-                  gh workflow run ai-review.yml --repo "$REPO" -f pr_number="$pr_num" 2>/dev/null || true
-                fi
+                # NOTE: ai-review-trigger.yml fires on pull_request:synchronize — no explicit dispatch needed
               else
                 echo "  Rebase succeeded but push was rejected (branch protection?)"
                 failed=$((failed + 1))
