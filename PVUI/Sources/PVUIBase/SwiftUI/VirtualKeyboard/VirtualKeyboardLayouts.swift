@@ -278,7 +278,7 @@ public enum VirtualKeyboardLayouts {
             .init(label: "0",         keyCode: .zero),
             .init(label: "+",         keyCode: .equalSign),             // + = equal sign on HID
             .init(label: "-",         keyCode: .hyphen),
-            .init(label: "£",         keyCode: .backslash),             // £ = backslash position on HID
+            .init(label: "£",         keyCode: .scrollLock),            // £ — proxy: scrollLock (HID 0x47); remap in core bridge
             .init(label: "CLR HOME",  keyCode: .home,    widthMultiplier: 1.5),
             .init(label: "INST DEL",  keyCode: .deleteOrBackspace, widthMultiplier: 1.5, symbolName: "delete.left"),
         ],
@@ -295,8 +295,8 @@ public enum VirtualKeyboardLayouts {
             .init(label: "I",        keyCode: .keyI),
             .init(label: "O",        keyCode: .keyO),
             .init(label: "P",        keyCode: .keyP),
-            .init(label: "@",        keyCode: .leftBracket),            // @ = [ position on HID
-            .init(label: "*",        keyCode: .rightBracket),           // * = ] position on HID
+            .init(label: "@",        keyCode: .openBracket),            // @ = [ position on HID
+            .init(label: "*",        keyCode: .closeBracket),           // * = ] position on HID
             .init(label: "↑",        keyCode: .upArrow,   symbolName: "arrow.up"),   // ↑ (up arrow char)
             // RESTORE triggers NMI — proxied to Print Screen key
             .init(label: "RESTORE",  keyCode: .printScreen, widthMultiplier: 1.5),
@@ -315,7 +315,8 @@ public enum VirtualKeyboardLayouts {
             .init(label: "L",        keyCode: .keyL),
             .init(label: ":",        keyCode: .semicolon),               // : = ; position on HID
             .init(label: ";",        keyCode: .quote),                   // ; = ' position on HID
-            .init(label: "=",        keyCode: .equalSign),                         // = sign
+            // C64 "=" key — proxy: nonUSPound (HID 0x32); remap to correct RETRO_KEY in core bridge
+            .init(label: "=",        keyCode: .nonUSPound),
             .init(label: "RETURN",   keyCode: .returnOrEnter, widthMultiplier: 2.0, symbolName: "return"),
         ],
         // Row 4: C= (Commodore key) SHIFT Z–/ . , SHIFT CRSR↓ CRSR→
@@ -474,8 +475,8 @@ public enum VirtualKeyboardLayouts {
             .init(label: "I",      keyCode: .keyI),
             .init(label: "O",      keyCode: .keyO),
             .init(label: "P",      keyCode: .keyP),
-            .init(label: "[",      keyCode: .leftBracket),
-            .init(label: "]",      keyCode: .rightBracket),
+            .init(label: "[",      keyCode: .openBracket),
+            .init(label: "]",      keyCode: .closeBracket),
             .init(label: "RETURN", keyCode: .returnOrEnter,      widthMultiplier: 1.5, symbolName: "return"),
             // CPY (Copy) — no direct HID equivalent; proxied to Page Up
             .init(label: "CPY",    keyCode: .pageUp,             widthMultiplier: 1.0),
