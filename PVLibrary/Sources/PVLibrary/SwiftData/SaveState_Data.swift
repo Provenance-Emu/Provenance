@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData)
 import SwiftData
 
 @Model
@@ -48,4 +47,3 @@ public class SaveState_Data {
         self.image = image
     }
 }
-#endif

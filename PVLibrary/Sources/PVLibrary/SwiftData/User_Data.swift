@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData)
 import SwiftData
 
 @Model
@@ -20,4 +19,3 @@ public class User_Data {
         self.lastSeen = lastSeen
     }
 }
-#endif

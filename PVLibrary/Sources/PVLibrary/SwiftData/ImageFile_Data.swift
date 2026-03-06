@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData)
 import SwiftData
 import CoreGraphics
 
@@ -40,4 +39,3 @@ public class ImageFile_Data {
         self.layout = layout
     }
 }
-#endif

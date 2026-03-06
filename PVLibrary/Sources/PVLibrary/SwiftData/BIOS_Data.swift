@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
-#if canImport(SwiftData)
 import SwiftData
 import PVPrimitives
 
@@ -46,5 +45,3 @@ public class BIOS_Data {
         self.system = system
     }
 }
-
-#endif

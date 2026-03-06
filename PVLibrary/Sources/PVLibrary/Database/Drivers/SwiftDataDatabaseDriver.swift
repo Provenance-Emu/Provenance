@@ -9,7 +9,6 @@
 //  ModelActor (`SwiftDataDatabaseActor`) is provided for async/concurrent use.
 //
 
-#if canImport(SwiftData)
 import SwiftData
 import Foundation
 import PVLogging
@@ -21,7 +20,6 @@ import PVLogging
 /// The `ModelContext` is not thread-safe; callers must ensure all accesses happen on
 /// the same thread (typically the main thread for UI-driven code).
 /// For concurrent/async use, prefer `SwiftDataDatabaseActor`.
-@available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
 public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     // MARK: DatabaseDriverDataTypes
@@ -122,7 +120,6 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
 // MARK: - CRUD helpers
 
-@available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
 public extension SwiftDataDatabaseDriver {
 
     // MARK: Insert
@@ -305,7 +302,6 @@ public extension SwiftDataDatabaseDriver {
 /// Use this actor when you need to access the SwiftData store from background tasks
 /// or concurrently from multiple callers. The API mirrors `SwiftDataDatabaseDriver`
 /// with `async throws` signatures for actor-isolated access.
-@available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
 @ModelActor
 public actor SwiftDataDatabaseActor {
 
@@ -455,4 +451,3 @@ public actor SwiftDataDatabaseActor {
         try PVSwiftDataSchema.deleteAll(from: modelContext)
     }
 }
-#endif

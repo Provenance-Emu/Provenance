@@ -5,7 +5,6 @@
 //  Created by Agent on 2026-03-05.
 //
 
-#if canImport(SwiftData)
 import XCTest
 import SwiftData
 import RealmSwift
@@ -271,4 +270,3 @@ extension XCTestCase {
         }
     }
 }
-#endif
