@@ -128,7 +128,7 @@ import SwiftData
 ///   migration phase; observe-based updates can be layered on once the full
 ///   SwiftData migration is complete.
 @available(iOS 17, tvOS 17, *)
-final class SwiftDataContinuesDataDriver: ContinuesDataDriver {
+final class SwiftDataContinuesDataDriver: ContinuesDataDriver, @unchecked Sendable {
     private let modelContainer: ModelContainer
 
     init(modelContainer: ModelContainer) {
