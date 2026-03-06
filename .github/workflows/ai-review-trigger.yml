@@ -1,14 +1,25 @@
 name: AI Review Trigger
 
-# Lightweight trigger: catches push events on agent/** branches,
-# finds the associated PR, and dispatches ai-review.yml via workflow_dispatch.
+# Lightweight trigger: catches pull_request events on agent/** branches,
+# then dispatches ai-review.yml via workflow_dispatch.
+#
+# Why pull_request instead of push:
+#   The agent (claude-code-action) pushes the branch THEN creates the PR in two
+#   separate steps. A push-event trigger fires before the PR exists, so
+#   `gh pr list` returns nothing and the review is silently skipped.
+#   pull_request:opened fires after both the push AND the PR creation are done.
+#   pull_request:synchronize fires on every subsequent push to an open PR,
+#   including force-pushes from rebase (which also use GITHUB_TOKEN and
+#   therefore don't fire push events in other workflows).
+#
 # This indirection is needed because claude-code-action@v1 does not support
 # push event contexts — it requires issue_comment, pull_request, or workflow_dispatch.
 
 on:
-  push:
+  pull_request:
+    types: [opened, synchronize]
     branches:
-      - 'agent/**'
+      - develop
 
 permissions:
   contents: read
@@ -19,33 +30,27 @@ jobs:
     name: Find PR & dispatch review
     runs-on: ubuntu-latest
     steps:
-      - name: Find open PR and dispatch ai-review.yml
+      - name: Dispatch ai-review.yml for [Agent] PRs
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -e
 
-          BRANCH="${{ github.ref_name }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
           REPO="${{ github.repository }}"
 
-          PR_JSON=$(gh pr list \
-            --head "$BRANCH" \
-            --state open \
-            --json number,title \
-            --jq '.[0]' \
-            --repo "$REPO" 2>/dev/null || echo "{}")
+          echo "PR #$PR_NUMBER — $PR_TITLE (branch: $HEAD_BRANCH)"
 
-          PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number // empty')
-          PR_TITLE=$(echo "$PR_JSON"  | jq -r '.title  // empty')
-
-          if [ -z "$PR_NUMBER" ]; then
-            echo "No open PR found for branch $BRANCH — skipping review dispatch."
+          # Auto-review only [Agent] PRs from agent/** branches
+          if ! echo "$PR_TITLE" | grep -q "^\[Agent\]"; then
+            echo "Not an [Agent] PR — skipping auto-review."
             exit 0
           fi
 
-          # Auto-review only [Agent] PRs on push
-          if ! echo "$PR_TITLE" | grep -q "^\[Agent\]"; then
-            echo "PR #$PR_NUMBER is not an [Agent] PR — skipping auto-review."
+          if ! echo "$HEAD_BRANCH" | grep -q "^agent/"; then
+            echo "Not an agent/** branch — skipping auto-review."
             exit 0
           fi
 
