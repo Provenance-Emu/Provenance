@@ -22,6 +22,7 @@
 //    target (e.g. "iCloud.org.provenance-emu.provenance").
 
 import SwiftData
+import Foundation
 
 /// The full schema for Provenance's SwiftData store — version 1.
 ///
@@ -45,10 +46,10 @@ public enum PVSwiftDataSchema {
 
     // MARK: - App-wide shared container
 
+    /// Lock protecting `_sharedContainer` for thread-safe lazy initialisation.
+    private static let _lock = NSLock()
+
     /// Backing store for the app-wide singleton.  Access only through `sharedContainer`.
-    ///
-    /// `nonisolated(unsafe)` is intentional: writes happen at most once (at startup)
-    /// before any concurrent reads occur, which is safe in practice.
     nonisolated(unsafe) private static var _sharedContainer: ModelContainer?
 
     /// The single app-wide `ModelContainer` instance.
@@ -66,6 +67,8 @@ public enum PVSwiftDataSchema {
     /// - Throws: Only on first access if the local container cannot be created.
     public static var sharedContainer: ModelContainer {
         get throws {
+            _lock.lock()
+            defer { _lock.unlock() }
             if let c = _sharedContainer { return c }
             let c = try makePVModelContainer()
             _sharedContainer = c
@@ -77,12 +80,17 @@ public enum PVSwiftDataSchema {
     ///
     /// Call once at app startup (e.g. in `AppDelegate` or `@main` App init)
     /// to inject a CloudKit-backed container before any SwiftData access occurs.
-    /// Subsequent calls are ignored in release builds; in debug builds an
-    /// assertion fires to catch accidental double-initialisation.
+    /// Subsequent calls are ignored; in debug builds an assertion fires to
+    /// catch accidental double-initialisation.
     ///
     /// - Parameter container: The `ModelContainer` the whole app should use.
     public static func setSharedContainer(_ container: ModelContainer) {
-        assert(_sharedContainer == nil, "PVSwiftDataSchema.setSharedContainer called more than once — subsequent call ignored.")
+        _lock.lock()
+        defer { _lock.unlock() }
+        guard _sharedContainer == nil else {
+            assertionFailure("PVSwiftDataSchema.setSharedContainer called more than once — subsequent call ignored.")
+            return
+        }
         _sharedContainer = container
     }
 
