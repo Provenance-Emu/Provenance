@@ -12,19 +12,23 @@
 //    1. User_Data          (no dependencies)
 //    2. System_Data        (no dependencies)
 //    3. Core_Data          (no dependencies)
-//    4. File_Data          (no dependencies)
-//    5. ImageFile_Data     (no dependencies)
-//    6. BIOS_Data          (needs System_Data)
-//    7. Game_Data          (needs System_Data, File_Data, ImageFile_Data)
-//    8. SaveState_Data     (needs Game_Data, Core_Data, File_Data, ImageFile_Data)
-//    9. Cheats_Data        (needs Game_Data, Core_Data, File_Data)
-//   10. RecentGame_Data    (needs Game_Data, Core_Data)
-//   11. Library_Data       (needs Game_Data)
+//    4. BIOS_Data          (needs System_Data; creates File_Data as needed)
+//    5. Core-System wiring (both above must exist)
+//    6. Game_Data          (needs System_Data; creates File_Data & ImageFile_Data as needed)
+//    7. SaveState_Data     (needs Game_Data, Core_Data; may create File_Data & ImageFile_Data)
+//    8. Cheats_Data        (needs Game_Data, Core_Data; may create File_Data)
+//    9. RecentGame_Data    (needs Game_Data, Core_Data)
+//   10. Library_Data       (needs Game_Data)
+//
+//  Notes:
+//  - File_Data and ImageFile_Data records are created opportunistically while migrating
+//    other entities; they do not have standalone migration phases.
+//  - Validation compares counts only for the primary Realm root entities listed above.
 //
 //  Safety guarantees:
 //  - Idempotent: guarded by a UserDefaults flag + SwiftData uniqueness constraints
 //  - Non-destructive: Realm data is never deleted (caller decides when to remove it)
-//  - Validates record counts pre- and post-migration
+//  - Validates primary record counts pre- and post-migration
 //  - Progress is logged via PVLogging
 //
 
@@ -34,9 +38,7 @@ import Foundation
 import RealmSwift
 import PVLogging
 import PVPrimitives
-
-/// Key stored in UserDefaults after a successful migration.
-private let kMigrationCompletedKey = "PVRealmToSwiftDataMigrationCompleted"
+import PVRealm
 
 /// Errors thrown by ``RealmToSwiftDataMigration``.
 public enum RealmToSwiftDataMigrationError: Error, LocalizedError {
@@ -62,7 +64,9 @@ public enum RealmToSwiftDataMigrationError: Error, LocalizedError {
 /// Progress snapshot emitted during migration.
 public struct MigrationProgress: Sendable {
     public let entity: String
+    /// Number of records actually inserted (skips already-existing records).
     public let migrated: Int
+    /// Total number of records in the Realm snapshot for this entity.
     public let total: Int
     public var fraction: Double { total > 0 ? Double(migrated) / Double(total) : 1.0 }
 }
@@ -84,44 +88,57 @@ private let kBatchSize = 200
 /// ```
 public actor RealmToSwiftDataMigration {
 
+    // MARK: - Constants
+
+    /// UserDefaults key written after a successful migration.
+    /// Exposed as `internal` so tests can reference the key by name without hard-coding it.
+    static let migrationCompletedKey = "PVRealmToSwiftDataMigrationCompleted"
+
+    // MARK: - Properties
+
     private let modelContainer: ModelContainer
     private let defaults: UserDefaults
+    /// Optional Realm configuration; if `nil` the default configuration is used.
+    /// Pass an in-memory configuration in tests for isolation.
+    private let realmConfiguration: Realm.Configuration?
 
     public init(modelContainer: ModelContainer,
-                defaults: UserDefaults = .standard) {
+                defaults: UserDefaults = .standard,
+                realmConfiguration: Realm.Configuration? = nil) {
         self.modelContainer = modelContainer
         self.defaults = defaults
+        self.realmConfiguration = realmConfiguration
     }
 
     // MARK: Entry point
 
     /// Runs the migration if it has not already been completed.
     ///
-    /// - Parameter progressHandler: Optional closure called after each entity batch.
+    /// - Parameter progressHandler: Optional closure called after each record is inserted.
     /// - Throws: ``RealmToSwiftDataMigrationError`` if migration fails.
     public func migrateIfNeeded(
         progressHandler: (@Sendable (MigrationProgress) -> Void)? = nil
     ) async throws {
-        guard !defaults.bool(forKey: kMigrationCompletedKey) else {
+        guard !defaults.bool(forKey: Self.migrationCompletedKey) else {
             ILOG("[Migration] Already completed — skipping.")
             return
         }
         ILOG("[Migration] Starting Realm → SwiftData migration.")
         try await runMigration(progressHandler: progressHandler)
-        defaults.set(true, forKey: kMigrationCompletedKey)
+        defaults.set(true, forKey: Self.migrationCompletedKey)
         ILOG("[Migration] Migration complete.")
     }
 
     /// Resets the completion flag so the migration will run again on the next call
     /// to ``migrateIfNeeded(progressHandler:)``.  Intended for debugging / testing only.
     public func resetMigrationFlag() {
-        defaults.removeObject(forKey: kMigrationCompletedKey)
+        defaults.removeObject(forKey: Self.migrationCompletedKey)
         ILOG("[Migration] Reset migration flag.")
     }
 
     /// Returns `true` if the migration has already been marked as complete.
     public var isMigrationCompleted: Bool {
-        defaults.bool(forKey: kMigrationCompletedKey)
+        defaults.bool(forKey: Self.migrationCompletedKey)
     }
 
     // MARK: - Private implementation
@@ -129,11 +146,11 @@ public actor RealmToSwiftDataMigration {
     private func runMigration(
         progressHandler: (@Sendable (MigrationProgress) -> Void)?
     ) async throws {
-        // Open Realm on this actor context.  Realm objects must not cross actor
+        // Open Realm on this actor context. Realm objects must not cross actor
         // boundaries, so we snapshot the data we need before entering SwiftData work.
         let snapshot: RealmSnapshot
         do {
-            snapshot = try RealmSnapshot()
+            snapshot = try RealmSnapshot(configuration: realmConfiguration)
         } catch {
             throw RealmToSwiftDataMigrationError.realmUnavailable(underlying: error)
         }
@@ -142,6 +159,12 @@ public actor RealmToSwiftDataMigration {
 
         let context = ModelContext(modelContainer)
         context.autosaveEnabled = false
+
+        // Shared caches for File_Data and ImageFile_Data, keyed by partialPath.
+        // These are populated lazily during migration to avoid creating duplicate records
+        // when multiple entities reference the same underlying file.
+        var fileCache: [String: File_Data] = [:]
+        var imageCache: [String: ImageFile_Data] = [:]
 
         do {
             // --- Phase 1: independent leaf objects ---
@@ -155,7 +178,7 @@ public actor RealmToSwiftDataMigration {
             try saveBatch(context)
 
             // --- Phase 2: objects that depend on systems/cores ---
-            try migrateBIOSes(snapshot: snapshot, context: context, systemMap: systemMap, progress: progressHandler)
+            try migrateBIOSes(snapshot: snapshot, context: context, systemMap: systemMap, fileCache: &fileCache, progress: progressHandler)
             try saveBatch(context)
 
             // Wire core ↔ system many-to-many after both are persisted.
@@ -163,14 +186,14 @@ public actor RealmToSwiftDataMigration {
             try saveBatch(context)
 
             // --- Phase 3: games (most complex object) ---
-            let gameMap = try migrateGames(snapshot: snapshot, context: context, systemMap: systemMap, progress: progressHandler)
+            let gameMap = try migrateGames(snapshot: snapshot, context: context, systemMap: systemMap, fileCache: &fileCache, imageCache: &imageCache, progress: progressHandler)
             try saveBatch(context)
 
             // --- Phase 4: child objects of games ---
-            try migrateSaveStates(snapshot: snapshot, context: context, gameMap: gameMap, coreMap: coreMap, progress: progressHandler)
+            try migrateSaveStates(snapshot: snapshot, context: context, gameMap: gameMap, coreMap: coreMap, fileCache: &fileCache, imageCache: &imageCache, progress: progressHandler)
             try saveBatch(context)
 
-            try migrateCheats(snapshot: snapshot, context: context, gameMap: gameMap, coreMap: coreMap, progress: progressHandler)
+            try migrateCheats(snapshot: snapshot, context: context, gameMap: gameMap, coreMap: coreMap, fileCache: &fileCache, progress: progressHandler)
             try saveBatch(context)
 
             try migrateRecentGames(snapshot: snapshot, context: context, gameMap: gameMap, coreMap: coreMap, progress: progressHandler)
@@ -197,6 +220,54 @@ public actor RealmToSwiftDataMigration {
         try context.save()
     }
 
+    // MARK: - File / Image deduplication helpers
+
+    /// Returns an existing `File_Data` for the given `partialPath`, or inserts and caches a new one.
+    /// Using a shared cache across all migration phases avoids duplicate rows when multiple entities
+    /// reference the same file path.
+    private func getOrCreateFile(
+        partialPath: String,
+        md5Cache: String? = nil,
+        createdDate: Date = Date(),
+        context: ModelContext,
+        cache: inout [String: File_Data]
+    ) -> File_Data {
+        if let cached = cache[partialPath] { return cached }
+        let f = File_Data(partialPath: partialPath, md5Cache: md5Cache, createdDate: createdDate)
+        context.insert(f)
+        cache[partialPath] = f
+        return f
+    }
+
+    /// Returns an existing `ImageFile_Data` for the given `partialPath`, or inserts and caches a new one.
+    /// Using a shared cache across all migration phases avoids duplicate rows when multiple entities
+    /// reference the same image path.
+    private func getOrCreateImage(
+        partialPath: String,
+        md5Cache: String? = nil,
+        createdDate: Date = Date(),
+        width: Float = 0,
+        height: Float = 0,
+        ratio: Float = 0,
+        layout: String = "",
+        context: ModelContext,
+        cache: inout [String: ImageFile_Data]
+    ) -> ImageFile_Data {
+        if let cached = cache[partialPath] { return cached }
+        let img = ImageFile_Data(
+            partialPath: partialPath,
+            md5Cache: md5Cache,
+            createdDate: createdDate,
+            width: width,
+            height: height,
+            ratio: ratio,
+            layout: layout
+        )
+        context.insert(img)
+        cache[partialPath] = img
+        return img
+    }
+
     // MARK: - Phase implementations
 
     // MARK: Users
@@ -209,19 +280,22 @@ public actor RealmToSwiftDataMigration {
         let users = snapshot.users
         ILOG("[Migration] Migrating \(users.count) users.")
 
-        for (idx, u) in users.enumerated() {
-            // Idempotency: skip if already exists (unique constraint on uuid)
-            let uuid = u.uuid
-            let existing = try? context.fetch(FetchDescriptor<User_Data>(
-                predicate: #Predicate { $0.uuid == uuid }
-            ))
-            if existing?.isEmpty == false { continue }
+        // Prefetch all existing User_Data UUIDs once to avoid N+1 per-row queries.
+        let existingUsers = try context.fetch(FetchDescriptor<User_Data>())
+        var existingUUIDs = Set(existingUsers.map { $0.uuid })
+        var insertedCount = 0
 
-            let obj = User_Data(uuid: u.uuid, name: u.name, lastSeen: u.lastSeen)
+        for (idx, u) in users.enumerated() {
+            let uuid = u.uuid
+            guard !existingUUIDs.contains(uuid) else { continue }
+
+            let obj = User_Data(uuid: uuid, name: u.name, lastSeen: u.lastSeen)
             context.insert(obj)
+            existingUUIDs.insert(uuid)
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "User", migrated: idx + 1, total: users.count))
+            progress?(MigrationProgress(entity: "User", migrated: insertedCount, total: users.count))
         }
     }
 
@@ -235,19 +309,15 @@ public actor RealmToSwiftDataMigration {
     ) throws -> [String: System_Data] {
         let systems = snapshot.systems
         ILOG("[Migration] Migrating \(systems.count) systems.")
-        var map: [String: System_Data] = [:]
+
+        // Prefetch all existing System_Data records and index by identifier.
+        let existing = try context.fetch(FetchDescriptor<System_Data>())
+        var map: [String: System_Data] = Dictionary(uniqueKeysWithValues: existing.map { ($0.identifier, $0) })
+        var insertedCount = 0
 
         for (idx, s) in systems.enumerated() {
             let identifier = s.identifier
             if map[identifier] != nil { continue }
-            // Idempotency: look up existing
-            let existing = try? context.fetch(FetchDescriptor<System_Data>(
-                predicate: #Predicate { $0.identifier == identifier }
-            ))
-            if let first = existing?.first {
-                map[identifier] = first
-                continue
-            }
 
             let obj = System_Data(
                 name: s.name,
@@ -271,9 +341,10 @@ public actor RealmToSwiftDataMigration {
             )
             context.insert(obj)
             map[identifier] = obj
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "System", migrated: idx + 1, total: systems.count))
+            progress?(MigrationProgress(entity: "System", migrated: insertedCount, total: systems.count))
         }
         return map
     }
@@ -288,15 +359,15 @@ public actor RealmToSwiftDataMigration {
     ) throws -> [String: Core_Data] {
         let cores = snapshot.cores
         ILOG("[Migration] Migrating \(cores.count) cores.")
-        var map: [String: Core_Data] = [:]
+
+        // Prefetch all existing Core_Data records and index by identifier.
+        let existing = try context.fetch(FetchDescriptor<Core_Data>())
+        var map: [String: Core_Data] = Dictionary(uniqueKeysWithValues: existing.map { ($0.identifier, $0) })
+        var insertedCount = 0
 
         for (idx, c) in cores.enumerated() {
             let identifier = c.identifier
             if map[identifier] != nil { continue }
-            let existing = try? context.fetch(FetchDescriptor<Core_Data>(
-                predicate: #Predicate { $0.identifier == identifier }
-            ))
-            if let first = existing?.first { map[identifier] = first; continue }
 
             let obj = Core_Data(
                 identifier: identifier,
@@ -308,9 +379,10 @@ public actor RealmToSwiftDataMigration {
             )
             context.insert(obj)
             map[identifier] = obj
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "Core", migrated: idx + 1, total: cores.count))
+            progress?(MigrationProgress(entity: "Core", migrated: insertedCount, total: cores.count))
         }
         return map
     }
@@ -339,27 +411,31 @@ public actor RealmToSwiftDataMigration {
         snapshot: RealmSnapshot,
         context: ModelContext,
         systemMap: [String: System_Data],
+        fileCache: inout [String: File_Data],
         progress: (@Sendable (MigrationProgress) -> Void)?
     ) throws {
         let bioses = snapshot.bioses
         ILOG("[Migration] Migrating \(bioses.count) BIOSes.")
 
+        // Prefetch existing BIOS records. Deduplicate by both filename AND md5 to
+        // respect the unique constraints on both fields and prevent save failures.
+        let existing = try context.fetch(FetchDescriptor<BIOS_Data>())
+        var existingByFilename = Set(existing.map { $0.expectedFilename })
+        var existingByMD5 = Set(existing.map { $0.expectedMD5 })
+        var insertedCount = 0
+
         for (idx, b) in bioses.enumerated() {
             let filename = b.expectedFilename
-            let existing = try? context.fetch(FetchDescriptor<BIOS_Data>(
-                predicate: #Predicate { $0.expectedFilename == filename }
-            ))
-            if existing?.isEmpty == false { continue }
+            let md5 = b.expectedMD5
+            guard !existingByFilename.contains(filename) && !existingByMD5.contains(md5) else { continue }
 
             let fileData: File_Data? = b.filePartialPath.map {
-                let f = File_Data(partialPath: $0, md5Cache: b.fileMD5Cache, createdDate: b.fileCreatedDate ?? Date())
-                context.insert(f)
-                return f
+                getOrCreateFile(partialPath: $0, md5Cache: b.fileMD5Cache, createdDate: b.fileCreatedDate ?? Date(), context: context, cache: &fileCache)
             }
 
             let obj = BIOS_Data(
                 expectedFilename: filename,
-                expectedMD5: b.expectedMD5,
+                expectedMD5: md5,
                 expectedSize: b.expectedSize,
                 optional: b.optional,
                 descriptionText: b.descriptionText,
@@ -369,9 +445,12 @@ public actor RealmToSwiftDataMigration {
                 system: b.systemIdentifier.flatMap { systemMap[$0] }
             )
             context.insert(obj)
+            existingByFilename.insert(filename)
+            existingByMD5.insert(md5)
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "BIOS", migrated: idx + 1, total: bioses.count))
+            progress?(MigrationProgress(entity: "BIOS", migrated: insertedCount, total: bioses.count))
         }
     }
 
@@ -382,62 +461,56 @@ public actor RealmToSwiftDataMigration {
         snapshot: RealmSnapshot,
         context: ModelContext,
         systemMap: [String: System_Data],
+        fileCache: inout [String: File_Data],
+        imageCache: inout [String: ImageFile_Data],
         progress: (@Sendable (MigrationProgress) -> Void)?
     ) throws -> [String: Game_Data] {
         let games = snapshot.games
         ILOG("[Migration] Migrating \(games.count) games.")
-        var map: [String: Game_Data] = [:]
+
+        // Prefetch all existing Game_Data records indexed by md5Hash to avoid N+1 queries.
+        let existing = try context.fetch(FetchDescriptor<Game_Data>())
+        var map: [String: Game_Data] = Dictionary(uniqueKeysWithValues: existing.map { ($0.md5Hash, $0) })
+        var insertedCount = 0
 
         for (idx, g) in games.enumerated() {
             let md5 = g.md5Hash
             if map[md5] != nil { continue }
-            let existing = try? context.fetch(FetchDescriptor<Game_Data>(
-                predicate: #Predicate { $0.md5Hash == md5 }
-            ))
-            if let first = existing?.first { map[md5] = first; continue }
 
-            // Primary file
+            // Primary file — reuse an existing File_Data row if this path was already migrated.
             let fileData: File_Data? = g.filePartialPath.map {
-                let f = File_Data(partialPath: $0, md5Cache: g.fileMD5Cache, createdDate: g.fileCreatedDate ?? Date())
-                context.insert(f)
-                return f
+                getOrCreateFile(partialPath: $0, md5Cache: g.fileMD5Cache, createdDate: g.fileCreatedDate ?? Date(), context: context, cache: &fileCache)
             }
 
-            // Artwork image
+            // Artwork image — reuse an existing ImageFile_Data row if already migrated.
             let artworkData: ImageFile_Data? = g.artworkPartialPath.map {
-                let img = ImageFile_Data(
+                getOrCreateImage(
                     partialPath: $0,
-                    md5Cache: nil,
-                    createdDate: Date(),
                     width: g.artworkWidth,
                     height: g.artworkHeight,
                     ratio: g.artworkRatio,
-                    layout: g.artworkLayout
+                    layout: g.artworkLayout,
+                    context: context,
+                    cache: &imageCache
                 )
-                context.insert(img)
-                return img
             }
 
-            // Related files
             var relatedFiles: [File_Data] = []
             for rf in g.relatedFilePaths {
-                let f = File_Data(partialPath: rf, md5Cache: nil, createdDate: Date())
-                context.insert(f)
-                relatedFiles.append(f)
+                relatedFiles.append(getOrCreateFile(partialPath: rf, context: context, cache: &fileCache))
             }
 
-            // Screenshots
             var screenshots: [ImageFile_Data] = []
             for ss in g.screenshotPaths {
-                let img = ImageFile_Data(
+                screenshots.append(getOrCreateImage(
                     partialPath: ss.partialPath,
                     width: ss.width,
                     height: ss.height,
                     ratio: ss.ratio,
-                    layout: ss.layout
-                )
-                context.insert(img)
-                screenshots.append(img)
+                    layout: ss.layout,
+                    context: context,
+                    cache: &imageCache
+                ))
             }
 
             let obj = Game_Data(
@@ -479,9 +552,10 @@ public actor RealmToSwiftDataMigration {
             )
             context.insert(obj)
             map[md5] = obj
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "Game", migrated: idx + 1, total: games.count))
+            progress?(MigrationProgress(entity: "Game", migrated: insertedCount, total: games.count))
         }
         return map
     }
@@ -493,27 +567,27 @@ public actor RealmToSwiftDataMigration {
         context: ModelContext,
         gameMap: [String: Game_Data],
         coreMap: [String: Core_Data],
+        fileCache: inout [String: File_Data],
+        imageCache: inout [String: ImageFile_Data],
         progress: (@Sendable (MigrationProgress) -> Void)?
     ) throws {
         let saves = snapshot.saveStates
         ILOG("[Migration] Migrating \(saves.count) save states.")
 
+        // Prefetch all existing SaveState_Data IDs to avoid N+1 queries.
+        let existing = try context.fetch(FetchDescriptor<SaveState_Data>())
+        var existingIDs = Set(existing.map { $0.id })
+        var insertedCount = 0
+
         for (idx, s) in saves.enumerated() {
             let id = s.id
-            let existing = try? context.fetch(FetchDescriptor<SaveState_Data>(
-                predicate: #Predicate { $0.id == id }
-            ))
-            if existing?.isEmpty == false { continue }
+            guard !existingIDs.contains(id) else { continue }
 
             let fileData: File_Data? = s.filePartialPath.map {
-                let f = File_Data(partialPath: $0, md5Cache: nil, createdDate: Date())
-                context.insert(f)
-                return f
+                getOrCreateFile(partialPath: $0, context: context, cache: &fileCache)
             }
             let imageData: ImageFile_Data? = s.imagePartialPath.map {
-                let img = ImageFile_Data(partialPath: $0)
-                context.insert(img)
-                return img
+                getOrCreateImage(partialPath: $0, context: context, cache: &imageCache)
             }
 
             let obj = SaveState_Data(
@@ -528,9 +602,11 @@ public actor RealmToSwiftDataMigration {
                 image: imageData
             )
             context.insert(obj)
+            existingIDs.insert(id)
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "SaveState", migrated: idx + 1, total: saves.count))
+            progress?(MigrationProgress(entity: "SaveState", migrated: insertedCount, total: saves.count))
         }
     }
 
@@ -541,22 +617,23 @@ public actor RealmToSwiftDataMigration {
         context: ModelContext,
         gameMap: [String: Game_Data],
         coreMap: [String: Core_Data],
+        fileCache: inout [String: File_Data],
         progress: (@Sendable (MigrationProgress) -> Void)?
     ) throws {
         let cheats = snapshot.cheats
         ILOG("[Migration] Migrating \(cheats.count) cheats.")
 
+        // Prefetch all existing Cheats_Data IDs to avoid N+1 queries.
+        let existing = try context.fetch(FetchDescriptor<Cheats_Data>())
+        var existingIDs = Set(existing.map { $0.id })
+        var insertedCount = 0
+
         for (idx, c) in cheats.enumerated() {
             let id = c.id
-            let existing = try? context.fetch(FetchDescriptor<Cheats_Data>(
-                predicate: #Predicate { $0.id == id }
-            ))
-            if existing?.isEmpty == false { continue }
+            guard !existingIDs.contains(id) else { continue }
 
             let fileData: File_Data? = c.filePartialPath.map {
-                let f = File_Data(partialPath: $0, md5Cache: nil, createdDate: Date())
-                context.insert(f)
-                return f
+                getOrCreateFile(partialPath: $0, context: context, cache: &fileCache)
             }
 
             let obj = Cheats_Data(
@@ -573,9 +650,11 @@ public actor RealmToSwiftDataMigration {
                 file: fileData
             )
             context.insert(obj)
+            existingIDs.insert(id)
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "Cheat", migrated: idx + 1, total: cheats.count))
+            progress?(MigrationProgress(entity: "Cheat", migrated: insertedCount, total: cheats.count))
         }
     }
 
@@ -591,12 +670,14 @@ public actor RealmToSwiftDataMigration {
         let recents = snapshot.recentGames
         ILOG("[Migration] Migrating \(recents.count) recent games.")
 
+        // Prefetch all existing RecentGame_Data IDs to avoid N+1 queries.
+        let existing = try context.fetch(FetchDescriptor<RecentGame_Data>())
+        var existingIDs = Set(existing.map { $0.id })
+        var insertedCount = 0
+
         for (idx, r) in recents.enumerated() {
             let id = r.id
-            let existing = try? context.fetch(FetchDescriptor<RecentGame_Data>(
-                predicate: #Predicate { $0.id == id }
-            ))
-            if existing?.isEmpty == false { continue }
+            guard !existingIDs.contains(id) else { continue }
 
             let obj = RecentGame_Data(
                 id: id,
@@ -605,9 +686,11 @@ public actor RealmToSwiftDataMigration {
                 core: r.coreIdentifier.flatMap { coreMap[$0] }
             )
             context.insert(obj)
+            existingIDs.insert(id)
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "RecentGame", migrated: idx + 1, total: recents.count))
+            progress?(MigrationProgress(entity: "RecentGame", migrated: insertedCount, total: recents.count))
         }
     }
 
@@ -622,12 +705,14 @@ public actor RealmToSwiftDataMigration {
         let libs = snapshot.libraries
         ILOG("[Migration] Migrating \(libs.count) libraries.")
 
+        // Prefetch all existing Library_Data UUIDs to avoid N+1 queries.
+        let existing = try context.fetch(FetchDescriptor<Library_Data>())
+        var existingUUIDs = Set(existing.map { $0.uuid })
+        var insertedCount = 0
+
         for (idx, l) in libs.enumerated() {
             let uuid = l.uuid
-            let existing = try? context.fetch(FetchDescriptor<Library_Data>(
-                predicate: #Predicate { $0.uuid == uuid }
-            ))
-            if existing?.isEmpty == false { continue }
+            guard !existingUUIDs.contains(uuid) else { continue }
 
             let games = l.gameMD5s.compactMap { gameMap[$0] }
             let obj = Library_Data(
@@ -642,9 +727,11 @@ public actor RealmToSwiftDataMigration {
                 games: games
             )
             context.insert(obj)
+            existingUUIDs.insert(uuid)
+            insertedCount += 1
 
             if (idx + 1) % kBatchSize == 0 { try saveBatch(context) }
-            progress?(MigrationProgress(entity: "Library", migrated: idx + 1, total: libs.count))
+            progress?(MigrationProgress(entity: "Library", migrated: insertedCount, total: libs.count))
         }
     }
 
@@ -664,27 +751,32 @@ public actor RealmToSwiftDataMigration {
         ]
 
         for (name, realmCount) in realmCounts {
-            let sdCount = fetchCount(of: name, context: context)
-            if sdCount < realmCount {
-                // Warn only — count may differ due to deduplication (unique constraints).
-                WLOG("[Migration] Validation: \(name) Realm=\(realmCount) SwiftData=\(sdCount). Some records may have been deduplicated or skipped.")
-            } else {
-                ILOG("[Migration] Validation OK: \(name) — Realm=\(realmCount), SwiftData=\(sdCount)")
+            do {
+                let sdCount = try fetchCount(of: name, context: context)
+                if sdCount < realmCount {
+                    // Warn only — count may differ due to deduplication (unique constraints).
+                    WLOG("[Migration] Validation: \(name) Realm=\(realmCount) SwiftData=\(sdCount). Some records may have been deduplicated or skipped.")
+                } else {
+                    ILOG("[Migration] Validation OK: \(name) — Realm=\(realmCount), SwiftData=\(sdCount)")
+                }
+            } catch {
+                ELOG("[Migration] Validation failed to fetch SwiftData count for \(name): \(error)")
+                throw RealmToSwiftDataMigrationError.swiftDataContextError(underlying: error)
             }
         }
     }
 
-    private func fetchCount(of entity: String, context: ModelContext) -> Int {
+    private func fetchCount(of entity: String, context: ModelContext) throws -> Int {
         switch entity {
-        case "Game":       return (try? context.fetchCount(FetchDescriptor<Game_Data>())) ?? 0
-        case "System":     return (try? context.fetchCount(FetchDescriptor<System_Data>())) ?? 0
-        case "Core":       return (try? context.fetchCount(FetchDescriptor<Core_Data>())) ?? 0
-        case "SaveState":  return (try? context.fetchCount(FetchDescriptor<SaveState_Data>())) ?? 0
-        case "Cheat":      return (try? context.fetchCount(FetchDescriptor<Cheats_Data>())) ?? 0
-        case "RecentGame": return (try? context.fetchCount(FetchDescriptor<RecentGame_Data>())) ?? 0
-        case "Library":    return (try? context.fetchCount(FetchDescriptor<Library_Data>())) ?? 0
-        case "User":       return (try? context.fetchCount(FetchDescriptor<User_Data>())) ?? 0
-        case "BIOS":       return (try? context.fetchCount(FetchDescriptor<BIOS_Data>())) ?? 0
+        case "Game":       return try context.fetchCount(FetchDescriptor<Game_Data>())
+        case "System":     return try context.fetchCount(FetchDescriptor<System_Data>())
+        case "Core":       return try context.fetchCount(FetchDescriptor<Core_Data>())
+        case "SaveState":  return try context.fetchCount(FetchDescriptor<SaveState_Data>())
+        case "Cheat":      return try context.fetchCount(FetchDescriptor<Cheats_Data>())
+        case "RecentGame": return try context.fetchCount(FetchDescriptor<RecentGame_Data>())
+        case "Library":    return try context.fetchCount(FetchDescriptor<Library_Data>())
+        case "User":       return try context.fetchCount(FetchDescriptor<User_Data>())
+        case "BIOS":       return try context.fetchCount(FetchDescriptor<BIOS_Data>())
         default:           return 0
         }
     }
@@ -707,20 +799,26 @@ struct RealmSnapshot {
     let libraries: [LibrarySnapshot]
     let users: [UserSnapshot]
 
-    init() throws {
-        // Open the default Realm (configured by RomDatabase.setDefaultRealmConfig() at launch).
-        // PVLibrary already depends on PVRealm, which brings RealmSwift in.
-        let realm = try Realm()
+    /// - Parameter configuration: Realm configuration to use. If `nil`, the process-wide
+    ///   default configuration is used (set by `RomDatabase.setDefaultRealmConfig()` at launch).
+    ///   Pass an in-memory configuration in tests for isolation.
+    init(configuration: Realm.Configuration? = nil) throws {
+        let realm: Realm
+        if let config = configuration {
+            realm = try Realm(configuration: config)
+        } else {
+            realm = try Realm()
+        }
 
-        systems    = realm.objects(PVSystem.self).map(SystemSnapshot.init)
-        cores      = realm.objects(PVCore.self).map(CoreSnapshot.init)
-        games      = realm.objects(PVGame.self).map(GameSnapshot.init)
-        saveStates = realm.objects(PVSaveState.self).map(SaveStateSnapshot.init)
-        cheats     = realm.objects(PVCheats.self).map(CheatSnapshot.init)
-        bioses     = realm.objects(PVBIOS.self).map(BIOSSnapshot.init)
+        systems     = realm.objects(PVSystem.self).map(SystemSnapshot.init)
+        cores       = realm.objects(PVCore.self).map(CoreSnapshot.init)
+        games       = realm.objects(PVGame.self).map(GameSnapshot.init)
+        saveStates  = realm.objects(PVSaveState.self).map(SaveStateSnapshot.init)
+        cheats      = realm.objects(PVCheats.self).map(CheatSnapshot.init)
+        bioses      = realm.objects(PVBIOS.self).map(BIOSSnapshot.init)
         recentGames = realm.objects(PVRecentGame.self).map(RecentGameSnapshot.init)
-        libraries  = realm.objects(PVLibrary.self).map(LibrarySnapshot.init)
-        users      = realm.objects(PVUser.self).map(UserSnapshot.init)
+        libraries   = realm.objects(PVLibrary.self).map(LibrarySnapshot.init)
+        users       = realm.objects(PVUser.self).map(UserSnapshot.init)
     }
 }
 
@@ -1051,4 +1149,4 @@ struct UserSnapshot {
     }
 }
 
-
+#endif
