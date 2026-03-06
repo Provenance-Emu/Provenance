@@ -68,13 +68,63 @@ jobs:
           submodules: false
           fetch-depth: 0
 
+      - name: Post initial status comment
+        id: status_comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUM="${{ github.event.inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}"
+          ACTION="${{ github.event.inputs.action }}"
+
+          if [ -z "$PR_NUM" ] || [ "$PR_NUM" = "0" ]; then
+            echo "comment_id=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          case "$ACTION" in
+            fix_ai_review) TITLE="🔧 Applying AI Review Fixes"  ;;
+            ai_approved)   TITLE="✅ Processing AI Approval"    ;;
+            *)             TITLE="🤔 Working on Request"        ;;
+          esac
+
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          cat > /tmp/claude_status.md << STATUSEOF
+          <!-- claude-status -->
+          ## ${TITLE}
+
+          ### Progress
+          - [x] 🚀 Agent started
+          - [ ] 📖 Reading context...
+          - [ ] 🔨 Working...
+          - [ ] 📤 Done
+
+          *Started: ${TIMESTAMP}*
+          STATUSEOF
+
+          # Find existing status comment to update, or create new
+          EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
+            --jq '[.[] | select(.body | test("<!-- claude-status -->";""))] | last | .id // empty' \
+            2>/dev/null || echo "")
+
+          if [ -n "$EXISTING" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${EXISTING}" \
+              --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
+            echo "comment_id=$EXISTING" >> "$GITHUB_OUTPUT"
+          else
+            COMMENT_ID=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
+              --method POST --field body=@/tmp/claude_status.md \
+              --jq '.id' 2>/dev/null || echo "")
+            echo "comment_id=$COMMENT_ID" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run Claude Code
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
           allowed_bots: 'github-actions[bot]'
-          claude_args: "--allowedTools 'Bash(gh issue comment:*),Bash(gh pr comment:*),Bash(gh pr create:*),Bash(gh pr edit:*),Bash(gh pr view:*),Bash(gh pr merge:*),Bash(gh issue edit:*),Bash(gh label:*),Bash(gh api:*),Bash(git:*),Bash(swift:*),Bash(swiftlint:*),Read,Write,Edit,Glob,Grep'"
+          claude_args: "--allowedTools 'Bash(gh issue comment:*),Bash(gh pr comment:*),Bash(gh pr create:*),Bash(gh pr edit:*),Bash(gh pr view:*),Bash(gh pr merge:*),Bash(gh issue edit:*),Bash(gh label:*),Bash(gh api:*),Bash(git:*),Bash(swift:*),Bash(swiftlint:*),Bash(cat:*),Bash(sed:*),Bash(date:*),Read,Write,Edit,Glob,Grep'"
           prompt: |
             You are working on the Provenance emulator app repository.
             Read CLAUDE.md for project conventions and module structure.
@@ -85,11 +135,50 @@ jobs:
             - Actor: ${{ github.actor }}
             - Issue/PR number: ${{ github.event.inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
             - Issue title: ${{ github.event.issue.title || github.event.pull_request.title || '' }}
+            - Status comment ID: ${{ steps.status_comment.outputs.comment_id }}
+
+            ## Live Status Comment
+            A `<!-- claude-status -->` comment has been posted to the PR (ID above).
+            Update it to show real-time progress using this exact pattern:
+            ```
+            STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
+            TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+            cat > /tmp/claude_status.md << STATUSEOF
+            <!-- claude-status -->
+            ## 🔧 Applying Fixes — In Progress
+
+            ### Progress
+            - [x] 🚀 Agent started
+            - [x] 📖 Read context
+            - [x] 🔨 Applied 3 fixes
+            - [ ] 📤 Pushing changes...
+
+            *Updated: ${TIMESTAMP}*
+            STATUSEOF
+            [ -n "$STATUS_ID" ] && gh api repos/$GITHUB_REPOSITORY/issues/comments/${STATUS_ID} \
+              --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
+            ```
+            Update after: reading context, each major fix, pushing, completion.
+            At completion, ensure the status comment shows final state (✅ or ❌).
+
+            ## Posting Comments — REQUIRED FORMAT
+            NEVER use `--body "line1\nline2"` — `\n` is a literal backslash-n, not a newline.
+            For ANY multi-line comment, write to a file first:
+            ```
+            cat > /tmp/comment.md << 'COMMENTEOF'
+            ## Title
+
+            - point one
+            - point two
+            COMMENTEOF
+            gh pr comment <N> --body-file /tmp/comment.md --repo $GITHUB_REPOSITORY
+            ```
+            Use `--body "text"` only for truly single-line messages with no newlines.
 
             ## Trigger Context
             ${{ github.event_name == 'pull_request_review' && github.event.review.state == 'changes_requested' && 'A human reviewer requested changes on this PR. Read all review comments and fix them.' || '' }}
             ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_ai_review' && format('The AI reviewer requested changes on PR #{0}. Read ALL review comments and fix every issue. Post a marker comment when done.', github.event.inputs.pr_number) || '' }}
-            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'ai_approved' && format('The AI reviewer has approved PR #{0} (or max review cycles reached). Enable auto-merge, add the ready-for-review label, and assign @JoeMatt for final review. Post a summary comment.', github.event.inputs.pr_number) || '' }}
+            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'ai_approved' && format('The AI reviewer has approved PR #{0} (or max review cycles reached). Enable auto-merge, add the ready-for-review label, and assign @JoeMatt for final review.', github.event.inputs.pr_number) || '' }}
             ${{ contains(github.event.comment.body || '', '/claude-fix') && 'Fix all pending review comments on this PR. Read the full review, address each comment, commit fixes, and push.' || '' }}
 
             ## User Request
@@ -97,9 +186,9 @@ jobs:
 
             ## Core Instructions
             1. Address the trigger context and user request above
-            2. Post progress/responses as comments:
-               - On issues: `gh issue comment <number> --body "..."`
-               - On PRs: `gh pr comment <number> --body "..."`
+            2. Post progress/responses as comments (use --body-file for multi-line, see above):
+               - On issues: `gh issue comment <number> --body-file /tmp/msg.md`
+               - On PRs: `gh pr comment <number> --body-file /tmp/msg.md`
                - The issue/PR number is: ${{ github.event.inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
             3. Target all PRs to the **'develop'** branch
             4. Prefix agent PR titles with '[Agent]'
@@ -131,7 +220,7 @@ jobs:
             **After creating a new PR:**
             9.  Enable auto-merge: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
             10. Set initial labels: `gh pr edit <number> --add-label "agent-work,ai-reviewing"`
-            11. Post a comment: "🤖 PR created. AI review starting automatically."
+            11. Post a comment: `gh pr comment <number> --body "🤖 PR created. AI review starting automatically." --repo $GITHUB_REPOSITORY`
             NOTE: Do NOT manually request a review — ai-review.yml fires automatically on the push.
 
             **When fixing AI review comments (fix_ai_review):**
@@ -139,24 +228,51 @@ jobs:
                 `gh pr edit <number> --add-label "needs-fixes" --remove-label "ai-reviewing,ready-for-review"`
             13. Get the PR branch: `gh pr view <number> --json headRefName --jq .headRefName`
             14. Checkout the branch: `git fetch origin && git checkout <branch> && git pull origin <branch>`
-            15. Fetch the latest AI review body:
+            15. Update status comment: "🔨 Applying fixes..." (see Live Status Comment above)
+            16. Fetch the latest AI review body:
                 `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/reviews \
                   --jq '[.[] | select(.user.login == "github-actions[bot]")] | sort_by(.submitted_at) | last | .body'`
-            16. Also fetch inline review comments:
+            17. Also fetch inline review comments:
                 `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/comments \
                   --jq '[.[] | select(.user.login == "github-actions[bot]")] | .[] | {path, line: .original_line, body}'`
-            17. Fix every CRITICAL and MAJOR issue. Fix MINOR issues where trivial.
-            18. Commit: `fix: address AI review — <brief summary>`
-            19. Push to EXISTING branch (never create a new branch or PR):
+            18. Fix every CRITICAL and MAJOR issue. Fix MINOR issues where trivial.
+            19. Commit: `fix: address AI review — <brief summary>`
+            20. Push to EXISTING branch (never create a new branch or PR):
                 `git push origin <branch>`
-            20. Update label — fixes pushed, review incoming:
+            21. Update label — fixes pushed, review incoming:
                 `gh pr edit <number> --add-label "ai-reviewing" --remove-label "needs-fixes"`
-            21. Post marker: `gh pr comment <number> --body "<!-- ai-review-processed -->\n✅ Fixes pushed: <summary>"`
+            22. Post marker comment (use --body-file):
+                ```
+                cat > /tmp/marker.md << 'MARKEREOF'
+                <!-- ai-review-processed -->
+                ✅ Fixes pushed — <brief summary of what was fixed>
+                MARKEREOF
+                gh pr comment <number> --body-file /tmp/marker.md --repo $GITHUB_REPOSITORY
+                ```
+            23. Update status comment to show completion (cycle N dispatched).
             NOTE: Do NOT re-request review. The push auto-triggers ai-review.yml for the next cycle.
 
             **When AI review approves (ai_approved):**
-            22. Enable auto-merge if not already: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
-            23. Set final labels:
+            24. Enable auto-merge if not already: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
+            25. Set final labels:
                 `gh pr edit <number> --add-label "ready-for-review" --remove-label "ai-reviewing,needs-fixes"`
-            24. Assign for human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
-            25. Post comment: "✅ AI review passed. Ready for @JoeMatt's final review."
+            26. Assign for human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
+            27. Update the status comment to final "ready for review" state:
+                ```
+                TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+                STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
+                cat > /tmp/claude_status.md << STATUSEOF
+                <!-- claude-status -->
+                ## ✅ Ready for Human Review
+
+                ### Completed
+                - [x] 🚀 Agent started
+                - [x] 🤖 AI review approved
+                - [x] 🔀 Auto-merge enabled
+                - [x] 👤 @JoeMatt assigned for final review
+
+                *Completed: ${TIMESTAMP}*
+                STATUSEOF
+                [ -n "$STATUS_ID" ] && gh api repos/$GITHUB_REPOSITORY/issues/comments/${STATUS_ID} \
+                  --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
+                ```

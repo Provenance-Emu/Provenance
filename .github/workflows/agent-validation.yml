@@ -127,19 +127,24 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
-      # These four Core dirs are top-level git submodules, so they are empty
-      # when submodules: false is set. xcodebuild resolves ALL XCLocalSwiftPackageReference
-      # entries in the workspace (not just those in the CI scheme), so their Package.swift
-      # files must exist. Shallow-init only these four — everything else has Package.swift
-      # tracked in the main repo.
+      # These Core dirs are top-level git submodules, empty with submodules: false.
+      # xcodebuild resolves ALL XCLocalSwiftPackageReference entries in the workspace
+      # (not just those in the CI scheme), so their Package.swift files must exist.
+      # ZipArchive uses a custom commit not pushed to the public remote; fall back to
+      # cloning the public repo (compatible Package.swift, same SSZipArchive structure).
       - name: Init required Core submodules (shallow)
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
             Cores/Bliss \
             Cores/CrabEMU \
-            Cores/VirtualJaguar \
-            Dependencies/ZipArchive
+            Cores/VirtualJaguar
+
+          # ZipArchive: custom commit not available on public remote — clone public instead
+          if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
+            echo "ZipArchive shallow init failed (custom commit). Cloning public remote..."
+            git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
+          fi
 
       - name: Cache DerivedData
         uses: actions/cache@v3

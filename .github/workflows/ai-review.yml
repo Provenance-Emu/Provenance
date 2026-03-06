@@ -116,14 +116,51 @@ jobs:
           fetch-depth: 0
           submodules: false
 
-      - name: Set ai-reviewing label
+      - name: Set ai-reviewing label and post status comment
+        id: status_comment
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr edit "${{ needs.triage.outputs.pr_number }}" \
+          PR_NUM="${{ needs.triage.outputs.pr_number }}"
+
+          gh pr edit "$PR_NUM" \
             --add-label "ai-reviewing" \
             --remove-label "needs-fixes" \
             --repo "${{ github.repository }}" 2>/dev/null || true
+
+          # Post/update a live status comment so the PR shows reviewer activity
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          MODEL="${{ needs.triage.outputs.model }}"
+
+          cat > /tmp/review_status.md << STATUSEOF
+          <!-- claude-status -->
+          ## 🔍 AI Code Review — In Progress
+
+          **Reviewer:** ${MODEL}
+
+          ### Progress
+          - [x] 🚀 Review started
+          - [ ] 📖 Reading PR diff and context...
+          - [ ] 🔎 Analysing changed files...
+          - [ ] 📝 Posting review...
+
+          *Started: ${TIMESTAMP}*
+          STATUSEOF
+
+          EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
+            --jq '[.[] | select(.body | test("<!-- claude-status -->";""))] | last | .id // empty' \
+            2>/dev/null || echo "")
+
+          if [ -n "$EXISTING" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${EXISTING}" \
+              --method PATCH --field body=@/tmp/review_status.md 2>/dev/null || true
+            echo "comment_id=$EXISTING" >> "$GITHUB_OUTPUT"
+          else
+            COMMENT_ID=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
+              --method POST --field body=@/tmp/review_status.md \
+              --jq '.id' 2>/dev/null || echo "")
+            echo "comment_id=$COMMENT_ID" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Run AI Reviewer
         uses: anthropics/claude-code-action@v1
@@ -143,6 +180,32 @@ jobs:
             PR to review: #${{ needs.triage.outputs.pr_number }}
             Repo: ${{ github.repository }}
             Reviewer model: ${{ needs.triage.outputs.model }}
+            Status comment ID: ${{ steps.status_comment.outputs.comment_id }}
+
+            ## Live Status Updates
+            Update the status comment (ID above) at each phase. Pattern:
+            ```
+            STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
+            TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+            cat > /tmp/review_status.md << STATUSEOF
+            <!-- claude-status -->
+            ## 🔍 AI Code Review — Phase Name
+
+            **Reviewer:** ${{ needs.triage.outputs.model }}
+
+            ### Progress
+            - [x] 🚀 Review started
+            - [x] 📖 Read PR diff and context
+            - [ ] 🔎 Analysing files...
+            - [ ] 📝 Posting review...
+
+            *Updated: ${TIMESTAMP}*
+            STATUSEOF
+            [ -n "$STATUS_ID" ] && gh api repos/${{ github.repository }}/issues/comments/${STATUS_ID} \
+              --method PATCH --field body=@/tmp/review_status.md 2>/dev/null || true
+            ```
+            Update after STEP 2 (context gathered), after STEP 3 (analysis done), and after STEP 4 (review posted).
+            Final update after STEP 5 should show the verdict with ✅ or 🔧.
 
             ## STEP 0 — Loop protection (always do this first)
 
