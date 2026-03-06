@@ -8,6 +8,28 @@
 import PVPrimitives
 import PVSystems
 
+/// ## Keyboard & Mouse capability discovery chain
+///
+/// Whether a running core supports (or requires) a virtual keyboard / mouse is
+/// determined by walking the following chain:
+///
+/// 1. **`KeyboardResponder` / `MouseResponder` protocols** (`Controls.swift`)
+///    Adopted by Obj-C bridge classes.  The bridge sets `gameSupportsKeyboard`,
+///    `requiresKeyboard`, `gameSupportsMouse`, and `requiresMouse` based on the
+///    currently loaded system/core.
+///
+/// 2. **`PVEmulatorCore` computed properties** (`PVEmulatorCore.swift`)
+///    `supportsVirtualKeyboard`, `requiresVirtualKeyboard`,
+///    `supportsVirtualMouse`, and `requiresVirtualMouse` forward to the bridge's
+///    protocol conformance (if any), returning `false` as a safe default.
+///
+/// 3. **PVUI / emulator view controller**
+///    Reads the `PVEmulatorCore` properties above and decides whether to show the
+///    virtual-keyboard or virtual-mouse overlay button.
+///
+/// Systems that route through `PVRetroArchCoreResponderClient` (e.g. DOS,
+/// AppleII, C64) automatically inherit keyboard support because
+/// `PVRetroArchCoreResponderClient` requires conformance to `KeyboardResponder`.
 public extension SystemIdentifier {
     public var responderClientType: any ResponderClient.Type {
         switch self {
