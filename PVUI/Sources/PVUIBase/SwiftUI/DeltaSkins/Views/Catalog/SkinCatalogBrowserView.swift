@@ -78,6 +78,7 @@ public struct SkinCatalogBrowserView: View {
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        #if !os(tvOS)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -104,6 +105,7 @@ public struct SkinCatalogBrowserView: View {
                 .accessibilityLabel("Refresh catalog")
             }
         }
+        #endif
         .onAppear {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
@@ -459,7 +461,12 @@ public struct SkinCatalogBrowserView: View {
 
     private func scheduleFilterUpdate() {
         filterTask?.cancel()
-        filterTask = Task { await applyFilters() }
+        filterTask = Task {
+            // Debounce rapid changes (e.g., typing) to avoid flooding the service.
+            try? await Task.sleep(nanoseconds: 300_000_000) // 300ms
+            guard !Task.isCancelled else { return }
+            await applyFilters()
+        }
     }
 
     private func sortLocally(_ entries: [SkinCatalogEntry], by option: SkinSortOption) -> [SkinCatalogEntry] {
@@ -563,7 +570,7 @@ private struct CatalogSkinCard: View {
                         HStack(spacing: 2) {
                             Image(systemName: "arrow.down.circle")
                                 .font(.system(size: 9))
-                            Text(formatCount(count))
+                            Text(formatSkinDownloadCount(count))
                                 .font(.system(size: 9, weight: .medium))
                         }
                         .foregroundColor(.white.opacity(0.5))
@@ -616,12 +623,16 @@ private struct CatalogSkinCard: View {
         }
     }
 
-    private func formatCount(_ count: Int) -> String {
-        if count >= 1_000 {
-            return String(format: "%.1fk", Double(count) / 1_000.0)
-        }
-        return "\(count)"
+}
+
+// MARK: - Shared Helpers
+
+/// Formats a download/play count into a compact string (e.g. 1200 → "1.2k").
+func formatSkinDownloadCount(_ count: Int) -> String {
+    if count >= 1_000 {
+        return String(format: "%.1fk", Double(count) / 1_000.0)
     }
+    return "\(count)"
 }
 
 // MARK: - SkinSortOption Display

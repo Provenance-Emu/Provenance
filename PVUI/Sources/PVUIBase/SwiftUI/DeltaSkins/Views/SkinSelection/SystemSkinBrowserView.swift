@@ -73,6 +73,7 @@ public struct SystemSkinBrowserView: View {
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        #if !os(tvOS)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 NavigationLink(destination: SkinCatalogBrowserView()) {
@@ -110,6 +111,7 @@ public struct SystemSkinBrowserView: View {
                 .disabled(isLoading)
             }
         }
+        #endif
         .onAppear {
             withAnimation(.easeInOut(duration: 0.8)) {
                 appearAnimation = true
