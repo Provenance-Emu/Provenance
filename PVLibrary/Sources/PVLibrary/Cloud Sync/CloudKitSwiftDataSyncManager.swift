@@ -109,6 +109,10 @@ public final class CloudKitSwiftDataSyncManager: @unchecked Sendable {
             WLOG("CloudKitSwiftDataSyncManager.start called more than once — ignoring.")
             return
         }
+        // Register this container as the app-wide singleton so that all other
+        // SwiftData consumers (PVRootViewController, GameImporterSwiftDataBridge,
+        // SwiftDataDatabaseDriver) automatically share the same persistent store.
+        PVSwiftDataSchema.setSharedContainer(container)
         await ModelContextActor.shared.configure(container: container)
         ILOG("CloudKitSwiftDataSyncManager started. Native SwiftData CloudKit sync active if container is CloudKit-backed.")
     }

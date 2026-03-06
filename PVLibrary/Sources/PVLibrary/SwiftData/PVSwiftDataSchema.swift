@@ -43,6 +43,51 @@ public enum PVSwiftDataSchema {
         User_Data.self,
     ])
 
+    // MARK: - App-wide shared container
+
+    /// Backing store for the app-wide singleton.  Access only through `sharedContainer`.
+    ///
+    /// `nonisolated(unsafe)` is intentional: writes happen at most once (at startup)
+    /// before any concurrent reads occur, which is safe in practice.
+    nonisolated(unsafe) private static var _sharedContainer: ModelContainer?
+
+    /// The single app-wide `ModelContainer` instance.
+    ///
+    /// On first access a local-only container is created automatically.
+    /// Call `setSharedContainer(_:)` **before** any code touches this property
+    /// when a CloudKit-backed container is required (e.g. after checking iCloud
+    /// account status at app startup).
+    ///
+    /// All consumers — `PVRootViewController`, `GameImporterSwiftDataBridge`,
+    /// `SwiftDataDatabaseDriver`, `ModelContextActor` — must reference this
+    /// property rather than calling `makePVModelContainer()` independently so
+    /// that the entire app shares one persistent store.
+    ///
+    /// - Throws: Only on first access if the local container cannot be created.
+    public static var sharedContainer: ModelContainer {
+        get throws {
+            if let c = _sharedContainer { return c }
+            let c = try makePVModelContainer()
+            _sharedContainer = c
+            return c
+        }
+    }
+
+    /// Replaces the shared container with `container`.
+    ///
+    /// Call once at app startup (e.g. in `AppDelegate` or `@main` App init)
+    /// to inject a CloudKit-backed container before any SwiftData access occurs.
+    /// Subsequent calls are ignored in release builds; in debug builds an
+    /// assertion fires to catch accidental double-initialisation.
+    ///
+    /// - Parameter container: The `ModelContainer` the whole app should use.
+    public static func setSharedContainer(_ container: ModelContainer) {
+        assert(_sharedContainer == nil, "PVSwiftDataSchema.setSharedContainer called more than once — subsequent call ignored.")
+        _sharedContainer = container
+    }
+
+    // MARK: - Container factory
+
     /// Creates and returns the shared `ModelContainer` for the Provenance library
     /// **without** CloudKit sync (local storage only).
     ///

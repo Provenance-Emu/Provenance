@@ -65,12 +65,11 @@ public actor ModelContextActor: GlobalActor {
         if let c = _container {
             container = c
         } else {
-            // Fallback: in-memory container for unit tests / previews.
-            // In production this path indicates that configure(container:) was never called,
-            // which means SwiftData changes will NOT be persisted. This is intentional for
-            // previews and unit tests; production code must call configure(container:) at startup.
-            assertionFailure("ModelContextActor.context() called before configure(container:) — no data will be persisted. Call configure(container:) at app startup.")
-            container = try PVSwiftDataSchema.makePVModelContainer(inMemory: true)
+            // Fallback: use the app-wide shared container so data is still persisted.
+            // This path is taken when CloudKit sync is disabled (no call to
+            // CloudKitSwiftDataSyncManager.start(container:)) which is valid.
+            // configure(container:) may also be called explicitly for custom setups.
+            container = try PVSwiftDataSchema.sharedContainer
             _container = container
         }
 

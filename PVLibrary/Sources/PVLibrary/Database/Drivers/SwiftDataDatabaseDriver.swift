@@ -62,14 +62,15 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     /// Satisfies the `DatabaseDriver` protocol. The `database` parameter is ignored —
     /// SwiftData manages its own container independently of Realm.
-    /// Falls back to an in-memory container if the persistent store cannot be opened.
+    /// Uses the app-wide shared container; falls back to an in-memory container
+    /// if the persistent store cannot be opened.
     public required convenience init(database _: RomDatabase) {
         do {
-            let container = try PVSwiftDataSchema.makePVModelContainer()
+            let container = try PVSwiftDataSchema.sharedContainer
             self.init(container: container, isUsingPersistentStore: true)
         } catch {
             let persistentError = error
-            ELOG("SwiftDataDatabaseDriver: failed to create persistent ModelContainer — \(persistentError)")
+            ELOG("SwiftDataDatabaseDriver: failed to obtain shared ModelContainer — \(persistentError)")
             // Non-fatal fallback: use an in-memory container so the app can continue.
             // isUsingPersistentStore will be false — callers can detect this and warn users.
             do {

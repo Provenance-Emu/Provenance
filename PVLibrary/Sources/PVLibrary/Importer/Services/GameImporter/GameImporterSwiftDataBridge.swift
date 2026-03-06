@@ -33,15 +33,15 @@ public final class GameImporterSwiftDataBridge {
     // MARK: Singleton / Shared
 
     /// Shared bridge backed by the application's SwiftData `ModelContainer`.
-    /// Returns `nil` if the `ModelContainer` cannot be created; all write calls
+    /// Returns `nil` if the `ModelContainer` cannot be obtained; all write calls
     /// are no-ops in that case instead of crashing the process.
     public static let shared: GameImporterSwiftDataBridge? = {
         do {
-            let container = try PVSwiftDataSchema.makePVModelContainer()
+            let container = try PVSwiftDataSchema.sharedContainer
             let driver = SwiftDataDatabaseDriver(container: container)
             return GameImporterSwiftDataBridge(driver: driver)
         } catch {
-            ELOG("GameImporterSwiftDataBridge: failed to create container — SwiftData writes disabled: \(error)")
+            ELOG("GameImporterSwiftDataBridge: failed to obtain shared container — SwiftData writes disabled: \(error)")
             return nil
         }
     }()
