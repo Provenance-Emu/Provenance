@@ -105,4 +105,7 @@ internal enum DeltaSkinCodingKeys: String, CodingKey {
 
     // Info keys
     case identifier, gameTypeIdentifier, debug, representations
+
+    // Keyboard overlay key
+    case keyboardOverlay
 }

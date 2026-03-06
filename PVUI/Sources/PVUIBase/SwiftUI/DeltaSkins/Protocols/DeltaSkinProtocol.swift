@@ -35,8 +35,17 @@ public protocol DeltaSkinProtocol: Identifiable, Equatable {
 
     /// The raw JSON representation of the skin
     var jsonRepresentation: [String: Any] { get }
-    
+
     func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo?
+
+    /// Optional keyboard overlay configuration embedded in the skin.
+    /// Returns `nil` for skins that do not declare a keyboard overlay.
+    var keyboardOverlay: KeyboardOverlayConfig? { get }
+}
+
+public extension DeltaSkinProtocol {
+    /// Default implementation — skins that do not override this return `nil`.
+    var keyboardOverlay: KeyboardOverlayConfig? { nil }
 }
 
 public extension Identifiable where  Self: DeltaSkinProtocol  {
