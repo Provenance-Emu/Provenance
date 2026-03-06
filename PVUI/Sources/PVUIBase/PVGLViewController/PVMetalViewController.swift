@@ -2564,6 +2564,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         let bufferSize = emulatorCore.bufferSize
 
+        /// Skip frame if the core hasn't reported valid dimensions yet
+        guard bufferSize.width > 0, bufferSize.height > 0 else {
+            DLOG("Skipping frame — core reported zero buffer size")
+            return false
+        }
+
         // Calculate buffer size
         let bytesPerPixel = getByteWidth(for: Int32(emulatorCore.pixelFormat), type: Int32(emulatorCore.pixelType))
         let bytesPerRow = Int(bufferSize.width) * Int(bytesPerPixel)
