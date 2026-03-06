@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVLogging
+import PVPrimitives
 
 /// Full-detail view for a single skin catalog entry.
 ///
@@ -229,23 +230,47 @@ public struct SkinCatalogDetailView: View {
                 )
 
             case .installed:
-                HStack(spacing: 10) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 18))
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                    Text("INSTALLED")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        .tracking(1)
+                VStack(spacing: 10) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        Text("INSTALLED")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                            .tracking(1)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.black.opacity(0.5))
+                            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
+                    )
+                    .shadow(color: RetroTheme.retroPink.opacity(0.4), radius: 6)
+
+                    if let system = primarySystemIdentifier {
+                        NavigationLink(destination: SystemSkinSelectionView(system: system)) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                                Text("SET AS ACTIVE SKIN")
+                                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                                    .tracking(1)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.black.opacity(0.4))
+                                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.black.opacity(0.5))
-                        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5))
-                )
-                .shadow(color: RetroTheme.retroPink.opacity(0.4), radius: 6)
 
             case .failed(let message):
                 VStack(spacing: 8) {
@@ -460,6 +485,21 @@ public struct SkinCatalogDetailView: View {
             .tracking(2)
             .foregroundColor(.white.opacity(0.4))
             .padding(.horizontal, 20)
+    }
+
+    // MARK: - System Identifier
+
+    /// Resolves the primary `SystemIdentifier` from the catalog entry's system codes.
+    private var primarySystemIdentifier: SystemIdentifier? {
+        // Try gameTypeIdentifier first (most specific)
+        if let gameTypeId = entry.gameTypeIdentifier,
+           let gameType = DeltaSkinGameType.fromAnyString(gameTypeId) {
+            return gameType.systemIdentifier
+        }
+        // Fall back to the first short code in entry.systems
+        return entry.systems.lazy.compactMap {
+            DeltaSkinGameType.fromAnyString($0)?.systemIdentifier
+        }.first
     }
 
     // MARK: - Download & Install Logic

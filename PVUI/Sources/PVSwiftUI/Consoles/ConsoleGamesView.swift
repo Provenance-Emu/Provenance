@@ -57,6 +57,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @State private var showLogViewer = false
     @State private var showSystemStatus = false
     @State private var showSystemSkinSelection = false
+    @State private var showSkinCatalog = false
     @State private var gameForSkinSelection: GameSkinSelectionState? = nil
 
     let gamesForSystemPredicate: NSPredicate
@@ -548,6 +549,23 @@ struct ConsoleGamesView: SwiftUI.View {
                                 ToolbarItem(placement: .navigationBarTrailing) {
                                     Button("Done") {
                                         showSystemSkinSelection = false
+                                    }
+                                    .foregroundColor(RetroTheme.retroPink)
+                                }
+                            }
+                    }
+                }
+                // Skin Catalog Browser Modal (pre-filtered to this system)
+                .sheet(isPresented: $showSkinCatalog) {
+                    NavigationStack {
+                        SkinCatalogBrowserView(preselectedSystem: console.shortName.lowercased())
+                        #if !os(tvOS)
+                            .navigationBarTitleDisplayMode(.inline)
+                        #endif
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") {
+                                        showSkinCatalog = false
                                     }
                                     .foregroundColor(RetroTheme.retroPink)
                                 }
@@ -1331,6 +1349,9 @@ extension ConsoleGamesView {
             },
             skinSelectionAction: {
                 showSystemSkinSelection = true
+            },
+            skinCatalogAction: {
+                showSkinCatalog = true
             },
             settingsContext: .console(console),
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
