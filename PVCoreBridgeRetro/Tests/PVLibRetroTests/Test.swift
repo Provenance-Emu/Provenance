@@ -18,6 +18,12 @@ struct Test {
     }
 
     // MARK: - Keyboard Event Pipeline Tests
+    //
+    // NOTE: sPendingKeyEvents / sPendingKeyCount / sPendingKeyLock are
+    // file-scope C statics shared across all PVLibRetroCoreBridge instances in
+    // the same process.  Tests that add assertion-based checks on queue contents
+    // must run serially (or reset bridge state between tests) to avoid
+    // inter-test contamination.
 
     /// Verify that sendKeyboardEvent: does not crash when called before the
     /// core registers its keyboard callback (runloop_key_event == NULL).

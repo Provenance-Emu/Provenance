@@ -57,6 +57,7 @@
 #include "verbosity.h"
 #include "input/input_keyboard.h"
 #include "input/input_keymaps.h"
+#include <os/lock.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
@@ -3152,8 +3153,13 @@ unsigned retro_api_version(void)
 // Thread safety: sPendingKeyLock (os_unfair_lock) guards sPendingKey*.
 // The callback itself is invoked outside the lock to avoid potential re-entry
 // deadlocks.
+//
+// NOTE: sPendingKeyLock guards reads of runloop_key_event but not writes — the
+// RetroArch environment callback (RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK)
+// assigns it without acquiring this lock.  This is a pre-existing race in the
+// RetroArch integration, not introduced here.  The window is narrow (core init
+// only) and will be addressed in a dedicated hardening pass.
 // ---------------------------------------------------------------------------
-#include <os/lock.h>
 
 #define PV_KEY_QUEUE_CAPACITY 64
 

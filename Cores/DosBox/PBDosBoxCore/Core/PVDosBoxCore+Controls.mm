@@ -264,19 +264,9 @@ s8 joyx[4], joyy[4];
 
 #pragma mark - Keyboard Support
 
-// Keyboard event pipeline (PVDosBox / libretro path):
-//
-//   UI virtual key press
-//     → keyDown:/keyUp:  (this file)
-//     → PVLibRetroCoreBridge -sendKeyboardEvent:hidCode:character:
-//         • dispatch_once: input_keymaps_init_keyboard_lut(rarch_key_map_apple_hid)
-//         • if runloop_key_event == NULL → warn + queue event (replayed later)
-//         • input_keymaps_translate_keysym_to_rk(hidCode) → enum retro_key
-//         → runloop_key_event(down, rk, character, 0)   [libretro core callback]
-//
-// GCKeyCode.rawValue == HID USB usage-page key code == what the LUT expects.
-// Key-up events (down=NO) clear the key state inside the core, preventing
-// stuck keys.
+// Keyboard pipeline: keyDown/keyUp → PVLibRetroCoreBridge -sendKeyboardEvent:hidCode:character:
+// → input_keymaps_translate_keysym_to_rk → runloop_key_event (libretro callback).
+// GCKeyCode.rawValue == HID USB key code; key-up events prevent stuck keys.
 
 - (BOOL)gameSupportsKeyboard { return YES; }
 - (BOOL)requiresKeyboard { return NO; }

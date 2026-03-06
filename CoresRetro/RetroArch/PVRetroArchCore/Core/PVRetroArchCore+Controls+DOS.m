@@ -95,21 +95,9 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 
 #pragma mark - Keyboard Support
 
-// Keyboard event pipeline (PVRetroArch / RetroArch-frontend path):
-//
-//   UI virtual key press
-//     → keyDown:/keyUp:  (this file)
-//     → apple_input_keyboard_event(down, hidCode, 0, 0, RETRO_DEVICE_KEYBOARD)
-//         (keyboard_event_apple.h — RetroArch's Cocoa input driver)
-//         • Translates HID code → RETRO_KEY via rarch_keysym_lut internally
-//         • Forwards to the RetroArch keyboard dispatcher
-//
-// NOTE: This path is independent of the PVLibRetroCoreBridge sendKeyboardEvent:
-// path used by the native libretro wrapper (PVDosBox).  Both ultimately deliver
-// RETRO_DEVICE_KEYBOARD events to the running core, but through different layers.
-//
-// GCKeyCode.rawValue == HID USB usage-page key code == what the LUT expects.
-// Key-up events (down=false) clear the key state, preventing stuck keys.
+// Keyboard pipeline: keyDown/keyUp → apple_input_keyboard_event (RetroArch Cocoa input driver)
+// → rarch_keysym_lut translation → RETRO_DEVICE_KEYBOARD dispatcher.
+// Independent of the PVLibRetroCoreBridge path; GCKeyCode.rawValue == HID USB key code.
 
 - (BOOL)gameSupportsKeyboard { return YES; }
 - (BOOL)requiresKeyboard { return NO; }
