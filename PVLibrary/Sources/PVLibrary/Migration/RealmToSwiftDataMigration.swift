@@ -774,11 +774,14 @@ public actor RealmToSwiftDataMigration {
         for (name, realmCount) in realmCounts {
             do {
                 let sdCount = try fetchCount(of: name, context: context)
-                if sdCount < realmCount {
+                if sdCount == realmCount {
+                    ILOG("[Migration] Validation OK: \(name) — Realm=\(realmCount), SwiftData=\(sdCount)")
+                } else if sdCount < realmCount {
                     // Warn only — count may differ due to deduplication (unique constraints).
                     WLOG("[Migration] Validation: \(name) Realm=\(realmCount) SwiftData=\(sdCount). Some records may have been deduplicated or skipped.")
                 } else {
-                    ILOG("[Migration] Validation OK: \(name) — Realm=\(realmCount), SwiftData=\(sdCount)")
+                    // SwiftData has more records than Realm — this is suspicious and may indicate duplicate creation during migration.
+                    WLOG("[Migration] Validation: \(name) Realm=\(realmCount) SwiftData=\(sdCount). SwiftData has more records than Realm; possible duplicate records created during migration.")
                 }
             } catch {
                 ELOG("[Migration] Validation failed to fetch SwiftData count for \(name): \(error)")
