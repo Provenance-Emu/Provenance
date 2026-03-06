@@ -2361,6 +2361,10 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
     BOOL loaded = core->retro_load_game(&info);
 
+    if (loaded) {
+        core->retro_get_system_av_info(&self->av_info);
+    }
+
     if (!loaded) {
         struct retro_ctx_load_content_info info2;
         info2.info = &info;
