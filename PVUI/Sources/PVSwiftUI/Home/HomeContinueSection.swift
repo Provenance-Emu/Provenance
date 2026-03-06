@@ -1139,7 +1139,7 @@ private let maxContinuesFetchCount = 500
 /// During the Realm → SwiftData migration the `resolver` closure still falls back to Realm
 /// so that the game-launch codepath continues to work until the full action layer is migrated.
 extension ContinueItemModel {
-    init(saveState_data state: SaveState_Data) {
+    init(saveStateData state: SaveState_Data) {
         let saveId = state.id
         let gameTitle = state.game?.title
         let date = state.date
