@@ -8,6 +8,7 @@
 import Foundation
 import SQLite
 import PVLogging
+import PVPrimitives
 import LibretroCheatDB
 
 /// Actor-based service for querying the bundled cheatbase.sqlite database.
@@ -106,12 +107,9 @@ public actor CheatDatabase {
 
         // 2. Query LibretroCheatDatabase by title + system
         if let title = title, !title.isEmpty {
-            // Strip parenthetical region/release tags (e.g. "(USA)", "(Japan)", "(Rev 1)")
+            // Strip parenthetical/bracketed region and release tags (e.g. "(USA)", "[!]")
             // so "Bomberman (USA)" matches the DB entry "Bomberman".
-            let cleanTitle = title
-                .replacingOccurrences(of: #"\s*\([^)]+\)"#, with: "", options: .regularExpression)
-                .trimmingCharacters(in: .whitespaces)
-            let lookupTitle = cleanTitle.isEmpty ? title : cleanTitle
+            let lookupTitle = title.strippingROMTags()
             DLOG("CheatDatabase: Querying libretro DB for title='\(lookupTitle)' (original='\(title)') system=\(systemIdentifier ?? "any")")
             do {
                 let libretroResults = try await LibretroCheatDatabase.shared.searchCheats(
@@ -145,11 +143,7 @@ public actor CheatDatabase {
 
         // 3. If libretro returned nothing, also try title on old DS cheatbase
         if results.isEmpty, let title = title, !title.isEmpty {
-            // Use the same cleaned title (strip region tags) for consistency
-            let cleanTitle = title
-                .replacingOccurrences(of: #"\s*\([^)]+\)"#, with: "", options: .regularExpression)
-                .trimmingCharacters(in: .whitespaces)
-            let lookupTitle = cleanTitle.isEmpty ? title : cleanTitle
+            let lookupTitle = title.strippingROMTags()
             do {
                 let titleResults = try searchCheats(byTitle: lookupTitle, limit: limit)
                 for entry in titleResults {
