@@ -1,9 +1,13 @@
 # Manual rebase via PR comment: comment "/rebase" on any PR to trigger.
 # For automatic rebase on develop push, see auto-rebase-on-develop.yml.
+#
+# Uses git directly to rebase the branch onto develop.
+# If conflicts are detected, dispatches Claude Code to resolve them automatically.
 name: Manual Rebase
 on:
   issue_comment:
     types: [created]
+
 concurrency:
   group: rebase-${{ github.event.issue.number }}
   cancel-in-progress: true
@@ -11,19 +15,114 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
+  actions: write
 
 jobs:
   rebase:
     name: Rebase
-    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/rebase')
+    if: github.event.issue.pull_request != '' && github.event.comment.body == '/rebase'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the latest code
+      - name: Acknowledge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh pr comment "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body "🔄 Rebase requested — rebasing onto \`develop\` now..." 2>/dev/null || true
+
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ github.token }}
           fetch-depth: 0
-      - name: Automatic Rebase
-        uses: cirrus-actions/rebase@1.8
+          token: ${{ github.token }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Rebase PR branch onto develop
+        id: rebase
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          BRANCH=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json headRefName --jq '.headRefName')
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+          git fetch origin develop
+          if ! git fetch origin "$BRANCH" 2>/dev/null; then
+            echo "Cannot fetch branch '$BRANCH'"
+            echo "result=fetch_failed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Already up to date?
+          if git merge-base --is-ancestor origin/develop "origin/$BRANCH" 2>/dev/null; then
+            echo "result=uptodate" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git checkout -B "$BRANCH" "origin/$BRANCH"
+
+          if git rebase origin/develop; then
+            if git push --force-with-lease origin "$BRANCH"; then
+              echo "result=success" >> "$GITHUB_OUTPUT"
+              # Re-trigger CI (GITHUB_TOKEN pushes don't fire pull_request events)
+              gh workflow run agent-validation.yml --repo "$REPO" -f branch="$BRANCH" 2>/dev/null || true
+              # Re-trigger AI review for [Agent] PRs
+              pr_title=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json title --jq '.title' 2>/dev/null || echo "")
+              if echo "$pr_title" | grep -q "^\[Agent\]"; then
+                gh workflow run ai-review.yml --repo "$REPO" -f pr_number="$PR_NUMBER" 2>/dev/null || true
+              fi
+            else
+              git rebase --abort 2>/dev/null || true
+              echo "result=push_failed" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            git rebase --abort 2>/dev/null || true
+            echo "result=conflict" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post result comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          RESULT: ${{ steps.rebase.outputs.result }}
+          BRANCH: ${{ steps.rebase.outputs.branch }}
+        run: |
+          case "$RESULT" in
+            success)
+              gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+                --body "✅ Rebased \`${BRANCH}\` onto \`develop\` successfully. CI and AI review re-triggered." 2>/dev/null || true
+              ;;
+            uptodate)
+              gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+                --body "✅ Branch \`${BRANCH}\` is already up to date with \`develop\` — no rebase needed." 2>/dev/null || true
+              ;;
+            conflict)
+              # Dispatch Claude to resolve conflicts
+              if gh workflow run claude-code.yml \
+                   --repo "${{ github.repository }}" \
+                   -f pr_number="$PR_NUMBER" \
+                   -f action="fix_rebase_conflict" 2>/dev/null; then
+                gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+                  --body $'🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
+              else
+                gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+                  --body $'❌ **Rebase conflict** — conflicts could not be resolved automatically.\n\nPlease resolve manually:\n\n```bash\ngit fetch origin\ngit checkout '"$BRANCH"'\ngit rebase origin/develop\n# resolve conflicts, then:\ngit push --force-with-lease\n```' 2>/dev/null || true
+              fi
+              ;;
+            push_failed)
+              gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+                --body "❌ Rebase succeeded but push was rejected (branch protection?). Please push manually with \`git push --force-with-lease\`." 2>/dev/null || true
+              ;;
+            fetch_failed)
+              gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+                --body "❌ Could not fetch branch — it may have been deleted." 2>/dev/null || true
+              ;;
+          esac

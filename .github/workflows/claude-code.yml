@@ -18,13 +18,14 @@ on:
         description: 'PR number to act on'
         required: true
       action:
-        description: 'Action: fix_ai_review | ai_approved'
+        description: 'Action: fix_ai_review | ai_approved | fix_rebase_conflict'
         required: true
 
 permissions:
   contents: write
   pull-requests: write
   issues: write
+  actions: write
   id-token: write
 
 concurrency:
@@ -40,6 +41,7 @@ jobs:
     # 4. A HUMAN reviewer requests changes on an [Agent] PR
     # 5. /claude-fix in a PR comment
     # 6. Dispatched by ai-review.yml (fix_ai_review or ai_approved)
+    # 7. Dispatched by rebase workflow (fix_rebase_conflict)
     if: |
       (github.event_name == 'issue_comment' &&
        contains(github.event.comment.body, '@claude')) ||
@@ -82,9 +84,10 @@ jobs:
           fi
 
           case "$ACTION" in
-            fix_ai_review) TITLE="🔧 Applying AI Review Fixes"  ;;
-            ai_approved)   TITLE="✅ Processing AI Approval"    ;;
-            *)             TITLE="🤔 Working on Request"        ;;
+            fix_ai_review)        TITLE="🔧 Applying AI Review Fixes"    ;;
+            ai_approved)          TITLE="✅ Processing AI Approval"       ;;
+            fix_rebase_conflict)  TITLE="🔀 Resolving Rebase Conflicts"  ;;
+            *)                    TITLE="🤔 Working on Request"           ;;
           esac
 
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
@@ -179,6 +182,7 @@ jobs:
             ${{ github.event_name == 'pull_request_review' && github.event.review.state == 'changes_requested' && 'A human reviewer requested changes on this PR. Read all review comments and fix them.' || '' }}
             ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_ai_review' && format('The AI reviewer requested changes on PR #{0}. Read ALL review comments and fix every issue. Post a marker comment when done.', github.event.inputs.pr_number) || '' }}
             ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'ai_approved' && format('The AI reviewer has approved PR #{0} (or max review cycles reached). Enable auto-merge, add the ready-for-review label, and assign @JoeMatt for final review.', github.event.inputs.pr_number) || '' }}
+            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_rebase_conflict' && format('PR #{0} has rebase conflicts that must be resolved. Follow the conflict resolution instructions below.', github.event.inputs.pr_number) || '' }}
             ${{ contains(github.event.comment.body || '', '/claude-fix') && 'Fix all pending review comments on this PR. Read the full review, address each comment, commit fixes, and push.' || '' }}
 
             ## User Request
@@ -252,12 +256,40 @@ jobs:
             23. Update status comment to show completion (cycle N dispatched).
             NOTE: Do NOT re-request review. The push auto-triggers ai-review.yml for the next cycle.
 
+            **When resolving rebase conflicts (fix_rebase_conflict):**
+            24. Get PR branch: `BRANCH=$(gh pr view <number> --json headRefName --jq .headRefName)`
+            25. Checkout and start rebase:
+                ```
+                git fetch origin develop
+                git checkout -B "$BRANCH" "origin/$BRANCH"
+                git rebase origin/develop || true   # will fail with conflicts — that's expected
+                ```
+            26. Find conflicting files: `git diff --name-only --diff-filter=U`
+            27. For EACH conflicting file:
+                a. Read the file — it contains conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`)
+                b. The `<<<<<<< HEAD` section is develop's version; `>>>>>>> <sha>` is the PR branch's version
+                c. Intelligently merge: for add/add conflicts prefer the PR branch's version (it's the
+                   feature being introduced); for content conflicts merge both sides' intent
+                d. Write the resolved file (no conflict markers)
+                e. `git add <file>`
+            28. Continue the rebase: `git rebase --continue` (set `GIT_EDITOR=true` to skip editor)
+                Repeat steps 26-28 if more conflicts arise in subsequent commits.
+            29. After rebase completes, push:
+                `git push --force-with-lease origin "$BRANCH"`
+            30. Post a comment summarising which conflicts were resolved and how.
+            31. Re-trigger CI: `gh workflow run agent-validation.yml --repo $GITHUB_REPOSITORY --ref develop -f branch="$BRANCH"`
+            32. Re-trigger AI review if [Agent] PR:
+                `gh workflow run ai-review.yml --repo $GITHUB_REPOSITORY -f pr_number=<number>`
+            33. Update status comment to show completion.
+            IMPORTANT: If `git rebase --continue` keeps failing or there are too many complex conflicts,
+            abort with `git rebase --abort` and post a comment explaining what requires manual resolution.
+
             **When AI review approves (ai_approved):**
-            24. Enable auto-merge if not already: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
-            25. Set final labels:
+            34. Enable auto-merge if not already: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
+            35. Set final labels:
                 `gh pr edit <number> --add-label "ready-for-review" --remove-label "ai-reviewing,needs-fixes"`
-            26. Assign for human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
-            27. Update the status comment to final "ready for review" state:
+            36. Assign for human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
+            37. Update the status comment to final "ready for review" state:
                 ```
                 TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
                 STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"

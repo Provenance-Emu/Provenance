@@ -150,11 +150,21 @@ jobs:
                 fi
               fi
             else
-              echo "  Rebase conflict - commenting on PR and skipping"
+              echo "  Rebase conflict — dispatching Claude to resolve"
               git rebase --abort 2>/dev/null || true
               failed=$((failed + 1))
 
-              gh pr comment "$pr_num" --repo "$REPO" --body $'**Auto-rebase conflict**\n\nThis PR could not be automatically rebased onto `develop` due to merge conflicts. Please rebase manually:\n\n```bash\ngit fetch origin\ngit checkout <your-branch>\ngit rebase origin/develop\n# resolve conflicts, then:\ngit push --force-with-lease\n```\n\nOr comment `/rebase` here to retry once conflicts are resolved on develop.'
+              # Dispatch Claude to resolve conflicts automatically
+              if gh workflow run claude-code.yml \
+                   --repo "$REPO" \
+                   -f pr_number="$pr_num" \
+                   -f action="fix_rebase_conflict" 2>/dev/null; then
+                gh pr comment "$pr_num" --repo "$REPO" \
+                  --body $'🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.'
+              else
+                # Dispatch failed — fall back to manual instructions
+                gh pr comment "$pr_num" --repo "$REPO" --body $'**Auto-rebase conflict**\n\nThis PR could not be automatically rebased onto `develop` due to merge conflicts. Please rebase manually:\n\n```bash\ngit fetch origin\ngit checkout <your-branch>\ngit rebase origin/develop\n# resolve conflicts, then:\ngit push --force-with-lease\n```\n\nOr comment `/rebase` here to retry.'
+              fi
             fi
           done < <(echo "$prs" | jq -r '.[] | [.number, .branch] | @tsv')
 
