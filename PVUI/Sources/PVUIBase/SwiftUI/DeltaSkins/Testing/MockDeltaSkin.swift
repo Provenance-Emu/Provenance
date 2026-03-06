@@ -8,6 +8,7 @@ public struct MockDeltaSkin: DeltaSkinProtocol {
     public let gameType: DeltaSkinGameType
     public let fileURL: URL
     public let isDebugEnabled: Bool
+    public let keyboardOverlay: KeyboardOverlayConfig?
 
     private let mockRepresentation: DeltaSkin.RepresentationInfo
     private let mockImage: UIImage
@@ -22,13 +23,15 @@ public struct MockDeltaSkin: DeltaSkinProtocol {
         name: String = "Test GBA",
         gameType: DeltaSkinGameType = .gba,
         fileURL: URL = URL(fileURLWithPath: "/tmp/test.deltaskin"),
-        isDebugEnabled: Bool = false
+        isDebugEnabled: Bool = false,
+        keyboardOverlay: KeyboardOverlayConfig? = nil
     ) {
         self.identifier = identifier
         self.name = name
         self.gameType = gameType
         self.fileURL = fileURL
         self.isDebugEnabled = isDebugEnabled
+        self.keyboardOverlay = keyboardOverlay
 
         // Create mock screen info
         let screenInfo = try! JSONDecoder().decode(DeltaSkin.ScreenInfo.self, from: """

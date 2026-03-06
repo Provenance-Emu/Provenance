@@ -84,6 +84,11 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
 
     public var isDebugEnabled: Bool = false
 
+    /// Returns the system-default keyboard overlay for this game type, if one exists.
+    public var keyboardOverlay: KeyboardOverlayConfig? {
+        DeltaSkinDefaults.defaultKeyboardOverlay(for: gameType)
+    }
+
     public var jsonRepresentation: [String: Any] {
         return [
             "identifier": identifier,
