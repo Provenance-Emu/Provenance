@@ -58,7 +58,8 @@ public struct SystemSkinSelectionView: View {
     /// Get the current device type
     private var currentDevice: DeltaSkinDevice {
         #if os(tvOS)
-        return .tv
+        // No real .deltaskin files use "tv" — iPad landscape skins work best at TV scale
+        return .ipad
         #else
         return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
         #endif
@@ -1007,7 +1008,8 @@ struct SkinSelectionPreviewCell: View {
     /// Get the current device type (matches SystemSkinSelectionView logic)
     private var currentDevice: DeltaSkinDevice {
         #if os(tvOS)
-        return .tv
+        // No real .deltaskin files use "tv" — iPad landscape skins work best at TV scale
+        return .ipad
         #else
         return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
         #endif

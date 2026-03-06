@@ -228,7 +228,8 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         // Check if skin supports the current orientation
         let device: DeltaSkinDevice = {
             #if os(tvOS)
-            return .tv
+            // No real .deltaskin files use "tv" — iPad landscape skins work best at TV scale
+            return .ipad
             #else
             return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
             #endif
