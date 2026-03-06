@@ -35,8 +35,12 @@ import PVLogging
 /// Monitors SwiftData context save events and triggers CloudKit file uploads.
 ///
 /// Create one instance at app-start and call `startMonitoring()`.
-/// The monitor holds a weak reference to the `CloudKitRomsSyncer` and
-/// `CloudKitSaveStatesSyncer` so it doesn't prevent them from being released.
+/// The monitor holds a weak reference to the `CloudKitRomsSyncer` so it
+/// doesn't prevent it from being released.
+///
+/// Thread safety: all mutable state (`cancellables`, `pendingSyncWork`) is
+/// exclusively accessed on `queue`. `startMonitoring()` and `stopMonitoring()`
+/// dispatch synchronously onto `queue`, so `@unchecked Sendable` is safe here.
 public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
 
     // MARK: - Constants
@@ -49,14 +53,17 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
     // MARK: - Properties
 
     private weak var romsSyncer: CloudKitRomsSyncer?
+
+    /// All Combine subscriptions. Always accessed on `queue`.
     private var cancellables = Set<AnyCancellable>()
 
-    /// Serial queue used to serialise notification callbacks and the debounce work item,
-    /// preventing races on `pendingSyncWork`.
+    /// Serial queue that serialises all state mutations (cancellables, pendingSyncWork)
+    /// and notification callbacks, preventing data races.
     private let queue = DispatchQueue(label: "com.provenance-emu.SwiftDataLocalSyncMonitor", qos: .utility)
 
     /// Pending debounced sync work item. Cancelled and replaced on each new save notification
     /// to coalesce rapid consecutive saves into a single `fetchAndApplyRemoteChanges()` call.
+    /// Always accessed on `queue`.
     private var pendingSyncWork: DispatchWorkItem?
 
     // MARK: - Init
@@ -67,7 +74,8 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
     }
 
     deinit {
-        cancellables.removeAll()
+        // Must dispatch synchronously to drain any in-flight work before dealloc.
+        queue.sync { cancellables.removeAll() }
     }
 
     // MARK: - Lifecycle
@@ -78,24 +86,29 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
     /// the legacy `NSManagedObjectContextObjectsDidChange`) from the underlying
     /// `NSPersistentCloudKitContainer`.  We observe the former because it carries
     /// permanent object IDs that survive context resets.
+    ///
+    /// Safe to call from any thread; subscription is stored synchronously on `queue`.
     public func startMonitoring() {
-        // NSManagedObjectContextDidSaveObjectIDsNotification carries three keys:
-        //   NSInsertedObjectIDsKey, NSUpdatedObjectIDsKey, NSDeletedObjectIDsKey
-        // Each value is a Set<NSManagedObjectID>.
-        NotificationCenter.default
-            .publisher(for: SwiftDataLocalSyncMonitor.contextDidSaveObjectIDsNotification)
-            .receive(on: queue)   // serial queue — safe to mutate pendingSyncWork here
-            .sink { [weak self] notification in
-                self?.handleContextSave(notification)
-            }
-            .store(in: &cancellables)
-
+        queue.sync {
+            // NSManagedObjectContextDidSaveObjectIDsNotification carries three keys:
+            //   NSInsertedObjectIDsKey, NSUpdatedObjectIDsKey, NSDeletedObjectIDsKey
+            // Each value is a Set<NSManagedObjectID>.
+            NotificationCenter.default
+                .publisher(for: SwiftDataLocalSyncMonitor.contextDidSaveObjectIDsNotification)
+                .receive(on: queue)   // serial queue — safe to mutate pendingSyncWork here
+                .sink { [weak self] notification in
+                    self?.handleContextSave(notification)
+                }
+                .store(in: &cancellables)
+        }
         ILOG("SwiftDataLocalSyncMonitor: started.")
     }
 
     /// Stops observing save notifications.
+    ///
+    /// Safe to call from any thread; cancellation is applied synchronously on `queue`.
     public func stopMonitoring() {
-        cancellables.removeAll()
+        queue.sync { cancellables.removeAll() }
         ILOG("SwiftDataLocalSyncMonitor: stopped.")
     }
 

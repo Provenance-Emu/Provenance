@@ -66,11 +66,14 @@ public actor SwiftDataSyncActor {
 
     /// Fetch all `Game_Data` models that have a CloudKit record but whose file
     /// has not yet been downloaded to this device.
+    ///
+    /// `isDownloaded` is `@Transient` (not persisted), so the cloudRecordID filter
+    /// runs in-database while the isDownloaded check is applied in memory.
     public func fetchGamesNeedingDownload() throws -> [Game_Data] {
         let descriptor = FetchDescriptor<Game_Data>(
-            predicate: #Predicate { $0.cloudRecordID != nil && !$0.isDownloaded }
+            predicate: #Predicate { $0.cloudRecordID != nil }
         )
-        return try modelContext.fetch(descriptor)
+        return try modelContext.fetch(descriptor).filter { !$0.isDownloaded }
     }
 
     /// Mark a game as fully synced to CloudKit.

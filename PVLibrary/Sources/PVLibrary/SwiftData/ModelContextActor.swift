@@ -82,9 +82,12 @@ public actor ModelContextActor: GlobalActor {
     ///
     /// The closure receives the background `ModelContext` and may freely fetch,
     /// insert, delete, and save models.  Any thrown error propagates to the caller.
+    ///
+    /// The closure is required to be `@Sendable` so that callers cannot accidentally
+    /// capture non-sendable state across the actor boundary.
     @discardableResult
     public func perform<T: Sendable>(
-        _ operation: (ModelContext) throws -> T
+        _ operation: @Sendable (ModelContext) throws -> T
     ) async throws -> T {
         let ctx = try context()
         return try operation(ctx)
@@ -116,10 +119,13 @@ public extension ModelContextActor {
     }
 
     /// Fetch all `SaveState_Data` records for a given game ID.
+    ///
+    /// Optional-chaining inside `#Predicate` (`game?.id`) is not reliably supported
+    /// by SwiftData's predicate compiler, so we fetch all save states and filter
+    /// by game ID in memory — consistent with `SwiftDataSyncActor.fetchSaveStatesNeedingUpload`.
     func fetchSaveStates(gameID: String) async throws -> [SaveState_Data] {
-        try await fetch(
-            FetchDescriptor<SaveState_Data>(predicate: #Predicate { $0.game?.id == gameID })
-        )
+        let all = try await fetch(FetchDescriptor<SaveState_Data>())
+        return all.filter { $0.game?.id == gameID }
     }
 
     /// Fetch a `BIOS_Data` record by its expected MD5 hash.

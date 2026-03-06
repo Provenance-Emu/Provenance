@@ -83,9 +83,8 @@ public enum PVSwiftDataSchema {
 
     /// Creates a `ModelContainer` backed by CloudKit for automatic metadata sync.
     ///
-    /// SwiftData's built-in CloudKit support (via `NSPersistentCloudKitContainer`)
-    /// automatically syncs model metadata between devices. Only structured model
-    /// data is synced; binary ROM/save-state files still use the file-based syncers.
+    /// Delegates to `CloudKitModelContainerConfiguration.makeCloudKitEnabledContainer`
+    /// to ensure a single canonical implementation and avoid configuration drift.
     ///
     /// - Parameters:
     ///   - cloudKitContainerIdentifier: The CloudKit container identifier, e.g.
@@ -99,12 +98,10 @@ public enum PVSwiftDataSchema {
         cloudKitContainerIdentifier: String = CloudKitModelContainerConfiguration.containerIdentifier,
         inMemory: Bool = false
     ) throws -> ModelContainer {
-        let config = ModelConfiguration(
-            schema: v1Schema,
-            isStoredInMemoryOnly: inMemory,
-            cloudKitDatabase: inMemory ? .none : .private(cloudKitContainerIdentifier)
+        return try CloudKitModelContainerConfiguration.makeCloudKitEnabledContainer(
+            cloudKitContainerIdentifier: cloudKitContainerIdentifier,
+            inMemory: inMemory
         )
-        return try ModelContainer(for: v1Schema, configurations: config)
     }
 
     /// Delete all objects for every tracked model type from the given context and save.

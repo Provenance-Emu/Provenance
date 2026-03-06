@@ -100,13 +100,21 @@ public class Game_Data {
     public var cloudRecordID: String?
 
     /// Whether the ROM file is stored locally on this device.
-    public var isDownloaded: Bool = true
+    ///
+    /// `@Transient` — device-local state only, never synced via CloudKit.
+    /// Receiving `isDownloaded == true` from another device would be incorrect
+    /// since the ROM file may not be present on this device.
+    @Transient public var isDownloaded: Bool = true
 
     /// Whether CloudKit holds a verified CKAsset for this game's ROM file.
     public var hasCloudAssets: Bool = false
 
     /// Cached ROM file size in bytes (avoids stat(2) calls during sync batching).
-    public var fileSize: Int = 0
+    ///
+    /// `@Transient` — device-local state derived from the filesystem; never synced
+    /// via CloudKit. Optional so existing rows without this value don't require a
+    /// migration default.
+    @Transient public var fileSize: Int? = nil
 
     /// Date of the last successful CloudKit sync round-trip for this game.
     public var lastCloudSyncDate: Date?
