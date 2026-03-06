@@ -426,6 +426,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         removeRunningObserverIfNeeded()
 
+        #if !os(tvOS)
+        // Clean up virtual keyboard / mouse cursor overlays
+        if #available(iOS 14.0, *) {
+            removeVirtualInputOverlays()
+        }
+        #endif
+
         // Resume GameImporter if view controller is deallocated (safety net)
         GameImporter.shared.resume()
     }
@@ -786,6 +793,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         GameImporter.shared.pause()
 
         core.startEmulation()
+
+        #if !os(tvOS)
+        // Show virtual keyboard / mouse cursor overlays for capable cores (e.g. DOS)
+        if #available(iOS 14.0, *) {
+            Task { @MainActor in
+                self.setupVirtualInputOverlaysIfNeeded()
+            }
+        }
+        #endif
 
         #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour

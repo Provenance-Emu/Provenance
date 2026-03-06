@@ -591,6 +591,25 @@ struct RetroMenuView: View {
                 )
             }
 
+
+            #if !os(tvOS)
+            // Virtual keyboard toggle (for keyboard-capable cores, e.g. DOS)
+            if #available(iOS 14.0, *), emulatorVC.coreSupportsVirtualKeyboard {
+                menuButton(
+                    title: emulatorVC.isVirtualKeyboardVisible ? "HIDE KEYBOARD" : "SHOW KEYBOARD",
+                    icon: "keyboard",
+                    color: palette.defaultTintColor.swiftUIColor
+                ) {
+                    // Resume emulation and dismiss menu, then toggle the overlay
+                    dismissAction(true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        emulatorVC.toggleVirtualKeyboard()
+                    }
+                }
+            }
+            #endif
+
+
                             // Screen filter selection
             VStack(alignment: .leading, spacing: 4) {
                 Text("SCREEN FILTER")
