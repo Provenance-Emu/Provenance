@@ -126,7 +126,7 @@ jobs:
           allowed_bots: 'github-actions[bot]'
           claude_args: >-
             --model ${{ needs.triage.outputs.model }}
-            --allowedTools 'Read,Glob,Grep,Bash(gh pr:*),Bash(gh api:*),Bash(gh workflow:*),Bash(cat:*)'
+            --allowedTools 'Read,Glob,Grep,Bash(gh pr:*),Bash(gh api:*),Bash(gh workflow:*),Bash(cat:*),Bash(sed:*)'
           prompt: |
             You are a senior iOS/tvOS Swift engineer performing an automated code review.
             You are the REVIEWER — do NOT make code changes, commits, or pushes.
@@ -217,17 +217,42 @@ jobs:
 
             ## STEP 4 — Post the review
 
-            Format the review body carefully. Include cycle count from STEP 0.
+            Determine your verdict first, then write the body to a temp file and post it.
+            IMPORTANT: Use `--body-file` — do NOT use `--body "$(cat <<...)"` (the heredoc
+            collapses to a single line when used inside a command substitution).
 
-            ```
             CYCLE=$((REVIEW_COUNT + 1))
 
+            **If verdict is APPROVE** (no CRITICAL or MAJOR issues):
+            ```
+            cat > /tmp/review_body.md << 'REVIEW_BODY'
+            ## AI Code Review — Cycle CYCLE_PLACEHOLDER/3
+            > Reviewer: MODEL_PLACEHOLDER
+
+            ### Summary
+            <one paragraph overall assessment>
+
+            ### Issues
+            **🔴 CRITICAL** — none
+            **🟠 MAJOR** — none
+            **🟡 MINOR** — <list or "none">
+            **⚪ NIT** — <list or "none">
+
+            ### Verdict: APPROVE ✅
+            REVIEW_BODY
+            sed -i "s/CYCLE_PLACEHOLDER/${CYCLE}/g" /tmp/review_body.md
+            sed -i "s/MODEL_PLACEHOLDER/${{ needs.triage.outputs.model }}/g" /tmp/review_body.md
             gh pr review ${{ needs.triage.outputs.pr_number }} \
               --repo ${{ github.repository }} \
-              --[approve|request-changes] \
-              --body "$(cat <<'REVIEW_BODY'
-            ## AI Code Review — Cycle $CYCLE/3
-            > Reviewer: ${{ needs.triage.outputs.model }}
+              --approve \
+              --body-file /tmp/review_body.md
+            ```
+
+            **If verdict is REQUEST_CHANGES** (any CRITICAL or MAJOR issue):
+            ```
+            cat > /tmp/review_body.md << 'REVIEW_BODY'
+            ## AI Code Review — Cycle CYCLE_PLACEHOLDER/3
+            > Reviewer: MODEL_PLACEHOLDER
 
             ### Summary
             <one paragraph overall assessment>
@@ -246,16 +271,21 @@ jobs:
             **⚪ NIT**
             - trivial style notes
 
-            ### Verdict: APPROVE | REQUEST_CHANGES
+            ### Verdict: REQUEST_CHANGES 🔧
 
             ---
-            *If no issues found in any category above, use `--approve` and write a positive summary.*
+            > 🤖 *Claude Code fixer has been dispatched to address CRITICAL and MAJOR issues automatically.*
             REVIEW_BODY
-            )"
+            sed -i "s/CYCLE_PLACEHOLDER/${CYCLE}/g" /tmp/review_body.md
+            sed -i "s/MODEL_PLACEHOLDER/${{ needs.triage.outputs.model }}/g" /tmp/review_body.md
+            gh pr review ${{ needs.triage.outputs.pr_number }} \
+              --repo ${{ github.repository }} \
+              --request-changes \
+              --body-file /tmp/review_body.md
             ```
 
             Rules for verdict:
-            - **APPROVE**: No CRITICAL or MAJOR issues found (MINORs and NITs are fine)
+            - **APPROVE**: No CRITICAL or MAJOR issues (MINORs and NITs are fine)
             - **REQUEST_CHANGES**: Any CRITICAL or MAJOR issue found
 
             ## STEP 5 — Post SHA marker and dispatch follow-up
@@ -285,3 +315,17 @@ jobs:
               -f pr_number="${{ needs.triage.outputs.pr_number }}" \
               -f action="fix_ai_review"
             ```
+
+            ## FINAL OUTPUT
+
+            After completing ALL steps above, output EXACTLY one of these lines to stdout.
+            This becomes the action's auto-posted PR comment — make it clean and informative.
+            Replace CYCLE with the actual cycle number computed above.
+
+            If verdict was APPROVE:
+            `✅ AI review complete — Verdict: APPROVE (cycle CYCLE/3)`
+
+            If verdict was REQUEST_CHANGES:
+            `🔧 AI review complete — REQUEST_CHANGES (cycle CYCLE/3). Auto-fixer dispatched.`
+
+            Output ONLY this single line. No summaries, no explanations, no extra markdown.
