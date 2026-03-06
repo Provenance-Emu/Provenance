@@ -26,7 +26,7 @@ public final class MouseCursorOverlayView: UIView {
     public var emulationFrame: CGRect = .zero
 
     /// The core that will receive forwarded mouse events.
-    public weak var mouseCore: (AnyObject & MouseResponder)?
+    public weak var mouseCore: MouseResponder?
 
     // MARK: - Private
 

@@ -600,9 +600,9 @@ struct RetroMenuView: View {
                     icon: "keyboard",
                     color: palette.defaultTintColor.swiftUIColor
                 ) {
-                    // Resume emulation and dismiss menu, then toggle the overlay
-                    dismissAction(true)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    // Dismiss menu and resume emulation; toggle overlay in the completion
+                    // block so the view hierarchy is fully settled before we mutate it.
+                    emulatorVC.dismissNav(resumeEmulation: true) {
                         emulatorVC.toggleVirtualKeyboard()
                     }
                 }

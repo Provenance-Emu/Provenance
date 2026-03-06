@@ -132,18 +132,10 @@ extension PVEmulatorViewController: VirtualKeyboardViewDelegate {
 
         isVirtualKeyboardVisible = false
 
-        let hide: () -> Void = {
-            kbView.alpha = 0
-        }
-        let completion: (Bool) -> Void = { [weak self] _ in
-            // Keep the view around to avoid re-creation cost; just keep it hidden.
-            _ = self
-        }
-
         if animated {
-            UIView.animate(withDuration: 0.2, animations: hide, completion: completion)
+            UIView.animate(withDuration: 0.2) { kbView.alpha = 0 }
         } else {
-            hide()
+            kbView.alpha = 0
         }
 
         ILOG("[VirtualKeyboard] Virtual keyboard hidden.")
@@ -167,7 +159,7 @@ extension PVEmulatorViewController: VirtualKeyboardViewDelegate {
             let overlay = MouseCursorOverlayView()
             overlay.translatesAutoresizingMaskIntoConstraints = false
             // Forward events to the core
-            overlay.mouseCore = core as? (AnyObject & MouseResponder)
+            overlay.mouseCore = core as? MouseResponder
             view.addSubview(overlay)
 
             NSLayoutConstraint.activate([

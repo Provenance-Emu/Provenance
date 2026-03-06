@@ -187,12 +187,20 @@ private struct KeySpec {
 @available(iOS 14.0, *)
 private final class RepeatButton: UIButton {
     private var repeatTimer: Timer?
+    /// Initial delay before key-repeat starts, matching standard keyboard behaviour (~400 ms).
+    private let initialRepeatDelay: TimeInterval = 0.4
+    /// Interval between repeated key events once repeat has started (~80 ms).
+    private let repeatInterval: TimeInterval = 0.08
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { [weak self] _ in
+        // Fire first repeat only after the initial delay, then at `repeatInterval`.
+        repeatTimer = Timer.scheduledTimer(withTimeInterval: initialRepeatDelay, repeats: false) { [weak self] _ in
             guard let self = self else { return }
-            self.sendActions(for: .touchDown)
+            self.repeatTimer = Timer.scheduledTimer(withTimeInterval: self.repeatInterval, repeats: true) { [weak self] _ in
+                guard let self = self else { return }
+                self.sendActions(for: .touchDown)
+            }
         }
     }
 
