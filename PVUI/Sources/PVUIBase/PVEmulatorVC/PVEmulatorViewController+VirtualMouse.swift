@@ -47,7 +47,7 @@ extension PVEmulatorViewController {
     /// Attach the cursor overlay and trackpad layer when the active core supports mouse input.
     /// Safe to call multiple times — returns immediately if already installed.
     func setupVirtualMouseIfNeeded() {
-        guard let mouseCore = core as? (AnyObject & MouseResponder),
+        guard let mouseCore = core as? MouseResponder,
               mouseCore.gameSupportsMouse else { return }
         guard cursorHostingController == nil else { return }
 
@@ -76,13 +76,26 @@ extension PVEmulatorViewController {
     }
 
     /// Remove cursor overlay and trackpad if present (called on teardown / core change).
+    /// Safe to call from any thread — UIKit operations are dispatched to the main thread.
     func teardownVirtualMouse() {
-        touchTrackpadView?.removeFromSuperview()
+        // Capture views before clearing the stored references so the async block
+        // can remove them even if self has been released by then.
+        let trackpad = touchTrackpadView
+        let host = cursorHostingController
         touchTrackpadView = nil
-
-        cursorHostingController?.view.removeFromSuperview()
-        cursorHostingController?.removeFromParent()
         cursorHostingController = nil
+
+        let doTeardown = {
+            trackpad?.removeFromSuperview()
+            host?.view.removeFromSuperview()
+            host?.removeFromParent()
+        }
+
+        if Thread.isMainThread {
+            doTeardown()
+        } else {
+            DispatchQueue.main.async(execute: doTeardown)
+        }
     }
 }
 #endif // canImport(UIKit) && !os(tvOS)
