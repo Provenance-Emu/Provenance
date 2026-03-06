@@ -3068,12 +3068,17 @@ unsigned retro_api_version(void)
 #endif
                 }
 
-                case RETRO_DEVICE_ID_POINTER_PRESSED:
+                case RETRO_DEVICE_ID_POINTER_PRESSED: {
+                    BOOL pressed;
+                    @synchronized(self) {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    return touchPressed ? 1 : 0;
+                        pressed = touchPressed;
 #else
-                    return mousePressed ? 1 : 0;
+                        pressed = mousePressed;
 #endif
+                    }
+                    return pressed ? 1 : 0;
+                }
 
                 default:
                     return 0;
@@ -3104,15 +3109,23 @@ unsigned retro_api_version(void)
                     return dy;
                 }
 
-                case RETRO_DEVICE_ID_MOUSE_LEFT:
+                case RETRO_DEVICE_ID_MOUSE_LEFT: {
+                    BOOL pressed;
+                    @synchronized(self) {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-                    return touchPressed ? 1 : 0;
+                        pressed = touchPressed;
 #else
-                    return leftMousePressed ? 1 : 0;
+                        pressed = leftMousePressed;
 #endif
+                    }
+                    return pressed ? 1 : 0;
+                }
 
-                case RETRO_DEVICE_ID_MOUSE_RIGHT:
-                    return rightMousePressed ? 1 : 0;
+                case RETRO_DEVICE_ID_MOUSE_RIGHT: {
+                    BOOL pressed;
+                    @synchronized(self) { pressed = rightMousePressed; }
+                    return pressed ? 1 : 0;
+                }
 
                 default:
                     return 0;
@@ -3166,12 +3179,24 @@ unsigned retro_api_version(void)
 - (void)setLeftMouseButtonPressed:(BOOL)pressed {
     // Update both: touchPressed drives RETRO_DEVICE_POINTER press state,
     // leftMousePressed drives RETRO_DEVICE_ID_MOUSE_LEFT specifically.
-    touchPressed = pressed;
-    leftMousePressed = pressed;
+    @synchronized(self) {
+        touchPressed = pressed;
+        leftMousePressed = pressed;
+        if (!pressed) {
+            // Reset delta baseline so the next press doesn't generate a
+            // spurious large delta from the previous touch session's position.
+            lastMousePositionValid = NO;
+        }
+    }
 }
 
 - (void)setRightMouseButtonPressed:(BOOL)pressed {
-    rightMousePressed = pressed;
+    @synchronized(self) {
+        rightMousePressed = pressed;
+        if (!pressed) {
+            lastMousePositionValid = NO;
+        }
+    }
 }
 
 @end
