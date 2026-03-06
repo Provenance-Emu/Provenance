@@ -73,6 +73,22 @@ public struct SystemSkinBrowserView: View {
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button {
+                    withAnimation {
+                        isLoading = true
+                    }
+                    Task {
+                        await reloadAllSkins()
+                    }
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                }
+                .disabled(isLoading)
+            }
+        }
         #if !os(tvOS)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -94,21 +110,6 @@ public struct SystemSkinBrowserView: View {
                         .font(.title2)
                         .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 }
-            }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    withAnimation {
-                        isLoading = true
-                    }
-                    Task {
-                        await reloadAllSkins()
-                    }
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                }
-                .disabled(isLoading)
             }
         }
         #endif
