@@ -1,0 +1,25 @@
+desc 'Capture App Store screenshots using fastlane snapshot'
+lane :screenshots do |options|
+  # Ensure Snapfile is configured correctly before running
+  snapshot(
+    workspace: "Provenance.xcworkspace",
+    scheme: options[:scheme] || "UITesting",
+    output_directory: "./fastlane/screenshots",
+    clear_previous_screenshots: true,
+    stop_after_first_error: false,
+    reinstall_app: true,
+    erase_simulator: false,
+    override_status_bar: true,
+    override_status_bar_arguments: "--time 9:41 --dataNetwork wifi --wifiBars 3 --batteryState charged --batteryLevel 100"
+  )
+end
+
+desc 'Verify screenshot output exists and is non-empty'
+lane :verify_screenshots do
+  screenshots_dir = "./fastlane/screenshots"
+  unless Dir.exist?(screenshots_dir) && !Dir.glob("#{screenshots_dir}/**/*.png").empty?
+    UI.user_error!("No screenshots found in #{screenshots_dir}. Run 'fastlane screenshots' first.")
+  end
+  count = Dir.glob("#{screenshots_dir}/**/*.png").count
+  UI.success("Found #{count} screenshots in #{screenshots_dir}")
+end

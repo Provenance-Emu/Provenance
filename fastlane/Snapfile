@@ -1,8 +1,9 @@
 # A list of devices you want to take the screenshots from
 devices([
-  "iPhone X",
-  "AppleTV",
-  "iPad Pro"
+  "iPhone 16 Pro",
+  "iPhone SE (3rd generation)",
+  "iPad Pro 12.9-inch (6th generation)",
+  "Apple TV 4K (3rd generation)"
 ])
 
 languages([
@@ -10,16 +11,21 @@ languages([
 ])
 
 # The name of the scheme which contains the UI Tests
-# scheme "SchemeName"
+# Use Provenance-Screenshots (no-core build) once that scheme is created (Milestone 1).
+# Falls back to standard UITesting scheme in the interim.
+scheme "UITesting"
 
 # Where should the resulting screenshots be stored?
-# output_directory "./screenshots"
+output_directory "./fastlane/screenshots"
 
-# clear_previous_screenshots true # remove the '#' to clear all previously generated screenshots before creating new ones
+# Remove previously generated screenshots before creating new ones
+clear_previous_screenshots true
 
 # Choose which project/workspace to use
-# project "./Project.xcodeproj"
-workspace "./Provenace.xcworkspace"
+workspace "./Provenance.xcworkspace"
+
+# Test runner configuration
+launch_arguments(["-SCREENSHOT_MODE 1"])
 
 # For more information about all available options run
 # fastlane action snapshot

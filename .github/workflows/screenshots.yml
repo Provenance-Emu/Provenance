@@ -1,0 +1,75 @@
+name: UI Screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      scheme:
+        description: 'Xcode scheme to use for screenshots'
+        required: false
+        default: 'UITesting'
+        type: string
+      upload_artifacts:
+        description: 'Upload screenshots as workflow artifacts'
+        required: false
+        default: true
+        type: boolean
+
+# Gameplay screenshots require Metal which is unavailable on GitHub-hosted runners.
+# See: https://github.com/actions/runner-images/issues/7085
+# This workflow captures UI-only screenshots (no emulator rendering).
+#
+# For App Store gameplay screenshots, run scripts/capture-gameplay-screenshots.sh locally.
+
+concurrency:
+  group: screenshots-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
+  XCODE_VERSION: '16.2'
+  BUNDLE_PATH: vendor/bundle
+
+jobs:
+  screenshots:
+    name: Capture UI Screenshots
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Select Xcode ${{ env.XCODE_VERSION }}
+        run: sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Boot simulator
+        run: |
+          xcrun simctl boot "iPhone 16 Pro" 2>/dev/null || true
+          xcrun simctl boot "iPhone SE (3rd generation)" 2>/dev/null || true
+
+      - name: Capture screenshots
+        run: |
+          bundle exec fastlane screenshots scheme:"${{ github.event.inputs.scheme }}"
+        env:
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+          FASTLANE_OPT_OUT_CRASH_REPORTING: '1'
+
+      - name: Upload screenshots
+        if: ${{ github.event.inputs.upload_artifacts != 'false' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ github.run_number }}
+          path: fastlane/screenshots/
+          retention-days: 30
+          if-no-files-found: warn
