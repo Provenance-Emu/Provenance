@@ -8,9 +8,11 @@
 #if canImport(SwiftData)
 import SwiftData
 import XCTest
+import PVPrimitives
 @testable import PVLibrary
 
 @available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
+@MainActor
 final class SwiftDataDatabaseDriverTests: XCTestCase {
 
     var driver: SwiftDataDatabaseDriver?
@@ -250,27 +252,54 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
         let save = SaveState_Data()
         let recent = RecentGame_Data()
         let core = Core_Data(identifier: "com.test.core", principleClass: "TestCore")
+        let bios = BIOS_Data(expectedFilename: "bios.bin", expectedMD5: "biosmd5",
+                             expectedSize: 1024, optional: false,
+                             descriptionText: "Test BIOS", regions: .unknown, version: "1.0")
+        let cheat = Cheats_Data(code: "AABBCC")
+        let file = File_Data(partialPath: "roms/test.rom")
+        let imageFile = ImageFile_Data(partialPath: "images/test.png")
+        let library = Library_Data()
+        let user = User_Data()
         try d.insert(game: game)
         try d.insert(system: system)
         try d.insert(saveState: save)
         try d.insert(recentGame: recent)
         d.modelContext.insert(core)
+        d.modelContext.insert(bios)
+        d.modelContext.insert(cheat)
+        d.modelContext.insert(file)
+        d.modelContext.insert(imageFile)
+        d.modelContext.insert(library)
+        d.modelContext.insert(user)
         try d.save()
 
-        // Sanity-check that all models are present before deletion
+        // Sanity-check that all 11 schema types are present before deletion
         XCTAssertEqual(try d.allGames().count, 1)
         XCTAssertEqual(try d.allSystems().count, 1)
         XCTAssertEqual(try d.allSaveStates().count, 1)
         XCTAssertEqual(try d.allRecentGames().count, 1)
         XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<Core_Data>()).count, 1)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<BIOS_Data>()).count, 1)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<Cheats_Data>()).count, 1)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<File_Data>()).count, 1)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<ImageFile_Data>()).count, 1)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<Library_Data>()).count, 1)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<User_Data>()).count, 1)
 
         try d.deleteAll()
 
+        // Verify all 11 schema types were cleared
         XCTAssertEqual(try d.allGames().count, 0)
         XCTAssertEqual(try d.allSystems().count, 0)
         XCTAssertEqual(try d.allSaveStates().count, 0)
         XCTAssertEqual(try d.allRecentGames().count, 0)
         XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<Core_Data>()).count, 0)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<BIOS_Data>()).count, 0)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<Cheats_Data>()).count, 0)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<File_Data>()).count, 0)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<ImageFile_Data>()).count, 0)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<Library_Data>()).count, 0)
+        XCTAssertEqual(try d.modelContext.fetch(FetchDescriptor<User_Data>()).count, 0)
     }
 }
 

@@ -17,10 +17,11 @@ import PVLogging
 
 /// Synchronous `DatabaseDriver` implementation backed by a SwiftData `ModelContext`.
 ///
-/// `ModelContext` is not thread-safe; all accesses must occur on the thread on which
-/// this driver was created. For concurrent or async use, prefer `SwiftDataDatabaseActor`,
+/// `ModelContext` is not thread-safe; `@MainActor` confinement enforces main-thread
+/// access at compile time. For concurrent or async use, prefer `SwiftDataDatabaseActor`,
 /// which is a `@ModelActor` and enforces safe isolation at compile time.
 @available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
+@MainActor
 public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     // MARK: DatabaseDriverDataTypes
@@ -295,13 +296,13 @@ public actor SwiftDataDatabaseActor {
     }
 
     /// Fetch all games, optionally sorted.
-    public func allGames(sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = [SortDescriptor(\.title)]) throws -> [Game_Data] {
+    public func allGames(sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = []) throws -> [Game_Data] {
         let descriptor = FetchDescriptor<Game_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
 
     /// Fetch all systems, optionally sorted.
-    public func allSystems(sortedBy sortDescriptors: [SortDescriptor<System_Data>] = [SortDescriptor(\.name)]) throws -> [System_Data] {
+    public func allSystems(sortedBy sortDescriptors: [SortDescriptor<System_Data>] = []) throws -> [System_Data] {
         let descriptor = FetchDescriptor<System_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
