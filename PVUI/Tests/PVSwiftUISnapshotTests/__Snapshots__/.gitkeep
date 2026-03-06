@@ -1,0 +1,2 @@
+# Baseline PNG snapshots are committed here after first `recordSnapshots: true` run.
+# See PVSwiftUISnapshotTests.swift and PVUI/.prefire.yml for details.

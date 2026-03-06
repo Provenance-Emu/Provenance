@@ -83,7 +83,15 @@ let package = Package(
 //        .package(url: "https://github.com/SvenTiigi/WhatsNewKit.git", from: "2.2.1")
 
         /// https://swiftpackageindex.com/LiYanan2004/MarkdownView
-        .package(url: "https://github.com/LiYanan2004/MarkdownView.git", from: "1.7.0")
+        .package(url: "https://github.com/LiYanan2004/MarkdownView.git", from: "1.7.0"),
+
+        // MARK: Snapshot testing (Milestone 3 — Screenshot Automation)
+        /// Prefire: generates snapshot tests from SwiftUI #Preview macros.
+        /// https://github.com/BarredEwe/Prefire
+        .package(url: "https://github.com/BarredEwe/Prefire", from: "2.1.0"),
+        /// swift-snapshot-testing: underlying snapshot diffing used by Prefire.
+        /// https://github.com/pointfreeco/swift-snapshot-testing
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.17.0")
     ],
     targets: [
 
@@ -241,6 +249,31 @@ let package = Package(
             name: "PVSwiftUITests",
             dependencies: [
                 "PVSwiftUI",
+            ]
+        ),
+
+        // MARK: Snapshot tests (Milestone 3)
+        // Prefire plugin scans #Preview macros in PVSwiftUI and generates
+        // PrefireTests.generated.swift at build time via xcodebuild/Xcode.
+        // Run baseline capture:
+        //   xcodebuild test -workspace Provenance.xcworkspace \
+        //     -scheme Provenance-Screenshots \
+        //     -destination "platform=iOS Simulator,name=iPhone 16 Pro" \
+        //     -only-testing PVSwiftUISnapshotTests \
+        //     -recordMode YES
+        .testTarget(
+            name: "PVSwiftUISnapshotTests",
+            dependencies: [
+                "PVSwiftUI",
+                .product(name: "Prefire", package: "Prefire"),
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+            ],
+            resources: [
+                // Baseline PNG snapshots are stored here; committed to track visual regressions.
+                .copy("__Snapshots__")
+            ],
+            plugins: [
+                .plugin(name: "PrefirePlugin", package: "Prefire")
             ]
         ),
 

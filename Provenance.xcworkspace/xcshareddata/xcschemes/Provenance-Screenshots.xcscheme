@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Provenance-Screenshots scheme
+  ==============================
+  Minimal scheme for App Store screenshot automation. Builds and tests the
+  UITesting host app together with ScreenshotUITests (via Milestone 2 deep links)
+  without pulling in heavy emulator cores. Used by `fastlane screenshots`.
+
+  To run locally:
+    xcodebuild test \
+      -workspace Provenance.xcworkspace \
+      -scheme "Provenance-Screenshots" \
+      -destination "platform=iOS Simulator,name=iPhone 16 Pro" \
+      -only-testing UITestingUITests/ScreenshotUITests
+-->
+<Scheme
+   LastUpgradeVersion = "1600"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <!-- UITesting host app — lightweight, no emulator cores -->
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B36DFC0E2CF196D700BAE9BE"
+               BuildableName = "UITesting.app"
+               BlueprintName = "UITesting"
+               ReferencedContainer = "container:UITesting/UITesting.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <!-- Screenshot UI test bundle -->
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B36DFC282CF196D800BAE9BE"
+               BuildableName = "UITestingUITests.xctest"
+               BlueprintName = "UITestingUITests"
+               ReferencedContainer = "container:UITesting/UITesting.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "NO"
+      shouldAutocreateTestPlan = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B36DFC0E2CF196D700BAE9BE"
+            BuildableName = "UITesting.app"
+            BlueprintName = "UITesting"
+            ReferencedContainer = "container:UITesting/UITesting.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B36DFC282CF196D800BAE9BE"
+               BuildableName = "UITestingUITests.xctest"
+               BlueprintName = "UITestingUITests"
+               ReferencedContainer = "container:UITesting/UITesting.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+      <CommandLineArguments>
+         <!-- Enable screenshot mode: skips core loading, keeps UI snappy -->
+         <CommandLineArgument
+            argument = "-SCREENSHOT_MODE"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B36DFC0E2CF196D700BAE9BE"
+            BuildableName = "UITesting.app"
+            BlueprintName = "UITesting"
+            ReferencedContainer = "container:UITesting/UITesting.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-SCREENSHOT_MODE"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B36DFC0E2CF196D700BAE9BE"
+            BuildableName = "UITesting.app"
+            BlueprintName = "UITesting"
+            ReferencedContainer = "container:UITesting/UITesting.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
