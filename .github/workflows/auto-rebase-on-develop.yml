@@ -10,7 +10,7 @@ name: Auto-rebase PRs on develop push
 on:
   push:
     branches: [develop]
-  workflow_dispatch: {}   # Manual trigger for testing
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -24,7 +24,7 @@ jobs:
   rebase:
     name: Rebase open PRs onto develop
     # Guard: skip if somehow triggered from a non-develop branch
-    if: github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
+    if: ${{ github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
