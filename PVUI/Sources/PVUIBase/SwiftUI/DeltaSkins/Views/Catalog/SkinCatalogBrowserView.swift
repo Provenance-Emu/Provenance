@@ -11,9 +11,21 @@ import PVLogging
 
 /// View for browsing and downloading skins from the remote skin catalog.
 ///
-/// Displays a searchable, filterable grid of available skins from `SkinCatalogService`.
-/// Tapping a skin opens `SkinCatalogDetailView` for download and installation.
+/// On tvOS this view redirects to `TVOSSkinCatalogBrowserView`, which provides an
+/// App Store–style layout suitable for focus-based navigation.
+/// On iOS/iPadOS it displays a searchable, filterable grid of available skins
+/// from `SkinCatalogService`. Tapping a skin opens `SkinCatalogDetailView`.
 public struct SkinCatalogBrowserView: View {
+
+    #if os(tvOS)
+    private let preselectedSystem: String?
+    public init(preselectedSystem: String? = nil) {
+        self.preselectedSystem = preselectedSystem
+    }
+    public var body: some View {
+        TVOSSkinCatalogBrowserView(preselectedSystem: preselectedSystem)
+    }
+    #else
 
     // MARK: - State
 
@@ -519,9 +531,12 @@ public struct SkinCatalogBrowserView: View {
             }
         }
     }
+    #endif // os(tvOS)
 }
 
-// MARK: - CatalogSkinCard
+// MARK: - CatalogSkinCard (iOS/iPadOS only)
+
+#if !os(tvOS)
 
 /// A grid card representing a single skin catalog entry.
 private struct CatalogSkinCard: View {
@@ -624,6 +639,7 @@ private struct CatalogSkinCard: View {
     }
 
 }
+#endif // !os(tvOS)
 
 // MARK: - Shared Helpers
 
@@ -635,8 +651,9 @@ func formatSkinDownloadCount(_ count: Int) -> String {
     return "\(count)"
 }
 
-// MARK: - SkinSortOption Display
+// MARK: - SkinSortOption Display (iOS only — used by filterBarView)
 
+#if !os(tvOS)
 private extension SkinSortOption {
     var displayName: String {
         switch self {
@@ -647,3 +664,4 @@ private extension SkinSortOption {
         }
     }
 }
+#endif // !os(tvOS)

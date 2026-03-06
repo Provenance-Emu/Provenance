@@ -55,7 +55,7 @@ public struct SystemSkinBrowserView: View {
                         } else {
                             systemsGridView
 
-                            // Browse online catalog
+                            // Browse online catalog (prominently on tvOS since no file picker)
                             catalogBrowsePromo
 
                             // DeltaStyles link component
@@ -271,6 +271,29 @@ public struct SystemSkinBrowserView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
+            #if os(tvOS)
+            // On tvOS there is no file picker — the catalog is the only import path.
+            NavigationLink(destination: SkinCatalogBrowserView()) {
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.down.circle.fill")
+                    Text("BROWSE SKIN CATALOG")
+                }
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 24)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black.opacity(0.6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                        )
+                )
+                .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+            }
+            .retroFocusButtonStyle()
+            #else
             HStack(spacing: 12) {
                 Button {
                     showingDocumentPicker = true
@@ -311,6 +334,7 @@ public struct SystemSkinBrowserView: View {
                     .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
                 }
             }
+            #endif // os(tvOS)
 
             Spacer()
         }
@@ -403,9 +427,15 @@ public struct SystemSkinBrowserView: View {
                         .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundStyle(RetroTheme.retroHorizontalGradient)
                         .tracking(1)
+                    #if os(tvOS)
+                    Text("Browse and download skins from the community catalog")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
+                    #else
                     Text("Browse the community skin catalog")
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
+                    #endif
                 }
 
                 Spacer()
@@ -425,7 +455,7 @@ public struct SystemSkinBrowserView: View {
             )
             .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 6)
         }
-        .buttonStyle(PlainButtonStyle())
+        .retroFocusButtonStyle(showBorder: false)
         .padding(.top, 8)
     }
 
