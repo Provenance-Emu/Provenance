@@ -18,6 +18,8 @@ public actor LibretroCheatDatabase {
 
     private let databaseManager: SQLiteDatabaseManager
     private var connection: SQLite.Connection?
+    /// Cached at connect time — false when the DB was generated without `--dat-dir` (no md5 column).
+    private var hasMD5Column: Bool = false
 
     private init() {
         let bundle = Bundle.module
@@ -69,6 +71,17 @@ public actor LibretroCheatDatabase {
         // Quick sanity check: verify the database has tables
         let tableCount = try conn.scalar("SELECT COUNT(*) FROM sqlite_master WHERE type='table'") as? Int64 ?? 0
         DLOG("LibretroCheatDatabase: Connected (\(tableCount) tables) at \(dbPath)")
+
+        // Check whether the games table has an md5 column.
+        // The column is only present when the DB is generated with --dat-dir.
+        let md5Count = (try? conn.scalar(
+            "SELECT COUNT(*) FROM pragma_table_info('games') WHERE name='md5'"
+        ) as? Int64) ?? 0
+        hasMD5Column = md5Count > 0
+        if !hasMD5Column {
+            WLOG("LibretroCheatDatabase: 'md5' column absent from games table — MD5 lookup disabled, falling back to title-only search")
+        }
+
         return conn
     }
 
@@ -92,14 +105,20 @@ public actor LibretroCheatDatabase {
         limit: Int = 300
     ) async throws -> [LibretroCheatEntry] {
         let conn = try await connect()
+
+        guard hasMD5Column else {
+            WLOG("LibretroCheatDatabase: searchCheats(byMD5:) called but md5 column is absent — returning empty")
+            return []
+        }
+
         let normalizedMD5 = md5.lowercased()
 
         let stmt: Statement
         if let systemName = systemName, !systemName.isEmpty {
-            let query = Self.queryByMD5AndSystem + " LIMIT \(limit)"
+            let query = queryByMD5AndSystem + " LIMIT \(limit)"
             stmt = try conn.prepare(query, normalizedMD5, systemName)
         } else {
-            let query = Self.queryByMD5 + " LIMIT \(limit)"
+            let query = queryByMD5 + " LIMIT \(limit)"
             stmt = try conn.prepare(query, normalizedMD5)
         }
 
@@ -147,10 +166,10 @@ public actor LibretroCheatDatabase {
 
         let stmt: Statement
         if let systemName = systemName, !systemName.isEmpty {
-            let query = Self.queryByTitleAndSystem + " LIMIT \(limit)"
+            let query = queryByTitleAndSystem + " LIMIT \(limit)"
             stmt = try conn.prepare(query, pattern, systemName)
         } else {
-            let query = Self.queryByTitle + " LIMIT \(limit)"
+            let query = queryByTitle + " LIMIT \(limit)"
             stmt = try conn.prepare(query, pattern)
         }
 
@@ -181,7 +200,7 @@ public actor LibretroCheatDatabase {
                 continue
             }
 
-            let md5 = row[6] as? String
+            let md5 = hasMD5Column ? row[6] as? String : nil
 
             results.append(LibretroCheatEntry(
                 id: Int(cheatID),
@@ -202,43 +221,69 @@ public actor LibretroCheatDatabase {
 
     // MARK: - Private Queries
 
-    private static let selectClause = """
-        SELECT
-            c.cheat_id,
-            c.cheat_name,
-            c.cheat_code,
-            c.device_name,
-            g.game_title,
-            s.system_name,
-            g.md5
-        FROM cheats c
-        JOIN games g ON c.game_id = g.game_id
-        JOIN systems s ON g.system_id = s.system_id
-        """
+    /// SELECT clause adapts based on whether the md5 column exists in the games table.
+    private var selectClause: String {
+        if hasMD5Column {
+            return """
+                SELECT
+                    c.cheat_id,
+                    c.cheat_name,
+                    c.cheat_code,
+                    c.device_name,
+                    g.game_title,
+                    s.system_name,
+                    g.md5
+                FROM cheats c
+                JOIN games g ON c.game_id = g.game_id
+                JOIN systems s ON g.system_id = s.system_id
+                """
+        } else {
+            return """
+                SELECT
+                    c.cheat_id,
+                    c.cheat_name,
+                    c.cheat_code,
+                    c.device_name,
+                    g.game_title,
+                    s.system_name
+                FROM cheats c
+                JOIN games g ON c.game_id = g.game_id
+                JOIN systems s ON g.system_id = s.system_id
+                """
+        }
+    }
 
-    private static let queryByTitle = selectClause + """
+    private var queryByTitle: String {
+        selectClause + """
 
-        WHERE g.game_title LIKE ? ESCAPE '\\' COLLATE NOCASE
-        ORDER BY g.game_title, c.cheat_name
-        """
+            WHERE g.game_title LIKE ? ESCAPE '\\' COLLATE NOCASE
+            ORDER BY g.game_title, c.cheat_name
+            """
+    }
 
-    private static let queryByTitleAndSystem = selectClause + """
+    private var queryByTitleAndSystem: String {
+        selectClause + """
 
-        WHERE g.game_title LIKE ? ESCAPE '\\' COLLATE NOCASE
-          AND s.system_name = ?
-        ORDER BY g.game_title, c.cheat_name
-        """
+            WHERE g.game_title LIKE ? ESCAPE '\\' COLLATE NOCASE
+              AND s.system_name = ?
+            ORDER BY g.game_title, c.cheat_name
+            """
+    }
 
-    private static let queryByMD5 = selectClause + """
+    private var queryByMD5: String {
+        selectClause + """
 
-        WHERE g.md5 = ?
-        ORDER BY g.game_title, c.cheat_name
-        """
+            WHERE g.md5 = ?
+            ORDER BY g.game_title, c.cheat_name
+            """
+    }
 
-    private static let queryByMD5AndSystem = selectClause + """
+    private var queryByMD5AndSystem: String {
+        selectClause + """
 
-        WHERE g.md5 = ?
-          AND s.system_name = ?
-        ORDER BY g.game_title, c.cheat_name
-        """
+            WHERE g.md5 = ?
+              AND s.system_name = ?
+            ORDER BY g.game_title, c.cheat_name
+            """
+    }
 }
