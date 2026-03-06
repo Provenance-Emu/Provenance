@@ -98,19 +98,7 @@ jobs:
               git rebase --abort 2>/dev/null || true
               failed=$((failed + 1))
 
-              gh pr comment "$pr_num" --repo "$REPO" --body "**Auto-rebase conflict**
-
-This PR could not be automatically rebased onto \`develop\` due to merge conflicts. Please rebase manually:
-
-\`\`\`bash
-git fetch origin
-git checkout <your-branch>
-git rebase origin/develop
-# resolve conflicts, then:
-git push --force-with-lease
-\`\`\`
-
-Or comment \`/rebase\` here to retry once conflicts are resolved on develop."
+              gh pr comment "$pr_num" --repo "$REPO" --body $'**Auto-rebase conflict**\n\nThis PR could not be automatically rebased onto `develop` due to merge conflicts. Please rebase manually:\n\n```bash\ngit fetch origin\ngit checkout <your-branch>\ngit rebase origin/develop\n# resolve conflicts, then:\ngit push --force-with-lease\n```\n\nOr comment `/rebase` here to retry once conflicts are resolved on develop.'
             fi
           done < <(echo "$prs" | jq -r '.[] | [.number, .branch] | @tsv')
 
