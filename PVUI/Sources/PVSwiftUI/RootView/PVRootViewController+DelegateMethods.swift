@@ -178,7 +178,7 @@ extension PVRootViewController: SFSafariViewControllerDelegate {
                             await gameImporter.clearCompleted()
                         }
                     }
-                    let hostingController = UIHostingController(rootView: settingsView)
+                    let hostingController = self.makeHostingController(settingsView)
                     let navigationController = UINavigationController(rootViewController: hostingController)
                     self.present(navigationController, animated: true)
                 }

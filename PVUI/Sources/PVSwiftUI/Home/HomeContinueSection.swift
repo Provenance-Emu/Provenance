@@ -68,7 +68,7 @@ protocol ContinuesDataDriver {
 
 /// Realm-backed implementation.
 final class RealmContinuesDataDriver: ContinuesDataDriver {
-    private let queue = DispatchQueue(label: "org.provenance.continues.driver", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "org.provenance.realm.continues.driver", qos: .userInitiated)
 
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
         AsyncStream { continuation in
@@ -110,6 +110,90 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
         }
     }
 }
+
+// MARK: - SwiftData driver
+
+#if canImport(SwiftData)
+import SwiftData
+
+/// SwiftData-backed implementation of ContinuesDataDriver.
+///
+/// The FetchDescriptor's `fetchLimit` is set **before** fetching so SwiftData
+/// never loads more rows than needed into memory (unlike the Realm driver's
+/// post-fetch `.prefix(500)` cap).
+///
+/// - Note: Unlike `RealmContinuesDataDriver`, this driver performs a **one-shot**
+///   fetch and immediately finishes the stream. It does not observe SwiftData
+///   change notifications for live updates. This is intentional for the current
+///   migration phase; observe-based updates can be layered on once the full
+///   SwiftData migration is complete.
+@available(iOS 17, tvOS 17, *)
+final class SwiftDataContinuesDataDriver: ContinuesDataDriver, @unchecked Sendable {
+    private let modelContainer: ModelContainer
+
+    init(modelContainer: ModelContainer) {
+        self.modelContainer = modelContainer
+    }
+
+    func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
+        AsyncStream { continuation in
+            let task = Task(priority: .userInitiated) { [modelContainer] in
+                let context = ModelContext(modelContainer)
+
+                // Build the predicate first, then set fetchLimit so SwiftData
+                // applies the limit to the already-filtered result set.
+                let predicate: Predicate<SaveState_Data>
+                if let id = consoleIdentifier {
+                    predicate = #Predicate<SaveState_Data> { state in
+                        state.game?.systemIdentifier == id
+                    }
+                } else {
+                    predicate = #Predicate<SaveState_Data> { state in
+                        state.game != nil
+                    }
+                }
+
+                var descriptor = FetchDescriptor<SaveState_Data>(
+                    predicate: predicate,
+                    sortBy: [SortDescriptor(\.date, order: .reverse)]
+                )
+                // Set fetchLimit after predicate so SwiftData never materializes
+                // more rows than needed.
+                descriptor.fetchLimit = 500
+
+                do {
+                    let results = try context.fetch(descriptor)
+                    let models: [ContinueItemModel] = results.compactMap { state in
+                        guard let game = state.game else { return nil }
+                        // Capture id by value so the resolver closure does not
+                        // retain the SwiftData model object past its context lifetime.
+                        return ContinueItemModel(
+                            id: state.id,
+                            gameTitle: game.title,
+                            imageURL: nil, // partialPath → full URL wiring deferred
+                            date: state.date,
+                            systemIdentifier: game.systemIdentifier,
+                            resolver: { [id = state.id] in
+                                // Bridge back to Realm until full SwiftData migration.
+                                RomDatabase.sharedInstance.object(
+                                    ofType: PVSaveState.self,
+                                    wherePrimaryKeyEquals: id
+                                )
+                            }
+                        )
+                    }
+                    continuation.yield(models)
+                } catch {
+                    ELOG("SwiftDataContinuesDataDriver: fetch failed: \(error)")
+                }
+                continuation.finish()
+            }
+            // Cancel the fetch task if the consumer stops listening.
+            continuation.onTermination = { _ in task.cancel() }
+        }
+    }
+}
+#endif // canImport(SwiftData)
 
 /// Optimized view model with reduced @Published properties to minimize re-renders
 class ContinuesSectionViewModel: ObservableObject {
