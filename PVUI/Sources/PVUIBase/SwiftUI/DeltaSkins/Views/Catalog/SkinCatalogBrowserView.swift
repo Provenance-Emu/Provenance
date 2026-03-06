@@ -259,7 +259,7 @@ public struct SkinCatalogBrowserView: View {
                         .overlay(
                             Capsule()
                                 .strokeBorder(
-                                    isSelected ? RetroTheme.retroGradient : AnyShapeStyle(Color.white.opacity(0.2)),
+                                    isSelected ? AnyShapeStyle(RetroTheme.retroGradient) : AnyShapeStyle(Color.white.opacity(0.2)),
                                     lineWidth: isSelected ? 1.5 : 0.5
                                 )
                         )
