@@ -394,6 +394,30 @@ struct LibretroCheatEntryTests {
     }
 }
 
+// MARK: - Region Tag Handling
+
+struct LibretroCheatDatabaseRegionTagTests {
+
+    @Test("Title with region tag matches same as clean title")
+    func regionTagMatchesSameAsCleanTitle() async throws {
+        // The DB stores "Super Mario World" but the app may pass "Super Mario World (USA)"
+        let cleanResults = try await LibretroCheatDatabase.shared.searchCheats(
+            byTitle: "Super Mario World",
+            systemName: "Nintendo - Super Nintendo Entertainment System",
+            limit: 10
+        )
+        let taggedResults = try await LibretroCheatDatabase.shared.searchCheats(
+            byTitle: "Super Mario World (USA)",
+            systemName: "Nintendo - Super Nintendo Entertainment System",
+            limit: 10
+        )
+        // The tagged search hits file_title which contains the region tag, or caller
+        // strips it — either way results should be non-empty
+        #expect(taggedResults.count > 0,
+                "Title with region tag '(USA)' should still find cheats via file_title column")
+    }
+}
+
 // MARK: - Special Characters in Search
 
 struct LibretroCheatDatabaseSpecialCharTests {

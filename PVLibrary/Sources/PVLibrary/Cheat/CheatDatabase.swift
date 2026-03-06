@@ -8,6 +8,7 @@
 import Foundation
 import SQLite
 import PVLogging
+import PVPrimitives
 import LibretroCheatDB
 
 /// Actor-based service for querying the bundled cheatbase.sqlite database.
@@ -106,10 +107,13 @@ public actor CheatDatabase {
 
         // 2. Query LibretroCheatDatabase by title + system
         if let title = title, !title.isEmpty {
-            DLOG("CheatDatabase: Querying libretro DB for title='\(title)' system=\(systemIdentifier ?? "any")")
+            // Strip parenthetical/bracketed region and release tags (e.g. "(USA)", "[!]")
+            // so "Bomberman (USA)" matches the DB entry "Bomberman".
+            let lookupTitle = title.strippingROMTags()
+            DLOG("CheatDatabase: Querying libretro DB for title='\(lookupTitle)' (original='\(title)') system=\(systemIdentifier ?? "any")")
             do {
                 let libretroResults = try await LibretroCheatDatabase.shared.searchCheats(
-                    byTitle: title,
+                    byTitle: lookupTitle,
                     systemName: systemIdentifier,
                     limit: limit
                 )
@@ -139,15 +143,16 @@ public actor CheatDatabase {
 
         // 3. If libretro returned nothing, also try title on old DS cheatbase
         if results.isEmpty, let title = title, !title.isEmpty {
+            let lookupTitle = title.strippingROMTags()
             do {
-                let titleResults = try searchCheats(byTitle: title, limit: limit)
+                let titleResults = try searchCheats(byTitle: lookupTitle, limit: limit)
                 for entry in titleResults {
                     let key = entry.cheatCode.lowercased()
                     if seenCodes.insert(key).inserted {
                         results.append(entry)
                     }
                 }
-                DLOG("CheatDatabase: \(titleResults.count) results from cheatbase by title '\(title)'")
+                DLOG("CheatDatabase: \(titleResults.count) results from cheatbase by title '\(lookupTitle)'")
             } catch {
                 ELOG("CheatDatabase: Title search error: \(error)")
                 lastError = error
