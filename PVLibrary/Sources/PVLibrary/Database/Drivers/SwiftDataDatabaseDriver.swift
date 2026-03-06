@@ -57,17 +57,24 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
             self.modelContext = ModelContext(container)
             self.isUsingPersistentStore = true
         } catch {
-            ELOG("SwiftDataDatabaseDriver: failed to create persistent ModelContainer — \(error)")
+            let persistentError = error
+            ELOG("SwiftDataDatabaseDriver: failed to create persistent ModelContainer — \(persistentError)")
             // Non-fatal fallback: use an in-memory container so the app can continue.
             // isUsingPersistentStore will be false — callers can detect this and warn users.
-            if let inMemoryContainer = try? PVSwiftDataSchema.makePVModelContainer(inMemory: true) {
+            do {
+                let inMemoryContainer = try PVSwiftDataSchema.makePVModelContainer(inMemory: true)
                 WLOG("SwiftDataDatabaseDriver: falling back to in-memory ModelContainer; data will not be persisted across launches")
                 self.modelContainer = inMemoryContainer
                 self.modelContext = ModelContext(inMemoryContainer)
                 self.isUsingPersistentStore = false
-            } else {
-                // All fallback attempts failed; crash with a clear diagnostic.
-                fatalError("SwiftDataDatabaseDriver: unable to create any ModelContainer: \(error)")
+            } catch {
+                let inMemoryError = error
+                ELOG("SwiftDataDatabaseDriver: failed to create in-memory ModelContainer — \(inMemoryError)")
+                // All fallback attempts failed; crash with a clear diagnostic that includes both errors.
+                fatalError(
+                    "SwiftDataDatabaseDriver: unable to create any ModelContainer. " +
+                    "Persistent store error: \(persistentError); in-memory fallback error: \(inMemoryError)"
+                )
             }
         }
     }
@@ -201,19 +208,15 @@ public extension SwiftDataDatabaseDriver {
 
     /// Search for games whose title contains `searchText` (case-insensitive).
     ///
-    /// A store-side predicate using `contains` is applied first as a coarse filter,
-    /// then an in-memory case-insensitive pass narrows the results. This avoids
-    /// fetching the entire game library while working around SwiftData's lack of
-    /// support for `lowercased()` inside `#Predicate`.
+    /// SwiftData predicates do not support `lowercased()` or other locale-aware
+    /// transformations, so all filtering is done in-memory to preserve correct
+    /// case-insensitive semantics (matching Realm's `CONTAINS[c]` behavior).
     public func searchGames(for searchText: String) throws -> [Game_Data] {
         let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty { return try allGames(sortedBy: [SortDescriptor(\.title)]) }
-        let coarse = try games(
-            matching: #Predicate { game in game.title.contains(trimmed) },
-            sortedBy: [SortDescriptor(\.title)]
-        )
+        let all = try allGames(sortedBy: [SortDescriptor(\.title)])
         let lower = trimmed.lowercased()
-        return coarse.filter { $0.title.lowercased().contains(lower) }
+        return all.filter { $0.title.lowercased().contains(lower) }
     }
 
     // MARK: Batch insert
@@ -376,17 +379,15 @@ public actor SwiftDataDatabaseActor {
 
     /// Search for games whose title contains `searchText` (case-insensitive).
     ///
-    /// A store-side predicate using `contains` is applied first as a coarse filter,
-    /// then an in-memory case-insensitive pass narrows the results.
+    /// SwiftData predicates do not support `lowercased()` or other locale-aware
+    /// transformations, so all filtering is done in-memory to preserve correct
+    /// case-insensitive semantics (matching Realm's `CONTAINS[c]` behavior).
     public func searchGames(for searchText: String) throws -> [Game_Data] {
         let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty { return try allGames(sortedBy: [SortDescriptor(\.title)]) }
-        let coarse = try games(
-            matching: #Predicate { game in game.title.contains(trimmed) },
-            sortedBy: [SortDescriptor(\.title)]
-        )
+        let all = try allGames(sortedBy: [SortDescriptor(\.title)])
         let lower = trimmed.lowercased()
-        return coarse.filter { $0.title.lowercased().contains(lower) }
+        return all.filter { $0.title.lowercased().contains(lower) }
     }
 
     // MARK: - Write
