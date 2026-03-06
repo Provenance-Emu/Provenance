@@ -3,25 +3,29 @@ name: Auto-rebase PRs on develop push
 # When develop receives new commits, automatically rebase all open PRs
 # targeting develop so they stay current and merge conflicts surface early.
 #
-# Only rebases PRs from the same repo (not forks — we can't push to those).
+# Only rebases PRs from the same repo (not forks - we can't push to those).
 # Skips draft PRs and PRs that are already up to date.
 # Comments on PRs with rebase conflicts so owners can resolve manually.
 
 on:
   push:
     branches: [develop]
+  workflow_dispatch: {}   # Manual trigger for testing
 
 permissions:
   contents: write
   pull-requests: write
+  workflows: write   # Required to push to branches containing workflow files
 
 concurrency:
   group: auto-rebase-develop
-  cancel-in-progress: false   # Queue — don't drop rebases during rapid pushes
+  cancel-in-progress: true   # Latest develop state wins; cancel stale in-progress runs
 
 jobs:
   rebase:
     name: Rebase open PRs onto develop
+    # Guard: skip if somehow triggered from a non-develop branch
+    if: github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -66,13 +70,13 @@ jobs:
 
             # Fetch the PR branch (may not be locally present)
             if ! git fetch origin "$branch" 2>/dev/null; then
-              echo "  Cannot fetch '$branch' — skipping (branch may be deleted)"
+              echo "  Cannot fetch '$branch' - skipping (branch may be deleted)"
               continue
             fi
 
             # Skip if already rebased onto develop (develop is already an ancestor)
             if git merge-base --is-ancestor origin/develop "origin/$branch" 2>/dev/null; then
-              echo "  Already up to date — skipping"
+              echo "  Already up to date - skipping"
               skipped_uptodate=$((skipped_uptodate + 1))
               continue
             fi
@@ -83,20 +87,19 @@ jobs:
             if git rebase origin/develop; then
               # Push rebased branch
               if git push --force-with-lease origin "$branch"; then
-                echo "  ✅ Rebased and pushed successfully"
+                echo "  Rebased and pushed successfully"
                 rebased=$((rebased + 1))
               else
-                echo "  ⚠️  Rebase succeeded but push was rejected (branch protection?)"
+                echo "  Rebase succeeded but push was rejected (branch protection?)"
                 git rebase --abort 2>/dev/null || true
                 failed=$((failed + 1))
               fi
             else
-              echo "  ❌ Rebase conflict — commenting on PR and skipping"
+              echo "  Rebase conflict - commenting on PR and skipping"
               git rebase --abort 2>/dev/null || true
               failed=$((failed + 1))
 
-              gh pr comment "$pr_num" --repo "$REPO" --body "$(cat <<'MSG'
-⚠️ **Auto-rebase conflict**
+              gh pr comment "$pr_num" --repo "$REPO" --body "**Auto-rebase conflict**
 
 This PR could not be automatically rebased onto \`develop\` due to merge conflicts. Please rebase manually:
 
@@ -108,14 +111,12 @@ git rebase origin/develop
 git push --force-with-lease
 \`\`\`
 
-Or comment \`/rebase\` here to retry once conflicts are resolved on develop.
-MSG
-)"
+Or comment \`/rebase\` here to retry once conflicts are resolved on develop."
             fi
           done < <(echo "$prs" | jq -r '.[] | [.number, .branch] | @tsv')
 
           echo ""
           echo "=== Summary ==="
-          echo "  Rebased:       $rebased"
+          echo "  Rebased:            $rebased"
           echo "  Already up to date: $skipped_uptodate"
-          echo "  Conflicts/errors: $failed"
+          echo "  Conflicts/errors:   $failed"
