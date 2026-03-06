@@ -131,30 +131,12 @@ jobs:
                    --repo "$REPO" \
                    -f pr_number="$pr_num" \
                    -f action="fix_rebase_conflict" 2>/dev/null; then
-                cat > /tmp/conflict_msg.md << 'MSGEOF'
-🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.
-
-If conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.
-MSGEOF
-                gh pr comment "$pr_num" --repo "$REPO" --body-file /tmp/conflict_msg.md 2>/dev/null || true
+                gh pr comment "$pr_num" --repo "$REPO" \
+                  --body $'🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
               else
                 # Dispatch failed — fall back to manual instructions
-                cat > /tmp/conflict_manual.md << MSGEOF
-**Auto-rebase conflict**
-
-This PR could not be automatically rebased onto \`develop\` due to merge conflicts. Please rebase manually:
-
-\`\`\`bash
-git fetch origin
-git checkout ${branch}
-git rebase origin/develop
-# resolve conflicts, then:
-git push --force-with-lease
-\`\`\`
-
-Or comment \`/rebase\` here to retry.
-MSGEOF
-                gh pr comment "$pr_num" --repo "$REPO" --body-file /tmp/conflict_manual.md 2>/dev/null || true
+                gh pr comment "$pr_num" --repo "$REPO" \
+                  --body $'**Auto-rebase conflict**\n\nThis PR could not be automatically rebased onto `develop` due to merge conflicts. Please rebase manually:\n\n```bash\ngit fetch origin\ngit checkout '"${branch}"'\ngit rebase origin/develop\n# resolve conflicts, then:\ngit push --force-with-lease\n```\n\nOr comment `/rebase` here to retry.' 2>/dev/null || true
               fi
             fi
           done < <(echo "$prs" | jq -r '.[] | [.number, .branch] | @tsv')

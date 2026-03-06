@@ -114,27 +114,11 @@ jobs:
                    --repo "${{ github.repository }}" \
                    -f pr_number="$PR_NUMBER" \
                    -f action="fix_rebase_conflict" 2>/dev/null; then
-                cat > /tmp/conflict_msg.md << 'MSGEOF'
-🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.
-
-If conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.
-MSGEOF
-                gh pr comment "$PR_NUMBER" --body-file /tmp/conflict_msg.md --repo "${{ github.repository }}" 2>/dev/null || true
+                gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+                  --body $'🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
               else
-                cat > /tmp/conflict_manual.md << MSGEOF
-❌ **Rebase conflict** — conflicts could not be resolved automatically.
-
-Please resolve manually:
-
-\`\`\`bash
-git fetch origin
-git checkout ${BRANCH}
-git rebase origin/develop
-# resolve conflicts, then:
-git push --force-with-lease
-\`\`\`
-MSGEOF
-                gh pr comment "$PR_NUMBER" --body-file /tmp/conflict_manual.md --repo "${{ github.repository }}" 2>/dev/null || true
+                gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+                  --body "❌ **Rebase conflict** — conflicts could not be resolved automatically. Please resolve manually: \`git fetch origin && git checkout ${BRANCH} && git rebase origin/develop\`, fix conflicts, then \`git push --force-with-lease\`." 2>/dev/null || true
               fi
               ;;
             push_failed)
