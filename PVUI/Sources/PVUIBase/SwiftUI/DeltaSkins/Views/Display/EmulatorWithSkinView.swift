@@ -663,7 +663,7 @@ struct EmulatorWithSkinView: View {
         if UIDevice.current.userInterfaceIdiom == .pad {
             deviceType = .ipad
         } else if UIDevice.current.userInterfaceIdiom == .tv {
-            deviceType = .iphone // Use iPhone as fallback since there's no Apple TV option
+            deviceType = .ipad // iPad landscape skins work best at TV scale; no real skins use "tv"
         } else {
             deviceType = .iphone
         }
@@ -887,7 +887,7 @@ struct EmulatorWithSkinView: View {
             // Helper function to check if skin supports current device
             func skinSupportsCurrentDevice(_ skin: DeltaSkinProtocol) -> Bool {
                 #if os(tvOS)
-                let device: DeltaSkinDevice = .tv
+                let device: DeltaSkinDevice = .ipad // No real skins use "tv"; iPad landscape is best for tvOS
                 #else
                 let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
                 #endif
