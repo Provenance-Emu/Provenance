@@ -15,6 +15,7 @@ import SwiftData
 ///
 /// All @Model types must be listed here. The container is configured via
 /// `makePVModelContainer`.
+@available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
 public enum PVSwiftDataSchema {
     /// Schema v1: initial SwiftData migration from Realm.
     public static let v1Schema = Schema([

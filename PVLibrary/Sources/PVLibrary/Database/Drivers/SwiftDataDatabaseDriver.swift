@@ -50,7 +50,7 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
 
     /// Designated initialiser. The `database` parameter is ignored — SwiftData manages
     /// its own container independently from Realm.
-    public required init(database: RomDatabase) {
+    public required init(database _: RomDatabase) {
         do {
             let container = try PVSwiftDataSchema.makePVModelContainer()
             self.modelContainer = container
@@ -201,13 +201,19 @@ public extension SwiftDataDatabaseDriver {
 
     /// Search for games whose title contains `searchText` (case-insensitive).
     ///
-    /// Filtering is performed in-memory after fetching all games because SwiftData
-    /// predicates do not support `lowercased()` or similar string-transform calls.
+    /// A store-side predicate using `contains` is applied first as a coarse filter,
+    /// then an in-memory case-insensitive pass narrows the results. This avoids
+    /// fetching the entire game library while working around SwiftData's lack of
+    /// support for `lowercased()` inside `#Predicate`.
     public func searchGames(for searchText: String) throws -> [Game_Data] {
-        let all = try allGames(sortedBy: [SortDescriptor(\.title)])
-        if searchText.isEmpty { return all }
-        let lower = searchText.lowercased()
-        return all.filter { $0.title.lowercased().contains(lower) }
+        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return try allGames(sortedBy: [SortDescriptor(\.title)]) }
+        let coarse = try games(
+            matching: #Predicate { game in game.title.contains(trimmed) },
+            sortedBy: [SortDescriptor(\.title)]
+        )
+        let lower = trimmed.lowercased()
+        return coarse.filter { $0.title.lowercased().contains(lower) }
     }
 
     // MARK: Batch insert
@@ -370,13 +376,17 @@ public actor SwiftDataDatabaseActor {
 
     /// Search for games whose title contains `searchText` (case-insensitive).
     ///
-    /// Filtering is performed in-memory after fetching all games because SwiftData
-    /// predicates do not support `lowercased()` or similar string-transform calls.
+    /// A store-side predicate using `contains` is applied first as a coarse filter,
+    /// then an in-memory case-insensitive pass narrows the results.
     public func searchGames(for searchText: String) throws -> [Game_Data] {
-        let all = try allGames(sortedBy: [SortDescriptor(\.title)])
-        if searchText.isEmpty { return all }
-        let lower = searchText.lowercased()
-        return all.filter { $0.title.lowercased().contains(lower) }
+        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return try allGames(sortedBy: [SortDescriptor(\.title)]) }
+        let coarse = try games(
+            matching: #Predicate { game in game.title.contains(trimmed) },
+            sortedBy: [SortDescriptor(\.title)]
+        )
+        let lower = trimmed.lowercased()
+        return coarse.filter { $0.title.lowercased().contains(lower) }
     }
 
     // MARK: - Write
