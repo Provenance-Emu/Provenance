@@ -549,17 +549,23 @@ private struct VirtualKeyButton: View {
 }
 
 #Preview("Compact Layout") {
-    let vm = VirtualKeyboardViewModel(layout: .compact)
-    return VirtualKeyboardView(viewModel: vm)
-        .padding()
-        .background(Color.gray)
+    let vm = VirtualKeyboardViewModel()
+    vm.layout = .compact
+    return ZStack {
+        Color.gray.ignoresSafeArea()
+        VirtualKeyboardView(viewModel: vm)
+    }
+    .preferredColorScheme(.dark)
 }
 
 #Preview("Function Row") {
-    let vm = VirtualKeyboardViewModel(layout: .functionRow)
-    return VirtualKeyboardView(viewModel: vm)
-        .padding()
-        .background(Color.gray)
+    let vm = VirtualKeyboardViewModel()
+    vm.layout = .functionRow
+    return ZStack {
+        Color.gray.ignoresSafeArea()
+        VirtualKeyboardView(viewModel: vm)
+    }
+    .preferredColorScheme(.dark)
 }
 #endif
 
