@@ -3158,9 +3158,10 @@ unsigned retro_api_version(void)
 #pragma mark - Mouse State Management
 
 - (void)setMousePosition:(CGPoint)normalizedPoint {
+    float nx, ny;
     @synchronized(self) {
-        float nx = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.x));
-        float ny = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.y));
+        nx = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.x));
+        ny = MAX(0.0f, MIN(1.0f, (float)normalizedPoint.y));
         // Update absolute position for RETRO_DEVICE_POINTER queries.
         currentTouchPosition.x = nx;
         currentTouchPosition.y = ny;
@@ -3174,6 +3175,14 @@ unsigned retro_api_version(void)
         lastMousePosition = CGPointMake(nx, ny);
         lastMousePositionValid = YES;
     }
+    // Notify the cursor overlay on the main thread (fire-and-forget, non-blocking).
+    CGPoint clampedPoint = CGPointMake(nx, ny);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName:@"PVMousePositionDidChange"
+            object:nil
+            userInfo:@{ @"PVMousePositionKey": [NSValue valueWithCGPoint:clampedPoint] }];
+    });
 }
 
 - (void)setLeftMouseButtonPressed:(BOOL)pressed {
@@ -3187,6 +3196,13 @@ unsigned retro_api_version(void)
             // spurious large delta from the previous touch session's position.
             lastMousePositionValid = NO;
         }
+    }
+    if (pressed) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter]
+                postNotificationName:@"PVMouseButtonDidPress"
+                object:nil];
+        });
     }
 }
 

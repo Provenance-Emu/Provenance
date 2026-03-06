@@ -392,6 +392,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         gpuViewController.dismiss(animated: false)
         controllerViewController?.dismiss(animated: false)
         core.touchViewController = nil
+        #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
+        teardownVirtualMouse()
+        #endif
         #if os(iOS) || os(tvOS)
         Task.detached { @MainActor in
             PVControllerManager.shared.controllers.forEach { $0.clearPauseHandler() }
@@ -774,6 +777,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             addControllerOverlay()
         }
         initMenuButton()
+        // Install visible mouse cursor + touch trackpad for mouse-supporting cores
+        setupVirtualMouseIfNeeded()
         #endif
 
         configureFPSCounterPreferenceObservationIfNeeded()
