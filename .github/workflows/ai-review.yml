@@ -121,6 +121,9 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
+          # Allow github-actions[bot] to trigger this — ai-review-trigger.yml dispatches
+          # this workflow via workflow_dispatch, making the actor a bot, not a human.
+          allowed_bots: 'github-actions[bot]'
           claude_args: >-
             --model ${{ needs.triage.outputs.model }}
             --allowedTools 'Read,Glob,Grep,Bash(gh pr:*),Bash(gh api:*),Bash(gh workflow:*),Bash(cat:*)'
