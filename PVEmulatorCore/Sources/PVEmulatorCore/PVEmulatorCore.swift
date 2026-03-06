@@ -240,6 +240,36 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     /// If skins are supported
     @objc dynamic open var supportsSkins: Bool { true }
 
+    // MARK: Virtual Keyboard / Mouse
+
+    /// Whether the loaded game/core supports a virtual keyboard overlay.
+    /// Forwards to `KeyboardResponder.gameSupportsKeyboard` when the bridge
+    /// conforms to that protocol; returns `false` otherwise.
+    @objc open var supportsVirtualKeyboard: Bool {
+        return (bridge as? KeyboardResponder)?.gameSupportsKeyboard ?? false
+    }
+
+    /// Whether the loaded game/core *requires* a virtual keyboard to be shown
+    /// automatically. Forwards to `KeyboardResponder.requiresKeyboard`; returns
+    /// `false` when the bridge does not conform.
+    @objc open var requiresVirtualKeyboard: Bool {
+        return (bridge as? KeyboardResponder)?.requiresKeyboard ?? false
+    }
+
+    /// Whether the loaded game/core supports a virtual mouse overlay.
+    /// Forwards to `MouseResponder.gameSupportsMouse` when the bridge
+    /// conforms to that protocol; returns `false` otherwise.
+    @objc open var supportsVirtualMouse: Bool {
+        return (bridge as? MouseResponder)?.gameSupportsMouse ?? false
+    }
+
+    /// Whether the loaded game/core *requires* a virtual mouse to be shown
+    /// automatically. Forwards to `MouseResponder.requiresMouse`; returns
+    /// `false` when the bridge does not conform.
+    @objc open var requiresVirtualMouse: Bool {
+        return (bridge as? MouseResponder)?.requiresMouse ?? false
+    }
+
     /// Default skins off while we develop the feature
     @objc dynamic open var supportsFilters: Bool { true }
 
