@@ -19,6 +19,7 @@ public enum PVFeature: String, CaseIterable {
     case inAppFreeROMs = "inAppFreeROMs"
     case romPathMigrator = "romPathMigrator"
     case cheatsUseSwiftUI = "cheatsUseSwiftUI"
+    case cheatsOnlineLookup = "cheatsOnlineLookup"
     case retroarchBuiltinEditor = "retroarchBuiltinEditor"
     case advancedSkinFeatures = "advancedSkinFeatures"
     case contentlessCores = "contentlessCores"
@@ -371,6 +372,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var retroarchBuiltinEditor: Bool { featureStates[.retroarchBuiltinEditor] ?? false }
     public var advancedSkinFeatures: Bool { featureStates[.advancedSkinFeatures] ?? false }
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
+    public var cheatsOnlineLookup: Bool { featureStates[.cheatsOnlineLookup] ?? false }
 
     // MARK: - Feature Queries
 

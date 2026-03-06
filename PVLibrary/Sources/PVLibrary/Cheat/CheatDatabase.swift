@@ -229,6 +229,27 @@ public actor CheatDatabase {
         }
         return results
     }
+
+    // MARK: - Online Search
+
+    /// Fetch cheat codes from online sources (libretro cheat database on GitHub).
+    ///
+    /// This is a thin wrapper around `CheatOnlineLookup` that can be called directly
+    /// from the UI layer after local searches return no results.
+    ///
+    /// - Parameters:
+    ///   - title: The game title.
+    ///   - systemIdentifier: The libretro system directory name.
+    /// - Returns: Array of `CheatDatabaseEntry` values with `isOnlineResult == true`.
+    public func searchCheatsOnline(
+        title: String,
+        systemIdentifier: String? = nil
+    ) async throws -> [CheatDatabaseEntry] {
+        try await CheatOnlineLookup.shared.searchCheats(
+            title: title,
+            systemIdentifier: systemIdentifier
+        )
+    }
 }
 
 // MARK: - Error
