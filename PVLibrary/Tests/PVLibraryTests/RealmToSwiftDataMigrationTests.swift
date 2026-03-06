@@ -20,13 +20,14 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
         try PVSwiftDataSchema.makePVModelContainer(inMemory: true)
     }
 
-    /// Creates a fresh in-memory Realm with a random identifier so tests are isolated.
-    private func makeInMemoryRealm() throws -> Realm {
-        let config = Realm.Configuration(
+    /// Returns a Realm.Configuration backed by a fresh isolated in-memory store.
+    /// Pass the result to `RealmToSwiftDataMigration(realmConfiguration:)` so that
+    /// each test runs against an empty, isolated Realm rather than the on-disk default.
+    private func makeInMemoryRealmConfig() -> Realm.Configuration {
+        Realm.Configuration(
             inMemoryIdentifier: UUID().uuidString,
             schemaVersion: schemaVersion
         )
-        return try Realm(configuration: config)
     }
 
     // MARK: - Migration flag tests
@@ -34,16 +35,20 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
     func testMigrationFlagDefaultFalse() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let container = try makeInMemoryContainer()
-        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
+        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults,
+                                                  realmConfiguration: makeInMemoryRealmConfig())
         let completed = await migrator.isMigrationCompleted
         XCTAssertFalse(completed)
     }
 
     func testResetMigrationFlag() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        defaults.set(true, forKey: "PVRealmToSwiftDataMigrationCompleted")
+        // Use the actor's own key constant rather than a hard-coded string so that
+        // a rename of the key in production doesn't silently break this test.
+        defaults.set(true, forKey: RealmToSwiftDataMigration.migrationCompletedKey)
         let container = try makeInMemoryContainer()
-        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
+        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults,
+                                                  realmConfiguration: makeInMemoryRealmConfig())
         var completed = await migrator.isMigrationCompleted
         XCTAssertTrue(completed)
 
@@ -57,7 +62,8 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
     func testMigrationWithEmptyRealm() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let container = try makeInMemoryContainer()
-        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
+        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults,
+                                                  realmConfiguration: makeInMemoryRealmConfig())
 
         // Should not throw — Realm is simply empty.
         await XCTAssertNoThrowAsync {
@@ -72,7 +78,8 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
     func testMigrationIsIdempotent() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let container = try makeInMemoryContainer()
-        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
+        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults,
+                                                  realmConfiguration: makeInMemoryRealmConfig())
 
         // First run
         try await migrator.migrateIfNeeded()
@@ -232,18 +239,18 @@ final class RealmToSwiftDataMigrationTests: XCTestCase {
 
     // MARK: - Progress reporting
 
-    func testProgressHandlerIsCalled() async throws {
+    /// Verifies that passing a progress handler to `migrateIfNeeded` does not cause migration to
+    /// throw. With an empty in-memory Realm the handler is never invoked (no entities to migrate),
+    /// so this test validates the no-crash contract rather than handler invocation.
+    func testProgressHandlerDoesNotThrow() async throws {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
         let container = try makeInMemoryContainer()
-        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults)
+        let migrator = RealmToSwiftDataMigration(modelContainer: container, defaults: defaults,
+                                                  realmConfiguration: makeInMemoryRealmConfig())
 
-        var entities: [String] = []
-        try await migrator.migrateIfNeeded { progress in
-            entities.append(progress.entity)
+        await XCTAssertNoThrowAsync {
+            try await migrator.migrateIfNeeded { _ in }
         }
-
-        // Even with an empty Realm the handler may be called for entities with 0 records;
-        // the key assertion is that migration completed without error.
         let completed = await migrator.isMigrationCompleted
         XCTAssertTrue(completed)
     }
