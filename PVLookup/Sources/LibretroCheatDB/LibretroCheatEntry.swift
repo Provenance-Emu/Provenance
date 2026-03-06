@@ -19,6 +19,8 @@ public struct LibretroCheatEntry: Sendable, Identifiable {
     public let gameTitle: String
     /// The system name (e.g. "Nintendo - Super Nintendo Entertainment System")
     public let systemName: String
+    /// MD5 hash of the ROM file, if available from the libretro DAT database
+    public let md5: String?
 
     public init(
         id: Int,
@@ -26,7 +28,8 @@ public struct LibretroCheatEntry: Sendable, Identifiable {
         cheatCode: String,
         deviceName: String,
         gameTitle: String,
-        systemName: String
+        systemName: String,
+        md5: String? = nil
     ) {
         self.id = id
         self.cheatName = cheatName
@@ -34,5 +37,6 @@ public struct LibretroCheatEntry: Sendable, Identifiable {
         self.deviceName = deviceName
         self.gameTitle = gameTitle
         self.systemName = systemName
+        self.md5 = md5
     }
 }

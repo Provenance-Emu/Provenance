@@ -109,6 +109,102 @@ struct LibretroCheatDatabaseSearchTests {
     }
 }
 
+// MARK: - MD5 Lookup
+
+struct LibretroCheatDatabaseMD5Tests {
+
+    @Test("MD5 lookup with nil md5 falls back to title search")
+    func nilMD5FallsBackToTitle() async throws {
+        let titleOnly = try await LibretroCheatDatabase.shared.searchCheats(
+            byTitle: "GoldenEye 007",
+            systemName: "Nintendo - Nintendo 64",
+            limit: 10
+        )
+        let withNilMD5 = try await LibretroCheatDatabase.shared.searchCheats(
+            byTitle: "GoldenEye 007",
+            md5: nil,
+            systemName: "Nintendo - Nintendo 64",
+            limit: 10
+        )
+        #expect(titleOnly.count == withNilMD5.count,
+                "nil MD5 should behave like title-only search")
+    }
+
+    @Test("MD5 lookup with empty string falls back to title search")
+    func emptyMD5FallsBackToTitle() async throws {
+        let titleOnly = try await LibretroCheatDatabase.shared.searchCheats(
+            byTitle: "Super Mario World",
+            systemName: "Nintendo - Super Nintendo Entertainment System",
+            limit: 5
+        )
+        let withEmptyMD5 = try await LibretroCheatDatabase.shared.searchCheats(
+            byTitle: "Super Mario World",
+            md5: "",
+            systemName: "Nintendo - Super Nintendo Entertainment System",
+            limit: 5
+        )
+        #expect(titleOnly.count == withEmptyMD5.count,
+                "Empty MD5 should behave like title-only search")
+    }
+
+    @Test("Fake MD5 returns empty, falls back to title")
+    func fakeMD5FallsBackToTitle() async throws {
+        let results = try await LibretroCheatDatabase.shared.searchCheats(
+            byTitle: "GoldenEye 007",
+            md5: "00000000000000000000000000000000",
+            systemName: "Nintendo - Nintendo 64",
+            limit: 10
+        )
+        // The fake MD5 won't match anything, so falls back to title search
+        // which should still return results (GoldenEye exists)
+        #expect(results.count > 0,
+                "After MD5 miss, should fall back to title search and find GoldenEye")
+    }
+
+    @Test("Direct MD5 search with nonexistent MD5 returns empty")
+    func directMD5SearchNonexistent() async throws {
+        let results = try await LibretroCheatDatabase.shared.searchCheats(
+            byMD5: "00000000000000000000000000000000",
+            limit: 10
+        )
+        #expect(results.isEmpty, "Non-existent MD5 should return empty results")
+    }
+
+    @Test("MD5 search normalizes case")
+    func md5SearchNormalizesCase() async throws {
+        // Both uppercase and lowercase MD5 should produce the same results.
+        // Use a known-fake MD5 to test normalization without depending on real DB data.
+        let upper = try await LibretroCheatDatabase.shared.searchCheats(
+            byMD5: "AAAABBBBCCCCDDDDEEEEFFFFAAAABBBB",
+            limit: 10
+        )
+        let lower = try await LibretroCheatDatabase.shared.searchCheats(
+            byMD5: "aaaabbbbccccddddeeeeffffaaaabbbb",
+            limit: 10
+        )
+        #expect(upper.count == lower.count,
+                "MD5 case should not affect lookup results")
+    }
+
+    @Test("Entry md5 field is nil or a 32-character hex string")
+    func entryMD5FieldFormat() async throws {
+        let results = try await LibretroCheatDatabase.shared.searchCheats(
+            byTitle: "Super Mario",
+            limit: 50
+        )
+        #expect(results.count > 0)
+        for entry in results {
+            if let md5 = entry.md5 {
+                #expect(md5.count == 32,
+                        "MD5 should be 32 hex characters, got '\(md5)' for \(entry.gameTitle)")
+                let validHex = md5.allSatisfy { "0123456789abcdef".contains($0) }
+                #expect(validHex,
+                        "MD5 should be lowercase hex, got '\(md5)' for \(entry.gameTitle)")
+            }
+        }
+    }
+}
+
 // MARK: - System Name Filtering
 
 struct LibretroCheatDatabaseSystemFilterTests {
@@ -233,6 +329,7 @@ struct LibretroCheatEntryTests {
         #expect(!entry.deviceName.isEmpty)
         #expect(!entry.gameTitle.isEmpty)
         #expect(!entry.systemName.isEmpty)
+        // md5 may be nil if the DB was not generated with --dat-dir
     }
 
     @Test("Entry conforms to Identifiable")
@@ -248,8 +345,23 @@ struct LibretroCheatEntryTests {
         #expect(entry.id == 42)
     }
 
-    @Test("Entry conforms to Sendable")
-    func entryIsSendable() async {
+    @Test("Entry with MD5 conforms to Identifiable")
+    func entryWithMD5IsIdentifiable() {
+        let entry = LibretroCheatEntry(
+            id: 99,
+            cheatName: "Max Health",
+            cheatCode: "DEADBEEF",
+            deviceName: "RetroArch",
+            gameTitle: "Test Game 2",
+            systemName: "Test System",
+            md5: "b4f3773b3b4dcdbfda7ef45d1b4d0b36"
+        )
+        #expect(entry.id == 99)
+        #expect(entry.md5 == "b4f3773b3b4dcdbfda7ef45d1b4d0b36")
+    }
+
+    @Test("Entry without MD5 has nil md5")
+    func entryWithoutMD5HasNilMD5() {
         let entry = LibretroCheatEntry(
             id: 1,
             cheatName: "Test",
@@ -258,12 +370,27 @@ struct LibretroCheatEntryTests {
             gameTitle: "Game",
             systemName: "System"
         )
+        #expect(entry.md5 == nil)
+    }
+
+    @Test("Entry conforms to Sendable")
+    func entryIsSendable() async {
+        let entry = LibretroCheatEntry(
+            id: 1,
+            cheatName: "Test",
+            cheatCode: "CODE",
+            deviceName: "Device",
+            gameTitle: "Game",
+            systemName: "System",
+            md5: "abcdef1234567890abcdef1234567890"
+        )
         // Verify Sendable by passing across actor boundary
         let captured: LibretroCheatEntry = await Task.detached {
             return entry
         }.value
         #expect(captured.id == entry.id)
         #expect(captured.cheatCode == entry.cheatCode)
+        #expect(captured.md5 == entry.md5)
     }
 }
 

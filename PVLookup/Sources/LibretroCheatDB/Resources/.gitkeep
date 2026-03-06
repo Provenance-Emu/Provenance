@@ -1,0 +1,12 @@
+This directory contains the libretro_cheats.sqlite.zip database file.
+
+Generate it by running:
+    make update-cheatdb
+
+Or with MD5 cross-referencing:
+    git clone --depth 1 https://github.com/libretro/libretro-database.git /tmp/libretro-database
+    python3 Scripts/generate_cheatdb.py /tmp/libretro-database/cht/ \
+        --dat-dir /tmp/libretro-database \
+        --output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
+
+The update-catalogs.yml GitHub Actions workflow also generates this automatically (weekly).
