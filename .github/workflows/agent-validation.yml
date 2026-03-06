@@ -121,6 +121,19 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
+      # These four Core dirs are top-level git submodules, so they are empty
+      # when submodules: false is set. xcodebuild resolves ALL XCLocalSwiftPackageReference
+      # entries in the workspace (not just those in the CI scheme), so their Package.swift
+      # files must exist. Shallow-init only these four — everything else has Package.swift
+      # tracked in the main repo.
+      - name: Init required Core submodules (shallow)
+        run: |
+          git submodule update --init --depth 1 \
+            Cores/4DO \
+            Cores/Bliss \
+            Cores/CrabEMU \
+            Cores/VirtualJaguar
+
       - name: Cache DerivedData
         uses: actions/cache@v3
         with:
@@ -131,6 +144,7 @@ jobs:
 
       - name: Build Provenance-CI (iOS Simulator)
         run: |
+          set -eo pipefail
           start_time=$(date +%s)
           xcodebuild build \
             -workspace Provenance.xcworkspace \
@@ -140,10 +154,12 @@ jobs:
             -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO \
             -quiet \
-            2>&1 | tail -50
+            2>&1 | tail -100
+          build_exit=${PIPESTATUS[0]}
           end_time=$(date +%s)
           duration=$((end_time - start_time))
           minutes=$((duration / 60))
           seconds=$((duration % 60))
           echo "### CI Build Time" >> $GITHUB_STEP_SUMMARY
           echo "Duration: ${minutes}m ${seconds}s" >> $GITHUB_STEP_SUMMARY
+          exit $build_exit
