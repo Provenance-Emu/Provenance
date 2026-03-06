@@ -10,16 +10,15 @@ on:
   pull_request_review:
     types: [submitted]
     # NOTE: Only human review events reach this trigger in practice.
-    # Copilot bot reviews are handled by copilot-review-poller.yml (scheduled),
-    # which dispatches here via workflow_dispatch — bypassing GitHub's
-    # "action_required" approval gate that fires for bot-triggered events.
+    # AI reviews from ai-review.yml are dispatched here via workflow_dispatch,
+    # bypassing GitHub's "action_required" approval gate for bot events.
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'PR number to act on (used by copilot-review-poller)'
+        description: 'PR number to act on'
         required: true
       action:
-        description: 'Action: fix_copilot_review | copilot_approved'
+        description: 'Action: fix_ai_review | ai_approved'
         required: true
 
 permissions:
@@ -40,7 +39,7 @@ jobs:
     # 3. @claude is mentioned in a PR review comment (inline)
     # 4. A HUMAN reviewer requests changes on an [Agent] PR
     # 5. /claude-fix in a PR comment
-    # 6. Dispatched by copilot-review-poller (fix_copilot_review or copilot_approved)
+    # 6. Dispatched by ai-review.yml (fix_ai_review or ai_approved)
     if: |
       (github.event_name == 'issue_comment' &&
        contains(github.event.comment.body, '@claude')) ||
@@ -88,8 +87,8 @@ jobs:
 
             ## Trigger Context
             ${{ github.event_name == 'pull_request_review' && github.event.review.state == 'changes_requested' && 'A human reviewer requested changes on this PR. Read all review comments and fix them.' || '' }}
-            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_copilot_review' && format('Copilot requested changes on PR #{0}. Read ALL review comments via `gh api` and fix every issue. Then re-request Copilot review. Post a marker comment when done.', github.event.inputs.pr_number) || '' }}
-            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'copilot_approved' && format('Copilot has approved PR #{0}. Enable auto-merge, add the ready-for-review label, and assign @JoeMatt for final review. Post a summary comment.', github.event.inputs.pr_number) || '' }}
+            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'fix_ai_review' && format('The AI reviewer requested changes on PR #{0}. Read ALL review comments and fix every issue. Post a marker comment when done.', github.event.inputs.pr_number) || '' }}
+            ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'ai_approved' && format('The AI reviewer has approved PR #{0} (or max review cycles reached). Enable auto-merge, add the ready-for-review label, and assign @JoeMatt for final review. Post a summary comment.', github.event.inputs.pr_number) || '' }}
             ${{ contains(github.event.comment.body || '', '/claude-fix') && 'Fix all pending review comments on this PR. Read the full review, address each comment, commit fixes, and push.' || '' }}
 
             ## User Request
@@ -114,7 +113,7 @@ jobs:
             Before creating any PR or branch:
             - Check for an existing open PR on the same branch: `gh pr list --head "agent/issue-<N>" --state open --repo $GITHUB_REPOSITORY`
             - If one exists, push fixes to THAT branch — never open a second PR
-            - When dispatched to fix Copilot review comments, determine the correct branch:
+            - When dispatched to fix AI review comments, determine the correct branch:
               `gh pr view <pr_number> --json headRefName --jq .headRefName`
               Then: `git fetch origin && git checkout <branch> && git pull origin <branch>`
               Make fixes, commit, push to THAT branch. Never create a new branch or PR.
@@ -124,24 +123,29 @@ jobs:
             **After creating a new PR:**
             9.  Enable auto-merge immediately: `gh pr merge <number> --auto --squash --repo $GITHUB_REPOSITORY`
             10. Add the 'agent-work' label: `gh pr edit <number> --add-label agent-work`
-            11. Request Copilot review: `gh pr edit <number> --add-reviewer copilot-pull-request-reviewer`
-            12. Post a comment: "@copilot-pull-request-reviewer review requested. Auto-merge enabled."
+            11. Post a comment: "🤖 PR created. Auto-merge enabled. AI review will start automatically."
+            NOTE: Do NOT manually request a review — ai-review.yml fires automatically on the push.
 
-            **When fixing Copilot review comments (fix_copilot_review):**
-            13. Fetch ALL review comments:
-                `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/reviews`
-                `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/comments`
-            14. Fix every issue in a single well-described commit
-            15. Push to the EXISTING branch (see NO DUPLICATE PRs above)
-            16. Check the Copilot review cycle count:
-                `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/reviews --jq '[.[] | select(.user.login | contains("copilot"))] | length'`
-                - If cycle count < 4: re-request Copilot review: `gh pr edit <number> --add-reviewer copilot-pull-request-reviewer`
-                - If cycle count >= 4: skip Copilot, escalate to human (treat as copilot_approved)
-            17. Post a marker comment so the poller knows this review was processed:
-                `gh pr comment <number> --body "<!-- copilot-review-processed:<review_id> -->\n✅ Fixed Copilot review #<review_id>: <summary of fixes>"`
+            **When fixing AI review comments (fix_ai_review):**
+            12. Get the PR branch: `gh pr view <number> --json headRefName --jq .headRefName`
+            13. Checkout the branch: `git fetch origin && git checkout <branch> && git pull origin <branch>`
+            14. Fetch the latest AI review body:
+                `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/reviews \
+                  --jq '[.[] | select(.user.login == "github-actions[bot]")] | sort_by(.submitted_at) | last | .body'`
+            15. Also fetch inline comments from the review:
+                `gh api repos/$GITHUB_REPOSITORY/pulls/<number>/comments \
+                  --jq '[.[] | select(.user.login == "github-actions[bot]")] | .[] | {path, line: .original_line, body}'`
+            16. Fix every CRITICAL and MAJOR issue. Fix MINOR issues where trivial.
+            17. Commit with message: `fix: address AI review — <brief summary of changes>`
+            18. Push to the EXISTING branch (never create a new branch or PR):
+                `git push origin <branch>`
+            19. Post a marker comment:
+                `gh pr comment <number> --body "<!-- ai-review-processed -->\n✅ Addressed AI review: <summary>"`
+            NOTE: Do NOT manually re-request a review. The push to the branch automatically
+                  triggers ai-review.yml for the next review cycle.
 
-            **When Copilot approves (copilot_approved):**
-            18. Enable auto-merge if not already: `gh pr merge <number> --auto --squash --repo $GITHUB_REPOSITORY`
-            19. Add the 'ready-for-review' label: `gh pr edit <number> --add-label ready-for-review`
-            20. Assign for final human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
-            21. Post a summary comment: "✅ Copilot approved. Auto-merge enabled. Ready for @JoeMatt's final review."
+            **When AI review approves (ai_approved):**
+            20. Enable auto-merge if not already: `gh pr merge <number> --auto --squash --repo $GITHUB_REPOSITORY`
+            21. Add the 'ready-for-review' label: `gh pr edit <number> --add-label ready-for-review`
+            22. Assign for final human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
+            23. Post a summary comment: "✅ AI review passed. Auto-merge enabled. Ready for @JoeMatt's final review."

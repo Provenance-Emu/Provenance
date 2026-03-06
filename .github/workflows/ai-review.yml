@@ -1,0 +1,306 @@
+name: AI Code Review
+
+# Event-driven AI code review using Claude (replaces Copilot review + poller).
+#
+# Reviewer model auto-selection:
+#   Simple PRs  (≤5 files, ≤300 diff lines, no complex patterns) → claude-sonnet-4-6
+#   Complex PRs (large diff OR Realm/SwiftData/ObjC patterns found) → claude-opus-4-6
+#
+# Flow:
+#   agent push  → triage job → review job → posts review → dispatches claude-code.yml
+#   fix_ai_review → fixer pushes → push triggers ai-review.yml again (event-driven)
+#   After 3 review cycles (or APPROVE): assigns @JoeMatt for final review
+
+on:
+  push:
+    branches:
+      - 'agent/**'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review (manual trigger)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: write   # To dispatch claude-code.yml
+
+# Cancel an in-progress review if a new push arrives for the same branch/PR.
+concurrency:
+  group: ai-review-${{ github.event.inputs.pr_number || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 1: Find PR + select reviewer model (pure bash, < 10 seconds)
+  # ─────────────────────────────────────────────────────────────────────────────
+  triage:
+    name: Find PR & select model
+    runs-on: ubuntu-latest
+    outputs:
+      pr_number:    ${{ steps.triage.outputs.pr_number }}
+      pr_title:     ${{ steps.triage.outputs.pr_title }}
+      should_review: ${{ steps.triage.outputs.should_review }}
+      model:        ${{ steps.triage.outputs.model }}
+
+    steps:
+      - name: Find PR and select reviewer model
+        id: triage
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+
+          # ── Resolve PR number ──────────────────────────────────────────────
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PR_NUMBER="${{ github.event.inputs.pr_number }}"
+          else
+            PR_JSON=$(gh pr list \
+              --head "${{ github.ref_name }}" \
+              --state open \
+              --json number,title \
+              --jq '.[0]' \
+              --repo "${{ github.repository }}" 2>/dev/null || echo "{}")
+            PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number // empty')
+          fi
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR found for branch ${{ github.ref_name }}. Skipping."
+            echo "should_review=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          PR_TITLE=$(gh pr view "$PR_NUMBER" \
+            --json title --jq '.title' \
+            --repo "${{ github.repository }}" 2>/dev/null || echo "")
+
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "pr_title=$PR_TITLE"   >> "$GITHUB_OUTPUT"
+
+          # ── Auto-review gate: only [Agent] PRs on push; any PR on manual ──
+          if [ "${{ github.event_name }}" = "push" ] \
+            && ! echo "$PR_TITLE" | grep -q "^\[Agent\]"; then
+            echo "Not an [Agent] PR — skipping auto-review."
+            echo "should_review=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "should_review=true" >> "$GITHUB_OUTPUT"
+
+          # ── Model selection heuristics (no extra API call needed) ──────────
+          # Fetch diff stats
+          DIFF_STAT=$(gh pr diff "$PR_NUMBER" --stat \
+            --repo "${{ github.repository }}" 2>/dev/null || echo "")
+          DIFF_BODY=$(gh pr diff "$PR_NUMBER" \
+            --repo "${{ github.repository }}" 2>/dev/null || echo "")
+
+          FILES_CHANGED=$(echo "$DIFF_STAT" | grep -oP '\d+ file' | grep -oP '\d+' || echo "0")
+          LINES_CHANGED=$(echo "$DIFF_STAT" | grep -oP '\d+ insertion' | grep -oP '\d+' || echo "0")
+          LINES_DEL=$(echo "$DIFF_STAT" | grep -oP '\d+ deletion' | grep -oP '\d+' || echo "0")
+          TOTAL_LINES=$(( ${LINES_CHANGED:-0} + ${LINES_DEL:-0} ))
+
+          # Check for complexity keywords in the diff
+          COMPLEX_PATTERNS=$(echo "$DIFF_BODY" | \
+            grep -cP 'Realm|ModelContext|@Model|@Relationship|@synchronized|\ actor\ |@MainActor|void\s*\*|PVFile|PVImageFile|PVSaveState|PVGame|SwiftData' \
+            2>/dev/null || echo "0")
+
+          echo "Files: ${FILES_CHANGED}, Lines: ${TOTAL_LINES}, Complex hits: ${COMPLEX_PATTERNS}"
+
+          # Select model
+          if [ "${FILES_CHANGED:-0}" -le 5 ] \
+            && [ "${TOTAL_LINES:-0}" -le 300 ] \
+            && [ "${COMPLEX_PATTERNS:-0}" -eq 0 ]; then
+            MODEL="claude-sonnet-4-6"
+          else
+            MODEL="claude-opus-4-6"
+          fi
+
+          echo "Selected reviewer model: $MODEL"
+          echo "model=$MODEL" >> "$GITHUB_OUTPUT"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 2: AI Code Review (Claude)
+  # ─────────────────────────────────────────────────────────────────────────────
+  review:
+    name: Review (model ${{ needs.triage.outputs.model }})
+    needs: triage
+    if: needs.triage.outputs.should_review == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Run AI Reviewer
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          claude_args: >-
+            --model ${{ needs.triage.outputs.model }}
+            --allowedTools 'Read,Glob,Grep,Bash(gh pr:*),Bash(gh api:*),Bash(gh workflow:*),Bash(cat:*)'
+          prompt: |
+            You are a senior iOS/tvOS Swift engineer performing an automated code review.
+            You are the REVIEWER — do NOT make code changes, commits, or pushes.
+
+            PR to review: #${{ needs.triage.outputs.pr_number }}
+            Repo: ${{ github.repository }}
+            Reviewer model: ${{ needs.triage.outputs.model }}
+
+            ## STEP 0 — Loop protection (always do this first)
+
+            Count how many GitHub Actions bot reviews already exist:
+            ```
+            REVIEW_COUNT=$(gh api repos/${{ github.repository }}/pulls/${{ needs.triage.outputs.pr_number }}/reviews \
+              --jq '[.[] | select(.user.login == "github-actions[bot]" and .state != "DISMISSED")] | length' \
+              --repo ${{ github.repository }} 2>/dev/null || echo "0")
+            echo "AI review cycle: $REVIEW_COUNT"
+            ```
+
+            If REVIEW_COUNT >= 3:
+            - Post a brief summary review: `gh pr review ${{ needs.triage.outputs.pr_number }} --comment --body "⚠️ Max review cycles (3) reached. Escalating to human review. See previous reviews for outstanding issues." --repo ${{ github.repository }}`
+            - Then dispatch approval: `gh workflow run claude-code.yml --repo ${{ github.repository }} -f pr_number="${{ needs.triage.outputs.pr_number }}" -f action="ai_approved"`
+            - **STOP here — do not post another full review.**
+
+            ## STEP 1 — Check for duplicate review
+
+            Check if a review was already posted for the current HEAD commit:
+            ```
+            HEAD_SHA=$(gh api repos/${{ github.repository }}/pulls/${{ needs.triage.outputs.pr_number }} \
+              --jq '.head.sha' 2>/dev/null || echo "")
+            ALREADY_REVIEWED=$(gh api repos/${{ github.repository }}/issues/${{ needs.triage.outputs.pr_number }}/comments \
+              --jq "[.[] | select(.body | contains(\"ai-review-sha:$HEAD_SHA\"))] | length" \
+              2>/dev/null || echo "0")
+            ```
+            If ALREADY_REVIEWED > 0: stop silently (this push was already reviewed).
+
+            ## STEP 2 — Gather PR context
+
+            ```
+            gh pr view ${{ needs.triage.outputs.pr_number }} --json title,body,baseRefName,headRefName,files --repo ${{ github.repository }}
+            gh pr diff ${{ needs.triage.outputs.pr_number }} --repo ${{ github.repository }}
+            cat .github/prompts/reviewer-context.md
+            cat CLAUDE.md
+            ```
+
+            For each changed file, use Read and Grep to understand the surrounding context:
+            - Read 30 lines around each changed section
+            - Grep for callers, related types, test files for changed functions
+            - Focus on cross-cutting impact — does this change affect callers in other modules?
+
+            ## STEP 3 — Review the changes
+
+            Evaluate only what is actually present in the diff. Check each category:
+
+            **A. Correctness & crashes**
+            - Logic errors, nil force-unwraps without clear invariant
+            - Swallowed errors (`try?` in critical paths without logging)
+            - Incorrect async/await (blocking main thread, wrong actor context)
+
+            **B. Realm thread safety**
+            - Realm `Object` or `Results<T>` crossing thread/actor boundaries
+            - `Results<T>` held across `async` suspension points
+            - Write transactions outside `try realm.write { }`
+
+            **C. SwiftData patterns**
+            - `@Model` missing `@Attribute(.unique)` on primary key fields
+            - `ModelContext` treated as Sendable (it is not)
+            - `@Relationship` missing `deleteRule`
+            - Lazy sequences not materialized before actor hop
+
+            **D. ObjC/C++ bridge thread safety**
+            - Flags shared between UI thread and emulator thread without `@synchronized(self)`
+            - Both the write side AND read side must use the same lock object
+
+            **E. Module dependency tiers**
+            - New `import` statements — verify no lower tier importing higher tier
+            - New `public` API that shouldn't be public
+
+            **F. Availability guards**
+            - SwiftData APIs must be gated with `@available(iOS 17, tvOS 17, ...)`
+            - Check any new iOS-version-specific API usage
+
+            **G. Upstream submodule source (always CRITICAL)**
+            - Any edit to `Cores/<name>/<upstream-dir>/` is never acceptable
+
+            **H. SwiftLint**
+            - Lines > 200 characters (only flag obvious cases, not borderline)
+            - `force_cast`/`force_try` in truly critical crash-prone paths
+
+            ## STEP 4 — Post the review
+
+            Format the review body carefully. Include cycle count from STEP 0.
+
+            ```
+            CYCLE=$((REVIEW_COUNT + 1))
+
+            gh pr review ${{ needs.triage.outputs.pr_number }} \
+              --repo ${{ github.repository }} \
+              --[approve|request-changes] \
+              --body "$(cat <<'REVIEW_BODY'
+            ## AI Code Review — Cycle $CYCLE/3
+            > Reviewer: ${{ needs.triage.outputs.model }}
+
+            ### Summary
+            <one paragraph overall assessment>
+
+            ### Issues
+
+            **🔴 CRITICAL** *(must fix)*
+            - `path/to/file.swift:line` — description and suggested fix
+
+            **🟠 MAJOR** *(should fix)*
+            - `path/to/file.swift:line` — description
+
+            **🟡 MINOR** *(optional)*
+            - `path/to/file.swift:line` — note
+
+            **⚪ NIT**
+            - trivial style notes
+
+            ### Verdict: APPROVE | REQUEST_CHANGES
+
+            ---
+            *If no issues found in any category above, use `--approve` and write a positive summary.*
+            REVIEW_BODY
+            )"
+            ```
+
+            Rules for verdict:
+            - **APPROVE**: No CRITICAL or MAJOR issues found (MINORs and NITs are fine)
+            - **REQUEST_CHANGES**: Any CRITICAL or MAJOR issue found
+
+            ## STEP 5 — Post SHA marker and dispatch follow-up
+
+            After posting the review, post a hidden marker comment with the SHA (prevents re-reviewing same commit):
+            ```
+            HEAD_SHA=$(gh api repos/${{ github.repository }}/pulls/${{ needs.triage.outputs.pr_number }} --jq '.head.sha')
+            gh pr comment ${{ needs.triage.outputs.pr_number }} \
+              --repo ${{ github.repository }} \
+              --body "<!-- ai-review-sha:$HEAD_SHA -->"
+            ```
+
+            Then dispatch the appropriate follow-up workflow:
+
+            If **APPROVE**:
+            ```
+            gh workflow run claude-code.yml \
+              --repo ${{ github.repository }} \
+              -f pr_number="${{ needs.triage.outputs.pr_number }}" \
+              -f action="ai_approved"
+            ```
+
+            If **REQUEST_CHANGES**:
+            ```
+            gh workflow run claude-code.yml \
+              --repo ${{ github.repository }} \
+              -f pr_number="${{ needs.triage.outputs.pr_number }}" \
+              -f action="fix_ai_review"
+            ```
