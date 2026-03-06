@@ -337,6 +337,16 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                         ILOG("[LOCAL SCAN FIX] Marked game as downloaded: \(gameToUpdate.title)")
                     }
                 }
+
+                // Dual-write: mirror romPath update into SwiftData (epic #2510).
+                // Only Sendable Strings are captured, so Task.detached is safe here.
+                let md5 = gameToUpdate.md5Hash
+                Task.detached(priority: .utility) {
+                    await GameImporterSwiftDataBridge.shared?.updateRelativePath(
+                        md5: md5,
+                        partialPath: partialPath
+                    )
+                }
             } catch {
                 ELOG("[LOCAL SCAN FIX] Failed to update game \(existingGame.title): \(error.localizedDescription)")
             }
@@ -382,12 +392,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                         finalGame = await tempService.getArtwork(forGame: updatedGame)
                     }
 
-                    // Step 3: Write back to Realm (sync)
-                    try await RealmContext.withBackgroundRealm { realm in
+                    // Step 3: Write back to Realm and mirror to SwiftData (epic #2510).
+                    let frozenForSwiftData: PVGame = try await RealmContext.withBackgroundRealm { realm in
                         try realm.write {
                             realm.add(finalGame, update: .modified)
                         }
+                        return finalGame.isFrozen ? finalGame : finalGame.freeze()
                     }
+                    await GameImporterSwiftDataBridge.shared?.saveGame(frozenForSwiftData)
                     DLOG("finishUpdateOrImport: Completed deferred getUpdatedGameInfo for: \(finalGame.romPath)")
                 } catch {
                     WLOG("finishUpdateOrImport: Failed deferred metadata update: \(error.localizedDescription)")
@@ -424,12 +436,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                     let tempService = GameImporterDatabaseService(lookup: PVLookup.shared, gameImporterFileService: GameImporterFileService())
                     let updatedGame = await tempService.getArtwork(forGame: frozenGame)
 
-                    // Step 3: Write back to Realm (sync)
-                    try await RealmContext.withBackgroundRealm { realm in
+                    // Step 3: Write back to Realm and mirror to SwiftData (epic #2510).
+                    let frozenArtwork: PVGame = try await RealmContext.withBackgroundRealm { realm in
                         try realm.write {
                             realm.add(updatedGame, update: .modified)
                         }
+                        return updatedGame.isFrozen ? updatedGame : updatedGame.freeze()
                     }
+                    await GameImporterSwiftDataBridge.shared?.saveGame(frozenArtwork)
                     DLOG("finishUpdateOrImport: Completed async artwork download for: \(updatedGame.romPath)")
                 } catch {
                     WLOG("finishUpdateOrImport: Failed async artwork download: \(error.localizedDescription)")
@@ -788,8 +802,9 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     /// Saves a game to the database
+    /// Saves a game to the database (Realm + SwiftData dual-write)
     func saveGame(_ game: PVGame) async throws {
-        try await RealmContext.withBackgroundRealm { realm in
+        let frozenGame: PVGame = try await RealmContext.withBackgroundRealm { realm in
             guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: game.systemIdentifier) else {
                 let systemIdentifier = game.systemIdentifier
                 ELOG("System not found in database: \(systemIdentifier)")
@@ -801,8 +816,10 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 try realm.write {
                     realm.add(game, update: .modified)
                 }
-                // Freeze the game before passing to cache (which runs in a Task on background thread)
-                RomDatabase.addGamesCache(game.freeze())
+                // Freeze before exiting the Realm context — cache and SwiftData both need a frozen snapshot.
+                let frozen = game.freeze()
+                RomDatabase.addGamesCache(frozen)
+                return frozen
             } catch {
                 ELOG("Failed to save game: \(error.localizedDescription)")
                 let systemIdentifier = game.systemIdentifier
@@ -811,6 +828,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 throw GameImporterError.failedToMoveROM(error)
             }
         }
+        // Dual-write: mirror into SwiftData after Realm context exits (epic #2510).
+        await GameImporterSwiftDataBridge.shared?.saveGame(frozenGame)
     }
 
     /// Calculates the MD5 hash for a given game
