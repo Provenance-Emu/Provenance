@@ -8,6 +8,9 @@
 #if canImport(SwiftUI)
 import Foundation
 import SwiftUI
+#if canImport(SwiftData)
+import SwiftData
+#endif
 import RealmSwift
 import PVLibrary
 import PVThemes
@@ -1125,6 +1128,99 @@ private struct EmptyContinuesView: View {
         Text("No Continues")
             .tag("no continues")
             .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+    }
+}
+
+// MARK: - SwiftData Support
+
+/// Maximum number of save-state records fetched by the SwiftData continues driver.
+private let maxContinuesFetchCount = 500
+
+/// Extends `ContinueItemModel` to be initialised from a SwiftData `SaveState_Data` record.
+///
+/// During the Realm → SwiftData migration the `resolver` closure still falls back to Realm
+/// so that the game-launch codepath continues to work until the full action layer is migrated.
+extension ContinueItemModel {
+    init(saveStateData state: SaveState_Data) {
+        let saveId = state.id
+        let gameTitle = state.game?.title
+        let date = state.date
+        let systemIdentifier = state.game?.systemIdentifier
+
+        // Resolve the artwork URL from the partial path stored in ImageFile_Data.
+        // The full URL is constructed by appending the partial path to the shared save‑states directory.
+        let imageURL: URL? = state.image.flatMap { img -> URL? in
+            guard !img.partialPath.isEmpty else { return nil }
+            let savesDir = Paths.saveSavesPath
+            return savesDir.appendingPathComponent(img.partialPath)
+        }
+
+        self.init(
+            id: saveId,
+            gameTitle: gameTitle,
+            imageURL: imageURL,
+            date: date,
+            systemIdentifier: systemIdentifier,
+            resolver: {
+                // Hybrid resolver: fetch from Realm during migration so that
+                // game-launch actions keep working before the action layer is
+                // fully migrated to SwiftData.
+                RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: saveId)
+            }
+        )
+    }
+}
+
+/// SwiftData-backed implementation of `ContinuesDataDriver`.
+///
+/// Fetches `SaveState_Data` records from the shared `ModelContainer` and maps
+/// them to `ContinueItemModel` values for display in `HomeContinueSection`.
+///
+/// This is a **one-shot** driver: it yields a single snapshot of the data and
+/// finishes.  Live updates are a future enhancement (tracked in #2555) that
+/// will use SwiftData's `withChanges(in:)` API (iOS 18+) or periodic polling.
+/// In the interim the Realm driver (`RealmContinuesDataDriver`) remains active.
+final class SwiftDataContinuesDataDriver: ContinuesDataDriver, @unchecked Sendable {
+    private let modelContainer: ModelContainer
+
+    init(modelContainer: ModelContainer) {
+        self.modelContainer = modelContainer
+    }
+
+    func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
+        AsyncStream { continuation in
+            let container = modelContainer
+            let task = Task.detached {
+                let context = ModelContext(container)
+                // Build the descriptor with sort, optional system predicate, and a fetch cap.
+                // The consoleIdentifier filter is pushed into the store-level predicate so
+                // SwiftData can skip irrelevant rows without loading them into memory.
+                var descriptor = FetchDescriptor<SaveState_Data>(
+                    sortBy: [SortDescriptor(\.date, order: .reverse)]
+                )
+                if let consoleIdentifier {
+                    descriptor.predicate = #Predicate<SaveState_Data> { state in
+                        state.game?.systemIdentifier == consoleIdentifier
+                    }
+                }
+                // Cap the fetch at the store level to avoid loading a large result set
+                // into memory; game/system presence is validated in the post-fetch filter.
+                descriptor.fetchLimit = maxContinuesFetchCount
+                do {
+                    let results = try context.fetch(descriptor)
+                    // Filter: both game and its system must be present.
+                    let models = results
+                        .filter { $0.game?.system != nil }
+                        .map { ContinueItemModel(saveStateData: $0) }
+                    continuation.yield(models)
+                } catch {
+                    ELOG("SwiftDataContinuesDataDriver: fetch failed: \(error)")
+                    continuation.yield([])
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { @Sendable _ in task.cancel() }
+        }
     }
 }
 
