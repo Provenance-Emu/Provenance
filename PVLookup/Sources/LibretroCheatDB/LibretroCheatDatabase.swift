@@ -167,10 +167,12 @@ public actor LibretroCheatDatabase {
         let stmt: Statement
         if let systemName = systemName, !systemName.isEmpty {
             let query = queryByTitleAndSystem + " LIMIT \(limit)"
-            stmt = try conn.prepare(query, pattern, systemName)
+            // Bind pattern twice: once for game_title, once for file_title
+            stmt = try conn.prepare(query, pattern, pattern, systemName)
         } else {
             let query = queryByTitle + " LIMIT \(limit)"
-            stmt = try conn.prepare(query, pattern)
+            // Bind pattern twice: once for game_title, once for file_title
+            stmt = try conn.prepare(query, pattern, pattern)
         }
 
         let results = try collectResults(from: stmt)
@@ -256,7 +258,8 @@ public actor LibretroCheatDatabase {
     private var queryByTitle: String {
         selectClause + """
 
-            WHERE g.game_title LIKE ? ESCAPE '\\' COLLATE NOCASE
+            WHERE (g.game_title LIKE ? ESCAPE '\\' COLLATE NOCASE
+               OR  g.file_title LIKE ? ESCAPE '\\' COLLATE NOCASE)
             ORDER BY g.game_title, c.cheat_name
             """
     }
@@ -264,7 +267,8 @@ public actor LibretroCheatDatabase {
     private var queryByTitleAndSystem: String {
         selectClause + """
 
-            WHERE g.game_title LIKE ? ESCAPE '\\' COLLATE NOCASE
+            WHERE (g.game_title LIKE ? ESCAPE '\\' COLLATE NOCASE
+               OR  g.file_title LIKE ? ESCAPE '\\' COLLATE NOCASE)
               AND s.system_name = ?
             ORDER BY g.game_title, c.cheat_name
             """
