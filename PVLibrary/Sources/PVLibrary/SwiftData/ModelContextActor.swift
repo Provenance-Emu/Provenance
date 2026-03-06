@@ -66,6 +66,10 @@ public actor ModelContextActor: GlobalActor {
             container = c
         } else {
             // Fallback: in-memory container for unit tests / previews.
+            // In production this path indicates that configure(container:) was never called,
+            // which means SwiftData changes will NOT be persisted. This is intentional for
+            // previews and unit tests; production code must call configure(container:) at startup.
+            assertionFailure("ModelContextActor.context() called before configure(container:) — no data will be persisted. Call configure(container:) at app startup.")
             container = try PVSwiftDataSchema.makePVModelContainer(inMemory: true)
             _container = container
         }

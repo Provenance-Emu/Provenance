@@ -107,7 +107,10 @@ public class Game_Data {
     @Transient public var isDownloaded: Bool = true
 
     /// Whether CloudKit holds a verified CKAsset for this game's ROM file.
-    public var hasCloudAssets: Bool = false
+    ///
+    /// Optional so that existing rows without this field don't require an explicit
+    /// migration default (nil is treated the same as false by sync logic).
+    public var hasCloudAssets: Bool?
 
     /// Cached ROM file size in bytes (avoids stat(2) calls during sync batching).
     ///

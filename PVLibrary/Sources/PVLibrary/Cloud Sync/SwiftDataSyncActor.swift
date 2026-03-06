@@ -59,7 +59,7 @@ public actor SwiftDataSyncActor {
     /// Fetch all `Game_Data` models that do not yet have a confirmed CloudKit asset.
     public func fetchGamesNeedingUpload() throws -> [Game_Data] {
         let descriptor = FetchDescriptor<Game_Data>(
-            predicate: #Predicate { !$0.hasCloudAssets }
+            predicate: #Predicate { $0.hasCloudAssets != true }
         )
         return try modelContext.fetch(descriptor)
     }
