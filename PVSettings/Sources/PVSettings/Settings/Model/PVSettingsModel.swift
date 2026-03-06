@@ -104,6 +104,12 @@ public extension Defaults.Keys {
 
     static let buttonPressEffect = Key<ButtonPressEffect>("buttonPressEffect", default: .glow)
     static let buttonSound = Key<ButtonSound>("buttonSound", default: .none)
+
+#if os(tvOS)
+    /// Multiplier applied to Siri Remote touch-surface pan deltas when driving mouse input.
+    /// Range 0.1 – 5.0; default is 1.0 (1:1 pixel mapping).
+    static let tvOSSiriRemoteMouseSensitivity = Key<Double>("tvOSSiriRemoteMouseSensitivity", default: 1.0)
+#endif
 }
 
 public enum ButtonPressEffect: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {

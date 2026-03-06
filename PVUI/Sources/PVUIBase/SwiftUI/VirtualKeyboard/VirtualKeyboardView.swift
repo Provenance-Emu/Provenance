@@ -2,21 +2,284 @@
 // PVUI
 //
 // SwiftUI virtual keyboard overlay for on-screen key input during emulation.
-// Supports platform-specific layouts (C64, ZX Spectrum, Amstrad CPC, etc.)
-// with haptic feedback and a swipe-down dismiss gesture.
+// iOS: Supports platform-specific layouts (C64, ZX Spectrum, Amstrad CPC, etc.)
+//      with haptic feedback and a swipe-down dismiss gesture.
+// tvOS: A lightweight QWERTY keyboard navigable with the Siri Remote D-pad.
+//       Only shown for cores that report `requiresKeyboard == true`.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
-#if !os(tvOS)
 import SwiftUI
-import UIKit
 import GameController
 
-// MARK: - VirtualKeyboardView
+#if os(tvOS)
+
+// MARK: - Key model (tvOS)
+
+/// A single key on the virtual keyboard.
+public struct VirtualKey: Identifiable, Hashable {
+    public let id: String
+    /// Label displayed on screen (e.g. "A", "Enter", "Space").
+    public let label: String
+    /// The GCKeyCode forwarded to the emulator core when this key is confirmed.
+    public let keyCode: GCKeyCode
+    /// Width multiplier relative to a normal key (e.g. 2.0 for Space).
+    public var widthScale: CGFloat
+
+    public init(label: String, keyCode: GCKeyCode, widthScale: CGFloat = 1.0) {
+        self.id = label
+        self.label = label
+        self.keyCode = keyCode
+        self.widthScale = widthScale
+    }
+}
+
+// MARK: - Layout (tvOS)
+
+private let keyboardRows: [[VirtualKey]] = [
+    // Row 1 - digits
+    [
+        VirtualKey(label: "1", keyCode: .one),
+        VirtualKey(label: "2", keyCode: .two),
+        VirtualKey(label: "3", keyCode: .three),
+        VirtualKey(label: "4", keyCode: .four),
+        VirtualKey(label: "5", keyCode: .five),
+        VirtualKey(label: "6", keyCode: .six),
+        VirtualKey(label: "7", keyCode: .seven),
+        VirtualKey(label: "8", keyCode: .eight),
+        VirtualKey(label: "9", keyCode: .nine),
+        VirtualKey(label: "0", keyCode: .zero),
+    ],
+    // Row 2 - QWERTY top
+    [
+        VirtualKey(label: "Q", keyCode: .keyQ),
+        VirtualKey(label: "W", keyCode: .keyW),
+        VirtualKey(label: "E", keyCode: .keyE),
+        VirtualKey(label: "R", keyCode: .keyR),
+        VirtualKey(label: "T", keyCode: .keyT),
+        VirtualKey(label: "Y", keyCode: .keyY),
+        VirtualKey(label: "U", keyCode: .keyU),
+        VirtualKey(label: "I", keyCode: .keyI),
+        VirtualKey(label: "O", keyCode: .keyO),
+        VirtualKey(label: "P", keyCode: .keyP),
+    ],
+    // Row 3 - QWERTY home
+    [
+        VirtualKey(label: "A", keyCode: .keyA),
+        VirtualKey(label: "S", keyCode: .keyS),
+        VirtualKey(label: "D", keyCode: .keyD),
+        VirtualKey(label: "F", keyCode: .keyF),
+        VirtualKey(label: "G", keyCode: .keyG),
+        VirtualKey(label: "H", keyCode: .keyH),
+        VirtualKey(label: "J", keyCode: .keyJ),
+        VirtualKey(label: "K", keyCode: .keyK),
+        VirtualKey(label: "L", keyCode: .keyL),
+        VirtualKey(label: "Bksp", keyCode: .deleteOrBackspace),
+    ],
+    // Row 4 - QWERTY bottom + special keys
+    [
+        VirtualKey(label: "Z", keyCode: .keyZ),
+        VirtualKey(label: "X", keyCode: .keyX),
+        VirtualKey(label: "C", keyCode: .keyC),
+        VirtualKey(label: "V", keyCode: .keyV),
+        VirtualKey(label: "B", keyCode: .keyB),
+        VirtualKey(label: "N", keyCode: .keyN),
+        VirtualKey(label: "M", keyCode: .keyM),
+        VirtualKey(label: "Space", keyCode: .spacebar, widthScale: 2.0),
+        VirtualKey(label: "Enter", keyCode: .returnOrEnter),
+        VirtualKey(label: "Esc", keyCode: .escape),
+    ],
+]
+
+// MARK: - ViewModel (tvOS)
+
+@MainActor
+public final class VirtualKeyboardViewModel: ObservableObject {
+    @Published public var selectedRow: Int = 0
+    @Published public var selectedColumn: Int = 0
+    @Published public var isVisible: Bool = false
+
+    private let rows: [[VirtualKey]] = keyboardRows
+
+    public var currentKey: VirtualKey? {
+        guard selectedRow < rows.count, selectedColumn < rows[selectedRow].count else { return nil }
+        return rows[selectedRow][selectedColumn]
+    }
+
+    public init() {}
+
+    public func moveUp() {
+        if selectedRow > 0 {
+            selectedRow -= 1
+            // Clamp column to new row's bounds.
+            selectedColumn = min(selectedColumn, rows[selectedRow].count - 1)
+        }
+    }
+
+    public func moveDown() {
+        if selectedRow < rows.count - 1 {
+            selectedRow += 1
+            selectedColumn = min(selectedColumn, rows[selectedRow].count - 1)
+        }
+    }
+
+    public func moveLeft() {
+        if selectedColumn > 0 {
+            selectedColumn -= 1
+        }
+    }
+
+    public func moveRight() {
+        if selectedColumn < rows[selectedRow].count - 1 {
+            selectedColumn += 1
+        }
+    }
+
+    public func rows(at index: Int) -> [VirtualKey] {
+        guard index < rows.count else { return [] }
+        return rows[index]
+    }
+
+    public var rowCount: Int { rows.count }
+}
+
+// MARK: - View (tvOS)
+
+/// A D-pad navigable on-screen keyboard for tvOS.
+/// Embed this in the emulator UI and pass a `VirtualKeyboardViewModel` plus a
+/// callback that receives the selected `GCKeyCode`.
+public struct VirtualKeyboardView: View {
+    @ObservedObject var viewModel: VirtualKeyboardViewModel
+    /// Called with the key code when the user confirms a key (buttonA / Select).
+    public var onKeyPress: (GCKeyCode) -> Void
+    /// Called with the key code when the user releases a key.
+    public var onKeyRelease: (GCKeyCode) -> Void
+
+    private let keySize: CGFloat = 56
+    private let keySpacing: CGFloat = 8
+
+    public init(
+        viewModel: VirtualKeyboardViewModel,
+        onKeyPress: @escaping (GCKeyCode) -> Void,
+        onKeyRelease: @escaping (GCKeyCode) -> Void = { _ in }
+    ) {
+        self.viewModel = viewModel
+        self.onKeyPress = onKeyPress
+        self.onKeyRelease = onKeyRelease
+    }
+
+    public var body: some View {
+        VStack(spacing: keySpacing) {
+            ForEach(0 ..< viewModel.rowCount, id: \.self) { rowIndex in
+                HStack(spacing: keySpacing) {
+                    ForEach(viewModel.rows(at: rowIndex)) { key in
+                        KeyCell(
+                            key: key,
+                            isSelected: viewModel.selectedRow == rowIndex
+                                && viewModel.selectedColumn == viewModel.rows(at: rowIndex).firstIndex(of: key),
+                            keySize: keySize
+                        )
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.black.opacity(0.85))
+        )
+        // D-pad navigation via focusable + onMoveCommand is not available on tvOS 14,
+        // so we use a UIKit-backed approach via the hosting controller's pressesBegan.
+        // The VirtualKeyboardHostingController exposes navigation methods on the viewModel.
+    }
+}
+
+// MARK: - KeyCell (tvOS)
+
+private struct KeyCell: View {
+    let key: VirtualKey
+    let isSelected: Bool
+    let keySize: CGFloat
+
+    var body: some View {
+        Text(key.label)
+            .font(.system(size: 20, weight: .semibold, design: .monospaced))
+            .foregroundColor(isSelected ? .black : .white)
+            .frame(
+                width: keySize * key.widthScale + (key.widthScale > 1 ? 8 * (key.widthScale - 1) : 0),
+                height: keySize
+            )
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isSelected ? Color.yellow : Color.white.opacity(0.15))
+            )
+            .scaleEffect(isSelected ? 1.1 : 1.0)
+            .animation(.easeOut(duration: 0.1), value: isSelected)
+    }
+}
+
+// MARK: - UIKit hosting controller (tvOS)
+
+/// A UIKit hosting controller that intercepts press events (Siri Remote / game
+/// controller D-pad) to drive `VirtualKeyboardViewModel` navigation.
+public final class VirtualKeyboardHostingController: UIHostingController<VirtualKeyboardView> {
+    private let viewModel: VirtualKeyboardViewModel
+    public var onKeyPress: (GCKeyCode) -> Void = { _ in }
+    public var onKeyRelease: (GCKeyCode) -> Void = { _ in }
+
+    public init(viewModel: VirtualKeyboardViewModel) {
+        self.viewModel = viewModel
+        let rootView = VirtualKeyboardView(
+            viewModel: viewModel,
+            onKeyPress: { _ in },
+            onKeyRelease: { _ in }
+        )
+        super.init(rootView: rootView)
+    }
+
+    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    public override var canBecomeFirstResponder: Bool { true }
+
+    public override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        for press in presses {
+            switch press.type {
+            case .upArrow:    viewModel.moveUp()
+            case .downArrow:  viewModel.moveDown()
+            case .leftArrow:  viewModel.moveLeft()
+            case .rightArrow: viewModel.moveRight()
+            case .select:
+                if let key = viewModel.currentKey {
+                    onKeyPress(key.keyCode)
+                }
+            default:
+                super.pressesBegan([press], with: event)
+            }
+        }
+    }
+
+    public override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        for press in presses {
+            if press.type == .select, let key = viewModel.currentKey {
+                onKeyRelease(key.keyCode)
+            } else {
+                super.pressesEnded([press], with: event)
+            }
+        }
+    }
+}
+
+#else // !os(tvOS) - iOS / iPadOS
+
+import UIKit
+
+// MARK: - VirtualKeyboardView (iOS)
 
 /// Bottom-sheet keyboard overlay rendered as a SwiftUI view hosted via UIHostingController.
 ///
-/// The view model (`VirtualKeyboardViewModel`) owns all state — modifier tracking,
+/// The view model (`VirtualKeyboardViewModel`) owns all state - modifier tracking,
 /// key event forwarding via `VirtualKeyboardDelegate`, and the dismiss callback.
 public struct VirtualKeyboardView: View {
 
@@ -170,7 +433,7 @@ public struct VirtualKeyboardView: View {
     }
 }
 
-// MARK: - VirtualKeyButton
+// MARK: - VirtualKeyButton (iOS)
 
 private struct VirtualKeyButton: View {
 
@@ -264,7 +527,7 @@ private struct VirtualKeyButton: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - Preview (iOS)
 
 #if DEBUG
 #Preview("Full Layout") {
@@ -285,4 +548,5 @@ private struct VirtualKeyButton: View {
     .preferredColorScheme(.dark)
 }
 #endif
-#endif // !os(tvOS)
+
+#endif // os(tvOS)
