@@ -131,7 +131,7 @@ public actor RealmToSwiftDataMigration {
 
     /// Resets the completion flag so the migration will run again on the next call
     /// to ``migrateIfNeeded(progressHandler:)``.  Intended for debugging / testing only.
-    public func resetMigrationFlag() {
+    internal func resetMigrationFlag() {
         defaults.removeObject(forKey: Self.migrationCompletedKey)
         ILOG("[Migration] Reset migration flag.")
     }
