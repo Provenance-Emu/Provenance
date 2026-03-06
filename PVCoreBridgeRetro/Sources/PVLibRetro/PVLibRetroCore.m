@@ -2440,79 +2440,15 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 //    core->retro_deinit();
 }
 
-- (NSTimeInterval)frameInterval {
-    NSTimeInterval fps = av_info.timing.fps ?: 60;
-    VLOG(@"%f", fps);
-    return fps;
-}
-
-# pragma mark - Video
-- (void)swapBuffers {
-    if (videoBuffer == videoBufferA) {
-        videoBuffer = videoBufferB;
-    } else {
-        videoBuffer = videoBufferA;
-    }
-}
+// frameInterval, swapBuffers, videoWidth, videoHeight, screenRect, aspectSize, bufferSize
+// are implemented in PVLibRetroCore+Video.m (PVLibRetroCoreBridge (Audio) category).
 
 -(BOOL)isDoubleBuffered {
     return YES;
 }
 
-- (CGFloat)videoWidth {
-    return av_info.geometry.base_width;
-}
-
-- (CGFloat)videoHeight {
-    return av_info.geometry.base_height;
-}
-
 - (const void *)videoBuffer {
     return videoBuffer;
-}
-
-- (CGRect)screenRect {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    unsigned height = av_info.geometry.base_height;
-    unsigned width = av_info.geometry.base_width;
-
-//    unsigned height = _videoHeight;
-//    unsigned width = _videoWidth;
-
-    return CGRectMake(0, 0, width, height);
-}
-
-- (CGSize)aspectSize {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    float aspect_ratio = av_info.geometry.aspect_ratio;
-    //    unsigned height = av_info.geometry.max_height;
-    //    unsigned width = av_info.geometry.max_width;
-    if (aspect_ratio == 1.0) {
-        return CGSizeMake(1, 1);
-    } else if (aspect_ratio < 1.2 && aspect_ratio > 1.1) {
-        return CGSizeMake(10, 9);
-    } else if (aspect_ratio < 1.26 && aspect_ratio > 1.24) {
-        return CGSizeMake(5, 4);
-    } else if (aspect_ratio < 1.4 && aspect_ratio > 1.3) {
-        return CGSizeMake(4, 3);
-    } else if (aspect_ratio < 1.6 && aspect_ratio > 1.4) {
-        return CGSizeMake(3, 2);
-    } else if (aspect_ratio < 1.7 && aspect_ratio > 1.6) {
-        return CGSizeMake(16, 9);
-    } else {
-        return CGSizeMake(4, 3);
-    }
-}
-
-- (CGSize)bufferSize {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    unsigned height = av_info.geometry.max_height;
-    unsigned width = av_info.geometry.max_width;
-
-    return CGSizeMake(width, height);
 }
 
 # pragma mark - Audio
@@ -3000,26 +2936,25 @@ unsigned retro_api_version(void)
     @synchronized(self) {
         currentTouchPosition.x = MAX(0.0, MIN(1.0, normalizedX));
         currentTouchPosition.y = MAX(0.0, MIN(1.0, normalizedY));
-    }
-
-    switch (touch.phase) {
-        case UITouchPhaseBegan:
-        case UITouchPhaseMoved:
-        case UITouchPhaseStationary:
-            touchPressed = YES;
-            break;
-        case UITouchPhaseEnded:
-        case UITouchPhaseCancelled:
-            touchPressed = NO;
-            self.activeStylusTouch = nil;
-            // Reset last mouse position so the next touch doesn't generate a
-            // spurious large delta from the previous session's final position.
-            @synchronized(self) {
+        switch (touch.phase) {
+            case UITouchPhaseBegan:
+            case UITouchPhaseMoved:
+            case UITouchPhaseStationary:
+                touchPressed = YES;
+                break;
+            case UITouchPhaseEnded:
+            case UITouchPhaseCancelled:
+                touchPressed = NO;
+                // Reset last mouse position so the next touch doesn't generate a
+                // spurious large delta from the previous session's final position.
                 lastMousePositionValid = NO;
-            }
-            break;
-        default:
-            break;
+                break;
+            default:
+                break;
+        }
+    }
+    if (touch.phase == UITouchPhaseCancelled || touch.phase == UITouchPhaseEnded) {
+        self.activeStylusTouch = nil;
     }
 }
 #else
@@ -3056,33 +2991,37 @@ unsigned retro_api_version(void)
         }
     }
 
-    // Update mouse button state based on event type
-    switch ([event type]) {
-        case NSEventTypeLeftMouseDown:
-            leftMousePressed = YES;
-            mousePressed = YES;
-            break;
-        case NSEventTypeLeftMouseUp:
-            leftMousePressed = NO;
-            mousePressed = leftMousePressed || rightMousePressed;
-            // Reset last position so the next drag doesn't generate a spurious delta.
-            @synchronized(self) { lastMousePositionValid = NO; }
-            break;
-        case NSEventTypeRightMouseDown:
-            rightMousePressed = YES;
-            mousePressed = YES;
-            break;
-        case NSEventTypeRightMouseUp:
-            rightMousePressed = NO;
-            mousePressed = leftMousePressed || rightMousePressed;
-            break;
-        case NSEventTypeMouseMoved:
-        case NSEventTypeLeftMouseDragged:
-        case NSEventTypeRightMouseDragged:
-            // Position and deltas already updated above
-            break;
-        default:
-            break;
+    // Update mouse button state based on event type.
+    // Guard under @synchronized so getPointerState: (emulator thread) sees
+    // a consistent view of all button flags alongside position/delta.
+    @synchronized(self) {
+        switch ([event type]) {
+            case NSEventTypeLeftMouseDown:
+                leftMousePressed = YES;
+                mousePressed = YES;
+                break;
+            case NSEventTypeLeftMouseUp:
+                leftMousePressed = NO;
+                mousePressed = rightMousePressed;
+                // Reset last position so the next drag doesn't generate a spurious delta.
+                lastMousePositionValid = NO;
+                break;
+            case NSEventTypeRightMouseDown:
+                rightMousePressed = YES;
+                mousePressed = YES;
+                break;
+            case NSEventTypeRightMouseUp:
+                rightMousePressed = NO;
+                mousePressed = leftMousePressed;
+                break;
+            case NSEventTypeMouseMoved:
+            case NSEventTypeLeftMouseDragged:
+            case NSEventTypeRightMouseDragged:
+                // Position and deltas already updated above.
+                break;
+            default:
+                break;
+        }
     }
 
     DLOG(@"Mouse event: position (%.3f, %.3f), left: %d, right: %d",
