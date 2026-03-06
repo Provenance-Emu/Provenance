@@ -26,7 +26,7 @@
         NSMutableArray *multipleCodes = [code componentsSeparatedByString:@"+"];
         ILOG(@"Multiple Codes %@ at INDEX %d", multipleCodes, cheatIndex);
         for (int i=0; i < multipleCodes.count; i++) {
-			NSString *singleCode = multipleCodes[i];
+		NSString *singleCode = multipleCodes[i];
             if (singleCode!= nil && singleCode.length > 0) {
                 ILOG(@"Applying Code %@",singleCode);
                 const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
@@ -40,6 +40,15 @@
                                     formatIndex = 0;
                                 } else if ([codeType isEqualToString:@"GameShark"]) {
                                     formatIndex = 1;
+                                }
+                                break;
+                            case MednaSystemNES:
+                                if ([codeType isEqualToString:@"Game Genie"] || [singleCode containsString:@"-"]) {
+                                    formatIndex = 0;
+                                } else if ([codeType isEqualToString:@"Pro Action Rocky"]) {
+                                    formatIndex = 2;
+                                } else {
+                                    formatIndex = 1; // Pro Action Replay
                                 }
                                 break;
                             case MednaSystemPSX:
@@ -89,6 +98,9 @@
         case MednaSystemGB:
             types = @[ @"Game Genie", @"GameShark"];
             break;
+        case MednaSystemNES:
+            types = @[ @"Game Genie", @"Pro Action Replay", @"Pro Action Rocky"];
+            break;
         case MednaSystemPSX:
             types = @[ @"GameShark"];
             break;
@@ -104,7 +116,8 @@
 - (BOOL)getCheatSupport {
     if (self.systemType == MednaSystemPSX ||
         self.systemType == MednaSystemSNES ||
-        self.systemType == MednaSystemGB) {
+        self.systemType == MednaSystemGB ||
+        self.systemType == MednaSystemNES) {
         return true;
     }
     return false;
