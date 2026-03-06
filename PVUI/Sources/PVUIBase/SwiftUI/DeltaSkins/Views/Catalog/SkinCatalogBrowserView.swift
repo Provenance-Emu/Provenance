@@ -43,6 +43,9 @@ public struct SkinCatalogBrowserView: View {
     @State private var spinnerRotation: Double = 0
     @State private var filterTask: Task<Void, Never>?
 
+    /// Observe the skin manager so we can show which catalog skins are already installed.
+    @StateObject private var skinManager = DeltaSkinManager.shared
+
     // MARK: - Filter Options
 
     private let deviceOptions: [(label: String, value: String?)] = [
@@ -288,8 +291,9 @@ public struct SkinCatalogBrowserView: View {
                 spacing: 20
             ) {
                 ForEach(entries) { entry in
+                    let isInstalled = skinManager.loadedSkins.contains { $0.identifier == entry.id }
                     NavigationLink(destination: SkinCatalogDetailView(entry: entry)) {
-                        CatalogSkinCard(entry: entry, glowIntensity: glowIntensity)
+                        CatalogSkinCard(entry: entry, glowIntensity: glowIntensity, isInstalled: isInstalled)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -542,13 +546,23 @@ public struct SkinCatalogBrowserView: View {
 private struct CatalogSkinCard: View {
     let entry: SkinCatalogEntry
     let glowIntensity: CGFloat
+    var isInstalled: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Thumbnail
+            // Thumbnail with installed badge overlay
             thumbnailView
                 .aspectRatio(1.4, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(alignment: .topTrailing) {
+                    if isInstalled {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                            .background(Color.black.opacity(0.7).clipShape(Circle()))
+                            .padding(6)
+                    }
+                }
 
             // Info
             VStack(alignment: .leading, spacing: 4) {
@@ -600,9 +614,9 @@ private struct CatalogSkinCard: View {
                 .fill(Color.black.opacity(0.4))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
+                        .strokeBorder(RetroTheme.retroGradient, lineWidth: isInstalled ? 2 : 1)
                 )
-                .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 6)
+                .shadow(color: isInstalled ? RetroTheme.retroPink.opacity(0.5) : RetroTheme.retroPurple.opacity(0.3), radius: 6)
         )
     }
 

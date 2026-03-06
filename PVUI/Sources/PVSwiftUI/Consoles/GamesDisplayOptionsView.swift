@@ -59,6 +59,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     // Optional action for the skin selection button
     var skinSelectionAction: (() -> Void)?
 
+    // Optional action for browsing the skin catalog
+    var skinCatalogAction: (() -> Void)?
+
     // Context for the settings button
     var settingsContext: SettingsContext = .home
 
@@ -389,6 +392,18 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
             }
 
+            // Browse skin catalog for system
+            if let catalogAction = skinCatalogAction {
+                Button(action: {
+                    #if !os(tvOS)
+                    Haptics.impact(style: .light)
+                    #endif
+                    catalogAction()
+                }) {
+                    Label("Browse Skin Catalog", systemImage: "arrow.down.circle")
+                }
+            }
+
             Divider()
 
             // Core options - show all available cores
@@ -461,6 +476,7 @@ struct GamesDisplayOptionsView_Previews: PreviewProvider {
                 systemStatusAction: { print("System status tapped") },
                 settingsAction: { print("Settings tapped") },
                 skinSelectionAction: { print("Skin selection tapped") },
+                skinCatalogAction: { print("Skin catalog tapped") },
                 settingsContext: context,
                 toggleFilterAction: { print("Filter toggled") },
                 toggleSortAction: { viewModel.sortGamesAscending.toggle() },
