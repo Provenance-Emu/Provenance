@@ -2997,8 +2997,10 @@ unsigned retro_api_version(void)
     CGFloat normalizedX = location.x / viewSize.width;
     CGFloat normalizedY = location.y / viewSize.height;
 
-    currentTouchPosition.x = MAX(0.0, MIN(1.0, normalizedX));
-    currentTouchPosition.y = MAX(0.0, MIN(1.0, normalizedY));
+    @synchronized(self) {
+        currentTouchPosition.x = MAX(0.0, MIN(1.0, normalizedX));
+        currentTouchPosition.y = MAX(0.0, MIN(1.0, normalizedY));
+    }
 
     switch (touch.phase) {
         case UITouchPhaseBegan:
@@ -3010,6 +3012,11 @@ unsigned retro_api_version(void)
         case UITouchPhaseCancelled:
             touchPressed = NO;
             self.activeStylusTouch = nil;
+            // Reset last mouse position so the next touch doesn't generate a
+            // spurious large delta from the previous session's final position.
+            @synchronized(self) {
+                lastMousePositionValid = NO;
+            }
             break;
         default:
             break;
@@ -3032,12 +3039,20 @@ unsigned retro_api_version(void)
         // Normalize coordinates to 0.0-1.0 range
         NSSize viewSize = view.bounds.size;
         if (viewSize.width > 0 && viewSize.height > 0) {
-            currentMousePosition.x = location.x / viewSize.width;
-            currentMousePosition.y = location.y / viewSize.height;
-
-            // Clamp to valid range
-            currentMousePosition.x = MAX(0.0, MIN(1.0, currentMousePosition.x));
-            currentMousePosition.y = MAX(0.0, MIN(1.0, currentMousePosition.y));
+            float nx = (float)MAX(0.0, MIN(1.0, location.x / viewSize.width));
+            float ny = (float)MAX(0.0, MIN(1.0, location.y / viewSize.height));
+            @synchronized(self) {
+                currentMousePosition.x = nx;
+                currentMousePosition.y = ny;
+                // Accumulate relative delta for RETRO_DEVICE_MOUSE X/Y queries,
+                // mirroring the iOS/touch path in setMousePosition:.
+                if (lastMousePositionValid) {
+                    mouseDeltaX += (nx - lastMousePosition.x) * 1000.0f;
+                    mouseDeltaY += (ny - lastMousePosition.y) * 1000.0f;
+                }
+                lastMousePosition = CGPointMake(nx, ny);
+                lastMousePositionValid = YES;
+            }
         }
     }
 
@@ -3050,6 +3065,8 @@ unsigned retro_api_version(void)
         case NSEventTypeLeftMouseUp:
             leftMousePressed = NO;
             mousePressed = leftMousePressed || rightMousePressed;
+            // Reset last position so the next drag doesn't generate a spurious delta.
+            @synchronized(self) { lastMousePositionValid = NO; }
             break;
         case NSEventTypeRightMouseDown:
             rightMousePressed = YES;
@@ -3062,7 +3079,7 @@ unsigned retro_api_version(void)
         case NSEventTypeMouseMoved:
         case NSEventTypeLeftMouseDragged:
         case NSEventTypeRightMouseDragged:
-            // Position already updated above
+            // Position and deltas already updated above
             break;
         default:
             break;

@@ -190,30 +190,15 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
 - (GLenum)internalPixelFormat {
     // internalformat for glTexImage2D must be a sized or base internal format.
     //
-    // On OpenGL ES 2.0 (iOS/tvOS), EXT_texture_format_BGRA8888 permits
-    // GL_BGRA_EXT as the internalformat when format is also GL_BGRA_EXT.
-    //
-    // On desktop OpenGL (macOS), GL_BGRA is *not* a valid internalformat —
-    // only sized/base formats such as GL_RGBA or GL_RGBA8 are accepted.
-    // Keep pixelFormat returning GL_BGRA for the upload format parameter;
-    // use GL_RGBA here so the internalformat/format pair is always legal.
-    switch (pix_fmt)
-    {
-        case RETRO_PIXEL_FORMAT_0RGB1555:
-        case RETRO_PIXEL_FORMAT_RGB565:
-            // Both 16-bit formats are expanded to RGBA8 in video_callback.
-            return GL_RGBA;
-        case RETRO_PIXEL_FORMAT_XRGB8888:
-#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-            // GLES 2.0: internalformat must equal format (EXT_texture_format_BGRA8888).
-            return GL_BGRA_EXT;
-#else
-            // macOS desktop GL: GL_BGRA is invalid as internalformat; use GL_RGBA.
-            return GL_RGBA;
-#endif
-        default:
-            return GL_RGBA;
-    }
+    // GL_RGBA is universally valid on both OpenGL ES 2.0 (iOS/tvOS) and desktop
+    // OpenGL (macOS).  EXT_texture_format_BGRA8888 allows GL_BGRA_EXT as
+    // internalformat on some GLES 2.0 implementations, but using GL_RGBA is
+    // always legal and avoids GL_INVALID_ENUM on implementations that don't
+    // fully expose the extension.  The upload format (-pixelFormat) remains
+    // GL_BGRA_EXT/GL_BGRA so the driver can do a zero-copy upload.
+    // All pixel formats (including XRGB8888) use GL_RGBA as internal storage.
+    (void)pix_fmt;
+    return GL_RGBA;
 }
 
 - (GLenum)pixelType {
