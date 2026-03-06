@@ -110,7 +110,7 @@ struct RetroMenuView: View {
             .main: isLandscape ? 180 : 220,     // Main menu (4-5 items)
             .core: isLandscape ? 200 : 240,     // Core menu (core actions, options)
             .states: isLandscape ? 200 : 240,   // States menu (3-4 items)
-            .options: isLandscape ? 200 : 240  // Options menu (game speed, cheats, controls)
+            .options: isLandscape ? 200 : 240  // Options menu (game speed, controls)
         ]
 
         #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
@@ -433,6 +433,16 @@ struct RetroMenuView: View {
                 }
             }
 
+            // Cheat codes button (if supported)
+            if let gameWithCheat = emulatorVC.core as? GameWithCheat, gameWithCheat.supportsCheatCode {
+                menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: palette.defaultTintColor.swiftUIColor) {
+                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                    dismissMenuForSubSheetThen {
+                        emulatorVC.showCheatsMenu()
+                    }
+                }
+            }
+
             // Quit game button - show different title if save option is available
             menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: palette.defaultTintColor.swiftUIColor) {
                 dismissAction(false)
@@ -579,16 +589,6 @@ struct RetroMenuView: View {
                     color: palette.defaultTintColor.swiftUIColor,
                     isOn: $showFPSCount
                 )
-            }
-
-            // Cheat codes button (if supported)
-            if let gameWithCheat = emulatorVC.core as? GameWithCheat, gameWithCheat.supportsCheatCode {
-                menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: palette.defaultTintColor.swiftUIColor) {
-                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
-                    dismissMenuForSubSheetThen {
-                        emulatorVC.showCheatsMenu()
-                    }
-                }
             }
 
                             // Screen filter selection
