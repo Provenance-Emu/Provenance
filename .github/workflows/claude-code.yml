@@ -121,7 +121,7 @@ jobs:
             ## Review Pipeline (for [Agent] PRs)
 
             **After creating a new PR:**
-            9.  Enable auto-merge immediately: `gh pr merge <number> --auto --squash --repo $GITHUB_REPOSITORY`
+            9.  Enable auto-merge immediately: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
             10. Add the 'agent-work' label: `gh pr edit <number> --add-label agent-work`
             11. Post a comment: "🤖 PR created. Auto-merge enabled. AI review will start automatically."
             NOTE: Do NOT manually request a review — ai-review.yml fires automatically on the push.
@@ -145,7 +145,7 @@ jobs:
                   triggers ai-review.yml for the next review cycle.
 
             **When AI review approves (ai_approved):**
-            20. Enable auto-merge if not already: `gh pr merge <number> --auto --squash --repo $GITHUB_REPOSITORY`
+            20. Enable auto-merge if not already: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
             21. Add the 'ready-for-review' label: `gh pr edit <number> --add-label ready-for-review`
             22. Assign for final human review: `gh pr edit <number> --add-assignee JoeMatt --add-reviewer JoeMatt`
             23. Post a summary comment: "✅ AI review passed. Auto-merge enabled. Ready for @JoeMatt's final review."
