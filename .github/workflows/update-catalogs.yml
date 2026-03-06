@@ -43,8 +43,6 @@ jobs:
         run: pip install -r Scripts/requirements-scraper.txt
 
       - name: Run skin catalog scraper
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 Scripts/scrape_skin_catalog.py \
             --output Scripts/catalog_seed.json \
@@ -55,11 +53,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet HEAD -- Scripts/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+          git diff --quiet Scripts/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
