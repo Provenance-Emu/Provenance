@@ -1,5 +1,5 @@
 # Manual rebase via PR comment: comment "/rebase" on any PR to trigger.
-# For automatic rebase on develop push, see auto-rebase-on-develop.yml.
+# For automatic rebase on develop push/merge, see auto-rebase-on-develop.yml.
 #
 # Uses git directly to rebase the branch onto develop.
 # If conflicts are detected, dispatches Claude Code to resolve them automatically.
@@ -7,10 +7,6 @@ name: Manual Rebase
 on:
   issue_comment:
     types: [created]
-
-concurrency:
-  group: rebase-${{ github.event.issue.number }}
-  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -21,6 +17,15 @@ permissions:
 jobs:
   rebase:
     name: Rebase
+    # IMPORTANT: concurrency is at the JOB level (not workflow level) so that
+    # bot comments posted by this job (acknowledgment, success, etc.) do NOT
+    # trigger a new run that cancels the in-progress rebase. When a workflow-
+    # level concurrency group is used, ANY new run in the group cancels in-
+    # progress runs before the job's `if` condition is evaluated. Moving it
+    # here means the `if` is checked first; skipped jobs don't claim the group.
+    concurrency:
+      group: rebase-${{ github.event.issue.number }}
+      cancel-in-progress: true
     if: github.event.issue.pull_request != '' && github.event.comment.body == '/rebase'
     runs-on: ubuntu-latest
     steps:
@@ -80,7 +85,6 @@ jobs:
                 gh workflow run ai-review.yml --repo "$REPO" -f pr_number="$PR_NUMBER" 2>/dev/null || true
               fi
             else
-              git rebase --abort 2>/dev/null || true
               echo "result=push_failed" >> "$GITHUB_OUTPUT"
             fi
           else
@@ -110,11 +114,27 @@ jobs:
                    --repo "${{ github.repository }}" \
                    -f pr_number="$PR_NUMBER" \
                    -f action="fix_rebase_conflict" 2>/dev/null; then
-                gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
-                  --body $'🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
+                cat > /tmp/conflict_msg.md << 'MSGEOF'
+🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.
+
+If conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.
+MSGEOF
+                gh pr comment "$PR_NUMBER" --body-file /tmp/conflict_msg.md --repo "${{ github.repository }}" 2>/dev/null || true
               else
-                gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
-                  --body $'❌ **Rebase conflict** — conflicts could not be resolved automatically.\n\nPlease resolve manually:\n\n```bash\ngit fetch origin\ngit checkout '"$BRANCH"'\ngit rebase origin/develop\n# resolve conflicts, then:\ngit push --force-with-lease\n```' 2>/dev/null || true
+                cat > /tmp/conflict_manual.md << MSGEOF
+❌ **Rebase conflict** — conflicts could not be resolved automatically.
+
+Please resolve manually:
+
+\`\`\`bash
+git fetch origin
+git checkout ${BRANCH}
+git rebase origin/develop
+# resolve conflicts, then:
+git push --force-with-lease
+\`\`\`
+MSGEOF
+                gh pr comment "$PR_NUMBER" --body-file /tmp/conflict_manual.md --repo "${{ github.repository }}" 2>/dev/null || true
               fi
               ;;
             push_failed)

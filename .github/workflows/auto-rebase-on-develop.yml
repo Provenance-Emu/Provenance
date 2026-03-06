@@ -1,20 +1,29 @@
 name: Auto-rebase PRs on develop push
 
-# When develop receives new commits, automatically rebase all open PRs
-# targeting develop so they stay current and merge conflicts surface early.
+# When develop receives new commits (push OR PR merge), automatically rebase
+# all open PRs targeting develop so they stay current.
 #
-# Also handles `/rebase` comments on PRs — rebases just that PR on demand.
+# Triggers:
+#   push to develop    — direct commits (e.g. manual hotfixes)
+#   pull_request:closed — PR was squash/merge-merged; fires reliably even when
+#                         GitHub's push event is swallowed by rate-limiting or
+#                         is suppressed by concurrent workflow activity
+#   workflow_dispatch  — manual trigger for debugging
+#
+# /rebase comments are handled exclusively by rebase.yml (single-PR).
+# This workflow only handles the "rebase everything after develop advances" case.
 #
 # Only rebases PRs from the same repo (not forks - we can't push to those).
 # Skips draft PRs and PRs that are already up to date.
-# Comments on PRs with rebase conflicts so owners can resolve manually.
+# Dispatches Claude to resolve rebase conflicts automatically.
 
 on:
   push:
     branches: [develop]
+  pull_request:
+    types: [closed]
+    branches: [develop]
   workflow_dispatch:
-  issue_comment:
-    types: [created]
 
 permissions:
   contents: write
@@ -23,31 +32,24 @@ permissions:
   actions: write
 
 concurrency:
+  # Only one rebase run at a time. Cancel stale runs so the latest develop
+  # state wins. NOTE: only push/pull_request/workflow_dispatch events land here
+  # now — bot comments no longer poison this group.
   group: auto-rebase-develop
-  cancel-in-progress: true   # Latest develop state wins; cancel stale in-progress runs
+  cancel-in-progress: true
 
 jobs:
   rebase:
     name: Rebase open PRs onto develop
+    # Only run when develop actually advanced (push/merge) or explicit dispatch.
+    # For pull_request events, only fire when the PR was actually merged.
     if: |
       (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
-      (github.event_name == 'workflow_dispatch') ||
-      (github.event_name == 'issue_comment' &&
-       github.event.issue.pull_request != null &&
-       github.event.comment.body == '/rebase')
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Acknowledge /rebase command
-        if: github.event_name == 'issue_comment'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.issue.number }}
-        run: |
-          gh pr comment "$PR_NUMBER" \
-            --repo "${{ github.repository }}" \
-            --body "🔄 Rebase requested — rebasing onto \`develop\` now..." 2>/dev/null || true
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -63,30 +65,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          EVENT_NAME: ${{ github.event_name }}
-          COMMENT_PR_NUMBER: ${{ github.event.issue.number }}
         run: |
-          if [ "$EVENT_NAME" = "issue_comment" ]; then
-            # /rebase comment: only process the specific PR
-            echo "Manual /rebase triggered on PR #${COMMENT_PR_NUMBER}"
-            PR_INFO=$(gh api "repos/$REPO/pulls/${COMMENT_PR_NUMBER}" \
-              --jq '{number: .number, branch: .head.ref, draft: .draft, same_repo: (.head.repo.full_name == .base.repo.full_name)}' \
-              2>/dev/null || echo "")
-            if [ -z "$PR_INFO" ]; then
-              echo "Could not fetch PR info — is this a PR comment?"
-              exit 0
-            fi
-            prs=$(echo "$PR_INFO" | jq -s '.')
-          else
-            echo "Develop was pushed to. Looking for PRs to rebase..."
-            # Fetch all open PRs targeting develop from the same repo (not forks)
-            prs=$(gh api "repos/$REPO/pulls?base=develop&state=open&per_page=100" \
-              --jq '.[] | select(
-                .draft == false and
-                .head.repo.full_name == .base.repo.full_name
-              ) | {number: .number, branch: .head.ref}' \
-              | jq -s '.')
-          fi
+          echo "Develop was pushed to / PR merged. Looking for PRs to rebase..."
+          # Fetch all open non-draft PRs targeting develop from the same repo (not forks)
+          prs=$(gh api "repos/$REPO/pulls?base=develop&state=open&per_page=100" \
+            --jq '.[] | select(
+              .draft == false and
+              .head.repo.full_name == .base.repo.full_name
+            ) | {number: .number, branch: .head.ref}' \
+            | jq -s '.')
 
           count=$(echo "$prs" | jq length)
           echo "Found $count eligible open PR(s) targeting develop."
@@ -111,11 +98,6 @@ jobs:
             if git merge-base --is-ancestor origin/develop "origin/$branch" 2>/dev/null; then
               echo "  Already up to date - skipping"
               skipped_uptodate=$((skipped_uptodate + 1))
-              # Still post a reply if this was a manual /rebase
-              if [ "$EVENT_NAME" = "issue_comment" ]; then
-                gh pr comment "$pr_num" --repo "$REPO" \
-                  --body "✅ Branch \`${branch}\` is already up to date with \`develop\` — no rebase needed." 2>/dev/null || true
-              fi
               continue
             fi
 
@@ -135,19 +117,9 @@ jobs:
                 if echo "$pr_title" | grep -q "^\[Agent\]"; then
                   gh workflow run ai-review.yml --repo "$REPO" -f pr_number="$pr_num" 2>/dev/null || true
                 fi
-                # Reply to manual /rebase with success
-                if [ "$EVENT_NAME" = "issue_comment" ]; then
-                  gh pr comment "$pr_num" --repo "$REPO" \
-                    --body "✅ Rebased \`${branch}\` onto \`develop\` successfully. CI and AI review re-triggered." 2>/dev/null || true
-                fi
               else
                 echo "  Rebase succeeded but push was rejected (branch protection?)"
-                git rebase --abort 2>/dev/null || true
                 failed=$((failed + 1))
-                if [ "$EVENT_NAME" = "issue_comment" ]; then
-                  gh pr comment "$pr_num" --repo "$REPO" \
-                    --body "❌ Rebase succeeded locally but push was rejected (branch protection rules?). Please push manually." 2>/dev/null || true
-                fi
               fi
             else
               echo "  Rebase conflict — dispatching Claude to resolve"
@@ -159,11 +131,30 @@ jobs:
                    --repo "$REPO" \
                    -f pr_number="$pr_num" \
                    -f action="fix_rebase_conflict" 2>/dev/null; then
-                gh pr comment "$pr_num" --repo "$REPO" \
-                  --body $'🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.'
+                cat > /tmp/conflict_msg.md << 'MSGEOF'
+🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.
+
+If conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.
+MSGEOF
+                gh pr comment "$pr_num" --repo "$REPO" --body-file /tmp/conflict_msg.md 2>/dev/null || true
               else
                 # Dispatch failed — fall back to manual instructions
-                gh pr comment "$pr_num" --repo "$REPO" --body $'**Auto-rebase conflict**\n\nThis PR could not be automatically rebased onto `develop` due to merge conflicts. Please rebase manually:\n\n```bash\ngit fetch origin\ngit checkout <your-branch>\ngit rebase origin/develop\n# resolve conflicts, then:\ngit push --force-with-lease\n```\n\nOr comment `/rebase` here to retry.'
+                cat > /tmp/conflict_manual.md << MSGEOF
+**Auto-rebase conflict**
+
+This PR could not be automatically rebased onto \`develop\` due to merge conflicts. Please rebase manually:
+
+\`\`\`bash
+git fetch origin
+git checkout ${branch}
+git rebase origin/develop
+# resolve conflicts, then:
+git push --force-with-lease
+\`\`\`
+
+Or comment \`/rebase\` here to retry.
+MSGEOF
+                gh pr comment "$pr_num" --repo "$REPO" --body-file /tmp/conflict_manual.md 2>/dev/null || true
               fi
             fi
           done < <(echo "$prs" | jq -r '.[] | [.number, .branch] | @tsv')
