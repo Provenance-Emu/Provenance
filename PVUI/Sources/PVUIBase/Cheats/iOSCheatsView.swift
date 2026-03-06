@@ -523,9 +523,9 @@ struct iOSCheatSearchView: View {
 
     @ViewBuilder
     private var listView: some View {
-        List {
+        SwiftUI.List {
             if hasOnlineResults {
-                Section {
+                SwiftUI.Section {
                     HStack(spacing: 8) {
                         Image(systemName: "globe")
                             .foregroundStyle(.blue)
