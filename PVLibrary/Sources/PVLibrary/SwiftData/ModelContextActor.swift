@@ -25,6 +25,7 @@
 #if canImport(SwiftData)
 import SwiftData
 import Foundation
+import PVLogging
 
 /// A global actor that serialises access to a background `ModelContext`,
 /// providing the same "safe DB access from any thread" ergonomics that
@@ -69,6 +70,7 @@ public actor ModelContextActor: GlobalActor {
             // This path is taken when CloudKit sync is disabled (no call to
             // CloudKitSwiftDataSyncManager.start(container:)) which is valid.
             // configure(container:) may also be called explicitly for custom setups.
+            DLOG("ModelContextActor: configure(container:) was not called — using PVSwiftDataSchema.sharedContainer as fallback.")
             container = try PVSwiftDataSchema.sharedContainer
             _container = container
         }
