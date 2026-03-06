@@ -31,6 +31,11 @@
             "minVersion": "3.0.5",
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Enables contentless cores like DOOM, Quake, etc."
+        },
+        "cheatsOnlineLookup": {
+            "enabled": true,
+            "minVersion": "3.0.5",
+            "description": "Enables online lookup for cheat codes via GitHub API with 24h disk cache."
         }
     }
 }
