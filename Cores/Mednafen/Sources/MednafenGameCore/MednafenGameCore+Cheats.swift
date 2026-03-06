@@ -72,6 +72,14 @@ class CppString {
                     switch systemType {
                     case .GB:
                         formatIndex = codeType == "Game Genie" ? 0 : 1
+                    case .NES:
+                        if codeType == "Game Genie" || singleCode.contains("-") {
+                            formatIndex = 0
+                        } else if codeType == "Pro Action Rocky" {
+                            formatIndex = 2
+                        } else {
+                            formatIndex = 1 // Pro Action Replay
+                        }
                     case .PSX:
                         if codeType == "GameShark" {
                             formatIndex = 0
@@ -115,6 +123,8 @@ class CppString {
         switch systemType {
         case .GB:
             return ["Game Genie", "GameShark"]
+        case .NES:
+            return ["Game Genie", "Pro Action Replay", "Pro Action Rocky"]
         case .PSX:
             return ["GameShark"]
         case .SNES:
@@ -123,8 +133,8 @@ class CppString {
             return []
         }
     }
-    
+
     @objc public func getCheatSupport() -> Bool {
-        return systemType == .PSX || systemType == .SNES || systemType == .GB
+        return systemType == .PSX || systemType == .SNES || systemType == .GB || systemType == .NES
     }
 }
