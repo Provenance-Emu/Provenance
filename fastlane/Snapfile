@@ -11,9 +11,8 @@ languages([
 ])
 
 # The name of the scheme which contains the UI Tests
-# Use Provenance-Screenshots (no-core build) once that scheme is created (Milestone 1).
-# Falls back to standard UITesting scheme in the interim.
-scheme "UITesting"
+# Provenance-Screenshots builds UITesting.app (no emulator cores) + ScreenshotUITests.
+scheme "Provenance-Screenshots"
 
 # Where should the resulting screenshots be stored?
 output_directory "./fastlane/screenshots"

@@ -3,7 +3,7 @@ lane :screenshots do |options|
   # Ensure Snapfile is configured correctly before running
   snapshot(
     workspace: "Provenance.xcworkspace",
-    scheme: options[:scheme] || "UITesting",
+    scheme: options[:scheme] || "Provenance-Screenshots",
     output_directory: "./fastlane/screenshots",
     clear_previous_screenshots: true,
     stop_after_first_error: false,

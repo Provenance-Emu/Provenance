@@ -1,0 +1,37 @@
+# Prefire configuration — Milestone 3: Screenshot Automation Pipeline
+# https://github.com/BarredEwe/Prefire
+#
+# The PrefirePlugin build plugin reads this file to control which #Preview
+# macros are scanned and how tests are generated.
+#
+# Generated test code is written to PrefireTests.generated.swift inside the
+# PVSwiftUISnapshotTests test target at build time.
+
+# Path(s) relative to Package.swift where Prefire should scan for #Preview macros.
+# We scan only PVSwiftUI (the SwiftUI-heavy module) to keep test scope focused.
+preview_default_enabled: true
+target_name: PVSwiftUISnapshotTests
+sources:
+  - Sources/PVSwiftUI
+
+# Simulator devices used when recording / diffing snapshots.
+# Must match devices available in CI (GitHub Actions macOS runners).
+snapshot_devices:
+  - "iPhone 16 Pro"
+  - "iPhone SE (3rd generation)"
+  - "iPad Pro 12.9-inch (6th generation)"
+
+# Accessibility sizes to capture (Normal + Large).
+snapshot_traits:
+  - preferredContentSizeCategory: .large
+  - preferredContentSizeCategory: .extraExtraExtraLarge
+
+# Set to true when re-recording baselines; keep false for CI regression checks.
+record_snapshots: false
+
+# Previews to exclude from auto-generation (complex, Realm-backed, or animation-heavy).
+excluded_previews:
+  - ConsoleGamesView
+  - BiosesView
+  - RetroMainView
+  - AppIconSelectorView
