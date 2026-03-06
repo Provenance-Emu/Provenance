@@ -2,6 +2,7 @@ import SwiftUI
 import Foundation
 import PVLogging
 import PVSwiftUI
+import PVUIBase
 import PVFeatureFlags
 import PVThemes
 import PVLibrary
@@ -384,6 +385,10 @@ extension ProvenanceApp {
         }
 
         switch action {
+        case .screen, .debug:
+            // Route deep-link navigation to ScreenNavigator (SwiftUI lifecycle path)
+            return ScreenNavigator.shared.handle(url: url)
+
         case .save:
             guard let queryItems = components.queryItems, !queryItems.isEmpty else {
                 ELOG("Query items is nil")

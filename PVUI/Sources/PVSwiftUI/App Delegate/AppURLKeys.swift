@@ -10,6 +10,10 @@
 public enum AppURLKeys: String, Codable {
     case open
     case save
+    /// Screen navigation: provenance://screen/<path>
+    case screen
+    /// Debug/automation actions: provenance://debug/<action>
+    case debug
 
     public enum OpenKeys: String, Codable {
         case md5Key = "PVGameMD5Key"

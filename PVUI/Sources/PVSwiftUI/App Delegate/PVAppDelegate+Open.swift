@@ -250,6 +250,9 @@ extension PVAppDelegate {
         }
 
         switch action {
+        case .screen, .debug:
+            return ScreenNavigator.shared.handle(url: url)
+
         case .save:
             guard let queryItems = components.queryItems, !queryItems.isEmpty else {
                 return false
