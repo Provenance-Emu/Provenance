@@ -86,7 +86,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     /// Creates a UIHostingController whose root view has the shared ModelContainer
     /// injected (when available), so every hosted SwiftUI hierarchy can use @Query.
     /// Must be called on the main actor as it creates UIKit objects.
-    @MainActor private func makeHostingController<V: View>(_ rootView: V) -> UIHostingController<AnyView> {
+    @MainActor internal func makeHostingController<V: View>(_ rootView: V) -> UIHostingController<AnyView> {
         #if canImport(SwiftData)
         if #available(iOS 17, tvOS 17, *),
            let container = sharedModelContainer {
