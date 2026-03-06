@@ -92,6 +92,7 @@ jobs:
       - name: Generate cheat database
         run: |
           python3 Scripts/generate_cheatdb.py /tmp/libretro-database/cht/ \
+            --dat-dir /tmp/libretro-database \
             --output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
 
       - name: Cleanup
