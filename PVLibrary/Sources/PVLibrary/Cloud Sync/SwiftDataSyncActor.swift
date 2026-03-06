@@ -90,9 +90,12 @@ public actor SwiftDataSyncActor {
     }
 
     /// Update metadata fields on a `Game_Data` model from a CloudKit record.
-    /// The closure receives the *unfrozen* model and may mutate it freely;
+    /// The closure receives the live SwiftData model instance and may mutate it freely;
     /// `save()` is called automatically after the closure returns.
-    public func updateGameMetadata(md5: String, update: (Game_Data) -> Void) throws {
+    ///
+    /// The closure is `@Sendable` to prevent accidental capture of non-sendable state
+    /// across the actor boundary.
+    public func updateGameMetadata(md5: String, update: @Sendable (Game_Data) -> Void) throws {
         guard let game = try fetchGame(md5: md5) else {
             WLOG("SwiftDataSyncActor.updateGameMetadata: no game found for md5=\(md5)")
             return

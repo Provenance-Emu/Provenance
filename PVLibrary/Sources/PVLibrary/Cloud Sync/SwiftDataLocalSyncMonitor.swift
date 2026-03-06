@@ -74,8 +74,17 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
     }
 
     deinit {
-        // Must dispatch synchronously to drain any in-flight work before dealloc.
-        queue.sync { cancellables.removeAll() }
+        // Use queue.async rather than queue.sync to avoid a potential deadlock:
+        // if the last strong reference is released from within a notification callback
+        // that runs on `queue`, a synchronous dispatch would deadlock.
+        // Capturing the values in the closure causes them to be released (and their
+        // subscriptions cancelled) when the async block executes on `queue`.
+        let capturedWork = pendingSyncWork
+        let capturedCancellables = cancellables
+        queue.async {
+            capturedWork?.cancel()
+            _ = capturedCancellables // released here; each AnyCancellable.deinit cancels it
+        }
     }
 
     // MARK: - Lifecycle
@@ -87,28 +96,32 @@ public final class SwiftDataLocalSyncMonitor: @unchecked Sendable {
     /// `NSPersistentCloudKitContainer`.  We observe the former because it carries
     /// permanent object IDs that survive context resets.
     ///
-    /// Safe to call from any thread; subscription is stored synchronously on `queue`.
+    /// Safe to call from any thread; subscription is stored asynchronously on `queue`.
     public func startMonitoring() {
-        queue.sync {
+        // Use async to avoid a potential deadlock when called from within `queue` itself
+        // (e.g. during a notification callback).  The subscription will be active on the
+        // next run-loop turn, which is sufficient for the monitoring use case.
+        queue.async {
             // NSManagedObjectContextDidSaveObjectIDsNotification carries three keys:
             //   NSInsertedObjectIDsKey, NSUpdatedObjectIDsKey, NSDeletedObjectIDsKey
             // Each value is a Set<NSManagedObjectID>.
             NotificationCenter.default
                 .publisher(for: SwiftDataLocalSyncMonitor.contextDidSaveObjectIDsNotification)
-                .receive(on: queue)   // serial queue — safe to mutate pendingSyncWork here
+                .receive(on: self.queue)   // serial queue — safe to mutate pendingSyncWork here
                 .sink { [weak self] notification in
                     self?.handleContextSave(notification)
                 }
-                .store(in: &cancellables)
+                .store(in: &self.cancellables)
         }
         ILOG("SwiftDataLocalSyncMonitor: started.")
     }
 
     /// Stops observing save notifications.
     ///
-    /// Safe to call from any thread; cancellation is applied synchronously on `queue`.
+    /// Safe to call from any thread; cancellation is dispatched asynchronously onto
+    /// `queue` to avoid deadlocking when called from within the queue itself.
     public func stopMonitoring() {
-        queue.sync { cancellables.removeAll() }
+        queue.async { self.cancellables.removeAll() }
         ILOG("SwiftDataLocalSyncMonitor: stopped.")
     }
 

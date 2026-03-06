@@ -83,8 +83,13 @@ public final class CloudKitSwiftDataSyncManager: @unchecked Sendable {
 
     // MARK: - Lifecycle
 
-    /// Configures `ModelContextActor` with the given container and starts native
-    /// SwiftData CloudKit sync (if `cloudKitEnabled` is true).
+    /// Configures `ModelContextActor` with the given container.
+    ///
+    /// Native SwiftData CloudKit sync is active automatically when the container was
+    /// created with a CloudKit-backed `ModelConfiguration` (i.e. via
+    /// `PVSwiftDataSchema.makePVModelContainerWithCloudKit()` or
+    /// `CloudKitModelContainerConfiguration.makeCloudKitEnabledContainer()`).
+    /// Passing a local-only container disables CloudKit sync without any additional flags.
     ///
     /// This should be called once, early in the application lifecycle (e.g.
     /// `AppDelegate.application(_:didFinishLaunchingWithOptions:)` or the
