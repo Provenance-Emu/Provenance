@@ -202,6 +202,27 @@ enum DeltaSkinDefaults {
         )
     }
 
+    // MARK: - Default Keyboard Overlay Configs
+
+    /// Returns the default `KeyboardOverlayConfig` for systems that ship with a
+    /// built-in keyboard overlay. Returns `nil` for systems that have no keyboard.
+    static func defaultKeyboardOverlay(for gameType: DeltaSkinGameType) -> KeyboardOverlayConfig? {
+        switch gameType {
+        case .dos:
+            return KeyboardOverlayConfig(variant: .full, autoShow: false, position: .bottom, opacity: 0.85)
+        case .c64:
+            return KeyboardOverlayConfig(variant: .c64, autoShow: false, position: .bottom, opacity: 0.85)
+        case .zxspectrum:
+            return KeyboardOverlayConfig(variant: .zxSpectrum, autoShow: false, position: .bottom, opacity: 0.85)
+        case .msx, .msx2:
+            return KeyboardOverlayConfig(variant: .compact, autoShow: false, position: .bottom, opacity: 0.85)
+        case .atari8bit, .atarist:
+            return KeyboardOverlayConfig(variant: .compact, autoShow: false, position: .bottom, opacity: 0.85)
+        default:
+            return nil
+        }
+    }
+
     /// Get screen size for device type
     static func screenSize(for device: DeltaSkinDevice) -> CGSize {
         switch device {

@@ -72,6 +72,38 @@ extension PVEmulatorViewController {
         (core as? KeyboardResponder)?.requiresKeyboard == true
     }
 
+    // MARK: - DeltaSkin Config Resolution
+
+    /// The `KeyboardOverlayConfig` that should be used for the current session.
+    ///
+    /// Resolution order:
+    ///   1. Config declared in the active skin's JSON (`keyboardOverlay` key).
+    ///   2. Hard-coded default for the game type (from `DeltaSkinDefaults`).
+    ///   3. `nil` — no keyboard overlay for this system.
+    var effectiveKeyboardOverlayConfig: KeyboardOverlayConfig? {
+        // 1. Active skin declaration takes priority
+        if let skinConfig = currentSkin?.keyboardOverlay {
+            return skinConfig
+        }
+
+        // 2. Fall back to the hard-coded default for this game type
+        if let gameType = currentSkin?.gameType {
+            return DeltaSkinDefaults.defaultKeyboardOverlay(for: gameType)
+        }
+
+        return nil
+    }
+
+    /// Call this after the emulator has started (e.g. at the end of `viewDidAppear` /
+    /// after `applySkin` completes) to honour `autoShow` from the DeltaSkin config.
+    func applyKeyboardOverlayConfigIfNeeded() {
+        guard let config = effectiveKeyboardOverlayConfig else { return }
+        DLOG("VirtualKeyboard: effectiveConfig variant=\(config.variant.rawValue) autoShow=\(config.autoShow)")
+        if config.autoShow {
+            showVirtualKeyboard(animated: false)
+        }
+    }
+
     // MARK: - Lifecycle
 
     /// Whether the virtual keyboard overlay is currently visible.
@@ -86,6 +118,8 @@ extension PVEmulatorViewController {
         if coreRequiresVirtualKeyboard {
             showVirtualKeyboard()
         }
+        // Also honour DeltaSkin autoShow
+        applyKeyboardOverlayConfigIfNeeded()
     }
 
     /// Tears down the keyboard overlay. Call from `viewWillDisappear` or `deinit`.
@@ -173,5 +207,24 @@ extension PVEmulatorViewController: VirtualKeyboardDelegate {
         guard let keyboardResponder = core as? KeyboardResponder else { return }
         keyboardResponder.keyUp(keyCode)
     }
+}
+
+// MARK: - Notification names
+
+public extension Notification.Name {
+    /// Posted when the virtual keyboard overlay should be shown.
+    static let pvShowVirtualKeyboard = Notification.Name("com.provenance.virtualKeyboard.show")
+
+    /// Posted when the virtual keyboard overlay should be hidden.
+    static let pvHideVirtualKeyboard = Notification.Name("com.provenance.virtualKeyboard.hide")
+
+    /// Posted when the virtual keyboard overlay should be toggled.
+    static let pvToggleVirtualKeyboard = Notification.Name("com.provenance.virtualKeyboard.toggle")
+}
+
+/// Namespace for virtual keyboard notification user-info keys.
+public enum PVVirtualKeyboardNotification {
+    /// `userInfo` key whose value is a `KeyboardOverlayConfig`.
+    public static let configKey = "keyboardOverlayConfig"
 }
 #endif // !os(tvOS)

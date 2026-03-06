@@ -73,6 +73,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
     public var name: String { info.name }
     public var gameType: DeltaSkinGameType { info.gameTypeIdentifier }
     public var isDebugEnabled: Bool { info.debug }
+    /// Keyboard overlay configuration decoded from the skin's `keyboardOverlay` JSON key.
+    /// Returns `nil` for skins that do not declare a keyboard overlay.
+    public var keyboardOverlay: KeyboardOverlayConfig? { info.keyboardOverlay }
 
     public func supports(_ traits: DeltaSkinTraits) -> Bool {
         let result = representation(for: traits) != nil
@@ -442,8 +445,13 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// Device-specific skin representations
         let representations: Dictionary<DeltaSkinDevice, DeviceRepresentations>
 
+        /// Optional keyboard overlay configuration. When present, a virtual keyboard
+        /// overlay will be available for this skin. Old skins that omit this key
+        /// fall back gracefully with no keyboard shown.
+        let keyboardOverlay: KeyboardOverlayConfig?
+
         private enum CodingKeys: String, CodingKey {
-            case name, identifier, gameTypeIdentifier, debug, representations
+            case name, identifier, gameTypeIdentifier, debug, representations, keyboardOverlay
         }
 
         public init(from decoder: Decoder) throws {
@@ -466,6 +474,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
 
             representations = reps
+            keyboardOverlay = try container.decodeIfPresent(KeyboardOverlayConfig.self, forKey: .keyboardOverlay)
         }
     }
 

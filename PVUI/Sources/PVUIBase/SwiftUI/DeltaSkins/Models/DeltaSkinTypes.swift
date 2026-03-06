@@ -312,6 +312,72 @@ private struct NumericValue: Codable {
     }
 }
 
+// MARK: - Keyboard Overlay
+
+/// Identifies which virtual keyboard layout to display for keyboard-based systems.
+/// Maps to the `VirtualKeyboardLayout` cases defined in the keyboard overlay subsystem.
+public enum VirtualKeyboardVariant: String, Codable, Hashable, Equatable, CaseIterable {
+    /// Full QWERTY layout (e.g. DOS, generic PC)
+    case full
+    /// Compact layout — fewer rows, suitable for smaller screens (MSX, Atari 8-bit)
+    case compact
+    /// Top function-row only (F1–F12 + modifier keys)
+    case functionRow
+    /// Commodore 64 keyboard layout
+    case c64
+    /// ZX Spectrum keyboard layout (character + shift rows)
+    case zxSpectrum
+    /// Amstrad CPC keyboard layout
+    case amstradCPC
+}
+
+/// Position on screen where the keyboard overlay should appear.
+public enum KeyboardOverlayPosition: String, Codable, Hashable, Equatable {
+    case bottom
+    case top
+}
+
+/// Configuration for an optional keyboard overlay embedded in a skin.
+/// Skins that omit this key behave as before — no keyboard is shown automatically.
+public struct KeyboardOverlayConfig: Codable, Hashable, Equatable {
+    /// Which virtual keyboard layout to display
+    public let variant: VirtualKeyboardVariant
+
+    /// If `true` the keyboard is shown immediately when the game launches,
+    /// without requiring the user to trigger it manually.
+    public let autoShow: Bool
+
+    /// Where on screen the overlay should anchor
+    public let position: KeyboardOverlayPosition
+
+    /// Overlay opacity in the range 0.0–1.0
+    public let opacity: Double
+
+    public init(
+        variant: VirtualKeyboardVariant,
+        autoShow: Bool = false,
+        position: KeyboardOverlayPosition = .bottom,
+        opacity: Double = 0.85
+    ) {
+        self.variant = variant
+        self.autoShow = autoShow
+        self.position = position
+        self.opacity = opacity
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case variant, autoShow, position, opacity
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        variant = try container.decode(VirtualKeyboardVariant.self, forKey: .variant)
+        autoShow = try container.decodeIfPresent(Bool.self, forKey: .autoShow) ?? false
+        position = try container.decodeIfPresent(KeyboardOverlayPosition.self, forKey: .position) ?? .bottom
+        opacity = try container.decodeIfPresent(Double.self, forKey: .opacity) ?? 0.85
+    }
+}
+
 import PVPrimitives
 
 /// Game type identifiers
