@@ -13,6 +13,10 @@ on:
         description: 'Branch to validate (used after auto-rebase)'
         required: false
         type: string
+      pr_number:
+        description: 'PR number (for changed-file detection in lint/SPM jobs)'
+        required: false
+        type: string
 
 concurrency:
   group: agent-validation-${{ github.head_ref || github.event.inputs.branch }}
@@ -33,16 +37,22 @@ jobs:
 
       - name: Get changed Swift files
         id: changed
-        run: |
-          FILES=$(gh pr diff ${{ github.event.pull_request.number }} --name-only | grep '\.swift$' || true)
-          if [ -z "$FILES" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-            echo "$FILES" > changed_files.txt
-          fi
         env:
           GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number || github.event.inputs.pr_number }}"
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "0" ]; then
+            echo "No PR number available — skipping lint (no changed-file context)"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            FILES=$(gh pr diff "$PR_NUMBER" --name-only | grep '\.swift$' || true)
+            if [ -z "$FILES" ]; then
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "skip=false" >> "$GITHUB_OUTPUT"
+              echo "$FILES" > changed_files.txt
+            fi
+          fi
 
       - name: Install SwiftLint
         if: steps.changed.outputs.skip == 'false'
@@ -76,6 +86,8 @@ jobs:
           - PVHashing
           - PVPlists
           - PVFeatureFlags
+          - PVObjCUtils
+          - PVCheevos
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -85,15 +97,21 @@ jobs:
 
       - name: Check if module changed
         id: check
-        run: |
-          CHANGED=$(gh pr diff ${{ github.event.pull_request.number }} --name-only | grep -c "^${{ matrix.module }}/" || true)
-          if [ "$CHANGED" -gt 0 ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          fi
         env:
           GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number || github.event.inputs.pr_number }}"
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "0" ]; then
+            # No PR number — run all modules unconditionally
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            CHANGED=$(gh pr diff "$PR_NUMBER" --name-only | grep -c "^${{ matrix.module }}/" || echo "0")
+            if [ "${CHANGED:-0}" -gt 0 ]; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
 
       - name: Select Xcode
         if: steps.check.outputs.changed == 'true'
@@ -150,9 +168,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-ci-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj', '**/Package.swift') }}
-          restore-keys: |
-            ${{ runner.os }}-ci-deriveddata-
+          # Include source file hashes so any Swift/ObjC change busts the cache.
+          # No restore-keys fallback — only exact cache hits to prevent stale artifacts.
+          key: ${{ runner.os }}-ci-deriveddata-${{ hashFiles('**/*.xcodeproj/project.pbxproj', '**/Package.swift', 'Provenance/**/*.swift', 'PV*/**/*.swift', 'PV*/**/*.m', 'PV*/**/*.mm', 'PV*/**/*.h') }}
 
       - name: Build Provenance-CI (iOS Simulator)
         run: |

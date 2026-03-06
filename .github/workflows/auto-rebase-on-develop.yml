@@ -129,7 +129,7 @@ jobs:
                 rebased=$((rebased + 1))
                 # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events
                 gh workflow run agent-validation.yml --repo "$REPO" --ref "$branch" \
-                  -f branch="$branch" 2>/dev/null || true
+                  -f branch="$branch" -f pr_number="$pr_num" 2>/dev/null || true
                 # Re-trigger AI review for [Agent] PRs
                 pr_title=$(gh pr view "$pr_num" --repo "$REPO" --json title --jq '.title' 2>/dev/null || echo "")
                 if echo "$pr_title" | grep -q "^\[Agent\]"; then

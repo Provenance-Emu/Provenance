@@ -73,7 +73,7 @@ jobs:
             if git push --force-with-lease origin "$BRANCH"; then
               echo "result=success" >> "$GITHUB_OUTPUT"
               # Re-trigger CI (GITHUB_TOKEN pushes don't fire pull_request events)
-              gh workflow run agent-validation.yml --repo "$REPO" -f branch="$BRANCH" 2>/dev/null || true
+              gh workflow run agent-validation.yml --repo "$REPO" -f branch="$BRANCH" -f pr_number="$PR_NUMBER" 2>/dev/null || true
               # Re-trigger AI review for [Agent] PRs
               pr_title=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json title --jq '.title' 2>/dev/null || echo "")
               if echo "$pr_title" | grep -q "^\[Agent\]"; then
