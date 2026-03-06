@@ -78,8 +78,12 @@ final class ScreenshotUITests: XCTestCase {
 
     /// Open a provenance://screen/<path> deep link and wait for the UI to settle.
     private func navigateTo(screen path: String) {
-        let url = "provenance://screen/\(path)"
-        app.open(URL(string: url)!)
+        let urlString = "provenance://screen/\(path)"
+        guard let url = URL(string: urlString) else {
+            XCTFail("Invalid URL string: \(urlString)")
+            return
+        }
+        app.open(url)
         sleep(1)
     }
 
@@ -97,6 +101,13 @@ final class ScreenshotUITests: XCTestCase {
 
 private extension XCUIApplication {
     func open(_ url: URL) {
+#if os(tvOS)
+        // tvOS does not have Safari. Deep links must be triggered by re-launching
+        // the app with the URL as a launch argument, or handled another way.
+        // For now, activate the app so screenshots still run against the default state.
+        self.activate()
+        sleep(1)
+#else
         // Use Safari as a proxy to open the URL scheme, then return to the app.
         let safari = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
         safari.activate()
@@ -112,6 +123,7 @@ private extension XCUIApplication {
         // Return to the test app
         self.activate()
         sleep(1)
+#endif
     }
 }
 

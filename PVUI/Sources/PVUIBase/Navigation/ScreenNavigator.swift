@@ -63,7 +63,7 @@ public enum ScreenDestination: Equatable {
     private static func parseScreenPath(_ parts: [String], queryItems: [URLQueryItem]?) -> ScreenDestination? {
         guard let first = parts.first else { return .library }
 
-        switch first {
+        switch first.lowercased() {
         case "library":
             return .library
         case "settings":
@@ -109,6 +109,9 @@ public enum ScreenDestination: Equatable {
 public final class ScreenNavigator: ObservableObject {
     public static let shared = ScreenNavigator()
 
+    // TODO: (Milestone 3) Wire this to the root view hierarchy — observe via
+    // `.onReceive(ScreenNavigator.shared.$destination)` in PVRootViewController,
+    // ContentView, or RetroMainView to make deep-link navigation functional end-to-end.
     @Published public private(set) var destination: ScreenDestination?
 
     private init() {}

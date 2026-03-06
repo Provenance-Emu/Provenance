@@ -63,23 +63,27 @@ mkdir -p "$OUTPUT_DIR"
 log "Output directory: $OUTPUT_DIR"
 
 # ── Determine if target is a simulator or physical device ─────────────────────
+# Match both classic uppercase UDIDs (XXXXXXXX-XXXX-...) and modern lowercase/mixed hex UDIDs.
 SIMULATOR_UDID=""
-if [[ "$DEVICE_NAME" =~ ^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$ ]]; then
+if [[ "$DEVICE_NAME" =~ ^[0-9A-Fa-f-]+$ ]]; then
   log "Using physical device UDID: $DEVICE_NAME"
   DESTINATION="id=$DEVICE_NAME"
 else
   log "Looking up simulator: $DEVICE_NAME"
+  # Pass DEVICE_NAME as an argument rather than interpolating it into the Python
+  # source string, to prevent code injection via crafted device names.
   SIMULATOR_UDID=$(xcrun simctl list devices available --json \
-    | python3 -c "
+    | python3 -c '
 import json, sys
+device_name = sys.argv[1]
 data = json.load(sys.stdin)
-for runtime, devices in data.get('devices', {}).items():
-  for d in devices:
-    if d.get('name') == '${DEVICE_NAME}' and d.get('isAvailable'):
-      print(d['udid'])
-      sys.exit(0)
+for runtime, devices in data.get("devices", {}).items():
+    for d in devices:
+        if d.get("name") == device_name and d.get("isAvailable"):
+            print(d["udid"])
+            sys.exit(0)
 sys.exit(1)
-" 2>/dev/null) || die "Simulator '$DEVICE_NAME' not found. Run 'xcrun simctl list devices' to see available simulators."
+' "$DEVICE_NAME" 2>/dev/null) || die "Simulator '$DEVICE_NAME' not found. Run 'xcrun simctl list devices' to see available simulators."
 
   log "Booting simulator $DEVICE_NAME ($SIMULATOR_UDID)"
   xcrun simctl boot "$SIMULATOR_UDID" 2>/dev/null || true
@@ -98,8 +102,8 @@ xcodebuild build-for-testing \
   -derivedDataPath "$BUILD_DIR" \
   CODE_SIGNING_ALLOWED=NO \
   SCREENSHOT_MODE=1 \
-  2>&1 | tee /tmp/xcodebuild-screenshot.log | xcpretty 2>/dev/null || tee /dev/null
-BUILD_EXIT=$?
+  2>&1 | tee /tmp/xcodebuild-screenshot.log | xcpretty 2>/dev/null
+BUILD_EXIT=${PIPESTATUS[0]}
 set -e
 
 if [[ $BUILD_EXIT -ne 0 ]]; then
@@ -111,6 +115,7 @@ log "Running ScreenshotUITests..."
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 RESULTS_DIR="$OUTPUT_DIR/results_$TIMESTAMP.xcresult"
 
+set +e
 xcodebuild test-without-building \
   -workspace Provenance.xcworkspace \
   -scheme UITesting \
@@ -120,15 +125,21 @@ xcodebuild test-without-building \
   -only-testing UITestingUITests/ScreenshotUITests \
   CODE_SIGNING_ALLOWED=NO \
   SCREENSHOT_MODE=1 \
-  2>&1 | xcpretty 2>/dev/null || tee /dev/null
+  2>&1 | xcpretty 2>/dev/null
+TEST_EXIT=${PIPESTATUS[0]}
+set -e
+
+if [[ $TEST_EXIT -ne 0 ]]; then
+  log "WARNING: ScreenshotUITests failed (exit code $TEST_EXIT). Screenshots may be missing or incomplete."
+fi
 
 # ── Extract attachments from .xcresult ────────────────────────────────────────
 log "Extracting screenshots from $RESULTS_DIR..."
 ATTACHMENT_DIR="$OUTPUT_DIR/$TIMESTAMP"
 mkdir -p "$ATTACHMENT_DIR"
 
-xcrun xcresulttool get --path "$RESULTS_DIR" --format json \
-  | python3 - "$RESULTS_DIR" "$ATTACHMENT_DIR" <<'PYEOF'
+# The Python script fetches xcresult data itself; no need to pipe xcresulttool output here.
+python3 - "$RESULTS_DIR" "$ATTACHMENT_DIR" <<'PYEOF'
 import json, sys, subprocess, os
 
 results_path = sys.argv[1]

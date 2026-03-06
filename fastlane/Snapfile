@@ -25,7 +25,7 @@ clear_previous_screenshots true
 workspace "./Provenance.xcworkspace"
 
 # Test runner configuration
-launch_arguments(["-SCREENSHOT_MODE 1"])
+launch_arguments(["-SCREENSHOT_MODE", "1"])
 
 # For more information about all available options run
 # fastlane action snapshot
