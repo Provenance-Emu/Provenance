@@ -2162,12 +2162,18 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
 
     const enum retro_pixel_format fmt = strongCurrent->pix_fmt;
 
+    // Use max_width as the destination row stride so that videoBuffer row layout
+    // matches what -bufferSize reports (max_width × max_height).  When a core
+    // renders at a resolution narrower than max_width the remaining pixels in
+    // each row are left unchanged; the renderer clips to base_width/base_height.
+    const size_t dstStride = strongCurrent->av_info.geometry.max_width;
+
     if (fmt == RETRO_PIXEL_FORMAT_XRGB8888) {
         // Source: 32-bit XRGB little-endian [B][G][R][X].
         // Force alpha=0xFF so the texture is fully opaque (X byte is unused).
         dispatch_apply(height, concurrentQueue, ^(size_t y) {
             const uint32_t *src_row = (const uint32_t *)((const uint8_t *)data + y * pitch);
-            uint32_t *dst = strongCurrent->videoBuffer + y * width;
+            uint32_t *dst = strongCurrent->videoBuffer + y * dstStride;
             for (size_t x = 0; x < width; x++) {
                 dst[x] = src_row[x] | 0xFF000000u;
             }
@@ -2177,7 +2183,7 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
         // Expand each pixel to 32-bit RGBA8 for uniform GL_RGBA upload.
         dispatch_apply(height, concurrentQueue, ^(size_t y) {
             const uint16_t *src_row = (const uint16_t *)((const uint8_t *)data + y * pitch);
-            uint32_t *dst = strongCurrent->videoBuffer + y * width;
+            uint32_t *dst = strongCurrent->videoBuffer + y * dstStride;
             for (size_t x = 0; x < width; x++) {
                 uint16_t px = src_row[x];
                 uint8_t r5 = (px >> 11) & 0x1F;
@@ -2196,7 +2202,7 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
         // Expand each pixel to 32-bit RGBA8 for uniform GL_RGBA upload.
         dispatch_apply(height, concurrentQueue, ^(size_t y) {
             const uint16_t *src_row = (const uint16_t *)((const uint8_t *)data + y * pitch);
-            uint32_t *dst = strongCurrent->videoBuffer + y * width;
+            uint32_t *dst = strongCurrent->videoBuffer + y * dstStride;
             for (size_t x = 0; x < width; x++) {
                 uint16_t px = src_row[x];
                 uint8_t r5 = (px >> 10) & 0x1F;
@@ -3076,22 +3082,35 @@ unsigned retro_api_version(void)
     switch (device) {
         case RETRO_DEVICE_POINTER: {
             switch (id) {
-                case RETRO_DEVICE_ID_POINTER_X:
+                case RETRO_DEVICE_ID_POINTER_X: {
+                    // Guard with @synchronized: setMousePosition: (UI thread) writes
+                    // currentTouchPosition/currentMousePosition while this runs on the
+                    // libretro polling thread, so reads must be protected to avoid tears.
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    float px;
+                    @synchronized(self) { px = currentTouchPosition.x; }
                     // Convert 0.0-1.0 range to libretro's -32768 to 32767 range
-                    return (int16_t)((currentTouchPosition.x * 2.0 - 1.0) * 32767);
+                    return (int16_t)((px * 2.0 - 1.0) * 32767);
 #else
-                    return (int16_t)((currentMousePosition.x * 2.0 - 1.0) * 32767);
+                    float px;
+                    @synchronized(self) { px = currentMousePosition.x; }
+                    return (int16_t)((px * 2.0 - 1.0) * 32767);
 #endif
+                }
 
-                case RETRO_DEVICE_ID_POINTER_Y:
+                case RETRO_DEVICE_ID_POINTER_Y: {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+                    float py;
+                    @synchronized(self) { py = currentTouchPosition.y; }
                     // Convert 0.0-1.0 range to libretro's -32768 to 32767 range
                     // Note: libretro uses inverted Y (top = -32768, bottom = 32767)
-                    return (int16_t)((currentTouchPosition.y * 2.0 - 1.0) * 32767);
+                    return (int16_t)((py * 2.0 - 1.0) * 32767);
 #else
-                    return (int16_t)((currentMousePosition.y * 2.0 - 1.0) * 32767);
+                    float py;
+                    @synchronized(self) { py = currentMousePosition.y; }
+                    return (int16_t)((py * 2.0 - 1.0) * 32767);
 #endif
+                }
 
                 case RETRO_DEVICE_ID_POINTER_PRESSED:
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
