@@ -19,6 +19,10 @@ public extension PVGame {
     var saveStatePath: URL { get {
         return PVEmulatorConfiguration.saveStatePath(forGame: self)
     }}
+
+    var cheatsPath: URL { get {
+        return PVEmulatorConfiguration.cheatsPath(forGame: self)
+    }}
     
     var diskCount: Int { get {
         return relatedFiles

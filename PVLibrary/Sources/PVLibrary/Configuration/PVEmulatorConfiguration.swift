@@ -292,6 +292,10 @@ public extension PVEmulatorConfiguration {
         return Paths.saveStatePath(forROM: game.url)
     }
 
+    class func cheatsPath(forGame game: PVGame) -> URL {
+        return Paths.cheatsPath(forROM: game.url)
+    }
+
     class func screenshotsPath(forGame game: PVGame) -> URL {
         let screenshotsPath = Paths.screenShotsPath.appendingPathComponent(game.system?.shortName ?? "", isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
 

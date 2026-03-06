@@ -105,7 +105,7 @@ extension Cheats: RealmRepresentable {
                 object.core = core.asRealm()
             }
             object.date = date
-            let path = game.file.fileName.saveStatePath.appendingPathComponent(file.fileName)
+            let path = game.file.fileName.cheatsPath.appendingPathComponent(file.fileName)
             object.file = PVFile(withURL: path)
             object.lastOpened = lastOpened
             object.code = code

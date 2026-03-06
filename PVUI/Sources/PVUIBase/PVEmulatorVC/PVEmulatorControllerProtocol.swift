@@ -430,6 +430,7 @@ public extension PVEmualatorControllerProtocol {
     var batterySavesPath: URL { get {return PVEmulatorConfiguration.batterySavesPath(forGame: game) }}
     var BIOSPath: URL { get { return PVEmulatorConfiguration.biosPath(forGame: game) } }
     var saveStatePath: URL { get { PVEmulatorConfiguration.saveStatePath(forGame: game) } }
+    var cheatsPath: URL { get { PVEmulatorConfiguration.cheatsPath(forGame: game) } }
 }
 
 // MARK: - Audio
