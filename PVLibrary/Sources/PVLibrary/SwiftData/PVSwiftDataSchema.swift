@@ -15,6 +15,7 @@ import SwiftData
 ///
 /// All @Model types must be listed here. The container is configured via
 /// `makePVModelContainer`.
+@available(iOS 17.0, tvOS 17.0, macOS 14.0, watchOS 10.0, visionOS 1.0, *)
 public enum PVSwiftDataSchema {
     /// Schema v1: initial SwiftData migration from Realm.
     public static let v1Schema = Schema([
@@ -41,6 +42,25 @@ public enum PVSwiftDataSchema {
             isStoredInMemoryOnly: inMemory
         )
         return try ModelContainer(configurations: config)
+    }
+
+    /// Delete all objects for every tracked model type from the given context and save.
+    ///
+    /// Centralised here so that `SwiftDataDatabaseDriver` and `SwiftDataDatabaseActor`
+    /// share a single authoritative list, preventing drift as the schema evolves.
+    public static func deleteAll(from context: ModelContext) throws {
+        try context.delete(model: Game_Data.self)
+        try context.delete(model: System_Data.self)
+        try context.delete(model: SaveState_Data.self)
+        try context.delete(model: RecentGame_Data.self)
+        try context.delete(model: Core_Data.self)
+        try context.delete(model: BIOS_Data.self)
+        try context.delete(model: Cheats_Data.self)
+        try context.delete(model: File_Data.self)
+        try context.delete(model: ImageFile_Data.self)
+        try context.delete(model: Library_Data.self)
+        try context.delete(model: User_Data.self)
+        try context.save()
     }
 }
 #endif
