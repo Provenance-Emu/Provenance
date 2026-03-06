@@ -169,7 +169,7 @@ public struct SkinCatalogDetailView: View {
                     statItem(icon: "star.fill", value: String(format: "%.1f", rating), label: "Rating")
                 }
                 if let downloads = entry.downloadCount, downloads > 0 {
-                    statItem(icon: "arrow.down.circle.fill", value: formatCount(downloads), label: "Downloads")
+                    statItem(icon: "arrow.down.circle.fill", value: formatSkinDownloadCount(downloads), label: "Downloads")
                 }
                 if let size = entry.fileSize {
                     statItem(icon: "internaldrive", value: formatFileSize(size), label: "Size")
@@ -465,6 +465,8 @@ public struct SkinCatalogDetailView: View {
     // MARK: - Download & Install Logic
 
     private func downloadAndInstall() async {
+        guard !Task.isCancelled else { return }
+
         await MainActor.run {
             downloadState = .downloading(progress: 0)
         }
@@ -473,6 +475,12 @@ public struct SkinCatalogDetailView: View {
             // Download the skin file with progress
             let localURL = try await downloadSkin()
             defer { try? FileManager.default.removeItem(at: localURL) }
+
+            // Check for cancellation before proceeding to install
+            guard !Task.isCancelled else {
+                await MainActor.run { downloadState = .idle }
+                return
+            }
 
             // Install via DeltaSkinManager
             await MainActor.run {
@@ -489,6 +497,10 @@ public struct SkinCatalogDetailView: View {
 
             ILOG("SkinCatalogDetailView: Successfully installed skin '\(entry.name)'")
         } catch {
+            guard !Task.isCancelled else {
+                await MainActor.run { downloadState = .idle }
+                return
+            }
             ELOG("SkinCatalogDetailView: Failed to install skin '\(entry.name)': \(error)")
             await MainActor.run {
                 downloadState = .failed(error.localizedDescription)
@@ -506,29 +518,18 @@ public struct SkinCatalogDetailView: View {
 
         return try await withCheckedThrowingContinuation { continuation in
             let delegate = SkinDownloadDelegate(
-                progressHandler: { [self] progress in
+                destURL: destURL,
+                progressHandler: { progress in
                     Task { @MainActor in
                         downloadState = .downloading(progress: progress)
                     }
                 },
                 completion: { result in
-                    switch result {
-                    case .success(let location):
-                        do {
-                            if FileManager.default.fileExists(atPath: destURL.path) {
-                                try FileManager.default.removeItem(at: destURL)
-                            }
-                            try FileManager.default.moveItem(at: location, to: destURL)
-                            continuation.resume(returning: destURL)
-                        } catch {
-                            continuation.resume(throwing: error)
-                        }
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                    }
+                    continuation.resume(with: result)
                 }
             )
             let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
+            delegate.session = session
             session.downloadTask(with: downloadURL).resume()
         }
     }
@@ -536,11 +537,16 @@ public struct SkinCatalogDetailView: View {
     // MARK: - URLSessionDownloadDelegate helper
 
     private final class SkinDownloadDelegate: NSObject, URLSessionDownloadDelegate {
+        /// Destination URL for the downloaded file. The file is moved here in didFinishDownloadingTo.
+        private let destURL: URL
         private let progressHandler: (Double) -> Void
         private let completion: (Result<URL, Error>) -> Void
-        private var downloadedURL: URL?
+        /// Stored so the session can be invalidated after completion to prevent leaks.
+        var session: URLSession?
+        private var moveError: Error?
 
-        init(progressHandler: @escaping (Double) -> Void, completion: @escaping (Result<URL, Error>) -> Void) {
+        init(destURL: URL, progressHandler: @escaping (Double) -> Void, completion: @escaping (Result<URL, Error>) -> Void) {
+            self.destURL = destURL
             self.progressHandler = progressHandler
             self.completion = completion
         }
@@ -554,10 +560,20 @@ public struct SkinCatalogDetailView: View {
 
         func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
                         didFinishDownloadingTo location: URL) {
-            downloadedURL = location
+            // The file at `location` is deleted by the system when this method returns.
+            // We must move it to a persistent location here before returning.
+            do {
+                if FileManager.default.fileExists(atPath: destURL.path) {
+                    try FileManager.default.removeItem(at: destURL)
+                }
+                try FileManager.default.moveItem(at: location, to: destURL)
+            } catch {
+                moveError = error
+            }
         }
 
         func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+            defer { self.session?.finishTasksAndInvalidate() }
             if let error = error {
                 completion(.failure(error))
                 return
@@ -566,22 +582,15 @@ public struct SkinCatalogDetailView: View {
                 completion(.failure(URLError(.badServerResponse)))
                 return
             }
-            guard let url = downloadedURL else {
-                completion(.failure(URLError(.unknown)))
+            if let moveError = moveError {
+                completion(.failure(moveError))
                 return
             }
-            completion(.success(url))
+            completion(.success(destURL))
         }
     }
 
     // MARK: - Helpers
-
-    private func formatCount(_ count: Int) -> String {
-        if count >= 1_000 {
-            return String(format: "%.1fk", Double(count) / 1_000.0)
-        }
-        return "\(count)"
-    }
 
     private func formatFileSize(_ bytes: Int) -> String {
         let mb = Double(bytes) / 1_048_576.0
