@@ -226,11 +226,32 @@ extension PVEmulatorViewController {
     func recoverCheatCodes() async {
         do {
             let fileManager = FileManager.default
-            let directoryContents = try await fileManager.contentsOfDirectory(
-                at: cheatsPath,
-                includingPropertiesForKeys:[.contentModificationDateKey]
-            ).filter { $0.lastPathComponent.hasSuffix(".svc.json") }
-            .sorted(by: {
+
+            /// Collect .svc.json files from a directory, returning empty array if the directory doesn't exist.
+            func svcFiles(in directory: URL) throws -> [URL] {
+                guard fileManager.fileExists(atPath: directory.path) else { return [] }
+                return try fileManager.contentsOfDirectory(
+                    at: directory,
+                    includingPropertiesForKeys: [.contentModificationDateKey]
+                ).filter { $0.lastPathComponent.hasSuffix(".svc.json") }
+            }
+
+            // Scan both the new Cheats/ directory and the legacy Save States directory so that
+            // existing .svc.json files written before this path change are still recovered.
+            let newFiles = try svcFiles(in: cheatsPath)
+            let legacyFiles = try svcFiles(in: saveStatePath)
+
+            // Deduplicate by filename — prefer the copy in cheatsPath if it exists in both.
+            var seen = Set<String>()
+            var merged: [URL] = []
+            for url in newFiles + legacyFiles {
+                let name = url.lastPathComponent.lowercased()
+                if seen.insert(name).inserted {
+                    merged.append(url)
+                }
+            }
+
+            let directoryContents = try merged.sorted(by: {
                 let date0 = try $0.promisedItemResourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
                 let date1 = try $1.promisedItemResourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
                 return date0.compare(date1) == .orderedAscending
