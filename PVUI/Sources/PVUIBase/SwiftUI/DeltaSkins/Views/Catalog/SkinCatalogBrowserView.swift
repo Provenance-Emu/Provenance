@@ -510,9 +510,17 @@ public struct SkinCatalogBrowserView: View {
                     query: searchText,
                     system: selectedSystem
                 )
-                // Apply device filter and sort locally on search results
+                // Apply device filter and sort locally on search results.
+                // Use prefix matching so "iphone" matches catalog variants like "iphone-x".
                 if let device = selectedDevice {
-                    results = results.filter { $0.deviceSupport?.contains(device) == true }
+                    let lowerFilter = device.lowercased()
+                    results = results.filter { entry in
+                        guard let entryDevices = entry.deviceSupport else { return true }
+                        return entryDevices.contains { d in
+                            let dl = d.lowercased()
+                            return dl == lowerFilter || dl.hasPrefix(lowerFilter + "-") || lowerFilter.hasPrefix(dl + "-")
+                        }
+                    }
                 }
                 results = sortLocally(results, by: sortOption)
             }
