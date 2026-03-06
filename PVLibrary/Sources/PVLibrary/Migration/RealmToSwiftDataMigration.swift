@@ -155,7 +155,9 @@ public actor RealmToSwiftDataMigration {
             throw RealmToSwiftDataMigrationError.realmUnavailable(underlying: error)
         }
 
-        ILOG("[Migration] Realm snapshot: \(snapshot.systems.count) systems, \(snapshot.games.count) games, \(snapshot.saveStates.count) save states, \(snapshot.cheats.count) cheats, \(snapshot.bioses.count) BIOSes, \(snapshot.recentGames.count) recent games, \(snapshot.libraries.count) libraries, \(snapshot.users.count) users, \(snapshot.cores.count) cores.")
+        ILOG("[Migration] Realm snapshot — systems: \(snapshot.systems.count), games: \(snapshot.games.count), save states: \(snapshot.saveStates.count)")
+        ILOG("[Migration] Realm snapshot — cheats: \(snapshot.cheats.count), BIOSes: \(snapshot.bioses.count), recent games: \(snapshot.recentGames.count)")
+        ILOG("[Migration] Realm snapshot — libraries: \(snapshot.libraries.count), users: \(snapshot.users.count), cores: \(snapshot.cores.count)")
 
         let context = ModelContext(modelContainer)
         context.autosaveEnabled = false
@@ -421,12 +423,14 @@ public actor RealmToSwiftDataMigration {
         // respect the unique constraints on both fields and prevent save failures.
         let existing = try context.fetch(FetchDescriptor<BIOS_Data>())
         var existingByFilename = Set(existing.map { $0.expectedFilename })
-        var existingByMD5 = Set(existing.map { $0.expectedMD5 })
+        // Normalize MD5s to uppercase to match BIOS_Data's own uppercasing on init.
+        var existingByMD5 = Set(existing.map { $0.expectedMD5.uppercased() })
         var insertedCount = 0
 
         for (idx, b) in bioses.enumerated() {
             let filename = b.expectedFilename
-            let md5 = b.expectedMD5
+            // Uppercase the MD5 so the dedup check is consistent with BIOS_Data's uppercasing.
+            let md5 = b.expectedMD5.uppercased()
             guard !existingByFilename.contains(filename) && !existingByMD5.contains(md5) else { continue }
 
             let fileData: File_Data? = b.filePartialPath.map {
@@ -504,6 +508,8 @@ public actor RealmToSwiftDataMigration {
             for ss in g.screenshotPaths {
                 screenshots.append(getOrCreateImage(
                     partialPath: ss.partialPath,
+                    md5Cache: ss.md5Cache,
+                    createdDate: ss.createdDate,
                     width: ss.width,
                     height: ss.height,
                     ratio: ss.ratio,
@@ -584,10 +590,26 @@ public actor RealmToSwiftDataMigration {
             guard !existingIDs.contains(id) else { continue }
 
             let fileData: File_Data? = s.filePartialPath.map {
-                getOrCreateFile(partialPath: $0, context: context, cache: &fileCache)
+                getOrCreateFile(
+                    partialPath: $0,
+                    md5Cache: s.fileMD5Cache,
+                    createdDate: s.fileCreatedDate ?? Date(),
+                    context: context,
+                    cache: &fileCache
+                )
             }
             let imageData: ImageFile_Data? = s.imagePartialPath.map {
-                getOrCreateImage(partialPath: $0, context: context, cache: &imageCache)
+                getOrCreateImage(
+                    partialPath: $0,
+                    md5Cache: s.imageMD5Cache,
+                    createdDate: s.imageCreatedDate ?? Date(),
+                    width: s.imageWidth,
+                    height: s.imageHeight,
+                    ratio: s.imageRatio,
+                    layout: s.imageLayout,
+                    context: context,
+                    cache: &imageCache
+                )
             }
 
             let obj = SaveState_Data(
@@ -892,13 +914,17 @@ struct ImageFileSnapshot {
     let height: Float
     let ratio: Float
     let layout: String
+    let md5Cache: String?
+    let createdDate: Date
 
     init(_ img: PVImageFile) {
-        partialPath = img.partialPath
-        width       = Float(img.width)
-        height      = Float(img.height)
-        ratio       = img.ratio
-        layout      = img.layout
+        partialPath  = img.partialPath
+        width        = Float(img.width)
+        height       = Float(img.height)
+        ratio        = img.ratio
+        layout       = img.layout
+        md5Cache     = img.md5Cache
+        createdDate  = img.createdDate
     }
 }
 
@@ -1021,19 +1047,57 @@ struct SaveStateSnapshot {
     let lastOpened: Date?
     let gameMD5: String?
     let coreIdentifier: String?
+
+    // File metadata
     let filePartialPath: String?
+    let fileMD5Cache: String?
+    let fileCreatedDate: Date?
+
+    // Image metadata
     let imagePartialPath: String?
+    let imageMD5Cache: String?
+    let imageCreatedDate: Date?
+    let imageWidth: Float
+    let imageHeight: Float
+    let imageRatio: Float
+    let imageLayout: String
 
     init(_ s: PVSaveState) {
-        id                    = s.id
-        date                  = s.date
-        isAutosave            = s.isAutosave
+        id                     = s.id
+        date                   = s.date
+        isAutosave             = s.isAutosave
         createdWithCoreVersion = s.createdWithCoreVersion
-        lastOpened            = s.lastOpened
-        gameMD5               = s.game?.isInvalidated == false ? s.game?.md5Hash : nil
-        coreIdentifier        = s.core?.isInvalidated == false ? s.core?.identifier : nil
-        filePartialPath       = s.file?.isInvalidated == false ? s.file?.partialPath : nil
-        imagePartialPath      = s.image?.isInvalidated == false ? s.image?.partialPath : nil
+        lastOpened             = s.lastOpened
+        gameMD5                = s.game?.isInvalidated == false ? s.game?.md5Hash : nil
+        coreIdentifier         = s.core?.isInvalidated == false ? s.core?.identifier : nil
+
+        if let f = s.file, !f.isInvalidated {
+            filePartialPath  = f.partialPath
+            fileMD5Cache     = f.md5Cache
+            fileCreatedDate  = f.createdDate
+        } else {
+            filePartialPath  = nil
+            fileMD5Cache     = nil
+            fileCreatedDate  = nil
+        }
+
+        if let img = s.image, !img.isInvalidated {
+            imagePartialPath = img.partialPath
+            imageMD5Cache    = img.md5Cache
+            imageCreatedDate = img.createdDate
+            imageWidth       = Float(img.width)
+            imageHeight      = Float(img.height)
+            imageRatio       = img.ratio
+            imageLayout      = img.layout
+        } else {
+            imagePartialPath = nil
+            imageMD5Cache    = nil
+            imageCreatedDate = nil
+            imageWidth       = 0
+            imageHeight      = 0
+            imageRatio       = 0
+            imageLayout      = ""
+        }
     }
 }
 
