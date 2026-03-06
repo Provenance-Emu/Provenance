@@ -29,6 +29,10 @@ import time
 import urllib.parse
 from datetime import datetime, timezone
 
+# GitHub API token for authenticated requests (avoids 60 req/hr rate limit)
+# Set via GITHUB_TOKEN env var or --github-token CLI flag
+_github_token = os.environ.get("GITHUB_TOKEN", "")
+
 # Optional imports -- fall back to stdlib if packages are unavailable
 try:
     import requests
@@ -125,9 +129,12 @@ def _get(url, timeout=30):
     """Perform a GET request with rate limiting. Returns response text or None."""
     _rate_limit()
     log(f"  GET {url}")
+    headers = {"User-Agent": "Provenance-SkinScraper/1.0"}
+    if _github_token and "api.github.com" in url:
+        headers["Authorization"] = f"token {_github_token}"
     if requests:
         try:
-            resp = requests.get(url, timeout=timeout)
+            resp = requests.get(url, timeout=timeout, headers=headers)
             resp.raise_for_status()
             return resp.text
         except requests.RequestException as e:
@@ -138,7 +145,7 @@ def _get(url, timeout=30):
         import urllib.request
         import urllib.error
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Provenance-SkinScraper/1.0"})
+            req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 return resp.read().decode("utf-8", errors="replace")
         except (urllib.error.URLError, urllib.error.HTTPError, OSError) as e:
@@ -827,8 +834,19 @@ Quickstart (no extra packages needed):
         action="store_true",
         help="Enable download URL HEAD-check validation (slow; checks every skin URL)",
     )
+    parser.add_argument(
+        "--github-token",
+        default="",
+        help="GitHub personal access token for authenticated API requests (avoids rate limiting). "
+             "Also reads from GITHUB_TOKEN env var.",
+    )
 
     args = parser.parse_args()
+
+    # Wire token from CLI flag (takes precedence over env var)
+    global _github_token
+    if args.github_token:
+        _github_token = args.github_token
 
     # --validate-urls overrides --skip-validation
     if args.validate_urls:
