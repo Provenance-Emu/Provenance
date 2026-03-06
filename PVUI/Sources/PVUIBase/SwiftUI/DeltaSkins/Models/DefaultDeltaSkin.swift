@@ -251,6 +251,11 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
     }
 
     public func screens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen]? {
+        // NDS dual-screen: return two screens splitting the combined 256x384 framebuffer
+        if systemIdentifier == .DS {
+            return ndsScreens(for: traits)
+        }
+
         // Calculate screen frame based on actual button positions
         // This ensures the screen area is properly positioned above the controls
         guard let buttons = self.buttons(for: traits) else {
@@ -355,6 +360,65 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
             filters: nil
         )
         return [screen]
+    }
+
+    /// Returns the two DS screens from the combined 256x384 framebuffer.
+    ///
+    /// - Portrait: screens are stacked vertically (top above bottom) filling the space
+    ///   above the controller buttons.
+    /// - Landscape: screens are placed side-by-side in the center strip between
+    ///   the left (D-pad) and right (action) button clusters.
+    ///
+    /// `inputFrame` coordinates are in the DS native framebuffer space (256×384 combined):
+    ///   - Top screen:    CGRect(x: 0, y:   0, width: 256, height: 192)
+    ///   - Bottom screen: CGRect(x: 0, y: 192, width: 256, height: 192)
+    ///
+    /// `outputFrame` coordinates are normalised 0–1 relative to the skin mapping size.
+    private func ndsScreens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen] {
+        // DS native framebuffer: combined 256×384 (top half + bottom half)
+        let topInputFrame    = CGRect(x: 0, y:   0, width: 256, height: 192)
+        let bottomInputFrame = CGRect(x: 0, y: 192, width: 256, height: 192)
+
+        if traits.orientation == .landscape {
+            // Landscape layout: screens side-by-side in the horizontal centre.
+            // Controller buttons occupy x ≈ 0..0.30 (D-pad) and 0.70..1.0 (action).
+            // We place screens in the 0.30..0.70 strip, each taking roughly half.
+            let topY:    CGFloat = 0.08
+            let height:  CGFloat = 0.84
+            let width:   CGFloat = 0.19   // each screen ~19% of width (256:192 ≈ 4:3, landscape-corrected)
+
+            let topOutputFrame    = CGRect(x: 0.31, y: topY, width: width, height: height)
+            let bottomOutputFrame = CGRect(x: 0.50, y: topY, width: width, height: height)
+
+            return [
+                DeltaSkinScreen(id: "nds_top",    inputFrame: topInputFrame,    outputFrame: topOutputFrame,    placement: .controller, filters: nil),
+                DeltaSkinScreen(id: "nds_bottom",  inputFrame: bottomInputFrame,  outputFrame: bottomOutputFrame,  placement: .controller, filters: nil)
+            ]
+        } else {
+            // Portrait layout: screens stacked vertically above the controller buttons.
+            // Control area starts around y = 0.52 in normalised portrait coordinates.
+            // Each screen is height-constrained to fit two in the available space.
+            //
+            // With iPhone mapping 750×1334:
+            //   available height = 0.03..0.52 → 0.49 total
+            //   gap between screens = 0.015
+            //   each screen height  = (0.49 – 0.015) / 2 ≈ 0.238
+            //   at 256:192 (4:3) aspect with mapping 750×1334:
+            //     width_px = 0.238 × 1334 × (256/192) ≈ 422 px → 422/750 ≈ 0.563
+            let topY:         CGFloat = 0.030
+            let screenHeight: CGFloat = 0.238
+            let gap:          CGFloat = 0.015
+            let screenWidth:  CGFloat = 0.563
+            let screenX:      CGFloat = (1.0 - screenWidth) / 2.0   // centred
+
+            let topOutputFrame    = CGRect(x: screenX, y: topY,                           width: screenWidth, height: screenHeight)
+            let bottomOutputFrame = CGRect(x: screenX, y: topY + screenHeight + gap,      width: screenWidth, height: screenHeight)
+
+            return [
+                DeltaSkinScreen(id: "nds_top",    inputFrame: topInputFrame,    outputFrame: topOutputFrame,    placement: .controller, filters: nil),
+                DeltaSkinScreen(id: "nds_bottom",  inputFrame: bottomInputFrame,  outputFrame: bottomOutputFrame,  placement: .controller, filters: nil)
+            ]
+        }
     }
 
     public func mappingSize(for traits: DeltaSkinTraits) -> CGSize? {
@@ -627,24 +691,35 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
     }
 
     public func screenGroups(for traits: DeltaSkinTraits) -> [DeltaSkinScreenGroup]? {
-        // For the default skin, we just have one screen group that contains the main screen
-        // Use the calculated screens from screens(for:) instead of the fixed screenPosition
-        guard let screens = self.screens(for: traits),
-              let mainScreen = screens.first else {
+        guard let screens = self.screens(for: traits), !screens.isEmpty else {
             return nil
         }
 
-        // Use the calculated outputFrame from the screen
-        let gameScreenFrame = mainScreen.outputFrame
+        if systemIdentifier == .DS {
+            // NDS: one group containing both screens; gameScreenFrame spans the full
+            // combined area (union of top and bottom output frames).
+            let frames = screens.compactMap { $0.outputFrame }
+            let gameScreenFrame = frames.reduce(CGRect.null) { $0.union($1) }
 
-        let group = DeltaSkinScreenGroup(
+            return [DeltaSkinScreenGroup(
+                id: "nds_group",
+                screens: screens,
+                extendedEdges: nil,
+                translucent: true,
+                gameScreenFrame: gameScreenFrame.isNull ? nil : gameScreenFrame
+            )]
+        }
+
+        // For all other systems, a single group containing the main screen.
+        let gameScreenFrame = screens.first?.outputFrame
+
+        return [DeltaSkinScreenGroup(
             id: "main_group",
             screens: screens,
             extendedEdges: nil,
             translucent: true,
             gameScreenFrame: gameScreenFrame
-        )
-        return [group]
+        )]
     }
 
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
