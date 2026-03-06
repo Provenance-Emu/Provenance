@@ -96,7 +96,7 @@ extension PVEmulatorViewController {
     /// Show the virtual keyboard overlay.
     /// Does nothing if the core does not support keyboard input or if already visible.
     public func showVirtualKeyboard() {
-        guard !isVirtualKeyboardVisible else { return }
+        guard coreSupportsVirtualKeyboard, !isVirtualKeyboardVisible else { return }
 
         let viewModel = VirtualKeyboardViewModel()
         viewModel.delegate = self

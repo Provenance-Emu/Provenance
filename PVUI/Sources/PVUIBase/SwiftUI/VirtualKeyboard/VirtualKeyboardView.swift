@@ -25,6 +25,8 @@ public struct VirtualKeyboardView: View {
     @Environment(\.horizontalSizeClass) private var hSizeClass
     @Environment(\.verticalSizeClass) private var vSizeClass
 
+    private let haptic = UIImpactFeedbackGenerator(style: .light)
+
     private var isLandscape: Bool {
         hSizeClass == .regular && vSizeClass == .compact
     }
@@ -83,7 +85,7 @@ public struct VirtualKeyboardView: View {
         HStack {
             Spacer()
             Button(action: {
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                haptic.impactOccurred()
                 viewModel.dismissAction?()
             }) {
                 Image(systemName: "xmark.circle.fill")
@@ -161,7 +163,7 @@ public struct VirtualKeyboardView: View {
         DragGesture(minimumDistance: 30)
             .onEnded { value in
                 if value.translation.height > 40 {
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    haptic.impactOccurred()
                     viewModel.dismissAction?()
                 }
             }
@@ -176,6 +178,7 @@ private struct VirtualKeyButton: View {
     @ObservedObject var viewModel: VirtualKeyboardViewModel
 
     @State private var isPressed: Bool = false
+    private let haptic = UIImpactFeedbackGenerator(style: .light)
 
     private var isModifierActive: Bool {
         if key.keyCode == .capsLock { return viewModel.capsLockOn }
@@ -194,7 +197,7 @@ private struct VirtualKeyButton: View {
                 .onChanged { _ in
                     if !isPressed {
                         isPressed = true
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        haptic.impactOccurred()
                         viewModel.keyDown(key)
                     }
                 }
