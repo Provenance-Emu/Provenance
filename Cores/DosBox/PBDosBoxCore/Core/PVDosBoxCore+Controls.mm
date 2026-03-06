@@ -264,6 +264,10 @@ s8 joyx[4], joyy[4];
 
 #pragma mark - Keyboard Support
 
+// Keyboard pipeline: keyDown/keyUp → PVLibRetroCoreBridge -sendKeyboardEvent:hidCode:character:
+// → input_keymaps_translate_keysym_to_rk → runloop_key_event (libretro callback).
+// GCKeyCode.rawValue == HID USB key code; key-up events prevent stuck keys.
+
 - (BOOL)gameSupportsKeyboard { return YES; }
 - (BOOL)requiresKeyboard { return NO; }
 
@@ -274,6 +278,7 @@ s8 joyx[4], joyy[4];
 }
 
 - (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    // Key-up clears the core's key state — essential for preventing stuck keys.
     [self sendKeyboardEvent:NO hidCode:(unsigned)key character:0];
 }
 

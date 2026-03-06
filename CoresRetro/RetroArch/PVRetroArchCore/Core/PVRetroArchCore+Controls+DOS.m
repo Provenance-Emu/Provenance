@@ -95,6 +95,10 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 
 #pragma mark - Keyboard Support
 
+// Keyboard pipeline: keyDown/keyUp → apple_input_keyboard_event (RetroArch Cocoa input driver)
+// → rarch_keysym_lut translation → RETRO_DEVICE_KEYBOARD dispatcher.
+// Independent of the PVLibRetroCoreBridge path; GCKeyCode.rawValue == HID USB key code.
+
 - (BOOL)gameSupportsKeyboard { return YES; }
 - (BOOL)requiresKeyboard { return NO; }
 
@@ -105,6 +109,7 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 }
 
 - (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    // Key-up clears the core's key state — essential for preventing stuck keys.
     apple_input_keyboard_event(false, (unsigned)key, 0, 0, RETRO_DEVICE_KEYBOARD);
 }
 
