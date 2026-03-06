@@ -20,9 +20,11 @@ private func makeInMemoryContainer() throws -> ModelContainer {
     try PVSwiftDataSchema.makePVModelContainer(inMemory: true)
 }
 
-// MARK: - Game CRUD tests
+// MARK: - Common base class
 
-final class SwiftDataGameCRUDTests: XCTestCase {
+/// Shared XCTestCase base that creates a fresh in-memory ModelContainer
+/// before each test and tears it down afterwards.
+class SwiftDataTestCase: XCTestCase {
 
     var container: ModelContainer!
     var context: ModelContext!
@@ -36,6 +38,11 @@ final class SwiftDataGameCRUDTests: XCTestCase {
         context = nil
         container = nil
     }
+}
+
+// MARK: - Game CRUD tests
+
+final class SwiftDataGameCRUDTests: SwiftDataTestCase {
 
     func testCreateGame() throws {
         let game = Game_Data(title: "Super Mario Bros",
@@ -136,20 +143,7 @@ final class SwiftDataGameCRUDTests: XCTestCase {
 
 // MARK: - System CRUD tests
 
-final class SwiftDataSystemCRUDTests: XCTestCase {
-
-    var container: ModelContainer!
-    var context: ModelContext!
-
-    override func setUpWithError() throws {
-        container = try makeInMemoryContainer()
-        context = ModelContext(container)
-    }
-
-    override func tearDown() {
-        context = nil
-        container = nil
-    }
+final class SwiftDataSystemCRUDTests: SwiftDataTestCase {
 
     func testCreateSystem() throws {
         let system = System_Data(name: "Nintendo Entertainment System",
@@ -209,20 +203,7 @@ final class SwiftDataSystemCRUDTests: XCTestCase {
 
 // MARK: - SaveState CRUD tests
 
-final class SwiftDataSaveStateCRUDTests: XCTestCase {
-
-    var container: ModelContainer!
-    var context: ModelContext!
-
-    override func setUpWithError() throws {
-        container = try makeInMemoryContainer()
-        context = ModelContext(container)
-    }
-
-    override func tearDown() {
-        context = nil
-        container = nil
-    }
+final class SwiftDataSaveStateCRUDTests: SwiftDataTestCase {
 
     func testCreateSaveState() throws {
         let saveState = SaveState_Data(id: "ss-1",
@@ -237,8 +218,8 @@ final class SwiftDataSaveStateCRUDTests: XCTestCase {
         )
         let results = try context.fetch(descriptor)
         XCTAssertEqual(results.count, 1)
-        let saveState = try XCTUnwrap(results.first)
-        XCTAssertFalse(saveState.isAutosave)
+        let fetchedSaveState = try XCTUnwrap(results.first)
+        XCTAssertFalse(fetchedSaveState.isAutosave)
     }
 
     func testAutosaveFlagRoundtrip() throws {
@@ -252,8 +233,8 @@ final class SwiftDataSaveStateCRUDTests: XCTestCase {
             predicate: #Predicate { $0.id == "ss-auto" }
         )
         let results = try context.fetch(descriptor)
-        let saveState = try XCTUnwrap(results.first)
-        XCTAssertTrue(saveState.isAutosave)
+        let fetchedSaveState = try XCTUnwrap(results.first)
+        XCTAssertTrue(fetchedSaveState.isAutosave)
     }
 
     func testDeleteSaveState() throws {
@@ -274,20 +255,7 @@ final class SwiftDataSaveStateCRUDTests: XCTestCase {
 
 // MARK: - Core CRUD tests
 
-final class SwiftDataCoreCRUDTests: XCTestCase {
-
-    var container: ModelContainer!
-    var context: ModelContext!
-
-    override func setUpWithError() throws {
-        container = try makeInMemoryContainer()
-        context = ModelContext(container)
-    }
-
-    override func tearDown() {
-        context = nil
-        container = nil
-    }
+final class SwiftDataCoreCRUDTests: SwiftDataTestCase {
 
     func testCreateCore() throws {
         let core = Core_Data(identifier: "com.provenance.nestopia",
@@ -320,27 +288,14 @@ final class SwiftDataCoreCRUDTests: XCTestCase {
             predicate: #Predicate { $0.identifier == "com.provenance.disabled" }
         )
         let results = try context.fetch(descriptor)
-        let core = try XCTUnwrap(results.first)
-        XCTAssertTrue(core.disabled)
+        let fetchedCore = try XCTUnwrap(results.first)
+        XCTAssertTrue(fetchedCore.disabled)
     }
 }
 
 // MARK: - BIOS CRUD tests
 
-final class SwiftDataBIOSCRUDTests: XCTestCase {
-
-    var container: ModelContainer!
-    var context: ModelContext!
-
-    override func setUpWithError() throws {
-        container = try makeInMemoryContainer()
-        context = ModelContext(container)
-    }
-
-    override func tearDown() {
-        context = nil
-        container = nil
-    }
+final class SwiftDataBIOSCRUDTests: SwiftDataTestCase {
 
     func testCreateBIOS() throws {
         let bios = BIOS_Data(expectedFilename: "scph1001.bin",
@@ -364,20 +319,7 @@ final class SwiftDataBIOSCRUDTests: XCTestCase {
 
 // MARK: - Relationship integrity tests
 
-final class SwiftDataRelationshipTests: XCTestCase {
-
-    var container: ModelContainer!
-    var context: ModelContext!
-
-    override func setUpWithError() throws {
-        container = try makeInMemoryContainer()
-        context = ModelContext(container)
-    }
-
-    override func tearDown() {
-        context = nil
-        container = nil
-    }
+final class SwiftDataRelationshipTests: SwiftDataTestCase {
 
     func testSystemGamesRelationship() throws {
         let system = System_Data(name: "SNES",
@@ -490,20 +432,7 @@ final class SwiftDataRelationshipTests: XCTestCase {
 
 // MARK: - Migration simulation tests
 
-final class SwiftDataMigrationSimulationTests: XCTestCase {
-
-    var container: ModelContainer!
-    var context: ModelContext!
-
-    override func setUpWithError() throws {
-        container = try makeInMemoryContainer()
-        context = ModelContext(container)
-    }
-
-    override func tearDown() {
-        context = nil
-        container = nil
-    }
+final class SwiftDataMigrationSimulationTests: SwiftDataTestCase {
 
     /// Simulates importing a batch of games (as would happen during Realm → SwiftData migration)
     /// and verifies record counts and relationship integrity.
@@ -576,20 +505,7 @@ final class SwiftDataMigrationSimulationTests: XCTestCase {
 
 // MARK: - Performance tests
 
-final class SwiftDataPerformanceTests: XCTestCase {
-
-    var container: ModelContainer!
-    var context: ModelContext!
-
-    override func setUpWithError() throws {
-        container = try makeInMemoryContainer()
-        context = ModelContext(container)
-    }
-
-    override func tearDown() {
-        context = nil
-        container = nil
-    }
+final class SwiftDataPerformanceTests: SwiftDataTestCase {
 
     func testInsert1000GamesPerformance() throws {
         // Each measure iteration uses a fresh in-memory container so that
