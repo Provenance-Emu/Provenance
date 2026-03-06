@@ -41,6 +41,11 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
     ///   Use `SwiftDataDatabaseActor` for concurrent/background access.
     public let modelContext: ModelContext
 
+    /// `true` when the driver is backed by a persistent on-disk store.
+    /// `false` when the driver fell back to an in-memory store due to a container
+    /// creation failure — data will not survive app restarts in this state.
+    public let isUsingPersistentStore: Bool
+
     // MARK: Init
 
     /// Designated initialiser. The `database` parameter is ignored — SwiftData manages
@@ -50,13 +55,16 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
             let container = try PVSwiftDataSchema.makePVModelContainer()
             self.modelContainer = container
             self.modelContext = ModelContext(container)
+            self.isUsingPersistentStore = true
         } catch {
             ELOG("SwiftDataDatabaseDriver: failed to create persistent ModelContainer — \(error)")
             // Non-fatal fallback: use an in-memory container so the app can continue.
+            // isUsingPersistentStore will be false — callers can detect this and warn users.
             if let inMemoryContainer = try? PVSwiftDataSchema.makePVModelContainer(inMemory: true) {
-                WLOG("SwiftDataDatabaseDriver: falling back to in-memory ModelContainer")
+                WLOG("SwiftDataDatabaseDriver: falling back to in-memory ModelContainer; data will not be persisted across launches")
                 self.modelContainer = inMemoryContainer
                 self.modelContext = ModelContext(inMemoryContainer)
+                self.isUsingPersistentStore = false
             } else {
                 // All fallback attempts failed; crash with a clear diagnostic.
                 fatalError("SwiftDataDatabaseDriver: unable to create any ModelContainer: \(error)")
@@ -70,6 +78,7 @@ public final class SwiftDataDatabaseDriver: DatabaseDriver {
         let container = try PVSwiftDataSchema.makePVModelContainer(inMemory: inMemory)
         self.modelContainer = container
         self.modelContext = ModelContext(container)
+        self.isUsingPersistentStore = !inMemory
     }
 
     // MARK: - DatabaseDriver protocol
@@ -191,15 +200,44 @@ public extension SwiftDataDatabaseDriver {
     }
 
     /// Search for games whose title contains `searchText` (case-insensitive).
+    ///
+    /// Filtering is performed in-memory after fetching all games because SwiftData
+    /// predicates do not support `lowercased()` or similar string-transform calls.
     public func searchGames(for searchText: String) throws -> [Game_Data] {
-        if searchText.isEmpty {
-            return try allGames(sortedBy: [SortDescriptor(\.title)])
-        }
+        let all = try allGames(sortedBy: [SortDescriptor(\.title)])
+        if searchText.isEmpty { return all }
         let lower = searchText.lowercased()
-        return try games(
-            matching: #Predicate { $0.title.lowercased().contains(lower) },
-            sortedBy: [SortDescriptor(\.title)]
-        )
+        return all.filter { $0.title.lowercased().contains(lower) }
+    }
+
+    // MARK: Batch insert
+
+    /// Insert multiple games in a single save operation (more efficient than repeated `insert(game:)`).
+    public func insertBatch(games: [Game_Data]) throws {
+        for game in games { modelContext.insert(game) }
+        try modelContext.save()
+        DLOG("SwiftDataDatabaseDriver: batch-inserted \(games.count) game(s)")
+    }
+
+    /// Insert multiple systems in a single save operation.
+    public func insertBatch(systems: [System_Data]) throws {
+        for system in systems { modelContext.insert(system) }
+        try modelContext.save()
+        DLOG("SwiftDataDatabaseDriver: batch-inserted \(systems.count) system(s)")
+    }
+
+    /// Insert multiple save states in a single save operation.
+    public func insertBatch(saveStates: [SaveState_Data]) throws {
+        for saveState in saveStates { modelContext.insert(saveState) }
+        try modelContext.save()
+        DLOG("SwiftDataDatabaseDriver: batch-inserted \(saveStates.count) save state(s)")
+    }
+
+    /// Insert multiple recent games in a single save operation.
+    public func insertBatch(recentGames: [RecentGame_Data]) throws {
+        for recentGame in recentGames { modelContext.insert(recentGame) }
+        try modelContext.save()
+        DLOG("SwiftDataDatabaseDriver: batch-inserted \(recentGames.count) recent game(s)")
     }
 
     // MARK: Update
@@ -242,19 +280,11 @@ public extension SwiftDataDatabaseDriver {
     // MARK: Delete all
 
     /// Delete all objects of all tracked model types and save.
+    ///
+    /// Delegates to `PVSwiftDataSchema.deleteAll(from:)` so the type list stays in sync
+    /// with the schema definition and is not duplicated here.
     public func deleteAll() throws {
-        try modelContext.delete(model: Game_Data.self)
-        try modelContext.delete(model: System_Data.self)
-        try modelContext.delete(model: SaveState_Data.self)
-        try modelContext.delete(model: RecentGame_Data.self)
-        try modelContext.delete(model: Core_Data.self)
-        try modelContext.delete(model: BIOS_Data.self)
-        try modelContext.delete(model: Cheats_Data.self)
-        try modelContext.delete(model: File_Data.self)
-        try modelContext.delete(model: ImageFile_Data.self)
-        try modelContext.delete(model: Library_Data.self)
-        try modelContext.delete(model: User_Data.self)
-        try modelContext.save()
+        try PVSwiftDataSchema.deleteAll(from: modelContext)
         DLOG("SwiftDataDatabaseDriver: deleted all objects")
     }
 }
@@ -292,13 +322,13 @@ public actor SwiftDataDatabaseActor {
     }
 
     /// Fetch all games, optionally sorted.
-    public func allGames(sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = [SortDescriptor(\.title)]) throws -> [Game_Data] {
+    public func allGames(sortedBy sortDescriptors: [SortDescriptor<Game_Data>] = []) throws -> [Game_Data] {
         let descriptor = FetchDescriptor<Game_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
 
     /// Fetch all systems, optionally sorted.
-    public func allSystems(sortedBy sortDescriptors: [SortDescriptor<System_Data>] = [SortDescriptor(\.name)]) throws -> [System_Data] {
+    public func allSystems(sortedBy sortDescriptors: [SortDescriptor<System_Data>] = []) throws -> [System_Data] {
         let descriptor = FetchDescriptor<System_Data>(sortBy: sortDescriptors)
         return try modelContext.fetch(descriptor)
     }
@@ -339,15 +369,14 @@ public actor SwiftDataDatabaseActor {
     }
 
     /// Search for games whose title contains `searchText` (case-insensitive).
+    ///
+    /// Filtering is performed in-memory after fetching all games because SwiftData
+    /// predicates do not support `lowercased()` or similar string-transform calls.
     public func searchGames(for searchText: String) throws -> [Game_Data] {
-        if searchText.isEmpty {
-            return try allGames()
-        }
+        let all = try allGames(sortedBy: [SortDescriptor(\.title)])
+        if searchText.isEmpty { return all }
         let lower = searchText.lowercased()
-        return try games(
-            matching: #Predicate { $0.title.lowercased().contains(lower) },
-            sortedBy: [SortDescriptor(\.title)]
-        )
+        return all.filter { $0.title.lowercased().contains(lower) }
     }
 
     // MARK: - Write
@@ -409,20 +438,10 @@ public actor SwiftDataDatabaseActor {
 
     /// Delete all objects of all tracked model types and persist.
     ///
-    /// Covers the same set of model types as `SwiftDataDatabaseDriver.deleteAll()`.
+    /// Delegates to `PVSwiftDataSchema.deleteAll(from:)` so the type list stays in sync
+    /// with the schema definition and is not duplicated across driver and actor.
     public func deleteAll() throws {
-        try modelContext.delete(model: Game_Data.self)
-        try modelContext.delete(model: System_Data.self)
-        try modelContext.delete(model: SaveState_Data.self)
-        try modelContext.delete(model: RecentGame_Data.self)
-        try modelContext.delete(model: Core_Data.self)
-        try modelContext.delete(model: BIOS_Data.self)
-        try modelContext.delete(model: Cheats_Data.self)
-        try modelContext.delete(model: File_Data.self)
-        try modelContext.delete(model: ImageFile_Data.self)
-        try modelContext.delete(model: Library_Data.self)
-        try modelContext.delete(model: User_Data.self)
-        try modelContext.save()
+        try PVSwiftDataSchema.deleteAll(from: modelContext)
     }
 }
 #endif

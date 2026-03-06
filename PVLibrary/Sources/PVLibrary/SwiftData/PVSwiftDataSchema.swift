@@ -42,5 +42,24 @@ public enum PVSwiftDataSchema {
         )
         return try ModelContainer(configurations: config)
     }
+
+    /// Delete all objects for every tracked model type from the given context and save.
+    ///
+    /// Centralised here so that `SwiftDataDatabaseDriver` and `SwiftDataDatabaseActor`
+    /// share a single authoritative list, preventing drift as the schema evolves.
+    public static func deleteAll(from context: ModelContext) throws {
+        try context.delete(model: Game_Data.self)
+        try context.delete(model: System_Data.self)
+        try context.delete(model: SaveState_Data.self)
+        try context.delete(model: RecentGame_Data.self)
+        try context.delete(model: Core_Data.self)
+        try context.delete(model: BIOS_Data.self)
+        try context.delete(model: Cheats_Data.self)
+        try context.delete(model: File_Data.self)
+        try context.delete(model: ImageFile_Data.self)
+        try context.delete(model: Library_Data.self)
+        try context.delete(model: User_Data.self)
+        try context.save()
+    }
 }
 #endif
