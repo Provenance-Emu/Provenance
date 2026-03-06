@@ -3,100 +3,116 @@
 //
 // SwiftUI virtual keyboard overlay for on-screen key input during emulation.
 // Supports platform-specific layouts (C64, ZX Spectrum, Amstrad CPC, etc.)
-// and fires GCKeyCode events consumed by the emulator core.
+// with haptic feedback and a swipe-down dismiss gesture.
 //
 // Copyright © 2026 Provenance Emu. All rights reserved.
 
+#if !os(tvOS)
 import SwiftUI
+import UIKit
 import GameController
-
-// MARK: - VirtualKeyboardDelegate
-
-/// Receives key press and release events from the virtual keyboard overlay.
-public protocol VirtualKeyboardDelegate: AnyObject {
-    func virtualKeyboard(_ keyboard: VirtualKeyboardView, keyDown key: VirtualKey)
-    func virtualKeyboard(_ keyboard: VirtualKeyboardView, keyUp key: VirtualKey)
-}
-
-// MARK: - VirtualKeyboardViewModel
-
-/// Observable state for the virtual keyboard overlay.
-@MainActor
-public final class VirtualKeyboardViewModel: ObservableObject {
-    /// The currently selected layout.
-    @Published public var layout: VirtualKeyboardLayout
-    /// Set of currently active (pressed) modifier key IDs.
-    @Published public var activeModifiers: Set<GCKeyCode> = []
-    /// Overall opacity of the keyboard overlay (0.0–1.0).
-    @Published public var opacity: Double = 0.85
-
-    public init(layout: VirtualKeyboardLayout = .full) {
-        self.layout = layout
-    }
-
-    /// Toggles a sticky modifier key on/off.
-    public func toggleModifier(_ keyCode: GCKeyCode) {
-        if activeModifiers.contains(keyCode) {
-            activeModifiers.remove(keyCode)
-        } else {
-            activeModifiers.insert(keyCode)
-        }
-    }
-
-    /// Returns `true` if the given modifier key is currently active.
-    public func isModifierActive(_ keyCode: GCKeyCode) -> Bool {
-        activeModifiers.contains(keyCode)
-    }
-}
 
 // MARK: - VirtualKeyboardView
 
-/// Overlay virtual keyboard for iOS/tvOS emulator screens.
+/// Bottom-sheet keyboard overlay rendered as a SwiftUI view hosted via UIHostingController.
 ///
-/// Usage:
-/// ```swift
-/// VirtualKeyboardView(viewModel: keyboardViewModel, delegate: self)
-/// ```
-///
-/// The view renders the rows defined by `viewModel.layout.rows` and
-/// calls `delegate.virtualKeyboard(_:keyDown:)` / `keyUp:` for each touch.
-/// Sticky modifiers remain highlighted until tapped again.
+/// The view model (`VirtualKeyboardViewModel`) owns all state — modifier tracking,
+/// key event forwarding via `VirtualKeyboardDelegate`, and the dismiss callback.
 public struct VirtualKeyboardView: View {
-    @ObservedObject public var viewModel: VirtualKeyboardViewModel
-    public weak var delegate: VirtualKeyboardDelegate?
 
-    public init(viewModel: VirtualKeyboardViewModel, delegate: VirtualKeyboardDelegate? = nil) {
-        self.viewModel = viewModel
-        self.delegate = delegate
+    @ObservedObject var viewModel: VirtualKeyboardViewModel
+
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    @Environment(\.verticalSizeClass) private var vSizeClass
+
+    private var isLandscape: Bool {
+        hSizeClass == .regular && vSizeClass == .compact
     }
+
+    public init(viewModel: VirtualKeyboardViewModel) {
+        self.viewModel = viewModel
+    }
+
+    // MARK: - Body
 
     public var body: some View {
-        VStack(spacing: 0) {
-            layoutPickerToolbar
-            keyboardRows
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                Spacer()
+                keyboardSheet(in: geometry)
+            }
+            .ignoresSafeArea(.keyboard)
         }
-        .background(Color.black.opacity(0.7))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .opacity(viewModel.opacity)
+        .gesture(swipeDownDismiss)
     }
 
-    // MARK: Layout Picker Toolbar
+    // MARK: - Sheet
+
+    private func keyboardSheet(in geometry: GeometryProxy) -> some View {
+        VStack(spacing: 0) {
+            handleBar
+            closeButtonRow
+            layoutPickerToolbar
+            keyboardContent(in: geometry)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.black.opacity(0.78))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.18), lineWidth: 0.5)
+                )
+        )
+        .padding(.horizontal, 4)
+        .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? 0 : 4)
+    }
+
+    // MARK: - Handle bar
+
+    private var handleBar: some View {
+        Capsule()
+            .fill(Color.white.opacity(0.35))
+            .frame(width: 36, height: 4)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
+    }
+
+    // MARK: - Close button
+
+    private var closeButtonRow: some View {
+        HStack {
+            Spacer()
+            Button(action: {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                viewModel.dismissAction?()
+            }) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.white.opacity(0.6))
+                    .font(.system(size: 20))
+                    .padding(8)
+            }
+        }
+        .padding(.horizontal, 8)
+    }
+
+    // MARK: - Layout picker toolbar
 
     private var layoutPickerToolbar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
                 ForEach(VirtualKeyboardLayout.allCases) { layoutCase in
                     Button(action: {
-                        viewModel.layout = layoutCase
-                        viewModel.activeModifiers.removeAll()
+                        viewModel.selectLayout(layoutCase)
                     }) {
                         Text(layoutCase.displayName)
                             .font(.system(size: 11, weight: .medium, design: .monospaced))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(viewModel.layout == layoutCase
-                                        ? Color.accentColor
-                                        : Color.white.opacity(0.15))
+                            .background(
+                                viewModel.layout == layoutCase
+                                    ? Color.accentColor
+                                    : Color.white.opacity(0.15)
+                            )
                             .foregroundColor(.white)
                             .clipShape(Capsule())
                     }
@@ -109,94 +125,88 @@ public struct VirtualKeyboardView: View {
         .background(Color.white.opacity(0.05))
     }
 
-    // MARK: Key Rows
+    // MARK: - Key rows
 
-    private var keyboardRows: some View {
-        VStack(spacing: 3) {
-            ForEach(viewModel.layout.rows.indices, id: \.self) { rowIndex in
-                keyRow(viewModel.layout.rows[rowIndex])
+    @ViewBuilder
+    private func keyboardContent(in geometry: GeometryProxy) -> some View {
+        let rows = viewModel.layout.rows
+        VStack(spacing: 4) {
+            ForEach(rows.indices, id: \.self) { rowIndex in
+                keyRow(rows[rowIndex], availableWidth: geometry.size.width - 24)
             }
         }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 5)
+        .padding(.horizontal, 8)
+        .padding(.bottom, 8)
     }
 
-    private func keyRow(_ keys: [VirtualKey]) -> some View {
+    private func keyRow(_ keys: [VirtualKey], availableWidth: CGFloat) -> some View {
         HStack(spacing: 3) {
             ForEach(keys) { key in
-                VirtualKeyButton(
-                    key: key,
-                    isActive: viewModel.isModifierActive(key.keyCode),
-                    onPress: { handleKeyPress(key) },
-                    onRelease: { handleKeyRelease(key) }
-                )
+                VirtualKeyButton(key: key, viewModel: viewModel)
+                    .frame(width: keyWidth(for: key, in: keys, availableWidth: availableWidth))
             }
         }
     }
 
-    // MARK: Event Handling
-
-    private func handleKeyPress(_ key: VirtualKey) {
-        if key.isModifier {
-            viewModel.toggleModifier(key.keyCode)
-            if viewModel.isModifierActive(key.keyCode) {
-                delegate?.virtualKeyboard(self, keyDown: key)
-            } else {
-                delegate?.virtualKeyboard(self, keyUp: key)
-            }
-        } else {
-            delegate?.virtualKeyboard(self, keyDown: key)
-        }
+    private func keyWidth(for key: VirtualKey, in row: [VirtualKey], availableWidth: CGFloat) -> CGFloat {
+        let totalFactors = row.reduce(0.0) { $0 + $1.widthMultiplier }
+        let spacing = CGFloat(row.count - 1) * 3
+        let usable = availableWidth - spacing
+        return max(24, (usable / totalFactors) * key.widthMultiplier)
     }
 
-    private func handleKeyRelease(_ key: VirtualKey) {
-        guard !key.isModifier else { return }
-        delegate?.virtualKeyboard(self, keyUp: key)
+    // MARK: - Dismiss gesture
+
+    private var swipeDownDismiss: some Gesture {
+        DragGesture(minimumDistance: 30)
+            .onEnded { value in
+                if value.translation.height > 40 {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    viewModel.dismissAction?()
+                }
+            }
     }
 }
 
 // MARK: - VirtualKeyButton
 
-/// A single key button in the virtual keyboard overlay.
 private struct VirtualKeyButton: View {
+
     let key: VirtualKey
-    let isActive: Bool
-    let onPress: () -> Void
-    let onRelease: () -> Void
+    @ObservedObject var viewModel: VirtualKeyboardViewModel
 
-    @State private var isPressed = false
+    @State private var isPressed: Bool = false
 
-    private static let baseKeyHeight: CGFloat = 36
-    private static let baseKeyWidth: CGFloat = 28
+    private var isModifierActive: Bool {
+        if key.keyCode == .capsLock { return viewModel.capsLockOn }
+        return viewModel.activeModifiers.contains(key.keyCode)
+    }
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 5)
-                .fill(backgroundColor)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 5)
-                        .stroke(Color.white.opacity(0.25), lineWidth: 0.5)
-                )
-                .shadow(color: .black.opacity(0.4), radius: 1, x: 0, y: 1)
-
+            keyBackground
             keyLabel
         }
-        .frame(width: Self.baseKeyWidth * key.widthMultiplier, height: Self.baseKeyHeight)
-        .scaleEffect(isPressed ? 0.92 : 1.0)
-        .animation(.easeInOut(duration: 0.08), value: isPressed)
+        .frame(height: 36)
+        .contentShape(Rectangle())
         .gesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in
                     if !isPressed {
                         isPressed = true
-                        onPress()
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        viewModel.keyDown(key)
                     }
                 }
                 .onEnded { _ in
-                    isPressed = false
-                    onRelease()
+                    if isPressed {
+                        isPressed = false
+                        viewModel.keyUp(key)
+                    }
                 }
         )
+        .accessibilityLabel(key.label)
+        .accessibilityAddTraits(.isButton)
     }
 
     @ViewBuilder
@@ -205,102 +215,71 @@ private struct VirtualKeyButton: View {
             Image(systemName: symbolName)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(labelColor)
-                .allowsTightening(true)
         } else {
             Text(key.label)
-                .font(.system(size: labelFontSize, weight: labelWeight, design: .monospaced))
+                .font(labelFont)
                 .foregroundColor(labelColor)
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.6)
+                .minimumScaleFactor(0.5)
                 .allowsTightening(true)
         }
     }
 
+    private var keyBackground: some View {
+        RoundedRectangle(cornerRadius: 5, style: .continuous)
+            .fill(backgroundColor)
+            .overlay(
+                RoundedRectangle(cornerRadius: 5, style: .continuous)
+                    .strokeBorder(strokeColor, lineWidth: 0.5)
+            )
+            .shadow(color: .black.opacity(0.4), radius: 1, x: 0, y: 1)
+    }
+
     private var backgroundColor: Color {
-        if isActive {
-            return Color.accentColor.opacity(0.85)
-        }
-        if isPressed {
-            return Color.white.opacity(0.35)
-        }
-        if key.isModifier {
-            return Color.gray.opacity(0.45)
-        }
-        return Color.white.opacity(0.18)
+        if isPressed { return Color.white.opacity(0.35) }
+        if isModifierActive { return Color.blue.opacity(0.55) }
+        if key.isModifier { return Color.white.opacity(0.18) }
+        return Color.white.opacity(0.14)
+    }
+
+    private var strokeColor: Color {
+        if isModifierActive { return Color.blue.opacity(0.8) }
+        return Color.white.opacity(0.25)
     }
 
     private var labelColor: Color {
-        isActive ? .white : .white.opacity(0.9)
+        if isModifierActive { return .white }
+        return Color.white.opacity(0.88)
     }
 
-    private var labelFontSize: CGFloat {
+    private var labelFont: Font {
         let len = key.label.count
-        if len <= 1 { return 14 }
-        if len <= 3 { return 11 }
-        return 9
-    }
-
-    private var labelWeight: Font.Weight {
-        key.isModifier ? .semibold : .regular
-    }
-}
-
-// MARK: - VirtualKeyboardOverlayModifier
-
-/// View modifier that attaches the virtual keyboard overlay to an emulator view.
-///
-/// Example:
-/// ```swift
-/// EmulatorMetalView()
-///     .virtualKeyboardOverlay(viewModel: keyboardVM, delegate: self)
-/// ```
-public struct VirtualKeyboardOverlayModifier: ViewModifier {
-    @ObservedObject var viewModel: VirtualKeyboardViewModel
-    weak var delegate: VirtualKeyboardDelegate?
-
-    public func body(content: Content) -> some View {
-        content
-            .overlay(alignment: .bottomLeading) {
-                VirtualKeyboardView(viewModel: viewModel, delegate: delegate)
-                    .frame(maxWidth: 420)
-                    .padding(.bottom, 8)
-                    .padding(.leading, 8)
-            }
-    }
-}
-
-public extension View {
-    /// Attaches a floating virtual keyboard overlay to this view.
-    func virtualKeyboardOverlay(
-        viewModel: VirtualKeyboardViewModel,
-        delegate: VirtualKeyboardDelegate? = nil
-    ) -> some View {
-        modifier(VirtualKeyboardOverlayModifier(viewModel: viewModel, delegate: delegate))
+        if len <= 1 { return .system(size: 13, weight: .regular) }
+        if len <= 3 { return .system(size: 11, weight: .medium) }
+        return .system(size: 9, weight: .medium)
     }
 }
 
 // MARK: - Preview
 
 #if DEBUG
+#Preview("Full Layout") {
+    ZStack {
+        Color.gray.ignoresSafeArea()
+        VirtualKeyboardView(viewModel: VirtualKeyboardViewModel())
+    }
+    .preferredColorScheme(.dark)
+}
+
 #Preview("C64 Layout") {
-    let vm = VirtualKeyboardViewModel(layout: .c64)
-    return VirtualKeyboardView(viewModel: vm)
-        .padding()
-        .background(Color.gray)
-}
-
-#Preview("ZX Spectrum Layout") {
-    let vm = VirtualKeyboardViewModel(layout: .zxSpectrum)
-    return VirtualKeyboardView(viewModel: vm)
-        .padding()
-        .background(Color.gray)
-}
-
-#Preview("Amstrad CPC Layout") {
-    let vm = VirtualKeyboardViewModel(layout: .amstradCPC)
-    return VirtualKeyboardView(viewModel: vm)
-        .padding()
-        .background(Color.gray)
+    let vm = VirtualKeyboardViewModel()
+    vm.layout = .c64
+    return ZStack {
+        Color.gray.ignoresSafeArea()
+        VirtualKeyboardView(viewModel: vm)
+    }
+    .preferredColorScheme(.dark)
 }
 #endif
+#endif // !os(tvOS)

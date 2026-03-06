@@ -16,7 +16,6 @@ public struct VirtualKey: Identifiable, Sendable {
     /// The label displayed on the key.
     public let label: String
     /// The `GCKeyCode` sent when this key is pressed.
-    /// Special platform keys use proxy GCKeyCodes that the core remaps to RETRO_KEY_*.
     public let keyCode: GCKeyCode
     /// Whether this key is a sticky modifier (toggles on/off).
     public let isModifier: Bool
@@ -49,13 +48,13 @@ public enum VirtualKeyboardLayout: String, CaseIterable, Identifiable, Sendable 
     case full
     /// Compact layout: letters plus essential keys only.
     case compact
-    /// Function key row: F1–F12 strip only.
+    /// Function key row: F1-F12 strip only.
     case functionRow
-    /// Commodore 64 keyboard layout with C=, RUN/STOP, RESTORE, CLR/HOME, INST/DEL, CRSR keys and F1–F8.
+    /// Commodore 64 keyboard layout.
     case c64
     /// ZX Spectrum keyboard layout with CAPS SHIFT and SYMBOL SHIFT sticky modifiers.
     case zxSpectrum
-    /// Amstrad CPC keyboard layout with CPC function keys f0–f9 and dedicated arrow/edit keys.
+    /// Amstrad CPC keyboard layout with CPC function keys f0-f9.
     case amstradCPC
 
     public var id: String { rawValue }
@@ -63,17 +62,16 @@ public enum VirtualKeyboardLayout: String, CaseIterable, Identifiable, Sendable 
     /// Human-readable display name for toolbar picker.
     public var displayName: String {
         switch self {
-        case .full:       return "Full"
-        case .compact:    return "Compact"
+        case .full:        return "Full"
+        case .compact:     return "Compact"
         case .functionRow: return "Fn Row"
-        case .c64:        return "C64"
-        case .zxSpectrum: return "Spectrum"
-        case .amstradCPC: return "CPC"
+        case .c64:         return "C64"
+        case .zxSpectrum:  return "Spectrum"
+        case .amstradCPC:  return "CPC"
         }
     }
 
     /// Returns the rows of keys for this layout.
-    /// Each inner array is one row displayed left-to-right.
     public var rows: [[VirtualKey]] {
         switch self {
         case .full:        return VirtualKeyboardLayouts.fullLayout
@@ -93,11 +91,10 @@ public enum VirtualKeyboardLayouts {
 
     // MARK: Standard Full QWERTY
 
-    /// Standard full QWERTY layout.
     public static let fullLayout: [[VirtualKey]] = [
         // Number row
         [
-            .init(label: "ESC",  keyCode: .escape,          symbolName: "escape"),
+            .init(label: "ESC",  keyCode: .escape,             symbolName: "escape"),
             .init(label: "1",    keyCode: .one),
             .init(label: "2",    keyCode: .two),
             .init(label: "3",    keyCode: .three),
@@ -108,7 +105,7 @@ public enum VirtualKeyboardLayouts {
             .init(label: "8",    keyCode: .eight),
             .init(label: "9",    keyCode: .nine),
             .init(label: "0",    keyCode: .zero),
-            .init(label: "⌫",   keyCode: .deleteOrBackspace, widthMultiplier: 1.5, symbolName: "delete.left"),
+            .init(label: "DEL",  keyCode: .deleteOrBackspace,  widthMultiplier: 1.5, symbolName: "delete.left"),
         ],
         // Function row
         [
@@ -127,7 +124,7 @@ public enum VirtualKeyboardLayouts {
         ],
         // QWERTY row
         [
-            .init(label: "TAB", keyCode: .tab,  widthMultiplier: 1.5, symbolName: "arrow.right.to.line"),
+            .init(label: "TAB", keyCode: .tab,          widthMultiplier: 1.5, symbolName: "arrow.right.to.line"),
             .init(label: "Q",   keyCode: .keyQ),
             .init(label: "W",   keyCode: .keyW),
             .init(label: "E",   keyCode: .keyE),
@@ -157,7 +154,7 @@ public enum VirtualKeyboardLayouts {
         ],
         // ZXCV row
         [
-            .init(label: "⇧",   keyCode: .leftShift,  isModifier: true, widthMultiplier: 2.0, symbolName: "shift"),
+            .init(label: "SHF",  keyCode: .leftShift,  isModifier: true, widthMultiplier: 2.0, symbolName: "shift"),
             .init(label: "Z",    keyCode: .keyZ),
             .init(label: "X",    keyCode: .keyX),
             .init(label: "C",    keyCode: .keyC),
@@ -167,22 +164,21 @@ public enum VirtualKeyboardLayouts {
             .init(label: "M",    keyCode: .keyM),
             .init(label: ",",    keyCode: .comma),
             .init(label: ".",    keyCode: .period),
-            .init(label: "↑",   keyCode: .upArrow,    symbolName: "arrow.up"),
-            .init(label: "⇧",   keyCode: .rightShift, isModifier: true, symbolName: "shift"),
+            .init(label: "UP",   keyCode: .upArrow,    symbolName: "arrow.up"),
+            .init(label: "SHF",  keyCode: .rightShift, isModifier: true, symbolName: "shift"),
         ],
         // Bottom row
         [
             .init(label: "ALT",   keyCode: .leftAlt,   isModifier: true, symbolName: "option"),
             .init(label: "SPACE", keyCode: .spacebar,  widthMultiplier: 4.0),
-            .init(label: "←",    keyCode: .leftArrow,  symbolName: "arrow.left"),
-            .init(label: "↓",    keyCode: .downArrow,  symbolName: "arrow.down"),
-            .init(label: "→",    keyCode: .rightArrow, symbolName: "arrow.right"),
+            .init(label: "LT",    keyCode: .leftArrow,  symbolName: "arrow.left"),
+            .init(label: "DN",    keyCode: .downArrow,  symbolName: "arrow.down"),
+            .init(label: "RT",    keyCode: .rightArrow, symbolName: "arrow.right"),
         ],
     ]
 
     // MARK: Compact QWERTY
 
-    /// Compact layout: letters only with essential modifiers.
     public static let compactLayout: [[VirtualKey]] = [
         [
             .init(label: "Q", keyCode: .keyQ),
@@ -197,38 +193,37 @@ public enum VirtualKeyboardLayouts {
             .init(label: "P", keyCode: .keyP),
         ],
         [
-            .init(label: "A", keyCode: .keyA),
-            .init(label: "S", keyCode: .keyS),
-            .init(label: "D", keyCode: .keyD),
-            .init(label: "F", keyCode: .keyF),
-            .init(label: "G", keyCode: .keyG),
-            .init(label: "H", keyCode: .keyH),
-            .init(label: "J", keyCode: .keyJ),
-            .init(label: "K", keyCode: .keyK),
-            .init(label: "L", keyCode: .keyL),
-            .init(label: "⌫", keyCode: .deleteOrBackspace, symbolName: "delete.left"),
+            .init(label: "A",   keyCode: .keyA),
+            .init(label: "S",   keyCode: .keyS),
+            .init(label: "D",   keyCode: .keyD),
+            .init(label: "F",   keyCode: .keyF),
+            .init(label: "G",   keyCode: .keyG),
+            .init(label: "H",   keyCode: .keyH),
+            .init(label: "J",   keyCode: .keyJ),
+            .init(label: "K",   keyCode: .keyK),
+            .init(label: "L",   keyCode: .keyL),
+            .init(label: "DEL", keyCode: .deleteOrBackspace, symbolName: "delete.left"),
         ],
         [
-            .init(label: "⇧",   keyCode: .leftShift, isModifier: true, symbolName: "shift"),
-            .init(label: "Z",    keyCode: .keyZ),
-            .init(label: "X",    keyCode: .keyX),
-            .init(label: "C",    keyCode: .keyC),
-            .init(label: "V",    keyCode: .keyV),
-            .init(label: "B",    keyCode: .keyB),
-            .init(label: "N",    keyCode: .keyN),
-            .init(label: "M",    keyCode: .keyM),
-            .init(label: "RET",  keyCode: .returnOrEnter, widthMultiplier: 1.5, symbolName: "return"),
+            .init(label: "SHF", keyCode: .leftShift,    isModifier: true, symbolName: "shift"),
+            .init(label: "Z",   keyCode: .keyZ),
+            .init(label: "X",   keyCode: .keyX),
+            .init(label: "C",   keyCode: .keyC),
+            .init(label: "V",   keyCode: .keyV),
+            .init(label: "B",   keyCode: .keyB),
+            .init(label: "N",   keyCode: .keyN),
+            .init(label: "M",   keyCode: .keyM),
+            .init(label: "RET", keyCode: .returnOrEnter, widthMultiplier: 1.5, symbolName: "return"),
         ],
         [
             .init(label: "CTRL",  keyCode: .leftControl, isModifier: true, symbolName: "control"),
-            .init(label: "SPACE", keyCode: .spacebar, widthMultiplier: 4.0),
-            .init(label: "ESC",   keyCode: .escape, symbolName: "escape"),
+            .init(label: "SPACE", keyCode: .spacebar,    widthMultiplier: 4.0),
+            .init(label: "ESC",   keyCode: .escape,      symbolName: "escape"),
         ],
     ]
 
     // MARK: Function Row
 
-    /// Function key strip only.
     public static let functionRowLayout: [[VirtualKey]] = [
         [
             .init(label: "ESC", keyCode: .escape, symbolName: "escape"),
@@ -249,23 +244,10 @@ public enum VirtualKeyboardLayouts {
 
     // MARK: Commodore 64
 
-    /// Commodore 64 keyboard layout.
-    ///
-    /// Special key mappings (GCKeyCode proxy → RETRO_KEY):
-    /// - `RESTORE`  → `.printScreen`  (NMI trigger in VICE)
-    /// - `C=`       → `.leftGUI`      (Commodore key = LWIN/LMETA in HID)
-    /// - `CLR/HOME` → `.home`
-    /// - `INST/DEL` → `.deleteOrBackspace`
-    /// - `CRSR↓`   → `.downArrow`
-    /// - `CRSR→`   → `.rightArrow`
-    /// - `RUN/STOP` → `.escape`       (maps to RETROK_ESCAPE in VICE via HID)
-    ///
-    /// F1–F8 share four physical keys; F2/F4/F6/F8 require SHIFT.
-    /// They are represented here as separate virtual keys for touch accessibility.
     public static let c64Layout: [[VirtualKey]] = [
-        // Row 1: ← 1–0 + - £ CLR/HOME INST/DEL
+        // Row 1
         [
-            .init(label: "←",        keyCode: .graveAccentAndTilde),   // ← (left arrow char) = backtick/grave on HID
+            .init(label: "LT-ARR",   keyCode: .graveAccentAndTilde),
             .init(label: "1",         keyCode: .one),
             .init(label: "2",         keyCode: .two),
             .init(label: "3",         keyCode: .three),
@@ -276,13 +258,13 @@ public enum VirtualKeyboardLayouts {
             .init(label: "8",         keyCode: .eight),
             .init(label: "9",         keyCode: .nine),
             .init(label: "0",         keyCode: .zero),
-            .init(label: "+",         keyCode: .equalSign),             // + = equal sign on HID
+            .init(label: "+",         keyCode: .equalSign),
             .init(label: "-",         keyCode: .hyphen),
-            .init(label: "£",         keyCode: .scrollLock),            // £ — proxy: scrollLock (HID 0x47); remap in core bridge
-            .init(label: "CLR HOME",  keyCode: .home,    widthMultiplier: 1.5),
-            .init(label: "INST DEL",  keyCode: .deleteOrBackspace, widthMultiplier: 1.5, symbolName: "delete.left"),
+            .init(label: "GBP",       keyCode: .scrollLock),
+            .init(label: "CLR HOME",  keyCode: .home,              widthMultiplier: 1.5),
+            .init(label: "INST DEL",  keyCode: .deleteOrBackspace,  widthMultiplier: 1.5, symbolName: "delete.left"),
         ],
-        // Row 2: CTRL Q–P @ * ↑ RESTORE
+        // Row 2
         [
             .init(label: "CTRL",     keyCode: .leftControl, isModifier: true, widthMultiplier: 1.5, symbolName: "control"),
             .init(label: "Q",        keyCode: .keyQ),
@@ -295,15 +277,14 @@ public enum VirtualKeyboardLayouts {
             .init(label: "I",        keyCode: .keyI),
             .init(label: "O",        keyCode: .keyO),
             .init(label: "P",        keyCode: .keyP),
-            .init(label: "@",        keyCode: .openBracket),            // @ = [ position on HID
-            .init(label: "*",        keyCode: .closeBracket),           // * = ] position on HID
-            .init(label: "↑",        keyCode: .upArrow,   symbolName: "arrow.up"),   // ↑ (up arrow char)
-            // RESTORE triggers NMI — proxied to Print Screen key
-            .init(label: "RESTORE",  keyCode: .printScreen, widthMultiplier: 1.5),
+            .init(label: "@",        keyCode: .openBracket),
+            .init(label: "*",        keyCode: .closeBracket),
+            .init(label: "UP",       keyCode: .upArrow,     symbolName: "arrow.up"),
+            .init(label: "RESTORE",  keyCode: .printScreen,  widthMultiplier: 1.5),
         ],
-        // Row 3: RUN/STOP A–; : = RETURN
+        // Row 3
         [
-            .init(label: "RUN STOP", keyCode: .escape,   widthMultiplier: 1.5),     // RUN/STOP → RETROK_ESCAPE in VICE
+            .init(label: "RUN STOP", keyCode: .escape,        widthMultiplier: 1.5),
             .init(label: "A",        keyCode: .keyA),
             .init(label: "S",        keyCode: .keyS),
             .init(label: "D",        keyCode: .keyD),
@@ -313,15 +294,14 @@ public enum VirtualKeyboardLayouts {
             .init(label: "J",        keyCode: .keyJ),
             .init(label: "K",        keyCode: .keyK),
             .init(label: "L",        keyCode: .keyL),
-            .init(label: ":",        keyCode: .semicolon),               // : = ; position on HID
-            .init(label: ";",        keyCode: .quote),                   // ; = ' position on HID
-            // C64 "=" key — proxy: nonUSPound (HID 0x32); remap to correct RETRO_KEY in core bridge
+            .init(label: ":",        keyCode: .semicolon),
+            .init(label: ";",        keyCode: .quote),
             .init(label: "=",        keyCode: .nonUSPound),
             .init(label: "RETURN",   keyCode: .returnOrEnter, widthMultiplier: 2.0, symbolName: "return"),
         ],
-        // Row 4: C= (Commodore key) SHIFT Z–/ . , SHIFT CRSR↓ CRSR→
+        // Row 4
         [
-            .init(label: "C=",       keyCode: .leftGUI,    isModifier: true, widthMultiplier: 1.5), // Commodore key = LWIN
+            .init(label: "C=",       keyCode: .leftGUI,    isModifier: true, widthMultiplier: 1.5),
             .init(label: "SHIFT",    keyCode: .leftShift,  isModifier: true, widthMultiplier: 1.5, symbolName: "shift"),
             .init(label: "Z",        keyCode: .keyZ),
             .init(label: "X",        keyCode: .keyX),
@@ -334,10 +314,10 @@ public enum VirtualKeyboardLayouts {
             .init(label: ".",        keyCode: .period),
             .init(label: "/",        keyCode: .slash),
             .init(label: "SHIFT",    keyCode: .rightShift, isModifier: true, widthMultiplier: 1.5, symbolName: "shift"),
-            .init(label: "CRSR ↓",  keyCode: .downArrow,  symbolName: "arrow.down"),
-            .init(label: "CRSR →",  keyCode: .rightArrow, symbolName: "arrow.right"),
+            .init(label: "CRSR DN",  keyCode: .downArrow,  symbolName: "arrow.down"),
+            .init(label: "CRSR RT",  keyCode: .rightArrow, symbolName: "arrow.right"),
         ],
-        // Row 5: Function keys F1–F8 (F2/F4/F6/F8 are SHIFT+F1/F3/F5/F7 on real C64)
+        // Row 5: F keys
         [
             .init(label: "F1", keyCode: .F1),
             .init(label: "F2", keyCode: .F2),
@@ -348,7 +328,7 @@ public enum VirtualKeyboardLayouts {
             .init(label: "F7", keyCode: .F7),
             .init(label: "F8", keyCode: .F8),
         ],
-        // Row 6: SPACE bar
+        // Row 6: Space
         [
             .init(label: "SPACE", keyCode: .spacebar, widthMultiplier: 8.0),
         ],
@@ -356,17 +336,8 @@ public enum VirtualKeyboardLayouts {
 
     // MARK: ZX Spectrum
 
-    /// ZX Spectrum keyboard layout.
-    ///
-    /// Special key mappings:
-    /// - `CAPS SHIFT`   → `.leftShift`   (sticky modifier — combine with letters for control sequences)
-    /// - `SYMBOL SHIFT` → `.leftAlt`     (sticky modifier — used as proxy for SYMBOL SHIFT in libretro)
-    /// - `BREAK`        → `.pause`       (CAPS SHIFT + SPACE in hardware; proxied for touch convenience)
-    ///
-    /// Note: Keyword entry (PRINT, GOTO, etc.) requires the core to handle SYMBOL SHIFT combos.
-    /// The SYMBOL SHIFT modifier enables access to punctuation and keywords via the standard keys.
     public static let zxSpectrumLayout: [[VirtualKey]] = [
-        // Row 1: 1–0
+        // Row 1: 1-0
         [
             .init(label: "1", keyCode: .one),
             .init(label: "2", keyCode: .two),
@@ -379,7 +350,7 @@ public enum VirtualKeyboardLayouts {
             .init(label: "9", keyCode: .nine),
             .init(label: "0", keyCode: .zero),
         ],
-        // Row 2: Q–P
+        // Row 2: Q-P
         [
             .init(label: "Q", keyCode: .keyQ),
             .init(label: "W", keyCode: .keyW),
@@ -392,61 +363,49 @@ public enum VirtualKeyboardLayouts {
             .init(label: "O", keyCode: .keyO),
             .init(label: "P", keyCode: .keyP),
         ],
-        // Row 3: A–ENTER
+        // Row 3: A-ENTER
         [
-            .init(label: "A", keyCode: .keyA),
-            .init(label: "S", keyCode: .keyS),
-            .init(label: "D", keyCode: .keyD),
-            .init(label: "F", keyCode: .keyF),
-            .init(label: "G", keyCode: .keyG),
-            .init(label: "H", keyCode: .keyH),
-            .init(label: "J", keyCode: .keyJ),
-            .init(label: "K", keyCode: .keyK),
-            .init(label: "L", keyCode: .keyL),
+            .init(label: "A",     keyCode: .keyA),
+            .init(label: "S",     keyCode: .keyS),
+            .init(label: "D",     keyCode: .keyD),
+            .init(label: "F",     keyCode: .keyF),
+            .init(label: "G",     keyCode: .keyG),
+            .init(label: "H",     keyCode: .keyH),
+            .init(label: "J",     keyCode: .keyJ),
+            .init(label: "K",     keyCode: .keyK),
+            .init(label: "L",     keyCode: .keyL),
             .init(label: "ENTER", keyCode: .returnOrEnter, widthMultiplier: 1.5, symbolName: "return"),
         ],
-        // Row 4: CAPS SHIFT, Z–M, SYMBOL SHIFT, SPACE
+        // Row 4: CAPS SHIFT, Z-M, SYMBOL SHIFT, SPACE
         [
-            // CAPS SHIFT: sticky modifier for control characters and graphic chars
-            .init(label: "CAPS\nSHIFT",   keyCode: .leftShift,  isModifier: true, widthMultiplier: 1.75, symbolName: "shift"),
-            .init(label: "Z",             keyCode: .keyZ),
-            .init(label: "X",             keyCode: .keyX),
-            .init(label: "C",             keyCode: .keyC),
-            .init(label: "V",             keyCode: .keyV),
-            .init(label: "B",             keyCode: .keyB),
-            .init(label: "N",             keyCode: .keyN),
-            .init(label: "M",             keyCode: .keyM),
-            // SYMBOL SHIFT: sticky modifier for punctuation / keyword shortcuts
-            .init(label: "SYM\nSHIFT",   keyCode: .leftAlt,    isModifier: true, widthMultiplier: 1.75, symbolName: "option"),
-            // SPACE: doubles as BREAK when held with CAPS SHIFT
-            .init(label: "SPACE",         keyCode: .spacebar,   widthMultiplier: 2.0),
+            .init(label: "CAPS SHF",  keyCode: .leftShift, isModifier: true, widthMultiplier: 1.75, symbolName: "shift"),
+            .init(label: "Z",         keyCode: .keyZ),
+            .init(label: "X",         keyCode: .keyX),
+            .init(label: "C",         keyCode: .keyC),
+            .init(label: "V",         keyCode: .keyV),
+            .init(label: "B",         keyCode: .keyB),
+            .init(label: "N",         keyCode: .keyN),
+            .init(label: "M",         keyCode: .keyM),
+            .init(label: "SYM SHF",   keyCode: .leftAlt,   isModifier: true, widthMultiplier: 1.75, symbolName: "option"),
+            .init(label: "SPACE",     keyCode: .spacebar,  widthMultiplier: 2.0),
         ],
-        // Row 5: Convenience keys for common game controls + BREAK
+        // Row 5: Arrow keys + BREAK
         [
-            .init(label: "←",    keyCode: .leftArrow,  symbolName: "arrow.left"),   // CAPS+5
-            .init(label: "↓",    keyCode: .downArrow,  symbolName: "arrow.down"),   // CAPS+6
-            .init(label: "↑",    keyCode: .upArrow,    symbolName: "arrow.up"),     // CAPS+7
-            .init(label: "→",    keyCode: .rightArrow, symbolName: "arrow.right"),  // CAPS+8
-            .init(label: "DEL",  keyCode: .deleteOrBackspace,  symbolName: "delete.left"),  // CAPS+0
-            // BREAK: CAPS SHIFT + SPACE hardware combo, proxied to Pause key
-            .init(label: "BREAK", keyCode: .pause, widthMultiplier: 1.5),
+            .init(label: "LT",    keyCode: .leftArrow,       symbolName: "arrow.left"),
+            .init(label: "DN",    keyCode: .downArrow,       symbolName: "arrow.down"),
+            .init(label: "UP",    keyCode: .upArrow,         symbolName: "arrow.up"),
+            .init(label: "RT",    keyCode: .rightArrow,      symbolName: "arrow.right"),
+            .init(label: "DEL",   keyCode: .deleteOrBackspace, symbolName: "delete.left"),
+            .init(label: "BREAK", keyCode: .pause,           widthMultiplier: 1.5),
         ],
     ]
 
     // MARK: Amstrad CPC
 
-    /// Amstrad CPC keyboard layout.
-    ///
-    /// Special key mappings:
-    /// - CPC function keys f0–f9 → F1–F10 (note CPC uses f0, not F10, for the tenth function key)
-    /// - `CLR`  → `.home`
-    /// - `CPY`  → `.pageUp`         (Copy key, no direct HID equivalent)
-    /// - `DEL`  → `.deleteForward`  (Forward delete)
-    /// - Numeric keypad included for CPC keypad support
     public static let amstradCPCLayout: [[VirtualKey]] = [
-        // Row 1: ESC 1–0 - = DEL CLR
+        // Row 1
         [
-            .init(label: "ESC",  keyCode: .escape,              symbolName: "escape"),
+            .init(label: "ESC",  keyCode: .escape,       symbolName: "escape"),
             .init(label: "1",    keyCode: .one),
             .init(label: "2",    keyCode: .two),
             .init(label: "3",    keyCode: .three),
@@ -459,12 +418,12 @@ public enum VirtualKeyboardLayouts {
             .init(label: "0",    keyCode: .zero),
             .init(label: "-",    keyCode: .hyphen),
             .init(label: "=",    keyCode: .equalSign),
-            .init(label: "DEL",  keyCode: .deleteForward,       widthMultiplier: 1.5, symbolName: "delete.forward"),
-            .init(label: "CLR",  keyCode: .home,                widthMultiplier: 1.5),
+            .init(label: "DEL",  keyCode: .deleteForward,  widthMultiplier: 1.5, symbolName: "delete.forward"),
+            .init(label: "CLR",  keyCode: .home,           widthMultiplier: 1.5),
         ],
-        // Row 2: TAB Q–P [ ] RETURN CPY
+        // Row 2
         [
-            .init(label: "TAB",    keyCode: .tab,                widthMultiplier: 1.5, symbolName: "arrow.right.to.line"),
+            .init(label: "TAB",    keyCode: .tab,          widthMultiplier: 1.5, symbolName: "arrow.right.to.line"),
             .init(label: "Q",      keyCode: .keyQ),
             .init(label: "W",      keyCode: .keyW),
             .init(label: "E",      keyCode: .keyE),
@@ -477,13 +436,12 @@ public enum VirtualKeyboardLayouts {
             .init(label: "P",      keyCode: .keyP),
             .init(label: "[",      keyCode: .openBracket),
             .init(label: "]",      keyCode: .closeBracket),
-            .init(label: "RETURN", keyCode: .returnOrEnter,      widthMultiplier: 1.5, symbolName: "return"),
-            // CPY (Copy) — no direct HID equivalent; proxied to Page Up
-            .init(label: "CPY",    keyCode: .pageUp,             widthMultiplier: 1.0),
+            .init(label: "RETURN", keyCode: .returnOrEnter, widthMultiplier: 1.5, symbolName: "return"),
+            .init(label: "CPY",    keyCode: .pageUp),
         ],
-        // Row 3: CAPS A–; : @ RETURN (right side)
+        // Row 3
         [
-            .init(label: "CAPS",   keyCode: .capsLock,           isModifier: true, widthMultiplier: 1.5, symbolName: "capslock"),
+            .init(label: "CAPS",   keyCode: .capsLock,     isModifier: true, widthMultiplier: 1.5, symbolName: "capslock"),
             .init(label: "A",      keyCode: .keyA),
             .init(label: "S",      keyCode: .keyS),
             .init(label: "D",      keyCode: .keyD),
@@ -494,10 +452,10 @@ public enum VirtualKeyboardLayouts {
             .init(label: "K",      keyCode: .keyK),
             .init(label: "L",      keyCode: .keyL),
             .init(label: ";",      keyCode: .semicolon),
-            .init(label: ":",      keyCode: .quote),              // : is at quote position
-            .init(label: "@",      keyCode: .backslash),          // @ is at backslash position on CPC
+            .init(label: ":",      keyCode: .quote),
+            .init(label: "@",      keyCode: .backslash),
         ],
-        // Row 4: SHIFT Z–/ . , \ SHIFT ↑
+        // Row 4
         [
             .init(label: "SHIFT",  keyCode: .leftShift,  isModifier: true, widthMultiplier: 1.75, symbolName: "shift"),
             .init(label: "Z",      keyCode: .keyZ),
@@ -510,23 +468,21 @@ public enum VirtualKeyboardLayouts {
             .init(label: ",",      keyCode: .comma),
             .init(label: ".",      keyCode: .period),
             .init(label: "/",      keyCode: .slash),
-            .init(label: "\\",     keyCode: .nonUSBackslash),
+            .init(label: "BSLSH",  keyCode: .nonUSBackslash),
             .init(label: "SHIFT",  keyCode: .rightShift, isModifier: true, widthMultiplier: 1.75, symbolName: "shift"),
-            .init(label: "↑",      keyCode: .upArrow,    symbolName: "arrow.up"),
+            .init(label: "UP",     keyCode: .upArrow,    symbolName: "arrow.up"),
         ],
-        // Row 5: CTRL ALT SPACE ALT DEL ← ↓ →
+        // Row 5
         [
             .init(label: "CTRL",   keyCode: .leftControl, isModifier: true, symbolName: "control"),
             .init(label: "SPACE",  keyCode: .spacebar,    widthMultiplier: 5.0),
             .init(label: "ALT",    keyCode: .leftAlt,     isModifier: true, symbolName: "option"),
-            .init(label: "⌫",     keyCode: .deleteOrBackspace, symbolName: "delete.left"),
-            .init(label: "←",     keyCode: .leftArrow,   symbolName: "arrow.left"),
-            .init(label: "↓",     keyCode: .downArrow,   symbolName: "arrow.down"),
-            .init(label: "→",     keyCode: .rightArrow,  symbolName: "arrow.right"),
+            .init(label: "DEL",    keyCode: .deleteOrBackspace, symbolName: "delete.left"),
+            .init(label: "LT",     keyCode: .leftArrow,   symbolName: "arrow.left"),
+            .init(label: "DN",     keyCode: .downArrow,   symbolName: "arrow.down"),
+            .init(label: "RT",     keyCode: .rightArrow,  symbolName: "arrow.right"),
         ],
-        // Row 6: CPC function keys f0–f9
-        // CPC labels f0 through f9 (f0 is the tenth function key, not F10 in the PC sense)
-        // Mapped to F1–F10 GCKeyCodes as the closest HID equivalents
+        // Row 6: CPC function keys f0-f9 (mapped to F1-F10)
         [
             .init(label: "f0", keyCode: .F1),
             .init(label: "f1", keyCode: .F2),
@@ -541,18 +497,18 @@ public enum VirtualKeyboardLayouts {
         ],
         // Row 7: Numeric keypad
         [
-            .init(label: "7", keyCode: .keypad7),
-            .init(label: "8", keyCode: .keypad8),
-            .init(label: "9", keyCode: .keypad9),
-            .init(label: "4", keyCode: .keypad4),
-            .init(label: "5", keyCode: .keypad5),
-            .init(label: "6", keyCode: .keypad6),
-            .init(label: "1", keyCode: .keypad1),
-            .init(label: "2", keyCode: .keypad2),
-            .init(label: "3", keyCode: .keypad3),
-            .init(label: "0", keyCode: .keypad0, widthMultiplier: 2.0),
-            .init(label: ".", keyCode: .keypadPeriod),
-            .init(label: "↵", keyCode: .keypadEnter, symbolName: "return"),
+            .init(label: "7",  keyCode: .keypad7),
+            .init(label: "8",  keyCode: .keypad8),
+            .init(label: "9",  keyCode: .keypad9),
+            .init(label: "4",  keyCode: .keypad4),
+            .init(label: "5",  keyCode: .keypad5),
+            .init(label: "6",  keyCode: .keypad6),
+            .init(label: "1",  keyCode: .keypad1),
+            .init(label: "2",  keyCode: .keypad2),
+            .init(label: "3",  keyCode: .keypad3),
+            .init(label: "0",  keyCode: .keypad0,     widthMultiplier: 2.0),
+            .init(label: ".",  keyCode: .keypadPeriod),
+            .init(label: "ENT", keyCode: .keypadEnter, symbolName: "return"),
         ],
     ]
 }

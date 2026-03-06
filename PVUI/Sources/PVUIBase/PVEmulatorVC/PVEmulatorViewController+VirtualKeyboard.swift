@@ -1,147 +1,145 @@
+// PVEmulatorViewController+VirtualKeyboard.swift
+// PVUI
 //
-//  PVEmulatorViewController+VirtualKeyboard.swift
-//  PVUI
+// Presentation logic for the SwiftUI virtual keyboard overlay.
+// The keyboard is added as a child UIHostingController so it floats
+// over the game without interrupting emulation or presenting a modal.
 //
-//  Created by Claude on behalf of Provenance Emu.
-//  Copyright © 2025 Provenance Emu. All rights reserved.
+// Cores advertise keyboard support via the KeyboardResponder protocol
+// property `gameSupportsKeyboard`. The keyboard button in the pause
+// menu is shown only when that property is `true`.
 //
+// Copyright © 2026 Provenance Emu. All rights reserved.
 
-#if canImport(UIKit) && !os(tvOS)
+#if !os(tvOS)
 import UIKit
+import SwiftUI
+import GameController
 import PVCoreBridge
 import PVLogging
-import GameController
 
-// MARK: - Stored Properties via Association
+// MARK: - Associated-object keys
 
-private enum VirtualKeyboardAssoc {
-    static var keyboardView: UInt8 = 0
-    static var mouseOverlayView: UInt8 = 0
-    static var isKeyboardVisible: UInt8 = 0
+private enum AssociatedKeys {
+    static var keyboardHostingVC: UInt8 = 0
+    static var keyboardViewModel: UInt8 = 0
 }
 
 // MARK: - PVEmulatorViewController + VirtualKeyboard
 
-@available(iOS 14.0, *)
-extension PVEmulatorViewController: VirtualKeyboardViewDelegate {
+@MainActor
+extension PVEmulatorViewController {
 
-    // MARK: - Stored Property Accessors
+    // MARK: - Stored properties via Objective-C associated objects
 
-    /// The on-screen keyboard overlay, lazily created on first access.
-    var virtualKeyboardView: VirtualKeyboardView? {
-        get { objc_getAssociatedObject(self, &VirtualKeyboardAssoc.keyboardView) as? VirtualKeyboardView }
-        set { objc_setAssociatedObject(self, &VirtualKeyboardAssoc.keyboardView, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    /// The UIHostingController wrapping the VirtualKeyboardView, if currently presented.
+    private var virtualKeyboardHostingVC: UIHostingController<AnyView>? {
+        get {
+            objc_getAssociatedObject(self, &AssociatedKeys.keyboardHostingVC)
+                as? UIHostingController<AnyView>
+        }
+        set {
+            objc_setAssociatedObject(
+                self, &AssociatedKeys.keyboardHostingVC,
+                newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
     }
 
-    /// The mouse cursor overlay, lazily created on first access.
-    var mouseCursorOverlayView: MouseCursorOverlayView? {
-        get { objc_getAssociatedObject(self, &VirtualKeyboardAssoc.mouseOverlayView) as? MouseCursorOverlayView }
-        set { objc_setAssociatedObject(self, &VirtualKeyboardAssoc.mouseOverlayView, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    /// The view model backing the keyboard overlay.
+    private var virtualKeyboardViewModel: VirtualKeyboardViewModel? {
+        get {
+            objc_getAssociatedObject(self, &AssociatedKeys.keyboardViewModel)
+                as? VirtualKeyboardViewModel
+        }
+        set {
+            objc_setAssociatedObject(
+                self, &AssociatedKeys.keyboardViewModel,
+                newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
     }
 
-    /// Whether the virtual keyboard is currently visible.
+    // MARK: - Public interface
+
+    /// Whether the emulator core reports keyboard support.
+    public var coreSupportsVirtualKeyboard: Bool {
+        (core as? KeyboardResponder)?.gameSupportsKeyboard == true
+    }
+
+    /// Whether the emulator core requires the keyboard to be shown automatically on launch.
+    public var coreRequiresVirtualKeyboard: Bool {
+        (core as? KeyboardResponder)?.requiresKeyboard == true
+    }
+
+    /// Whether the virtual keyboard overlay is currently visible.
     public var isVirtualKeyboardVisible: Bool {
-        get { (objc_getAssociatedObject(self, &VirtualKeyboardAssoc.isKeyboardVisible) as? NSNumber)?.boolValue ?? false }
-        set { objc_setAssociatedObject(self, &VirtualKeyboardAssoc.isKeyboardVisible, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        virtualKeyboardHostingVC != nil
     }
-
-    // MARK: - Capability Checks
-
-    /// Whether the running core supports a virtual keyboard.
-    var coreSupportsVirtualKeyboard: Bool {
-        (core as? KeyboardResponder)?.gameSupportsKeyboard ?? false
-    }
-
-    /// Whether the running core requires the virtual keyboard to be shown automatically.
-    var coreRequiresVirtualKeyboard: Bool {
-        (core as? KeyboardResponder)?.requiresKeyboard ?? false
-    }
-
-    /// Whether the running core supports virtual mouse input.
-    var coreSupportsMouse: Bool {
-        (core as? MouseResponder)?.gameSupportsMouse ?? false
-    }
-
-    // MARK: - Lifecycle
 
     /// Call this after the core has started and the view hierarchy is ready.
-    /// It will auto-show the keyboard overlay if the core requires it and
-    /// add the mouse overlay if the core supports mouse input.
+    /// Auto-shows the keyboard if the core requires it.
     public func setupVirtualInputOverlaysIfNeeded() {
-        if coreSupportsMouse {
-            showMouseCursorOverlay()
-        }
         if coreRequiresVirtualKeyboard {
-            showVirtualKeyboard(animated: false)
+            showVirtualKeyboard()
         }
     }
 
-    /// Tears down both overlays.  Call from `viewWillDisappear` or `deinit`.
+    /// Tears down the keyboard overlay. Call from `viewWillDisappear` or `deinit`.
     public func removeVirtualInputOverlays() {
-        virtualKeyboardView?.removeFromSuperview()
-        virtualKeyboardView = nil
-        mouseCursorOverlayView?.removeFromSuperview()
-        mouseCursorOverlayView = nil
-        isVirtualKeyboardVisible = false
+        hideVirtualKeyboard()
     }
 
-    // MARK: - Virtual Keyboard
+    /// Show the virtual keyboard overlay.
+    /// Does nothing if the core does not support keyboard input or if already visible.
+    public func showVirtualKeyboard() {
+        guard !isVirtualKeyboardVisible else { return }
 
-    /// Shows the on-screen keyboard overlay without pausing emulation.
-    public func showVirtualKeyboard(animated: Bool = true) {
-        guard coreSupportsVirtualKeyboard else {
-            DLOG("[VirtualKeyboard] Core does not support virtual keyboard, skipping.")
-            return
+        let viewModel = VirtualKeyboardViewModel()
+        viewModel.delegate = self
+        viewModel.dismissAction = { [weak self] in
+            self?.hideVirtualKeyboard()
         }
+        virtualKeyboardViewModel = viewModel
 
-        if virtualKeyboardView == nil {
-            let kbView = VirtualKeyboardView()
-            kbView.delegate = self
-            kbView.translatesAutoresizingMaskIntoConstraints = false
-            kbView.alpha = 0
-            view.addSubview(kbView)
+        let keyboardView = VirtualKeyboardView(viewModel: viewModel)
+        let hostingVC = UIHostingController(rootView: AnyView(keyboardView))
+        hostingVC.view.backgroundColor = .clear
+        hostingVC.view.isOpaque = false
 
-            let keyboardHeight: CGFloat = 200
-            NSLayoutConstraint.activate([
-                kbView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                kbView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                kbView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                kbView.heightAnchor.constraint(equalToConstant: keyboardHeight)
-            ])
-            virtualKeyboardView = kbView
-        }
+        addChild(hostingVC)
+        view.addSubview(hostingVC.view)
+        hostingVC.didMove(toParent: self)
 
-        isVirtualKeyboardVisible = true
+        hostingVC.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hostingVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingVC.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
 
-        let show = {
-            self.virtualKeyboardView?.alpha = 1
-        }
-
-        if animated {
-            UIView.animate(withDuration: 0.25, animations: show)
-        } else {
-            show()
-        }
-
-        ILOG("[VirtualKeyboard] Virtual keyboard shown.")
+        virtualKeyboardHostingVC = hostingVC
+        ILOG("[VirtualKeyboard] Keyboard overlay shown")
     }
 
-    /// Hides the on-screen keyboard overlay without pausing emulation.
-    public func hideVirtualKeyboard(animated: Bool = true) {
-        guard let kbView = virtualKeyboardView else { return }
+    /// Hide the virtual keyboard overlay, releasing all held keys first.
+    public func hideVirtualKeyboard() {
+        guard let hostingVC = virtualKeyboardHostingVC else { return }
 
-        isVirtualKeyboardVisible = false
+        // Release all held/modifier keys so the emulator doesn't see stuck keys
+        virtualKeyboardViewModel?.releaseAllKeys()
 
-        if animated {
-            UIView.animate(withDuration: 0.2) { kbView.alpha = 0 }
-        } else {
-            kbView.alpha = 0
-        }
+        hostingVC.willMove(toParent: nil)
+        hostingVC.view.removeFromSuperview()
+        hostingVC.removeFromParent()
 
-        ILOG("[VirtualKeyboard] Virtual keyboard hidden.")
+        virtualKeyboardHostingVC = nil
+        virtualKeyboardViewModel = nil
+        ILOG("[VirtualKeyboard] Keyboard overlay hidden")
     }
 
-    /// Toggles the on-screen keyboard overlay.
+    /// Toggle keyboard visibility.
     public func toggleVirtualKeyboard() {
         if isVirtualKeyboardVisible {
             hideVirtualKeyboard()
@@ -149,40 +147,28 @@ extension PVEmulatorViewController: VirtualKeyboardViewDelegate {
             showVirtualKeyboard()
         }
     }
+}
 
-    // MARK: - Mouse Cursor Overlay
+// MARK: - VirtualKeyboardDelegate
 
-    func showMouseCursorOverlay() {
-        guard coreSupportsMouse else { return }
+extension PVEmulatorViewController: VirtualKeyboardDelegate {
 
-        if mouseCursorOverlayView == nil {
-            let overlay = MouseCursorOverlayView()
-            overlay.translatesAutoresizingMaskIntoConstraints = false
-            // Forward events to the core
-            overlay.mouseCore = core as? MouseResponder
-            view.addSubview(overlay)
-
-            NSLayoutConstraint.activate([
-                overlay.topAnchor.constraint(equalTo: view.topAnchor),
-                overlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                overlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                // Leave space for the keyboard when it is visible
-                overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
-            mouseCursorOverlayView = overlay
-        }
-
-        ILOG("[VirtualKeyboard] Mouse cursor overlay shown.")
+    @available(iOS 14.0, *)
+    public func virtualKeyboard(
+        _ keyboard: VirtualKeyboardViewModel,
+        keyDown keyCode: GCKeyCode
+    ) {
+        guard let keyboardResponder = core as? KeyboardResponder else { return }
+        keyboardResponder.keyDown(keyCode)
     }
 
-    // MARK: - VirtualKeyboardViewDelegate
-
-    public func virtualKeyboard(_ keyboard: VirtualKeyboardView, keyDown keyCode: GCKeyCode) {
-        (core as? KeyboardResponder)?.keyDown(keyCode)
-    }
-
-    public func virtualKeyboard(_ keyboard: VirtualKeyboardView, keyUp keyCode: GCKeyCode) {
-        (core as? KeyboardResponder)?.keyUp(keyCode)
+    @available(iOS 14.0, *)
+    public func virtualKeyboard(
+        _ keyboard: VirtualKeyboardViewModel,
+        keyUp keyCode: GCKeyCode
+    ) {
+        guard let keyboardResponder = core as? KeyboardResponder else { return }
+        keyboardResponder.keyUp(keyCode)
     }
 }
-#endif
+#endif // !os(tvOS)

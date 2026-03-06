@@ -387,8 +387,14 @@ struct RetroMenuView: View {
 
     /// Check if core has features that warrant a CORE tab
     private var hasCoreFeatures: Bool {
-        emulatorVC.core is CoreOptional ||
+        #if !os(tvOS)
+        return emulatorVC.core is CoreOptional ||
+        (emulatorVC.core as? CoreActions)?.coreActions != nil ||
+        emulatorVC.coreSupportsVirtualKeyboard
+        #else
+        return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil
+        #endif
     }
 
     /// Whether the game qualifies for a save on quit based on play time and auto-save settings.
@@ -501,6 +507,23 @@ struct RetroMenuView: View {
                     }
                 }
             }
+
+            // Virtual keyboard button (iOS only, when core supports keyboard)
+            #if !os(tvOS)
+            if emulatorVC.coreSupportsVirtualKeyboard {
+                menuButton(
+                    title: emulatorVC.isVirtualKeyboardVisible ? "HIDE KEYBOARD" : "VIRTUAL KEYBOARD",
+                    icon: "keyboard",
+                    color: palette.defaultTintColor.swiftUIColor
+                ) {
+                    dismissAction(false)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        emulatorVC.toggleVirtualKeyboard()
+                        emulatorVC.core.setPauseEmulation(false)
+                    }
+                }
+            }
+            #endif
 
             // If no core features available, show message
             if !hasCoreFeatures {
