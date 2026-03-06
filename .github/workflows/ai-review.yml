@@ -12,13 +12,10 @@ name: AI Code Review
 #   After 3 review cycles (or APPROVE): assigns @JoeMatt for final review
 
 on:
-  push:
-    branches:
-      - 'agent/**'
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'PR number to review (manual trigger)'
+        description: 'PR number to review'
         required: true
         type: string
 
@@ -54,21 +51,11 @@ jobs:
         run: |
           set -e
 
-          # ── Resolve PR number ──────────────────────────────────────────────
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            PR_NUMBER="${{ github.event.inputs.pr_number }}"
-          else
-            PR_JSON=$(gh pr list \
-              --head "${{ github.ref_name }}" \
-              --state open \
-              --json number,title \
-              --jq '.[0]' \
-              --repo "${{ github.repository }}" 2>/dev/null || echo "{}")
-            PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number // empty')
-          fi
+          # PR number always comes from workflow_dispatch input
+          PR_NUMBER="${{ github.event.inputs.pr_number }}"
 
           if [ -z "$PR_NUMBER" ]; then
-            echo "No open PR found for branch ${{ github.ref_name }}. Skipping."
+            echo "No PR number provided. Skipping."
             echo "should_review=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -79,16 +66,7 @@ jobs:
 
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           echo "pr_title=$PR_TITLE"   >> "$GITHUB_OUTPUT"
-
-          # ── Auto-review gate: only [Agent] PRs on push; any PR on manual ──
-          if [ "${{ github.event_name }}" = "push" ] \
-            && ! echo "$PR_TITLE" | grep -q "^\[Agent\]"; then
-            echo "Not an [Agent] PR — skipping auto-review."
-            echo "should_review=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          echo "should_review=true" >> "$GITHUB_OUTPUT"
+          echo "should_review=true"   >> "$GITHUB_OUTPUT"
 
           # ── Model selection heuristics (no extra API call needed) ──────────
           # Fetch diff stats

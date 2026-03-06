@@ -1,0 +1,55 @@
+name: AI Review Trigger
+
+# Lightweight trigger: catches push events on agent/** branches,
+# finds the associated PR, and dispatches ai-review.yml via workflow_dispatch.
+# This indirection is needed because claude-code-action@v1 does not support
+# push event contexts — it requires issue_comment, pull_request, or workflow_dispatch.
+
+on:
+  push:
+    branches:
+      - 'agent/**'
+
+permissions:
+  contents: read
+  actions: write   # To dispatch ai-review.yml
+
+jobs:
+  dispatch:
+    name: Find PR & dispatch review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find open PR and dispatch ai-review.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+
+          BRANCH="${{ github.ref_name }}"
+          REPO="${{ github.repository }}"
+
+          PR_JSON=$(gh pr list \
+            --head "$BRANCH" \
+            --state open \
+            --json number,title \
+            --jq '.[0]' \
+            --repo "$REPO" 2>/dev/null || echo "{}")
+
+          PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number // empty')
+          PR_TITLE=$(echo "$PR_JSON"  | jq -r '.title  // empty')
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR found for branch $BRANCH — skipping review dispatch."
+            exit 0
+          fi
+
+          # Auto-review only [Agent] PRs on push
+          if ! echo "$PR_TITLE" | grep -q "^\[Agent\]"; then
+            echo "PR #$PR_NUMBER is not an [Agent] PR — skipping auto-review."
+            exit 0
+          fi
+
+          echo "Dispatching AI review for PR #$PR_NUMBER ($PR_TITLE)"
+          gh workflow run ai-review.yml \
+            --repo "$REPO" \
+            -f pr_number="$PR_NUMBER"
