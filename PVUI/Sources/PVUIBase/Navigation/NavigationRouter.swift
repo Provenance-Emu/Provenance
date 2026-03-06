@@ -97,7 +97,7 @@ public final class NavigationRouter: ObservableObject {
 
     private var providers: [WeakProviderBox] = []
 
-    private init() {}
+    public init() {}
 
     // MARK: - Provider Registration
 
@@ -175,16 +175,16 @@ public final class NavigationRouter: ObservableObject {
 
     /// Stores a `RouteProvider` weakly using a separate AnyObject reference.
     private final class WeakProviderBox {
-        private(set) weak var _object: AnyObject?
+        private(set) weak var weakObject: AnyObject?
         let objectIdentifier: ObjectIdentifier
         /// The name captured at registration time so we can log even after dealloc.
         let capturedName: String
 
-        var provider: (any RouteProvider)? { _object as? any RouteProvider }
-        var isExpired: Bool { _object == nil }
+        var provider: (any RouteProvider)? { weakObject as? any RouteProvider }
+        var isExpired: Bool { weakObject == nil }
 
         init(_ provider: any RouteProvider) {
-            self._object = provider
+            self.weakObject = provider
             self.objectIdentifier = ObjectIdentifier(provider)
             self.capturedName = provider.routeProviderName
         }
