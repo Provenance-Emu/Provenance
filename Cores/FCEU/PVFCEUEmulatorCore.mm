@@ -89,6 +89,8 @@ static const float kFCMicThreshold = 0.015f;
     // Famicom microphone support
 #if !TARGET_OS_TV
     AVAudioEngine *_micEngine;
+    AVAudioSessionCategory _savedSessionCategory;
+    AVAudioSessionCategoryOptions _savedSessionOptions;
 #endif
     _Atomic(BOOL) _micAudioActive;  // set by audio tap; applied in executeFrame
 }
@@ -471,8 +473,13 @@ void FCEUD_Message(const char *s)
         typeof(self) strongSelf = weakSelf;
         if (!strongSelf) return;
 
-        NSError *sessionError = nil;
         AVAudioSession *session = [AVAudioSession sharedInstance];
+        // Save current session state so we can restore it when mic monitoring stops,
+        // preventing disruption to the emulator's existing audio output pipeline.
+        strongSelf->_savedSessionCategory = session.category;
+        strongSelf->_savedSessionOptions  = session.categoryOptions;
+
+        NSError *sessionError = nil;
         [session setCategory:AVAudioSessionCategoryPlayAndRecord
                  withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker |
                              AVAudioSessionCategoryOptionMixWithOthers
@@ -547,6 +554,19 @@ void FCEUD_Message(const char *s)
         [_micEngine.inputNode removeTapOnBus:0];
         [_micEngine stop];
         _micEngine = nil;
+
+        // Restore the audio session category that was in effect before we switched
+        // to PlayAndRecord, so the emulator's audio pipeline is not permanently affected.
+        if (_savedSessionCategory) {
+            NSError *restoreError = nil;
+            [[AVAudioSession sharedInstance] setCategory:_savedSessionCategory
+                                             withOptions:_savedSessionOptions
+                                                   error:&restoreError];
+            if (restoreError) {
+                WLOG(@"[FCEU] Failed to restore AVAudioSession: %@", restoreError.localizedDescription);
+            }
+            _savedSessionCategory = nil;
+        }
     }
     _micAudioActive = NO;
     pad[1][0] &= ~kFCMicBit;
