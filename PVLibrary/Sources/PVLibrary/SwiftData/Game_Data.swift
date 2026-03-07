@@ -197,4 +197,21 @@ public extension Game_Data {
     var genresArray: [String] {
         genres?.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) } ?? []
     }
+
+    /// Generate mock `Game_Data` objects for Simulator previews and UI testing.
+    ///
+    /// Unlike the Realm equivalent, SwiftData objects do not need to be inserted
+    /// into a `ModelContext` before use — they can be passed directly to views.
+    /// Insert into a context only if persistence or relationship traversal is needed.
+    static func mockGenerate(systemID: String? = nil, count: Int = 10) -> [Game_Data] {
+        let systemIdentifier = systemID ?? "mock.system"
+        return (1...count).map { index in
+            Game_Data(
+                title: "Mock Game \(index)",
+                systemIdentifier: systemIdentifier,
+                md5Hash: UUID().uuidString,
+                publishDate: "\(1980 + index)"
+            )
+        }
+    }
 }
