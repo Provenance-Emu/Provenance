@@ -78,14 +78,17 @@ public actor LibretroCheatDatabase {
         let tableCount = try conn.scalar("SELECT COUNT(*) FROM sqlite_master WHERE type='table'") as? Int64 ?? 0
         DLOG("LibretroCheatDatabase: Connected (\(tableCount) tables) at \(dbPath)")
 
-        // Check whether the games table has an md5 column.
-        // The column is only present when the DB is generated with --dat-dir.
-        let md5Count = (try? conn.scalar(
-            "SELECT COUNT(*) FROM pragma_table_info('games') WHERE name='md5'"
+        // Check whether the games table has any populated MD5 values.
+        // The md5 column always exists in the schema, but values are only
+        // populated when the DB is generated with --dat-dir. Use a data-presence
+        // check (not column-existence) so the warning fires correctly and
+        // unnecessary MD5 queries are skipped when no hash data is available.
+        let md5DataCount = (try? conn.scalar(
+            "SELECT EXISTS(SELECT 1 FROM games WHERE md5 IS NOT NULL)"
         ) as? Int64) ?? 0
-        hasMD5Column = md5Count > 0
+        hasMD5Column = md5DataCount > 0
         if !hasMD5Column {
-            WLOG("LibretroCheatDatabase: 'md5' column absent from games table — MD5 lookup disabled, falling back to title-only search")
+            WLOG("LibretroCheatDatabase: No MD5 data in games table — DB was generated without --dat-dir; MD5 lookup disabled, falling back to title-only search")
         }
 
         return conn
