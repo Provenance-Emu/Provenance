@@ -164,6 +164,7 @@ jobs:
           # ZipArchive: custom commit not available on public remote — clone public instead
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
             echo "ZipArchive shallow init failed (custom commit). Cloning public remote..."
+            rm -rf Dependencies/ZipArchive
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
           fi
 
