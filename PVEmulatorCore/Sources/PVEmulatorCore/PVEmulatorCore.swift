@@ -73,10 +73,11 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
         get { bridge.controller8 }
         set { bridge.controller8 = newValue; registerControllerForHaptics(newValue, player: 7) } }
 
-    @MainActor
     private func registerControllerForHaptics(_ controller: GCController?, player: Int) {
         if #available(iOS 14.0, tvOS 14.0, *) {
-            GCControllerHapticsManager.shared.register(controller: controller, forPlayer: player)
+            Task { @MainActor in
+                GCControllerHapticsManager.shared.register(controller: controller, forPlayer: player)
+            }
         }
     }
 #endif

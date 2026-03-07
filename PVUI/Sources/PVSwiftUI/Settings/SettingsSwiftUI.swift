@@ -1666,7 +1666,28 @@ private struct ControllerSection: View {
                            subtitle: "Vibrate when pressing buttons.",
                            icon: .sfSymbol("iphone.radiowaves.left.and.right"))
             }
+            #endif
 
+            // On tvOS, always show Controller Rumble Intensity since external controllers
+            // (DualSense, Xbox) are the primary input and phone haptic toggle is absent.
+            // On iOS/iPadOS, gate it behind the Haptic Feedback toggle.
+            #if os(tvOS)
+            Section(header: Text("Controller Rumble")) {
+                VStack(alignment: .leading, spacing: 4) {
+                    SettingsRow(title: "Controller Rumble Intensity",
+                                subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
+                                icon: .sfSymbol("waveform.path"))
+                    Slider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
+                        Text("Intensity")
+                    } minimumValueLabel: {
+                        Image(systemName: "speaker")
+                    } maximumValueLabel: {
+                        Image(systemName: "speaker.wave.3")
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            #else
             if hapticFeedback {
                 Section(header: Text("Controller Rumble")) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -1684,6 +1705,8 @@ private struct ControllerSection: View {
                     }
                 }
             }
+            #endif
+            #if !os(tvOS)
             OnScreenControllerSection()
             #endif
         }

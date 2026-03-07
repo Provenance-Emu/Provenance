@@ -9,6 +9,9 @@ import Foundation
 #if canImport(UIKit)
 import UIKit
 #endif
+#if canImport(AudioToolbox)
+import AudioToolbox
+#endif
 
 #if canImport(GameController)
 import GameController
@@ -155,16 +158,11 @@ public extension EmulatorCoreRumbleDataSource {
 
     @MainActor func rumblePhone() {
 #if os(iOS) && !targetEnvironment(macCatalyst)
-        // Use CHHapticEngine via HapticsManager if available; fall back to system vibration.
-        if #available(iOS 14.0, *) {
-            rumble(player: 0)
+        let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
+        if deviceHasHaptic {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         } else {
-            let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
-            if deviceHasHaptic {
-                let generator = UIImpactFeedbackGenerator(style: .heavy)
-                generator.prepare()
-                generator.impactOccurred()
-            }
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         }
 #endif
     }

@@ -411,12 +411,5 @@ public enum AdaptiveTriggerProfile {
     case soft
 }
 
-// MARK: - GCHapticsLocality Hashable (needed for dictionary keys on older SDKs)
-
-extension GCHapticsLocality: @retroactive Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.rawValue)
-    }
-}
 
 #endif // canImport(GameController) && canImport(CoreHaptics)
