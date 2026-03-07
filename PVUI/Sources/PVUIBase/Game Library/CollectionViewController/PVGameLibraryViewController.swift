@@ -811,6 +811,8 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         if segue.identifier == "SettingsSegue" {
             let settingsVC = (segue.destination as! UINavigationController).topViewController as! PVSettingsViewController
             settingsVC.conflictsController = updatesController
+            // PVMenuDelegate conformance is provided retroactively by PVSwiftUI; cast is nil on
+            // non-SwiftUI hosts but PVSettingsViewController falls back to NotificationCenter in that case.
             settingsVC.menuDelegate = self as? PVMenuDelegate
         } else if segue.identifier == "SplitSettingsSegue" {
 #if os(tvOS)

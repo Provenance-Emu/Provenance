@@ -814,7 +814,11 @@ public final class PVSettingsViewController: QuickTableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Scan", comment: ""),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
-            self.menuDelegate?.didTapScanROMs()
+            if let delegate = self.menuDelegate {
+                delegate.didTapScanROMs()
+            } else {
+                NotificationCenter.default.post(name: .PVReimportLibrary, object: nil)
+            }
             self.done(self)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
@@ -835,7 +839,11 @@ public final class PVSettingsViewController: QuickTableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Reset", comment: ""),
                                       style: .destructive,
                                       handler: { (_: UIAlertAction) -> Void in
-            self.menuDelegate?.didTapResetLibrary()
+            if let delegate = self.menuDelegate {
+                delegate.didTapResetLibrary()
+            } else {
+                NotificationCenter.default.post(name: .PVResetLibrary, object: nil)
+            }
             self.done(self)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
@@ -856,7 +864,11 @@ public final class PVSettingsViewController: QuickTableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Update", comment: ""),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
-            self.menuDelegate?.didTapUpdateMetadata()
+            if let delegate = self.menuDelegate {
+                delegate.didTapUpdateMetadata()
+            } else {
+                NotificationCenter.default.post(name: .PVRefreshLibrary, object: nil)
+            }
             self.done(self)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
