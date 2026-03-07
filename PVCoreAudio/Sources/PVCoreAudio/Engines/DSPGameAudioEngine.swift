@@ -1,4 +1,5 @@
 import Foundation
+import os
 import AVFoundation
 import PVLogging
 import PVAudio
@@ -28,7 +29,7 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
 
     /// Audio buffer for waveform visualization
     private var audioBufferForVisualization = [Float](repeating: 0, count: 4096)
-    private let audioBufferLock = NSLock()
+    private let audioBufferLock = OSAllocatedUnfairLock<Void>(initialState: ())
 
     public var volume: Float = 1.0 {
         didSet {

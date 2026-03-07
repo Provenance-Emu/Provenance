@@ -194,16 +194,15 @@ public class CloudSyncManager {
     // MARK: - Task Tracking
 
     private func trackSyncTask(_ task: Task<Void, Never>) {
-        activeTasksLock.lock()
-        activeSyncTasks.append(task)
-        activeTasksLock.unlock()
+        activeTasksLock.withLock { activeSyncTasks.append(task) }
     }
 
     private func cancelAllActiveSyncTasks() {
-        activeTasksLock.lock()
-        let tasks = activeSyncTasks
-        activeSyncTasks.removeAll()
-        activeTasksLock.unlock()
+        let tasks = activeTasksLock.withLock {
+            let tasks = activeSyncTasks
+            activeSyncTasks.removeAll()
+            return tasks
+        }
         tasks.forEach { $0.cancel() }
     }
 

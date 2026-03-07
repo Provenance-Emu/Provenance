@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 import CloudKit
 import RealmSwift
 import Combine
@@ -49,8 +50,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private var cancellables = Set<AnyCancellable>()
     private let progressTracker = SyncProgressTracker.shared // Added Progress Tracker
     private let uploadQueue = CloudKitUploadQueueActor.shared
-    private let loadAllLock = NSLock()
-    private var isLoadAllInFlight: Bool = false
+    private let isLoadAllInFlight = OSAllocatedUnfairLock<Bool>(initialState: false)
     private let metadataOnlyGate = MetadataOnlyGate()
     private let artworkDownloadGate = ArtworkDownloadGate()
     private let artworkLookupGate = ArtworkLookupGate()
@@ -116,20 +116,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     // TODO: Implement these methods based on CloudKit logic
     public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
         // Prevent overlapping full-library queries which spam CloudKit and UI logs
-        loadAllLock.lock()
-        if isLoadAllInFlight {
-            loadAllLock.unlock()
+        guard isLoadAllInFlight.withLock({ inFlight -> Bool in
+            guard !inFlight else { return false }
+            inFlight = true
+            return true
+        }) else {
             ILOG("[SYNC] Skipping loadAllFromCloud: operation already in flight.")
             await iterationComplete?()
             return Completable.empty()
         }
-        isLoadAllInFlight = true
-        loadAllLock.unlock()
-        defer {
-            loadAllLock.lock()
-            isLoadAllInFlight = false
-            loadAllLock.unlock()
-        }
+        defer { isLoadAllInFlight.withLock { $0 = false } }
 
         ILOG("[SYNC] Starting loadAllFromCloud for CloudKit ROMs...")
         ILOG("[SYNC] CloudKit Database: \(database.databaseScope.rawValue == 2 ? "Private" : "Public")")
