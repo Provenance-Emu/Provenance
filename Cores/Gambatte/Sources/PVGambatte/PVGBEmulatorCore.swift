@@ -17,20 +17,28 @@ import PVLogging
 @objc
 @objcMembers
 public class PVGBEmulatorCore: PVEmulatorCore {
-    
+
     public var displayMode: GBPalette = .default {
         didSet {
             _bridge.changeDisplayMode(displayMode.rawValue)
         }
     }
     public var isGameboyColor: Bool = false
-    
+
     var _bridge: PVGBEmulatorCoreBridge = .init()
-    
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
+
+    // MARK: - RetroAchievements backing storage
+
+    /// Weak reference to the OSD delegate.
+    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
+
+    /// Hardcore mode flag.
+    var _hardcoreMode: Bool = false
 }
 
 extension PVGBEmulatorCore: PVGBSystemResponderClient {
