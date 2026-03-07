@@ -39,7 +39,9 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     @objc
     dynamic open var controller1: GCController? {
         get { bridge.controller1 }
-        set { bridge.controller1 = newValue
+        set {
+            bridge.controller1 = newValue
+            registerControllerForHaptics(newValue, player: 0)
             guard let controller1 = controller1, !controller1.isAttachedToDevice else {
                 stopHaptic()
                 return
@@ -50,26 +52,33 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 
     @objc dynamic open var controller2: GCController? {
         get { bridge.controller2 }
-        set { bridge.controller2 = newValue } }
+        set { bridge.controller2 = newValue; registerControllerForHaptics(newValue, player: 1) } }
     @objc dynamic open var controller3: GCController? {
         get { bridge.controller3 }
-        set { bridge.controller3 = newValue } }
+        set { bridge.controller3 = newValue; registerControllerForHaptics(newValue, player: 2) } }
     @objc dynamic open var controller4: GCController? {
         get { bridge.controller4 }
-        set { bridge.controller4 = newValue } }
+        set { bridge.controller4 = newValue; registerControllerForHaptics(newValue, player: 3) } }
 
     @objc dynamic open var controller5: GCController? {
         get { bridge.controller5 }
-        set { bridge.controller5 = newValue } }
+        set { bridge.controller5 = newValue; registerControllerForHaptics(newValue, player: 4) } }
     @objc dynamic open var controller6: GCController? {
         get { bridge.controller6 }
-        set { bridge.controller6 = newValue } }
+        set { bridge.controller6 = newValue; registerControllerForHaptics(newValue, player: 5) } }
     @objc dynamic open var controller7: GCController?  {
         get { bridge.controller7 }
-        set { bridge.controller7 = newValue } }
+        set { bridge.controller7 = newValue; registerControllerForHaptics(newValue, player: 6) } }
     @objc dynamic open var controller8: GCController? {
         get { bridge.controller8 }
-        set { bridge.controller8 = newValue } }
+        set { bridge.controller8 = newValue; registerControllerForHaptics(newValue, player: 7) } }
+
+    @MainActor
+    private func registerControllerForHaptics(_ controller: GCController?, player: Int) {
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            GCControllerHapticsManager.shared.register(controller: controller, forPlayer: player)
+        }
+    }
 #endif
 
 #if !os(macOS) && !os(watchOS)

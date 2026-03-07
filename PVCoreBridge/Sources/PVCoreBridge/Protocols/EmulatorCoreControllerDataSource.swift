@@ -86,15 +86,53 @@ public extension EmulatorCoreRumbleDataSource {
         return HapticsManager.shared.hapticsEngine(forPlayer: player)
     }
 
-    /// Trigger a default rumble pulse (1.0 low-frequency, 0.5 high-frequency, 0.3s) for `player`.
+    /// Fire rumble for the given player (0-based).
+    ///
+    /// Routing priority:
+    /// 1. External controller with GCDeviceHaptics support → controller motors
+    /// 2. Attached controller (phone) → device Taptic Engine via rumblePhone()
+    /// 3. No controller → device Taptic Engine
     @MainActor
     func rumble(player: Int) {
+        rumble(player: player, lowFrequency: 0.8, highFrequency: 0.5, duration: 0.3)
+    }
+
+    /// Fire rumble with explicit dual-motor parameters.
+    ///
+    /// - Parameters:
+    ///   - player: 0-based player index.
+    ///   - lowFrequency: Low-frequency (grip/left) motor intensity in [0, 1].
+    ///   - highFrequency: High-frequency (right) motor intensity in [0, 1].
+    ///   - duration: Vibration duration in seconds.
+    @MainActor
+    func rumble(player: Int, lowFrequency: Float, highFrequency: Float, duration: TimeInterval = 0.3) {
         guard self.supportsRumble else {
             WLOG("Rumble called on core that doesn't support it")
             return
         }
         if #available(iOS 14.0, tvOS 14.0, *) {
-            HapticsManager.shared.rumble(lowFrequency: 1.0, highFrequency: 0.5, duration: 0.3, player: player)
+            // 1-based player index for GCController lookup; player param is 0-based.
+            let playerIndex = player + 1
+            let controller = self.controller(for: playerIndex)
+
+            if let controller = controller, !controller.isAttachedToDevice, controller.haptics != nil {
+                // External controller with haptics support — route to controller motors.
+                let params = GCControllerHapticsManager.RumbleParams(
+                    lowFrequency: lowFrequency,
+                    highFrequency: highFrequency,
+                    duration: duration
+                )
+                GCControllerHapticsManager.shared.rumble(player: player, params: params)
+            } else {
+                // Attached (phone) controller or no haptics → Taptic Engine.
+#if os(iOS) && !targetEnvironment(macCatalyst)
+                rumblePhone()
+#endif
+            }
+        } else {
+#if os(iOS) && !targetEnvironment(macCatalyst)
+            rumblePhone()
+#endif
         }
     }
 

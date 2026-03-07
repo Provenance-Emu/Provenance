@@ -108,6 +108,10 @@ public extension Defaults.Keys {
     static let pauseButtonIsMenuButton = Key<Bool>("pauseButtonIsMenuButton", default: false)
     static let hapticFeedback = Key<Bool>("hapticFeedback", default: true)
 
+    /// Intensity multiplier for external controller rumble motors via GCDeviceHaptics.
+    /// Range 0.0 (silent) – 1.0 (full intensity). Default 1.0.
+    static let controllerHapticIntensity = Key<Double>("controllerHapticIntensity", default: 1.0)
+
     static let buttonPressEffect = Key<ButtonPressEffect>("buttonPressEffect", default: .glow)
     static let buttonSound = Key<ButtonSound>("buttonSound", default: .none)
 
