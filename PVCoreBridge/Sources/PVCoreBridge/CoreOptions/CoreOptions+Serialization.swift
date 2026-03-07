@@ -60,70 +60,87 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         broadcast.post(name: Notification.Name("OptionUpdated"), object: nil, userInfo:info)
     }
 
-    static func valueForOption(_ option: CoreOption) -> Bool {
-        return valueForOption(option).asBool
+    // MARK: - Typed valueForOption overloads
+
+    /// Read a Bool option, optionally scoped to a specific game's MD5.
+    /// When `md5` is nil the method falls back to `currentGameMD5`, then
+    /// to the per-core global key.
+    static func valueForOption(_ option: CoreOption, andMD5 md5: String? = nil) -> Bool {
+        return valueForOption(option, andMD5: md5).asBool
     }
 
-    static func valueForOption(_ option: CoreOption) -> String {
-        return valueForOption(option).asString
+    /// Read a String option, optionally scoped to a specific game's MD5.
+    static func valueForOption(_ option: CoreOption, andMD5 md5: String? = nil) -> String {
+        return valueForOption(option, andMD5: md5).asString
     }
 
-    static func valueForOption(_ option: CoreOption) -> Int? {
-        return valueForOption(option).asInt ?? option.defaultValue as? Int
+    /// Read an optional Int option, optionally scoped to a specific game's MD5.
+    static func valueForOption(_ option: CoreOption, andMD5 md5: String? = nil) -> Int? {
+        return valueForOption(option, andMD5: md5).asInt ?? option.defaultValue as? Int
     }
 
-    static func valueForOption(_ option: CoreOption) -> Float? {
-        return valueForOption(option).asFloat ?? option.defaultValue as? Float
+    /// Read an optional Float option, optionally scoped to a specific game's MD5.
+    static func valueForOption(_ option: CoreOption, andMD5 md5: String? = nil) -> Float? {
+        return valueForOption(option, andMD5: md5).asFloat ?? option.defaultValue as? Float
     }
 
-    static func valueForOption(_ option: CoreOption) -> Int {
-        return valueForOption(option).asInt ?? option.defaultValue as! Int
-    }
-    
-    static func valueForOption(_ option: CoreOption) -> UInt {
-        return valueForOption(option).asUInt ?? option.defaultValue as! UInt
+    /// Read a non-optional Int option, optionally scoped to a specific game's MD5.
+    static func valueForOption(_ option: CoreOption, andMD5 md5: String? = nil) -> Int {
+        return valueForOption(option, andMD5: md5).asInt ?? option.defaultValue as! Int
     }
 
-
-    static func valueForOption(_ option: CoreOption) -> Float {
-        return valueForOption(option).asFloat ?? option.defaultValue as! Float
+    /// Read a non-optional UInt option, optionally scoped to a specific game's MD5.
+    static func valueForOption(_ option: CoreOption, andMD5 md5: String? = nil) -> UInt {
+        return valueForOption(option, andMD5: md5).asUInt ?? option.defaultValue as! UInt
     }
 
-    static func valueForOption(_ option: CoreOption) -> CoreOptionValue {
+    /// Read a non-optional Float option, optionally scoped to a specific game's MD5.
+    static func valueForOption(_ option: CoreOption, andMD5 md5: String? = nil) -> Float {
+        return valueForOption(option, andMD5: md5).asFloat ?? option.defaultValue as! Float
+    }
+
+    /// Core read implementation. Resolves the effective MD5 using:
+    ///   1. The explicitly supplied `md5` argument, or
+    ///   2. `currentGameMD5` set on the conforming type.
+    /// Per-game keys (`<ClassName>.<md5>.<optionKey>`) take precedence over
+    /// per-core global keys (`<ClassName>.<optionKey>`). When no MD5 is
+    /// available the result is equivalent to the global key.
+    static func valueForOption(_ option: CoreOption, andMD5 md5: String? = nil) -> CoreOptionValue {
+        let effectiveMD5 = md5 ?? currentGameMD5
         switch option {
         case let .bool(_, defaultValue, _):
-            guard let value = storedValueForOption(Bool.self, option.key) else { return .bool(defaultValue) }
+            guard let value = storedValueForOption(Bool.self, option.key, andMD5: effectiveMD5) else { return .bool(defaultValue) }
             return .bool(value)
         case .string:
-            if let value = storedValueForOption(String.self, option.key) {
+            if let value = storedValueForOption(String.self, option.key, andMD5: effectiveMD5) {
                 return .string(value)
             } else {
                 return .notFound
             }
         case let .range(_, _, defaultValue, _):
-            if let value = storedValueForOption(Int.self, option.key) {
+            if let value = storedValueForOption(Int.self, option.key, andMD5: effectiveMD5) {
                 return .int(value)
             } else {
                 return .int(defaultValue)
             }
         case let .rangef(_, _, defaultValue, _):
-            if let value = storedValueForOption(Float.self, option.key) {
+            if let value = storedValueForOption(Float.self, option.key, andMD5: effectiveMD5) {
                 return .float(value)
             } else {
                 return .float(defaultValue)
             }
         case .multi:
-            if let value = storedValueForOption(Int.self, option.key) {
+            if let value = storedValueForOption(Int.self, option.key, andMD5: effectiveMD5) {
                 return .int(value)
-            } else if let value = storedValueForOption(String.self, option.key) {
+            } else if let value = storedValueForOption(String.self, option.key, andMD5: effectiveMD5) {
                 return .string(value)
             } else {
                 return .notFound
             }
         case let .enumeration(_, _, defaultValue, _):
-            if let value = storedValueForOption(Int.self, option.key) {
+            if let value = storedValueForOption(Int.self, option.key, andMD5: effectiveMD5) {
                 return .int(value)
-            } else if let value = storedValueForOption(String.self, option.key) {
+            } else if let value = storedValueForOption(String.self, option.key, andMD5: effectiveMD5) {
                 return .string(value)
             } else {
                 return .int(defaultValue)
