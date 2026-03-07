@@ -700,6 +700,7 @@ public extension OpenVGDB {
 
     /// Search the database by CRC32 hash and return the first matching ROM.
     func searchROM(byCRC crc: String) async throws -> ROMMetadata? {
+        let sanitizedCRC = sanitizeForSQLLike(crc.uppercased())
         let query = """
             SELECT DISTINCT
                 releaseTitleName as 'gameTitle',
@@ -724,7 +725,7 @@ public extension OpenVGDB {
                 romID
             FROM ROMs rom
             LEFT JOIN RELEASES release USING (romID)
-            WHERE romHashCRC = '\(crc.uppercased())' COLLATE NOCASE
+            WHERE romHashCRC = '\(sanitizedCRC)' COLLATE NOCASE
             LIMIT 1
         """
 
