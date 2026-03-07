@@ -329,4 +329,19 @@ extension SystemIdentifier {
         case ._3DS:         return "Nintendo - Nintendo 3DS"
         }
     }
+
+    /// The system directory name used in the libretro cheat database (cht/ folder).
+    ///
+    /// For most systems this matches `libretroDatabaseName`, but some systems use
+    /// a different folder name in the cheat repo vs the thumbnails repo:
+    ///
+    /// - DOOM: thumbnails use "DOOM", cheat repo uses "PrBoom"
+    /// - AtariJaguarCD: thumbnails have no specific folder; cheat repo uses "Atari - Jaguar CD"
+    public var libretroCheatSystemName: String {
+        switch self {
+        case .DOOM:         return "PrBoom"
+        case .AtariJaguarCD: return "Atari - Jaguar CD"
+        default:            return libretroDatabaseName
+        }
+    }
 }

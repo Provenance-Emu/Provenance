@@ -43,8 +43,10 @@ import sys
 from pathlib import Path
 
 
-# Map libretro directory names to short system names.
-# These must match SystemIdentifier.libretroDatabaseName in Provenance.
+# Map libretro cht/ directory names to short system names.
+# These must match SystemIdentifier.libretroCheatSystemName in Provenance
+# (which may differ from libretroDatabaseName used for thumbnail URLs —
+# e.g. DOOM cheats use "PrBoom" but thumbnails use "DOOM").
 SYSTEM_SHORT_NAMES = {
     "Atari - 2600": "2600",
     "Atari - 5200": "5200",
