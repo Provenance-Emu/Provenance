@@ -42,6 +42,12 @@ public actor LibretroCheatDatabase {
 
     // MARK: - Setup
 
+    /// Pre-warm: ensures the database is extracted and the connection is open.
+    /// Call this at app startup (fire-and-forget) to avoid first-use lag.
+    public func warmUp() async {
+        _ = try? await connect()
+    }
+
     /// Ensures the database is extracted and connection is open.
     private func connect() async throws -> SQLite.Connection {
         if let existing = connection {

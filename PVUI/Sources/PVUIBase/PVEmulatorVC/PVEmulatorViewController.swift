@@ -429,14 +429,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         removeRunningObserverIfNeeded()
 
-        #if !os(tvOS)
-        // Clean up virtual keyboard / mouse cursor overlays
-        if #available(iOS 14.0, *) {
-            Task { @MainActor in
-                removeVirtualInputOverlays()
-            }
-        }
-        #endif
+        // Virtual keyboard / mouse cursor overlays are cleaned up in viewWillDisappear.
+        // Associated objects are automatically released during dealloc.
 
         // Resume GameImporter if view controller is deallocated (safety net)
         GameImporter.shared.resume()
@@ -982,6 +976,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         destroyAutosaveTimer()
+        #if !os(tvOS)
+        removeVirtualInputOverlays()
+        #endif
     }
 
     override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

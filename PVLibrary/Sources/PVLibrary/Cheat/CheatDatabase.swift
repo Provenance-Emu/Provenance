@@ -235,6 +235,16 @@ public actor CheatDatabase {
         return results
     }
 
+    // MARK: - Pre-warming
+
+    /// Pre-warm both databases to avoid first-use lag when the user opens the cheat search.
+    /// Safe to call fire-and-forget at app startup.
+    public static func warmUpDatabases() {
+        Task.detached(priority: .utility) {
+            await LibretroCheatDatabase.shared.warmUp()
+        }
+    }
+
     // MARK: - Online Search
 
     /// Fetch cheat codes from online sources (libretro cheat database on GitHub).

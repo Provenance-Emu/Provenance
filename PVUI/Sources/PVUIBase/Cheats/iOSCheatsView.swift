@@ -159,7 +159,12 @@ public struct iOSCheatsView: View {
                 iOSEditCheatView(cheat: ctx.cheat, cheatTypes: cheatTypes)
             }
         }
-        .onAppear { loadCheats() }
+        .onAppear {
+            loadCheats()
+            // Pre-warm the LibretroCheatDatabase so extraction happens now
+            // (in background) rather than blocking when the user opens search.
+            CheatDatabase.warmUpDatabases()
+        }
     }
 
     // MARK: - Empty State

@@ -38,11 +38,24 @@ public actor SQLiteDatabaseManager {
 
         let fileManager = FileManager.default
 
-        // Check if database already exists
+        // Check if database already exists and is up to date
         if fileManager.fileExists(atPath: databasePath.path) {
-            DLOG("SQLiteDatabaseManager: Database already exists")
-            isDatabasePrepared = true
-            return
+            // If the bundle zip is newer than the extracted DB, re-extract to
+            // pick up cheat database updates shipped with new app versions.
+            var needsReextract = false
+            if let zipURL = bundle.url(forResource: compressedName, withExtension: "zip"),
+               let zipDate = (try? fileManager.attributesOfItem(atPath: zipURL.path))?[.modificationDate] as? Date,
+               let dbDate  = (try? fileManager.attributesOfItem(atPath: databasePath.path))?[.modificationDate] as? Date,
+               zipDate > dbDate {
+                DLOG("SQLiteDatabaseManager: Bundle zip is newer than extracted DB — re-extracting")
+                try? fileManager.removeItem(at: databasePath)
+                needsReextract = true
+            }
+            if !needsReextract {
+                DLOG("SQLiteDatabaseManager: Database already exists and is up to date")
+                isDatabasePrepared = true
+                return
+            }
         }
 
         DLOG("SQLiteDatabaseManager: Database not found, starting extraction...")

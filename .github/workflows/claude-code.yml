@@ -200,6 +200,12 @@ jobs:
             5. Do NOT modify submodule source code directly
             6. Do NOT modify project.pbxproj unless absolutely necessary
             7. Keep changes focused — one logical change per PR
+            7a. CRITICAL — NEVER tell users to run shell commands referencing files on the
+               CI runner filesystem (/tmp, /home/runner, /root, etc.). Those files only exist
+               inside this CI container and are inaccessible to users on their own machines.
+               If you need to create a GitHub issue or PR with multi-line content,
+               CREATE IT YOURSELF during this run using --body-file. Never ask the user to
+               run a script with a /tmp path you've written. Do the work directly.
             8. CRITICAL: Never use "Closes #N" or "Fixes #N" for EPIC or parent issues.
                Only use "Closes" for the specific sub-task issue your PR fully completes.
                Reference epics/parent issues with "Part of #N" to prevent premature closure.
