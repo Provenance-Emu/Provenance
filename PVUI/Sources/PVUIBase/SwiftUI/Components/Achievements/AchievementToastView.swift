@@ -92,7 +92,7 @@ struct AchievementOverlayView: View {
                     Spacer()
                     HStack(spacing: 6) {
                         ForEach(Array(viewModel.challengeIndicators.keys.prefix(5)), id: \.self) { achID in
-                            ChallengeIndicatorView(badgeURL: viewModel.challengeIndicators[achID] ?? nil)
+                            ChallengeIndicatorView(badgeURL: viewModel.challengeIndicators[achID])
                         }
                     }
                     .padding(.leading, 16)

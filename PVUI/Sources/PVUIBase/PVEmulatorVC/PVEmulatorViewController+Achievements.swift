@@ -55,6 +55,10 @@ public extension PVEmulatorViewController {
     /// - The game has no MD5 hash.
     func startAchievementsIfNeeded() {
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return }
+        guard Defaults[.retroAchievementsEnabled] else {
+            DLOG("RetroAchievements: disabled in settings, skipping achievements.")
+            return
+        }
         guard PVCheevos.hasValidSession else {
             DLOG("RetroAchievements: no valid session, skipping achievements.")
             return
