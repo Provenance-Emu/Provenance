@@ -18,13 +18,30 @@ internal final class PVFCEUOptions: CoreOptions, Sendable {
         var options = [CoreOption]()
 
         let coreGroup = CoreOption.group(.init(title: "Core", description: nil),
-                                         subOptions: [])
+                                         subOptions: [famicomMicOption])
         let videoGroup = CoreOption.group(.init(title: "Video", description: nil),
                                          subOptions: [])
         options.append(coreGroup)
         options.append(videoGroup)
 
         return options
+    }
+
+    // MARK: - Core Options
+
+    static var famicomMicOption: CoreOption {
+        CoreOption.bool(
+            .init(
+                title: "Famicom Microphone",
+                description: "Enable Famicom controller 2 microphone input via iOS mic. Only needed for games that use the Famicom mic (e.g. Zelda JP, Gimmick!). Disabling preserves the P2 Start button for NES 2-player games.",
+                requiresRestart: false
+            ),
+            defaultValue: false
+        )
+    }
+
+    static var famicomMicEnabled: Bool {
+        valueForOption(famicomMicOption)
     }
 
 }

@@ -31,7 +31,9 @@
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
 @import PVAudio;
+#if !TARGET_OS_TV
 @import AVFoundation;
+#endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -85,12 +87,16 @@ static const float kFCMicThreshold = 0.015f;
     NSUInteger currentDisc;
 
     // Famicom microphone support
+#if !TARGET_OS_TV
     AVAudioEngine *_micEngine;
-    volatile BOOL _micAudioActive;  // set by audio tap; applied in executeFrame
+#endif
+    _Atomic(BOOL) _micAudioActive;  // set by audio tap; applied in executeFrame
 }
 
+#if !TARGET_OS_TV
 - (void)startFamicomMicMonitoring;
 - (void)stopFamicomMicMonitoring;
+#endif
 
 @end
 
@@ -191,14 +197,18 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 		//	FCEUI_SetInput(3, SI_GAMEPAD, &pad[3], 0);
 	}
 
-    // Enable Famicom microphone mode: the Famicom controller 2 had a built-in mic.
-    // replaceP2StartWithMicrophone tells FCEU to replace P2 Start reads with a
-    // toggling mic signal driven by joy[1] bit 3 (the P2 Start bit).
-    replaceP2StartWithMicrophone = true;
-
     FCEU_ResetPalette();
 
-    [self startFamicomMicMonitoring];
+#if !TARGET_OS_TV
+    // Famicom mic mode is opt-in: setting replaceP2StartWithMicrophone unconditionally
+    // nullifies the P2 Start button (FCEU input.cpp:128-131), breaking all NES 2-player
+    // games. Only enable when the user has opted in via the "Famicom Microphone" option.
+    BOOL famicomMicEnabled = [[NSUserDefaults standardUserDefaults]
+                              boolForKey:@"PVFCEUOptions.Famicom Microphone"];
+    if (famicomMicEnabled) {
+        [self startFamicomMicMonitoring];
+    }
+#endif
 
     return YES;
 }
@@ -241,8 +251,10 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 
 - (void)stopEmulation
 {
+#if !TARGET_OS_TV
     [self stopFamicomMicMonitoring];
     replaceP2StartWithMicrophone = false;
+#endif
 
     FCEUI_CloseGame();
     FCEUI_Kill();
@@ -505,6 +517,10 @@ void FCEUD_Message(const char *s)
             [inputNode removeTapOnBus:0];
             strongSelf->_micEngine = nil;
         } else {
+            // Enable mic mode only after the engine starts successfully.
+            // replaceP2StartWithMicrophone nullifies P2 Start reads (FCEU input.cpp:128-131),
+            // so it must never be set for standard NES 2-player games.
+            replaceP2StartWithMicrophone = true;
             ILOG(@"[FCEU] Famicom microphone monitoring started.");
         }
     };
@@ -525,6 +541,7 @@ void FCEUD_Message(const char *s)
 #endif
 }
 
+#if !TARGET_OS_TV
 - (void)stopFamicomMicMonitoring {
     if (_micEngine) {
         [_micEngine.inputNode removeTapOnBus:0];
@@ -535,6 +552,7 @@ void FCEUD_Message(const char *s)
     pad[1][0] &= ~kFCMicBit;
     ILOG(@"[FCEU] Famicom microphone monitoring stopped.");
 }
+#endif
 
 @end
 
