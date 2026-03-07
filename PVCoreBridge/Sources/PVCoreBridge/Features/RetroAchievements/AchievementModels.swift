@@ -11,7 +11,8 @@ import Foundation
 // MARK: - Memory Region
 
 /// Describes a contiguous block of emulator memory exposed to the achievement runtime.
-public struct AchievementMemoryRegion: Sendable {
+/// Pointer safety is managed by the emulation session lifetime.
+public struct AchievementMemoryRegion: @unchecked Sendable {
     /// Category of memory, matching rcheevos `RC_MEMORY_TYPE_*` constants.
     public enum Kind: UInt8, Sendable {
         case systemRAM   = 0
