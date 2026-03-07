@@ -1764,7 +1764,7 @@ private struct LibrarySection2: View {
     @ObservedObject var viewModel: PVSettingsViewModel
 
     var body: some View {
-        Section(header: Text("Library")) {
+        Section(header: Text("Library Management")) {
 
             #if os(tvOS)
                 // Cloud Sync Settings
@@ -1811,24 +1811,27 @@ private struct LibrarySection2: View {
             }
 
             Button(action: viewModel.reimportROMs) {
-                SettingsRow(title: "Re-import ROMs",
-                            subtitle: "Scan ROM directories for new or updated files.",
-                            icon: .sfSymbol("triangle.circle.fill"))
+                SettingsRow(title: "Scan ROM Directories",
+                            subtitle: "Import new ROMs and update metadata without changing custom artwork or names.",
+                            icon: .sfSymbol("magnifyingglass.circle"))
             }
-            Button(action: viewModel.resetData) {
-                SettingsRow(title: "Reset Data",
-                            subtitle: "Delete all settings and configurations.",
-                            icon: .sfSymbol("delete.forward.fill"))
-            }
+
             Button(action: viewModel.refreshGameLibrary) {
-                SettingsRow(title: "Refresh Game Library",
-                            subtitle: "Update artwork and game information.",
-                            icon: .sfSymbol("arrow.uturn.forward"))
+                SettingsRow(title: "Update Game Metadata",
+                            subtitle: "Re-fetch artwork and info from the database. Custom artwork and names are preserved.",
+                            icon: .sfSymbol("arrow.triangle.2.circlepath"))
             }
+
             Button(action: viewModel.emptyImageCache) {
-                SettingsRow(title: "Empty Image Cache",
-                            subtitle: "Clear cached artwork to free space.",
-                            icon: .sfSymbol("trash"))
+                SettingsRow(title: "Clear Artwork Cache",
+                            subtitle: "Delete cached artwork to free up space. Images re-download automatically.",
+                            icon: .sfSymbol("photo.badge.minus"))
+            }
+
+            Button(role: .destructive, action: viewModel.resetData) {
+                SettingsRow(title: "Reset Library",
+                            subtitle: "Delete all game data, settings, and custom artwork, then re-import from scratch.",
+                            icon: .sfSymbol("trash.slash"))
             }
         }
     }

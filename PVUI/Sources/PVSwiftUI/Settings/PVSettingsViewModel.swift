@@ -207,88 +207,68 @@ class PVSettingsViewModel: ObservableObject {
         #endif
     }
 
-    // Function to reimport ROMs
+    // MARK: - Library Management Actions
+
+    /// Scan ROM directories for new or updated files.
     func reimportROMs() {
         let alert = UIAlertController(
-            title: "Re-Scan all ROM Directories?",
-            message: """
-                Attempt scan all ROM Directories,
-                import all new ROMs found, and update existing ROMs, and recover save states.
-                """,
+            title: "Scan ROM Directories?",
+            message: "Scan all ROM directories for new or updated files. Existing custom artwork and names are not changed.",
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
-            NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
+        alert.addAction(UIAlertAction(title: "Scan", style: .default) { [weak self] _ in
+            self?.menuDelegate?.didTapScanROMs()
         })
 
-        alert.addAction(UIAlertAction(title: "No", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
-        if let window = UIApplication.shared.windows.first,
-           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
-            rootViewController.present(alert, animated: true)
-        }
+        presentAlert(alert)
     }
 
-    // Function to reset data
+    /// Delete all game data and settings, then re-import everything.
     func resetData() {
         let alert = UIAlertController(
-            title: "Reset Everything?",
-            message: """
-                Attempt to delete all settings / configurations, then
-                reimport everything.
-                """,
+            title: "Reset Library?",
+            message: "This will delete all game data, settings, and custom artwork, then re-import everything from scratch. This cannot be undone.",
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
-            NotificationCenter.default.post(name: NSNotification.Name.PVResetLibrary, object: nil)
+        alert.addAction(UIAlertAction(title: "Reset", style: .destructive) { [weak self] _ in
+            self?.menuDelegate?.didTapResetLibrary()
         })
 
-        alert.addAction(UIAlertAction(title: "No", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
-        if let window = UIApplication.shared.windows.first,
-           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
-            rootViewController.present(alert, animated: true)
-        }
+        presentAlert(alert)
     }
 
-    // Function to refresh game library
+    /// Re-fetch metadata and artwork from the database.
     func refreshGameLibrary() {
         let alert = UIAlertController(
-            title: "Refresh Game Library?",
-            message: """
-                Attempt to reload the artwork and title
-                information for your entire library.
-                This can be a slow process, especially for
-                large libraries.
-                Only do this if you really, really want to
-                try and get more artwork or update the information.
-                """,
+            title: "Update Game Metadata?",
+            message: "Re-fetch artwork and title information from the database for your entire library. Your custom artwork and names will not be changed. This can be slow for large libraries.",
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
-            NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
+        alert.addAction(UIAlertAction(title: "Update", style: .default) { [weak self] _ in
+            self?.menuDelegate?.didTapUpdateMetadata()
         })
 
-        alert.addAction(UIAlertAction(title: "No", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
-        if let window = UIApplication.shared.windows.first,
-           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
-            rootViewController.present(alert, animated: true)
-        }
+        presentAlert(alert)
     }
 
-    // Function to empty image cache
+    /// Clear the artwork cache to free up disk space.
     func emptyImageCache() {
         let alert = UIAlertController(
-            title: "Empty Image Cache?",
-            message: "Empty artwork cache to free up space. Images will be re-downloaded when needed.",
+            title: "Clear Artwork Cache?",
+            message: "Delete all cached artwork to free up disk space. Images will be re-downloaded automatically when needed.",
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { _ in
+        alert.addAction(UIAlertAction(title: "Clear Cache", style: .destructive) { _ in
             do {
                 try PVMediaCache.empty()
             } catch {
@@ -296,8 +276,12 @@ class PVSettingsViewModel: ObservableObject {
             }
         })
 
-        alert.addAction(UIAlertAction(title: "No", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
 
+        presentAlert(alert)
+    }
+
+    private func presentAlert(_ alert: UIAlertController) {
         if let window = UIApplication.shared.windows.first,
            let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
             rootViewController.present(alert, animated: true)

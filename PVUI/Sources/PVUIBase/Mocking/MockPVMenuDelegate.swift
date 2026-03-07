@@ -47,7 +47,23 @@ public class MockPVMenuDelegate: PVMenuDelegate {
         print("MockPVMenuDelegate: closeMenu called")
 
     }
-    
+
+    public func didTapScanROMs() {
+        print("MockPVMenuDelegate: didTapScanROMs called")
+    }
+
+    public func didTapUpdateMetadata() {
+        print("MockPVMenuDelegate: didTapUpdateMetadata called")
+    }
+
+    public func didTapClearArtworkCache() {
+        print("MockPVMenuDelegate: didTapClearArtworkCache called")
+    }
+
+    public func didTapResetLibrary() {
+        print("MockPVMenuDelegate: didTapResetLibrary called")
+    }
+
     public func showSettings() {
         // No-op in testing environment
         print("MockPVMenuDelegate: showSettings called")
