@@ -141,7 +141,10 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             }
 
             DLOG("No existing game found, starting import to database")
-            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: nil)
+            // Pass resolved associated files (bin/cue for m3u, etc.) so they are persisted as
+            // related files even when the filesystem cache is stale after a fresh import.
+            let resolvedFiles = queueItem.resolvedAssociatedFileURLs.isEmpty ? nil : queueItem.resolvedAssociatedFileURLs
+            try await self.importToDatabaseROM(forItem: queueItem, system: targetSystem, relatedFiles: resolvedFiles)
         }
     }
 
@@ -236,8 +239,15 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         let md5Duration = Date().timeIntervalSince(md5StartTime)
         DLOG("Calculated MD5: \(md5) in \(String(format: "%.2f", md5Duration))s")
 
-        DLOG("About to append \(relatedPVFiles.count) related files to game")
-        game.relatedFiles.append(objectsIn: relatedPVFiles)
+        // Deduplicate by filename to prevent the same disc file being added twice
+        // (once from the filesystem cache and once from resolvedAssociatedFileURLs)
+        var seenFilenames = Set<String>()
+        let uniqueRelatedFiles = relatedPVFiles.filter { file in
+            let key = file.url?.lastPathComponent.lowercased() ?? file.partialPath.lowercased()
+            return seenFilenames.insert(key).inserted
+        }
+        DLOG("About to append \(uniqueRelatedFiles.count) related files to game (deduped from \(relatedPVFiles.count))")
+        game.relatedFiles.append(objectsIn: uniqueRelatedFiles)
         game.md5Hash = md5
 
         // Capture all game properties BEFORE finishUpdateOrImport (which adds game to Realm)
