@@ -316,7 +316,15 @@ static void mednafen_init(MednafenGameCoreBridge* current)
     // MARK: PSX Settings
     BOOL psx_h_overscan = MednafenGameCoreOptions.psx_h_overscan;
     Mednafen::MDFNI_SetSettingB("psx.h_overscan", psx_h_overscan); // Show horizontal overscan area. 1 default
-    Mednafen::MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
+    // Set default region used when auto-detect fails. Configurable so EU/PAL users can set "eu"
+    // to get correct PAL timing and aspect ratio for discs without clear region markers.
+    const char* psx_region_default;
+    switch (MednafenGameCoreOptions.psx_region_default) {
+        case 0:  psx_region_default = "jp"; break;
+        case 2:  psx_region_default = "eu"; break;
+        default: psx_region_default = "na"; break;
+    }
+    Mednafen::MDFNI_SetSetting("psx.region_default", psx_region_default);
 
     Mednafen::MDFNI_SetSettingB("psx.input.analog_mode_ct", false); // Enable Analog mode toggle
     /*
