@@ -811,6 +811,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         if segue.identifier == "SettingsSegue" {
             let settingsVC = (segue.destination as! UINavigationController).topViewController as! PVSettingsViewController
             settingsVC.conflictsController = updatesController
+            settingsVC.menuDelegate = self as? PVMenuDelegate
         } else if segue.identifier == "SplitSettingsSegue" {
 #if os(tvOS)
             // Cancel the original segue

@@ -268,6 +268,11 @@ class PVSettingsViewModel: ObservableObject {
             preferredStyle: .alert
         )
 
+        // Note: PVMediaCache.empty() is called directly here rather than through menuDelegate,
+        // because clearing the artwork cache is a local, synchronous operation that does not
+        // need to be observed by PVAppDelegate or other NSNotification listeners. The other
+        // three library-management actions (scan, update metadata, reset) post notifications
+        // because they trigger long-running background work handled in PVAppDelegate.
         alert.addAction(UIAlertAction(title: "Clear Cache", style: .destructive) { _ in
             do {
                 try PVMediaCache.empty()
@@ -281,11 +286,16 @@ class PVSettingsViewModel: ObservableObject {
         presentAlert(alert)
     }
 
-    private func presentAlert(_ alert: UIViewController) {
-        if let window = UIApplication.shared.windows.first,
-           let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
-            rootViewController.present(alert, animated: true)
-        }
+    private func presentAlert(_ alert: UIAlertController) {
+        let scene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive }
+            ?? UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first
+        guard let window = scene?.windows.first(where: { $0.isKeyWindow }) ?? scene?.windows.first,
+              let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController else { return }
+        rootViewController.present(alert, animated: true)
     }
 
     func launchWebServer() {
