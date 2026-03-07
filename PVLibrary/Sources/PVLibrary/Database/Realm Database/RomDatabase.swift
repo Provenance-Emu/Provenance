@@ -40,13 +40,7 @@ public final class RealmConfiguration {
         guard !PVAppGroupId.isEmpty, let container = RealmConfiguration.appGroupContainer else {
             return false
         }
-        let fm = FileManager.default
-        var isDir: ObjCBool = false
-        let path = container.path
-        guard fm.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue else {
-            return false
-        }
-        return true
+        return FileManager.default.isReadableFile(atPath: container.path)
 #endif
     }
 
