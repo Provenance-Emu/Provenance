@@ -432,7 +432,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         #if !os(tvOS)
         // Clean up virtual keyboard / mouse cursor overlays
         if #available(iOS 14.0, *) {
-            removeVirtualInputOverlays()
+            Task { @MainActor in
+                removeVirtualInputOverlays()
+            }
         }
         #endif
 

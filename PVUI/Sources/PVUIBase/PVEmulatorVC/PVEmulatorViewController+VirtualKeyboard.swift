@@ -129,13 +129,13 @@ extension PVEmulatorViewController {
 
     /// Show the virtual keyboard overlay.
     /// Does nothing if the core does not support keyboard input or if already visible.
-    public func showVirtualKeyboard() {
+    public func showVirtualKeyboard(animated: Bool = true) {
         guard coreSupportsVirtualKeyboard, !isVirtualKeyboardVisible else { return }
 
         let viewModel = VirtualKeyboardViewModel()
         viewModel.delegate = self
         viewModel.dismissAction = { [weak self] in
-            self?.hideVirtualKeyboard()
+            self?.hideVirtualKeyboard(animated: true)
         }
         virtualKeyboardViewModel = viewModel
 
@@ -156,32 +156,47 @@ extension PVEmulatorViewController {
             hostingVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
+        if animated {
+            hostingVC.view.alpha = 0
+            UIView.animate(withDuration: 0.25) { hostingVC.view.alpha = 1 }
+        }
+
         virtualKeyboardHostingVC = hostingVC
-        ILOG("[VirtualKeyboard] Keyboard overlay shown")
+        ILOG("[VirtualKeyboard] Keyboard overlay shown (animated: \(animated))")
     }
 
     /// Hide the virtual keyboard overlay, releasing all held keys first.
-    public func hideVirtualKeyboard() {
+    public func hideVirtualKeyboard(animated: Bool = true) {
         guard let hostingVC = virtualKeyboardHostingVC else { return }
 
         // Release all held/modifier keys so the emulator doesn't see stuck keys
         virtualKeyboardViewModel?.releaseAllKeys()
 
-        hostingVC.willMove(toParent: nil)
-        hostingVC.view.removeFromSuperview()
-        hostingVC.removeFromParent()
+        let cleanup = {
+            hostingVC.willMove(toParent: nil)
+            hostingVC.view.removeFromSuperview()
+            hostingVC.removeFromParent()
+        }
+
+        if animated {
+            UIView.animate(withDuration: 0.25, animations: {
+                hostingVC.view.alpha = 0
+            }, completion: { _ in cleanup() })
+        } else {
+            cleanup()
+        }
 
         virtualKeyboardHostingVC = nil
         virtualKeyboardViewModel = nil
-        ILOG("[VirtualKeyboard] Keyboard overlay hidden")
+        ILOG("[VirtualKeyboard] Keyboard overlay hidden (animated: \(animated))")
     }
 
     /// Toggle keyboard visibility.
-    public func toggleVirtualKeyboard() {
+    public func toggleVirtualKeyboard(animated: Bool = true) {
         if isVirtualKeyboardVisible {
-            hideVirtualKeyboard()
+            hideVirtualKeyboard(animated: animated)
         } else {
-            showVirtualKeyboard()
+            showVirtualKeyboard(animated: animated)
         }
     }
 }
