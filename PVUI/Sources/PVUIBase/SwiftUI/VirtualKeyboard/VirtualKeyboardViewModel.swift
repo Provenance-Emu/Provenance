@@ -65,8 +65,9 @@ public final class VirtualKeyboardViewModel: ObservableObject {
 
     // MARK: - Init
 
-    public init(delegate: VirtualKeyboardDelegate? = nil) {
+    public init(delegate: VirtualKeyboardDelegate? = nil, layout: VirtualKeyboardLayout = .full) {
         self.delegate = delegate
+        self.layout = layout
     }
 
     // MARK: - Layout

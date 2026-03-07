@@ -11,7 +11,7 @@ import GameController
 // MARK: - VirtualKey
 
 /// A single key in the virtual keyboard overlay.
-public struct VirtualKey: Identifiable, Sendable {
+public struct VirtualKey: Identifiable, Hashable, Sendable {
     public let id: UUID
     /// The label displayed on the key.
     public let label: String

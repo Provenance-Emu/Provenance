@@ -14,104 +14,30 @@ import GameController
 
 #if os(tvOS)
 
-// MARK: - Key model (tvOS)
-
-/// A single key on the virtual keyboard.
-public struct VirtualKey: Identifiable, Hashable {
-    public let id: String
-    /// Label displayed on screen (e.g. "A", "Enter", "Space").
-    public let label: String
-    /// The GCKeyCode forwarded to the emulator core when this key is confirmed.
-    public let keyCode: GCKeyCode
-    /// Width multiplier relative to a normal key (e.g. 2.0 for Space).
-    public var widthScale: CGFloat
-
-    public init(label: String, keyCode: GCKeyCode, widthScale: CGFloat = 1.0) {
-        self.id = label
-        self.label = label
-        self.keyCode = keyCode
-        self.widthScale = widthScale
-    }
-}
-
-// MARK: - Layout (tvOS)
-
-private let keyboardRows: [[VirtualKey]] = [
-    // Row 1 - digits
-    [
-        VirtualKey(label: "1", keyCode: .one),
-        VirtualKey(label: "2", keyCode: .two),
-        VirtualKey(label: "3", keyCode: .three),
-        VirtualKey(label: "4", keyCode: .four),
-        VirtualKey(label: "5", keyCode: .five),
-        VirtualKey(label: "6", keyCode: .six),
-        VirtualKey(label: "7", keyCode: .seven),
-        VirtualKey(label: "8", keyCode: .eight),
-        VirtualKey(label: "9", keyCode: .nine),
-        VirtualKey(label: "0", keyCode: .zero),
-    ],
-    // Row 2 - QWERTY top
-    [
-        VirtualKey(label: "Q", keyCode: .keyQ),
-        VirtualKey(label: "W", keyCode: .keyW),
-        VirtualKey(label: "E", keyCode: .keyE),
-        VirtualKey(label: "R", keyCode: .keyR),
-        VirtualKey(label: "T", keyCode: .keyT),
-        VirtualKey(label: "Y", keyCode: .keyY),
-        VirtualKey(label: "U", keyCode: .keyU),
-        VirtualKey(label: "I", keyCode: .keyI),
-        VirtualKey(label: "O", keyCode: .keyO),
-        VirtualKey(label: "P", keyCode: .keyP),
-    ],
-    // Row 3 - QWERTY home
-    [
-        VirtualKey(label: "A", keyCode: .keyA),
-        VirtualKey(label: "S", keyCode: .keyS),
-        VirtualKey(label: "D", keyCode: .keyD),
-        VirtualKey(label: "F", keyCode: .keyF),
-        VirtualKey(label: "G", keyCode: .keyG),
-        VirtualKey(label: "H", keyCode: .keyH),
-        VirtualKey(label: "J", keyCode: .keyJ),
-        VirtualKey(label: "K", keyCode: .keyK),
-        VirtualKey(label: "L", keyCode: .keyL),
-        VirtualKey(label: "Bksp", keyCode: .deleteOrBackspace),
-    ],
-    // Row 4 - QWERTY bottom + special keys
-    [
-        VirtualKey(label: "Z", keyCode: .keyZ),
-        VirtualKey(label: "X", keyCode: .keyX),
-        VirtualKey(label: "C", keyCode: .keyC),
-        VirtualKey(label: "V", keyCode: .keyV),
-        VirtualKey(label: "B", keyCode: .keyB),
-        VirtualKey(label: "N", keyCode: .keyN),
-        VirtualKey(label: "M", keyCode: .keyM),
-        VirtualKey(label: "Space", keyCode: .spacebar, widthScale: 2.0),
-        VirtualKey(label: "Enter", keyCode: .returnOrEnter),
-        VirtualKey(label: "Esc", keyCode: .escape),
-    ],
-]
-
 // MARK: - ViewModel (tvOS)
 
+/// tvOS keyboard view model using shared VirtualKeyboardLayout for D-pad navigation.
 @MainActor
 public final class VirtualKeyboardViewModel: ObservableObject {
     @Published public var selectedRow: Int = 0
     @Published public var selectedColumn: Int = 0
     @Published public var isVisible: Bool = false
+    @Published public var layout: VirtualKeyboardLayout = .full
 
-    private let rows: [[VirtualKey]] = keyboardRows
+    private var rows: [[VirtualKey]] { layout.rows }
 
     public var currentKey: VirtualKey? {
         guard selectedRow < rows.count, selectedColumn < rows[selectedRow].count else { return nil }
         return rows[selectedRow][selectedColumn]
     }
 
-    public init() {}
+    public init(layout: VirtualKeyboardLayout = .full) {
+        self.layout = layout
+    }
 
     public func moveUp() {
         if selectedRow > 0 {
             selectedRow -= 1
-            // Clamp column to new row's bounds.
             selectedColumn = min(selectedColumn, rows[selectedRow].count - 1)
         }
     }
@@ -206,7 +132,7 @@ private struct KeyCell: View {
             .font(.system(size: 20, weight: .semibold, design: .monospaced))
             .foregroundColor(isSelected ? .black : .white)
             .frame(
-                width: keySize * key.widthScale + (key.widthScale > 1 ? 8 * (key.widthScale - 1) : 0),
+                width: keySize * key.widthMultiplier + (key.widthMultiplier > 1 ? 8 * (key.widthMultiplier - 1) : 0),
                 height: keySize
             )
             .background(
