@@ -367,39 +367,30 @@ public final class PVSettingsViewController: QuickTableViewController {
 
         let librarySection = Section(title: NSLocalizedString("Game Library", comment: "Game Library"), rows: libraryRows, footer: "Check the wiki about importing ROMs.")
 
-        // Game Library 2
+        // Library Management
         let library2Rows: [TableRow] = [
             NavigationRow(
-                text: NSLocalizedString("Re-import all ROMs Directories", comment: ""),
-                detailText: .subtitle("Re-import all ROMs from the ROMs Directory"),
-                icon: .sfSymbol("triangle.circle.fill"),
+                text: NSLocalizedString("Scan ROM Directories", comment: ""),
+                detailText: .subtitle("Import new ROMs and update metadata without changing custom artwork or names"),
+                icon: .sfSymbol("magnifyingglass.circle"),
                 customization: nil,
                 action: { [weak self] _ in
                     self?.reimportROMsAction()
                 }
             ),
             NavigationRow(
-                text: NSLocalizedString("Reset Everything", comment: ""),
-                detailText: .subtitle("Delete All Settings, Re-import ROMs ⚠️ Very Slow"),
-                icon: .sfSymbol("delete.forward.fill"),
-                customization: nil,
-                action: { [weak self] _ in
-                    self?.resetDataAction()
-                }
-            ),
-            NavigationRow(
-                text: NSLocalizedString("Refresh Game Library", comment: ""),
-                detailText: .subtitle("Re-import ROMs ⚠️ Slow"),
-                icon: .sfSymbol("arrow.uturn.forward"),
+                text: NSLocalizedString("Update Game Metadata", comment: ""),
+                detailText: .subtitle("Re-fetch artwork and info from the database. Custom artwork and names are preserved."),
+                icon: .sfSymbol("arrow.triangle.2.circlepath"),
                 customization: nil,
                 action: { [weak self] _ in
                     self?.refreshGameLibraryAction()
                 }
             ),
             NavigationRow(
-                text: NSLocalizedString("Empty Image Cache", comment: "Empty Image Cache"),
-                detailText: .subtitle("Re-download covers"),
-                icon: .sfSymbol("trash"),
+                text: NSLocalizedString("Clear Artwork Cache", comment: ""),
+                detailText: .subtitle("Delete cached artwork to free up space. Images re-download automatically."),
+                icon: .sfSymbol("photo.badge.minus"),
                 customization: nil,
                 action: { [weak self] _ in
                     self?.emptyImageCacheAction()
@@ -415,10 +406,22 @@ public final class PVSettingsViewController: QuickTableViewController {
                                detailText: .subtitle("Visual options for Game Library"),
                                icon: .sfSymbol("eye"),
                                viewController: self,
-                               segue: "appearanceSegue")
+                               segue: "appearanceSegue"),
+            NavigationRow(
+                text: NSLocalizedString("Reset Library", comment: ""),
+                detailText: .subtitle("Delete all game data, settings, and custom artwork, then re-import from scratch"),
+                icon: .sfSymbol("trash.slash"),
+                customization: { cell, _ in
+                    cell.textLabel?.textColor = .systemRed
+                },
+                action: { [weak self] _ in
+                    self?.resetDataAction()
+                }
+            ),
         ]
 
-        let librarySection2 = Section(title: nil, rows: library2Rows)
+        let library2SectionTitle = NSLocalizedString("Library Management", comment: "")
+        let librarySection2 = Section(title: library2SectionTitle, rows: library2Rows)
 
         // Beta options
 #if !os(tvOS)
@@ -796,70 +799,62 @@ public final class PVSettingsViewController: QuickTableViewController {
 
     func reimportROMsAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Re-Scan all ROM Directories?",
-                                      message: """
-                                        Attempt scan all ROM Directories,
-                                        import all new ROMs found, and update existing ROMs
-                                      """,
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: NSLocalizedString("Scan ROM Directories?", comment: ""),
+            message: NSLocalizedString("Scan all ROM directories for new or updated files. Existing custom artwork and names are not changed.", comment: ""),
+            preferredStyle: .alert)
         alert.popoverPresentationController?.sourceView = tableView
         alert.popoverPresentationController?.sourceRect = tableView.bounds
-        alert.preferredContentSize = CGSize(width: 500, height: 300)
-        alert.addAction(UIAlertAction(title: "Yes",
+        alert.preferredContentSize = CGSize(width: 500, height: 200)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Scan", comment: ""),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
-            NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
+            NotificationCenter.default.post(name: .PVReimportLibrary, object: nil)
             self.done(self)
         }))
-        alert.addAction(UIAlertAction(title: "No",
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
                                       style: .cancel,
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
+
     func resetDataAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Reset Everything?",
-                                      message: """
-                                        Attempt to delete all settings / configurations, then
-                                        reimport everything.
-                                      """,
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: NSLocalizedString("Reset Library?", comment: ""),
+            message: NSLocalizedString("This will delete all game data, settings, and custom artwork, then re-import everything from scratch. This cannot be undone.", comment: ""),
+            preferredStyle: .alert)
         alert.popoverPresentationController?.sourceView = tableView
         alert.popoverPresentationController?.sourceRect = tableView.bounds
-        alert.preferredContentSize = CGSize(width: 500, height: 300)
-        alert.addAction(UIAlertAction(title: "Yes",
-                                      style: .default,
+        alert.preferredContentSize = CGSize(width: 500, height: 200)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Reset", comment: ""),
+                                      style: .destructive,
                                       handler: { (_: UIAlertAction) -> Void in
-            NotificationCenter.default.post(name: NSNotification.Name.PVResetLibrary, object: nil)
+            NotificationCenter.default.post(name: .PVResetLibrary, object: nil)
             self.done(self)
         }))
-        alert.addAction(UIAlertAction(title: "No",
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
                                       style: .cancel,
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
+
     func refreshGameLibraryAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Refresh Game Library?",
-                                      message: """
-                                        Attempt to reload the artwork and title
-                                        information for your entire library.
-                                        This can be a slow process, especially for
-                                        large libraries.
-                                        Only do this if you really, really want to
-                                        try and get more artwork or update the information.
-                                      """,
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: NSLocalizedString("Update Game Metadata?", comment: ""),
+            message: NSLocalizedString("Re-fetch artwork and title information from the database for your entire library. Your custom artwork and names will not be changed. This can be slow for large libraries.", comment: ""),
+            preferredStyle: .alert)
         alert.popoverPresentationController?.sourceView = tableView
         alert.popoverPresentationController?.sourceRect = tableView.bounds
-        alert.preferredContentSize = CGSize(width: 500, height: 300)
-        alert.addAction(UIAlertAction(title: "Yes",
+        alert.preferredContentSize = CGSize(width: 500, height: 200)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Update", comment: ""),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
-            NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
+            NotificationCenter.default.post(name: .PVRefreshLibrary, object: nil)
             self.done(self)
         }))
-        alert.addAction(UIAlertAction(title: "No",
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
                                       style: .cancel,
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
@@ -867,21 +862,19 @@ public final class PVSettingsViewController: QuickTableViewController {
 
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""),
-                                      message: """
-                                      Empty the image cache to free up disk space.
-                                      Images will be redownloaded on demand.
-                                      """,
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: NSLocalizedString("Clear Artwork Cache?", comment: ""),
+            message: NSLocalizedString("Delete all cached artwork to free up disk space. Images will be re-downloaded automatically when needed.", comment: ""),
+            preferredStyle: .alert)
         alert.popoverPresentationController?.sourceView = tableView
         alert.popoverPresentationController?.sourceRect = tableView.bounds
         alert.preferredContentSize = CGSize(width: 500, height: 150)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""),
-                                      style: .default,
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Clear Cache", comment: ""),
+                                      style: .destructive,
                                       handler: { (_: UIAlertAction) -> Void in
             try? PVMediaCache.empty()
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""),
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
                                       style: .cancel,
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
