@@ -6,6 +6,7 @@
 //
 
 import CloudKit
+import os
 import RxSwift
 import RealmSwift
 
@@ -17,8 +18,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     private let deferredRetryGate = DeferredSaveStateRetryGate()
 
     /// Prevent concurrent full-library scans. Multiple boot-time call sites can trigger this.
-    private let loadAllLock = NSLock()
-    private var isLoadAllInFlight: Bool = false
+    private let isLoadAllInFlight = OSAllocatedUnfairLock<Bool>(initialState: false)
 
     /// Dedupes ROM metadata fetches across many save-state records that refer to the same game MD5.
     /// Also applies a short negative cache to avoid hammering CloudKit when a record truly doesn't exist.
@@ -809,22 +809,18 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 return Disposables.create()
             }
 
-            self.loadAllLock.lock()
-            if self.isLoadAllInFlight {
-                self.loadAllLock.unlock()
+            guard self.isLoadAllInFlight.withLock({ inFlight -> Bool in
+                guard !inFlight else { return false }
+                inFlight = true
+                return true
+            }) else {
                 DLOG("[SYNC] SaveState loadAllFromCloud already in-flight; skipping duplicate call.")
                 observer(.completed)
                 return Disposables.create()
             }
-            self.isLoadAllInFlight = true
-            self.loadAllLock.unlock()
 
             Task {
-                defer {
-                    self.loadAllLock.lock()
-                    self.isLoadAllInFlight = false
-                    self.loadAllLock.unlock()
-                }
+                defer { self.isLoadAllInFlight.withLock { $0 = false } }
                 do {
                     ILOG("[SYNC] Loading all save state records from CloudKit...")
                     await CloudKitSyncAnalytics.shared.startSync(operation: "Load SaveStates")

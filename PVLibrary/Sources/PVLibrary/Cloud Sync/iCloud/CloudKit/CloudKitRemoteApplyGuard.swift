@@ -14,21 +14,13 @@ public enum CloudKitRemoteApplyGuard {
     private static var depth: Int = 0
 
     public static var isApplyingRemoteChanges: Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        return depth > 0
+        lock.withLock { depth > 0 }
     }
 
     @discardableResult
     public static func withApplyingRemoteChanges<T>(_ work: () throws -> T) rethrows -> T {
-        lock.lock()
-        depth += 1
-        lock.unlock()
-        defer {
-            lock.lock()
-            depth = max(0, depth - 1)
-            lock.unlock()
-        }
+        lock.withLock { depth += 1 }
+        defer { lock.withLock { depth = max(0, depth - 1) } }
         return try work()
     }
 }

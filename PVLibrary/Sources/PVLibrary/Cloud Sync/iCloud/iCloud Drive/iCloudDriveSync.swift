@@ -510,13 +510,13 @@ public enum iCloudDriveSync {
 
     /// Reset progress tracking
     private static func resetProgress() {
-        progressLock.lock()
-        defer { progressLock.unlock() }
-        filesProcessed = 0
-        totalFilesToMove = 0
-        totalBytesProcessed = 0
-        retryQueue = []
-        currentRetryAttempt = 0
+        progressLock.withLock {
+            filesProcessed = 0
+            totalFilesToMove = 0
+            totalBytesProcessed = 0
+            retryQueue = []
+            currentRetryAttempt = 0
+        }
     }
 
     /// Add a file to the retry queue for later processing with exponential backoff
@@ -788,21 +788,22 @@ public enum iCloudDriveSync {
 
     /// Increment the number of files processed
     private static func incrementFilesProcessed() {
-        progressLock.lock()
-        defer { progressLock.unlock() }
-        filesProcessed += 1
+        let (processed, total) = progressLock.withLock { () -> (Int, Int) in
+            filesProcessed += 1
+            return (filesProcessed, totalFilesToMove)
+        }
 
         // Log progress every 10 files or when it's a multiple of 5%
-        if filesProcessed % 10 == 0 || (totalFilesToMove > 0 && filesProcessed * 20 % totalFilesToMove == 0) {
-            let percentage = totalFilesToMove > 0 ? Double(filesProcessed) / Double(totalFilesToMove) * 100.0 : 0
-            ILOG("File recovery progress: \(filesProcessed)/\(totalFilesToMove) (\(Int(percentage))%)")
+        if processed % 10 == 0 || (total > 0 && processed * 20 % total == 0) {
+            let percentage = total > 0 ? Double(processed) / Double(total) * 100.0 : 0
+            ILOG("File recovery progress: \(processed)/\(total) (\(Int(percentage))%)")
 
             // Post notification for progress updates
             Task { @MainActor in
                 NotificationCenter.default.post(
                     name: iCloudFileRecoveryProgress,
                     object: nil,
-                    userInfo: ["current": filesProcessed, "total": totalFilesToMove]
+                    userInfo: ["current": processed, "total": total]
                 )
             }
         }
@@ -810,17 +811,18 @@ public enum iCloudDriveSync {
 
     /// Add to the total number of files to move
     private static func addToTotalFiles(_ count: Int) {
-        progressLock.lock()
-        defer { progressLock.unlock() }
-        totalFilesToMove += count
-        ILOG("Total files to move: \(totalFilesToMove)")
+        let (processed, total) = progressLock.withLock { () -> (Int, Int) in
+            totalFilesToMove += count
+            return (filesProcessed, totalFilesToMove)
+        }
+        ILOG("Total files to move: \(total)")
 
         // Post notification for initial progress
         Task { @MainActor in
             NotificationCenter.default.post(
                 name: iCloudFileRecoveryProgress,
                 object: nil,
-                userInfo: ["current": filesProcessed, "total": totalFilesToMove]
+                userInfo: ["current": processed, "total": total]
             )
         }
     }
@@ -835,22 +837,23 @@ public enum iCloudDriveSync {
     }
 
     static func moveFilesFromiCloudDriveToLocalDocuments() async {
-        recoveryLock.lock()
-        if isRecoveryInFlight {
-            recoveryLock.unlock()
+        let (shouldProceed, shouldPostStarted) = recoveryLock.withLock { () -> (Bool, Bool) in
+            if isRecoveryInFlight { return (false, false) }
+            isRecoveryInFlight = true
+            let shouldPostStarted = !isRecoverySessionActive
+            isRecoverySessionActive = true
+            return (true, shouldPostStarted)
+        }
+        guard shouldProceed else {
             DLOG("File recovery already in-flight; skipping duplicate run.")
             return
         }
-        isRecoveryInFlight = true
-        let shouldPostStarted = !isRecoverySessionActive
-        isRecoverySessionActive = true
-        recoveryLock.unlock()
 
         defer {
-            recoveryLock.lock()
-            isRecoveryInFlight = false
-            isRecoverySessionActive = false
-            recoveryLock.unlock()
+            recoveryLock.withLock {
+                isRecoveryInFlight = false
+                isRecoverySessionActive = false
+            }
         }
 
         // Ensure heavy filesystem enumeration and copying never runs on the main actor/runloop.
