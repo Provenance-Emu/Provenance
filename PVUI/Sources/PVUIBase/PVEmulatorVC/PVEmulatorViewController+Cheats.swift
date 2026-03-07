@@ -108,10 +108,14 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Resolve the libretro database name for the current game's system.
+    /// Resolve the libretro cheat system name for the current game's system.
+    ///
+    /// Uses `libretroCheatSystemName` which maps to the actual cht/ directory name
+    /// in the libretro cheat database (may differ from `libretroDatabaseName` used
+    /// for thumbnail URLs — e.g. DOOM cheats live under "PrBoom").
     private var gameLibretroDatabaseName: String? {
         guard let sysID = SystemIdentifier(rawValue: game.systemIdentifier) else { return nil }
-        let name = sysID.libretroDatabaseName
+        let name = sysID.libretroCheatSystemName
         return name == "Unknown" ? nil : name
     }
 
