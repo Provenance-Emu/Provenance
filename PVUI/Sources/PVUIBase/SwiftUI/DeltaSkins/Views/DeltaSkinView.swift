@@ -1423,27 +1423,31 @@ public struct DeltaSkinView: View {
                 let thresholdX = buttonWidth * 0.3
                 let thresholdY = buttonHeight * 0.3
 
-                // Add directions from this remaining touch
+                // Compute cardinal directions for this remaining touch
+                var touchDirections: Set<String> = []
                 var addedFromThisTouch = false
-                if relativeY < -thresholdY { remainingDirections.insert("up"); addedFromThisTouch = true }
-                if relativeY > thresholdY { remainingDirections.insert("down"); addedFromThisTouch = true }
-                if relativeX > thresholdX { remainingDirections.insert("right"); addedFromThisTouch = true }
-                if relativeX < -thresholdX { remainingDirections.insert("left"); addedFromThisTouch = true }
+                if relativeY < -thresholdY { touchDirections.insert("up"); addedFromThisTouch = true }
+                if relativeY > thresholdY { touchDirections.insert("down"); addedFromThisTouch = true }
+                if relativeX > thresholdX { touchDirections.insert("right"); addedFromThisTouch = true }
+                if relativeX < -thresholdX { touchDirections.insert("left"); addedFromThisTouch = true }
 
                 // If nothing crossed thresholds, resolve to nearest direction for this touch
                 if !addedFromThisTouch {
                     if abs(relativeX) >= abs(relativeY) {
-                        remainingDirections.insert(relativeX >= 0 ? "right" : "left")
+                        touchDirections.insert(relativeX >= 0 ? "right" : "left")
                     } else {
-                        remainingDirections.insert(relativeY >= 0 ? "down" : "up")
+                        touchDirections.insert(relativeY >= 0 ? "down" : "up")
                     }
                 }
+
+                // Resolve diagonals for this touch's button and merge into remaining
+                remainingDirections.formUnion(resolveDiagonalDirections(touchDirections, forButton: dpadButton))
             }
         }
 
-        // Get currently pressed D-pad directions
-        let dpadTokens = ["up", "down", "left", "right"]
-        let currentDirections: Set<String> = Set(dpadTokens.filter { pressedButtons.contains($0) })
+        // Track all D-pad tokens (cardinal + diagonal) so diagonal tokens in pressedButtons are released correctly
+        let allDpadTokens = ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright"]
+        let currentDirections: Set<String> = Set(allDpadTokens.filter { pressedButtons.contains($0) })
 
         // Release directions that are no longer needed
         for direction in currentDirections.subtracting(remainingDirections) {
@@ -1561,23 +1565,16 @@ public struct DeltaSkinView: View {
             ILOG("skins: D-pad fallback to nearest direction: \(activeDirections)")
         }
 
-        // Support multiple directions simultaneously instead of resolving to diagonal tokens
-        // This allows pressing up+left separately, or up+right, etc.
-        let hasUp = activeDirections.contains("up")
-        let hasDown = activeDirections.contains("down")
-        let hasLeft = activeDirections.contains("left")
-        let hasRight = activeDirections.contains("right")
+        // Build resolved directions set from active directions
+        var resolvedDirections: Set<String> = activeDirections
 
-        // Build resolved directions set - allow multiple directions at once
-        var resolvedDirections: Set<String> = []
-        if hasUp { resolvedDirections.insert("up") }
-        if hasDown { resolvedDirections.insert("down") }
-        if hasLeft { resolvedDirections.insert("left") }
-        if hasRight { resolvedDirections.insert("right") }
+        // Resolve cardinal combos to diagonal tokens if the button's directional mapping supports them.
+        // This allows skins/cores that expect 'upleft' to receive it instead of separate 'up'+'left'.
+        let resolvedWithDiagonals = resolveDiagonalDirections(resolvedDirections, forButton: button)
 
         // Merge directions from all active D-pad touches
         // Calculate desired directions for ALL active D-pad touches
-        var allResolvedDirections: Set<String> = resolvedDirections
+        var allResolvedDirections: Set<String> = resolvedWithDiagonals
 
         // Add directions from other active D-pad touches
         for (otherTouchId, otherDPadButton) in touchToDPadMap {
@@ -1598,27 +1595,31 @@ public struct DeltaSkinView: View {
                 let otherThresholdX = otherButtonWidth * 0.3
                 let otherThresholdY = otherButtonHeight * 0.3
 
-                // Add directions from this other touch
+                // Compute cardinal directions for this other touch
+                var otherTouchDirections: Set<String> = []
                 var addedFromThisTouch = false
-                if otherRelativeY < -otherThresholdY { allResolvedDirections.insert("up"); addedFromThisTouch = true }
-                if otherRelativeY > otherThresholdY { allResolvedDirections.insert("down"); addedFromThisTouch = true }
-                if otherRelativeX > otherThresholdX { allResolvedDirections.insert("right"); addedFromThisTouch = true }
-                if otherRelativeX < -otherThresholdX { allResolvedDirections.insert("left"); addedFromThisTouch = true }
+                if otherRelativeY < -otherThresholdY { otherTouchDirections.insert("up"); addedFromThisTouch = true }
+                if otherRelativeY > otherThresholdY { otherTouchDirections.insert("down"); addedFromThisTouch = true }
+                if otherRelativeX > otherThresholdX { otherTouchDirections.insert("right"); addedFromThisTouch = true }
+                if otherRelativeX < -otherThresholdX { otherTouchDirections.insert("left"); addedFromThisTouch = true }
 
                 // If nothing crossed thresholds (center touch), resolve to nearest direction for this touch
                 if !addedFromThisTouch {
                     if abs(otherRelativeX) >= abs(otherRelativeY) {
-                        allResolvedDirections.insert(otherRelativeX >= 0 ? "right" : "left")
+                        otherTouchDirections.insert(otherRelativeX >= 0 ? "right" : "left")
                     } else {
-                        allResolvedDirections.insert(otherRelativeY >= 0 ? "down" : "up")
+                        otherTouchDirections.insert(otherRelativeY >= 0 ? "down" : "up")
                     }
                 }
+
+                // Resolve diagonals for this touch's button too, then merge
+                allResolvedDirections.formUnion(resolveDiagonalDirections(otherTouchDirections, forButton: otherDPadButton))
             }
         }
 
-        // Get currently pressed D-pad directions
-        let dpadTokens = ["up", "down", "left", "right"]
-        let currentDirections: Set<String> = Set(dpadTokens.filter { pressedButtons.contains($0) })
+        // Track all D-pad tokens including diagonals so releases are handled correctly
+        let allDpadTokens = ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright"]
+        let currentDirections: Set<String> = Set(allDpadTokens.filter { pressedButtons.contains($0) })
 
         // Release directions not in the merged resolved set
         for direction in currentDirections.subtracting(allResolvedDirections) {
@@ -2095,7 +2096,7 @@ public struct DeltaSkinView: View {
 
         // For D-pad buttons, check if any other D-pad touches would still activate this direction
         // This is a safety check - releaseDPadDirectionsForTouch should handle D-pad logic correctly
-        let dpadButtons = ["up", "down", "left", "right"]
+        let dpadButtons = ["up", "down", "left", "right", "upleft", "upright", "downleft", "downright"]
         let isDPadButton = dpadButtons.contains(buttonId)
 
         if otherTouchesHoldingButton {
@@ -2116,6 +2117,44 @@ public struct DeltaSkinView: View {
         // Pass to the input handler
         DLOG("Forwarding button release to input handler: \(buttonId)")
         inputHandler.buttonReleased(buttonId)
+    }
+
+    /// Resolve cardinal direction combinations to diagonal tokens when the button's directional
+    /// mapping supports them. For example, "up"+"left" becomes "upleft" if the mapping contains
+    /// an "upleft" key. Falls back to individual cardinal tokens when the mapping has no diagonal keys.
+    /// This ensures cores that expect 'upleft' receive the correct token.
+    private func resolveDiagonalDirections(_ directions: Set<String>, forButton button: DeltaSkinButton) -> Set<String> {
+        guard case .directional(let mapping) = button.input else {
+            // Not a directional button or no mapping — pass through unchanged
+            return directions
+        }
+
+        let hasUp = directions.contains("up")
+        let hasDown = directions.contains("down")
+        let hasLeft = directions.contains("left")
+        let hasRight = directions.contains("right")
+
+        var result = directions
+
+        if hasUp && hasLeft, let token = mapping["upleft"] {
+            result.remove("up")
+            result.remove("left")
+            result.insert(token)
+        } else if hasUp && hasRight, let token = mapping["upright"] {
+            result.remove("up")
+            result.remove("right")
+            result.insert(token)
+        } else if hasDown && hasLeft, let token = mapping["downleft"] {
+            result.remove("down")
+            result.remove("left")
+            result.insert(token)
+        } else if hasDown && hasRight, let token = mapping["downright"] {
+            result.remove("down")
+            result.remove("right")
+            result.insert(token)
+        }
+
+        return result
     }
 
     /// Extract the actual input command from a button
