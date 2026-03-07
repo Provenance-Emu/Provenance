@@ -101,45 +101,68 @@ jobs:
               continue
             fi
 
-            # Attempt rebase
+            # Attempt rebase first (linear history preferred).
+            # If rebase fails due to conflicts, fall back to a merge commit —
+            # this avoids the "freshly-made PR immediately has rebase conflict"
+            # problem that happens when multiple agent PRs touch overlapping files.
             git checkout -B "$branch" "origin/$branch"
 
-            if git rebase origin/develop; then
-              # Push rebased branch
+            push_branch_and_retrigger() {
+              local branch="$1" pr_num="$2"
               if git push --force-with-lease origin "$branch"; then
-                echo "  Rebased and pushed successfully"
                 rebased=$((rebased + 1))
                 # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events
                 gh workflow run agent-validation.yml --repo "$REPO" --ref "$branch" \
                   -f branch="$branch" -f pr_number="$pr_num" 2>/dev/null || true
-                # NOTE: ai-review-trigger.yml fires on pull_request:synchronize — no explicit dispatch needed
-                # Re-trigger IPA build if PR has build-ipa label (GITHUB_TOKEN push won't re-fire build.yml)
+                # Re-trigger IPA build if PR has build-ipa label
                 pr_labels=$(gh pr view "$pr_num" --repo "$REPO" --json labels --jq '[.labels[].name] | join(",")' 2>/dev/null || echo "")
                 if echo "$pr_labels" | grep -q "build-ipa"; then
                   echo "  PR has build-ipa label — re-dispatching build.yml"
                   gh workflow run build.yml --repo "$REPO" --ref "$branch" \
                     -f pr_number="$pr_num" 2>/dev/null || true
                 fi
+                return 0
               else
-                echo "  Rebase succeeded but push was rejected (branch protection?)"
-                failed=$((failed + 1))
+                echo "  Push rejected (branch protection?)"
+                return 1
               fi
-            else
-              echo "  Rebase conflict — dispatching Claude to resolve"
-              git rebase --abort 2>/dev/null || true
-              failed=$((failed + 1))
+            }
 
-              # Dispatch Claude to resolve conflicts automatically
-              if gh workflow run claude-code.yml \
-                   --repo "$REPO" \
-                   -f pr_number="$pr_num" \
-                   -f action="fix_rebase_conflict" 2>/dev/null; then
-                gh pr comment "$pr_num" --repo "$REPO" \
-                  --body $'🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
+            if git rebase origin/develop; then
+              echo "  Rebase succeeded"
+              push_branch_and_retrigger "$branch" "$pr_num" \
+                && echo "  Pushed successfully (rebase)" \
+                || { failed=$((failed + 1)); }
+            else
+              # Rebase failed — abort and try a plain merge instead.
+              # A merge commit avoids the commit-replay conflict while still
+              # keeping the branch current with develop (GitHub's MERGEABLE check
+              # uses 3-way merge, so this matches what GitHub expects).
+              echo "  Rebase conflict — falling back to merge"
+              git rebase --abort 2>/dev/null || true
+              git checkout -B "$branch" "origin/$branch"
+
+              if git merge --no-edit -m "chore: sync with develop" origin/develop 2>/dev/null; then
+                echo "  Merge fallback succeeded"
+                push_branch_and_retrigger "$branch" "$pr_num" \
+                  && echo "  Pushed successfully (merge fallback)" \
+                  || { failed=$((failed + 1)); }
               else
-                # Dispatch failed — fall back to manual instructions
-                gh pr comment "$pr_num" --repo "$REPO" \
-                  --body $'**Auto-rebase conflict**\n\nThis PR could not be automatically rebased onto `develop` due to merge conflicts. Please rebase manually:\n\n```bash\ngit fetch origin\ngit checkout '"${branch}"'\ngit rebase origin/develop\n# resolve conflicts, then:\ngit push --force-with-lease\n```\n\nOr comment `/rebase` here to retry.' 2>/dev/null || true
+                # Both rebase and merge failed — genuine conflict, dispatch Claude.
+                git merge --abort 2>/dev/null || true
+                echo "  Both rebase and merge failed — dispatching Claude to resolve"
+                failed=$((failed + 1))
+
+                if gh workflow run claude-code.yml \
+                     --repo "$REPO" \
+                     -f pr_number="$pr_num" \
+                     -f action="fix_rebase_conflict" 2>/dev/null; then
+                  gh pr comment "$pr_num" --repo "$REPO" \
+                    --body $'🤖 **Merge conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
+                else
+                  gh pr comment "$pr_num" --repo "$REPO" \
+                    --body $'**Auto-sync conflict**\n\nThis PR could not be automatically synced with `develop` due to merge conflicts. Please resolve manually:\n\n```bash\ngit fetch origin\ngit checkout '"${branch}"'\ngit merge origin/develop\n# resolve conflicts, then:\ngit push\n```\n\nOr comment `/rebase` here to retry.' 2>/dev/null || true
+                fi
               fi
             fi
           done < <(echo "$prs" | jq -r '.[] | [.number, .branch] | @tsv')
