@@ -74,7 +74,7 @@ public actor RetroNetworkClient: Sendable {
         }
     }
 
-        /// Perform a request and decode the JSON response
+    /// Perform a request and decode the JSON response
     /// - Parameters:
     ///   - endpoint: The API endpoint path
     ///   - parameters: Query parameters to include in the request
