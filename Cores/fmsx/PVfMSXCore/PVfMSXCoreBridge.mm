@@ -43,8 +43,6 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-		// Set pitch_shift to 1 for RGB565 (16-bit/2 bytes per pixel)
-		pitch_shift = 1;
 	}
 
 	_current = self;
@@ -165,18 +163,6 @@
 
 - (CGSize)bufferSize {
     return CGSizeMake(272, 240);
-}
-
-- (GLenum)pixelFormat {
-    return GL_RGB565;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT_5_6_5;
-}
-
-- (GLenum)internalPixelFormat {
-    return GL_RGB565;
 }
 
 # pragma mark - Audio
