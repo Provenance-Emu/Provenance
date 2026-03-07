@@ -85,7 +85,7 @@ public actor AchievementSessionManager {
     /// Stop the active session and cancel the ping loop.
     ///
     /// Safe to call even when no session is active.
-    public func stopSession() async {
+    public func stopSession() {
         pingTask?.cancel()
         pingTask = nil
         activeGameId = nil

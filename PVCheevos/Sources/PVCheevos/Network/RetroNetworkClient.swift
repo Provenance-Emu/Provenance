@@ -225,6 +225,7 @@ public actor RetroNetworkClient: Sendable {
         request.setValue("PVCheevos-Swift-Client", forHTTPHeaderField: "User-Agent")
 
         let body = "r=gameid&m=\(hash)"
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         request.httpBody = body.data(using: .utf8)
 
         let (data, response) = try await urlSession.data(for: request)
@@ -264,7 +265,16 @@ public actor RetroNetworkClient: Sendable {
         request.setValue("PVCheevos-Swift-Client", forHTTPHeaderField: "User-Agent")
 
         let hardcoreFlag = hardcore ? "1" : "0"
-        let body = "r=awardachievement&u=\(username)&t=\(token)&a=\(achievementId)&h=\(hardcoreFlag)"
+        let parameters: [String: String] = [
+            "r": "awardachievement",
+            "u": username,
+            "t": token,
+            "a": "\(achievementId)",
+            "h": hardcoreFlag
+        ]
+        let body = parameters.map { "\($0.key)=\($0.value)" }
+            .joined(separator: "&")
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         request.httpBody = body.data(using: .utf8)
 
         let (data, response) = try await urlSession.data(for: request)
