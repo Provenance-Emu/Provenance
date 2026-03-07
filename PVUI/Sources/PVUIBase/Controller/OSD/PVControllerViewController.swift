@@ -182,10 +182,20 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     private var toggleButton: UIButton?
     private var buttonsVisible = true
 
+    // MARK: - Quick Action Buttons
+    private var quickSaveButton: UIButton?
+    private var quickLoadButton: UIButton?
+    private var fastForwardButton: UIButton?
+    private var isFastForwardActive: Bool = false
+
     // Add computed property to check if we should show the toggle button
     private var shouldShowToggleButton: Bool {
         /// Only show toggle button if we have controls to toggle
         return !controlLayout.isEmpty && !inMoveMode
+    }
+
+    private var coreSupportsStateSaves: Bool {
+        return (emulatorCore as? PVEmulatorCore)?.supportsSaveStates == true
     }
 
     public required init(controlLayout: [ControlLayoutEntry], system: PVSystem, responder: T) {
@@ -344,6 +354,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         // Add toggle button
         setupToggleButton()
         updateToggleButtonAppearance()
+
+        // Add quick action buttons (quick save/load and fast forward)
+        setupQuickActionButtons()
     }
 
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
@@ -392,6 +405,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             leftShoulderButton2, rightShoulderButton2,
             zTriggerButton, startButton, selectButton,
             leftAnalogButton, rightAnalogButton,
+            quickSaveButton, quickLoadButton, fastForwardButton,
         ].compactMap { $0 }
     }
 
@@ -1492,6 +1506,124 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 for: .normal
             )
         }
+    }
+
+    // MARK: - Quick Action Buttons Setup
+
+    private func setupQuickActionButtons() {
+        guard fastForwardButton == nil else { return }
+
+        let buttonSize: CGFloat = 44
+        let spacing: CGFloat = 8
+        let topPadding: CGFloat = 8
+
+        // Fast Forward — always available
+        let ffButton = makeQuickActionButton(
+            systemImage: "forward.fill",
+            accessibilityLabel: "Fast Forward"
+        )
+        ffButton.addTarget(self, action: #selector(fastForwardTapped), for: .touchUpInside)
+        ffButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(ffButton)
+        NSLayoutConstraint.activate([
+            ffButton.widthAnchor.constraint(equalToConstant: buttonSize),
+            ffButton.heightAnchor.constraint(equalToConstant: buttonSize),
+            ffButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            ffButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
+        ])
+        self.fastForwardButton = ffButton
+
+        // Quick Save / Load — only when core supports save states
+        if coreSupportsStateSaves {
+            let qlButton = makeQuickActionButton(
+                systemImage: "arrow.counterclockwise",
+                accessibilityLabel: "Quick Load"
+            )
+            qlButton.addTarget(self, action: #selector(quickLoadTapped), for: .touchUpInside)
+            qlButton.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(qlButton)
+            NSLayoutConstraint.activate([
+                qlButton.widthAnchor.constraint(equalToConstant: buttonSize),
+                qlButton.heightAnchor.constraint(equalToConstant: buttonSize),
+                qlButton.trailingAnchor.constraint(equalTo: ffButton.leadingAnchor, constant: -spacing),
+                qlButton.topAnchor.constraint(equalTo: ffButton.topAnchor),
+            ])
+            self.quickLoadButton = qlButton
+
+            let qsButton = makeQuickActionButton(
+                systemImage: "square.and.arrow.down",
+                accessibilityLabel: "Quick Save"
+            )
+            qsButton.addTarget(self, action: #selector(quickSaveTapped), for: .touchUpInside)
+            qsButton.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(qsButton)
+            NSLayoutConstraint.activate([
+                qsButton.widthAnchor.constraint(equalToConstant: buttonSize),
+                qsButton.heightAnchor.constraint(equalToConstant: buttonSize),
+                qsButton.trailingAnchor.constraint(equalTo: qlButton.leadingAnchor, constant: -spacing),
+                qsButton.topAnchor.constraint(equalTo: ffButton.topAnchor),
+            ])
+            self.quickSaveButton = qsButton
+        }
+    }
+
+    private func makeQuickActionButton(systemImage: String, accessibilityLabel: String) -> UIButton {
+        let button = MenuButton(type: .custom)
+        button.setImage(UIImage(systemName: systemImage), for: .normal)
+        button.tintColor = .white
+        button.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        button.layer.cornerRadius = 22
+        button.layer.masksToBounds = true
+        button.accessibilityLabel = accessibilityLabel
+        #if !os(tvOS)
+        button.isPointerInteractionEnabled = true
+        #endif
+        return button
+    }
+
+    @objc private func quickSaveTapped() {
+        vibrate()
+        guard let emulatorController = parent as? (any PVEmualatorControllerProtocol) else {
+            ELOG("QuickSave: parent is not PVEmualatorControllerProtocol")
+            return
+        }
+        Task { @MainActor in
+            do {
+                try await emulatorController.quicksave()
+            } catch {
+                ELOG("QuickSave failed: \(error)")
+            }
+        }
+    }
+
+    @objc private func quickLoadTapped() {
+        vibrate()
+        guard let emulatorController = parent as? (any PVEmualatorControllerProtocol) else {
+            ELOG("QuickLoad: parent is not PVEmualatorControllerProtocol")
+            return
+        }
+        Task { @MainActor in
+            do {
+                try await emulatorController.quickload()
+            } catch {
+                ELOG("QuickLoad failed: \(error)")
+            }
+        }
+    }
+
+    @objc private func fastForwardTapped() {
+        guard let core = emulatorCore as? PVEmulatorCore else { return }
+        isFastForwardActive.toggle()
+        core.gameSpeed = isFastForwardActive ? .fast : .normal
+        updateFastForwardButtonAppearance()
+    }
+
+    private func updateFastForwardButtonAppearance() {
+        fastForwardButton?.setImage(UIImage(systemName: "forward.fill"), for: .normal)
+        fastForwardButton?.tintColor = isFastForwardActive ? .systemYellow : .white
+        fastForwardButton?.backgroundColor = isFastForwardActive
+            ? UIColor.systemOrange.withAlphaComponent(0.6)
+            : UIColor.black.withAlphaComponent(0.4)
     }
 }
 #endif // UIKit
