@@ -1503,6 +1503,7 @@ private struct AudioSection: View {
     @Default(.volume) var volume
     @Default(.volumeHUD) var volumeHUD
     @Default(.respectMuteSwitch) var respectMuteSwitch
+    @Default(.pauseOnHeadphonesDisconnect) var pauseOnHeadphonesDisconnect
     #endif
     var body: some View {
         Section(header: Text("Audio")) {
@@ -1511,6 +1512,11 @@ private struct AudioSection: View {
                 SettingsRow(title: "Respect Silent Mode",
                             subtitle: respectMuteSwitch ? "Disable game audio when system ringer is muted. Does not apply to headphones or external audio destinations." : "Play game audio when system ringer is muted. Does not apply to headphones or external audio destinations.",
                             icon: respectMuteSwitch ? .sfSymbol("speaker.slash.fill") : .sfSymbol("speaker.slash"))
+            }
+            ThemedToggle(isOn: $pauseOnHeadphonesDisconnect) {
+                SettingsRow(title: "Pause on Headphones Disconnect",
+                            subtitle: "Auto-pause emulation when AirPods or Bluetooth headphones disconnect.",
+                            icon: .sfSymbol("airpodspro"))
             }
 //            ThemedToggle(isOn: $volumeHUD) {
 //                SettingsRow(title: "Volume HUD",
