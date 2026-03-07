@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVCoreAudio
 import PVSettings
 import PVLogging
 import Defaults
