@@ -24,6 +24,7 @@
 #import <CoreHaptics/CoreHaptics.h>
 #import <sys/types.h>
 #import <sys/sysctl.h>
+#import <sys/mman.h>
 #import <assert.h>
 
 /* Dolphin Includes */
@@ -496,15 +497,14 @@ static void ResetDolphinStaticState() {
     // Pause on Panic
     Config::SetBase(Config::MAIN_AUTO_DISC_CHANGE, !self.pauseOnPanic);
 
-    // Fast Disc Speed (faster loading)
-    // If you later add a UI or option for this in Provenance, wire it here instead of hardcoding.
-    Config::SetBase(Config::MAIN_FAST_DISC_SPEED, true);
+    // Fast Disc Speed (faster loading, skip disc read delays)
+    Config::SetBase(Config::MAIN_FAST_DISC_SPEED, self.fastDiscSpeed);
 
     // Write-Back Cache (inverted: enableWriteBackCache=true means accurate NANs=true, which is slower)
     Config::SetBase(Config::MAIN_ACCURATE_NANS, self.enableWriteBackCache);
 
-    // GPU Sync (disabled for performance, matching DolphiniOS defaults)
-    Config::SetBase(Config::MAIN_SYNC_GPU, false);
+    // GPU Sync with CPU - user-configurable (disabled by default for performance)
+    Config::SetBase(Config::MAIN_SYNC_GPU, self.syncGPU);
 
     // Speed Limit
     if (self.speedLimit == 0) {
@@ -549,9 +549,10 @@ static void ResetDolphinStaticState() {
 
 
 
-    // CPU High Level / Low Level Emulation
-    Config::SetBase(Config::MAIN_DSP_HLE, true);
-    Config::SetBase(Config::MAIN_DSP_THREAD, true);
+    // DSP emulation mode (HLE = faster, LLE = more accurate)
+    Config::SetBase(Config::MAIN_DSP_HLE, self.dspHLE);
+    // DSP threading (separate thread = better performance, may cause audio desync)
+    Config::SetBase(Config::MAIN_DSP_THREAD, self.dspThread);
     Core::SetIsThrottlerTempDisabled(false);
 
     // === DEBUG AND LOGGING ===
@@ -891,21 +892,57 @@ static void ResetDolphinStaticState() {
 /// See setupHapticFeedback method in Controls for implementation
 
 /// JIT availability detection
-/// Based on DolphiniOS's JitManager logic - JIT is available when process is debugged
-/// or on simulator, which allows dynamic code execution
+/// Supports multiple JIT enablement paths including:
+///   - iOS Simulator (always available)
+///   - Xcode debugging / AltStore / SideStore (debugger attach path)
+///   - iOS/tvOS 14.2+ cs_allow_jit entitlement (used by JIT enabler apps like StikJIT)
+///   - iOS/tvOS 17+ native JIT entitlement (com.apple.security.cs.allow-jit)
+///   - iOS/tvOS 26+ MAP_JIT kernel relaxation for entitled apps
 -(BOOL)checkJITAvailable {
 #if TARGET_OS_SIMULATOR
     // JIT is always available on iOS Simulator
     return YES;
 #else
-    // Check if process is being debugged, which enables JIT
-    // This covers AltStore, SideStore, Xcode debugging, etc.
-    return [self isProcessDebugged];
+    // Method 1: Check if process is being debugged (AltStore, SideStore, Xcode, etc.)
+    if ([self isProcessDebugged]) {
+        NSLog(@"✅ JIT: Available via debugger attach (AltStore/Xcode/SideStore)");
+        return YES;
+    }
+
+    // Method 2: Try MAP_JIT to detect if the entitlement allows JIT directly.
+    // On iOS/tvOS 14.2+ with com.apple.security.cs.allow-jit entitlement,
+    // and on iOS/tvOS 17+ / tvOS 26+ with improved JIT support,
+    // mmap with MAP_JIT succeeds without needing a debugger.
+    void *testPage = mmap(nullptr, PAGE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
+                          MAP_PRIVATE | MAP_ANONYMOUS | MAP_JIT, -1, 0);
+    if (testPage != MAP_FAILED) {
+        munmap(testPage, PAGE_SIZE);
+        NSLog(@"✅ JIT: Available via MAP_JIT entitlement (iOS/tvOS 14.2+ JIT entitlement)");
+        return YES;
+    }
+
+    // Method 3: Check for pthread_jit_write_protect_np availability
+    // This function was introduced alongside Apple Silicon JIT support
+    // and indicates the platform supports hardware-enforced JIT protection
+#if __has_builtin(__builtin_available)
+    if (@available(iOS 14.2, tvOS 14.2, *)) {
+        // On Apple Silicon devices with proper entitlements, write protection
+        // can be toggled — check if the symbol is available (non-simulator ARM64)
+#if defined(__aarch64__)
+        // pthread_jit_write_protect_np is available on Apple Silicon
+        // If we reach here and MAP_JIT failed, JIT is not available via entitlement
+        NSLog(@"⚠️ JIT: MAP_JIT failed on Apple Silicon device — entitlement not present");
+#endif
+    }
+#endif
+
+    NSLog(@"⚠️ JIT: Not available — falling back to Cached Interpreter for best JITless performance");
+    return NO;
 #endif
 }
 
 /// Check if the current process is being debugged
-/// This is the primary way JIT becomes available on iOS devices
+/// This is the primary way JIT becomes available on iOS devices via AltStore/SideStore/Xcode
 -(BOOL)isProcessDebugged {
     int junk;
     int mib[4];

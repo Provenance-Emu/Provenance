@@ -114,6 +114,10 @@
 @property (nonatomic, assign) bool enableMMU;
 @property (nonatomic, assign) bool pauseOnPanic;
 @property (nonatomic, assign) bool enableWriteBackCache;
+@property (nonatomic, assign) bool dspHLE;
+@property (nonatomic, assign) bool dspThread;
+@property (nonatomic, assign) bool syncGPU;
+@property (nonatomic, assign) bool fastDiscSpeed;
 @property (nonatomic, assign) int8_t speedLimit;
 @property (nonatomic, assign) int8_t fallbackRegion;
 

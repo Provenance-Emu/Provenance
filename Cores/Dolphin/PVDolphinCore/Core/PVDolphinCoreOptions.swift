@@ -391,6 +391,38 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         defaultValue: false)
     }()
 
+    static var dspHLEOption: CoreOption = {
+        .bool(.init(
+            title: "DSP High Level Emulation (HLE)",
+            description: "Use High Level Emulation for the DSP. Faster but less accurate than LLE. Disable for games with DSP audio issues.",
+            requiresRestart: true),
+        defaultValue: true)
+    }()
+
+    static var dspThreadOption: CoreOption = {
+        .bool(.init(
+            title: "DSP on Separate Thread",
+            description: "Run the DSP on a dedicated thread for improved performance. May cause audio desync in some games.",
+            requiresRestart: true),
+        defaultValue: true)
+    }()
+
+    static var syncGPUOption: CoreOption = {
+        .bool(.init(
+            title: "Synchronize GPU Thread",
+            description: "Sync the GPU thread to the CPU, ensuring accurate timing. Reduces performance but fixes flickering in some games. Only relevant in Dual Core mode.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var fastDiscSpeedOption: CoreOption = {
+        .bool(.init(
+            title: "Fast Disc Speed",
+            description: "Skip disc read speed emulation for faster loading times. May break games that depend on precise disc timing.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
     static var speedLimitOption: CoreOption = {
         .enumeration(.init(title: "Speed Limit",
                           description: "Limit emulation speed as percentage of normal speed.",
@@ -573,7 +605,8 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             cpuOption, cpuClockOption, dualCoreOption, idleSkippingOption,
             fastMemoryOption, enableCheatOption, enableVBIOverrideOption,
             vbiFrequencyRangeOption, enableMMUOption, pauseOnPanicOption,
-            enableWriteBackCacheOption, speedLimitOption, fallbackRegionOption
+            enableWriteBackCacheOption, speedLimitOption, fallbackRegionOption,
+            dspHLEOption, dspThreadOption, syncGPUOption, fastDiscSpeedOption
         ]
         let cpuGroup: CoreOption = .group(.init(title: "CPU & Emulation",
                                                description: "CPU emulation and performance settings"),
@@ -762,6 +795,18 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     @objc static var enableWriteBackCache: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.enableWriteBackCacheOption).asBool
     }
+    @objc static var dspHLE: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.dspHLEOption).asBool
+    }
+    @objc static var dspThread: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.dspThreadOption).asBool
+    }
+    @objc static var syncGPU: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.syncGPUOption).asBool
+    }
+    @objc static var fastDiscSpeed: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.fastDiscSpeedOption).asBool
+    }
     @objc static var speedLimit: Int{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.speedLimitOption).asInt ?? 100
     }
@@ -851,6 +896,10 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         self.enableMMU = PVDolphinCoreOptions.enableMMU
         self.pauseOnPanic = PVDolphinCoreOptions.pauseOnPanic
         self.enableWriteBackCache = PVDolphinCoreOptions.enableWriteBackCache
+        self.dspHLE = PVDolphinCoreOptions.dspHLE
+        self.dspThread = PVDolphinCoreOptions.dspThread
+        self.syncGPU = PVDolphinCoreOptions.syncGPU
+        self.fastDiscSpeed = PVDolphinCoreOptions.fastDiscSpeed
         self.speedLimit = NSNumber(value: PVDolphinCoreOptions.speedLimit).int8Value
         self.fallbackRegion = NSNumber(value: PVDolphinCoreOptions.fallbackRegion).int8Value
 
