@@ -10,9 +10,10 @@ import Foundation
 
 /// Supported ROM patch file formats.
 public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
-    /// International Patching System — oldest and most common format.
-    /// Supports IPS32 (large ROM) extension.
+    /// International Patching System — classic format for ROMs up to 16 MB.
     case ips
+    /// IPS32 — large-ROM extension of IPS using 4-byte offsets and "EEOF" terminator.
+    case ips32
     /// Beat Patch System — successor to IPS; includes CRC verification.
     case bps
     /// Universal Patch System — bidirectional patching with CRC.
@@ -36,6 +37,7 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
     public var fileExtensions: [String] {
         switch self {
         case .ips:     return ["ips"]
+        case .ips32:   return ["ips32"]
         case .bps:     return ["bps"]
         case .ups:     return ["ups"]
         case .xdelta:  return ["xdelta", "delta"]
@@ -51,6 +53,7 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
     public var displayName: String {
         switch self {
         case .ips:     return "IPS"
+        case .ips32:   return "IPS32"
         case .bps:     return "BPS (Beat)"
         case .ups:     return "UPS"
         case .xdelta:  return "xdelta"
@@ -66,7 +69,7 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
     public var hasIntegrityCheck: Bool {
         switch self {
         case .bps, .ups, .ppf, .xdelta3: return true
-        case .ips, .xdelta, .aps, .rup, .nsp: return false
+        case .ips, .ips32, .xdelta, .aps, .rup, .nsp: return false
         }
     }
 

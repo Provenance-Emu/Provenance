@@ -79,6 +79,9 @@ public struct BPSPatcher: Sendable {
 
             switch command {
             case 0:  // SourceRead
+                guard outputOffset + length <= targetSize else {
+                    throw PatchError.corruptPatchFile("SourceRead overflows target buffer at offset \(outputOffset)")
+                }
                 for i in 0..<length {
                     let srcIdx = outputOffset + i
                     target[outputOffset + i] = srcIdx < source.count ? source[srcIdx] : 0
@@ -89,6 +92,9 @@ public struct BPSPatcher: Sendable {
                 guard pos + length <= actionsEnd else {
                     throw PatchError.corruptPatchFile("Truncated TargetRead data")
                 }
+                guard outputOffset + length <= targetSize else {
+                    throw PatchError.corruptPatchFile("TargetRead overflows target buffer at offset \(outputOffset)")
+                }
                 target.replaceSubrange(outputOffset..<(outputOffset + length), with: patch[pos..<(pos + length)])
                 pos += length
                 outputOffset += length
@@ -98,6 +104,12 @@ public struct BPSPatcher: Sendable {
                 let negative = (rawOffset & 1) != 0
                 let delta = rawOffset >> 1
                 sourceRelOffset = negative ? sourceRelOffset - delta : sourceRelOffset + delta
+                guard outputOffset + length <= targetSize else {
+                    throw PatchError.corruptPatchFile("SourceCopy overflows target buffer at offset \(outputOffset)")
+                }
+                guard sourceRelOffset >= 0 else {
+                    throw PatchError.corruptPatchFile("SourceCopy has negative source offset")
+                }
                 for _ in 0..<length {
                     target[outputOffset] = sourceRelOffset < source.count ? source[sourceRelOffset] : 0
                     outputOffset += 1
@@ -109,7 +121,16 @@ public struct BPSPatcher: Sendable {
                 let negative = (rawOffset & 1) != 0
                 let delta = rawOffset >> 1
                 targetRelOffset = negative ? targetRelOffset - delta : targetRelOffset + delta
+                guard outputOffset + length <= targetSize else {
+                    throw PatchError.corruptPatchFile("TargetCopy overflows target buffer at offset \(outputOffset)")
+                }
+                guard targetRelOffset >= 0 else {
+                    throw PatchError.corruptPatchFile("TargetCopy has negative source offset")
+                }
                 for _ in 0..<length {
+                    guard targetRelOffset < outputOffset else {
+                        throw PatchError.corruptPatchFile("TargetCopy source position \(targetRelOffset) references unwritten data")
+                    }
                     target[outputOffset] = target[targetRelOffset]
                     outputOffset += 1
                     targetRelOffset += 1

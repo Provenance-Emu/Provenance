@@ -15,7 +15,7 @@ import CryptoKit
 /// so changing either invalidates the cache entry. Original ROMs are never modified.
 ///
 /// Cache directory: `Library/Caches/PVPatchedROMs/<key>/patched.<ext>`
-public actor PatchCache: Sendable {
+public actor PatchCache {
 
     private let cacheDirectory: URL
 
@@ -28,15 +28,16 @@ public actor PatchCache: Sendable {
         }
     }
 
-    /// Look up a cached patched ROM for the given source + patch combination.
+    /// Look up a cached patched ROM using already-loaded file data.
     ///
     /// - Parameters:
-    ///   - romURL: URL of the original (source) ROM.
-    ///   - patchURL: URL of the patch file.
+    ///   - romData: The source ROM data (used to compute cache key).
+    ///   - patchData: The patch file data (used to compute cache key).
+    ///   - ext: The file extension of the original ROM (for the cached filename).
     /// - Returns: URL of the cached patched ROM, or `nil` if not cached.
-    public func cachedURL(romURL: URL, patchURL: URL) -> URL? {
-        guard let key = cacheKey(romURL: romURL, patchURL: patchURL) else { return nil }
-        let candidate = cacheEntry(for: key, extension: romURL.pathExtension)
+    public func cachedURL(romData: Data, patchData: Data, extension ext: String) -> URL? {
+        let key = cacheKey(romData: romData, patchData: patchData)
+        let candidate = cacheEntry(for: key, extension: ext)
         return FileManager.default.fileExists(atPath: candidate.path) ? candidate : nil
     }
 
@@ -44,16 +45,15 @@ public actor PatchCache: Sendable {
     ///
     /// - Parameters:
     ///   - data: The patched ROM data to cache.
-    ///   - romURL: URL of the original source ROM (used for key + extension).
-    ///   - patchURL: URL of the patch file (used for key).
+    ///   - romData: The source ROM data (used to compute cache key).
+    ///   - patchData: The patch file data (used to compute cache key).
+    ///   - ext: File extension for the cached output file.
     /// - Returns: URL of the saved cached file.
-    public func store(_ data: Data, romURL: URL, patchURL: URL) throws -> URL {
-        guard let key = cacheKey(romURL: romURL, patchURL: patchURL) else {
-            throw PatchError.patchApplicationFailed("Could not compute cache key")
-        }
+    public func store(_ data: Data, romData: Data, patchData: Data, extension ext: String) throws -> URL {
+        let key = cacheKey(romData: romData, patchData: patchData)
         let entryDir = cacheDirectory.appendingPathComponent(key, isDirectory: true)
         try FileManager.default.createDirectory(at: entryDir, withIntermediateDirectories: true)
-        let outputURL = cacheEntry(for: key, extension: romURL.pathExtension)
+        let outputURL = cacheEntry(for: key, extension: ext)
         try data.write(to: outputURL, options: .atomic)
         return outputURL
     }
@@ -66,8 +66,8 @@ public actor PatchCache: Sendable {
     }
 
     /// Remove the cached entry for a specific ROM + patch pair.
-    public func remove(romURL: URL, patchURL: URL) throws {
-        guard let key = cacheKey(romURL: romURL, patchURL: patchURL) else { return }
+    public func remove(romData: Data, patchData: Data) throws {
+        let key = cacheKey(romData: romData, patchData: patchData)
         let entryDir = cacheDirectory.appendingPathComponent(key, isDirectory: true)
         if FileManager.default.fileExists(atPath: entryDir.path) {
             try FileManager.default.removeItem(at: entryDir)
@@ -82,11 +82,7 @@ public actor PatchCache: Sendable {
     }
 
     /// Cache key is SHA256(romSHA256 + patchSHA256).
-    private func cacheKey(romURL: URL, patchURL: URL) -> String? {
-        guard let romData = try? Data(contentsOf: romURL, options: .mappedIfSafe),
-              let patchData = try? Data(contentsOf: patchURL, options: .mappedIfSafe) else {
-            return nil
-        }
+    private func cacheKey(romData: Data, patchData: Data) -> String {
         let romHash = SHA256.hash(data: romData).compactMap { String(format: "%02x", $0) }.joined()
         let patchHash = SHA256.hash(data: patchData).compactMap { String(format: "%02x", $0) }.joined()
         let combined = Data((romHash + patchHash).utf8)

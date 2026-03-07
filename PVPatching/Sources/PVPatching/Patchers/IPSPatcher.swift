@@ -35,9 +35,11 @@ public struct IPSPatcher: Sendable {
     /// - Parameters:
     ///   - patch: The raw IPS patch file data.
     ///   - source: The source ROM data to patch.
+    ///   - isIPS32: `true` for IPS32 (large ROM) patches that use 4-byte offsets.
+    ///              Detect from the file extension (`.ips32`) rather than scanning the patch body.
     /// - Returns: The patched ROM data.
     /// - Throws: `PatchError` on format or integrity issues.
-    public func apply(patch: Data, to source: Data) throws -> Data {
+    public func apply(patch: Data, to source: Data, isIPS32: Bool = false) throws -> Data {
         var result = source
 
         var pos = 0
@@ -52,8 +54,6 @@ public struct IPSPatcher: Sendable {
         }
         pos = 5
 
-        // Detect IPS32 by looking for "EEOF" EOF marker
-        let isIPS32 = detectIPS32(patch: patch)
         let offsetSize = isIPS32 ? 4 : 3
         let eofMarker = isIPS32 ? Self.eof32 : Self.eof
 
@@ -128,15 +128,6 @@ public struct IPSPatcher: Sendable {
     }
 
     // MARK: - Private helpers
-
-    private func detectIPS32(patch: Data) -> Bool {
-        // Search for "EEOF" anywhere in the patch
-        let eeof = Array("EEOF".utf8)
-        for i in 0...(patch.count - 4) {
-            if Array(patch[i..<(i+4)]) == eeof { return true }
-        }
-        return false
-    }
 
     private func readBE24(_ data: Data, at offset: Int) -> Int {
         Int(data[offset]) << 16 | Int(data[offset + 1]) << 8 | Int(data[offset + 2])

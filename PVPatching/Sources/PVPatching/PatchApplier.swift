@@ -22,7 +22,7 @@ import PVLogging
 /// let patchedURL = try await applier.apply(patchURL: patchURL, to: romURL)
 /// // Pass patchedURL to the emulator core
 /// ```
-public actor PatchApplier: Sendable {
+public actor PatchApplier {
 
     private let cache: PatchCache
 
@@ -40,12 +40,6 @@ public actor PatchApplier: Sendable {
     /// - Returns: URL of the patched ROM in the patch cache.
     /// - Throws: `PatchError` if the format is unsupported or patching fails.
     public func apply(patchURL: URL, to romURL: URL) async throws -> URL {
-        // Return cached result if available
-        if let cached = await cache.cachedURL(romURL: romURL, patchURL: patchURL) {
-            ILOG("PatchApplier: returning cached result for \(patchURL.lastPathComponent)")
-            return cached
-        }
-
         guard FileManager.default.fileExists(atPath: patchURL.path) else {
             throw PatchError.patchFileNotFound(patchURL)
         }
@@ -57,15 +51,22 @@ public actor PatchApplier: Sendable {
             throw PatchError.unsupportedFormat(patchURL.pathExtension)
         }
 
-        ILOG("PatchApplier: applying \(format.displayName) patch '\(patchURL.lastPathComponent)' to '\(romURL.lastPathComponent)'")
-
+        // Load files once; use data for both the cache key check and patch application.
         let patchFileData = try Data(contentsOf: patchURL, options: .mappedIfSafe)
         let romData       = try Data(contentsOf: romURL, options: .mappedIfSafe)
+
+        // Return cached result if available
+        if let cached = await cache.cachedURL(romData: romData, patchData: patchFileData, extension: romURL.pathExtension) {
+            ILOG("PatchApplier: returning cached result for \(patchURL.lastPathComponent)")
+            return cached
+        }
+
+        ILOG("PatchApplier: applying \(format.displayName) patch '\(patchURL.lastPathComponent)' to '\(romURL.lastPathComponent)'")
 
         let patched = try applyPatch(format: format, patch: patchFileData, source: romData)
 
         do {
-            let cachedURL = try await cache.store(patched, romURL: romURL, patchURL: patchURL)
+            let cachedURL = try await cache.store(patched, romData: romData, patchData: patchFileData, extension: romURL.pathExtension)
             ILOG("PatchApplier: cached patched ROM at \(cachedURL.path)")
             return cachedURL
         } catch {
@@ -75,7 +76,9 @@ public actor PatchApplier: Sendable {
 
     /// Invalidate the cache entry for a specific ROM + patch pair.
     public func invalidateCache(patchURL: URL, romURL: URL) async throws {
-        try await cache.remove(romURL: romURL, patchURL: patchURL)
+        let romData   = try Data(contentsOf: romURL, options: .mappedIfSafe)
+        let patchData = try Data(contentsOf: patchURL, options: .mappedIfSafe)
+        try await cache.remove(romData: romData, patchData: patchData)
     }
 
     /// Clear the entire patch cache.
@@ -89,6 +92,8 @@ public actor PatchApplier: Sendable {
         switch format {
         case .ips:
             return try IPSPatcher().apply(patch: patch, to: source)
+        case .ips32:
+            return try IPSPatcher().apply(patch: patch, to: source, isIPS32: true)
         case .bps:
             return try BPSPatcher().apply(patch: patch, to: source)
         case .ups:

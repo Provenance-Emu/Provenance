@@ -13,6 +13,15 @@ final class PatchFormatTests: XCTestCase {
         XCTAssertEqual(PatchFormat.detect(from: url), .ips)
     }
 
+    func testDetectIPS32() {
+        let url = URL(fileURLWithPath: "/roms/patch.ips32")
+        XCTAssertEqual(PatchFormat.detect(from: url), .ips32)
+    }
+
+    func testIPS32HasNoIntegrityCheck() {
+        XCTAssertFalse(PatchFormat.ips32.hasIntegrityCheck)
+    }
+
     func testDetectBPS() {
         let url = URL(fileURLWithPath: "/roms/translation.bps")
         XCTAssertEqual(PatchFormat.detect(from: url), .bps)

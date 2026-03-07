@@ -18,15 +18,13 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../PVLogging"),
-        .package(path: "../PVHashing")
+        .package(path: "../PVLogging")
     ],
     targets: [
         .target(
             name: "PVPatching",
             dependencies: [
-                "PVLogging",
-                "PVHashing"
+                "PVLogging"
             ],
             path: "Sources/PVPatching"
         ),
