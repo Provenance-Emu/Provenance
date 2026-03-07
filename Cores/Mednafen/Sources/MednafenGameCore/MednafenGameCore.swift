@@ -130,6 +130,14 @@ open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
         super.init()
         self.bridge = _bridge as? any ObjCBridgedCoreBridge
     }
+
+    // MARK: - RetroAchievements backing storage
+
+    /// Weak reference to the OSD delegate.
+    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
+
+    /// Hardcore mode flag.
+    var _hardcoreMode: Bool = false
 }
 
 @objc extension MednafenGameCore: PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient {

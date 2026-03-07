@@ -22,7 +22,7 @@ import Combine
 import Defaults
 import PVSettings
 internal import enum PVCoreBridge.PVDSButton
-//import PVCoreBridge
+import PVCoreBridge
 
 @objc
 @objcMembers
@@ -87,6 +87,17 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
         configureShowFPSPreferenceObservation()
     }
+
+    // MARK: - RetroAchievements backing storage
+
+    /// Weak reference to the OSD delegate.
+    /// RetroArch renders its own achievement OSD in the GL buffer; this
+    /// delegate is used only for events that need to reach native Swift
+    /// UI (sounds, CloudKit tracking, etc.).
+    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
+
+    /// Hardcore mode is controlled via RetroArch config; this mirrors it.
+    var _hardcoreMode: Bool = false
 
     private func configureShowFPSPreferenceObservation() {
         _bridge.setShowFPSCounterVisible(Defaults[.showFPSCount])
