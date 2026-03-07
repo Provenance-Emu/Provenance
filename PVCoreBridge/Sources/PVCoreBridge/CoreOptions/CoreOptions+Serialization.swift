@@ -144,4 +144,55 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         }
         return foundOption
     }
+
+    // MARK: - Per-game key helpers
+
+    /// Builds the UserDefaults key for a per-game override: `<ClassName>.<md5>.<optionKey>`
+    static func perGameKey(for option: CoreOption, md5: String) -> String {
+        let className = "\(String(describing: Self.self))"
+        return "\(className).\(md5).\(option.key)"
+    }
+
+    /// Builds the UserDefaults key prefix for all per-game overrides of a game: `<ClassName>.<md5>.`
+    static func perGameKeyPrefix(md5: String) -> String {
+        let className = "\(String(describing: Self.self))"
+        return "\(className).\(md5)."
+    }
+
+    // MARK: - Per-game override inspection
+
+    /// Returns `true` if a per-game override exists in UserDefaults for the given option and game MD5.
+    ///
+    /// Use this to show an "overridden" badge next to the option in the UI.
+    static func hasPerGameOverride(for option: CoreOption, md5: String) -> Bool {
+        let key = perGameKey(for: option, md5: md5)
+        return UserDefaults.standard.object(forKey: key) != nil
+    }
+
+    // MARK: - Scoped reset
+
+    /// Deletes the per-game UserDefaults entry for a single option, reverting it to the
+    /// core-global value for the next read.
+    ///
+    /// Only removes `<ClassName>.<md5>.<optionKey>` — the core-global key is untouched.
+    static func resetOption(_ option: CoreOption, forMD5 md5: String) {
+        let key = perGameKey(for: option, md5: md5)
+        DLOG("CoreOptions: removing per-game override key: \(key)")
+        UserDefaults.standard.removeObject(forKey: key)
+        UserDefaults.standard.synchronize()
+    }
+
+    /// Deletes **all** per-game UserDefaults entries for the given game MD5, reverting every
+    /// option to its core-global value.
+    ///
+    /// Only removes keys matching the prefix `<ClassName>.<md5>.` — core-global keys and
+    /// other games' per-game keys are untouched.
+    static func resetAllOptions(forMD5 md5: String) {
+        let prefix = perGameKeyPrefix(md5: md5)
+        let defaults = UserDefaults.standard
+        let keysToRemove = defaults.dictionaryRepresentation().keys.filter { $0.hasPrefix(prefix) }
+        DLOG("CoreOptions: removing \(keysToRemove.count) per-game override(s) for md5 \(md5)")
+        keysToRemove.forEach { defaults.removeObject(forKey: $0) }
+        defaults.synchronize()
+    }
 }

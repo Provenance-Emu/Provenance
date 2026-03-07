@@ -45,7 +45,11 @@ public extension CoreOptional {
         }
     }
 
-    /// Reset all options for this core to their default values
+    /// Reset all options for this core to their default values (core-global scope only).
+    ///
+    /// This only writes to `<ClassName>.<key>` keys.  Per-game override keys
+    /// (`<ClassName>.<md5>.<key>`) are **not** modified — use `resetAllOptions(forMD5:)`
+    /// to clear per-game overrides for a specific game.
     static func resetAllOptions() {
         resetOptions(options)
     }
