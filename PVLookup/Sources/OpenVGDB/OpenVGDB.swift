@@ -680,6 +680,59 @@ public extension OpenVGDB {
         return try executeQuery(query)
     }
 
+    /// Search the database by CRC32 hash.
+    /// CRC32 is available without full decompression for ZIP, 7z, RAR, and LZH archives,
+    /// enabling fast ROM identification directly from archive central directories.
+    func searchByCRC(_ crc: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
+        let properties = getStandardProperties()
+        let sanitizedCRC = sanitizeForSQLLike(crc.uppercased())
+
+        let query = """
+            SELECT DISTINCT \(properties)
+            FROM ROMs rom
+            LEFT JOIN RELEASES release USING (romID)
+            WHERE romHashCRC = '\(sanitizedCRC)' COLLATE NOCASE
+            \(systemID != nil ? "AND systemID = \(systemID!.openVGDBID)" : "")
+            """
+
+        return try executeQuery(query)
+    }
+
+    /// Search the database by CRC32 hash and return the first matching ROM.
+    func searchROM(byCRC crc: String) async throws -> ROMMetadata? {
+        let query = """
+            SELECT DISTINCT
+                releaseTitleName as 'gameTitle',
+                releaseCoverFront as 'boxImageURL',
+                TEMPRomRegion as 'region',
+                releaseDescription as 'gameDescription',
+                releaseCoverBack as 'boxBackURL',
+                releaseDeveloper as 'developer',
+                releasePublisher as 'publisher',
+                romSerial as 'serial',
+                releaseDate as 'releaseDate',
+                releaseGenre as 'genres',
+                releaseReferenceURL as 'referenceURL',
+                releaseID as 'releaseID',
+                romLanguage as 'language',
+                regionLocalizedID as 'regionID',
+                systemID as 'systemID',
+                TEMPsystemShortName as 'systemShortName',
+                romFileName,
+                romHashCRC,
+                romHashMD5,
+                romID
+            FROM ROMs rom
+            LEFT JOIN RELEASES release USING (romID)
+            WHERE romHashCRC = '\(crc.uppercased())' COLLATE NOCASE
+            LIMIT 1
+        """
+
+        let results = try db.execute(query: query)
+        guard let result = results.first else { return nil }
+        return convertToROMMetadata(result)
+    }
+
     func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
         // First try MD5
         var query = """

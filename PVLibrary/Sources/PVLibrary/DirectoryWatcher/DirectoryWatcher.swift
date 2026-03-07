@@ -115,7 +115,11 @@ public final class DirectoryWatcher: ObservableObject {
         .sevenZip: SevenZipExtractor(),
         .tar: TarExtractor(),
         .bzip2: BZip2Extractor(),
-        .gzip: GZipExtractor()
+        .gzip: GZipExtractor(),
+        .lzh: LzhExtractor(),
+        .lha: LzhExtractor(),
+        .xz: XZExtractor(),
+        .rar: RarExtractor()
     ]
 
     /// The current extraction progress
@@ -325,18 +329,18 @@ public final class DirectoryWatcher: ObservableObject {
                     detectedArchiveType = .sevenZip
                     ILOG("Detected 7z archive from signature (file has .\(filePath.pathExtension) extension): \(filePath.lastPathComponent)")
                 } else {
-                    // Try extension-based detection as fallback
-                    detectedArchiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased())
+                    // Try extension-based detection as fallback (handles lzh, lha, bzip2, gzip, xz, etc.)
+                    detectedArchiveType = ArchiveType.from(fileExtension: filePath.pathExtension)
                     if detectedArchiveType != nil {
                         ILOG("Using extension-based detection for \(filePath.lastPathComponent): \(detectedArchiveType!.rawValue)")
                     }
                 }
             } else {
-                detectedArchiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased())
+                detectedArchiveType = ArchiveType.from(fileExtension: filePath.pathExtension)
             }
         } else {
             // Fallback to extension-based detection if we can't read the file
-            detectedArchiveType = ArchiveType(rawValue: filePath.pathExtension.lowercased())
+            detectedArchiveType = ArchiveType.from(fileExtension: filePath.pathExtension)
         }
 
         guard let archiveType = detectedArchiveType else {
