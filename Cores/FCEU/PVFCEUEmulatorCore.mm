@@ -31,6 +31,9 @@
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
 @import PVAudio;
+#if !TARGET_OS_TV
+@import AVFoundation;
+#endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -61,15 +64,39 @@
 extern uint8 *XBuf;
 static uint32_t palette[256];
 
+// Famicom controller 2 had a built-in microphone. FCEU emulates this via
+// replaceP2StartWithMicrophone: when true, P2 Start drives a toggling mic bit.
+// We expose this global so the bridge can enable Famicom mic mode and feed
+// real iOS microphone audio into the P2 Start bit.
+extern bool replaceP2StartWithMicrophone;
+
+// P2 Start occupies bit 3 of joy[1], which FCEU extracts as: joy[1] = pad[1][0] >> 8.
+// So to drive joy[1] bit 3 (JOY_START), we set bit 11 in pad[1][0].
+static const uint32_t kFCMicBit = (JOY_START << 8);  // 0x0800
+
+// RMS threshold for considering microphone audio "active" (0.0–1.0 range).
+static const float kFCMicThreshold = 0.015f;
+
 @interface PVFCEUEmulatorCoreBridge ()
 {
     uint32_t *videoBuffer;
     uint8_t *pXBuf;
     int32_t *soundBuffer;
     int32_t soundSize;
-    
+
     NSUInteger currentDisc;
+
+    // Famicom microphone support
+#if !TARGET_OS_TV
+    AVAudioEngine *_micEngine;
+#endif
+    _Atomic(BOOL) _micAudioActive;  // set by audio tap; applied in executeFrame
 }
+
+#if !TARGET_OS_TV
+- (void)startFamicomMicMonitoring;
+- (void)stopFamicomMicMonitoring;
+#endif
 
 @end
 
@@ -172,6 +199,17 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 
     FCEU_ResetPalette();
 
+#if !TARGET_OS_TV
+    // Famicom mic mode is opt-in: setting replaceP2StartWithMicrophone unconditionally
+    // nullifies the P2 Start button (FCEU input.cpp:128-131), breaking all NES 2-player
+    // games. Only enable when the user has opted in via the "Famicom Microphone" option.
+    BOOL famicomMicEnabled = [[NSUserDefaults standardUserDefaults]
+                              boolForKey:@"PVFCEUOptions.Famicom Microphone"];
+    if (famicomMicEnabled) {
+        [self startFamicomMicMonitoring];
+    }
+#endif
+
     return YES;
 }
 
@@ -184,6 +222,14 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 {
     pXBuf = 0;
     soundSize = 0;
+
+    // Apply Famicom mic state each frame. updateControllers clears P2 Start each frame,
+    // so we re-apply the mic bit here immediately before FCEU reads the input.
+    if (_micAudioActive) {
+        pad[1][0] |= kFCMicBit;
+    } else {
+        pad[1][0] &= ~kFCMicBit;
+    }
 
     FCEUI_Emulate(&pXBuf, &soundBuffer, &soundSize, 0);
 
@@ -205,6 +251,11 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 
 - (void)stopEmulation
 {
+#if !TARGET_OS_TV
+    [self stopFamicomMicMonitoring];
+    replaceP2StartWithMicrophone = false;
+#endif
+
     FCEUI_CloseGame();
     FCEUI_Kill();
 
@@ -331,6 +382,14 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
 }
 
 #pragma mark - FCEUX internal functions and stubs
+
+// FCEUD_SetInput is called by FCEU when loading a movie that specifies input config.
+// We apply the microphone flag from the movie data; other fields are already configured.
+void FCEUD_SetInput(bool fourscore, bool microphone, ESI port0, ESI port1, ESIFC fcexp) {
+    replaceP2StartWithMicrophone = microphone;
+    FCEUI_SetInputFourscore(fourscore);
+}
+
 void FCEUD_SetPalette(unsigned char index, unsigned char r, unsigned char g, unsigned char b)
 {
     palette[index] = ( r << 16 ) | ( g << 8 ) | b;
@@ -395,6 +454,105 @@ void FCEUD_Message(const char *s)
 {
     ILOG(@"FCEUX: %s", s);
 }
+
+// MARK: - Famicom Microphone
+
+- (void)startFamicomMicMonitoring {
+#if !TARGET_OS_TV
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+    if (status == AVAuthorizationStatusDenied || status == AVAuthorizationStatusRestricted) {
+        WLOG(@"[FCEU] Microphone access denied — Famicom mic will not work.");
+        return;
+    }
+
+    __weak typeof(self) weakSelf = self;
+
+    void (^startEngine)(void) = ^{
+        typeof(self) strongSelf = weakSelf;
+        if (!strongSelf) return;
+
+        NSError *sessionError = nil;
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        [session setCategory:AVAudioSessionCategoryPlayAndRecord
+                 withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker |
+                             AVAudioSessionCategoryOptionMixWithOthers
+                       error:&sessionError];
+        if (sessionError) {
+            ELOG(@"[FCEU] AVAudioSession error: %@", sessionError.localizedDescription);
+            return;
+        }
+        [session setActive:YES error:nil];
+
+        strongSelf->_micEngine = [[AVAudioEngine alloc] init];
+        AVAudioInputNode *inputNode = strongSelf->_micEngine.inputNode;
+        AVAudioFormat *fmt = [inputNode outputFormatForBus:0];
+
+        [inputNode installTapOnBus:0
+                        bufferSize:1024
+                            format:fmt
+                             block:^(AVAudioPCMBuffer *buf, AVAudioTime *when) {
+            typeof(self) s = weakSelf;
+            if (!s) return;
+
+            // Compute RMS of the first channel to get the mic audio level.
+            float rms = 0.0f;
+            const float *channelData = [buf floatChannelData][0];
+            AVAudioFrameCount frameCount = buf.frameLength;
+            for (AVAudioFrameCount i = 0; i < frameCount; i++) {
+                rms += channelData[i] * channelData[i];
+            }
+            if (frameCount > 0) {
+                rms = sqrtf(rms / (float)frameCount);
+            }
+
+            // Latch mic activity; applied to pad[1][0] each frame in executeFrameSkippingFrame:
+            // to avoid racing with updateControllers which otherwise clears P2 Start each frame.
+            s->_micAudioActive = (rms > kFCMicThreshold);
+        }];
+
+        NSError *engineError = nil;
+        [strongSelf->_micEngine startAndReturnError:&engineError];
+        if (engineError) {
+            ELOG(@"[FCEU] AVAudioEngine start error: %@", engineError.localizedDescription);
+            [inputNode removeTapOnBus:0];
+            strongSelf->_micEngine = nil;
+        } else {
+            // Enable mic mode only after the engine starts successfully.
+            // replaceP2StartWithMicrophone nullifies P2 Start reads (FCEU input.cpp:128-131),
+            // so it must never be set for standard NES 2-player games.
+            replaceP2StartWithMicrophone = true;
+            ILOG(@"[FCEU] Famicom microphone monitoring started.");
+        }
+    };
+
+    if (status == AVAuthorizationStatusNotDetermined) {
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
+            if (granted) {
+                dispatch_async(dispatch_get_main_queue(), startEngine);
+            } else {
+                WLOG(@"[FCEU] Microphone permission denied — Famicom mic will not work.");
+            }
+        }];
+    } else {
+        startEngine();
+    }
+#else
+    ILOG(@"[FCEU] Famicom mic monitoring not supported on tvOS.");
+#endif
+}
+
+#if !TARGET_OS_TV
+- (void)stopFamicomMicMonitoring {
+    if (_micEngine) {
+        [_micEngine.inputNode removeTapOnBus:0];
+        [_micEngine stop];
+        _micEngine = nil;
+    }
+    _micAudioActive = NO;
+    pad[1][0] &= ~kFCMicBit;
+    ILOG(@"[FCEU] Famicom microphone monitoring stopped.");
+}
+#endif
 
 @end
 
