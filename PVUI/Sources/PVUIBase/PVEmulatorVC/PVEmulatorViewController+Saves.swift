@@ -52,6 +52,15 @@ public extension PVEmulatorViewController {
             return false
         }
 
+        // RetroAchievements hardcore mode disallows save-state loads.
+        if achievementsBlocksSaveStateLoad() {
+            presentError(
+                "Save state loading is disabled in RetroAchievements Hardcore Mode.",
+                source: view
+            )
+            return false
+        }
+
         guard let realm = try? await Realm() else {
             ELOG("Realm() failed")
             return false
