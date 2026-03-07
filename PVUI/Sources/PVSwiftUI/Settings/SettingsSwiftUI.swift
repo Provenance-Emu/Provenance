@@ -1773,6 +1773,11 @@ private struct LibrarySection2: View {
                                  subtitle: "Manage CloudKit and iCloud Drive sync settings",
                                  icon: .sfSymbol("icloud"))
                 }
+                NavigationLink(destination: BackupRestoreView()) {
+                    SettingsRow(title: "Backup & Restore",
+                                subtitle: "Manually back up and restore saves, database, and artwork.",
+                                icon: .sfSymbol("archivebox"))
+                }
             #else
 //            if viewModel.showFeatureFlagsDebug {
                 PaidFeatureView {
@@ -1790,6 +1795,12 @@ private struct LibrarySection2: View {
                 .freemiumKitColorReset()
 //            }
             #endif
+
+            NavigationLink(destination: BackupRestoreView()) {
+                SettingsRow(title: "Backup & Restore",
+                            subtitle: "Manually back up and restore saves, database, and artwork.",
+                            icon: .sfSymbol("archivebox"))
+            }
 
             NavigationLink(destination: BatchArtworkMatchingView()) {
                 SettingsRow(title: "Batch Artwork Matcher",
