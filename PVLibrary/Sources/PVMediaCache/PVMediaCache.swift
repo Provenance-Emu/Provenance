@@ -135,7 +135,7 @@ public final class PVMediaCache: NSObject, Sendable {
         return _sharedInstance
     }
 
-    static var cachePath: URL {
+    public static var cachePath: URL {
 //        #if os(tvOS)
 //        let cachesDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
 //        #else

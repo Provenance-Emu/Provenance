@@ -447,6 +447,10 @@ public final class RomDatabase {
             ILOG("Setting default Realm configuration")
             RealmConfiguration.setDefaultRealmConfig()
 
+            // Check for a pending restore staged by BackupManager.
+            // If default.restored.realm exists, swap it in before opening the database.
+            applyPendingRealmRestoreIfNeeded()
+
             ILOG("Creating RomDatabase instance")
             _sharedInstance = try RomDatabase()
 
@@ -468,6 +472,28 @@ public final class RomDatabase {
             }
         } else {
             ILOG("Database already initialized")
+        }
+    }
+
+    /// Checks for a pending Realm restore staged by BackupManager (default.restored.realm).
+    /// If found, atomically replaces the active database file before the database is opened.
+    private class func applyPendingRealmRestoreIfNeeded() {
+        guard let activeURL = RealmConfiguration.realmConfig.fileURL else { return }
+        let pendingURL = activeURL.deletingLastPathComponent()
+            .appendingPathComponent("default.restored.realm")
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: pendingURL.path) else { return }
+
+        ILOG("BackupRestore: pending Realm restore detected — swapping in restored database")
+        do {
+            if fm.fileExists(atPath: activeURL.path) {
+                try fm.removeItem(at: activeURL)
+            }
+            try fm.moveItem(at: pendingURL, to: activeURL)
+            ILOG("BackupRestore: restored database applied successfully")
+        } catch {
+            ELOG("BackupRestore: failed to apply pending restore: \(error.localizedDescription)")
+            // Leave the staged file in place so the user can retry
         }
     }
 
