@@ -1796,11 +1796,13 @@ private struct LibrarySection2: View {
 //            }
             #endif
 
+            #if !os(tvOS)
             NavigationLink(destination: BackupRestoreView()) {
                 SettingsRow(title: "Backup & Restore",
                             subtitle: "Manually back up and restore saves, database, and artwork.",
                             icon: .sfSymbol("archivebox"))
             }
+            #endif
 
             NavigationLink(destination: BatchArtworkMatchingView()) {
                 SettingsRow(title: "Batch Artwork Matcher",

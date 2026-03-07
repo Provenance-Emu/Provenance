@@ -10,8 +10,11 @@
 //
 
 import Foundation
+import RealmSwift
 import ZipArchive
+import PVFileSystem
 import PVLogging
+import PVMediaCache
 
 // MARK: - BackupError
 
@@ -132,7 +135,7 @@ public final class BackupManager: @unchecked Sendable {
         // 1. Copy Realm database
         if contents.contains(.database) {
             progressHandler?(.copyingDatabase)
-            try await copyRealmDatabase(to: tempDir)
+            try copyRealmDatabase(to: tempDir)
         }
 
         // 2. Copy save states
@@ -260,7 +263,7 @@ public final class BackupManager: @unchecked Sendable {
 
     // MARK: - Helpers
 
-    private func copyRealmDatabase(to stagingDir: URL) async throws {
+    private func copyRealmDatabase(to stagingDir: URL) throws {
         let fm = FileManager.default
         let dbDir = stagingDir.appendingPathComponent("database", isDirectory: true)
 
@@ -272,18 +275,13 @@ public final class BackupManager: @unchecked Sendable {
 
         let destURL = dbDir.appendingPathComponent("default.realm", isDirectory: false)
 
-        // Locate the active Realm file and copy it.
-        // We do this on the MainActor to ensure no writes are in flight.
-        try await MainActor.run {
-            guard let sourceURL = RealmConfiguration.realmConfig.fileURL,
-                  fm.fileExists(atPath: sourceURL.path) else {
-                return
-            }
-            do {
-                try fm.copyItem(at: sourceURL, to: destURL)
-            } catch {
-                throw BackupError.realmCopyFailed(error)
-            }
+        // Use Realm.writeCopy(toFile:) to create a consistent, compacted snapshot
+        // regardless of any concurrent background writes.
+        do {
+            let realm = try Realm(configuration: RealmConfiguration.realmConfig)
+            try realm.writeCopy(toFile: destURL)
+        } catch {
+            throw BackupError.realmCopyFailed(error)
         }
     }
 
@@ -343,16 +341,30 @@ public final class BackupManager: @unchecked Sendable {
 
     private func restoreDirectory(from source: URL, to destination: URL) throws {
         let fm = FileManager.default
+        let tempURL = destination.deletingLastPathComponent()
+            .appendingPathComponent(destination.lastPathComponent + ".restoring", isDirectory: true)
+
         do {
-            if fm.fileExists(atPath: destination.path) {
-                try fm.removeItem(at: destination)
-            }
+            // Ensure parent directory exists
             try fm.createDirectory(
                 at: destination.deletingLastPathComponent(),
                 withIntermediateDirectories: true
             )
-            try fm.copyItem(at: source, to: destination)
+
+            // Copy to a temp location first; if this fails, the original is intact
+            if fm.fileExists(atPath: tempURL.path) {
+                try fm.removeItem(at: tempURL)
+            }
+            try fm.copyItem(at: source, to: tempURL)
+
+            // Atomic swap: remove old, rename temp -> destination
+            if fm.fileExists(atPath: destination.path) {
+                try fm.removeItem(at: destination)
+            }
+            try fm.moveItem(at: tempURL, to: destination)
         } catch {
+            // Clean up the temp location if it was created
+            try? fm.removeItem(at: tempURL)
             throw BackupError.fileSystemError(error)
         }
     }
