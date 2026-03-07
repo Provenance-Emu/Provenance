@@ -8,8 +8,9 @@ on:
     branches:
       - master
       - develop
-    # Full archive matrix only runs on PRs that touch cores, project config, or build infra.
-    # All other PRs are validated by agent-validation.yml (Provenance-CI simulator build).
+    # Full archive matrix only runs on PRs that touch cores, project config, or build infra,
+    # AND only for external contributors (not JoeMatt/owner, not agent bots).
+    # JoeMatt and anyone else can trigger a build explicitly via the build-ipa label or /build comment.
     types: [opened, synchronize, reopened]
     paths:
       - 'Cores/**'
@@ -20,9 +21,18 @@ on:
       - 'Package.resolved'
       - '*.xcconfig'
       - '.github/workflows/build.yml'
+  # Manual / label / comment triggered build via build-trigger.yml
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to post artifacts to (leave empty for branch-only build)'
+        required: false
+        type: string
 
+# Concurrency: keyed on PR number when available so same-PR builds cancel each other,
+# but different PRs and develop pushes are independent.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+  group: build-${{ github.event.pull_request.number || github.event.inputs.pr_number || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -35,10 +45,18 @@ env:
 jobs:
   build:
     name: Build and upload Provenance
-    # Skip full builds for agent PRs — they use agent-validation.yml instead
+    # Build conditions:
+    #   push to develop/master    → always (→ alpha release)
+    #   workflow_dispatch          → always (triggered by label/comment/manual via build-trigger.yml)
+    #   pull_request from external → only non-agent, non-owner PRs touching core paths
+    #   JoeMatt (OWNER) PRs       → only via workflow_dispatch (label / /build comment)
     if: >-
       github.event_name == 'push' ||
-      !startsWith(github.event.pull_request.title, '[Agent]')
+      github.event_name == 'workflow_dispatch' ||
+      (
+        !startsWith(github.event.pull_request.title, '[Agent]') &&
+        github.event.pull_request.author_association != 'OWNER'
+      )
     strategy:
       fail-fast: false
       matrix:
@@ -279,3 +297,47 @@ jobs:
           )" \
             --prerelease \
             *.ipa 2>/dev/null || echo "::warning::No IPA files to attach"
+
+  # Post artifact download links to PR for workflow_dispatch builds (label / /build triggered)
+  post-to-pr:
+    name: Post IPA links to PR
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Post build links comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.inputs.pr_number }}
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          # Fetch artifact names for this run
+          ARTIFACT_NAMES=$(gh api \
+            "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" \
+            --jq '.artifacts[].name' 2>/dev/null || echo "")
+
+          # Build artifact list
+          ARTIFACT_LIST=""
+          while IFS= read -r name; do
+            [ -n "$name" ] && ARTIFACT_LIST="${ARTIFACT_LIST}- \`${name}\`"$'\n'
+          done <<< "$ARTIFACT_NAMES"
+
+          cat > /tmp/build_links.md << COMMENTEOF
+          ## 📦 IPA Builds Ready
+
+          Download from the [Actions run page](${RUN_URL}).
+
+          ### Available IPAs
+          ${ARTIFACT_LIST}
+          > **Install:** Download the \`.ipa\`, then sideload via AltStore, SideStore, or TrollStore.
+          > Artifacts expire after 90 days.
+          COMMENTEOF
+
+          gh pr comment "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body-file /tmp/build_links.md 2>/dev/null || \
+          echo "::warning::Could not post comment to PR #${PR_NUMBER}"

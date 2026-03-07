@@ -1,7 +1,12 @@
 name: Attach Build Products
 
+# Posts IPA artifact links to the PR that triggered the build.
+# Only fires for pull_request triggered builds — develop pushes are handled by the
+# alpha-release job in build.yml (GitHub Releases).
+# workflow_dispatch builds are handled by the post-to-pr job in build.yml.
+
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+  group: attach-${{ github.event.workflow_run.pull_requests[0].number || github.event.workflow_run.head_sha }}
   cancel-in-progress: true
 
 on:
@@ -10,56 +15,104 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
 jobs:
-  artifacts-url-comments:
-    name: add artifact links to pull request and related issues job
+  attach:
+    name: Post IPA links to PR
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Only run for pull_request triggered builds that succeeded.
+    # Develop pushes use the alpha-release job; workflow_dispatch builds use post-to-pr.
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
     steps:
-      - name: Download workflow artifact data
-        uses: actions/github-script@v6
-        id: artifacts
-        with:
-          script: |
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.payload.workflow_run.id,
-            });
-            return artifacts.data;
-
-      - name: add artifact links to pull request and related issues step
-        uses: tonyhallett/artifacts-url-comments@v1.1.0
+      - name: Get PR info and check eligibility
+        id: pr
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-            prefix: Builds for this Pull Request are available at
-            suffix: Have a nice day.
-            format: name
-            addTo: pull
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get the PR number from the workflow run's associated pull requests
+          PR_NUMBER=$(echo '${{ toJSON(github.event.workflow_run.pull_requests) }}' \
+            | jq -r '.[0].number // empty')
 
-      - name: Notify Discord with Download Links
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No associated PR found — skipping"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Skip agent PRs
+          PR_TITLE=$(gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json title --jq '.title' 2>/dev/null || echo "")
+
+          if echo "$PR_TITLE" | grep -q "^\[Agent\]"; then
+            echo "Agent PR — IPA comment not needed (uses smoke build instead)"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Post artifact links to PR
+        if: steps.pr.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        run: |
+          RUN_ID="${{ github.event.workflow_run.id }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN_ID}"
+
+          # Fetch artifact names for the completed build run
+          ARTIFACT_NAMES=$(gh api \
+            "repos/${{ github.repository }}/actions/runs/${RUN_ID}/artifacts" \
+            --jq '.artifacts[].name' 2>/dev/null || echo "")
+
+          ARTIFACT_LIST=""
+          while IFS= read -r name; do
+            [ -n "$name" ] && ARTIFACT_LIST="${ARTIFACT_LIST}- \`${name}\`"$'\n'
+          done <<< "$ARTIFACT_NAMES"
+
+          SHA="${{ github.event.workflow_run.head_sha }}"
+          SHORT_SHA="${SHA:0:7}"
+
+          cat > /tmp/ipa_links.md << COMMENTEOF
+          ## 📦 IPA Builds Ready — \`${SHORT_SHA}\`
+
+          Download from the [Actions run page](${RUN_URL}).
+
+          ### Available IPAs
+          ${ARTIFACT_LIST}
+          > **Install:** Download the \`.ipa\`, then sideload via AltStore, SideStore, or TrollStore.
+          > Artifacts expire after 90 days.
+          COMMENTEOF
+
+          gh pr comment "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body-file /tmp/ipa_links.md 2>/dev/null || \
+          echo "::warning::Could not post comment to PR #${PR_NUMBER}"
+
+      - name: Notify Discord
+        if: steps.pr.outputs.skip == 'false'
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
         run: |
-          ARTIFACTS_JSON='${{ steps.artifacts.outputs.result }}'
+          [ -z "$DISCORD_WEBHOOK" ] && exit 0
 
-          # Create download links list
-          DOWNLOAD_LINKS=""
-          while IFS= read -r artifact; do
-            name=$(echo $artifact | jq -r '.name')
-            url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/${{ github.event.workflow_run.id }}/artifacts/$(echo $artifact | jq -r '.id')"
-            DOWNLOAD_LINKS+="• [${name}](${url})\n"
-          done < <(echo "$ARTIFACTS_JSON" | jq -c '.artifacts[]')
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}"
 
-          curl -H "Content-Type: application/json" -X POST $DISCORD_WEBHOOK \
-          -d '{
-            "embeds": [{
-              "title": "🎮 New Provenance Builds Available",
-              "description": "New builds are ready for download:\n'"${DOWNLOAD_LINKS}"'",
-              "color": 5814783,
-              "footer": {
-                "text": "Pull Request #${{ github.event.workflow_run.pull_requests[0].number }}"
-              }
-            }]
-          }'
+          curl -s -H "Content-Type: application/json" -X POST "$DISCORD_WEBHOOK" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"📦 New Provenance Builds — PR #${PR_NUMBER}\",
+                \"description\": \"IPA builds ready for sideloading.\",
+                \"url\": \"${RUN_URL}\",
+                \"color\": 5814783
+              }]
+            }" 2>/dev/null || true

@@ -1,0 +1,127 @@
+name: Build Trigger
+
+# Dispatches build.yml (full IPA build) based on selective triggers:
+#
+#   1. PR labeled with "build-ipa"      → build for any PR (JoeMatt opt-in, explicit request)
+#   2. PR changed from draft→ready      → build for non-agent, non-owner external contributor PRs
+#   3. /build comment on a PR           → build on demand (any PR, any user with write access)
+#
+# build.yml is triggered via workflow_dispatch so the builds appear under build.yml
+# in the Actions tab and go through the standard artifact + post-to-pr pipeline.
+
+on:
+  pull_request:
+    types: [labeled, ready_for_review]
+    branches:
+      - develop
+      - master
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: write
+
+jobs:
+  # ── Trigger 1: build-ipa label added to any PR ──────────────────────────────
+  trigger-label:
+    name: Dispatch build for build-ipa label
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'build-ipa' &&
+      github.event.pull_request.state == 'open'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acknowledge and dispatch build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          REPO="${{ github.repository }}"
+
+          echo "build-ipa label added to PR #${PR_NUMBER} (${BRANCH}) — dispatching build"
+
+          # Post acknowledgement
+          gh pr comment "$PR_NUMBER" --repo "$REPO" \
+            --body "🔨 **build-ipa** label detected — dispatching full IPA build. Download links will appear here when ready (~5h)." \
+            2>/dev/null || true
+
+          gh workflow run build.yml \
+            --repo "$REPO" \
+            --ref "$BRANCH" \
+            -f pr_number="$PR_NUMBER"
+
+  # ── Trigger 2: PR marked ready-for-review (external contributors only) ──────
+  trigger-ready:
+    name: Dispatch build on ready-for-review (external PRs)
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'ready_for_review' &&
+      !startsWith(github.event.pull_request.title, '[Agent]') &&
+      github.event.pull_request.author_association != 'OWNER'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch build for external contributor PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          REPO="${{ github.repository }}"
+
+          echo "External PR #${PR_NUMBER} marked ready-for-review — dispatching build"
+
+          gh pr comment "$PR_NUMBER" --repo "$REPO" \
+            --body "🔨 PR is ready for review — dispatching full IPA build. Download links will appear here when ready (~5h)." \
+            2>/dev/null || true
+
+          gh workflow run build.yml \
+            --repo "$REPO" \
+            --ref "$BRANCH" \
+            -f pr_number="$PR_NUMBER"
+
+  # ── Trigger 3: /build comment on a PR ────────────────────────────────────────
+  trigger-comment:
+    name: Dispatch build for /build comment
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request != null &&
+      github.event.comment.body == '/build'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR branch
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_DATA=$(gh pr view "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            --json headRefName,state --jq '{branch: .headRefName, state: .state}')
+          echo "branch=$(echo "$PR_DATA" | jq -r .branch)" >> "$GITHUB_OUTPUT"
+          echo "state=$(echo "$PR_DATA" | jq -r .state)" >> "$GITHUB_OUTPUT"
+
+      - name: Validate PR is open
+        if: steps.pr.outputs.state != 'OPEN'
+        run: |
+          echo "PR is not open (state: ${{ steps.pr.outputs.state }}) — skipping"
+          exit 0
+
+      - name: Acknowledge and dispatch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ github.event.issue.number }}"
+          BRANCH="${{ steps.pr.outputs.branch }}"
+          REPO="${{ github.repository }}"
+
+          gh pr comment "$PR_NUMBER" --repo "$REPO" \
+            --body "🔨 Build triggered by \`/build\` — dispatching full IPA build (~5h). Download links will appear here when ready." \
+            2>/dev/null || true
+
+          gh workflow run build.yml \
+            --repo "$REPO" \
+            --ref "$BRANCH" \
+            -f pr_number="$PR_NUMBER"

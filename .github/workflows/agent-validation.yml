@@ -131,10 +131,13 @@ jobs:
 
   # Job 3: Fast CI simulator build — validates that code compiles
   # Uses Provenance-CI target (no emulator cores) for fastest possible build
+  # Skipped when the PR has build-ipa label: build.yml runs the full 5h archive build
+  # which already validates compilation (redundant smoke build wastes runner time).
   smoke-build:
     name: Build (Provenance-CI Simulator)
     runs-on: macos-15
     timeout-minutes: 30
+    if: "!contains(github.event.pull_request.labels.*.name, 'build-ipa')"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
