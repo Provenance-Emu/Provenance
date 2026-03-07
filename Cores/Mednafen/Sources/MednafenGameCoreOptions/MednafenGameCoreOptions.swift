@@ -43,7 +43,7 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
         
         let psxGroup:CoreOption = .group(.init(title: "PlayStation",
                                                      description: ""),
-                                          subOptions: [psx_h_overscan_option])
+                                          subOptions: [psx_h_overscan_option, psx_region_default_option])
         
         options.append(psxGroup)
         
@@ -219,6 +219,19 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
             title: "Overscan",
             description: "Show horizontal overscan area.",
             requiresRestart: true), defaultValue: true)
+    }
+
+    // psx.region_default
+    static var psx_region_default_option: CoreOption {
+        .enumeration(.init(title: "Default region",
+                           description: "Used if region autodetection fails. Set to 'Europe' for PAL games that are detected incorrectly.",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "jp", description: "Japan", value: 0),
+                        .init(title: "na", description: "North America", value: 1),
+                        .init(title: "eu", description: "Europe", value: 2),
+                     ],
+                     defaultValue: 1)
     }
 
     static var psx_temporal_blur_option: CoreOption {
@@ -401,6 +414,7 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
         
     // PSX
     @objc(psx_h_overscan) static var psx_h_overscan: Bool { valueForOption(psx_h_overscan_option).asBool }
+    @objc(psx_region_default) static var psx_region_default: Int { valueForOption(psx_region_default_option).asInt ?? 1 }
 
     // SS
     @objc(ss_region_default) static var ss_region_default: Int { valueForOption(ss_region_default_option).asInt ?? 0 }
