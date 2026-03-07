@@ -272,10 +272,11 @@ struct BackupRestoreView: View {
                 Image(systemName: "arrow.down.doc.fill")
                 #if os(tvOS)
                 Text("Restore from Documents")
+                    .fontWeight(.semibold)
                 #else
                 Text("Choose Backup File")
-                #endif
                     .fontWeight(.semibold)
+                #endif
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)

@@ -2,9 +2,7 @@ import Foundation
 import PVSupport
 import PVEmulatorCore
 import PVLogging
-internal import enum PVCoreBridge.CoreOption
-internal import struct PVCoreBridge.CoreOptionValueDisplay
-internal import struct PVCoreBridge.CoreOptionEnumValue
+import PVCoreBridge
 
 extension PVRetroArchCoreOptions: SubCoreOptional {
 

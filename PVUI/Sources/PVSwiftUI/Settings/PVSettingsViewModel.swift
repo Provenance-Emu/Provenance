@@ -281,7 +281,7 @@ class PVSettingsViewModel: ObservableObject {
         presentAlert(alert)
     }
 
-    private func presentAlert(_ alert: UIAlertController) {
+    private func presentAlert(_ alert: UIViewController) {
         if let window = UIApplication.shared.windows.first,
            let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController {
             rootViewController.present(alert, animated: true)

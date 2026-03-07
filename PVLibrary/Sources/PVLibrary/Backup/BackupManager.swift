@@ -161,7 +161,7 @@ public final class BackupManager: @unchecked Sendable {
         let zipURL = try createZip(from: tempDir)
 
         // Clean up staging directory
-        try? fm.removeItem(at: tempDir)
+        try? await fm.removeItem(at: tempDir)
 
         progressHandler?(.done)
         return zipURL

@@ -21,7 +21,6 @@ import PVCoreObjCBridge
 import Combine
 import Defaults
 import PVSettings
-internal import enum PVCoreBridge.PVDSButton
 import PVCoreBridge
 
 @objc
