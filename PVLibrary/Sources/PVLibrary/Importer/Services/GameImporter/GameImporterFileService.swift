@@ -249,6 +249,10 @@ class GameImporterFileService : GameImporterFileServicing {
             if !queueItem.childQueueItems.isEmpty {
                 try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
             }
+            // Move any associated files (e.g. bin/cue for m3u) that may still be in Imports
+            if !queueItem.resolvedAssociatedFileURLs.isEmpty {
+                try await moveAssociatedFiles(forQueueItem: queueItem, to: destinationFolder)
+            }
             return
         }
 
@@ -296,6 +300,10 @@ class GameImporterFileService : GameImporterFileServicing {
             if !queueItem.childQueueItems.isEmpty {
                 try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
             }
+            // Move any associated files (e.g. bin/cue for m3u) that may still be in Imports
+            if !queueItem.resolvedAssociatedFileURLs.isEmpty {
+                try await moveAssociatedFiles(forQueueItem: queueItem, to: destinationFolder)
+            }
             return
         }
 
@@ -324,6 +332,8 @@ class GameImporterFileService : GameImporterFileServicing {
             }
 
             try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
+            // Move associated files (e.g. bin/cue files referenced by an m3u) to the same system dir
+            try await moveAssociatedFiles(forQueueItem: queueItem, to: destinationFolder)
         } catch {
             throw GameImporterError.failedToMoveROM(error)
         }
@@ -347,6 +357,33 @@ class GameImporterFileService : GameImporterFileServicing {
                 throw GameImporterError.failedToMoveCDROM(error)
             }
         }
+    }
+
+    /// Moves resolved associated files (e.g. .bin/.cue files for an .m3u) to the destination folder
+    /// and updates their URLs in the queue item. This ensures disc image files accompany the primary
+    /// file (e.g. m3u) in the system ROM directory and can be referenced correctly during playback.
+    internal func moveAssociatedFiles(forQueueItem queueItem: ImportQueueItem, to destinationFolder: URL) async throws {
+        guard !queueItem.resolvedAssociatedFileURLs.isEmpty else { return }
+
+        var updatedURLs: [URL] = []
+        for fileURL in queueItem.resolvedAssociatedFileURLs {
+            // If the file no longer exists at the source (already moved), point to destination
+            guard FileManager.default.fileExists(atPath: fileURL.path) else {
+                let expectedDestination = destinationFolder.appendingPathComponent(fileURL.lastPathComponent)
+                updatedURLs.append(expectedDestination)
+                ILOG("Associated file already moved or missing: \(fileURL.lastPathComponent)")
+                continue
+            }
+            do {
+                let movedURL = try await moveFile(fileURL, to: destinationFolder)
+                updatedURLs.append(movedURL)
+                ILOG("Moved associated file \(fileURL.lastPathComponent) to system dir")
+            } catch {
+                ELOG("Failed to move associated file \(fileURL.lastPathComponent): \(error.localizedDescription)")
+                updatedURLs.append(fileURL) // keep original URL so callers can still reference it
+            }
+        }
+        queueItem.resolvedAssociatedFileURLs = updatedURLs
     }
 
 
