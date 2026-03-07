@@ -314,3 +314,31 @@ jobs:
                 [ -n "$STATUS_ID" ] && gh api repos/$GITHUB_REPOSITORY/issues/comments/${STATUS_ID} \
                   --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
                 ```
+
+      # GITHUB_TOKEN pushes/PR-creates don't fire pull_request events in other workflows.
+      # Explicitly dispatch ai-review for any [Agent] PR the agent just created for this issue.
+      - name: Dispatch AI review for newly created Agent PRs
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ISSUE_NUM="${{ github.event.issue.number }}"
+          REPO="${{ github.repository }}"
+
+          PR_NUMBER=$(gh pr list \
+            --repo "$REPO" \
+            --head "agent/issue-${ISSUE_NUM}" \
+            --state open \
+            --json number,title \
+            --jq '.[] | select(.title | startswith("[Agent]")) | .number' \
+            2>/dev/null | head -1)
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open [Agent] PR found for issue #${ISSUE_NUM} — skipping review dispatch"
+            exit 0
+          fi
+
+          echo "Dispatching AI review for PR #${PR_NUMBER}"
+          gh workflow run ai-review.yml \
+            --repo "$REPO" \
+            -f pr_number="$PR_NUMBER"
