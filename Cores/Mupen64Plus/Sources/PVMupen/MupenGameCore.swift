@@ -564,6 +564,32 @@ extension MupenGameCore: CoreOptional {
     }
 }
 
+// MARK: - TransferPakSupport
+
+extension MupenGameCore: TransferPakSupport {
+    public var transferPakSlotCount: Int { 4 }
+
+    public func setTransferPakROM(_ rom: TransferPakROM?, forPort port: Int) {
+        _bridge.setGBCartROMPath(
+            rom?.romPath.path,
+            savePath: rom?.savePath?.path,
+            forPort: port
+        )
+        // Enable Transfer Pak plugin mode on this controller port when a cart is inserted.
+        // Value 4 = PLUGIN_TRANSFER_PAK, value 2 = PLUGIN_MEMPAK (fallback when no cart).
+        let mode = rom != nil ? 4 : 2
+        _bridge.setMode(mode, forController: port)
+    }
+
+    public func transferPakROM(forPort port: Int) -> TransferPakROM? {
+        guard port >= 0 && port < 4 else { return nil }
+        guard let romPathStr = _bridge.gbCartROMPath(forPort: port) else { return nil }
+        let romURL = URL(fileURLWithPath: romPathStr)
+        let saveURL = _bridge.gbCartSavePath(forPort: port).map { URL(fileURLWithPath: $0) }
+        return TransferPakROM(romPath: romURL, savePath: saveURL)
+    }
+}
+
 extension MupenGameCore: GameWithCheat {
     public var supportsCheatCode: Bool { true }
 
