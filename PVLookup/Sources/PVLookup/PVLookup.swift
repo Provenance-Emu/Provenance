@@ -379,7 +379,7 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         let upperCRC = crc.uppercased()
 
         if let openVGDB = await getOpenVGDB() {
-            return try? await openVGDB.searchByCRC(upperCRC, systemID: systemID)
+            return try await openVGDB.searchByCRC(upperCRC, systemID: systemID)
         }
         return nil
     }

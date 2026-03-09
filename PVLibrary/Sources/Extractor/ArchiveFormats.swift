@@ -16,8 +16,7 @@ enum ArchiveFormats: String, CaseIterable, Sendable {
     case bzip2 = "bz2"
     case xz
     case zstd = "zst"
-    case lzh
-    case lha
+    case lzh  // covers both .lzh and .lha extensions
 
     var fileExtensions: [String] {
         switch self {
@@ -29,8 +28,7 @@ enum ArchiveFormats: String, CaseIterable, Sendable {
         case .bzip2: return ["bz2", "bzip2"]
         case .xz: return ["xz"]
         case .zstd: return ["zst", "zstd"]
-        case .lzh: return ["lzh"]
-        case .lha: return ["lha"]
+        case .lzh: return ["lzh", "lha"]
         }
     }
 
@@ -45,14 +43,13 @@ enum ArchiveFormats: String, CaseIterable, Sendable {
         case .xz: return "application/x-xz"
         case .zstd: return "application/zstd"
         case .lzh: return "application/x-lzh-compressed"
-        case .lha: return "application/x-lzh-compressed"
         }
     }
 
     /// Whether this archive format stores a CRC index readable without decompressing
     var supportsCRCIndex: Bool {
         switch self {
-        case .zip, .sevenZip, .rar, .lzh, .lha: return true
+        case .zip, .sevenZip, .rar, .lzh: return true
         case .tar, .gzip, .bzip2, .xz, .zstd: return false
         }
     }

@@ -700,38 +700,7 @@ public extension OpenVGDB {
 
     /// Search the database by CRC32 hash and return the first matching ROM.
     func searchROM(byCRC crc: String) async throws -> ROMMetadata? {
-        let sanitizedCRC = sanitizeForSQLLike(crc.uppercased())
-        let query = """
-            SELECT DISTINCT
-                releaseTitleName as 'gameTitle',
-                releaseCoverFront as 'boxImageURL',
-                TEMPRomRegion as 'region',
-                releaseDescription as 'gameDescription',
-                releaseCoverBack as 'boxBackURL',
-                releaseDeveloper as 'developer',
-                releasePublisher as 'publisher',
-                romSerial as 'serial',
-                releaseDate as 'releaseDate',
-                releaseGenre as 'genres',
-                releaseReferenceURL as 'referenceURL',
-                releaseID as 'releaseID',
-                romLanguage as 'language',
-                regionLocalizedID as 'regionID',
-                systemID as 'systemID',
-                TEMPsystemShortName as 'systemShortName',
-                romFileName,
-                romHashCRC,
-                romHashMD5,
-                romID
-            FROM ROMs rom
-            LEFT JOIN RELEASES release USING (romID)
-            WHERE romHashCRC = '\(sanitizedCRC)' COLLATE NOCASE
-            LIMIT 1
-        """
-
-        let results = try db.execute(query: query)
-        guard let result = results.first else { return nil }
-        return convertToROMMetadata(result)
+        return try await searchByCRC(crc)?.first
     }
 
     func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {

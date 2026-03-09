@@ -38,8 +38,7 @@ public enum ArchiveType: String, CaseIterable {
     case tar
     case gzip = "gz"
     case rar
-    case lzh
-    case lha
+    case lzh  // covers both .lzh and .lha extensions
     case xz
 
     /// Additional file extensions that map to this archive type (beyond the rawValue).
@@ -47,7 +46,6 @@ public enum ArchiveType: String, CaseIterable {
         switch self {
         case .bzip2: return ["bzip2"]
         case .gzip: return ["gzip"]
-        case .lha: return ["lzh"]
         case .lzh: return ["lha"]
         default: return []
         }

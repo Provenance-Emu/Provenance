@@ -117,7 +117,6 @@ public final class DirectoryWatcher: ObservableObject {
         .bzip2: BZip2Extractor(),
         .gzip: GZipExtractor(),
         .lzh: LzhExtractor(),
-        .lha: LzhExtractor(),
         .xz: XZExtractor(),
         .rar: RarExtractor()
     ]
