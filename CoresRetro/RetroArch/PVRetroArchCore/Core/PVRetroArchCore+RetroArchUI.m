@@ -348,6 +348,10 @@ int argc =  1;
     NSString *systemDir = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
     [self syncResources:self.BIOSPath to:systemDir];
 
+    // SPIKE 2823: This byte-mutation is a temporary hack that only works with TOS 1.02 US.
+    // It should be replaced with proper Hatari configuration once the root cause of the
+    // crash (incorrect TOS path or TOS content validation) is determined.
+    // See: https://github.com/Provenance-Emu/Provenance/issues/2823
     /// Re-apply TOS fix after sync to ensure it's not overwritten
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
         NSString *tosImagePath = [systemDir stringByAppendingPathComponent:@"tos.img"];
@@ -635,6 +639,10 @@ void extract_bundles();
     }
     NSString *systemDirectory = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
 
+    // SPIKE 2823: This byte-mutation is a temporary hack that only works with TOS 1.02 US.
+    // It should be replaced with proper Hatari configuration once the root cause of the
+    // crash (incorrect TOS path or TOS content validation) is determined.
+    // See: https://github.com/Provenance-Emu/Provenance/issues/2823
     /// Ensure TOS image is properly synced for Hatari core (force update if corrupted)
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
         NSString *tosImagePath = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
