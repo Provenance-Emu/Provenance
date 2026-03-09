@@ -107,6 +107,7 @@ let package = Package(
                 "FloatingButton",
                 "FreemiumKit",
                 "MarkdownView",
+                "PVCoreAudio",
                 "PVCoreBridge",
                 "PVEmulatorCore",
                 "PVFeatureFlags",

@@ -453,6 +453,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Observer for refreshing Delta skin after a skin change
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleDeltaSkinChanged(_:)), name: Notification.Name("DeltaSkinChanged"), object: nil)
+
+        #if !os(macOS)
+        registerAudioRouteChangeObserver()
+        #endif
     }
 
     private func addControllerOverlay() {

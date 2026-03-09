@@ -1504,8 +1504,14 @@ private struct AudioSection: View {
     @Default(.volumeHUD) var volumeHUD
     @Default(.respectMuteSwitch) var respectMuteSwitch
     #endif
+    @Default(.pauseOnHeadphonesDisconnect) var pauseOnHeadphonesDisconnect
     var body: some View {
         Section(header: Text("Audio")) {
+            ThemedToggle(isOn: $pauseOnHeadphonesDisconnect) {
+                SettingsRow(title: "Pause on Headphones Disconnect",
+                            subtitle: "Auto-pause emulation when AirPods or Bluetooth headphones disconnect.",
+                            icon: .sfSymbol("headphones"))
+            }
             #if !os(tvOS)
             ThemedToggle(isOn: $respectMuteSwitch) {
                 SettingsRow(title: "Respect Silent Mode",
