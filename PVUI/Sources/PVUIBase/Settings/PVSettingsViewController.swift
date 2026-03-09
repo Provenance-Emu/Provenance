@@ -39,6 +39,11 @@ public final class PVSettingsViewController: QuickTableViewController {
 
     private var cancellables = Set<AnyCancellable>()
 
+    /// Optional delegate for library-management actions. When set, the typed delegate
+    /// methods are called instead of posting NSNotifications directly, keeping both
+    /// the UIKit and SwiftUI paths consistent.
+    public weak var menuDelegate: PVMenuDelegate?
+
     public var conflictsController: PVGameLibraryUpdatesController? {
         didSet {
             setupConflictsObserver()
@@ -809,7 +814,11 @@ public final class PVSettingsViewController: QuickTableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Scan", comment: ""),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
-            NotificationCenter.default.post(name: .PVReimportLibrary, object: nil)
+            if let delegate = self.menuDelegate {
+                delegate.didTapScanROMs()
+            } else {
+                NotificationCenter.default.post(name: .PVReimportLibrary, object: nil)
+            }
             self.done(self)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
@@ -830,7 +839,11 @@ public final class PVSettingsViewController: QuickTableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Reset", comment: ""),
                                       style: .destructive,
                                       handler: { (_: UIAlertAction) -> Void in
-            NotificationCenter.default.post(name: .PVResetLibrary, object: nil)
+            if let delegate = self.menuDelegate {
+                delegate.didTapResetLibrary()
+            } else {
+                NotificationCenter.default.post(name: .PVResetLibrary, object: nil)
+            }
             self.done(self)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
@@ -851,7 +864,11 @@ public final class PVSettingsViewController: QuickTableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Update", comment: ""),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
-            NotificationCenter.default.post(name: .PVRefreshLibrary, object: nil)
+            if let delegate = self.menuDelegate {
+                delegate.didTapUpdateMetadata()
+            } else {
+                NotificationCenter.default.post(name: .PVRefreshLibrary, object: nil)
+            }
             self.done(self)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
