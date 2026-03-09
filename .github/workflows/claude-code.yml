@@ -290,7 +290,7 @@ jobs:
             19. Commit: `fix: address AI review — <brief summary>`
             20. Push to EXISTING branch (never create a new branch or PR):
                 `git push origin <branch>`
-            21. Update label — fixes pushed, review incoming:
+            21. Update label — fixes pushed:
                 `gh pr edit <number> --add-label "ai-reviewing" --remove-label "needs-fixes"`
             22. Post marker comment (use --body-file):
                 ```
@@ -301,7 +301,7 @@ jobs:
                 gh pr comment <number> --body-file /tmp/marker.md --repo $GITHUB_REPOSITORY
                 ```
             23. Update status comment to show completion (cycle N dispatched).
-            NOTE: Do NOT re-request review. The push auto-triggers ai-review.yml for the next cycle.
+            NOTE: Do NOT manually dispatch ai-review.yml — the claude-code.yml post-step does it automatically after you finish.
 
             **When resolving rebase conflicts (fix_rebase_conflict):**
             24. Get PR branch: `BRANCH=$(gh pr view <number> --json headRefName --jq .headRefName)`
@@ -325,9 +325,8 @@ jobs:
                 `git push --force-with-lease origin "$BRANCH"`
             30. Post a comment summarising which conflicts were resolved and how.
             31. Re-trigger CI: `gh workflow run agent-validation.yml --repo $GITHUB_REPOSITORY --ref develop -f branch="$BRANCH"`
-            32. Re-trigger AI review if [Agent] PR:
-                `gh workflow run ai-review.yml --repo $GITHUB_REPOSITORY -f pr_number=<number>`
-            33. Update status comment to show completion.
+            32. Update status comment to show completion.
+            NOTE: AI review is automatically re-dispatched by the claude-code.yml post-step — do NOT manually run ai-review.yml.
             IMPORTANT: If `git rebase --continue` keeps failing or there are too many complex conflicts,
             abort with `git rebase --abort` and post a comment explaining what requires manual resolution.
 
@@ -357,21 +356,44 @@ jobs:
                 ```
 
       # GITHUB_TOKEN pushes/PR-creates don't fire pull_request events in other workflows.
-      # Explicitly dispatch ai-review for any [Agent] PR the agent just created for this issue.
-      - name: Dispatch AI review for newly created Agent PRs
-        if: github.event_name == 'issues'
+      # Explicitly dispatch ai-review after:
+      #   1. A new [Agent] PR is created from an issue
+      #   2. Fixes are pushed for fix_ai_review (next review cycle)
+      #   3. Rebase is resolved for fix_rebase_conflict (re-review after rebase)
+      - name: Dispatch AI review for Agent PRs
+        if: |
+          github.event_name == 'issues' ||
+          (github.event_name == 'workflow_dispatch' &&
+           (github.event.inputs.action == 'fix_ai_review' ||
+            github.event.inputs.action == 'fix_rebase_conflict'))
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          ISSUE_NUM="${{ github.event.issue.number }}"
           REPO="${{ github.repository }}"
+          ACTION="${{ github.event.inputs.action }}"
+
+          # For fix_ai_review and fix_rebase_conflict: PR number is directly available
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PR_NUMBER="${{ github.event.inputs.pr_number }}"
+            if [ -z "$PR_NUMBER" ]; then
+              echo "No PR number in workflow_dispatch inputs — skipping"
+              exit 0
+            fi
+            echo "Dispatching AI review for PR #${PR_NUMBER} (post-${ACTION})"
+            gh workflow run ai-review.yml \
+              --repo "$REPO" \
+              -f pr_number="$PR_NUMBER"
+            exit 0
+          fi
+
+          # For issues events: find the newly created Agent PR for this issue
+          ISSUE_NUM="${{ github.event.issue.number }}"
 
           PR_NUMBER=$(gh pr list \
             --repo "$REPO" \
-            --head "agent/issue-${ISSUE_NUM}" \
             --state open \
-            --json number,title \
-            --jq '.[] | select(.title | startswith("[Agent]")) | .number' \
+            --json number,title,headRefName \
+            --jq ".[] | select(.title | startswith(\"[Agent]\")) | select(.headRefName | startswith(\"agent/issue-${ISSUE_NUM}\")) | .number" \
             2>/dev/null | head -1)
 
           if [ -z "$PR_NUMBER" ]; then
@@ -379,7 +401,7 @@ jobs:
             exit 0
           fi
 
-          echo "Dispatching AI review for PR #${PR_NUMBER}"
+          echo "Dispatching AI review for PR #${PR_NUMBER} (new PR from issue #${ISSUE_NUM})"
           gh workflow run ai-review.yml \
             --repo "$REPO" \
             -f pr_number="$PR_NUMBER"
