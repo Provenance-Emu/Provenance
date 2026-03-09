@@ -88,11 +88,6 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
                                             .init(title: "Dynamic Recompiler", description: "Fastest but requires JIT or will crash", value: 2)],
                                         defaultValue: 1))
         
-        coreOptions.append(.range(.init(title: "Count Per Operation",
-                                        description: "Force number of cycles per emulated instruction.",
-                                        requiresRestart: true),
-                                  range: .init(defaultValue: 2, min: 1, max: 4), defaultValue: 2))
-        
         coreOptions.append(.bool(.init(title: "Disable Extra Memory",
                                        description: "Disable 4MB expansion RAM pack. May be necessary for some games.",
                                        requiresRestart: true),
@@ -109,7 +104,7 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
                                  defaultValue: true))
         
         coreOptions.append(.range(.init(title: "Count Per Op",
-                                        description: "Force number of cycles per emulated instruction when set greater than 0. 0 for default from .ini.",
+                                        description: "CPU cycles per emulated instruction. 0=ROM default (usually 2). Lower=overclock (1=faster, may glitch). Higher=underclock (3-4=more accurate, slower). Useful for games like Majora's Mask or DK64 that have slowdown.",
                                         requiresRestart: true),
                                   range: .init(defaultValue: 0, min: 0, max: 7), defaultValue: 0))
         
