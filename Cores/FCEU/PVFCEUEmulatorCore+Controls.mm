@@ -22,7 +22,7 @@
 //#include "fceux/src/emufile.h"
 
 #define DEADZONE 0.1f
-static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
+static const uint32_t NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
 
 // FCEU packs all 4 players into 2 ports (32-bit each):
 //   Port 0 (pad[0][0]): P1 = bits 0-7, P3 = bits 16-23
@@ -69,6 +69,7 @@ static inline int fceuPlayerShift(NSInteger player) {
             case 1: controller = self.controller2; break;
             case 2: controller = self.controller3; break;
             case 3: controller = self.controller4; break;
+            default: break;
         }
 
         if ([controller extendedGamepad])
