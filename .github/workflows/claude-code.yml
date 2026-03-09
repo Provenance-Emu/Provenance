@@ -214,6 +214,38 @@ jobs:
                that should merge AFTER another PR. Example body footer:
                `Depends on: #2551` — this tells the dependency checker the merge order.
                Only add this when there's a real ordering dependency (shared file changes).
+            10. GITHUB ISSUE RELATIONSHIPS — Use these APIs when creating epics and sub-tasks:
+
+               **Parent-child (sub-issues):** When you create a sub-task issue under an epic,
+               immediately wire it as a sub-issue of the parent epic:
+               ```bash
+               # Get the integer ID of the child issue
+               child_id=$(gh api "repos/$GITHUB_REPOSITORY/issues/CHILD_NUMBER" --jq '.id')
+               # Add it as sub-issue of the parent epic
+               gh api -X POST "repos/$GITHUB_REPOSITORY/issues/PARENT_NUMBER/sub_issues" \
+                 -f "sub_issue_id=$child_id"
+               ```
+
+               **Blocked-by relationships:** When a task cannot start until another is done,
+               use the GraphQL API to mark it as blocked:
+               ```bash
+               # Get node IDs
+               blocked_id=$(gh api "repos/$GITHUB_REPOSITORY/issues/BLOCKED_NUMBER" --jq '.node_id')
+               blocker_id=$(gh api "repos/$GITHUB_REPOSITORY/issues/BLOCKER_NUMBER" --jq '.node_id')
+               # Mark BLOCKED_NUMBER as blocked by BLOCKER_NUMBER
+               gh api graphql -f query="mutation {
+                 addBlockedBy(input: {issueId: \"$blocked_id\", blockingIssueId: \"$blocker_id\"}) {
+                   issue { number }
+                 }
+               }"
+               ```
+
+               **Rules:**
+               - Every sub-task issue you create must be added as a sub-issue of its parent epic
+               - Add blocked-by only for OPEN issues blocking OPEN issues (closed = resolved)
+               - Never add a closed issue as a sub-issue (GitHub rejects it)
+               - Reference parents as "Part of #N" in issue bodies, NOT "Closes #N"
+               - When creating an epic, add all existing or newly created sub-tasks as sub-issues
 
             ## NO DUPLICATE PRs — CRITICAL
             Before creating any PR or branch:
@@ -234,7 +266,10 @@ jobs:
             ## Review Pipeline (for [Agent] PRs)
 
             **After creating a new PR:**
-            9.  Enable auto-merge: `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
+            9.  Enable auto-merge (merge commit, NOT squash):
+                `gh pr merge <number> --auto --merge --repo $GITHUB_REPOSITORY`
+                If auto-merge was previously set to squash, disable then re-enable:
+                `gh pr merge <number> --disable-auto && gh pr merge <number> --auto --merge`
             10. Set initial labels: `gh pr edit <number> --add-label "agent-work,ai-reviewing"`
             11. Post a comment: `gh pr comment <number> --body "🤖 PR created. AI review starting automatically." --repo $GITHUB_REPOSITORY`
             NOTE: Do NOT manually request a review — ai-review.yml fires automatically on the push.
