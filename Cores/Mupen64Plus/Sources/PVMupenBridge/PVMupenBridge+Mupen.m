@@ -267,7 +267,9 @@ void ConfigureGLideN64(NSString *romFolder) {
     ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &txHiresEnable);
 
     // Path to folder with hi-res texture packs.
-    ConfigSetParameter(gliden64, "txPath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/"].fileSystemRepresentation);
+    // GLideN64 expects txPath to be the hires_texture root; it appends /<GameName>/ itself.
+    // createHiResFolder creates <romFolder>/hires_texture/ — point txPath there.
+    ConfigSetParameter(gliden64, "txPath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"hires_texture"].fileSystemRepresentation);
     // Path to folder where plugin saves texture cache files.
     ConfigSetParameter(gliden64, "txCachePath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/cache/"].fileSystemRepresentation);
     // Path to folder where plugin saves dumped textures.

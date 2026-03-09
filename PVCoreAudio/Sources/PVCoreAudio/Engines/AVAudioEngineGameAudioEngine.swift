@@ -406,37 +406,33 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         // Only process if we have enough data
         guard byteCount > 0 else { return }
         
-        // Lock to prevent concurrent access
-        audioBufferLock.lock()
-        defer { audioBufferLock.unlock() }
-        
-        // Process 16-bit PCM audio data
-        let samples = buffer.bindMemory(to: Int16.self, capacity: byteCount / 2)
-        let sampleCount = min(byteCount / 2, audioBufferForVisualization.count)
-        
-        // For stereo, average the channels
-        if channels == 2 {
-            for i in 0..<(sampleCount / 2) {
-                let leftSample = Float(samples[i * 2]) / Float(Int16.max)
-                let rightSample = Float(samples[i * 2 + 1]) / Float(Int16.max)
-                audioBufferForVisualization[i] = (leftSample + rightSample) / 2.0
-            }
-        } else {
-            // For mono, just convert to float
-            for i in 0..<sampleCount {
-                audioBufferForVisualization[i] = Float(samples[i]) / Float(Int16.max)
+        audioBufferLock.withLock {
+            // Process 16-bit PCM audio data
+            let samples = buffer.bindMemory(to: Int16.self, capacity: byteCount / 2)
+            let sampleCount = min(byteCount / 2, audioBufferForVisualization.count)
+
+            // For stereo, average the channels
+            if channels == 2 {
+                for i in 0..<(sampleCount / 2) {
+                    let leftSample = Float(samples[i * 2]) / Float(Int16.max)
+                    let rightSample = Float(samples[i * 2 + 1]) / Float(Int16.max)
+                    audioBufferForVisualization[i] = (leftSample + rightSample) / 2.0
+                }
+            } else {
+                // For mono, just convert to float
+                for i in 0..<sampleCount {
+                    audioBufferForVisualization[i] = Float(samples[i]) / Float(Int16.max)
+                }
             }
         }
     }
     
     /// Get waveform data for visualization
     public func getWaveformData(numberOfPoints: Int) -> WaveformData {
-        audioBufferLock.lock()
-        defer { audioBufferLock.unlock() }
-        
+        audioBufferLock.withLock {
         // Create a result array of the requested size
         var result = [Float](repeating: 0, count: numberOfPoints)
-        
+
         // If we don't have enough data or engine isn't running, return zeros
         guard isRunning, !audioBufferForVisualization.isEmpty else {
             return WaveformData(amplitudes: result)
@@ -518,10 +514,11 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol {
         
         // Clean up
         vDSP_destroy_fftsetup(fftSetup)
-        
+
         return WaveformData(amplitudes: result)
+        }
     }
-    
+
     /// Adjusts buffer size based on performance metrics
     private func adjustBufferSizeIfNeeded(processingTime: Double) {
         if context.bufferUnderrunCount > 5 {

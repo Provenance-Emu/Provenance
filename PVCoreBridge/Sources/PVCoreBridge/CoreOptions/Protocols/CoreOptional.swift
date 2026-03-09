@@ -13,6 +13,13 @@ public protocol CoreOptional {//where Self: EmulatorCoreIOInterface {
     /// The options available for this core
     static var options: [CoreOption] { get }
 
+    /// The MD5 hash of the currently loaded game.
+    /// When non-nil, `valueForOption` reads the per-game key
+    /// (`<ClassName>.<md5>.<optionKey>`) before falling back to the
+    /// per-core global key (`<ClassName>.<optionKey>`).
+    /// Set this when a game is loaded and clear it on unload.
+    static var currentGameMD5: String? { get }
+
 //    static func bool(forOption option: String) -> Bool
 //    static func int(forOption option: String) -> Int
 //    static func float(forOption option: String) -> Float
@@ -30,6 +37,9 @@ public protocol SubCoreOptional: CoreOptional {
 }
 
 public extension CoreOptional {
+    /// Default implementation: no per-game MD5 override.
+    static var currentGameMD5: String? { nil }
+
     /// Reset a specific set of options to their default values
     /// - Parameter options: The options to reset
     static func resetOptions(_ options: [CoreOption]) {

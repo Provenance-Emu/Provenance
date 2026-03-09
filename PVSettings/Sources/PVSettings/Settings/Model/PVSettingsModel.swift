@@ -470,6 +470,9 @@ public extension Defaults.Keys {
     static let audioLatency = Key<TimeInterval>("audioLatency", default: 10.0)
 
     static let respectMuteSwitch = Key<Bool>("respectMuteSwitch", default: true)
+
+    /// Auto-pause emulation when AirPods or Bluetooth headphones disconnect.
+    static let pauseOnHeadphonesDisconnect = Key<Bool>("pauseOnHeadphonesDisconnect", default: true)
 }
 
 public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, CustomStringConvertible, Identifiable {

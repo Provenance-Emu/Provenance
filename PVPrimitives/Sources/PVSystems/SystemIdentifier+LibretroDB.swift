@@ -337,10 +337,22 @@ extension SystemIdentifier {
     ///
     /// - DOOM: thumbnails use "DOOM", cheat repo uses "PrBoom"
     /// - AtariJaguarCD: thumbnails have no specific folder; cheat repo uses "Atari - Jaguar CD"
+    /// - MSX/MSX2: both map to "Microsoft - MSX - MSX2 - MSX2P - MSX Turbo R" in cheat DB
+    /// - Atari8bit: cheat DB uses "Atari - 8-bit Family"
+    /// - MAME/CPS*: cheat DB uses "FBNeo - Arcade Games"
+    /// - ZXSpectrum: cheat DB uses "Sinclair - ZX Spectrum +3"
     public var libretroCheatSystemName: String {
         switch self {
         case .DOOM:         return "PrBoom"
         case .AtariJaguarCD: return "Atari - Jaguar CD"
+        // MSX and MSX2 share a single combined system entry in the cheat DB
+        case .MSX, .MSX2:  return "Microsoft - MSX - MSX2 - MSX2P - MSX Turbo R"
+        // Atari 8-bit family uses a different name in the cheat DB
+        case .Atari8bit:    return "Atari - 8-bit Family"
+        // Arcade systems map to the FBNeo entry in the cheat DB
+        case .MAME, .CPS1, .CPS2, .CPS3: return "FBNeo - Arcade Games"
+        // ZX Spectrum uses the "+3" variant name in the cheat DB
+        case .ZXSpectrum:   return "Sinclair - ZX Spectrum +3"
         default:            return libretroDatabaseName
         }
     }

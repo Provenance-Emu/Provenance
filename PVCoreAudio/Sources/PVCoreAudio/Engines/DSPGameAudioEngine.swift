@@ -176,14 +176,12 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
 
             // Capture audio data for visualization
             if let leftChannel = pcmBuffer.floatChannelData?[0], let rightChannel = pcmBuffer.floatChannelData?[1] {
-                self.audioBufferLock.lock()
-                defer { self.audioBufferLock.unlock() }
-
-                let count = min(Int(pcmBuffer.frameLength), self.audioBufferForVisualization.count)
-
-                // Average left and right channels for visualization
-                for i in 0..<count {
-                    self.audioBufferForVisualization[i] = (leftChannel[i] + rightChannel[i]) / 2.0
+                self.audioBufferLock.withLock {
+                    let count = min(Int(pcmBuffer.frameLength), self.audioBufferForVisualization.count)
+                    // Average left and right channels for visualization
+                    for i in 0..<count {
+                        self.audioBufferForVisualization[i] = (leftChannel[i] + rightChannel[i]) / 2.0
+                    }
                 }
             }
 
@@ -340,63 +338,60 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
         // Only process if we have enough data
         guard byteCount > 0 else { return }
 
-        // Lock to prevent concurrent access
-        audioBufferLock.lock()
-        defer { audioBufferLock.unlock() }
+        audioBufferLock.withLock {
+            // Process 16-bit PCM audio data
+            let samples = buffer.bindMemory(to: Int16.self, capacity: byteCount / 2)
+            let sampleCount = min(byteCount / 2, audioBufferForVisualization.count)
 
-        // Process 16-bit PCM audio data
-        let samples = buffer.bindMemory(to: Int16.self, capacity: byteCount / 2)
-        let sampleCount = min(byteCount / 2, audioBufferForVisualization.count)
-
-        // For stereo, average the channels
-        if channels == 2 {
-            for i in 0..<(sampleCount / 2) {
-                let leftSample = Float(samples[i * 2]) / Float(Int16.max)
-                let rightSample = Float(samples[i * 2 + 1]) / Float(Int16.max)
-                audioBufferForVisualization[i] = (leftSample + rightSample) / 2.0
-            }
-        } else {
-            // For mono, just convert to float
-            for i in 0..<sampleCount {
-                audioBufferForVisualization[i] = Float(samples[i]) / Float(Int16.max)
+            // For stereo, average the channels
+            if channels == 2 {
+                for i in 0..<(sampleCount / 2) {
+                    let leftSample = Float(samples[i * 2]) / Float(Int16.max)
+                    let rightSample = Float(samples[i * 2 + 1]) / Float(Int16.max)
+                    audioBufferForVisualization[i] = (leftSample + rightSample) / 2.0
+                }
+            } else {
+                // For mono, just convert to float
+                for i in 0..<sampleCount {
+                    audioBufferForVisualization[i] = Float(samples[i]) / Float(Int16.max)
+                }
             }
         }
     }
 
     /// Get waveform data for visualization
     public func getWaveformData(numberOfPoints: Int) -> WaveformData {
-        audioBufferLock.lock()
-        defer { audioBufferLock.unlock() }
+        audioBufferLock.withLock {
+            // Create a result array of the requested size
+            var result = [Float](repeating: 0, count: numberOfPoints)
 
-        // Create a result array of the requested size
-        var result = [Float](repeating: 0, count: numberOfPoints)
+            // If we don't have enough data or engine isn't running, return zeros
+            guard isRunning, !audioBufferForVisualization.isEmpty else {
+                return WaveformData(amplitudes: result)
+            }
 
-        // If we don't have enough data or engine isn't running, return zeros
-        guard isRunning, !audioBufferForVisualization.isEmpty else {
+            // Use Accelerate framework to downsample the audio buffer to the requested number of points
+            let inputLength = vDSP_Length(audioBufferForVisualization.count)
+            let stride = max(1, Int(inputLength) / numberOfPoints)
+
+            for i in 0..<numberOfPoints {
+                let startIdx = i * stride
+                let endIdx = min(startIdx + stride, audioBufferForVisualization.count)
+
+                if startIdx < endIdx {
+                    // Take absolute values for visualization
+                    var absValues = [Float](repeating: 0, count: endIdx - startIdx)
+                    vDSP_vabs(Array(audioBufferForVisualization[startIdx..<endIdx]), 1, &absValues, 1, vDSP_Length(endIdx - startIdx))
+
+                    // Find the maximum value in this segment
+                    var maxValue: Float = 0
+                    vDSP_maxv(absValues, 1, &maxValue, vDSP_Length(absValues.count))
+
+                    result[i] = maxValue
+                }
+            }
+
             return WaveformData(amplitudes: result)
         }
-
-        // Use Accelerate framework to downsample the audio buffer to the requested number of points
-        let inputLength = vDSP_Length(audioBufferForVisualization.count)
-        let stride = max(1, Int(inputLength) / numberOfPoints)
-
-        for i in 0..<numberOfPoints {
-            let startIdx = i * stride
-            let endIdx = min(startIdx + stride, audioBufferForVisualization.count)
-
-            if startIdx < endIdx {
-                // Take absolute values for visualization
-                var absValues = [Float](repeating: 0, count: endIdx - startIdx)
-                vDSP_vabs(Array(audioBufferForVisualization[startIdx..<endIdx]), 1, &absValues, 1, vDSP_Length(endIdx - startIdx))
-
-                // Find the maximum value in this segment
-                var maxValue: Float = 0
-                vDSP_maxv(absValues, 1, &maxValue, vDSP_Length(absValues.count))
-
-                result[i] = maxValue
-            }
-        }
-
-        return WaveformData(amplitudes: result)
     }
 }
