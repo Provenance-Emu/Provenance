@@ -5,6 +5,82 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<!-- AGENTS: Add new entries under [Unreleased] for every meaningful feature or fix.
+     When a release ships, rename [Unreleased] to the version number and date,
+     then add a fresh [Unreleased] section at the top. -->
+
+## [Unreleased] — 3.4.0 (in development, March 2026)
+
+### Added
+- **Cheat Code Library** — Online search across 1.2M cheat codes from the libretro database
+  covering 44 systems (N64, SNES, PSX, GBA, and more). Enabled via features.json flag.
+  Stale cache detection ensures DB is always fresh on first use (#2618, #2619, #2641, #2642)
+- **RetroAchievements** — Foundation layer: `PVCheevosProtocol` + per-core conformance stubs
+  wired into emulator lifecycle (#2722, #2747, #2748)
+- **Virtual Keyboard & Mouse** — Full QWERTY on-screen overlay with haptics, platform-specific
+  layouts (C64, ZX Spectrum, Amstrad CPC), Siri Remote passthrough on tvOS, and mouse cursor
+  overlay for pointer-based computer cores (#2587–#2595, #2620–#2622)
+- **DS Dual-Screen Skins** — Phases 1-3: `supportsSkins` flag, DefaultDeltaSkin dual-screen
+  layout, touch input routing for native DS cores (#2612)
+- **Haptics System** — `PVRumbleProtocol` in PVCoreBridge; tiers 1-4 roadmap issued (#2751, #2746)
+- **N64 Transfer Pak** — `TransferPakSupport` protocol enabling Pokémon Stadium and other
+  Transfer Pak games (#2751)
+- **Per-Game Core Options** — MD5 wired through `valueForOption` reads; scoped reset helpers
+  (`resetOptionsForGame`, `resetAllOptions`) (#2728, #2753, #2757)
+- **Quick OSD Controls** — Quick Save, Quick Load, and Fast Forward buttons in the on-screen
+  controller overlay (#2626)
+- **Screen Recording** — Screenshot pipeline milestones 1 & 3; Provenance Plus gated (#2613)
+- **SwiftData Models** — New `Game_Data` and related models for Realm → SwiftData migration
+  Phase 1 (#2522)
+- **Auto-Pause on Headphone Disconnect** — Game pauses automatically when AirPods or Bluetooth
+  headphones disconnect (#2750)
+- **FCEU Famicom Mic** — Famicom controller microphone support via AVAudioEngine (#2702)
+- **Dolphin Options** — DSP HLE/Thread, GPU Sync, Fast Disc Speed exposed as user settings;
+  improved JIT detection (#2630)
+- **Configurable PSX Region** — Default region option for PSX/Mednafen core (#2661)
+- **Manual Backup & Restore** — Manually back up and restore the full game library (#2662)
+- **Controller Guide** — In-app controller guide for iOS, tvOS, and on-screen controls
+  (#2527–#2534)
+- **Skin Catalog Refresh** — Updated skin catalog seed from upstream repository (#2561)
+- **Netplay Architecture** — Research document and design for native Swift/SwiftUI netplay
+  system (#2544, #2558)
+
+### Fixed
+- **Cheat System Name Mismatches** — Added `libretroCheatSystemName` mappings for MSX,
+  MAME, ZX Spectrum, Atari 8-bit, and others; title tag stripping for region codes (#2617)
+- **Cheat DB MD5 Detection** — Detects MD5 data presence (not just column existence) to
+  correctly disable MD5-based lookup when DB was built without `--dat-dir` (#2641)
+- **Cheats Not Showing** — Feature flag `cheatsOnlineLookup` now enabled; stale cached DB
+  re-extracted when bundle zip is newer (#2619, #2618)
+- **Cheat Code Persistence** — Fixed `codeType` field separator, SwiftData model alignment,
+  and file path for saved cheats (#2597)
+- **MelonDS Color Issues** — Fixed display color calibration in MelonDS core (#2557)
+- **DosBox Graphics** — Graphics glitch resolved in native DosBox core (#2559)
+- **GLideN64 Texture Path** — Corrected hi-res texture pack path for Mupen64Plus (#2708)
+- **m3u Import** — Associated disc files now moved to system dir when importing m3u (#2660)
+- **Skin Browser Device Filter** — Fixed device filter returning 0 results (#2603)
+- **D-pad Diagonal Tokens** — Resolved D-pad diagonal tokens from directional mapping (#2640)
+- **iPadOS 26 Search Bar** — Fixed search bar placement regression (#2613)
+- **Settings Menu Delegate** — Added fallback notifications when menuDelegate is nil (#2749)
+- **App Group Container Check** — Simplified check for readable app group container (#2623)
+
+### Changed
+- **Cheats UI** — Moved Cheat Codes to main tab in pause menu for faster access (#2608)
+- **Lock Patterns** — Converted bare `NSLock.lock()/unlock()` to `withLock` throughout
+  audio engines and emulator VC (#2688, #2750)
+- **Library Management UX** — Reworked library management settings labels and architecture (#2706)
+- **WhatsNew** — Moved release notes from hardcoded Swift to `whats-new.json` metadata file;
+  agents can add new releases by editing JSON only
+
+### CI / Infrastructure
+- **Selective IPA Builds** — PR builds only for external contributors or opt-in via
+  `build-ipa` label / `/build` comment; develop push always builds alpha release
+- **AI Review Cycle Fix** — Fixed silent review gap: GITHUB_TOKEN pushes don't fire
+  `pull_request` events; claude-code.yml now explicitly dispatches ai-review.yml after
+  fix and rebase cycles
+- **GitHub Issue Relationships** — Agent instructions updated to wire sub-issues and
+  blocked-by relationships via API when creating epics and sub-tasks
+
 ## [3.0.6] - 2025-03-16
 
 Special thanks to all contributors and testers who helped make this release possible.

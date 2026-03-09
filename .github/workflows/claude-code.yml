@@ -200,6 +200,35 @@ jobs:
             5. Do NOT modify submodule source code directly
             6. Do NOT modify project.pbxproj unless absolutely necessary
             7. Keep changes focused — one logical change per PR
+
+            ## Documentation & Quality (do these for every significant PR)
+
+            7b. CHANGELOG.md — For any feature addition, bug fix, or refactor, add an entry
+               under the `[Unreleased]` section at the top of `CHANGELOG.md`. Format:
+               - Under `### Added` for new features
+               - Under `### Fixed` for bug fixes
+               - Under `### Changed` for refactors / behavior changes
+               Example: `- **Feature Name** — one-sentence description (#PR_NUMBER)`
+               Do NOT add entries for trivial doc changes or CI tweaks.
+
+            7c. Release Notes — When adding a major user-visible feature, also add a new
+               version entry to `PVUI/Sources/PVSwiftUI/Resources/whats-new.json`.
+               Only add if the feature is significant enough to show in a "What's New" sheet.
+               Use a clear `version`, `title`, and up to 6 `features` entries with SF Symbol
+               names and named colors (blue, green, orange, purple, red, pink, yellow, gray).
+
+            7d. Tests — For any new protocol, model, parser, or business logic, add or update
+               tests in the appropriate test target. Tier 0-2 modules can use `swift test`.
+               At minimum, write a test for the happy path and one edge case.
+               If a test target doesn't exist yet, note it in the PR body.
+
+            7e. reviewer-context.md — If your PR introduces a new pattern, protocol, or
+               design rule that reviewers should check for in future PRs, add a brief
+               entry to `.github/prompts/reviewer-context.md` under "New Patterns".
+               Examples: new actor types, new thread-safety requirements, new module tiers.
+
+            7f. TODO.md — If your PR completes an epic task, mark the item as done (`[X]`).
+               If you discover new work, add it as a new `[ ]` item.
             7a. CRITICAL — NEVER tell users to run shell commands referencing files on the
                CI runner filesystem (/tmp, /home/runner, /root, etc.). Those files only exist
                inside this CI container and are inaccessible to users on their own machines.

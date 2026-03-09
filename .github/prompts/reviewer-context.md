@@ -96,6 +96,47 @@ Higher tiers may import lower tiers. **Never the reverse.**
 
 ---
 
+## New Patterns (March 2026)
+
+### PVRumbleProtocol / Haptics
+- `PVRumbleProtocol` in `PVCoreBridge/Features/` — cores that support rumble conform to this.
+- `PVHapticsManager` manages device and controller haptics; guard tvOS paths with `#if !os(tvOS)`.
+- Strong/weak motor intensity is `Float` in `[0.0, 1.0]` range.
+
+### RetroAchievements (PVCheevos)
+- `PVCheevosProtocol` — cores opt in by conforming; added stubs first, implementation later.
+- `AchievementSessionManager` — actor-based; calls from emulator thread must use `await`.
+- Never call cheevos APIs before ROM is loaded and core is running.
+
+### Per-Game Core Options
+- `valueForOption(_:forMD5:)` pattern — static-context reads use MD5 to scope to a game.
+- `resetOptionsForGame(md5:)` and `resetAllOptions()` are the scoped reset helpers.
+- Options stored in `UserDefaults` with key `"pvcore.<bundleIdentifier>.<optionKey>.<md5>"`.
+
+### WhatsNew Release Notes (JSON-driven)
+- Release notes live in `PVUI/Sources/PVSwiftUI/Resources/whats-new.json`.
+- `WhatsNewLoader.loadAll(...)` in `PVSwiftUI` converts JSON → `[WhatsNew]` for WhatsNewKit.
+- `ProvenanceApp` conformance calls `WhatsNewLoader.loadAll(...)` — no hardcoded entries.
+- **Agents**: add new version entries to the JSON file; never modify `ProvenanceApp.swift` for this.
+
+### Virtual Keyboard / Mouse
+- `PVVirtualKeyboardView` — SwiftUI QWERTY overlay; shown via `supportsVirtualKeyboard` on core.
+- `PVMouseCursorView` — pointer overlay for computer cores; activated by `supportsVirtualMouse`.
+- Both use `@Environment(\.pvEmulatorCoordinator)` — don't access directly from core bridge.
+- Platform-specific layouts (C64, ZX Spectrum, CPC) in `PVUI/Sources/PVSwiftUI/VirtualKeyboard/`.
+
+### DS Dual-Screen Skins
+- `supportsSkins` flag on native DS cores (`PVDesmume2015Core`, `PVMelonDSCore`).
+- `DefaultDeltaSkin` layout handles dual-screen sizing independently.
+- Touch routing: only works with native cores, not RetroArch-wrapped dylib cores.
+
+### NSLock Pattern (Modern)
+- Use `lock.withLock { }` (Swift 5.10+) instead of bare `.lock()` / `.unlock()`.
+- Both read AND write sides of shared state must use the same lock object.
+- For actor-isolated state, prefer actor isolation over NSLock.
+
+---
+
 ## Project Conventions
 
 - **Swift**: 4-space indent, no indent for `case`, trailing commas in collections
@@ -105,3 +146,18 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - **Platforms**: iOS + tvOS. Both must compile. Check `#if os(tvOS)` guards where needed.
 - **Branches**: `agent/**` for agent work, `feature/**` for human features, PR to `develop`
 - **Commit style**: conventional commits (`fix:`, `feat:`, `chore:`, `build:`, `refactor:`)
+
+## Module Tier Updates (March 2026)
+
+| Tier | Modules |
+|------|---------|
+| 0 | PVObjCUtils, PVFeatureFlags, PVCheevos |
+| 1 | PVLogging, PVPlists, PVHashing |
+| 2 | PVSettings, PVPrimitives |
+| 3 | PVSupport, PVAudio, PVCoreAudio |
+| 4 | PVCoreBridge, PVEmulatorCore, PVShaders |
+| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLookup, PVLibrary, PVRealm, PVPatching |
+| 6 | PVUI (PVSwiftUI, PVUIBase, PVUI_IOS, PVUI_TV), App targets |
+
+Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
+`PVCheevos` is Tier 0 (no dependencies on higher tiers).

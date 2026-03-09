@@ -1,0 +1,213 @@
+name: Update Changelog
+
+# Keeps CHANGELOG.md [Unreleased] section current by summarising recent commits
+# every Monday morning and after manual dispatch.
+#
+# The job reads conventional-commit messages merged to develop since the last
+# tagged release and appends new entries to the [Unreleased] block.
+# It will NOT overwrite entries already in [Unreleased] — it only appends lines
+# that don't already appear there (dedup by PR number).
+#
+# Runs as github-actions[bot]; pushes directly to develop.
+
+on:
+  schedule:
+    # Every Monday at 07:00 UTC
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+    inputs:
+      since_ref:
+        description: 'Git ref to look back from (default: last semver tag)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  update-changelog:
+    name: Refresh [Unreleased] section
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: develop
+
+      - name: Compute since-ref
+        id: since
+        run: |
+          SINCE="${{ github.event.inputs.since_ref }}"
+          if [ -z "$SINCE" ]; then
+            # Last semver tag on develop
+            SINCE=$(git tag --sort=-version:refname | grep -E '^v?[0-9]+\.[0-9]+' | head -1)
+            if [ -z "$SINCE" ]; then
+              # Fall back to 30 days ago if no tags found
+              SINCE=$(git log --oneline --since="30 days ago" --format="%H" | tail -1)
+            fi
+          fi
+          echo "since=$SINCE" >> "$GITHUB_OUTPUT"
+          echo "Looking back from: $SINCE"
+
+      - name: Collect conventional commits since last tag
+        id: commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SINCE="${{ steps.since.outputs.since }}"
+
+          # Extract commits with PR numbers from merge commits and direct pushes
+          git log "${SINCE}..HEAD" \
+            --no-merges \
+            --format="%s %b" \
+            --grep="feat\|fix\|refactor\|perf\|docs\|chore\|build\|ci" \
+          | grep -E "^(feat|fix|refactor|perf|docs|chore|build|ci)(\([^)]+\))?:" \
+          > /tmp/raw_commits.txt || true
+
+          echo "Raw commits found: $(wc -l < /tmp/raw_commits.txt)"
+          cat /tmp/raw_commits.txt
+
+      - name: Generate [Unreleased] entries
+        id: generate
+        run: |
+          # Build structured entries from conventional commits
+          python3 << 'PYEOF'
+          import re, sys
+
+          with open('/tmp/raw_commits.txt') as f:
+              lines = [l.strip() for l in f if l.strip()]
+
+          added = []
+          fixed = []
+          changed = []
+          ci = []
+
+          for line in lines:
+              m = re.match(r'^(feat|fix|refactor|perf|docs|chore|build|ci)(?:\(([^)]+)\))?:\s*(.*)', line)
+              if not m:
+                  continue
+              kind, scope, desc = m.group(1), m.group(2) or '', m.group(3)
+
+              # Extract PR number if present like (#2750)
+              pr_m = re.search(r'\(#(\d+)\)', desc)
+              pr_ref = f' (#{pr_m.group(1)})' if pr_m else ''
+              clean_desc = re.sub(r'\s*\(#\d+\)', '', desc).strip()
+
+              scope_prefix = f'**{scope.title()}** — ' if scope else ''
+              entry = f'- {scope_prefix}{clean_desc}{pr_ref}'
+
+              if kind in ('build', 'ci'):
+                  ci.append(entry)
+              elif kind in ('fix',):
+                  fixed.append(entry)
+              elif kind in ('feat', 'perf'):
+                  added.append(entry)
+              else:
+                  changed.append(entry)
+
+          sections = []
+          if added:
+              sections.append('### Added\n' + '\n'.join(added))
+          if fixed:
+              sections.append('### Fixed\n' + '\n'.join(fixed))
+          if changed:
+              sections.append('### Changed\n' + '\n'.join(changed))
+          if ci:
+              sections.append('### CI / Infrastructure\n' + '\n'.join(ci))
+
+          output = '\n\n'.join(sections)
+          with open('/tmp/unreleased_entries.txt', 'w') as f:
+              f.write(output)
+
+          print(f"Generated {len(added)} added, {len(fixed)} fixed, {len(changed)} changed, {len(ci)} CI entries")
+          PYEOF
+
+      - name: Update CHANGELOG.md
+        run: |
+          # Only proceed if we have new entries
+          if [ ! -s /tmp/unreleased_entries.txt ]; then
+            echo "No new entries to add — skipping."
+            exit 0
+          fi
+
+          NEW_ENTRIES=$(cat /tmp/unreleased_entries.txt)
+
+          python3 << 'PYEOF'
+          import re
+
+          with open('CHANGELOG.md', 'r') as f:
+              content = f.read()
+
+          with open('/tmp/unreleased_entries.txt') as f:
+              new_entries = f.read().strip()
+
+          if not new_entries:
+              print("Nothing to add.")
+              exit(0)
+
+          # Find [Unreleased] section
+          unreleased_match = re.search(r'## \[Unreleased\][^\n]*\n', content)
+          if not unreleased_match:
+              # No [Unreleased] section — create one before first release
+              first_release = re.search(r'\n## \[', content)
+              if first_release:
+                  insert_pos = first_release.start()
+                  content = content[:insert_pos] + f'\n\n## [Unreleased]\n\n{new_entries}\n' + content[insert_pos:]
+              else:
+                  content += f'\n\n## [Unreleased]\n\n{new_entries}\n'
+          else:
+              # Find end of [Unreleased] section (next ## heading or EOF)
+              start = unreleased_match.end()
+              next_section = re.search(r'\n## \[', content[start:])
+              if next_section:
+                  end = start + next_section.start()
+              else:
+                  end = len(content)
+
+              existing_section = content[start:end]
+
+              # Dedup: only add entries (by PR number) not already present
+              existing_prs = set(re.findall(r'#(\d+)', existing_section))
+              filtered_lines = []
+              for line in new_entries.split('\n'):
+                  if line.startswith('###'):
+                      filtered_lines.append(line)
+                      continue
+                  prs_in_line = set(re.findall(r'#(\d+)', line))
+                  if not prs_in_line or not prs_in_line.issubset(existing_prs):
+                      filtered_lines.append(line)
+
+              filtered = '\n'.join(filtered_lines).strip()
+              if not filtered or filtered == '\n'.join(l for l in new_entries.split('\n') if l.startswith('###')).strip():
+                  print("All entries already present — skipping.")
+                  exit(0)
+
+              # Append at the end of the [Unreleased] section
+              content = content[:end] + '\n' + filtered + '\n' + content[end:]
+
+          with open('CHANGELOG.md', 'w') as f:
+              f.write(content)
+
+          print("CHANGELOG.md updated.")
+          PYEOF
+
+      - name: Commit changelog update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet CHANGELOG.md; then
+            echo "No changes to CHANGELOG.md — nothing to commit."
+            exit 0
+          fi
+
+          git add CHANGELOG.md
+          git commit -m "chore(changelog): update [Unreleased] from recent commits
+
+Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          git push origin develop
+          echo "CHANGELOG.md pushed to develop."

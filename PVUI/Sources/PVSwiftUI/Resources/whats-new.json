@@ -1,0 +1,476 @@
+[
+  {
+    "version": "3.0.0",
+    "title": "App Store First Release",
+    "features": [
+      {
+        "symbolName": "applelogo",
+        "symbolColor": "gray",
+        "title": "App Store First Release",
+        "subtitle": "Provenance is now available on the App Store — the most powerful multi-system emulator for iOS and tvOS."
+      }
+    ]
+  },
+  {
+    "version": "3.0.1",
+    "title": "Performance & Polish",
+    "features": [
+      {
+        "symbolName": "bolt.fill",
+        "symbolColor": "orange",
+        "title": "Performance Improvements",
+        "subtitle": "Faster app startup and improved overall performance. Now with iOS 16 support!"
+      },
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "blue",
+        "title": "Enhanced Gaming Experience",
+        "subtitle": "Improved 3DS support with better layouts, touch controls, and new performance options including overclocking settings."
+      },
+      {
+        "symbolName": "paintbrush.fill",
+        "symbolColor": "purple",
+        "title": "UI Refinements",
+        "subtitle": "Polished theme system, improved systems list layout, and clearer graphics settings."
+      },
+      {
+        "symbolName": "wrench.and.screwdriver.fill",
+        "symbolColor": "green",
+        "title": "Bug Fixes",
+        "subtitle": "Fixed various crashes, improved save states menu, and resolved homepage display issues."
+      },
+      {
+        "symbolName": "plus.circle.fill",
+        "symbolColor": "blue",
+        "title": "Mupen-Next for N64",
+        "subtitle": "Added support for the RetroArch Mupen-Next core for enhanced N64 emulation."
+      }
+    ]
+  },
+  {
+    "version": "3.0.2",
+    "title": "Stability & Performance",
+    "features": [
+      {
+        "symbolName": "shield.lefthalf.filled",
+        "symbolColor": "blue",
+        "title": "Enhanced Stability",
+        "subtitle": "Added crash reporting and fixed several startup-related issues for a more reliable experience."
+      },
+      {
+        "symbolName": "gauge.with.dots.needle.bottom.50percent",
+        "symbolColor": "green",
+        "title": "Performance Optimizations",
+        "subtitle": "Improved app startup speed and fixed cache-related delays."
+      },
+      {
+        "symbolName": "cpu",
+        "symbolColor": "purple",
+        "title": "BIOS Management",
+        "subtitle": "Improved BIOS file detection and automatic matching across all systems."
+      },
+      {
+        "symbolName": "gamecontroller",
+        "symbolColor": "orange",
+        "title": "Controller Improvements",
+        "subtitle": "Updated Saturn and Jaguar controller support for better gameplay experience."
+      },
+      {
+        "symbolName": "gearshape.2",
+        "symbolColor": "purple",
+        "title": "Core Enhancements",
+        "subtitle": "Improved 3DS core options with instant updates for settings like upscaling and CPU clock speed."
+      }
+    ]
+  },
+  {
+    "version": "3.0.3",
+    "title": "Performance & Compatibility",
+    "features": [
+      {
+        "symbolName": "cpu.fill",
+        "symbolColor": "blue",
+        "title": "Core Scanning Improvements",
+        "subtitle": "Enhanced core detection and loading to prevent boot crashes."
+      },
+      {
+        "symbolName": "exclamationmark.triangle.fill",
+        "symbolColor": "orange",
+        "title": "Better Error Handling",
+        "subtitle": "Improved RetroArch error handling for enhanced stability."
+      },
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "green",
+        "title": "Controller Fixes",
+        "subtitle": "Fixed Intellivision on-screen control layout and responsiveness."
+      },
+      {
+        "symbolName": "cpu.fill",
+        "symbolColor": "purple",
+        "title": "Graphics Enhancements",
+        "subtitle": "Custom MoltenVK implementation to fix 3DS crashes and shader issues."
+      },
+      {
+        "symbolName": "display",
+        "symbolColor": "red",
+        "title": "Jaguar Improvements",
+        "subtitle": "Fixed video rendering and display issues for Atari Jaguar games."
+      },
+      {
+        "symbolName": "archivebox.fill",
+        "symbolColor": "blue",
+        "title": "BIOS Support",
+        "subtitle": "Added support for zipped BIOS files including Neo Geo and others."
+      },
+      {
+        "symbolName": "wrench.and.screwdriver.fill",
+        "symbolColor": "gray",
+        "title": "General Improvements",
+        "subtitle": "Various bug fixes and stability improvements across all systems."
+      }
+    ]
+  },
+  {
+    "version": "3.0.4",
+    "title": "RetroArch Improvements",
+    "features": [
+      {
+        "symbolName": "square.3.layers.3d.top.filled",
+        "symbolColor": "blue",
+        "title": "3DS Graphics Enhancement",
+        "subtitle": "Fixed shadow rendering issues for improved visual quality in 3DS games."
+      },
+      {
+        "symbolName": "list.bullet.rectangle.fill",
+        "symbolColor": "orange",
+        "title": "RetroArch Menu Fix",
+        "subtitle": "Resolved issues with RetroArch menu display and navigation."
+      },
+      {
+        "symbolName": "bolt.horizontal.circle.fill",
+        "symbolColor": "green",
+        "title": "Core Performance",
+        "subtitle": "Enhanced stability and responsiveness across all RetroArch-based cores."
+      }
+    ]
+  },
+  {
+    "version": "3.0.5",
+    "title": "New Cores & System Improvements",
+    "features": [
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "blue",
+        "title": "New RetroArch Cores",
+        "subtitle": "Added Pokemini, BNES, BSNES HD, BSNES Mercury, GenesisPlus GX Wide, and improved FDS support with fceumm and nestopia."
+      },
+      {
+        "symbolName": "music.note",
+        "symbolColor": "purple",
+        "title": "Audio Improvements",
+        "subtitle": "Added CoreMIDI support, improved audio switching, and reduced audio glitching during gameplay."
+      },
+      {
+        "symbolName": "gearshape.2.fill",
+        "symbolColor": "orange",
+        "title": "Core Enhancements",
+        "subtitle": "Improved core options interface, better system compatibility, and enhanced feature flags system."
+      },
+      {
+        "symbolName": "arrow.triangle.2.circlepath",
+        "symbolColor": "red",
+        "title": "Performance & Stability",
+        "subtitle": "Faster system bootup, improved state management, and various crash fixes."
+      },
+      {
+        "symbolName": "square.3.layers.3d.top.filled",
+        "symbolColor": "green",
+        "title": "3DS Improvements",
+        "subtitle": "Added support for custom textures and improved graphics performance."
+      }
+    ]
+  },
+  {
+    "version": "3.0.6",
+    "title": "3DS Enhancements & UI Improvements",
+    "features": [
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "blue",
+        "title": "3DS Performance Boost",
+        "subtitle": "Major optimizations for 3DS emulation with improved rendering, audio processing, and hardware acceleration."
+      },
+      {
+        "symbolName": "gearshape.2.fill",
+        "symbolColor": "orange",
+        "title": "Core Options Menu",
+        "subtitle": "Access and customize RetroArch core options directly from the Provenance interface."
+      },
+      {
+        "symbolName": "magnifyingglass",
+        "symbolColor": "green",
+        "title": "Enhanced Search",
+        "subtitle": "Improved search functionality in Home and Console views with auto-hiding search bars."
+      },
+      {
+        "symbolName": "opticaldisc",
+        "symbolColor": "purple",
+        "title": "Multi-Disc Support",
+        "subtitle": "Enhanced disc selection menu for multi-disc games."
+      },
+      {
+        "symbolName": "arrow.clockwise",
+        "symbolColor": "red",
+        "title": "Core Updates",
+        "subtitle": "Updated Mednafen to 1.32.1 and improved RetroArch cores with better Vulkan support."
+      }
+    ]
+  },
+  {
+    "version": "3.1.1",
+    "title": "Core Updates & UI Improvements",
+    "features": [
+      {
+        "symbolName": "cpu",
+        "symbolColor": "blue",
+        "title": "Dreamcast Core Updates",
+        "subtitle": "Performance fixes and Windows CE support for enhanced compatibility."
+      },
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "green",
+        "title": "GameCube Controller Fixes",
+        "subtitle": "Improved controller handling and reliability in the GameCube core."
+      },
+      {
+        "symbolName": "paintbrush.fill",
+        "symbolColor": "purple",
+        "title": "UI Improvements",
+        "subtitle": "General interface polish and usability enhancements."
+      },
+      {
+        "symbolName": "archivebox.fill",
+        "symbolColor": "orange",
+        "title": "Mednafen Updates",
+        "subtitle": "Added CHD support for PSX and Saturn and fixed save state reliability issues."
+      },
+      {
+        "symbolName": "display",
+        "symbolColor": "blue",
+        "title": "Jaguar Improvements",
+        "subtitle": "Graphics fixes and improved iCloud sync reliability."
+      },
+      {
+        "symbolName": "paintpalette",
+        "symbolColor": "pink",
+        "title": "Skins Enhancements",
+        "subtitle": "Improved skin support and visual refinements."
+      }
+    ]
+  },
+  {
+    "version": "3.2.0",
+    "title": "Controller Remapping, Universal Skins & MAME",
+    "features": [
+      {
+        "symbolName": "keyboard",
+        "symbolColor": "blue",
+        "title": "3DS Keyboard Input Fixed",
+        "subtitle": "Resolved crashes when typing in 3DS games with proper validation and timeout protection."
+      },
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "green",
+        "title": "Controller Button Remapping",
+        "subtitle": "Easily remap controller buttons with a new intuitive UI. Joy-Con controllers now auto-fix swapped A/B and X/Y buttons."
+      },
+      {
+        "symbolName": "paintpalette",
+        "symbolColor": "pink",
+        "title": "Universal Skin Support",
+        "subtitle": "Full skin support across all cores — including RetroArch-based cores."
+      },
+      {
+        "symbolName": "lock.open.display",
+        "symbolColor": "purple",
+        "title": "Skins Now Free",
+        "subtitle": "Skin features are available to everyone — no Provenance Plus required."
+      },
+      {
+        "symbolName": "wrench.and.screwdriver",
+        "symbolColor": "orange",
+        "title": "Stability Improvements",
+        "subtitle": "Resolved various crashes and improved overall app reliability."
+      },
+      {
+        "symbolName": "arcade.stick",
+        "symbolColor": "yellow",
+        "title": "MAME ZIP Support",
+        "subtitle": "Added importer support for MAME ZIP files."
+      }
+    ]
+  },
+  {
+    "version": "3.2.1",
+    "title": "Skin Fixes & Control Improvements",
+    "features": [
+      {
+        "symbolName": "ipad",
+        "symbolColor": "blue",
+        "title": "iPad Skins Fixed",
+        "subtitle": "Resolved skin display issues on iPad devices for a better visual experience."
+      },
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "green",
+        "title": "Joystick Fixed in Landscape",
+        "subtitle": "Fixed joystick controls in default skin when playing in landscape orientation."
+      },
+      {
+        "symbolName": "gamecontroller",
+        "symbolColor": "orange",
+        "title": "Atari Lynx Controls Fixed",
+        "subtitle": "Resolved RetroArch control issues for Atari Lynx games."
+      },
+      {
+        "symbolName": "lock.open.fill",
+        "symbolColor": "purple",
+        "title": "RetroAchievements Login Fixed",
+        "subtitle": "Fixed login issues with RetroAchievements service."
+      },
+      {
+        "symbolName": "paintpalette.fill",
+        "symbolColor": "pink",
+        "title": "Skin UI Improvements",
+        "subtitle": "Fixed skin selection and import user interfaces for better usability."
+      },
+      {
+        "symbolName": "arrow.clockwise",
+        "symbolColor": "red",
+        "title": "Skin Rotation Fixed",
+        "subtitle": "Resolved skin rotation issues for proper display in all orientations."
+      }
+    ]
+  },
+  {
+    "version": "3.3.0",
+    "title": "iCloud Sync, Shaders & UI Improvements",
+    "features": [
+      {
+        "symbolName": "icloud.and.arrow.up",
+        "symbolColor": "blue",
+        "title": "iCloud Sync Improvements",
+        "subtitle": "Improved ROM and save state iCloud sync reliability and accuracy."
+      },
+      {
+        "symbolName": "photo.on.rectangle",
+        "symbolColor": "green",
+        "title": "Better Save State Selection",
+        "subtitle": "Screenshot-based save state selection with save counts per core and cloud sync support."
+      },
+      {
+        "symbolName": "speedometer",
+        "symbolColor": "orange",
+        "title": "More Accurate Performance Overlay",
+        "subtitle": "Improved FPS and performance metrics overlay for better accuracy and debugging."
+      },
+      {
+        "symbolName": "sparkles",
+        "symbolColor": "purple",
+        "title": "Shader Fixes and Expansion",
+        "subtitle": "Fixed Metal shaders and added shader support for RetroArch-based cores, PPSSPP, and Dolphin."
+      },
+      {
+        "symbolName": "gamecontroller.fill",
+        "symbolColor": "yellow",
+        "title": "32X Controller Fixes",
+        "subtitle": "Fixed Sega 32X external controller mappings and resolved a crash when unloading a game."
+      },
+      {
+        "symbolName": "button.programmable",
+        "symbolColor": "blue",
+        "title": "Start/Select Mapping",
+        "subtitle": "Added Start/Select mappings for DualShock, DualSense, Xbox, and Switch controllers across many cores."
+      },
+      {
+        "symbolName": "aspectratio",
+        "symbolColor": "purple",
+        "title": "Rendering and Layout Fixes",
+        "subtitle": "Fixed Mupen and Mednafen resolution issues and corrected several screen placement bugs."
+      },
+      {
+        "symbolName": "paintpalette.fill",
+        "symbolColor": "pink",
+        "title": "Controller Skin Improvements",
+        "subtitle": "Improved controller skin performance and expanded supported layouts."
+      },
+      {
+        "symbolName": "opticaldisc",
+        "symbolColor": "orange",
+        "title": "GenesisPlusGX CHD Support",
+        "subtitle": "Added CHD support to GenesisPlusGX for improved disc-based library compatibility."
+      },
+      {
+        "symbolName": "pause.circle.fill",
+        "symbolColor": "blue",
+        "title": "Pause Menu Refresh",
+        "subtitle": "Improved pause menu design with new features and a more polished experience."
+      }
+    ]
+  },
+  {
+    "version": "3.4.0",
+    "title": "Cheat Codes, Achievements & More",
+    "features": [
+      {
+        "symbolName": "list.bullet.clipboard.fill",
+        "symbolColor": "orange",
+        "title": "Cheat Code Library",
+        "subtitle": "Search over 1.2 million cheat codes from the libretro database covering 44 systems. Online lookup enabled with smart title matching."
+      },
+      {
+        "symbolName": "trophy.fill",
+        "symbolColor": "yellow",
+        "title": "RetroAchievements",
+        "subtitle": "Foundation for RetroAchievements integration — earn trophies and track progress across supported games."
+      },
+      {
+        "symbolName": "keyboard.fill",
+        "symbolColor": "blue",
+        "title": "Virtual Keyboard & Mouse",
+        "subtitle": "Full QWERTY on-screen keyboard and mouse cursor overlay for computer emulation. Platform-specific layouts for C64, ZX Spectrum, and Amstrad CPC."
+      },
+      {
+        "symbolName": "rectangle.split.2x1.fill",
+        "symbolColor": "purple",
+        "title": "DS Dual-Screen Skins",
+        "subtitle": "Nintendo DS dual-screen skin support with independent screen sizing and touch controls."
+      },
+      {
+        "symbolName": "wave.3.right",
+        "symbolColor": "pink",
+        "title": "Haptic Feedback",
+        "subtitle": "New haptics system with PVRumbleProtocol — feel the game through your controller and device."
+      },
+      {
+        "symbolName": "headphones",
+        "symbolColor": "green",
+        "title": "Smart Auto-Pause",
+        "subtitle": "Game pauses automatically when AirPods or Bluetooth headphones disconnect."
+      },
+      {
+        "symbolName": "forward.fill",
+        "symbolColor": "cyan",
+        "title": "Quick OSD Controls",
+        "subtitle": "New Quick Save, Quick Load, and Fast Forward buttons accessible directly from the on-screen controller overlay."
+      },
+      {
+        "symbolName": "n64.gamecontroller.fill",
+        "symbolColor": "gray",
+        "title": "N64 Transfer Pak",
+        "subtitle": "Transfer Pak protocol support — enabling Pokémon Stadium and other games that use the Transfer Pak accessory."
+      }
+    ]
+  }
+]
