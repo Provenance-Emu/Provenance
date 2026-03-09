@@ -209,6 +209,38 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     @ViewBuilder
+    var unsupportedSystemBanner: some View {
+        let supportLevel = console.coreSupportLevel(isAppStore: AppState.shared.isAppStore)
+        if supportLevel != .fullySupported {
+            HStack(spacing: 8) {
+                Image(systemName: supportLevel == .appStoreRestricted ? "lock.fill" : "exclamationmark.triangle.fill")
+                    .font(.system(size: 14))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(supportLevel.label)
+                        .font(.system(size: 13, weight: .semibold))
+                    Text(supportLevel.explanation)
+                        .font(.system(size: 11))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer()
+            }
+            .foregroundColor(supportLevel == .appStoreRestricted ? .orange : .red)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill((supportLevel == .appStoreRestricted ? Color.orange : Color.red).opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder((supportLevel == .appStoreRestricted ? Color.orange : Color.red).opacity(0.4), lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal, 8)
+            .padding(.top, 4)
+        }
+    }
+
+    @ViewBuilder
     var importProgressView: some View {
         // Defer ImportProgressView creation to avoid synchronous ViewModel initialization blocking main thread
         if shouldShowImportProgress, let libraryUpdatesController = AppState.shared.libraryUpdatesController {
@@ -377,6 +409,8 @@ struct ConsoleGamesView: SwiftUI.View {
                         .allowsHitTesting(true)
 
                     importProgressView
+
+                    unsupportedSystemBanner
 
                     gamesScrollView
 

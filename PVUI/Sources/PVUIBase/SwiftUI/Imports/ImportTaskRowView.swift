@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVLibrary
+import PVRealm
 import PVThemes
 import Perception
 
@@ -36,6 +37,18 @@ struct ImportTaskRowView: View {
     @State private var isNavigatingToSystemSelection = false
     @ObservedObject private var themeManager = ThemeManager.shared
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
+
+    private var isAppStore: Bool { AppState.shared.isAppStore }
+
+    /// Returns the support level for the resolved or chosen system, if any.
+    private var resolvedSupportLevel: CoreSupportLevel? {
+        let systemID = item.userChosenSystem ?? item.resolvedSystem
+            ?? (item.systems.count == 1 ? item.systems.first : nil)
+        guard let systemID else { return nil }
+        guard let pvSystem = PVEmulatorConfiguration.system(forIdentifier: systemID) else { return nil }
+        let level = pvSystem.coreSupportLevel(isAppStore: isAppStore)
+        return level == .fullySupported ? nil : level
+    }
 
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
@@ -117,21 +130,36 @@ struct ImportTaskRowView: View {
                         .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                 } else if let chosenSystem = item.userChosenSystem {
                     // Show the selected system when one is chosen
-                    Text("\(chosenSystem.fullName)")
-                        .font(.system(size: 14))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
-                } else if let resolvedSystem = item.resolvedSystem {
-                    Text("\(resolvedSystem.fullName)")
-                        .font(.system(size: 14))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
-                } else if !item.systems.isEmpty {
-                    if item.systems.count == 1 {
-                        Text("\(item.systems.first!.fullName) matched")
+                    HStack(spacing: 6) {
+                        Text("\(chosenSystem.fullName)")
                             .font(.system(size: 14))
                             .foregroundColor(RetroTheme.retroBlue)
                             .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                        if let level = resolvedSupportLevel {
+                            SystemSupportLevelRow(level: level)
+                        }
+                    }
+                } else if let resolvedSystem = item.resolvedSystem {
+                    HStack(spacing: 6) {
+                        Text("\(resolvedSystem.fullName)")
+                            .font(.system(size: 14))
+                            .foregroundColor(RetroTheme.retroBlue)
+                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                        if let level = resolvedSupportLevel {
+                            SystemSupportLevelRow(level: level)
+                        }
+                    }
+                } else if !item.systems.isEmpty {
+                    if item.systems.count == 1 {
+                        HStack(spacing: 6) {
+                            Text("\(item.systems.first!.fullName) matched")
+                                .font(.system(size: 14))
+                                .foregroundColor(RetroTheme.retroBlue)
+                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
+                            if let level = resolvedSupportLevel {
+                                SystemSupportLevelRow(level: level)
+                            }
+                        }
                     } else {
                         Text("\(item.systems.count) systems")
                             .font(.system(size: 14))

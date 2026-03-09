@@ -357,3 +357,61 @@ public extension PVSystem {
         return self.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
     }
 }
+
+/// Describes how well a system is supported given the current build context.
+public enum CoreSupportLevel: Equatable {
+    /// At least one enabled core with a loaded class is available.
+    case fullySupported
+    /// Cores exist but all require sideloading or JIT (App Store disabled).
+    case appStoreRestricted
+    /// Cores exist but all are explicitly disabled (experimental / not yet working).
+    case disabled
+    /// No cores are registered for this system at all.
+    case noCores
+
+    /// Human-readable label suitable for a badge or short description.
+    public var label: String {
+        switch self {
+        case .fullySupported: return "Supported"
+        case .appStoreRestricted: return "Requires Sideload / JIT"
+        case .disabled: return "Unsupported"
+        case .noCores: return "No Core"
+        }
+    }
+
+    /// A brief explanation shown in help/warning contexts.
+    public var explanation: String {
+        switch self {
+        case .fullySupported:
+            return "This system is fully supported."
+        case .appStoreRestricted:
+            return "This system requires a sideloaded build or JIT to run. It is not playable in the standard App Store version."
+        case .disabled:
+            return "No stable core is available for this system. It may be experimental or work-in-progress."
+        case .noCores:
+            return "No emulator core is registered for this system. ROMs can be stored but not played."
+        }
+    }
+}
+
+public extension PVSystem {
+    /// The effective support level for this system in the given App Store context.
+    /// - Parameter isAppStore: Pass `true` when running an App Store build.
+    func coreSupportLevel(isAppStore: Bool) -> CoreSupportLevel {
+        let allCores = Array(cores)
+        guard !allCores.isEmpty else { return .noCores }
+
+        // Fully usable: not disabled, not appStoreDisabled (or sideloaded), and has a loaded class
+        if allCores.contains(where: { !$0.disabled && (!$0.appStoreDisabled || !isAppStore) && $0.hasCoreClass }) {
+            return .fullySupported
+        }
+
+        // App Store restricted: has working cores that need sideload/JIT
+        if isAppStore && allCores.contains(where: { !$0.disabled && $0.appStoreDisabled }) {
+            return .appStoreRestricted
+        }
+
+        // Only disabled cores remain
+        return .disabled
+    }
+}

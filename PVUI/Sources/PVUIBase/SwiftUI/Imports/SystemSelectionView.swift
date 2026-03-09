@@ -10,6 +10,7 @@ import PVLibrary
 import Perception
 import PVSystems
 import PVThemes
+import PVRealm
 
 struct SystemSelectionView: View {
     @ObservedObject var item: ImportQueueItem
@@ -23,6 +24,15 @@ struct SystemSelectionView: View {
 
     // Replace delegate with callback
     var onSystemSelected: ((SystemIdentifier, ImportQueueItem) -> Void)?
+
+    private var isAppStore: Bool { AppState.shared.isAppStore }
+
+    private func supportLevel(for systemID: SystemIdentifier) -> CoreSupportLevel {
+        guard let pvSystem = PVEmulatorConfiguration.system(forIdentifier: systemID) else {
+            return .noCores
+        }
+        return pvSystem.coreSupportLevel(isAppStore: isAppStore)
+    }
 
     var body: some View {
         ZStack {
@@ -65,11 +75,18 @@ struct SystemSelectionView: View {
                                         presentationMode.wrappedValue.dismiss()
                                     }
                                 }) {
+                                    let level = supportLevel(for: system)
                                     HStack {
-                                        Text(system.fullName)
-                                            .font(.system(size: 16, weight: .bold))
-                                            .foregroundColor(.white)
-                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(system.fullName)
+                                                .font(.system(size: 16, weight: .bold))
+                                                .foregroundColor(.white)
+                                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
+
+                                            if level != .fullySupported {
+                                                SystemSupportLevelRow(level: level)
+                                            }
+                                        }
 
                                         Spacer()
 
@@ -125,6 +142,39 @@ struct SystemSelectionView: View {
                 glowOpacity = 1.0
             }
         }
+    }
+}
+
+/// Inline support level indicator used inside system selection rows.
+struct SystemSupportLevelRow: View {
+    let level: CoreSupportLevel
+
+    private var icon: String {
+        switch level {
+        case .fullySupported: return "checkmark.circle.fill"
+        case .appStoreRestricted: return "lock.fill"
+        case .disabled: return "xmark.circle.fill"
+        case .noCores: return "questionmark.circle.fill"
+        }
+    }
+
+    private var color: Color {
+        switch level {
+        case .fullySupported: return .green
+        case .appStoreRestricted: return .orange
+        case .disabled: return .red
+        case .noCores: return .gray
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 10))
+            Text(level.label)
+                .font(.system(size: 11, weight: .medium))
+        }
+        .foregroundColor(color)
     }
 }
 
