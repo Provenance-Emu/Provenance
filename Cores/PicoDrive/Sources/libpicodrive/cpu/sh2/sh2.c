@@ -84,7 +84,7 @@ int sh2_irl_irq(SH2 *sh2, int level, int nested_call)
 			// do this to avoid missing irqs that other SH2 might clear
 			int vector = sh2->irq_callback(sh2, level);
 			sh2_do_irq(sh2, level, vector);
-			sh2->m68krcycles_done += C_SH2_TO_M68K(*sh2, 13);
+			sh2->m68krcycles_done += C_SH2_TO_M68K(sh2, 13);
 		}
 		else
 			sh2->test_irq = 1;
@@ -115,6 +115,7 @@ void sh2_pack(const SH2 *sh2, unsigned char *buff)
 
 	p[0] = sh2->pending_int_irq;
 	p[1] = sh2->pending_int_vector;
+	p[2] = sh2->m68krcycles_done;
 }
 
 void sh2_unpack(SH2 *sh2, const unsigned char *buff)
@@ -127,6 +128,7 @@ void sh2_unpack(SH2 *sh2, const unsigned char *buff)
 	sh2->pending_int_irq = p[0];
 	sh2->pending_int_vector = p[1];
 	sh2->test_irq = 1;
+	sh2->m68krcycles_done = p[2];
 }
 
 #ifdef DRC_CMP

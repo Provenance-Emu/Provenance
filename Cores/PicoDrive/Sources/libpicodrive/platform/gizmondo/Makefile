@@ -64,6 +64,7 @@ OBJS += pico/sound/sound.o
 endif
 OBJS += pico/sound/mix_asm.o
 OBJS += pico/sound/sn76496.o pico/sound/ym2612.o
+OBJS += pico/sound/emu2413/emu2413.o
 # zlib
 OBJS += zlib/gzio.o zlib/inffast.o zlib/inflate.o zlib/inftrees.o zlib/trees.o \
 	zlib/deflate.o zlib/crc32.o zlib/adler32.o zlib/zutil.o zlib/compress.o
@@ -97,6 +98,9 @@ ifeq "$(profile)" "1"
 	../../tools/gcda $@
 endif
 
+
+../../tools/textfilter: ../../tools/textfilter.c
+	make -C ../../tools/ textfilter
 
 readme.txt: ../../tools/textfilter ../base_readme.txt
 	../../tools/textfilter ../base_readme.txt $@ GIZ

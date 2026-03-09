@@ -35,12 +35,13 @@ static int do_ack(int level)
   if (pv->pending_ints & pv->reg[1] & 0x20) {
     pv->pending_ints &= ~0x20;
     pv->status &= ~SR_F;
-    return (pv->reg[0] & pv->pending_ints & 0x10) >> 2;
+    if (pv->reg[0] & pv->pending_ints & 0x10)
+      return pv->hint_irq;
   }
   else if (pv->pending_ints & pv->reg[0] & 0x10)
     pv->pending_ints &= ~0x10;
 
-  return 0;
+  return (PicoIn.AHW & PAHW_PICO ? PicoPicoIrqAck(level) : 0);
 }
 
 /* callbacks */
@@ -139,8 +140,6 @@ PICO_INTERNAL void SekInit(void)
 // Reset the 68000:
 PICO_INTERNAL int SekReset(void)
 {
-  if (Pico.rom==NULL) return 1;
-
 #ifdef EMU_C68K
   CycloneReset(&PicoCpuCM68k);
 #endif
@@ -188,50 +187,53 @@ PICO_INTERNAL void SekSetRealTAS(int use_real)
 // XXX: rename
 PICO_INTERNAL void SekPackCpu(unsigned char *cpu, int is_sub)
 {
-  unsigned int pc=0;
-
 #if defined(EMU_C68K)
   struct Cyclone *context = is_sub ? &PicoCpuCS68k : &PicoCpuCM68k;
   memcpy(cpu,context->d,0x40);
-  pc=context->pc-context->membase;
-  *(unsigned int *)(cpu+0x44)=CycloneGetSr(context);
-  *(unsigned int *)(cpu+0x48)=context->osp;
+  *(u32 *)(cpu+0x40)=context->pc-context->membase;
+  *(u32 *)(cpu+0x44)=CycloneGetSr(context);
+  *(u32 *)(cpu+0x48)=context->osp;
   cpu[0x4c] = context->irq;
   cpu[0x4d] = context->state_flags & 1;
 #elif defined(EMU_M68K)
   void *oldcontext = m68ki_cpu_p;
   m68k_set_context(is_sub ? &PicoCpuMS68k : &PicoCpuMM68k);
   memcpy(cpu,m68ki_cpu_p->dar,0x40);
-  pc=m68ki_cpu_p->pc;
-  *(unsigned int  *)(cpu+0x44)=m68k_get_reg(NULL, M68K_REG_SR);
-  *(unsigned int  *)(cpu+0x48)=m68ki_cpu_p->sp[m68ki_cpu_p->s_flag^SFLAG_SET];
+  *(u32  *)(cpu+0x40)=m68ki_cpu_p->pc;
+  *(u32  *)(cpu+0x44)=m68k_get_reg(NULL, M68K_REG_SR);
+  *(u32  *)(cpu+0x48)=m68ki_cpu_p->sp[m68ki_cpu_p->s_flag^SFLAG_SET];
   cpu[0x4c] = CPU_INT_LEVEL>>8;
   cpu[0x4d] = CPU_STOPPED;
   m68k_set_context(oldcontext);
 #elif defined(EMU_F68K)
   M68K_CONTEXT *context = is_sub ? &PicoCpuFS68k : &PicoCpuFM68k;
   memcpy(cpu,context->dreg,0x40);
-  pc=context->pc;
-  *(unsigned int  *)(cpu+0x44)=context->sr;
-  *(unsigned int  *)(cpu+0x48)=context->asp;
+  *(u32  *)(cpu+0x40)=context->pc;
+  *(u32  *)(cpu+0x44)=context->sr;
+  *(u32  *)(cpu+0x48)=context->asp;
   cpu[0x4c] = context->interrupts[0];
   cpu[0x4d] = (context->execinfo & FM68K_HALTED) ? 1 : 0;
 #endif
 
-  *(unsigned int *)(cpu+0x40) = pc;
-  *(unsigned int *)(cpu+0x50) =
-    is_sub ? SekCycleCntS68k : Pico.t.m68c_cnt;
+  if (is_sub) {
+    *(u32 *)(cpu+0x50) = SekCycleCntS68k;
+    *(s16 *)(cpu+0x4e) = SekCycleCntS68k - SekCycleAimS68k;
+  } else {
+    *(u32 *)(cpu+0x50) = Pico.t.m68c_cnt + Pico.t.z80_buscycles +
+                          ((Pico.t.refresh_delay + (1<<14)/2) >> 14);
+    *(s16 *)(cpu+0x4e) = Pico.t.m68c_cnt - Pico.t.m68c_aim;
+  }
 }
 
 PICO_INTERNAL void SekUnpackCpu(const unsigned char *cpu, int is_sub)
 {
 #if defined(EMU_C68K)
   struct Cyclone *context = is_sub ? &PicoCpuCS68k : &PicoCpuCM68k;
-  CycloneSetSr(context, *(unsigned int *)(cpu+0x44));
-  context->osp=*(unsigned int *)(cpu+0x48);
+  CycloneSetSr(context, *(u32 *)(cpu+0x44));
+  context->osp=*(u32 *)(cpu+0x48);
   memcpy(context->d,cpu,0x40);
   context->membase = 0;
-  context->pc = *(unsigned int *)(cpu+0x40);
+  context->pc = *(u32 *)(cpu+0x40);
   CycloneUnpack(context, NULL); // rebase PC
   context->irq = cpu[0x4c];
   context->state_flags = 0;
@@ -240,33 +242,38 @@ PICO_INTERNAL void SekUnpackCpu(const unsigned char *cpu, int is_sub)
 #elif defined(EMU_M68K)
   void *oldcontext = m68ki_cpu_p;
   m68k_set_context(is_sub ? &PicoCpuMS68k : &PicoCpuMM68k);
-  m68k_set_reg(M68K_REG_SR, *(unsigned int *)(cpu+0x44));
+  m68k_set_reg(M68K_REG_SR, *(u32 *)(cpu+0x44));
   memcpy(m68ki_cpu_p->dar,cpu,0x40);
-  m68ki_cpu_p->pc=*(unsigned int *)(cpu+0x40);
-  m68ki_cpu_p->sp[m68ki_cpu_p->s_flag^SFLAG_SET]=*(unsigned int *)(cpu+0x48);
+  m68ki_cpu_p->pc=*(u32 *)(cpu+0x40);
+  m68ki_cpu_p->sp[m68ki_cpu_p->s_flag^SFLAG_SET]=*(u32 *)(cpu+0x48);
   CPU_INT_LEVEL = cpu[0x4c] << 8;
   CPU_STOPPED = cpu[0x4d];
   m68k_set_context(oldcontext);
 #elif defined(EMU_F68K)
   M68K_CONTEXT *context = is_sub ? &PicoCpuFS68k : &PicoCpuFM68k;
   memcpy(context->dreg,cpu,0x40);
-  context->pc =*(unsigned int *)(cpu+0x40);
-  context->sr =*(unsigned int *)(cpu+0x44);
-  context->asp=*(unsigned int *)(cpu+0x48);
+  context->pc =*(u32 *)(cpu+0x40);
+  context->sr =*(u32 *)(cpu+0x44);
+  context->asp=*(u32 *)(cpu+0x48);
   context->interrupts[0] = cpu[0x4c];
   context->execinfo &= ~FM68K_HALTED;
   if (cpu[0x4d]&1) context->execinfo |= FM68K_HALTED;
 #endif
-  if (is_sub)
-    SekCycleCntS68k = *(unsigned int *)(cpu+0x50);
-  else
-    Pico.t.m68c_cnt = *(unsigned int *)(cpu+0x50);
+  if (is_sub) {
+    SekCycleCntS68k = *(u32 *)(cpu+0x50);
+    SekCycleAimS68k = SekCycleCntS68k - *(s16 *)(cpu+0x4e);
+  } else {
+    Pico.t.m68c_cnt = *(u32 *)(cpu+0x50);
+    Pico.t.m68c_aim = Pico.t.m68c_cnt - *(s16 *)(cpu+0x4e);
+    Pico.t.z80_buscycles = 0;
+    Pico.t.refresh_delay = 0;
+  }
 }
 
 
 /* idle loop detection, not to be used in CD mode */
 #ifdef EMU_C68K
-#include "cpu/cyclone/tools/idle.h"
+#include <cpu/cyclone/tools/idle.h>
 #endif
 
 static unsigned short **idledet_ptrs = NULL;
@@ -294,14 +301,6 @@ void SekRegisterIdleHit(unsigned int pc)
 
 void SekInitIdleDet(void)
 {
-  unsigned short **tmp;
-  tmp = realloc(idledet_ptrs, 0x200 * sizeof(tmp[0]));
-  if (tmp == NULL) {
-    free(idledet_ptrs);
-    idledet_ptrs = NULL;
-  }
-  else
-    idledet_ptrs = tmp;
   idledet_count = idledet_bads = 0;
   idledet_start_frame = Pico.m.frame_count + 360;
 #ifdef IDLE_STATS
@@ -324,7 +323,7 @@ int SekIsIdleReady(void)
 int SekIsIdleCode(unsigned short *dst, int bytes)
 {
   // printf("SekIsIdleCode %04x %i\n", *dst, bytes);
-  switch (bytes)
+  if (idledet_count >= 0) switch (bytes)
   {
     case 2:
       if ((*dst & 0xf000) != 0x6000)     // not another branch
@@ -393,8 +392,11 @@ int SekRegisterIdlePatch(unsigned int pc, int oldop, int newop, void *ctx)
     (newop&0x200)?'n':'y', is_main68k?'m':'s', idledet_count);
 
   // XXX: probably shouldn't patch RAM too
-  v = m68k_read16_map[pc >> M68K_MEM_SHIFT];
-  if (!(v & 0x80000000))
+  if (is_main68k)
+    v = m68k_read16_map[pc >> M68K_MEM_SHIFT];
+  else
+    v = s68k_read16_map[pc >> M68K_MEM_SHIFT];
+  if (~v & ~((uptr)-1LL >> 1)) // MSB clear?
     target = (u16 *)((v << 1) + pc);
   else {
     if (++idledet_bads > 128)
@@ -402,7 +404,7 @@ int SekRegisterIdlePatch(unsigned int pc, int oldop, int newop, void *ctx)
     return 1; // don't patch
   }
 
-  if (idledet_count >= 0x200 && (idledet_count & 0x1ff) == 0) {
+  if (!idledet_ptrs || (idledet_count & 0x1ff) == 0) {
     unsigned short **tmp;
     tmp = realloc(idledet_ptrs, (idledet_count+0x200) * sizeof(tmp[0]));
     if (tmp == NULL)
@@ -437,7 +439,11 @@ void SekFinishIdleDet(void)
     else
       elprintf(EL_STATUS|EL_IDLE, "idle: don't know how to restore %04x", *op);
   }
+
   idledet_count = -1;
+  if (idledet_ptrs)
+    free(idledet_ptrs);
+  idledet_ptrs = NULL;
 }
 
 

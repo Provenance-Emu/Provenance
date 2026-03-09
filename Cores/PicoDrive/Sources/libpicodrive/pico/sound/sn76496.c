@@ -22,7 +22,7 @@
 
 #include "sn76496.h"
 
-#define MAX_OUTPUT 0x47ff // was 0x7fff
+#define MAX_OUTPUT 0x4800 // was 0x7fff
 
 #define STEP 0x10000
 
@@ -31,22 +31,15 @@
 /* bit0 = output */
 
 /* noise feedback for white noise mode (verified on real SN76489 by John Kortink) */
-#define FB_WNOISE 0x14002	/* (16bits) bit16 = bit0(out) ^ bit2 ^ bit15 */
+#define FB_WNOISE_T 0x3000	/* (15bits) bit15 = bit1 ^ bit2, TI */
+#define FB_WNOISE_S 0x9000	/* (16bits) bit16 = bit0 ^ bit3, Sega PSG */
 
 /* noise feedback for periodic noise mode */
-//#define FB_PNOISE 0x10000 /* 16bit rorate */
-#define FB_PNOISE 0x08000   /* JH 981127 - fixes Do Run Run */
+#define FB_PNOISE_T 0x4000	/* 15bit rotate for TI */
+#define FB_PNOISE_S 0x8000	/* 16bit rotate for Sega PSG */
 
-/*
-0x08000 is definitely wrong. The Master System conversion of Marble Madness
-uses periodic noise as a baseline. With a 15-bit rotate, the bassline is
-out of tune.
-The 16-bit rotate has been confirmed against a real PAL Sega Master System 2.
-Hope that helps the System E stuff, more news on the PSG as and when!
-*/
-
-/* noise generator start preset (for periodic noise) */
-#define NG_PRESET 0x0f35
+#define FB_WNOISE FB_WNOISE_S	/* Sega */
+#define FB_PNOISE FB_PNOISE_S
 
 
 struct SN76496
@@ -58,16 +51,16 @@ struct SN76496
 	int Register[8];	/* registers */
 	int LastRegister;	/* last register written */
 	int Volume[4];		/* volume of voice 0-2 and noise */
-	unsigned int RNG;		/* noise generator      */
+	unsigned int RNG;	/* noise generator      */
 	int NoiseFB;		/* noise feedback mask */
 	int Period[4];
 	int Count[4];
 	int Output[4];
-	int pad[1];
+	int Panning;
 };
 
 static struct SN76496 ono_sn; // one and only SN76496
-int *sn76496_regs;
+int *sn76496_regs = ono_sn.Register;
 
 //static
 void SN76496Write(int data)
@@ -97,6 +90,7 @@ void SN76496Write(int data)
 		case 4:	/* tone 2 : frequency */
 			R->Period[c] = R->UpdateStep * data;
 			if (R->Period[c] == 0) R->Period[c] = R->UpdateStep;
+			if (R->Count[c] > R->Period[c]) R->Count[c] = R->Period[c];
 			if (r == 4)
 			{
 				/* update noise shift frequency */
@@ -115,10 +109,10 @@ void SN76496Write(int data)
 			R->NoiseFB = (n & 4) ? FB_WNOISE : FB_PNOISE;
 			n &= 3;
 			/* N/512,N/1024,N/2048,Tone #3 output */
-			R->Period[3] = (n == 3) ? 2 * R->Period[2] : (R->UpdateStep << (5 + n));
+			R->Period[3] = 2 * (n == 3 ? R->Period[2] : R->UpdateStep << (4 + n));
 
 			/* reset noise shifter */
-			R->RNG = NG_PRESET;
+			R->RNG = FB_PNOISE;
 			R->Output[3] = R->RNG & 1;
 			break;
 	}
@@ -138,22 +132,9 @@ void SN76496Update(short *buffer, int length, int stereo)
 	int i;
 	struct SN76496 *R = &ono_sn;
 
-	/* If the volume is 0, increase the counter */
-	for (i = 0;i < 4;i++)
-	{
-		if (R->Volume[i] == 0)
-		{
-			/* note that I do count += length, NOT count = length + 1. You might think */
-			/* it's the same since the volume is 0, but doing the latter could cause */
-			/* interferencies when the program is rapidly modulating the volume. */
-			if (R->Count[i] <= length*STEP) R->Count[i] += length*STEP;
-		}
-	}
-
 	while (length > 0)
 	{
 		int vol[4];
-		unsigned int out;
 		int left;
 
 
@@ -173,10 +154,17 @@ void SN76496Update(short *buffer, int length, int stereo)
 			/* If we exit the loop in the middle, Output[i] has to be inverted */
 			/* and vol[i] incremented only if the exit status of the square */
 			/* wave is 1. */
-			while (R->Count[i] <= 0)
+			if (R->Count[i] < -2*R->Period[i] || R->Volume[i] == 0) {
+				/* Cut off anything above the Nyquist frequency. */
+				/* It will only create aliasing anyway. This is actually an */
+				/* ideal lowpass filter with Nyquist corner frequency. */
+				vol[i] += STEP/2; // mean value
+				R->Count[i] = R->Output[i] = 0;
+			}
+			while (R->Count[i] < 0)
 			{
 				R->Count[i] += R->Period[i];
-				if (R->Count[i] > 0)
+				if (R->Count[i] >= 0)
 				{
 					R->Output[i] ^= 1;
 					if (R->Output[i]) vol[i] += R->Period[i];
@@ -189,6 +177,7 @@ void SN76496Update(short *buffer, int length, int stereo)
 		}
 
 		left = STEP;
+		if (R->Output[3]) vol[3] += R->Count[3];
 		do
 		{
 			int nextevent;
@@ -196,33 +185,58 @@ void SN76496Update(short *buffer, int length, int stereo)
 			if (R->Count[3] < left) nextevent = R->Count[3];
 			else nextevent = left;
 
-			if (R->Output[3]) vol[3] += R->Count[3];
 			R->Count[3] -= nextevent;
 			if (R->Count[3] <= 0)
 			{
-				if (R->RNG & 1) R->RNG ^= R->NoiseFB;
-				R->RNG >>= 1;
 				R->Output[3] = R->RNG & 1;
+				R->RNG >>= 1;
+				if (R->Output[3])
+				{
+					R->RNG ^= R->NoiseFB;
+					vol[3] += R->Period[3];
+				}
 				R->Count[3] += R->Period[3];
-				if (R->Output[3]) vol[3] += R->Period[3];
 			}
-			if (R->Output[3]) vol[3] -= R->Count[3];
 
 			left -= nextevent;
-		} while (left > 0);
-
-		out = vol[0] * R->Volume[0] + vol[1] * R->Volume[1] +
-				vol[2] * R->Volume[2] + vol[3] * R->Volume[3];
-
-		if (out > MAX_OUTPUT * STEP) out = MAX_OUTPUT * STEP;
-
-		if ((out /= STEP)) // will be optimized to shift; max 0x47ff = 18431
-			*buffer += out;
-		if(stereo) buffer+=2; // only left for stereo, to be mixed to right later
-		else buffer++;
+		} while (left > 0 && R->Volume[3]);
+		if (R->Output[3]) vol[3] -= R->Count[3];
 
 		length--;
+		if (R->Panning == 0xff || !stereo) {
+			unsigned int out =
+				vol[0] * R->Volume[0] + vol[1] * R->Volume[1] +
+				vol[2] * R->Volume[2] + vol[3] * R->Volume[3];
+
+			if (out > MAX_OUTPUT * STEP) out = MAX_OUTPUT * STEP;
+
+			out /= STEP; // will be optimized to shift; max 0x4800 = 18432
+			*buffer++ += out;
+			if (stereo) *buffer++ += out;
+		} else {
+#define P(n) !!(R->Panning & (1<<(n)))
+			unsigned int outl =
+				vol[0] * R->Volume[0] * P(4) + vol[1] * R->Volume[1] * P(5) +
+				vol[2] * R->Volume[2] * P(6) + vol[3] * R->Volume[3] * P(7);
+			unsigned int outr =
+				vol[0] * R->Volume[0] * P(0) + vol[1] * R->Volume[1] * P(1) +
+				vol[2] * R->Volume[2] * P(2) + vol[3] * R->Volume[3] * P(3);
+#undef P
+			if (outl > MAX_OUTPUT * STEP) outl = MAX_OUTPUT * STEP;
+			if (outr > MAX_OUTPUT * STEP) outr = MAX_OUTPUT * STEP;
+
+			outl /= STEP; // will be optimized to shift; max 0x4800 = 18432
+			outr /= STEP; // will be optimized to shift; max 0x4800 = 18432
+			*buffer++ += outl;
+			*buffer++ += outr;
+		}
 	}
+}
+
+void SN76496Config(int panning)
+{
+	struct SN76496 *R = &ono_sn;
+	R->Panning = panning & 0xff;
 }
 
 
@@ -248,7 +262,7 @@ static void SN76496_set_gain(struct SN76496 *R,int gain)
 	gain &= 0xff;
 
 	/* increase max output basing on gain (0.2 dB per step) */
-	out = MAX_OUTPUT / 3;
+	out = MAX_OUTPUT / 4.0;
 	while (gain-- > 0)
 		out *= 1.023292992;	/* = (10 ^ (0.2/20)) */
 
@@ -256,7 +270,7 @@ static void SN76496_set_gain(struct SN76496 *R,int gain)
 	for (i = 0;i < 15;i++)
 	{
 		/* limit volume to avoid clipping */
-		if (out > MAX_OUTPUT / 3) R->VolTable[i] = MAX_OUTPUT / 3;
+		if (out > MAX_OUTPUT / 4) R->VolTable[i] = MAX_OUTPUT / 4;
 		else R->VolTable[i] = out;
 
 		out /= 1.258925412;	/* = 10 ^ (2/20) = 2dB */
@@ -266,16 +280,23 @@ static void SN76496_set_gain(struct SN76496 *R,int gain)
 
 
 //static
+void SN76496_set_clockrate(int clock,int sample_rate)
+{
+	struct SN76496 *R = &ono_sn;
+
+	R->SampleRate = sample_rate;
+	SN76496_set_clock(R,clock);
+}
+
+//static
 int SN76496_init(int clock,int sample_rate)
 {
 	struct SN76496 *R = &ono_sn;
 	int i;
 
 	//R->Channel = stream_create(0,1, sample_rate,R,SN76496Update);
-	sn76496_regs = R->Register;
 
-	R->SampleRate = sample_rate;
-	SN76496_set_clock(R,clock);
+	SN76496_set_clockrate(clock,sample_rate);
 
 	for (i = 0;i < 4;i++) R->Volume[i] = 0;
 
@@ -288,14 +309,15 @@ int SN76496_init(int clock,int sample_rate)
 
 	for (i = 0;i < 4;i++)
 	{
-		R->Output[i] = 0;
-		R->Period[i] = R->Count[i] = R->UpdateStep;
+		R->Volume[i] = R->Output[i] = R->Count[i] = 0;
+		R->Period[i] = R->UpdateStep;
 	}
-	R->RNG = NG_PRESET;
+	R->RNG = FB_PNOISE;
 	R->Output[3] = R->RNG & 1;
 
 	// added
 	SN76496_set_gain(R, 0);
+	R->Panning = 0xff;
 
 	return 0;
 }

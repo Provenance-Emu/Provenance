@@ -1,9 +1,9 @@
 
 extern int engineStateSuspend;
 
-void emu_HandleResume(void);
+void emu_handle_resume(void);
 
-void emu_msg_cb(const char *msg);
+void blitscreen_clut(void);
 
 // actually comes from Pico/Misc_amips.s
 void memset32_uncached(int *dest, int c, int count);

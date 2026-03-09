@@ -21,67 +21,70 @@
 extern "C" {
 #endif
 
+#include <pico/pico_port.h>
+
 /******************************/
 /* Compiler dependant defines */
 /******************************/
 
 #ifndef UINT8
-#define UINT8	unsigned char
+#define UINT8	u8
 #endif
 
 #ifndef INT8
-#define INT8	signed char
+#define INT8	s8
 #endif
 
 #ifndef UINT16
-#define UINT16	unsigned short
+#define UINT16	u16
 #endif
 
 #ifndef INT16
-#define INT16	signed short
+#define INT16	s16
 #endif
 
 #ifndef UINT32
-#define UINT32	unsigned int
+#define UINT32	u32
 #endif
 
 #ifndef INT32
-#define INT32	signed int
+#define INT32	s32
 #endif
 
 #ifndef FPTR
-#define FPTR	uintptr_t
+#define FPTR	uptr
 #endif
 
 /*************************************/
 /* Z80 core Structures & definitions */
 /*************************************/
 
-#define CZ80_FETCH_BITS			4   // [4-12]   default = 8
+// NB this must have at least the value of (16-Z80_MEM_SHIFT)
+#define CZ80_FETCH_BITS			6   // [4-12]   default = 8
 
 #define CZ80_FETCH_SFT			(16 - CZ80_FETCH_BITS)
 #define CZ80_FETCH_BANK			(1 << CZ80_FETCH_BITS)
 
-#define PICODRIVE_HACKS		1
-#define CZ80_LITTLE_ENDIAN		1
+#define PICODRIVE_HACKS			1
+#define CZ80_LITTLE_ENDIAN		CPU_IS_LE
 #define CZ80_USE_JUMPTABLE		1
-#define CZ80_BIG_FLAGS_ARRAY	1
+#define CZ80_BIG_FLAGS_ARRAY		1
 //#ifdef BUILD_CPS1PSP
 //#define CZ80_ENCRYPTED_ROM		1
 //#else
 #define CZ80_ENCRYPTED_ROM		0
 //#endif
-#define CZ80_EMULATE_R_EXACTLY	1
+#define CZ80_EMULATE_R_EXACTLY		1
 
 #define zR8(A)		(*CPU->pzR8[A])
 #define zR16(A)		(CPU->pzR16[A]->W)
 
-#define pzAF		&(CPU->AF)
-#define zAF			CPU->AF.W
-#define zlAF		CPU->AF.B.L
-#define zhAF		CPU->AF.B.H
-#define zA			zhAF
-#define zF			zlAF
+#define pzFA		&(CPU->FA)
+#define zFA			CPU->FA.W
+#define zlFA		CPU->FA.B.L
+#define zhFA		CPU->FA.B.H
+#define zA			zlFA
+#define zF			zhFA
 
 #define pzBC		&(CPU->BC)
 #define zBC			CPU->BC.W
@@ -104,11 +107,11 @@ extern "C" {
 #define zH			zhHL
 #define zL			zlHL
 
-#define zAF2		CPU->AF2.W
-#define zlAF2		CPU->AF2.B.L
-#define zhAF2		CPU->AF2.B.H
-#define zA2			zhAF2
-#define zF2			zlAF2
+#define zFA2		CPU->FA2.W
+#define zlFA2		CPU->FA2.B.L
+#define zhFA2		CPU->FA2.B.H
+#define zA2			zhFA2
+#define zF2			zlFA2
 
 #define zBC2		CPU->BC2.W
 #define zDE2		CPU->DE2.W
@@ -167,6 +170,10 @@ extern "C" {
 #define CZ80_IFF_SFT	CZ80_PF_SFT
 #define CZ80_IFF		CZ80_PF
 
+#define	CZ80_HAS_INT	0x1
+#define	CZ80_HAS_NMI	0x2
+#define	CZ80_HALTED	0x4
+
 #ifndef IRQ_LINE_STATE
 #define IRQ_LINE_STATE
 #define CLEAR_LINE		0		/* clear (a fired, held or pulsed) line */
@@ -180,13 +187,13 @@ enum
 {
 	CZ80_PC = 1,
 	CZ80_SP,
-	CZ80_AF,
+	CZ80_FA,
 	CZ80_BC,
 	CZ80_DE,
 	CZ80_HL,
 	CZ80_IX,
 	CZ80_IY,
-	CZ80_AF2,
+	CZ80_FA2,
 	CZ80_BC2,
 	CZ80_DE2,
 	CZ80_HL2,
@@ -225,7 +232,7 @@ typedef struct cz80_t
 			union16 BC;
 			union16 DE;
 			union16 HL;
-			union16 AF;
+			union16 FA;
 		};
 	};
 
@@ -237,14 +244,14 @@ typedef struct cz80_t
 	union16 BC2;
 	union16 DE2;
 	union16 HL2;
-	union16 AF2;
+	union16 FA2;
 
 	union16 R;
 	union16 IFF;
 
 	UINT8 I;
 	UINT8 IM;
-	UINT8 HaltState;
+	UINT8 Status;
 	UINT8 dummy;
 
 	INT32 IRQLine;

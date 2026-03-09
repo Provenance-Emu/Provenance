@@ -206,7 +206,7 @@
  *   ops not used by VR are not implemented
  */
 
-#include "../../pico_int.h"
+#include <pico/pico_int.h>
 
 #define u32 unsigned int
 

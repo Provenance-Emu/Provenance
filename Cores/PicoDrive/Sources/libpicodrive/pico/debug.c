@@ -43,10 +43,16 @@ char *PDebugMain(void)
     !!(Pico.sv.flags & SRF_ENABLED), !!(Pico.sv.flags & SRF_EEPROM), Pico.sv.eeprom_type); MVP;
   sprintf(dstrp, "sram range: %06x-%06x, reg: %02x\n", Pico.sv.start, Pico.sv.end, Pico.m.sram_reg); MVP;
   sprintf(dstrp, "pend int: v:%i, h:%i, vdp status: %04x\n", bit(pv->pending_ints,5), bit(pv->pending_ints,4), pv->status); MVP;
+  sprintf(dstrp, "VDP regs 00-07: %02x %02x %02x %02x %02x %02x %02x %02x\n",reg[0],reg[1],reg[2],reg[3],reg[4],reg[5],reg[6],reg[7]); MVP;
+  sprintf(dstrp, "VDP regs 08-0f: %02x %02x %02x %02x %02x %02x %02x %02x\n",reg[8],reg[9],reg[10],reg[11],reg[12],reg[13],reg[14],reg[15]); MVP;
+  sprintf(dstrp, "VDP regs 10-17: %02x %02x %02x %02x %02x %02x %02x %02x\n",reg[16],reg[17],reg[18],reg[19],reg[20],reg[21],reg[22],reg[23]); MVP;
+  sprintf(dstrp, "VDP regs 18-1f: %02x %02x %02x %02x %02x %02x %02x %02x\n",reg[24],reg[25],reg[26],reg[27],reg[28],reg[29],reg[30],reg[31]); MVP;
+  r = (reg[5]<<9)+(reg[6]<<11);
+  sprintf(dstrp, "sprite #0: %04x %04x %04x %04x\n",PicoMem.vram[r/2],PicoMem.vram[r/2+1],PicoMem.vram[r/2+2],PicoMem.vram[r/2+3]); MVP;
   sprintf(dstrp, "pal: %i, hw: %02x, frame#: %i, cycles: %u\n", Pico.m.pal, Pico.m.hardware, Pico.m.frame_count, SekCyclesDone()); MVP;
-  sprintf(dstrp, "M68k: PC: %06x, SR: %04x, irql: %i\n", SekPc, SekSr, SekIrqLevel); MVP;
+  sprintf(dstrp, "M68k: PC: %06lx, SR: %04x, irql: %i\n", (ulong)SekPc, SekSr, SekIrqLevel); MVP;
   for (r = 0; r < 8; r++) {
-    sprintf(dstrp, "d%i=%08x, a%i=%08x\n", r, SekDar(r), r, SekDar(r+8)); MVP;
+    sprintf(dstrp, "d%i=%08lx, a%i=%08lx\n", r, (ulong)SekDar(r), r, (ulong)SekDar(r+8)); MVP;
   }
   sprintf(dstrp, "z80Run: %i, z80_reset: %i, z80_bnk: %06x\n", Pico.m.z80Run, Pico.m.z80_reset, Pico.m.z80_bank68k<<15); MVP;
   z80_debug(dstrp); MVP;
@@ -71,7 +77,7 @@ char *PDebug32x(void)
   }
   r = Pico32x.sh2_regs;
   sprintf(dstrp, "SH: %04x %04x %04x      IRQs: %02x  eflags: %02x\n",
-    r[0], r[1], r[2], Pico32x.sh2irqs, Pico32x.emu_flags); MVP;
+    r[0], r[1], r[2], Pico32x.sh2irqi[0]|Pico32x.sh2irqi[1], Pico32x.emu_flags); MVP;
 
   i = 0;
   r = Pico32x.vdp_regs;
@@ -80,12 +86,12 @@ char *PDebug32x(void)
     i*2, r[i+0], r[i+1], r[i+2], r[i+3], r[i+4], r[i+5], r[i+6], r[i+7]); MVP;
 
   sprintf(dstrp, "                   mSH2              sSH2\n"); MVP;
-  sprintf(dstrp, "PC,SR %08x,     %03x %08x,     %03x\n", sh2_pc(&msh2), sh2_sr(0), sh2_pc(&ssh2), sh2_sr(1)); MVP;
+  sprintf(dstrp, "PC,SR %08lx,     %03x %08lx,     %03x\n", (ulong)sh2_pc(&msh2), (uint)sh2_sr(0), (ulong)sh2_pc(&ssh2), (uint)sh2_sr(1)); MVP;
   for (i = 0; i < 16/2; i++) {
-    sprintf(dstrp, "R%d,%2d %08x,%08x %08x,%08x\n", i, i + 8,
-      sh2_reg(0,i), sh2_reg(0,i+8), sh2_reg(1,i), sh2_reg(1,i+8)); MVP;
+    sprintf(dstrp, "R%d,%2d %08lx,%08lx %08lx,%08lx\n", i, i + 8,
+      (ulong)sh2_reg(0,i), (ulong)sh2_reg(0,i+8), (ulong)sh2_reg(1,i), (ulong)sh2_reg(1,i+8)); MVP;
   }
-  sprintf(dstrp, "gb,vb %08x,%08x %08x,%08x\n", sh2_gbr(0), sh2_vbr(0), sh2_gbr(1), sh2_vbr(1)); MVP;
+  sprintf(dstrp, "gb,vb %08lx,%08lx %08lx,%08lx\n", (ulong)sh2_gbr(0), (ulong)sh2_vbr(0), (ulong)sh2_gbr(1), (ulong)sh2_vbr(1)); MVP;
   sprintf(dstrp, "IRQs/mask:        %02x/%02x             %02x/%02x\n",
     Pico32x.sh2irqi[0], Pico32x.sh2irq_mask[0], Pico32x.sh2irqi[1], Pico32x.sh2irq_mask[1]); MVP;
 #else
@@ -142,7 +148,11 @@ char *PDebugSpriteList(void)
 }
 
 #define GREEN1  0x0700
-#ifdef USE_BGR555
+#if defined(USE_BGR555)
+ #define YELLOW1 0x039c
+ #define BLUE1   0x7800
+ #define RED1    0x001e
+#elif defined(USE_BGR565)
  #define YELLOW1 0x071c
  #define BLUE1   0xf000
  #define RED1    0x001e
@@ -202,7 +212,7 @@ void PDebugShowPalette(unsigned short *screen, int stride)
 
   Pico.m.dirtyPal = 1;
   if (PicoIn.AHW & PAHW_SMS)
-    PicoDoHighPal555M4();
+    PicoDoHighPal555SMS();
   else
     PicoDoHighPal555(1, 0, est);
   Pico.m.dirtyPal = 1;
@@ -369,44 +379,34 @@ void PDebugDumpMem(void)
 
 void PDebugZ80Frame(void)
 {
-  int lines, line_sample;
+  int lines;
 
   if (PicoIn.AHW & PAHW_SMS)
     return;
 
-  if (Pico.m.pal) {
+  if (Pico.m.pal)
     lines = 313;
-    line_sample = 68;
-  } else {
+  else
     lines = 262;
-    line_sample = 93;
-  }
 
-  z80_resetCycles();
   PsndStartFrame();
-
-  if (/*Pico.m.z80Run &&*/ !Pico.m.z80_reset && (PicoIn.opt&POPT_EN_Z80))
-    PicoSyncZ80(Pico.t.m68c_cnt + line_sample * 488);
-  if (PicoIn.sndOut)
-    PsndGetSamples(line_sample);
 
   if (/*Pico.m.z80Run &&*/ !Pico.m.z80_reset && (PicoIn.opt&POPT_EN_Z80)) {
     PicoSyncZ80(Pico.t.m68c_cnt + 224 * 488);
     z80_int();
   }
-  if (PicoIn.sndOut)
-    PsndGetSamples(224);
 
   // sync z80
   if (/*Pico.m.z80Run &&*/ !Pico.m.z80_reset && (PicoIn.opt&POPT_EN_Z80)) {
     Pico.t.m68c_cnt += Pico.m.pal ? 151809 : 127671; // cycles adjusted for converter
     PicoSyncZ80(Pico.t.m68c_cnt);
   }
-  if (PicoIn.sndOut && ym2612.dacen && Pico.snd.dac_line < lines)
-    PsndDoDAC(lines - 1);
-  PsndDoPSG(lines - 1);
 
-  timers_cycle();
+  if (PicoIn.sndOut)
+    PsndGetSamples(lines);
+
+  timers_cycle(Pico.t.z80c_aim);
+  z80_resetCycles();
   Pico.t.m68c_aim = Pico.t.m68c_cnt;
 }
 

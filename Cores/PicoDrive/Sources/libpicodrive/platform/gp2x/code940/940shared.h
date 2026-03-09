@@ -1,4 +1,4 @@
-#include "../../../pico/sound/ym2612.h"
+#include <pico/sound/ym2612.h>
 
 // max 16 jobs, lower num means higher prio
 enum _940_job_t {

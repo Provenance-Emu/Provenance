@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 
+#ifdef USE_LIBRETRO_VFS
+#include "file_stream_transforms.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

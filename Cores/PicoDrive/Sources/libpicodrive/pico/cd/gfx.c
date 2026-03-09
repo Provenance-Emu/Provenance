@@ -43,6 +43,7 @@ typedef struct
   //uint32 cycles;                    /* current cycles count for graphics operation */
   //uint32 cyclesPerLine;             /* current graphics operation timings */
   uint32 dotMask;                   /* stamp map size mask */
+  uint32 stampMask;                 /* stamp number mask */
   uint16 *tracePtr;                 /* trace vector pointer */
   uint16 *mapPtr;                   /* stamp map table base address */
   uint8 stampShift;                 /* stamp pixel shift value (related to stamp size) */
@@ -52,7 +53,8 @@ typedef struct
   uint32 y_step;                    /* pico: render line step */
   uint8 lut_prio[4][0x10][0x10];    /* WORD-RAM data writes priority lookup table */
   uint8 lut_pixel[0x200];           /* Graphics operation dot offset lookup table */
-  uint8 lut_cell[0x100];            /* Graphics operation stamp offset lookup table */
+  uint16 lut_cell2[0x80];           /* Graphics operation stamp offset lookup table */
+  uint16 lut_cell4[0x80];           /* Graphics operation stamp offset lookup table */
 } gfx_t;
 
 static gfx_t gfx;
@@ -66,7 +68,7 @@ static void gfx_schedule(void);
 void gfx_init(void)
 {
   int i, j;
-  uint8 mask, row, col, temp;
+  uint8 row, col, temp;
 
   memset(&gfx, 0, sizeof(gfx));
 
@@ -87,24 +89,23 @@ void gfx_init(void)
   }
 
   /* Initialize cell lookup table             */
-  /* table entry = yyxxshrr (8 bits)          */
+  /* table entry = yyxxhrr (7 bits)           */
   /* with: yy = cell row (0-3)                */
   /*       xx = cell column (0-3)             */
-  /*        s = stamp size (0=16x16, 1=32x32) */
   /*      hrr = HFLIP & ROTATION bits         */
-  for (i=0; i<0x100; i++)
+  for (i=0; i<0x80; i++)
   {
     /* one stamp = 2x2 cells (16x16) or 4x4 cells (32x32) */
-    mask = (i & 8) ? 3 : 1;
-    row = (i >> 6) & mask;
-    col = (i >> 4) & mask;
+    row = (i >> 5) & 3;
+    col = (i >> 3) & 3;
 
-    if (i & 4) { col = col ^ mask; }  /* HFLIP (always first)  */ 
-    if (i & 2) { col = col ^ mask; row = row ^ mask; }  /* ROLL1 */
-    if (i & 1) { temp = col; col = row ^ mask; row = temp; }  /* ROLL0  */
+    if (i & 4) { col = col ^ 3; }  /* HFLIP (always first)  */ 
+    if (i & 2) { col = col ^ 3; row = row ^ 3; }  /* ROLL1 */
+    if (i & 1) { temp = col; col = row ^ 3; row = temp; }  /* ROLL0  */
 
     /* cell offset (0-3 or 0-15) */
-    gfx.lut_cell[i] = row + col * (mask + 1);
+    gfx.lut_cell2[i] = ((row&1) + (col&1) * 2) << 6;
+    gfx.lut_cell4[i] = ((row&3) + (col&3) * 4) << 6;
   }
 
   /* Initialize pixel lookup table      */
@@ -175,12 +176,136 @@ int gfx_context_load(const uint8 *state)
   return bufferptr;
 }
 
+static inline int gfx_pixel(uint32 xpos, uint32 ypos, uint16 *lut_cell)
+{
+  uint16 stamp_data;
+  uint32 stamp_index;
+  uint8 pixel_out = 0x00;
+
+  /* check if pixel is outside stamp map */
+  if (((xpos | ypos) & ~gfx.dotMask) == 0)
+  {
+    /* read stamp map table data */
+    stamp_data = gfx.mapPtr[(xpos >> gfx.stampShift) | ((ypos >> gfx.stampShift) << gfx.mapShift)];
+
+    /* stamp generator base index                                     */
+    /* sss ssssssss ccyyyxxx (16x16) or sss sssssscc ccyyyxxx (32x32) */
+    /* with:  s = stamp number (1 stamp = 16x16 or 32x32 pixels)      */
+    /*        c = cell offset  (0-3 for 16x16, 0-15 for 32x32)        */
+    /*      yyy = line offset  (0-7)                                  */
+    /*      xxx = pixel offset (0-7)                                  */
+    stamp_index = (stamp_data & gfx.stampMask) << 8;
+
+    if (stamp_index)
+    {
+      /* extract HFLIP & ROTATION bits */
+      stamp_data = (stamp_data >> 13) & 7;
+
+      /* cell offset (0-3 or 0-15)                             */
+      /* table entry = yyxxhrr (7 bits)                        */
+      /* with: yy = cell row  (0-3) = (ypos >> (11 + 3)) & 3   */
+      /*       xx = cell column (0-3) = (xpos >> (11 + 3)) & 3 */
+      /*      hrr = HFLIP & ROTATION bits                      */
+      stamp_index |= lut_cell[stamp_data | ((ypos >> 9) & 0x60) | ((xpos >> 11) & 0x18)];
+
+      /* pixel  offset (0-63)                              */
+      /* table entry = yyyxxxhrr (9 bits)                  */
+      /* with: yyy = pixel row  (0-7) = (ypos >> 11) & 7   */
+      /*       xxx = pixel column (0-7) = (xpos >> 11) & 7 */
+      /*       hrr = HFLIP & ROTATION bits                 */
+      stamp_index |= gfx.lut_pixel[stamp_data | ((ypos >> 5) & 0x1c0) | ((xpos >> 8) & 0x38)];
+
+      /* read pixel pair (2 pixels/byte) */
+      pixel_out = READ_BYTE(Pico_mcd->word_ram2M, stamp_index >> 1);
+
+      /* extract left or right pixel */
+      pixel_out >>= 4 * !(stamp_index & 1);
+      pixel_out &= 0x0f;
+    }
+  }
+
+  return pixel_out;
+}
+
+#define RENDER_LOOP(N, UPDP, COND1, COND2) do {				\
+  if (bufferIndex & 1) {						\
+    bufferIndex ^= 1;							\
+    goto right##N; /* no initial left pixel */				\
+  }									\
+  /* process all dots */						\
+  while (width--)							\
+  {									\
+    /* left pixel */							\
+    xpos &= mask;							\
+    ypos &= mask;							\
+									\
+    if (COND1) {							\
+      pixel_out = gfx_pixel(xpos, ypos, lut_cell);			\
+      UPDP;								\
+    }									\
+									\
+    if (COND2) {							\
+      /* read out paired pixel data */					\
+      pixel_in = READ_BYTE(Pico_mcd->word_ram2M, bufferIndex >> 1);	\
+									\
+      /* priority mode write */						\
+      pixel_in = (lut_prio[(pixel_in & 0xf0) >> 4][pixel_out] << 4) |	\
+                 (pixel_in & 0x0f);					\
+									\
+      /* write data to image buffer */					\
+      WRITE_BYTE(Pico_mcd->word_ram2M, bufferIndex >> 1, pixel_in);	\
+    }									\
+									\
+    /* increment pixel position */					\
+    xpos += xoffset;							\
+    ypos += yoffset;							\
+									\
+right##N:								\
+    if (width-- == 0) break;						\
+									\
+    /* right pixel */							\
+    xpos &= mask;							\
+    ypos &= mask;							\
+									\
+    if (COND1) {							\
+      pixel_out = gfx_pixel(xpos, ypos, lut_cell);			\
+      UPDP;								\
+    }									\
+									\
+    if (COND2) {							\
+      /* read out paired pixel data */					\
+      pixel_in = READ_BYTE(Pico_mcd->word_ram2M, bufferIndex >> 1);	\
+									\
+      /* priority mode write */						\
+      pixel_in = (lut_prio[pixel_in & 0x0f][pixel_out]) |		\
+                 (pixel_in & 0xf0);					\
+									\
+      /* write data to image buffer */					\
+      WRITE_BYTE(Pico_mcd->word_ram2M, bufferIndex >> 1, pixel_in);	\
+    }									\
+									\
+    /* increment pixel position */					\
+    xpos += xoffset;							\
+    ypos += yoffset;							\
+									\
+    /* next pixel */							\
+    bufferIndex += 2;							\
+    /* check current pixel position  */					\
+    if ((bufferIndex & 7) == 0)						\
+    {									\
+      /* next cell: increment buffer offset by one column (minus 8 pixels) */ \
+      bufferIndex += gfx.bufferOffset-1;				\
+    }									\
+  }									\
+} while (0)
+
 static void gfx_render(uint32 bufferIndex, uint32 width)
 {
   uint8 pixel_in, pixel_out;
-  uint16 stamp_data;
-  uint32 stamp_index;
   uint32 priority;
+  uint8 (*lut_prio)[0x10];
+  uint16 *lut_cell;
+  uint32 mask;
 
   /* pixel map start position for current line (13.3 format converted to 13.11) */
   uint32 xpos = *gfx.tracePtr++ << 8;
@@ -192,126 +317,30 @@ static void gfx_render(uint32 bufferIndex, uint32 width)
 
   priority = (Pico_mcd->s68k_regs[2] << 8) | Pico_mcd->s68k_regs[3];
   priority = (priority >> 3) & 0x03;
+  lut_prio = gfx.lut_prio[priority];
 
-  /* process all dots */
-  while (width--)
+  lut_cell = (Pico_mcd->s68k_regs[0x58+1] & 0x02) ? gfx.lut_cell4 : gfx.lut_cell2;
+
+  /* check if stamp map is repeated */
+  mask = 0xffffff; /* 24-bit range */
+  if (Pico_mcd->s68k_regs[0x58+1] & 0x01)
   {
-    /* check if stamp map is repeated */
-    if (Pico_mcd->s68k_regs[0x58+1] & 0x01)
-    {
-      /* stamp map range */
-      xpos &= gfx.dotMask;
-      ypos &= gfx.dotMask;
-    }
-    else
-    {
-      /* 24-bit range */
-      xpos &= 0xffffff;
-      ypos &= 0xffffff;
-    }
+    /* stamp map range */
+    mask = gfx.dotMask;
+  }
 
-    /* check if pixel is outside stamp map */
-    if ((xpos | ypos) & ~gfx.dotMask)
-    {
-      /* force pixel output to 0 */
-      pixel_out = 0x00;
-    }
-    else
-    {
-      /* read stamp map table data */
-      stamp_data = gfx.mapPtr[(xpos >> gfx.stampShift) | ((ypos >> gfx.stampShift) << gfx.mapShift)];
-
-      /* stamp generator base index                                     */
-      /* sss ssssssss ccyyyxxx (16x16) or sss sssssscc ccyyyxxx (32x32) */
-      /* with:  s = stamp number (1 stamp = 16x16 or 32x32 pixels)      */
-      /*        c = cell offset  (0-3 for 16x16, 0-15 for 32x32)        */
-      /*      yyy = line offset  (0-7)                                  */
-      /*      xxx = pixel offset (0-7)                                  */
-      stamp_index = (stamp_data & 0x7ff) << 8;
-
-      if (stamp_index)
-      {
-        /* extract HFLIP & ROTATION bits */
-        stamp_data = (stamp_data >> 13) & 7;
-
-        /* cell offset (0-3 or 0-15)                             */
-        /* table entry = yyxxshrr (8 bits)                       */
-        /* with: yy = cell row  (0-3) = (ypos >> (11 + 3)) & 3   */
-        /*       xx = cell column (0-3) = (xpos >> (11 + 3)) & 3 */
-        /*        s = stamp size (0=16x16, 1=32x32)              */
-        /*      hrr = HFLIP & ROTATION bits                      */
-        stamp_index |= gfx.lut_cell[
-          stamp_data | ((Pico_mcd->s68k_regs[0x58+1] & 0x02) << 2 )
-          | ((ypos >> 8) & 0xc0) | ((xpos >> 10) & 0x30)] << 6;
-            
-        /* pixel  offset (0-63)                              */
-        /* table entry = yyyxxxhrr (9 bits)                  */
-        /* with: yyy = pixel row  (0-7) = (ypos >> 11) & 7   */
-        /*       xxx = pixel column (0-7) = (xpos >> 11) & 7 */
-        /*       hrr = HFLIP & ROTATION bits                 */
-        stamp_index |= gfx.lut_pixel[stamp_data | ((xpos >> 8) & 0x38) | ((ypos >> 5) & 0x1c0)];
-
-        /* read pixel pair (2 pixels/byte) */
-        pixel_out = READ_BYTE(Pico_mcd->word_ram2M, stamp_index >> 1);
-
-        /* extract left or rigth pixel */
-        if (stamp_index & 1)
-        {
-           pixel_out &= 0x0f;
-        }
-        else
-        {
-           pixel_out >>= 4;
-        }
-      }
-      else
-      {
-        /* stamp 0 is not used: force pixel output to 0 */
-        pixel_out = 0x00;
-      }
-    }
-
-    /* read out paired pixel data */
-    pixel_in = READ_BYTE(Pico_mcd->word_ram2M, bufferIndex >> 1);
-
-    /* update left or rigth pixel */
-    if (bufferIndex & 1)
-    {
-      /* priority mode write */
-      pixel_out = gfx.lut_prio[priority][pixel_in & 0x0f][pixel_out];
-
-      pixel_out |= (pixel_in & 0xf0);
-    }
-    else
-    {
-      /* priority mode write */
-      pixel_out = gfx.lut_prio[priority][pixel_in >> 4][pixel_out];
-
-      pixel_out = (pixel_out << 4) | (pixel_in & 0x0f);
-    }
-
-    /* write data to image buffer */
-    WRITE_BYTE(Pico_mcd->word_ram2M, bufferIndex >> 1, pixel_out);
-
-    /* check current pixel position  */
-    if ((bufferIndex & 7) != 7)
-    {
-      /* next pixel */
-      bufferIndex++;
-    }
-    else
-    {
-      /* next cell: increment image buffer offset by one column (minus 7 pixels) */
-      bufferIndex += gfx.bufferOffset;
-    }
-
-    /* increment pixel position */
-    xpos += xoffset;
-    ypos += yoffset;
+  pixel_out = 0;
+  if (xoffset+(1U<<10) <= 1U<<11 && yoffset+(1U<<10) <= 1U<<11) {
+    /* upscaling >= 2x, test for duplicate pixels to avoid recalculation */
+    uint32 oldx, oldy;
+    oldx = oldy = ~xpos;
+    RENDER_LOOP(1, oldx = xpos;oldy = ypos, (oldx^xpos ^ oldy^ypos) >> 11, (!priority) | pixel_out);
+  } else {
+    RENDER_LOOP(3,                        , 1, (!priority) | pixel_out);
   }
 }
 
-void gfx_start(unsigned int base)
+void gfx_start(uint32 base)
 {
   /* make sure 2M mode is enabled */
   if (!(Pico_mcd->s68k_regs[3] & 0x04))
@@ -327,28 +356,32 @@ void gfx_start(unsigned int base)
     {
       case 0:
         gfx.dotMask = 0x07ffff;   /* 256x256 dots/map  */
-        gfx.stampShift = 11 + 4;  /* 16x16 dots/stamps */
+        gfx.stampMask = 0x7ff;    /* 16x16 dots/stamp  */
+        gfx.stampShift = 11 + 4;  /* 16x16 dots/stamp  */
         gfx.mapShift = 4;         /* 16x16 stamps/map  */
         mask = 0x3fe00;           /* 512 bytes/table   */
         break;
 
       case 1:
         gfx.dotMask = 0x07ffff;   /* 256x256 dots/map  */
-        gfx.stampShift = 11 + 5;  /* 32x32 dots/stamps */
+        gfx.stampMask = 0x7fc;    /* 16x16 dots/stamp  */
+        gfx.stampShift = 11 + 5;  /* 32x32 dots/stamp  */
         gfx.mapShift = 3;         /* 8x8 stamps/map    */
         mask = 0x3ff80;           /* 128 bytes/table   */
         break;
 
       case 2:
         gfx.dotMask = 0x7fffff;   /* 4096*4096 dots/map */
-        gfx.stampShift = 11 + 4;  /* 16x16 dots/stamps  */
+        gfx.stampMask = 0x7ff;    /* 16x16 dots/stamp   */
+        gfx.stampShift = 11 + 4;  /* 16x16 dots/stamp   */
         gfx.mapShift = 8;         /* 256x256 stamps/map */
         mask = 0x20000;           /* 131072 bytes/table */
         break;
 
       case 3:
         gfx.dotMask = 0x7fffff;   /* 4096*4096 dots/map */
-        gfx.stampShift = 11 + 5;  /* 32x32 dots/stamps  */
+        gfx.stampMask = 0x7fc;    /* 16x16 dots/stamp   */
+        gfx.stampShift = 11 + 5;  /* 32x32 dots/stamp   */
         gfx.mapShift = 7;         /* 128x128 stamps/map */
         mask = 0x38000;           /* 32768 bytes/table  */
         break;
@@ -376,6 +409,8 @@ void gfx_start(unsigned int base)
 
     /* start graphics operation */
     Pico_mcd->s68k_regs[0x58] = 0x80;
+    Pico_mcd->m.state_flags &= ~PCD_ST_S68K_POLL;
+    Pico_mcd->m.s68k_poll_cnt = 0;
 
     gfx_schedule();
   }
@@ -393,10 +428,9 @@ static void gfx_schedule(void)
   h = (Pico_mcd->s68k_regs[0x64] << 8) | Pico_mcd->s68k_regs[0x65];
 
   cycles = 5 * w * h;
+  y_step = h;
   if (cycles > UPDATE_CYCLES)
     y_step = (UPDATE_CYCLES + 5 * w - 1) / (5 * w);
-  else
-    y_step = h;
 
   gfx.y_step = y_step;
   pcd_event_schedule_s68k(PCD_EVENT_GFX, 5 * w * y_step);
@@ -419,9 +453,11 @@ void gfx_update(unsigned int cycles)
     Pico_mcd->s68k_regs[0x64] =
     Pico_mcd->s68k_regs[0x65] = 0;
 
+    Pico_mcd->m.state_flags &= ~PCD_ST_S68K_POLL;
+    Pico_mcd->m.s68k_poll_cnt = 0;
     if (Pico_mcd->s68k_regs[0x33] & PCDS_IEN1) {
       elprintf(EL_INTS|EL_CD, "s68k: gfx_cd irq 1");
-      SekInterruptS68k(1);
+      pcd_irq_s68k(1, 1);
     }
   }
   else {

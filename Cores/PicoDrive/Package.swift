@@ -102,7 +102,8 @@ let package = Package(
                 .define("__GCCUNIX__", to: "1"),
                 .headerSearchPath("../libpicodrive/"),
                 .headerSearchPath("../libpicodrive/include/"),
-                .headerSearchPath("../libpicodrive/platform/libretro/")
+                .headerSearchPath("../libpicodrive/platform/libretro/"),
+                .headerSearchPath("../libpicodrive/platform/libretro/libretro-common/include/")
             ]
         ),
 
@@ -132,12 +133,13 @@ let package = Package(
                     "pico/carthw/svp/ssp16.c",
                     "pico/carthw/svp/svp.c",
                     "pico/cd/cd_image.c",
+                    "pico/cd/cd_parse.c",
                     "pico/cd/cdc.c",
                     "pico/cd/cdd.c",
-                    "pico/cd/cue.c",
                     "pico/cd/gfx.c",
                     "pico/cd/gfx_dma.c",
                     "pico/cd/mcd.c",
+                    "pico/cd/megasd.c",
                     "pico/cd/memory.c",
                     "pico/cd/misc.c",
                     "pico/cd/pcm.c",
@@ -158,6 +160,7 @@ let package = Package(
                     "pico/sek.c",
                     "pico/sms.c",
                     "pico/sound/mix.c",
+                    "pico/sound/resampler.c",
                     "pico/sound/sn76496.c",
                     "pico/sound/sound.c",
                     "pico/sound/ym2612.c",
@@ -166,7 +169,23 @@ let package = Package(
                     "pico/z80if.c",
                     "platform/common/mp3.c",
                     "platform/common/mp3_dummy.c",
-                    "platform/libretro/libretro.c"
+                    "platform/libretro/libretro.c",
+                    "platform/libretro/libretro-common/compat/compat_posix_string.c",
+                    "platform/libretro/libretro-common/compat/compat_strcasestr.c",
+                    "platform/libretro/libretro-common/compat/compat_strl.c",
+                    "platform/libretro/libretro-common/compat/fopen_utf8.c",
+                    "platform/libretro/libretro-common/encodings/encoding_utf.c",
+                    "platform/libretro/libretro-common/file/file_path.c",
+                    "platform/libretro/libretro-common/file/file_path_io.c",
+                    "platform/libretro/libretro-common/formats/png/rpng.c",
+                    "platform/libretro/libretro-common/memmap/memmap.c",
+                    "platform/libretro/libretro-common/streams/file_stream.c",
+                    "platform/libretro/libretro-common/streams/file_stream_transforms.c",
+                    "platform/libretro/libretro-common/streams/trans_stream.c",
+                    "platform/libretro/libretro-common/streams/trans_stream_pipe.c",
+                    "platform/libretro/libretro-common/string/stdstring.c",
+                    "platform/libretro/libretro-common/time/rtime.c",
+                    "platform/libretro/libretro-common/vfs/vfs_implementation.c"
                 ],
                 resources: [
                     .copy("pico/carthw.cfg")
@@ -181,7 +200,9 @@ let package = Package(
 
                     .headerSearchPath("./"),
                     .headerSearchPath("./include"),
-                    .headerSearchPath("./pico")
+                    .headerSearchPath("./pico"),
+                    .headerSearchPath("./platform/libretro"),
+                    .headerSearchPath("./platform/libretro/libretro-common/include")
                 ]
             ),
 

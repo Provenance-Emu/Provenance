@@ -27,24 +27,23 @@ cyclone_checkpc:
     and     r3, r0, #0xff000000
     bic     r0, r0, #1
     bics    r2, r0, #0xff000000
-    beq     crashed
+    @ ouf, some Codemasters titles actually start at address 0
+    @ beq     crashed
 
     ldr     r1, [r7, #0x6c]  @ read16 map
     mov     r2, r2, lsr #M68K_MEM_SHIFT
     ldr     r1, [r1, r2, lsl #2]
-    movs    r1, r1, lsl #1
-    bcs     crashed
 
-    sub     r1, r1, r3
-    str     r1, [r7, #0x60]  @ membase
-    add     r0, r0, r1
-    bx      lr
+    movs    r1, r1, lsl #1
+    subcc   r1, r1, r3
+    strcc   r1, [r7, #0x60]  @ membase
+    addcc   r0, r0, r1
+    bxcc    lr
 
 crashed:
     stmfd   sp!,{lr}
     mov     r1, r7
     bl      cyclone_crashed
-    ldr     r0, [r7, #0x40]  @ reload PC + membase
     ldmfd   sp!,{pc}
 
 
@@ -82,24 +81,24 @@ cyclone_fetch32:
     ldr     r1, [r1, r2, lsl #2]
     bic     r0, r0, #1
     movs    r1, r1, lsl #1
-    ldrcch  r0, [r1, r0]!
+    ldrcch  r2, [r1, r0]!
     ldrcch  r1, [r1, #2]
-    orrcc   r0, r1, r0, lsl #16
+    orrcc   r0, r1, r2, lsl #16
     bxcc    lr
 
-    stmfd   sp!,{r0,r1,lr}
+    stmfd   sp!,{r0,r1,r2,lr}
     mov     lr, pc
     bx      r1
     mov     r2, r0, lsl #16
-    ldmia   sp, {r0,r1}
+    ldmfd   sp!, {r0,r1}
     str     r2, [sp]
     add     r0, r0, #2
     mov     lr, pc
     bx      r1
-    ldr     r1, [sp]
+    ldmfd   sp!, {r1,lr}
     mov     r0, r0, lsl #16
     orr     r0, r1, r0, lsr #16
-    ldmfd   sp!,{r1,r2,pc}
+    bx      lr
 
 
 cyclone_write8: @ u32 a, u8 d

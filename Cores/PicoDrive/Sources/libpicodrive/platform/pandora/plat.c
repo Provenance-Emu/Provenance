@@ -20,6 +20,7 @@
 #include "../common/emu.h"
 #include "../common/arm_utils.h"
 #include "../common/input_pico.h"
+#include "../common/keyboard.h"
 #include "../common/version.h"
 #include "../libpicofe/input.h"
 #include "../libpicofe/menu.h"
@@ -37,32 +38,17 @@
 
 static struct vout_fbdev *main_fb, *layer_fb;
 // g_layer_* - in use, g_layer_c* - configured custom
-int g_layer_cx, g_layer_cy, g_layer_cw, g_layer_ch;
+int g_layer_cx = 80, g_layer_cy, g_layer_cw = 640, g_layer_ch = 480;
+int saved_start_line = 0, saved_line_count = 240;
+int saved_start_col = 0, saved_col_count = 320;
 static int g_layer_x, g_layer_y;
 static int g_layer_w = 320, g_layer_h = 240;
-static int g_osd_fps_x, g_osd_y, doing_bg_frame;
+static int g_osd_start_x, g_osd_fps_x, g_osd_y, doing_bg_frame;
 
 static unsigned char __attribute__((aligned(4))) fb_copy[320 * 240 * 2];
 static void *temp_frame;
 const char *renderer_names[] = { NULL };
 const char *renderer_names32x[] = { NULL };
-
-static const char * const pandora_gpio_keys[KEY_MAX + 1] = {
-	[0 ... KEY_MAX] = NULL,
-	[KEY_UP]	= "Up",
-	[KEY_LEFT]	= "Left",
-	[KEY_RIGHT]	= "Right",
-	[KEY_DOWN]	= "Down",
-	[KEY_HOME]	= "A",
-	[KEY_PAGEDOWN]	= "X",
-	[KEY_END]	= "B",
-	[KEY_PAGEUP]	= "Y",
-	[KEY_RIGHTSHIFT]= "L",
-	[KEY_RIGHTCTRL]	= "R",
-	[KEY_LEFTALT]	= "Start",
-	[KEY_LEFTCTRL]	= "Select",
-	[KEY_MENU]	= "Pandora",
-};
 
 static struct in_default_bind in_evdev_defbinds[] =
 {
@@ -90,7 +76,9 @@ static struct in_default_bind in_evdev_defbinds[] =
 	{ KEY_4,	IN_BINDTYPE_EMU, PEVB_SSLOT_NEXT },
 	{ KEY_5,	IN_BINDTYPE_EMU, PEVB_PICO_PPREV },
 	{ KEY_6,	IN_BINDTYPE_EMU, PEVB_PICO_PNEXT },
-	{ KEY_7,	IN_BINDTYPE_EMU, PEVB_PICO_SWINP },
+	{ KEY_7,	IN_BINDTYPE_EMU, PEVB_PICO_STORY },
+	{ KEY_8,	IN_BINDTYPE_EMU, PEVB_PICO_PAD },
+	{ KEY_9,	IN_BINDTYPE_EMU, PEVB_PICO_PENST },
 	{ 0, 0, 0 }
 };
 
@@ -141,35 +129,61 @@ static void draw_cd_leds(void)
 	int old_reg;
 	old_reg = Pico_mcd->s68k_regs[0];
 
-	if (0) {
-		// 8-bit modes
-		unsigned int col_g = (old_reg & 2) ? 0xc0c0c0c0 : 0xe0e0e0e0;
-		unsigned int col_r = (old_reg & 1) ? 0xd0d0d0d0 : 0xe0e0e0e0;
-		*(unsigned int *)((char *)g_screen_ptr + g_screen_width*2+ 4) =
-		*(unsigned int *)((char *)g_screen_ptr + g_screen_width*3+ 4) =
-		*(unsigned int *)((char *)g_screen_ptr + g_screen_width*4+ 4) = col_g;
-		*(unsigned int *)((char *)g_screen_ptr + g_screen_width*2+12) =
-		*(unsigned int *)((char *)g_screen_ptr + g_screen_width*3+12) =
-		*(unsigned int *)((char *)g_screen_ptr + g_screen_width*4+12) = col_r;
-	} else {
-		// 16-bit modes
-		unsigned int *p = (unsigned int *)((short *)g_screen_ptr + g_screen_width*2+4);
-		unsigned int col_g = (old_reg & 2) ? 0x06000600 : 0;
-		unsigned int col_r = (old_reg & 1) ? 0xc000c000 : 0;
-		*p++ = col_g; *p++ = col_g; p+=2; *p++ = col_r; *p++ = col_r; p += g_screen_width/2 - 12/2;
-		*p++ = col_g; *p++ = col_g; p+=2; *p++ = col_r; *p++ = col_r; p += g_screen_width/2 - 12/2;
-		*p++ = col_g; *p++ = col_g; p+=2; *p++ = col_r; *p++ = col_r;
-	}
+	// 16-bit modes
+	unsigned int *p = (unsigned int *)((short *)g_screen_ptr + g_screen_width*2+4);
+	unsigned int col_g = (old_reg & 2) ? 0x06000600 : 0;
+	unsigned int col_r = (old_reg & 1) ? 0xc000c000 : 0;
+	*p++ = col_g; *p++ = col_g; p+=2; *p++ = col_r; *p++ = col_r; p += g_screen_width/2 - 12/2;
+	*p++ = col_g; *p++ = col_g; p+=2; *p++ = col_r; *p++ = col_r; p += g_screen_width/2 - 12/2;
+	*p++ = col_g; *p++ = col_g; p+=2; *p++ = col_r; *p++ = col_r;
+}
+
+static void draw_pico_ptr(void)
+{
+	int up = (PicoPicohw.pen_pos[0]|PicoPicohw.pen_pos[1]) & 0x8000;
+	int o = (up ? 0x0000 : 0xffff), _ = (up ? 0xffff : 0x0000);
+	int x = pico_pen_x, y = pico_pen_y, pitch = g_screen_ppitch;
+	unsigned short *p = (unsigned short *)g_screen_ptr;
+	// storyware pages are actually squished, 2:1
+	int h = (pico_inp_mode == 1 ? 160 : saved_line_count);
+	if (h < 224) y++;
+
+	x = (x * saved_col_count * ((1ULL<<32) / 320 + 1)) >> 32;
+	y = (y * h               * ((1ULL<<32) / 224 + 1)) >> 32;
+	p += (saved_start_col+x) + (saved_start_line+y) * pitch;
+
+	p[-pitch-1] ^= o; p[-pitch] ^= _; p[-pitch+1] ^= _; p[-pitch+2] ^= o;
+	p[-1]       ^= _; p[0]      ^= o; p[1]        ^= o; p[2]        ^= _;
+	p[pitch-1]  ^= _; p[pitch]  ^= o; p[pitch+1]  ^= o; p[pitch+2]  ^= _;
+	p[2*pitch-1]^= o; p[2*pitch]^= _; p[2*pitch+1]^= _; p[2*pitch+2]^= o;
 }
 
 void pemu_finalize_frame(const char *fps, const char *notice)
 {
+	if (PicoIn.AHW & PAHW_PICO) {
+		int h = saved_line_count, w = saved_col_count;
+		u16 *pd = g_screen_ptr + saved_start_line*g_screen_ppitch
+					+ saved_start_col;
+
+		if (pico_inp_mode)
+			emu_pico_overlay(pd, w, h, g_screen_ppitch);
+		if (pico_inp_mode /*== 2 || overlay*/)
+			draw_pico_ptr();
+	}
 	if (notice && notice[0])
-		emu_osd_text16(2, g_osd_y, notice);
-	if (fps && fps[0] && (currentConfig.EmuOpt & EOPT_SHOW_FPS))
-		emu_osd_text16(g_osd_fps_x, g_osd_y, fps);
+		emu_osd_text16(2 + g_osd_start_x, g_osd_y, notice);
+	if (fps && fps[0] && (currentConfig.EmuOpt & EOPT_SHOW_FPS)) {
+		const char *p;
+		// avoid wrapping when fps is very high
+		if (fps[5] != ' ' && (p = strchr(fps, '/')))
+			fps = p;
+ 		emu_osd_text16(g_osd_fps_x, g_osd_y, fps);
+	}
 	if ((PicoIn.AHW & PAHW_MCD) && (currentConfig.EmuOpt & EOPT_EN_CD_LEDS))
 		draw_cd_leds();
+	// draw virtual keyboard on display
+	if (kbd_mode && currentConfig.keyboard == 2 && vkbd)
+		vkbd_draw(vkbd);
 }
 
 void plat_video_flip(void)
@@ -181,7 +195,20 @@ void plat_video_flip(void)
 	xenv_update(NULL, NULL, NULL, NULL);
 }
 
+void plat_video_clear_buffers(void)
+{
+	vout_fbdev_clear(layer_fb);
+}
+
+// pnd doesn't use multiple renderers, but we have to handle this since it's
+// called on 32x enable and PicoDrawSetOutFormat() sets up the 32x layers
 void plat_video_toggle_renderer(int change, int is_menu)
+{
+	if (!is_menu)
+		PicoDrawSetOutFormat(PDF_RGB555, 0);
+}
+
+void plat_video_menu_update(void)
 {
 }
 
@@ -226,6 +253,10 @@ void plat_status_msg_busy_first(const char *msg)
 	plat_status_msg_busy_next(msg);
 }
 
+void plat_status_msg_busy_done(void)
+{
+}
+
 void plat_update_volume(int has_changed, int is_up)
 {
 }
@@ -233,11 +264,10 @@ void plat_update_volume(int has_changed, int is_up)
 void pemu_forced_frame(int no_scale, int do_emu)
 {
 	doing_bg_frame = 1;
-	emu_cmn_forced_frame(no_scale, do_emu);
+	// making a copy because enabling the layer clears it's mem
+	emu_cmn_forced_frame(no_scale, do_emu, fb_copy);
 	doing_bg_frame = 0;
 
-	// making a copy because enabling the layer clears it's mem
-	memcpy((void *)fb_copy, g_screen_ptr, sizeof(fb_copy));
 	g_menubg_src_ptr = fb_copy;
 }
 
@@ -316,6 +346,13 @@ static int pnd_setup_layer_(int fd, int enabled, int x, int y, int w, int h)
 
 int pnd_setup_layer(int enabled, int x, int y, int w, int h)
 {
+	// it's not allowed for the layer to be partially offscreen,
+	// instead it is faked by emu_video_mode_change()
+	if (x < 0) { w += x; x = 0; }
+	if (y < 0) { h += y; y = 0; }
+	if (x + w > 800) w = 800 - x;
+	if (y + h > 480) h = 480 - y;
+
 	return pnd_setup_layer_(vout_fbdev_get_fd(layer_fb), enabled, x, y, w, h);
 }
 
@@ -332,29 +369,24 @@ void pnd_restore_layer_data(void)
 	plat_video_flip();
 }
 
-void emu_video_mode_change(int start_line, int line_count, int is_32cols)
+void emu_video_mode_change(int start_line, int line_count, int start_col, int col_count)
 {
-	int fb_w = 320, fb_h = 240, fb_left = 0, fb_right = 0, fb_top = 0, fb_bottom = 0;
+	int fb_w, fb_h = 240, fb_left = 0, fb_right = 0, fb_top = 0, fb_bottom = 0;
 
 	if (doing_bg_frame)
 		return;
 
-	if (is_32cols) {
-		fb_w = 256;
-		fb_left = fb_right = 32;
-	}
-
 	switch (currentConfig.scaling) {
 	case SCALE_1x1:
-		g_layer_w = fb_w;
+		g_layer_w = col_count;
 		g_layer_h = fb_h;
 		break;
 	case SCALE_2x2_3x2:
-		g_layer_w = fb_w * (is_32cols ? 3 : 2);
+		g_layer_w = col_count * (col_count < 320 ? 3 : 2);
 		g_layer_h = fb_h * 2;
 		break;
 	case SCALE_2x2_2x2:
-		g_layer_w = fb_w * 2;
+		g_layer_w = col_count * 2;
 		g_layer_h = fb_h * 2;
 		break;
 	case SCALE_FULLSCREEN:
@@ -379,18 +411,38 @@ void emu_video_mode_change(int start_line, int line_count, int is_32cols)
 	case SCALE_FULLSCREEN:
 	case SCALE_CUSTOM:
 		fb_top = start_line;
-		fb_h = line_count;
+		fb_h = start_line + line_count;
 		break;
 	}
-	g_osd_fps_x = is_32cols ? 232 : 264;
-	g_osd_y = fb_top + fb_h - 8;
+	fb_w = 320;
+	fb_left = start_col;
+	fb_right = 320 - (start_col + col_count);
+	if (currentConfig.scaling == SCALE_CUSTOM) {
+		int right = g_layer_x + g_layer_w;
+		int bottom = g_layer_y + g_layer_h;
+		if (g_layer_x < 0)
+			fb_left += -g_layer_x * col_count / g_menuscreen_w;
+		if (g_layer_y < 0)
+			fb_top += -g_layer_y * line_count / g_menuscreen_h;
+		if (right > g_menuscreen_w)
+			fb_right += (right - g_menuscreen_w) * col_count / g_menuscreen_w;
+		if (bottom > g_menuscreen_h)
+			fb_bottom += (bottom - g_menuscreen_h) * line_count / g_menuscreen_h;
+	}
+	fb_w -= fb_left + fb_right;
+	fb_h -= fb_top + fb_bottom;
 
 	pnd_setup_layer(1, g_layer_x, g_layer_y, g_layer_w, g_layer_h);
+	vout_fbdev_resize(layer_fb, fb_w, fb_h, 16, fb_left, fb_right, fb_top, fb_bottom, 4, 0);
 	vout_fbdev_clear(layer_fb);
-	vout_fbdev_resize(layer_fb, fb_w, fb_h, 16, fb_left, fb_right, fb_top, fb_bottom, 4);
 	plat_video_flip();
 
-	PicoDrawSetOutFormat(PDF_RGB555, 0);
+	g_osd_start_x = start_col;
+	g_osd_fps_x = start_col + col_count - 5*8 - 2;
+	g_osd_y = fb_top + fb_h - 8;
+
+	saved_start_line = start_line, saved_line_count = line_count;
+	saved_start_col = start_col, saved_col_count = col_count;
 }
 
 void plat_video_loop_prepare(void)
@@ -399,6 +451,7 @@ void plat_video_loop_prepare(void)
 	memset(g_menuscreen_ptr, 0, g_menuscreen_w * g_menuscreen_h * 2);
 	g_menuscreen_ptr = vout_fbdev_flip(main_fb);
 
+	PicoDrawSetOutFormat(PDF_RGB555, 0);
 	// emu_video_mode_change will call pnd_setup_layer()
 }
 
@@ -413,6 +466,7 @@ void pemu_loop_prep(void)
 
 void pemu_loop_end(void)
 {
+	memset(fb_copy, 0, sizeof(fb_copy));
 	/* do one more frame for menu bg */
 	pemu_forced_frame(0, 1);
 
@@ -445,6 +499,11 @@ void plat_wait_till_us(unsigned int us_to)
 void *plat_mem_get_for_drc(size_t size)
 {
 	return NULL;
+}
+
+int plat_parse_arg(int argc, char *argv[], int *x)
+{
+	return 1;
 }
 
 void plat_early_init(void)

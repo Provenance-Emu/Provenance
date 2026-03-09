@@ -10,15 +10,11 @@
 
 #include "cell_map.c"
 
-#ifndef UTYPES_DEFINED
-typedef unsigned short u16;
-#endif
-
 // check: Heart of the alien, jaguar xj 220
-PICO_INTERNAL void DmaSlowCell(unsigned int source, unsigned int a, int len, unsigned char inc)
+PICO_INTERNAL void DmaSlowCell(u32 source, u32 a, int len, unsigned char inc)
 {
   unsigned char *base;
-  unsigned int asrc, a2;
+  u32 asrc, a2;
   u16 *r;
 
   base = Pico_mcd->word_ram1M[Pico_mcd->s68k_regs[3]&1];
@@ -32,12 +28,11 @@ PICO_INTERNAL void DmaSlowCell(unsigned int source, unsigned int a, int len, uns
         asrc = cell_map(source >> 2) << 2;
         asrc |= source & 2;
         // if(a&1) d=(d<<8)|(d>>8); // ??
-        r[a>>1] = *(u16 *)(base + asrc);
+        VideoWriteVRAM(a, *(u16 *)(base + asrc));
 	source += 2;
         // AutoIncrement
         a=(u16)(a+inc);
       }
-      Pico.est.rendstatus |= PDRAW_SPRITES_MOVED;
       break;
 
     case 3: // cram

@@ -1,5 +1,6 @@
 /*
- * PicoDrive
+ * PicoDrive MP3 driver for PSP
+ *
  * (C) notaz, 2007,2008
  *
  * This work is licensed under the terms of MAME license.
@@ -12,11 +13,10 @@
 #include <pspkernel.h>
 #include <pspsdk.h>
 #include <pspaudiocodec.h>
-#include <kubridge.h>
 
-#include "../../pico/pico_int.h"
-#include "../../pico/sound/mix.h"
-#include "../common/lprintf.h"
+#include <pico/pico_int.h>
+#include <pico/sound/mix.h>
+#include "../libpicofe/lprintf.h"
 
 int mp3_last_error = 0;
 
@@ -136,19 +136,11 @@ static int read_next_frame(int which_buffer)
 
 static SceUID load_start_module(const char *prxname)
 {
-	SceUID mod, mod1;
-	int status, ret;
+	SceUID mod;
 
 	mod = pspSdkLoadStartModule(prxname, PSP_MEMORY_PARTITION_KERNEL);
 	if (mod < 0) {
 		lprintf("failed to load %s (%08x), trying kuKernelLoadModule\n", prxname, mod);
-		mod1 = kuKernelLoadModule(prxname, 0, NULL);
-		if (mod1 < 0) lprintf("kuKernelLoadModule failed with %08x\n", mod1);
-		else {
-			ret = sceKernelStartModule(mod1, 0, NULL, &status, 0);
-			if (ret < 0) lprintf("sceKernelStartModule failed with %08x\n", ret);
-			else mod = mod1;
-		}
 	}
 	return mod;
 }
@@ -395,16 +387,14 @@ void mp3_start_play(void *f, int pos)
 }
 
 
-void mp3_update(int *buffer, int length, int stereo)
+void mp3_update(s32 *buffer, int length, int stereo)
 {
 	int length_mp3;
 
 	// playback was started, track not ended
 	if (mp3_handle < 0 || mp3_src_pos >= mp3_src_size) return;
 
-	length_mp3 = length;
-	if (PicoIn.sndRate == 22050) length_mp3 <<= 1;	// mp3s are locked to 44100Hz stereo
-	else if (PicoIn.sndRate == 11025) length_mp3 <<= 2;	// so make length 44100ish
+	length_mp3 = length * Pico.snd.cdda_mult >> 16;
 
 	/* do we have to wait? */
 	if (mp3_job_started && mp3_samples_ready < length_mp3)
@@ -418,30 +408,30 @@ void mp3_update(int *buffer, int length, int stereo)
 	/* mix mp3 data, only stereo */
 	if (mp3_samples_ready >= length_mp3)
 	{
-		int shr = 0;
-		void (*mix_samples)(int *dest_buf, short *mp3_buf, int count) = mix_16h_to_32;
-		if (PicoIn.sndRate == 22050) { mix_samples = mix_16h_to_32_s1; shr = 1; }
-		else if (PicoIn.sndRate == 11025) { mix_samples = mix_16h_to_32_s2; shr = 2; }
+		void (*mix_samples)(s32 *dest_buf, s16 *mp3_buf, int count, int fac16) = mix_16h_to_32_resample_stereo;
+		if (!stereo)
+	                mix_samples = mix_16h_to_32_resample_mono;
 
 		if (1152 - mp3_buffer_offs >= length_mp3) {
-			mix_samples(buffer, mp3_mix_buffer[mp3_play_bufsel] + mp3_buffer_offs*2, length<<1);
+			mix_samples(buffer, mp3_mix_buffer[mp3_play_bufsel] + mp3_buffer_offs*2, length, Pico.snd.cdda_mult);
 
 			mp3_buffer_offs += length_mp3;
 		} else {
 			// collect samples from both buffers..
-			int left = 1152 - mp3_buffer_offs;
+			int left = (1152 - mp3_buffer_offs) * Pico.snd.cdda_div >> 16;
+			int sm = stereo ? 2 : 1;
+
 			if (mp3_play_bufsel == 0)
 			{
-				mix_samples(buffer, mp3_mix_buffer[0] + mp3_buffer_offs*2, length<<1);
-				mp3_buffer_offs = length_mp3 - left;
+				mix_samples(buffer, mp3_mix_buffer[0] + mp3_buffer_offs*2, length, Pico.snd.cdda_mult);
 				mp3_play_bufsel = 1;
 			} else {
-				mix_samples(buffer, mp3_mix_buffer[1] + mp3_buffer_offs*2, (left>>shr)<<1);
-				mp3_buffer_offs = length_mp3 - left;
-				mix_samples(buffer + ((left>>shr)<<1),
-					mp3_mix_buffer[0], (mp3_buffer_offs>>shr)<<1);
+				mix_samples(buffer, mp3_mix_buffer[1] + mp3_buffer_offs*2, left, Pico.snd.cdda_mult);
+				mix_samples(buffer + left * sm,
+					mp3_mix_buffer[0], (length-left), Pico.snd.cdda_mult);
 				mp3_play_bufsel = 0;
 			}
+			mp3_buffer_offs = (length-left) * Pico.snd.cdda_mult >> 16;
 		}
 		mp3_samples_ready -= length_mp3;
 	}
@@ -458,24 +448,6 @@ void mp3_update(int *buffer, int length, int stereo)
 		psp_sem_unlock(thread_job_sem);
 		sceKernelDelayThread(1);
 	}
-}
-
-
-int mp3_get_offset(void) // 0-1023
-{
-	unsigned int offs1024 = 0;
-	int cdda_on;
-
-	cdda_on = (PicoIn.AHW & PAHW_MCD) && (PicoIn.opt&0x800) && !(Pico_mcd->s68k_regs[0x36] & 1) &&
-			(Pico_mcd->scd.Status_CDC & 1) && mp3_handle >= 0;
-
-	if (cdda_on) {
-		offs1024  = mp3_src_pos << 7;
-		offs1024 /= mp3_src_size >> 3;
-	}
-	lprintf("offs1024=%u (%i/%i)\n", offs1024, mp3_src_pos, mp3_src_size);
-
-	return offs1024;
 }
 
 

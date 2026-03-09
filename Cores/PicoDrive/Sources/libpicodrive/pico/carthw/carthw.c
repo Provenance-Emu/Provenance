@@ -1,6 +1,7 @@
 /*
  * Support for a few cart mappers and some protection.
  * (C) notaz, 2008-2011
+ * (C) irixxxx, 2021-2024
  *
  * This work is licensed under the terms of MAME license.
  * See COPYING file in the top-level directory.
@@ -35,7 +36,7 @@ void carthw_ssf2_write8(u32 a, u32 d)
 {
   u32 target, base;
 
-  if ((a & ~0x0e) != 0xa130f1) {
+  if ((a & ~0x0e) != 0xa130f1 || a == 0xa130f1) {
     PicoWrite8_io(a, d);
     return;
   }
@@ -71,9 +72,12 @@ static void carthw_ssf2_mem_setup(void)
 
 static void carthw_ssf2_statef(void)
 {
-  int i;
-  for (i = 1; i < 8; i++)
-    carthw_ssf2_write8(0xa130f0 | (i << 1), carthw_ssf2_banks[i]);
+  int i, reg;
+  for (i = 1; i < 8; i++) {
+    reg = carthw_ssf2_banks[i];
+    carthw_ssf2_banks[i] = i;
+    carthw_ssf2_write8(0xa130f1 | (i << 1), reg);
+  }
 }
 
 static void carthw_ssf2_unload(void)
@@ -130,7 +134,7 @@ static carthw_state_chunk carthw_Xin1_state[] =
 	{ 0,            0,                         NULL }
 };
 
-// TODO: test a0, reads, w16
+// TODO: reads should also work, but then we need to handle open bus
 static void carthw_Xin1_write8(u32 a, u32 d)
 {
 	if ((a & 0xffff00) != 0xa13000) {
@@ -138,12 +142,23 @@ static void carthw_Xin1_write8(u32 a, u32 d)
 		return;
 	}
 
-	carthw_Xin1_do(a, 0x3f, 16);
+	carthw_Xin1_do(a, 0x3e, 16);
+}
+
+static void carthw_Xin1_write16(u32 a, u32 d)
+{
+  if ((a & 0xffff00) != 0xa13000) {
+    PicoWrite16_io(a, d);
+    return;
+  }
+
+  carthw_Xin1_write8(a + 1, d);
 }
 
 static void carthw_Xin1_mem_setup(void)
 {
-	cpu68k_map_set(m68k_write8_map, 0xa10000, 0xa1ffff, carthw_Xin1_write8, 1);
+	cpu68k_map_set(m68k_write8_map,  0xa10000, 0xa1ffff, carthw_Xin1_write8, 1);
+	cpu68k_map_set(m68k_write16_map, 0xa10000, 0xa1ffff, carthw_Xin1_write16, 1);
 }
 
 static void carthw_Xin1_reset(void)
@@ -395,7 +410,7 @@ static u32 carthw_pier_prot_read8(u32 a)
   }
   elprintf(EL_UIO, "pier r8  [%06x] @%06x", a, SekPc);
 
-  return Pico.rom[(a & 0x7fff) ^ 1];
+  return Pico.rom[MEM_BE2(a & 0x7fff)];
 }
 
 static void carthw_pier_mem_setup(void)
@@ -483,15 +498,295 @@ void carthw_pier_startup(void)
   carthw_chunks     = carthw_pier_state;
 }
 
+/* superfighter mappers, see mame: mame/src/devices/bus/megadrive/rom.cpp */
+unsigned int carthw_sf00x_reg;
+
+static carthw_state_chunk carthw_sf00x_state[] =
+{
+	{ CHUNK_CARTHW, sizeof(carthw_sf00x_reg), &carthw_sf00x_reg },
+	{ 0,            0,                         NULL }
+};
+
+// SF-001
+
+// additionally map SRAM at 0x3c0000 for the newer version of sf001
+static u32 carthw_sf001_read8_sram(u32 a)
+{
+  return m68k_read8((a & 0xffff) + Pico.sv.start);
+}
+
+static u32 carthw_sf001_read16_sram(u32 a)
+{
+  return m68k_read16((a & 0xffff) + Pico.sv.start);
+}
+
+static void carthw_sf001_write8_sram(u32 a, u32 d)
+{
+  m68k_write8((a & 0xffff) + Pico.sv.start, d);
+}
+
+static void carthw_sf001_write16_sram(u32 a, u32 d)
+{
+  m68k_write16((a & 0xffff) + Pico.sv.start, d);
+}
+
+static void carthw_sf001_write8(u32 a, u32 d)
+{
+  if ((a & 0xf00) != 0xe00 || (carthw_sf00x_reg & 0x20)) // wrong addr / locked
+    return;
+
+  if (d & 0x80) {
+    // bank 0xe at addr 0x000000
+    cpu68k_map_set(m68k_read8_map,  0x000000, 0x040000-1, Pico.rom+0x380000, 0);
+    cpu68k_map_set(m68k_read16_map, 0x000000, 0x040000-1, Pico.rom+0x380000, 0);
+    // SRAM also at 0x3c0000 for newer mapper version
+    cpu68k_map_set(m68k_read8_map,  0x3c0000, 0x400000-1, carthw_sf001_read8_sram, 1);
+    cpu68k_map_set(m68k_read16_map, 0x3c0000, 0x400000-1, carthw_sf001_read16_sram, 1);
+    cpu68k_map_set(m68k_write8_map, 0x3c0000, 0x400000-1, carthw_sf001_write8_sram, 1);
+    cpu68k_map_set(m68k_write16_map,0x3c0000, 0x400000-1, carthw_sf001_write16_sram, 1);
+  } else {
+    // bank 0x0 at addr 0x000000
+    cpu68k_map_set(m68k_read8_map,  0x000000, 0x040000-1, Pico.rom, 0);
+    cpu68k_map_set(m68k_read16_map, 0x000000, 0x040000-1, Pico.rom, 0);
+    // SRAM off, bank 0xf at addr 0x3c0000
+    cpu68k_map_set(m68k_read8_map,  0x3c0000, 0x400000-1, Pico.rom+0x3c0000, 0);
+    cpu68k_map_set(m68k_read16_map, 0x3c0000, 0x400000-1, Pico.rom+0x3c0000, 0);
+    cpu68k_map_set(m68k_write8_map, 0x3c0000, 0x400000-1, Pico.rom+0x3c0000, 0);
+    cpu68k_map_set(m68k_write16_map,0x3c0000, 0x400000-1, Pico.rom+0x3c0000, 0);
+  }
+  carthw_sf00x_reg = d;
+}
+
+static void carthw_sf001_write16(u32 a, u32 d)
+{
+  carthw_sf001_write8(a + 1, d);
+}
+
+static void carthw_sf001_mem_setup(void)
+{
+  // writing to low cartridge addresses
+  cpu68k_map_set(m68k_write8_map,  0x000000, 0x00ffff, carthw_sf001_write8, 1);
+  cpu68k_map_set(m68k_write16_map, 0x000000, 0x00ffff, carthw_sf001_write16, 1);
+}
+
+static void carthw_sf001_reset(void)
+{
+  carthw_sf00x_reg = 0;
+  carthw_sf001_write8(0x0e01, 0);
+}
+
+static void carthw_sf001_statef(void)
+{
+  int reg = carthw_sf00x_reg;
+  carthw_sf00x_reg = 0;
+  carthw_sf001_write8(0x0e01, reg);
+}
+
+void carthw_sf001_startup(void)
+{
+  PicoCartMemSetup  = carthw_sf001_mem_setup;
+  PicoResetHook     = carthw_sf001_reset;
+  PicoLoadStateHook = carthw_sf001_statef;
+  carthw_chunks     = carthw_sf00x_state;
+}
+
+// SF-002
+
+static void carthw_sf002_write8(u32 a, u32 d)
+{
+  if ((a & 0xf00) != 0xe00)
+    return;
+
+  if (d & 0x80) {
+    // bank 0x00-0x0e on addr 0x20000
+    cpu68k_map_set(m68k_read8_map,  0x200000, 0x3c0000-1, Pico.rom, 0);
+    cpu68k_map_set(m68k_read16_map, 0x200000, 0x3c0000-1, Pico.rom, 0);
+  } else {
+    // bank 0x10-0x1e on addr 0x20000
+    cpu68k_map_set(m68k_read8_map,  0x200000, 0x3c0000-1, Pico.rom+0x200000, 0);
+    cpu68k_map_set(m68k_read16_map, 0x200000, 0x3c0000-1, Pico.rom+0x200000, 0);
+  }
+  carthw_sf00x_reg = d;
+}
+
+static void carthw_sf002_write16(u32 a, u32 d)
+{
+  carthw_sf002_write8(a + 1, d);
+}
+
+static void carthw_sf002_mem_setup(void)
+{
+  // writing to low cartridge addresses
+  cpu68k_map_set(m68k_write8_map,  0x000000, 0x00ffff, carthw_sf002_write8, 1);
+  cpu68k_map_set(m68k_write16_map, 0x000000, 0x00ffff, carthw_sf002_write16, 1);
+}
+
+static void carthw_sf002_reset(void)
+{
+  carthw_sf002_write8(0x0e01, 0);
+}
+
+static void carthw_sf002_statef(void)
+{
+  carthw_sf002_write8(0x0e01, carthw_sf00x_reg);
+}
+
+void carthw_sf002_startup(void)
+{
+  PicoCartMemSetup  = carthw_sf002_mem_setup;
+  PicoResetHook     = carthw_sf002_reset;
+  PicoLoadStateHook = carthw_sf002_statef;
+  carthw_chunks     = carthw_sf00x_state;
+}
+
+// SF-004
+
+// reading from cartridge I/O region returns the current bank index
+static u32 carthw_sf004_read8(u32 a)
+{
+  if ((a & ~0xff) == 0xa13000)
+    return carthw_sf00x_reg & 0xf0; // bank index
+  return PicoRead8_io(a);
+}
+
+static u32 carthw_sf004_read16(u32 a)
+{
+  if ((a & ~0xff) == 0xa13000)
+    return carthw_sf00x_reg & 0xf0;
+  return PicoRead16_io(a);
+}
+
+// writing to low cartridge adresses changes mappings
+static void carthw_sf004_write8(u32 a, u32 d)
+{
+  int idx, i;
+  unsigned bs = 0x40000; // bank size
+
+  // there are 3 byte-sized regs, stored together in carthw_sf00x_reg
+  if (!(carthw_sf00x_reg & 0x8000))
+    return; // locked
+
+  switch (a & 0xf00) {
+  case 0xd00:
+    carthw_sf00x_reg = (carthw_sf00x_reg & ~0xff0000) | ((d & 0xff) << 16);
+    return PicoWrite8_io(0xa130f1, (d & 0x80) ? SRR_MAPPED : 0); // SRAM mapping
+  case 0xe00:
+    carthw_sf00x_reg = (carthw_sf00x_reg & ~0x00ff00) | ((d & 0xff) << 8);
+    break;
+  case 0xf00:
+    carthw_sf00x_reg = (carthw_sf00x_reg & ~0x0000ff) | ((d & 0xff) << 0);
+    break;
+  default:
+    return; // wrong addr
+  }
+
+  // bank mapping changed
+  idx = ((carthw_sf00x_reg>>4) & 0x7); // bank index
+  if ((carthw_sf00x_reg>>8) & 0x40) {
+    // linear bank mapping, starting at idx
+    for (i = 0; i < 8; i++, idx = (idx+1) & 0x7) {
+      cpu68k_map_set(m68k_read8_map,  i*bs, (i+1)*bs-1, Pico.rom + idx*bs, 0);
+      cpu68k_map_set(m68k_read16_map, i*bs, (i+1)*bs-1, Pico.rom + idx*bs, 0);
+    }
+  } else {
+    // single bank mapping
+    for (i = 0; i < 8; i++) {
+      cpu68k_map_set(m68k_read8_map,  i*bs, (i+1)*bs-1, Pico.rom + idx*bs, 0);
+      cpu68k_map_set(m68k_read16_map, i*bs, (i+1)*bs-1, Pico.rom + idx*bs, 0);
+    }
+  }
+}
+
+static void carthw_sf004_write16(u32 a, u32 d)
+{
+  carthw_sf004_write8(a + 1, d);
+}
+
+static void carthw_sf004_mem_setup(void)
+{
+  // writing to low cartridge addresses
+  cpu68k_map_set(m68k_write8_map,  0x000000, 0x00ffff, carthw_sf004_write8, 1);
+  cpu68k_map_set(m68k_write16_map, 0x000000, 0x00ffff, carthw_sf004_write16, 1);
+  // reading from the cartridge I/O region
+  cpu68k_map_set(m68k_read8_map,   0xa10000, 0xa1ffff, carthw_sf004_read8, 1);
+  cpu68k_map_set(m68k_read16_map,  0xa10000, 0xa1ffff, carthw_sf004_read16, 1);
+}
+
+static void carthw_sf004_reset(void)
+{
+  carthw_sf00x_reg = -1;
+  carthw_sf004_write8(0x0d01, 0);
+  carthw_sf004_write8(0x0f01, 0);
+  carthw_sf004_write8(0x0e01, 0x80);
+}
+
+static void carthw_sf004_statef(void)
+{
+  int reg = carthw_sf00x_reg;
+  carthw_sf00x_reg = -1;
+  carthw_sf004_write8(0x0d01, reg >> 16);
+  carthw_sf004_write8(0x0f01, reg >> 0);
+  carthw_sf004_write8(0x0e01, reg >> 8);
+}
+
+void carthw_sf004_startup(void)
+{
+  PicoCartMemSetup  = carthw_sf004_mem_setup;
+  PicoResetHook     = carthw_sf004_reset;
+  PicoLoadStateHook = carthw_sf004_statef;
+  carthw_chunks     = carthw_sf00x_state;
+}
+
+/* Simple protection through reading flash ID */
+static int flash_writecount;
+
+static carthw_state_chunk carthw_flash_state[] =
+{
+  { CHUNK_CARTHW, sizeof(flash_writecount), &flash_writecount },
+  { 0,            0,                        NULL }
+};
+
+static u32 PicoRead16_flash(u32 a) { return (a&6) ? 0x2257 : 0x0020; }
+
+static void PicoWrite16_flash(u32 a, u32 d)
+{
+  int banksz = (1<<M68K_MEM_SHIFT)-1;
+  switch (++flash_writecount) {
+    case 3: cpu68k_map_set(m68k_read16_map, 0, banksz, PicoRead16_flash, 1);
+            break;
+    case 4: cpu68k_map_read_mem(0, banksz, Pico.rom, 0);
+            flash_writecount = 0;
+            break;
+  }
+}
+
+static void carthw_flash_mem_setup(void)
+{
+  cpu68k_map_set(m68k_write16_map, 0, 0x7fffff, PicoWrite16_flash, 1);
+}
+
+void carthw_flash_startup(void)
+{
+  elprintf(EL_STATUS, "Flash prot emu startup");
+
+  PicoCartMemSetup   = carthw_flash_mem_setup;
+  carthw_chunks      = carthw_flash_state;
+}
+
 /* Simple unlicensed ROM protection emulation */
 static struct {
   u32 addr;
   u32 mask;
   u16 val;
   u16 readonly;
-} *sprot_items;
-static int sprot_item_alloc;
+} sprot_items[8];
 static int sprot_item_count;
+
+static carthw_state_chunk carthw_sprot_state[] =
+{
+  { CHUNK_CARTHW, sizeof(sprot_items), &sprot_items },
+  { 0,            0,                         NULL }
+};
 
 static u16 *carthw_sprot_get_val(u32 a, int rw_only)
 {
@@ -510,9 +805,6 @@ static u32 PicoRead8_sprot(u32 a)
   u16 *val;
   u32 d;
 
-  if (0xa10000 <= a && a < 0xa12000)
-    return PicoRead8_io(a);
-
   val = carthw_sprot_get_val(a, 0);
   if (val != NULL) {
     d = *val;
@@ -521,38 +813,32 @@ static u32 PicoRead8_sprot(u32 a)
     elprintf(EL_UIO, "prot r8  [%06x]   %02x @%06x", a, d, SekPc);
     return d;
   }
-  else {
-    elprintf(EL_UIO, "prot r8  [%06x] MISS @%06x", a, SekPc);
-    return 0;
-  }
+  else if (0xa10000 <= a && a <= 0xa1ffff)
+    return PicoRead8_io(a);
+
+  elprintf(EL_UIO, "prot r8  [%06x] MISS @%06x", a, SekPc);
+  return 0;
 }
 
 static u32 PicoRead16_sprot(u32 a)
 {
   u16 *val;
 
-  if (0xa10000 <= a && a < 0xa12000)
-    return PicoRead16_io(a);
-
   val = carthw_sprot_get_val(a, 0);
   if (val != NULL) {
     elprintf(EL_UIO, "prot r16 [%06x] %04x @%06x", a, *val, SekPc);
     return *val;
   }
-  else {
-    elprintf(EL_UIO, "prot r16 [%06x] MISS @%06x", a, SekPc);
-    return 0;
-  }
+  else if (0xa10000 <= a && a <= 0xa1ffff)
+    return PicoRead16_io(a);
+
+  elprintf(EL_UIO, "prot r16 [%06x] MISS @%06x", a, SekPc);
+  return 0;
 }
 
 static void PicoWrite8_sprot(u32 a, u32 d)
 {
   u16 *val;
-
-  if (0xa10000 <= a && a < 0xa12000) {
-    PicoWrite8_io(a, d);
-    return;
-  }
 
   val = carthw_sprot_get_val(a, 1);
   if (val != NULL) {
@@ -562,45 +848,33 @@ static void PicoWrite8_sprot(u32 a, u32 d)
       *val = (*val & 0x00ff) | (d << 8);
     elprintf(EL_UIO, "prot w8  [%06x]   %02x @%06x", a, d & 0xff, SekPc);
   }
-  else
-    elprintf(EL_UIO, "prot w8  [%06x]   %02x MISS @%06x", a, d & 0xff, SekPc);
+  else if (0xa10000 <= a && a <= 0xa1ffff)
+    return PicoWrite8_io(a, d);
+
+  elprintf(EL_UIO, "prot w8  [%06x]   %02x MISS @%06x", a, d & 0xff, SekPc);
 }
 
 static void PicoWrite16_sprot(u32 a, u32 d)
 {
   u16 *val;
 
-  if (0xa10000 <= a && a < 0xa12000) {
-    PicoWrite16_io(a, d);
-    return;
-  }
-
   val = carthw_sprot_get_val(a, 1);
   if (val != NULL) {
     *val = d;
     elprintf(EL_UIO, "prot w16 [%06x] %04x @%06x", a, d & 0xffff, SekPc);
   }
-  else
-    elprintf(EL_UIO, "prot w16 [%06x] %04x MISS @%06x", a, d & 0xffff, SekPc);
+  else if (0xa10000 <= a && a <= 0xa1ffff)
+    return PicoWrite16_io(a, d);
+
+  elprintf(EL_UIO, "prot w16 [%06x] %04x MISS @%06x", a, d & 0xffff, SekPc);
 }
 
 void carthw_sprot_new_location(unsigned int a, unsigned int mask, unsigned short val, int is_ro)
 {
-  if (sprot_items == NULL) {
-    sprot_items = calloc(8, sizeof(sprot_items[0]));
-    sprot_item_alloc = 8;
-    sprot_item_count = 0;
-  }
-
-  if (sprot_item_count == sprot_item_alloc) {
-    void *tmp;
-    sprot_item_alloc *= 2;
-    tmp = realloc(sprot_items, sprot_item_alloc);
-    if (tmp == NULL) {
-      elprintf(EL_STATUS, "OOM");
-      return;
-    }
-    sprot_items = tmp;
+  int sprot_elems = sizeof(sprot_items)/sizeof(sprot_items[0]);
+  if (sprot_item_count == sprot_elems) {
+    elprintf(EL_STATUS, "too many sprot items");
+    return;
   }
 
   sprot_items[sprot_item_count].addr = a;
@@ -612,17 +886,17 @@ void carthw_sprot_new_location(unsigned int a, unsigned int mask, unsigned short
 
 static void carthw_sprot_unload(void)
 {
-  free(sprot_items);
-  sprot_items = NULL;
-  sprot_item_count = sprot_item_alloc = 0;
+  sprot_item_count = 0;
 }
 
 static void carthw_sprot_mem_setup(void)
 {
   int start;
 
-  // map ROM - 0x7fffff, /TIME areas (which are tipically used)
+  // map 0x400000 - 0x7fffff, /TIME areas (which are tipically used)
   start = (Pico.romsize + M68K_BANK_MASK) & ~M68K_BANK_MASK;
+  if (start < 0x400000) start = 0x400000;
+
   cpu68k_map_set(m68k_read8_map,   start, 0x7fffff, PicoRead8_sprot, 1);
   cpu68k_map_set(m68k_read16_map,  start, 0x7fffff, PicoRead16_sprot, 1);
   cpu68k_map_set(m68k_write8_map,  start, 0x7fffff, PicoWrite8_sprot, 1);
@@ -640,32 +914,41 @@ void carthw_sprot_startup(void)
 
   PicoCartMemSetup   = carthw_sprot_mem_setup;
   PicoCartUnloadHook = carthw_sprot_unload;
+  carthw_chunks      = carthw_sprot_state;
 }
 
 /* Protection emulation for Lion King 3. Credits go to Haze */
-static u8 prot_lk3_cmd, prot_lk3_data;
+static struct {
+  u32 bank;
+  u8 cmd, data;
+} carthw_lk3_regs;
+
+static carthw_state_chunk carthw_lk3_state[] =
+{
+  { CHUNK_CARTHW, sizeof(carthw_lk3_regs), &carthw_lk3_regs },
+  { 0,            0,                         NULL }
+};
+
+static u8 *carthw_lk3_mem; // shadow copy memory
+static u32 carthw_lk3_madr[0x100000/M68K_BANK_SIZE];
 
 static u32 PicoRead8_plk3(u32 a)
 {
   u32 d = 0;
-  switch (prot_lk3_cmd) {
-    case 1: d = prot_lk3_data >> 1; break;
+  switch (carthw_lk3_regs.cmd) {
+    case 0: d = carthw_lk3_regs.data << 1; break;
+    case 1: d = carthw_lk3_regs.data >> 1; break;
     case 2: // nibble rotate
-      d = ((prot_lk3_data >> 4) | (prot_lk3_data << 4)) & 0xff;
+      d = ((carthw_lk3_regs.data >> 4) | (carthw_lk3_regs.data << 4)) & 0xff;
       break;
     case 3: // bit rotate
-      d = prot_lk3_data;
+      d = carthw_lk3_regs.data;
       d = (d >> 4) | (d << 4);
       d = ((d & 0xcc) >> 2) | ((d & 0x33) << 2);
       d = ((d & 0xaa) >> 1) | ((d & 0x55) << 1);
       break;
-/* Top Fighter 2000 MK VIII (Unl)
-      case 0x98: d = 0x50; break; // prot_lk3_data == a8 here
-      case 0x67: d = 0xde; break; // prot_lk3_data == 7b here (rot!)
-      case 0xb5: d = 0x9f; break; // prot_lk3_data == 4a
-*/
     default:
-      elprintf(EL_UIO, "unhandled prot cmd %02x @%06x", prot_lk3_cmd, SekPc);
+      elprintf(EL_UIO, "unhandled prot cmd %02x @%06x", carthw_lk3_regs.cmd, SekPc);
       break;
   }
 
@@ -677,49 +960,256 @@ static void PicoWrite8_plk3p(u32 a, u32 d)
 {
   elprintf(EL_UIO, "prot w8  [%06x]   %02x @%06x", a, d & 0xff, SekPc);
   if (a & 2)
-    prot_lk3_cmd = d;
+    carthw_lk3_regs.cmd = d & 0x3;
   else
-    prot_lk3_data = d;
+    carthw_lk3_regs.data = d;
 }
 
 static void PicoWrite8_plk3b(u32 a, u32 d)
 {
-  int addr;
+  u32 addr;
 
   elprintf(EL_UIO, "prot w8  [%06x]   %02x @%06x", a, d & 0xff, SekPc);
   addr = d << 15;
-  if (addr + 0x8000 > Pico.romsize) {
-    elprintf(EL_UIO|EL_ANOMALY, "prot_lk3: bank too large: %02x", d);
+  if (addr+0x10000 >= Pico.romsize) {
+    elprintf(EL_UIO|EL_ANOMALY, "lk3_mapper: bank too large: %02x", d);
     return;
   }
-  if (addr == 0)
-    memcpy(Pico.rom, Pico.rom + Pico.romsize, 0x8000);
-  else
-    memcpy(Pico.rom, Pico.rom + addr, 0x8000);
+
+  if (addr != carthw_lk3_regs.bank) {
+    // banking is by or'ing the bank address in the 1st megabyte, not adding.
+    // only do linear mapping if map addresses aren't overlapping bank address
+    u32 len = M68K_BANK_SIZE;
+    u32 a, b;
+    for (b = 0x000000; b < 0x0100000; b += len) {
+      if (!((b + (len-1)) & addr)) {
+        cpu68k_map_set(m68k_read8_map,  b, b + (len-1), Pico.rom+addr + b, 0);
+        cpu68k_map_set(m68k_read16_map, b, b + (len-1), Pico.rom+addr + b, 0);
+      } else {
+        // overlap. ugh, need a shadow copy since banks can contain code and
+        // 68K cpu emulator cores need mapped access to code memory
+        if (carthw_lk3_madr[b/len] != addr) // only if shadow isn't the same
+          for (a = b; a < b+M68K_BANK_SIZE; a += 0x8000)
+            memcpy(carthw_lk3_mem + a, Pico.rom + (addr|a), 0x8000);
+        carthw_lk3_madr[b/len] = addr;
+        cpu68k_map_set(m68k_read8_map,  b, b + (len-1), carthw_lk3_mem + b, 0);
+        cpu68k_map_set(m68k_read16_map, b, b + (len-1), carthw_lk3_mem + b, 0);
+      }
+    }
+  }
+  carthw_lk3_regs.bank = addr;
 }
 
-static void carthw_prot_lk3_mem_setup(void)
+static void carthw_lk3_mem_setup(void)
 {
   cpu68k_map_set(m68k_read8_map,   0x600000, 0x7fffff, PicoRead8_plk3, 1);
   cpu68k_map_set(m68k_write8_map,  0x600000, 0x6fffff, PicoWrite8_plk3p, 1);
   cpu68k_map_set(m68k_write8_map,  0x700000, 0x7fffff, PicoWrite8_plk3b, 1);
+  carthw_lk3_regs.bank = 0;
 }
 
-void carthw_prot_lk3_startup(void)
+static void carthw_lk3_statef(void)
 {
-  int ret;
+  PicoWrite8_plk3b(0x700000, carthw_lk3_regs.bank >> 15);
+}
 
+static void carthw_lk3_unload(void)
+{
+  free(carthw_lk3_mem);
+  carthw_lk3_mem = NULL;
+  memset(carthw_lk3_madr, 0, sizeof(carthw_lk3_madr));
+}
+
+void carthw_lk3_startup(void)
+{
   elprintf(EL_STATUS, "lk3 prot emu startup");
 
-  // allocate space for bank0 backup
-  ret = PicoCartResize(Pico.romsize + 0x8000);
-  if (ret != 0) {
+  // allocate space for shadow copy
+  if (carthw_lk3_mem == NULL)
+    carthw_lk3_mem = malloc(0x100000);
+  if (carthw_lk3_mem == NULL) {
     elprintf(EL_STATUS, "OOM");
     return;
   }
-  memcpy(Pico.rom + Pico.romsize, Pico.rom, 0x8000);
 
-  PicoCartMemSetup = carthw_prot_lk3_mem_setup;
+  PicoCartMemSetup   = carthw_lk3_mem_setup;
+  PicoLoadStateHook  = carthw_lk3_statef;
+  PicoCartUnloadHook = carthw_lk3_unload;
+  carthw_chunks      = carthw_lk3_state;
+}
+
+/* SMW64 mapper, based on mame source */
+static struct {
+  u32 bank60, bank61;
+  u16 data[8], ctrl[4];
+} carthw_smw64_regs;
+
+static carthw_state_chunk carthw_smw64_state[] =
+{
+  { CHUNK_CARTHW, sizeof(carthw_smw64_regs), &carthw_smw64_regs },
+  { 0,            0,                         NULL }
+};
+
+static u32 PicoRead8_smw64(u32 a)
+{
+  u16 *data = carthw_smw64_regs.data, *ctrl = carthw_smw64_regs.ctrl;
+  u32 d = 0;
+
+  if (a & 1) {
+    if (a>>16 == 0x66) switch ((a>>1) & 7) {
+      case 0: d = carthw_smw64_regs.data[0]  ; break;
+      case 1: d = carthw_smw64_regs.data[0]+1; break;
+      case 2: d = carthw_smw64_regs.data[1]  ; break;
+      case 3: d = carthw_smw64_regs.data[1]+1; break;
+      case 4: d = carthw_smw64_regs.data[2]  ; break;
+      case 5: d = carthw_smw64_regs.data[2]+1; break;
+      case 6: d = carthw_smw64_regs.data[2]+2; break;
+      case 7: d = carthw_smw64_regs.data[2]+3; break;
+    } else /*0x67*/ { // :-O
+      if (ctrl[1] & 0x80)
+        d = ctrl[2] & 0x40 ? data[4]&data[5] : data[4]^0xff;
+      if (a & 2)
+        d &= 0x7f;
+      else if (ctrl[2] & 0x80) {
+        if (ctrl[2] & 0x20)
+          data[2] = (data[5] << 2) & 0xfc;
+        else
+          data[0] = ((data[4] << 1) ^ data[3]) & 0xfe;
+      }
+    }
+  }
+
+  elprintf(EL_UIO, "prot r8  [%06x]   %02x @%06x", a, d, SekPc);
+  return d;
+}
+
+static u32 PicoRead16_smw64(u32 a)
+{
+  return PicoRead8_smw64(a+1);
+}
+
+static void PicoWrite8_smw64(u32 a, u32 d)
+{
+  u16 *data = carthw_smw64_regs.data, *ctrl = carthw_smw64_regs.ctrl;
+
+  if ((a & 3) == 1) {
+    switch (a >> 16) {
+    case 0x60: ctrl[0] = d; break;
+    case 0x64: data[4] = d; break;
+    case 0x67:
+      if (ctrl[1] & 0x80) {
+        carthw_smw64_regs.bank60 = 0x80000 + ((d<<14) & 0x70000);
+        cpu68k_map_set(m68k_read8_map,  0x600000, 0x60ffff, Pico.rom + carthw_smw64_regs.bank60, 0);
+        cpu68k_map_set(m68k_read16_map, 0x600000, 0x60ffff, Pico.rom + carthw_smw64_regs.bank60, 0);
+      }
+      ctrl[2] = d;
+    }
+  } else if ((a & 3) == 3) {
+    switch (a >> 16) {
+    case 0x61: ctrl[1] = d; break;
+    case 0x64: data[5] = d; break;
+    case 0x60:
+      switch (ctrl[0] & 7) { // :-O
+      case 0: data[0] = (data[0]^data[3] ^ d) & 0xfe; break;
+      case 1: data[1] = (                  d) & 0xfe; break;
+      case 7:
+        carthw_smw64_regs.bank61 = 0x80000 + ((d<<14) & 0x70000);
+        cpu68k_map_set(m68k_read8_map,  0x610000, 0x61ffff, Pico.rom + carthw_smw64_regs.bank61, 0);
+        cpu68k_map_set(m68k_read16_map, 0x610000, 0x61ffff, Pico.rom + carthw_smw64_regs.bank61, 0);
+        break;
+      }
+      data[3] = d;
+    }
+  }
+}
+
+static void PicoWrite16_smw64(u32 a, u32 d)
+{
+  PicoWrite8_smw64(a+1, d);
+}
+
+static void carthw_smw64_mem_setup(void)
+{
+  // 1st 512 KB mirrored
+  cpu68k_map_set(m68k_read8_map,   0x080000, 0x0fffff, Pico.rom, 0);
+  cpu68k_map_set(m68k_read16_map,  0x080000, 0x0fffff, Pico.rom, 0);
+
+  cpu68k_map_set(m68k_read8_map,   0x660000, 0x67ffff, PicoRead8_smw64, 1);
+  cpu68k_map_set(m68k_read16_map,  0x660000, 0x67ffff, PicoRead16_smw64, 1);
+  cpu68k_map_set(m68k_write8_map,  0x600000, 0x67ffff, PicoWrite8_smw64, 1);
+  cpu68k_map_set(m68k_write16_map, 0x600000, 0x67ffff, PicoWrite16_smw64, 1);
+}
+
+static void carthw_smw64_statef(void)
+{
+  cpu68k_map_set(m68k_read8_map,   0x600000, 0x60ffff, Pico.rom + carthw_smw64_regs.bank60, 0);
+  cpu68k_map_set(m68k_read16_map,  0x600000, 0x60ffff, Pico.rom + carthw_smw64_regs.bank60, 0);
+  cpu68k_map_set(m68k_read8_map,   0x610000, 0x61ffff, Pico.rom + carthw_smw64_regs.bank61, 0);
+  cpu68k_map_set(m68k_read16_map,  0x610000, 0x61ffff, Pico.rom + carthw_smw64_regs.bank61, 0);
+}
+
+static void carthw_smw64_reset(void)
+{
+  memset(&carthw_smw64_regs, 0, sizeof(carthw_smw64_regs));
+}
+
+void carthw_smw64_startup(void)
+{
+  elprintf(EL_STATUS, "SMW64 mapper startup");
+
+  PicoCartMemSetup  = carthw_smw64_mem_setup;
+  PicoResetHook     = carthw_smw64_reset;
+  PicoLoadStateHook = carthw_smw64_statef;
+  carthw_chunks     = carthw_smw64_state;
+}
+
+/* J-Cart */
+unsigned char carthw_jcart_th;
+
+static carthw_state_chunk carthw_jcart_state[] =
+{
+  { CHUNK_CARTHW, sizeof(carthw_jcart_th), &carthw_jcart_th },
+  { 0,            0,                       NULL }
+};
+
+static void carthw_jcart_write8(u32 a, u32 d)
+{
+  carthw_jcart_th = (d&1) << 6;
+}
+
+static void carthw_jcart_write16(u32 a, u32 d)
+{
+  carthw_jcart_write8(a+1, d);
+}
+
+static u32 carthw_jcart_read8(u32 a)
+{
+  u32 v = PicoReadPad(2 + (a&1), 0x3f | carthw_jcart_th);
+  // some carts additionally have an EEPROM; SDA is also readable in this range
+  if (Pico.m.sram_reg & SRR_MAPPED)
+    v |= EEPROM_read() & 0x80; // SDA is always on bit 7 for J-Carts
+  return v;
+}
+
+static u32 carthw_jcart_read16(u32 a)
+{
+  return carthw_jcart_read8(a) | (carthw_jcart_read8(a+1) << 8);
+}
+
+static void carthw_jcart_mem_setup(void)
+{
+  cpu68k_map_set(m68k_write8_map,  0x380000, 0x3fffff, carthw_jcart_write8, 1);
+  cpu68k_map_set(m68k_write16_map, 0x380000, 0x3fffff, carthw_jcart_write16, 1);
+  cpu68k_map_set(m68k_read8_map,  0x380000, 0x3fffff, carthw_jcart_read8, 1);
+  cpu68k_map_set(m68k_read16_map, 0x380000, 0x3fffff, carthw_jcart_read16, 1);
+}
+
+void carthw_jcart_startup(void)
+{
+  elprintf(EL_STATUS, "J-Cart startup");
+
+  PicoCartMemSetup  = carthw_jcart_mem_setup;
+  carthw_chunks     = carthw_jcart_state;
 }
 
 // vim:ts=2:sw=2:expandtab

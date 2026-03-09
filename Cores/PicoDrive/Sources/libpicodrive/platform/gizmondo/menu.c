@@ -28,7 +28,7 @@
 #include "../common/emu.h"
 #include "../common/readpng.h"
 #include "../common/input.h"
-#include "version.h"
+#include "../common/version.h"
 
 #include <pico/pico_int.h>
 #include <pico/patch.h>
@@ -49,12 +49,10 @@ unsigned char *menu_screen = gfx_buffer; /* draw here and blit later, to avoid f
 void menu_darken_bg(void *dst, const void *src, int pixels, int darker);
 static void menu_prepare_bg(int use_game_bg);
 
-static unsigned int inp_prev = 0;
-
 void menu_draw_begin(int use_bgbuff)
 {
 	if (use_bgbuff)
-		memcpy32((int *)menu_screen, (int *)bg_buffer, 321*240*2/4);
+		memcpy((int *)menu_screen, (int *)bg_buffer, 321*240*2);
 }
 
 
@@ -66,7 +64,7 @@ void menu_draw_end(void)
 		lprintf("%s: Framework2D_LockBuffer() returned NULL\n", __FUNCTION__);
 		return;
 	}
-	memcpy32(giz_screen, (int *)menu_screen, 321*240*2/4);
+	memcpy(giz_screen, (int *)menu_screen, 321*240*2);
 	fb_unlock();
 	giz_screen = NULL;
 	fb_flip();
@@ -931,6 +929,7 @@ menu_entry opt2_entries[] =
 	{ "Emulate Z80",               MB_ONOFF, MA_OPT2_ENABLE_Z80,    &PicoIn.opt, 0x00004, 0, 0, 1, 1 },
 	{ "Emulate YM2612 (FM)",       MB_ONOFF, MA_OPT2_ENABLE_YM2612, &PicoIn.opt, 0x00001, 0, 0, 1, 1 },
 	{ "Emulate SN76496 (PSG)",     MB_ONOFF, MA_OPT2_ENABLE_SN76496,&PicoIn.opt, 0x00002, 0, 0, 1, 1 },
+	{ "Emulate YM2413 (FM)",       MB_ONOFF, MA_OPT2_ENABLE_YM2413, &PicoIn.opt, 0x00020, 0, 0, 1, 1 },
 	{ "Double buffering",          MB_ONOFF, MA_OPT2_DBLBUFF,       &currentConfig.EmuOpt, 0x8000, 0, 0, 1, 1 },
 	{ "Wait for V-sync (slow)",    MB_ONOFF, MA_OPT2_VSYNC,         &currentConfig.EmuOpt, 0x2000, 0, 0, 1, 1 },
 	{ "gzip savestates",           MB_ONOFF, MA_OPT2_GZIP_STATES,   &currentConfig.EmuOpt, 0x0008, 0, 0, 1, 1 },
@@ -1456,14 +1455,14 @@ static void menu_loop_root(void)
 // warning: alignment
 void menu_darken_bg(void *dst, const void *src, int pixels, int darker)
 {
-	unsigned int *dest = dst;
-	const unsigned int *srce = src;
+	u32 *dest = dst;
+	const u32 *srce = src;
 	pixels /= 2;
 	if (darker)
 	{
 		while (pixels--)
 		{
-			unsigned int p = *srce++;
+			u32 p = *srce++;
 			*dest++ = ((p&0xf79ef79e)>>1) - ((p&0xc618c618)>>3);
 		}
 	}
@@ -1471,7 +1470,7 @@ void menu_darken_bg(void *dst, const void *src, int pixels, int darker)
 	{
 		while (pixels--)
 		{
-			unsigned int p = *srce++;
+			u32 p = *srce++;
 			*dest++ = (p&0xf79ef79e)>>1;
 		}
 	}
@@ -1578,9 +1577,9 @@ int menu_loop_tray(void)
 					selfname = romsel_loop(curr_path);
 					if (selfname) {
 						int ret = -1;
-						cd_img_type cd_type;
+						cd_track_type cd_type;
 						cd_type = emu_cdCheck(NULL, romFileName);
-						if (cd_type != CIT_NOT_CD)
+						if (cd_type >= 0 && cd_type != CT_UNKNOWN)
 							ret = Insert_CD(romFileName, cd_type);
 						if (ret != 0) {
 							sprintf(menuErrorMsg, "Load failed, invalid CD image?");

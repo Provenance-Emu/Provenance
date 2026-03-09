@@ -8,7 +8,7 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 
-#include "../pico/pico_int.h"
+#include <pico/pico_int.h>
 #include "debug.h"
 
 static char pdb_pending_cmds[128];
