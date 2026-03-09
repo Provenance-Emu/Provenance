@@ -19,37 +19,48 @@ extension PVEmulatorViewController {
     }
 
     /// Whether a recording session is currently active.
+    /// Single source of truth: reads from `AppState.shared.emulationUIState.isRecording`.
     public var isRecording: Bool {
-        PVRecordingManager.shared.isRecording
+        AppState.shared.emulationUIState.isRecording
     }
 
     /// Starts a ReplayKit screen recording session.
     /// Updates `AppState.shared.emulationUIState.isRecording` on success.
     public func startScreenRecording() {
-        PVRecordingManager.shared.startRecording { [weak self] error in
-            guard let self = self else { return }
-            if let error = error {
-                ELOG("[Recording] Could not start recording: \(error.localizedDescription)")
-                self.showRecordingError(error)
-            } else {
+        Task { @MainActor in
+            do {
+                try await PVRecordingManager.shared.startRecording()
                 AppState.shared.emulationUIState.isRecording = true
                 ILOG("[Recording] Recording started")
+            } catch {
+                ELOG("[Recording] Could not start recording: \(error.localizedDescription)")
+                showRecordingError(error)
             }
         }
     }
 
     /// Stops the current ReplayKit recording and presents the share sheet.
+    /// Updates `AppState.shared.emulationUIState.isRecording` on completion.
     public func stopScreenRecording() {
-        PVRecordingManager.shared.stopRecording(presenter: self) { [weak self] error in
-            guard let self = self else { return }
-            AppState.shared.emulationUIState.isRecording = false
-            if let error = error {
-                ELOG("[Recording] Could not stop recording: \(error.localizedDescription)")
-                self.showRecordingError(error)
-            } else {
+        Task { @MainActor in
+            do {
+                try await PVRecordingManager.shared.stopRecording(presenter: self)
+                AppState.shared.emulationUIState.isRecording = false
                 ILOG("[Recording] Recording stopped and preview presented")
+            } catch {
+                AppState.shared.emulationUIState.isRecording = false
+                ELOG("[Recording] Could not stop recording: \(error.localizedDescription)")
+                showRecordingError(error)
             }
         }
+    }
+
+    /// Discards the current recording without presenting the preview.
+    /// Updates `AppState.shared.emulationUIState.isRecording` to keep state consistent.
+    public func discardScreenRecording() {
+        PVRecordingManager.shared.discardRecording()
+        AppState.shared.emulationUIState.isRecording = false
+        ILOG("[Recording] Recording discarded via VC")
     }
 
     /// Toggles recording on/off.

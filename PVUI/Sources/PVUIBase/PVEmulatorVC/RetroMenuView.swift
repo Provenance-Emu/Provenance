@@ -601,7 +601,7 @@ struct RetroMenuView: View {
 #if os(iOS)
     @ViewBuilder
     private var recordingButton: some View {
-        let isRecording = PVRecordingManager.shared.isRecording
+        let isRecording = AppState.shared.emulationUIState.isRecording
         let isAvailable = PVRecordingManager.shared.isAvailable
         if isAvailable {
             let title = isRecording ? "STOP RECORDING" : "RECORD GAMEPLAY"
