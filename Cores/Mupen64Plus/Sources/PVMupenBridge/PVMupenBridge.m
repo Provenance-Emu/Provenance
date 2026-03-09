@@ -123,7 +123,9 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 static char *MupenGetGBCartROM(void *cb_data, int controller_num) {
     if (controller_num < 0 || controller_num >= 4) return NULL;
     PVMupenBridge *bridge = (__bridge PVMupenBridge *)cb_data;
-    return bridge->_gbCartROMCStr[controller_num];
+    @synchronized (bridge) {
+        return bridge->_gbCartROMCStr[controller_num];
+    }
 }
 
 /// Called by the core to ask where GB cart RAM (save) data should be
@@ -132,7 +134,9 @@ static char *MupenGetGBCartROM(void *cb_data, int controller_num) {
 static char *MupenGetGBCartRAM(void *cb_data, int controller_num) {
     if (controller_num < 0 || controller_num >= 4) return NULL;
     PVMupenBridge *bridge = (__bridge PVMupenBridge *)cb_data;
-    return bridge->_gbCartSaveCStr[controller_num];
+    @synchronized (bridge) {
+        return bridge->_gbCartSaveCStr[controller_num];
+    }
 }
 
 @implementation PVMupenBridge {
@@ -188,6 +192,12 @@ static char *MupenGetGBCartRAM(void *cb_data, int controller_num) {
 
     [self pluginsUnload];
     [self detachCoreLib];
+
+    // Free strdup-allocated Transfer Pak C-string caches.
+    for (int i = 0; i < 4; i++) {
+        if (_gbCartROMCStr[i])  { free(_gbCartROMCStr[i]);  _gbCartROMCStr[i]  = NULL; }
+        if (_gbCartSaveCStr[i]) { free(_gbCartSaveCStr[i]); _gbCartSaveCStr[i] = NULL; }
+    }
 
 #if !__has_feature(objc_arc)
     dispatch_release(mupenWaitToBeginFrameSemaphore);
