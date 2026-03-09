@@ -59,13 +59,21 @@ public final class GCControllerHapticsManager {
     /// Maps player index → (locality → engine).
     private var engineMap: [Int: [GCHapticsLocality: CHHapticEngine]] = [:]
 
-    /// Global haptic intensity multiplier. Reads `controllerHapticIntensity` from UserDefaults
-    /// (set by PVSettings). Can also be overridden directly for testing.
-    public var intensityMultiplier: Float {
-        // Respect the global haptic toggle.
-        guard UserDefaults.standard.object(forKey: "hapticFeedback") as? Bool ?? true else { return 0 }
+    /// Cached haptic intensity multiplier, updated when UserDefaults changes.
+    /// Avoids reading UserDefaults on every rumble call.
+    private var _cachedIntensityMultiplier: Float = 1.0
+
+    /// Global haptic intensity multiplier driven by `hapticFeedback` and
+    /// `controllerHapticIntensity` UserDefaults keys (written by PVSettings).
+    public var intensityMultiplier: Float { _cachedIntensityMultiplier }
+
+    private func refreshIntensityCache() {
+        guard UserDefaults.standard.object(forKey: "hapticFeedback") as? Bool ?? true else {
+            _cachedIntensityMultiplier = 0
+            return
+        }
         let stored = UserDefaults.standard.object(forKey: "controllerHapticIntensity") as? Double ?? 1.0
-        return Float(max(0.0, min(1.0, stored)))
+        _cachedIntensityMultiplier = Float(max(0.0, min(1.0, stored)))
     }
 
     private var notificationObservers: [NSObjectProtocol] = []
@@ -73,6 +81,7 @@ public final class GCControllerHapticsManager {
     // MARK: - Lifecycle
 
     private init() {
+        refreshIntensityCache()
         registerNotifications()
     }
 
@@ -100,6 +109,12 @@ public final class GCControllerHapticsManager {
         }
         notificationObservers.append(bgObs)
         #endif
+
+        // Keep intensity cache in sync with UserDefaults changes from PVSettings.
+        let udObs = nc.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in self?.refreshIntensityCache() }
+        }
+        notificationObservers.append(udObs)
 
         notificationObservers.append(connectObs)
         notificationObservers.append(disconnectObs)
@@ -239,6 +254,10 @@ public final class GCControllerHapticsManager {
             try? engine.start()
         }
 
+        // Start the engine once at creation time. The resetHandler handles recovery
+        // if the engine stops unexpectedly (e.g., after app foreground transition).
+        try? engine.start()
+
         return engine
     }
 
@@ -353,8 +372,6 @@ public final class GCControllerHapticsManager {
         guard intensity > 0 else { return }
 
         do {
-            try engine.start()
-
             let clampedIntensity = max(0.01, min(1.0, intensity))
             let clampedSharpness = max(0.0, min(1.0, sharpness))
             let clampedDuration = max(0.05, duration)

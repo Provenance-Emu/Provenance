@@ -43,22 +43,14 @@ public extension EmulatorCoreControllerDataSource {
     @MainActor
     func controller(for player: Int) -> GCController? {
         switch player {
-        case 1:
-            if let controller1 = self.controller1, controller1.isAttachedToDevice {
-#if os(iOS) && !targetEnvironment(macCatalyst)
-                (self as? EmulatorCoreRumbleDataSource)?.rumblePhone()
-#else
-                VLOG("rumblePhone*(")
-#endif
-            }
-            return controller1
+        case 1: return controller1
         case 2: return controller2
         case 3: return controller3
         case 4: return controller4
         case 5: return controller5
         case 6: return controller6
         case 7: return controller7
-        case 8: return controller7
+        case 8: return controller8
         default:
             WLOG("No player \(player)")
             return nil
