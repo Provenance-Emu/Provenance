@@ -54,28 +54,33 @@ public struct UPSPatcher: Sendable {
         let outputSize = readVLI(patch, pos: &pos)
 
         // Verify source CRC32
-        let sourceCRC = readLE32(patch, at: patch.count - 12)
+        let inputCRC  = readLE32(patch, at: patch.count - 12)
+        let outputCRC = readLE32(patch, at: patch.count - 8)
         let computedSourceCRC = crc32(source[0..<min(inputSize, source.count)])
-        guard sourceCRC == computedSourceCRC else {
-            // Try reverse direction (output → input patching), as UPS is bidirectional
-            let outputCRC = readLE32(patch, at: patch.count - 8)
+        guard inputCRC == computedSourceCRC else {
+            // Try reverse direction (output → input patching), as UPS is bidirectional.
+            // In reverse, the caller's "source" is the output ROM; we produce the input ROM.
             let computedOutputCRC = crc32(source[0..<min(outputSize, source.count)])
             guard outputCRC == computedOutputCRC else {
                 throw PatchError.sourceROMMismatch
             }
-            // Reverse patching: swap input/output sizes
+            // Reverse patching: swap input/output sizes.
+            // The expected CRC for the produced result is the original input CRC.
             return try applyPatching(patch: patch, source: source,
-                                     inputSize: outputSize, outputSize: inputSize, startPos: pos)
+                                     inputSize: outputSize, outputSize: inputSize,
+                                     startPos: pos, expectedOutputCRC: inputCRC)
         }
 
         return try applyPatching(patch: patch, source: source,
-                                 inputSize: inputSize, outputSize: outputSize, startPos: pos)
+                                 inputSize: inputSize, outputSize: outputSize,
+                                 startPos: pos, expectedOutputCRC: outputCRC)
     }
 
     // MARK: - Private helpers
 
     private func applyPatching(patch: Data, source: Data,
-                               inputSize: Int, outputSize: Int, startPos: Int) throws -> Data {
+                               inputSize: Int, outputSize: Int,
+                               startPos: Int, expectedOutputCRC: UInt32) throws -> Data {
         var result = Data(count: outputSize)
 
         // Copy source into result (truncating or padding as needed)
@@ -102,6 +107,12 @@ public struct UPSPatcher: Sendable {
                 }
                 offset += 1
             }
+        }
+
+        // Verify output CRC32 — ensures the patched ROM matches the expected result.
+        let computedOutputCRC = crc32(result)
+        guard expectedOutputCRC == computedOutputCRC else {
+            throw PatchError.patchedROMVerificationFailed
         }
 
         return result

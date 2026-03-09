@@ -30,13 +30,27 @@ public struct IPSPatcher: Sendable {
 
     public init() {}
 
+    /// Determine if a patch file uses IPS32 format based on its file extension.
+    ///
+    /// IPS32 detection MUST be done by examining the file extension (`.ips32`), NOT by
+    /// scanning the patch body for the "EEOF" byte sequence. Scanning the entire file for
+    /// "EEOF" is unreliable because the bytes `0x45 0x45 0x4F 0x46` can legitimately appear
+    /// inside a record's data payload in a standard IPS patch, causing false positives.
+    ///
+    /// - Parameter url: The patch file URL.
+    /// - Returns: `true` if the extension is `ips32` (case-insensitive).
+    public static func isIPS32Format(url: URL) -> Bool {
+        url.pathExtension.lowercased() == "ips32"
+    }
+
     /// Apply an IPS patch to source data and return the patched result.
     ///
     /// - Parameters:
     ///   - patch: The raw IPS patch file data.
     ///   - source: The source ROM data to patch.
     ///   - isIPS32: `true` for IPS32 (large ROM) patches that use 4-byte offsets.
-    ///              Detect from the file extension (`.ips32`) rather than scanning the patch body.
+    ///              **Must be determined from the file extension** (`.ips32`), never by
+    ///              scanning the patch body for the "EEOF" byte sequence — see `isIPS32Format(url:)`.
     /// - Returns: The patched ROM data.
     /// - Throws: `PatchError` on format or integrity issues.
     public func apply(patch: Data, to source: Data, isIPS32: Bool = false) throws -> Data {
