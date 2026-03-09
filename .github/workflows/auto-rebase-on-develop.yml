@@ -114,8 +114,16 @@ jobs:
                 # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events
                 gh workflow run agent-validation.yml --repo "$REPO" --ref "$branch" \
                   -f branch="$branch" -f pr_number="$pr_num" 2>/dev/null || true
-                # Re-trigger IPA build if PR has build-ipa label
+                # Re-trigger AI review for [Agent] PRs — GITHUB_TOKEN force-push doesn't
+                # fire pull_request:synchronize so ai-review-trigger.yml never fires.
+                pr_title=$(gh pr view "$pr_num" --repo "$REPO" --json title --jq '.title' 2>/dev/null || echo "")
                 pr_labels=$(gh pr view "$pr_num" --repo "$REPO" --json labels --jq '[.labels[].name] | join(",")' 2>/dev/null || echo "")
+                if echo "$pr_title" | grep -q "^\[Agent\]"; then
+                  echo "  [Agent] PR — dispatching AI review for rebased code"
+                  gh workflow run ai-review.yml --repo "$REPO" \
+                    -f pr_number="$pr_num" 2>/dev/null || true
+                fi
+                # Re-trigger IPA build if PR has build-ipa label
                 if echo "$pr_labels" | grep -q "build-ipa"; then
                   echo "  PR has build-ipa label — re-dispatching build.yml"
                   gh workflow run build.yml --repo "$REPO" --ref "$branch" \
