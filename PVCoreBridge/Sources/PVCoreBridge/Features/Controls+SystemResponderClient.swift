@@ -110,7 +110,7 @@ public extension SystemIdentifier {
         case .AppleII:
             return PVRetroArchCoreResponderClient.self
         case .AtariST:
-            return PV7800SystemResponderClient.self
+            return PVDOSSystemResponderClient.self
         case .C64:
             return PVRetroArchCoreResponderClient.self
         case .CDi:

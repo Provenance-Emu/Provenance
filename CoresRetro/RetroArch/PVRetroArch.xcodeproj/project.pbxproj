@@ -173,7 +173,6 @@
 		B3B377A12E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3779E2E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m */; };
 		B3B377A22E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3779D2E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m */; };
 		B3B377A42E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3779F2E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m */; };
-		B3B377A82E44327700DBE2E0 /* PVRetroArchCore+Controls+AtariST.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B377A72E44327700DBE2E0 /* PVRetroArchCore+Controls+AtariST.m */; };
 		B3B377A62E44373200DBE2E0 /* PVRetroArchCore+Controls+EP128.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B377A52E44373200DBE2E0 /* PVRetroArchCore+Controls+EP128.m */; };
 		B3C439532BF442920021B9C3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C439522BF442920021B9C3 /* PVSupport */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
@@ -477,7 +476,6 @@
 		B3B3779D2E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+5200.m"; sourceTree = "<group>"; };
 		B3B3779E2E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+7800.m"; sourceTree = "<group>"; };
 		B3B3779F2E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+Atari8Bit.m"; sourceTree = "<group>"; };
-		B3B377A72E44327700DBE2E0 /* PVRetroArchCore+Controls+AtariST.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+AtariST.m"; sourceTree = "<group>"; };
 		B3B377A52E44373200DBE2E0 /* PVRetroArchCore+Controls+EP128.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+EP128.m"; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVRetroArch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRetroArch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVRetroArch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArch.h; sourceTree = "<group>"; };
@@ -880,7 +878,6 @@
 				B3B3779D2E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m */,
 				B3B3779E2E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m */,
 				B3B3779F2E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m */,
-				B3B377A72E44327700DBE2E0 /* PVRetroArchCore+Controls+AtariST.m */,
 				93C372622A8B68000007671D /* PVRetroArchCore+Controls+3DO.m */,
 				B3DD7A6E2ECD16F80022FF70 /* PVRetroArchCore+Controls+CDi.m */,
 				B36CEE8A2E415C8200F6F05D /* PVRetroArchCore+Controls+Colecovision.m */,
@@ -1438,7 +1435,6 @@
 				B3B377A12E44327700DBE2E0 /* PVRetroArchCore+Controls+7800.m in Sources */,
 				B3B377A22E44327700DBE2E0 /* PVRetroArchCore+Controls+5200.m in Sources */,
 				B3B377A42E44327700DBE2E0 /* PVRetroArchCore+Controls+Atari8Bit.m in Sources */,
-				B3B377A82E44327700DBE2E0 /* PVRetroArchCore+Controls+AtariST.m in Sources */,
 				B3B377A62E44373200DBE2E0 /* PVRetroArchCore+Controls+EP128.m in Sources */,
 				93A7278B2AAEB1C60052B279 /* PVRetroArchCore+Controls+NeoGeo.m in Sources */,
 				B32111B52CBC556500BE8D6C /* PVRetroArchCore+Controls+Supervision.m in Sources */,
