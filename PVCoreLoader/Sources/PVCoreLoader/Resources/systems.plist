@@ -5573,6 +5573,126 @@
 				<key>Size</key>
 				<integer>196608</integer>
 			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.00 US Boot Image</string>
+				<key>MD5</key>
+				<string>1a586c64dc73b7a11f07781ef3acc82b</string>
+				<key>Name</key>
+				<string>tos100.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>131072</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.00 DE Boot Image</string>
+				<key>MD5</key>
+				<string>fc3aa501f1f7605c06cbf2f99a3c9b6a</string>
+				<key>Name</key>
+				<string>tos100de.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>131072</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.02 UK Boot Image</string>
+				<key>MD5</key>
+				<string>3b5c6f14bdebb38e9a19db96bddb83ab</string>
+				<key>Name</key>
+				<string>tos102uk.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.04 US Boot Image</string>
+				<key>MD5</key>
+				<string>036c5ae4f885cbf58baea72fdb4b42f8</string>
+				<key>Name</key>
+				<string>tos104.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.04 DE Boot Image</string>
+				<key>MD5</key>
+				<string>9526ef63b9cb6d7304376ac93e055d4d</string>
+				<key>Name</key>
+				<string>tos104de.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.04 UK Boot Image</string>
+				<key>MD5</key>
+				<string>2b7f2ee22e4e7cd5f37d3c97bfcd3f18</string>
+				<key>Name</key>
+				<string>tos104uk.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.06 ST Boot Image</string>
+				<key>MD5</key>
+				<string>a2cf56fdada3c93d61306e44e994a80c</string>
+				<key>Name</key>
+				<string>tos106.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>196608</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 1.62 STE Boot Image</string>
+				<key>MD5</key>
+				<string>c1374d3e6fd8f875cf23e2e2dada8a4b</string>
+				<key>Name</key>
+				<string>tos162.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>262144</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>TOS 2.06 STE Boot Image</string>
+				<key>MD5</key>
+				<string>0b1f9ac65c1cc9a9b5e99b7f3d225a10</string>
+				<key>Name</key>
+				<string>tos206.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>262144</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>EmuTOS 1024k (open-source free alternative)</string>
+				<key>MD5</key>
+				<string></string>
+				<key>Name</key>
+				<string>emutos1m.img</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
 		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
