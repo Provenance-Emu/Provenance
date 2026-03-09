@@ -91,8 +91,8 @@ struct AchievementOverlayView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Spacer()
                     HStack(spacing: 6) {
-                        ForEach(Array(viewModel.challengeIndicators.keys.prefix(5)), id: \.self) { achID in
-                            ChallengeIndicatorView(badgeURL: viewModel.challengeIndicators[achID])
+                        ForEach(Array(viewModel.challengeIndicators.keys.sorted().prefix(5)), id: \.self) { achID in
+                            ChallengeIndicatorView(badgeURL: viewModel.challengeIndicators[achID] ?? nil)
                         }
                     }
                     .padding(.leading, 16)
