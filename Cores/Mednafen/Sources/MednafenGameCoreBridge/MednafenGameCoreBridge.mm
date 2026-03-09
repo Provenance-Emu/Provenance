@@ -880,10 +880,21 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
     }
-    else if (self.systemType == MednaSystemVirtualBoy || self.systemType == MednaSystemSNES || self.systemType == MednaSystemNES)
+    else if (self.systemType == MednaSystemVirtualBoy || self.systemType == MednaSystemSNES)
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+    }
+    else if (self.systemType == MednaSystemNES)
+    {
+        // Ports 0 and 1 are standard NES controller ports (players 1 and 2).
+        // Ports 2 and 3 are the NES Four Score ports (players 3 and 4).
+        // Setting all four lets Mednafen pass P3/P4 data through the Four Score adapter
+        // when FSDisable=0 (the default). Autodetect via nes.nofs setting handles the rest.
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+        game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
+        game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
     }
     else if (self.systemType == MednaSystemSS) {
         BOOL hasM3u = [path.pathExtension.lowercaseString isEqualToString:@"m3u"];

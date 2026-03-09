@@ -189,13 +189,20 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
     FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
     FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
 
-	// 4 Player
-	if (FCEUGameInfo->inputfc == SIFC_4PLAYER) {
-		FCEUI_SetInputFourscore(true);
-		// This needed?
-		//	FCEUI_SetInput(2, SI_GAMEPAD, &pad[2], 0);
-		//	FCEUI_SetInput(3, SI_GAMEPAD, &pad[3], 0);
-	}
+    // 4-Player / Fourscore setup.
+    // FCEU packs P3 into bits 16-23 of pad[0] and P4 into bits 24-31 of pad[1].
+    // No extra FCEUI_SetInput calls are needed; the existing port 0/1 buffers carry all 4 players.
+    {
+        // 0 = Auto (detect from ROM), 1 = Always On, 2 = Off
+        NSInteger fsMode = [[NSUserDefaults standardUserDefaults]
+                            integerForKey:@"PVFCEUOptions.4-Player / Fourscore"];
+        BOOL romRequiresFourscore = (FCEUGameInfo->inputfc == SIFC_4PLAYER);
+        if (fsMode == 1 || (fsMode == 0 && romRequiresFourscore)) {
+            FCEUI_SetInputFourscore(true);
+        } else {
+            FCEUI_SetInputFourscore(false);
+        }
+    }
 
     FCEU_ResetPalette();
 

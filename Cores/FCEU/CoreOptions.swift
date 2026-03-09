@@ -18,7 +18,7 @@ internal final class PVFCEUOptions: CoreOptions, Sendable {
         var options = [CoreOption]()
 
         let coreGroup = CoreOption.group(.init(title: "Core", description: nil),
-                                         subOptions: [famicomMicOption])
+                                         subOptions: [fourscoreOption, famicomMicOption])
         let videoGroup = CoreOption.group(.init(title: "Video", description: nil),
                                          subOptions: [])
         options.append(coreGroup)
@@ -28,6 +28,30 @@ internal final class PVFCEUOptions: CoreOptions, Sendable {
     }
 
     // MARK: - Core Options
+
+    /// Manual fourscore/4-player mode override.
+    /// 0 = Auto (detect from ROM header — default)
+    /// 1 = Always On (force-enable NES Four Score / Famicom 4-player)
+    /// 2 = Off (disable even when ROM header requests it)
+    static var fourscoreOption: CoreOption {
+        CoreOption.enumeration(
+            .init(
+                title: "4-Player / Fourscore",
+                description: "Enable NES Four Score or Famicom 4-player adapter. Auto detects from ROM header (works for most Famicom 4-player games). Use 'Always On' for NES Four Score games (e.g. Gauntlet, Super Dodge Ball) that lack header detection.",
+                requiresRestart: true
+            ),
+            values: [
+                .init(title: "Auto",       description: "Detect from ROM header", value: 0),
+                .init(title: "Always On",  description: "Force-enable fourscore",  value: 1),
+                .init(title: "Off",        description: "Disable fourscore",       value: 2),
+            ],
+            defaultValue: 0
+        )
+    }
+
+    static var fourscoreMode: Int {
+        valueForOption(fourscoreOption)
+    }
 
     static var famicomMicOption: CoreOption {
         CoreOption.bool(
