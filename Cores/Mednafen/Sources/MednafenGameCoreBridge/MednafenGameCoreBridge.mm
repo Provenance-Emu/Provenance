@@ -918,40 +918,31 @@ static void emulation_run(BOOL skipFrame) {
             multiDiscGame = YES;
         }
 
-        // PSX: Set multitap configuration if detected
-        //        NSString *serial = [self romSerial];
-        //        NSNumber* multitapCount = [MednafenGameCore multiDiscPSXGames][serial];
-        //
-        // FIXME:  "forget about multitap for now :)"
-        // Set multitap configuration if detected
-        //    if (multiTapGames[[current ROMSerial]])
-        //    {
-        //        current.multiTapPlayerCount = [[multiTapGames objectForKey:[current ROMSerial]] intValue];
-        //
-        //        if([multiTap5PlayerPort2 containsObject:[current ROMSerial]])
-        //            MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-        //        else
-        //        {
-        //            MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
-        //            if(current.multiTapPlayerCount > 5)
-        //                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-        //        }
-        //    }
+        // PSX: Set multitap configuration if detected by serial
+        NSString *serial = self.romSerial;
+        NSNumber *multitapCount = [MednafenGameCoreOptions multiTapPSXGames][serial];
+        if (multitapCount != nil) {
+            self->multiTapPlayerCount = [multitapCount intValue];
+            ILOG(@"Mednafen PSX: multi-tap serial=%@ players=%d", serial, self->multiTapPlayerCount);
 
-
-        //        if (multitapCount != nil)
-        //        {
-        //            multiTapPlayerCount = [multitapCount intValue];
-        //
-        //            if([[MednafenGameCore multiTap5PlayerPort2] containsObject:serial]) {
-        //                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-        //            } else {
-        //                MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
-        //                if(multiTapPlayerCount > 5) {
-        //                    MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-        //                }
-        //            }
-        //        }
+            if ([[MednafenGameCoreOptions multiTap5PlayerPort2] containsObject:serial]) {
+                Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", true); // Enable multitap on PSX port 2
+            } else {
+                Mednafen::MDFNI_SetSettingB("psx.input.pport1.multitap", true); // Enable multitap on PSX port 1
+                if (self->multiTapPlayerCount > 5) {
+                    Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", true); // Enable multitap on PSX port 2 for 6-8 players
+                }
+            }
+            // Re-setup inputs with updated player count
+            for (unsigned i = 0; i < (unsigned)self->multiTapPlayerCount; i++) {
+                uint8 *buf = (uint8 *)inputBuffer[i];
+                Mednafen::MDFN_en16lsb(&buf[3], (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
+                Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
+                game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
+            }
+        }
         // PSX: Check if SBI file is required
         if ([MednafenGameCoreOptions sbiRequiredGames][self.romSerial])
         {
@@ -1164,26 +1155,10 @@ static void emulation_run(BOOL skipFrame) {
             break;
     }
 
-    NSUInteger maxNumberPlayers = MIN([self maxNumberPlayers], 4);
+    NSUInteger maxNumberPlayers = MIN([self maxNumberPlayers], 8);
 
     for (NSInteger playerIndex = 0; playerIndex < maxNumberPlayers; playerIndex++) {
-        GCController *controller = nil;
-
-        if (self.controller1 && playerIndex == 0) {
-            controller = self.controller1;
-        }
-        else if (self.controller2 && playerIndex == 1)
-        {
-            controller = self.controller2;
-        }
-        else if (self.controller3 && playerIndex == 2)
-        {
-            controller = self.controller3;
-        }
-        else if (self.controller4 && playerIndex == 3)
-        {
-            controller = self.controller4;
-        }
+        GCController *controller = [self controllerForPlayer:(NSUInteger)(playerIndex + 1)];
 
         if (controller) {
             uint8 *d8 = (uint8 *)inputBuffer[playerIndex];
@@ -1212,7 +1187,7 @@ static void emulation_run(BOOL skipFrame) {
 
 - (void)executeFrameSkippingFrame: (BOOL) skip {
     // Should we be using controller callbacks instead?
-    if (!skip && (self.controller1 || self.controller2 || self.controller3 || self.controller4)) {
+    if (!skip && ([self controllerForPlayer:1] || [self controllerForPlayer:2] || [self controllerForPlayer:3] || [self controllerForPlayer:4])) {
         [self pollControllers];
     }
 
