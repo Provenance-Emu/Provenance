@@ -620,13 +620,29 @@ void extract_bundles();
     }
     ILOG(@"Video driver set to: %@", content);
 
-    /// Set video settings for Hatari to ensure correct color rendering
-    /// Note: We don't set video_pixel_format here as cores should set it themselves via SET_PIXEL_FORMAT
-    /// Setting it in config can conflict with cores that request different formats (e.g., geolith uses XRGB8888)
+    /// Set video settings for Hatari (Atari ST) to ensure correct color rendering.
+    ///
+    /// Pixel format: Hatari libretro uses RETRO_PIXEL_FORMAT_RGB565 by default.
+    /// This is set by the core via RETRO_ENVIRONMENT_SET_PIXEL_FORMAT during retro_load_game().
+    /// RetroArch's runloop stores this in video_st->pix_fmt and the Metal/GL video driver
+    /// converts it appropriately. We do NOT override video_pixel_format in the config file
+    /// as that can conflict with cores requesting different formats (e.g., geolith uses XRGB8888).
+    ///
+    /// hatari.cfg nMonitorType values (in hatari.cfg [Screen] section):
+    ///   0 = Color ST monitor  (correct for most color games - default)
+    ///   1 = Monochrome monitor (SM124 - only for mono games, renders in B&W)
+    ///   2 = VGA monitor       (for Atari STE/Falcon VGA output)
+    ///   3 = TV output         (for RF/composite output simulation)
+    ///
+    /// Wrong colors after boot are typically caused by:
+    ///   1. nMonitorType != 0 (using mono/VGA mode for a color game)
+    ///   2. TOS image corruption or byte-order issues (see Spike 2823)
+    ///   3. nSpec512Threshold too low (causes Spectrum 512 dithering artifacts)
+    /// See: hatari.cfg [Screen] section - nMonitorType = 0, nSpec512Threshold = 4
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
         content = [content stringByAppendingString:@"video_scale_integer = \"true\"\n"];
         content = [content stringByAppendingString:@"video_smooth = \"false\"\n"];
-        ILOG(@"Hatari video settings: integer scaling, no smoothing (pixel format set by core)");
+        ILOG(@"Hatari video settings: integer scaling, no smoothing (pixel format RGB565 set by core via SET_PIXEL_FORMAT)");
     }
 
     /// Only sync bundled resources on first-run or version update
