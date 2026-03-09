@@ -136,15 +136,12 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
             {
                 if (*Data)
                 {
-                    [current rumble];
-//                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0xFFFF);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0xFFFF);
+                    // Route rumble pak command to HapticsManager via the player-aware method.
+                    [current rumbleForPlayer:Control];
                 }
                 else
                 {
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0);
+                    [current stopRumbleForPlayer:Control];
                 }
             }
 //        }
@@ -380,5 +377,8 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 - (BOOL)supportsRumble {
     return YES;
 }
+
+// rumbleForPlayer: and stopRumbleForPlayer: are @objc Swift methods in
+// PVMupen64Plus-NXCore+Rumble.swift that dispatch to HapticsManager on the main actor.
 
 @end

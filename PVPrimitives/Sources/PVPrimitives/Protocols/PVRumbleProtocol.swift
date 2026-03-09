@@ -151,6 +151,21 @@ public extension PVRumbleProtocol {
     func stopAllRumble() {
         stopRumble(player: nil)
     }
+
+    /// Convenience: trigger a symmetric full-intensity rumble pulse.
+    func rumblePulse(duration: TimeInterval = 0.3) {
+        rumble(RumbleEvent(lowFrequency: 1.0, highFrequency: 1.0, duration: duration))
+    }
+
+    /// Convenience: trigger a light high-frequency buzz (e.g., UI feedback).
+    func rumbleBuzz(duration: TimeInterval = 0.1) {
+        rumble(RumbleEvent(lowFrequency: 0.0, highFrequency: 0.8, duration: duration))
+    }
+
+    /// Convenience: trigger a heavy low-frequency thump (e.g., N64 rumble pak).
+    func rumbleThump(duration: TimeInterval = 0.5) {
+        rumble(RumbleEvent(lowFrequency: 1.0, highFrequency: 0.2, duration: duration))
+    }
 }
 
 // MARK: - Helpers

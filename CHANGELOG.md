@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   overlay for pointer-based computer cores (#2587–#2595, #2620–#2622)
 - **DS Dual-Screen Skins** — Phases 1-3: `supportsSkins` flag, DefaultDeltaSkin dual-screen
   layout, touch input routing for native DS cores (#2612)
-- **Haptics System** — `PVRumbleProtocol` in PVCoreBridge; tiers 1-4 roadmap issued (#2751, #2746)
+- **Haptics System (Tier 1+2)** — `PVRumbleProtocol` in PVPrimitives (platform-agnostic, no GameController/UIKit import); `PVHapticsLocality` enum; refactored `HapticsManager` in PVCoreBridge with full `rumble(lowFrequency:highFrequency:duration:player:)` API; completed `EmulatorCoreRumbleDataSource.rumble(player:)` implementation; N64 RumblePak (Mupen64Plus) wired to CHHapticEngine via player-aware `rumbleForPlayer:` dispatch (#2742, #2743)
 - **N64 Transfer Pak** — `TransferPakSupport` protocol enabling Pokémon Stadium and other
   Transfer Pak games (#2751)
 - **Per-Game Core Options** — MD5 wired through `valueForOption` reads; scoped reset helpers

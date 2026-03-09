@@ -67,12 +67,11 @@ public extension EmulatorCoreControllerDataSource {
 #if canImport(CoreHaptics)
 import CoreHaptics
 public extension EmulatorCoreRumbleDataSource {
-//    var supportsRumble: Bool { false }
 
     @MainActor
     func rumble() {
         Task {
-            rumble(player: 0)
+            await MainActor.run { rumble(player: 0) }
         }
     }
 }
@@ -87,49 +86,47 @@ public extension EmulatorCoreRumbleDataSource {
         return await HapticsManager.shared.hapticsEngine(forPlayer: player)
     }
 
+    /// Trigger a default rumble pulse (1.0 low-frequency, 0.5 high-frequency, 0.3s) for `player`.
     @MainActor
     func rumble(player: Int) {
         guard self.supportsRumble else {
             WLOG("Rumble called on core that doesn't support it")
             return
         }
-
         if #available(iOS 14.0, tvOS 14.0, *) {
-            Task { [weak self] in
-                let haptics = await self?.hapticEngine(for: player)
-                if let haptics =  haptics {
-                    #warning("deviceHasHaptic incomplete")
-                    // TODO: haptic vibrate
-                }
-            }
-        } else {
-            // Fallback on earlier versions
+            HapticsManager.shared.rumble(lowFrequency: 1.0, highFrequency: 0.5, duration: 0.3, player: player)
+        }
+    }
+
+    /// Trigger a rumble with explicit motor intensities and duration for `player`.
+    @MainActor
+    func rumble(lowFrequency: Float, highFrequency: Float, duration: TimeInterval, player: Int) {
+        guard self.supportsRumble else { return }
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            HapticsManager.shared.rumble(lowFrequency: lowFrequency, highFrequency: highFrequency, duration: duration, player: player)
+        }
+    }
+
+    /// Stop all rumble for `player`.
+    @MainActor
+    func stopRumble(player: Int = 0) {
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            HapticsManager.shared.stopRumble(player: player)
         }
     }
 
     @MainActor func rumblePhone() {
 #if os(iOS) && !targetEnvironment(macCatalyst)
-
-        let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
-
-        DispatchQueue.main.async {
+        // Use CHHapticEngine via HapticsManager if available; fall back to system vibration.
+        if #available(iOS 14.0, *) {
+            rumble(player: 0)
+        } else {
+            let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
             if deviceHasHaptic {
-            #warning("deviceHasHaptic incomplete")
-
-                //                AudioServicesStopSystemSound(kSystemSoundID_Vibrate)
-
-                let vibrationLength = 30
-
-                // Must use NSArray/NSDictionary to prevent crash.
-                let pattern: [Any] = [false, 0, true, vibrationLength]
-                let _: [String: Any] = ["VibePattern": pattern, "Intensity": 1]
-
-                //                AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary as NSDictionary)
-                self.rumble()
+                let generator = UIImpactFeedbackGenerator(style: .heavy)
+                generator.prepare()
+                generator.impactOccurred()
             }
-            //            else {
-            //                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-            //            }
         }
 #endif
     }
