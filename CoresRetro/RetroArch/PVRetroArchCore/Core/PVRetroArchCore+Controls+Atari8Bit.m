@@ -68,5 +68,19 @@ extern GCController *touch_controller;
     }
 }
 
+#pragma mark - Keyboard Support
+
+// Atari 8-bit computers used a keyboard as primary input
+- (BOOL)gameSupportsKeyboard { return YES; }
+- (BOOL)requiresKeyboard { return YES; }
+
+- (void)keyDown:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    apple_input_keyboard_event(true, (unsigned)key, 0, 0, RETRO_DEVICE_KEYBOARD);
+}
+
+- (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    apple_input_keyboard_event(false, (unsigned)key, 0, 0, RETRO_DEVICE_KEYBOARD);
+}
+
 // TODO: Mouse responder
 @end
