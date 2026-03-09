@@ -85,10 +85,6 @@ public final class GCControllerHapticsManager {
         registerNotifications()
     }
 
-    deinit {
-        notificationObservers.forEach { NotificationCenter.default.removeObserver($0) }
-    }
-
     private func registerNotifications() {
         let nc = NotificationCenter.default
 
@@ -249,9 +245,9 @@ public final class GCControllerHapticsManager {
             VLOG("[GCHaptics] Engine stopped: \(reason)")
         }
 
-        engine.resetHandler = {
+        engine.resetHandler = { [weak engine] in
             ILOG("[GCHaptics] Engine reset — restarting")
-            try? engine.start()
+            try? engine?.start()
         }
 
         // Start the engine once at creation time. The resetHandler handles recovery
@@ -289,9 +285,7 @@ public final class GCControllerHapticsManager {
             if controller.physicalInputProfile is GCDualSenseGamepad { return .dualSense }
         }
         if controller.physicalInputProfile is GCDualShockGamepad { return .dualShock4 }
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            if controller.physicalInputProfile is GCXboxGamepad { return .xbox }
-        }
+        if controller.physicalInputProfile is GCXboxGamepad { return .xbox }
 
         let vendor = controller.vendorName?.lowercased() ?? ""
         let category = controller.productCategory.lowercased()
