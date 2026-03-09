@@ -1292,6 +1292,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Then organize cue/bin files for any remaining CUEs not claimed by M3Us
         self.organizeCueAndBinFiles(in: &workQueue)
 
+        // Attach any orphaned .sbi files to their matching CUE items
+        // (SBI files can also arrive standalone when the user adds them after the initial import)
+        self.organizeSBIFiles(in: &workQueue)
+
             ILOG("GameImporter: preProcessQueue() - attempting to replace queue (generation \(snapshotGeneration))")
 
             // Attempt to update queue only if snapshot is still current
@@ -1821,6 +1825,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     }
                 }
             }
+            // Also look for a matching .sbi file next to each CUE (LibCrypt / PSX region protection)
+            detectAdjacentSBIFile(forCUEURL: resolvedURL, primaryGameItem: primaryGameItem)
         }
     }
 
@@ -1958,6 +1964,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                 cueItem.expectedAssociatedFileNames = currentExpected.isEmpty ? nil : currentExpected
             }
             cueItem.fileType = .cdRom // CUE always implies CD-ROM
+
+            // Detect adjacent .sbi file (LibCrypt subchannel data for PSX region protection)
+            detectAdjacentSBIFile(forCUEURL: cueURL, primaryGameItem: cueItem)
 
             // Set CD-ROM systems for CUE files so they show the right system selection list
             if cueItem.systems.isEmpty {

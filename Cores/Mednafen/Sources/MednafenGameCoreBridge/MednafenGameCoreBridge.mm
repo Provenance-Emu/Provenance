@@ -950,49 +950,86 @@ static void emulation_run(BOOL skipFrame) {
             Mednafen::MDFNI_SetSettingB("psx.input.pport1.multitap", false);
             Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", false);
         }
-        // PSX: Check if SBI file is required
+        // PSX: Check if SBI file is required (LibCrypt copy-protection)
         if ([MednafenGameCoreOptions sbiRequiredGames][self.romSerial])
         {
             self->_isSBIRequired = YES;
         }
 
-        // Handle required SBI files for games
-        // TODO: Handle SBI Games
-        //        if(_isSBIRequired && _allCueSheetFiles.count && ([path.pathExtension.lowercaseString isEqualToString:@"cue"] || [path.pathExtension.lowercaseString isEqualToString:@"m3u"]))
-        //        {
-        //            NSURL *romPath = [NSURL fileURLWithPath:path.stringByDeletingLastPathComponent];
+        // Check that required SBI files are present next to their CUE sheets.
         //
-        //            BOOL missingFileStatus = NO;
-        //            NSUInteger missingFileCount = 0;
-        //            NSMutableString *missingFilesList = [NSMutableString string];
+        // Mednafen automatically loads <disc>.sbi when opening <disc>.cue, but if the file is
+        // absent the LibCrypt check fails silently and the game freezes after the BIOS screen.
+        // Surface a descriptive error early so the user knows exactly what is missing.
         //
-        //            // Build a path to SBI file and check if it exists
-        //            for(NSString *cueSheetFile in _allCueSheetFiles)
-        //            {
-        //                NSString *extensionlessFilename = cueSheetFile.stringByDeletingPathExtension;
-        //                NSURL *sbiFile = [romPath URLByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sbi"]];
-        //
-        //                // Check if the required SBI files exist
-        //                if(![sbiFile checkResourceIsReachableAndReturnError:nil])
-        //                {
-        //                    missingFileStatus = YES;
-        //                    missingFileCount++;
-        //                    [missingFilesList appendString:[NSString stringWithFormat:@"\"%@\"\n\n", extensionlessFilename]];
-        //                }
-        //            }
-        //            // Alert the user of missing SBI files that are required for the game
-        //            if(missingFileStatus)
-        //            {
-        //                NSError *outErr = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:@{
-        //                    NSLocalizedDescriptionKey : missingFileCount > 1 ? @"Required SBI files missing." : @"Required SBI file missing.",
-        //                    NSLocalizedRecoverySuggestionErrorKey : missingFileCount > 1 ? [NSString stringWithFormat:@"To run this game you need SBI files for the discs:\n\n%@Drag and drop the required files onto the game library window and try again.\n\nFor more information, visit:\nhttps://github.com/OpenEmu/OpenEmu/wiki/User-guide:-CD-based-games#q-i-have-a-sbi-file", missingFilesList] : [NSString stringWithFormat:@"To run this game you need a SBI file for the disc:\n\n%@Drag and drop the required file onto the game library window and try again.\n\nFor more information, visit:\nhttps://github.com/OpenEmu/OpenEmu/wiki/User-guide:-CD-based-games#q-i-have-a-sbi-file", missingFilesList],
-        //                    }];
-        //
-        //                *error = outErr;
-        //
-        //                return NO;
-        //            }
-        //        }
+        // For .cue files  → check for <basename>.sbi in the same directory.
+        // For .m3u files  → parse the m3u, collect .cue entries, check each one's .sbi.
+        if (self->_isSBIRequired) {
+            NSString *pathExt = path.pathExtension.lowercaseString;
+            NSString *romDirectory = path.stringByDeletingLastPathComponent;
+            NSMutableArray<NSString *> *cueBasenames = [NSMutableArray array];
+
+            if ([pathExt isEqualToString:@"cue"]) {
+                [cueBasenames addObject:path.stringByDeletingPathExtension.lastPathComponent];
+            } else if ([pathExt isEqualToString:@"m3u"]) {
+                // Parse m3u – each non-comment line that ends in .cue is a disc
+                NSString *m3uString = [NSString stringWithContentsOfFile:path
+                                                                encoding:NSUTF8StringEncoding
+                                                                   error:nil];
+                NSArray<NSString *> *lines = [m3uString componentsSeparatedByCharactersInSet:
+                                              [NSCharacterSet newlineCharacterSet]];
+                for (NSString *line in lines) {
+                    NSString *trimmed = [line stringByTrimmingCharactersInSet:
+                                        [NSCharacterSet whitespaceCharacterSet]];
+                    if (trimmed.length == 0 || [trimmed hasPrefix:@"#"]) { continue; }
+                    if ([trimmed.pathExtension.lowercaseString isEqualToString:@"cue"]) {
+                        [cueBasenames addObject:trimmed.stringByDeletingPathExtension.lastPathComponent];
+                    }
+                }
+            }
+
+            if (cueBasenames.count > 0) {
+                NSMutableArray<NSString *> *missingDiscs = [NSMutableArray array];
+                NSFileManager *fm = [NSFileManager defaultManager];
+
+                for (NSString *basename in cueBasenames) {
+                    NSString *sbiPath = [[romDirectory stringByAppendingPathComponent:basename]
+                                         stringByAppendingPathExtension:@"sbi"];
+                    if (![fm fileExistsAtPath:sbiPath]) {
+                        [missingDiscs addObject:basename];
+                        WLOG(@"MednafenGameCoreBridge: Missing SBI file for LibCrypt disc: %@.sbi", basename);
+                    }
+                }
+
+                if (missingDiscs.count > 0 && error) {
+                    NSString *discList = [[missingDiscs valueForKey:@"description"]
+                                          componentsJoinedByString:@"\n"];
+                    BOOL plural = missingDiscs.count > 1;
+                    NSString *title = plural
+                        ? @"Required SBI files missing."
+                        : @"Required SBI file missing.";
+                    NSString *recovery = [NSString stringWithFormat:
+                        @"This game uses Sony LibCrypt copy-protection and requires %@ SBI %@ "
+                        @"to run correctly.\n\n"
+                        @"Missing %@:\n%@\n\n"
+                        @"Drop the .sbi file(s) into the same folder as the .cue file(s) and try again.\n\n"
+                        @"SBI files are available at: https://github.com/Provenance-Emu/Provenance/wiki/SBI-files",
+                        plural ? @"matching" : @"a matching",
+                        plural ? @"files" : @"file",
+                        plural ? @"files" : @"file",
+                        discList];
+
+                    NSDictionary *userInfo = @{
+                        NSLocalizedDescriptionKey:            title,
+                        NSLocalizedRecoverySuggestionErrorKey: recovery
+                    };
+                    *error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                                                 code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                             userInfo:userInfo];
+                    return NO;
+                }
+            }
+        }
     } else if (self.systemType == MednaSystemLynx) {
         // lynx sets all of these in 1 variable, so setting the one we use
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
