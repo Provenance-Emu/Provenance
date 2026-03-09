@@ -77,7 +77,7 @@ public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
                     requiresRestart: true),
                       defaultValue: true)
  
-            static let hq_pqg: CoreOption =
+            static let hq_psg: CoreOption =
                 .bool(.init(
                     title: "HQ PSG",
                     description: "High-quality PSG resampling (slower)",
@@ -85,11 +85,16 @@ public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
                       defaultValue: true)
             
             static let filter: CoreOption =
-                .bool(.init(
+                .enumeration(.init(
                     title: "Audio Filtering",
-                    description: "Apply a low-pass filter",
+                    description: "Audio filter mode. 0=off, 1=low-pass, 2=3-band EQ.",
                     requiresRestart: true),
-                      defaultValue: true)
+                             values: [
+                               .init(title: "Off", description: "", value: 0),
+                               .init(title: "Low-pass", description: "", value: 1),
+                               .init(title: "3-band EQ", description: "", value: 2),
+                             ],
+                defaultValue: 1)
             
             
             static let ym2413: CoreOption =
@@ -134,7 +139,7 @@ public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
 //                             ])
 //            }()
             
-            static var allOptions: [CoreOption] = [hq_fm, hq_pqg, filter, ym2413, ym2612, mono]
+            static var allOptions: [CoreOption] = [hq_fm, hq_psg, filter, ym2413, ym2612, mono]
         }
     }
     
@@ -165,8 +170,8 @@ public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
 @objc
 extension PVCoreGenesisPlusOptions {    
     @objc public static var hq_fm: Bool { valueForOption(Options.Sound.hq_fm).asBool }
-    @objc public static var hq_psg: Bool { valueForOption(Options.Sound.hq_fm).asBool }
-    @objc public static var filter: Int { valueForOption(Options.Sound.hq_fm).asInt! }
+    @objc public static var hq_psg: Bool { valueForOption(Options.Sound.hq_psg).asBool }
+    @objc public static var filter: Int { valueForOption(Options.Sound.filter).asInt! }
     @objc public static var ym2413: Int { valueForOption(Options.Sound.ym2413).asInt! }
     @objc public static var ym2612: Int { valueForOption(Options.Sound.ym2612).asInt! }
     @objc public static var mono: Bool { valueForOption(Options.Sound.mono).asBool }

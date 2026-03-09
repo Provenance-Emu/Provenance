@@ -551,8 +551,9 @@ static bool environment_callback(unsigned cmd, void *data)
 	  }
 
     
+    [self readOptions];
+
     if (retro_load_game(&info)) {
-        [self readOptions];
 
         if ([self.batterySavesPath length]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
