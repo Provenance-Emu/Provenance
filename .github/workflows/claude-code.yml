@@ -127,7 +127,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
           allowed_bots: 'github-actions[bot]'
-          claude_args: "--allowedTools 'Bash(gh issue comment:*),Bash(gh pr comment:*),Bash(gh pr create:*),Bash(gh pr edit:*),Bash(gh pr view:*),Bash(gh pr merge:*),Bash(gh issue edit:*),Bash(gh label:*),Bash(gh api:*),Bash(git:*),Bash(swift:*),Bash(swiftlint:*),Bash(cat:*),Bash(sed:*),Bash(date:*),Read,Write,Edit,Glob,Grep'"
+          claude_args: "--allowedTools 'Bash(gh issue comment:*),Bash(gh issue create:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue close:*),Bash(gh pr comment:*),Bash(gh pr create:*),Bash(gh pr edit:*),Bash(gh pr view:*),Bash(gh pr merge:*),Bash(gh pr list:*),Bash(gh issue edit:*),Bash(gh label:*),Bash(gh api:*),Bash(gh workflow:*),Bash(git:*),Bash(swift:*),Bash(swiftlint:*),Bash(cat:*),Bash(sed:*),Bash(date:*),Bash(python3:*),Read,Write,Edit,Glob,Grep'"
           prompt: |
             You are working on the Provenance emulator app repository.
             Read CLAUDE.md for project conventions and module structure.
