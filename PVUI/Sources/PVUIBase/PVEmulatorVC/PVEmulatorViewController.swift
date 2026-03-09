@@ -31,13 +31,21 @@ import ZipArchive
 private weak var staticSelf: PVEmualatorControllerProtocol?
 
 func uncaughtExceptionHandler(exception _: NSException?) {
-    if let staticSelf = staticSelf, staticSelf.core.supportsSaveStates {
-        Task.detached(priority: .utility) { @MainActor in
+    guard let staticSelf = staticSelf else { return }
+    let core = staticSelf.core
+    Task.detached(priority: .utility) { @MainActor in
+        // First create a save state snapshot (requires core to be in a live state)
+        if core.supportsSaveStates {
             do {
                 try await staticSelf.autoSaveState()
             } catch {
                 ELOG("AutoSave error: \(error.localizedDescription)")
             }
+        }
+        // Then stop emulation to flush battery saves — cores write SRAM/battery data in stopEmulation
+        if core.isOn {
+            ILOG("uncaughtExceptionHandler: stopping emulation to flush battery saves")
+            core.stopEmulation()
         }
     }
 }
@@ -441,6 +449,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillTerminate(_:)), name: UIApplication.willTerminateNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: UIScreen.didConnectNotification, object: nil)
@@ -2636,6 +2645,15 @@ extension PVEmulatorViewController {
     }
 
     @objc func appDidEnterBackground(_: Notification?) {}
+
+    /// Flush battery saves when the app is about to be terminated.
+    /// Cores write SRAM/battery data during stopEmulation, so we call it here
+    /// to ensure saves are not lost if the app is force-quit or killed by the OS.
+    @objc func appWillTerminate(_: Notification?) {
+        guard core.isOn else { return }
+        ILOG("appWillTerminate: stopping emulation to flush battery saves")
+        core.stopEmulation()
+    }
 
     @objc func appWillResignActive(_: Notification?) {
         if !core.isOn {
