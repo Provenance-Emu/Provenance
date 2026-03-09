@@ -5761,6 +5761,7 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>st</string>
+			<string>msa</string>
 			<string>mas</string>
 			<string>zip</string>
 			<string>stx</string>
