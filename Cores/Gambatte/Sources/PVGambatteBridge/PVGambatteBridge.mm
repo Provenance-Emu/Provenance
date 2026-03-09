@@ -131,7 +131,12 @@ public:
     double outSampleRate = inSampleRate * mul / div;
     sampleRate = outSampleRate; // 47994.326636
 
-    if (gb.load([path UTF8String]) != 0) {
+    unsigned loadFlags = 0;
+    if ([PVGBEmulatorCoreOptions forceDMG]) {
+        loadFlags |= gambatte::GB::FORCE_DMG;
+    }
+
+    if (gb.load([path UTF8String], loadFlags) != 0) {
         if (error) {
             NSDictionary *userInfo = @{
                                        NSLocalizedDescriptionKey: @"Failed to load game.",
@@ -148,12 +153,13 @@ public:
         return NO;
     }
 
-    // Load built-in GBC palette for monochrome games if supported
-	if (gb.isCgb()) {
+    // Load built-in GBC palette for monochrome games if supported.
+    // When FORCE_DMG is enabled, treat the game as non-color regardless of ROM header.
+    if (gb.isCgb()) {
         displayMode = [PVGBEmulatorCoreOptions getPalette];
-	} else {
-		[self loadPalette];
-	}
+    } else {
+        [self loadPalette];
+    }
     return YES;
 }
 

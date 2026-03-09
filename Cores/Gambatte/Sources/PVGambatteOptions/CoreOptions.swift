@@ -17,16 +17,28 @@ import libresample
 @objc public class PVGBEmulatorCoreOptions: NSObject, CoreOptions {
     public static var options: [CoreOption] {
         var options = [CoreOption]()
-        
+
+        let consoleGroup = CoreOption.group(.init(title: "Console",
+                                                  description: nil),
+                                            subOptions: [Options.forceDMGOption])
+
         let videoGroup = CoreOption.group(.init(title: "Video",
                                                 description: "Change the way Gambatte renders games."),
                                           subOptions: [Options.paletteOption])
-        
+
+        options.append(consoleGroup)
         options.append(videoGroup)
         return options
     }
-    
+
     public enum Options {
+        // MARK: Console
+        public static var forceDMGOption: CoreOption {
+            .bool(.init(title: "forceDMG",
+                        description: "Force Monochromatic Mode — run GBC games as if on a non-color Game Boy.",
+                        requiresRestart: true), defaultValue: false)
+        }
+
         public static var paletteValues: [CoreOptionEnumValue] {
             CoreOptionEnumValue.values(fromArray:
                                             [
@@ -57,6 +69,8 @@ import libresample
 }
 
 @objc extension PVGBEmulatorCoreOptions {
+    @objc static public var forceDMG: Bool { valueForOption(Options.forceDMGOption) }
+
     @objc static public func getPalette() -> GBPalette {
         let index: Int = valueForOption(Options.paletteOption)
         guard index >= 0,
