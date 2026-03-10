@@ -1,8 +1,6 @@
 name: Cursor Agent
 
 on:
-  issues:
-    types: [opened, labeled]
   workflow_dispatch:
     inputs:
       issue_number:
@@ -37,16 +35,7 @@ concurrency:
 
 jobs:
   cursor-agent:
-    if: |
-      (
-        github.event_name == 'issues' &&
-        (
-          (github.event.action == 'labeled' && github.event.label.name == 'cursor-work') ||
-          (github.event.action == 'opened' && contains(toJSON(github.event.issue.labels.*.name), 'cursor-work'))
-        ) &&
-        !contains(toJSON(github.event.issue.labels.*.name), 'agent-work')
-      ) ||
-      github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:

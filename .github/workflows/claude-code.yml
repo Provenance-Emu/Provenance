@@ -390,10 +390,15 @@ jobs:
 
       - name: Dispatch Cursor fallback
         id: cursor_fallback
-        if: steps.claude_run.outcome == 'failure' && secrets.CURSOR_API_KEY != ''
+        if: steps.claude_run.outcome == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
         run: |
+          if [ -z "${CURSOR_API_KEY:-}" ]; then
+            echo "dispatched=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           EVENT_NAME="${{ github.event_name }}"
           ACTION="${{ github.event.inputs.action }}"
           ISSUE_NUMBER="${{ github.event.issue.number }}"
