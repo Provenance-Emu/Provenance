@@ -693,3 +693,9 @@ public extension Defaults.Keys {
     /// Number of times the user has dismissed the support nag screen
     static let nagDismissCount = Key<Int>("nagDismissCount", default: 0)
 }
+
+// MARK: - JIT Onboarding Settings
+public extension Defaults.Keys {
+    /// Set of core category identifiers for which the JIT onboarding has been dismissed ("Don't show again")
+    static let jitOnboardingDismissedCategories = Key<Set<String>>("jitOnboardingDismissedCategories", default: [])
+}
