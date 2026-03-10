@@ -6,7 +6,7 @@ extension PVEmulatorViewController {
     public func showSwapDiscsMenu() {
         guard let core = self.core as? (PVEmulatorCore & DiscSwappable) else {
             presentError("Internal error: No core found.", source: self.view)
-            isShowingMenu = false
+            // Don't resume emulation here - the presenting menu handles that.
             enableControllerInput(false)
             return
         }
@@ -14,8 +14,7 @@ extension PVEmulatorViewController {
         let numberOfDiscs = core.numberOfDiscs
         guard numberOfDiscs > 1 else {
             presentError("Game only supports 1 disc.", source: self.view)
-            core.setPauseEmulation(false)
-            isShowingMenu = false
+            // Don't resume emulation here - the presenting menu handles that.
             enableControllerInput(false)
             return
         }
@@ -35,7 +34,8 @@ extension PVEmulatorViewController {
                     core.swapDisc(number: index)
                 })
 
-                core.setPauseEmulation(false)
+                // Disc swap is an intentional resume action — go through the proper
+                // isShowingMenu setter so the didSet observer manages the pause state.
                 self.isShowingMenu = false
                 self.enableControllerInput(false)
             }))
@@ -43,8 +43,7 @@ extension PVEmulatorViewController {
 
         // Add cancel action
         actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { [unowned self] _ in
-            core.setPauseEmulation(false)
-            self.isShowingMenu = false
+            // Don't resume emulation here - the presenting menu handles that.
             self.enableControllerInput(false)
         }))
 
