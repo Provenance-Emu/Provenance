@@ -82,8 +82,8 @@ public extension EmulatorCoreRumbleDataSource {
 
     @MainActor
     @available(iOS 14.0, tvOS 14.0, *)
-    func hapticEngine(for player: Int) async -> CHHapticEngine? {
-        return await HapticsManager.shared.hapticsEngine(forPlayer: player)
+    func hapticEngine(for player: Int) -> CHHapticEngine? {
+        return HapticsManager.shared.hapticsEngine(forPlayer: player)
     }
 
     /// Trigger a default rumble pulse (1.0 low-frequency, 0.5 high-frequency, 0.3s) for `player`.

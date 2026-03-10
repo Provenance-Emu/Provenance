@@ -8,9 +8,11 @@
 import Foundation
 import PVLogging
 #if canImport(GameController) && canImport(CoreHaptics)
-import GameController
-import CoreHaptics
+@preconcurrency import GameController
+@preconcurrency import CoreHaptics
 
+/// All access is confined to the main actor; `@unchecked Sendable` is safe
+/// because `@MainActor` guarantees single-threaded access.
 @MainActor
 @available(iOS 14.0, tvOS 14.0, *)
 internal final class HapticsManager: @unchecked Sendable {
@@ -19,7 +21,7 @@ internal final class HapticsManager: @unchecked Sendable {
 
     // MARK: - Engine construction
 
-    static private func buildDeviceEngine() -> CHHapticEngine? {
+    nonisolated private static func buildDeviceEngine() -> CHHapticEngine? {
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return nil }
         do {
             let engine = try CHHapticEngine()
@@ -40,7 +42,7 @@ internal final class HapticsManager: @unchecked Sendable {
         }
     }
 
-    static private func buildControllerEngine(for controller: GCController) -> CHHapticEngine? {
+    nonisolated private static func buildControllerEngine(for controller: GCController) -> CHHapticEngine? {
         guard let haptics = controller.haptics,
               let engine = haptics.createEngine(withLocality: GCHapticsLocality.default) else { return nil }
         engine.isAutoShutdownEnabled = true
@@ -62,7 +64,6 @@ internal final class HapticsManager: @unchecked Sendable {
     private var controllerEngines: [Int: CHHapticEngine] = [:]
 
     private init() {
-        // Pre-create device engine for player 0; others are created on-demand.
         if let engine = HapticsManager.buildDeviceEngine() {
             deviceEngines[0] = engine
         }
@@ -75,31 +76,29 @@ internal final class HapticsManager: @unchecked Sendable {
         NotificationCenter.default.addObserver(
             forName: .GCControllerDidConnect, object: nil, queue: .main
         ) { [weak self] note in
-            guard let self, let controller = note.object as? GCController else { return }
+            guard let self,
+                  let controller = note.object as? GCController else { return }
             let index = Int(controller.playerIndex.rawValue)
             guard index >= 0 else { return }
             if let engine = HapticsManager.buildControllerEngine(for: controller) {
-                MainActor.assumeIsolated {
-                    self.controllerEngines[index] = engine
-                }
+                self.controllerEngines[index] = engine
             }
         }
 
         NotificationCenter.default.addObserver(
             forName: .GCControllerDidDisconnect, object: nil, queue: .main
         ) { [weak self] note in
-            guard let self, let controller = note.object as? GCController else { return }
+            guard let self,
+                  let controller = note.object as? GCController else { return }
             let index = Int(controller.playerIndex.rawValue)
-            MainActor.assumeIsolated {
-                self.controllerEngines.removeValue(forKey: index)
-            }
+            self.controllerEngines.removeValue(forKey: index)
         }
     }
 
     // MARK: - Public API
 
     /// Returns the device Taptic Engine for the given player index, creating it if needed.
-    func hapticsEngine(forPlayer player: Int) async -> CHHapticEngine? {
+    func hapticsEngine(forPlayer player: Int) -> CHHapticEngine? {
         if let existing = deviceEngines[player] { return existing }
         let engine = HapticsManager.buildDeviceEngine()
         deviceEngines[player] = engine
@@ -117,13 +116,11 @@ internal final class HapticsManager: @unchecked Sendable {
         let clampedHigh = min(max(highFrequency, 0), 1)
         let clampedDuration = max(duration, 0.05)
 
-        // Fire on device engine
         if let engine = deviceEngines[player] ?? HapticsManager.buildDeviceEngine() {
             deviceEngines[player] = engine
             playPattern(on: engine, intensity: max(clampedLow, clampedHigh), sharpness: clampedHigh, duration: clampedDuration)
         }
 
-        // Fire on controller engine if connected
         if let engine = controllerEngines[player] {
             playPattern(on: engine, intensity: max(clampedLow, clampedHigh), sharpness: clampedHigh, duration: clampedDuration)
         }

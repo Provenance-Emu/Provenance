@@ -218,7 +218,7 @@ public struct RoadmapSummarySection: View {
             VStack(spacing: 4) {
                 Text("\(Int(overallProgress * 100))%")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundStyle(.retroBlue)
+                    .foregroundStyle(Color.retroBlue)
                 Text("Overall")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
