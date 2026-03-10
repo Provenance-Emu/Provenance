@@ -39,9 +39,9 @@ public final class DOLJitManager {
 #if targetEnvironment(simulator)
         jitType = .notRestricted
 #elseif NONJAILBROKEN
-        if #available(iOS 14.5, *) {
+        if #available(iOS 14.5, tvOS 14.5, *) {
             jitType = .debugger
-        } else if #available(iOS 14.4, *) {
+        } else if #available(iOS 14.4, tvOS 14.4, *) {
             var size = 0
             sysctlbyname("kern.osversion", nil, &size, nil, 0)
             var buildString = [CChar](repeating: 0, count: size)
@@ -53,15 +53,15 @@ public final class DOLJitManager {
             } else {
                 jitType = .debugger
             }
-        } else if #available(iOS 14.2, *) {
+        } else if #available(iOS 14.2, tvOS 14.2, *) {
             if canAcquireJitByUnsigned() {
                 jitType = .allowUnsigned
             } else {
                 jitType = .debugger
             }
-        } else if #available(iOS 14, *) {
+        } else if #available(iOS 14.0, tvOS 14.0, *) {
             jitType = .debugger
-        } else if #available(iOS 13.5, *) {
+        } else if #available(iOS 13.5, tvOS 13.4, *) {
             jitType = .ptrace
         } else {
             jitType = .debugger
@@ -265,7 +265,7 @@ public final class DOLJitManager {
             return false
         }
 
-        if #available(iOS 13.4, *) {
+        if #available(iOS 13.4, tvOS 13.4, *) {
             if !HasValidCodeSignature() {
                 return false
             }

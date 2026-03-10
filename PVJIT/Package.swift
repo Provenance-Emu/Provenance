@@ -6,8 +6,7 @@ let package = Package(
     name: "PVJIT",
     platforms: [
         .iOS(.v17),
-        .tvOS(.v17),
-        .visionOS(.v1)
+        .tvOS(.v17)
     ],
     products: [
         .library(
@@ -24,15 +23,14 @@ let package = Package(
             type: .static,
             targets: ["PVJIT"]
         ),
+        .library(
+            name: "JITManager",
+            targets: ["JITManager"]
+        ),
 
 //        .library(
 //            name: "FastmemUtil",
 //            targets: ["FastmemUtil"]
-//        ),
-//
-//        .library(
-//            name: "JITManager",
-//            targets: ["JITManager"]
 //        ),
     ],
 
@@ -53,13 +51,9 @@ let package = Package(
                 "SideKit",
                 "JITManager",
                 "FastmemUtil"
-			],
-            resources: [
-                .process("Resources/")
             ],
             linkerSettings: [
-				.linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
-                .linkedFramework("AppKit", .when(platforms: [.macOS])),
+				.linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),
             ]),
 
 //        .target(

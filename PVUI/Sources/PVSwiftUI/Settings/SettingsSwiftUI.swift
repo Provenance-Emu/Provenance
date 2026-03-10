@@ -1696,7 +1696,7 @@ private struct ControllerRumbleSlider: View {
                 SettingsRow(title: "Controller Rumble Intensity",
                             subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
                             icon: .sfSymbol("waveform.path"))
-                Slider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
+                RetroWaveSlider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
                     Text("Intensity")
                 } minimumValueLabel: {
                     Image(systemName: "speaker")

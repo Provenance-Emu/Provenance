@@ -3,102 +3,211 @@
 // Refer to the license.txt file included.
 
 import Foundation
+import SwiftUI
 import UIKit
 import JITManager
 
-@objc public final class JitWaitScreenViewController : UIViewController {
-  @objc public weak var delegate: JitScreenDelegate?
-  var cancellation_token = DOLCancellationToken()
-  var is_presenting_alert = false
-    
-    public static let module: Bundle = .module
-  
-    public override func viewDidLoad() {
-    NotificationCenter.default.addObserver(self, selector: #selector(jitAcquired), name: NSNotification.Name.DOLJitAcquired, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(altJitFailed), name: NSNotification.Name.DOLJitAltJitFailure, object: nil)
-    
-    DOLJitManager.shared.attemptToAcquireJitByWaitingForDebugger(using: cancellation_token)
-    
-    let device_id = Bundle.main.object(forInfoDictionaryKey: "ALTDeviceID") as! String
-    if (device_id != "dummy") {
-      // ALTDeviceID has been set, so we should attempt to acquire by AltJIT instead
-      // of just sitting around and waiting for a debugger.
-      DOLJitManager.shared.attemptToAcquireJitByAltJIT()
+/// SwiftUI-backed wait screen shared by iOS and tvOS while JIT is being acquired.
+@MainActor
+private final class JitWaitScreenViewModel: ObservableObject {
+    @Published var activeAlert: JitWaitAlert?
+
+    /// Called when the wait flow completes successfully or is cancelled.
+    var onFinish: ((Bool) -> Void)?
+
+    /// Token used while waiting for a remote debugger to attach.
+    let cancellationToken = DOLCancellationToken()
+
+    private var observers: [NSObjectProtocol] = []
+    private var hasStarted = false
+
+    deinit {
+        observers.forEach(NotificationCenter.default.removeObserver)
     }
-    
-    // We can always try this. If the device is not connected to the VPN, then this request will just silently fail.
-    DOLJitManager.shared.attemptToAcquireJitByJitStreamer()
-  }
-  
-    public override func viewDidAppear(_ animated: Bool) {
-    if let auxError = DOLJitManager.shared.getAuxiliaryError() {
-      self.is_presenting_alert = true
-      
-      let controller = UIAlertController(title: "Failed to Activate Workaround", message: "Provenance attempted to enable JIT with a different workaround, but the following error was returned:\n\n\(auxError)\n\nProvenance will now fallback to waiting for a remote debugger.", preferredStyle: .alert)
-      controller.addAction(UIAlertAction.init(title: "OK", style: .default, handler: { _ in
-        self.is_presenting_alert = false
-      }))
-      
-      self.present(controller, animated: true, completion: nil)
+
+    /// Starts JIT acquisition and subscribes to the result notifications once.
+    func start() {
+        guard !hasStarted else { return }
+        hasStarted = true
+
+        let notificationCenter = NotificationCenter.default
+        observers.append(
+            notificationCenter.addObserver(
+                forName: .DOLJitAcquired,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                self?.onFinish?(true)
+            }
+        )
+        observers.append(
+            notificationCenter.addObserver(
+                forName: .DOLJitAltJitFailure,
+                object: nil,
+                queue: .main
+            ) { [weak self] notification in
+                let message: String
+                if let error = notification.userInfo?["nserror"] as? NSError {
+                    message = error.localizedDescription
+                } else {
+                    message = "No error message available."
+                }
+                self?.activeAlert = .altJitFailure(message)
+            }
+        )
+
+        DOLJitManager.shared.attemptToAcquireJitByWaitingForDebugger(using: cancellationToken)
+
+        if let deviceID = Bundle.main.object(forInfoDictionaryKey: "ALTDeviceID") as? String, deviceID != "dummy" {
+            // ALTDeviceID has been set, so we should attempt to acquire by AltJIT instead
+            // of just sitting around and waiting for a debugger.
+            DOLJitManager.shared.attemptToAcquireJitByAltJIT()
+        }
+
+        // We can always try this. If the device is not connected to the VPN, then this
+        // request will just silently fail. Other helper apps, such as SideStore or
+        // StikDebug, can also attach independently while this screen is visible.
+        DOLJitManager.shared.attemptToAcquireJitByJitStreamer()
+
+        if let auxError = DOLJitManager.shared.getAuxiliaryError() {
+            activeAlert = .workaroundFailure(auxError)
+        }
     }
-  }
-  
-  @objc func jitAcquired(notification: Notification) {
-    DispatchQueue.main.async {
-      self.delegate?.didFinishJitScreen(result: true, sender: self)
-    }
-  }
-  
-  @objc func altJitFailed(notification: Notification) {
-    let error_string: String
-    
-    if let error = notification.userInfo!["nserror"] as? NSError {
-      error_string = error.localizedDescription
-    }
-    else {
-      error_string = "No error message available."
-    }
-    
-    while (self.is_presenting_alert) {
-      // Wait for the alert to be dismissed.
-      sleep(1)
-    }
-    
-    DispatchQueue.main.async {
-      let alert = UIAlertController.init(title: "Failed to Contact AltJIT", message: error_string, preferredStyle: .alert)
-      
-      alert.addAction(UIAlertAction.init(title: "Wait for Other Debugger", style: .default, handler: { _ in
-        self.is_presenting_alert = false
-      }))
-      
-      alert.addAction(UIAlertAction.init(title: "Retry AltJIT", style: .default, handler: { _ in
-        self.is_presenting_alert = false
-        
+
+    /// Retries AltJIT after a recoverable connection failure.
+    func retryAltJIT() {
         DOLJitManager.shared.attemptToAcquireJitByAltJIT()
-      }))
-      
-      alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { _ in
-        self.is_presenting_alert = false
-        
-        self.cancellation_token.cancel()
-        
-        self.delegate?.didFinishJitScreen(result: false, sender: self)
-      }))
-      
-      self.is_presenting_alert = true
-      
-      self.present(alert, animated: true, completion: nil)
     }
-  }
-  
-  @IBAction func helpPressed(_ sender: Any) {
-    let url = URL.init(string: "https://wiki.provenance-emu/jit")
-    UIApplication.shared.open(url!, options: [:], completionHandler: nil)
-  }
-  
-  @IBAction func cancelPressed(_ sender: Any) {
-    self.cancellation_token.cancel()
-    
-    self.delegate?.didFinishJitScreen(result: false, sender: self)
-  }
+
+    /// Cancels the wait flow and reports failure back to the presenter.
+    func cancel() {
+        cancellationToken.cancel()
+        onFinish?(false)
+    }
+}
+
+/// Alerts shown while the wait screen is active.
+private enum JitWaitAlert: Identifiable {
+    case workaroundFailure(String)
+    case altJitFailure(String)
+
+    var id: String {
+        switch self {
+        case .workaroundFailure:
+            return "workaroundFailure"
+        case .altJitFailure:
+            return "altJitFailure"
+        }
+    }
+}
+
+/// Shared SwiftUI content for the JIT wait screen.
+private struct JitWaitScreenRootView: View {
+    @Environment(\.openURL) private var openURL
+    @ObservedObject var viewModel: JitWaitScreenViewModel
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [Color(red: 0.08, green: 0.09, blue: 0.15), Color(red: 0.02, green: 0.03, blue: 0.08)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                Image(systemName: "bolt.badge.clock.fill")
+                    .font(.system(size: 64, weight: .semibold))
+                    .foregroundStyle(.yellow)
+
+                Text("Activating Performance Mode")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .multilineTextAlignment(.center)
+
+                Text("Provenance is waiting for debugger-based JIT. If you have SideStore, StikDebug, AltStore, or another debugger helper available, keep it nearby while activation completes.")
+                    .font(.system(size: 20, weight: .medium))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: 760)
+
+                ProgressView()
+                    .controlSize(.large)
+                    .padding(.top, 8)
+
+                HStack(spacing: 16) {
+                    Button("Help") {
+                        if let url = URL(string: "https://wiki.provenance-emu.com/jit-help") {
+                            openURL(url)
+                        }
+                    }
+                    .buttonStyle(.bordered)
+
+                    Button("Cancel", role: .cancel) {
+                        viewModel.cancel()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.red)
+                }
+                .padding(.top, 8)
+            }
+            .padding(.horizontal, 40)
+            .padding(.vertical, 48)
+        }
+        .task {
+            viewModel.start()
+        }
+        .alert(item: $viewModel.activeAlert) { alert in
+            switch alert {
+            case .workaroundFailure(let message):
+                let fallbackMessage =
+                    "Provenance attempted to prepare Performance Mode automatically, " +
+                    "but the following error was returned:\n\n\(message)\n\n" +
+                    "Provenance will now fallback to waiting for a remote debugger."
+                return Alert(
+                    title: Text("Automatic Setup Failed"),
+                    message: Text(fallbackMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            case .altJitFailure(let message):
+                return Alert(
+                    title: Text("Failed to Contact AltJIT"),
+                    message: Text("\(message)\n\nYou can retry AltJIT or continue waiting for another debugger-based helper such as SideStore or StikDebug."),
+                    primaryButton: .default(Text("Retry AltJIT")) {
+                        viewModel.retryAltJIT()
+                    },
+                    secondaryButton: .cancel(Text("Wait for Another Helper")) {
+                    }
+                )
+            }
+        }
+    }
+}
+
+/// Hosting controller bridge so the existing UIKit presentation flow can
+/// present the shared SwiftUI wait screen on both iOS and tvOS.
+public final class JitWaitScreenViewController: UIHostingController<AnyView> {
+    public weak var delegate: JitScreenDelegate? {
+        didSet {
+            viewModel.onFinish = { [weak self] result in
+                guard let self else { return }
+                self.delegate?.didFinishJitScreen(result: result, sender: self)
+            }
+        }
+    }
+
+    private let viewModel: JitWaitScreenViewModel
+
+    public init() {
+        let viewModel = JitWaitScreenViewModel()
+        self.viewModel = viewModel
+        super.init(rootView: AnyView(JitWaitScreenRootView(viewModel: viewModel)))
+        self.viewModel.onFinish = { [weak self] result in
+            guard let self else { return }
+            self.delegate?.didFinishJitScreen(result: result, sender: self)
+        }
+    }
+
+    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }

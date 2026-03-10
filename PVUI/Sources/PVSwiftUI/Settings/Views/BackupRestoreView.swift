@@ -535,7 +535,11 @@ private struct BackupContentsToggle: View {
                 }
             }
         }
+        #if os(tvOS)
+        .toggleStyle(RetroTheme.RetroToggleStyle())
+        #else
         .toggleStyle(SwitchToggleStyle(tint: .retroPink))
+        #endif
     }
 }
 

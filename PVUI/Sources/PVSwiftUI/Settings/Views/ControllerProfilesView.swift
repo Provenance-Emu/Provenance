@@ -147,10 +147,12 @@ struct ControllerProfilesView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        #if !os(tvOS)
         .swipeActions(edge: .leading) {
             Button("Rename") { startRename(profile) }
                 .tint(accentColor)
         }
+        #endif
     }
 
     // MARK: - Helpers

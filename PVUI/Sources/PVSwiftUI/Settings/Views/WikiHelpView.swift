@@ -106,27 +106,29 @@ public struct WikiHelpView: View {
     }
 
     #if os(tvOS)
-    private func wikiSubList(item: WikiNavItem) -> some View {
-        List {
-            // Parent page link
-            NavigationLink(destination: WikiPageView(path: item.path, title: item.title)) {
-                Label(item.title, systemImage: "doc.text")
-            }
-            // Children
-            ForEach(item.children) { child in
-                if child.children.isEmpty {
-                    NavigationLink(destination: WikiPageView(path: child.path, title: child.title)) {
-                        Label(child.title, systemImage: iconForPath(child.path))
-                    }
-                } else {
-                    NavigationLink(destination: wikiSubList(item: child)) {
-                        Label(child.title, systemImage: iconForPath(child.path))
+    private func wikiSubList(item: WikiNavItem) -> AnyView {
+        AnyView(
+            List {
+                // Parent page link
+                NavigationLink(destination: WikiPageView(path: item.path, title: item.title)) {
+                    Label(item.title, systemImage: "doc.text")
+                }
+                // Children
+                ForEach(item.children) { child in
+                    if child.children.isEmpty {
+                        NavigationLink(destination: WikiPageView(path: child.path, title: child.title)) {
+                            Label(child.title, systemImage: iconForPath(child.path))
+                        }
+                    } else {
+                        NavigationLink(destination: wikiSubList(item: child)) {
+                            Label(child.title, systemImage: iconForPath(child.path))
+                        }
                     }
                 }
             }
-        }
-        .navigationTitle(item.title)
-        .listStyle(.grouped)
+            .navigationTitle(item.title)
+            .listStyle(.grouped)
+        )
     }
     #endif
 

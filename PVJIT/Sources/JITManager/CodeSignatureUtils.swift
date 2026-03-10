@@ -67,7 +67,7 @@ struct CSCodedirectory {
     var execSegmentFlags: UInt64
 }
 
-@available(iOS 13.4, *)
+@available(iOS 13.4, tvOS 13.4, *)
 func HasValidCodeSignature() -> Bool {
     var info = Dl_info()
     guard dladdr(#function, &info) != 0, let base = info.dli_fbase else {

@@ -12,12 +12,11 @@
 import SwiftUI
 import UIKit
 import PVSettings
-import PVJIT
 import JITManager
 import PVLogging
 
 /// Manages the JIT onboarding flow, determining when to show the education screen
-@available(iOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, *)
 public final class JITOnboardingManager: ObservableObject {
     public static let shared = JITOnboardingManager()
 
@@ -35,9 +34,8 @@ public final class JITOnboardingManager: ObservableObject {
             return false
         }
 
-        // Only show on iOS (tvOS doesn't support JIT the same way)
-        #if os(iOS)
-        // Check if we're on a JIT-restricted environment
+        #if os(iOS) || os(tvOS)
+        // Check if we're on a JIT-restricted environment.
         let jitManager = DOLJitManager.shared
         let jitType = jitManager.getJitType()
 
@@ -46,15 +44,15 @@ public final class JITOnboardingManager: ObservableObject {
             return false
         }
 
-        // Only show for debugger-type JIT that requires user action
-        // If it's already unrestricted or uses other methods, skip onboarding
+        // Only show for debugger-based JIT that requires user action,
+        // including modern helper flows like StikDebug or SideStore JIT.
         if jitType == .notRestricted || jitType == .allowUnsigned {
             return false
         }
 
         return true
         #else
-        return false
+            return false
         #endif
     }
 
@@ -90,7 +88,15 @@ public final class JITOnboardingManager: ObservableObject {
         )
 
         let hostingController = UIHostingController(rootView: onboardingView)
+        #if os(tvOS)
+        if #available(tvOS 26.0, *) {
+            hostingController.modalPresentationStyle = .formSheet
+        } else {
+            hostingController.modalPresentationStyle = .fullScreen
+        }
+        #else
         hostingController.modalPresentationStyle = .formSheet
+        #endif
         hostingController.isModalInPresentation = true
 
         // Configure for iPhone to use full screen
@@ -143,7 +149,7 @@ public final class JITOnboardingManager: ObservableObject {
 
 // MARK: - Core Category Helpers
 
-@available(iOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, *)
 public extension JITOnboardingManager {
     /// Known core categories that benefit from JIT
     enum CoreCategory {
@@ -203,7 +209,7 @@ public extension JITOnboardingManager {
 
 // MARK: - SwiftUI View Modifier
 
-@available(iOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, *)
 public extension View {
     /// Adds JIT onboarding presentation capability to a view
     func jitOnboarding(

@@ -12,12 +12,10 @@
 import SwiftUI
 import PVThemes
 import PVSettings
-import PVJIT
-import JITManager
 
 /// Apple-safe JIT onboarding view that explains "Performance Mode" to users
 /// without using words like "jailbreak" or implying App Store policy circumvention.
-@available(iOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, *)
 public struct JITOnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -178,7 +176,10 @@ public struct JITOnboardingView: View {
             explanationCard(
                 icon: "gear.badge.checkmark",
                 title: "How to Enable",
-                description: "Performance Mode requires a special capability that must be enabled for this app. If you're running Provenance via AltStore, SideStore, or developer tools, tap Enable below."
+                description:
+                    "Performance Mode requires a debugger-based helper to attach to Provenance. " +
+                    "If you use SideStore, StikDebug, AltStore, or developer tools, " +
+                    "tap Enable below and finish the helper flow."
             )
 
             // Compatibility mode note
@@ -370,7 +371,7 @@ public struct JITOnboardingView: View {
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
 
-                    Text("Please wait while we enable advanced CPU features for better performance.")
+                    Text("Please wait while we connect a debugger-based helper such as SideStore or StikDebug for better performance.")
                         .font(.system(size: 14))
                         .foregroundColor(RetroTheme.retroBlue)
                         .multilineTextAlignment(.center)
@@ -411,7 +412,7 @@ public struct JITOnboardingView: View {
 // MARK: - Preview
 
 #if DEBUG
-@available(iOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, *)
 struct JITOnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         JITOnboardingView(

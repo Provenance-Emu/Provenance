@@ -85,8 +85,8 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         return isAppStore
     }
 
-    // JIT-related properties for iOS, non-App Store builds with PVJIT support
-#if os(iOS) && !APP_STORE && canImport(PVJIT)
+    /// JIT-related state shared by non-App Store iOS and tvOS builds.
+#if (os(iOS) || os(tvOS)) && !APP_STORE && canImport(PVJIT)
     weak var jitScreenDelegate: JitScreenDelegate?
     weak var jitWaitScreenVC: JitWaitScreenViewController?
     var cancellation_token = DOLCancellationToken()
@@ -350,7 +350,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     // TODO: This is not called from the ContentView
     @MainActor
     private func setupJITIfNeeded() {
-#if os(iOS) && !APP_STORE
+#if (os(iOS) || os(tvOS)) && !APP_STORE
         if Defaults[.autoJIT] {
             DOLJitManager.shared.attemptToAcquireJitOnStartup()
         }

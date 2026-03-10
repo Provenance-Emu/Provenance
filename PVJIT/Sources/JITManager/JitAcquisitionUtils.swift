@@ -47,7 +47,7 @@ import DebuggerUtils
         return .notArm64e
     }
 
-    if #available(iOS 13.4, *) {
+    if #available(iOS 13.4, tvOS 13.4, *) {
         if !HasValidCodeSignature() {
             return .improperlySigned
         }
@@ -73,18 +73,18 @@ import DebuggerUtils
 #endif
 
 #if NONJAILBROKEN
-    if #available(iOS 14.4, *) {
+    if #available(iOS 14.4, tvOS 14.4, *) {
         // "Yes", we do have JIT. At least, we will later when AltServer/Jitterbug/
         // Xcode/etc connnects to us.
         hasJit = true
-    } else if #available(iOS 14.2, *) {
+    } else if #available(iOS 14.2, tvOS 14.2, *) {
         acquisitionError = AcquireJitWithAllowUnsigned()
         if acquisitionError == .none {
             hasJit = true
         }
-    } else if #available(iOS 14, *) {
+    } else if #available(iOS 14.0, tvOS 14.0, *) {
         acquisitionError = .needUpdate
-    } else if #available(iOS 13.5, *) {
+    } else if #available(iOS 13.5, tvOS 13.4, *) {
         SetProcessDebuggedWithPTrace()
 
         hasJit = true

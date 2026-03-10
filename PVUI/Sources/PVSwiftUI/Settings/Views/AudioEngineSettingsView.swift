@@ -59,7 +59,7 @@ struct AudioEngineSettingsView: View {
             Section(header: Text("Latency")) {
                 HStack {
                     Text("Audio Latency")
-                    Slider(value: $audioLatency, in: 5.0...25.0, step: 0.5) {
+                    RetroWaveSlider(value: $audioLatency, in: 5.0...25.0, step: 0.5) {
                         Text("Audio Latency (\(Int(audioLatency)) ms)")
                     } minimumValueLabel: {
                         Image(systemName: "hare")

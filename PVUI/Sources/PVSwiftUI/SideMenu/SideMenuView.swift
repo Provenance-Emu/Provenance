@@ -405,7 +405,9 @@ SideMenuView: SwiftUI.View {
                 imageView.contentMode = .scaleAspectFit
                 imageView.tintColor = menuIconTint
                 vc.navigationItem.titleView = imageView
+                #if !os(tvOS)
                 vc.navigationItem.preferredSearchBarPlacement = .stacked
+                #endif
             } else {
                 if menuIconTint != .clear {
                     image?.applyTintEffectWithColor(menuIconTint)
@@ -467,3 +469,4 @@ SideMenuView: SwiftUI.View {
 
 
 #endif
+

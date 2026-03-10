@@ -7,6 +7,7 @@
 
 #if os(tvOS)
 import SwiftUI
+import UIKit
 import PVCoreBridge
 import PVLibrary
 import PVRealm
@@ -14,6 +15,85 @@ import RealmSwift
 import PVThemes
 import PVLogging
 import PVFeatureFlags
+
+/// UIKit-backed multiline editor used in tvOS cheat forms where `TextEditor`
+/// is unavailable.
+private struct TVOSMultilineCodeEditor: UIViewRepresentable {
+    @Binding var text: String
+    @Binding var isFocused: Bool
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text, isFocused: $isFocused)
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = TVOSFocusableTextView()
+        textView.delegate = context.coordinator
+        textView.backgroundColor = .clear
+        textView.textColor = .white
+        textView.font = .monospacedSystemFont(ofSize: 24, weight: .regular)
+        textView.autocorrectionType = .no
+        textView.autocapitalizationType = .allCharacters
+        textView.spellCheckingType = .no
+        textView.smartDashesType = .no
+        textView.smartQuotesType = .no
+        textView.keyboardAppearance = .dark
+        textView.returnKeyType = .default
+        textView.textContainerInset = UIEdgeInsets(top: 20, left: 16, bottom: 20, right: 16)
+        textView.text = text
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        if uiView.text != text {
+            uiView.text = text
+        }
+
+        if isFocused, !uiView.isFirstResponder {
+            uiView.becomeFirstResponder()
+        } else if !isFocused, uiView.isFirstResponder {
+            uiView.resignFirstResponder()
+        }
+    }
+
+    /// Bridges `UITextViewDelegate` events back into SwiftUI state.
+    final class Coordinator: NSObject, UITextViewDelegate {
+        private let text: Binding<String>
+        private let isFocused: Binding<Bool>
+
+        init(text: Binding<String>, isFocused: Binding<Bool>) {
+            self.text = text
+            self.isFocused = isFocused
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            let updatedText = textView.text ?? ""
+            if text.wrappedValue != updatedText {
+                text.wrappedValue = updatedText
+            }
+        }
+
+        func textViewDidBeginEditing(_ textView: UITextView) {
+            if !isFocused.wrappedValue {
+                isFocused.wrappedValue = true
+            }
+        }
+
+        func textViewDidEndEditing(_ textView: UITextView) {
+            if isFocused.wrappedValue {
+                isFocused.wrappedValue = false
+            }
+        }
+    }
+}
+
+/// Focusable `UITextView` subclass so cheat code editing can participate in the
+/// tvOS focus system.
+private final class TVOSFocusableTextView: UITextView {
+    override var canBecomeFocused: Bool {
+        true
+    }
+}
 
 /// SwiftUI-based Cheats View for tvOS
 /// This replaces the storyboard-based PVCheatsViewController on tvOS
@@ -502,12 +582,14 @@ struct TVOSAddCheatView: View {
 
                         HStack(alignment: .center, spacing: 16) {
                             if CheatCodeValidator.supportsMultiLine(for: selectedCodeTypeString) {
-                                TextEditor(text: $cheatCode)
-                                    .font(.system(size: 24, design: .monospaced))
-                                    .foregroundStyle(.white)
-                                    .autocorrectionDisabled()
+                                TVOSMultilineCodeEditor(
+                                    text: $cheatCode,
+                                    isFocused: Binding(
+                                        get: { focusedField == .code },
+                                        set: { focusedField = $0 ? .code : nil }
+                                    )
+                                )
                                     .frame(minHeight: 100)
-                                    .padding(20)
                                     .background(
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(Color.black.opacity(0.5))
@@ -516,7 +598,6 @@ struct TVOSAddCheatView: View {
                                                     .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
                                             )
                                     )
-                                    .focused($focusedField, equals: .code)
                             } else {
                                 TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
                                     .textFieldStyle(.plain)
@@ -732,12 +813,14 @@ struct TVOSEditCheatView: View {
 
                         HStack(alignment: .center, spacing: 16) {
                             if CheatCodeValidator.supportsMultiLine(for: selectedCodeTypeString) {
-                                TextEditor(text: $cheatCode)
-                                    .font(.system(size: 24, design: .monospaced))
-                                    .foregroundStyle(.white)
-                                    .autocorrectionDisabled()
+                                TVOSMultilineCodeEditor(
+                                    text: $cheatCode,
+                                    isFocused: Binding(
+                                        get: { focusedField == .code },
+                                        set: { focusedField = $0 ? .code : nil }
+                                    )
+                                )
                                     .frame(minHeight: 100)
-                                    .padding(20)
                                     .background(
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(Color.black.opacity(0.5))
@@ -746,7 +829,6 @@ struct TVOSEditCheatView: View {
                                                     .stroke(focusedField == .code ? accentColor : accentColor.opacity(0.3), lineWidth: 2)
                                             )
                                     )
-                                    .focused($focusedField, equals: .code)
                             } else {
                                 TextField(CheatCodeValidator.placeholder(for: selectedCodeTypeString), text: $cheatCode)
                                     .textFieldStyle(.plain)
