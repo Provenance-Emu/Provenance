@@ -10,6 +10,11 @@
 //
 
 import Foundation
+// NOTE: PVRealm is imported here because PVFile and PVImageFile (Realm model
+// objects) appear in the protocol's method signature. Once the SwiftData
+// migration (#2510) is complete, these parameters can be replaced with
+// Foundation types (e.g., URL) and this import removed, fully decoupling
+// the abstraction from any specific persistence backend.
 import PVRealm
 
 /// Abstracts the persistence of a newly created save state into the app database.
