@@ -50,8 +50,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Netplay Architecture** — Research document and design for native Swift/SwiftUI netplay
   system (#2544, #2558)
 
+### Changed
+- **Lock modernization in PVLibrary** — Replaced all `NSLock` instances with `OSAllocatedUnfairLock`
+  (iOS/tvOS 16+), eliminating bare `.lock()` / `.unlock()` pairs in favour of deadlock-safe
+  `withLock { }` closures across `GameImporter`, `DirectoryWatcher`, `CloudKitRemoteApplyGuard`,
+  `CloudSyncManager`, `CloudKitSubscriptionManager`, `iCloudDriveSync`,
+  `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
+
 ### Fixed
 - **Controller Profile Scope Resolution** — `SceneCoordinator.loadControllerProfiles` now passes `coreIdentifier` to `loadActiveProfile`, enabling game+core and system+core profile scopes to match correctly at game launch (#2879 follow-up)
+- **RarExtractor Path Traversal** — Sanitize entry filenames in RAR archives to prevent `../` path traversal outside the destination directory (Part of #2663)
+- **CRC Lookup Error Logging** — `PVLookup.searchROM(byCRC:)` now logs database errors via `ELOG` instead of silently swallowing them with `try?` (Part of #2663)
+- **XZExtractor Memory Warning** — Log a warning when extracting XZ archives larger than 200 MB, since the entire file is loaded into memory (Part of #2663)
 - **PVCoreLoader Deadlock Risk** — Replaced `NSLock` with `OSAllocatedUnfairLock` in
   `CoreLoader` and `LibretroMetadataReader`; all bare `.lock()`/`.unlock()` pairs replaced
   with `.withLock { }` closures, eliminating the early-return deadlock path in `getCorePlists` (#2809)
@@ -72,11 +82,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **iPadOS 26 Search Bar** — Fixed search bar placement regression (#2613)
 - **Settings Menu Delegate** — Added fallback notifications when menuDelegate is nil (#2749)
 - **App Group Container Check** — Simplified check for readable app group container (#2623)
+- **Crash-Save Safety** — `uncaughtExceptionHandler` now calls `stopEmulation()` synchronously
+  (removes the `Task.detached { @MainActor }` that would never execute during crash recovery);
+  save-state screenshot writes use `.atomic` option to prevent partial/corrupt files (#2766)
 
 ### Changed
+- **Save-State Persistence Abstraction** — Extracted Realm write for save states into
+  `SaveStatePersistenceServiceProtocol` / `RomDatabase` conformance; `createNewSaveState`
+  now calls the abstracted service rather than Realm directly, preparing for SwiftData
+  backend swap in #2510 without touching PVUI call sites (#2888)
 - **Cheats UI** — Moved Cheat Codes to main tab in pause menu for faster access (#2608)
 - **Lock Patterns** — Converted bare `NSLock.lock()/unlock()` to `withLock` throughout
   audio engines and emulator VC (#2688, #2750)
+- **Lock Patterns (PVUI GPU/Metal/SaveState)** — Replaced all `NSLock` bare pairs and
+  `objc_sync_enter/exit` in `PVGPUViewController`, `PVMetalViewController`, `PVGLViewController`,
+  and `RealmSaveStateDriver` with `OSAllocatedUnfairLock` + `withLock {}`. Eliminates deadlock
+  risk from bare lock/unlock; removes ObjC runtime sync overhead on render threads (#2808, Part of #1681)
 - **Library Management UX** — Reworked library management settings labels and architecture (#2706)
 - **WhatsNew** — Moved release notes from hardcoded Swift to `whats-new.json` metadata file;
   agents can add new releases by editing JSON only

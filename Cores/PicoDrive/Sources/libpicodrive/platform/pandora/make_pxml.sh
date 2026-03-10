@@ -4,8 +4,8 @@ set -e
 verfile=../common/version.h
 test -f $verfile
 
-major=`head -n 1 $verfile | sed 's/.*"\([0-9]*\)\.\([0-9]*\).*/\1/g'`
-minor=`head -n 1 $verfile | sed 's/.*"\([0-9]*\)\.\([0-9]*\).*/\2/g'`
+major=`head -n 1 $verfile | sed 's/[^0-9]*\([0-9]*\)\.\([0-9]*\).*/\1/g'`
+minor=`head -n 1 $verfile | sed 's/[^0-9]*\([0-9]*\)\.\([0-9]*\).*/\2/g'`
 # lame, I know..
 build=`git describe HEAD | grep -- - | sed -e 's/.*\-\(.*\)\-.*/\1/'`
 test -n "$build" && build_post="-$build"

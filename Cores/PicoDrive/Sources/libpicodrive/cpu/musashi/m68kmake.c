@@ -122,6 +122,9 @@ static const char* g_version = "3.31";
 #endif /* DECL_SPEC */
 
 
+#ifdef USE_LIBRETRO_VFS
+#include "file_stream_transforms.h"
+#endif
 
 /* ======================================================================== */
 /* ============================== PROTOTYPES ============================== */
@@ -636,6 +639,9 @@ int get_oper_cycles(opcode_struct* op, int ea_mode, int cpu_type)
 			(strcmp(op->name, "or") == 0 && strcmp(op->spec_proc, "er") == 0)  ||
 			(strcmp(op->name, "sub") == 0 && strcmp(op->spec_proc, "er") == 0) ||
 			strcmp(op->name, "suba")   == 0))
+			return op->cycles[cpu_type] + g_ea_cycle_table[ea_mode][cpu_type][size] + 2;
+
+		if(cpu_type == CPU_TYPE_000 && ea_mode == EA_MODE_I && op->size == 8 && strcmp(op->name, "btst") == 0)
 			return op->cycles[cpu_type] + g_ea_cycle_table[ea_mode][cpu_type][size] + 2;
 
 		if(strcmp(op->name, "jmp") == 0)

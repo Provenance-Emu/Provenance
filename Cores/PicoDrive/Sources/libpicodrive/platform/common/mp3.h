@@ -12,8 +12,8 @@ int mp3dec_decode(FILE *f, int *file_pos, int file_len);
 extern unsigned short mpeg1_l3_bitrates[16];
 
 #ifdef __GP2X__
-void mp3_update_local(int *buffer, int length, int stereo);
-void mp3_start_play_local(void *f, int pos);
+int _mp3dec_start(FILE *f, int fpos_start);
+int _mp3dec_decode(FILE *f, int *file_pos, int file_len);
 #endif
 
 #endif // __COMMON_MP3_H__

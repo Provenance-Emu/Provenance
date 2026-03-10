@@ -367,8 +367,12 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         ILOG("PVLookup: Starting ROM search for CRC: \(upperCRC)")
 
         if let openVGDB = await getOpenVGDB() {
-            if let result = try? await openVGDB.searchROM(byCRC: upperCRC) {
-                return result
+            do {
+                if let result = try await openVGDB.searchROM(byCRC: upperCRC) {
+                    return result
+                }
+            } catch {
+                ELOG("PVLookup: CRC search failed for \(upperCRC): \(error.localizedDescription)")
             }
         }
         return nil

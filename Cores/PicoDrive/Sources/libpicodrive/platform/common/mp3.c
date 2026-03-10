@@ -21,33 +21,6 @@ unsigned short mpeg1_l3_bitrates[16] = {
 	0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320
 };
 
-int mp3_find_sync_word(const unsigned char *buf, int size)
-{
-	const unsigned char *p, *pe;
-
-	/* find byte-aligned syncword - need 12 (MPEG 1,2) or 11 (MPEG 2.5) matching bits */
-	for (p = buf, pe = buf + size - 3; p <= pe; p++)
-	{
-		int pn;
-		if (p[0] != 0xff)
-			continue;
-		pn = p[1];
-		if ((pn & 0xf8) != 0xf8 || // currently must be MPEG1
-		    (pn & 6) == 0) {       // invalid layer
-			p++; continue;
-		}
-		pn = p[2];
-		if ((pn & 0xf0) < 0x20 || (pn & 0xf0) == 0xf0 || // bitrates
-		    (pn & 0x0c) != 0) { // not 44kHz
-			continue;
-		}
-
-		return p - buf;
-	}
-
-	return -1;
-}
-
 static int try_get_bitrate(unsigned char *buf, int buf_size)
 {
 	int offs1, offs = 0;
@@ -155,10 +128,10 @@ void mp3_start_play(void *f_, int pos1024)
 	mp3dec_decode(mp3_current_file, &mp3_file_pos, mp3_file_len);
 }
 
-void mp3_update(int *buffer, int length, int stereo)
+void mp3_update(s32 *buffer, int length, int stereo)
 {
-	int length_mp3, shr = 0;
-	void (*mix_samples)(int *dest_buf, short *mp3_buf, int count) = mix_16h_to_32;
+	int length_mp3;
+	void (*mix_samples)(s32 *dest_buf, short *mp3_buf, int count, int fac16) = mix_16h_to_32_resample_stereo;
 
 	if (mp3_current_file == NULL || mp3_file_pos >= mp3_file_len)
 		return; /* no file / EOF */
@@ -166,35 +139,29 @@ void mp3_update(int *buffer, int length, int stereo)
 	if (!decoder_active)
 		return;
 
-	length_mp3 = length;
-	if (PicoIn.sndRate <= 11025 + 100) {
-		mix_samples = mix_16h_to_32_s2;
-		length_mp3 <<= 2; shr = 2;
-	}
-	else if (PicoIn.sndRate <= 22050 + 100) {
-		mix_samples = mix_16h_to_32_s1;
-		length_mp3 <<= 1; shr = 1;
-	}
+	length_mp3 = length * Pico.snd.cdda_mult >> 16;
+	if (!stereo)
+		mix_samples = mix_16h_to_32_resample_mono;
 
 	if (1152 - cdda_out_pos >= length_mp3) {
 		mix_samples(buffer, cdda_out_buffer + cdda_out_pos * 2,
-			length * 2);
+			length, Pico.snd.cdda_mult);
 
 		cdda_out_pos += length_mp3;
 	} else {
-		int ret, left = 1152 - cdda_out_pos;
+		int left = (1152 - cdda_out_pos) * Pico.snd.cdda_div >> 16;
+		int ret, sm = stereo ? 2 : 1;
 
 		if (left > 0)
 			mix_samples(buffer, cdda_out_buffer + cdda_out_pos * 2,
-				(left >> shr) * 2);
+				left, Pico.snd.cdda_mult);
 
 		ret = mp3dec_decode(mp3_current_file, &mp3_file_pos,
 			mp3_file_len);
 		if (ret == 0) {
-			cdda_out_pos = length_mp3 - left;
-			mix_samples(buffer + (left >> shr) * 2,
-				cdda_out_buffer,
-				(cdda_out_pos >> shr) * 2);
+			mix_samples(buffer + left * sm, cdda_out_buffer,
+				length-left, Pico.snd.cdda_mult);
+			cdda_out_pos = (length-left) * Pico.snd.cdda_mult >> 16;
 		} else
 			cdda_out_pos = 0;
 	}

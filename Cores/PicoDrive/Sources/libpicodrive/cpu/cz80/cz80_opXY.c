@@ -70,7 +70,7 @@ switch (Opcode)
 	OPXY(0x5c): // LD   E,HX
 	OPXY(0x7c): // LD   A,HX
 		zR8((Opcode >> 3) & 7) = data->B.H;
-		RET(5)
+		RET(4)
 
 	OPXY(0x45): // LD   B,LX
 	OPXY(0x4d): // LD   C,LX
@@ -78,7 +78,7 @@ switch (Opcode)
 	OPXY(0x5d): // LD   E,LX
 	OPXY(0x7d): // LD   A,LX
 		zR8((Opcode >> 3) & 7) = data->B.L;
-		RET(5)
+		RET(4)
 
 	OPXY(0x60): // LD   HX,B
 	OPXY(0x61): // LD   HX,C
@@ -86,7 +86,7 @@ switch (Opcode)
 	OPXY(0x63): // LD   HX,E
 	OPXY(0x67): // LD   HX,A
 		data->B.H = zR8(Opcode & 7);
-		RET(5)
+		RET(4)
 
 	OPXY(0x68): // LD   LX,B
 	OPXY(0x69): // LD   LX,C
@@ -94,15 +94,15 @@ switch (Opcode)
 	OPXY(0x6b): // LD   LX,E
 	OPXY(0x6f): // LD   LX,A
 		data->B.L = zR8(Opcode & 7);
-		RET(5)
+		RET(4)
 
 	OPXY(0x65): // LD   HX,LX
 		data->B.H = data->B.L;
-		RET(5)
+		RET(4)
 
 	OPXY(0x6c): // LD   LX,HX
 		data->B.L = data->B.H;
-		RET(5)
+		RET(4)
 
 	OPXY(0x06): // LD   B,#imm
 	OPXY(0x0e): // LD   C,#imm
@@ -113,11 +113,11 @@ switch (Opcode)
 
 	OPXY(0x26): // LD   HX,#imm
 		data->B.H = READ_ARG();
-		RET(5)
+		RET(4)
 
 	OPXY(0x2e): // LD   LX,#imm
 		data->B.L = READ_ARG();
-		RET(5)
+		RET(4)
 
 	OPXY(0x0a): // LD   A,(BC)
 		goto OP_LOAD_A_mBC;
@@ -194,8 +194,9 @@ switch (Opcode)
 
 	OPXY(0xc1): // POP  BC
 	OPXY(0xd1): // POP  DE
-	OPXY(0xf1): // POP  AF
 		goto OP_POP_RR;
+	OPXY(0xf1): // POP  AF
+		goto OP_POP_AF;
 
 	OPXY(0xe1): // POP  IX
 		goto OP_POP;
@@ -206,8 +207,9 @@ switch (Opcode)
 
 	OPXY(0xc5): // PUSH BC
 	OPXY(0xd5): // PUSH DE
-	OPXY(0xf5): // PUSH AF
 		goto OP_PUSH_RR;
+	OPXY(0xf5): // PUSH AF
+		goto OP_PUSH_AF;
 
 	OPXY(0xe5): // PUSH IX
 		goto OP_PUSH;
@@ -242,12 +244,12 @@ switch (Opcode)
 	OPXY(0x24): // INC  HX
 		data->B.H++;
 		zF = (zF & CF) | SZHV_inc[data->B.H];
-		RET(5)
+		RET(4)
 
 	OPXY(0x2c): // INC  LX
 		data->B.L++;
 		zF = (zF & CF) | SZHV_inc[data->B.L];
-		RET(5)
+		RET(4)
 
 	OPXY(0x34): // INC  (IX+o)
 		adr = data->W + (INT8)READ_ARG();
@@ -268,12 +270,12 @@ switch (Opcode)
 	OPXY(0x25): // DEC  HX
 		data->B.H--;
 		zF = (zF & CF) | SZHV_dec[data->B.H];
-		RET(5)
+		RET(4)
 
 	OPXY(0x2d): // DEC  LX
 		data->B.L--;
 		zF = (zF & CF) | SZHV_dec[data->B.L];
-		RET(5)
+		RET(4)
 
 	OPXY(0x35): // DEC  (IX+o)
 		adr = data->W + (INT8)READ_ARG();
@@ -296,12 +298,10 @@ switch (Opcode)
 
 	OPXY(0x84): // ADD  A,HX
 		val = data->B.H;
-		USE_CYCLES(1)
 		goto OP_ADD;
 
 	OPXY(0x85): // ADD  A,LX
 		val = data->B.L;
-		USE_CYCLES(1)
 		goto OP_ADD;
 
 	OPXY(0x86): // ADD  A,(IX+o)
@@ -326,12 +326,10 @@ switch (Opcode)
 
 	OPXY(0x8c): // ADC  A,HX
 		val = data->B.H;
-		USE_CYCLES(1)
 		goto OP_ADC;
 
 	OPXY(0x8d): // ADC  A,LX
 		val = data->B.L;
-		USE_CYCLES(1)
 		goto OP_ADC;
 
 	OPXY(0x8e): // ADC  A,(IX+o)
@@ -356,12 +354,10 @@ switch (Opcode)
 
 	OPXY(0x94): // SUB  HX
 		val = data->B.H;
-		USE_CYCLES(1)
 		goto OP_SUB;
 
 	OPXY(0x95): // SUB  LX
 		val = data->B.L;
-		USE_CYCLES(1)
 		goto OP_SUB;
 
 	OPXY(0x96): // SUB  (IX+o)
@@ -386,12 +382,10 @@ switch (Opcode)
 
 	OPXY(0x9c): // SBC  A,HX
 		val = data->B.H;
-		USE_CYCLES(1)
 		goto OP_SBC;
 
 	OPXY(0x9d): // SBC  A,LX
 		val = data->B.L;
-		USE_CYCLES(1)
 		goto OP_SBC;
 
 	OPXY(0x9e): // SBC  A,(IX+o)
@@ -416,12 +410,10 @@ switch (Opcode)
 
 	OPXY(0xbc): // CP   HX
 		val = data->B.H;
-		USE_CYCLES(1)
 		goto OP_CP;
 
 	OPXY(0xbd): // CP   LX
 		val = data->B.L;
-		USE_CYCLES(1)
 		goto OP_CP;
 
 	OPXY(0xbe): // CP   (IX+o)
@@ -446,12 +438,10 @@ switch (Opcode)
 
 	OPXY(0xa4): // AND  HX
 		val = data->B.H;
-		USE_CYCLES(1)
 		goto OP_AND;
 
 	OPXY(0xa5): // AND  LX
 		val = data->B.L;
-		USE_CYCLES(1)
 		goto OP_AND;
 
 	OPXY(0xa6): // AND  (IX+o)
@@ -476,12 +466,10 @@ switch (Opcode)
 
 	OPXY(0xac): // XOR  HX
 		val = data->B.H;
-		USE_CYCLES(1)
 		goto OP_XOR;
 
 	OPXY(0xad): // XOR  LX
 		val = data->B.L;
-		USE_CYCLES(1)
 		goto OP_XOR;
 
 	OPXY(0xae): // XOR  (IX+o)
@@ -506,12 +494,10 @@ switch (Opcode)
 
 	OPXY(0xb4): // OR   HX
 		val = data->B.H;
-		USE_CYCLES(1)
 		goto OP_OR;
 
 	OPXY(0xb5): // OR   LX
 		val = data->B.L;
-		USE_CYCLES(1)
 		goto OP_OR;
 
 	OPXY(0xb6): // OR   (IX+o)

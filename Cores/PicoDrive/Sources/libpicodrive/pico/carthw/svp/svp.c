@@ -92,7 +92,7 @@ static void PicoSVPLine(void)
 }
 
 
-static int PicoSVPDma(unsigned int source, int len, unsigned short **base, unsigned int *mask)
+static int PicoSVPDma(u32 source, int len, unsigned short **base, u32 *mask)
 {
 	if (source < Pico.romsize) // Rom
 	{

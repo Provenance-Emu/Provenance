@@ -16,7 +16,7 @@
 #include "warm.h"
 #include "plat.h"
 
-#include <pico/pico.h>
+#include <pico/pico_int.h>
 
 /* GP2X local */
 int gp2x_current_bpp;
@@ -147,6 +147,11 @@ void gp2x_make_fb_bufferable(int yes)
 }
 
 /* common */
+void plat_video_menu_update(void)
+{
+	// surface is always the screen
+}
+
 void plat_video_menu_enter(int is_rom_loaded)
 {
 	if (gp2x_current_bpp != 16 || gp2x_dev_id == GP2X_DEV_WIZ) {
@@ -182,6 +187,11 @@ void plat_video_menu_leave(void)
 void *plat_mem_get_for_drc(size_t size)
 {
 	return NULL;
+}
+
+int plat_parse_arg(int argc, char *argv[], int *x)
+{
+	return 1;
 }
 
 void plat_early_init(void)

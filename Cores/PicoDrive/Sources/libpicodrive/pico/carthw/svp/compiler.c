@@ -1,13 +1,14 @@
 /*
  * SSP1601 to ARM recompiler
  * (C) notaz, 2008,2009,2010
+ * (C) irixxxx, 2019-2023
  *
  * This work is licensed under the terms of MAME license.
  * See COPYING file in the top-level directory.
  */
 
-#include "../../pico_int.h"
-#include "../../../cpu/drc/cmn.h"
+#include <pico/pico_int.h>
+#include <cpu/drc/cmn.h>
 #include "compiler.h"
 
 // FIXME: asm has these hardcoded
@@ -39,7 +40,7 @@ void ssp_drc_end(void){}
 #endif
 
 #define COUNT_OP
-#include "../../../cpu/drc/emit_arm.c"
+#include <cpu/drc/emit_arm.c>
 
 // -----------------------------------------------------
 
@@ -359,7 +360,7 @@ static void tr_mov16(int r, int val)
 
 static void tr_mov16_cond(int cond, int r, int val)
 {
-	emith_op_imm(cond, 0, A_OP_MOV, r, val);
+	emith_move_r_imm_c(cond, r, val);
 	hostreg_r[r] = -1;
 }
 
@@ -476,6 +477,7 @@ static void tr_ptrr_mod(int r, int mod, int need_modulo, int count)
 		if (mod == 2)
 		     known_regs.r[r] = (known_regs.r[r] & ~modulo) | ((known_regs.r[r] - count) & modulo);
 		else known_regs.r[r] = (known_regs.r[r] & ~modulo) | ((known_regs.r[r] + count) & modulo);
+		dirty_regb |= (1 << (r + 8));
 	}
 	else
 	{
@@ -693,9 +695,9 @@ static int tr_aop_ssp2arm(int op)
 /* spacial version of call for calling C needed on ios, since we use r9.. */
 static void emith_call_c_func(void *target)
 {
-	EOP_STMFD_SP(A_R7M|A_R9M);
+	EOP_STMFD_SP(M2(7,9));
 	emith_call(target);
-	EOP_LDMFD_SP(A_R7M|A_R9M);
+	EOP_LDMFD_SP(M2(7,9));
 }
 #else
 #define emith_call_c_func emith_call
@@ -842,6 +844,7 @@ static void tr_PMX_to_r0(int reg)
 		return;
 	}
 
+	tr_flush_dirty_pmcrs();
 	known_regb &= ~KRREG_PMC;
 	dirty_regb &= ~KRREG_PMC;
 	known_regb &= ~(1 << (20+reg));
@@ -849,7 +852,6 @@ static void tr_PMX_to_r0(int reg)
 
 	// call the C code to handle this
 	tr_flush_dirty_ST();
-	//tr_flush_dirty_pmcrs();
 	tr_mov16(0, reg);
 	emith_call_c_func(ssp_pm_read);
 	hostreg_clear();
@@ -989,6 +991,7 @@ static void tr_r0_to_ST(int const_val)
 	EOP_ORR_REG_LSL(6, 6, 1, 4);		// orr   r6, r6, r1, lsl #4
 	TR_WRITE_R0_TO_REG(SSP_ST);
 	hostreg_r[1] = -1;
+	known_regb &= ~KRREG_ST;
 	dirty_regb &= ~KRREG_ST;
 }
 
@@ -1021,9 +1024,9 @@ static void tr_r0_to_AL(int const_val)
 	hostreg_sspreg_changed(SSP_AL);
 	if (const_val != -1) {
 		known_regs.gr[SSP_A].l = const_val;
-		known_regb |= 1 << SSP_AL;
+		known_regb |=  KRREG_AL;
 	} else
-		known_regb &= ~(1 << SSP_AL);
+		known_regb &= ~KRREG_AL;
 }
 
 static void tr_r0_to_PMX(int reg)
@@ -1083,6 +1086,7 @@ static void tr_r0_to_PMX(int reg)
 		return;
 	}
 
+	tr_flush_dirty_pmcrs();
 	known_regb &= ~KRREG_PMC;
 	dirty_regb &= ~KRREG_PMC;
 	known_regb &= ~(1 << (25+reg));
@@ -1090,7 +1094,6 @@ static void tr_r0_to_PMX(int reg)
 
 	// call the C code to handle this
 	tr_flush_dirty_ST();
-	//tr_flush_dirty_pmcrs();
 	tr_mov16(1, reg);
 	emith_call_c_func(ssp_pm_write);
 	hostreg_clear();
@@ -1128,16 +1131,17 @@ static void tr_r0_to_PMC(int const_val)
 			known_regs.emu_status |= SSP_PMC_HAVE_ADDR;
 			known_regs.pmc.l = const_val;
 		}
+		dirty_regb |= KRREG_PMC;
 	}
 	else
 	{
 		tr_flush_dirty_ST();
-		if (known_regb & KRREG_PMC) {
+		if (dirty_regb & KRREG_PMC) {
 			emith_move_r_imm(1, known_regs.pmc.v);
 			EOP_STR_IMM(1,7,0x400+SSP_PMC*4);
-			known_regb &= ~KRREG_PMC;
 			dirty_regb &= ~KRREG_PMC;
 		}
+		known_regb &= ~KRREG_PMC;
 		EOP_LDR_IMM(1,7,0x484);			// ldr r1, [r7, #0x484] // emu_status
 		EOP_ADD_IMM(2,7,24/2,4);		// add r2, r7, #0x400
 		EOP_TST_IMM(1, 0, SSP_PMC_HAVE_ADDR);
@@ -1245,7 +1249,7 @@ static int tr_detect_pm0_block(unsigned int op, int *pc, int imm)
 	EOP_ORR_IMM(6, 6, 24/2, 6);		// orr   r6, r6, 0x600
 	hostreg_sspreg_changed(SSP_ST);
 	known_regs.gr[SSP_ST].h = 0x60;
-	known_regb |= 1 << SSP_ST;
+	known_regb |=  KRREG_ST;
 	dirty_regb &= ~KRREG_ST;
 	(*pc) += 3*2;
 	n_in_ops += 3;
@@ -1434,16 +1438,13 @@ static int translate_op(unsigned int op, int *pc, int imm, int *end_cond, int *j
 			tmpv = tr_cond_check(op);
 			if (tmpv != A_COND_AL) {
 				jump_op = tcache_ptr;
-				EOP_MOV_IMM(0, 0, 0); // placeholder for branch
+				EOP_C_B(tmpv, 0, 0); // placeholder for branch
 			}
 			tr_mov16(0, *pc);
 			tr_r0_to_STACK(*pc);
-			if (tmpv != A_COND_AL) {
-				u32 *real_ptr = tcache_ptr;
-				tcache_ptr = jump_op;
-				EOP_C_B(tr_neg_cond(tmpv),0,real_ptr - jump_op - 2);
-				tcache_ptr = real_ptr;
-			}
+			if (tmpv != A_COND_AL)
+				EOP_C_B_PTR(jump_op, tr_neg_cond(tmpv), 0,
+						tcache_ptr - jump_op - 2);
 			tr_mov16_cond(tmpv, 0, imm);
 			if (tmpv != A_COND_AL)
 				tr_mov16_cond(tr_neg_cond(tmpv), 0, *pc);
@@ -1517,8 +1518,8 @@ static int translate_op(unsigned int op, int *pc, int imm, int *end_cond, int *j
 			tr_make_dirty_ST();
 			EOP_C_DOP_REG_XIMM(A_COND_AL,A_OP_SUB,1,5,5,0,A_AM1_LSL,10); // subs r5, r5, r10
 			hostreg_sspreg_changed(SSP_A);
-			known_regb &= ~(KRREG_A|KRREG_AL);
 			dirty_regb |= KRREG_ST;
+			known_regb &= ~(KRREG_A|KRREG_AL|KRREG_ST);
 			ret++; break;
 
 		// mpya (rj), (ri), b
@@ -1528,8 +1529,8 @@ static int translate_op(unsigned int op, int *pc, int imm, int *end_cond, int *j
 			tr_make_dirty_ST();
 			EOP_C_DOP_REG_XIMM(A_COND_AL,A_OP_ADD,1,5,5,0,A_AM1_LSL,10); // adds r5, r5, r10
 			hostreg_sspreg_changed(SSP_A);
-			known_regb &= ~(KRREG_A|KRREG_AL);
 			dirty_regb |= KRREG_ST;
+			known_regb &= ~(KRREG_A|KRREG_AL|KRREG_ST);
 			ret++; break;
 
 		// mld (rj), (ri), b
@@ -1537,8 +1538,9 @@ static int translate_op(unsigned int op, int *pc, int imm, int *end_cond, int *j
 			EOP_C_DOP_IMM(A_COND_AL,A_OP_MOV,1,0,5,0,0); // movs r5, #0
 			hostreg_sspreg_changed(SSP_A);
 			known_regs.gr[SSP_A].v = 0;
-			known_regb |= (KRREG_A|KRREG_AL);
 			dirty_regb |= KRREG_ST;
+			known_regb &= ~KRREG_ST;
+			known_regb |= (KRREG_A|KRREG_AL);
 			tr_mac_load_XY(op);
 			ret++; break;
 
@@ -1712,12 +1714,8 @@ static void *emit_block_epilogue(int cycles, int cond, int pc, int end_pc)
 			ssp_block_table[pc];
 		if (target != NULL)
 			emith_jump(target);
-		else {
-			int ops = emith_jump(ssp_drc_next);
-			end_ptr = tcache_ptr;
-			// cause the next block to be emitted over jump instruction
-			tcache_ptr -= ops;
-		}
+		else
+			emith_jump(ssp_drc_next);
 	}
 	else {
 		u32 *target1 = (pc     < 0x400) ?
@@ -1795,17 +1793,18 @@ void *ssp_translate_block(int pc)
 	tr_flush_dirty_ST();
 	tr_flush_dirty_pmcrs();
 	block_end = emit_block_epilogue(ccount, end_cond, jump_pc, pc);
+	emith_flush();
+	emith_pool_commit(-1);
 
 	if (tcache_ptr - (u32 *)tcache > DRC_TCACHE_SIZE/4) {
 		elprintf(EL_ANOMALY|EL_STATUS|EL_SVP, "tcache overflow!\n");
-		fflush(stdout);
 		exit(1);
 	}
 
 	// stats
 	nblocks++;
-	//printf("%i blocks, %i bytes, k=%.3f\n", nblocks, (tcache_ptr - tcache)*4,
-	//	(double)(tcache_ptr - tcache) / (double)n_in_ops);
+	//printf("%i blocks, %i bytes, k=%.3f\n", nblocks, (u8 *)tcache_ptr - tcache,
+	//	(double)((u8 *)tcache_ptr - tcache) / (double)n_in_ops);
 
 #ifdef DUMP_BLOCK
 	{

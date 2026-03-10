@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#include "../pico/pico_int.h"
+#include <pico/pico_int.h>
 
 #define DUMP(f, prefix, type, field) \
   fprintf(f, "#define %-20s 0x%02x\n", \

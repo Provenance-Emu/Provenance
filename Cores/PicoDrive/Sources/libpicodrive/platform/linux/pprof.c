@@ -1,20 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/mman.h>
 
 #include <pico/pico_int.h>
 
+int rc_mem[pp_total_points];
+
 struct pp_counters *pp_counters;
+int *refcounts = rc_mem;
 static int shmemid;
+
+static unsigned long devMem;
+volatile unsigned long *gp2x_memregl;
+volatile unsigned short *gp2x_memregs;
 
 void pprof_init(void)
 {
 	int this_is_new_shmem = 1;
 	key_t shmemkey;
 	void *shmem;
+
+#if 0
+	devMem = open("/dev/mem",   O_RDWR);
+	if (devMem == -1)
+	{
+		perror("pprof: open failed");
+		return;
+	}
+	gp2x_memregl = (unsigned long *)mmap(0, 0x10000, PROT_READ|PROT_WRITE, MAP_SHARED, devMem, 0xc0000000);
+	if (gp2x_memregl == (unsigned long *)-1)
+	{
+		perror("pprof: mmap failed");
+		return;
+	}
+	gp2x_memregs = (unsigned short *)gp2x_memregl;
+#endif
 
 #ifndef PPROF_TOOL
 	unsigned int tmp = pprof_get_one();
@@ -28,11 +53,11 @@ void pprof_init(void)
 		return;
 	}
 
-#ifndef PPROF_TOOL
+//#ifndef PPROF_TOOL
 	shmemid = shmget(shmemkey, sizeof(*pp_counters),
 		IPC_CREAT | IPC_EXCL | 0644);
 	if (shmemid == -1)
-#endif
+//#endif
 	{
 		shmemid = shmget(shmemkey, sizeof(*pp_counters),
 				0644);
@@ -76,15 +101,18 @@ static const struct {
 	IT(draw),
 	IT(sound),
 	IT(m68k),
+	IT(s68k),
+	IT(mem68),
 	IT(z80),
 	IT(msh2),
 	IT(ssh2),
+	IT(memsh),
 	IT(dummy),
 };
 
 int main(int argc, char *argv[])
 {
-	unsigned long long old[pp_total_points], new[pp_total_points];
+	pp_type old[pp_total_points], new[pp_total_points];
 	int base = 0;
 	int l, i;
 
@@ -107,11 +135,12 @@ int main(int argc, char *argv[])
 		memcpy(new, pp_counters->counter, sizeof(new));
 		for (i = 0; i < ARRAY_SIZE(pp_tab); i++)
 		{
-			unsigned long long idiff = new[i] - old[i];
-			unsigned long long bdiff = (new[base] - old[base]) | 1;
+			pp_type idiff = new[i] - old[i];
+			pp_type bdiff = (new[base] - old[base]) | 1;
 			printf("%6.2f ", (double)idiff * 100.0 / bdiff);
 		}
 		printf("\n");
+		fflush(stdout);
 		memcpy(old, new, sizeof(old));
 
 		if (argc < 3)

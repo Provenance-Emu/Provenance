@@ -23,6 +23,7 @@
 
 import SwiftData
 import Foundation
+import os
 
 /// The full schema for Provenance's SwiftData store — version 1.
 ///
@@ -47,7 +48,8 @@ public enum PVSwiftDataSchema {
     // MARK: - App-wide shared container
 
     /// Lock protecting `_sharedContainer` for thread-safe lazy initialisation.
-    private static let _lock = NSLock()
+    /// Uses `OSAllocatedUnfairLock` (iOS 16+) for lower overhead and deadlock-free `withLock` semantics.
+    private static let _lock = OSAllocatedUnfairLock<Void>()
 
     /// Backing store for the app-wide singleton.  Access only through `sharedContainer`.
     nonisolated(unsafe) private static var _sharedContainer: ModelContainer?
@@ -67,12 +69,12 @@ public enum PVSwiftDataSchema {
     /// - Throws: Only on first access if the local container cannot be created.
     public static var sharedContainer: ModelContainer {
         get throws {
-            _lock.lock()
-            defer { _lock.unlock() }
-            if let c = _sharedContainer { return c }
-            let c = try makePVModelContainer()
-            _sharedContainer = c
-            return c
+            try _lock.withLockUnchecked {
+                if let c = _sharedContainer { return c }
+                let c = try makePVModelContainer()
+                _sharedContainer = c
+                return c
+            }
         }
     }
 
@@ -85,13 +87,13 @@ public enum PVSwiftDataSchema {
     ///
     /// - Parameter container: The `ModelContainer` the whole app should use.
     public static func setSharedContainer(_ container: ModelContainer) {
-        _lock.lock()
-        defer { _lock.unlock() }
-        guard _sharedContainer == nil else {
-            assertionFailure("PVSwiftDataSchema.setSharedContainer called more than once — subsequent call ignored.")
-            return
+        _lock.withLock {
+            guard _sharedContainer == nil else {
+                assertionFailure("PVSwiftDataSchema.setSharedContainer called more than once — subsequent call ignored.")
+                return
+            }
+            _sharedContainer = container
         }
-        _sharedContainer = container
     }
 
     // MARK: - Container factory

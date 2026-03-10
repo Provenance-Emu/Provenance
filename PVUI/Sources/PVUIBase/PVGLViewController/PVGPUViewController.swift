@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import Defaults
 import PVSettings
 #if canImport(UIKit)
@@ -59,9 +60,9 @@ public class PVGPUViewController: BaseViewController {
     private var frameTimestamps: [CFTimeInterval] = []
     private let maxFrameTimestamps = 60
     /// Thread-safe access to frame timestamps
-    private let frameTimestampsLock = NSLock()
+    private let frameTimestampsLock = OSAllocatedUnfairLock<Void>(initialState: ())
     private var didPostFirstFrameNotification: Bool = false
-    private let firstFrameLock = NSLock()
+    private let firstFrameLock = OSAllocatedUnfairLock<Void>(initialState: ())
     #endif
 
     #if os(iOS)
@@ -89,12 +90,13 @@ public class PVGPUViewController: BaseViewController {
     @objc public func markFramePresented() {
         trackFramePresentation()
 
-        firstFrameLock.lock()
-        let shouldPost = !didPostFirstFrameNotification
-        if shouldPost {
-            didPostFirstFrameNotification = true
+        let shouldPost = firstFrameLock.withLock { () -> Bool in
+            let shouldPost = !didPostFirstFrameNotification
+            if shouldPost {
+                didPostFirstFrameNotification = true
+            }
+            return shouldPost
         }
-        firstFrameLock.unlock()
 
         guard shouldPost else { return }
         DispatchQueue.main.async {
@@ -104,32 +106,31 @@ public class PVGPUViewController: BaseViewController {
 
     /// Reset first-frame tracking when starting a new emulation session.
     @objc public func resetFirstFrameTracking() {
-        frameTimestampsLock.lock()
-        frameTimestamps.removeAll()
-        lastFrameTimestamp = 0
-        frameTimestampsLock.unlock()
+        frameTimestampsLock.withLock {
+            frameTimestamps.removeAll()
+            lastFrameTimestamp = 0
+        }
 
-        firstFrameLock.lock()
-        didPostFirstFrameNotification = false
-        firstFrameLock.unlock()
+        firstFrameLock.withLock {
+            didPostFirstFrameNotification = false
+        }
     }
 
     #if os(iOS) || os(tvOS)
     /// Track frame presentation for FPS calculation on iOS/tvOS
     @objc func trackFramePresentation() {
         let currentTime = CACurrentMediaTime()
-        frameTimestampsLock.lock()
-        defer { frameTimestampsLock.unlock() }
-
-        if lastFrameTimestamp > 0 {
-            let frameTime = currentTime - lastFrameTimestamp
-            frameTimestamps.append(frameTime)
-            /// Use efficient removal - only resize when necessary
-            if frameTimestamps.count > maxFrameTimestamps {
-                frameTimestamps.removeFirst()
+        frameTimestampsLock.withLock {
+            if lastFrameTimestamp > 0 {
+                let frameTime = currentTime - lastFrameTimestamp
+                frameTimestamps.append(frameTime)
+                /// Use efficient removal - only resize when necessary
+                if frameTimestamps.count > maxFrameTimestamps {
+                    frameTimestamps.removeFirst()
+                }
             }
+            lastFrameTimestamp = currentTime
         }
-        lastFrameTimestamp = currentTime
     }
     #endif
 
@@ -140,26 +141,24 @@ public class PVGPUViewController: BaseViewController {
     /// Override GLKViewController's timeSinceLastDraw property
     public override var timeSinceLastDraw: TimeInterval {
         get {
-            frameTimestampsLock.lock()
-            defer { frameTimestampsLock.unlock() }
-
-            guard !frameTimestamps.isEmpty else { return super.timeSinceLastDraw }
-            /// Use efficient sum calculation
-            let sum = frameTimestamps.reduce(0, +)
-            return sum / Double(frameTimestamps.count)
+            frameTimestampsLock.withLock {
+                guard !frameTimestamps.isEmpty else { return super.timeSinceLastDraw }
+                /// Use efficient sum calculation
+                let sum = frameTimestamps.reduce(0, +)
+                return sum / Double(frameTimestamps.count)
+            }
         }
     }
     #else
     /// Provide timeSinceLastDraw for Metal view controllers
     @objc public var timeSinceLastDraw: TimeInterval {
         get {
-            frameTimestampsLock.lock()
-            defer { frameTimestampsLock.unlock() }
-
-            guard !frameTimestamps.isEmpty else { return 0 }
-            /// Use efficient sum calculation
-            let sum = frameTimestamps.reduce(0, +)
-            return sum / Double(frameTimestamps.count)
+            frameTimestampsLock.withLock {
+                guard !frameTimestamps.isEmpty else { return 0 }
+                /// Use efficient sum calculation
+                let sum = frameTimestamps.reduce(0, +)
+                return sum / Double(frameTimestamps.count)
+            }
         }
     }
     #endif
@@ -173,26 +172,24 @@ public class PVGPUViewController: BaseViewController {
     /// Instead, provide a computed property that calculates from timestamps
     @objc public var calculatedFramesPerSecond: Double {
         get {
-            frameTimestampsLock.lock()
-            defer { frameTimestampsLock.unlock() }
-
-            guard !frameTimestamps.isEmpty else { return Double(super.framesPerSecond) }
-            let sum = frameTimestamps.reduce(0, +)
-            let avgFrameTime = sum / Double(frameTimestamps.count)
-            return avgFrameTime > 0 ? 1.0 / avgFrameTime : Double(super.framesPerSecond)
+            frameTimestampsLock.withLock {
+                guard !frameTimestamps.isEmpty else { return Double(super.framesPerSecond) }
+                let sum = frameTimestamps.reduce(0, +)
+                let avgFrameTime = sum / Double(frameTimestamps.count)
+                return avgFrameTime > 0 ? 1.0 / avgFrameTime : Double(super.framesPerSecond)
+            }
         }
     }
     #else
     /// Provide framesPerSecond for Metal view controllers
     @objc public var framesPerSecond: Double {
         get {
-            frameTimestampsLock.lock()
-            defer { frameTimestampsLock.unlock() }
-
-            guard !frameTimestamps.isEmpty else { return 0 }
-            let sum = frameTimestamps.reduce(0, +)
-            let avgFrameTime = sum / Double(frameTimestamps.count)
-            return avgFrameTime > 0 ? 1.0 / avgFrameTime : 0
+            frameTimestampsLock.withLock {
+                guard !frameTimestamps.isEmpty else { return 0 }
+                let sum = frameTimestamps.reduce(0, +)
+                let avgFrameTime = sum / Double(frameTimestamps.count)
+                return avgFrameTime > 0 ? 1.0 / avgFrameTime : 0
+            }
         }
     }
     #endif

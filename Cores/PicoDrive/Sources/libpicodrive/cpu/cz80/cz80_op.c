@@ -200,9 +200,15 @@ OP_LD_mNN_xx:
  POP
 -----------------------------------------*/
 
+	OP(0xf1):   // POP  AF
+OP_POP_AF:
+		POP_16(res)
+		zA = res >> 8;
+		zF = res & 0xFF;
+		RET(10)
+
 	OP(0xc1):   // POP  BC
 	OP(0xd1):   // POP  DE
-	OP(0xf1):   // POP  AF
 OP_POP_RR:
 		data = CPU->pzR16[(Opcode >> 4) & 3];
 
@@ -215,9 +221,14 @@ OP_POP:
  PUSH
 -----------------------------------------*/
 
+	OP(0xf5):   // PUSH AF
+OP_PUSH_AF:
+		PUSH_16((zA << 8) | zF);
+		RET(11)
+
+
 	OP(0xc5):   // PUSH BC
 	OP(0xd5):   // PUSH DE
-	OP(0xf5):   // PUSH AF
 OP_PUSH_RR:
 		data = CPU->pzR16[(Opcode >> 4) & 3];
 
@@ -232,9 +243,9 @@ OP_PUSH:
 
 	OP(0x08):   // EX   AF,AF'
 OP_EX_AF_AF2:
-		res = zAF;
-		zAF = zAF2;
-		zAF2 = res;
+		res = zFA;
+		zFA = zFA2;
+		zFA2 = res;
 		RET(4)
 
 	OP(0xeb):   // EX   DE,HL
@@ -686,37 +697,28 @@ OP_CCF:
 
 	OP(0x76):   // HALT
 OP_HALT:
-		CPU->HaltState = 1;
-		CPU->ICount = 0;
-		goto Cz80_Check_Interrupt;
+		CPU->Status |= CZ80_HALTED;
+		RET(4)
 
 	OP(0xf3):   // DI
 OP_DI:
 		zIFF = 0;
-		RET(4)
+		USE_CYCLES(4)
+		goto Cz80_Exec_nocheck;
 
 	OP(0xfb):   // EI
 OP_EI:
 		USE_CYCLES(4)
 		if (!zIFF1)
 		{
-			zIFF1 = zIFF2 = (1 << 2);
-			while (GET_OP() == 0xfb)
-			{
-				USE_CYCLES(4)
-				PC++;
-#if CZ80_EMULATE_R_EXACTLY
-				zR++;
-#endif
-			}
 			if (CPU->IRQState)
 			{
-				afterEI = 1;
-				CPU->ExtraCycles += 1 - CPU->ICount;
-				CPU->ICount = 1;
+				CPU->Status |= CZ80_HAS_INT;
+				CPU->ExtraCycles -= CPU->ICount;
+				CPU->ICount = 0;
 			}
 		}
-		else zIFF2 = (1 << 2);
+		zIFF1 = zIFF2 = (1 << 2);
 		goto Cz80_Exec_nocheck;
 
 /*-----------------------------------------

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Picodrive
+Comment=A mega drive/genesis emulator
+Exec=picodrive %f
+Icon=megadrive
+Categories=emulators;
+X-OD-Manual=
+X-OD-Selector=
+X-OD-Filter=.md,.smd,.gen,.bin,.sms,.gg,.sg,.cue,.chd,.cso,.iso,.32x,.pco,.zip
+Terminal=true
+Type=Application
+StartupNotify=true

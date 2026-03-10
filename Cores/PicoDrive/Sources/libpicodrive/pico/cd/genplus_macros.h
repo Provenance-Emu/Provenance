@@ -5,15 +5,15 @@
 #undef int16
 #undef int32
 
-#define uint8  unsigned char
-#define uint16 unsigned short
-#define uint32 unsigned int
-#define int8  signed char
-#define int16 signed short
-#define int32 signed int
+#define uint8  u8
+#define uint16 u16
+#define uint32 u32
+#define int8   s8
+#define int16  s16
+#define int32  s32
 
-#define READ_BYTE(BASE, ADDR) (BASE)[(ADDR)^1]
-#define WRITE_BYTE(BASE, ADDR, VAL) (BASE)[(ADDR)^1] = (VAL)
+#define READ_BYTE(BASE, ADDR) (BASE)[MEM_BE2(ADDR)]
+#define WRITE_BYTE(BASE, ADDR, VAL) (BASE)[MEM_BE2(ADDR)] = (VAL)
 
 #define load_param(param, size) \
   memcpy(param, &state[bufferptr], size); \

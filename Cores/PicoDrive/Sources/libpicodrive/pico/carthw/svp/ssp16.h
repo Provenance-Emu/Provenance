@@ -38,8 +38,13 @@ typedef union
 {
 	unsigned int v;
 	struct {
+#if CPU_IS_LE
 		unsigned short l;
 		unsigned short h;
+#else
+		unsigned short h;
+		unsigned short l;
+#endif
 	};
 } ssp_reg_t;
 

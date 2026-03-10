@@ -33,20 +33,20 @@ private weak var staticSelf: PVEmualatorControllerProtocol?
 func uncaughtExceptionHandler(exception _: NSException?) {
     guard let staticSelf = staticSelf else { return }
     let core = staticSelf.core
-    Task.detached(priority: .utility) { @MainActor in
-        // First create a save state snapshot (requires core to be in a live state)
-        if core.supportsSaveStates {
-            do {
-                try await staticSelf.autoSaveState()
-            } catch {
-                ELOG("AutoSave error: \(error.localizedDescription)")
-            }
-        }
-        // Then stop emulation to flush battery saves — cores write SRAM/battery data in stopEmulation
-        if core.isOn {
-            ILOG("uncaughtExceptionHandler: stopping emulation to flush battery saves")
-            core.stopEmulation()
-        }
+    // CRITICAL: This is a C-level exception handler called on the faulting thread.
+    // The process is in an unstable state and will terminate immediately after this
+    // function returns. Async tasks (Task.detached, @MainActor hops) are NEVER
+    // guaranteed to run here — the Swift concurrency runtime cannot schedule them
+    // before the process is killed.
+    //
+    // autoSaveState() is intentionally omitted: it requires async Realm database
+    // writes that cannot complete safely during crash recovery and risk corrupting
+    // the database if interrupted mid-write.
+    //
+    // Only synchronous, signal-safe operations belong here.
+    if core.isOn {
+        ILOG("uncaughtExceptionHandler: synchronously stopping emulation to flush battery saves")
+        core.stopEmulation()
     }
 }
 

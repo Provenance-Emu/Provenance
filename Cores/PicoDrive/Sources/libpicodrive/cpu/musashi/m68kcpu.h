@@ -27,14 +27,11 @@
 #define M68KCPU__HEADER
 
 // notaz: something's missing this
-#ifndef UINT64
-#define UINT64 unsigned long long
-#endif
-#ifndef UINT16
-#define UINT32 unsigned int
-#define UINT16 unsigned short
-#define UINT8  unsigned char
-#endif
+#include <stdint.h>
+typedef uint64_t UINT64;
+typedef uint32_t UINT32;
+typedef uint16_t UINT16;
+typedef uint8_t  UINT8;
 
 #include "m68k.h"
 #include <limits.h>
@@ -74,8 +71,12 @@
 #define uint32 unsigned int			/* AWJ: changed from long to int */
 
 /* signed and unsigned int must be at least 32 bits wide */
-#define sint   signed   int
-#define uint   unsigned int
+//#define sint   signed   int
+//#define uint   unsigned int
+#define sint _sint
+#define uint _uint
+typedef signed int sint;
+typedef unsigned int uint;
 
 
 #if M68K_USE_64_BIT
@@ -919,6 +920,7 @@ typedef struct
 	void (*instr_hook_callback)(void);                /* Called every instruction cycle prior to execution */
 
 	// notaz
+	sint cyc_initial_cycles;
 	sint cyc_remaining_cycles;
 	sint not_polling;
 } m68ki_cpu_core;
@@ -926,6 +928,7 @@ typedef struct
 // notaz
 extern m68ki_cpu_core *m68ki_cpu_p;
 #define m68ki_cpu (*m68ki_cpu_p)
+#define m68ki_initial_cycles m68ki_cpu_p->cyc_initial_cycles
 #define m68ki_remaining_cycles m68ki_cpu_p->cyc_remaining_cycles
 
 
@@ -1538,7 +1541,7 @@ INLINE void m68ki_set_sr_noint_nosp(uint value)
 INLINE void m68ki_set_sr(uint value)
 {
 	m68ki_set_sr_noint(value);
-	if (GET_CYCLES() >= 0) // notaz
+	if (GET_CYCLES() > 0) // notaz
 		m68ki_check_interrupts();
 }
 

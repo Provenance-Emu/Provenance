@@ -1,0 +1,19 @@
+name: prepare
+on: workflow_call
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: create release
+      id: create_release
+      if: ${{ github.ref_type == 'tag' }}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        tag=$(echo ${{ github.ref }} | sed 's:refs/tags/::')
+        gh release create "$tag" --verify-tag -d -t "$tag" -n "$tag"
+

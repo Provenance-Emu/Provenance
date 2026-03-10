@@ -22,9 +22,9 @@
 #include "../common/arm_utils.h"
 #include "../common/menu_pico.h"
 #include "../common/emu.h"
-#include "../../pico/pico_int.h"
-#include "../../pico/sound/ym2612.h"
-#include "../../pico/sound/mix.h"
+#include <pico/pico_int.h>
+#include <pico/sound/ym2612.h>
+#include <pico/sound/mix.h>
 #include "code940/940shared.h"
 #include "plat.h"
 #include "940ctl.h"
@@ -100,10 +100,10 @@ int YM2612Write_940(unsigned int a, unsigned int v, int scanline)
 		UINT16 *writebuff = shared_ctl->writebuffsel ? shared_ctl->writebuff0 : shared_ctl->writebuff1;
 
 		/* detect rapid ym updates */
-		if (upd && !(writebuff_ptr & 0x80000000) && scanline < 224)
+		if (upd && !(writebuff_ptr & 0x80000000))
 		{
-			int mid = Pico.m.pal ? 68 : 93;
-			if (scanline > mid) {
+			int mid = (Pico.m.pal ? 313 : 262) / 2;
+			if (scanline >= mid) {
 				//printf("%05i:%03i: rapid ym\n", Pico.m.frame_count, scanline);
 				writebuff[writebuff_ptr++ & 0xffff] = 0xfffe;
 				writebuff_ptr |= 0x80000000;
@@ -282,7 +282,7 @@ void sharedmem940_finish(void)
 }
 
 
-void YM2612Init_940(int baseclock, int rate)
+void YM2612Init_940(int baseclock, int rate, int ssg)
 {
 	static int oldrate;
 
@@ -339,7 +339,7 @@ void YM2612Init_940(int baseclock, int rate)
 	memset(shared_ctl,  0, sizeof(*shared_ctl));
 
 	/* cause local ym2612 to init REGS */
-	YM2612Init_(baseclock, rate);
+	YM2612Init_(baseclock, rate, ssg);
 
 	internal_reset();
 
@@ -425,8 +425,7 @@ int YM2612UpdateOne_940(int *buffer, int length, int stereo, int is_buf_empty)
 int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 {
 	if (!(PicoIn.opt & POPT_EXT_FM)) {
-		//mp3_update_local(buffer, length, stereo);
-		return 0;
+		return _mp3dec_decode(f, file_pos, file_len);
 	}
 
 	// check if playback was started, track not ended
@@ -457,8 +456,7 @@ int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 int mp3dec_start(FILE *f, int fpos_start)
 {
 	if (!(PicoIn.opt & POPT_EXT_FM)) {
-		//mp3_start_play_local(f, pos);
-		return -1;
+		return _mp3dec_start(f, fpos_start);
 	}
 
 	if (loaded_mp3 != f)

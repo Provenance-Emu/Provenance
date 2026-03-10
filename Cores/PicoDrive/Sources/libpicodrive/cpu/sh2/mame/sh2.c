@@ -372,7 +372,7 @@ INLINE void BRA(sh2_state *sh2, UINT32 d)
 #if BUSY_LOOP_HACKS
 	if (disp == -2)
 	{
-		UINT32 next_opcode = RW( sh2, sh2->ppc & AM );
+		UINT32 next_opcode = (UINT32)(UINT16)RW( sh2, sh2->ppc & AM );
 		/* BRA  $
 		 * NOP
 		 */
@@ -800,9 +800,10 @@ INLINE void DT(sh2_state *sh2, UINT32 n)
 		sh2->sr |= T;
 	else
 		sh2->sr &= ~T;
+	sh2->no_polling = SH2_NO_POLLING;
 #if BUSY_LOOP_HACKS
 	{
-		UINT32 next_opcode = RW( sh2, sh2->ppc & AM );
+		UINT32 next_opcode = (UINT32)(UINT16)RW( sh2, sh2->ppc & AM );
 		/* DT   Rn
 		 * BF   $-2
 		 */
@@ -1049,12 +1050,12 @@ INLINE void MAC_W(sh2_state *sh2, UINT32 m, UINT32 n)
 	INT32 tempm, tempn, dest, src, ans;
 	UINT32 templ;
 
-	tempn = (INT32) RW( sh2, sh2->r[n] );
+	tempn = (INT32)(INT16) RW( sh2, sh2->r[n] );
 	sh2->r[n] += 2;
-	tempm = (INT32) RW( sh2, sh2->r[m] );
+	tempm = (INT32)(INT16) RW( sh2, sh2->r[m] );
 	sh2->r[m] += 2;
 	templ = sh2->macl;
-	tempm = ((INT32) (short) tempn * (INT32) (short) tempm);
+	tempm = (tempn * tempm);
 	if ((INT32) sh2->macl >= 0)
 		dest = 0;
 	else

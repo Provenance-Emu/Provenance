@@ -13,14 +13,17 @@
 #include <dlfcn.h>
 
 #include <pico/pico_int.h>
-#include "../libpicofe/lprintf.h"
 #include "mp3.h"
 
 #if LIBAVCODEC_VERSION_MAJOR < 55
 #define AVCodecID CodecID
 #define AV_CODEC_ID_MP3 CODEC_ID_MP3
+#define AV_CH_LAYOUT_STEREO CH_LAYOUT_STEREO
+#define AV_SAMPLE_FMT_S16 SAMPLE_FMT_S16
+#define request_sample_fmt sample_fmt
 #endif
 
+static void *libavcodec;
 static AVCodecContext *ctx;
 
 /* avoid compile time linking to libavcodec due to huge list of it's deps..
@@ -37,7 +40,8 @@ int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 	int bytes_in;
 	int bytes_out;
 	int offset;
-	int len;
+	int len = -1;
+	int retry = 3;
 
 	p_av_init_packet(&avpkt);
 
@@ -56,6 +60,7 @@ int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 			*file_pos = file_len;
 			return 1; // EOF
 		}
+		*file_pos += offset;
 
 		// to avoid being flooded with "incorrect frame size" errors,
 		// we must calculate and pass exact frame size - lame
@@ -65,7 +70,6 @@ int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 
 		if (offset > 0 && bytes_in - offset < frame_size) {
 			// underflow
-			*file_pos += offset;
 			continue;
 		}
 
@@ -85,47 +89,60 @@ int mp3dec_decode(FILE *f, int *file_pos, int file_len)
 				*file_pos, file_len, len);
 
 			// attempt to skip the offending frame..
-			*file_pos += offset + 1;
-			continue;
-		}
-
-		*file_pos += offset + len;
+			*file_pos += 1;
+		} else
+			*file_pos += len;
 	}
-	while (0);
+	while (len <= 0 && --retry > 0);
 
-	return 0;
+	return len <= 0;
 }
 
 int mp3dec_start(FILE *f, int fpos_start)
 {
 	void (*avcodec_register_all)(void);
 	AVCodec *(*avcodec_find_decoder)(enum AVCodecID id);
+#if LIBAVCODEC_VERSION_MAJOR < 54
 	AVCodecContext *(*avcodec_alloc_context)(void);
 	int (*avcodec_open)(AVCodecContext *avctx, AVCodec *codec);
+#else
+	AVCodecContext *(*avcodec_alloc_context)(AVCodec *);
+	int (*avcodec_open)(AVCodecContext *avctx, AVCodec *codec, AVDictionary **);
+#endif
 	void (*av_free)(void *ptr);
 	AVCodec *codec;
-	void *soh;
 	int ret;
 
 	if (ctx != NULL)
 		return 0;
 
+#if LIBAVCODEC_VERSION_MAJOR < 54
 	// either v52 or v53 should be ok
-	soh = dlopen("libavcodec.so.52", RTLD_NOW);
-	if (soh == NULL)
-		soh = dlopen("libavcodec.so.53", RTLD_NOW);
-	if (soh == NULL) {
+	if (libavcodec == NULL)
+		libavcodec = dlopen("libavcodec.so.52", RTLD_NOW);
+	if (libavcodec == NULL)
+		libavcodec = dlopen("libavcodec.so.53", RTLD_NOW);
+#else
+	if (libavcodec == NULL)
+		libavcodec = dlopen("libavcodec.so", RTLD_NOW);
+#endif
+	if (libavcodec == NULL) {
 		lprintf("mp3dec: load libavcodec.so: %s\n", dlerror());
 		return -1;
 	}
 
-	avcodec_register_all = dlsym(soh, "avcodec_register_all");
-	avcodec_find_decoder = dlsym(soh, "avcodec_find_decoder");
-	avcodec_alloc_context = dlsym(soh, "avcodec_alloc_context");
-	avcodec_open = dlsym(soh, "avcodec_open");
-	av_free = dlsym(soh, "av_free");
-	p_av_init_packet = dlsym(soh, "av_init_packet");
-	p_avcodec_decode_audio3 = dlsym(soh, "avcodec_decode_audio3");
+	avcodec_register_all = dlsym(libavcodec, "avcodec_register_all");
+	avcodec_find_decoder = dlsym(libavcodec, "avcodec_find_decoder");
+#if LIBAVCODEC_VERSION_MAJOR < 54
+	avcodec_alloc_context = dlsym(libavcodec, "avcodec_alloc_context");
+	avcodec_open = dlsym(libavcodec, "avcodec_open");
+#else
+	avcodec_alloc_context = dlsym(libavcodec, "avcodec_alloc_context3");
+	avcodec_open = dlsym(libavcodec, "avcodec_open2");
+#endif
+	av_free = dlsym(libavcodec, "av_free");
+	p_av_init_packet = dlsym(libavcodec, "av_init_packet");
+	p_avcodec_decode_audio3 = dlsym(libavcodec, "avcodec_decode_audio3");
 
 	if (avcodec_register_all == NULL || avcodec_find_decoder == NULL
 	    || avcodec_alloc_context == NULL || avcodec_open == NULL
@@ -133,7 +150,6 @@ int mp3dec_start(FILE *f, int fpos_start)
 	    || p_av_init_packet == NULL || p_avcodec_decode_audio3 == NULL)
 	{
 		lprintf("mp3dec: missing symbol(s) in libavcodec.so\n");
-		dlclose(soh);
 		return -1;
 	}
 
@@ -148,12 +164,24 @@ int mp3dec_start(FILE *f, int fpos_start)
 		return -1;
 	}
 
+#if LIBAVCODEC_VERSION_MAJOR < 54
 	ctx = avcodec_alloc_context();
 	if (ctx == NULL) {
 		lprintf("mp3dec: avcodec_alloc_context failed\n");
 		return -1;
 	}
+#else
+	ctx = avcodec_alloc_context(codec);
+	if (ctx == NULL) {
+		lprintf("mp3dec: avcodec_alloc_context failed\n");
+		return -1;
+	}
+#endif
+	ctx->request_channel_layout = AV_CH_LAYOUT_STEREO;
+	ctx->request_sample_fmt = AV_SAMPLE_FMT_S16;
+	ctx->sample_rate = 44100;
 
+#if LIBAVCODEC_VERSION_MAJOR < 54
 	ret = avcodec_open(ctx, codec);
 	if (ret < 0) {
 		lprintf("mp3dec: avcodec_open failed: %d\n", ret);
@@ -161,6 +189,14 @@ int mp3dec_start(FILE *f, int fpos_start)
 		ctx = NULL;
 		return -1;
 	}
-
+#else
+	ret = avcodec_open(ctx, codec, NULL);
+	if (ret < 0) {
+		lprintf("mp3dec: avcodec_open failed: %d\n", ret);
+		av_free(ctx);
+		ctx = NULL;
+		return -1;
+	}
+#endif
 	return 0;
 }
