@@ -67,6 +67,7 @@ __weak PVPicoDriveBridge *_current;
     NSMutableDictionary<NSString *, NSString *> *_variableCache;
     atomic_bool _shouldRun;
     atomic_bool _isGameLoaded;
+    atomic_bool _didShutdownCore;
 }
 
 @end
@@ -387,6 +388,7 @@ static void writeSaveFile(const char* path, int type)
         _variableCache = [NSMutableDictionary dictionary];
         atomic_init(&_shouldRun, false);
         atomic_init(&_isGameLoaded, false);
+        atomic_init(&_didShutdownCore, false);
     }
 
 	_current = self;
@@ -554,24 +556,29 @@ static void writeSaveFile(const char* path, int type)
         writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
     }
 
-    if (atomic_load(&_isGameLoaded)) {
-        retro_unload_game();
-        atomic_store(&_isGameLoaded, false);
-    }
-    retro_deinit();
-    _current = nil;
+    [self shutdownCoreIfNeeded];
 }
 
 - (void)dealloc {
     atomic_store(&_shouldRun, false);
+    [self shutdownCoreIfNeeded];
+    free(self->videoBufferA);
+    free(self->videoBufferB);
+}
+
+- (void)shutdownCoreIfNeeded {
+    bool expected = false;
+    if (!atomic_compare_exchange_strong(&_didShutdownCore, &expected, true)) {
+        return;
+    }
+
     if (atomic_load(&_isGameLoaded)) {
         retro_unload_game();
         atomic_store(&_isGameLoaded, false);
     }
+
     retro_deinit();
     _current = nil;
-    free(self->videoBufferA);
-    free(self->videoBufferB);
 }
 
 #pragma mark Video
