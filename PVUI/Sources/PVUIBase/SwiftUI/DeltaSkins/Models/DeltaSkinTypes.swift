@@ -334,14 +334,10 @@ public enum VirtualKeyboardVariant: String, Codable, Hashable, Equatable, CaseIt
 extension VirtualKeyboardVariant {
     /// Maps this skin-level variant identifier to the corresponding keyboard layout.
     public func toLayout() -> VirtualKeyboardLayout {
-        switch self {
-        case .full:        return .full
-        case .compact:     return .compact
-        case .functionRow: return .functionRow
-        case .c64:         return .c64
-        case .zxSpectrum:  return .zxSpectrum
-        case .amstradCPC:  return .amstradCPC
+        if let layout = VirtualKeyboardLayout(rawValue: rawValue) {
+            return layout
         }
+        return .full
     }
 }
 
