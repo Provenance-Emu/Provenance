@@ -72,6 +72,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   save-state screenshot writes use `.atomic` option to prevent partial/corrupt files (#2766)
 
 ### Changed
+- **Save-State Persistence Abstraction** — Extracted Realm write for save states into
+  `SaveStatePersistenceServiceProtocol` / `RomDatabase` conformance; `createNewSaveState`
+  now calls the abstracted service rather than Realm directly, preparing for SwiftData
+  backend swap in #2510 without touching PVUI call sites (#2888)
 - **Cheats UI** — Moved Cheat Codes to main tab in pause menu for faster access (#2608)
 - **Lock Patterns** — Converted bare `NSLock.lock()/unlock()` to `withLock` throughout
   audio engines and emulator VC (#2688, #2750)
