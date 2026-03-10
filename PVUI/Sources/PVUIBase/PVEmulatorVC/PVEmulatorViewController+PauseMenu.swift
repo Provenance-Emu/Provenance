@@ -52,6 +52,9 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
         // Setting isShowingMenu will handle pausing the emulation
         isShowingMenu = true
 
+        // Temporarily hide indicator overlay to avoid interaction conflicts
+        temporarilyHideIndicatorOverlay()
+
         // Create a hosting view controller for our custom menu
         let menuVC = UIViewController()
         menuVC.modalPresentationStyle = .overFullScreen
@@ -133,6 +136,9 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
 
             // Setting isShowingMenu to false will handle resuming the emulation
             isShowingMenu = false
+
+            // Restore indicator overlay visibility
+            restoreIndicatorOverlay()
         }
         menuPresentationViewController = nil
     }
