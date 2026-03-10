@@ -200,11 +200,16 @@ tvos: | update developer_tvos
 open:
 	open Provenance.xcworkspace
 
-## Generate libretro cheat database from libretro-database repo
+## Generate libretro cheat database if missing (for builds/tests)
+ensure-cheatdb:
+	@PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
+## Force-regenerate libretro cheat database from libretro-database repo
 ## Uses MD5 cross-referencing from DAT files for ROM hash lookup support.
 update-cheatdb:
 	$(info Generating libretro cheat database…)
 	rm -rf /tmp/libretro-database
+	rm -f PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
 	git clone --depth=1 https://github.com/libretro/libretro-database.git /tmp/libretro-database
 	python3 Scripts/generate_cheatdb.py /tmp/libretro-database/cht/ \
 		--dat-dir /tmp/libretro-database \
