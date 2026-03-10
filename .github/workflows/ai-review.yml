@@ -415,8 +415,8 @@ jobs:
 
             Output ONLY this single line. No summaries, no explanations, no extra markdown.
 
-      # If Claude failed (rate limit, auth error), try Kimi (moonshot-v1-128k)
-      # as a fallback reviewer via its OpenAI-compatible API.
+      # If Claude failed (rate limit, auth error), try Kimi Code (kimi-for-coding, 256k ctx)
+      # as a fallback reviewer via its Anthropic-compatible API (api.kimi.com/coding).
       - name: Kimi fallback review
         if: steps.reviewer_run.outcome == 'failure'
         env:
@@ -437,31 +437,29 @@ jobs:
             echo "Kimi key missing or diff empty — falling back to manual notice"
             KIMI_FAILED=true
           else
-            # --- Build prompt payload ---
+            # --- Build prompt payload (Anthropic messages format) ---
             cat > /tmp/kimi_payload.json << PAYLOAD_EOF
           {
-            "model": "moonshot-v1-128k",
-            "temperature": 0.2,
+            "model": "kimi-for-coding",
+            "max_tokens": 4096,
+            "system": "You are an experienced Swift/iOS code reviewer. Review the provided PR diff carefully and produce a concise structured review. Focus on correctness, memory safety, threading, API misuse, and Swift best practices. Be direct and specific — cite file paths and line numbers where possible.",
             "messages": [
               {
-                "role": "system",
-                "content": "You are an experienced Swift/iOS code reviewer. Review the provided PR diff carefully and produce a concise structured review. Focus on correctness, memory safety, threading, API misuse, and Swift best practices. Be direct and specific — cite file paths and line numbers where possible."
-              },
-              {
                 "role": "user",
-                "content": "PR #${PR_NUM}: ${PR_TITLE}\n\nDescription:\n${PR_BODY}\n\nDiff (truncated to 40k chars):\n\`\`\`diff\n${DIFF}\n\`\`\`\n\nProvide your review in this format:\n\n## AI Code Review (Kimi fallback — Claude rate-limited)\n\n### Summary\n<one paragraph>\n\n### Issues\n**🔴 CRITICAL** *(must fix)*\n- or 'none'\n\n**🟠 MAJOR** *(should fix)*\n- or 'none'\n\n**🟡 MINOR** *(optional)*\n- or 'none'\n\n**⚪ NIT**\n- or 'none'\n\n### Verdict: APPROVE ✅  or  REQUEST_CHANGES 🔧\n\n---\n> 🤖 *Fallback review by Kimi (moonshot-v1-128k). Claude Code was rate-limited.*"
+                "content": "PR #${PR_NUM}: ${PR_TITLE}\n\nDescription:\n${PR_BODY}\n\nDiff (truncated to 60k chars):\n\`\`\`diff\n${DIFF}\n\`\`\`\n\nProvide your review in this format:\n\n## AI Code Review (Kimi fallback — Claude rate-limited)\n\n### Summary\n<one paragraph>\n\n### Issues\n**🔴 CRITICAL** *(must fix)*\n- or 'none'\n\n**🟠 MAJOR** *(should fix)*\n- or 'none'\n\n**🟡 MINOR** *(optional)*\n- or 'none'\n\n**⚪ NIT**\n- or 'none'\n\n### Verdict: APPROVE ✅  or  REQUEST_CHANGES 🔧\n\n---\n> 🤖 *Fallback review by Kimi Code (kimi-for-coding, 256k ctx). Claude Code was rate-limited.*"
               }
             ]
           }
           PAYLOAD_EOF
 
-            # --- Call Kimi API ---
-            KIMI_RESP=$(curl -sf -X POST "https://api.moonshot.ai/v1/chat/completions" \
-              -H "Authorization: Bearer ${KIMI_API_KEY}" \
+            # --- Call Kimi Code API (Anthropic-compatible) ---
+            KIMI_RESP=$(curl -sf -X POST "https://api.kimi.com/coding/v1/messages" \
+              -H "x-api-key: ${KIMI_API_KEY}" \
+              -H "anthropic-version: 2023-06-01" \
               -H "Content-Type: application/json" \
               -d @/tmp/kimi_payload.json 2>/dev/null || echo "")
 
-            KIMI_REVIEW=$(echo "$KIMI_RESP" | jq -r '.choices[0].message.content // ""' 2>/dev/null || echo "")
+            KIMI_REVIEW=$(echo "$KIMI_RESP" | jq -r '[.content[]?.text] | join("") | select(length > 0)' 2>/dev/null || echo "")
 
             if [ -z "$KIMI_REVIEW" ]; then
               echo "Kimi API call failed or returned empty content"
@@ -487,7 +485,7 @@ jobs:
           ## ✅ AI Review Complete (Kimi fallback)
 
           **Primary reviewer:** ${{ needs.triage.outputs.model }} — rate-limited
-          **Fallback reviewer:** Kimi (moonshot-v1-128k)
+          **Fallback reviewer:** Kimi Code (kimi-for-coding, 256k ctx)
 
           Review posted as PR comment above.
 
