@@ -75,8 +75,10 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 
     private func registerControllerForHaptics(_ controller: GCController?, player: Int) {
         if #available(iOS 14.0, tvOS 14.0, *) {
+            /// Safe: GCController is main-thread-only; callers set controllers on main thread.
+            nonisolated(unsafe) let gc = controller
             Task { @MainActor in
-                GCControllerHapticsManager.shared.register(controller: controller, forPlayer: player)
+                GCControllerHapticsManager.shared.register(controller: gc, forPlayer: player)
             }
         }
     }

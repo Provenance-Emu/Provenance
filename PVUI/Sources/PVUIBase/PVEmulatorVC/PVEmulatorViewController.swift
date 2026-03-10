@@ -44,9 +44,9 @@ func uncaughtExceptionHandler(exception _: NSException?) {
     // the database if interrupted mid-write.
     //
     // Only synchronous, signal-safe operations belong here.
-    if core.isOn {
+    if !core.shouldStop {
         ILOG("uncaughtExceptionHandler: synchronously stopping emulation to flush battery saves")
-        core.stopEmulation()
+        core.emergencyStopEmulation()
     }
 }
 

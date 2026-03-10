@@ -33,7 +33,7 @@ private struct AchievementToast: Identifiable, Equatable {
 // MARK: - Overlay ViewModel
 
 @MainActor
-final class AchievementOverlayViewModel: ObservableObject {
+public final class AchievementOverlayViewModel: ObservableObject {
     @Published fileprivate var toasts: [AchievementToast] = []
     @Published fileprivate var challengeIndicators: [UInt32: URL?] = [:]
 

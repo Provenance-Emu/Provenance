@@ -698,7 +698,7 @@ public class RealmSaveStateDriver: SaveStateDriver {
             }
 
             // Update cache
-            cacheLock.withLock { viewModelCache[saveState.id] = saveState }
+            cacheLock.withLock { [weak self] in  self?.viewModelCache[saveState.id] = saveState }
 
             // Update UI on main thread
             Task { @MainActor in
@@ -727,7 +727,8 @@ public class RealmSaveStateDriver: SaveStateDriver {
             }
 
             // Remove from caches
-            cacheLock.withLock {
+            cacheLock.withLock {  [weak self] in
+                guard let self else { return }
                 for id in ids {
                     viewModelCache.removeValue(forKey: id)
                     imageCache.removeValue(forKey: id)

@@ -169,6 +169,7 @@ let package = Package(
                     "pico/videoport.c",
                     "pico/z80if.c",
                     "platform/common/mp3.c",
+                    "platform/common/mp3_sync.c",
                     "platform/common/mp3_dummy.c",
                     "platform/libretro/libretro.c",
                     "platform/libretro/libretro-common/compat/compat_posix_string.c",

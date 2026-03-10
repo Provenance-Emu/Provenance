@@ -91,13 +91,17 @@ public final class GCControllerHapticsManager {
         let nc = NotificationCenter.default
 
         let connectObs = nc.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] note in
-            guard let controller = note.object as? GCController else { return }
-            Task { @MainActor in self?.controllerConnected(controller) }
+            guard let gc = note.object as? GCController else { return }
+            /// Safe: delivered on queue: .main which is the MainActor executor.
+            nonisolated(unsafe) let controller = gc
+            MainActor.assumeIsolated { self?.controllerConnected(controller) }
         }
 
         let disconnectObs = nc.addObserver(forName: .GCControllerDidDisconnect, object: nil, queue: .main) { [weak self] note in
-            guard let controller = note.object as? GCController else { return }
-            Task { @MainActor in self?.controllerDisconnected(controller) }
+            guard let gc = note.object as? GCController else { return }
+            /// Safe: delivered on queue: .main which is the MainActor executor.
+            nonisolated(unsafe) let controller = gc
+            MainActor.assumeIsolated { self?.controllerDisconnected(controller) }
         }
 
         // Stop engines when the app moves to background; restart on foreground.

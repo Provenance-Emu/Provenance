@@ -20,6 +20,23 @@ import RealmSwift
 /// SwiftData (#2510) without altering any UI call sites.
 extension RomDatabase: SaveStatePersistenceServiceProtocol {
 
+    /// Resolves the Realm instance used for save-state writes.
+    ///
+    /// This avoids placing an `await` inside `??`, which Swift treats as a
+    /// non-async autoclosure context and rejects during compilation.
+    private func saveStateWriteRealm() async throws -> Realm {
+        if let threadRealm = Thread.current.realm?.realm {
+            return threadRealm
+        }
+
+        do {
+            return try await Realm(configuration: RealmConfiguration.realmConfig)
+        } catch {
+            ELOG("registerSaveState: cannot obtain Realm — \(error.localizedDescription)")
+            throw SaveStateError.realmWriteError(error)
+        }
+    }
+
     /// Creates a ``PVSaveState`` record in Realm and returns its UUID.
     ///
     /// Bridges the non-`async` Realm `writeAsync` API into Swift concurrency via
@@ -40,11 +57,7 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
         // Pre-flight: obtain a Realm instance before entering the continuation.
         // asyncWriteTransaction returns early (without calling its block) when
         // Realm is unavailable — that silently leaves the continuation dangling.
-        guard let realm = Thread.current.realm?.realm
-                       ?? (try? Realm(configuration: RealmConfiguration.realmConfig)) else {
-            ELOG("registerSaveState: cannot obtain Realm — aborting before entering continuation")
-            throw SaveStateError.noCoreFound(coreIdentifier)
-        }
+        let realm = try await saveStateWriteRealm()
 
         return try await withCheckedThrowingContinuation { continuation in
             realm.writeAsync {

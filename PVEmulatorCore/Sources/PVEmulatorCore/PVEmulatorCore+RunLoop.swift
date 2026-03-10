@@ -35,6 +35,24 @@ import PVLogging
 
     @objc open var isSpeedModified: Bool { return gameSpeed != .normal }
 
+    /// Performs a best-effort synchronous shutdown for fatal exception handling.
+    ///
+    /// This intentionally avoids `@MainActor` state such as `isOn` because the
+    /// uncaught exception handler cannot safely hop actors before the process exits.
+    @objc open func emergencyStopEmulation() {
+        stopHaptic()
+        shouldStop = true
+        isRunning = false
+
+        isFrontBufferReady = false
+        frontBufferCondition.signal()
+
+        /// Bypass Swift actor isolation for the fatal-exception path and send the
+        /// Objective-C selector synchronously, matching the pre-concurrency behavior.
+        let stopSelector = NSSelectorFromString("stopEmulation")
+        _ = (bridge as AnyObject).perform(stopSelector)
+    }
+
     @MainActor
     @objc open func stopEmulation() {
         stopHaptic()

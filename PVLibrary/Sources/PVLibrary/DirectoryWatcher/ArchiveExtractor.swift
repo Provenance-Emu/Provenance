@@ -380,11 +380,11 @@ class RarExtractor: BaseExtractor {
         }
         try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true, attributes: nil)
         #if canImport(Unrar)
-        let archive = try Archive(filePath: path.path)
+        let archive = try Archive(path: path.path)
         let entries = try archive.entries()
         let total = entries.count
         for (index, entry) in entries.enumerated() {
-            guard !entry.isDirectory else { continue }
+            guard !entry.directory else { continue }
             // Sanitize entry filename to prevent path traversal (e.g. "../" components)
             let sanitizedName = entry.fileName
                 .components(separatedBy: "/")
@@ -402,7 +402,8 @@ class RarExtractor: BaseExtractor {
             }
             let parentDir = fullPath.deletingLastPathComponent()
             try FileManager.default.createDirectory(at: parentDir, withIntermediateDirectories: true, attributes: nil)
-            try archive.extract(entry, to: fullPath.path)
+            let data = try archive.extract(entry)
+            try data.write(to: fullPath)
             yieldPath(fullPath)
             progress(Double(index + 1) / Double(max(total, 1)))
         }
