@@ -37,8 +37,11 @@ public struct BPSPatcher: Sendable {
     /// - Returns: The patched ROM data.
     /// - Throws: `PatchError` on format or integrity issues.
     public func apply(patch: Data, to source: Data) throws -> Data {
-        guard patch.count >= 4 else {
-            throw PatchError.corruptPatchFile("BPS file too small")
+        // Minimum valid BPS: header(4) + 3×VLI-min(3) + 3×CRC32(12) = 19 bytes.
+        // A file with 4..18 bytes can pass the header check but crash on
+        // readLE32(patch, at: patch.count - 12) / patch.count - 8 / patch.count - 4.
+        guard patch.count >= 19 else {
+            throw PatchError.corruptPatchFile("BPS file too small (minimum 19 bytes)")
         }
         guard patch[0..<4].elementsEqual("BPS1".utf8) else {
             throw PatchError.corruptPatchFile("Invalid BPS header — expected 'BPS1'")
