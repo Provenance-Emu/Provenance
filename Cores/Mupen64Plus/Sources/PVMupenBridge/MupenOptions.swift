@@ -105,7 +105,7 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
         
         // MARK: CountPerOp - CPU Overclock/Underclock
         // Use enumeration with presets for better UX
-        // NOTE: Title must remain "Count Per Op" — bridge reads it via intForOption:@"Count Per Op"
+        // NOTE: Title must remain "Count Per Op" -- bridge reads it via intForOption:@"Count Per Op"
         coreOptions.append(.enumeration(.init(title: "Count Per Op",
                                               description: "Controls N64 CPU emulation speed (CountPerOp). Lower=faster CPU (overclock), Higher=slower CPU (underclock).",
                                               requiresRestart: true),
