@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import CloudKit
 import Combine
 import PVLogging
@@ -40,8 +41,9 @@ public enum iCloudDriveSync {
 
     // Track whether a file recovery session is currently active
     static var isRecoverySessionActive: Bool = false
-    private static let recoveryLock = NSLock()
-    private static var isRecoveryInFlight: Bool = false
+    /// Lock protecting `isRecoveryInFlight`. Uses `OSAllocatedUnfairLock<Bool>` (iOS 16+)
+    /// to wrap the flag directly, ensuring all access is through deadlock-free `withLock`.
+    private static let recoveryLock = OSAllocatedUnfairLock<Bool>(initialState: false)
 
     // Set of files currently being recovered - used to prevent premature access
     /// Thread-safe set of files currently being recovered from iCloud
@@ -498,7 +500,9 @@ public enum iCloudDriveSync {
     private static var filesProcessed = 0
     private static var totalFilesToMove = 0
     private static var totalBytesProcessed: UInt64 = 0
-    private static var progressLock = NSLock()
+    /// Lock protecting `filesProcessed`, `totalFilesToMove`, and related progress counters.
+    /// Uses `OSAllocatedUnfairLock` (iOS 16+) for deadlock-free `withLock` semantics.
+    private static let progressLock = OSAllocatedUnfairLock<Void>()
 
     // Retry queue for files that fail with timeout errors
     private static var retryQueue: [(sourceFile: URL, destFile: URL)] = []
@@ -837,9 +841,9 @@ public enum iCloudDriveSync {
     }
 
     static func moveFilesFromiCloudDriveToLocalDocuments() async {
-        let (shouldProceed, shouldPostStarted) = recoveryLock.withLock { () -> (Bool, Bool) in
-            if isRecoveryInFlight { return (false, false) }
-            isRecoveryInFlight = true
+        let (shouldProceed, shouldPostStarted) = recoveryLock.withLock { (isInFlight: inout Bool) -> (Bool, Bool) in
+            if isInFlight { return (false, false) }
+            isInFlight = true
             let shouldPostStarted = !isRecoverySessionActive
             isRecoverySessionActive = true
             return (true, shouldPostStarted)
@@ -850,8 +854,8 @@ public enum iCloudDriveSync {
         }
 
         defer {
-            recoveryLock.withLock {
-                isRecoveryInFlight = false
+            recoveryLock.withLock { (isInFlight: inout Bool) in
+                isInFlight = false
                 isRecoverySessionActive = false
             }
         }

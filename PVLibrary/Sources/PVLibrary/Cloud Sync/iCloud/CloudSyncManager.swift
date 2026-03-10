@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import Combine
 import PVLogging
 import PVPrimitives
@@ -117,9 +118,11 @@ public class CloudSyncManager {
     private var notificationTokens: [NSObjectProtocol] = []
     private var integrityAuditTask: Task<Void, Never>?
     private var metadataBootstrapTask: Task<Void, Never>?
-    /// Track active async tasks so they can be cancelled on emulation pause
+    /// Track active async tasks so they can be cancelled on emulation pause.
+    /// Protected by `activeTasksLock` via `withLock`.
     private var activeSyncTasks: [Task<Void, Never>] = []
-    private let activeTasksLock = NSLock()
+    /// Thread-safe guard for `activeSyncTasks`. Uses `OSAllocatedUnfairLock` (iOS 16+).
+    private let activeTasksLock = OSAllocatedUnfairLock<Void>()
 
     /// Throttle for status updates to prevent flooding the UI
     private var lastStatusUpdate: Date = .distantPast

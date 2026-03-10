@@ -50,6 +50,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Netplay Architecture** — Research document and design for native Swift/SwiftUI netplay
   system (#2544, #2558)
 
+### Changed
+- **Lock modernization in PVLibrary** — Replaced all `NSLock` instances with `OSAllocatedUnfairLock`
+  (iOS/tvOS 16+), eliminating bare `.lock()` / `.unlock()` pairs in favour of deadlock-safe
+  `withLock { }` closures across `GameImporter`, `DirectoryWatcher`, `CloudKitRemoteApplyGuard`,
+  `CloudSyncManager`, `CloudKitSubscriptionManager`, `iCloudDriveSync`,
+  `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
+
 ### Fixed
 - **PVCoreLoader Deadlock Risk** — Replaced `NSLock` with `OSAllocatedUnfairLock` in
   `CoreLoader` and `LibretroMetadataReader`; all bare `.lock()`/`.unlock()` pairs replaced

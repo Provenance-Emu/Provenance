@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 import PVLookup
 import PVSystems
 import PVPrimitives
@@ -27,7 +28,8 @@ public protocol GameImporterSystemsServicing {
 
 class GameImporterSystemsService: GameImporterSystemsServicing {
     private let lookup: PVLookup
-    private let cacheLock = NSLock()
+    /// Thread-safe guard for `systemsCache`. Uses `OSAllocatedUnfairLock` (iOS 16+).
+    private let cacheLock = OSAllocatedUnfairLock<Void>()
 
     private struct SystemsCacheEntry<Value> {
         var value: Value?
@@ -53,48 +55,37 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
     }
 
     private func cachedSystems(for key: SystemCacheKey) -> SystemsCacheResult<[SystemIdentifier]>? {
-        cacheLock.lock()
-        defer { cacheLock.unlock() }
-
-        guard var entry = systemsCache[key] else {
-            return nil
-        }
-
-        entry.lastAccess = Date().timeIntervalSinceReferenceDate
-        systemsCache[key] = entry
-
-        if let value = entry.value {
-            return .hit(value)
-        } else {
-            return .miss
+        cacheLock.withLock {
+            guard var entry = systemsCache[key] else { return nil }
+            entry.lastAccess = Date().timeIntervalSinceReferenceDate
+            systemsCache[key] = entry
+            if let value = entry.value {
+                return .hit(value)
+            } else {
+                return .miss
+            }
         }
     }
 
     private func cacheSystems(_ value: [SystemIdentifier]?, for key: SystemCacheKey) {
-        cacheLock.lock()
-        systemsCache[key] = SystemsCacheEntry(value: value, lastAccess: Date().timeIntervalSinceReferenceDate)
-        let shouldTrim = systemsCache.count > systemsCacheLimit
-        cacheLock.unlock()
-
+        let shouldTrim = cacheLock.withLock { () -> Bool in
+            systemsCache[key] = SystemsCacheEntry(value: value, lastAccess: Date().timeIntervalSinceReferenceDate)
+            return systemsCache.count > systemsCacheLimit
+        }
         guard shouldTrim else { return }
         trimSystemsCache()
     }
 
     private func trimSystemsCache() {
-        cacheLock.lock()
-        let overflow = systemsCache.count - systemsCacheLimit
-        guard overflow > 0 else {
-            cacheLock.unlock()
-            return
+        cacheLock.withLock {
+            let overflow = systemsCache.count - systemsCacheLimit
+            guard overflow > 0 else { return }
+            let keysToRemove = systemsCache
+                .sorted { $0.value.lastAccess < $1.value.lastAccess }
+                .prefix(overflow)
+                .map { $0.key }
+            keysToRemove.forEach { systemsCache.removeValue(forKey: $0) }
         }
-
-        let keysToRemove = systemsCache
-            .sorted { $0.value.lastAccess < $1.value.lastAccess }
-            .prefix(overflow)
-            .map { $0.key }
-
-        keysToRemove.forEach { systemsCache.removeValue(forKey: $0) }
-        cacheLock.unlock()
     }
 
     func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem], romFilename: String) -> [PVGame]? {
