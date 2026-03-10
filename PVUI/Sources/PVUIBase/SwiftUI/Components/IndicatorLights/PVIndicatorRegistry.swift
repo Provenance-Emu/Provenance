@@ -57,9 +57,9 @@ public final class PVIndicatorRegistry: ObservableObject {
         setupJITObservers()
     }
 
-    deinit {
-        removeJITObservers()
-    }
+//    deinit {
+//        removeJITObservers()
+//    }
 
     // MARK: - Public API
 
