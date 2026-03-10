@@ -1239,9 +1239,11 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if PVControllerManager.shared.isKeyboardConnected && !Defaults[.onscreenJoypadWithKeyboard] {
             DLOG("`isKeyboardConnected` true and `onscreenJoypadWithKeyboard` false, hiding")
             joyPad.isHidden = true
+            joyPad2?.isHidden = true
             return
         }
         joyPad.isHidden = false
+        joyPad2?.isHidden = false
 
         guard let dPad = dPad, !dPad.isCustomMoved, !joyPad.isCustomMoved else {
             return
