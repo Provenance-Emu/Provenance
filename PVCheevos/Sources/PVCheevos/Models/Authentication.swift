@@ -14,6 +14,28 @@ public final class RetroCredentialsManager: @unchecked Sendable {
 
     private init() {}
 
+    private func loadCredentialsLocked() -> (username: String, password: String)? {
+        guard let username = userDefaults.string(forKey: usernameKey),
+              let encodedPassword = userDefaults.string(forKey: passwordKey),
+              let passwordData = Data(base64Encoded: encodedPassword),
+              let password = String(data: passwordData, encoding: .utf8) else {
+            return nil
+        }
+        return (username: username, password: password)
+    }
+
+    private func loadSessionTokenLocked() -> String? {
+        userDefaults.string(forKey: tokenKey)
+    }
+
+    private func loadUserProfileLocked() -> UserProfile? {
+        guard let data = userDefaults.data(forKey: userProfileKey),
+              let profile = try? JSONDecoder().decode(UserProfile.self, from: data) else {
+            return nil
+        }
+        return profile
+    }
+
     /// Save username and password securely
     public func saveCredentials(username: String, password: String) {
         queue.async {
@@ -43,45 +65,35 @@ public final class RetroCredentialsManager: @unchecked Sendable {
     /// Load stored credentials
     public func loadCredentials() -> (username: String, password: String)? {
         return queue.sync {
-            guard let username = userDefaults.string(forKey: usernameKey),
-                  let encodedPassword = userDefaults.string(forKey: passwordKey),
-                  let passwordData = Data(base64Encoded: encodedPassword),
-                  let password = String(data: passwordData, encoding: .utf8) else {
-                return nil
-            }
-            return (username: username, password: password)
+            loadCredentialsLocked()
         }
     }
 
     /// Load stored session token
     public func loadSessionToken() -> String? {
         return queue.sync {
-            return userDefaults.string(forKey: tokenKey)
+            loadSessionTokenLocked()
         }
     }
 
     /// Load stored user profile
     public func loadUserProfile() -> UserProfile? {
         return queue.sync {
-            guard let data = userDefaults.data(forKey: userProfileKey),
-                  let profile = try? JSONDecoder().decode(UserProfile.self, from: data) else {
-                return nil
-            }
-            return profile
+            loadUserProfileLocked()
         }
     }
 
     /// Check if user has stored credentials
     public var hasStoredCredentials: Bool {
         return queue.sync {
-            return loadCredentials() != nil
+            loadCredentialsLocked() != nil
         }
     }
 
     /// Check if user has a valid session
     public var hasValidSession: Bool {
         return queue.sync {
-            return loadSessionToken() != nil && loadUserProfile() != nil
+            loadSessionTokenLocked() != nil && loadUserProfileLocked() != nil
         }
     }
 
