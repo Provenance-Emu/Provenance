@@ -13,6 +13,9 @@ import PVSettings
 import GameController
 import PVSupport
 import PVLibrary
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 // Menu categories
 enum MenuCategory {
@@ -28,7 +31,7 @@ class PVGameMenuOverlay: UIView {
     // MARK: - Properties
 
     weak var emulatorViewController: PVEmulatorViewController?
-    private var hostingController: UIHostingController<RetroMenuView>?
+    private var hostingController: UIViewController?
 
     // MARK: - Initialization
 
@@ -52,9 +55,14 @@ class PVGameMenuOverlay: UIView {
         guard let emulatorVC = emulatorViewController else { return }
 
         // Create the SwiftUI menu view
-        let menuView = RetroMenuView(emulatorVC: emulatorVC, dismissAction: { [weak self] resumeEmulation in
-            self?.dismiss(resumeEmulation: resumeEmulation)
-        })
+        var menuView: some View {
+            RetroMenuView(emulatorVC: emulatorVC, dismissAction: { [weak self] resumeEmulation in
+                self?.dismiss(resumeEmulation: resumeEmulation)
+            })
+            #if canImport(FreemiumKit)
+            .environmentObject(FreemiumKit.shared)
+            #endif
+        }
 
         // Create and configure the hosting controller
         hostingController = UIHostingController(rootView: menuView)
