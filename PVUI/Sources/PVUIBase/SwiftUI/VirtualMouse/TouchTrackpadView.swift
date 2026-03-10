@@ -94,6 +94,30 @@ public final class TouchTrackpadView: UIView {
         addGestureRecognizer(longPress)
     }
 
+    // MARK: - Hit-testing: defer to sibling interactive views (e.g. controller skin buttons)
+    //
+    // If a sibling view in the parent hierarchy would respond to this touch
+    // (e.g. an on-screen button in the UIKit controller skin), pass the touch
+    // through rather than consuming it ourselves.  This prevents the trackpad
+    // from blocking button presses when it is laid out over a controller skin.
+
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        // If any interactive sibling (e.g. an on-screen controller button) claims
+        // this touch location, yield to it so the trackpad doesn't block presses.
+        if let siblings = superview?.subviews {
+            for sibling in siblings.reversed() where sibling !== self {
+                guard sibling.isUserInteractionEnabled,
+                      !sibling.isHidden,
+                      sibling.alpha > 0 else { continue }
+                let siblingPoint = sibling.convert(point, from: self)
+                if sibling.hitTest(siblingPoint, with: event) != nil {
+                    return nil
+                }
+            }
+        }
+        return super.hitTest(point, with: event)
+    }
+
     // MARK: - Touch tracking (movement)
 
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

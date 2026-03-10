@@ -146,6 +146,7 @@ extension PVEmulatorViewController {
 
         addChild(hostingVC)
         view.addSubview(hostingVC.view)
+        view.bringSubviewToFront(hostingVC.view)
         hostingVC.didMove(toParent: self)
 
         hostingVC.view.translatesAutoresizingMaskIntoConstraints = false
@@ -197,6 +198,17 @@ extension PVEmulatorViewController {
             hideVirtualKeyboard(animated: animated)
         } else {
             showVirtualKeyboard(animated: animated)
+        }
+    }
+
+    /// Bring all virtual input overlays (keyboard + mouse cursor) to the front of the view
+    /// hierarchy.  Call this after applying a new skin so the overlays stay on top.
+    public func bringVirtualInputOverlaysToFront() {
+        if let keyboardView = virtualKeyboardHostingVC?.view {
+            view.bringSubviewToFront(keyboardView)
+        }
+        if let cursorView = cursorHostingController?.view {
+            view.bringSubviewToFront(cursorView)
         }
     }
 }

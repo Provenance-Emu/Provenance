@@ -60,15 +60,17 @@ extension PVEmulatorViewController {
         view.addSubview(trackpad)
         touchTrackpadView = trackpad
 
-        // 2. Cursor overlay (pass-through, no hit-testing)
+        // 2. Cursor overlay (pass-through, no hit-testing) — must be above all other layers
         let overlay = MouseCursorOverlayView()
         let host = UIHostingController(rootView: overlay)
         host.view.backgroundColor = .clear
+        host.view.isOpaque = false
         host.view.isUserInteractionEnabled = false
         host.view.frame = view.bounds
         host.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addChild(host)
         view.addSubview(host.view)
+        view.bringSubviewToFront(host.view)
         host.didMove(toParent: self)
         cursorHostingController = host
 

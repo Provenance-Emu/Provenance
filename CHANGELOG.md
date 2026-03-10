@@ -58,6 +58,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **Virtual Mouse Cursor Z-Order** — Mouse cursor overlay now stays above the emulator surface and all other layers by calling `bringSubviewToFront` after insertion (#2925, Part of #2575)
+- **Virtual Keyboard Z-Order** — Keyboard overlay now renders above skin controller buttons; `bringSubviewToFront` called on show and after every skin change (#2926, Part of #2575)
+- **TouchTrackpadView Touch Stealing** — `TouchTrackpadView` now yields to interactive sibling views (e.g. controller skin buttons) via `hitTest` override, preventing it from blocking on-screen button presses (#2924, Part of #2575)
+- **RetroArch gameSupportsMouse Force-Cast** — Replaced `as!` with safe `as?` casting in `PVRetroArchCoreCore` DOS extension; non-DOS cores now correctly return `false` for `gameSupportsMouse`/`gameSupportsKeyboard` instead of crashing (#2927, Part of #2575)
 - **UTType.bios Identifier** — `UTType.bios` and `UTI.bios` now use the dedicated `com.provenance.bios` identifier (previously shared `com.provenance.rom`); added `com.provenance.bios` exported type declaration to all 7 app Info.plist files (#2864 follow-up)
 - **Script Permissions** — UTI generator scripts (`gen_uti.swift`, `generate_uti_declarations.py`) marked executable
 - **Controller Profile Scope Resolution** — `SceneCoordinator.loadControllerProfiles` now passes `coreIdentifier` to `loadActiveProfile`, enabling game+core and system+core profile scopes to match correctly at game launch (#2879 follow-up)

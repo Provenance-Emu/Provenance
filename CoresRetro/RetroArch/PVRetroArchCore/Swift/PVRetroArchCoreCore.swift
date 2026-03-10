@@ -383,59 +383,59 @@ extension PVRetroArchCoreCore: PVSupervisionSystemResponderClient {
 // PVDOSSystemResponderClient
 extension PVRetroArchCoreCore: PVDOSSystemResponderClient {
     public func didRelease(_ button: PVCoreBridge.PVDOSButton, forPlayer player: Int) {
-        (_bridge as! PVDOSSystemResponderClient).didRelease(button, forPlayer: player)
+        (_bridge as? PVDOSSystemResponderClient)?.didRelease(button, forPlayer: player)
     }
 
     public var gameSupportsKeyboard: Bool {
-        (_bridge as! PVDOSSystemResponderClient).gameSupportsKeyboard
+        (_bridge as? PVDOSSystemResponderClient)?.gameSupportsKeyboard ?? false
     }
 
     public var requiresKeyboard: Bool {
-        (_bridge as! PVDOSSystemResponderClient).requiresKeyboard
+        (_bridge as? PVDOSSystemResponderClient)?.requiresKeyboard ?? false
     }
 
     public func keyDown(_ key: GCKeyCode) {
-        (_bridge as! PVDOSSystemResponderClient).keyDown(key)
+        (_bridge as? PVDOSSystemResponderClient)?.keyDown(key)
     }
     public func keyUp(_ key: GCKeyCode) {
-        (_bridge as! PVDOSSystemResponderClient).keyUp(key)
+        (_bridge as? PVDOSSystemResponderClient)?.keyUp(key)
     }
     public var gameSupportsMouse: Bool {
-        (_bridge as! PVDOSSystemResponderClient).gameSupportsMouse
+        (_bridge as? PVDOSSystemResponderClient)?.gameSupportsMouse ?? false
     }
     public var requiresMouse: Bool {
-        (_bridge as! PVDOSSystemResponderClient).requiresMouse
+        (_bridge as? PVDOSSystemResponderClient)?.requiresMouse ?? false
     }
     public func didScroll(_ cursor: GCDeviceCursor) {
-        (_bridge as! PVDOSSystemResponderClient).didScroll(cursor)
+        (_bridge as? PVDOSSystemResponderClient)?.didScroll(cursor)
     }
 
     public var mouseMovedHandler: GCMouseMoved? {
-        (_bridge as! PVDOSSystemResponderClient).mouseMovedHandler
+        (_bridge as? PVDOSSystemResponderClient)?.mouseMovedHandler
     }
     public func mouseMoved(at point: CGPoint) {
-        (_bridge as! PVDOSSystemResponderClient).mouseMoved(at: point)
+        (_bridge as? PVDOSSystemResponderClient)?.mouseMoved(at: point)
     }
     public func mouseMoved(atPoint point: CGPoint) {
-        (_bridge as! PVDOSSystemResponderClient).mouseMoved(at: point)
+        (_bridge as? PVDOSSystemResponderClient)?.mouseMoved(at: point)
     }
     public func leftMouseDown(at point: CGPoint) {
-        (_bridge as! PVDOSSystemResponderClient).leftMouseDown(at: point)
+        (_bridge as? PVDOSSystemResponderClient)?.leftMouseDown(at: point)
     }
     public func leftMouseDown(atPoint point: CGPoint) {
-        (_bridge as! PVDOSSystemResponderClient).leftMouseDown(at: point)
+        (_bridge as? PVDOSSystemResponderClient)?.leftMouseDown(at: point)
     }
     public func leftMouseUp() {
-        (_bridge as! PVDOSSystemResponderClient).leftMouseUp()
+        (_bridge as? PVDOSSystemResponderClient)?.leftMouseUp()
     }
     public func rightMouseDown(atPoint point: CGPoint) {
-        (_bridge as! PVDOSSystemResponderClient).rightMouseDown(atPoint: point)
+        (_bridge as? PVDOSSystemResponderClient)?.rightMouseDown(atPoint: point)
     }
     public func rightMouseUp() {
-        (_bridge as! PVDOSSystemResponderClient).rightMouseUp()
+        (_bridge as? PVDOSSystemResponderClient)?.rightMouseUp()
     }
     public func didPush(_ button: PVCoreBridge.PVDOSButton, forPlayer player: Int) {
-        (_bridge as! PVDOSSystemResponderClient).didPush(button, forPlayer: player)
+        (_bridge as? PVDOSSystemResponderClient)?.didPush(button, forPlayer: player)
     }
 }
 
