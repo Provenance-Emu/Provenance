@@ -926,11 +926,14 @@ static void emulation_run(BOOL skipFrame) {
             ILOG(@"Mednafen PSX: multi-tap serial=%@ players=%d", serial, self->multiTapPlayerCount);
 
             if ([[MednafenGameCoreOptions multiTap5PlayerPort2] containsObject:serial]) {
+                Mednafen::MDFNI_SetSettingB("psx.input.pport1.multitap", false);
                 Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", true); // Enable multitap on PSX port 2
             } else {
                 Mednafen::MDFNI_SetSettingB("psx.input.pport1.multitap", true); // Enable multitap on PSX port 1
                 if (self->multiTapPlayerCount > 5) {
                     Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", true); // Enable multitap on PSX port 2 for 6-8 players
+                } else {
+                    Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", false);
                 }
             }
             // Re-setup inputs with updated player count
@@ -942,6 +945,10 @@ static void emulation_run(BOOL skipFrame) {
                 Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
                 game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
             }
+        } else {
+            // Explicitly disable multi-tap for non-multi-tap games to prevent bleed from prior loads
+            Mednafen::MDFNI_SetSettingB("psx.input.pport1.multitap", false);
+            Mednafen::MDFNI_SetSettingB("psx.input.pport2.multitap", false);
         }
         // PSX: Check if SBI file is required
         if ([MednafenGameCoreOptions sbiRequiredGames][self.romSerial])
@@ -1158,7 +1165,18 @@ static void emulation_run(BOOL skipFrame) {
     NSUInteger maxNumberPlayers = MIN([self maxNumberPlayers], 8);
 
     for (NSInteger playerIndex = 0; playerIndex < maxNumberPlayers; playerIndex++) {
-        GCController *controller = [self controllerForPlayer:(NSUInteger)(playerIndex + 1)];
+        GCController *controller = nil;
+        switch (playerIndex) {
+            case 0: controller = self.controller1; break;
+            case 1: controller = self.controller2; break;
+            case 2: controller = self.controller3; break;
+            case 3: controller = self.controller4; break;
+            case 4: controller = self.controller5; break;
+            case 5: controller = self.controller6; break;
+            case 6: controller = self.controller7; break;
+            case 7: controller = self.controller8; break;
+            default: break;
+        }
 
         if (controller) {
             uint8 *d8 = (uint8 *)inputBuffer[playerIndex];
@@ -1187,7 +1205,8 @@ static void emulation_run(BOOL skipFrame) {
 
 - (void)executeFrameSkippingFrame: (BOOL) skip {
     // Should we be using controller callbacks instead?
-    if (!skip && ([self controllerForPlayer:1] || [self controllerForPlayer:2] || [self controllerForPlayer:3] || [self controllerForPlayer:4])) {
+    if (!skip && (self.controller1 || self.controller2 || self.controller3 || self.controller4 ||
+                  self.controller5 || self.controller6 || self.controller7 || self.controller8)) {
         [self pollControllers];
     }
 
