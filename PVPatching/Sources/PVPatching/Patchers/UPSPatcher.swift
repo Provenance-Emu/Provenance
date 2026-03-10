@@ -35,8 +35,11 @@ public struct UPSPatcher: Sendable {
     /// - Returns: The patched ROM data.
     /// - Throws: `PatchError` on format or integrity issues.
     public func apply(patch: Data, to source: Data) throws -> Data {
-        guard patch.count >= 4 else {
-            throw PatchError.corruptPatchFile("UPS file too small")
+        // Minimum valid UPS: header(4) + 2×VLI-min(2) + 3×CRC32(12) = 18 bytes.
+        // A file with 4..17 bytes can pass the header check but crash on
+        // readLE32(patch, at: patch.count - 12) / patch.count - 8 / patch.count - 4.
+        guard patch.count >= 18 else {
+            throw PatchError.corruptPatchFile("UPS file too small (minimum 18 bytes)")
         }
         guard patch[0..<4].elementsEqual("UPS1".utf8) else {
             throw PatchError.corruptPatchFile("Invalid UPS header — expected 'UPS1'")
