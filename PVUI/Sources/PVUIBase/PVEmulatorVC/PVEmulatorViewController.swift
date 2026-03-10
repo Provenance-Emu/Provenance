@@ -1728,6 +1728,11 @@ extension PVEmulatorViewController {
 
             // Skin fully applied; resume emulation
             core.setPauseEmulation(false)
+
+            // Re-raise virtual input overlays above the newly added skin views
+            #if !os(tvOS)
+            bringVirtualInputOverlaysToFront()
+            #endif
         }
     }
 
