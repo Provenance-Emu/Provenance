@@ -32,6 +32,18 @@ jobs:
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
           echo "=== Automation Health Check — $TIMESTAMP ==="
 
+          # Portable ISO-8601 → epoch helper (avoids GNU vs BSD date differences)
+          iso_to_epoch() {
+            python3 -c "
+import sys, datetime
+try:
+    ts = datetime.datetime.fromisoformat(sys.argv[1].replace('Z', '+00:00'))
+    print(int(ts.timestamp()))
+except Exception:
+    print(0)
+" "$1" 2>/dev/null || echo "0"
+          }
+
           # ── Check 1: Stuck AI reviews ─────────────────────────────────────────
           # PRs with ai-reviewing label where the latest ai-review.yml run is >2h old
           echo ""
@@ -57,7 +69,7 @@ jobs:
 
             run_status=$(echo "$latest_run" | jq -r '.status')
             created_at=$(echo "$latest_run" | jq -r '.createdAt')
-            age_seconds=$(( $(date -u +%s) - $(date -u -d "$created_at" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$created_at" +%s 2>/dev/null || echo "0") ))
+            age_seconds=$(( $(date -u +%s) - $(iso_to_epoch "$created_at") ))
             age_hours=$(( age_seconds / 3600 ))
 
             if [ "$run_status" != "completed" ] && [ "$age_hours" -ge 2 ]; then
@@ -97,7 +109,7 @@ jobs:
             run_id=$(echo "$run" | jq -r '.databaseId')
             created_at=$(echo "$run" | jq -r '.createdAt')
             title=$(echo "$run" | jq -r '.displayTitle')
-            age_seconds=$(( $(date -u +%s) - $(date -u -d "$created_at" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$created_at" +%s 2>/dev/null || echo "0") ))
+            age_seconds=$(( $(date -u +%s) - $(iso_to_epoch "$created_at") ))
             age_minutes=$(( age_seconds / 60 ))
             if [ "$age_minutes" -ge 60 ]; then
               echo "  Run #$run_id stuck for ${age_minutes}min: $title"
@@ -153,7 +165,7 @@ jobs:
                 2>/dev/null || echo "")
               nudge_age=999999
               if [ -n "$last_nudge" ]; then
-                nudge_age=$(( ($(date -u +%s) - $(date -u -d "$last_nudge" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$last_nudge" +%s 2>/dev/null || echo "0")) / 3600 ))
+                nudge_age=$(( ($(date -u +%s) - $(iso_to_epoch "$last_nudge")) / 3600 ))
               fi
               if [ "$nudge_age" -ge 24 ]; then
                 gh pr comment "$pr_num" --repo "$REPO" \
@@ -189,7 +201,7 @@ jobs:
             issue_title=$(echo "$issue" | jq -r '.title')
             created_at=$(echo "$issue" | jq -r '.created_at')
 
-            age_seconds=$(( $(date -u +%s) - $(date -u -d "$created_at" +%s 2>/dev/null || date -u -j -f "%Y-%m-%dT%H:%M:%SZ" "$created_at" +%s 2>/dev/null || echo "0") ))
+            age_seconds=$(( $(date -u +%s) - $(iso_to_epoch "$created_at") ))
             age_hours=$(( age_seconds / 3600 ))
 
             if [ "$age_hours" -ge 24 ]; then

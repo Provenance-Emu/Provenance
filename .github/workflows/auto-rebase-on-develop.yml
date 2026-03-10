@@ -16,6 +16,9 @@ name: Auto-rebase PRs on develop push
 # Only rebases PRs from the same repo (not forks - we can't push to those).
 # Skips draft PRs and PRs that are already up to date.
 # Dispatches Claude to resolve rebase conflicts automatically.
+#
+# Each eligible PR is rebased in a separate matrix job (up to 8 in parallel)
+# so a large backlog doesn't block for O(n) sequential time.
 
 on:
   push:
@@ -39,8 +42,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  rebase:
-    name: Rebase open PRs onto develop
+  # ── Job 1: Discover which PRs need rebasing ────────────────────────────────
+  discover:
+    name: Find PRs to rebase
     # Only run when develop actually advanced (push/merge) or explicit dispatch.
     # For pull_request events, only fire when the PR was actually merged.
     if: |
@@ -48,7 +52,45 @@ jobs:
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 5
+    outputs:
+      prs:   ${{ steps.list.outputs.prs }}
+      count: ${{ steps.list.outputs.count }}
+    steps:
+      - name: List eligible open PRs
+        id: list
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Develop was pushed to / PR merged. Looking for PRs to rebase..."
+
+          # Fetch all open non-draft PRs targeting develop from the same repo (not forks)
+          prs=$(gh api "repos/$REPO/pulls?base=develop&state=open&per_page=100" \
+            --jq '[.[] | select(
+              .draft == false and
+              .head.repo.full_name == .base.repo.full_name
+            ) | {number: .number, branch: .head.ref}]')
+
+          count=$(echo "$prs" | jq length)
+          echo "Found $count eligible open PR(s) targeting develop."
+
+          # Write outputs — prs must be a JSON array string for fromJSON()
+          echo "prs=$prs"   >> "$GITHUB_OUTPUT"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+  # ── Job 2: Rebase each PR (parallel matrix) ───────────────────────────────
+  rebase:
+    name: "Rebase PR #${{ matrix.pr.number }} (${{ matrix.pr.branch }})"
+    needs: discover
+    if: needs.discover.outputs.count != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false        # One conflict shouldn't abort other PR rebases
+      max-parallel: 8         # Cap concurrency to avoid GitHub API rate-limits
+      matrix:
+        pr: ${{ fromJSON(needs.discover.outputs.prs) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -61,122 +103,113 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Rebase open PRs
+      - name: Fetch develop + PR branch in one round-trip
+        id: fetch
+        run: |
+          branch="${{ matrix.pr.branch }}"
+          if git fetch origin develop "$branch" 2>/dev/null; then
+            echo "fetched=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "  Cannot fetch '$branch' — branch may be deleted, skipping"
+            echo "fetched=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check if already up to date
+        id: check
+        if: steps.fetch.outputs.fetched == 'true'
+        run: |
+          branch="${{ matrix.pr.branch }}"
+          if git merge-base --is-ancestor origin/develop "origin/$branch" 2>/dev/null; then
+            echo "Already up to date — skipping"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Rebase (with merge fallback on conflict)
+        if: steps.fetch.outputs.fetched == 'true' && steps.check.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          echo "Develop was pushed to / PR merged. Looking for PRs to rebase..."
-          # Fetch all open non-draft PRs targeting develop from the same repo (not forks)
-          prs=$(gh api "repos/$REPO/pulls?base=develop&state=open&per_page=100" \
-            --jq '.[] | select(
-              .draft == false and
-              .head.repo.full_name == .base.repo.full_name
-            ) | {number: .number, branch: .head.ref}' \
-            | jq -s '.')
+          branch="${{ matrix.pr.branch }}"
+          pr_num="${{ matrix.pr.number }}"
 
-          count=$(echo "$prs" | jq length)
-          echo "Found $count eligible open PR(s) targeting develop."
-          [ "$count" -eq 0 ] && exit 0
+          # Attempt rebase first (linear history preferred).
+          # If rebase fails due to conflicts, fall back to a merge commit —
+          # this avoids the "freshly-made PR immediately has rebase conflict"
+          # problem that happens when multiple agent PRs touch overlapping files.
+          git checkout -B "$branch" "origin/$branch"
 
-          git fetch origin develop
-          rebased=0
-          skipped_uptodate=0
-          failed=0
+          push_and_retrigger() {
+            if git push --force-with-lease origin "$branch"; then
+              # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events
+              gh workflow run agent-validation.yml --repo "$REPO" --ref "$branch" \
+                -f branch="$branch" -f pr_number="$pr_num" 2>/dev/null || true
 
-          while IFS=$'\t' read -r pr_num branch; do
-            echo ""
-            echo "=== PR #$pr_num  branch: $branch ==="
+              # Fetch title + labels in a single API call (was two separate calls)
+              pr_meta=$(gh pr view "$pr_num" --repo "$REPO" \
+                --json title,labels \
+                --jq '{title: .title, labels: ([.labels[].name] | join(","))}' \
+                2>/dev/null || echo '{"title":"","labels":""}')
+              pr_title=$(echo "$pr_meta" | jq -r '.title')
+              pr_labels=$(echo "$pr_meta" | jq -r '.labels')
 
-            # Fetch the PR branch (may not be locally present)
-            if ! git fetch origin "$branch" 2>/dev/null; then
-              echo "  Cannot fetch '$branch' - skipping (branch may be deleted)"
-              continue
+              # Re-trigger AI review for [Agent] PRs — GITHUB_TOKEN force-push doesn't
+              # fire pull_request:synchronize so ai-review-trigger.yml never fires.
+              if echo "$pr_title" | grep -q "^\[Agent\]"; then
+                echo "  [Agent] PR — dispatching AI review for rebased code"
+                gh workflow run ai-review.yml --repo "$REPO" \
+                  -f pr_number="$pr_num" 2>/dev/null || true
+              fi
+
+              # Re-trigger IPA build if PR has build-ipa label
+              if echo "$pr_labels" | grep -q "build-ipa"; then
+                echo "  PR has build-ipa label — re-dispatching build.yml"
+                gh workflow run build.yml --repo "$REPO" --ref "$branch" \
+                  -f pr_number="$pr_num" 2>/dev/null || true
+              fi
+              return 0
+            else
+              echo "  Push rejected (branch protection?)"
+              return 1
             fi
+          }
 
-            # Skip if already rebased onto develop (develop is already an ancestor)
-            if git merge-base --is-ancestor origin/develop "origin/$branch" 2>/dev/null; then
-              echo "  Already up to date - skipping"
-              skipped_uptodate=$((skipped_uptodate + 1))
-              continue
-            fi
-
-            # Attempt rebase first (linear history preferred).
-            # If rebase fails due to conflicts, fall back to a merge commit —
-            # this avoids the "freshly-made PR immediately has rebase conflict"
-            # problem that happens when multiple agent PRs touch overlapping files.
+          if git rebase origin/develop; then
+            echo "Rebase succeeded"
+            push_and_retrigger \
+              && echo "Pushed successfully (rebase)" \
+              || { echo "Push failed"; exit 1; }
+          else
+            # Rebase failed — abort and try a plain merge instead.
+            # A merge commit avoids the commit-replay conflict while still
+            # keeping the branch current with develop (GitHub's MERGEABLE check
+            # uses 3-way merge, so this matches what GitHub expects).
+            echo "Rebase conflict — falling back to merge"
+            git rebase --abort 2>/dev/null || true
             git checkout -B "$branch" "origin/$branch"
 
-            push_branch_and_retrigger() {
-              local branch="$1" pr_num="$2"
-              if git push --force-with-lease origin "$branch"; then
-                rebased=$((rebased + 1))
-                # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events
-                gh workflow run agent-validation.yml --repo "$REPO" --ref "$branch" \
-                  -f branch="$branch" -f pr_number="$pr_num" 2>/dev/null || true
-                # Re-trigger AI review for [Agent] PRs — GITHUB_TOKEN force-push doesn't
-                # fire pull_request:synchronize so ai-review-trigger.yml never fires.
-                pr_title=$(gh pr view "$pr_num" --repo "$REPO" --json title --jq '.title' 2>/dev/null || echo "")
-                pr_labels=$(gh pr view "$pr_num" --repo "$REPO" --json labels --jq '[.labels[].name] | join(",")' 2>/dev/null || echo "")
-                if echo "$pr_title" | grep -q "^\[Agent\]"; then
-                  echo "  [Agent] PR — dispatching AI review for rebased code"
-                  gh workflow run ai-review.yml --repo "$REPO" \
-                    -f pr_number="$pr_num" 2>/dev/null || true
-                fi
-                # Re-trigger IPA build if PR has build-ipa label
-                if echo "$pr_labels" | grep -q "build-ipa"; then
-                  echo "  PR has build-ipa label — re-dispatching build.yml"
-                  gh workflow run build.yml --repo "$REPO" --ref "$branch" \
-                    -f pr_number="$pr_num" 2>/dev/null || true
-                fi
-                return 0
-              else
-                echo "  Push rejected (branch protection?)"
-                return 1
-              fi
-            }
-
-            if git rebase origin/develop; then
-              echo "  Rebase succeeded"
-              push_branch_and_retrigger "$branch" "$pr_num" \
-                && echo "  Pushed successfully (rebase)" \
-                || { failed=$((failed + 1)); }
+            if git merge --no-edit -m "chore: sync with develop" origin/develop 2>/dev/null; then
+              echo "Merge fallback succeeded"
+              push_and_retrigger \
+                && echo "Pushed successfully (merge fallback)" \
+                || { echo "Push failed"; exit 1; }
             else
-              # Rebase failed — abort and try a plain merge instead.
-              # A merge commit avoids the commit-replay conflict while still
-              # keeping the branch current with develop (GitHub's MERGEABLE check
-              # uses 3-way merge, so this matches what GitHub expects).
-              echo "  Rebase conflict — falling back to merge"
-              git rebase --abort 2>/dev/null || true
-              git checkout -B "$branch" "origin/$branch"
+              # Both rebase and merge failed — genuine conflict, dispatch Claude.
+              git merge --abort 2>/dev/null || true
+              echo "Both rebase and merge failed — dispatching Claude to resolve"
 
-              if git merge --no-edit -m "chore: sync with develop" origin/develop 2>/dev/null; then
-                echo "  Merge fallback succeeded"
-                push_branch_and_retrigger "$branch" "$pr_num" \
-                  && echo "  Pushed successfully (merge fallback)" \
-                  || { failed=$((failed + 1)); }
+              if gh workflow run claude-code.yml \
+                   --repo "$REPO" \
+                   -f pr_number="$pr_num" \
+                   -f action="fix_rebase_conflict" 2>/dev/null; then
+                gh pr comment "$pr_num" --repo "$REPO" \
+                  --body $'🤖 **Merge conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
               else
-                # Both rebase and merge failed — genuine conflict, dispatch Claude.
-                git merge --abort 2>/dev/null || true
-                echo "  Both rebase and merge failed — dispatching Claude to resolve"
-                failed=$((failed + 1))
-
-                if gh workflow run claude-code.yml \
-                     --repo "$REPO" \
-                     -f pr_number="$pr_num" \
-                     -f action="fix_rebase_conflict" 2>/dev/null; then
-                  gh pr comment "$pr_num" --repo "$REPO" \
-                    --body $'🤖 **Merge conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
-                else
-                  gh pr comment "$pr_num" --repo "$REPO" \
-                    --body $'**Auto-sync conflict**\n\nThis PR could not be automatically synced with `develop` due to merge conflicts. Please resolve manually:\n\n```bash\ngit fetch origin\ngit checkout '"${branch}"'\ngit merge origin/develop\n# resolve conflicts, then:\ngit push\n```\n\nOr comment `/rebase` here to retry.' 2>/dev/null || true
-                fi
+                gh pr comment "$pr_num" --repo "$REPO" \
+                  --body $'**Auto-sync conflict**\n\nThis PR could not be automatically synced with `develop` due to merge conflicts. Please resolve manually:\n\n```bash\ngit fetch origin\ngit checkout '"${branch}"'\ngit merge origin/develop\n# resolve conflicts, then:\ngit push\n```\n\nOr comment `/rebase` here to retry.' 2>/dev/null || true
               fi
+              exit 1
             fi
-          done < <(echo "$prs" | jq -r '.[] | [.number, .branch] | @tsv')
-
-          echo ""
-          echo "=== Summary ==="
-          echo "  Rebased:            $rebased"
-          echo "  Already up to date: $skipped_uptodate"
-          echo "  Conflicts/errors:   $failed"
+          fi

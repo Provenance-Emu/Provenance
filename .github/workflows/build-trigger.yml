@@ -42,9 +42,21 @@ jobs:
           BRANCH="${{ github.event.pull_request.head.ref }}"
           REPO="${{ github.repository }}"
 
-          echo "build-ipa label added to PR #${PR_NUMBER} (${BRANCH}) — dispatching build"
+          echo "build-ipa label added to PR #${PR_NUMBER} (${BRANCH}) — checking for in-progress builds"
 
-          # Post acknowledgement
+          # Skip if a build is already queued or running for this branch
+          running=$(gh run list --workflow=build.yml --repo "$REPO" --limit 20 \
+            --json status,headBranch \
+            --jq "[.[] | select((.status == \"in_progress\" or .status == \"queued\") and .headBranch == \"$BRANCH\")] | length" \
+            2>/dev/null || echo "0")
+          if [ "${running:-0}" -gt 0 ]; then
+            echo "Build already in progress for $BRANCH — skipping duplicate dispatch"
+            gh pr comment "$PR_NUMBER" --repo "$REPO" \
+              --body "ℹ️ Full build is already in progress for this branch — skipping duplicate." \
+              2>/dev/null || true
+            exit 0
+          fi
+
           gh pr comment "$PR_NUMBER" --repo "$REPO" \
             --body "🔨 **build-ipa** label detected — dispatching full IPA build. Download links will appear here when ready (~5h)." \
             2>/dev/null || true
@@ -116,6 +128,18 @@ jobs:
           PR_NUMBER="${{ github.event.issue.number }}"
           BRANCH="${{ steps.pr.outputs.branch }}"
           REPO="${{ github.repository }}"
+
+          # Skip if a build is already queued or running for this branch
+          running=$(gh run list --workflow=build.yml --repo "$REPO" --limit 20 \
+            --json status,headBranch \
+            --jq "[.[] | select((.status == \"in_progress\" or .status == \"queued\") and .headBranch == \"$BRANCH\")] | length" \
+            2>/dev/null || echo "0")
+          if [ "${running:-0}" -gt 0 ]; then
+            gh pr comment "$PR_NUMBER" --repo "$REPO" \
+              --body "ℹ️ Full build is already in progress for this branch — no need to re-trigger." \
+              2>/dev/null || true
+            exit 0
+          fi
 
           gh pr comment "$PR_NUMBER" --repo "$REPO" \
             --body "🔨 Build triggered by \`/build\` — dispatching full IPA build (~5h). Download links will appear here when ready." \

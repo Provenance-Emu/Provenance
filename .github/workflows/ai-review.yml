@@ -68,16 +68,14 @@ jobs:
           echo "pr_title=$PR_TITLE"   >> "$GITHUB_OUTPUT"
           echo "should_review=true"   >> "$GITHUB_OUTPUT"
 
-          # ── Model selection heuristics (no extra API call needed) ──────────
-          # Fetch diff stats
-          DIFF_STAT=$(gh pr diff "$PR_NUMBER" --stat \
-            --repo "${{ github.repository }}" 2>/dev/null || echo "")
+          # ── Model selection heuristics ─────────────────────────────────────
+          # Fetch diff once; derive file/line counts from it (avoids double API call)
           DIFF_BODY=$(gh pr diff "$PR_NUMBER" \
             --repo "${{ github.repository }}" 2>/dev/null || echo "")
 
-          FILES_CHANGED=$(echo "$DIFF_STAT" | grep -oP '\d+ file' | grep -oP '\d+' || echo "0")
-          LINES_CHANGED=$(echo "$DIFF_STAT" | grep -oP '\d+ insertion' | grep -oP '\d+' || echo "0")
-          LINES_DEL=$(echo "$DIFF_STAT" | grep -oP '\d+ deletion' | grep -oP '\d+' || echo "0")
+          FILES_CHANGED=$(echo "$DIFF_BODY" | grep -c '^diff --git' || echo "0")
+          LINES_CHANGED=$(echo "$DIFF_BODY" | grep -cP '^\+[^+]' || echo "0")
+          LINES_DEL=$(echo "$DIFF_BODY" | grep -cP '^-[^-]' || echo "0")
           TOTAL_LINES=$(( ${LINES_CHANGED:-0} + ${LINES_DEL:-0} ))
 
           # Check for complexity keywords in the diff
