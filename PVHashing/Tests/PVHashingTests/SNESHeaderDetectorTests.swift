@@ -107,9 +107,8 @@ struct SNESHeaderDetectorTests {
         // Edge case: exactly 512 bytes (just the header, no ROM)
         let fileSize: UInt64 = 512
         let offset = SNESHeaderDetector.detectOffset(fileSize: fileSize)
-        // 512 - 512 = 0, and 0 % 1024 == 0, so this would technically match hasHeader
-        // But it's not a valid ROM
-        #expect(SNESHeaderDetector.hasCopierHeader(fileSize: fileSize) == true)
+        #expect(offset == 0, "Header-only file should default to no offset")
+        #expect(SNESHeaderDetector.hasCopierHeader(fileSize: fileSize) == false)
     }
 
     // MARK: - Real-world ROM Size Tests
