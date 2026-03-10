@@ -88,29 +88,30 @@ void pcd_pcm_sync(unsigned int to)
     }
 
     addr = ch->addr;
-    inc = *(unsigned short *)&ch->regs[2];
-    mul_l = ((int)ch->regs[0] * (ch->regs[1] & 0xf)) >> (5+1); 
-    mul_r = ((int)ch->regs[0] * (ch->regs[1] >>  4)) >> (5+1);
+    inc = ch->regs[2] + (ch->regs[3]<<8);
+    mul_l = (int)ch->regs[0] * (ch->regs[1] & 0xf); 
+    mul_r = (int)ch->regs[0] * (ch->regs[1] >>  4);
 
-    for (s = 0; s < steps; s++, addr = (addr + inc) & 0x7FFFFFF)
+    for (s = 0; s < steps; s++)
     {
       smp = Pico_mcd->pcm_ram[addr >> PCM_STEP_SHIFT];
 
       // test for loop signal
       if (smp == 0xff)
       {
-        addr = *(unsigned short *)&ch->regs[4]; // loop_addr
+        addr = ch->regs[4] + (ch->regs[5]<<8); // loop_addr
         smp = Pico_mcd->pcm_ram[addr];
         addr <<= PCM_STEP_SHIFT;
         if (smp == 0xff)
           break;
-      }
+      } else
+        addr = (addr + inc) & 0x07FFFFFF;
 
       if (smp & 0x80)
         smp = -(smp & 0x7f);
 
-      out[s*2  ] += smp * mul_l; // max 128 * 119 = 15232
-      out[s*2+1] += smp * mul_r;
+      out[s*2  ] += (smp * mul_l) >> 5; // max 127 * 255 * 15 / 32 = 15180
+      out[s*2+1] += (smp * mul_r) >> 5;
     }
     ch->addr = addr;
   }
@@ -120,14 +121,14 @@ end:
   Pico_mcd->pcm_mixpos += steps;
 }
 
-void pcd_pcm_update(int *buf32, int length, int stereo)
+void pcd_pcm_update(s32 *buf32, int length, int stereo)
 {
   int step, *pcm;
   int p = 0;
 
   pcd_pcm_sync(SekCyclesDoneS68k());
 
-  if (!Pico_mcd->pcm_mixbuf_dirty || !(PicoIn.opt & POPT_EN_MCD_PCM))
+  if (!Pico_mcd->pcm_mixbuf_dirty || !(PicoIn.opt & POPT_EN_MCD_PCM) || !buf32)
     goto out;
 
   step = (Pico_mcd->pcm_mixpos << 16) / length;

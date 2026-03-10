@@ -257,10 +257,61 @@ void m68ki_build_opcode_table(void)
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 M68KMAKE_OPCODE_HANDLER_HEADER
+#include <stdlib.h>
 
 #include "m68kcpu.h"
 extern void m68040_fpu_op0(void);
 extern void m68040_fpu_op1(void);
+
+/* Count non-0 bits */
+INLINE int m68ki_bit_count(uint32 arg)
+{
+	arg = arg - ((arg>>1)&0x55555555);
+	arg = (arg&0x33333333) + ((arg>>2)&0x33333333);
+	return (((arg + (arg>>4))&0x0f0f0f0f) * 0x01010101) >> 24;
+}
+
+INLINE int m68ki_mulu_cycles(uint32 arg)
+{
+	if (CPU_TYPE_IS_000(CPU_TYPE))
+		return m68ki_bit_count(arg) * 2;
+	else if (CPU_TYPE_IS_010(CPU_TYPE))
+		return m68ki_bit_count(arg); /* guesswork */
+	else
+		return m68ki_bit_count(arg) / 2; /* guesswork */
+}
+
+INLINE int m68ki_muls_cycles(sint32 arg)
+{
+	if (CPU_TYPE_IS_000(CPU_TYPE))
+		return m68ki_bit_count(arg ^ (arg<<1)) * 2;
+	else if (CPU_TYPE_IS_010(CPU_TYPE))
+		return m68ki_bit_count(arg ^ (arg<<1)); /* guesswork */
+	else
+		return m68ki_bit_count(arg ^ (arg<<1)) / 2; /* guesswork */
+}
+
+INLINE int m68ki_divu_cycles(uint32 arg)
+{
+	/* approximation only. Doesn't factor in shorter cycles by carry */
+	if (CPU_TYPE_IS_000(CPU_TYPE))
+		return 128 - m68ki_bit_count(arg) * 2;
+	else if (CPU_TYPE_IS_010(CPU_TYPE))
+		return 96; /* guesswork */
+	else
+		return 32; /* guesswork */
+}
+
+INLINE int m68ki_divs_cycles(uint32 scyc, sint32 arg)
+{
+	/* approximation only. Doesn't factor in shorter cycles by carry */
+	if (CPU_TYPE_IS_000(CPU_TYPE))
+		return 128 - m68ki_bit_count(abs(arg)) * 2 + scyc*2 + 8;
+	else if (CPU_TYPE_IS_010(CPU_TYPE))
+		return 96 + scyc*2 + 8; /* guesswork */
+	else
+		return 32 + scyc   + 4; /* guesswork */
+}
 
 /* ======================================================================== */
 /* ========================= INSTRUCTION HANDLERS ========================= */
@@ -389,7 +440,7 @@ addi      32  .     .     0000011010......  A+-DXWL...  U U U U  20  20   4   4
 addq       8  .     d     0101...000000...  ..........  U U U U   4   4   2   2
 addq       8  .     .     0101...000......  A+-DXWL...  U U U U   8   8   4   4
 addq      16  .     d     0101...001000...  ..........  U U U U   4   4   2   2
-addq      16  .     a     0101...001001...  ..........  U U U U   4   4   2   2
+addq      16  .     a     0101...001001...  ..........  U U U U   8   8   2   2
 addq      16  .     .     0101...001......  A+-DXWL...  U U U U   8   8   4   4
 addq      32  .     d     0101...010000...  ..........  U U U U   8   8   2   2
 addq      32  .     a     0101...010001...  ..........  U U U U   8   8   2   2
@@ -418,7 +469,7 @@ andi       8  .     d     0000001000000...  ..........  U U U U   8   8   2   2
 andi       8  .     .     0000001000......  A+-DXWL...  U U U U  12  12   4   4
 andi      16  .     d     0000001001000...  ..........  U U U U   8   8   2   2
 andi      16  .     .     0000001001......  A+-DXWL...  U U U U  12  12   4   4
-andi      32  .     d     0000001010000...  ..........  U U U U  14  14   2   2
+andi      32  .     d     0000001010000...  ..........  U U U U  16  14   2   2
 andi      32  .     .     0000001010......  A+-DXWL...  U U U U  20  20   4   4
 asr        8  s     .     1110...000000...  ..........  U U U U   6   6   6   6
 asr       16  s     .     1110...001000...  ..........  U U U U   6   6   6   6
@@ -438,13 +489,13 @@ bcc        8  .     .     0110............  ..........  U U U U  10  10   6   6
 bcc       16  .     .     0110....00000000  ..........  U U U U  10  10   6   6
 bcc       32  .     .     0110....11111111  ..........  U U U U  10  10   6   6
 bchg       8  r     .     0000...101......  A+-DXWL...  U U U U   8   8   4   4
-bchg      32  r     d     0000...101000...  ..........  U U U U   8   8   4   4
+bchg      32  r     d     0000...101000...  ..........  U U U U   6   6   4   4
 bchg       8  s     .     0000100001......  A+-DXWL...  U U U U  12  12   4   4
-bchg      32  s     d     0000100001000...  ..........  U U U U  12  12   4   4
-bclr       8  r     .     0000...110......  A+-DXWL...  U U U U   8  10   4   4
-bclr      32  r     d     0000...110000...  ..........  U U U U  10  10   4   4
+bchg      32  s     d     0000100001000...  ..........  U U U U  10  10   4   4
+bclr       8  r     .     0000...110......  A+-DXWL...  U U U U   8   8   4   4
+bclr      32  r     d     0000...110000...  ..........  U U U U   8   8   4   4
 bclr       8  s     .     0000100010......  A+-DXWL...  U U U U  12  12   4   4
-bclr      32  s     d     0000100010000...  ..........  U U U U  14  14   4   4
+bclr      32  s     d     0000100010000...  ..........  U U U U  12  12   4   4
 bfchg     32  .     d     1110101011000...  ..........  . . U U   .   .  12  12  timing not quite correct
 bfchg     32  .     .     1110101011......  A..DXWL...  . . U U   .   .  20  20
 bfclr     32  .     d     1110110011000...  ..........  . . U U   .   .  12  12
@@ -465,10 +516,10 @@ bkpt       0  .     .     0100100001001...  ..........  . U U U   .  10  10  10
 bra        8  .     .     01100000........  ..........  U U U U  10  10  10  10
 bra       16  .     .     0110000000000000  ..........  U U U U  10  10  10  10
 bra       32  .     .     0110000011111111  ..........  U U U U  10  10  10  10
-bset      32  r     d     0000...111000...  ..........  U U U U   8   8   4   4
+bset      32  r     d     0000...111000...  ..........  U U U U   6   6   4   4
 bset       8  r     .     0000...111......  A+-DXWL...  U U U U   8   8   4   4
 bset       8  s     .     0000100011......  A+-DXWL...  U U U U  12  12   4   4
-bset      32  s     d     0000100011000...  ..........  U U U U  12  12   4   4
+bset      32  s     d     0000100011000...  ..........  U U U U  10  10   4   4
 bsr        8  .     .     01100001........  ..........  U U U U  18  18   7   7
 bsr       16  .     .     0110000100000000  ..........  U U U U  18  18   7   7
 bsr       32  .     .     0110000111111111  ..........  U U U U  18  18   7   7
@@ -482,8 +533,8 @@ cas       16  .     .     0000110011......  A+-DXWL...  . . U U   .   .  12  12
 cas       32  .     .     0000111011......  A+-DXWL...  . . U U   .   .  12  12
 cas2      16  .     .     0000110011111100  ..........  . . U U   .   .  12  12
 cas2      32  .     .     0000111011111100  ..........  . . U U   .   .  12  12
-chk       16  .     d     0100...110000...  ..........  U U U U  10   8   8   8
-chk       16  .     .     0100...110......  A+-DXWLdxI  U U U U  10   8   8   8
+chk       16  .     d     0100...110000...  ..........  U U U U   4   2   2   2
+chk       16  .     .     0100...110......  A+-DXWLdxI  U U U U   4   2   2   2
 chk       32  .     d     0100...100000...  ..........  . . U U   .   .   8   8
 chk       32  .     .     0100...100......  A+-DXWLdxI  . . U U   .   .   8   8
 chk2cmp2   8  .     pcdi  0000000011111010  ..........  . . U U   .   .  23  23
@@ -541,10 +592,10 @@ cptrapcc  32  .     .     1111...001111...  ..........  . . U .   .   .   4   . 
 dbt       16  .     .     0101000011001...  ..........  U U U U  12  12   6   6
 dbf       16  .     .     0101000111001...  ..........  U U U U  12  12   6   6
 dbcc      16  .     .     0101....11001...  ..........  U U U U  12  12   6   6
-divs      16  .     d     1000...111000...  ..........  U U U U 158 122  56  56
-divs      16  .     .     1000...111......  A+-DXWLdxI  U U U U 158 122  56  56
-divu      16  .     d     1000...011000...  ..........  U U U U 140 108  44  44
-divu      16  .     .     1000...011......  A+-DXWLdxI  U U U U 140 108  44  44
+divs      16  .     d     1000...111000...  ..........  U U U U  16  16  16  16  cycles depending on operands
+divs      16  .     .     1000...111......  A+-DXWLdxI  U U U U  16  16  16  16  cycles depending on operands
+divu      16  .     d     1000...011000...  ..........  U U U U  10  10  10  10  cycles depending on operands
+divu      16  .     .     1000...011......  A+-DXWLdxI  U U U U  10  10  10  10  cycles depending on operands
 divl      32  .     d     0100110001000...  ..........  . . U U   .   .  84  84
 divl      32  .     .     0100110001......  A+-DXWLdxI  . . U U   .   .  84  84
 eor        8  .     d     1011...100000...  ..........  U U U U   4   4   2   2
@@ -696,10 +747,10 @@ moves      8  .     .     0000111000......  A+-DXWL...  . S S S   .  14   5   5
 moves     16  .     .     0000111001......  A+-DXWL...  . S S S   .  14   5   5
 moves     32  .     .     0000111010......  A+-DXWL...  . S S S   .  16   5   5
 move16    32  .     .     1111011000100...  ..........  . . . U   .   .   .   4  TODO: correct timing
-muls      16  .     d     1100...111000...  ..........  U U U U  54  32  27  27
-muls      16  .     .     1100...111......  A+-DXWLdxI  U U U U  54  32  27  27
-mulu      16  .     d     1100...011000...  ..........  U U U U  54  30  27  27
-mulu      16  .     .     1100...011......  A+-DXWLdxI  U U U U  54  30  27  27
+muls      16  .     d     1100...111000...  ..........  U U U U  38  28  20  20  cycles depending on operands
+muls      16  .     .     1100...111......  A+-DXWLdxI  U U U U  38  28  20  20  cycles depending on operands
+mulu      16  .     d     1100...011000...  ..........  U U U U  38  26  20  20  cycles depending on operands
+mulu      16  .     .     1100...011......  A+-DXWLdxI  U U U U  38  26  20  20  cycles depending on operands
 mull      32  .     d     0100110000000...  ..........  . . U U   .   .  43  43
 mull      32  .     .     0100110000......  A+-DXWLdxI  . . U U   .   .  43  43
 nbcd       8  .     d     0100100000000...  ..........  U U U U   6   6   6   6
@@ -835,7 +886,7 @@ subx      16  mm    .     1001...101001...  ..........  U U U U  18  18  12  12
 subx      32  mm    .     1001...110001...  ..........  U U U U  30  30  12  12
 swap      32  .     .     0100100001000...  ..........  U U U U   4   4   4   4
 tas        8  .     d     0100101011000...  ..........  U U U U   4   4   4   4
-tas        8  .     .     0100101011......  A+-DXWL...  U U U U  14  14  12  12
+tas        8  .     .     0100101011......  A+-DXWL...  U U U U  10  10   8   8
 trap       0  .     .     010011100100....  ..........  U U U U   4   4   4   4
 trapt      0  .     .     0101000011111100  ..........  . . U U   .   .   4   4
 trapt     16  .     .     0101000011111010  ..........  . . U U   .   .   6   6
@@ -2332,6 +2383,8 @@ M68KMAKE_OP(bchg, 32, r, d)
 	uint* r_dst = &DY;
 	uint mask = 1 << (DX & 0x1f);
 
+	if(CPU_TYPE_IS_010_LESS(CPU_TYPE) && mask >= 0x10000)
+		USE_CYCLES(2);
 	FLAG_Z = *r_dst & mask;
 	*r_dst ^= mask;
 }
@@ -2353,6 +2406,8 @@ M68KMAKE_OP(bchg, 32, s, d)
 	uint* r_dst = &DY;
 	uint mask = 1 << (OPER_I_8() & 0x1f);
 
+	if(CPU_TYPE_IS_010_LESS(CPU_TYPE) && mask >= 0x10000)
+		USE_CYCLES(2);
 	FLAG_Z = *r_dst & mask;
 	*r_dst ^= mask;
 }
@@ -2374,6 +2429,8 @@ M68KMAKE_OP(bclr, 32, r, d)
 	uint* r_dst = &DY;
 	uint mask = 1 << (DX & 0x1f);
 
+	if(CPU_TYPE_IS_010_LESS(CPU_TYPE) && mask >= 0x10000)
+		USE_CYCLES(2);
 	FLAG_Z = *r_dst & mask;
 	*r_dst &= ~mask;
 }
@@ -2395,6 +2452,8 @@ M68KMAKE_OP(bclr, 32, s, d)
 	uint* r_dst = &DY;
 	uint mask = 1 << (OPER_I_8() & 0x1f);
 
+	if(CPU_TYPE_IS_010_LESS(CPU_TYPE) && mask >= 0x10000)
+		USE_CYCLES(2);
 	FLAG_Z = *r_dst & mask;
 	*r_dst &= ~mask;
 }
@@ -3182,6 +3241,8 @@ M68KMAKE_OP(bset, 32, r, d)
 	uint* r_dst = &DY;
 	uint mask = 1 << (DX & 0x1f);
 
+	if(CPU_TYPE_IS_010_LESS(CPU_TYPE) && mask >= 0x10000)
+		USE_CYCLES(2);
 	FLAG_Z = *r_dst & mask;
 	*r_dst |= mask;
 }
@@ -3203,6 +3264,8 @@ M68KMAKE_OP(bset, 32, s, d)
 	uint* r_dst = &DY;
 	uint mask = 1 << (OPER_I_8() & 0x1f);
 
+	if(CPU_TYPE_IS_010_LESS(CPU_TYPE) && mask >= 0x10000)
+		USE_CYCLES(2);
 	FLAG_Z = *r_dst & mask;
 	*r_dst |= mask;
 }
@@ -3490,6 +3553,7 @@ M68KMAKE_OP(chk, 16, ., d)
 
 	if(src >= 0 && src <= bound)
 	{
+		USE_CYCLES(6);
 		return;
 	}
 	FLAG_N = (src < 0)<<7;
@@ -3508,6 +3572,7 @@ M68KMAKE_OP(chk, 16, ., .)
 
 	if(src >= 0 && src <= bound)
 	{
+		USE_CYCLES(6);
 		return;
 	}
 	FLAG_N = (src < 0)<<7;
@@ -4487,8 +4552,10 @@ M68KMAKE_OP(divs, 16, ., d)
 {
 	uint* r_dst = &DX;
 	sint src = MAKE_INT_16(DY);
+	sint dst = MAKE_INT_32(*r_dst);
 	sint quotient;
 	sint remainder;
+	int cycles;
 
 	if(src != 0)
 	{
@@ -4499,12 +4566,21 @@ M68KMAKE_OP(divs, 16, ., d)
 			FLAG_V = VFLAG_CLEAR;
 			FLAG_C = CFLAG_CLEAR;
 			*r_dst = 0;
+			USE_CYCLES(m68ki_divs_cycles(2, 0));
 			return;
 		}
 
-		quotient = MAKE_INT_32(*r_dst) / src;
-		remainder = MAKE_INT_32(*r_dst) % src;
+		if(abs(dst) >= abs(src<<16))
+		{
+			FLAG_V = VFLAG_SET;
+			USE_CYCLES(2*(dst < 0));
+			return;
+		}
 
+		quotient = dst / src;
+		remainder = dst % src;
+
+		cycles = m68ki_divs_cycles(2*(dst < 0) + (quotient < 0), quotient);
 		if(quotient == MAKE_INT_16(quotient))
 		{
 			FLAG_Z = quotient;
@@ -4512,12 +4588,15 @@ M68KMAKE_OP(divs, 16, ., d)
 			FLAG_V = VFLAG_CLEAR;
 			FLAG_C = CFLAG_CLEAR;
 			*r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
+			USE_CYCLES(cycles);
 			return;
 		}
 		FLAG_V = VFLAG_SET;
+		USE_CYCLES(cycles);
 		return;
 	}
 	m68ki_exception_trap(EXCEPTION_ZERO_DIVIDE);
+	ADD_CYCLES(12);
 }
 
 
@@ -4525,8 +4604,10 @@ M68KMAKE_OP(divs, 16, ., .)
 {
 	uint* r_dst = &DX;
 	sint src = MAKE_INT_16(M68KMAKE_GET_OPER_AY_16);
+	sint dst = MAKE_INT_32(*r_dst);
 	sint quotient;
 	sint remainder;
+	int cycles;
 
 	if(src != 0)
 	{
@@ -4537,12 +4618,21 @@ M68KMAKE_OP(divs, 16, ., .)
 			FLAG_V = VFLAG_CLEAR;
 			FLAG_C = CFLAG_CLEAR;
 			*r_dst = 0;
+			USE_CYCLES(m68ki_divs_cycles(2, 0));
 			return;
 		}
 
-		quotient = MAKE_INT_32(*r_dst) / src;
-		remainder = MAKE_INT_32(*r_dst) % src;
+		if(abs(dst) >= abs(src<<16))
+		{
+			FLAG_V = VFLAG_SET;
+			USE_CYCLES(2*(dst < 0));
+			return;
+		}
 
+		quotient = dst / src;
+		remainder = dst % src;
+
+		cycles = m68ki_divs_cycles(2*(dst < 0) + (quotient < 0), quotient);
 		if(quotient == MAKE_INT_16(quotient))
 		{
 			FLAG_Z = quotient;
@@ -4550,12 +4640,15 @@ M68KMAKE_OP(divs, 16, ., .)
 			FLAG_V = VFLAG_CLEAR;
 			FLAG_C = CFLAG_CLEAR;
 			*r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
+			USE_CYCLES(cycles);
 			return;
 		}
 		FLAG_V = VFLAG_SET;
+		USE_CYCLES(cycles);
 		return;
 	}
 	m68ki_exception_trap(EXCEPTION_ZERO_DIVIDE);
+	ADD_CYCLES(12);
 }
 
 
@@ -4576,12 +4669,14 @@ M68KMAKE_OP(divu, 16, ., d)
 			FLAG_V = VFLAG_CLEAR;
 			FLAG_C = CFLAG_CLEAR;
 			*r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
+			USE_CYCLES(m68ki_divu_cycles(quotient));
 			return;
 		}
 		FLAG_V = VFLAG_SET;
 		return;
 	}
 	m68ki_exception_trap(EXCEPTION_ZERO_DIVIDE);
+	ADD_CYCLES(6);
 }
 
 
@@ -4602,12 +4697,14 @@ M68KMAKE_OP(divu, 16, ., .)
 			FLAG_V = VFLAG_CLEAR;
 			FLAG_C = CFLAG_CLEAR;
 			*r_dst = MASK_OUT_ABOVE_32(MASK_OUT_ABOVE_16(quotient) | (remainder << 16));
+			USE_CYCLES(m68ki_divu_cycles(quotient));
 			return;
 		}
 		FLAG_V = VFLAG_SET;
 		return;
 	}
 	m68ki_exception_trap(EXCEPTION_ZERO_DIVIDE);
+	ADD_CYCLES(6);
 }
 
 
@@ -7500,9 +7597,11 @@ M68KMAKE_OP(move16, 32, ., .)
 M68KMAKE_OP(muls, 16, ., d)
 {
 	uint* r_dst = &DX;
-	uint res = MASK_OUT_ABOVE_32(MAKE_INT_16(DY) * MAKE_INT_16(MASK_OUT_ABOVE_16(*r_dst)));
+	uint x = MAKE_INT_16(DY);
+	uint res = MASK_OUT_ABOVE_32(x * MAKE_INT_16(MASK_OUT_ABOVE_16(*r_dst)));
 
 	*r_dst = res;
+	USE_CYCLES(m68ki_muls_cycles(x));
 
 	FLAG_Z = res;
 	FLAG_N = NFLAG_32(res);
@@ -7514,9 +7613,11 @@ M68KMAKE_OP(muls, 16, ., d)
 M68KMAKE_OP(muls, 16, ., .)
 {
 	uint* r_dst = &DX;
-	uint res = MASK_OUT_ABOVE_32(MAKE_INT_16(M68KMAKE_GET_OPER_AY_16) * MAKE_INT_16(MASK_OUT_ABOVE_16(*r_dst)));
+	uint x = MAKE_INT_16(M68KMAKE_GET_OPER_AY_16);
+	uint res = MASK_OUT_ABOVE_32(x * MAKE_INT_16(MASK_OUT_ABOVE_16(*r_dst)));
 
 	*r_dst = res;
+	USE_CYCLES(m68ki_muls_cycles(x));
 
 	FLAG_Z = res;
 	FLAG_N = NFLAG_32(res);
@@ -7528,9 +7629,11 @@ M68KMAKE_OP(muls, 16, ., .)
 M68KMAKE_OP(mulu, 16, ., d)
 {
 	uint* r_dst = &DX;
-	uint res = MASK_OUT_ABOVE_16(DY) * MASK_OUT_ABOVE_16(*r_dst);
+	uint x = MASK_OUT_ABOVE_16(DY);
+	uint res = x * MASK_OUT_ABOVE_16(*r_dst);
 
 	*r_dst = res;
+	USE_CYCLES(m68ki_mulu_cycles(x));
 
 	FLAG_Z = res;
 	FLAG_N = NFLAG_32(res);
@@ -7542,9 +7645,11 @@ M68KMAKE_OP(mulu, 16, ., d)
 M68KMAKE_OP(mulu, 16, ., .)
 {
 	uint* r_dst = &DX;
-	uint res = M68KMAKE_GET_OPER_AY_16 * MASK_OUT_ABOVE_16(*r_dst);
+	uint x = M68KMAKE_GET_OPER_AY_16;
+	uint res = x * MASK_OUT_ABOVE_16(*r_dst);
 
 	*r_dst = res;
+	USE_CYCLES(m68ki_mulu_cycles(x));
 
 	FLAG_Z = res;
 	FLAG_N = NFLAG_32(res);

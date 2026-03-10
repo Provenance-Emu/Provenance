@@ -8,7 +8,6 @@
 
 #include "pico_int.h"
 
-typedef unsigned char  u8;
 
 static unsigned int pppc, ops=0;
 extern unsigned int lastread_a, lastread_d[16], lastwrite_cyc_d[16], lastwrite_mus_d[16];

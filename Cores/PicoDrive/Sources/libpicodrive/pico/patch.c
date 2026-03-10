@@ -442,11 +442,11 @@ void PicoPatchPrepare(void)
       addr=PicoPatches[i].addr;
       addr &= ~1;
       if (addr < Pico.romsize)
-         PicoPatches[i].data_old = *(unsigned short *)(Pico.rom + addr);
+         PicoPatches[i].data_old = *(u16 *)(Pico.rom + addr);
       else
       {
          if(!(PicoIn.AHW & PAHW_SMS))
-            PicoPatches[i].data_old = (unsigned short) m68k_read16(addr);
+            PicoPatches[i].data_old = (u16) m68k_read16(addr);
          else
             ;// wrong: PicoPatches[i].data_old = (unsigned char) PicoRead8_z80(addr);
       }
@@ -469,7 +469,7 @@ void PicoPatchApply(void)
          if (PicoPatches[i].active)
          {
             if (!(PicoIn.AHW & PAHW_SMS))
-               *(unsigned short *)(Pico.rom + addr) = PicoPatches[i].data;
+               *(u16 *)(Pico.rom + addr) = PicoPatches[i].data;
             else if (!PicoPatches[i].comp || PicoPatches[i].comp == *(char *)(Pico.rom + addr))
                *(char *)(Pico.rom + addr) = (char) PicoPatches[i].data;
          }
@@ -481,13 +481,13 @@ void PicoPatchApply(void)
             if (u == i)
             {
                if (!(PicoIn.AHW & PAHW_SMS))
-                  *(unsigned short *)(Pico.rom + addr) = PicoPatches[i].data_old;
+                  *(u16 *)(Pico.rom + addr) = PicoPatches[i].data_old;
                else
                   *(char *)(Pico.rom + addr) = (char) PicoPatches[i].data_old;
             }
          }
       // fprintf(stderr, "patched %i: %06x:%04x\n", PicoPatches[i].active, addr,
-      // *(unsigned short *)(Pico.rom + addr));
+      // *(u16 *)(Pico.rom + addr));
       }
       else
       {

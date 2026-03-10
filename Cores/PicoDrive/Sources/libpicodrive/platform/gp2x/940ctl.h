@@ -1,7 +1,7 @@
 void sharedmem940_init(void);
 void sharedmem940_finish(void);
 
-void YM2612Init_940(int baseclock, int rate);
+void YM2612Init_940(int baseclock, int rate, int ssg);
 void YM2612ResetChip_940(void);
 int  YM2612UpdateOne_940(int *buffer, int length, int stereo, int is_buf_empty);
 

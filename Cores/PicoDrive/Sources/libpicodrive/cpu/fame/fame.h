@@ -98,14 +98,25 @@ extern "C" {
 /* Data definition */
 /*******************/
 
+#include <pico/pico_port.h>
+
+/*
+typedef unsigned char	u8;
+typedef signed char	s8;
+typedef unsigned short	u16;
+typedef signed short	s16;
+typedef unsigned int	u32;
+typedef signed int	s32;
+*/
+
 typedef union
 {
-	unsigned char B;
-	signed char SB;
-	unsigned short W;
-	signed short SW;
-	unsigned int D;
-	signed int SD;
+	u8 B[4];
+	s8 SB[4];
+	u16 W[2];
+	s16 SW[2];
+	u32 D;
+	s32 SD;
 } famec_union32;
 
 /* M68K CPU CONTEXT */
@@ -167,7 +178,7 @@ int  fm68k_reset(M68K_CONTEXT *ctx);
 int  fm68k_emulate(M68K_CONTEXT *ctx, int n, fm68k_call_reason reason);
 int  fm68k_would_interrupt(M68K_CONTEXT *ctx); // to be called from fm68k_emulate()
 
-unsigned int fm68k_get_pc(const M68K_CONTEXT *ctx);
+u32 fm68k_get_pc(const M68K_CONTEXT *ctx);
 
 // PICODRIVE_HACK
 int fm68k_idle_install(void);

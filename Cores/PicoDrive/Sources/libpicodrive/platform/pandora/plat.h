@@ -1,6 +1,8 @@
 
 extern int g_layer_cx, g_layer_cy;
 extern int g_layer_cw, g_layer_ch;
+extern int saved_start_line, saved_line_count;
+extern int saved_start_col, saved_col_count;
 
 void pnd_menu_init(void);
 int  pnd_setup_layer(int enabled, int x, int y, int w, int h);

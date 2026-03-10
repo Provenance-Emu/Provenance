@@ -13,7 +13,7 @@
 //#include "emu.h"
 //#include "menu.h"
 #include "../asmutils.h"
-#include "../helix/pub/mp3dec.h"
+#include <platform/common/helix/pub/mp3dec.h>
 
 /* we will need some gp2x internals here */
 extern volatile unsigned short *gp2x_memregs; /* from minimal library rlyeh */

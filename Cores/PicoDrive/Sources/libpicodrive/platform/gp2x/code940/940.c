@@ -2,7 +2,7 @@
 // (c) Copyright 2006-2007, Grazvydas "notaz" Ignotas
 
 #include "940shared.h"
-#include "../../common/mp3.h"
+#include <platform/common/helix/pub/mp3dec.h>
 
 static _940_data_t *shared_data = (_940_data_t *)   0x00100000;
 static _940_ctl_t  *shared_ctl  = (_940_ctl_t *)    0x00200000;
@@ -19,7 +19,7 @@ void drain_wb(void);
 // is changed by other core just before we update it
 void set_if_not_changed(int *val, int oldval, int newval);
 
-void _memcpy(void *dst, const void *src, int count);
+extern void *memcpy(void *dest, const void *src, unsigned long n);
 
 //	asm volatile ("mov r0, #0" ::: "r0");
 //	asm volatile ("mcr p15, 0, r0, c7, c6,  0" ::: "r0"); /* flush dcache */
@@ -153,6 +153,8 @@ void Main940(void)
 	int job = 0;
 	ym2612_940 = &shared_data->ym2612;
 
+//	extern unsigned __bss_start__, __bss_end__;
+//	memset(&__bss_start__, 0, &__bss_end__ - &__bss_start__);
 
 	for (;;)
 	{
@@ -165,8 +167,9 @@ void Main940(void)
 			case JOB940_INITALL:
 				/* ym2612 */
 				shared_ctl->writebuff0[0] = shared_ctl->writebuff1[0] = 0xffff;
-				YM2612Init_(shared_ctl->baseclock, shared_ctl->rate);
+				YM2612Init_(shared_ctl->baseclock, shared_ctl->rate, 0);
 				/* Helix mp3 decoder */
+				__malloc_init();
 				shared_data->mp3dec = MP3InitDecoder();
 				break;
 
@@ -184,8 +187,8 @@ void Main940(void)
 				break;
 
 			case JOB940_PICOSTATESAVE2:
-				YM2612PicoStateSave2(0, 0);
-				_memcpy(shared_ctl->writebuff0, ym2612_940->REGS, 0x200);
+				YM2612PicoStateSave2(0, 0, 0);
+				memcpy(shared_ctl->writebuff0, ym2612_940->REGS, 0x200);
 				break;
 
 			case JOB940_PICOSTATELOAD2_PREP:
@@ -193,8 +196,8 @@ void Main940(void)
 				break;
 
 			case JOB940_PICOSTATELOAD2:
-				_memcpy(ym2612_940->REGS, shared_ctl->writebuff0, 0x200);
-				YM2612PicoStateLoad2(0, 0);
+				memcpy(ym2612_940->REGS, shared_ctl->writebuff0, 0x200);
+				YM2612PicoStateLoad2(0, 0, 0);
 				break;
 
 			case JOB940_YM2612UPDATEONE:
@@ -207,6 +210,7 @@ void Main940(void)
 
 			case JOB940_MP3RESET:
 				if (shared_data->mp3dec) MP3FreeDecoder(shared_data->mp3dec);
+				__malloc_init();
 				shared_data->mp3dec = MP3InitDecoder();
 				break;
 		}
@@ -215,4 +219,3 @@ void Main940(void)
 		dcache_clean();
 	}
 }
-

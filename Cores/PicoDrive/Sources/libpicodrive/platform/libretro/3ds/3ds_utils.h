@@ -4,6 +4,7 @@
 void ctr_flush_invalidate_cache(void);
 
 int ctr_svchack_init(void);
+void check_rosalina(void);
 
 #include <stdio.h>
 #define DEBUG_HOLD() do{printf("%s@%s:%d.\n",__FUNCTION__, __FILE__, __LINE__);fflush(stdout);wait_for_input();}while(0)

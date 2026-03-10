@@ -4,6 +4,12 @@ Pandora, GPH device, PSP, Gizmondo ports, CPU core hacks
 lots of additional coding (see changeLog).
 Homepage: http://notaz.gp2x.de/
 
+irixxxx
+improvements to dynamic recompilers, 32X emulation, ARM asm, sound, VDP,
+platforms (GPH, PSP, generic linux), added SG-1000 and Game Gear support,
+fixed a lot of bugs (and probably added more new bugs), cleaned up stuff,
+probably more that I've already forgotten.
+
 fDave
 project starter
 Cyclone 68000 core and PicoDrive core itself
@@ -29,7 +35,6 @@ Homepage: http://www.mame.net/
 Eke-Eke
 CD graphics processor and CD controller implementation (from Genesis Plus GX)
 
-
 Additional thanks
 -----------------
 
@@ -53,4 +58,5 @@ Additional thanks
 * Paul Cercueil for OpenDingux port.
 * Inder for some graphics.
 * squarepusher for some libretro fixes
+* Hiroshica for support of japanese Mark-III extended YM2413 sound
 * Anyone else I forgot. Let me know if it's you.

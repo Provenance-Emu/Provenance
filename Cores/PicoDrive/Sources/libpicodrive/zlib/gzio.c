@@ -9,6 +9,10 @@
 
 #include <stdio.h>
 
+#ifdef USE_LIBRETRO_VFS
+#include "file_stream_transforms.h"
+#endif
+
 #include "zutil.h"
 
 #ifdef NO_DEFLATE       /* for compatibility with old definition */
@@ -1013,6 +1017,7 @@ const char * ZEXPORT gzerror (file, errnum)
     return (const char*)s->msg;
 }
 
+#if 0
 /* ===========================================================================
      Clear the error and end-of-file flags, and do the same for the real file.
 */
@@ -1026,3 +1031,4 @@ void ZEXPORT gzclearerr (file)
     s->z_eof = 0;
     clearerr(s->file);
 }
+#endif

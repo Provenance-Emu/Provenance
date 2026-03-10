@@ -2,15 +2,14 @@
 #include <commdlg.h>
 #include <stdio.h>
 
-#include "../../pico/pico.h"
+#include <pico/pico.h>
 #include "../common/readpng.h"
 #include "../common/config.h"
-#include "../common/lprintf.h"
 #include "../common/emu.h"
 #include "../common/menu.h"
 #include "../common/input.h"
 #include "../common/plat.h"
-#include "version.h"
+#include "../common/version.h"
 #include "direct.h"
 #include "in_vk.h"
 

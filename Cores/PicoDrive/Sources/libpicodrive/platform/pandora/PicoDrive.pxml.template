@@ -14,8 +14,8 @@
   <title lang="en_US">PicoDrive @major@.@minor@@build_post@</title>
  
   <descriptions>
-    <description lang="en_US">Genesis/MegaDrive/SegaCD/32x Emulator.</description>
-    <description lang="de_DE">Ein MegaDrive/SegaCD/32x Emulator</description>
+    <description lang="en_US">Genesis/Mega Drive/Sega CD/32x Emulator.</description>
+    <description lang="de_DE">Ein Mega Drive/Sega CD/32x Emulator</description>
   </descriptions>
  
   <exec command="PicoDrive.sh"/>
