@@ -103,10 +103,21 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
                                        requiresRestart: true),
                                  defaultValue: true))
         
-        coreOptions.append(.range(.init(title: "Count Per Op",
-                                        description: "CPU cycles per emulated instruction. 0=ROM default (usually 2). Lower=overclock (1=faster, may glitch). Higher=underclock (3-4=more accurate, slower). Useful for games like Majora's Mask or DK64 that have slowdown.",
-                                        requiresRestart: true),
-                                  range: .init(defaultValue: 0, min: 0, max: 7), defaultValue: 0))
+        // MARK: CountPerOp - CPU Overclock/Underclock
+        // Use enumeration with presets for better UX
+        coreOptions.append(.enumeration(.init(title: "CPU Speed / CountPerOp",
+                                              description: "Controls N64 CPU emulation speed. Lower=faster CPU (overclock), Higher=slower CPU (underclock).",
+                                              requiresRestart: true),
+                                        values: [
+                                            .init(title: "ROM Default (usually 2)", description: "Use game's default setting", value: 0),
+                                            .init(title: "Overclock (1)", description: "Faster emulation. Good for: Majora's Mask, DK64, Perfect Dark, Conker's Bad Fur Day. May cause glitches in some games.", value: 1),
+                                            .init(title: "Underclock (3)", description: "More accurate, slower. Can improve compatibility with some games.", value: 3),
+                                            .init(title: "Underclock (4)", description: "More accurate, slower. Maximum underclock for problematic games.", value: 4),
+                                            .init(title: "Custom (5)", description: "Advanced: Use only if you know what you're doing", value: 5),
+                                            .init(title: "Custom (6)", description: "Advanced: Use only if you know what you're doing", value: 6),
+                                            .init(title: "Custom (7)", description: "Advanced: Use only if you know what you're doing", value: 7)
+                                        ],
+                                        defaultValue: 0))
         
         // MARK: --- DEBUG
         // MARK: OSD <Bool=0>
