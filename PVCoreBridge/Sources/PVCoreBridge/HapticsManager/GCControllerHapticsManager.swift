@@ -98,12 +98,19 @@ public final class GCControllerHapticsManager {
             Task { @MainActor in self?.controllerDisconnected(controller) }
         }
 
-        // Stop engines when the app moves to background; resume on foreground.
+        // Stop engines when the app moves to background; restart on foreground.
+        // Note: CHHapticEngine.resetHandler only fires on external server resets,
+        // not after a manual .stop(). We must restart engines explicitly on foreground.
         #if canImport(UIKit) && !os(watchOS)
         let bgObs = nc.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in self?.stopAllEngines() }
         }
         notificationObservers.append(bgObs)
+
+        let fgObs = nc.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in self?.restartAllEngines() }
+        }
+        notificationObservers.append(fgObs)
         #endif
 
         // Keep intensity cache in sync with UserDefaults changes from PVSettings.
@@ -272,6 +279,20 @@ public final class GCControllerHapticsManager {
             }
         }
         VLOG("[GCHaptics] All engines stopped (app backgrounded)")
+    }
+
+    private func restartAllEngines() {
+        for (player, localityMap) in engineMap {
+            for (locality, engine) in localityMap {
+                do {
+                    try engine.start()
+                    VLOG("[GCHaptics] Engine restarted for player \(player + 1), locality \(locality)")
+                } catch {
+                    ELOG("[GCHaptics] Failed to restart engine for player \(player + 1), locality \(locality): \(error)")
+                }
+            }
+        }
+        VLOG("[GCHaptics] All engines restarted (app foregrounded)")
     }
 
     // MARK: - Controller Detection

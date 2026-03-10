@@ -152,7 +152,9 @@ public extension EmulatorCoreRumbleDataSource {
 #if os(iOS) && !targetEnvironment(macCatalyst)
         let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
         if deviceHasHaptic {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.prepare()
+            generator.impactOccurred()
         } else {
             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         }
