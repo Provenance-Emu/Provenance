@@ -79,7 +79,7 @@ internal final class HapticsManager: @unchecked Sendable {
             let index = Int(controller.playerIndex.rawValue)
             guard index >= 0 else { return }
             if let engine = HapticsManager.buildControllerEngine(for: controller) {
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     self.controllerEngines[index] = engine
                 }
             }
@@ -90,7 +90,7 @@ internal final class HapticsManager: @unchecked Sendable {
         ) { [weak self] note in
             guard let self, let controller = note.object as? GCController else { return }
             let index = Int(controller.playerIndex.rawValue)
-            Task { @MainActor in
+            MainActor.assumeIsolated {
                 self.controllerEngines.removeValue(forKey: index)
             }
         }
