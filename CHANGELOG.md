@@ -58,6 +58,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **RarExtractor Path Traversal** — Sanitize entry filenames in RAR archives to prevent `../` path traversal outside the destination directory (Part of #2663)
+- **CRC Lookup Error Logging** — `PVLookup.searchROM(byCRC:)` now logs database errors via `ELOG` instead of silently swallowing them with `try?` (Part of #2663)
+- **XZExtractor Memory Warning** — Log a warning when extracting XZ archives larger than 200 MB, since the entire file is loaded into memory (Part of #2663)
 - **PVCoreLoader Deadlock Risk** — Replaced `NSLock` with `OSAllocatedUnfairLock` in
   `CoreLoader` and `LibretroMetadataReader`; all bare `.lock()`/`.unlock()` pairs replaced
   with `.withLock { }` closures, eliminating the early-return deadlock path in `getCorePlists` (#2809)

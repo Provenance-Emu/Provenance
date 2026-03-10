@@ -340,6 +340,11 @@ class TarExtractor: BaseExtractor {
 
 class XZExtractor: BaseExtractor {
     override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
+        // XZArchive loads the entire file into memory. Warn for large files.
+        if let attributes = try? FileManager.default.attributesOfItem(atPath: path.path),
+           let fileSize = attributes[.size] as? Int64, fileSize > 200_000_000 {
+            WLOG("XZExtractor: loading \(fileSize / 1_000_000) MB XZ file into memory — consider chunked extraction for very large archives")
+        }
         let container = try Data(contentsOf: path)
         let decompressedData = try XZArchive.unarchive(archive: container)
         try await extractCompressedData(decompressedData, at: path, to: destination, yieldPath: yieldPath, progress: progress)
@@ -380,7 +385,21 @@ class RarExtractor: BaseExtractor {
         let total = entries.count
         for (index, entry) in entries.enumerated() {
             guard !entry.isDirectory else { continue }
-            let fullPath = destination.appendingPathComponent(entry.fileName)
+            // Sanitize entry filename to prevent path traversal (e.g. "../" components)
+            let sanitizedName = entry.fileName
+                .components(separatedBy: "/")
+                .filter { !$0.isEmpty && $0 != ".." && $0 != "." }
+                .joined(separator: "/")
+            guard !sanitizedName.isEmpty else {
+                WLOG("RarExtractor: skipping entry with unsafe path: \(entry.fileName)")
+                continue
+            }
+            let fullPath = destination.appendingPathComponent(sanitizedName)
+            // Verify the resolved path is still within the destination directory
+            guard fullPath.path.hasPrefix(destination.path) else {
+                WLOG("RarExtractor: skipping entry that escapes destination: \(entry.fileName)")
+                continue
+            }
             let parentDir = fullPath.deletingLastPathComponent()
             try FileManager.default.createDirectory(at: parentDir, withIntermediateDirectories: true, attributes: nil)
             try archive.extract(entry, to: fullPath.path)
