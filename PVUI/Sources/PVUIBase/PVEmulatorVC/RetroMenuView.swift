@@ -17,6 +17,9 @@ import PVLibrary
 import PVFeatureFlags
 import UniformTypeIdentifiers
 import PVThemes
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 // MARK: - SwiftUI Menu Views
 
@@ -584,10 +587,75 @@ struct RetroMenuView: View {
             }
 #endif
 
+            // Screen recording button — iOS only, gated behind Provenance Plus
+#if os(iOS)
+            recordingButton
+#endif
+
             Spacer(minLength: 0)
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }
+
+    // Screen recording button with Plus gating
+#if os(iOS)
+    @ViewBuilder
+    private var recordingButton: some View {
+        let isRecording = PVRecordingManager.shared.isRecording
+        let isAvailable = PVRecordingManager.shared.isAvailable
+        if isAvailable {
+            let title = isRecording ? "STOP RECORDING" : "RECORD GAMEPLAY"
+            let icon = isRecording ? "stop.circle" : "record.circle"
+            let color = isRecording
+                ? Color.red
+                : (palette.defaultTintColor.swiftUIColor)
+#if canImport(FreemiumKit)
+            PaidFeatureView {
+                menuButton(title: title, icon: icon, color: color) {
+                    dismissAction(true)
+                    emulatorVC.toggleScreenRecording()
+                }
+            } lockedView: {
+                HStack {
+                    menuButton(title: title, icon: icon, color: color) {}
+                        .disabled(true)
+                        .opacity(0.6)
+                    HStack(spacing: 3) {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text("PLUS")
+                            .font(.system(size: 9, weight: .heavy))
+                    }
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule()
+                            .fill(Color.retroPink.opacity(0.15))
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 0.5)
+                            )
+                    )
+                    .padding(.trailing, 8)
+                }
+            }
+            .freemiumKitColorReset()
+#else
+            menuButton(title: title, icon: icon, color: color) {
+                dismissAction(true)
+                emulatorVC.toggleScreenRecording()
+            }
+#endif
+        }
+    }
+#endif
 
     // Options related buttons - game settings and enhancements
     private var optionsMenuButtons: some View {
