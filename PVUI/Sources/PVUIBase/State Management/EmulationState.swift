@@ -24,6 +24,9 @@ public final class EmulationUIState : ObservableObject {
     public var emulator: PVEmualatorControllerProtocol?
     public var isInBackground: Bool = false
 
+    /// Whether a ReplayKit screen recording session is currently active.
+    public var isRecording: Bool = false
+
     /// The current game that should be loaded in the emulator scene
     public var currentGame: PVGame? = nil
 
@@ -41,6 +44,7 @@ public final class EmulationUIState : ObservableObject {
             currentGame = nil
             currentSaveState = nil
             currentCore = nil
+            isRecording = false
         }
         return (core, emulator, currentGame)
     }
