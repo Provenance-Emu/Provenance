@@ -1241,6 +1241,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             joyPad.isHidden = true
             return
         }
+        joyPad.isHidden = false
 
         guard let dPad = dPad, !dPad.isCustomMoved, !joyPad.isCustomMoved else {
             return
