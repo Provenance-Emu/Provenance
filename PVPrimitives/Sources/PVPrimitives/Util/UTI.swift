@@ -12,7 +12,7 @@ import CoreServices
 public extension UTI {
     // General ROM types
     nonisolated(unsafe) static let rom = UTI(rawValue: "com.provenance.rom")
-    nonisolated(unsafe) static let bios = UTI(rawValue: "com.provenance.rom")
+    nonisolated(unsafe) static let bios = UTI(rawValue: "com.provenance.bios")
     nonisolated(unsafe) static let cheat = UTI(rawValue: "com.provenance.cheat")
     nonisolated(unsafe) static let artwork = UTI(rawValue: "com.provenance.artwork")
     nonisolated(unsafe) static let savestate = UTI(rawValue: "com.provenance.savestate")
@@ -100,7 +100,7 @@ import UniformTypeIdentifiers
 public extension UTType {
     // General ROM types — all exported (Provenance defines the format/type)
     static let rom: UTType = UTType(exportedAs: "com.provenance.rom", conformingTo: .data)
-    static let bios: UTType = UTType(exportedAs: "com.provenance.rom", conformingTo: .data)
+    static let bios: UTType = UTType(exportedAs: "com.provenance.bios", conformingTo: .rom)
     static let cheat: UTType = UTType(exportedAs: "com.provenance.cheat", conformingTo: .data)
     static let artwork: UTType = UTType(exportedAs: "com.provenance.artwork", conformingTo: .image)
     static let savestate: UTType = UTType(exportedAs: "com.provenance.savestate", conformingTo: .data)

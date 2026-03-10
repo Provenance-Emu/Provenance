@@ -58,6 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **UTType.bios Identifier** — `UTType.bios` and `UTI.bios` now use the dedicated `com.provenance.bios` identifier (previously shared `com.provenance.rom`); added `com.provenance.bios` exported type declaration to all 7 app Info.plist files (#2864 follow-up)
+- **Script Permissions** — UTI generator scripts (`gen_uti.swift`, `generate_uti_declarations.py`) marked executable
 - **PVCoreLoader Deadlock Risk** — Replaced `NSLock` with `OSAllocatedUnfairLock` in
   `CoreLoader` and `LibretroMetadataReader`; all bare `.lock()`/`.unlock()` pairs replaced
   with `.withLock { }` closures, eliminating the early-return deadlock path in `getCorePlists` (#2809)
