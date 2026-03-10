@@ -9,8 +9,10 @@ import Foundation
 import PVLogging
 import PVPrimitives
 
+#if canImport(ObjectiveC)
 @objc
 @objcMembers
+#endif
 public final class EmulatorCoreInfoPlist: NSObject, Sendable {
     public let identifier: String
     public let principleClass: String

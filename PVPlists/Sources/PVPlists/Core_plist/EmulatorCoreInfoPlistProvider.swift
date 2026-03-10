@@ -8,7 +8,10 @@
 import Foundation
 import PVPrimitives
 
-@objc public protocol EmulatorCoreInfoPlistProvider {
+#if canImport(ObjectiveC)
+@objc
+#endif
+public protocol EmulatorCoreInfoPlistProvider {
     static var corePlist: EmulatorCoreInfoPlist { get }
     static var resourceBundle: Bundle { get }
 }
