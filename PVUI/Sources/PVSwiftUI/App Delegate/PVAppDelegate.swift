@@ -20,6 +20,7 @@ import PVThemes
 import PVSettings
 import PVUIBase
 import PVSwiftUI
+import PVLibrary
 import PVLogging
 import Combine
 import Observation
@@ -364,6 +365,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         ILOG("PVAppDelegate: Application did finish launching")
+        RealmConfiguration.setDefaultRealmConfig()
 
         #if !os(tvOS)
         // Handle shortcut from launch options (for non-SwiftUI apps)

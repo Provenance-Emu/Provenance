@@ -9,8 +9,8 @@
 import SwiftUI
 import PVSettings
 import PVThemes
-#if canImport(PVJIT)
-import PVJIT
+#if canImport(JITManager)
+import JITManager
 #endif
 
 // MARK: - JIT Status Types
@@ -65,7 +65,7 @@ public final class JITStatusViewModel: ObservableObject {
     @Published public var status: JITStatus = .notApplicable
     @Published public var isExpanded: Bool = false
 
-    #if canImport(PVJIT)
+    #if canImport(JITManager)
     private var jitManager: DOLJitManager { DOLJitManager.shared }
     #endif
 
@@ -75,7 +75,7 @@ public final class JITStatusViewModel: ObservableObject {
 
     /// Updates the JIT status based on the current JIT manager state
     public func updateStatus() {
-        #if canImport(PVJIT)
+        #if canImport(JITManager)
         let isJITEnabled = jitManager.appHasAcquiredJit()
         let jitType = jitManager.getJitType()
 

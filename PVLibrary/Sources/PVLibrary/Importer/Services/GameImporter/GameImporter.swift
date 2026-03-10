@@ -542,9 +542,6 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
         #endif
 
-        //create defaults
-        createDefaultDirectories(fm: fm)
-
         //set service dependencies
         gameImporterDatabaseService.setRomsPath(url: romsPath)
 
@@ -629,6 +626,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         await self.initCorePlists()
+        let fm = FileManager.default
+        createDefaultDirectories(fm: fm)
 
         /// Updates the system to path map
         @MainActor

@@ -45,8 +45,12 @@ public class AppState: ObservableObject {
         }
     }
 
+    /// Configures Realm before AppState startup observers can touch database-backed singletons.
     @ObservedObject
-    public static private(set) var shared: AppState = .init()
+    public static private(set) var shared: AppState = {
+        RealmConfiguration.setDefaultRealmConfig()
+        return .init()
+    }()
 
     /// Computed property to access current bootup state
     public var bootupState: AppBootupState.State {
@@ -235,14 +239,14 @@ public class AppState: ObservableObject {
                     /// CloudKit syncers gate work off `CloudSyncManager.shared.isPausedForEmulation`.
                     Task { @MainActor in
                         CloudSyncManager.shared.pauseForEmulation()
-                        GameImporter.shared.pauseForEmulation()
+                        self?.gameImporter?.pauseForEmulation()
                     }
                 } else {
                     ILOG("AppState: Emulation inactive, can resume imports")
                     self?.resumeImportsIfNoOtherConditions(previousCondition: "Emulation")
                     Task { @MainActor in
                         CloudSyncManager.shared.resumeFromEmulation()
-                        GameImporter.shared.resumeFromEmulation()
+                        self?.gameImporter?.resumeFromEmulation()
                     }
                 }
             }

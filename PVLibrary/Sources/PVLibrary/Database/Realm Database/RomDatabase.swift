@@ -525,7 +525,7 @@ public final class RomDatabase {
 
     private var libraryRef: ThreadSafeReference<PVLibrary>!
     public var library: PVLibrary {
-        let realm = try! Realm()
+        let realm = try! Realm(configuration: RealmConfiguration.realmConfig)
         return realm.resolve(libraryRef)!
     }
 
@@ -550,6 +550,7 @@ public final class RomDatabase {
     public static var sharedInstance: RomDatabase {
         // Make sure real shared is inited first
         guard let shared = RomDatabase._sharedInstance else {
+            RealmConfiguration.setDefaultRealmConfig()
             return try! RomDatabase()
         }
 
@@ -572,7 +573,7 @@ public final class RomDatabase {
     }
 
     public var realm: Realm {
-        try! Realm()
+        try! Realm(configuration: RealmConfiguration.realmConfig)
     }
 
     private init() {
@@ -679,11 +680,11 @@ public extension RomDatabase {
 
 public extension Object {
     static func all() -> Results<PersistedType> {
-        try! Realm().objects(Self.PersistedType)
+        try! Realm(configuration: RealmConfiguration.realmConfig).objects(Self.PersistedType)
     }
 
     static func forPrimaryKey(_ primaryKey: String) -> PersistedType? {
-        try! Realm().object(ofType: Self.PersistedType.self, forPrimaryKey: primaryKey)
+        try! Realm(configuration: RealmConfiguration.realmConfig).object(ofType: Self.PersistedType.self, forPrimaryKey: primaryKey)
     }
 }
 

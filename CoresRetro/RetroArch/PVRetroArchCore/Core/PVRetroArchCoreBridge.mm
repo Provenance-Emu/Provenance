@@ -208,13 +208,13 @@ extern int g_gs_preference;
 
 + (NSString * _Nullable)perGameOptionsPathForGame:(NSString *)gameFilename {
     if (!gameFilename || gameFilename.length == 0) {
-        ELOG("[CoreOptions] perGameOptionsPathForGame: gameFilename is empty");
+        ELOG(@"[CoreOptions] perGameOptionsPathForGame: gameFilename is empty");
         return nil;
     }
 
     NSString *coreName = [self coreLibraryName];
     if (!coreName || coreName.length == 0) {
-        ELOG("[CoreOptions] perGameOptionsPathForGame: coreName is empty");
+        ELOG(@"[CoreOptions] perGameOptionsPathForGame: coreName is empty");
         return nil;
     }
 
@@ -225,7 +225,7 @@ extern int g_gs_preference;
                                        APPLICATION_SPECIAL_DIRECTORY_CONFIG);
 
     if (string_is_empty(config_dir)) {
-        ELOG("[CoreOptions] perGameOptionsPathForGame: config_dir is empty");
+        ELOG(@"[CoreOptions] perGameOptionsPathForGame: config_dir is empty");
         return nil;
     }
 
@@ -242,19 +242,19 @@ extern int g_gs_preference;
                                    ".opt", sizeof(opt_path));
 
     if (string_is_empty(opt_path)) {
-        ELOG("[CoreOptions] perGameOptionsPathForGame: failed to build path");
+        ELOG(@"[CoreOptions] perGameOptionsPathForGame: failed to build path");
         return nil;
     }
 
     NSString *result = [NSString stringWithUTF8String:opt_path];
-    ILOG("[CoreOptions] per-game .opt path: %s", opt_path);
+    ILOG(@"[CoreOptions] per-game .opt path: %s", opt_path);
     return result;
 }
 
 + (NSString * _Nullable)perCoreOptionsPath {
     NSString *coreName = [self coreLibraryName];
     if (!coreName || coreName.length == 0) {
-        ELOG("[CoreOptions] perCoreOptionsPath: coreName is empty");
+        ELOG(@"[CoreOptions] perCoreOptionsPath: coreName is empty");
         return nil;
     }
 
@@ -265,7 +265,7 @@ extern int g_gs_preference;
                                        APPLICATION_SPECIAL_DIRECTORY_CONFIG);
 
     if (string_is_empty(config_dir)) {
-        ELOG("[CoreOptions] perCoreOptionsPath: config_dir is empty");
+        ELOG(@"[CoreOptions] perCoreOptionsPath: config_dir is empty");
         return nil;
     }
 
@@ -279,12 +279,12 @@ extern int g_gs_preference;
                                    ".opt", sizeof(opt_path));
 
     if (string_is_empty(opt_path)) {
-        ELOG("[CoreOptions] perCoreOptionsPath: failed to build path");
+        ELOG(@"[CoreOptions] perCoreOptionsPath: failed to build path");
         return nil;
     }
 
     NSString *result = [NSString stringWithUTF8String:opt_path];
-    ILOG("[CoreOptions] per-core .opt path: %s", opt_path);
+    ILOG(@"[CoreOptions] per-core .opt path: %s", opt_path);
     return result;
 }
 
