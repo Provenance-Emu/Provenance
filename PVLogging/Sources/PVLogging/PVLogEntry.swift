@@ -10,7 +10,9 @@ nonisolated(unsafe) internal var __PVLogEntryIndexCounter:UInt = 0
 // Used to calculate offsets
 internal let __PVLoggingStartupTime: Date = Date()
 
+#if canImport(ObjectiveC)
 @objc
+#endif
 public final class PVLogEntry: NSObject {
     public let time: Date
     public let entryIndex: UInt
@@ -31,7 +33,9 @@ public final class PVLogEntry: NSObject {
         }
     }
     
+    #if canImport(ObjectiveC)
     @objc
+    #endif
     public convenience init(message: String) {
         self.init()
         self.text = message

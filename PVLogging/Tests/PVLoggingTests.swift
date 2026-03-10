@@ -394,9 +394,11 @@ struct PVLogPublisherTests {
         #expect(logs.contains(where: { $0.message == "error convenience" && $0.level == .error }))
     }
 
+    #if canImport(Combine)
     @Test("logPublisher property is accessible")
     func logPublisherAccessible() {
         // Verify the property is accessible and the type is correct
         _ = PVLogPublisher.shared.logPublisher
     }
+    #endif
 }

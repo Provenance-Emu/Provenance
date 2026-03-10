@@ -7,7 +7,9 @@
 
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc
+#endif
 public enum LevelString: Int {
     case U
     case Error

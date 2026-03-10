@@ -7,7 +7,9 @@
 
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc
+#endif
 public protocol PVLoggingEntity {
     /**
      *  Obtain paths of any file logs
