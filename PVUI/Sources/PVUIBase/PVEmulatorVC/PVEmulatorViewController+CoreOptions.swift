@@ -44,12 +44,12 @@ extension PVEmulatorViewController {
         #endif
     }
 
-    /// Dismisses core options and resumes emulation
+    /// Dismisses core options.
+    /// Emulation pause state is handled by the menu system; we don't resume here
+    /// to prevent unpausing when navigating back to the pause menu.
     @objc private func dismissCoreOptionsAndResume() {
         presentedViewController?.dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
-            self.core.setPauseEmulation(false)
-            self.isShowingMenu = false
             self.enableControllerInput(false)
             #if os(tvOS)
             self.resetTVOSMenuGestures()

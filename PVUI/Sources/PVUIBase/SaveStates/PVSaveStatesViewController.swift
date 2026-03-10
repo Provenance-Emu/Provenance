@@ -190,9 +190,9 @@ public final class PVSaveStatesViewController: UICollectionViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
+        // Don't resume emulation here - the presenting menu handles that.
+        // This prevents the game from unpausing when navigating back to the pause menu.
         if let emulatorViewController = presentingViewController as? PVEmualatorControllerProtocol {
-            emulatorViewController.core.setPauseEmulation(false)
-            emulatorViewController.isShowingMenu = false
             emulatorViewController.enableControllerInput(false)
         }
     }

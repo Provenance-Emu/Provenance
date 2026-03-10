@@ -132,8 +132,8 @@ public extension PVEmulatorViewController {
 public extension PVEmulatorViewController {
     func saveStatesViewControllerDone(_: PVSaveStatesViewController) {
         dismiss(animated: true, completion: nil)
-        core.setPauseEmulation(false)
-        isShowingMenu = false
+        // Don't resume emulation here - the presenting menu handles that.
+        // This prevents the game from unpausing when navigating back to the pause menu.
         enableControllerInput(false)
     }
     func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) async throws -> Bool {
