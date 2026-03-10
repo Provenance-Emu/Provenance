@@ -680,6 +680,29 @@ public extension OpenVGDB {
         return try executeQuery(query)
     }
 
+    /// Search the database by CRC32 hash.
+    /// CRC32 is available without full decompression for ZIP, 7z, RAR, and LZH archives,
+    /// enabling fast ROM identification directly from archive central directories.
+    func searchByCRC(_ crc: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
+        let properties = getStandardProperties()
+        let sanitizedCRC = sanitizeForSQLLike(crc.uppercased())
+
+        let query = """
+            SELECT DISTINCT \(properties)
+            FROM ROMs rom
+            LEFT JOIN RELEASES release USING (romID)
+            WHERE romHashCRC = '\(sanitizedCRC)' COLLATE NOCASE
+            \(systemID != nil ? "AND systemID = \(systemID!.openVGDBID)" : "")
+            """
+
+        return try executeQuery(query)
+    }
+
+    /// Search the database by CRC32 hash and return the first matching ROM.
+    func searchROM(byCRC crc: String) async throws -> ROMMetadata? {
+        return try await searchByCRC(crc)?.first
+    }
+
     func systemIdentifier(forRomMD5 md5: String, or filename: String?) async throws -> SystemIdentifier? {
         // First try MD5
         var query = """

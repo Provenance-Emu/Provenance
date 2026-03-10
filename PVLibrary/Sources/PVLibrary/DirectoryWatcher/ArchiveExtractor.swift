@@ -16,6 +16,12 @@ import SWCompression
 #if canImport(PLzmaSDK)
 import PLzmaSDK
 #endif
+#if canImport(LzhArchive)
+import LzhArchive
+#endif
+#if canImport(Unrar)
+import Unrar
+#endif
 import Combine
 
 
@@ -32,6 +38,25 @@ public enum ArchiveType: String, CaseIterable {
     case tar
     case gzip = "gz"
     case rar
+    case lzh  // covers both .lzh and .lha extensions
+    case xz
+
+    /// Additional file extensions that map to this archive type (beyond the rawValue).
+    var alternateExtensions: [String] {
+        switch self {
+        case .bzip2: return ["bzip2"]
+        case .gzip: return ["gzip"]
+        case .lzh: return ["lha"]
+        default: return []
+        }
+    }
+
+    static func from(fileExtension ext: String) -> ArchiveType? {
+        let lower = ext.lowercased()
+        return ArchiveType.allCases.first {
+            $0.rawValue == lower || $0.alternateExtensions.contains(lower)
+        }
+    }
 }
 
 /// Backend selection for 7z archive extraction
@@ -310,6 +335,61 @@ class TarExtractor: BaseExtractor {
                 }
             }
         }
+    }
+}
+
+class XZExtractor: BaseExtractor {
+    override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
+        let container = try Data(contentsOf: path)
+        let decompressedData = try XZArchive.unarchive(archive: container)
+        try await extractCompressedData(decompressedData, at: path, to: destination, yieldPath: yieldPath, progress: progress)
+    }
+}
+
+class LzhExtractor: BaseExtractor {
+    override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
+        guard FileManager.default.fileExists(atPath: path.path) else {
+            throw ArchiveError.extractionFailed("LZH file does not exist: \(path.path)")
+        }
+        try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true, attributes: nil)
+        #if canImport(LzhArchive)
+        let succeeded = LzhArchive.unLzhFile(atPath: path.path, toDestination: destination.path, overwrite: true)
+        guard succeeded else {
+            throw ArchiveError.extractionFailed("LzhArchive failed to extract: \(path.lastPathComponent)")
+        }
+        let extractedFiles = try FileManager.default.contentsOfDirectory(at: destination, includingPropertiesForKeys: nil)
+        for file in extractedFiles {
+            yieldPath(file)
+        }
+        progress(1.0)
+        #else
+        throw ArchiveError.extractionFailed("LzhArchive is not available")
+        #endif
+    }
+}
+
+class RarExtractor: BaseExtractor {
+    override func performExtraction(from path: URL, to destination: URL, yieldPath: (URL) -> Void, progress: (Double) -> Void) async throws {
+        guard FileManager.default.fileExists(atPath: path.path) else {
+            throw ArchiveError.extractionFailed("RAR file does not exist: \(path.path)")
+        }
+        try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true, attributes: nil)
+        #if canImport(Unrar)
+        let archive = try Archive(filePath: path.path)
+        let entries = try archive.entries()
+        let total = entries.count
+        for (index, entry) in entries.enumerated() {
+            guard !entry.isDirectory else { continue }
+            let fullPath = destination.appendingPathComponent(entry.fileName)
+            let parentDir = fullPath.deletingLastPathComponent()
+            try FileManager.default.createDirectory(at: parentDir, withIntermediateDirectories: true, attributes: nil)
+            try archive.extract(entry, to: fullPath.path)
+            yieldPath(fullPath)
+            progress(Double(index + 1) / Double(max(total, 1)))
+        }
+        #else
+        throw ArchiveError.extractionFailed("Unrar is not available")
+        #endif
     }
 }
 
