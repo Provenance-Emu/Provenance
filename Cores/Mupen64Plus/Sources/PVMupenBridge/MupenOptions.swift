@@ -105,12 +105,14 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
         
         // MARK: CountPerOp - CPU Overclock/Underclock
         // Use enumeration with presets for better UX
-        coreOptions.append(.enumeration(.init(title: "CPU Speed / CountPerOp",
-                                              description: "Controls N64 CPU emulation speed. Lower=faster CPU (overclock), Higher=slower CPU (underclock).",
+        // NOTE: Title must remain "Count Per Op" — bridge reads it via intForOption:@"Count Per Op"
+        coreOptions.append(.enumeration(.init(title: "Count Per Op",
+                                              description: "Controls N64 CPU emulation speed (CountPerOp). Lower=faster CPU (overclock), Higher=slower CPU (underclock).",
                                               requiresRestart: true),
                                         values: [
                                             .init(title: "ROM Default (usually 2)", description: "Use game's default setting", value: 0),
                                             .init(title: "Overclock (1)", description: "Faster emulation. Good for: Majora's Mask, DK64, Perfect Dark, Conker's Bad Fur Day. May cause glitches in some games.", value: 1),
+                                            .init(title: "Standard (2)", description: "Default speed. Matches ROM default for most games.", value: 2),
                                             .init(title: "Underclock (3)", description: "More accurate, slower. Can improve compatibility with some games.", value: 3),
                                             .init(title: "Underclock (4)", description: "More accurate, slower. Maximum underclock for problematic games.", value: 4),
                                             .init(title: "Custom (5)", description: "Advanced: Use only if you know what you're doing", value: 5),
