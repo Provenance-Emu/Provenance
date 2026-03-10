@@ -30,7 +30,7 @@ permissions:
 
 concurrency:
   group: kimi-agent-${{ github.event.inputs.issue_number }}
-  cancel-in-progress: false
+  cancel-in-progress: true   # cancel if same issue re-dispatched
 
 jobs:
   kimi-agent:
@@ -96,34 +96,21 @@ jobs:
           ISSUE_TITLE=$(echo "$ISSUE_JSON" | jq -r '.title // ""')
           ISSUE_BODY=$(echo "$ISSUE_JSON"  | jq -r '.body  // ""')
 
+          BRANCH="agent/issue-${ISSUE}-${GITHUB_RUN_ID: -5}"
+          git checkout -b "$BRANCH"
+
           claude --dangerously-skip-permissions \
             --model kimi-for-coding \
-            --allowedTools 'Bash(gh issue comment:*),Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue close:*),Bash(gh pr comment:*),Bash(gh pr create:*),Bash(gh pr edit:*),Bash(gh pr view:*),Bash(gh label:*),Bash(gh api:*),Bash(git:*),Bash(swift:*),Bash(swiftlint:*),Bash(cat:*),Bash(sed:*),Bash(date:*),Bash(python3:*),Read,Write,Edit,Glob,Grep' \
-            -p "You are working on the Provenance emulator app repository.
-          Read CLAUDE.md for conventions and module structure.
+            --max-turns 20 \
+            --allowedTools 'Bash(gh *),Bash(git *),Bash(swift *),Bash(swiftlint *),Bash(python3 *),Read,Write,Edit,Glob,Grep' \
+            -p "Provenance repo. Read CLAUDE.md for conventions.
 
-          Repository: ${REPO}
-          Issue #${ISSUE}: ${ISSUE_TITLE}
-          Action: ${ACTION}
-          Status comment ID: ${{ steps.status_comment.outputs.comment_id }}
+          Fix issue #${ISSUE}: ${ISSUE_TITLE}
 
-          Issue body:
           ${ISSUE_BODY}
 
-          ## Instructions
-
-          Implement the issue above following CLAUDE.md conventions:
-          1. Read the issue carefully and understand the full scope
-          2. Find the relevant files (use Glob/Grep)
-          3. Implement the changes
-          4. Run swiftlint on changed files
-          5. Commit with conventional commit message (feat/fix/refactor/chore)
-          6. Create a PR targeting develop with title '[Agent] <description>'
-          7. Close the issue referencing the PR
-
-          Branch name: agent/issue-${ISSUE}-$(echo '${{ github.run_id }}' | tail -c 6)
-
-          Keep changes focused. Do not refactor unrelated code."
+          Steps: find files → implement → swiftlint → commit (conventional) → gh pr create --base develop --title '[Agent] ${ISSUE_TITLE}' → gh issue close ${ISSUE}
+          Branch already created: ${BRANCH}. Be concise, minimal changes only."
 
       # PRs created by GITHUB_TOKEN don't fire pull_request events, so
       # ai-review-trigger.yml never sees them. Label and dispatch explicitly here.
