@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ObjectiveC
 import os
 import PVSupport
 import QuartzCore
@@ -123,9 +124,6 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
     weak var emulatorCore: PVEmulatorCore?
 
-    /// Lock protecting render-path access to emulatorCore on non-double-buffered cores.
-    /// Replaces the legacy `objc_sync_enter/exit(emulatorCore)` pattern.
-    private let renderLock = OSAllocatedUnfairLock<Void>(initialState: ())
 
 #if targetEnvironment(macCatalyst) || os(macOS)
     //    var isPaused: Bool = false
@@ -1001,10 +999,12 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                     emulatorCore.frontBufferLock.unlock()
                     emulatorCore.frontBufferCondition.unlock()
                 } else {
-                    renderLock.withLock {
-                        fetchVideoBuffer()
-                        renderBlock()
-                    }
+                    // Non-double-buffered: synchronize with emulator core's @synchronized(self)
+                    // (executeFrame is wrapped in @synchronized(self) / objc_sync_enter(self))
+                    objc_sync_enter(emulatorCore)
+                    defer { objc_sync_exit(emulatorCore) }
+                    fetchVideoBuffer()
+                    renderBlock()
                 }
             }
         }
@@ -1186,10 +1186,12 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 emulatorCore.frontBufferLock.unlock()
                 emulatorCore.frontBufferCondition.unlock()
             } else {
-                renderLock.withLock {
-                    fetchVideoBuffer()
-                    renderBlock()
-                }
+                // Non-double-buffered: synchronize with emulator core's @synchronized(self)
+                // (executeFrame is wrapped in @synchronized(self) / objc_sync_enter(self))
+                objc_sync_enter(emulatorCore)
+                defer { objc_sync_exit(emulatorCore) }
+                fetchVideoBuffer()
+                renderBlock()
             }
         }
 
