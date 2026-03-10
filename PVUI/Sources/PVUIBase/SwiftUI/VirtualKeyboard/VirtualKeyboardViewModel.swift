@@ -12,6 +12,7 @@ import Foundation
 import Combine
 import GameController
 import PVCoreBridge
+import PVSettings
 
 // MARK: - VirtualKeyboardDelegate
 
@@ -73,9 +74,11 @@ public final class VirtualKeyboardViewModel: ObservableObject {
     // MARK: - Layout
 
     /// Switch to a new layout, releasing all held modifiers first.
+    /// Persists the choice to `preferredKeyboardVariant` so it is restored next session.
     public func selectLayout(_ newLayout: VirtualKeyboardLayout) {
         releaseAllKeys()
         layout = newLayout
+        Defaults[.preferredKeyboardVariant] = newLayout.rawValue
     }
 
     // MARK: - Key events
