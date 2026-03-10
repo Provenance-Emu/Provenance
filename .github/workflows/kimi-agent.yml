@@ -125,6 +125,44 @@ jobs:
 
           Keep changes focused. Do not refactor unrelated code."
 
+      # PRs created by GITHUB_TOKEN don't fire pull_request events, so
+      # ai-review-trigger.yml never sees them. Label and dispatch explicitly here.
+      - name: Label PR and dispatch AI review
+        if: steps.kimi_run.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ISSUE="${{ github.event.inputs.issue_number }}"
+          REPO="${{ github.repository }}"
+
+          # Find the PR opened for this issue (agent/* branch, opened by this run)
+          PR_NUMBER=$(gh pr list --repo "$REPO" --state open \
+            --json number,headRefName,title \
+            --jq ".[] | select(.headRefName | test(\"agent/issue-${ISSUE}-\")) | .number" \
+            2>/dev/null | head -1)
+
+          if [[ -z "$PR_NUMBER" ]]; then
+            echo "No PR found for issue #${ISSUE} — skipping label/review dispatch"
+            exit 0
+          fi
+
+          echo "Found PR #${PR_NUMBER} for issue #${ISSUE}"
+
+          # Add standard agent labels
+          gh pr edit "$PR_NUMBER" --repo "$REPO" \
+            --add-label "agent-work,ready-for-review" 2>/dev/null || true
+
+          # Enable auto-merge
+          gh pr merge "$PR_NUMBER" --repo "$REPO" --auto --merge 2>/dev/null || true
+
+          # Dispatch AI review (bypasses pull_request event limitation)
+          gh workflow run ai-review.yml \
+            --repo "$REPO" \
+            --ref develop \
+            -f pr_number="$PR_NUMBER"
+
+          echo "Dispatched AI review for PR #${PR_NUMBER}"
+
       - name: Post result
         if: always()
         env:
@@ -134,6 +172,14 @@ jobs:
           STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
           OUTCOME="${{ steps.kimi_run.outcome }}"
+
+          # Find PR if created
+          PR_NUMBER=$(gh pr list --repo "${{ github.repository }}" --state open \
+            --json number,headRefName \
+            --jq ".[] | select(.headRefName | test(\"agent/issue-${ISSUE}-\")) | .number" \
+            2>/dev/null | head -1)
+          PR_LINK=""
+          [[ -n "$PR_NUMBER" ]] && PR_LINK="\n**PR:** #${PR_NUMBER}"
 
           if [[ "$OUTCOME" == "success" ]]; then
             ICON="✅"; MSG="Completed"
@@ -148,7 +194,7 @@ jobs:
           ## ${ICON} Kimi Code Agent — ${MSG}
 
           **Model:** kimi-for-coding
-          **Issue:** #${ISSUE}
+          **Issue:** #${ISSUE}${PR_LINK}
           **Finished:** ${TIMESTAMP}
 
           [View run logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" \
