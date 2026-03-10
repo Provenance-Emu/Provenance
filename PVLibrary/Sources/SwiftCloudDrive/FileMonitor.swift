@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+import PVLogging
 
 /// Monitors changes to files using file presenter. Used to notifiy of changes
 /// from remote devices.
@@ -61,7 +61,7 @@ final class FileMonitor: NSObject, NSFilePresenter, @unchecked Sendable {
             }
             informOfChange(at: version.url)
         } catch {
-            os_log("Failed to handle cloud metadata")
+            ELOG("Failed to handle cloud metadata")
         }
     }
     

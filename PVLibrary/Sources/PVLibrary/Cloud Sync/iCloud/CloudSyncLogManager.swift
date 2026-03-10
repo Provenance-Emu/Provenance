@@ -10,7 +10,9 @@ import Foundation
 import PVLogging
 import Combine
 import CloudKit
-import os.log
+#if canImport(OSLog)
+import OSLog
+#endif
 
 /// Log level for cloud sync operations
 public enum CloudLogLevel: String, Codable {
