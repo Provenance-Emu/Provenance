@@ -10,6 +10,9 @@ import Foundation
 #if canImport(Combine)
 import Combine
 #endif
+#if canImport(OSLog)
+import OSLog
+#endif
 
 /// A modern Combine-based publisher for PVLogging
 public final class PVLogPublisher: @unchecked Sendable {
