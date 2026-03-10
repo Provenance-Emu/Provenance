@@ -402,52 +402,128 @@ jobs:
 
             Output ONLY this single line. No summaries, no explanations, no extra markdown.
 
-      # If the AI reviewer failed (rate limit, auth, or runtime error), notify the
-      # user so they can handle the review manually or wait for token reset.
-      - name: Notify on reviewer failure
+      # If Claude failed (rate limit, auth error), try Kimi (moonshot-v1-128k)
+      # as a fallback reviewer via its OpenAI-compatible API.
+      - name: Kimi fallback review
         if: steps.reviewer_run.outcome == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
+          KIMI_API_KEY: ${{ secrets.KIMI_API_KEY }}
         run: |
           PR_NUM="${{ needs.triage.outputs.pr_number }}"
+          REPO="${{ github.repository }}"
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
 
-          cat > /tmp/review_failure.md << 'FAILEOF'
+          # --- Fetch PR metadata and diff ---
+          PR_JSON=$(gh api "repos/${REPO}/pulls/${PR_NUM}" 2>/dev/null || echo '{}')
+          PR_TITLE=$(echo "$PR_JSON" | jq -r '.title // "Unknown"')
+          PR_BODY=$(echo "$PR_JSON"  | jq -r '.body  // ""')
+          DIFF=$(gh pr diff "$PR_NUM" --repo "$REPO" 2>/dev/null | head -c 40000 || echo "")
+
+          if [ -z "$KIMI_API_KEY" ] || [ -z "$DIFF" ]; then
+            echo "Kimi key missing or diff empty — falling back to manual notice"
+            KIMI_FAILED=true
+          else
+            # --- Build prompt payload ---
+            cat > /tmp/kimi_payload.json << PAYLOAD_EOF
+          {
+            "model": "moonshot-v1-128k",
+            "temperature": 0.2,
+            "messages": [
+              {
+                "role": "system",
+                "content": "You are an experienced Swift/iOS code reviewer. Review the provided PR diff carefully and produce a concise structured review. Focus on correctness, memory safety, threading, API misuse, and Swift best practices. Be direct and specific — cite file paths and line numbers where possible."
+              },
+              {
+                "role": "user",
+                "content": "PR #${PR_NUM}: ${PR_TITLE}\n\nDescription:\n${PR_BODY}\n\nDiff (truncated to 40k chars):\n\`\`\`diff\n${DIFF}\n\`\`\`\n\nProvide your review in this format:\n\n## AI Code Review (Kimi fallback — Claude rate-limited)\n\n### Summary\n<one paragraph>\n\n### Issues\n**🔴 CRITICAL** *(must fix)*\n- or 'none'\n\n**🟠 MAJOR** *(should fix)*\n- or 'none'\n\n**🟡 MINOR** *(optional)*\n- or 'none'\n\n**⚪ NIT**\n- or 'none'\n\n### Verdict: APPROVE ✅  or  REQUEST_CHANGES 🔧\n\n---\n> 🤖 *Fallback review by Kimi (moonshot-v1-128k). Claude Code was rate-limited.*"
+              }
+            ]
+          }
+          PAYLOAD_EOF
+
+            # --- Call Kimi API ---
+            KIMI_RESP=$(curl -sf -X POST "https://api.moonshot.cn/v1/chat/completions" \
+              -H "Authorization: Bearer ${KIMI_API_KEY}" \
+              -H "Content-Type: application/json" \
+              -d @/tmp/kimi_payload.json 2>/dev/null || echo "")
+
+            KIMI_REVIEW=$(echo "$KIMI_RESP" | jq -r '.choices[0].message.content // ""' 2>/dev/null || echo "")
+
+            if [ -z "$KIMI_REVIEW" ]; then
+              echo "Kimi API call failed or returned empty content"
+              KIMI_FAILED=true
+            else
+              KIMI_FAILED=false
+              # Post the Kimi review as a PR comment (not a formal review — Kimi has no GH token)
+              echo "$KIMI_REVIEW" > /tmp/kimi_review.md
+              gh pr comment "$PR_NUM" --body-file /tmp/kimi_review.md \
+                --repo "$REPO" 2>/dev/null || true
+
+              # Remove ai-reviewing label; add ai-reviewed
+              gh pr edit "$PR_NUM" \
+                --remove-label "ai-reviewing" \
+                --add-label "ai-reviewed" \
+                --repo "$REPO" 2>/dev/null || true
+
+              # Update status comment
+              STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
+              if [ -n "$STATUS_ID" ]; then
+                cat > /tmp/kimi_status.md << STATUSEOF
+          <!-- claude-status -->
+          ## ✅ AI Review Complete (Kimi fallback)
+
+          **Primary reviewer:** ${{ needs.triage.outputs.model }} — rate-limited
+          **Fallback reviewer:** Kimi (moonshot-v1-128k)
+
+          Review posted as PR comment above.
+
+          *Completed: ${TIMESTAMP}*
+          STATUSEOF
+                gh api "repos/${REPO}/issues/comments/${STATUS_ID}" \
+                  --method PATCH --field body=@/tmp/kimi_status.md 2>/dev/null || true
+              fi
+            fi
+          fi
+
+          # --- Both Claude and Kimi failed: post manual notice ---
+          if [ "${KIMI_FAILED:-true}" = "true" ]; then
+            cat > /tmp/review_failure.md << 'FAILEOF'
           <!-- agent-failure-notice -->
           ## ⚠️ AI Review Failed
 
-          The AI reviewer could not complete the review (likely rate-limited or auth error).
+          Both Claude Code (rate-limited) and Kimi (fallback) could not complete the review.
 
           **Options:**
-          1. **Wait** for the Claude Code token window to reset (~2 hours)
+          1. **Wait** for the Claude Code token window to reset (~2 hours) and re-run
           2. **Review manually** or use Cursor locally
-          3. **Re-trigger** by commenting `@claude` or re-running the workflow
+          3. **Re-trigger** by re-running the `AI PR Review` workflow
 
           FAILEOF
-          echo "*Failed: ${TIMESTAMP}*" >> /tmp/review_failure.md
+            echo "*Failed: ${TIMESTAMP}*" >> /tmp/review_failure.md
 
-          gh pr comment "$PR_NUM" --body-file /tmp/review_failure.md \
-            --repo "${{ github.repository }}" 2>/dev/null || true
+            gh pr comment "$PR_NUM" --body-file /tmp/review_failure.md \
+              --repo "$REPO" 2>/dev/null || true
 
-          gh pr edit "$PR_NUM" \
-            --add-label "needs-manual-intervention" \
-            --remove-label "ai-reviewing" \
-            --repo "${{ github.repository }}" 2>/dev/null || true
+            gh pr edit "$PR_NUM" \
+              --add-label "needs-manual-intervention" \
+              --remove-label "ai-reviewing" \
+              --repo "$REPO" 2>/dev/null || true
 
-          # Update status comment to show failure
-          STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
-          if [ -n "$STATUS_ID" ]; then
-            cat > /tmp/review_status.md << STATUSEOF
+            STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
+            if [ -n "$STATUS_ID" ]; then
+              cat > /tmp/review_status.md << STATUSEOF
           <!-- claude-status -->
           ## ❌ AI Review Failed
 
-          **Reviewer:** ${{ needs.triage.outputs.model }}
+          **Reviewer:** ${{ needs.triage.outputs.model }} (rate-limited)
+          **Fallback:** Kimi — also failed
 
-          The reviewer was rate-limited or encountered an error.
           Manual review needed, or re-trigger once tokens are available.
 
           *Failed: ${TIMESTAMP}*
           STATUSEOF
-            gh api "repos/${{ github.repository }}/issues/comments/${STATUS_ID}" \
-              --method PATCH --field body=@/tmp/review_status.md 2>/dev/null || true
+              gh api "repos/${REPO}/issues/comments/${STATUS_ID}" \
+                --method PATCH --field body=@/tmp/review_status.md 2>/dev/null || true
+            fi
           fi
