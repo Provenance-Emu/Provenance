@@ -1,8 +1,16 @@
+#if canImport(CryptoKit)
+import CryptoKit
+#else
+import Crypto
+#endif
+#if canImport(Checksum)
 import Checksum
+#endif
 import Foundation
 import PVLogging
-import CryptoKit
+#if canImport(Combine)
 import Combine
+#endif
 
 /// Notification names for file access errors and coordination
 public extension Notification.Name {
@@ -22,11 +30,11 @@ extension FileManager: MD5Provider {
             return md5Hash
         } catch {
             ELOG("An error occurred: \(error)\nFile: \(url)")
-            
+
             // Post notification for file access error
             let nsError = error as NSError
             let errorType = determineErrorType(nsError)
-            
+
             Task { @MainActor in
                 NotificationCenter.default.post(
                     name: .fileAccessError,
@@ -40,13 +48,14 @@ extension FileManager: MD5Provider {
                     ]
                 )
             }
-            
+
             return nil
         }
         #endif
     }
 }
 
+#if canImport(Combine)
 /// Asynchronously reads a local file and calculates the MD5 checksum.
 /// - Parameters:
 ///   - fileURL: The URL of the file.
@@ -64,7 +73,7 @@ func calculateMD5(of fileURL: URL, startingAt offset: UInt64 = 0) -> AnyPublishe
             // If retryable, introduce a delay before retrying
             return Fail(error: error) // Emit the error to trigger retry
                 .delay(for: .seconds(1), scheduler: DispatchQueue.global()) // Wait 1 second
-                .eraseToAnyPublisher() 
+                .eraseToAnyPublisher()
         } else {
             // If not retryable, fail immediately
             return Fail(error: error).eraseToAnyPublisher()
@@ -80,7 +89,7 @@ private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escapin
         do {
             let fileHandle = try FileHandle(forReadingFrom: fileURL)
             defer { fileHandle.closeFile() }
-            
+
             if offset > 0 {
                 // Recommended way for macOS 10.15.4+ and iOS 13.4+
                 if #available(macOS 10.15.4, iOS 13.4, tvOS 13.4, *) {
@@ -90,10 +99,10 @@ private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escapin
                     fileHandle.seek(toFileOffset: offset)
                 }
             }
-            
+
             var hasher = Insecure.MD5()
             let bufferSize: Int = 1024 * 1024 // 1 MB
-            
+
             while true {
                 // Autorelease pool for efficient memory management during read loop
                 let data = try autoreleasepool { () -> Data? in
@@ -104,16 +113,16 @@ private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escapin
                         return fileHandle.readData(ofLength: bufferSize)
                     }
                 }
-                
+
                 guard let chunk = data, !chunk.isEmpty else {
                     break // End of file
                 }
                 hasher.update(data: chunk)
             }
-            
+
             let result = hasher.finalize()
             let hashString = result.map { String(format: "%02x", $0) }.joined().uppercased()
-            
+
             promise(.success(hashString))
         } catch {
             VLOG("calculateMD5Attempt failed for \(fileURL.lastPathComponent): \(error.localizedDescription)")
@@ -157,7 +166,7 @@ func calculateMD5Synchronously(of fileURL: URL, startingAt offset: UInt64 = 0) t
         // Throw a generic error or a more specific one if possible
         throw NSError(domain: "PVHashingErrorDomain", code: 1, userInfo: [NSLocalizedDescriptionKey: "MD5 calculation produced an empty hash."])
     }
-    
+
     return md5Hash.uppercased()
 }
 
@@ -178,6 +187,26 @@ public extension URL {
     }
 }
 
+#else
+
+/// Direct synchronous MD5 calculation without Combine (used on Linux)
+func calculateMD5Synchronously(of fileURL: URL, startingAt offset: UInt64 = 0) throws -> String {
+    return try _computeMD5(of: fileURL, startingAt: offset)
+}
+
+public extension URL {
+    /// Asynchronously computes the MD5 hash of the file using Swift structured concurrency.
+    func md5Async(startingAt offset: UInt64 = 0) async throws -> String {
+        try await calculateMD5Async(of: self, startingAt: offset)
+    }
+
+    /// Streams progress events and the final MD5 hash via `AsyncThrowingStream`.
+    func md5Stream(startingAt offset: UInt64 = 0) -> AsyncThrowingStream<MD5HashingEvent, Error> {
+        calculateMD5Stream(of: self, startingAt: offset)
+    }
+}
+#endif
+
 // MARK: - Error Handling Helpers
 
 /// Determine the type of error for better user feedback
@@ -186,23 +215,23 @@ func determineErrorType(_ error: NSError) -> String {
     if error.domain == NSPOSIXErrorDomain && error.code == 60 {
         return "timeout"
     }
-    
+
     // Check for file access errors
     if error.domain == NSCocoaErrorDomain && error.code == 256 {
         return "access_denied"
     }
-    
+
     // Check for iCloud-related errors
-    if error.domain == NSCocoaErrorDomain && 
+    if error.domain == NSCocoaErrorDomain &&
        (error.userInfo[NSUnderlyingErrorKey] as? NSError)?.domain == NSPOSIXErrorDomain {
         return "icloud_access"
     }
-    
+
     // Check for NSFileProviderInternalErrorDomain errors (iCloud file provider errors)
     if error.domain == "NSFileProviderInternalErrorDomain" {
         return "file_provider_error"
     }
-    
+
     return "unknown"
 }
 
@@ -212,7 +241,7 @@ func isRetryableError(_ error: NSError) -> Bool {
     if error.domain == NSPOSIXErrorDomain && error.code == 60 {
         return true
     }
-    
+
     // Some file access errors might be temporary
     if error.domain == NSCocoaErrorDomain && error.code == 256 {
         // Check if it's a temporary file system issue
@@ -221,6 +250,6 @@ func isRetryableError(_ error: NSError) -> Bool {
             return true
         }
     }
-    
+
     return false
 }
