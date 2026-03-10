@@ -23,6 +23,7 @@ import CommonCrypto
 import Perception
 import SwiftUI
 import PVLookupTypes
+import PVHashing
 import RealmSwift
 
 public protocol GameImporterDatabaseServicing {
@@ -878,6 +879,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             if !fm.fileExists(atPath: romPath.path) {
                 ELOG("Cannot find file at path: \(romPath)")
                 return nil
+            }
+
+            // Use N64 ROM normalizer for Nintendo 64 games to handle byte-swapping
+            if game.system?.identifier == "com.provenance.n64" {
+                return await N64ROMNormalizer.md5ForN64ROMAsync(at: romPath, fromOffset: offset)
             }
 
             // For SNES .smc files, detect and skip 512-byte copier header if present
