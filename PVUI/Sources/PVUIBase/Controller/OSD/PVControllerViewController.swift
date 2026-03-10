@@ -1232,23 +1232,16 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 
     fileprivate func adjustJoystick() {
-        guard  let joyPad = joyPad else {
+        guard let joyPad = joyPad else {
             return
         }
 
-        //        guard Defaults[.onscreenJoypad] else {
-        //            DLOG("onscreenJoypad false, hiding")
-        //            joyPad.isHidden = true
-        //            return
-        //        }
-        //
-        //        if PVControllerManager.shared.isKeyboardConnected && !Defaults[.onscreenJoypadWithKeyboard] {
-        //            DLOG("`isKeyboardConnected` true and `onscreenJoypadWithKeyboard` false, hiding")
-        //            joyPad.isHidden = true
-        //            return
-        //        }
-        //
-        //        joyPad.isHidden = false
+        if PVControllerManager.shared.isKeyboardConnected && !Defaults[.onscreenJoypadWithKeyboard] {
+            DLOG("`isKeyboardConnected` true and `onscreenJoypadWithKeyboard` false, hiding")
+            joyPad.isHidden = true
+            return
+        }
+
         guard let dPad = dPad, !dPad.isCustomMoved, !joyPad.isCustomMoved else {
             return
         }

@@ -393,7 +393,8 @@ struct RetroMenuView: View {
         #if !os(tvOS)
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
-        emulatorVC.coreSupportsVirtualKeyboard
+        emulatorVC.coreSupportsVirtualKeyboard ||
+        emulatorVC.coreSupportsVirtualMouse
         #else
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil
@@ -511,7 +512,6 @@ struct RetroMenuView: View {
                 }
             }
 
-            // Virtual keyboard button (iOS only, when core supports keyboard)
             #if !os(tvOS)
             if emulatorVC.coreSupportsVirtualKeyboard {
                 menuButton(
@@ -522,6 +522,20 @@ struct RetroMenuView: View {
                     dismissAction(false)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                         emulatorVC.toggleVirtualKeyboard()
+                        emulatorVC.core.setPauseEmulation(false)
+                    }
+                }
+            }
+
+            if emulatorVC.coreSupportsVirtualMouse {
+                menuButton(
+                    title: emulatorVC.isVirtualMouseVisible ? "HIDE MOUSE" : "VIRTUAL MOUSE",
+                    icon: "computermouse",
+                    color: palette.defaultTintColor.swiftUIColor
+                ) {
+                    dismissAction(false)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        emulatorVC.toggleVirtualMouse()
                         emulatorVC.core.setPauseEmulation(false)
                     }
                 }
