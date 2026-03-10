@@ -795,9 +795,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             self.applyFPSCounterVisibilityPreference(Defaults[.showFPSCount])
         }
 
-        // Set up JIT status indicator
-        setupJITIndicatorIfNeeded()
-
         hideOrShowMenuButton()
 
         convertOldSaveStatesToNewIfNeeded()
@@ -813,6 +810,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Start RetroAchievements session if the user is logged in and the core supports it.
         startAchievementsIfNeeded()
+
+        // Set up the indicator light overlay for JIT status, etc.
+        setupIndicatorOverlay()
 
         #if !os(tvOS)
         // Show virtual keyboard / mouse cursor overlays for capable cores (e.g. DOS)
@@ -1397,6 +1397,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Tear down RetroAchievements session before stopping the core.
         stopAchievements()
 
+        // Remove indicator overlay
+        removeIndicatorOverlay()
+
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)
         if let view = controllerViewController?.view {
@@ -1448,9 +1451,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             self.themeDidChangeObserver = nil
         }
         fpsHUDView.removeFromSuperview()
-
-        // Clean up JIT status indicator
-        cleanupJITIndicator()
 
         dismiss(animated: true, completion: completion)
         view?.removeFromSuperview()

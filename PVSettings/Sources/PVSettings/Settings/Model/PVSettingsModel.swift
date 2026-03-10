@@ -42,6 +42,9 @@ extension Defaults.Keys {
     /// Show JIT status indicator in the emulator HUD
     static let showJITStatusIndicator = Key<Bool>("showJITStatusIndicator", default: false)
 
+    /// Show persistent HUD status indicator dots (JIT, netplay, etc.) in the emulator overlay
+    static let showStatusIndicators = Key<Bool>("showStatusIndicators", default: true)
+
     static let vsyncEnabled = Key<Bool>("vsyncEnabled", default: true)
 }
 
