@@ -49,6 +49,7 @@
 #import "api/m64p_common.h"
 #import "api/m64p_config.h"
 #import "api/m64p_frontend.h"
+#import "api/m64p_types.h"
 #import "api/m64p_vidext.h"
 #import "api/callbacks.h"
 #import "osal/dynamiclib.h"
@@ -112,6 +113,32 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     [((__bridge PVMupenBridge *)context) OE_didReceiveStateChangeForParamType:paramType value:newValue];
 }
 
+// ---------------------------------------------------------------------------
+// Transfer Pak / GB-cart media loader callbacks
+// ---------------------------------------------------------------------------
+/// Called by the core to ask which GB ROM file should be inserted into
+/// controller port `controller_num` (0-based).  Returns a C string owned
+/// by the bridge (valid for the duration of the session) or NULL/empty to
+/// leave the slot empty.
+static char *MupenGetGBCartROM(void *cb_data, int controller_num) {
+    if (controller_num < 0 || controller_num >= 4) return NULL;
+    PVMupenBridge *bridge = (__bridge PVMupenBridge *)cb_data;
+    @synchronized (bridge) {
+        return bridge->_gbCartROMCStr[controller_num];
+    }
+}
+
+/// Called by the core to ask where GB cart RAM (save) data should be
+/// persisted.  Returns a C string owned by the bridge or NULL/empty to let
+/// the core auto-generate a default save location.
+static char *MupenGetGBCartRAM(void *cb_data, int controller_num) {
+    if (controller_num < 0 || controller_num >= 4) return NULL;
+    PVMupenBridge *bridge = (__bridge PVMupenBridge *)cb_data;
+    @synchronized (bridge) {
+        return bridge->_gbCartSaveCStr[controller_num];
+    }
+}
+
 @implementation PVMupenBridge {
     NSData *romData;
 
@@ -165,6 +192,12 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
     [self pluginsUnload];
     [self detachCoreLib];
+
+    // Free strdup-allocated Transfer Pak C-string caches.
+    for (int i = 0; i < 4; i++) {
+        if (_gbCartROMCStr[i])  { free(_gbCartROMCStr[i]);  _gbCartROMCStr[i]  = NULL; }
+        if (_gbCartSaveCStr[i]) { free(_gbCartSaveCStr[i]); _gbCartSaveCStr[i] = NULL; }
+    }
 
 #if !__has_feature(objc_arc)
     dispatch_release(mupenWaitToBeginFrameSemaphore);
@@ -323,6 +356,19 @@ static void *dlopen_myself()
 
 	// open core here
 	CoreStartup(FRONTEND_API_VERSION, configPath.fileSystemRepresentation, dataPath.fileSystemRepresentation, (__bridge void *)self, MupenDebugCallback, (__bridge void *)self, MupenStateCallback);
+
+    // Register Transfer Pak media loader so the core can request GB cart ROM/RAM paths.
+    // Slots without a cart return NULL, which the core treats as "no cartridge inserted".
+    m64p_media_loader mediaLoader;
+    mediaLoader.cb_data      = (__bridge void *)self;
+    mediaLoader.get_gb_cart_rom = MupenGetGBCartROM;
+    mediaLoader.get_gb_cart_ram = MupenGetGBCartRAM;
+    m64p_error mediaLoaderStatus = CoreDoCommand(M64CMD_SET_MEDIA_LOADER, sizeof(m64p_media_loader), &mediaLoader);
+    if (mediaLoaderStatus != M64ERR_SUCCESS) {
+        WLOG(@"Failed to register Transfer Pak media loader (error %d) — Transfer Pak support will be unavailable", mediaLoaderStatus);
+    } else {
+        ILOG(@"Transfer Pak media loader registered successfully");
+    }
 
 	// Setup configs
 	ConfigureAll(romFolder);

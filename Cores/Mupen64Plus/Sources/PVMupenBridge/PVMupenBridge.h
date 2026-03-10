@@ -49,9 +49,20 @@ typedef enum PVN64Button: NSInteger PVN64Button;
     uint8_t padData[4][19];
     int8_t xAxis[4];
     int8_t yAxis[4];
-    
+
     int controllerMode[4];
     NSOperationQueue * __nonnull _inputQueue;
+
+    /// GB/GBC ROM paths mounted in each Transfer Pak slot (index 0-3, nil = empty).
+    NSString * __nullable gbCartROMPath[4];
+    /// GB/GBC save (RAM) paths for each Transfer Pak slot (nil = let core auto-manage).
+    NSString * __nullable gbCartSavePath[4];
+
+    /// C-string copies owned by this object for the lifetime of the core session.
+    /// The m64p_media_loader callbacks must return a char* that stays valid; we
+    /// store these here so the GC / ARC doesn't collect them between calls.
+    char * __nullable _gbCartROMCStr[4];
+    char * __nullable _gbCartSaveCStr[4];
 }
 
 @property (nonatomic, assign) int videoWidth;
@@ -65,6 +76,19 @@ typedef enum PVN64Button: NSInteger PVN64Button;
 
 - (void) videoInterrupt;
 - (void) setMode:(NSInteger)mode forController:(NSInteger)controller;
+
+/// Sets or clears the GB/GBC cartridge in a Transfer Pak slot (port 0-3).
+/// Pass nil romPath to remove the cartridge from the slot.
+- (void) setGBCartROMPath:(nullable NSString *)romPath
+                 savePath:(nullable NSString *)savePath
+                  forPort:(NSInteger)port;
+
+/// Returns the GB ROM path currently mounted in the given Transfer Pak port, or nil.
+- (nullable NSString *) gbCartROMPathForPort:(NSInteger)port;
+
+/// Returns the GB save path currently mounted in the given Transfer Pak port, or nil.
+- (nullable NSString *) gbCartSavePathForPort:(NSInteger)port;
+
 - (void) swapBuffers;
 @end
 
