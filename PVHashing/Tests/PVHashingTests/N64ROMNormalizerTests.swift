@@ -27,10 +27,11 @@ class N64ROMNormalizerTests: XCTestCase {
     }
 
     func testDetectN64MirroredFormat() {
-        // n64 byte-mirrored variant: 0x12 0x40 0x80 0x37
+        // 0x12 0x40 0x80 0x37 is v64 with 4-byte reversal applied — not a simple n64.
+        // It has no well-defined single-step conversion to z64, so it maps to .unknown.
         let magicBytes: [UInt8] = [0x12, 0x40, 0x80, 0x37]
         let format = N64ROMFormat(magicBytes: magicBytes)
-        XCTAssertEqual(format, .n64)
+        XCTAssertEqual(format, .unknown)
     }
 
     func testDetectUnknownFormat() {

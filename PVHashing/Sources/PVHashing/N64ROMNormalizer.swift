@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 /// N64 ROM byte-order formats
@@ -11,7 +12,6 @@ public enum N64ROMFormat {
     /// - z64: 0x80 0x37 0x12 0x40 (native N64 header)
     /// - v64: 0x37 0x80 0x40 0x12 (word-swapped)
     /// - n64: 0x40 0x12 0x37 0x80 (little-endian)
-    /// - n64 mirrored: 0x12 0x40 0x80 0x37 (byte-mirrored variant)
     public init(magicBytes: [UInt8]) {
         guard magicBytes.count >= 4 else {
             self = .unknown
@@ -35,13 +35,6 @@ public enum N64ROMFormat {
         // Check for n64 format (little-endian)
         if magicBytes[0] == 0x40 && magicBytes[1] == 0x12 &&
            magicBytes[2] == 0x37 && magicBytes[3] == 0x80 {
-            self = .n64
-            return
-        }
-
-        // Check for n64 byte-mirrored variant
-        if magicBytes[0] == 0x12 && magicBytes[1] == 0x40 &&
-           magicBytes[2] == 0x80 && magicBytes[3] == 0x37 {
             self = .n64
             return
         }
@@ -148,36 +141,102 @@ public enum N64ROMNormalizer {
 
 public extension N64ROMNormalizer {
     /// Calculates MD5 hash of an N64 ROM file, normalizing to .z64 format first.
+    ///
+    /// Streams the file in 1 MB chunks to avoid loading the entire ROM (up to 64 MB)
+    /// into memory at once. Each chunk is byte-swap normalized before hashing.
+    ///
     /// - Parameters:
     ///   - url: URL of the ROM file
     ///   - offset: Byte offset to start reading from (usually 0 for N64)
     /// - Returns: The MD5 hash string, or nil if calculation fails
     static func md5ForN64ROM(at url: URL, fromOffset offset: UInt = 0) -> String? {
-        guard let data = try? Data(contentsOf: url, options: .mappedIfSafe) else {
+        guard let fileHandle = try? FileHandle(forReadingFrom: url) else {
+            return nil
+        }
+        defer { try? fileHandle.close() }
+
+        // Read first 4 bytes to detect format before seeking to the hash offset
+        guard let headerData = try? fileHandle.read(upToCount: 4), headerData.count >= 4 else {
+            return nil
+        }
+        let format = detectFormat(from: headerData)
+
+        // Seek to hash start offset
+        do {
+            try fileHandle.seek(toOffset: UInt64(offset))
+        } catch {
             return nil
         }
 
-        let dataToHash: Data
-        if offset > 0 && offset < data.count {
-            dataToHash = data.subdata(in: Int(offset)..<data.count)
-        } else {
-            dataToHash = data
-        }
+        var hasher = Insecure.MD5()
+        // 1 MB buffer, divisible by 4 — keeps chunk alignment correct for
+        // both v64 (2-byte swap) and n64 (4-byte swap).
+        let bufferSize = 1024 * 1024
 
-        guard let normalizedData = normalizeToZ64(dataToHash) else {
+        do {
+            while true {
+                guard let chunk = try fileHandle.read(upToCount: bufferSize), !chunk.isEmpty else {
+                    break
+                }
+                switch format {
+                case .z64, .unknown:
+                    hasher.update(data: chunk)
+                case .v64:
+                    hasher.update(data: swapBytePairsInChunk(chunk))
+                case .n64:
+                    hasher.update(data: reverseByteQuadsInChunk(chunk))
+                }
+            }
+        } catch {
             return nil
         }
 
-        return normalizedData.md5.uppercased()
+        let result = hasher.finalize()
+        return result.map { String(format: "%02x", $0) }.joined().uppercased()
     }
 
     /// Async version of MD5 calculation for N64 ROMs.
     static func md5ForN64ROMAsync(at url: URL, fromOffset offset: UInt = 0) async -> String? {
         await withCheckedContinuation { continuation in
-            DispatchQueue.global(qos: .utility).async {
+            Task.detached(priority: .utility) {
                 let hash = md5ForN64ROM(at: url, fromOffset: offset)
                 continuation.resume(returning: hash)
             }
         }
+    }
+
+    // MARK: - Private Chunk-Level Byte Swap Helpers
+
+    /// Swaps byte pairs within a chunk for v64→z64 conversion: [A B C D] → [B A D C]
+    private static func swapBytePairsInChunk(_ data: Data) -> Data {
+        var result = data
+        result.withUnsafeMutableBytes { bytes in
+            guard let ptr = bytes.bindMemory(to: UInt8.self).baseAddress else { return }
+            let count = bytes.count
+            var i = 0
+            while i + 1 < count {
+                let tmp = ptr[i]
+                ptr[i] = ptr[i + 1]
+                ptr[i + 1] = tmp
+                i += 2
+            }
+        }
+        return result
+    }
+
+    /// Reverses every 4-byte group within a chunk for n64→z64 conversion: [A B C D] → [D C B A]
+    private static func reverseByteQuadsInChunk(_ data: Data) -> Data {
+        var result = data
+        result.withUnsafeMutableBytes { bytes in
+            guard let ptr = bytes.bindMemory(to: UInt8.self).baseAddress else { return }
+            let count = bytes.count
+            var i = 0
+            while i + 3 < count {
+                let a = ptr[i], b = ptr[i + 1], c = ptr[i + 2], d = ptr[i + 3]
+                ptr[i] = d; ptr[i + 1] = c; ptr[i + 2] = b; ptr[i + 3] = a
+                i += 4
+            }
+        }
+        return result
     }
 }
