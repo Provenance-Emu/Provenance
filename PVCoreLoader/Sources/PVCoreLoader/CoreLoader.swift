@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import os
 import PVSupport
 import PVCoreBridge
 import PVEmulatorCore
