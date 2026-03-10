@@ -246,6 +246,7 @@ let package = Package(
             ],
             resources: [
                 .copy("Resources/whats-new.json"),
+                .copy("Resources/roadmap.json"),
             ]
         ),
 

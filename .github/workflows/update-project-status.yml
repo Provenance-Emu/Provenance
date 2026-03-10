@@ -1,0 +1,191 @@
+name: Sync Issues & PRs to GitHub Project
+
+# Keeps the "Provenance Roadmap" GitHub Project v2 in sync with issue/PR activity.
+# Updates Status field automatically as work moves through the pipeline.
+#
+# One-time setup required: run Scripts/setup-github-project.sh to create the project,
+# then update PROJECT_NUMBER below with the returned project number.
+
+on:
+  issues:
+    types: [opened, closed, labeled, unlabeled]
+  pull_request:
+    types: [opened, closed, labeled, unlabeled, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to sync (optional)'
+        required: false
+        type: string
+      pr_number:
+        description: 'PR number to sync (optional)'
+        required: false
+        type: string
+
+permissions:
+  issues: read
+  pull-requests: read
+  # projects: write  — Note: GITHUB_TOKEN needs 'project' scope; set in repo settings
+  #                    or use a PAT stored as PROJECT_TOKEN secret.
+
+env:
+  PROJECT_NUMBER: 1  # ← Update after running setup-github-project.sh
+  ORG: Provenance-Emu
+  REPO: ${{ github.repository }}
+
+jobs:
+  sync-to-project:
+    name: Sync to Roadmap project
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.PROJECT_TOKEN || github.token }}
+
+    steps:
+      - name: Get project node ID and field IDs
+        id: project
+        run: |
+          result=$(gh api graphql -f query='
+            query($org: String!, $num: Int!) {
+              organization(login: $org) {
+                projectV2(number: $num) {
+                  id
+                  fields(first: 20) {
+                    nodes {
+                      ... on ProjectV2SingleSelectField {
+                        id name
+                        options { id name }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ' -f org="$ORG" -F num="$PROJECT_NUMBER" 2>/dev/null || echo '{}')
+
+          project_id=$(echo "$result" | jq -r '.data.organization.projectV2.id // empty')
+          if [[ -z "$project_id" ]]; then
+            echo "Project not found — run Scripts/setup-github-project.sh first"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "project_id=$project_id" >> "$GITHUB_OUTPUT"
+
+          # Extract Status field ID and option IDs
+          status_field_id=$(echo "$result" | jq -r '
+            .data.organization.projectV2.fields.nodes[]
+            | select(.name == "Status")
+            | .id' | head -1)
+          echo "status_field_id=$status_field_id" >> "$GITHUB_OUTPUT"
+
+          todo_id=$(echo "$result" | jq -r '
+            .data.organization.projectV2.fields.nodes[]
+            | select(.name == "Status")
+            | .options[]
+            | select(.name == "Todo")
+            | .id' | head -1)
+          inprogress_id=$(echo "$result" | jq -r '
+            .data.organization.projectV2.fields.nodes[]
+            | select(.name == "Status")
+            | .options[]
+            | select(.name == "In Progress")
+            | .id' | head -1)
+          done_id=$(echo "$result" | jq -r '
+            .data.organization.projectV2.fields.nodes[]
+            | select(.name == "Status")
+            | .options[]
+            | select(.name == "Done")
+            | .id' | head -1)
+
+          echo "todo_id=$todo_id"           >> "$GITHUB_OUTPUT"
+          echo "inprogress_id=$inprogress_id" >> "$GITHUB_OUTPUT"
+          echo "done_id=$done_id"           >> "$GITHUB_OUTPUT"
+          echo "skip=false"                 >> "$GITHUB_OUTPUT"
+
+      - name: Determine item and target status
+        if: steps.project.outputs.skip == 'false'
+        id: item
+        run: |
+          EVENT="${{ github.event_name }}"
+          ACTION="${{ github.event.action }}"
+
+          # Determine content node_id and target status
+          if [[ "$EVENT" == "issues" ]]; then
+            NODE_ID="${{ github.event.issue.node_id }}"
+            if [[ "$ACTION" == "closed" ]]; then
+              TARGET_STATUS="${{ steps.project.outputs.done_id }}"
+            else
+              TARGET_STATUS="${{ steps.project.outputs.todo_id }}"
+            fi
+
+          elif [[ "$EVENT" == "pull_request" ]]; then
+            NODE_ID="${{ github.event.pull_request.node_id }}"
+            if [[ "$ACTION" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]]; then
+              TARGET_STATUS="${{ steps.project.outputs.done_id }}"
+            elif [[ "$ACTION" == "closed" ]]; then
+              TARGET_STATUS="${{ steps.project.outputs.todo_id }}"
+            else
+              TARGET_STATUS="${{ steps.project.outputs.inprogress_id }}"
+            fi
+
+          elif [[ "$EVENT" == "workflow_dispatch" ]]; then
+            ISSUE_NUM="${{ github.event.inputs.issue_number }}"
+            PR_NUM="${{ github.event.inputs.pr_number }}"
+            if [[ -n "$ISSUE_NUM" ]]; then
+              NODE_ID=$(gh api "repos/$REPO/issues/$ISSUE_NUM" --jq '.node_id' 2>/dev/null || echo "")
+            elif [[ -n "$PR_NUM" ]]; then
+              NODE_ID=$(gh api "repos/$REPO/pulls/$PR_NUM" --jq '.node_id' 2>/dev/null || echo "")
+            fi
+            TARGET_STATUS="${{ steps.project.outputs.todo_id }}"
+          fi
+
+          echo "node_id=${NODE_ID:-}" >> "$GITHUB_OUTPUT"
+          echo "target_status=${TARGET_STATUS:-}" >> "$GITHUB_OUTPUT"
+
+      - name: Add item to project (idempotent)
+        if: steps.project.outputs.skip == 'false' && steps.item.outputs.node_id != ''
+        id: add_item
+        run: |
+          result=$(gh api graphql -f query='
+            mutation($projectId: ID!, $contentId: ID!) {
+              addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                item { id }
+              }
+            }
+          ' -f projectId="${{ steps.project.outputs.project_id }}" \
+            -f contentId="${{ steps.item.outputs.node_id }}" 2>/dev/null || echo '{}')
+
+          item_id=$(echo "$result" | jq -r '.data.addProjectV2ItemById.item.id // empty')
+          echo "item_id=${item_id:-}" >> "$GITHUB_OUTPUT"
+
+      - name: Update status field
+        if: |
+          steps.project.outputs.skip == 'false' &&
+          steps.add_item.outputs.item_id != '' &&
+          steps.item.outputs.target_status != '' &&
+          steps.project.outputs.status_field_id != ''
+        run: |
+          gh api graphql -f query='
+            mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: $projectId,
+                itemId: $itemId,
+                fieldId: $fieldId,
+                value: { singleSelectOptionId: $optionId }
+              }) { projectV2Item { id } }
+            }
+          ' \
+            -f projectId="${{ steps.project.outputs.project_id }}" \
+            -f itemId="${{ steps.add_item.outputs.item_id }}" \
+            -f fieldId="${{ steps.project.outputs.status_field_id }}" \
+            -f optionId="${{ steps.item.outputs.target_status }}" \
+          && echo "Status updated" || echo "Status update failed (non-fatal)"
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "### Project Sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Event: ${{ github.event_name }} / ${{ github.event.action }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Item ID: ${{ steps.add_item.outputs.item_id || 'n/a' }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Status option: ${{ steps.item.outputs.target_status || 'n/a' }}" >> "$GITHUB_STEP_SUMMARY"

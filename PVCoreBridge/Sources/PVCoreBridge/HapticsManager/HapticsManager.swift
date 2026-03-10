@@ -13,7 +13,7 @@ import CoreHaptics
 
 @MainActor
 @available(iOS 14.0, tvOS 14.0, *)
-internal final class HapticsManager: Sendable {
+internal final class HapticsManager: @unchecked Sendable {
 
     static let shared: HapticsManager = .init()
 
@@ -41,8 +41,8 @@ internal final class HapticsManager: Sendable {
     }
 
     static private func buildControllerEngine(for controller: GCController) -> CHHapticEngine? {
-        guard let haptics = controller.haptics else { return nil }
-        let engine = haptics.createEngine(withLocality: GCHapticsLocality.default)
+        guard let haptics = controller.haptics,
+              let engine = haptics.createEngine(withLocality: GCHapticsLocality.default) else { return nil }
         engine.isAutoShutdownEnabled = true
         engine.stoppedHandler = { reason in
             WLOG("HapticsManager controller engine stopped: \(reason.rawValue)")

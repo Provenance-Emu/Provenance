@@ -855,6 +855,13 @@ public struct PVSettingsView: View {
                     CollapsibleSection(title: "Documentation") {
                         DocumentationSection()
                     }
+                    CollapsibleSection(title: "Roadmap") {
+                        RoadmapSummarySection()
+                        NavigationLink("View Full Roadmap →") {
+                            RoadmapView()
+                        }
+                        .padding(.top, 4)
+                    }
                     CollapsibleSection(title: "Build") {
                         BuildSection(viewModel: viewModel)
                             .environmentObject(viewModel)
