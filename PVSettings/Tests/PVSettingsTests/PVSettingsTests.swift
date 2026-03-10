@@ -784,6 +784,84 @@ struct SkinModeTests {
     }
 }
 
+@Suite("SkinMode Defaults Migration", .serialized)
+struct SkinModeDefaultsMigrationTests {
+    /// Removes both canonical and legacy skin-mode keys between migration tests.
+    private func clearSkinModeDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: canonicalSkinModeDefaultsKey)
+        defaults.removeObject(forKey: legacySkinModeDefaultsKey)
+    }
+
+    @Test("Migrates the legacy skinMode key to the canonical key")
+    func migrateLegacySkinModeKey() {
+        clearSkinModeDefaults()
+        defer { clearSkinModeDefaults() }
+
+        UserDefaults.standard.set(SkinMode.always.rawValue, forKey: legacySkinModeDefaultsKey)
+        migrateLegacySkinModeIfNeeded()
+
+        #expect(UserDefaults.standard.string(forKey: canonicalSkinModeDefaultsKey) == SkinMode.always.rawValue)
+    }
+
+    @Test("Canonical skinMode value wins over the legacy key")
+    func canonicalSkinModeWins() {
+        clearSkinModeDefaults()
+        defer { clearSkinModeDefaults() }
+
+        UserDefaults.standard.set(SkinMode.selectedOnly.rawValue, forKey: canonicalSkinModeDefaultsKey)
+        UserDefaults.standard.set(SkinMode.off.rawValue, forKey: legacySkinModeDefaultsKey)
+        migrateLegacySkinModeIfNeeded()
+
+        #expect(UserDefaults.standard.string(forKey: canonicalSkinModeDefaultsKey) == SkinMode.selectedOnly.rawValue)
+    }
+
+    @Test("SelectedOnly subtitle keeps the corrected spelling")
+    func selectedOnlySubtitleSpelling() {
+        #expect(SkinMode.selectedOnly.subtitle == "Use skins for selected systems, use classic controller as default")
+    }
+}
+
+@Suite("RetroAchievements Defaults Migration", .serialized)
+struct RetroAchievementsDefaultsMigrationTests {
+    /// Removes canonical and legacy RetroAchievements keys between migration tests.
+    private func clearRetroAchievementsDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: canonicalRetroAchievementsEnabledDefaultsKey)
+        defaults.removeObject(forKey: legacyRetroAchievementsEnabledDefaultsKey)
+        defaults.removeObject(forKey: canonicalRetroAchievementsHardcoreDefaultsKey)
+        defaults.removeObject(forKey: legacyRetroAchievementsHardcoreDefaultsKey)
+    }
+
+    @Test("Migrates the legacy RetroAchievements enabled key")
+    func migrateLegacyRetroAchievementsEnabledKey() {
+        clearRetroAchievementsDefaults()
+        defer { clearRetroAchievementsDefaults() }
+
+        UserDefaults.standard.set(true, forKey: legacyRetroAchievementsEnabledDefaultsKey)
+        migrateLegacyBoolPreferenceIfNeeded(
+            primaryKey: canonicalRetroAchievementsEnabledDefaultsKey,
+            legacyKey: legacyRetroAchievementsEnabledDefaultsKey
+        )
+
+        #expect(UserDefaults.standard.bool(forKey: canonicalRetroAchievementsEnabledDefaultsKey) == true)
+    }
+
+    @Test("Migrates the legacy RetroAchievements hardcore key")
+    func migrateLegacyRetroAchievementsHardcoreKey() {
+        clearRetroAchievementsDefaults()
+        defer { clearRetroAchievementsDefaults() }
+
+        UserDefaults.standard.set(true, forKey: legacyRetroAchievementsHardcoreDefaultsKey)
+        migrateLegacyBoolPreferenceIfNeeded(
+            primaryKey: canonicalRetroAchievementsHardcoreDefaultsKey,
+            legacyKey: legacyRetroAchievementsHardcoreDefaultsKey
+        )
+
+        #expect(UserDefaults.standard.bool(forKey: canonicalRetroAchievementsHardcoreDefaultsKey) == true)
+    }
+}
+
 // MARK: - iCloudSyncMode Tests
 
 @Suite("iCloudSyncMode")

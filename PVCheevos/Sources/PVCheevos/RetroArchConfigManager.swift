@@ -8,9 +8,14 @@ public final class RetroArchConfigManager: @unchecked Sendable {
     private let userDefaults = UserDefaults.standard
     private let queue = DispatchQueue(label: "com.pvcheevos.retroarch", qos: .userInitiated)
 
-    // UserDefaults keys for app settings
-    private let enabledKey = "ra_cheevos_enabled"
-    private let hardcoreModeKey = "ra_cheevos_hardcore_mode"
+    private let defaultsKeys = (
+        enabled: "retroAchievementsEnabled",
+        hardcore: "retroAchievementsHardcoreEnabled"
+    )
+    private let legacyDefaultsKeys = (
+        enabled: "ra_cheevos_enabled",
+        hardcore: "ra_cheevos_hardcore_mode"
+    )
 
     // RetroArch config keys
     private let retroArchKeys = (
@@ -27,12 +32,10 @@ public final class RetroArchConfigManager: @unchecked Sendable {
     /// Whether RetroAchievements is enabled in the app
     public var isRetroAchievementsEnabled: Bool {
         get {
-            // Direct access to UserDefaults is thread-safe
-            return userDefaults.bool(forKey: enabledKey)
+            readBooleanSetting(primaryKey: defaultsKeys.enabled, legacyKey: legacyDefaultsKeys.enabled)
         }
         set {
-            // Use queue for writes and sync operations
-            userDefaults.set(newValue, forKey: enabledKey)
+            writeBooleanSetting(newValue, primaryKey: defaultsKeys.enabled, legacyKey: legacyDefaultsKeys.enabled)
             queue.async {
                 self.syncToRetroArch()
             }
@@ -42,12 +45,10 @@ public final class RetroArchConfigManager: @unchecked Sendable {
     /// Whether hardcore mode is enabled
     public var isHardcoreModeEnabled: Bool {
         get {
-            // Direct access to UserDefaults is thread-safe
-            return userDefaults.bool(forKey: hardcoreModeKey)
+            readBooleanSetting(primaryKey: defaultsKeys.hardcore, legacyKey: legacyDefaultsKeys.hardcore)
         }
         set {
-            // Use queue for writes and sync operations
-            userDefaults.set(newValue, forKey: hardcoreModeKey)
+            writeBooleanSetting(newValue, primaryKey: defaultsKeys.hardcore, legacyKey: legacyDefaultsKeys.hardcore)
             queue.async {
                 self.syncToRetroArch()
             }
@@ -103,6 +104,27 @@ public final class RetroArchConfigManager: @unchecked Sendable {
     }
 
     // MARK: - Private Methods
+
+    /// Reads the canonical app setting and migrates the legacy RetroArch-only key on first access.
+    func readBooleanSetting(primaryKey: String, legacyKey: String) -> Bool {
+        if userDefaults.object(forKey: primaryKey) != nil {
+            return userDefaults.bool(forKey: primaryKey)
+        }
+
+        guard userDefaults.object(forKey: legacyKey) != nil else {
+            return false
+        }
+
+        let legacyValue = userDefaults.bool(forKey: legacyKey)
+        userDefaults.set(legacyValue, forKey: primaryKey)
+        return legacyValue
+    }
+
+    /// Persists the canonical setting while mirroring the legacy key for backward compatibility.
+    func writeBooleanSetting(_ value: Bool, primaryKey: String, legacyKey: String) {
+        userDefaults.set(value, forKey: primaryKey)
+        userDefaults.set(value, forKey: legacyKey)
+    }
 
     /// Sync current app settings to RetroArch config file
     private func syncToRetroArch() {
@@ -175,12 +197,12 @@ public final class RetroArchConfigManager: @unchecked Sendable {
         // Update app settings if values found
         if let enabledStr = enabledValue {
             let enabled = enabledStr.lowercased() == "true"
-            userDefaults.set(enabled, forKey: enabledKey)
+            writeBooleanSetting(enabled, primaryKey: defaultsKeys.enabled, legacyKey: legacyDefaultsKeys.enabled)
         }
 
         if let hardcoreStr = hardcoreValue {
             let hardcore = hardcoreStr.lowercased() == "true"
-            userDefaults.set(hardcore, forKey: hardcoreModeKey)
+            writeBooleanSetting(hardcore, primaryKey: defaultsKeys.hardcore, legacyKey: legacyDefaultsKeys.hardcore)
         }
     }
 

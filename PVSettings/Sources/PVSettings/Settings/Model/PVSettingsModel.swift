@@ -568,11 +568,68 @@ public enum SkinMode: String, Codable, Equatable, UserDefaultsRepresentable, Def
         case .off:
             return "Always use the classic on-screen controller"
         case .selectedOnly:
-            return "Use skins for selected sytems, use classic controller as default"
+            return "Use skins for selected systems, use classic controller as default"
         case .always:
             return "Always use skins including the default generated skins"
         }
     }
+}
+
+/// Canonical storage key for controller skin mode preferences.
+internal let canonicalSkinModeDefaultsKey = "skinMode"
+
+/// Legacy storage key preserved for migrating existing installs.
+internal let legacySkinModeDefaultsKey = "skinMOde"
+
+/// Canonical storage key for the RetroAchievements master toggle.
+internal let canonicalRetroAchievementsEnabledDefaultsKey = "retroAchievementsEnabled"
+
+/// Legacy storage key used by the RetroArch bridge before app-wide Defaults integration.
+internal let legacyRetroAchievementsEnabledDefaultsKey = "ra_cheevos_enabled"
+
+/// Canonical storage key for the RetroAchievements hardcore toggle.
+internal let canonicalRetroAchievementsHardcoreDefaultsKey = "retroAchievementsHardcoreEnabled"
+
+/// Legacy storage key used by the RetroArch bridge before app-wide Defaults integration.
+internal let legacyRetroAchievementsHardcoreDefaultsKey = "ra_cheevos_hardcore_mode"
+
+/// Migrates the original typoed skin-mode key to the canonical storage key.
+internal func migrateLegacySkinModeIfNeeded(userDefaults: UserDefaults = .standard) {
+    guard userDefaults.object(forKey: canonicalSkinModeDefaultsKey) == nil else {
+        return
+    }
+
+    guard let legacyRawValue = userDefaults.string(forKey: legacySkinModeDefaultsKey),
+          let legacyMode = SkinMode(rawValue: legacyRawValue) else {
+        return
+    }
+
+    userDefaults.set(legacyMode.rawValue, forKey: canonicalSkinModeDefaultsKey)
+}
+
+/// Builds the shared Defaults key after ensuring older persisted values are migrated forward.
+internal func makeSkinModeKey(defaultValue: SkinMode) -> Defaults.Key<SkinMode> {
+    migrateLegacySkinModeIfNeeded()
+    return Key<SkinMode>(canonicalSkinModeDefaultsKey, default: defaultValue)
+}
+
+/// Migrates a legacy boolean preference into its canonical Defaults key the first time it is accessed.
+internal func migrateLegacyBoolPreferenceIfNeeded(primaryKey: String, legacyKey: String, userDefaults: UserDefaults = .standard) {
+    guard userDefaults.object(forKey: primaryKey) == nil else {
+        return
+    }
+
+    guard userDefaults.object(forKey: legacyKey) != nil else {
+        return
+    }
+
+    userDefaults.set(userDefaults.bool(forKey: legacyKey), forKey: primaryKey)
+}
+
+/// Builds a shared boolean Defaults key after migrating any legacy storage key.
+internal func makeMigratingBoolKey(_ primaryKey: String, legacyKey: String, defaultValue: Bool) -> Defaults.Key<Bool> {
+    migrateLegacyBoolPreferenceIfNeeded(primaryKey: primaryKey, legacyKey: legacyKey)
+    return Key<Bool>(primaryKey, default: defaultValue)
 }
 
 // MARK: Beta Options
@@ -614,9 +671,9 @@ public extension Defaults.Keys {
 #endif
 
     #if os(tvOS) || os(macOS) || targetEnvironment(macCatalyst)
-    static let skinMode = Key<SkinMode>("skinMOde", default: .off)
+    static let skinMode = makeSkinModeKey(defaultValue: .off)
     #else
-    static let skinMode = Key<SkinMode>("skinMOde", default: .selectedOnly)
+    static let skinMode = makeSkinModeKey(defaultValue: .selectedOnly)
     #endif
 }
 
@@ -672,10 +729,18 @@ public final class PVSettingsWrapper: NSObject {
 
 public extension Defaults.Keys {
     /// Master toggle for RetroAchievements in all cores (native + LibRetro).
-    static let retroAchievementsEnabled = Key<Bool>("retroAchievementsEnabled", default: false)
+    static let retroAchievementsEnabled = makeMigratingBoolKey(
+        canonicalRetroAchievementsEnabledDefaultsKey,
+        legacyKey: legacyRetroAchievementsEnabledDefaultsKey,
+        defaultValue: false
+    )
 
     /// When `true`, save-state loads are blocked during active achievement sessions.
-    static let retroAchievementsHardcoreEnabled = Key<Bool>("retroAchievementsHardcoreEnabled", default: false)
+    static let retroAchievementsHardcoreEnabled = makeMigratingBoolKey(
+        canonicalRetroAchievementsHardcoreDefaultsKey,
+        legacyKey: legacyRetroAchievementsHardcoreDefaultsKey,
+        defaultValue: false
+    )
 }
 
 public extension Defaults.Keys {
