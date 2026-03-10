@@ -321,7 +321,7 @@ static void *dlopen_myself()
 		}
 	}
 
-//    [self parseOptions];
+    [self parseOptions];
 
     NSError *copyError = nil;
 	// Create hires folder placement
@@ -780,6 +780,24 @@ static void *dlopen_myself()
 
 - (NSUInteger)channelCount {
     return 2;
+}
+
+#pragma mark - Options
+
+- (void)parseOptions {
+    // Parse controller pak options and set controller modes
+    // Values: 1=None, 2=Memory Pak, 3=Rumble Pak, 4=Transfer Pak, 5=Raw
+    int pak1 = [MupenGameCoreOptions controllerPak1Option];
+    int pak2 = [MupenGameCoreOptions controllerPak2Option];
+    int pak3 = [MupenGameCoreOptions controllerPak3Option];
+    int pak4 = [MupenGameCoreOptions controllerPak4Option];
+
+    [self setMode:pak1 forController:0];
+    [self setMode:pak2 forController:1];
+    [self setMode:pak3 forController:2];
+    [self setMode:pak4 forController:3];
+
+    ILOG(@"Controller paks configured: P1=%d, P2=%d, P3=%d, P4=%d", pak1, pak2, pak3, pak4);
 }
 
 @end
