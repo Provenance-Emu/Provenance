@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **Cheats & MultiDisc Pause Leak** — `onDone` closures in Cheats (tvOS + iOS) and error/cancel handlers in the disc-swap menu no longer call `setPauseEmulation(false)` or `isShowingMenu = false` directly, preventing the emulator from unpausing while the pause menu is still visible (Part of #2909)
 - **Virtual Mouse Cursor Z-Order** — Mouse cursor overlay now stays above the emulator surface and all other layers by calling `bringSubviewToFront` after insertion (#2925, Part of #2575)
 - **Virtual Keyboard Z-Order** — Keyboard overlay now renders above skin controller buttons; `bringSubviewToFront` called on show and after every skin change (#2926, Part of #2575)
 - **TouchTrackpadView Touch Stealing** — `TouchTrackpadView` now yields to interactive sibling views (e.g. controller skin buttons) via `hitTest` override, preventing it from blocking on-screen button presses (#2924, Part of #2575)

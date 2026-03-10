@@ -162,8 +162,9 @@ extension PVEmulatorViewController {
             },
             onDone: { [weak self] in
                 guard let self = self else { return }
-                self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
+                // Don't resume emulation here - the presenting menu handles that.
+                // Calling setPauseEmulation/isShowingMenu directly would unpause the game
+                // even if the pause menu is still visible behind this sheet.
                 self.enableControllerInput(false)
                 // Ensure the emulator view can receive gesture events again
                 self.view.becomeFirstResponder()
@@ -208,8 +209,9 @@ extension PVEmulatorViewController {
             },
             onDone: { [weak self] in
                 guard let self = self else { return }
-                self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
+                // Don't resume emulation here - the presenting menu handles that.
+                // Calling setPauseEmulation/isShowingMenu directly would unpause the game
+                // even if the pause menu is still visible behind this sheet.
                 self.enableControllerInput(false)
             }
         )
