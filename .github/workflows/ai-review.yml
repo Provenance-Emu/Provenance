@@ -64,6 +64,19 @@ jobs:
             --json title --jq '.title' \
             --repo "${{ github.repository }}" 2>/dev/null || echo "")
 
+          # Skip if the owner (JoeMatt) has already approved — no need to re-review
+          OWNER_APPROVED=$(gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json reviews \
+            --jq '[.reviews[] | select(.state == "APPROVED" and .author.login == "JoeMatt")] | length' \
+            2>/dev/null || echo "0")
+
+          if [ "${OWNER_APPROVED:-0}" -gt 0 ]; then
+            echo "Owner has already approved PR #${PR_NUMBER} — skipping AI review."
+            echo "should_review=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           echo "pr_title=$PR_TITLE"   >> "$GITHUB_OUTPUT"
           echo "should_review=true"   >> "$GITHUB_OUTPUT"
