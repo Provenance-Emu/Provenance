@@ -58,6 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **UTType.bios Identifier** — `UTType.bios` and `UTI.bios` now use the dedicated `com.provenance.bios` identifier (previously shared `com.provenance.rom`); added `com.provenance.bios` exported type declaration to all 7 app Info.plist files (#2864 follow-up)
+- **Script Permissions** — UTI generator scripts (`gen_uti.swift`, `generate_uti_declarations.py`) marked executable
 - **Controller Profile Scope Resolution** — `SceneCoordinator.loadControllerProfiles` now passes `coreIdentifier` to `loadActiveProfile`, enabling game+core and system+core profile scopes to match correctly at game launch (#2879 follow-up)
 - **RarExtractor Path Traversal** — Sanitize entry filenames in RAR archives to prevent `../` path traversal outside the destination directory (Part of #2663)
 - **CRC Lookup Error Logging** — `PVLookup.searchROM(byCRC:)` now logs database errors via `ELOG` instead of silently swallowing them with `try?` (Part of #2663)
