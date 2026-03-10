@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import PVSupport
 import QuartzCore
 import ReplayKit
@@ -121,6 +122,10 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     }
 
     weak var emulatorCore: PVEmulatorCore?
+
+    /// Lock protecting render-path access to emulatorCore on non-double-buffered cores.
+    /// Replaces the legacy `objc_sync_enter/exit(emulatorCore)` pattern.
+    private let renderLock = OSAllocatedUnfairLock<Void>(initialState: ())
 
 #if targetEnvironment(macCatalyst) || os(macOS)
     //    var isPaused: Bool = false
@@ -996,10 +1001,10 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                     emulatorCore.frontBufferLock.unlock()
                     emulatorCore.frontBufferCondition.unlock()
                 } else {
-                    objc_sync_enter(emulatorCore)
-                    fetchVideoBuffer()
-                    renderBlock()
-                    objc_sync_exit(emulatorCore)
+                    renderLock.withLock {
+                        fetchVideoBuffer()
+                        renderBlock()
+                    }
                 }
             }
         }
@@ -1181,10 +1186,10 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 emulatorCore.frontBufferLock.unlock()
                 emulatorCore.frontBufferCondition.unlock()
             } else {
-                objc_sync_enter(emulatorCore)
-                fetchVideoBuffer()
-                renderBlock()
-                objc_sync_exit(emulatorCore)
+                renderLock.withLock {
+                    fetchVideoBuffer()
+                    renderBlock()
+                }
             }
         }
 
@@ -1361,12 +1366,3 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 }
 
 
-import ObjectiveC
-//// Helper functions for ObjC synchronization
-//func objc_sync_enter(_ obj: AnyObject) {
-//    objc_sync_enter(obj)
-//}
-//
-//func objc_sync_exit(_ obj: AnyObject) {
-//    objc_sync_exit(obj)
-//}

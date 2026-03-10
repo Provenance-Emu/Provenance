@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import Metal
 import MetalKit
 import IOSurface
@@ -207,7 +208,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     // Add these properties to the class
     private var commandBufferPool: [MTLCommandBuffer] = []
-    private var commandBufferPoolLock = NSLock()
+    private var commandBufferPoolLock = OSAllocatedUnfairLock<Void>(initialState: ())
     private var renderPassDescriptor: MTLRenderPassDescriptor?
     private var lastBufferSize: CGSize = .zero
     private var lastPixelFormat: GLenum = 0

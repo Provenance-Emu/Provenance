@@ -72,6 +72,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Cheats UI** — Moved Cheat Codes to main tab in pause menu for faster access (#2608)
 - **Lock Patterns** — Converted bare `NSLock.lock()/unlock()` to `withLock` throughout
   audio engines and emulator VC (#2688, #2750)
+- **Lock Patterns (PVUI GPU/Metal/SaveState)** — Replaced all `NSLock` bare pairs and
+  `objc_sync_enter/exit` in `PVGPUViewController`, `PVMetalViewController`, `PVGLViewController`,
+  and `RealmSaveStateDriver` with `OSAllocatedUnfairLock` + `withLock {}`. Eliminates deadlock
+  risk from bare lock/unlock; removes ObjC runtime sync overhead on render threads (#2808, Part of #1681)
 - **Library Management UX** — Reworked library management settings labels and architecture (#2706)
 - **WhatsNew** — Moved release notes from hardcoded Swift to `whats-new.json` metadata file;
   agents can add new releases by editing JSON only
