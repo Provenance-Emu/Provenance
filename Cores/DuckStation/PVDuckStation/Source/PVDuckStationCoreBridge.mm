@@ -170,6 +170,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     NSString *saveStatePath;
     bool isInitialized;
     NSUInteger _maxDiscs;
+    NSUInteger _maxNumberPlayers;
 
     @package
     NSMutableDictionary <NSString *, id> *_displayModes;
@@ -193,6 +194,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
             //        Log::SetFilterLevel(LOGLEVEL_TRACE);
         Log::RegisterCallback(OELogFunc, NULL);
         _enabledCheats = [[NSMutableSet alloc] init];
+        _maxNumberPlayers = 2;
     }
     return self;
 }
@@ -204,6 +206,10 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 -(NSString*) systemIdentifier {
     return @"com.provenance.psx";
+}
+
+-(NSUInteger)maxNumberPlayers {
+    return _maxNumberPlayers;
 }
 
 #pragma mark - Video
@@ -315,7 +321,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 #pragma mark - Input
 
 - (void)pollControllers {
-    NSUInteger maxNumberPlayers = 4; //MIN([self maxNumberPlayers], 4);
+    NSUInteger maxNumberPlayers = [self maxNumberPlayers];
 
     for (NSInteger playerIndex = 0; playerIndex < maxNumberPlayers; playerIndex++) {
         GCController *controller = nil;
@@ -335,7 +341,23 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
         {
             controller = self.controller4;
         }
-        
+        else if (self.controller5 && playerIndex == 4)
+        {
+            controller = self.controller5;
+        }
+        else if (self.controller6 && playerIndex == 5)
+        {
+            controller = self.controller6;
+        }
+        else if (self.controller7 && playerIndex == 6)
+        {
+            controller = self.controller7;
+        }
+        else if (self.controller8 && playerIndex == 7)
+        {
+            controller = self.controller8;
+        }
+
             //        if (controller) {
             //            uint8 *d8 = (uint8 *)inputBuffer[playerIndex];
             //            bool analogMode = (d8[2] & 0x02);
@@ -1686,10 +1708,13 @@ void Host::OnGameChanged(const std::string& disc_path, const std::string& game_s
         if (hacks & OEPSXHacksOnlyOneMemcard) {
             g_settings.memory_card_types[1] = MemoryCardType::None;
         }
-            //        if (hacks & OEPSXHacksMultiTap5PlayerPort2) {
-            //            g_settings.multitap_mode = MultitapMode::Port2Only;
-            //            g_settings.controller_types;
-            //        }
+        if (hacks & OEPSXHacksMultiTap5PlayerPort2) {
+            g_settings.multitap_mode = MultitapMode::Port2Only;
+            g_settings.controller_types[2] = ControllerType::AnalogController;
+            g_settings.controller_types[3] = ControllerType::AnalogController;
+            g_settings.controller_types[4] = ControllerType::AnalogController;
+            _maxNumberPlayers = 5;
+        }
         if (hacks & OEPSXHacksMultiTap) {
             g_settings.multitap_mode = MultitapMode::BothPorts;
             g_settings.controller_types[2] = ControllerType::AnalogController;
@@ -1698,6 +1723,7 @@ void Host::OnGameChanged(const std::string& disc_path, const std::string& game_s
             g_settings.controller_types[5] = ControllerType::AnalogController;
             g_settings.controller_types[6] = ControllerType::AnalogController;
             g_settings.controller_types[7] = ControllerType::AnalogController;
+            _maxNumberPlayers = 8;
         }
     } while (0);
     g_settings.FixIncompatibleSettings(false);
