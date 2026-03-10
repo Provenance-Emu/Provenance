@@ -63,7 +63,7 @@ public actor AchievementSessionManager {
     @discardableResult
     public func startSession(gameHash: String) async throws -> StartSessionResponse {
         // Stop any existing session first.
-        await stopSession()
+        stopSession()
 
         // Resolve the RA game ID from the hash.
         guard let gameId = try await client.getGameId(forHash: gameHash) else {
@@ -139,6 +139,10 @@ public actor AchievementSessionManager {
         pingTask?.cancel()
         guard let gameId = activeGameId else { return }
 
+        // [weak self] is intentional: if the actor is deallocated while a ping
+        // is in flight (e.g. the emulator session is torn down on a background
+        // thread), the guard-let allows the loop to exit cleanly rather than
+        // extending the actor's lifetime indefinitely via a strong capture.
         pingTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: UInt64(AchievementSessionManager.pingInterval * 1_000_000_000))
