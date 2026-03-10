@@ -9,6 +9,9 @@ import Foundation
 #if canImport(UIKit)
 import UIKit
 #endif
+#if canImport(AudioToolbox)
+import AudioToolbox
+#endif
 
 #if canImport(GameController)
 import GameController
@@ -40,22 +43,14 @@ public extension EmulatorCoreControllerDataSource {
     @MainActor
     func controller(for player: Int) -> GCController? {
         switch player {
-        case 1:
-            if let controller1 = self.controller1, controller1.isAttachedToDevice {
-#if os(iOS) && !targetEnvironment(macCatalyst)
-                (self as? EmulatorCoreRumbleDataSource)?.rumblePhone()
-#else
-                VLOG("rumblePhone*(")
-#endif
-            }
-            return controller1
+        case 1: return controller1
         case 2: return controller2
         case 3: return controller3
         case 4: return controller4
         case 5: return controller5
         case 6: return controller6
         case 7: return controller7
-        case 8: return controller7
+        case 8: return controller8
         default:
             WLOG("No player \(player)")
             return nil
@@ -86,25 +81,63 @@ public extension EmulatorCoreRumbleDataSource {
         return HapticsManager.shared.hapticsEngine(forPlayer: player)
     }
 
-    /// Trigger a default rumble pulse (1.0 low-frequency, 0.5 high-frequency, 0.3s) for `player`.
+    /// Fire rumble for the given player (0-based).
+    ///
+    /// Routing priority:
+    /// 1. External controller with GCDeviceHaptics support → controller motors
+    /// 2. Attached controller (phone) → device Taptic Engine via rumblePhone()
+    /// 3. No controller → device Taptic Engine
     @MainActor
     func rumble(player: Int) {
+        rumble(player: player, lowFrequency: 1.0, highFrequency: 0.5, duration: 0.3)
+    }
+
+    /// Fire rumble with explicit dual-motor parameters.
+    ///
+    /// - Parameters:
+    ///   - player: 0-based player index.
+    ///   - lowFrequency: Low-frequency (grip/left) motor intensity in [0, 1].
+    ///   - highFrequency: High-frequency (right) motor intensity in [0, 1].
+    ///   - duration: Vibration duration in seconds.
+    @MainActor
+    func rumble(player: Int, lowFrequency: Float, highFrequency: Float, duration: TimeInterval = 0.3) {
         guard self.supportsRumble else {
             WLOG("Rumble called on core that doesn't support it")
             return
         }
         if #available(iOS 14.0, tvOS 14.0, *) {
-            HapticsManager.shared.rumble(lowFrequency: 1.0, highFrequency: 0.5, duration: 0.3, player: player)
+            // 1-based player index for GCController lookup; player param is 0-based.
+            let playerIndex = player + 1
+            let controller = self.controller(for: playerIndex)
+
+            if let controller = controller, !controller.isAttachedToDevice, controller.haptics != nil {
+                // External controller with haptics support — route to controller motors.
+                let params = GCControllerHapticsManager.RumbleParams(
+                    lowFrequency: lowFrequency,
+                    highFrequency: highFrequency,
+                    duration: duration
+                )
+                GCControllerHapticsManager.shared.rumble(player: player, params: params)
+            } else {
+                // Attached (phone) controller or no haptics → Taptic Engine.
+#if os(iOS) && !targetEnvironment(macCatalyst)
+                rumblePhone()
+#endif
+            }
+        } else {
+#if os(iOS) && !targetEnvironment(macCatalyst)
+            rumblePhone()
+#endif
         }
     }
 
     /// Trigger a rumble with explicit motor intensities and duration for `player`.
+    ///
+    /// Delegates to `rumble(player:lowFrequency:highFrequency:duration:)` for unified routing
+    /// through GCControllerHapticsManager (controller motors) with Taptic Engine fallback.
     @MainActor
     func rumble(lowFrequency: Float, highFrequency: Float, duration: TimeInterval, player: Int) {
-        guard self.supportsRumble else { return }
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            HapticsManager.shared.rumble(lowFrequency: lowFrequency, highFrequency: highFrequency, duration: duration, player: player)
-        }
+        rumble(player: player, lowFrequency: lowFrequency, highFrequency: highFrequency, duration: duration)
     }
 
     /// Stop all rumble for `player`.
@@ -117,16 +150,13 @@ public extension EmulatorCoreRumbleDataSource {
 
     @MainActor func rumblePhone() {
 #if os(iOS) && !targetEnvironment(macCatalyst)
-        // Use CHHapticEngine via HapticsManager if available; fall back to system vibration.
-        if #available(iOS 14.0, *) {
-            rumble(player: 0)
+        let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
+        if deviceHasHaptic {
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.prepare()
+            generator.impactOccurred()
         } else {
-            let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
-            if deviceHasHaptic {
-                let generator = UIImpactFeedbackGenerator(style: .heavy)
-                generator.prepare()
-                generator.impactOccurred()
-            }
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         }
 #endif
     }
