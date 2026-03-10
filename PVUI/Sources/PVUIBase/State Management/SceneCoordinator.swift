@@ -958,6 +958,9 @@ public class SceneCoordinator: ObservableObject {
                 ILOG("SceneCoordinator: Core set: \(core.projectName)")
             }
 
+            // Load per-game / per-system controller profiles for all connected controllers.
+            loadControllerProfiles(for: currentGame)
+
             // Open the emulator scene - the emulator will handle loading the game with save state
             openEmulatorScene()
         } else {

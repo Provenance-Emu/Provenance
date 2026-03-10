@@ -27,6 +27,7 @@ struct ControllerProfilesView: View {
 
     // MARK: - State
 
+    // Frozen Realm objects are safe to store in @State; mutation goes through RomDatabase helpers.
     @State private var profiles: [PVControllerProfile] = []
     @State private var showNewProfileAlert = false
     @State private var newProfileName = ""
