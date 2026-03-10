@@ -1672,43 +1672,39 @@ private struct ControllerSection: View {
             // (DualSense, Xbox) are the primary input and phone haptic toggle is absent.
             // On iOS/iPadOS, gate it behind the Haptic Feedback toggle.
             #if os(tvOS)
-            Section(header: Text("Controller Rumble")) {
-                VStack(alignment: .leading, spacing: 4) {
-                    SettingsRow(title: "Controller Rumble Intensity",
-                                subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
-                                icon: .sfSymbol("waveform.path"))
-                    Slider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
-                        Text("Intensity")
-                    } minimumValueLabel: {
-                        Image(systemName: "speaker")
-                    } maximumValueLabel: {
-                        Image(systemName: "speaker.wave.3")
-                    }
-                    .padding(.horizontal)
-                }
-            }
+            ControllerRumbleSlider(controllerHapticIntensity: $controllerHapticIntensity)
             #else
             if hapticFeedback {
-                Section(header: Text("Controller Rumble")) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        SettingsRow(title: "Controller Rumble Intensity",
-                                    subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
-                                    icon: .sfSymbol("waveform.path"))
-                        Slider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
-                            Text("Intensity")
-                        } minimumValueLabel: {
-                            Image(systemName: "speaker")
-                        } maximumValueLabel: {
-                            Image(systemName: "speaker.wave.3")
-                        }
-                        .padding(.horizontal)
-                    }
-                }
+                ControllerRumbleSlider(controllerHapticIntensity: $controllerHapticIntensity)
             }
             #endif
             #if !os(tvOS)
             OnScreenControllerSection()
             #endif
+        }
+    }
+}
+
+/// Slider for adjusting external controller rumble motor intensity.
+/// Used by both tvOS (always visible) and iOS (gated behind haptic feedback toggle).
+private struct ControllerRumbleSlider: View {
+    @Binding var controllerHapticIntensity: Double
+
+    var body: some View {
+        Section(header: Text("Controller Rumble")) {
+            VStack(alignment: .leading, spacing: 4) {
+                SettingsRow(title: "Controller Rumble Intensity",
+                            subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
+                            icon: .sfSymbol("waveform.path"))
+                Slider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
+                    Text("Intensity")
+                } minimumValueLabel: {
+                    Image(systemName: "speaker")
+                } maximumValueLabel: {
+                    Image(systemName: "speaker.wave.3")
+                }
+                .padding(.horizontal)
+            }
         }
     }
 }
