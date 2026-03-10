@@ -50,4 +50,24 @@ final class SystemIdentifierTests {
             #expect(mappedID == libretroDatabaseID)
         }
     }
+
+    // MARK: - Offset Tests (for MD5 hashing)
+    func testNESHas16ByteOffset() {
+        // NES uses iNES header (16 bytes) that should be skipped
+        #expect(SystemIdentifier.NES.offset == 16)
+    }
+
+    func testSNESHasZeroOffset() {
+        // SNES uses dynamic detection in GameImporterDatabaseService
+        // (512-byte copier header detection), so static offset is 0
+        #expect(SystemIdentifier.SNES.offset == 0)
+    }
+
+    func testOtherSystemsHaveZeroOffset() {
+        // Most systems have no header to skip
+        #expect(SystemIdentifier.Genesis.offset == 0)
+        #expect(SystemIdentifier.GBA.offset == 0)
+        #expect(SystemIdentifier.N64.offset == 0)
+        #expect(SystemIdentifier.PSX.offset == 0)
+    }
 }

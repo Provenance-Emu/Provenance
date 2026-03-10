@@ -18,6 +18,7 @@ import PVFileSystem
 import PVLogging
 import PVPrimitives
 import PVRealm
+import PVHashing
 import CommonCrypto
 import Perception
 import SwiftUI
@@ -847,12 +848,15 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     public func calculateMD5(forGame game: PVGame) async -> String? {
         var offset: UInt = 0
 
-        //this seems to be spread in many places, not sure why.  it might be doable to put this in the queue item, but for now, trying to consolidate.
-        //I have no history or explanation for why we need the 16 offset for SNES/NES
-        // the legacy code was actually inconsistently applied, so there's a good chance this causes some bugs (or fixes some)
-        if game.system?.identifier == "com.provenance.snes" || game.system?.identifier == "com.provenance.nes" {
+        // NES uses a 16-byte iNES header that should be skipped for MD5 calculation
+        // to match No-Intro database entries (headerless ROMs)
+        if game.system?.identifier == "com.provenance.nes" {
             offset = 16
         }
+
+        // SNES .smc files may have a 512-byte copier header - detect and skip if present
+        let isSNES = game.system?.identifier == "com.provenance.snes"
+        let isSMC = game.file?.url.pathExtension.lowercased() == "smc"
 
         let romPath = game.file?.url
 
@@ -862,10 +866,26 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 ELOG("Cannot find file at path: \(romPath)")
                 return nil
             }
+
+            // For SNES .smc files, detect and skip 512-byte copier header if present
+            if isSNES && isSMC {
+                if let snesOffset = detectSNESCopierHeaderOffset(for: romPath) {
+                    offset = snesOffset
+                }
+            }
+
             return await calculateMD5Async(at: romPath, fromOffset: offset)
         }
 
         return nil
+    }
+
+    /// Detects if a SNES .smc file has a 512-byte copier header.
+    /// - Parameter url: URL of the .smc file
+    /// - Returns: 512 if a copier header is detected, 0 if the file is headerless (clean No-Intro ROM),
+    ///           or nil if the file cannot be accessed.
+    private func detectSNESCopierHeaderOffset(for url: URL) -> UInt? {
+        SNESHeaderDetector.detectOffset(for: url)
     }
 
     /// Async MD5 calculation that yields control periodically to prevent blocking the import queue
