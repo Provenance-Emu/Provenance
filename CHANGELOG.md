@@ -67,6 +67,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **iPadOS 26 Search Bar** — Fixed search bar placement regression (#2613)
 - **Settings Menu Delegate** — Added fallback notifications when menuDelegate is nil (#2749)
 - **App Group Container Check** — Simplified check for readable app group container (#2623)
+- **Crash-Save Safety** — `uncaughtExceptionHandler` now calls `stopEmulation()` synchronously
+  (removes the `Task.detached { @MainActor }` that would never execute during crash recovery);
+  save-state screenshot writes use `.atomic` option to prevent partial/corrupt files (#2766)
 
 ### Changed
 - **Cheats UI** — Moved Cheat Codes to main tab in pause menu for faster access (#2608)

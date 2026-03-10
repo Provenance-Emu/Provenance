@@ -303,7 +303,9 @@ public extension PVEmualatorControllerProtocol {
             if let jpegData = screenshot.jpegData(compressionQuality: 0.95) {
                 let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
                 do {
-                    try jpegData.write(to: imageURL)
+                    // Use atomic write to prevent a partial/corrupt image file if the
+                    // process is interrupted between creating and finalising the write.
+                    try jpegData.write(to: imageURL, options: .atomic)
                     imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
                     #if os(tvOS)
                     localTopShelfImageURL = imageURL
