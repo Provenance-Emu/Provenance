@@ -167,6 +167,15 @@ public extension System_Data {
             return .square
         case .N64, .SNES:
             return .HDTV
+        case .CDi: return .poster
+        case .CPS1: return .poster
+        case .CPS2: return .poster
+        case .CPS3: return .poster
+        case .DOOM: return .poster
+        case .Quake: return .poster
+        case .Quake2: return .poster
+        case .RetroArch: return .poster
+        case .Wolf3D: return .poster
         }
     }
     #endif

@@ -40,7 +40,9 @@ public struct ControllerGuideDetailView: View {
                 }
             }
             .navigationTitle("Controller Guide")
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }

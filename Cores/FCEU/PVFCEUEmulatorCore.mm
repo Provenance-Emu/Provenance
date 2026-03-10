@@ -74,8 +74,10 @@ extern bool replaceP2StartWithMicrophone;
 // So to drive joy[1] bit 3 (JOY_START), we set bit 11 in pad[1][0].
 static const uint32_t kFCMicBit = (JOY_START << 8);  // 0x0800
 
+#if !TARGET_OS_TV
 // RMS threshold for considering microphone audio "active" (0.0–1.0 range).
 static const float kFCMicThreshold = 0.015f;
+#endif
 
 @interface PVFCEUEmulatorCoreBridge ()
 {

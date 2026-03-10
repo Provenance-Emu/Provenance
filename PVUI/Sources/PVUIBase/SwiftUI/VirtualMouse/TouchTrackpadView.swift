@@ -77,7 +77,9 @@ public final class TouchTrackpadView: UIView {
 
     private func commonInit() {
         backgroundColor = .clear
+        #if !os(tvOS)
         isMultipleTouchEnabled = false
+        #endif
         isUserInteractionEnabled = true
 
         // Tap: left click
