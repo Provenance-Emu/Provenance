@@ -32,6 +32,7 @@
 #include "./apple_platform.h"
 #include "../ui_companion_driver.h"
 #include "../../configuration.h"
+#include "../../file_path_special.h"
 #include "../../frontend/frontend.h"
 #include "../../input/drivers/cocoa_input.h"
 #include "../../input/drivers_keyboard/keyboard_event_apple.h"
@@ -195,6 +196,96 @@ extern int g_gs_preference;
         int numberOfRootOptions = coreopts->size;
     }
     return coreopts;
+}
+
++ (NSString * _Nullable)coreLibraryName {
+    runloop_state_t *runloop_st = runloop_state_get_ptr();
+    if (!runloop_st || string_is_empty(runloop_st->system.info.library_name)) {
+        return nil;
+    }
+    return [NSString stringWithUTF8String:runloop_st->system.info.library_name];
+}
+
++ (NSString * _Nullable)perGameOptionsPathForGame:(NSString *)gameFilename {
+    if (!gameFilename || gameFilename.length == 0) {
+        ELOG("[CoreOptions] perGameOptionsPathForGame: gameFilename is empty");
+        return nil;
+    }
+
+    NSString *coreName = [self coreLibraryName];
+    if (!coreName || coreName.length == 0) {
+        ELOG("[CoreOptions] perGameOptionsPathForGame: coreName is empty");
+        return nil;
+    }
+
+    // Get the config directory using RetroArch's path system
+    char config_dir[PATH_MAX_LENGTH];
+    config_dir[0] = '\0';
+    fill_pathname_application_special(config_dir, sizeof(config_dir),
+                                       APPLICATION_SPECIAL_DIRECTORY_CONFIG);
+
+    if (string_is_empty(config_dir)) {
+        ELOG("[CoreOptions] perGameOptionsPathForGame: config_dir is empty");
+        return nil;
+    }
+
+    // Build the path: <config_dir>/<core_name>/<game_name>.opt
+    char opt_path[PATH_MAX_LENGTH];
+    opt_path[0] = '\0';
+
+    // Remove file extension from game filename to match RetroArch's convention
+    NSString *gameNameNoExt = [gameFilename stringByDeletingPathExtension];
+
+    fill_pathname_join_special_ext(opt_path, config_dir,
+                                   [coreName UTF8String],
+                                   [gameNameNoExt UTF8String],
+                                   ".opt", sizeof(opt_path));
+
+    if (string_is_empty(opt_path)) {
+        ELOG("[CoreOptions] perGameOptionsPathForGame: failed to build path");
+        return nil;
+    }
+
+    NSString *result = [NSString stringWithUTF8String:opt_path];
+    ILOG("[CoreOptions] per-game .opt path: %s", opt_path);
+    return result;
+}
+
++ (NSString * _Nullable)perCoreOptionsPath {
+    NSString *coreName = [self coreLibraryName];
+    if (!coreName || coreName.length == 0) {
+        ELOG("[CoreOptions] perCoreOptionsPath: coreName is empty");
+        return nil;
+    }
+
+    // Get the config directory using RetroArch's path system
+    char config_dir[PATH_MAX_LENGTH];
+    config_dir[0] = '\0';
+    fill_pathname_application_special(config_dir, sizeof(config_dir),
+                                       APPLICATION_SPECIAL_DIRECTORY_CONFIG);
+
+    if (string_is_empty(config_dir)) {
+        ELOG("[CoreOptions] perCoreOptionsPath: config_dir is empty");
+        return nil;
+    }
+
+    // Build the path: <config_dir>/<core_name>/<core_name>.opt
+    char opt_path[PATH_MAX_LENGTH];
+    opt_path[0] = '\0';
+
+    fill_pathname_join_special_ext(opt_path, config_dir,
+                                   [coreName UTF8String],
+                                   [coreName UTF8String],
+                                   ".opt", sizeof(opt_path));
+
+    if (string_is_empty(opt_path)) {
+        ELOG("[CoreOptions] perCoreOptionsPath: failed to build path");
+        return nil;
+    }
+
+    NSString *result = [NSString stringWithUTF8String:opt_path];
+    ILOG("[CoreOptions] per-core .opt path: %s", opt_path);
+    return result;
 }
 
 @end

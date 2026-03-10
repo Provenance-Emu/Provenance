@@ -404,4 +404,26 @@ void menuToggle();
 #pragma clang diagnostic pop
 @interface PVRetroArchCoreBridge (CoreOptions)
 + (core_option_manager_t  * _Nullable ) getOptions;
+
+/*! @brief Returns the path to the per-game .opt file for RetroArch core options
+ *  @param gameFilename The filename of the game (ROM name without path)
+ *  @return NSString path to the .opt file, or nil if paths cannot be determined
+ *
+ *  The returned path follows RetroArch's convention:
+ *  <Documents>/RetroArch/config/<core_name>/<game_name>.opt
+ */
++ (NSString * _Nullable)perGameOptionsPathForGame:(NSString *)gameFilename;
+
+/*! @brief Returns the path to the per-core global .opt file for RetroArch core options
+ *  @return NSString path to the core's global .opt file, or nil if paths cannot be determined
+ *
+ *  The returned path follows RetroArch's convention:
+ *  <Documents>/RetroArch/config/<core_name>/<core_name>.opt
+ */
++ (NSString * _Nullable)perCoreOptionsPath;
+
+/*! @brief Returns the core's library name as reported by the libretro core
+ *  @return NSString containing the core name, or nil if not available
+ */
++ (NSString * _Nullable)coreLibraryName;
 @end
