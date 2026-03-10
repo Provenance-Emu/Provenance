@@ -159,23 +159,19 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
             unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
 //            Data[32] = DataCRC( Data, 32 );
 //
-            if ((dwAddress == PAK_IO_RUMBLE) )//&& (rumble.set_rumble_state))
+            if (dwAddress == PAK_IO_RUMBLE)
             {
-                if (*Data)
-                {
 #if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
-#warning "TODO: Fix Rumble"
-//                    [current rumble];
+                if (@available(iOS 14.0, *)) {
+                    if (*Data) {
+                        // Rumble on - trigger haptic feedback
+                        [[PVHapticsManager shared] rumbleWithPlayer:Control lowFrequency:1.0 highFrequency:0.8 duration:0.1];
+                    } else {
+                        // Rumble off - stop haptics
+                        [[PVHapticsManager shared] stopRumbleWithPlayer:Control];
+                    }
+                }
 #endif
-//                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0xFFFF);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0xFFFF);
-                }
-                else
-                {
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0);
-                }
             }
 //        }
 
