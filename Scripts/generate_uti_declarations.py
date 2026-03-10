@@ -239,19 +239,6 @@ def generate_declarations(systems_plist: Path = SYSTEMS_PLIST):
     for exts in system_ext_map.values():
         all_system_exts.update(exts)
 
-    base_exts_raw = sorted(
-        all_system_exts
-        - set(STANDARD_ARCHIVE_UTIS.keys())
-        - {"zip", "rar", "7z", "iso"}
-    )
-    # Keep only extensions that aren't already in a per-system type,
-    # plus the explicitly listed base extensions
-    base_extra = sorted(
-        set(BASE_ROM_EXTENSIONS)
-        | (all_system_exts - system_claimed_exts
-           - set(STANDARD_ARCHIVE_UTIS.keys())
-           - {"zip", "rar", "7z", "iso"})
-    )
     # Remove duplicates and sort (case-insensitive)
     seen = set()
     base_exts_final = []
