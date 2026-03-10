@@ -50,6 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   system (#2544, #2558)
 
 ### Fixed
+- **RarExtractor Path Traversal** — Sanitize entry filenames in RAR archives to prevent `../` path traversal outside the destination directory (Part of #2663)
+- **CRC Lookup Error Logging** — `PVLookup.searchROM(byCRC:)` now logs database errors via `ELOG` instead of silently swallowing them with `try?` (Part of #2663)
+- **XZExtractor Memory Warning** — Log a warning when extracting XZ archives larger than 200 MB, since the entire file is loaded into memory (Part of #2663)
 - **Cheat System Name Mismatches** — Added `libretroCheatSystemName` mappings for MSX,
   MAME, ZX Spectrum, Atari 8-bit, and others; title tag stripping for region codes (#2617)
 - **Cheat DB MD5 Detection** — Detects MD5 data presence (not just column existence) to
