@@ -48,8 +48,8 @@ public struct BPSPatcher: Sendable {
         }
 
         // Verify patch CRC32
-        let patchCRC = readLE32(patch, at: patch.count - 4)
-        let computedPatchCRC = crc32(patch[0..<(patch.count - 4)])
+        let patchCRC = patch.readLE32(at: patch.count - 4)
+        let computedPatchCRC = patchCRC32(patch[0..<(patch.count - 4)])
         guard patchCRC == computedPatchCRC else {
             throw PatchError.crcMismatch(expected: patchCRC, actual: computedPatchCRC)
         }
@@ -62,8 +62,8 @@ public struct BPSPatcher: Sendable {
         pos += metadataLength  // skip metadata (JSON string)
 
         // Verify source CRC32
-        let sourceCRC = readLE32(patch, at: patch.count - 12)
-        let computedSourceCRC = crc32(source[0..<min(sourceSize, source.count)])
+        let sourceCRC = patch.readLE32(at: patch.count - 12)
+        let computedSourceCRC = patchCRC32(source[0..<min(sourceSize, source.count)])
         guard sourceCRC == computedSourceCRC else {
             throw PatchError.sourceROMMismatch
         }
@@ -145,46 +145,12 @@ public struct BPSPatcher: Sendable {
         }
 
         // Verify target CRC32
-        let targetCRC = readLE32(patch, at: patch.count - 8)
-        let computedTargetCRC = crc32(target)
+        let targetCRC = patch.readLE32(at: patch.count - 8)
+        let computedTargetCRC = patchCRC32(target)
         guard targetCRC == computedTargetCRC else {
             throw PatchError.patchedROMVerificationFailed
         }
 
         return target
-    }
-
-    // MARK: - Private helpers
-
-    private func readVLI(_ data: Data, pos: inout Int) -> Int {
-        var result = 0
-        var shift = 0
-        while pos < data.count {
-            let byte = Int(data[pos])
-            pos += 1
-            result |= (byte & 0x7F) << shift
-            if byte & 0x80 != 0 { break }
-            shift += 7
-            result += 1 << shift
-        }
-        return result
-    }
-
-    private func readLE32(_ data: Data, at offset: Int) -> UInt32 {
-        UInt32(data[offset]) |
-        UInt32(data[offset + 1]) << 8 |
-        UInt32(data[offset + 2]) << 16 |
-        UInt32(data[offset + 3]) << 24
-    }
-
-    private func crc32(_ data: some DataProtocol) -> UInt32 {
-        var crc: UInt32 = 0xFFFF_FFFF
-        for byte in data {
-            crc ^= UInt32(byte)
-            for _ in 0..<8 {
-                crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
-            }
-        }
-        return ~crc
     }
 }

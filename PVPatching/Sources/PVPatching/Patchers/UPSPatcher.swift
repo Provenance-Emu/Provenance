@@ -46,8 +46,8 @@ public struct UPSPatcher: Sendable {
         }
 
         // Verify patch CRC32
-        let patchCRC = readLE32(patch, at: patch.count - 4)
-        let computedPatchCRC = crc32(patch[0..<(patch.count - 4)])
+        let patchCRC = patch.readLE32(at: patch.count - 4)
+        let computedPatchCRC = patchCRC32(patch[0..<(patch.count - 4)])
         guard patchCRC == computedPatchCRC else {
             throw PatchError.crcMismatch(expected: patchCRC, actual: computedPatchCRC)
         }
@@ -57,13 +57,13 @@ public struct UPSPatcher: Sendable {
         let outputSize = readVLI(patch, pos: &pos)
 
         // Verify source CRC32
-        let inputCRC  = readLE32(patch, at: patch.count - 12)
-        let outputCRC = readLE32(patch, at: patch.count - 8)
-        let computedSourceCRC = crc32(source[0..<min(inputSize, source.count)])
+        let inputCRC  = patch.readLE32(at: patch.count - 12)
+        let outputCRC = patch.readLE32(at: patch.count - 8)
+        let computedSourceCRC = patchCRC32(source[0..<min(inputSize, source.count)])
         guard inputCRC == computedSourceCRC else {
             // Try reverse direction (output → input patching), as UPS is bidirectional.
             // In reverse, the caller's "source" is the output ROM; we produce the input ROM.
-            let computedOutputCRC = crc32(source[0..<min(outputSize, source.count)])
+            let computedOutputCRC = patchCRC32(source[0..<min(outputSize, source.count)])
             guard outputCRC == computedOutputCRC else {
                 throw PatchError.sourceROMMismatch
             }
@@ -113,7 +113,7 @@ public struct UPSPatcher: Sendable {
         }
 
         // Verify output CRC32 — ensures the patched ROM matches the expected result.
-        let computedOutputCRC = crc32(result)
+        let computedOutputCRC = patchCRC32(result)
         guard expectedOutputCRC == computedOutputCRC else {
             throw PatchError.patchedROMVerificationFailed
         }
@@ -121,35 +121,4 @@ public struct UPSPatcher: Sendable {
         return result
     }
 
-    private func readVLI(_ data: Data, pos: inout Int) -> Int {
-        var result = 0
-        var shift = 0
-        while pos < data.count {
-            let byte = Int(data[pos])
-            pos += 1
-            result += (byte & 0x7F) << shift
-            if byte & 0x80 != 0 { break }
-            shift += 7
-            result += 1 << shift
-        }
-        return result
-    }
-
-    private func readLE32(_ data: Data, at offset: Int) -> UInt32 {
-        UInt32(data[offset]) |
-        UInt32(data[offset + 1]) << 8 |
-        UInt32(data[offset + 2]) << 16 |
-        UInt32(data[offset + 3]) << 24
-    }
-
-    private func crc32(_ data: some DataProtocol) -> UInt32 {
-        var crc: UInt32 = 0xFFFF_FFFF
-        for byte in data {
-            crc ^= UInt32(byte)
-            for _ in 0..<8 {
-                crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
-            }
-        }
-        return ~crc
-    }
 }
