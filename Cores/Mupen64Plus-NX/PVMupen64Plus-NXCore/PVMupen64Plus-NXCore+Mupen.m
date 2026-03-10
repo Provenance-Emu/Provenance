@@ -152,7 +152,9 @@ void ConfigureCore(NSString *romFolder) {
     ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
 
 	int SiDmaDuration = [MupenGameNXCore intForOption:@"SiDmaDuration"];
-	ConfigSetParameter(config, "SiDmaDuration", M64TYPE_INT, &SiDmaDuration);
+    if (SiDmaDuration >= 0) {
+        ConfigSetParameter(config, "SiDmaDuration", M64TYPE_INT, &SiDmaDuration);
+    }
 
 	int disableExtraMemory = [MupenGameNXCore boolForOption:@"Disable Extra Memory"];
 	ConfigSetParameter(config, "DisableExtraMem", M64TYPE_BOOL, &disableExtraMemory);
@@ -160,6 +162,10 @@ void ConfigureCore(NSString *romFolder) {
 	int randomizeInterrupt = [MupenGameNXCore boolForOption:@"Randomize Interrupt"];
 	ConfigSetParameter(config, "RandomizeInterrupt", M64TYPE_BOOL, &randomizeInterrupt);
 
+    int countPerOp = [MupenGameNXCore intForOption:@"Count Per Op"];
+    if (countPerOp >= 1) {
+        ConfigSetParameter(config, "CountPerOp", M64TYPE_INT, &countPerOp);
+    }
 
 		// Draw on-screen display if True, otherwise don't draw OSD
 	int osd = [MupenGameNXCore boolForOption:@"Debug OSD"];
@@ -188,7 +194,7 @@ void ConfigureVideoGeneral() {
     int screenHeight = HEIGHT;
     if(RESIZE_TO_FULLSCREEN) {
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-        float widthScale = floor(size.height / WIDTHf);
+        float widthScale = floor(size.width / WIDTHf);
         float heightScale = floor(size.height / HEIGHTf);
         float scale = MAX(MIN(widthScale, heightScale), 1);
         screenWidth =  scale * WIDTHf;
@@ -356,7 +362,7 @@ void ConfigureRICE() {
     ConfigSetParameter(rice, "MultiSampling", M64TYPE_INT, &multiSampling);
 
     // Color bit depth for rendering window (0=32 bits, 1=16 bits)
-    int colorQuality = 0;
+    int colorQuality = [MupenGameNXCore intForOption:@"Color Quality"];
     ConfigSetParameter(rice, "ColorQuality", M64TYPE_INT, &colorQuality);
 
     /** End RICE CONFIG **/

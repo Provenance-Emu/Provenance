@@ -180,7 +180,7 @@ void ConfigureCore(NSString *romFolder) {
 	int randomizeInterrupt = [MupenGameCoreOptions boolForOption:@"Randomize Interrupt"];
 	ConfigSetParameter(config, "RandomizeInterrupt", M64TYPE_BOOL, &randomizeInterrupt);
 
-    int countPerOp = [MupenGameCoreOptions boolForOption:@"Count Per Op"];
+    int countPerOp = [MupenGameCoreOptions intForOption:@"Count Per Op"];
     if (countPerOp >= 1) {
         ConfigSetParameter(config, "CountPerOp", M64TYPE_INT, &countPerOp);
     }
@@ -389,7 +389,7 @@ void ConfigureRICE() {
     ConfigSetParameter(rice, "MultiSampling", M64TYPE_INT, &multiSampling);
 
     // Color bit depth for rendering window (0=32 bits, 1=16 bits)
-    int colorQuality = 0;
+    int colorQuality = [MupenGameCoreOptions intForOption:@"Color Quality"];
     ConfigSetParameter(rice, "ColorQuality", M64TYPE_INT, &colorQuality);
 
     /** End RICE CONFIG **/
