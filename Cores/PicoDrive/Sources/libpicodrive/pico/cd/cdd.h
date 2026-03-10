@@ -60,6 +60,8 @@
 /* CD track */
 typedef struct
 {
+  int type;
+  char *fname;
   void *fd;
 #ifdef USE_LIBTREMOR
   OggVorbis_File vf;
@@ -67,6 +69,7 @@ typedef struct
   int offset;
   int start;
   int end;
+  int loop, loop_lba; /* for MEGASD */
 } track_t; 
 
 /* CD TOC */

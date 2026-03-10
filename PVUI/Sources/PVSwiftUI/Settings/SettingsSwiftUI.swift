@@ -1628,6 +1628,7 @@ private struct ControllerSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
     @Default(.hapticFeedback) var hapticFeedback
+    @Default(.controllerHapticIntensity) var controllerHapticIntensity
 
     var body: some View {
         Group {
@@ -1665,8 +1666,45 @@ private struct ControllerSection: View {
                            subtitle: "Vibrate when pressing buttons.",
                            icon: .sfSymbol("iphone.radiowaves.left.and.right"))
             }
+            #endif
+
+            // On tvOS, always show Controller Rumble Intensity since external controllers
+            // (DualSense, Xbox) are the primary input and phone haptic toggle is absent.
+            // On iOS/iPadOS, gate it behind the Haptic Feedback toggle.
+            #if os(tvOS)
+            ControllerRumbleSlider(controllerHapticIntensity: $controllerHapticIntensity)
+            #else
+            if hapticFeedback {
+                ControllerRumbleSlider(controllerHapticIntensity: $controllerHapticIntensity)
+            }
+            #endif
+            #if !os(tvOS)
             OnScreenControllerSection()
             #endif
+        }
+    }
+}
+
+/// Slider for adjusting external controller rumble motor intensity.
+/// Used by both tvOS (always visible) and iOS (gated behind haptic feedback toggle).
+private struct ControllerRumbleSlider: View {
+    @Binding var controllerHapticIntensity: Double
+
+    var body: some View {
+        Section(header: Text("Controller Rumble")) {
+            VStack(alignment: .leading, spacing: 4) {
+                SettingsRow(title: "Controller Rumble Intensity",
+                            subtitle: "Motor strength for DualSense, Xbox, Switch, and DualShock 4 controllers.",
+                            icon: .sfSymbol("waveform.path"))
+                Slider(value: $controllerHapticIntensity, in: 0.0...1.0, step: 0.05) {
+                    Text("Intensity")
+                } minimumValueLabel: {
+                    Image(systemName: "speaker")
+                } maximumValueLabel: {
+                    Image(systemName: "speaker.wave.3")
+                }
+                .padding(.horizontal)
+            }
         }
     }
 }

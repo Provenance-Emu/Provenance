@@ -9,6 +9,7 @@
 import Foundation
 import CoreSpotlight
 import PVLibrary
+import PVPrimitives
 import PVSupport
 import RealmSwift
 import UniformTypeIdentifiers

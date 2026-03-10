@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import PVSupport
 import RealmSwift
 import PVLogging
@@ -37,9 +38,11 @@ public final class PVSaveState: RealmSwift.Object, Identifiable, Filed, LocalFil
     
     @Persisted public var createdWithCoreVersion: String!
 
-    /// Cache for size calculations
-    private static var sizeCache = [String: UInt64]()
-    private static let sizeCacheLock = NSLock()
+    /// Cache for size calculations, protected by ``sizeCacheLock``.
+    nonisolated(unsafe) private static var sizeCache = [String: UInt64]()
+    /// Thread-safe guard for `sizeCache`. Uses `OSAllocatedUnfairLock` (iOS 16+) for
+    /// lower overhead than `NSLock` and guaranteed deadlock-free `withLock` semantics.
+    private static let sizeCacheLock = OSAllocatedUnfairLock<Void>()
 
     public convenience init(withGame game: PVGame, core: PVCore, file: PVFile, date: Date = Date(), image: PVImageFile? = nil, isAutosave: Bool = false, isPinned: Bool = false, isFavorite: Bool = false, userDescription: String? = nil, createdWithCoreVersion: String? = nil) {
         self.init()
@@ -64,20 +67,15 @@ public extension PVSaveState {
     /// Synchronous size calculation - returns the combined size of the save state file and image
     var size: UInt64 {
         // Check cache first
-        PVSaveState.sizeCacheLock.lock()
-        if let cachedSize = PVSaveState.sizeCache[id] {
-            PVSaveState.sizeCacheLock.unlock()
+        if let cachedSize = PVSaveState.sizeCacheLock.withLock({ PVSaveState.sizeCache[id] }) {
             return cachedSize
         }
-        PVSaveState.sizeCacheLock.unlock()
 
         // Calculate size if not cached
         let calculatedSize = (file?.size ?? 0) + (image?.size ?? 0)
 
         // Store in cache
-        PVSaveState.sizeCacheLock.lock()
-        PVSaveState.sizeCache[id] = calculatedSize
-        PVSaveState.sizeCacheLock.unlock()
+        PVSaveState.sizeCacheLock.withLock { PVSaveState.sizeCache[id] = calculatedSize }
 
         return calculatedSize
     }
@@ -86,12 +84,9 @@ public extension PVSaveState {
     /// - Returns: The combined size of the save state file and image
     func sizeAsync() async -> UInt64 {
         // Check cache first (synchronously)
-        PVSaveState.sizeCacheLock.lock()
-        if let cachedSize = PVSaveState.sizeCache[id] {
-            PVSaveState.sizeCacheLock.unlock()
+        if let cachedSize = PVSaveState.sizeCacheLock.withLock({ PVSaveState.sizeCache[id] }) {
             return cachedSize
         }
-        PVSaveState.sizeCacheLock.unlock()
 
         @ThreadSafe var threadsafeSelf: PVSaveState? = self
         /// Use Task to move the calculation to a background thread
@@ -106,24 +101,18 @@ public extension PVSaveState {
         }.value
 
         // Store in cache
-        PVSaveState.sizeCacheLock.lock()
-        PVSaveState.sizeCache[id] = UInt64(calculatedSize)
-        PVSaveState.sizeCacheLock.unlock()
+        PVSaveState.sizeCacheLock.withLock { PVSaveState.sizeCache[id] = UInt64(calculatedSize) }
 
         return calculatedSize
     }
 
     /// Clear the size cache for this save state
     func clearSizeCache() {
-        PVSaveState.sizeCacheLock.lock()
-        PVSaveState.sizeCache.removeValue(forKey: id)
-        PVSaveState.sizeCacheLock.unlock()
+        PVSaveState.sizeCacheLock.withLock { PVSaveState.sizeCache.removeValue(forKey: id) }
     }
 
     /// Clear the entire size cache
     static func clearAllSizeCaches() {
-        PVSaveState.sizeCacheLock.lock()
-        PVSaveState.sizeCache.removeAll()
-        PVSaveState.sizeCacheLock.unlock()
+        PVSaveState.sizeCacheLock.withLock { PVSaveState.sizeCache.removeAll() }
     }
 }

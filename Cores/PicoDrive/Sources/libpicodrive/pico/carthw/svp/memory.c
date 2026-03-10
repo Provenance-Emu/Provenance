@@ -26,8 +26,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../../pico_int.h"
-#include "../../memory.h"
+#include <pico/pico_int.h>
+#include <pico/memory.h>
 
 // for wait loop det
 static void PicoWrite16_dram(u32 a, u32 d)

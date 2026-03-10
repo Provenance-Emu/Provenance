@@ -61,6 +61,23 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     func hideMenu()
     func showSpeedMenu()
     func showSwapDiscsMenu()
+
+    // MARK: - Database (abstracted for SwiftData migration #2510)
+
+    /// The persistence service used to register save states in the database.
+    ///
+    /// Defaults to ``RomDatabase/sharedInstance`` (Realm).  Override to inject a
+    /// different backend (e.g. `SwiftDataSaveStatePersistenceService` from #2510,
+    /// or a mock for testing).
+    var saveStatePersistenceService: any SaveStatePersistenceServiceProtocol { get }
+}
+
+public extension PVEmualatorControllerProtocol {
+    /// Default implementation returns the shared Realm-backed database.
+    /// Override this property to substitute a SwiftData or test backend.
+    var saveStatePersistenceService: any SaveStatePersistenceServiceProtocol {
+        RomDatabase.sharedInstance
+    }
 }
 
 public extension PVEmualatorControllerProtocol where Self: UIViewController {
@@ -303,7 +320,9 @@ public extension PVEmualatorControllerProtocol {
             if let jpegData = screenshot.jpegData(compressionQuality: 0.95) {
                 let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
                 do {
-                    try jpegData.write(to: imageURL)
+                    // Use atomic write to prevent a partial/corrupt image file if the
+                    // process is interrupted between creating and finalising the write.
+                    try jpegData.write(to: imageURL, options: .atomic)
                     imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
                     #if os(tvOS)
                     localTopShelfImageURL = imageURL
@@ -322,76 +341,26 @@ public extension PVEmualatorControllerProtocol {
         try await core.saveState(toFileAtPath: saveURL.path)
         DLOG("Succeeded saving state, auto: \(auto)")
 
-        /// Create the save state in database
-        try await RomDatabase.sharedInstance.asyncWriteTransaction {
-            guard let realm = try? Realm() else {
-                ELOG("Realm() failed")
-                return
-            }
-            /// Fetch fresh instances of core and game within the write transaction
-            guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier),
-                  let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
-                ELOG("no core found for identifier: \(coreIdentifier)")
-                return
-//                throw SaveStateError.noCoreFound(coreIdentifier)
-            }
+        /// Register the save state in the database via the abstracted persistence service.
+        /// This defaults to the Realm-backed RomDatabase today and can be swapped for
+        /// a SwiftData implementation when #2510 lands — no changes needed here.
+        let saveStateID = try await saveStatePersistenceService.registerSaveState(
+            gameID: gameMD5,
+            coreIdentifier: coreIdentifier,
+            file: saveFile,
+            imageFile: imageFile,
+            isAutosave: auto
+        )
 
-            /// Create and add the save state
-            let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
-            realm.add(saveState)
-
-            #if os(tvOS)
-            if let localTopShelfImageURL {
-                let saveStateID = saveState.id
-                Task.detached(priority: .utility) { [self, localTopShelfImageURL] in
-                    storeSaveStateScreenshotForTopShelf(from: localTopShelfImageURL, saveStateID: saveStateID)
-                }
-            }
-            #endif
-
-            /// Post notification for CloudKit sync
-            let saveStateID = saveState.id
-            Task { @MainActor in
-                NotificationCenter.default.post(name: .PVSaveStateSaved, object: nil, userInfo: ["saveStateID": saveStateID])
-                DLOG("Posted PVSaveStateSaved notification for save state: \(saveStateID)")
-            }
-
-            /// Store metadata asynchronously
-            LibrarySerializer.storeMetadata(saveState) { result in
-                switch result {
-                case .success(let url):
-                    ILOG("Serialized save state metadata to (\(url.path))")
-                case .error(let error):
-                    ELOG("Failed to serialize save metadata. \(error)")
-                }
-            }
-
-            /// Handle cleanup if this is an auto-save
-            if auto {
-                self.cleanupOldAutoSaves(for: game)
+        #if os(tvOS)
+        if let localTopShelfImageURL {
+            Task.detached(priority: .utility) { [self, localTopShelfImageURL] in
+                storeSaveStateScreenshotForTopShelf(from: localTopShelfImageURL, saveStateID: saveStateID)
             }
         }
+        #endif
 
         return true
-    }
-
-    /// Separate function to handle cleanup of old auto-saves
-    private func cleanupOldAutoSaves(for game: PVGame) {
-        guard let autoSaves = game.thaw()?.autoSaves else { return }
-        guard let realm = try? Realm() else {
-            ELOG("Realm() failed")
-            return
-        }
-
-        if autoSaves.count > 5 {
-            // Get saves to delete (keeping the 5 most recent)
-            let savesToDelete = Array(autoSaves.sorted(byKeyPath: "date", ascending: false).suffix(from: 5))
-
-            for saveState in savesToDelete {
-                DLOG("Deleting old auto save of \(saveState.game.title) dated: \(saveState.date.description)")
-                realm.delete(saveState)
-            }
-        }
     }
 }
 

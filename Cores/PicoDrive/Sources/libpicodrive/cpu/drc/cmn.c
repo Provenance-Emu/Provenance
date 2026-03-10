@@ -10,7 +10,13 @@
 #include <pico/pico_int.h>
 #include "cmn.h"
 
-u8 ALIGNED(4096) tcache_default[DRC_TCACHE_SIZE];
+#if defined(__linux__) && (defined(__aarch64__) || defined(__VFP_FP__))
+// might be running on a 64k-page kernel
+#define PICO_PAGE_ALIGN 65536
+#else
+#define PICO_PAGE_ALIGN 4096
+#endif
+u8 ALIGNED(PICO_PAGE_ALIGN) tcache_default[DRC_TCACHE_SIZE];
 u8 *tcache;
 
 void drc_cmn_init(void)

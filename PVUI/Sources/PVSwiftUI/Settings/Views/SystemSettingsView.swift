@@ -225,6 +225,13 @@ struct SystemSection: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var isCoresExpanded = false
     @State private var isBiosesExpanded = false
+    @Default(.unsupportedCores) private var unsupportedCores
+
+    private var isAppStore: Bool { AppState.shared.isAppStore }
+
+    private var supportLevel: CoreSupportLevel {
+        system.coreSupportLevel(isAppStore: isAppStore, unsupportedCores: unsupportedCores)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -261,15 +268,21 @@ struct SystemSection: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(system.name)
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
-                                startPoint: .leading,
-                                endPoint: .trailing
+                    HStack(spacing: 8) {
+                        Text(system.name)
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
                             )
-                        )
+
+                        if supportLevel != .fullySupported {
+                            CoreSupportLevelBadge(level: supportLevel)
+                        }
+                    }
 
                     // Games count with retrowave styling
                     HStack(spacing: 6) {
@@ -280,6 +293,13 @@ struct SystemSection: View {
                         Text("\(system.games.count) Games")
                             .font(.system(size: 14))
                             .foregroundColor(.white.opacity(0.8))
+                    }
+
+                    if supportLevel != .fullySupported {
+                        Text(supportLevel.explanation)
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.6))
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
@@ -492,5 +512,30 @@ struct BIOSRow: View {
                 .font(.caption)
                 .foregroundColor(.red)
         }
+    }
+}
+
+/// A small badge indicating a system's core support level.
+struct CoreSupportLevelBadge: View {
+    let level: CoreSupportLevel
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: level.icon)
+                .font(.system(size: 10, weight: .bold))
+            Text(level.label)
+                .font(.system(size: 10, weight: .semibold))
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(
+            Capsule()
+                .fill(level.badgeColor.opacity(0.2))
+                .overlay(
+                    Capsule()
+                        .strokeBorder(level.badgeColor.opacity(0.6), lineWidth: 1)
+                )
+        )
+        .foregroundColor(level.badgeColor)
     }
 }

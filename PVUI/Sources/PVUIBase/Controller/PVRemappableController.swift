@@ -72,11 +72,11 @@ public enum AdaptiveTriggerMode {
 /// Represents a button mapping configuration
 public struct ButtonMapping: Codable, Equatable {
     /// The original button input
-    let sourceId: ButtonIdentifier
+    public let sourceId: ButtonIdentifier
     /// The button to map to
-    let destinationId: ButtonIdentifier
+    public let destinationId: ButtonIdentifier
 
-    init(source: ButtonIdentifier, destination: ButtonIdentifier) {
+    public init(source: ButtonIdentifier, destination: ButtonIdentifier) {
         self.sourceId = source
         self.destinationId = destination
     }
@@ -100,14 +100,11 @@ public final class PVRemappableController: NSObject {
         self.wrappedController = controller
         super.init()
 
-        // Forward controller properties
-        wrappedController.playerIndex = controller.playerIndex
-
         // Load saved mappings first (if any exist)
         loadMappings()
 
-        // Set up default mappings (e.g., Joy-Con auto-fix) only if no mappings exist
-        /// This ensures user's manual remappings take precedence over auto-fix
+        // Set up default mappings (e.g., Joy-Con auto-fix) only if no mappings exist.
+        // This ensures user's manual remappings take precedence over auto-fix.
         if buttonMappings.isEmpty {
             setupDefaultMappings()
         }
@@ -174,24 +171,13 @@ public final class PVRemappableController: NSObject {
     @available(iOS 14.0, tvOS 14.0, *)
     private func setupXboxFeatures(_ xbox: GCXboxGamepad) {
         if #available(iOS 14.5, tvOS 14.5, *) {
-            // Paddle buttons
-            xbox.buttonA.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.paddleOne) }
-            }
-            xbox.buttonB.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.paddleTwo) }
-            }
-            xbox.buttonX.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.paddleThree) }
-            }
-            xbox.buttonY.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
-                if pressed { self?.handleSpecialButton(.paddleFour) }
-            }
-
-            // Share button
+            // Share button (buttonOptions maps to Xbox Share on Elite/Series X controllers)
             xbox.buttonOptions?.pressedChangedHandler = { [weak self] (button: GCControllerButtonInput, value: Float, pressed: Bool) in
                 if pressed { self?.handleSpecialButton(.shareButton) }
             }
+            // Note: Xbox Elite paddle buttons (P1–P4) are not individually accessible via
+            // GCXboxGamepad in the current GCController API. They surface through the
+            // standard button inputs, so no additional setup is needed here.
         }
     }
 
@@ -278,13 +264,13 @@ public final class PVRemappableController: NSObject {
 
     /// Set up any default button mappings
     private func setupDefaultMappings() {
-        /// Detect Joy-Con controllers and fix button swaps
+        // Detect Joy-Con controllers and fix button swaps
         if isJoyConController() {
-            /// Joy-Con controllers have swapped A/B and X/Y buttons
-            /// Fix: Swap A<->B and X<->Y
+            // Joy-Con controllers have swapped A/B and X/Y buttons
+            // Fix: Swap A<->B and X<->Y
             swapButtons(.buttonA, .buttonB)
             swapButtons(.buttonX, .buttonY)
-            /// Save mappings so they persist across reconnections
+            // Save mappings so they persist across reconnections
             saveMappings()
             ILOG("Joy-Con controller detected - auto-corrected A/B and X/Y button mappings")
         }
@@ -294,26 +280,26 @@ public final class PVRemappableController: NSObject {
     private func isJoyConController() -> Bool {
         guard let vendorName = wrappedController.vendorName else { return false }
 
-        /// Joy-Con controllers appear with different identifiers:
-        /// - "Joy-Con (L)" or "Joy-Con (R)" when connected separately
-        /// - "Nintendo" when connected as a pair
-        /// - Product category might be "Nintendo Switch"
+        // Joy-Con controllers appear with different identifiers:
+        // - "Joy-Con (L)" or "Joy-Con (R)" when connected separately
+        // - "Nintendo" when connected as a pair
+        // - Product category might be "Nintendo Switch"
         let vendorLower = vendorName.lowercased()
         let productCategory = wrappedController.productCategory.lowercased()
 
-        /// Check for explicit Joy-Con identifiers
+        // Check for explicit Joy-Con identifiers
         if vendorLower.contains("joy-con") || vendorLower.contains("joycon") {
             return true
         }
 
-        /// Check for Nintendo Switch controllers (includes Joy-Cons and Pro Controller)
-        /// Joy-Cons often appear as separate Left/Right controllers
+        // Check for Nintendo Switch controllers (includes Joy-Cons and Pro Controller)
+        // Joy-Cons often appear as separate Left/Right controllers
         if vendorLower.contains("nintendo") {
-            /// If it's a Switch controller and not explicitly a Pro Controller, assume Joy-Con
+            // If it's a Switch controller and not explicitly a Pro Controller, assume Joy-Con
             if productCategory.contains("switch") && !vendorLower.contains("pro") {
                 return true
             }
-            /// Left/Right in name usually indicates Joy-Con
+            // Left/Right in name usually indicates Joy-Con
             if vendorLower.contains("left") || vendorLower.contains("right") {
                 return true
             }
@@ -369,16 +355,8 @@ public final class PVRemappableController: NSObject {
             }
             return nil
         case .paddleOne, .paddleTwo, .paddleThree, .paddleFour:
-            if #available(iOS 14.5, tvOS 14.5, *),
-               let xbox = gamepad as? GCXboxGamepad {
-                switch id {
-                case .paddleOne: return xbox.buttonA
-                case .paddleTwo: return xbox.buttonB
-                case .paddleThree: return xbox.buttonX
-                case .paddleFour: return xbox.buttonY
-                default: return nil
-                }
-            }
+            // Xbox Elite paddle buttons are not individually accessible as
+            // GCControllerButtonInput via the GCController API.
             return nil
         case .shareButton:
             if #available(iOS 14.5, tvOS 14.5, *),
@@ -405,24 +383,24 @@ public final class PVRemappableController: NSObject {
     private func setupInputHandlers() {
         guard let gamepad = wrappedController.extendedGamepad else { return }
 
-        /// Store original handler if one exists (set by cores or other parts)
+        // Store original handler if one exists (set by cores or other parts)
         originalValueChangedHandler = gamepad.valueChangedHandler
 
-        /// Set up individual button handlers for remapping
+        // Set up individual button handlers for remapping
         setupButtonRemappingHandlers(on: gamepad)
 
-        /// Chain the original handler after remapping
+        // Chain the original handler after remapping
         gamepad.valueChangedHandler = { [weak self] (gamepad, element) in
             guard let self = self else { return }
 
-            /// Chain original handler so we don't break existing functionality
+            // Chain original handler so we don't break existing functionality
             self.originalValueChangedHandler?(gamepad, element)
         }
     }
 
     /// Set up individual button handlers to apply remapping
     private func setupButtonRemappingHandlers(on gamepad: GCExtendedGamepad) {
-        /// Set up handlers for all mappable buttons
+        // Set up handlers for all mappable buttons
         let buttons: [(GCControllerButtonInput, ButtonIdentifier)] = [
             (gamepad.buttonA, .buttonA),
             (gamepad.buttonB, .buttonB),
@@ -440,50 +418,50 @@ public final class PVRemappableController: NSObject {
         ]
 
         for (button, buttonId) in buttons {
-            /// Store original handler BEFORE we modify it
+            // Store original handler BEFORE we modify it
             originalButtonHandlers[buttonId] = button.valueChangedHandler
 
-            /// Set new handler that applies remapping
+            // Set new handler that applies remapping
             button.valueChangedHandler = { [weak self] (button, value, pressed) in
                 guard let self = self else { return }
 
-                /// Prevent infinite loops from swapped buttons
+                // Prevent infinite loops from swapped buttons
                 guard !self.remappingInProgress.contains(buttonId) else {
-                    /// Already remapping this button, just call original handler
+                    // Already remapping this button, just call original handler
                     self.originalButtonHandlers[buttonId]?(button, value, pressed)
                     return
                 }
 
-                /// Check if this button has a remapping
+                // Check if this button has a remapping
                 if let mapping = self.buttonMappings[buttonId],
                    let destButton = self.button(for: mapping.destinationId, on: gamepad) {
-                    /// Mark as in progress to prevent loops
+                    // Mark as in progress to prevent loops
                     self.remappingInProgress.insert(buttonId)
 
-                    /// Get the ORIGINAL handler of destination button (before our remapping)
-                    /// This prevents infinite loops when buttons are swapped
+                    // Get the ORIGINAL handler of destination button (before our remapping)
+                    // This prevents infinite loops when buttons are swapped
                     if let destId = self.identifier(for: destButton),
                        let destOriginalHandler = self.originalButtonHandlers[destId] {
-                        /// Call destination's original handler with destination button
+                        // Call destination's original handler with destination button
                         destOriginalHandler(destButton, value, pressed)
                     } else {
-                        /// Fallback: call destination's current handler
+                        // Fallback: call destination's current handler
                         destButton.valueChangedHandler?(destButton, value, pressed)
                     }
 
-                    /// Remove from in-progress set
+                    // Remove from in-progress set
                     self.remappingInProgress.remove(buttonId)
 
-                    /// Also call original handler for this button to maintain compatibility
+                    // Also call original handler for this button to maintain compatibility
                     self.originalButtonHandlers[buttonId]?(button, value, pressed)
                 } else {
-                    /// No remapping, call original handler
+                    // No remapping, call original handler
                     self.originalButtonHandlers[buttonId]?(button, value, pressed)
                 }
             }
         }
 
-        /// Handle options button if available
+        // Handle options button if available
         if #available(iOS 14.0, tvOS 14.0, *), let optionsButton = gamepad.buttonOptions {
             originalButtonHandlers[.options] = optionsButton.valueChangedHandler
             optionsButton.valueChangedHandler = { [weak self] (button, value, pressed) in
@@ -536,17 +514,11 @@ public final class PVRemappableController: NSObject {
                     switch element {
                     case dualSense.buttonOptions: return .share
                     case dualSense.touchpadButton: return .touchpadButton
-                    case dualSense.buttonOptions: return .micButton
-                    case dualSense.buttonOptions: return .createButton
                     default: break
                     }
                 }
                 if let xbox = gamepad as? GCXboxGamepad {
                     switch element {
-                    case xbox.buttonA: return .paddleOne
-                    case xbox.buttonB: return .paddleTwo
-                    case xbox.buttonX: return .paddleThree
-                    case xbox.buttonY: return .paddleFour
                     case xbox.buttonOptions: return .shareButton
                     default: break
                     }
@@ -598,9 +570,12 @@ extension PVRemappableController {
 extension PVRemappableController {
     /// Save current mappings to UserDefaults
     public func saveMappings() {
-        // Convert mappings to serializable format
-        let mappingsData = try? JSONEncoder().encode(buttonMappings)
-        UserDefaults.standard.set(mappingsData, forKey: "PVControllerMappings_\(wrappedController.vendorName ?? "unknown")")
+        do {
+            let mappingsData = try JSONEncoder().encode(buttonMappings)
+            UserDefaults.standard.set(mappingsData, forKey: "PVControllerMappings_\(wrappedController.vendorName ?? "unknown")")
+        } catch {
+            ELOG("Failed to encode controller mappings for '\(wrappedController.vendorName ?? "unknown")': \(error)")
+        }
     }
 
     /// Load saved mappings from UserDefaults

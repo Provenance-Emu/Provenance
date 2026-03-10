@@ -13,7 +13,7 @@
 #include "../libpicofe/input.h"
 #include "../common/emu.h"
 #include "../common/input_pico.h"
-#include "version.h"
+#include "../common/version.h"
 
 #include "log_io.h"
 
@@ -310,7 +310,7 @@ void plat_video_flip(void)
 		ximage_realloc(xlib_display, DefaultVisual(xlib_display, 0));
 
 		// propagate new ponters to renderers
-		plat_video_toggle_renderer(0, 0);
+		plat_video_set_buffer(g_screen_ptr);
 	}
 }
 

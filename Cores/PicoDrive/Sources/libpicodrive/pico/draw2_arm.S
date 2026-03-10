@@ -1,14 +1,22 @@
 /*
  * assembly optimized versions of most funtions from draw2.c
  * (C) notaz, 2006-2008
+ * (C) irixxxx, 2019-2023
  *
  * This work is licensed under the terms of MAME license.
  * See COPYING file in the top-level directory.
  *
  * this is highly specialized, be careful if changing related C code!
+ *
+ * NB: this only deals with buffers having line width at 328
  */
 
-#include "pico_int_o32.h"
+#include "pico_int_offs.h"
+
+.equ PDRAW_INTERLACE,	(1<<3)
+.equ PDRAW_32_COLS,	(1<<8)
+.equ PDRAW_BORDER_32,	(1<<9)
+.equ PDRAW_30_ROWS,	(1<<11)
 
 @ define these constants in your include file:
 @ .equiv START_ROW, 		1
@@ -24,14 +32,17 @@
 .text
 .align 2
 
-@ void BackFillFull(void *dst, int reg7)
+@ void BackFillFull(unsigned char *dst, int reg7, int lwidth)
 
 .global BackFillFull
 
 BackFillFull:
-    stmfd   sp!, {r4-r9,lr}
+    stmfd   sp!, {r4-r10,lr}
 
-    add     lr, r0, #328*8
+    sub     r10,r2, #320 @ unused bytes in a line
+    add     lr, r0, #8  @ 8 px overlap area at start of line
+    add     lr, lr, r2, lsl #3 @ 8 lines overlap area at top
+
     mov     r0, r1, lsl #26
     mov     r0, r0, lsr #26
 
@@ -52,7 +63,6 @@ BackFillFull:
 
     @ go go go!
 .bff_loop:
-    add     lr, lr, #8
     subs    r12, r12, #1
 
     stmia   lr!, {r0-r9} @ 10*4*8
@@ -64,9 +74,10 @@ BackFillFull:
     stmia   lr!, {r0-r9}
     stmia   lr!, {r0-r9}
 
+    add     lr, lr, r10 @ skip unused rest of line
     bne     .bff_loop
 
-    ldmfd   sp!, {r4-r9,lr}
+    ldmfd   sp!, {r4-r10,lr}
     bx      lr
 
 .pool
@@ -413,11 +424,16 @@ DrawLayerFull:
     orr     lr, lr, r4, lsl #13   @ lr|=nametab_bits{3}<<13
 
     ldr     r11,[sp, #9*4]        @ est
-    sub     r4, r9, #(START_ROW<<24)
+    ldr     r4, [r11, #OFS_EST_Draw2Start]
+    ldr     r7, [r11, #OFS_EST_rendstatus]
     ldr     r11, [r11, #OFS_EST_Draw2FB]
+    sub     r4, r9, r4, lsl #24
+    tst     r7, #PDRAW_BORDER_32  @ H32 border mode?
+    tstne   r7, #PDRAW_32_COLS
+    addne   r11, r11, #32
     mov     r4, r4, asr #24
     mov     r7, #328*8
-    mla     r11, r4, r7, r11      @ scrpos+=8*328*(planestart-START_ROW);
+    mla     r11, r4, r7, r11      @ scrpos+=8*328*(planestart-Draw2Start);
 
     @ Get vertical scroll value:
     add_c24 r7, r10, (OFS_PMEM_vsram-OFS_PMEM_vram)
@@ -585,13 +601,18 @@ DrawLayerFull:
 .global DrawTilesFromCacheF
 
 DrawTilesFromCacheF:
-    stmfd   sp!, {r4-r10,lr}
+    stmfd   sp!, {r4-r11,lr}
 
     mov     r9, #0xff000000 @ r9=prevcode=-1
     mvn     r6, #0          @ r6=prevy=-1
 
+    ldr     r7, [r1, #OFS_EST_rendstatus]
     ldr     r4, [r1, #OFS_EST_Draw2FB]
+    ldr     r11,[r1, #OFS_EST_Draw2Start]
     ldr     r2, [r0], #4    @ read y offset
+    tst     r7, #PDRAW_BORDER_32 @ H32 border mode?
+    tstne   r7, #PDRAW_32_COLS
+    addne   r4, r4, #32
     mov     r7, #328
     mla     r2, r7, r2, r4
     sub     r12, r2, #(328*8*START_ROW) @ r12=scrpos
@@ -606,13 +627,14 @@ DrawTilesFromCacheF:
 .dtfcf_loop:
     ldr     r7, [r8], #4    @ read code
     movs    r1, r7, lsr #16 @ r1=dx;
-    ldmeqfd sp!, {r4-r10,pc} @ dx is never zero, this must be a terminator, return
+    ldmeqfd sp!, {r4-r11,pc} @ dx is never zero, this must be a terminator, return
 
     @ row changed?
     cmp     r6, r7, lsr #27
     movne   r6, r7, lsr #27
+    subne   r6, r6, r11
     movne   r4, #328*8
-    mlane   r5, r4, r6, r12 @ r5=pd = scrpos + prevy*328*8
+    mlane   r5, r4, r6, r12 @ r5=pd = scrpos + (prevy-Draw2Start)*328*8
 
     bic     r1, r1, #0xf800
     add     r1, r5, r1      @ r1=pdest (halfwords)
@@ -688,14 +710,22 @@ DrawWindowFull:
 
     ldr     r4, [r11, #OFS_Pico_video_reg+12]
     mov     r5, #1                @ nametab_step
+    ldr     r11, [r3, #OFS_EST_Draw2FB]
+    ldr     r6, [r3, #OFS_EST_Draw2Start]
     tst     r4, #1                @ 40 cell mode?
     andne   r12, r12, #0xf000     @ 0x3c<<10
-    andeq   r12, r12, #0xf800
     movne   r5, r5, lsl #7
-    moveq   r5, r5, lsl #6        @ nametab_step
+    bne     0f
+    ldr     r7, [r3, #OFS_EST_rendstatus]
+    and     r12, r12, #0xf800
+    mov     r5, r5, lsl #6        @ nametab_step
+    tst     r7, #PDRAW_BORDER_32
+    tstne   r7, #PDRAW_32_COLS
+    addne   r11, r11, #32         @ center screen in H32 mode
 
-    and     r4, r0, #0xff
-    mla     r12, r5, r4, r12      @ nametab += nametab_step*start;
+0:  and     r4, r0, #0xff
+    sub     r4, r4, r6
+    mla     r12, r5, r4, r12      @ nametab += nametab_step*(start-Draw2Start];
 
     ldr     r10, [r3, #OFS_EST_PicoMem_vram]
     mov     r4, r0, lsr #16       @ r4=start_cell_h
@@ -715,14 +745,13 @@ DrawWindowFull:
 
     mov     r9, #0xff000000       @ r9=prevcode=-1
 
-    ldr     r11, [r3, #OFS_EST_Draw2FB]
     and     r4, r0, #0xff
     add     r11, r11, #328*8
-    sub     r4, r4, #START_ROW
+    sub     r4, r4, r6
     add     r11, r11, #8
 
     mov     r7, #328*8
-    mla     r11, r7, r4, r11      @ scrpos+=8*328*(start-START_ROW);
+    mla     r11, r7, r4, r11      @ scrpos+=8*328*(start-Draw2Start);
     mov     r0, #0xf
 
 .dwfloop_outer:
@@ -915,11 +944,16 @@ DrawSpriteFull:
     and     r3, lr, #0x6000
     mov     r3, r3, lsr #9  @ r3=pal=((code>>9)&0x30);
 
+    ldr     r0, [r1,  #OFS_EST_rendstatus]
     ldr     r11, [r1, #OFS_EST_Draw2FB]
+    ldr     r2, [r1,  #OFS_EST_Draw2Start]
     ldr     r10, [r1, #OFS_EST_PicoMem_vram]
-    sub     r1, r12, #(START_ROW*8)
+    tst     r0, #PDRAW_BORDER_32  @ H32 border mode?
+    tstne   r0, #PDRAW_32_COLS
+    addne   r11, r11, #32
+    sub     r12, r12, r2, lsl #3
     mov     r0, #328
-    mla     r11, r1, r0, r11      @ scrpos+=(sy-START_ROW*8)*328;
+    mla     r11, r12, r0, r11     @ scrpos+=(sy-Draw2Start*8)*328;
 
     orr     r5, r5, r5, lsl #16   @
     orr     r5, r6, r5, lsl #8    @ r5=width|(height<<8)|(height<<24)

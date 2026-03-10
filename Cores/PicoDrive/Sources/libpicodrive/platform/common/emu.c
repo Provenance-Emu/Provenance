@@ -1,6 +1,7 @@
 /*
  * PicoDrive
  * (C) notaz, 2007-2010
+ * (C) irixxxx, 2019-2024
  *
  * This work is licensed under the terms of MAME license.
  * See COPYING file in the top-level directory.
@@ -19,14 +20,20 @@
 #include "../libpicofe/fonts.h"
 #include "../libpicofe/sndout.h"
 #include "../libpicofe/lprintf.h"
+#include "../libpicofe/readpng.h"
 #include "../libpicofe/plat.h"
 #include "emu.h"
+#include "keyboard.h"
 #include "input_pico.h"
 #include "menu_pico.h"
 #include "config_file.h"
 
 #include <pico/pico_int.h>
 #include <pico/patch.h>
+
+#if defined(__GNUC__) && __GNUC__ >= 7
+#pragma GCC diagnostic ignored "-Wformat-truncation"
+#endif
 
 #ifndef _WIN32
 #define PATH_SEP      "/"
@@ -53,7 +60,14 @@ int pico_inp_mode;
 int flip_after_sync;
 int engineState = PGS_Menu;
 
-static short __attribute__((aligned(4))) sndBuffer[2*44100/50];
+int kbd_mode;
+struct vkbd *vkbd;
+
+static int pico_page;
+static int pico_w, pico_h;
+static u16 *pico_overlay;
+
+static short __attribute__((aligned(4))) sndBuffer[2*54000/50];
 
 /* tmp buff to reduce stack usage for plats with small stack */
 static char static_buff[512];
@@ -123,8 +137,8 @@ static void fname_ext(char *dst, int dstlen, const char *prefix, const char *ext
 	strncpy(dst + prefix_len, p, dstlen - prefix_len - 1);
 
 	dst[dstlen - 8] = 0;
-	if (dst[strlen(dst) - 4] == '.')
-		dst[strlen(dst) - 4] = 0;
+	if ((p = strrchr(dst, '.')) != NULL)
+		dst[p-dst] = 0;
 	if (ext)
 		strcat(dst, ext);
 }
@@ -178,6 +192,7 @@ static const char *find_bios(int *region, const char *cd_fname)
 			(*region == 8 ? "EU" : "JAP") : "USA");
 	}
 
+	// locate BIOS file
 	if (*region == 4) { // US
 		files = biosfiles_us;
 		count = sizeof(biosfiles_us) / sizeof(char *);
@@ -202,6 +217,16 @@ static const char *find_bios(int *region, const char *cd_fname)
 		strcat(static_buff, ".zip");
 		f = fopen(static_buff, "rb");
 		if (f) break;
+
+		strcpy(static_buff, files[i]);
+		strcat(static_buff, ".bin");
+		f = fopen(static_buff, "rb");
+		if (f) break;
+
+		static_buff[strlen(static_buff) - 4] = 0;
+		strcat(static_buff, ".zip");
+		f = fopen(static_buff, "rb");
+		if (f) break;
 	}
 
 	if (f) {
@@ -214,6 +239,26 @@ static const char *find_bios(int *region, const char *cd_fname)
 		menu_update_msg(static_buff);
 		return NULL;
 	}
+}
+
+static const char *find_msu(const char *cd_fname)
+{
+	int i;
+
+	// look for MSU.MD or MD+ rom file. XXX another extension list? ugh...
+	static const char *md_exts[] = { "gen", "smd", "md", "32x" };
+	char *ext = strrchr(cd_fname, '.');
+	int extpos = ext ? ext-cd_fname : strlen(cd_fname);
+	strcpy(static_buff, cd_fname);
+	static_buff[extpos++] = '.';
+	for (i = 0; i < ARRAY_SIZE(md_exts); i++) {
+		strcpy(static_buff+extpos, md_exts[i]);
+		if (access(static_buff, R_OK) == 0) {
+			printf("found MSU rom: %s\n",static_buff);
+			return static_buff;
+		}
+	}
+	return NULL;
 }
 
 /* check if the name begins with BIOS name */
@@ -318,6 +363,14 @@ static void system_announce(void)
 
 	if (PicoIn.AHW & PAHW_SMS) {
 		sys_name = "Master System";
+		if (PicoIn.AHW & PAHW_GG)
+			sys_name = "Game Gear";
+		else if (PicoIn.AHW & PAHW_SG)
+			sys_name = "SG-1000";
+		else if (PicoIn.AHW & PAHW_SC)
+			sys_name = "SC-3000";
+		else if (Pico.m.hardware & PMS_HW_JAP)
+			sys_name = "Mark III";
 #ifdef NO_SMS
 		extra = " [no support]";
 #endif
@@ -334,7 +387,7 @@ static void system_announce(void)
 	} else if (PicoIn.AHW & PAHW_32X) {
 		sys_name = "32X";
 	} else {
-		sys_name = "MegaDrive";
+		sys_name = "Mega Drive";
 		if ((Pico.m.hardware & 0xc0) == 0x80)
 			sys_name = "Genesis";
 	}
@@ -377,7 +430,7 @@ int emu_reload_rom(const char *rom_fname_in)
 		movie_data = 0;
 	}
 
-	if (!strcmp(ext, ".gmv"))
+	if (!strcasecmp(ext, ".gmv"))
 	{
 		// check for both gmv and rom
 		int dummy;
@@ -414,7 +467,7 @@ int emu_reload_rom(const char *rom_fname_in)
 		get_ext(rom_fname, ext);
 		lprintf("gmv loaded for %s\n", rom_fname);
 	}
-	else if (!strcmp(ext, ".pat"))
+	else if (!strcasecmp(ext, ".pat"))
 	{
 		int dummy;
 		PicoPatchLoad(rom_fname);
@@ -431,8 +484,8 @@ int emu_reload_rom(const char *rom_fname_in)
 
 	emu_make_path(carthw_path, "carthw.cfg", sizeof(carthw_path));
 
-	media_type = PicoLoadMedia(rom_fname, carthw_path,
-			find_bios, do_region_override);
+	media_type = PicoLoadMedia(rom_fname, NULL, 0, carthw_path,
+			find_bios, find_msu, do_region_override);
 
 	switch (media_type) {
 	case PM_BAD_DETECT:
@@ -486,6 +539,9 @@ int emu_reload_rom(const char *rom_fname_in)
 	}
 	else
 	{
+		PicoSetInputDevice(0, currentConfig.input_dev0);
+		PicoSetInputDevice(1, currentConfig.input_dev1);
+
 		system_announce();
 		PicoIn.opt &= ~POPT_DIS_VDP_FIFO;
 	}
@@ -531,11 +587,11 @@ out:
 
 int emu_swap_cd(const char *fname)
 {
-	enum cd_img_type cd_type;
+	enum cd_track_type cd_type;
 	int ret = -1;
 
 	cd_type = PicoCdCheck(fname, NULL);
-	if (cd_type != CIT_NOT_CD)
+	if (cd_type != CT_UNKNOWN)
 		ret = cdd_load(fname, cd_type);
 	if (ret != 0) {
 		menu_update_msg("Load failed, invalid CD image?");
@@ -545,6 +601,31 @@ int emu_swap_cd(const char *fname)
 	strncpy(rom_fname_loaded, fname, sizeof(rom_fname_loaded)-1);
 	rom_fname_loaded[sizeof(rom_fname_loaded) - 1] = 0;
 
+	return 1;
+}
+
+int emu_play_tape(const char *fname)
+{
+	int ret;
+
+	ret = PicoPlayTape(fname);
+	if (ret != 0) {
+		menu_update_msg("loading tape failed");
+		return 0;
+	}
+	return 1;
+}
+
+int emu_record_tape(const char *ext)
+{
+	int ret;
+
+	fname_ext(static_buff, sizeof(static_buff), "tape"PATH_SEP, ext, rom_fname_loaded);
+	ret = PicoRecordTape(static_buff);
+	if (ret != 0) {
+		menu_update_msg("recording tape failed");
+		return 0;
+	}
 	return 1;
 }
 
@@ -577,15 +658,19 @@ static void make_config_cfg(char *cfg_buff_512)
 void emu_prep_defconfig(void)
 {
 	memset(&defaultConfig, 0, sizeof(defaultConfig));
-	defaultConfig.EmuOpt    = 0x9d | EOPT_EN_CD_LEDS;
-	defaultConfig.s_PicoOpt = POPT_EN_STEREO|POPT_EN_FM|POPT_EN_PSG|POPT_EN_Z80 |
+	defaultConfig.EmuOpt    = EOPT_EN_SRAM | EOPT_EN_SOUND | EOPT_16BPP |
+				  EOPT_EN_CD_LEDS | EOPT_GZIP_SAVES | EOPT_PICO_PEN;
+	defaultConfig.s_PicoOpt = POPT_EN_SNDFILTER|POPT_EN_GG_LCD|POPT_EN_YM2413 |
+				  POPT_EN_STEREO|POPT_EN_FM|POPT_EN_PSG|POPT_EN_Z80 |
 				  POPT_EN_MCD_PCM|POPT_EN_MCD_CDDA|POPT_EN_MCD_GFX |
 				  POPT_EN_DRC|POPT_ACC_SPRITES |
 				  POPT_EN_32X|POPT_EN_PWM;
 	defaultConfig.s_PsndRate = 44100;
 	defaultConfig.s_PicoRegion = 0; // auto
 	defaultConfig.s_PicoAutoRgnOrder = 0x184; // US, EU, JP
+	defaultConfig.s_hwSelect = PHWS_AUTO;
 	defaultConfig.s_PicoCDBuffers = 0;
+	defaultConfig.s_PicoSndFilterAlpha = 0x10000 * 60 / 100;
 	defaultConfig.confirm_save = EOPT_CONFIRM_SAVE;
 	defaultConfig.Frameskip = -1; // auto
 	defaultConfig.input_dev0 = PICO_INPUT_PAD_3BTN;
@@ -596,6 +681,7 @@ void emu_prep_defconfig(void)
 	defaultConfig.turbo_rate = 15;
 	defaultConfig.msh2_khz = PICO_MSH2_HZ / 1000;
 	defaultConfig.ssh2_khz = PICO_SSH2_HZ / 1000;
+	defaultConfig.max_skip = 4;
 
 	// platform specific overrides
 	pemu_prep_defconfig();
@@ -608,6 +694,8 @@ void emu_set_defconfig(void)
 	PicoIn.sndRate = currentConfig.s_PsndRate;
 	PicoIn.regionOverride = currentConfig.s_PicoRegion;
 	PicoIn.autoRgnOrder = currentConfig.s_PicoAutoRgnOrder;
+	PicoIn.hwSelect = currentConfig.s_hwSelect;
+	PicoIn.sndFilterAlpha = currentConfig.s_PicoSndFilterAlpha;
 }
 
 int emu_read_config(const char *rom_fname, int no_defaults)
@@ -656,12 +744,6 @@ int emu_read_config(const char *rom_fname, int no_defaults)
 	PicoIn.overclockM68k = currentConfig.overclock_68k;
 
 	// some sanity checks
-#ifdef PSP
-	/* TODO: mv to plat_validate_config() */
-	if (currentConfig.CPUclock < 10 || currentConfig.CPUclock > 4096) currentConfig.CPUclock = 200;
-	if (currentConfig.gamma < -4 || currentConfig.gamma >  16) currentConfig.gamma = 0;
-	if (currentConfig.gamma2 < 0 || currentConfig.gamma2 > 2)  currentConfig.gamma2 = 0;
-#endif
 	if (currentConfig.volume < 0 || currentConfig.volume > 99)
 		currentConfig.volume = 50;
 
@@ -811,9 +893,9 @@ char *emu_get_save_fname(int load, int is_sram, int slot, int *time)
 
 	if (is_sram)
 	{
-		strcpy(ext, (PicoIn.AHW & PAHW_MCD) ? ".brm" : ".srm");
+		strcpy(ext, (PicoIn.AHW & PAHW_MCD) && Pico.romsize == 0 ? ".brm" : ".srm");
 		romfname_ext(saveFname, sizeof(static_buff),
-			(PicoIn.AHW & PAHW_MCD) ? "brm"PATH_SEP : "srm"PATH_SEP, ext);
+			(PicoIn.AHW & PAHW_MCD) && Pico.romsize == 0 ? "brm"PATH_SEP : "srm"PATH_SEP, ext);
 		if (!load)
 			return saveFname;
 
@@ -887,7 +969,7 @@ int emu_save_load_game(int load, int sram)
 		int sram_size;
 		unsigned char *sram_data;
 		int truncate = 1;
-		if (PicoIn.AHW & PAHW_MCD)
+		if ((PicoIn.AHW & PAHW_MCD) && Pico.romsize == 0)
 		{
 			if (PicoIn.opt & POPT_EN_MCD_RAMCART) {
 				sram_size = 0x12000;
@@ -914,7 +996,7 @@ int emu_save_load_game(int load, int sram)
 			ret = fread(sram_data, 1, sram_size, sramFile);
 			ret = ret > 0 ? 0 : -1;
 			fclose(sramFile);
-			if ((PicoIn.AHW & PAHW_MCD) && (PicoIn.opt&POPT_EN_MCD_RAMCART))
+			if ((PicoIn.AHW & PAHW_MCD) && Pico.romsize == 0 && (PicoIn.opt&POPT_EN_MCD_RAMCART))
 				memcpy(Pico_mcd->bram, sram_data, 0x2000);
 		} else {
 			// sram save needs some special processing
@@ -964,8 +1046,8 @@ void emu_set_fastforward(int set_on)
 		set_EmuOpt = currentConfig.EmuOpt;
 		PicoIn.sndOut = NULL;
 		currentConfig.Frameskip = 8;
-		currentConfig.EmuOpt &= ~4;
-		currentConfig.EmuOpt |= 0x40000;
+		currentConfig.EmuOpt &= ~EOPT_EN_SOUND;
+		currentConfig.EmuOpt |= EOPT_NO_FRMLIMIT;
 		is_on = 1;
 		emu_status_msg("FAST FORWARD");
 	}
@@ -975,9 +1057,6 @@ void emu_set_fastforward(int set_on)
 		currentConfig.EmuOpt = set_EmuOpt;
 		PsndRerate(1);
 		is_on = 0;
-		// mainly to unbreak pcm
-		if (PicoIn.AHW & PAHW_MCD)
-			pcd_state_loaded();
 	}
 }
 
@@ -1003,22 +1082,72 @@ void emu_reset_game(void)
 	reset_timing = 1;
 }
 
-void run_events_pico(unsigned int events)
+static u16 *load_pico_overlay(int page, int w, int h)
 {
-	int lim_x;
+	static const char *pic_exts[] = { "png", "PNG" };
+	char *ext, *fname = NULL;
+	int extpos, i;
 
-	if (events & PEV_PICO_SWINP) {
-		pico_inp_mode++;
-		if (pico_inp_mode > 2)
-			pico_inp_mode = 0;
-		switch (pico_inp_mode) {
-			case 2: emu_status_msg("Input: Pen on Pad"); break;
-			case 1: emu_status_msg("Input: Pen on Storyware"); break;
-			case 0: emu_status_msg("Input: Joystick");
-				PicoPicohw.pen_pos[0] = PicoPicohw.pen_pos[1] = 0x8000;
-				break;
+	if (pico_page == page && pico_w == w && pico_h == h)
+		return pico_overlay;
+	pico_page = page;
+	pico_w = w, pico_h = h;
+
+	ext = strrchr(rom_fname_loaded, '.');
+	extpos = ext ? ext-rom_fname_loaded : strlen(rom_fname_loaded);
+	strcpy(static_buff, rom_fname_loaded);
+	static_buff[extpos++] = '_';
+	if (page < 0) {
+		static_buff[extpos++] = 'p';
+		static_buff[extpos++] = 'a';
+		static_buff[extpos++] = 'd';
+	} else
+		static_buff[extpos++] = '0'+PicoPicohw.page;
+	static_buff[extpos++] = '.';
+
+	for (i = 0; i < ARRAY_SIZE(pic_exts); i++) {
+		strcpy(static_buff+extpos, pic_exts[i]);
+		if (access(static_buff, R_OK) == 0) {
+			printf("found Pico file: %s\n", static_buff);
+			fname = static_buff;
+			break;
 		}
 	}
+
+	pico_overlay = realloc(pico_overlay, w*h*2);
+	memset(pico_overlay, 0, w*h*2);
+	if (!fname || !pico_overlay || readpng(pico_overlay, fname, READPNG_SCALE, w, h)) {
+		if (pico_overlay)
+			free(pico_overlay);
+		pico_overlay = NULL;
+	}
+
+	return pico_overlay;
+}
+
+void emu_pico_overlay(u16 *pd, int w, int h, int pitch)
+{
+	u16 *overlay = NULL;
+	int y, oh = h;
+
+	// get overlay
+	if (pico_inp_mode == 1) {
+		oh = (w/2 < h ? w/2 : h); // storyware has squished h
+		overlay = load_pico_overlay(PicoPicohw.page, w, oh);
+	} else if (pico_inp_mode == 2)
+		overlay = load_pico_overlay(-1, w, oh);
+
+	// copy overlay onto buffer
+	if (overlay) {
+		for (y = 0; y < oh; y++)
+			memcpy(pd + y*pitch, overlay + y*w, w*2);
+		if (y < h)
+			memset(pd + y*pitch, 0, w*2);
+	}
+}
+
+void run_events_pico(unsigned int events)
+{
 	if (events & PEV_PICO_PPREV) {
 		PicoPicohw.page--;
 		if (PicoPicohw.page < 0)
@@ -1027,10 +1156,46 @@ void run_events_pico(unsigned int events)
 	}
 	if (events & PEV_PICO_PNEXT) {
 		PicoPicohw.page++;
-		if (PicoPicohw.page > 6)
-			PicoPicohw.page = 6;
-		emu_status_msg("Page %i", PicoPicohw.page);
+		if (PicoPicohw.page > 7)
+			PicoPicohw.page = 7;
+		if (PicoPicohw.page == 7) {
+			// Used in games that require the Keyboard Pico peripheral
+			emu_status_msg("Test Page");
+		} else {
+			emu_status_msg("Page %i", PicoPicohw.page);
+		}
 	}
+	if (events & PEV_PICO_STORY) {
+		if (pico_inp_mode == 1) {
+			pico_inp_mode = 0;
+			emu_status_msg("Input: D-Pad");
+		} else {
+			pico_inp_mode = 1;
+			emu_status_msg("Input: Pen on Storyware");
+		}
+	}
+	if (events & PEV_PICO_PAD) {
+		if (pico_inp_mode == 2) {
+			pico_inp_mode = 0;
+			emu_status_msg("Input: D-Pad");
+		} else {
+			pico_inp_mode = 2;
+			emu_status_msg("Input: Pen on Pad");
+		}
+	}
+	if (events & PEV_PICO_PENST) {
+		PicoPicohw.pen_pos[0] ^= 0x8000;
+		PicoPicohw.pen_pos[1] ^= 0x8000;
+		emu_status_msg("Pen %s", PicoPicohw.pen_pos[0] & 0x8000 ? "Up" : "Down");
+	}
+
+	if ((currentConfig.EmuOpt & EOPT_PICO_PEN) &&
+			(PicoIn.pad[0]&0x20) && pico_inp_mode && pico_overlay) {
+		pico_inp_mode = 0;
+		emu_status_msg("Input: D-Pad");
+	}
+
+	PicoPicohw.kb.active = (PicoIn.opt & POPT_EN_KBD ? kbd_mode : 0);
 
 	if (pico_inp_mode == 0)
 		return;
@@ -1042,21 +1207,20 @@ void run_events_pico(unsigned int events)
 	if (PicoIn.pad[0] & 8) pico_pen_x++;
 	PicoIn.pad[0] &= ~0x0f; // release UDLR
 
-	lim_x = (Pico.video.reg[12]&1) ? 319 : 255;
-	if (pico_pen_y < 8)
-		pico_pen_y = 8;
-	if (pico_pen_y > 224 - PICO_PEN_ADJUST_Y)
-		pico_pen_y = 224 - PICO_PEN_ADJUST_Y;
-	if (pico_pen_x < 0)
-		pico_pen_x = 0;
-	if (pico_pen_x > lim_x - PICO_PEN_ADJUST_X)
-		pico_pen_x = lim_x - PICO_PEN_ADJUST_X;
+	/* cursor position, cursor drawing must not cross screen borders */
+	if (pico_pen_y < PICO_PEN_ADJUST_Y)
+		pico_pen_y = PICO_PEN_ADJUST_Y;
+	if (pico_pen_y > 223-1 - PICO_PEN_ADJUST_Y)
+		pico_pen_y = 223-1 - PICO_PEN_ADJUST_Y;
+	if (pico_pen_x < PICO_PEN_ADJUST_X)
+		pico_pen_x = PICO_PEN_ADJUST_X;
+	if (pico_pen_x > 319-1 - PICO_PEN_ADJUST_X)
+		pico_pen_x = 319-1 - PICO_PEN_ADJUST_X;
 
-	PicoPicohw.pen_pos[0] = pico_pen_x;
-	if (!(Pico.video.reg[12] & 1))
-		PicoPicohw.pen_pos[0] += pico_pen_x / 4;
-	PicoPicohw.pen_pos[0] += 0x3c;
-	PicoPicohw.pen_pos[1] = pico_inp_mode == 1 ? (0x2f8 + pico_pen_y) : (0x1fc + pico_pen_y);
+	PicoPicohw.pen_pos[0] &= 0x8000;
+	PicoPicohw.pen_pos[1] &= 0x8000;
+	PicoPicohw.pen_pos[0] |= 0x03c + pico_pen_x;
+	PicoPicohw.pen_pos[1] |= (pico_inp_mode == 1 ? 0x2f8 : 0x1fc) + pico_pen_y;
 }
 
 static void do_turbo(unsigned short *pad, int acts)
@@ -1116,6 +1280,7 @@ static void run_events_ui(unsigned int which)
 			while (in_menu_wait_any(NULL, 50) & (PBTN_MOK | PBTN_MBACK))
 				;
 			in_set_config_int(0, IN_CFG_BLOCKING, 0);
+			plat_status_msg_clear();
 		}
 		if (do_it) {
 			plat_status_msg_busy_first((which & PEV_STATE_LOAD) ? "LOADING STATE" : "SAVING STATE");
@@ -1123,10 +1288,7 @@ static void run_events_ui(unsigned int which)
 			emu_save_load_game((which & PEV_STATE_LOAD) ? 1 : 0, 0);
 			PicoStateProgressCB = NULL;
 		}
-	}
-	if (which & PEV_SWITCH_RND)
-	{
-		plat_video_toggle_renderer(1, 0);
+		plat_status_msg_busy_done();
 	}
 	if (which & (PEV_SSLOT_PREV|PEV_SSLOT_NEXT))
 	{
@@ -1143,6 +1305,22 @@ static void run_events_ui(unsigned int which)
 		emu_status_msg("SAVE SLOT %i [%s]", state_slot,
 			emu_check_save_file(state_slot, NULL) ? "USED" : "FREE");
 	}
+	if (which & PEV_SWITCH_RND)
+	{
+		plat_video_toggle_renderer(1, 0);
+	}
+	if (which & PEV_SWITCH_KBD)
+	{
+		if (! (PicoIn.opt & POPT_EN_KBD)) {
+			kbd_mode = 0;
+			emu_status_msg("No keyboard configured");
+		} else {
+			kbd_mode = !kbd_mode;
+			emu_status_msg("Keyboard %s", kbd_mode ? "on" : "off");
+		}
+		if (! kbd_mode)
+			plat_video_clear_buffers();
+	}
 	if (which & PEV_RESET)
 		emu_reset_game();
 	if (which & PEV_MENU)
@@ -1153,37 +1331,83 @@ void emu_update_input(void)
 {
 	static int prev_events = 0;
 	int actions[IN_BINDTYPE_COUNT] = { 0, };
-	int pl_actions[2];
-	int events;
+	int actions_kbd[IN_BIND_LAST] = { 0, };
+	int pl_actions[4];
+	int count_kbd = 0;
+	int events, i;
 
 	in_update(actions);
 
 	pl_actions[0] = actions[IN_BINDTYPE_PLAYER12];
 	pl_actions[1] = actions[IN_BINDTYPE_PLAYER12] >> 16;
-
-	PicoIn.pad[0] = pl_actions[0] & 0xfff;
-	PicoIn.pad[1] = pl_actions[1] & 0xfff;
-
-	if (pl_actions[0] & 0x7000)
-		do_turbo(&PicoIn.pad[0], pl_actions[0]);
-	if (pl_actions[1] & 0x7000)
-		do_turbo(&PicoIn.pad[1], pl_actions[1]);
+	pl_actions[2] = actions[IN_BINDTYPE_PLAYER34];
+	pl_actions[3] = actions[IN_BINDTYPE_PLAYER34] >> 16;
 
 	events = actions[IN_BINDTYPE_EMU] & PEV_MASK;
+
+	if (kbd_mode) {
+		int mask = (PicoIn.AHW & PAHW_PICO ? 0xf : 0x0);
+		if (currentConfig.keyboard == 1)
+			count_kbd = in_update_kbd(actions_kbd);
+		else if (currentConfig.keyboard == 2)
+			count_kbd = vkbd_update(vkbd, pl_actions[0], actions_kbd);
+
+		// FIXME: Only passthrough joystick input to avoid collisions
+		// with PS/2 bindings. Ideally we should check if the device this
+		// input originated from is the same as the device used for
+		// PS/2 input, and passthrough if they are different devices.
+		PicoIn.pad[0] = pl_actions[0] & mask;
+		PicoIn.pad[1] = pl_actions[1] & mask;
+		PicoIn.pad[2] = pl_actions[2] & mask;
+		PicoIn.pad[3] = pl_actions[3] & mask;
+
+		// Ignore events mapped to bindings that collide with PS/2 peripherals.
+		// Note that calls to emu_set_fastforward() should be avoided as well,
+		// since fast-forward activates even with parameter set_on = 0.
+		events &= PEV_SWITCH_KBD;
+	} else {
+		PicoIn.pad[0] = pl_actions[0] & 0xfff;
+		PicoIn.pad[1] = pl_actions[1] & 0xfff;
+		PicoIn.pad[2] = pl_actions[2] & 0xfff;
+		PicoIn.pad[3] = pl_actions[3] & 0xfff;
+
+		if (pl_actions[0] & 0x7000)
+			do_turbo(&PicoIn.pad[0], pl_actions[0]);
+		if (pl_actions[1] & 0x7000)
+			do_turbo(&PicoIn.pad[1], pl_actions[1]);
+		if (pl_actions[2] & 0x7000)
+			do_turbo(&PicoIn.pad[2], pl_actions[2]);
+		if (pl_actions[3] & 0x7000)
+			do_turbo(&PicoIn.pad[3], pl_actions[3]);
+
+		if ((events ^ prev_events) & PEV_FF) {
+			emu_set_fastforward(events & PEV_FF);
+			plat_update_volume(0, 0);
+			reset_timing = 1;
+		}
+	}
 
 	// volume is treated in special way and triggered every frame
 	if (events & (PEV_VOL_DOWN|PEV_VOL_UP))
 		plat_update_volume(1, events & PEV_VOL_UP);
 
-	if ((events ^ prev_events) & PEV_FF) {
-		emu_set_fastforward(events & PEV_FF);
-		plat_update_volume(0, 0);
-		reset_timing = 1;
-	}
-
 	events &= ~prev_events;
 
-	if (PicoIn.AHW == PAHW_PICO)
+	// update keyboard input, actions only updated if keyboard mode active
+	PicoIn.kbd = 0;
+	for (i = 0; i < count_kbd; i++) {
+		if (actions_kbd[i]) {
+			unsigned int key = (actions_kbd[i] & 0xff);
+			if (key == PEVB_KBD_LSHIFT || key == PEVB_KBD_RSHIFT ||
+			    key == PEVB_KBD_CTRL || key == PEVB_KBD_FUNC) {
+				PicoIn.kbd = (PicoIn.kbd & 0x00ff) | (key << 8);
+			} else {
+				PicoIn.kbd = (PicoIn.kbd & 0xff00) | key;
+			}
+		}
+	}
+
+	if (PicoIn.AHW & PAHW_PICO)
 		run_events_pico(events);
 	if (events)
 		run_events_ui(events);
@@ -1198,11 +1422,11 @@ static void mkdir_path(char *path_with_reserve, int pos, const char *name)
 	strcpy(path_with_reserve + pos, name);
 	if (plat_is_dir(path_with_reserve))
 		return;
-	if (mkdir(path_with_reserve, 0777) < 0)
+	if (mkdir(path_with_reserve, 0755) < 0)
 		lprintf("failed to create: %s\n", path_with_reserve);
 }
 
-void emu_cmn_forced_frame(int no_scale, int do_emu)
+void emu_cmn_forced_frame(int no_scale, int do_emu, void *buf)
 {
 	int po_old = PicoIn.opt;
 	int y;
@@ -1211,12 +1435,13 @@ void emu_cmn_forced_frame(int no_scale, int do_emu)
 		memset32((short *)g_screen_ptr + g_screen_ppitch * y, 0,
 			 g_screen_width * 2 / 4);
 
-	PicoIn.opt &= ~POPT_ALT_RENDERER;
+	PicoIn.opt &= ~(POPT_ALT_RENDERER|POPT_EN_SOFTSCALE);
 	PicoIn.opt |= POPT_ACC_SPRITES;
-	if (!no_scale)
+	if (!no_scale && currentConfig.scaling)
 		PicoIn.opt |= POPT_EN_SOFTSCALE;
 
 	PicoDrawSetOutFormat(PDF_RGB555, 1);
+	PicoDrawSetOutBuf(buf, g_screen_ppitch * 2);
 	Pico.m.dirtyPal = 1;
 	if (do_emu)
 		PicoFrame();
@@ -1249,6 +1474,7 @@ void emu_init(void)
 	mkdir_path(path, pos, "mds");
 	mkdir_path(path, pos, "srm");
 	mkdir_path(path, pos, "brm");
+	mkdir_path(path, pos, "tape");
 	mkdir_path(path, pos, "cfg");
 
 	pprof_init();
@@ -1296,19 +1522,23 @@ void emu_sound_start(void)
 {
 	PicoIn.sndOut = NULL;
 
+	// auto-select rate?
+	if (PicoIn.sndRate > 52000 && PicoIn.sndRate < 54000)
+		PicoIn.sndRate = YM2612_NATIVE_RATE();
 	if (currentConfig.EmuOpt & EOPT_EN_SOUND)
 	{
 		int is_stereo = (PicoIn.opt & POPT_EN_STEREO) ? 1 : 0;
 
+		memset(sndBuffer, 0, sizeof(sndBuffer));
+		PicoIn.sndOut = sndBuffer;
 		PsndRerate(Pico.m.frame_count ? 1 : 0);
 
 		printf("starting audio: %i len: %i stereo: %i, pal: %i\n",
 			PicoIn.sndRate, Pico.snd.len, is_stereo, Pico.m.pal);
+
 		sndout_start(PicoIn.sndRate, is_stereo);
 		PicoIn.writeSound = snd_write_nonblocking;
 		plat_update_volume(0, 0);
-		memset(sndBuffer, 0, sizeof(sndBuffer));
-		PicoIn.sndOut = sndBuffer;
 	}
 }
 
@@ -1342,20 +1572,30 @@ static void emu_loop_prep(void)
 
 	plat_target_gamma_set(currentConfig.gamma, 0);
 
+	vkbd = NULL;
+	if (currentConfig.keyboard == 2) {
+		if (PicoIn.AHW & PAHW_SMS) vkbd = vkbd_init(0);
+		else if (PicoIn.AHW & PAHW_PICO) vkbd = vkbd_init(1);
+	}
+	PicoIn.opt &= ~POPT_EN_KBD;
+	if (((PicoIn.AHW & PAHW_PICO) || (PicoIn.AHW & PAHW_SC)) && currentConfig.keyboard)
+		PicoIn.opt |= POPT_EN_KBD;
+
 	pemu_loop_prep();
 }
 
 /* our tick here is 1 us right now */
-#define ms_to_ticks(x) (unsigned int)(x * 1000)
-#define get_ticks() plat_get_ticks_us()
+#define ms_to_ticks(x)	(int)(x * 1000)
+#define get_ticks()	plat_get_ticks_us()
+#define vsync_delay	ms_to_ticks(1)
 
 void emu_loop(void)
 {
 	int frames_done, frames_shown;	/* actual frames for fps counter */
-	int target_frametime_x3;
-	unsigned int timestamp_x3 = 0;
-	unsigned int timestamp_aim_x3 = 0;
-	unsigned int timestamp_fps_x3 = 0;
+	int target_frametime;
+	unsigned int timestamp = 0;
+	unsigned int timestamp_aim = 0;
+	unsigned int timestamp_fps = 0;
 	char *notice_msg = NULL;
 	char fpsbuff[24];
 	int fskip_cnt = 0;
@@ -1370,9 +1610,9 @@ void emu_loop(void)
 
 	/* number of ticks per frame */
 	if (Pico.m.pal)
-		target_frametime_x3 = 3 * ms_to_ticks(1000) / 50;
+		target_frametime = ms_to_ticks(1000) / 50;
 	else
-		target_frametime_x3 = 3 * ms_to_ticks(1000) / 60;
+		target_frametime = ms_to_ticks(1000) / 60;
 
 	reset_timing = 1;
 	frames_done = frames_shown = 0;
@@ -1388,28 +1628,26 @@ void emu_loop(void)
 		if (reset_timing) {
 			reset_timing = 0;
 			plat_video_wait_vsync();
-			timestamp_aim_x3 = get_ticks() * 3;
-			timestamp_fps_x3 = timestamp_aim_x3;
+			timestamp_aim = get_ticks();
+			timestamp_fps = timestamp_aim;
 			fskip_cnt = 0;
 		}
 		else if (currentConfig.EmuOpt & EOPT_NO_FRMLIMIT) {
-			timestamp_aim_x3 = get_ticks() * 3;
+			timestamp_aim = get_ticks();
 		}
 
-		timestamp_x3 = get_ticks() * 3;
+		timestamp = get_ticks();
 
 		// show notice_msg message?
 		if (notice_msg_time != 0)
 		{
 			static int noticeMsgSum;
-			if (timestamp_x3 - ms_to_ticks(notice_msg_time) * 3
-			     > ms_to_ticks(STATUS_MSG_TIMEOUT) * 3)
+			if (timestamp - ms_to_ticks(notice_msg_time)
+			     > ms_to_ticks(STATUS_MSG_TIMEOUT))
 			{
 				notice_msg_time = 0;
-				plat_status_msg_clear();
-				plat_video_flip();
-				plat_status_msg_clear(); /* Do it again in case of double buffering */
 				notice_msg = NULL;
+				plat_status_msg_clear();
 			}
 			else {
 				int sum = noticeMsg[0] + noticeMsg[1] + noticeMsg[2];
@@ -1422,7 +1660,7 @@ void emu_loop(void)
 		}
 
 		// second changed?
-		if (timestamp_x3 - timestamp_fps_x3 >= ms_to_ticks(1000) * 3)
+		if (timestamp - timestamp_fps >= ms_to_ticks(1000))
 		{
 #ifdef BENCHMARK
 			static int bench = 0, bench_fps = 0, bench_fps_s = 0, bfp = 0, bf[4];
@@ -1440,13 +1678,13 @@ void emu_loop(void)
 				snprintf(fpsbuff, 8, "%02i/%02i  ", frames_shown, frames_done);
 #endif
 			frames_shown = frames_done = 0;
-			timestamp_fps_x3 += ms_to_ticks(1000) * 3;
+			timestamp_fps += ms_to_ticks(1000);
 		}
 #ifdef PFRAMES
 		sprintf(fpsbuff, "%i", Pico.m.frame_count);
 #endif
 
-		diff = timestamp_aim_x3 - timestamp_x3;
+		diff = timestamp_aim - timestamp;
 
 		if (currentConfig.Frameskip >= 0) // frameskip enabled (or 0)
 		{
@@ -1458,23 +1696,35 @@ void emu_loop(void)
 				fskip_cnt = 0;
 			}
 		}
-		else if (diff < -target_frametime_x3)
+		else if (diff < -target_frametime)
 		{
 			/* no time left for this frame - skip */
-			/* limit auto frameskip to 8 */
-			if (frames_done / 8 <= frames_shown)
+			/* limit auto frameskip to max_skip */
+			if (fskip_cnt < currentConfig.max_skip) {
+				fskip_cnt++;
 				skip = 1;
-		}
+			}
+			else {
+				fskip_cnt = 0;
+			}
+		} else
+			fskip_cnt = 0;
 
 		// don't go in debt too much
-		while (diff < -target_frametime_x3 * 3) {
-			timestamp_aim_x3 += target_frametime_x3;
-			diff = timestamp_aim_x3 - timestamp_x3;
+		while (diff < -target_frametime * 3) {
+			timestamp_aim += target_frametime;
+			diff = timestamp_aim - timestamp;
 		}
 
 		emu_update_input();
+
+		// 3D glasses
+		skip |= (PicoIn.AHW & PAHW_SMS) &&
+			(Pico.m.hardware & PMS_HW_3D) &&
+			(PicoMem.zram[0x1ffb] & 1);
+
 		if (skip) {
-			int do_audio = diff > -target_frametime_x3 * 2;
+			int do_audio = diff > -target_frametime * 2;
 			PicoIn.skipFrame = do_audio ? 1 : 2;
 			PicoFrame();
 			PicoIn.skipFrame = 0;
@@ -1485,7 +1735,7 @@ void emu_loop(void)
 			frames_shown++;
 		}
 		frames_done++;
-		timestamp_aim_x3 += target_frametime_x3;
+		timestamp_aim += target_frametime;
 
 		if (!skip && !flip_after_sync)
 			plat_video_flip();
@@ -1495,18 +1745,18 @@ void emu_loop(void)
 		    && !(currentConfig.EmuOpt & (EOPT_NO_FRMLIMIT|EOPT_EXT_FRMLIMIT)))
 		{
 			unsigned int timestamp = get_ticks();
-			diff = timestamp_aim_x3 - timestamp * 3;
+			diff = timestamp_aim - timestamp;
 
 			// sleep or vsync if we are still too fast
-			if (diff > target_frametime_x3 && (currentConfig.EmuOpt & EOPT_VSYNC)) {
+			if (diff > target_frametime + vsync_delay && (currentConfig.EmuOpt & EOPT_VSYNC)) {
 				// we are too fast
 				plat_video_wait_vsync();
 				timestamp = get_ticks();
-				diff = timestamp * 3 - timestamp_aim_x3;
+				diff = timestamp_aim - timestamp;
 			}
-			if (diff > target_frametime_x3) {
+			if (diff > target_frametime + vsync_delay) {
 				// still too fast
-				plat_wait_till_us(timestamp + (diff - target_frametime_x3) / 3);
+				plat_wait_till_us(timestamp + (diff - target_frametime));
 			}
 		}
 

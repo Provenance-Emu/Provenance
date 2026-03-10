@@ -8,9 +8,117 @@
 import PVCoreBridge
 import PVFileSystem
 import PVLogging
+import PVRealm
 import RealmSwift
 
-/// Save state purging and recoovery
+// MARK: - SaveStatePersistenceServiceProtocol (Realm implementation)
+
+/// Realm-backed conformance to ``SaveStatePersistenceServiceProtocol``.
+///
+/// PVUI emulator code calls `saveStatePersistenceService.registerSaveState(…)`
+/// rather than touching Realm directly, so the backend can be swapped for
+/// SwiftData (#2510) without altering any UI call sites.
+extension RomDatabase: SaveStatePersistenceServiceProtocol {
+
+    /// Creates a ``PVSaveState`` record in Realm and returns its UUID.
+    ///
+    /// Bridges the non-`async` Realm `writeAsync` API into Swift concurrency via
+    /// `withCheckedThrowingContinuation` so callers can `await` the result.
+    /// The continuation is resumed exactly once (via `defer`) regardless of which
+    /// code path exits the write block.
+    ///
+    /// Realm availability is verified *before* entering the continuation so that
+    /// `asyncWriteTransaction`'s silent early-return (when Realm is unavailable)
+    /// can never leave the continuation dangling forever.
+    public func registerSaveState(
+        gameID: String,
+        coreIdentifier: String,
+        file: PVFile,
+        imageFile: PVImageFile?,
+        isAutosave: Bool
+    ) async throws -> String {
+        // Pre-flight: obtain a Realm instance before entering the continuation.
+        // asyncWriteTransaction returns early (without calling its block) when
+        // Realm is unavailable — that silently leaves the continuation dangling.
+        guard let realm = Thread.current.realm?.realm
+                       ?? (try? Realm(configuration: RealmConfiguration.realmConfig)) else {
+            ELOG("registerSaveState: cannot obtain Realm — aborting before entering continuation")
+            throw SaveStateError.noCoreFound(coreIdentifier)
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            realm.writeAsync {
+                // Use `defer` to guarantee exactly one continuation.resume(_:) call.
+                var resumeError: Error?
+                var saveStateID = ""
+
+                defer {
+                    if let error = resumeError {
+                        continuation.resume(throwing: error)
+                    } else if saveStateID.isEmpty {
+                        continuation.resume(throwing: SaveStateError.noCoreFound(coreIdentifier))
+                    } else {
+                        continuation.resume(returning: saveStateID)
+                    }
+                }
+
+                guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier),
+                      let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID) else {
+                    ELOG("registerSaveState: game or core not found — gameID=\(gameID) core=\(coreIdentifier)")
+                    resumeError = SaveStateError.noCoreFound(coreIdentifier)
+                    return
+                }
+
+                let saveState = PVSaveState(withGame: game, core: core, file: file, image: imageFile, isAutosave: isAutosave)
+                realm.add(saveState)
+                saveStateID = saveState.id
+
+                // Post notification for CloudKit sync
+                let id = saveState.id
+                Task { @MainActor in
+                    NotificationCenter.default.post(name: .PVSaveStateSaved, object: nil, userInfo: ["saveStateID": id])
+                    DLOG("registerSaveState: posted PVSaveStateSaved for \(id)")
+                }
+
+                // Serialise metadata sidecar JSON — freeze so it is safe to pass off-thread
+                let frozenState = saveState.freeze()
+                LibrarySerializer.storeMetadata(frozenState) { result in
+                    switch result {
+                    case .success(let url):
+                        ILOG("registerSaveState: serialised metadata → \(url.path)")
+                    case .error(let error):
+                        ELOG("registerSaveState: failed to serialise metadata — \(error)")
+                    }
+                }
+
+                // Purge old auto-saves beyond the keep limit
+                if isAutosave {
+                    self.cleanupOldAutoSaves(for: game, realm: realm)
+                }
+            }
+        }
+    }
+
+    /// Retain only the five most recent auto-saves for `game`, deleting the rest.
+    ///
+    /// Must be called from within an active Realm write transaction context.
+    /// The caller-supplied `realm` is the same instance used for the enclosing
+    /// write, avoiding a redundant `Realm()` constructor call on the write thread.
+    private func cleanupOldAutoSaves(for game: PVGame, realm: Realm) {
+        guard let autoSaves = game.thaw()?.autoSaves else { return }
+        if autoSaves.count > 5 {
+            let savesToDelete = Array(autoSaves.sorted(byKeyPath: "date", ascending: false).suffix(from: 5))
+            for saveState in savesToDelete {
+                DLOG("cleanupOldAutoSaves: deleting old save '\(saveState.id)' dated \(saveState.date)")
+                realm.delete(saveState)
+            }
+        }
+    }
+}
+
+// MARK: - Save state purging and recovery
+
+/// Save state purging and recovery
 public extension RomDatabase {
 
     func recoverAllSaveStates() {

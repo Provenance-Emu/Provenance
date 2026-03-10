@@ -27,7 +27,7 @@ extension PVTGBDualCore: @preconcurrency CoreOptional {
 
         let consoleGroup = CoreOption.group(.init(title: "Console",
                                                 description: nil),
-                                          subOptions: [linkCableEmulationOption])
+                                          subOptions: [linkCableEmulationOption, forceMonochromaticOption])
 
         let videoGroup = CoreOption.group(.init(title: "Video",
                                                 description: nil),
@@ -48,6 +48,13 @@ extension PVTGBDualCore: @preconcurrency CoreOptional {
     static var linkCableEmulationOption: CoreOption {
         .bool(.init(title: "tgbdual_gblink_enable",
                     description: "Link cable emulation (reload)",
+                    requiresRestart: true), defaultValue: false)
+    }
+
+    // MARK: Force Monochromatic
+    static var forceMonochromaticOption: CoreOption {
+        .bool(.init(title: "tgbdual_force_monochromatic",
+                    description: "Force Monochromatic Mode — render GBC games in greyscale (DMG style). Requires restart.",
                     requiresRestart: true), defaultValue: false)
     }
 
@@ -92,6 +99,8 @@ extension PVTGBDualCore: @preconcurrency CoreOptional {
         switch variable {
         case "tgbdual_gblink_enable":
             return Self.valueForOption(Self.linkCableEmulationOption).asBool
+        case "tgbdual_force_monochromatic":
+            return Self.valueForOption(Self.forceMonochromaticOption).asBool
         case "tgbdual_screen_placement":
             switch Self.valueForOption(Self.screenPlacementOption).asInt ?? 0 {
             case 0: return "left-right"

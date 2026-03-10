@@ -10,6 +10,8 @@ import PVUIBase
 import PVHelp
 import GameController
 import PVThemes
+import PVLibrary
+import PVRealm
 import MarkdownView
 #if canImport(PVUI_IOS)
 import PVUI_IOS
@@ -314,7 +316,7 @@ struct ControllerSettingsView: View {
                 #endif
             }
 
-            /// Button Remapping Section
+            // Button Remapping Section
             if !controllerManager.controllers.isEmpty {
                 Section {
                     ForEach(controllerManager.controllers, id: \.self) { controller in
@@ -448,10 +450,20 @@ struct ControllerSettingsView: View {
 struct ButtonRemappingView: View {
     let controller: GCController
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var remappableController: PVRemappableController?
     @State private var currentMappings: [ButtonIdentifier: ButtonIdentifier] = [:]
     @State private var selectedButton: ButtonIdentifier?
     @State private var showingDestinationPicker = false
+
+    // Profile management
+    @State private var activeProfileName: String?
+    @State private var showSaveProfileAlert = false
+    @State private var newProfileName = ""
+    @State private var showSaveProfileError = false
+    @State private var saveProfileErrorMessage = ""
+
+    private var remappableController: PVRemappableController {
+        getRemappableControllerWrapper(for: controller)
+    }
 
     private var accentColor: Color {
         themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
@@ -468,6 +480,34 @@ struct ButtonRemappingView: View {
 
     var body: some View {
         List {
+            // MARK: Profiles section
+            Section {
+                HStack {
+                    Label("Active Profile", systemImage: "person.crop.rectangle")
+                    Spacer()
+                    Text(activeProfileName ?? "None")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+                NavigationLink(destination: ControllerProfilesView(controller: controller)
+                    .onDisappear { loadActiveProfileName() }
+                ) {
+                    Label("Manage Profiles", systemImage: "list.bullet.rectangle.portrait")
+                        .foregroundColor(accentColor)
+                }
+
+                Button(action: { showSaveProfileAlert = true }) {
+                    Label("Save Current Mappings\u{2026}", systemImage: "square.and.arrow.down")
+                        .foregroundColor(accentColor)
+                }
+            } header: {
+                Text("Profiles")
+            } footer: {
+                Text("Profiles let you save and switch between different button layouts.")
+                    .font(.caption)
+            }
+
             Section {
                 ForEach(standardButtons, id: \.self) { button in
                     Button(action: {
@@ -538,8 +578,30 @@ struct ButtonRemappingView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .onAppear {
-            setupRemappableController()
             loadCurrentMappings()
+            loadActiveProfileName()
+        }
+        .alert("Save Profile", isPresented: $showSaveProfileAlert) {
+            TextField("Profile name", text: $newProfileName)
+            Button("Save") {
+                let name = newProfileName.trimmingCharacters(in: .whitespacesAndNewlines)
+                newProfileName = ""
+                guard !name.isEmpty else { return }
+                if remappableController.saveCurrentMappingsAsProfile(name: name, makeActive: true) != nil {
+                    loadActiveProfileName()
+                } else {
+                    saveProfileErrorMessage = "No button mappings are configured. Remap at least one button before saving a profile."
+                    showSaveProfileError = true
+                }
+            }
+            Button("Cancel", role: .cancel) { newProfileName = "" }
+        } message: {
+            Text("Save your current button mappings as a named profile.")
+        }
+        .alert("Save Failed", isPresented: $showSaveProfileError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(saveProfileErrorMessage)
         }
         .confirmationDialog(
             "Map \(selectedButton.map { buttonDisplayName($0) } ?? "button") to:",
@@ -564,30 +626,17 @@ struct ButtonRemappingView: View {
         }
     }
 
-    private func setupRemappableController() {
-        /// Get remappable controller wrapper - this will be created if it doesn't exist
-        /// We access it through a helper function that creates it
-        loadRemappableController()
-    }
-
-    private func loadRemappableController() {
-        /// Access remappable controller through PVControllerManager's public function
-        remappableController = getRemappableControllerWrapper(for: controller)
+    /// Refresh the active profile name label from Realm.
+    private func loadActiveProfileName() {
+        guard let vendorName = controller.vendorName else { return }
+        let db = RomDatabase.sharedInstance
+        activeProfileName = db.activeControllerProfile(forVendor: vendorName)?.name
     }
 
     private func loadCurrentMappings() {
-        guard let remappable = remappableController else {
-            loadRemappableController()
-            guard let remappable = remappableController else { return }
-            return loadMappings(from: remappable)
-        }
-        loadMappings(from: remappable)
-    }
-
-    private func loadMappings(from remappable: PVRemappableController) {
         var mappings: [ButtonIdentifier: ButtonIdentifier] = [:]
         for button in standardButtons {
-            if let mapped = remappable.mappedButton(for: button) {
+            if let mapped = remappableController.mappedButton(for: button) {
                 mappings[button] = mapped
             }
         }
@@ -595,54 +644,32 @@ struct ButtonRemappingView: View {
     }
 
     private func remapButton(_ source: ButtonIdentifier, to destination: ButtonIdentifier) {
-        remap(button: source, to: destination, forController: controller)
+        remappableController.remap(button: source, to: destination)
+        remappableController.saveMappings()
         loadCurrentMappings()
     }
 
     private func clearMapping(for button: ButtonIdentifier) {
-        guard let remappable = remappableController else {
-            loadRemappableController()
-            guard let remappable = remappableController else { return }
-            remappable.clearMapping(for: button)
-            remappable.saveMappings()
-            loadCurrentMappings()
-            return
-        }
-        remappable.clearMapping(for: button)
-        remappable.saveMappings()
+        remappableController.clearMapping(for: button)
+        remappableController.saveMappings()
         loadCurrentMappings()
     }
 
     private func clearAllMappings() {
-        clearMappings(for: controller)
+        remappableController.clearAllMappings()
+        remappableController.saveMappings()
         loadCurrentMappings()
     }
 
     private func swapABButtons() {
-        guard let remappable = remappableController else {
-            loadRemappableController()
-            guard let remappable = remappableController else { return }
-            remappable.swapButtons(.buttonA, .buttonB)
-            remappable.saveMappings()
-            loadCurrentMappings()
-            return
-        }
-        remappable.swapButtons(.buttonA, .buttonB)
-        remappable.saveMappings()
+        remappableController.swapButtons(.buttonA, .buttonB)
+        remappableController.saveMappings()
         loadCurrentMappings()
     }
 
     private func swapXYButtons() {
-        guard let remappable = remappableController else {
-            loadRemappableController()
-            guard let remappable = remappableController else { return }
-            remappable.swapButtons(.buttonX, .buttonY)
-            remappable.saveMappings()
-            loadCurrentMappings()
-            return
-        }
-        remappable.swapButtons(.buttonX, .buttonY)
-        remappable.saveMappings()
+        remappableController.swapButtons(.buttonX, .buttonY)
+        remappableController.saveMappings()
         loadCurrentMappings()
     }
 

@@ -97,6 +97,12 @@ void log(retro_log_level level, const char *fmt, ...) {
     data = (uint8_t*)[dataObj bytes];
     const char *meta = NULL;
     
+    // Read force monochromatic option from persistent store before initialising the emulator.
+    // The option key format is "<ClassName>.<optionKey>" as defined by CoreOptional.
+    NSString *monoKey = @"PVTGBDualCore.tgbdual_force_monochromatic";
+    self.forceMonochromatic = [[NSUserDefaults standardUserDefaults] boolForKey:monoKey];
+    ILOG(@"TGBDual: forceMonochromatic=%@", self.forceMonochromatic ? @"YES" : @"NO");
+
     retro_set_environment(environment_callback);
     retro_set_video_refresh(video_callback);
     retro_set_input_poll(input_poll_callback);
@@ -216,16 +222,40 @@ static size_t audio_batch_callback(const int16_t *data, size_t frames) {
 static dispatch_queue_t memcpy_queue =
 dispatch_queue_create("tgbdual memcpy queue", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0));
 
+/// Convert an RGB565 pixel to its luminance-equivalent greyscale RGB565 value.
+/// Uses ITU-R BT.601 luma coefficients.
+static inline uint16_t rgb565_to_grey(uint16_t pixel) {
+    uint32_t r = (pixel >> 11) & 0x1F;   // 5-bit red
+    uint32_t g = (pixel >>  5) & 0x3F;   // 6-bit green
+    uint32_t b =  pixel        & 0x1F;   // 5-bit blue
+    // Expand to 8-bit
+    uint32_t r8 = (r << 3) | (r >> 2);
+    uint32_t g8 = (g << 2) | (g >> 4);
+    uint32_t b8 = (b << 3) | (b >> 2);
+    // Luma (BT.601): Y = 0.299R + 0.587G + 0.114B
+    uint32_t y8 = (r8 * 299u + g8 * 587u + b8 * 114u + 500u) / 1000u;
+    uint32_t y5 = y8 >> 3;   // 8-bit → 5-bit (for R and B channels)
+    uint32_t y6 = y8 >> 2;   // 8-bit → 6-bit (for G channel)
+    return (uint16_t)((y5 << 11) | (y6 << 5) | y5);
+}
+
 static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch) {
     GET_CURRENT_OR_RETURN();
     current.videoWidth  = width;
     current.videoHeight = height;
 
+    BOOL forceMono = current.forceMonochromatic;
     dispatch_apply(height, memcpy_queue, ^(size_t y){
         const uint16_t *src = (uint16_t*)data + y * (pitch >> TGBDUAL_PITCH_SHIFT); //pitch is in bytes not pixels
         uint16_t *dst = current->_videoBuffer + y * current->_videoWidth;
 
-        memcpy(dst, src, sizeof(uint16_t)*width);
+        if (forceMono) {
+            for (unsigned x = 0; x < width; x++) {
+                dst[x] = rgb565_to_grey(src[x]);
+            }
+        } else {
+            memcpy(dst, src, sizeof(uint16_t)*width);
+        }
     });
 }
 

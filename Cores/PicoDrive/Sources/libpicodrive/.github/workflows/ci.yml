@@ -1,0 +1,309 @@
+name: Picodrive CI
+on: [push, pull_request]
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y libsdl1.2-dev libasound2-dev libpng-dev libz-dev
+    - name: configure
+      run: DUMP_CONFIG_LOG=1 ./configure
+    - name: make
+      run: make -j$(getconf _NPROCESSORS_ONLN)
+
+  build-libretro:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: make
+      run: LDFLAGS=-Wl,--no-undefined make -j$(getconf _NPROCESSORS_ONLN) -f Makefile.libretro
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Libretro-linux
+        path: picodrive_libretro.so
+
+  build-win32:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-win32
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=win32
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive.zip PicoDrive-win32-$ver.zip
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Win32
+        path: PicoDrive-win32*.zip
+
+
+  build-gp2x:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-gp2x
+    permissions:
+      packages: read
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=gph
+        make -j$(getconf _NPROCESSORS_ONLN) PLATFORM_MP3=0
+        make -C platform/gp2x rel VER=$ver
+        mv PicoDrive_$ver.zip PicoDrive-gph_$ver.zip
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: GP2X
+        path: PicoDrive-gph_*.zip
+
+  build-pandora:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-pandora
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=pandora
+        make -j$(getconf _NPROCESSORS_ONLN)
+        make -C platform/pandora rel VER=$ver
+        mv platform/pandora/PicoDrive_*.pnd .
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Pandora
+        path: PicoDrive_*.pnd
+
+  build-psp:
+    runs-on: ubuntu-latest
+    container: pspdev/pspdev
+    steps:
+    - name: build environment
+      run: |
+        apk add git gcc g++ zip
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        export CROSS_COMPILE=psp-
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=psp
+        make -j$(getconf _NPROCESSORS_ONLN)
+        make -C platform/psp rel VER=$ver
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: PSP
+        path: PicoDrive_psp_*.zip
+
+  build-ps2:
+    runs-on: ubuntu-latest
+    container: ps2dev/ps2dev
+    steps:
+    - name: build environment
+      run: |
+        apk add build-base cmake git zip make
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        export CROSS_COMPILE=mips64r5900el-ps2-elf-
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=ps2
+        make -j$(getconf _NPROCESSORS_ONLN)
+        make -C platform/ps2 rel VER=$ver
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: PS2
+        path: PicoDrive_ps2_*.zip
+
+
+  build-dingux:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    container: ghcr.io/irixxxx/toolchain-dingux
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=dingux
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive-dge.zip PicoDrive-dge-$ver.zip
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Dingux
+        path: PicoDrive-dge*.zip
+
+  build-gcw0:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-opendingux
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=opendingux-gcw0
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive.opk PicoDrive-gcw0-$ver.opk
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: GCW0
+        path: PicoDrive-gcw0*.opk
+
+  build-opendingux:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-opendingux
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=opendingux
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive.opk PicoDrive-opendingux-$ver.opk
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Opendingux
+        path: PicoDrive-opendingux*.opk
+
+  build-miyoo:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    container: ghcr.io/irixxxx/toolchain-miyoo
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=miyoo
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive-miyoo.ipk PicoDrive-miyoo-$ver.ipk
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Miyoo
+        path: PicoDrive-miyoo*.ipk
+
+  build-retrofw:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-retrofw
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=retrofw
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive.opk PicoDrive-retrofw-$ver.opk
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: RetroFW
+        path: PicoDrive-retrofw*.opk
+
+  build-odbeta-gcw0:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-odbeta-gcw0
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=odbeta
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive.opk PicoDrive-odbeta-gcw0-$ver.opk
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ODbeta gcw0
+        path: PicoDrive-odbeta-*.opk
+
+  build-odbeta-lepus:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-odbeta-lepus
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=odbeta
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive.opk PicoDrive-odbeta-lepus-$ver.opk
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ODbeta lepus
+        path: PicoDrive-odbeta-*.opk
+
+  build-odbeta-rg99:
+    runs-on: ubuntu-latest
+    container: ghcr.io/irixxxx/toolchain-odbeta-rs90
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: build
+      run: |
+        git config --global --add safe.directory $PWD
+        ver=$(cut -d'"' -f2 platform/common/version.h)-$(git rev-parse --short HEAD)
+        ./configure --platform=odbeta
+        make -j$(getconf _NPROCESSORS_ONLN)
+        mv PicoDrive.opk PicoDrive-odbeta-rg99-$ver.opk
+    - name: artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ODbeta rg99
+        path: PicoDrive-odbeta-*.opk

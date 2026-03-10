@@ -1,7 +1,7 @@
 #include "../sh2.h"
 
 #ifdef DRC_CMP
-#include "../compiler.c"
+#include "../compiler.h"
 #define BUSY_LOOP_HACKS 0
 #else
 #define BUSY_LOOP_HACKS 1
@@ -9,12 +9,12 @@
 
 // MAME types
 #ifndef INT8
-typedef signed char  INT8;
-typedef signed short INT16;
-typedef signed int   INT32;
-typedef unsigned int   UINT32;
-typedef unsigned short UINT16;
-typedef unsigned char  UINT8;
+typedef s8  INT8;
+typedef s16 INT16;
+typedef s32 INT32;
+typedef u32 UINT32;
+typedef u16 UINT16;
+typedef u8  UINT8;
 #endif
 
 #ifdef DRC_SH2
@@ -24,9 +24,10 @@ typedef unsigned char  UINT8;
 static __inline unsigned int name(SH2 *sh2, unsigned int a) \
 { \
 	unsigned int ret; \
-	sh2->sr |= sh2->icount << 12; \
+	sh2->sr |= (sh2->icount << 12) | (sh2->no_polling); \
 	ret = cname(a, sh2); \
 	sh2->icount = (signed int)sh2->sr >> 12; \
+	sh2->no_polling = (sh2->sr & SH2_NO_POLLING); \
 	sh2->sr &= 0x3f3; \
 	return ret; \
 }
@@ -34,9 +35,10 @@ static __inline unsigned int name(SH2 *sh2, unsigned int a) \
 #define MAKE_WRITEFUNC(name, cname) \
 static __inline void name(SH2 *sh2, unsigned int a, unsigned int d) \
 { \
-	sh2->sr |= sh2->icount << 12; \
+	sh2->sr |= (sh2->icount << 12) | (sh2->no_polling); \
 	cname(a, d, sh2); \
 	sh2->icount = (signed int)sh2->sr >> 12; \
+	sh2->no_polling = (sh2->sr & SH2_NO_POLLING); \
 	sh2->sr &= 0x3f3; \
 }
 
@@ -121,7 +123,7 @@ int sh2_execute_interpreter(SH2 *sh2, int cycles)
 		if (sh2->delay)
 		{
 			sh2->ppc = sh2->delay;
-			opcode = RW(sh2, sh2->delay);
+			opcode = (UINT32)(UINT16)RW(sh2, sh2->delay);
 
 			// TODO: more branch types
 			if ((opcode >> 13) == 5) { // BRA/BSR
@@ -139,7 +141,7 @@ int sh2_execute_interpreter(SH2 *sh2, int cycles)
 		else
 		{
 			sh2->ppc = sh2->pc;
-			opcode = RW(sh2, sh2->pc);
+			opcode = (UINT32)(UINT16)RW(sh2, sh2->pc);
 		}
 
 		sh2->delay = 0;
@@ -167,14 +169,16 @@ int sh2_execute_interpreter(SH2 *sh2, int cycles)
 
 		sh2->icount--;
 
-		if (sh2->test_irq && !sh2->delay && sh2->pending_level > ((sh2->sr >> 4) & 0x0f))
+		if (sh2->test_irq && !sh2->delay)
 		{
 			int level = sh2->pending_level;
-			int vector = sh2->irq_callback(sh2, level);
-			sh2_do_irq(sh2, level, vector);
+			if (level > ((sh2->sr >> 4) & 0x0f))
+			{
+				int vector = sh2->irq_callback(sh2, level);
+				sh2_do_irq(sh2, level, vector);
+			}
 			sh2->test_irq = 0;
 		}
-
 	}
 	while (sh2->icount > 0 || sh2->delay);	/* can't interrupt before delay */
 
@@ -214,14 +218,14 @@ int sh2_execute_interpreter(SH2 *sh2, int cycles)
 			if (sh2->pc < *base_pc || sh2->pc >= *end_pc) {
 				*base_pc = sh2->pc;
 				scan_block(*base_pc, sh2->is_slave,
-					op_flags, end_pc, NULL);
+					op_flags, end_pc, NULL, NULL);
 			}
 			if ((op_flags[(sh2->pc - *base_pc) / 2]
 				& OF_BTARGET) || sh2->pc == *base_pc
 				|| pc_expect != sh2->pc) // branched
 			{
 				pc_expect = sh2->pc;
-				if (sh2->icount < 0)
+				if (sh2->icount <= 0)
 					break;
 			}
 
@@ -232,13 +236,13 @@ int sh2_execute_interpreter(SH2 *sh2, int cycles)
 		if (sh2->delay)
 		{
 			sh2->ppc = sh2->delay;
-			opcode = RW(sh2, sh2->delay);
+			opcode = (UINT32)(UINT16)RW(sh2, sh2->delay);
 			sh2->pc -= 2;
 		}
 		else
 		{
 			sh2->ppc = sh2->pc;
-			opcode = RW(sh2, sh2->pc);
+			opcode = (UINT32)(UINT16)RW(sh2, sh2->pc);
 		}
 
 		sh2->delay = 0;
