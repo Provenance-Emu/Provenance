@@ -18,6 +18,8 @@
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/provenance-emu/provenance?style=flat-square">
 <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/provenance-emu/provenance">
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Provenance-EMU/Provenance">
+<br/>
+<a href="https://github.com/orgs/Provenance-Emu/projects/1"><img src="https://img.shields.io/badge/Roadmap-GitHub%20Projects-blue?style=flat-square&logo=github"/></a>
 </div>
 
 </br>
