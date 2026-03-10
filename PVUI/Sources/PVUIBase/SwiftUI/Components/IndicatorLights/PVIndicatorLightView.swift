@@ -37,9 +37,7 @@ public struct PVIndicatorLightView: View {
             indicatorContent
         }
         .buttonStyle(IndicatorButtonStyle())
-        .popover(isPresented: $showPopover) {
-            IndicatorPopoverView(state: state)
-        }
+        .modifier(IndicatorDetailsPresentation(showPopover: $showPopover, state: state))
         .scaleEffect(isExpanded ? 1.2 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isExpanded)
         .onLongPressGesture(minimumDuration: 0.3) {
@@ -105,6 +103,25 @@ private struct IndicatorButtonStyle: ButtonStyle {
     }
 }
 
+private struct IndicatorDetailsPresentation: ViewModifier {
+    @Binding var showPopover: Bool
+    let state: PVIndicatorState
+
+    func body(content: Content) -> some View {
+        #if os(tvOS)
+        content
+            .sheet(isPresented: $showPopover) {
+                IndicatorPopoverView(state: state)
+            }
+        #else
+        content
+            .popover(isPresented: $showPopover) {
+                IndicatorPopoverView(state: state)
+            }
+        #endif
+    }
+}
+
 // MARK: - Popover View
 
 private struct IndicatorPopoverView: View {
@@ -147,9 +164,17 @@ private struct IndicatorPopoverView: View {
         .frame(minWidth: 200, maxWidth: 280)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
+                .fill(popoverBackgroundColor)
                 .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 4)
         )
+    }
+
+    private var popoverBackgroundColor: Color {
+        #if os(tvOS)
+        return Color.black.opacity(0.9)
+        #else
+        return Color(.systemBackground)
+        #endif
     }
 }
 
