@@ -456,7 +456,7 @@ jobs:
           PAYLOAD_EOF
 
             # --- Call Kimi API ---
-            KIMI_RESP=$(curl -sf -X POST "https://api.moonshot.cn/v1/chat/completions" \
+            KIMI_RESP=$(curl -sf -X POST "https://api.moonshot.ai/v1/chat/completions" \
               -H "Authorization: Bearer ${KIMI_API_KEY}" \
               -H "Content-Type: application/json" \
               -d @/tmp/kimi_payload.json 2>/dev/null || echo "")

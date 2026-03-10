@@ -1,0 +1,13 @@
+# Aider config for Provenance
+# Using gpt-4o (OpenAI) until Kimi key is refreshed.
+# To switch to Kimi once you have a fresh key from platform.moonshot.cn:
+#   export OPENAI_API_BASE=https://api.moonshot.cn/v1
+#   export OPENAI_API_KEY=<fresh-key>
+#   aider --model openai/moonshot-v1-128k
+model: gpt-4o
+auto-commits: true
+dirty-commits: false
+attribute-author: false
+attribute-committer: false
+pretty: true
+stream: true
