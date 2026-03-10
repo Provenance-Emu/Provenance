@@ -668,6 +668,16 @@ public final class PVSettingsWrapper: NSObject {
         set { Defaults[.showFPSCount] = newValue }}
 }
 
+// MARK: - RetroAchievements Settings
+
+public extension Defaults.Keys {
+    /// Master toggle for RetroAchievements in all cores (native + LibRetro).
+    static let retroAchievementsEnabled = Key<Bool>("retroAchievementsEnabled", default: false)
+
+    /// When `true`, save-state loads are blocked during active achievement sessions.
+    static let retroAchievementsHardcoreEnabled = Key<Bool>("retroAchievementsHardcoreEnabled", default: false)
+}
+
 public extension Defaults.Keys {
     static let showFavorites = Key<Bool>("showFavorites", default: true)
 

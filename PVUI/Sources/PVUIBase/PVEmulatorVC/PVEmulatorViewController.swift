@@ -808,6 +808,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         core.startEmulation()
 
+        // Start RetroAchievements session if the user is logged in and the core supports it.
+        startAchievementsIfNeeded()
+
         #if !os(tvOS)
         // Show virtual keyboard / mouse cursor overlays for capable cores (e.g. DOS)
         if #available(iOS 14.0, *) {
@@ -1387,6 +1390,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Remove KVO before stopping so the observer doesn't enqueue a redundant async updatePlayedDuration()
         removeRunningObserverIfNeeded()
+
+        // Tear down RetroAchievements session before stopping the core.
+        stopAchievements()
+
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)
         if let view = controllerViewController?.view {

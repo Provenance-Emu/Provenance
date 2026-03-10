@@ -127,6 +127,7 @@ public typealias RAComments = Comments
 // Session management
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 public typealias RASessionManager = AchievementSessionManager
+@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 public typealias RASessionError = AchievementSessionError
 
 // MARK: - RetroArch Integration
