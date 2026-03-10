@@ -1,5 +1,8 @@
 import Testing
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 @testable import PVCheevos
 
 /// Thread-safe response queue for multi-request mock sequences
@@ -34,8 +37,8 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
             let response = HTTPURLResponse(
                 url: request.url!,
                 statusCode: next.statusCode,
-                httpVersion: nil,
-                headerFields: nil
+                httpVersion: nil as String?,
+                headerFields: nil as [String: String]?
             )!
             return (next.data, response)
         }
@@ -44,8 +47,8 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
         let response = mockResponse ?? HTTPURLResponse(
             url: request.url!,
             statusCode: 200,
-            httpVersion: nil,
-            headerFields: nil
+            httpVersion: nil as String?,
+            headerFields: nil as [String: String]?
         )!
 
         return (data, response)
@@ -56,8 +59,8 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
         self.mockResponse = HTTPURLResponse(
             url: URL(string: "https://example.com")!,
             statusCode: statusCode,
-            httpVersion: nil,
-            headerFields: nil
+            httpVersion: nil as String?,
+            headerFields: nil as [String: String]?
         )
     }
 

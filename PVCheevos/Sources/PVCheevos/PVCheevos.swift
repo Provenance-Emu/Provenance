@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 /// Main entry point for the PVCheevos library
 /// Provides convenient access to RetroAchievements API functionality

@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 /// Main client for accessing the RetroAchievements API
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
