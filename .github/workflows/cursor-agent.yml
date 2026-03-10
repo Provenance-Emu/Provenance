@@ -1,0 +1,601 @@
+name: Cursor Agent
+
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to implement'
+        required: false
+        type: string
+      pr_number:
+        description: 'PR number to update'
+        required: false
+        type: string
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'implement_issue'
+        type: choice
+        options:
+          - implement_issue
+          - fix_bug
+          - fix_ai_review
+          - ai_approved
+          - fix_rebase_conflict
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: cursor-agent-${{ github.event.inputs.pr_number || github.event.inputs.issue_number || github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  cursor-agent:
+    if: |
+      (
+        github.event_name == 'issues' &&
+        (
+          (github.event.action == 'labeled' && github.event.label.name == 'cursor-work') ||
+          (github.event.action == 'opened' && contains(toJSON(github.event.issue.labels.*.name), 'cursor-work'))
+        ) &&
+        !contains(toJSON(github.event.issue.labels.*.name), 'agent-work')
+      ) ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Resolve Cursor context
+        id: context
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          EVENT_NAME="${{ github.event_name }}"
+          ACTION="${{ github.event.inputs.action }}"
+          ISSUE_NUMBER="${{ github.event.inputs.issue_number || github.event.issue.number }}"
+          PR_NUMBER="${{ github.event.inputs.pr_number }}"
+
+          if [ -z "$ACTION" ]; then
+            ACTION="implement_issue"
+          fi
+
+          ISSUE_TITLE=""
+          ISSUE_LABELS=""
+          TARGET_KIND="issue"
+          TARGET_NUMBER=""
+          BRANCH=""
+
+          if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "0" ]; then
+            ISSUE_JSON=$(gh issue view "$ISSUE_NUMBER" --repo "$REPO" --json title,labels 2>/dev/null || echo '{}')
+            ISSUE_TITLE=$(echo "$ISSUE_JSON" | jq -r '.title // ""')
+            ISSUE_LABELS=$(echo "$ISSUE_JSON" | jq -r '[(.labels // [])[].name] | join(",")')
+          fi
+
+          if [ -z "$PR_NUMBER" ] && [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "0" ]; then
+            BRANCH="agent/issue-${ISSUE_NUMBER}-cursor"
+            PR_NUMBER=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty' 2>/dev/null || echo "")
+          fi
+
+          if [ -n "$PR_NUMBER" ]; then
+            PR_JSON=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json headRefName --jq '{branch: .headRefName}' 2>/dev/null || echo '{}')
+            BRANCH=$(echo "$PR_JSON" | jq -r '.branch // ""')
+            TARGET_KIND="pr"
+            TARGET_NUMBER="$PR_NUMBER"
+          elif [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "0" ]; then
+            TARGET_KIND="issue"
+            TARGET_NUMBER="$ISSUE_NUMBER"
+            if [ -z "$BRANCH" ]; then
+              BRANCH="agent/issue-${ISSUE_NUMBER}-cursor"
+            fi
+          else
+            echo "Unable to determine issue or PR target"
+            exit 1
+          fi
+
+          case "$ACTION" in
+            fix_bug)
+              COMMIT_SUBJECT="fix: address issue #${ISSUE_NUMBER}"
+              ;;
+            fix_ai_review)
+              COMMIT_SUBJECT="fix: address AI review feedback on PR #${PR_NUMBER}"
+              ;;
+            fix_rebase_conflict)
+              COMMIT_SUBJECT="fix: resolve rebase conflicts on PR #${PR_NUMBER}"
+              ;;
+            implement_issue)
+              COMMIT_SUBJECT="feat: address issue #${ISSUE_NUMBER}"
+              ;;
+            *)
+              COMMIT_SUBJECT="chore: update issue #${ISSUE_NUMBER:-$PR_NUMBER}"
+              ;;
+          esac
+
+          RELATION_LINE=""
+          if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "0" ]; then
+            ISSUE_TITLE_LC=$(printf '%s' "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]')
+            ISSUE_LABELS_LC=$(printf '%s' "$ISSUE_LABELS" | tr '[:upper:]' '[:lower:]')
+            if echo "$ISSUE_LABELS_LC" | grep -Eq '(^|,)(epic|parent)(,|$)' || echo "$ISSUE_TITLE_LC" | grep -q '^epic'; then
+              RELATION_LINE="Part of #${ISSUE_NUMBER}"
+            else
+              RELATION_LINE="Closes #${ISSUE_NUMBER}"
+            fi
+          fi
+
+          REQUIRES_AGENT="true"
+          if [ "$ACTION" = "ai_approved" ]; then
+            REQUIRES_AGENT="false"
+          fi
+
+          {
+            echo "action=$ACTION"
+            echo "issue_number=$ISSUE_NUMBER"
+            echo "issue_title=$ISSUE_TITLE"
+            echo "issue_labels=$ISSUE_LABELS"
+            echo "pr_number=$PR_NUMBER"
+            echo "branch=$BRANCH"
+            echo "target_kind=$TARGET_KIND"
+            echo "target_number=$TARGET_NUMBER"
+            echo "commit_subject=$COMMIT_SUBJECT"
+            echo "relation_line=$RELATION_LINE"
+            echo "requires_agent=$REQUIRES_AGENT"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post initial status comment
+        id: status_comment
+        env:
+          TARGET_NUMBER: ${{ steps.context.outputs.target_number }}
+          ACTION: ${{ steps.context.outputs.action }}
+          TARGET_KIND: ${{ steps.context.outputs.target_kind }}
+        run: |
+          set -euo pipefail
+
+          case "$ACTION" in
+            fix_ai_review)        TITLE="Applying AI review fixes" ;;
+            ai_approved)          TITLE="Processing AI approval" ;;
+            fix_rebase_conflict)  TITLE="Resolving rebase conflicts" ;;
+            fix_bug)              TITLE="Fixing bug" ;;
+            *)                    TITLE="Working on issue" ;;
+          esac
+
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          cat > /tmp/cursor_status.md <<EOF
+          <!-- cursor-status -->
+          ## Cursor Agent - ${TITLE}
+
+          **Target:** ${TARGET_KIND} #${TARGET_NUMBER}
+
+          ### Progress
+          - [x] Agent started
+          - [ ] Reading context
+          - [ ] Working
+          - [ ] Done
+
+          *Started: ${TIMESTAMP}*
+          EOF
+
+          EXISTING=$(gh api "repos/${{ github.repository }}/issues/${TARGET_NUMBER}/comments" \
+            --jq '[.[] | select(.body | test("<!-- cursor-status -->";""))] | last | .id // empty' 2>/dev/null || echo "")
+
+          if [ -n "$EXISTING" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${EXISTING}" \
+              --method PATCH --field body=@/tmp/cursor_status.md >/dev/null 2>&1 || true
+            echo "comment_id=$EXISTING" >> "$GITHUB_OUTPUT"
+          else
+            COMMENT_ID=$(gh api "repos/${{ github.repository }}/issues/${TARGET_NUMBER}/comments" \
+              --method POST --field body=@/tmp/cursor_status.md --jq '.id' 2>/dev/null || echo "")
+            echo "comment_id=$COMMENT_ID" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install Cursor CLI
+        if: steps.context.outputs.requires_agent == 'true'
+        run: |
+          curl https://cursor.com/install -fsS | bash
+          echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
+
+      - name: Validate Cursor authentication
+        if: steps.context.outputs.requires_agent == 'true'
+        run: |
+          if [ -z "${CURSOR_API_KEY:-}" ]; then
+            echo "CURSOR_API_KEY is required for cursor-agent.yml"
+            exit 1
+          fi
+
+      - name: Configure git identity
+        if: steps.context.outputs.requires_agent == 'true'
+        run: |
+          git config user.name "Cursor Agent"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Prepare branch
+        id: prepare
+        if: steps.context.outputs.requires_agent == 'true'
+        env:
+          ACTION: ${{ steps.context.outputs.action }}
+          BRANCH: ${{ steps.context.outputs.branch }}
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+
+          if [ "$ACTION" = "fix_ai_review" ]; then
+            git fetch origin "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+          elif [ "$ACTION" = "fix_rebase_conflict" ]; then
+            git fetch origin develop "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            if git rebase origin/develop; then
+              echo "rebase_result=clean" >> "$GITHUB_OUTPUT"
+            else
+              echo "rebase_result=conflict" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            git fetch origin develop
+            if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+              git fetch origin "$BRANCH"
+              git checkout -B "$BRANCH" "origin/$BRANCH"
+            else
+              git checkout -B "$BRANCH" "origin/develop"
+            fi
+          fi
+
+      - name: Run Cursor agent
+        id: cursor_run
+        if: |
+          steps.context.outputs.requires_agent == 'true' &&
+          (steps.context.outputs.action != 'fix_rebase_conflict' || steps.prepare.outputs.rebase_result != 'clean')
+        env:
+          REPO: ${{ github.repository }}
+          ACTION: ${{ steps.context.outputs.action }}
+          ISSUE_NUMBER: ${{ steps.context.outputs.issue_number }}
+          ISSUE_TITLE: ${{ steps.context.outputs.issue_title }}
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          BRANCH: ${{ steps.context.outputs.branch }}
+        run: |
+          set -euo pipefail
+
+          ISSUE_BODY=""
+          PR_BODY=""
+          REVIEW_BODY=""
+          INLINE_REVIEW_COMMENTS=""
+
+          if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "0" ]; then
+            ISSUE_BODY=$(gh issue view "$ISSUE_NUMBER" --repo "$REPO" --json body --jq '.body // ""' 2>/dev/null || echo "")
+          fi
+
+          if [ -n "$PR_NUMBER" ]; then
+            PR_BODY=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json body --jq '.body // ""' 2>/dev/null || echo "")
+          fi
+
+          if [ "$ACTION" = "fix_ai_review" ]; then
+            REVIEW_BODY=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
+              --jq '[.[] | select(.user.login == "github-actions[bot]")] | sort_by(.submitted_at) | last | .body // ""' 2>/dev/null || echo "")
+            INLINE_REVIEW_COMMENTS=$(gh api "repos/$REPO/pulls/$PR_NUMBER/comments" \
+              --jq '[.[] | select(.user.login == "github-actions[bot]")] | map("- \(.path):\(.original_line // 0) — \(.body)") | join("\n")' 2>/dev/null || echo "")
+          fi
+
+          cat > /tmp/cursor_prompt.md <<EOF
+          You are working on the Provenance emulator app repository.
+          Read CLAUDE.md, .github/cursor-agent-routing.md, and .github/prompts/reviewer-context.md before making changes.
+
+          Repository rules:
+          - Do not create branches, commit, push, open pull requests, close issues, edit labels, or post GitHub comments.
+          - Keep changes focused and production-ready.
+          - Target iOS and tvOS compatibility.
+          - Do not modify project.pbxproj unless absolutely necessary.
+          - Do not modify upstream submodule source in Cores/<name>/<upstream-dir>/.
+          - If you touch Swift declarations, preserve existing comments and add /// comments only where new public-facing declarations truly need them.
+          - Leave the repository ready for the workflow to publish your work.
+
+          Action: ${ACTION}
+          Branch already checked out: ${BRANCH}
+
+          Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
+          ${ISSUE_BODY}
+
+          PR #${PR_NUMBER}
+          ${PR_BODY}
+
+          EOF
+
+          if [ "$ACTION" = "fix_ai_review" ]; then
+            cat >> /tmp/cursor_prompt.md <<EOF
+          Latest AI review to address:
+          ${REVIEW_BODY}
+
+          Inline review comments:
+          ${INLINE_REVIEW_COMMENTS}
+
+          Fix every CRITICAL and MAJOR issue. Fix MINOR issues when straightforward.
+
+          EOF
+          elif [ "$ACTION" = "fix_rebase_conflict" ]; then
+            cat >> /tmp/cursor_prompt.md <<EOF
+          The repository is currently in a rebase conflict state after attempting to rebase this branch onto develop.
+          Resolve the conflict markers in the working tree, preserve both sides' intent, and leave the repository ready for:
+          - git add -A
+          - git rebase --continue
+
+          Do not run git commands yourself.
+
+          EOF
+          else
+            cat >> /tmp/cursor_prompt.md <<EOF
+          Implement the requested issue with minimal, maintainable changes.
+          If the issue points at an almost-finished implementation, finish it cleanly rather than broadening scope.
+
+          EOF
+          fi
+
+          agent -p "$(cat /tmp/cursor_prompt.md)" --model default
+
+      - name: Publish code changes
+        id: publish
+        if: steps.context.outputs.requires_agent == 'true'
+        env:
+          ACTION: ${{ steps.context.outputs.action }}
+          BRANCH: ${{ steps.context.outputs.branch }}
+          COMMIT_SUBJECT: ${{ steps.context.outputs.commit_subject }}
+          REBASE_RESULT: ${{ steps.prepare.outputs.rebase_result }}
+        run: |
+          set -euo pipefail
+
+          if [ "$ACTION" = "fix_rebase_conflict" ]; then
+            if [ "$REBASE_RESULT" = "clean" ]; then
+              git push --force-with-lease origin "$BRANCH"
+              echo "result=pushed" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            if git diff --name-only --diff-filter=U | grep -q .; then
+              echo "result=still_conflicted" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            git add -A
+            if ! GIT_EDITOR=true git rebase --continue; then
+              echo "result=rebase_continue_failed" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            while [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; do
+              if git diff --name-only --diff-filter=U | grep -q .; then
+                echo "result=still_conflicted" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+
+              if ! GIT_EDITOR=true git rebase --continue; then
+                echo "result=rebase_continue_failed" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            done
+
+            git push --force-with-lease origin "$BRANCH"
+            echo "result=pushed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+            echo "result=no_changes" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "result=no_changes" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git commit -m "$COMMIT_SUBJECT"
+
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git push origin "$BRANCH"
+          else
+            git push -u origin "$BRANCH"
+          fi
+
+          echo "result=pushed" >> "$GITHUB_OUTPUT"
+
+      - name: Create or discover PR
+        id: pr
+        if: |
+          steps.context.outputs.action != 'ai_approved' &&
+          steps.publish.outputs.result != '' &&
+          steps.publish.outputs.result != 'still_conflicted' &&
+          steps.publish.outputs.result != 'rebase_continue_failed'
+        env:
+          REPO: ${{ github.repository }}
+          ACTION: ${{ steps.context.outputs.action }}
+          ISSUE_NUMBER: ${{ steps.context.outputs.issue_number }}
+          ISSUE_TITLE: ${{ steps.context.outputs.issue_title }}
+          RELATION_LINE: ${{ steps.context.outputs.relation_line }}
+          BRANCH: ${{ steps.context.outputs.branch }}
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          PUBLISH_RESULT: ${{ steps.publish.outputs.result }}
+        run: |
+          set -euo pipefail
+
+          if [ "$PUBLISH_RESULT" != "pushed" ] && [ -z "$PR_NUMBER" ]; then
+            echo "pr_number=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ -z "$PR_NUMBER" ] && [ -n "$ISSUE_NUMBER" ] && [ "$ACTION" != "fix_ai_review" ] && [ "$ACTION" != "fix_rebase_conflict" ]; then
+            cat > /tmp/cursor_pr_body.md <<EOF
+          ## Summary
+          - Implement the requested issue with focused changes through the Cursor workflow lane.
+
+          ## Test plan
+          - [ ] GitHub Actions validation
+          - [ ] Manual verification in Xcode if needed
+
+          ${RELATION_LINE}
+          EOF
+
+            gh pr create \
+              --repo "$REPO" \
+              --base develop \
+              --head "$BRANCH" \
+              --title "[Agent] ${ISSUE_TITLE}" \
+              --body-file /tmp/cursor_pr_body.md >/dev/null
+          fi
+
+          if [ -z "$PR_NUMBER" ]; then
+            PR_NUMBER=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty' 2>/dev/null || echo "")
+          fi
+
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure Cursor labels exist
+        if: |
+          steps.context.outputs.action == 'ai_approved' ||
+          steps.pr.outputs.pr_number != ''
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "cursor-work" --repo "$REPO" --color "5319e7" --description "Route work through Cursor lanes" --force >/dev/null 2>&1 || true
+          gh label create "needs-manual-intervention" --repo "$REPO" --color "d93f0b" --description "Agent workflow needs human help" --force >/dev/null 2>&1 || true
+
+      - name: Mark PR ready for review
+        if: |
+          steps.context.outputs.action == 'ai_approved' ||
+          (
+            steps.pr.outputs.pr_number != '' &&
+            steps.publish.outputs.result == 'pushed'
+          )
+        env:
+          REPO: ${{ github.repository }}
+          ACTION: ${{ steps.context.outputs.action }}
+          PR_NUMBER: ${{ steps.context.outputs.action == 'ai_approved' && steps.context.outputs.pr_number || steps.pr.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+
+          if [ "$ACTION" = "ai_approved" ]; then
+            gh pr merge "$PR_NUMBER" --repo "$REPO" --auto --merge 2>/dev/null || true
+            gh pr edit "$PR_NUMBER" --repo "$REPO" \
+              --add-label "agent-work,cursor-work,ready-for-review" \
+              --remove-label "ai-reviewing,needs-fixes,needs-manual-intervention" \
+              --add-assignee JoeMatt \
+              --add-reviewer JoeMatt 2>/dev/null || true
+            exit 0
+          fi
+
+          gh pr edit "$PR_NUMBER" --repo "$REPO" \
+            --add-label "agent-work,cursor-work,ai-reviewing" \
+            --remove-label "needs-fixes,ready-for-review,needs-manual-intervention" 2>/dev/null || true
+
+          gh pr merge "$PR_NUMBER" --repo "$REPO" --auto --merge 2>/dev/null || true
+
+      - name: Post AI review marker comment
+        if: |
+          steps.context.outputs.action == 'fix_ai_review' &&
+          steps.pr.outputs.pr_number != '' &&
+          steps.publish.outputs.result == 'pushed'
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        run: |
+          cat > /tmp/cursor_marker.md <<'EOF'
+          <!-- ai-review-processed -->
+          Cursor pushed fixes for the latest AI review comments.
+          EOF
+
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file /tmp/cursor_marker.md 2>/dev/null || true
+
+      - name: Dispatch shared AI review
+        if: |
+          steps.context.outputs.action != 'ai_approved' &&
+          steps.pr.outputs.pr_number != '' &&
+          steps.publish.outputs.result == 'pushed'
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        run: |
+          gh workflow run ai-review.yml --repo "${{ github.repository }}" -f pr_number="$PR_NUMBER"
+
+      - name: Mark workflow for manual intervention
+        if: |
+          failure() ||
+          steps.publish.outputs.result == 'still_conflicted' ||
+          steps.publish.outputs.result == 'rebase_continue_failed'
+        env:
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number || steps.context.outputs.pr_number }}
+          TARGET_NUMBER: ${{ steps.context.outputs.target_number }}
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "needs-manual-intervention" 2>/dev/null || true
+          else
+            gh issue edit "$TARGET_NUMBER" --repo "$REPO" --add-label "needs-manual-intervention" 2>/dev/null || true
+          fi
+
+      - name: Finalize status comment
+        if: always()
+        env:
+          STATUS_ID: ${{ steps.status_comment.outputs.comment_id }}
+          TARGET_NUMBER: ${{ steps.context.outputs.target_number }}
+          ACTION: ${{ steps.context.outputs.action }}
+          PUBLISH_RESULT: ${{ steps.publish.outputs.result }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number || steps.context.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          TITLE="Cursor Agent complete"
+          RESULT_LINE="Completed."
+
+          if [ "$ACTION" = "ai_approved" ]; then
+            TITLE="Ready for human review"
+            RESULT_LINE="Auto-merge enabled and @JoeMatt assigned."
+          elif [ "$PUBLISH_RESULT" = "pushed" ]; then
+            TITLE="Cursor Agent complete"
+            RESULT_LINE="Changes pushed and shared AI review dispatched."
+          elif [ "$PUBLISH_RESULT" = "no_changes" ]; then
+            TITLE="Cursor Agent complete"
+            RESULT_LINE="No file changes were needed."
+          elif [ "$PUBLISH_RESULT" = "still_conflicted" ] || [ "$PUBLISH_RESULT" = "rebase_continue_failed" ]; then
+            TITLE="Cursor Agent needs manual help"
+            RESULT_LINE="Rebase conflict resolution still needs human attention."
+          elif [ "${{ job.status }}" != "success" ]; then
+            TITLE="Cursor Agent failed"
+            RESULT_LINE="The workflow could not complete automatically."
+          fi
+
+          cat > /tmp/cursor_status_final.md <<EOF
+          <!-- cursor-status -->
+          ## ${TITLE}
+
+          ### Result
+          - ${RESULT_LINE}
+          EOF
+
+          if [ -n "$PR_NUMBER" ]; then
+            echo "- PR: #${PR_NUMBER}" >> /tmp/cursor_status_final.md
+          fi
+
+          cat >> /tmp/cursor_status_final.md <<EOF
+
+          *Updated: ${TIMESTAMP}*
+          EOF
+
+          if [ -n "$STATUS_ID" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${STATUS_ID}" \
+              --method PATCH --field body=@/tmp/cursor_status_final.md >/dev/null 2>&1 || true
+          else
+            gh api "repos/${{ github.repository }}/issues/${TARGET_NUMBER}/comments" \
+              --method POST --field body=@/tmp/cursor_status_final.md >/dev/null 2>&1 || true
+          fi

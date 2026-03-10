@@ -42,6 +42,7 @@ jobs:
       pr_title:     ${{ steps.triage.outputs.pr_title }}
       should_review: ${{ steps.triage.outputs.should_review }}
       model:        ${{ steps.triage.outputs.model }}
+      followup_workflow: ${{ steps.triage.outputs.followup_workflow }}
 
     steps:
       - name: Find PR and select reviewer model
@@ -64,6 +65,23 @@ jobs:
             --json title --jq '.title' \
             --repo "${{ github.repository }}" 2>/dev/null || echo "")
 
+          PR_LABELS=$(gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json labels \
+            --jq '[(.labels // [])[].name] | join(",")' \
+            2>/dev/null || echo "")
+
+          HEAD_BRANCH=$(gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json headRefName \
+            --jq '.headRefName // ""' \
+            2>/dev/null || echo "")
+
+          FOLLOWUP_WORKFLOW="claude-code.yml"
+          if echo "$PR_LABELS" | grep -Eq '(^|,)cursor-work(,|$)' || echo "$HEAD_BRANCH" | grep -q 'cursor$'; then
+            FOLLOWUP_WORKFLOW="cursor-agent.yml"
+          fi
+
           # Skip if the owner (JoeMatt) has already approved — no need to re-review
           OWNER_APPROVED=$(gh pr view "$PR_NUMBER" \
             --repo "${{ github.repository }}" \
@@ -80,6 +98,7 @@ jobs:
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           echo "pr_title=$PR_TITLE"   >> "$GITHUB_OUTPUT"
           echo "should_review=true"   >> "$GITHUB_OUTPUT"
+          echo "followup_workflow=$FOLLOWUP_WORKFLOW" >> "$GITHUB_OUTPUT"
 
           # ── Model selection heuristics ─────────────────────────────────────
           # Fetch diff once; derive file/line counts from it (avoids double API call)
@@ -232,7 +251,7 @@ jobs:
 
             If REVIEW_COUNT >= 3:
             - Post a brief summary review: `gh pr review ${{ needs.triage.outputs.pr_number }} --comment --body "⚠️ Max review cycles (3) reached. Escalating to human review. See previous reviews for outstanding issues." --repo ${{ github.repository }}`
-            - Then dispatch approval: `gh workflow run claude-code.yml --repo ${{ github.repository }} -f pr_number="${{ needs.triage.outputs.pr_number }}" -f action="ai_approved"`
+            - Then dispatch approval: `gh workflow run ${{ needs.triage.outputs.followup_workflow }} --repo ${{ github.repository }} -f pr_number="${{ needs.triage.outputs.pr_number }}" -f action="ai_approved"`
             - **STOP here — do not post another full review.**
 
             ## STEP 1 — Check for duplicate review
@@ -359,7 +378,7 @@ jobs:
             ### Verdict: REQUEST_CHANGES 🔧
 
             ---
-            > 🤖 *Claude Code fixer has been dispatched to address CRITICAL and MAJOR issues automatically.*
+            > 🤖 *An automated fixer workflow has been dispatched to address CRITICAL and MAJOR issues automatically.*
             REVIEW_BODY
             sed -i "s/CYCLE_PLACEHOLDER/${CYCLE}/g" /tmp/review_body.md
             sed -i "s/MODEL_PLACEHOLDER/${{ needs.triage.outputs.model }}/g" /tmp/review_body.md
@@ -387,7 +406,7 @@ jobs:
 
             If **APPROVE**:
             ```
-            gh workflow run claude-code.yml \
+            gh workflow run ${{ needs.triage.outputs.followup_workflow }} \
               --repo ${{ github.repository }} \
               -f pr_number="${{ needs.triage.outputs.pr_number }}" \
               -f action="ai_approved"
@@ -395,7 +414,7 @@ jobs:
 
             If **REQUEST_CHANGES**:
             ```
-            gh workflow run claude-code.yml \
+            gh workflow run ${{ needs.triage.outputs.followup_workflow }} \
               --repo ${{ github.repository }} \
               -f pr_number="${{ needs.triage.outputs.pr_number }}" \
               -f action="fix_ai_review"
@@ -507,7 +526,7 @@ jobs:
 
           **Options:**
           1. **Wait** for the Claude Code token window to reset (~2 hours) and re-run
-          2. **Review manually** or use Cursor locally
+          2. **Review manually** or use Cursor locally / with `@cursor`
           3. **Re-trigger** by re-running the `AI PR Review` workflow
 
           FAILEOF

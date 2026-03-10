@@ -50,10 +50,12 @@ jobs:
        contains(github.event.comment.body, '/claude-fix')) ||
       (github.event_name == 'issues' &&
        github.event.action == 'labeled' &&
-       github.event.label.name == 'agent-work') ||
+       github.event.label.name == 'agent-work' &&
+       !contains(toJSON(github.event.issue.labels.*.name), 'cursor-work')) ||
       (github.event_name == 'issues' &&
        github.event.action == 'opened' &&
-       contains(toJSON(github.event.issue.labels.*.name), 'agent-work')) ||
+       contains(toJSON(github.event.issue.labels.*.name), 'agent-work') &&
+       !contains(toJSON(github.event.issue.labels.*.name), 'cursor-work')) ||
       (github.event_name == 'pull_request_review_comment' &&
        contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' &&
@@ -386,8 +388,52 @@ jobs:
                   --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
                 ```
 
+      - name: Dispatch Cursor fallback
+        id: cursor_fallback
+        if: steps.claude_run.outcome == 'failure' && secrets.CURSOR_API_KEY != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          EVENT_NAME="${{ github.event_name }}"
+          ACTION="${{ github.event.inputs.action }}"
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          PR_NUMBER="${{ github.event.inputs.pr_number || github.event.pull_request.number }}"
+
+          dispatch_success=false
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$PR_NUMBER" ] && [ -n "$ACTION" ]; then
+            gh workflow run cursor-agent.yml \
+              --repo "${{ github.repository }}" \
+              -f pr_number="$PR_NUMBER" \
+              -f action="$ACTION" && dispatch_success=true
+          elif [ "$EVENT_NAME" = "issues" ] && [ -n "$ISSUE_NUMBER" ]; then
+            ISSUE_LABELS=$(gh issue view "$ISSUE_NUMBER" --repo "${{ github.repository }}" --json labels \
+              --jq '[(.labels // [])[].name] | join(",")' 2>/dev/null || echo "")
+            ISSUE_ACTION="implement_issue"
+            if echo "$ISSUE_LABELS" | tr '[:upper:]' '[:lower:]' | grep -Eq '(^|,)(bug|regression)(,|$)'; then
+              ISSUE_ACTION="fix_bug"
+            fi
+
+            gh workflow run cursor-agent.yml \
+              --repo "${{ github.repository }}" \
+              -f issue_number="$ISSUE_NUMBER" \
+              -f action="$ISSUE_ACTION" && dispatch_success=true
+          elif [ "$EVENT_NAME" = "issue_comment" ] && [ -n "$ISSUE_NUMBER" ] && [ "${{ github.event.issue.pull_request.url != '' }}" = "true" ]; then
+            gh workflow run cursor-agent.yml \
+              --repo "${{ github.repository }}" \
+              -f pr_number="$ISSUE_NUMBER" \
+              -f action="fix_ai_review" && dispatch_success=true
+          elif [ "$EVENT_NAME" = "pull_request_review" ] && [ -n "$PR_NUMBER" ]; then
+            gh workflow run cursor-agent.yml \
+              --repo "${{ github.repository }}" \
+              -f pr_number="$PR_NUMBER" \
+              -f action="fix_ai_review" && dispatch_success=true
+          fi
+
+          echo "dispatched=$dispatch_success" >> "$GITHUB_OUTPUT"
+
       # If Claude Code failed (rate limit, auth, or runtime error), notify the user
-      # so they can handle the task manually via Cursor or wait for token reset.
+      # so they can either rely on Cursor fallback or handle the task manually.
       - name: Notify on Claude Code failure
         if: steps.claude_run.outcome == 'failure'
         env:
@@ -410,7 +456,7 @@ jobs:
 
           **Options:**
           1. **Wait** for the Claude Code token window to reset (~2 hours)
-          2. **Use Cursor** locally to handle this task manually
+          2. **Use Cursor** locally or via the Cursor GitHub app
           3. **Re-trigger** by commenting `@claude` once tokens are available
 
           FAILEOF
@@ -421,14 +467,20 @@ jobs:
           elif [ "$ACTION" = "fix_rebase_conflict" ]; then
             echo "**Task was:** Resolve rebase conflicts on PR #${PR_NUM}" >> /tmp/failure_notify.md
           fi
+          if [ "${{ steps.cursor_fallback.outputs.dispatched }}" = "true" ]; then
+            echo "" >> /tmp/failure_notify.md
+            echo "**Cursor fallback:** Dispatched automatically via \`cursor-agent.yml\`." >> /tmp/failure_notify.md
+          fi
           echo "" >> /tmp/failure_notify.md
           echo "*Failed: ${TIMESTAMP}*" >> /tmp/failure_notify.md
 
           gh pr comment "$PR_NUM" --body-file /tmp/failure_notify.md --repo "${{ github.repository }}" 2>/dev/null || \
             gh issue comment "$PR_NUM" --body-file /tmp/failure_notify.md --repo "${{ github.repository }}" 2>/dev/null || true
 
-          gh pr edit "$PR_NUM" --add-label "needs-manual-intervention" --repo "${{ github.repository }}" 2>/dev/null || \
-            gh issue edit "$PR_NUM" --add-label "needs-manual-intervention" --repo "${{ github.repository }}" 2>/dev/null || true
+          if [ "${{ steps.cursor_fallback.outputs.dispatched }}" != "true" ]; then
+            gh pr edit "$PR_NUM" --add-label "needs-manual-intervention" --repo "${{ github.repository }}" 2>/dev/null || \
+              gh issue edit "$PR_NUM" --add-label "needs-manual-intervention" --repo "${{ github.repository }}" 2>/dev/null || true
+          fi
 
           # Update status comment to show failure
           STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
@@ -441,7 +493,7 @@ jobs:
           - [x] 🚀 Agent started
           - [ ] ❌ Agent failed (rate limit or auth error)
 
-          **Manual intervention needed** — use Cursor or wait for token reset.
+          **Fallback:** ${{ steps.cursor_fallback.outputs.dispatched == 'true' && 'Cursor workflow dispatched automatically.' || 'Manual intervention needed — use Cursor or wait for token reset.' }}
 
           *Failed: ${TIMESTAMP}*
           STATUSEOF

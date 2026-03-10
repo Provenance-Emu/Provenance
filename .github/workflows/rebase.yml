@@ -105,13 +105,21 @@ jobs:
                 --body "✅ Branch \`${BRANCH}\` is already up to date with \`develop\` — no rebase needed." 2>/dev/null || true
               ;;
             conflict)
-              # Dispatch Claude to resolve conflicts
-              if gh workflow run claude-code.yml \
+              PR_LABELS=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json labels \
+                --jq '[(.labels // [])[].name] | join(",")' 2>/dev/null || echo "")
+              FOLLOWUP_WORKFLOW="claude-code.yml"
+              FOLLOWUP_AGENT="Claude"
+              if echo "$PR_LABELS" | grep -Eq '(^|,)cursor-work(,|$)'; then
+                FOLLOWUP_WORKFLOW="cursor-agent.yml"
+                FOLLOWUP_AGENT="Cursor"
+              fi
+
+              if gh workflow run "$FOLLOWUP_WORKFLOW" \
                    --repo "${{ github.repository }}" \
                    -f pr_number="$PR_NUMBER" \
                    -f action="fix_rebase_conflict" 2>/dev/null; then
                 gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
-                  --body $'🤖 **Rebase conflict detected** — Claude has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, Claude will post a comment explaining what needs manual attention.' 2>/dev/null || true
+                  --body $'🤖 **Rebase conflict detected** — '"${FOLLOWUP_AGENT}"$' has been dispatched to resolve the conflicts automatically.\n\nIf conflicts cannot be resolved cleanly, the workflow will post a comment explaining what needs manual attention.' 2>/dev/null || true
               else
                 gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
                   --body "❌ **Rebase conflict** — conflicts could not be resolved automatically. Please resolve manually: \`git fetch origin && git checkout ${BRANCH} && git rebase origin/develop\`, fix conflicts, then \`git push --force-with-lease\`." 2>/dev/null || true
