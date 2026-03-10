@@ -209,99 +209,93 @@ class PVSettingsViewModel: ObservableObject {
 
     // MARK: - Library Management Actions
 
-    /// Scan ROM directories for new or updated files.
-    func reimportROMs() {
-        let alert = UIAlertController(
-            title: "Scan ROM Directories?",
-            message: "Scan all ROM directories for new or updated files. Existing custom artwork and names are not changed.",
-            preferredStyle: .alert
-        )
+    /// Confirmation state published to the View layer for SwiftUI `.alert()` presentation.
+    @Published var pendingLibraryAction: LibraryAction?
 
-        alert.addAction(UIAlertAction(title: "Scan", style: .default) { [weak self] _ in
-            self?.menuDelegate?.didTapScanROMs()
-        })
+    /// Set pending action — the View presents a confirmation alert via `.alert()`.
+    func reimportROMs() { pendingLibraryAction = .scanROMs }
+    func resetData() { pendingLibraryAction = .resetLibrary }
+    func refreshGameLibrary() { pendingLibraryAction = .updateMetadata }
+    func emptyImageCache() { pendingLibraryAction = .clearArtworkCache }
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        presentAlert(alert)
-    }
-
-    /// Delete all game data and settings, then re-import everything.
-    func resetData() {
-        let alert = UIAlertController(
-            title: "Reset Library?",
-            message: "This will delete all game data, settings, and custom artwork, then re-import everything from scratch. This cannot be undone.",
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: "Reset", style: .destructive) { [weak self] _ in
-            self?.menuDelegate?.didTapResetLibrary()
-        })
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        presentAlert(alert)
-    }
-
-    /// Re-fetch metadata and artwork from the database.
-    func refreshGameLibrary() {
-        let alert = UIAlertController(
-            title: "Update Game Metadata?",
-            message: "Re-fetch artwork and title information from the database for your entire library. Your custom artwork and names will not be changed. This can be slow for large libraries.",
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: "Update", style: .default) { [weak self] _ in
-            self?.menuDelegate?.didTapUpdateMetadata()
-        })
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        presentAlert(alert)
-    }
-
-    /// Clear the artwork cache to free up disk space.
-    func emptyImageCache() {
-        let alert = UIAlertController(
-            title: "Clear Artwork Cache?",
-            message: "Delete all cached artwork to free up disk space. Images will be re-downloaded automatically when needed.",
-            preferredStyle: .alert
-        )
-
-        // Note: PVMediaCache.empty() is called directly here rather than through menuDelegate,
-        // because clearing the artwork cache is a local, synchronous operation that does not
-        // need to be observed by PVAppDelegate or other NSNotification listeners. The other
-        // three library-management actions (scan, update metadata, reset) post notifications
-        // because they trigger long-running background work handled in PVAppDelegate.
-        alert.addAction(UIAlertAction(title: "Clear Cache", style: .destructive) { _ in
-            do {
-                try PVMediaCache.empty()
-            } catch {
-                // TODO: Present error
-            }
-        })
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        presentAlert(alert)
-    }
-
-    private func presentAlert(_ alert: UIAlertController) {
-        let scene = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first { $0.activationState == .foregroundActive }
-            ?? UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .first
-        guard let window = scene?.windows.first(where: { $0.isKeyWindow }) ?? scene?.windows.first,
-              let rootViewController = window.rootViewController?.presentedViewController ?? window.rootViewController else { return }
-        rootViewController.present(alert, animated: true)
+    /// Execute the confirmed action and clear pending state.
+    func confirmLibraryAction() {
+        guard let action = pendingLibraryAction else { return }
+        pendingLibraryAction = nil
+        switch action {
+        case .scanROMs:
+            menuDelegate?.didTapScanROMs()
+        case .updateMetadata:
+            menuDelegate?.didTapUpdateMetadata()
+        case .clearArtworkCache:
+            // PVMediaCache.empty() is synchronous and local — no notification needed.
+            do { try PVMediaCache.empty() } catch { }
+        case .resetLibrary:
+            menuDelegate?.didTapResetLibrary()
+        }
     }
 
     func launchWebServer() {
         menuDelegate?.didTapAddGames()
     }
 
+}
+
+extension PVSettingsViewModel {
+    /// Confirmable library management actions presented as SwiftUI alerts.
+    enum LibraryAction: Identifiable {
+        case scanROMs
+        case resetLibrary
+        case updateMetadata
+        case clearArtworkCache
+
+        var id: String {
+            switch self {
+            case .scanROMs:        return "scanROMs"
+            case .resetLibrary:    return "resetLibrary"
+            case .updateMetadata:  return "updateMetadata"
+            case .clearArtworkCache: return "clearArtworkCache"
+            }
+        }
+
+        var title: String {
+            switch self {
+            case .scanROMs:        return "Scan ROM Directories?"
+            case .resetLibrary:    return "Reset Library?"
+            case .updateMetadata:  return "Update Game Metadata?"
+            case .clearArtworkCache: return "Clear Artwork Cache?"
+            }
+        }
+
+        var message: String {
+            switch self {
+            case .scanROMs:
+                return "Scan all ROM directories for new or updated files. Existing custom artwork and names are not changed."
+            case .resetLibrary:
+                return "This will delete all game data, settings, and custom artwork, then re-import everything from scratch. This cannot be undone."
+            case .updateMetadata:
+                return "Re-fetch artwork and title information from the database for your entire library. Your custom artwork and names will not be changed. This can be slow for large libraries."
+            case .clearArtworkCache:
+                return "Delete all cached artwork to free up disk space. Images will be re-downloaded automatically when needed."
+            }
+        }
+
+        var confirmButtonTitle: String {
+            switch self {
+            case .scanROMs:        return "Scan"
+            case .resetLibrary:    return "Reset"
+            case .updateMetadata:  return "Update"
+            case .clearArtworkCache: return "Clear Cache"
+            }
+        }
+
+        var isDestructive: Bool {
+            switch self {
+            case .resetLibrary, .clearArtworkCache: return true
+            case .scanROMs, .updateMetadata: return false
+            }
+        }
+    }
 }
 
 extension PVSettingsViewModel {

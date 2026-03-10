@@ -18,6 +18,8 @@
 @import PVSupport;
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
+@import PVLoggingObjC;
+
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
 @import OpenGL.GL3;
 @import GLUT;

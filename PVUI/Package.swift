@@ -137,7 +137,6 @@ let package = Package(
                 .process("Resources/Assets.xcassets"),
                 .copy("Resources/PrivacyInfo.xcprivacy"),
                 .copy("Resources/catalog_seed.json"),
-                .copy("Resources/whats-new.json"),
             ],
             cSettings: [
                 .define("GL_SILENCE_DEPRECATION", to: "1"),
@@ -244,6 +243,9 @@ let package = Package(
                 .product(name: "SiriusRating", package: "siriusrating-ios", condition: .when(platforms: [.iOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
+            ],
+            resources: [
+                .copy("Resources/whats-new.json"),
             ]
         ),
 

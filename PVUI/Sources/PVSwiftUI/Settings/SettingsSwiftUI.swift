@@ -1840,6 +1840,16 @@ private struct LibrarySection2: View {
                             icon: .sfSymbol("trash.slash"))
             }
         }
+        .alert(item: $viewModel.pendingLibraryAction) { action in
+            Alert(
+                title: Text(action.title),
+                message: Text(action.message),
+                primaryButton: action.isDestructive
+                    ? .destructive(Text(action.confirmButtonTitle)) { viewModel.confirmLibraryAction() }
+                    : .default(Text(action.confirmButtonTitle)) { viewModel.confirmLibraryAction() },
+                secondaryButton: .cancel()
+            )
+        }
     }
 }
 

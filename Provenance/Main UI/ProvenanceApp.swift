@@ -75,8 +75,10 @@ struct ProvenanceApp: App {
                             //                             InMemoryWhatsNewVersionStore(),
                         NSUbiquitousKeyValueWhatsNewVersionStore(),
                         // UserDefaultsWhatsNewVersionStore(),
-                        // Pass a `WhatsNewCollectionProvider` or an array of WhatsNew instances
-                        whatsNewCollection: self
+                        whatsNewCollection: WhatsNewLoader.loadAll(
+                            primaryActionBackground: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                            primaryActionForeground: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white
+                        )
                      )
                 )
 #endif
@@ -761,19 +763,3 @@ extension ProvenanceApp {
 // What's New!
 // Release notes are defined in PVUI/Sources/PVSwiftUI/Resources/whats-new.json.
 // To add a new version: edit that JSON file — no Swift code changes needed.
-#if canImport(WhatsNewKit)
-import PVSwiftUI
-// MARK: - App+WhatsNewCollectionProvider
-
-extension ProvenanceApp: WhatsNewCollectionProvider {
-
-    /// Loads WhatsNew entries from whats-new.json via WhatsNewLoader (PVSwiftUI).
-    /// Agents: add new releases by editing PVUI/Sources/PVSwiftUI/Resources/whats-new.json.
-    var whatsNewCollection: WhatsNewCollection {
-        WhatsNewLoader.loadAll(
-            primaryActionBackground: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
-            primaryActionForeground: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white
-        )
-    }
-}
-#endif

@@ -85,13 +85,13 @@ public enum WhatsNewLoader {
             let features: [WhatsNew.Feature] = entry.features.map { f in
                 WhatsNew.Feature(
                     image: .init(systemName: f.symbolName, foregroundColor: color(from: f.symbolColor)),
-                    title: "\(f.title)",
-                    subtitle: "\(f.subtitle)"
+                    title: WhatsNew.Text(f.title),
+                    subtitle: WhatsNew.Text(f.subtitle)
                 )
             }
             return WhatsNew(
                 version: .init(stringLiteral: entry.version),
-                title: "\(entry.title)",
+                title: WhatsNew.Title(stringLiteral: entry.title),
                 features: features,
                 primaryAction: .init(
                     title: "Continue",

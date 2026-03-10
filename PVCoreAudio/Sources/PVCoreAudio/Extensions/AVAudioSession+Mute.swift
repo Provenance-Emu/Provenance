@@ -2,7 +2,7 @@
 import AVFoundation
 import MediaPlayer
 
-extension AVAudioSession {
+public extension AVAudioSession {
     /// Returns true if the device is in silent mode (hardware silent switch is on)
     var isSilentModeEnabled: Bool {
         // Use the ringer state to detect silent mode
@@ -12,7 +12,7 @@ extension AVAudioSession {
     }
 }
 
-extension AVAudioSessionRouteDescription {
+public extension AVAudioSessionRouteDescription {
     var isHeadsetPluggedIn: Bool {
         return self.outputs.contains {
             $0.portType == .headphones ||
