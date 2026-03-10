@@ -52,6 +52,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showFavorites) var showFavorites: Bool
     @Default(.showRecentGames) var showRecentGames: Bool
     @Default(.showSearchbar) var showSearchbar: Bool
+    @Default(.unsupportedCores) var unsupportedCores: Bool
 
     // Modal state for log viewer and system status
     @State private var showLogViewer = false
@@ -205,6 +206,38 @@ struct ConsoleGamesView: SwiftUI.View {
                 return realm.object(ofType: PVGame.self, forPrimaryKey: key)
             }).first else { return }
             SceneCoordinator.shared.launchGame(game.freeze())
+        }
+    }
+
+    @ViewBuilder
+    var unsupportedSystemBanner: some View {
+        let supportLevel = console.coreSupportLevel(isAppStore: AppState.shared.isAppStore, unsupportedCores: unsupportedCores)
+        if supportLevel != .fullySupported {
+            HStack(spacing: 8) {
+                Image(systemName: supportLevel == .appStoreRestricted ? "lock.fill" : "exclamationmark.triangle.fill")
+                    .font(.system(size: 14))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(supportLevel.label)
+                        .font(.system(size: 13, weight: .semibold))
+                    Text(supportLevel.explanation)
+                        .font(.system(size: 11))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer()
+            }
+            .foregroundColor(supportLevel == .appStoreRestricted ? .orange : .red)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill((supportLevel == .appStoreRestricted ? Color.orange : Color.red).opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder((supportLevel == .appStoreRestricted ? Color.orange : Color.red).opacity(0.4), lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal, 8)
+            .padding(.top, 4)
         }
     }
 
@@ -377,6 +410,8 @@ struct ConsoleGamesView: SwiftUI.View {
                         .allowsHitTesting(true)
 
                     importProgressView
+
+                    unsupportedSystemBanner
 
                     gamesScrollView
 

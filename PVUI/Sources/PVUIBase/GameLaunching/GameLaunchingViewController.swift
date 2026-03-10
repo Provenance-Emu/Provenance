@@ -481,12 +481,27 @@ public extension GameLaunchingViewController {
                 var message = "This game may not be playable after downloading:\n\n\(warningMessage)\n\nDo you want to download anyway?"
 
                 if !hasAvailableCores {
+                    let supportLevel = system.coreSupportLevel(isAppStore: AppState.shared.isAppStore, unsupportedCores: Defaults[.unsupportedCores])
                     title = "No Compatible Core"
-                    message = "There are no compatible emulator cores available for \(system.name).\n\n"
-                    if AppState.shared.isAppStore {
-                        message += "Some cores may be unavailable in the App Store version. Enable 'Unsupported Cores' in Settings to see more options.\n\n"
+                    switch supportLevel {
+                    case .appStoreRestricted:
+                        message = "\(system.name) cores are not available in the App Store build.\n\n"
+                        message += "To play \(system.name) games you need a sideloaded build or JIT access (e.g. via AltStore, SideStore, or a developer certificate).\n\n"
+                        message += "Download this ROM anyway? You can use it once you have a supported build."
+                    case .disabled:
+                        message = "No stable emulator core is available for \(system.name). "
+                        message += "Support is experimental or not yet implemented.\n\n"
+                        message += "Enable 'Unsupported Cores' in Settings → Advanced to try experimental cores.\n\n"
+                        message += "Download this ROM anyway?"
+                    case .noCores:
+                        message = "No emulator core is registered for \(system.name). "
+                        message += "ROMs can be stored in your library but cannot be played in this version.\n\n"
+                        message += "Download this ROM anyway?"
+                    case .fullySupported:
+                        // Shouldn't reach here, but provide a fallback message
+                        message = "There are no compatible emulator cores available for \(system.name).\n\n"
+                        message += "Download this ROM anyway? You won't be able to play it until a compatible core is available."
                     }
-                    message += "Download this ROM anyway? You won't be able to play it until a compatible core is available."
                 } else if !missingBIOSFiles.isEmpty {
                     title = "Missing BIOS Files"
                     message = "\(system.name) requires BIOS files to run games.\n\n\(warningMessage)\n\nDownload this ROM anyway? You'll need to add the BIOS files before playing."
