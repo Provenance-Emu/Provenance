@@ -228,23 +228,29 @@ public actor RetroNetworkClient: Sendable {
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         request.httpBody = body.data(using: .utf8)
 
-        let (data, response) = try await urlSession.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw RetroError.invalidResponse
-        }
-
-        struct GameIDResponse: Decodable {
-            let success: Bool
-            let gameID: Int?
-            enum CodingKeys: String, CodingKey {
-                case success = "Success"
-                case gameID = "GameID"
+        do {
+            let (data, response) = try await urlSession.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                throw RetroError.invalidResponse
             }
-        }
 
-        let decoded = try JSONDecoder().decode(GameIDResponse.self, from: data)
-        guard decoded.success, let id = decoded.gameID, id != 0 else { return nil }
-        return id
+            struct GameIDResponse: Decodable {
+                let success: Bool
+                let gameID: Int?
+                enum CodingKeys: String, CodingKey {
+                    case success = "Success"
+                    case gameID = "GameID"
+                }
+            }
+
+            let decoded = try JSONDecoder().decode(GameIDResponse.self, from: data)
+            guard decoded.success, let id = decoded.gameID, id != 0 else { return nil }
+            return id
+        } catch let retroError as RetroError {
+            throw retroError
+        } catch {
+            throw RetroError.network(error)
+        }
     }
 
     /// Award an achievement unlock to the RetroAchievements server.
@@ -277,26 +283,34 @@ public actor RetroNetworkClient: Sendable {
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         request.httpBody = body.data(using: .utf8)
 
-        let (data, response) = try await urlSession.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw RetroError.invalidResponse
-        }
-        guard httpResponse.statusCode == 200 else {
-            throw RetroError.serverError("HTTP \(httpResponse.statusCode)")
-        }
-
-        struct AwardResponse: Decodable {
-            let success: Bool
-            let error: String?
-            enum CodingKeys: String, CodingKey {
-                case success = "Success"
-                case error = "Error"
+        do {
+            let (data, response) = try await urlSession.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw RetroError.invalidResponse
             }
-        }
+            guard httpResponse.statusCode == 200 else {
+                throw RetroError.serverError("HTTP \(httpResponse.statusCode)")
+            }
 
-        if let decoded = try? JSONDecoder().decode(AwardResponse.self, from: data), !decoded.success {
-            let msg = decoded.error ?? "Unknown error"
-            throw RetroError.serverError(msg)
+            struct AwardResponse: Decodable {
+                let success: Bool
+                let error: String?
+                enum CodingKeys: String, CodingKey {
+                    case success = "Success"
+                    case error = "Error"
+                }
+            }
+
+            // Decode with explicit error so malformed JSON surfaces rather than silently succeeding.
+            let decoded = try JSONDecoder().decode(AwardResponse.self, from: data)
+            if !decoded.success {
+                let msg = decoded.error ?? "Unknown error"
+                throw RetroError.serverError(msg)
+            }
+        } catch let retroError as RetroError {
+            throw retroError
+        } catch {
+            throw RetroError.network(error)
         }
     }
 
