@@ -308,6 +308,7 @@
 		B3C65E522CA53330000E37B0 /* new_vi_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D8B35D712260F9D00C4C844 /* new_vi_main.m */; };
 		B3C65E532CA53330000E37B0 /* vidext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0BF1183E6FA002995A1 /* vidext.m */; };
 		B3C65E542CA53356000E37B0 /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
+		D2A1A1B12D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */; };
 		B3C65E652CA53CAB000E37B0 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C65E642CA53C00000E37B0 /* CorePlist.swift */; };
 		B3C83E1727960C0F0020824C /* mupencheat.txt in Resources */ = {isa = PBXBuildFile; fileRef = B30559E22072FEE9001212D2 /* mupencheat.txt */; };
 		B3C83E1B279617760020824C /* assem_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A852072FEE9001212D2 /* assem_arm.h */; };
@@ -990,6 +991,7 @@
 		B34CB0ED2274BA8C009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT_NEON.cpp; sourceTree = "<group>"; };
 		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MupenOptions.swift; sourceTree = "<group>"; };
+		D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMupenBridgeRumbleHelper.swift; sourceTree = "<group>"; };
 		B36EF440279C5AB1005C7ED4 /* assem_arm64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = assem_arm64.h; sourceTree = "<group>"; };
 		B36EF441279C5AB1005C7ED4 /* linkage_arm64.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = linkage_arm64.S; sourceTree = "<group>"; };
 		B36EF442279C5AB1005C7ED4 /* assem_arm64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = assem_arm64.c; sourceTree = "<group>"; };
@@ -2568,6 +2570,7 @@
 			isa = PBXGroup;
 			children = (
 				B35E6C3B207EE3750040709A /* MupenOptions.swift */,
+				D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */,
 				3D208F801182B00300BEAA42 /* PVMupenBridge.h */,
 				3D208F811182B00300BEAA42 /* PVMupenBridge.m */,
 				B39C29D627A12D0F0078D028 /* PVMupenBridge+Cheats.h */,
@@ -4679,6 +4682,7 @@
 				B3C078CB2C750D33006F109B /* mi_controller.c in Sources */,
 				B3C078CC2C750D33006F109B /* workqueue.c in Sources */,
 				B3C65E542CA53356000E37B0 /* MupenOptions.swift in Sources */,
+				D2A1A1B12D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift in Sources */,
 				B3C078CD2C750D33006F109B /* pi_controller.c in Sources */,
 				B3C078CE2C750D33006F109B /* fb.c in Sources */,
 				B3C078CF2C750D33006F109B /* pif.c in Sources */,

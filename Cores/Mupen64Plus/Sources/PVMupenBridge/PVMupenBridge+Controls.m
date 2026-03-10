@@ -456,4 +456,16 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
     return YES;
 }
 
+- (void)rumbleForPlayer:(NSInteger)player {
+    [PVMupenBridgeRumbleHelper rumbleForBridgeObject:self
+                                              player:player
+                                        lowFrequency:1.0f
+                                       highFrequency:0.3f
+                                            duration:0.5];
+}
+
+- (void)stopRumbleForPlayer:(NSInteger)player {
+    [PVMupenBridgeRumbleHelper stopRumbleForBridgeObject:self player:player];
+}
+
 @end
