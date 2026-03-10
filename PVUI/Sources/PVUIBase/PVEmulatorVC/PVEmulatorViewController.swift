@@ -795,6 +795,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             self.applyFPSCounterVisibilityPreference(Defaults[.showFPSCount])
         }
 
+        // Set up JIT status indicator
+        setupJITIndicatorIfNeeded()
+
         hideOrShowMenuButton()
 
         convertOldSaveStatesToNewIfNeeded()
@@ -1445,6 +1448,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             self.themeDidChangeObserver = nil
         }
         fpsHUDView.removeFromSuperview()
+
+        // Clean up JIT status indicator
+        cleanupJITIndicator()
+
         dismiss(animated: true, completion: completion)
         view?.removeFromSuperview()
         removeFromParent()
