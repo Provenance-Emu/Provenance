@@ -89,7 +89,7 @@ public extension EmulatorCoreRumbleDataSource {
     /// 3. No controller → device Taptic Engine
     @MainActor
     func rumble(player: Int) {
-        rumble(player: player, lowFrequency: 0.8, highFrequency: 0.5, duration: 0.3)
+        rumble(player: player, lowFrequency: 1.0, highFrequency: 0.5, duration: 0.3)
     }
 
     /// Fire rumble with explicit dual-motor parameters.
@@ -132,12 +132,12 @@ public extension EmulatorCoreRumbleDataSource {
     }
 
     /// Trigger a rumble with explicit motor intensities and duration for `player`.
+    ///
+    /// Delegates to `rumble(player:lowFrequency:highFrequency:duration:)` for unified routing
+    /// through GCControllerHapticsManager (controller motors) with Taptic Engine fallback.
     @MainActor
     func rumble(lowFrequency: Float, highFrequency: Float, duration: TimeInterval, player: Int) {
-        guard self.supportsRumble else { return }
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            HapticsManager.shared.rumble(lowFrequency: lowFrequency, highFrequency: highFrequency, duration: duration, player: player)
-        }
+        rumble(player: player, lowFrequency: lowFrequency, highFrequency: highFrequency, duration: duration)
     }
 
     /// Stop all rumble for `player`.

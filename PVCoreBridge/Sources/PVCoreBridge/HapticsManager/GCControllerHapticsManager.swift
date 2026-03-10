@@ -68,7 +68,9 @@ public final class GCControllerHapticsManager {
     public var intensityMultiplier: Float { _cachedIntensityMultiplier }
 
     private func refreshIntensityCache() {
-        guard UserDefaults.standard.object(forKey: "hapticFeedback") as? Bool ?? true else {
+        // Default to enabled (true) when the key is absent so first-run behavior is on.
+        let enabled = UserDefaults.standard.object(forKey: "hapticFeedback") as? Bool ?? true
+        guard enabled else {
             _cachedIntensityMultiplier = 0
             return
         }
@@ -344,7 +346,8 @@ public final class GCControllerHapticsManager {
             playEvent(engine: leftEngine, intensity: leftIntensity, sharpness: 0.2, duration: duration)
         }
 
-        // Right handle = high-frequency motor (only if separate engine exists).
+        // Right handle = high-frequency motor, only played when a separate left-handle engine
+        // exists — ensures we use per-motor engines rather than falling back to the shared default.
         if let rightEngine = engines[.rightHandle], engines[.leftHandle] != nil {
             playEvent(engine: rightEngine, intensity: rightIntensity, sharpness: 0.6, duration: duration)
         }
