@@ -2,6 +2,19 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
+#if os(Linux)
+let platformDeps: [Package.Dependency] = []
+let platformTargetDeps: [Target.Dependency] = []
+#else
+let platformDeps: [Package.Dependency] = [
+    .package(path: "../PVSettings/"),
+    .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop")
+]
+let platformTargetDeps: [Target.Dependency] = [
+    "PVSettings"
+]
+#endif
+
 let package = Package(
     name: "PVSupport",
     platforms: [
@@ -28,9 +41,7 @@ let package = Package(
 
     dependencies: [
         .package(path: "../PVLogging/"),
-        .package(path: "../PVSettings/"),
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git",branch: "develop")
-    ],
+    ] + platformDeps,
 
     // MARK: - Targets
     targets: [
@@ -39,8 +50,7 @@ let package = Package(
             name: "PVSupport",
             dependencies: [
                 "PVLogging",
-                "PVSettings"
-            ],
+            ] + platformTargetDeps,
             resources: [
                 .process("Resources/AHAP/"),
                 .copy("PrivacyInfo.xcprivacy")
@@ -56,10 +66,6 @@ let package = Package(
             linkerSettings: [
                 .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
                 .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
-            ],
-            plugins: [
-//                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
-//                .plugin(name: "SwiftGen-Generate", package: "SwiftGenPlugin")
             ]
         ),
 

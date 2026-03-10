@@ -7,6 +7,7 @@
 
 import Foundation
 
+#if canImport(UniformTypeIdentifiers)
 import UniformTypeIdentifiers
 
 // also declare the content type in the Info.plist
@@ -16,3 +17,4 @@ extension UTType {
     // Note: rom, artwork, cheat, savestate are declared in PVPrimitives/UTI.swift
     static var retroarchConfigFile: UTType { UTType(exportedAs: "com.provenance.retroarch.config") }
 }
+#endif

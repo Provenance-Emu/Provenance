@@ -1,13 +1,13 @@
 {
-  "originHash" : "b5a0b42fbd4b5319d0cc085ec410c12ef0bec19502ffb08a03119c463e75c36f",
+  "originHash" : "6696f41f473bb6d2cf775ae8767a83cd8dc6896263eb605fc482f76fa2bf7e35",
   "pins" : [
     {
-      "identity" : "swiftgenplugin",
+      "identity" : "swift-log",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/BookBeat/SwiftGenPlugin.git",
+      "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "branch" : "xcodeproject-support",
-        "revision" : "1228d5a43ca791db0719d42f641c34a00b9c32f3"
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
       }
     }
   ],

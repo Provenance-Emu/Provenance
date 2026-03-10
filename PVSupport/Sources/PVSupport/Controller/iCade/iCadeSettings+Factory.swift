@@ -5,9 +5,8 @@
 //  Created by Joseph Mattiello on 8/8/24.
 //
 
-import PVSettings
-
 #if canImport(UIKit) && canImport(GameController)
+import PVSettings
 
 public extension iCadeControllerSetting {
     nonisolated

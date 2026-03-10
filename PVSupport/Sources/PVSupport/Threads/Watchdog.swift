@@ -1,6 +1,9 @@
 import Foundation
+#if canImport(os)
 import os
+#endif
 
+#if !os(Linux)
 /// Class for logging excessive blocking on the main thread.
 final public class Watchdog {
     fileprivate let pingThread: PingThread
@@ -30,7 +33,7 @@ final public class Watchdog {
 
         self.pingThread.start()
     }
-    
+
     deinit {
         pingThread.cancel()
     }
@@ -45,7 +48,7 @@ private final class PingThread: Thread {
     fileprivate var semaphore = DispatchSemaphore(value: 0)
     fileprivate let threshold: Double
     fileprivate let handler: () -> Void
-    
+
     init(threshold: Double, handler: @escaping () -> Void) {
         self.threshold = threshold
         self.handler = handler
@@ -64,48 +67,14 @@ private final class PingThread: Thread {
 //                self.pingTaskIsRunning = false
 //                self.semaphore.signal()
             }
-            
+
             Thread.sleep(forTimeInterval: threshold)
             if pingTaskIsRunning {
                 handler()
             }
-            
+
             _ = semaphore.wait(timeout: DispatchTime.distantFuture)
         }
     }
 }
-
-//private final class PingController {
-//    private var pingTask: Task<Void, Never>?
-//    private let semaphore = DispatchSemaphore(value: 0)
-//    private var isCancelled = false
-//    private let threshold: TimeInterval = 5 // Adjust according to your needs
-//
-//    func start() {
-//        self.pingTask = Task {
-//            while !isCancelled {
-//                await performPingTask()
-//                try? await Task.sleep(nanoseconds: UInt64(threshold * 1_000_000_000))
-//                semaphore.signal()
-////                semaphore.wait()
-//            }
-//        }
-//    }
-//
-//    func cancel() {
-//        isCancelled = true
-//        pingTask?.cancel()
-//    }
-//
-//    private func performPingTask() async {
-//        // Perform the ping task here
-//        // Example:
-//        await withUnsafeContinuation { continuation in
-//            // Placeholder for actual ping operation
-//            DispatchQueue.main.asyncAfter(deadline: .now() + threshold) {
-//                self.semaphore.signal()
-//                continuation.resume()
-//            }
-//        }
-//    }
-//}
+#endif

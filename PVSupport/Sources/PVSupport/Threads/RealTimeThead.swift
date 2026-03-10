@@ -6,8 +6,11 @@
 //
 
 import Foundation
+#if canImport(MachO)
 import MachO
+#endif
 
+#if canImport(Darwin)
 @_cdecl("move_pthread_to_realtime_scheduling_class")
 public func movePthreadToRealtimeSchedulingClass(_ pthread: pthread_t) {
 
@@ -40,7 +43,8 @@ public func movePthreadToRealtimeSchedulingClass(_ pthread: pthread_t) {
     }
 }
 
-@_cdecl("MakeCurrentThreadRealTime") 
+@_cdecl("MakeCurrentThreadRealTime")
 public func MakeCurrentThreadRealTime() {
     movePthreadToRealtimeSchedulingClass(pthread_self())
 }
+#endif
