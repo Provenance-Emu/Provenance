@@ -136,7 +136,7 @@ public extension PVRemappableController {
             return
         }
 
-        apply(profile: profile)
+        apply(profile: profile.freeze())
     }
 
     // MARK: - Private helpers
