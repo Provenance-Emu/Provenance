@@ -973,9 +973,14 @@ static void emulation_run(BOOL skipFrame) {
                 [cueBasenames addObject:path.stringByDeletingPathExtension.lastPathComponent];
             } else if ([pathExt isEqualToString:@"m3u"]) {
                 // Parse m3u – each non-comment line that ends in .cue is a disc
+                NSError *m3uReadErr = nil;
                 NSString *m3uString = [NSString stringWithContentsOfFile:path
                                                                 encoding:NSUTF8StringEncoding
-                                                                   error:nil];
+                                                                   error:&m3uReadErr];
+                if (!m3uString) {
+                    WLOG(@"MednafenGameCoreBridge: Failed to read M3U for SBI check (%@): %@",
+                         path.lastPathComponent, m3uReadErr.localizedDescription);
+                }
                 NSArray<NSString *> *lines = [m3uString componentsSeparatedByCharactersInSet:
                                               [NSCharacterSet newlineCharacterSet]];
                 for (NSString *line in lines) {

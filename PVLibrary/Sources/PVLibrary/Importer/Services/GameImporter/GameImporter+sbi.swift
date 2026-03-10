@@ -78,14 +78,14 @@ extension GameImporter {
     ///   - indicesToRemove: Indices in `importQueue` that should be removed after this pass.
     internal func processSBIItem(
         _ sbiItem: ImportQueueItem,
-        in importQueue: inout [ImportQueueItem],
+        in importQueue: [ImportQueueItem],
         indicesToRemove: inout [Int]
     ) {
         let sbiURL  = sbiItem.url
         let baseName = sbiURL.deletingPathExtension().lastPathComponent
 
         // 1. Find a matching CUE item in the queue (same base name, case-insensitive)
-        for (index, item) in importQueue.enumerated() {
+        for item in importQueue {
             guard item.id != sbiItem.id else { continue }
             let itemExt  = item.url.pathExtension.lowercased()
             let itemBase = item.url.deletingPathExtension().lastPathComponent
@@ -120,10 +120,9 @@ extension GameImporter {
         ILOG("SBI: Starting SBI organisation...")
         var indicesToRemove: [Int] = []
 
-        for (index, item) in importQueue.enumerated() {
+        for item in importQueue {
             guard item.url.pathExtension.lowercased() == Extensions.sbi.rawValue else { continue }
-            processSBIItem(item, in: &importQueue, indicesToRemove: &indicesToRemove)
-            _ = index // suppress unused-variable warning
+            processSBIItem(item, in: importQueue, indicesToRemove: &indicesToRemove)
         }
 
         // Remove any SBI items that were successfully attached to a CUE
