@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import PVLogging
 import PVEmulatorCore
 import PVFileSystem
@@ -98,9 +99,11 @@ public final class DirectoryWatcher: ObservableObject {
     /// The dispatch source for the file system object
     private var dispatchSource: DispatchSourceFileSystemObject?
     /// The serial queue for the extractor
-    /// Track files currently being extracted to prevent concurrent extraction attempts
+    /// Track files currently being extracted to prevent concurrent extraction attempts.
+    /// Protected by `extractingFilesLock` via `withLock`.
     private var extractingFiles: Set<URL> = []
-    private let extractingFilesLock = NSLock()
+    /// Thread-safe guard for `extractingFiles`. Uses `OSAllocatedUnfairLock` (iOS 16+).
+    private let extractingFilesLock = OSAllocatedUnfairLock<Void>()
     private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
     /// Buffered events to replay after emulation pause
     private var bufferedEvents: [URL] = []
@@ -220,13 +223,12 @@ public final class DirectoryWatcher: ObservableObject {
 
     /// Extract an archive from a file path
     public func extractArchive(at filePath: URL) async throws {
-        // Check if this file is already being extracted
-        extractingFilesLock.lock()
-        let isAlreadyExtracting = extractingFiles.contains(filePath)
-        if !isAlreadyExtracting {
+        // Check if this file is already being extracted; register it if not.
+        let isAlreadyExtracting = extractingFilesLock.withLock { () -> Bool in
+            guard !extractingFiles.contains(filePath) else { return true }
             extractingFiles.insert(filePath)
+            return false
         }
-        extractingFilesLock.unlock()
 
         guard !isAlreadyExtracting else {
             ILOG("Archive \(filePath.lastPathComponent) is already being extracted, skipping duplicate attempt")
@@ -235,9 +237,7 @@ public final class DirectoryWatcher: ObservableObject {
 
         defer {
             // Remove from extracting set when done
-            extractingFilesLock.lock()
-            extractingFiles.remove(filePath)
-            extractingFilesLock.unlock()
+            extractingFilesLock.withLock { extractingFiles.remove(filePath) }
         }
 
         ILOG("Starting archive extraction for file: \(filePath.path)")

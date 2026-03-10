@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import CloudKit
 import PVLogging
 import Combine
@@ -40,9 +41,11 @@ public class CloudKitSubscriptionManager {
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
 
-    /// Track recently processed record IDs to prevent duplicate processing
+    /// Track recently processed record IDs to prevent duplicate processing.
+    /// Protected by `recentlyProcessedLock` via `withLock`.
     private var recentlyProcessedRecords: Set<String> = []
-    private let recentlyProcessedLock = NSLock()
+    /// Thread-safe guard for `recentlyProcessedRecords`. Uses `OSAllocatedUnfairLock` (iOS 16+).
+    private let recentlyProcessedLock = OSAllocatedUnfairLock<Void>()
     private let recordProcessingCooldown: TimeInterval = 30 // seconds
 
     // MARK: - Initialization
@@ -302,23 +305,22 @@ public class CloudKitSubscriptionManager {
     /// Check if a record was recently processed and add it to the tracking set if not
     /// - Parameter recordID: The record ID to check
     /// - Returns: true if the record was already recently processed, false if it's new
+    /// Checks if `recordID` was recently processed and, if not, registers it for tracking.
+    ///
+    /// - Parameter recordID: The CloudKit record ID to check.
+    /// - Returns: `true` if the record was already processed within the cooldown window; `false` otherwise.
     private func wasRecentlyProcessed(_ recordID: CKRecord.ID) -> Bool {
-        recentlyProcessedLock.lock()
-        defer { recentlyProcessedLock.unlock() }
-
         let key = recordID.recordName
-        if recentlyProcessedRecords.contains(key) {
-            return true
+        let alreadyProcessed = recentlyProcessedLock.withLock {
+            guard !recentlyProcessedRecords.contains(key) else { return true }
+            recentlyProcessedRecords.insert(key)
+            return false
         }
-
-        // Add to tracking set
-        recentlyProcessedRecords.insert(key)
+        guard !alreadyProcessed else { return true }
 
         // Schedule removal after cooldown period
         DispatchQueue.global().asyncAfter(deadline: .now() + recordProcessingCooldown) { [weak self] in
-            self?.recentlyProcessedLock.lock()
-            self?.recentlyProcessedRecords.remove(key)
-            self?.recentlyProcessedLock.unlock()
+            self?.recentlyProcessedLock.withLock { self?.recentlyProcessedRecords.remove(key) }
         }
 
         return false

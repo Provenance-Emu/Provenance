@@ -12,6 +12,7 @@ import CoreSpotlight
 import AsyncAlgorithms
 import Combine
 import Foundation
+import os
 import Perception
 import PVCoreLoader
 import PVFileSystem
@@ -427,10 +428,13 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     var importAutoStartDelayTask: Task<Void, Never>?
 
-    // Task management for preventing concurrent processing
+    // Task management for preventing concurrent processing.
+    // All four fields below are protected by `processingTaskLock` via `withLock`.
     private var currentProcessingTask: Task<Void, Never>?
     private var currentTimeoutTask: Task<Void, Never>?
-    private let processingTaskLock = NSLock()
+    /// Thread-safe guard for task-management fields. Uses `OSAllocatedUnfairLock` (iOS 16+)
+    /// to eliminate deadlock-prone bare `.lock()` / `.unlock()` pairs.
+    private let processingTaskLock = OSAllocatedUnfairLock<Void>()
 
     // Timeout configuration for hung task detection
     private let processingTimeoutDuration: TimeInterval = 600 // 10 minutes
@@ -916,17 +920,17 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("GameImporter: startProcessing() called (manual BEGIN button)")
 
             // Force kill any stuck tasks first
-            processingTaskLock.lock()
-            if let existingTask = currentProcessingTask {
-                let isRunning = !existingTask.isCancelled
-                ILOG("GameImporter: BEGIN button - killing existing task (running: \(isRunning))")
-                existingTask.cancel()
-                currentProcessingTask = nil
-                currentTimeoutTask?.cancel()
-                currentTimeoutTask = nil
-                processingStartTime = nil
+            processingTaskLock.withLock {
+                if let existingTask = currentProcessingTask {
+                    let isRunning = !existingTask.isCancelled
+                    ILOG("GameImporter: BEGIN button - killing existing task (running: \(isRunning))")
+                    existingTask.cancel()
+                    currentProcessingTask = nil
+                    currentTimeoutTask?.cancel()
+                    currentTimeoutTask = nil
+                    processingStartTime = nil
+                }
             }
-            processingTaskLock.unlock()
 
             // Reset state to idle so we can start fresh
             await MainActor.run {
@@ -939,10 +943,10 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     private func hasActiveProcessingTask() -> Bool {
-        processingTaskLock.lock()
-        defer { processingTaskLock.unlock() }
-        guard let task = currentProcessingTask else { return false }
-        return !task.isCancelled
+        processingTaskLock.withLock {
+            guard let task = currentProcessingTask else { return false }
+            return !task.isCancelled
+        }
     }
 
     private func normalizedProcessingState(reason: String) async -> ProcessingState {
@@ -969,9 +973,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         // If we have queued items but task has been running for a while, check if it's stuck
         if !queuedItems.isEmpty {
-            processingTaskLock.lock()
-            let startTime = processingStartTime
-            processingTaskLock.unlock()
+            let startTime = processingTaskLock.withLock { processingStartTime }
 
             if let startTime = startTime {
                 let elapsed = Date().timeIntervalSince(startTime)
@@ -980,13 +982,13 @@ public final class GameImporter: GameImporting, ObservableObject {
                     ILOG("GameImporter: Detected stuck processing task (running for \(String(format: "%.1f", elapsed))s with \(queuedItems.count) queued items) - killing and restarting")
 
                     // Kill the stuck task
-                    processingTaskLock.lock()
-                    currentProcessingTask?.cancel()
-                    currentProcessingTask = nil
-                    currentTimeoutTask?.cancel()
-                    currentTimeoutTask = nil
-                    processingStartTime = nil
-                    processingTaskLock.unlock()
+                    processingTaskLock.withLock {
+                        currentProcessingTask?.cancel()
+                        currentProcessingTask = nil
+                        currentTimeoutTask?.cancel()
+                        currentTimeoutTask = nil
+                        processingStartTime = nil
+                    }
 
                     await MainActor.run {
                         self.processingState = .idle
@@ -1011,17 +1013,13 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        var restartDelay: TimeInterval?
-        processingTaskLock.lock()
-        if let nextAvailable = autoRestartAvailableAt {
+        let restartDelay: TimeInterval? = processingTaskLock.withLock {
+            guard let nextAvailable = autoRestartAvailableAt else { return nil }
             let delta = nextAvailable.timeIntervalSinceNow
-            if delta > 0 {
-                restartDelay = delta
-            } else {
-                autoRestartAvailableAt = nil
-            }
+            if delta > 0 { return delta }
+            autoRestartAvailableAt = nil
+            return nil
         }
-        processingTaskLock.unlock()
 
         if let delay = restartDelay {
             ILOG("GameImporter: Delaying auto-restart (\(context)) by \(String(format: "%.2f", delay))s")
@@ -1063,10 +1061,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         let queuedCount = queueSnapshot.filter { $0.status == .queued }.count
 
         // Use lock ONLY for checking/setting task reference - release before async operations
-        let shouldStart: Bool = {
-            processingTaskLock.lock()
-            defer { processingTaskLock.unlock() }
-
+        let shouldStart: Bool = processingTaskLock.withLock {
             // Double-check we don't already have a processing task
             if let existingTask = currentProcessingTask {
                 let isRunning = !existingTask.isCancelled
@@ -1096,16 +1091,14 @@ public final class GameImporter: GameImporting, ObservableObject {
                 return false
             }
             return true
-        }()
+        }
 
         guard shouldStart else {
             ILOG("GameImporter: Skipping start processing (\(trigger)) - task already running")
             return
         }
 
-        processingTaskLock.lock()
-        autoRestartAvailableAt = nil
-        processingTaskLock.unlock()
+        processingTaskLock.withLock { autoRestartAvailableAt = nil }
 
         ILOG("GameImporter: Starting processing safely (\(trigger))")
 
@@ -1123,12 +1116,12 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             defer {
                 // Clean up task references when done
-                self.processingTaskLock.lock()
-                self.currentProcessingTask = nil
-                self.currentTimeoutTask?.cancel()
-                self.currentTimeoutTask = nil
-                self.processingStartTime = nil
-                self.processingTaskLock.unlock()
+                self.processingTaskLock.withLock {
+                    self.currentProcessingTask = nil
+                    self.currentTimeoutTask?.cancel()
+                    self.currentTimeoutTask = nil
+                    self.processingStartTime = nil
+                }
 
                 Task { [weak self] in
                     await self?.restartProcessingIfQueueHasPendingWork(context: "post-run")
@@ -1158,37 +1151,34 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         // Store task references while holding lock (minimal lock scope)
-        processingTaskLock.lock()
-        currentProcessingTask = processingTask
-        currentTimeoutTask = timeoutTask
-        processingStartTime = startTime
-        processingTaskLock.unlock()
+        processingTaskLock.withLock {
+            currentProcessingTask = processingTask
+            currentTimeoutTask = timeoutTask
+            processingStartTime = startTime
+        }
     }
 
     /// Handles timeout recovery when processing task hangs
     private func handleProcessingTimeout() async {
-        processingTaskLock.lock()
-        defer { processingTaskLock.unlock() }
+        // Hold the lock only long enough to extract and cancel the task — never across an await.
+        let duration: TimeInterval? = processingTaskLock.withLock {
+            guard let task = currentProcessingTask else { return nil }
+            let elapsed = Date().timeIntervalSince(processingStartTime ?? Date())
+            task.cancel()
+            currentProcessingTask = nil
+            currentTimeoutTask = nil
+            processingStartTime = nil
+            return elapsed
+        }
 
-        // Check if we still have a processing task (it might have completed just before timeout)
-        guard let processingTask = currentProcessingTask else {
+        // Check if we still had a processing task (it might have completed just before timeout)
+        guard let duration else {
             VLOG("GameImporter: Timeout triggered but processing task already completed")
             return
         }
 
-        let startTime = processingStartTime ?? Date()
-        let duration = Date().timeIntervalSince(startTime)
-
         ELOG("GameImporter: Processing task timeout detected after \(Int(duration)) seconds (limit: \(Int(processingTimeoutDuration))s)")
         ELOG("GameImporter: Cancelling hung processing task and resetting state")
-
-        // Cancel the hung processing task
-        processingTask.cancel()
-
-        // Clean up task references
-        currentProcessingTask = nil
-        currentTimeoutTask = nil
-        processingStartTime = nil
 
         // Reset state to idle on main actor with helpful message
         await MainActor.run {
@@ -1214,9 +1204,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         let queuedItemsCount = queue.filter { $0.status == .queued || $0.userChosenSystem != nil }.count
         if queuedItemsCount > 0 {
             ILOG("GameImporter: Scheduling delayed restart after timeout recovery (\(queuedItemsCount) items in queue)")
-            processingTaskLock.lock()
-            autoRestartAvailableAt = Date().addingTimeInterval(5)
-            processingTaskLock.unlock()
+            processingTaskLock.withLock { autoRestartAvailableAt = Date().addingTimeInterval(5) }
 
             Task.detached { [weak self] in
                 await self?.restartProcessingIfQueueHasPendingWork(context: "timeout")
@@ -3619,10 +3607,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             updateImporterStatus("Import processing paused")
 
             // Cancel timeout task when pausing to avoid false timeout triggers
-            processingTaskLock.lock()
-            currentTimeoutTask?.cancel()
-            currentTimeoutTask = nil
-            processingTaskLock.unlock()
+            processingTaskLock.withLock {
+                currentTimeoutTask?.cancel()
+                currentTimeoutTask = nil
+            }
         }
     }
 
@@ -3642,13 +3630,13 @@ public final class GameImporter: GameImporting, ObservableObject {
                 updateImporterStatus("Import paused for emulation")
 
                 // Cancel any in-flight processing immediately
-                processingTaskLock.lock()
-                currentProcessingTask?.cancel()
-                currentProcessingTask = nil
-                currentTimeoutTask?.cancel()
-                currentTimeoutTask = nil
-                processingStartTime = nil
-                processingTaskLock.unlock()
+                processingTaskLock.withLock {
+                    currentProcessingTask?.cancel()
+                    currentProcessingTask = nil
+                    currentTimeoutTask?.cancel()
+                    currentTimeoutTask = nil
+                    processingStartTime = nil
+                }
 
                 // Cancel queued operations so nothing continues
                 workQueue.cancelAllOperations()

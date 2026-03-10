@@ -51,6 +51,7 @@
 import SwiftData
 import CloudKit
 import Foundation
+import os
 import PVLogging
 
 /// Coordinates the two-layer CloudKit sync strategy for SwiftData models.
@@ -67,14 +68,18 @@ public final class CloudKitSwiftDataSyncManager: @unchecked Sendable {
 
     // MARK: - Properties
 
-    private let lock = NSLock()
-    private var _isStarted = false
+    /// Whether `start(container:)` has already been called, wrapped directly inside the lock.
+    ///
+    /// Thread-safe: guarded by `OSAllocatedUnfairLock<Bool>` (iOS 16+). Using a
+    /// value-wrapping lock eliminates a separate `_isStarted` field and ensures
+    /// callers always access the flag through the deadlock-free `withLock` closure.
+    private let lock = OSAllocatedUnfairLock<Bool>(initialState: false)
 
     /// Whether `start(container:)` has already been called.
     ///
-    /// Thread-safe: guarded by an internal `NSLock`.
+    /// Thread-safe: guarded by `lock`.
     public var isStarted: Bool {
-        lock.withLock { _isStarted }
+        lock.withLock { $0 }
     }
 
     // MARK: - Init
@@ -100,9 +105,9 @@ public final class CloudKitSwiftDataSyncManager: @unchecked Sendable {
     ///     result of `PVSwiftDataSchema.makePVModelContainerWithCloudKit()`.
     ///     For testing pass the result of `PVSwiftDataSchema.makePVModelContainer(inMemory:true)`.
     public func start(container: ModelContainer) async {
-        let alreadyStarted = lock.withLock {
-            if _isStarted { return true }
-            _isStarted = true
+        let alreadyStarted = lock.withLock { (isStarted: inout Bool) -> Bool in
+            if isStarted { return true }
+            isStarted = true
             return false
         }
         guard !alreadyStarted else {
