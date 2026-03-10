@@ -3,7 +3,7 @@
 
 import Foundation
 
-let repoRoot = URL(fileURLWithPath: "/home/runner/work/Provenance/Provenance")
+let repoRoot = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
 let systemsPlist = repoRoot.appendingPathComponent("PVLibrary/Sources/PVLibrary/Resources/systems.plist")
 let referenceURL = "https://provenance-emu.com/"
 let mimeBase = "application/x-provenance-"
