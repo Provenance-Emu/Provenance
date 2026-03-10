@@ -165,10 +165,10 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
                 if (@available(iOS 14.0, *)) {
                     if (*Data) {
                         // Rumble on - trigger haptic feedback
-                        [[PVHapticsManager shared] rumbleWithPlayer:Control lowFrequency:1.0 highFrequency:0.8 duration:0.1];
+                        [current rumbleForPlayer:Control];
                     } else {
                         // Rumble off - stop haptics
-                        [[PVHapticsManager shared] stopRumbleWithPlayer:Control];
+                        [current stopRumbleForPlayer:Control];
                     }
                 }
 #endif

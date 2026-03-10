@@ -32,6 +32,9 @@ void MupenControllerCommand(int Control, unsigned char *Command);
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player;
+
+- (void)rumbleForPlayer:(NSInteger)player;
+- (void)stopRumbleForPlayer:(NSInteger)player;
 @end
 
 NS_ASSUME_NONNULL_END

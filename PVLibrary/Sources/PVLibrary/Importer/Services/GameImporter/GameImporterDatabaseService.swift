@@ -856,7 +856,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         // SNES .smc files may have a 512-byte copier header - detect and skip if present
         let isSNES = game.system?.identifier == "com.provenance.snes"
-        let isSMC = game.file?.url.pathExtension.lowercased() == "smc"
+        let isSMC = game.file?.url?.pathExtension.lowercased() == "smc"
 
         let romPath = game.file?.url
 

@@ -12,5 +12,4 @@ import PVCoreBridge
 @objc extension MupenGameCore { // : EmulatorCoreRumbleDataSource { // (Rumble)
 
     @objc public override var supportsRumble: Bool { true }
-    
 }
