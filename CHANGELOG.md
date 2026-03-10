@@ -50,6 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   system (#2544, #2558)
 
 ### Fixed
+- **PVCoreLoader Deadlock Risk** — Replaced `NSLock` with `OSAllocatedUnfairLock` in
+  `CoreLoader` and `LibretroMetadataReader`; all bare `.lock()`/`.unlock()` pairs replaced
+  with `.withLock { }` closures, eliminating the early-return deadlock path in `getCorePlists` (#2809)
 - **Cheat System Name Mismatches** — Added `libretroCheatSystemName` mappings for MSX,
   MAME, ZX Spectrum, Atari 8-bit, and others; title tag stripping for region codes (#2617)
 - **Cheat DB MD5 Detection** — Detects MD5 data presence (not just column existence) to

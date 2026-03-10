@@ -42,4 +42,66 @@ final class PVCoreLoaderTests: XCTestCase {
         }
         print(debugInfo)
     }
+
+    // MARK: - Thread-safety tests for OSAllocatedUnfairLock migration
+
+    /// Verifies that concurrent reads of getCorePlists() return a consistent result and
+    /// do not deadlock — the key regression test for the NSLock early-return bug.
+    func testGetCorePlistsConcurrentAccess() {
+        CoreLoader.clearCoreListCache()
+
+        let iterations = 50
+        var results: [[EmulatorCoreInfoPlist]] = Array(repeating: [], count: iterations)
+        let lock = NSLock()
+
+        DispatchQueue.concurrentPerform(iterations: iterations) { index in
+            let plists = CoreLoader.getCorePlists()
+            lock.withLock { results[index] = plists }
+        }
+
+        // All concurrent readers must get the same count
+        let firstCount = results[0].count
+        for (index, result) in results.enumerated() {
+            XCTAssertEqual(
+                result.count, firstCount,
+                "Concurrent call \(index) returned \(result.count) plists, expected \(firstCount)"
+            )
+        }
+    }
+
+    /// Verifies clearCoreListCache() + getCorePlists() round-trip works correctly
+    /// and doesn't leave the lock in a broken state.
+    func testClearAndReloadCacheIsIdempotent() {
+        let first = CoreLoader.getCorePlists()
+        CoreLoader.clearCoreListCache()
+        let second = CoreLoader.getCorePlists()
+
+        XCTAssertEqual(
+            first.count, second.count,
+            "Reloading after cache clear should return the same number of plists"
+        )
+    }
+
+    /// Stress-tests interleaved clear + read operations from concurrent threads.
+    /// If the lock implementation has a deadlock or data-race bug this will hang or crash.
+    func testConcurrentClearAndRead() {
+        let expectation = self.expectation(description: "concurrent clear and read")
+        expectation.expectedFulfillmentCount = 2
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            for _ in 0..<20 {
+                CoreLoader.clearCoreListCache()
+            }
+            expectation.fulfill()
+        }
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            for _ in 0..<20 {
+                _ = CoreLoader.getCorePlists()
+            }
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10)
+    }
 }

@@ -12,8 +12,9 @@ struct LibretroMetadata {
 }
 
 enum LibretroMetadataReader {
-    nonisolated(unsafe) private static var cache: [String: LibretroMetadata] = [:]
-    nonisolated(unsafe) private static let cacheLock = NSLock()
+    /// Thread-safe cache storage using `OSAllocatedUnfairLock` to wrap the dictionary directly.
+    /// This eliminates bare lock/unlock pairs and the associated unlock-on-early-return risks.
+    private static let cacheStorage = OSAllocatedUnfairLock<[String: LibretroMetadata]>(initialState: [:])
 
     static func metadata(forIdentifier identifier: String) -> LibretroMetadata? {
         #if !canImport(Darwin)
@@ -25,23 +26,22 @@ enum LibretroMetadataReader {
             return nil
         }
         ILOG("RetroArch metadata: Loading metadata for core \(identifier)")
-        cacheLock.lock()
-        if let cached = cache[identifier] {
-            cacheLock.unlock()
+
+        /// Fast path: return cached entry without doing I/O
+        if let cached = cacheStorage.withLock({ $0[identifier] }) {
             ILOG("RetroArch metadata: Cache hit for \(identifier) - version: \(cached.version), extensions: \(cached.validExtensions.joined(separator: ", "))")
             return cached
         }
-        cacheLock.unlock()
 
+        /// Load outside the lock so we don't block other threads during dlopen/symbol lookup
         ILOG("RetroArch metadata: Cache miss for \(identifier), loading from framework...")
         guard let metadata = loadMetadata(forIdentifier: identifier) else {
             ILOG("RetroArch metadata: Failed to load metadata for \(identifier)")
             return nil
         }
 
-        cacheLock.lock()
-        cache[identifier] = metadata
-        cacheLock.unlock()
+        /// Store result — concurrent first-load races are benign (last writer wins)
+        cacheStorage.withLock { $0[identifier] = metadata }
 
         ILOG("RetroArch metadata: Successfully loaded and cached metadata for \(identifier) - version: \(metadata.version), extensions: \(metadata.validExtensions.joined(separator: ", "))")
         return metadata

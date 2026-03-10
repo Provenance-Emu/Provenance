@@ -27,19 +27,15 @@ public final class CoreLoader: Sendable {
 
     fileprivate let ThisBundle: Bundle = Bundle.module
 
-    /// Cache for core plists to avoid repeated file system operations
-    nonisolated(unsafe) private static var cachedCorePlists: [EmulatorCoreInfoPlist]?
-
-    /// Lock for thread-safe access to the cache
-    private static let cacheLock = NSLock()
+    /// Thread-safe storage wrapping the cached core plists array.
+    /// `OSAllocatedUnfairLock` eliminates bare lock/unlock pairs and the associated
+    /// early-return deadlock risk present with `NSLock`.
+    private static let cacheStorage = OSAllocatedUnfairLock<[EmulatorCoreInfoPlist]?>(initialState: nil)
 
     /// Clears the cached core plists, forcing a reload on next getCorePlists() call
     /// This is primarily useful for testing or in rare cases where cores might change during runtime
     static public func clearCoreListCache() {
-        cacheLock.lock()
-        defer { cacheLock.unlock() }
-
-        cachedCorePlists = nil
+        cacheStorage.withLock { $0 = nil }
         ILOG("Core plists cache cleared")
     }
 
@@ -57,22 +53,18 @@ public final class CoreLoader: Sendable {
 //    }
 
     static public func getCorePlists() -> [EmulatorCoreInfoPlist] {
-        cacheLock.lock()
-
-        /// Check if we have cached data while holding the lock
-        if let cachedPlists = cachedCorePlists {
-            cacheLock.unlock()
-            DLOG("Returning cached core plists (\(cachedPlists.count) items)")
-            return cachedPlists
+        /// Fast path: return cached value without doing I/O
+        if let cached = cacheStorage.withLock({ $0 }) {
+            DLOG("Returning cached core plists (\(cached.count) items)")
+            return cached
         }
 
-        /// Otherwise load and cache the result
+        /// Load outside the lock so we don't block other threads during filesystem I/O
         ILOG("Loading core plists from file system...")
         let plists = loadCorePlists()
 
-        /// Update cache while still holding the lock
-        cachedCorePlists = plists
-        cacheLock.unlock()
+        /// Store result — concurrent first-load races are benign (last writer wins)
+        cacheStorage.withLock { $0 = plists }
 
         ILOG("Cached \(plists.count) core plists for future use")
         return plists
