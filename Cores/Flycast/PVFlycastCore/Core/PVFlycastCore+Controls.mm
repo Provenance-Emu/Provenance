@@ -75,11 +75,11 @@ s8 joyx[4], joyy[4];
         {
             controller = self.controller2;
         }
-        else if (self.controller3 && playerIndex == 3)
+        else if (self.controller3 && playerIndex == 2)
         {
             controller = self.controller3;
         }
-        else if (self.controller4 && playerIndex == 4)
+        else if (self.controller4 && playerIndex == 3)
         {
             controller = self.controller4;
         }
@@ -114,11 +114,11 @@ s8 joyx[4], joyy[4];
 
             float xvalue = gamepad.leftThumbstick.xAxis.value;
             s8 x=(s8)(xvalue*127);
-            joyx[0] = x;
+            joyx[playerIndex] = x;
 
             float yvalue = gamepad.leftThumbstick.yAxis.value;
             s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
-            joyy[0] = y;
+            joyy[playerIndex] = y;
 
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];

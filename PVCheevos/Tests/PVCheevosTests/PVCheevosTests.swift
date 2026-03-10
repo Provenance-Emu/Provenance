@@ -71,6 +71,63 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     }
 }
 
+@Suite("RetroArchConfigManager", .serialized)
+@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
+struct RetroArchConfigManagerTests {
+    /// Canonical shared-app key used by gameplay and settings.
+    private let enabledKey = "retroAchievementsEnabled"
+    /// Canonical shared-app key used by gameplay and settings.
+    private let hardcoreKey = "retroAchievementsHardcoreEnabled"
+    /// Legacy RetroArch-only compatibility key.
+    private let legacyEnabledKey = "ra_cheevos_enabled"
+    /// Legacy RetroArch-only compatibility key.
+    private let legacyHardcoreKey = "ra_cheevos_hardcore_mode"
+
+    /// Removes RetroAchievements settings keys so tests can run independently.
+    private func clearDefaults() {
+        let defaults = UserDefaults.standard
+        [enabledKey, hardcoreKey, legacyEnabledKey, legacyHardcoreKey].forEach(defaults.removeObject(forKey:))
+    }
+
+    @Test("Migrates the legacy enabled key into the canonical app key")
+    func migratesLegacyEnabledKey() {
+        clearDefaults()
+        defer { clearDefaults() }
+
+        UserDefaults.standard.set(true, forKey: legacyEnabledKey)
+
+        #expect(RetroArchConfigManager.shared.isRetroAchievementsEnabled == true)
+        #expect(UserDefaults.standard.object(forKey: enabledKey) != nil)
+        #expect(UserDefaults.standard.bool(forKey: enabledKey) == true)
+    }
+
+    @Test("Canonical enabled key wins when both keys exist")
+    func canonicalEnabledKeyWins() {
+        clearDefaults()
+        defer { clearDefaults() }
+
+        UserDefaults.standard.set(false, forKey: enabledKey)
+        UserDefaults.standard.set(true, forKey: legacyEnabledKey)
+
+        #expect(RetroArchConfigManager.shared.isRetroAchievementsEnabled == false)
+    }
+
+    @Test("Writes hardcore mode to canonical and legacy keys")
+    func writesHardcoreModeToBothKeys() {
+        clearDefaults()
+        defer { clearDefaults() }
+
+        RetroArchConfigManager.shared.writeBooleanSetting(
+            true,
+            primaryKey: hardcoreKey,
+            legacyKey: legacyHardcoreKey
+        )
+
+        #expect(UserDefaults.standard.bool(forKey: hardcoreKey) == true)
+        #expect(UserDefaults.standard.bool(forKey: legacyHardcoreKey) == true)
+    }
+}
+
 // MARK: - Credentials Tests
 @Test func testCredentialsCreation() {
     let credentials = RetroCredentials.webAPIKey(username: "testuser", webAPIKey: "testkey")
