@@ -158,15 +158,23 @@ extension PVEmulatorViewController {
         hideVirtualKeyboard()
     }
 
-    /// Resolves which `VirtualKeyboardLayout` to use based on skin config,
-    /// user preference, and system defaults.
+    /// Resolves which `VirtualKeyboardLayout` to use.
+    ///
+    /// Priority:
+    ///   1. Explicit skin JSON `keyboardOverlay` — skin authors' intent wins.
+    ///   2. User's persisted `preferredKeyboardVariant` — last layout the user chose.
+    ///   3. System default from `DeltaSkinDefaults` — built-in per-game-type fallback.
+    ///   4. `.full` — universal fallback.
     private func resolvedKeyboardLayout() -> VirtualKeyboardLayout {
-        if let config = effectiveKeyboardOverlayConfig {
-            return config.variant.toLayout()
+        if let skinConfig = currentSkin?.keyboardOverlay {
+            return skinConfig.variant.toLayout()
         }
-        let saved = Defaults[.preferredKeyboardVariant]
-        if let variant = VirtualKeyboardVariant(rawValue: saved) {
+        if let variant = VirtualKeyboardVariant(rawValue: Defaults[.preferredKeyboardVariant]) {
             return variant.toLayout()
+        }
+        if let gameType = currentSkin?.gameType,
+           let defaultConfig = DeltaSkinDefaults.defaultKeyboardOverlay(for: gameType) {
+            return defaultConfig.variant.toLayout()
         }
         return .full
     }
