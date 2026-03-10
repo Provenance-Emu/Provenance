@@ -22,6 +22,7 @@ public struct PVIndicatorLightView: View {
 
     @State private var isExpanded = false
     @State private var showPopover = false
+    @State private var pulseProgress = false
 
     public init(state: PVIndicatorState, onTap: (() -> Void)? = nil) {
         self.state = state
@@ -45,9 +46,11 @@ public struct PVIndicatorLightView: View {
             withAnimation {
                 isExpanded = true
             }
-            // Haptic feedback
+            // Haptic feedback (iOS only — UIImpactFeedbackGenerator unavailable on tvOS)
+            #if !os(tvOS)
             let generator = UIImpactFeedbackGenerator(style: .light)
             generator.impactOccurred()
+            #endif
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation {
@@ -59,18 +62,21 @@ public struct PVIndicatorLightView: View {
 
     private var indicatorContent: some View {
         ZStack {
-            // Pulsing glow effect
+            // Pulsing glow effect — uses a local @State so the animation actually
+            // transitions from the initial (scale 1.0 / opacity 1) to final state.
             if state.isPulsing {
                 Circle()
                     .fill(state.color.glowColor)
                     .frame(width: 16, height: 16)
-                    .scaleEffect(state.isPulsing ? 1.5 : 1.0)
-                    .opacity(state.isPulsing ? 0 : 1)
+                    .scaleEffect(pulseProgress ? 1.5 : 1.0)
+                    .opacity(pulseProgress ? 0 : 1)
                     .animation(
                         Animation.easeOut(duration: 0.6)
                             .repeatCount(1, autoreverses: false),
-                        value: state.isPulsing
+                        value: pulseProgress
                     )
+                    .onAppear { pulseProgress = true }
+                    .onDisappear { pulseProgress = false }
             }
 
             // Main dot

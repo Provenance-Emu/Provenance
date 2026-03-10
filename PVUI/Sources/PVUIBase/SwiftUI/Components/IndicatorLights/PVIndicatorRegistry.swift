@@ -115,8 +115,9 @@ public final class PVIndicatorRegistry: ObservableObject {
         )
         indicators[id] = state
 
-        // Turn off pulse after animation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
+        // Turn off pulse after animation completes
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 600_000_000)
             guard var state = self?.indicators[id], state.isPulsing else { return }
             state = PVIndicatorState(
                 id: state.id,
