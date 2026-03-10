@@ -1,0 +1,156 @@
+name: Kimi Code Agent
+
+# Kimi-powered coding agent — same prompts/tools as claude-code.yml but uses
+# Kimi Code (kimi-for-coding, 256k context) via ANTHROPIC_BASE_URL redirect.
+# Use when Claude Code credits are low or for parallel agent work.
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to implement'
+        required: true
+        type: string
+      action:
+        description: 'Action to perform'
+        required: false
+        default: 'implement_issue'
+        type: choice
+        options:
+          - implement_issue
+          - fix_bug
+          - ai_approved
+          - fix_ai_review
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: kimi-agent-${{ github.event.inputs.issue_number }}
+  cancel-in-progress: false
+
+jobs:
+  kimi-agent:
+    name: Kimi Agent — Issue #${{ github.event.inputs.issue_number }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    env:
+      ANTHROPIC_BASE_URL: https://api.kimi.com/coding
+      ANTHROPIC_API_KEY: ${{ secrets.KIMI_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code@latest
+
+      - name: Post status comment
+        id: status_comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ISSUE="${{ github.event.inputs.issue_number }}"
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          BODY="<!-- claude-status -->
+          ## 🤖 Kimi Code Agent — Starting
+
+          **Model:** kimi-for-coding (256k context)
+          **Issue:** #${ISSUE}
+          **Action:** ${{ github.event.inputs.action }}
+          **Started:** ${TIMESTAMP}
+
+          *Working...*"
+
+          COMMENT_ID=$(gh issue comment "$ISSUE" --body "$BODY" \
+            --repo "${{ github.repository }}" \
+            --jq '.id' 2>/dev/null || echo "")
+          echo "comment_id=$COMMENT_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Run Kimi Code Agent
+        id: kimi_run
+        continue-on-error: true
+        env:
+          ANTHROPIC_BASE_URL: https://api.kimi.com/coding
+          ANTHROPIC_API_KEY: ${{ secrets.KIMI_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          ISSUE="${{ github.event.inputs.issue_number }}"
+          ACTION="${{ github.event.inputs.action }}"
+          REPO="${{ github.repository }}"
+
+          # Configure git
+          git config user.name  "Kimi Code Agent"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          ISSUE_JSON=$(gh issue view "$ISSUE" --repo "$REPO" --json title,body,labels 2>/dev/null || echo '{}')
+          ISSUE_TITLE=$(echo "$ISSUE_JSON" | jq -r '.title // ""')
+          ISSUE_BODY=$(echo "$ISSUE_JSON"  | jq -r '.body  // ""')
+
+          claude --dangerously-skip-permissions \
+            --model kimi-for-coding \
+            --allowedTools 'Bash(gh issue comment:*),Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh issue close:*),Bash(gh pr comment:*),Bash(gh pr create:*),Bash(gh pr edit:*),Bash(gh pr view:*),Bash(gh label:*),Bash(gh api:*),Bash(git:*),Bash(swift:*),Bash(swiftlint:*),Bash(cat:*),Bash(sed:*),Bash(date:*),Bash(python3:*),Read,Write,Edit,Glob,Grep' \
+            -p "You are working on the Provenance emulator app repository.
+          Read CLAUDE.md for conventions and module structure.
+
+          Repository: ${REPO}
+          Issue #${ISSUE}: ${ISSUE_TITLE}
+          Action: ${ACTION}
+          Status comment ID: ${{ steps.status_comment.outputs.comment_id }}
+
+          Issue body:
+          ${ISSUE_BODY}
+
+          ## Instructions
+
+          Implement the issue above following CLAUDE.md conventions:
+          1. Read the issue carefully and understand the full scope
+          2. Find the relevant files (use Glob/Grep)
+          3. Implement the changes
+          4. Run swiftlint on changed files
+          5. Commit with conventional commit message (feat/fix/refactor/chore)
+          6. Create a PR targeting develop with title '[Agent] <description>'
+          7. Close the issue referencing the PR
+
+          Branch name: agent/issue-${ISSUE}-$(echo '${{ github.run_id }}' | tail -c 6)
+
+          Keep changes focused. Do not refactor unrelated code."
+
+      - name: Post result
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ISSUE="${{ github.event.inputs.issue_number }}"
+          STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          OUTCOME="${{ steps.kimi_run.outcome }}"
+
+          if [[ "$OUTCOME" == "success" ]]; then
+            ICON="✅"; MSG="Completed"
+          else
+            ICON="❌"; MSG="Failed — check run logs"
+          fi
+
+          if [[ -n "$STATUS_ID" ]]; then
+            gh api "repos/${{ github.repository }}/issues/comments/${STATUS_ID}" \
+              --method PATCH \
+              --field body="<!-- claude-status -->
+          ## ${ICON} Kimi Code Agent — ${MSG}
+
+          **Model:** kimi-for-coding
+          **Issue:** #${ISSUE}
+          **Finished:** ${TIMESTAMP}
+
+          [View run logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" \
+              2>/dev/null || true
+          fi
