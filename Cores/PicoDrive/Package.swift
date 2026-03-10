@@ -164,6 +164,7 @@ let package = Package(
                     "pico/sound/sn76496.c",
                     "pico/sound/sound.c",
                     "pico/sound/ym2612.c",
+                    "pico/sound/emu2413/emu2413.c",
                     "pico/state.c",
                     "pico/videoport.c",
                     "pico/z80if.c",
@@ -195,8 +196,9 @@ let package = Package(
                     .define("NDEBUG", to: "1", .when(configuration: .release)),
                     .define("DEBUG", to: "1", .when(configuration: .debug)),
 
-                        .define("EMU_F68K", to: "1"),
+                    .define("EMU_F68K", to: "1"),
                     .define("_USE_CZ80", to: "1"),
+                    .define("REVISION", to: "\"\""),
 
                     .headerSearchPath("./"),
                     .headerSearchPath("./include"),
