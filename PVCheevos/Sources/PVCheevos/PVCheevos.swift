@@ -34,6 +34,15 @@ public struct PVCheevos {
         return RetroArchConfigManager.shared
     }
 
+    /// Create a new `AchievementSessionManager` backed by the stored-credentials client.
+    ///
+    /// Returns `nil` when no valid session is stored (user not logged in).
+    @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
+    public static func sessionManager() -> AchievementSessionManager? {
+        guard hasValidSession else { return nil }
+        return AchievementSessionManager(client: client())
+    }
+
     /// Create credentials with web API key
     public static func credentials(username: String, webAPIKey: String) -> RetroCredentials {
         return RetroCredentials.webAPIKey(username: username, webAPIKey: webAPIKey)
@@ -114,6 +123,11 @@ public typealias RAGameRankings = GameRankings
 // Comment types
 public typealias RAComment = Comment
 public typealias RAComments = Comments
+
+// Session management
+@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
+public typealias RASessionManager = AchievementSessionManager
+public typealias RASessionError = AchievementSessionError
 
 // MARK: - RetroArch Integration
 public typealias RARetroArchConfigManager = RetroArchConfigManager

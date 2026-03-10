@@ -209,6 +209,97 @@ public actor RetroNetworkClient: Sendable {
         }
     }
 
+    /// Look up a RetroAchievements game ID for a ROM hash.
+    /// - Parameters:
+    ///   - hash: MD5 hex string of the ROM.
+    /// - Returns: The RA game ID, or `nil` if the hash is not in the database.
+    /// - Throws: RetroError if the request fails.
+    public func getGameId(forHash hash: String) async throws -> Int? {
+        guard let url = URL(string: "https://retroachievements.org/dorequest.php") else {
+            throw RetroError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.setValue("PVCheevos-Swift-Client", forHTTPHeaderField: "User-Agent")
+
+        let body = "r=gameid&m=\(hash)"
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        request.httpBody = body.data(using: .utf8)
+
+        let (data, response) = try await urlSession.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw RetroError.invalidResponse
+        }
+
+        struct GameIDResponse: Decodable {
+            let success: Bool
+            let gameID: Int?
+            enum CodingKeys: String, CodingKey {
+                case success = "Success"
+                case gameID = "GameID"
+            }
+        }
+
+        let decoded = try JSONDecoder().decode(GameIDResponse.self, from: data)
+        guard decoded.success, let id = decoded.gameID, id != 0 else { return nil }
+        return id
+    }
+
+    /// Award an achievement unlock to the RetroAchievements server.
+    /// - Parameters:
+    ///   - achievementId: The numeric achievement ID.
+    ///   - hardcore: `true` if earned in hardcore (no save-state) mode.
+    ///   - username: RetroAchievements username.
+    ///   - token: Session token from login.
+    /// - Throws: RetroError if the request fails.
+    public func awardAchievement(achievementId: UInt32, hardcore: Bool, username: String, token: String) async throws {
+        guard let url = URL(string: "https://retroachievements.org/dorequest.php") else {
+            throw RetroError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.setValue("PVCheevos-Swift-Client", forHTTPHeaderField: "User-Agent")
+
+        let hardcoreFlag = hardcore ? "1" : "0"
+        let parameters: [String: String] = [
+            "r": "awardachievement",
+            "u": username,
+            "t": token,
+            "a": "\(achievementId)",
+            "h": hardcoreFlag
+        ]
+        let body = parameters.map { "\($0.key)=\($0.value)" }
+            .joined(separator: "&")
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        request.httpBody = body.data(using: .utf8)
+
+        let (data, response) = try await urlSession.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw RetroError.invalidResponse
+        }
+        guard httpResponse.statusCode == 200 else {
+            throw RetroError.serverError("HTTP \(httpResponse.statusCode)")
+        }
+
+        struct AwardResponse: Decodable {
+            let success: Bool
+            let error: String?
+            enum CodingKeys: String, CodingKey {
+                case success = "Success"
+                case error = "Error"
+            }
+        }
+
+        if let decoded = try? JSONDecoder().decode(AwardResponse.self, from: data), !decoded.success {
+            let msg = decoded.error ?? "Unknown error"
+            throw RetroError.serverError(msg)
+        }
+    }
+
     /// Send a ping update (Rich Presence and session maintenance)
     /// - Parameters:
     ///   - username: RetroAchievements username

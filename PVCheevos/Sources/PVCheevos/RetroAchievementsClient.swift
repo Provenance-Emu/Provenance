@@ -232,6 +232,29 @@ public actor RetroAchievementsClient: Sendable {
         )
     }
 
+    /// Resolve a RetroAchievements game ID from a ROM MD5 hash.
+    /// - Parameter hash: MD5 hex string of the ROM.
+    /// - Returns: The RA game ID, or `nil` if the hash is not in the database.
+    public func getGameId(forHash hash: String) async throws -> Int? {
+        return try await networkClient.getGameId(forHash: hash)
+    }
+
+    /// Award an achievement unlock to the RetroAchievements server.
+    /// - Parameters:
+    ///   - id: The numeric achievement ID (from rcheevos callback).
+    ///   - hardcore: `true` if earned in hardcore mode.
+    public func awardAchievement(id: UInt32, hardcore: Bool) async throws {
+        guard let session = await getCurrentSession() else {
+            throw RetroError.authenticationFailed
+        }
+        try await networkClient.awardAchievement(
+            achievementId: id,
+            hardcore: hardcore,
+            username: session.user.user,
+            token: session.token
+        )
+    }
+
     // MARK: - Data API (requires API key or will fail with session token)
 }
 
