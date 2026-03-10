@@ -411,7 +411,7 @@ public class SceneCoordinator: ObservableObject {
             }
 
             // Load per-game / per-system controller profiles for all connected controllers.
-            loadControllerProfiles(for: currentGame)
+            loadControllerProfiles(for: currentGame, core: core)
 
             // Open the emulator scene - errors will be handled by PVEmulatorViewController
             openEmulatorScene()
@@ -428,14 +428,15 @@ public class SceneCoordinator: ObservableObject {
     // MARK: - Controller Profile Loading
 
     /// Load the best-matching controller profile for every connected controller
-    /// before launching `game`.  Profiles are scoped (game → system → global).
-    private func loadControllerProfiles(for game: PVGame) {
+    /// before launching `game`.  Profiles are scoped (game → system+core → system → global).
+    private func loadControllerProfiles(for game: PVGame, core: PVCore? = nil) {
         let systemIdentifier = game.systemIdentifier.isEmpty ? nil : game.systemIdentifier
+        let coreIdentifier = core?.identifier.isEmpty == false ? core?.identifier : nil
         let gameID = game.md5Hash.isEmpty ? nil : game.md5Hash
 
         for controller in PVControllerManager.shared.controllers {
             let wrapper = getRemappableControllerWrapper(for: controller)
-            wrapper.loadActiveProfile(systemIdentifier: systemIdentifier, gameID: gameID)
+            wrapper.loadActiveProfile(systemIdentifier: systemIdentifier, coreIdentifier: coreIdentifier, gameID: gameID)
         }
         ILOG("SceneCoordinator: Loaded controller profiles for \(PVControllerManager.shared.controllers.count) controller(s)")
     }
@@ -959,7 +960,7 @@ public class SceneCoordinator: ObservableObject {
             }
 
             // Load per-game / per-system controller profiles for all connected controllers.
-            loadControllerProfiles(for: currentGame)
+            loadControllerProfiles(for: currentGame, core: coreToUse)
 
             // Open the emulator scene - the emulator will handle loading the game with save state
             openEmulatorScene()

@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   system (#2544, #2558)
 
 ### Fixed
+- **Controller Profile Scope Resolution** — `SceneCoordinator.loadControllerProfiles` now passes `coreIdentifier` to `loadActiveProfile`, enabling game+core and system+core profile scopes to match correctly at game launch (#2879 follow-up)
 - **PVCoreLoader Deadlock Risk** — Replaced `NSLock` with `OSAllocatedUnfairLock` in
   `CoreLoader` and `LibretroMetadataReader`; all bare `.lock()`/`.unlock()` pairs replaced
   with `.withLock { }` closures, eliminating the early-return deadlock path in `getCorePlists` (#2809)
