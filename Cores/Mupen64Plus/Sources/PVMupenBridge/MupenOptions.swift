@@ -40,9 +40,9 @@ public final class MupenGameCoreOptions: NSObject, CoreOptions, CoreOptional, Se
                             values:[
                                 .init(title: "None", description: "", value: 1),
                                 .init(title: "Memory Pak", description: "", value: 2),
-                                //                                            .init(title: "Rumble Pak, description: "", value: 3),
-                                //                                            .init(title: "Transer Pak", description: "", value: 4),
-                                    .init(title: "Raw Data", description: "Used for Rumble or Transer Pak", value: 5),
+                                .init(title: "Rumble Pak", description: "Vibration feedback (requires compatible controller)", value: 3),
+                                .init(title: "Transfer Pak", description: "Connect a GB/GBC cartridge to this N64 controller port", value: 4),
+                                .init(title: "Raw Data", description: "Pass raw pak data to the plugin", value: 5),
                             ],
                             defaultValue: defaultValue)
     }

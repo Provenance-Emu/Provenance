@@ -199,10 +199,60 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 
 @implementation PVMupenBridge (Controls)
 
-//-(void)setMode:(NSInteger)mode forController:(NSInteger)controller {
-//    NSAssert(controller < 4, @"Out of index");
-//    self->controllerMode[controller] = mode;
-//}
+- (void)setMode:(NSInteger)mode forController:(NSInteger)controller {
+    NSAssert(controller < 4, @"Controller index out of range (0-3)");
+    if (controller >= 0 && controller < 4) {
+        self->controllerMode[controller] = (int)mode;
+    }
+}
+
+/// Sets (or clears) the GB/GBC cart ROM + save paths for a Transfer Pak slot.
+/// Pass nil for both to remove the cart.  Rebuilds the C-string cache immediately
+/// so the next m64p_media_loader callback sees the updated paths.
+- (void)setGBCartROMPath:(nullable NSString *)romPath
+               savePath:(nullable NSString *)savePath
+                forPort:(NSInteger)port {
+    NSAssert(port >= 0 && port < 4, @"Transfer Pak port index out of range (0-3)");
+    if (port < 0 || port >= 4) return;
+
+    @synchronized (self) {
+        // Release previous C-string copies.
+        if (self->_gbCartROMCStr[port]) {
+            free(self->_gbCartROMCStr[port]);
+            self->_gbCartROMCStr[port] = NULL;
+        }
+        if (self->_gbCartSaveCStr[port]) {
+            free(self->_gbCartSaveCStr[port]);
+            self->_gbCartSaveCStr[port] = NULL;
+        }
+
+        self->gbCartROMPath[port]  = romPath;
+        self->gbCartSavePath[port] = savePath;
+
+        if (romPath.length > 0) {
+            self->_gbCartROMCStr[port] = strdup(romPath.fileSystemRepresentation);
+        }
+        if (savePath.length > 0) {
+            self->_gbCartSaveCStr[port] = strdup(savePath.fileSystemRepresentation);
+        }
+    }
+
+    ILOG(@"Transfer Pak port %ld: ROM=%@  save=%@", (long)port, romPath ?: @"<none>", savePath ?: @"<auto>");
+}
+
+- (nullable NSString *)gbCartROMPathForPort:(NSInteger)port {
+    if (port < 0 || port >= 4) return nil;
+    @synchronized (self) {
+        return self->gbCartROMPath[port];
+    }
+}
+
+- (nullable NSString *)gbCartSavePathForPort:(NSInteger)port {
+    if (port < 0 || port >= 4) return nil;
+    @synchronized (self) {
+        return self->gbCartSavePath[port];
+    }
+}
 
 - (void)pollController:(GCController* _Nullable)controller forIndex:(NSInteger)playerIndex {
     if (!controller) {
