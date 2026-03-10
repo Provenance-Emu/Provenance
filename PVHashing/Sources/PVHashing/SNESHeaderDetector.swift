@@ -46,7 +46,8 @@ public enum SNESHeaderDetector {
     /// - Parameter fileSize: Size of the SNES ROM file in bytes
     /// - Returns: The number of bytes to skip (512 if header present, 0 if clean)
     public static func detectOffset(fileSize: UInt64) -> UInt {
-        let hasHeader = (fileSize >= copierHeaderSize) &&
+        /// A file with only 512 bytes is header-only and should not be treated as a valid headered ROM.
+        let hasHeader = (fileSize > copierHeaderSize) &&
                         ((fileSize - copierHeaderSize) % bankSize == 0)
         let isClean = (fileSize % bankSize == 0)
 
@@ -69,7 +70,7 @@ public enum SNESHeaderDetector {
     /// - Parameter fileSize: Size of the SNES ROM file in bytes
     /// - Returns: true if the file appears to have a 512-byte copier header
     public static func hasCopierHeader(fileSize: UInt64) -> Bool {
-        (fileSize >= copierHeaderSize) && ((fileSize - copierHeaderSize) % bankSize == 0)
+        (fileSize > copierHeaderSize) && ((fileSize - copierHeaderSize) % bankSize == 0)
     }
 
     /// Checks if a file size indicates a headerless SNES ROM.
