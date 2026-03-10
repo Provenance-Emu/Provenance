@@ -481,7 +481,7 @@ public extension GameLaunchingViewController {
                 var message = "This game may not be playable after downloading:\n\n\(warningMessage)\n\nDo you want to download anyway?"
 
                 if !hasAvailableCores {
-                    let supportLevel = system.coreSupportLevel(isAppStore: AppState.shared.isAppStore)
+                    let supportLevel = system.coreSupportLevel(isAppStore: AppState.shared.isAppStore, unsupportedCores: Defaults[.unsupportedCores])
                     title = "No Compatible Core"
                     switch supportLevel {
                     case .appStoreRestricted:

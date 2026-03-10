@@ -11,11 +11,13 @@ import Perception
 import PVSystems
 import PVThemes
 import PVRealm
+import PVSettings
 
 struct SystemSelectionView: View {
     @ObservedObject var item: ImportQueueItem
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var themeManager = ThemeManager.shared
+    @Default(.unsupportedCores) private var unsupportedCores
 
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
@@ -31,7 +33,7 @@ struct SystemSelectionView: View {
         guard let pvSystem = PVEmulatorConfiguration.system(forIdentifier: systemID) else {
             return .noCores
         }
-        return pvSystem.coreSupportLevel(isAppStore: isAppStore)
+        return pvSystem.coreSupportLevel(isAppStore: isAppStore, unsupportedCores: unsupportedCores)
     }
 
     var body: some View {
@@ -145,36 +147,30 @@ struct SystemSelectionView: View {
     }
 }
 
-/// Inline support level indicator used inside system selection rows.
-struct SystemSupportLevelRow: View {
-    let level: CoreSupportLevel
-
-    private var icon: String {
-        switch level {
-        case .fullySupported: return "checkmark.circle.fill"
-        case .appStoreRestricted: return "lock.fill"
-        case .disabled: return "xmark.circle.fill"
-        case .noCores: return "questionmark.circle.fill"
-        }
-    }
-
-    private var color: Color {
-        switch level {
+/// SwiftUI color mapping for `CoreSupportLevel`. Defined here so both PVUIBase and PVSwiftUI views share one source.
+extension CoreSupportLevel {
+    public var badgeColor: Color {
+        switch self {
         case .fullySupported: return .green
         case .appStoreRestricted: return .orange
         case .disabled: return .red
         case .noCores: return .gray
         }
     }
+}
+
+/// Inline support level indicator used inside system selection rows.
+struct SystemSupportLevelRow: View {
+    let level: CoreSupportLevel
 
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: icon)
+            Image(systemName: level.icon)
                 .font(.system(size: 10))
             Text(level.label)
                 .font(.system(size: 11, weight: .medium))
         }
-        .foregroundColor(color)
+        .foregroundColor(level.badgeColor)
     }
 }
 

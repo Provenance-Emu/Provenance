@@ -225,11 +225,12 @@ struct SystemSection: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var isCoresExpanded = false
     @State private var isBiosesExpanded = false
+    @Default(.unsupportedCores) private var unsupportedCores
 
     private var isAppStore: Bool { AppState.shared.isAppStore }
 
     private var supportLevel: CoreSupportLevel {
-        system.coreSupportLevel(isAppStore: isAppStore)
+        system.coreSupportLevel(isAppStore: isAppStore, unsupportedCores: unsupportedCores)
     }
 
     var body: some View {
@@ -518,27 +519,9 @@ struct BIOSRow: View {
 struct CoreSupportLevelBadge: View {
     let level: CoreSupportLevel
 
-    private var badgeColor: Color {
-        switch level {
-        case .fullySupported: return .green
-        case .appStoreRestricted: return .orange
-        case .disabled: return .red
-        case .noCores: return .gray
-        }
-    }
-
-    private var icon: String {
-        switch level {
-        case .fullySupported: return "checkmark.circle.fill"
-        case .appStoreRestricted: return "lock.fill"
-        case .disabled: return "xmark.circle.fill"
-        case .noCores: return "questionmark.circle.fill"
-        }
-    }
-
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: icon)
+            Image(systemName: level.icon)
                 .font(.system(size: 10, weight: .bold))
             Text(level.label)
                 .font(.system(size: 10, weight: .semibold))
@@ -547,12 +530,12 @@ struct CoreSupportLevelBadge: View {
         .padding(.vertical, 3)
         .background(
             Capsule()
-                .fill(badgeColor.opacity(0.2))
+                .fill(level.badgeColor.opacity(0.2))
                 .overlay(
                     Capsule()
-                        .strokeBorder(badgeColor.opacity(0.6), lineWidth: 1)
+                        .strokeBorder(level.badgeColor.opacity(0.6), lineWidth: 1)
                 )
         )
-        .foregroundColor(badgeColor)
+        .foregroundColor(level.badgeColor)
     }
 }

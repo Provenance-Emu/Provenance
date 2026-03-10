@@ -8,6 +8,7 @@
 import SwiftUI
 import PVLibrary
 import PVRealm
+import PVSettings
 import PVThemes
 import Perception
 
@@ -36,6 +37,7 @@ struct ImportTaskRowView: View {
     let item: ImportQueueItem
     @State private var isNavigatingToSystemSelection = false
     @ObservedObject private var themeManager = ThemeManager.shared
+    @Default(.unsupportedCores) private var unsupportedCores
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
 
     private var isAppStore: Bool { AppState.shared.isAppStore }
@@ -46,7 +48,7 @@ struct ImportTaskRowView: View {
             ?? (item.systems.count == 1 ? item.systems.first : nil)
         guard let systemID else { return nil }
         guard let pvSystem = PVEmulatorConfiguration.system(forIdentifier: systemID) else { return nil }
-        let level = pvSystem.coreSupportLevel(isAppStore: isAppStore)
+        let level = pvSystem.coreSupportLevel(isAppStore: isAppStore, unsupportedCores: unsupportedCores)
         return level == .fullySupported ? nil : level
     }
 

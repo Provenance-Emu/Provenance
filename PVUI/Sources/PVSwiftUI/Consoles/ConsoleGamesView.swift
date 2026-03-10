@@ -52,6 +52,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showFavorites) var showFavorites: Bool
     @Default(.showRecentGames) var showRecentGames: Bool
     @Default(.showSearchbar) var showSearchbar: Bool
+    @Default(.unsupportedCores) var unsupportedCores: Bool
 
     // Modal state for log viewer and system status
     @State private var showLogViewer = false
@@ -210,7 +211,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @ViewBuilder
     var unsupportedSystemBanner: some View {
-        let supportLevel = console.coreSupportLevel(isAppStore: AppState.shared.isAppStore)
+        let supportLevel = console.coreSupportLevel(isAppStore: AppState.shared.isAppStore, unsupportedCores: unsupportedCores)
         if supportLevel != .fullySupported {
             HStack(spacing: 8) {
                 Image(systemName: supportLevel == .appStoreRestricted ? "lock.fill" : "exclamationmark.triangle.fill")

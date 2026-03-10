@@ -392,22 +392,39 @@ public enum CoreSupportLevel: Equatable {
             return "No emulator core is registered for this system. ROMs can be stored but not played."
         }
     }
+
+    /// SF Symbol name for the icon representing this support level.
+    public var icon: String {
+        switch self {
+        case .fullySupported: return "checkmark.circle.fill"
+        case .appStoreRestricted: return "lock.fill"
+        case .disabled: return "xmark.circle.fill"
+        case .noCores: return "questionmark.circle.fill"
+        }
+    }
 }
 
 public extension PVSystem {
-    /// The effective support level for this system in the given App Store context.
-    /// - Parameter isAppStore: Pass `true` when running an App Store build.
-    func coreSupportLevel(isAppStore: Bool) -> CoreSupportLevel {
+    /// The effective support level for this system in the given build context.
+    /// - Parameters:
+    ///   - isAppStore: Pass `true` when running an App Store build.
+    ///   - unsupportedCores: Pass `true` when the user has enabled the "Unsupported Cores" setting.
+    ///     When enabled, disabled and App Store-restricted cores are treated as playable.
+    func coreSupportLevel(isAppStore: Bool, unsupportedCores: Bool = false) -> CoreSupportLevel {
         let allCores = Array(cores)
         guard !allCores.isEmpty else { return .noCores }
 
-        // Fully usable: not disabled, not appStoreDisabled (or sideloaded), and has a loaded class
-        if allCores.contains(where: { !$0.disabled && (!$0.appStoreDisabled || !isAppStore) && $0.hasCoreClass }) {
+        // Fully usable: satisfies disabled/appStoreDisabled constraints (respecting unsupportedCores) and has a loaded class
+        if allCores.contains(where: {
+            (!$0.disabled || unsupportedCores) &&
+            (!$0.appStoreDisabled || !isAppStore || unsupportedCores) &&
+            $0.hasCoreClass
+        }) {
             return .fullySupported
         }
 
-        // App Store restricted: has working cores that need sideload/JIT
-        if isAppStore && allCores.contains(where: { !$0.disabled && $0.appStoreDisabled }) {
+        // App Store restricted: has working cores that need sideload/JIT (only when unsupportedCores is off)
+        if isAppStore && !unsupportedCores && allCores.contains(where: { !$0.disabled && $0.appStoreDisabled }) {
             return .appStoreRestricted
         }
 
