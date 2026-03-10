@@ -359,6 +359,31 @@ public actor PVLookup: ROMMetadataProvider, ArtworkLookupOnlineService, ArtworkL
         return nil
     }
 
+    /// Search for a ROM by CRC32 hash.
+    /// CRC32 can be read from ZIP, 7z, RAR, and LZH archive central directories without decompressing,
+    /// making this a fast path for identifying ROMs inside archives.
+    public func searchROM(byCRC crc: String) async throws -> ROMMetadata? {
+        let upperCRC = crc.uppercased()
+        ILOG("PVLookup: Starting ROM search for CRC: \(upperCRC)")
+
+        if let openVGDB = await getOpenVGDB() {
+            if let result = try? await openVGDB.searchROM(byCRC: upperCRC) {
+                return result
+            }
+        }
+        return nil
+    }
+
+    /// Search database by CRC32, returning all matches.
+    public func searchDatabase(usingCRC crc: String, systemID: SystemIdentifier? = nil) async throws -> [ROMMetadata]? {
+        let upperCRC = crc.uppercased()
+
+        if let openVGDB = await getOpenVGDB() {
+            return try await openVGDB.searchByCRC(upperCRC, systemID: systemID)
+        }
+        return nil
+    }
+
     public func searchDatabase(usingFilename filename: String, systemID: SystemIdentifier?) async throws -> [ROMMetadata]? {
         /// Start time for overall search
         let searchStartTime = Date()

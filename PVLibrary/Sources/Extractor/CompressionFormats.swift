@@ -9,7 +9,7 @@ enum CompressionFormats: String, Codable, Sendable, Equatable, Hashable {
     case lzma
     case lzma2
     case zlib
-    case defalate
+    case deflate
     case bzip
     case bzip2
 }

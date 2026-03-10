@@ -13,7 +13,15 @@ public enum Extensions: String, CaseIterable {
     case gz = "gz"
     case rar = "rar"
     case zip = "zip"
-    
+    case tar = "tar"
+    case bz2 = "bz2"
+    case bzip2 = "bzip2"
+    case lzh = "lzh"
+    case lha = "lha"
+    case xz = "xz"
+    case zst = "zst"
+    case zstd = "zstd"
+
     // Images
     case png = "png"
     case jpg = "jpg"
@@ -42,7 +50,10 @@ public enum Extensions: String, CaseIterable {
     case bin = "bin"
     case sub = "sub"
     
-    private static let _archiveExtensions: Set<Extensions> = [.sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip]
+    private static let _archiveExtensions: Set<Extensions> = [
+        .sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip,
+        .tar, .bz2, .bzip2, .lzh, .lha, .xz, .zst, .zstd
+    ]
     private static let _artworkExtensions: Set<Extensions> = [.png, .jpg, .jpeg]
     private static let _discImageExtensions: Set<Extensions> = [.ccd, .img, .iso, .chd]
     private static let _playlistExtensions: Set<Extensions> = [.m3u, .cue]
