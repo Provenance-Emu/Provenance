@@ -39,6 +39,9 @@ extension Defaults.Keys {
 
     static let showFPSCount = Key<Bool>("showFPSCount", default: false)
 
+    /// Show JIT status indicator in the emulator HUD
+    static let showJITStatusIndicator = Key<Bool>("showJITStatusIndicator", default: false)
+
     static let vsyncEnabled = Key<Bool>("vsyncEnabled", default: true)
 }
 
