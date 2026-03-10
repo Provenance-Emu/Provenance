@@ -161,6 +161,8 @@ jobs:
           fi
 
       - name: Run AI Reviewer
+        id: reviewer_run
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -399,3 +401,53 @@ jobs:
             `🔧 AI review complete — REQUEST_CHANGES (cycle CYCLE/3). Auto-fixer dispatched.`
 
             Output ONLY this single line. No summaries, no explanations, no extra markdown.
+
+      # If the AI reviewer failed (rate limit, auth, or runtime error), notify the
+      # user so they can handle the review manually or wait for token reset.
+      - name: Notify on reviewer failure
+        if: steps.reviewer_run.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUM="${{ needs.triage.outputs.pr_number }}"
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          cat > /tmp/review_failure.md << 'FAILEOF'
+          <!-- agent-failure-notice -->
+          ## ⚠️ AI Review Failed
+
+          The AI reviewer could not complete the review (likely rate-limited or auth error).
+
+          **Options:**
+          1. **Wait** for the Claude Code token window to reset (~2 hours)
+          2. **Review manually** or use Cursor locally
+          3. **Re-trigger** by commenting `@claude` or re-running the workflow
+
+          FAILEOF
+          echo "*Failed: ${TIMESTAMP}*" >> /tmp/review_failure.md
+
+          gh pr comment "$PR_NUM" --body-file /tmp/review_failure.md \
+            --repo "${{ github.repository }}" 2>/dev/null || true
+
+          gh pr edit "$PR_NUM" \
+            --add-label "needs-manual-intervention" \
+            --remove-label "ai-reviewing" \
+            --repo "${{ github.repository }}" 2>/dev/null || true
+
+          # Update status comment to show failure
+          STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
+          if [ -n "$STATUS_ID" ]; then
+            cat > /tmp/review_status.md << STATUSEOF
+          <!-- claude-status -->
+          ## ❌ AI Review Failed
+
+          **Reviewer:** ${{ needs.triage.outputs.model }}
+
+          The reviewer was rate-limited or encountered an error.
+          Manual review needed, or re-trigger once tokens are available.
+
+          *Failed: ${TIMESTAMP}*
+          STATUSEOF
+            gh api "repos/${{ github.repository }}/issues/comments/${STATUS_ID}" \
+              --method PATCH --field body=@/tmp/review_status.md 2>/dev/null || true
+          fi

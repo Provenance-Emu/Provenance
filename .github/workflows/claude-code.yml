@@ -122,6 +122,8 @@ jobs:
           fi
 
       - name: Run Claude Code
+        id: claude_run
+        continue-on-error: true
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -384,6 +386,69 @@ jobs:
                   --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
                 ```
 
+      # If Claude Code failed (rate limit, auth, or runtime error), notify the user
+      # so they can handle the task manually via Cursor or wait for token reset.
+      - name: Notify on Claude Code failure
+        if: steps.claude_run.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUM="${{ github.event.inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}"
+          ACTION="${{ github.event.inputs.action }}"
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          if [ -z "$PR_NUM" ] || [ "$PR_NUM" = "0" ]; then
+            echo "No PR/issue number — cannot post notification"
+            exit 0
+          fi
+
+          cat > /tmp/failure_notify.md << 'FAILEOF'
+          <!-- agent-failure-notice -->
+          ## ⚠️ Claude Code Agent Failed
+
+          The Claude Code agent could not complete this task (likely rate-limited or auth error).
+
+          **Options:**
+          1. **Wait** for the Claude Code token window to reset (~2 hours)
+          2. **Use Cursor** locally to handle this task manually
+          3. **Re-trigger** by commenting `@claude` once tokens are available
+
+          FAILEOF
+
+          # Add action-specific context
+          if [ "$ACTION" = "fix_ai_review" ]; then
+            echo "**Task was:** Fix AI review comments on PR #${PR_NUM}" >> /tmp/failure_notify.md
+          elif [ "$ACTION" = "fix_rebase_conflict" ]; then
+            echo "**Task was:** Resolve rebase conflicts on PR #${PR_NUM}" >> /tmp/failure_notify.md
+          fi
+          echo "" >> /tmp/failure_notify.md
+          echo "*Failed: ${TIMESTAMP}*" >> /tmp/failure_notify.md
+
+          gh pr comment "$PR_NUM" --body-file /tmp/failure_notify.md --repo "${{ github.repository }}" 2>/dev/null || \
+            gh issue comment "$PR_NUM" --body-file /tmp/failure_notify.md --repo "${{ github.repository }}" 2>/dev/null || true
+
+          gh pr edit "$PR_NUM" --add-label "needs-manual-intervention" --repo "${{ github.repository }}" 2>/dev/null || \
+            gh issue edit "$PR_NUM" --add-label "needs-manual-intervention" --repo "${{ github.repository }}" 2>/dev/null || true
+
+          # Update status comment to show failure
+          STATUS_ID="${{ steps.status_comment.outputs.comment_id }}"
+          if [ -n "$STATUS_ID" ]; then
+            cat > /tmp/claude_status.md << STATUSEOF
+          <!-- claude-status -->
+          ## ❌ Claude Code Agent Failed
+
+          ### Progress
+          - [x] 🚀 Agent started
+          - [ ] ❌ Agent failed (rate limit or auth error)
+
+          **Manual intervention needed** — use Cursor or wait for token reset.
+
+          *Failed: ${TIMESTAMP}*
+          STATUSEOF
+            gh api "repos/${{ github.repository }}/issues/comments/${STATUS_ID}" \
+              --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
+          fi
+
       # GITHUB_TOKEN pushes/PR-creates don't fire pull_request events in other workflows.
       # Explicitly dispatch ai-review after:
       #   1. A new [Agent] PR is created from an issue
@@ -391,10 +456,11 @@ jobs:
       #   3. Rebase is resolved for fix_rebase_conflict (re-review after rebase)
       - name: Dispatch AI review for Agent PRs
         if: |
-          github.event_name == 'issues' ||
-          (github.event_name == 'workflow_dispatch' &&
-           (github.event.inputs.action == 'fix_ai_review' ||
-            github.event.inputs.action == 'fix_rebase_conflict'))
+          steps.claude_run.outcome == 'success' &&
+          (github.event_name == 'issues' ||
+           (github.event_name == 'workflow_dispatch' &&
+            (github.event.inputs.action == 'fix_ai_review' ||
+             github.event.inputs.action == 'fix_rebase_conflict')))
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
