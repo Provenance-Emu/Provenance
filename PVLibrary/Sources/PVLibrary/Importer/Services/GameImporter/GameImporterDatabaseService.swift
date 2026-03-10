@@ -844,14 +844,27 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     /// Calculates the MD5 hash for a given game
+    ///
+    /// NES ROM Hashing Notes:
+    /// - NES ROMs commonly use the iNES format (16-byte header) or NES 2.0 format (also 16-byte header)
+    /// - UNIF format (.unf/.unif) is headerless and should NOT have the offset applied
+    /// - OpenVGDB/No-Intro typically store hashes of the raw PRG+CHR data without headers
+    /// - The 16-byte offset skips the iNES/NES 2.0 header to hash only the ROM payload
+    /// - See: https://wiki.nesdev.com/w/index.php/INES for iNES header format
+    ///
+    /// - Parameter game: The game to calculate MD5 for
+    /// - Returns: The uppercase MD5 hash string, or nil if calculation failed
     @objc
     public func calculateMD5(forGame game: PVGame) async -> String? {
         var offset: UInt = 0
 
-        // NES uses a 16-byte iNES header that should be skipped for MD5 calculation
-        // to match No-Intro database entries (headerless ROMs)
+        // Apply 16-byte offset for iNES header if the file appears to have one
+        // This ensures we hash only the PRG+CHR ROM data, matching No-Intro/OpenVGDB expectations
         if game.system?.identifier == "com.provenance.nes" {
-            offset = 16
+            if let romPath = game.file?.url, hasINESHeader(at: romPath) {
+                offset = 16
+                ILOG("Detected iNES/NES 2.0 header for \(romPath.lastPathComponent), applying 16-byte MD5 offset")
+            }
         }
 
         // SNES .smc files may have a 512-byte copier header - detect and skip if present
@@ -886,6 +899,36 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     ///           or nil if the file cannot be accessed.
     private func detectSNESCopierHeaderOffset(for url: URL) -> UInt? {
         SNESHeaderDetector.detectOffset(for: url)
+    }
+
+    /// Checks if a file has a valid iNES or NES 2.0 header (16 bytes)
+    ///
+    /// iNES header format (first 4 bytes):
+    /// - Bytes 0-3: "NES" followed by MS-DOS EOF marker (0x1A)
+    ///
+    /// This distinguishes iNES/NES 2.0 files from UNIF format (.unf/.unif) which are headerless
+    ///
+    /// - Parameter url: The file URL to check
+    /// - Returns: True if the file has a valid iNES/NES 2.0 header
+    internal func hasINESHeader(at url: URL) -> Bool {
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: url.path),
+              let fileHandle = try? FileHandle(forReadingFrom: url) else {
+            return false
+        }
+        defer { try? fileHandle.close() }
+
+        // Read first 4 bytes to check for iNES magic number: "NES\x1A"
+        guard let headerData = try? fileHandle.read(upToCount: 4),
+              headerData.count == 4 else {
+            return false
+        }
+
+        let headerBytes = [UInt8](headerData)
+        return headerBytes[0] == 0x4E && // 'N'
+               headerBytes[1] == 0x45 && // 'E'
+               headerBytes[2] == 0x53 && // 'S'
+               headerBytes[3] == 0x1A    // DOS EOF marker
     }
 
     /// Async MD5 calculation that yields control periodically to prevent blocking the import queue
