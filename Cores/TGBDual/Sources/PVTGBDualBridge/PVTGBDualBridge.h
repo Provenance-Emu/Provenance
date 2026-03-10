@@ -26,6 +26,7 @@
 @property (nonatomic, assign, nullable) uint16_t *videoBuffer;
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
+@property (nonatomic, assign) BOOL forceMonochromatic;
 
 
 // MARK: Core

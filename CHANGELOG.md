@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `apple_input_keyboard_event` in Dreamcast (Flycast), PSX, SNES, CDi, 3DO, Saturn, N64,
   ColecoVision, Atari 8-bit, EP128, and MAME RetroArch cores. Atari 8-bit and EP128 set
   `requiresKeyboard = YES` as keyboard-primary systems (#2841–#2851, Part of #2425)
+- **TGBDual Force Monochromatic Mode** — New "Force Monochromatic Mode" console option renders GBC games in greyscale (DMG style) for both player screens via RGB565 luma conversion (#2863, Part of #60)
 - **Cheat Code Library** — Online search across 1.2M cheat codes from the libretro database
   covering 44 systems (N64, SNES, PSX, GBA, and more). Enabled via features.json flag.
   Stale cache detection ensures DB is always fresh on first use (#2618, #2619, #2641, #2642)
