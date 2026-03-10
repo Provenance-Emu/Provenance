@@ -114,14 +114,12 @@ subs r2, r2, #0x14
 blt Lmemcpy_fl32  /* less than 32 bytes (12 from above) */
 stmdb sp!, {r4, r7, r8, r9, r10}  /* borrow r4 */
 
-/* blat 64 bytes at a time */
+/* blat 32 bytes at a time */
 /* XXX for really big copies perhaps we should use more registers */
 Lmemcpy_floop32:
 ldmia r1!, {r3, r4, r7, r8, r9, r10, r12, lr}
 stmia r0!, {r3, r4, r7, r8, r9, r10, r12, lr}
-ldmia r1!, {r3, r4, r7, r8, r9, r10, r12, lr}
-stmia r0!, {r3, r4, r7, r8, r9, r10, r12, lr}
-subs r2, r2, #0x40        
+subs r2, r2, #0x20        
 bge Lmemcpy_floop32
 
 cmn r2, #0x10
@@ -314,14 +312,12 @@ stmdb sp!, {r4, r7, r8, r9, r10, lr}
 subs r2, r2, #0x14  /* less than 32 bytes (12 from above) */
 blt Lmemcpy_bl32
 
-/* blat 64 bytes at a time */
+/* blat 32 bytes at a time */
 /* XXX for really big copies perhaps we should use more registers */
 Lmemcpy_bloop32:
 ldmdb r1!, {r3, r4, r7, r8, r9, r10, r12, lr}
 stmdb r0!, {r3, r4, r7, r8, r9, r10, r12, lr}
-ldmdb r1!, {r3, r4, r7, r8, r9, r10, r12, lr}
-stmdb r0!, {r3, r4, r7, r8, r9, r10, r12, lr}
-subs r2, r2, #0x40        
+subs r2, r2, #0x20        
 bge Lmemcpy_bloop32
 
 Lmemcpy_bl32:

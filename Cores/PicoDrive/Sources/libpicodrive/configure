@@ -10,55 +10,63 @@ rm -f config.log
 
 compile_object()
 {
-  c="$CC $CFLAGS -c $TMPC -o $TMPO $@"
+  c="$CC $MFLAGS $CFLAGS -c $TMPC -o $TMPO $@"
   echo $c >> config.log
   $c >> config.log 2>&1
 }
 
 compile_binary()
 {
-  c="$CC $CFLAGS $TMPC -o $TMPB $LDFLAGS $@"
+  c="$CC $MFLAGS $CFLAGS $TMPC -o $TMPB $LDFLAGS $@ $SYSLIBS"
   echo $c >> config.log
   $c >> config.log 2>&1
 }
 
+check_option()
+{
+  echo 'void test(void) { }' >$TMPC
+  compile_object $1 || return 1
+  return 0
+}
+
 check_define()
 {
-  $CC -E -dD $CFLAGS pico/arm_features.h | grep -q $1 || return 1
+  $CC -E -dD $MFLAGS $CFLAGS pico/arm_features.h | grep -q "define[ 	]*$1" || return 1
   return 0
 }
 
 # setting options to "yes" or "no" will make that choice default,
 # "" means "autodetect".
 
-platform_list="generic pandora gp2x opendingux"
+# TODO this is annoyingly messy. should have platform and device
+platform_list="generic pandora gph dingux retrofw opendingux[-gcw0] odbeta[-gcw0] miyoo rpi1 rpi2 ps2 psp win32"
 platform="generic"
 sound_driver_list="oss alsa sdl"
 sound_drivers=""
 have_armv5=""
 have_armv6=""
 have_armv7=""
+have_arm_oabi=""
 have_arm_neon=""
 have_libavcodec=""
+have_libchdr=""
+have_gles="no"
 need_sdl="no"
-need_xlib="no"
-# these are for known platforms
-optimize_cortexa8="no"
-optimize_arm926ej="no"
-optimize_arm920="no"
+need_zlib="no"
 
 # hardcoded stuff
 CC="${CC-${CROSS_COMPILE}gcc}"
 CXX="${CXX-${CROSS_COMPILE}g++}"
 AS="${AS-${CROSS_COMPILE}as}"
 STRIP="${STRIP-${CROSS_COMPILE}strip}"
-SDL_CONFIG="`$CC --print-sysroot 2> /dev/null || true`/usr/bin/sdl-config"
-MAIN_LDLIBS="$LDLIBS -lm"
+LD="${LD-${CROSS_COMPILE}gcc}" # Use better gcc for linking
+SYSROOT=`$CC $CFLAGS $LDFLAGS --print-sysroot 2> /dev/null || true`
 config_mak="config.mak"
 
 fail()
 {
   echo "$@"
+  if test -n "$DUMP_CONFIG_LOG"; then cat config.log; fi
   exit 1
 }
 
@@ -66,26 +74,94 @@ fail()
 set_platform()
 {
   platform=$1
+  CFLAGS="$CFLAGS -D__`echo ${platform%-*} | tr '[a-z]' '[A-Z]'`__"
   case "$platform" in
-  generic)
+  rpi1)
+    MFLAGS="-mcpu=arm1176jzf-s -mfpu=vfp"
+    have_gles="yes"
     ;;
-  opendingux)
+  rpi2)
+    MFLAGS="-mcpu=cortex-a7 -mfpu=neon"
+    have_gles="yes"
+    ;;
+  generic)
+    MFLAGS=""
+    ;;
+  dingux)
+    # dingoo a320, ritmix rzx-50, the like. all have Ingenic MIPS cpu <= JZ4755
     sound_drivers="sdl"
+    # use static linking since the lib situation is ... let's say vague
+    #LDFLAGS="$LDFLAGS -static"
+    # uses a pre-gcw0 version of opendingux
+    MFLAGS="-march=mips32 -msoft-float"
+    platform="opendingux"
+    ;;
+  retrofw)
+    # devices using retrofw. AFAIK all have Ingenic MIPS JZ4760 with fpu
+    sound_drivers="sdl"
+    # uses it's own modified version of opendingux
+    MFLAGS="-march=mips32"
+    platform="opendingux"
+    ;;
+  opendingux | opendingux-gcw0)
+    # more modern devices using opendingux, with Ingenic MIPS JZ4770 or newer
+    sound_drivers="sdl"
+    # mostly based on opendingux for gcw0
+    CFLAGS="$CFLAGS -D__OPENDINGUX__"
+    [ "${platform#*gcw0}" = "" ] && CFLAGS="$CFLAGS -D__GCW0__"
+    MFLAGS="-march=mips32r2"
+    platform="opendingux"
+    ;;
+  miyoo)
+    # Miyoo BittBoy, PocketGO 1, PowKiddy V90/Q90 with Allwinner F1C100s
+    sound_drivers="sdl"
+    CFLAGS="$CFLAGS -D__OPENDINGUX__"
+    MFLAGS="-mcpu=arm926ej-s -marm"
+    platform="opendingux"
+    ;;
+  odbeta | odbeta-gcw0)
+    # various devices with opendingux beta, arch flags from toolchain default
+    sound_drivers="sdl"
+    CFLAGS="$CFLAGS -D__OPENDINGUX__"
+    [ "${platform#*gcw0}" = "" ] && CFLAGS="$CFLAGS -D__GCW0__"
+    MFLAGS="" # toolchains are arch specific
+    platform="opendingux"
     ;;
   pandora)
     sound_drivers="oss alsa"
-    optimize_cortexa8="yes"
-    have_arm_neon="yes"
+    have_libavcodec="yes"
+    MFLAGS="-mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp"
     ;;
-  gp2x)
+  gph)
     sound_drivers="oss"
-    optimize_arm920="yes"
+    # compile for OABI if toolchain provides it (faster code on caanoo)
+    have_arm_oabi="yes"
+    # always use static linking, since caanoo doesn't have OABI libs. Moreover,
+    # dynamic linking slows Wiz 1-10%, and libm on F100 isn't compatible
+    LDFLAGS="$LDFLAGS -static"
+    # unified binary for all of them. picodrive detects device type for itself.
     CFLAGS="$CFLAGS -D__GP2X__"
-    if [ "$CROSS_COMPILE" = "arm-linux-" ]; then
-      # still using static, dynamic linking slows Wiz 1-10%
-      # also libm on F100 is not compatible
-      MAIN_LDLIBS="$MAIN_LDLIBS -static"
-    fi
+    # add -mfpu=fpa to select correct parameter passing for -msoft-float :-/
+    MFLAGS="-mcpu=arm920t -mfloat-abi=soft -mfpu=fpa"
+    platform="gp2x"
+    ;;
+  psp)
+    # use newlib
+    SYSLIBS="-lc -lpspuser -lpspkernel"
+    MFLAGS="-march=allegrex"
+    ARCH=mipsel
+    ;;
+  ps2)
+    # use newlib
+    SYSLIBS=""
+    MFLAGS=""
+    ARCH=mips64r5900el
+    ASFLAGS="$ASFLAGS -G0 -call_shared"
+    CFLAGS="$CFLAGS -D_EE -G0 -I${PS2SDK}/ee/include -I${PS2SDK}/common/include -I${PS2DEV}/gsKit/include -I${PS2SDK}/ports/include"
+    LDFLAGS="$LDFLAGS -Wl,-zmax-page-size=128 -T${PS2SDK}/ee/startup/linkfile -L${PS2SDK}/ee/lib -L${PS2DEV}/gsKit/lib -L${PS2SDK}/ports/lib"
+    ;;
+  win32)
+    MFLAGS=""
     ;;
   *)
     fail "unsupported platform: $platform"
@@ -102,6 +178,12 @@ for opt do
   ;;
   --sound-drivers=*) sound_drivers="$optarg"
   ;;
+  --with-libavcodec=*) have_libavcodec="$optarg"
+  ;;
+  --with-sdl-gles=*) have_gles="$optarg"
+  ;;
+  --with-zlib=*) need_zlib="$optarg"
+  ;;
   *) echo "ERROR: unknown option $opt"; show_help="yes"
   ;;
   esac
@@ -114,6 +196,9 @@ if [ "$show_help" = "yes" ]; then
   echo "                           available: $platform_list"
   echo "  --sound-drivers=LIST     sound output drivers [guessed]"
   echo "                           available: $sound_driver_list"
+  echo "  --with-libavcodec=yes|no use libavcodec for mp3 decoding"
+  echo "  --with-sdl-gles=yes|no   enable GLES usage for SDL"
+  echo "  --with-zlib=yes|no       use internal zlib"
   echo "influential environment variables:"
   echo "  CROSS_COMPILE CC CXX AS STRIP CFLAGS ASFLAGS LDFLAGS LDLIBS"
   exit 1
@@ -138,34 +223,22 @@ fi
 #  fi
 #fi
 
-# basic compiler test
-cat > $TMPC <<EOF
-int main(void) { return 0; }
-EOF
-if ! compile_binary; then
-  fail "compiler test failed, please check config.log"
-fi
-
 if [ -z "$ARCH" ]; then
-  ARCH=`$CC -dumpmachine | awk -F '-' '{print $1}'`
+  ARCH=`$CC $MFLAGS $CFLAGS -dumpmachine | awk -F '-' '{print $1}'`
 fi
 
+# CPU/ABI stuff first, else compile test may fail
 case "$ARCH" in
+arm64*)
+  ;;
 arm*)
   # ARM stuff
   ARCH="arm"
 
-  if [ "$optimize_cortexa8" = "yes" ]; then
-    CFLAGS="$CFLAGS -mcpu=cortex-a8 -mtune=cortex-a8"
-    ASFLAGS="$ASFLAGS -mcpu=cortex-a8"
-  fi
-  if [ "$optimize_arm926ej" = "yes" ]; then
-    CFLAGS="$CFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
-    ASFLAGS="$ASFLAGS -mcpu=arm926ej-s -mfloat-abi=softfp"
-  fi
-  if [ "$optimize_arm920" = "yes" ]; then
-    CFLAGS="$CFLAGS -mcpu=arm920t -mtune=arm920t"
-    ASFLAGS="$ASFLAGS -mcpu=arm920t -mfloat-abi=soft"
+  # OABI/EABI selection
+  if [ "$have_arm_oabi" = "yes" ] &&  check_option -mabi=apcs-gnu; then
+    echo "$CFLAGS" | grep -q -- '-mabi=' || MFLAGS="$MFLAGS -mabi=apcs-gnu"
+    echo "$CFLAGS" | grep -q -- '-m\(no-\)*thumb-interwork' || CFLAGS="$CFLAGS -mno-thumb-interwork"
   fi
 
   if [ "x$have_arm_neon" = "x" ]; then
@@ -189,26 +262,13 @@ arm*)
     have_armv5=`check_define HAVE_ARMV5 && echo yes` || true
   fi
 
-  # automatically set mfpu and mfloat-abi if they are not set
-  if [ "$have_arm_neon" = "yes" ]; then
-    fpu="neon"
-  elif [ "$have_armv6" = "yes" ]; then
-    fpu="vfp"
-  fi
-  if [ "x$fpu" != "x" ]; then
-    echo "$CFLAGS" | grep -q -- '-mfpu=' || CFLAGS="$CFLAGS -mfpu=$fpu"
-    echo "$ASFLAGS" | grep -q -- '-mfpu=' || ASFLAGS="$ASFLAGS -mfpu=$fpu"
-    floatabi_set_by_gcc=`$CC -v 2>&1 | grep -q -- --with-float= && echo yes` || true
-    if [ "$floatabi_set_by_gcc" != "yes" ]; then
-      echo "$CFLAGS" | grep -q -- '-mfloat-abi=' || CFLAGS="$CFLAGS -mfloat-abi=softfp"
-      echo "$ASFLAGS" | grep -q -- '-mfloat-abi=' || ASFLAGS="$ASFLAGS -mfloat-abi=softfp"
-    fi
-  fi
-
   # must disable thumb as recompiler can't handle it
   if check_define __thumb__; then
     CFLAGS="$CFLAGS -marm"
   fi
+
+  # add -ldl for helix support
+  need_dl=yes
 
   # warn about common mistakes
   if [ "$platform" != "gp2x" -a "$have_armv5" != "yes" ]; then
@@ -229,26 +289,34 @@ arm*)
 esac
 
 case "$platform" in
-generic | opendingux)
+rpi1 | rpi2 | generic | opendingux | win32)
   need_sdl="yes"
   ;;
 esac
+
+# basic compiler test
+cat > $TMPC <<EOF
+int main (int argc, char *argv[]) { return 0; }
+EOF
+if ! compile_binary; then
+  fail "compiler test failed, please check config.log"
+fi
 
 # header/library presence tests
 check_zlib()
 {
   cat > $TMPC <<EOF
   #include <zlib.h>
-  int main(void) { uncompress(0, 0, 0, 0); }
+  int main (int argc, char *argv[]) { uncompress(0, 0, 0, 0); }
 EOF
-  compile_binary
+  compile_binary "$@"
 }
 
 check_libpng()
 {
   cat > $TMPC <<EOF
   #include <png.h>
-  void main() { png_init_io(0, 0); }
+  int main (int argc, char *argv[]) { png_init_io(0, 0); }
 EOF
 #  compile_binary
   compile_object
@@ -259,7 +327,7 @@ check_oss()
   cat > $TMPC <<EOF
   #include <sys/soundcard.h>
   #include <sys/ioctl.h>
-  void main() { int a=0; ioctl(0, SNDCTL_DSP_SETFMT, &a); }
+  int main (int argc, char *argv[]) { int a=0; ioctl(0, SNDCTL_DSP_SETFMT, &a); }
 EOF
   compile_binary
 }
@@ -268,7 +336,7 @@ check_alsa()
 {
   cat > $TMPC <<EOF
   #include <alsa/asoundlib.h>
-  void main() { snd_pcm_open(0, 0, 0, 0); }
+  int main (int argc, char *argv[]) { snd_pcm_open(0, 0, 0, 0); }
 EOF
   compile_binary "$@"
 }
@@ -277,7 +345,7 @@ check_sdl()
 {
   cat > $TMPC <<EOF
   #include <SDL.h>
-  void main() { SDL_OpenAudio(0, 0); }
+  int main (int argc, char *argv[]) { SDL_OpenAudio(0, 0); }
 EOF
   compile_binary "$@"
 }
@@ -286,25 +354,49 @@ check_libavcodec()
 {
   cat > $TMPC <<EOF
   #include <libavcodec/avcodec.h>
-  void main() { avcodec_decode_audio3(0, 0, 0, 0); }
+  int main (int argc, char *argv[]) { avcodec_decode_audio3(0, 0, 0, 0); }
 EOF
   compile_object "$@"
 }
 
-#MAIN_LDLIBS="$MAIN_LDLIBS -lz"
-#check_zlib || fail "please install zlib (libz-dev)"
+check_libchdr()
+{
+  cat > $TMPC <<EOF
+  #include <libchdr/chd.h>
+  int main (int argc, char *argv[]) { chd_open("", 0, NULL, NULL); }
+EOF
+  compile_object "$@"
+}
+
+test -n "$SDL_CONFIG" || SDL_CONFIG="$(ls $SYSROOT/*bin*/sdl-config 2>/dev/null | grep /bin/sdl-config | head -n 1)"
+test -n "$SDL_CONFIG" || SDL_CONFIG="$(ls $SYSROOT/*/*bin*/sdl-config 2>/dev/null | grep /bin/sdl-config | head -n 1)"
+#test -n "$SDL_CONFIG" || SDL_CONFIG="$(ls $SYSROOT/*bin*/sdl2-config 2>/dev/null | grep /bin/sdl2-config | head -n 1)"
+#test -n "$SDL_CONFIG" || SDL_CONFIG="$(ls $SYSROOT/*/*bin*/sdl2-config 2>/dev/null | grep /bin/sdl2-config | head -n 1)"
+SDLVERSION=sdl && echo $SDL_CONFIG | grep -q sdl2 && SDLVERSION=sdl2
+test -n "$SDL_CONFIG" || SDL_CONFIG=false
+
+MAIN_LDLIBS="$LDLIBS -lm"
+
+check_zlib -lz && MAIN_LDLIBS="$MAIN_LDLIBS -lz" || need_zlib="yes"
 
 MAIN_LDLIBS="-lpng $MAIN_LDLIBS"
 check_libpng || fail "please install libpng (libpng-dev)"
 
-if check_libavcodec; then
-  have_libavcodec="yes"
-  # add -ldl if needed
-  case "$MAIN_LDLIBS" in
-    *"-ldl"*) ;;
-    *) MAIN_LDLIBS="-ldl $MAIN_LDLIBS" ;;
-  esac
-fi
+case "$have_libavcodec" in
+y|Y|yes)
+  if check_libavcodec; then
+    have_libavcodec="yes"
+    need_dl=yes
+  else
+    have_libavcodec="no"
+  fi ;;
+*) have_libavcodec="no" ;;
+esac
+
+#if check_libchdr; then
+#  have_libchdr="yes"
+#  MAIN_LDLIBS="-lchdr $MAIN_LDLIBS"
+#fi
 
 # find what audio support we can compile
 if [ "x$sound_drivers" = "x" ]; then
@@ -332,13 +424,23 @@ if [ "$need_sdl" = "yes" ]; then
     fail "sdl-config is missing; please install libsdl (libsdl1.2-dev)"
   CFLAGS="$CFLAGS `$SDL_CONFIG --cflags`"
   MAIN_LDLIBS="`$SDL_CONFIG --libs` $MAIN_LDLIBS"
+  SYSLIBS="$SYSLIBS -ldl"
+  need_dl=yes
   check_sdl `$SDL_CONFIG --libs` || fail "please install libsdl (libsdl1.2-dev)"
+  if [ "$SDLVERSION" = "sdl2" ]; then
+    CFLAGS="$CFLAGS -D__USE_SDL2__"
+  fi
 fi
 
-cat > $TMPC <<EOF
-void test(void *f, void *d) { fread(d, 1, 1, f); }
-EOF
-if compile_object -Wno-unused-result; then
+# add -ldl if needed
+if [ "$need_dl" = "yes" ]; then
+  case "$MAIN_LDLIBS" in
+    *"-ldl"*) ;;
+    *) MAIN_LDLIBS="$MAIN_LDLIBS -ldl" ;;
+  esac
+fi
+
+if check_option -Wno-unused_result; then
   CFLAGS="$CFLAGS -Wno-unused-result"
 fi
 
@@ -346,15 +448,17 @@ fi
 test "x$have_armv6" != "x" || have_armv6="no"
 test "x$have_armv7" != "x" || have_armv7="no"
 test "x$have_libavcodec" != "x" || have_libavcodec="no"
+test "x$have_libchdr" != "x" || have_libchdr="no"
 
 echo "architecture        $ARCH"
 echo "platform            $platform"
 echo "sound drivers       $sound_drivers"
 echo "C compiler          $CC"
-echo "C compiler flags    $CFLAGS"
+echo "C compiler flags    $MFLAGS $CFLAGS"
 echo "libraries           $MAIN_LDLIBS"
 echo "linker flags        $LDFLAGS"
 echo "libavcodec (mp3)    $have_libavcodec"
+#echo "libchdr             $have_libchdr"
 # echo "ARMv7 optimizations $have_armv7"
 
 echo "# Automatically generated by configure" > $config_mak
@@ -366,8 +470,9 @@ echo "CC = $CC" >> $config_mak
 echo "CXX = $CXX" >> $config_mak
 echo "AS = $AS" >> $config_mak
 echo "STRIP = $STRIP" >> $config_mak
-echo "CFLAGS += $CFLAGS" >> $config_mak
-echo "ASFLAGS += $ASFLAGS" >> $config_mak
+echo "LD = $LD" >> $config_mak
+echo "CFLAGS += $MFLAGS $CFLAGS" >> $config_mak
+echo "ASFLAGS += $MFLAGS $ASFLAGS" >> $config_mak
 echo "LDFLAGS += $LDFLAGS" >> $config_mak
 echo "LDLIBS += $MAIN_LDLIBS" >> $config_mak
 echo >> $config_mak
@@ -375,18 +480,31 @@ echo >> $config_mak
 echo "ARCH = $ARCH" >> $config_mak
 echo "PLATFORM = $platform" >> $config_mak
 echo "SOUND_DRIVERS = $sound_drivers" >> $config_mak
+if [ "$have_gles" = "yes" ]; then
+  echo "HAVE_GLES = 1" >> $config_mak
+fi
 if [ "$have_libavcodec" = "yes" ]; then
   echo "HAVE_LIBAVCODEC = 1" >> $config_mak
+fi
+if [ "$have_libchdr" = "yes" ]; then
+  echo "HAVE_LIBCHDR = 1" >> $config_mak
+fi
+if [ "$need_zlib" = "yes" ]; then
+  echo "PLATFORM_ZLIB = 1" >> $config_mak
+fi
+if [ "$ARCH" = "arm" -a "$have_armv6" != "yes" -a "$have_armv7" != "yes" ]; then
+  # pass info to cyclone not to use newer arm arch instructions
+  echo "HAVE_ARMv6 = 0" >> $config_mak
 fi
 
 # GP2X toolchains are too old for UAL asm,
 # so add this here to not litter main Makefile
-if [ "$platform" = "g1p2x" ]; then
-  echo >> $config_mak
-  echo "%.o: %.S" >> $config_mak
-  echo "        $(CC) $(CFLAGS) -E -c $^ -o /tmp/$(notdir $@).s" >> $config_mak
-  echo "        $(AS) $(ASFLAGS) /tmp/$(notdir $@).s -o $@" >> $config_mak
-fi
+#if [ "$platform" = "gp2x" ]; then
+#  echo >> $config_mak
+#  echo '%.o: %.S' >> $config_mak
+#  echo '	$(CC) $(CFLAGS) -E -c $^ -o /tmp/$(notdir $@).s' >> $config_mak
+#  echo '	$(AS) $(ASFLAGS) /tmp/$(notdir $@).s -o $@' >> $config_mak
+#fi
 
 # use pandora's skin (for now)
 test -e skin || ln -s platform/pandora/skin skin

@@ -13,12 +13,27 @@
 uptr z80_read_map [0x10000 >> Z80_MEM_SHIFT];
 uptr z80_write_map[0x10000 >> Z80_MEM_SHIFT];
 
+u32 z80_read(u32 a)
+{
+  uptr v;
+  a &= 0x00ffff;
+  v = z80_read_map[a >> Z80_MEM_SHIFT];
+  if (map_flag_set(v))
+    return ((z80_read_f *)(v << 1))(a);
+  else
+    return *(u8 *)((v << 1) + a);
+}
+
+
 #ifdef _USE_DRZ80
 // this causes trouble in some cases, like doukutsu putting sp in bank area
 // no perf difference for most, upto 1-2% for some others
 //#define FAST_Z80SP
 
 struct DrZ80 drZ80;
+// import flag conversion from DrZ80
+extern u8 DrZ80_ARM[];
+extern u8 DrARM_Z80[];
 
 static void drz80_load_pcsp(u32 pc, u32 sp)
 {
@@ -91,35 +106,30 @@ void z80_init(void)
 
 void z80_reset(void)
 {
+  int is_sms = (PicoIn.AHW & (PAHW_SMS|PAHW_SG|PAHW_SC)) == PAHW_SMS;
 #ifdef _USE_DRZ80
   drZ80.Z80I = 0;
   drZ80.Z80IM = 0;
   drZ80.Z80IF = 0;
   drZ80.z80irqvector = 0xff0000; // RST 38h
   drZ80.Z80PC_BASE = drZ80.Z80PC = z80_read_map[0] << 1;
-  // others not changed, undefined on cold boot
-/*
-  drZ80.Z80F  = (1<<2);  // set ZFlag
-  drZ80.Z80F2 = (1<<2);  // set ZFlag
-  drZ80.Z80IX = 0xFFFF << 16;
-  drZ80.Z80IY = 0xFFFF << 16;
-*/
+  // other registers not changed, undefined on cold boot
 #ifdef FAST_Z80SP
   // drZ80 is locked in single bank
-  drz80_sp_base = (PicoIn.AHW & PAHW_SMS) ? 0xc000 : 0x0000;
+  drz80_sp_base = (PicoIn.AHW & PAHW_8BIT) ? 0xc000 : 0x0000;
   drZ80.Z80SP_BASE = z80_read_map[drz80_sp_base >> Z80_MEM_SHIFT] << 1;
 #endif
+  drZ80.Z80SP = drZ80.Z80SP_BASE + (is_sms ? 0xdff0 : 0xffff); // simulate BIOS
   drZ80.z80_irq_callback = NULL; // use auto-clear
-  if (PicoIn.AHW & PAHW_SMS) {
-    drZ80.Z80SP = drZ80.Z80SP_BASE + 0xdff0; // simulate BIOS
+  if (PicoIn.AHW & PAHW_8BIT)
     drZ80.z80_irq_callback = dz80_noop_irq_ack;
-  }
   // XXX: since we use direct SP pointer, it might make sense to force it to RAM,
   // but we'll rely on built-in stack protection for now
 #endif
 #ifdef _USE_CZ80
   Cz80_Reset(&CZ80);
-  if (PicoIn.AHW & PAHW_SMS)
+  Cz80_Set_Reg(&CZ80, CZ80_SP, 0xffff);
+  if (is_sms)
     Cz80_Set_Reg(&CZ80, CZ80_SP, 0xdff0);
 #endif
 }
@@ -146,24 +156,26 @@ struct z80_state {
   u8 im;            // irq mode
   u8 irq_pending;   // irq line level, 1 if active
   u8 irq_vector[3]; // up to 3 byte vector for irq mode0 handling
-  u8 reserved[8];
+  u16 cyc;
+  u8 reserved[6];
 };
 
 void z80_pack(void *data)
 {
   struct z80_state *s = data;
   memset(data, 0, Z80_STATE_SIZE);
-  strcpy(s->magic, "Z80");
+  memcpy(s->magic, "Z80a", 4);
+  s->cyc = Pico.t.z80c_cnt + ((Pico.t.z80_busdelay + (1<<8)/2) >> 8);
 #if defined(_USE_DRZ80)
   #define DRR8(n)   (drZ80.Z80##n >> 24)
   #define DRR16(n)  (drZ80.Z80##n >> 16)
   #define DRR16H(n) (drZ80.Z80##n >> 24)
   #define DRR16L(n) ((drZ80.Z80##n >> 16) & 0xff)
-  s->m.a = DRR8(A);     s->m.f = drZ80.Z80F;
+  s->m.a = DRR8(A);     s->m.f = DrARM_Z80[drZ80.Z80F];
   s->m.b = DRR16H(BC);  s->m.c = DRR16L(BC);
   s->m.d = DRR16H(DE);  s->m.e = DRR16L(DE);
   s->m.h = DRR16H(HL);  s->m.l = DRR16L(HL);
-  s->a.a = DRR8(A2);    s->a.f = drZ80.Z80F2;
+  s->a.a = DRR8(A2);    s->a.f = DrARM_Z80[drZ80.Z80F2];
   s->a.b = DRR16H(BC2); s->a.c = DRR16L(BC2);
   s->a.d = DRR16H(DE2); s->a.e = DRR16L(DE2);
   s->a.h = DRR16H(HL2); s->a.l = DRR16L(HL2);
@@ -198,7 +210,7 @@ void z80_pack(void *data)
     s->iff1 = !!zIFF1;
     s->iff2 = !!zIFF2;
     s->im = zIM;
-    s->irq_pending = (Cz80_Get_Reg(&CZ80, CZ80_IRQ) == HOLD_LINE);
+    s->irq_pending = (Cz80_Get_Reg(&CZ80, CZ80_IRQ) != CLEAR_LINE);
     s->irq_vector[0] = 0xff;
   }
 #endif
@@ -207,20 +219,32 @@ void z80_pack(void *data)
 int z80_unpack(const void *data)
 {
   const struct z80_state *s = data;
-  if (strcmp(s->magic, "Z80") != 0) {
+  if (memcmp(s->magic, "Z80", 3) != 0) {
     elprintf(EL_STATUS, "legacy z80 state - ignored");
     return 0;
   }
+  Pico.t.z80c_cnt = s->cyc;
+  Pico.t.z80_busdelay = 0;
 
 #if defined(_USE_DRZ80)
   #define DRW8(n, v)       drZ80.Z80##n = (u32)(v) << 24
   #define DRW16(n, v)      drZ80.Z80##n = (u32)(v) << 16
   #define DRW16HL(n, h, l) drZ80.Z80##n = ((u32)(h) << 24) | ((u32)(l) << 16)
-  DRW8(A, s->m.a);  drZ80.Z80F = s->m.f;
+  u8 mf, af;
+  if (s->magic[3] == 'a') {
+    // new save: flags always in Z80 format
+    mf = DrZ80_ARM[s->m.f];
+    af = DrZ80_ARM[s->a.f];
+  } else {
+    // NB hack, swap Flag3 and NFlag for save file compatibility
+    mf = (s->m.f & 0x9f)|((s->m.f & 0x40)>>1)|((s->m.f & 0x20)<<1);
+    af = (s->a.f & 0x9f)|((s->a.f & 0x40)>>1)|((s->a.f & 0x20)<<1);
+  }
+  DRW8(A, s->m.a);  drZ80.Z80F = mf;
   DRW16HL(BC, s->m.b, s->m.c);
   DRW16HL(DE, s->m.d, s->m.e);
   DRW16HL(HL, s->m.h, s->m.l);
-  DRW8(A2, s->a.a); drZ80.Z80F2 = s->a.f;
+  DRW8(A2, s->a.a); drZ80.Z80F2 = af;
   DRW16HL(BC2, s->a.b, s->a.c);
   DRW16HL(DE2, s->a.d, s->a.e);
   DRW16HL(HL2, s->a.h, s->a.l);
@@ -255,7 +279,8 @@ int z80_unpack(const void *data)
     Cz80_Set_Reg(&CZ80, CZ80_IFF1, s->iff1);
     Cz80_Set_Reg(&CZ80, CZ80_IFF2, s->iff2);
     zIM = s->im;
-    Cz80_Set_Reg(&CZ80, CZ80_IRQ, s->irq_pending ? HOLD_LINE : CLEAR_LINE);
+    Cz80_Set_Reg(&CZ80, CZ80_IRQ, s->irq_pending ? ASSERT_LINE : CLEAR_LINE);
+    Cz80_Set_IRQ(&CZ80, 0, Cz80_Get_Reg(&CZ80, CZ80_IRQ));
     return 0;
   }
 #else

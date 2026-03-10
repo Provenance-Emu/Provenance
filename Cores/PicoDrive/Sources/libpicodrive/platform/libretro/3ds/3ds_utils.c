@@ -1,12 +1,31 @@
 
 #include "3ds_utils.h"
 
+#define GET_VERSION_MAJOR(version)    ((version) >>24)
+
 typedef int (*ctr_callback_type)(void);
 
 int srvGetServiceHandle(unsigned int* out, const char* name);
 int svcCloseHandle(unsigned int handle);
 int svcBackdoor(ctr_callback_type);
+int32_t svcGetSystemInfo(int64_t* out, uint32_t type, int32_t param);
+void ctr_clear_cache(void);
 
+static int has_rosalina;
+
+void check_rosalina(void) {
+  int64_t version;
+  uint32_t major;
+
+  has_rosalina = 0;
+
+  if (!svcGetSystemInfo(&version, 0x10000, 0)) {
+     major = GET_VERSION_MAJOR(version);
+
+     if (major >= 8)
+       has_rosalina = 1;
+  }
+}
 
 static void ctr_enable_all_svc_kernel(void)
 {
@@ -40,14 +59,22 @@ static void ctr_clean_invalidate_kernel(void)
 
 void ctr_flush_invalidate_cache(void)
 {
-//   __asm__ volatile("svc 0x2E\n\t");
-//   __asm__ volatile("svc 0x4B\n\t");
-   svcBackdoor((ctr_callback_type)ctr_clean_invalidate_kernel);
+  if (has_rosalina) {
+    ctr_clear_cache();
+   } else {
+    //   __asm__ volatile("svc 0x2E\n\t");
+    //   __asm__ volatile("svc 0x4B\n\t");
+    svcBackdoor((ctr_callback_type)ctr_clean_invalidate_kernel);
+   }
 }
 
 int ctr_svchack_init(void)
 {
+   extern unsigned int __ctr_svchax;
    extern unsigned int __service_ptr;
+
+   if(__ctr_svchax)
+      return 1; /* All services have already been enabled */
 
    if(__service_ptr)
       return 0;

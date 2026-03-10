@@ -8,9 +8,9 @@
 #include "kgsdk/Framework2D.h"
 #include "kgsdk/FrameworkAudio.h"
 #include "../common/emu.h"
-#include "../common/lprintf.h"
 #include "../common/arm_utils.h"
 #include "../common/config.h"
+#include "../libpicofe/lprintf.h"
 #include "emu.h"
 #include "menu.h"
 #include "giz.h"
@@ -155,7 +155,7 @@ static void blit(const char *fps, const char *notice)
 		}
 		// a hack for VR
 		if (PicoIn.AHW & PAHW_SVP)
-			memset32((int *)(Pico.est.Draw2FB+328*8+328*223), 0xe0e0e0e0, 328);
+			memset((int *)(Pico.est.Draw2FB+328*8+328*223), 0xe0e0e0e0, 328*4);
 		if (!(Pico.video.reg[12]&1)) lines_flags|=0x10000;
 		if (currentConfig.EmuOpt&0x4000)
 			lines_flags|=0x40000; // (Pico.m.frame_count&1)?0x20000:0x40000;
@@ -166,22 +166,25 @@ static void blit(const char *fps, const char *notice)
 		int lines_flags;
 		// 8bit accurate renderer
 		if (Pico.m.dirtyPal) {
-			Pico.m.dirtyPal = 0;
-			vidConvCpyRGB565(localPal, Pico.cram, 0x40);
+			if (Pico.m.dirtyPal == 2)
+				Pico.m.dirtyPal = 0;
+			/* no support
+			switch (Pico.est.SonicPalCount) {
+			case 3: vidConvCpyRGB565(localPal+0xc0, Pico.est.SonicPal+0xc0, 0x40);
+			case 2: vidConvCpyRGB565(localPal+0x80, Pico.est.SonicPal+0x80, 0x40);
+			case 1: vidConvCpyRGB565(localPal+0x40, Pico.est.SonicPal+0x40, 0x40);
+			default://vidConvCpyRGB565(localPal, Pico.est.SonicPal, 0x40);
+			} */
+			vidConvCpyRGB565(localPal, Pico.est.SonicPal, 0x40);
 			if (Pico.video.reg[0xC]&8) { // shadow/hilight mode
-				//vidConvCpyRGB32sh(localPal+0x40, Pico.cram, 0x40);
-				//vidConvCpyRGB32hi(localPal+0x80, Pico.cram, 0x40); // TODO?
-				memcpy32((void *)(localPal+0xc0), (void *)(localPal+0x40), 0x40*2/4);
+				//vidConvCpyRGB32sh(localPal+0x40, Pico.est.SonicPal, 0x40);
+				//vidConvCpyRGB32hi(localPal+0x80, Pico.est.SonicPal, 0x40); // TODO?
+				memcpy((void *)(localPal+0xc0), (void *)(localPal+0x40), 0x40*2);
 				localPal[0xc0] = 0x0600;
 				localPal[0xd0] = 0xc000;
 				localPal[0xe0] = 0x0000; // reserved pixels for OSD
 				localPal[0xf0] = 0xffff;
 			}
-			/* no support
-			else if (rendstatus & 0x20) { // mid-frame palette changes
-				vidConvCpyRGB565(localPal+0x40, HighPal, 0x40);
-				vidConvCpyRGB565(localPal+0x80, HighPal+0x40, 0x40);
-			} */
 		}
 		lines_flags = (Pico.video.reg[1]&8) ? 240 : 224;
 		if (!(Pico.video.reg[12]&1)) lines_flags|=0x10000;
@@ -291,7 +294,7 @@ void pemu_forced_frame(int no_scale, int do_emu)
 
 	PicoIn.opt &= ~0x10;
 	PicoIn.opt |= POPT_ACC_SPRITES;
-	if (!no_scale)
+	if (!no_scale && currentConfig.scaling)
 		PicoIn.opt |= POPT_EN_SOFTSCALE;
 	currentConfig.EmuOpt |= 0x80;
 

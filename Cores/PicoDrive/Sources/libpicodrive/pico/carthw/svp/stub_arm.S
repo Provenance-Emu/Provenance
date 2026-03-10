@@ -6,9 +6,9 @@
 @* See COPYING file in the top-level directory.
 @*
 
-#include "../../arm_features.h"
+#include <pico/arm_features.h>
 
-.syntax unified
+@.syntax unified
 .text
 .align 2
 
@@ -281,8 +281,8 @@ ssp_hle_902_loop:
     bgt     ssp_hle_902_loop
 
     tst     r12, #1
-    ldrhne  r0, [r2], #2
-    strhne  r0, [r3], #2
+    ldrneh  r0, [r2], #2
+    strneh  r0, [r3], #2
 
     ldr     r0, [r7, #SSP_OFFS_IRAM_ROM]
     add     r1, r7, #0x200
@@ -501,7 +501,7 @@ FUNCTION(ssp_hle_07_036):
     mov     r12,    #0x4000
     orr     r12,r12,#0x0018
     subs    r12,r3, r12
-    subsne  r12,r12,#0x0400
+    subnes  r12,r12,#0x0400
     blne    tr_unhandled
 
     orr     r2, r2, r2, lsl #16
@@ -510,7 +510,7 @@ FUNCTION(ssp_hle_07_036):
 
 hle_07_036_no_ovrwr:
     tst     r1, #2
-    strhne  r2, [r1], #0x3e	@ align
+    strneh  r2, [r1], #0x3e	@ align
     subne   r0, r0, #1
     subs    r0, r0, #4
     blt     hle_07_036_l2
@@ -525,7 +525,7 @@ hle_07_036_l2:
     tst     r0, #2
     strne   r2, [r1], #0x40
     tst     r0, #1
-    strhne  r2, [r1], #2
+    strneh  r2, [r1], #2
     b       hle_07_036_end_copy
 
 hle_07_036_ovrwr:
@@ -562,10 +562,10 @@ hle_07_036_ol1:
 
 hle_07_036_ol2:
     tst     r0, #1
-    ldrhne  r3, [r1]
+    ldrneh  r3, [r1]
     andne   r3, r3, r12
     orrne   r3, r3, r2
-    strhne  r3, [r1], #2
+    strneh  r3, [r1], #2
 
 hle_07_036_end_copy:
     ldr     r2, [r7, #SSP_OFFS_DRAM]

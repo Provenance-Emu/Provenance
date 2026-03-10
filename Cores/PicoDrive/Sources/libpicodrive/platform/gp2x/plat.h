@@ -19,7 +19,7 @@ void gp2x_memset_all_buffers(int offset, int byte, int len);
 void vid_mmsp2_init(void);
 void vid_mmsp2_finish(void);
 
-void vid_pollux_init();
-void vid_pollux_finish();
+void vid_pollux_init(void);
+void vid_pollux_finish(void);
 
 void gp2x_menu_init(void);

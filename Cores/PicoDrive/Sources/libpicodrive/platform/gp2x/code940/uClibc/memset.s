@@ -22,7 +22,7 @@
 		.text
 		.global memset
 		.type memset,%function
-		.align 4
+		.align 2
 
 memset:
 	mov	a4, a1

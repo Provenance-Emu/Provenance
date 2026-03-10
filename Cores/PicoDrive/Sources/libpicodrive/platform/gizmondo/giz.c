@@ -11,7 +11,7 @@
 #include "kgsdk/Framework.h"
 #include "kgsdk/Framework2D.h"
 #include "giz.h"
-#include "version.h"
+#include "../common/version.h"
 
 #define LOG_FILE "log.log"
 

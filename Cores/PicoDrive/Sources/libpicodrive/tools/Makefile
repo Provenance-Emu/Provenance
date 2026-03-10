@@ -1,13 +1,17 @@
-CFLAGS = -Wall -ggdb
+TARGETS = amalgamate textfilter make_carthw_c
+HOSTCC ?= cc
 
-TARGETS = amalgamate textfilter mkoffsets
-OBJS = $(addsuffix .o,$(TARGETS))
+all:
+	if [ -f "offsets/$(XPLATFORM)-offsets.h" ]; then \
+		ln -sf "../tools/offsets/$(XPLATFORM)-offsets.h" ../pico/pico_int_offs.h; \
+	else \
+		CC="$(XCC)" CFLAGS="$(XCFLAGS)" sh ./mkoffsets.sh ../pico; \
+	fi
 
-all: $(TARGETS)
+$(TARGETS): $(addsuffix .c,$(TARGETS))
+	$(HOSTCC) -o $@ -O $@.c
 
 clean:
 	$(RM) $(TARGETS) $(OBJS)
-
-mkoffsets: CFLAGS += -m32 -I..
 
 .PHONY: clean all

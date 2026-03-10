@@ -14,7 +14,7 @@
 #include "../common/menu.h"
 #include "../common/emu.h"
 #include "../common/config.h"
-#include "version.h"
+#include "../common/version.h"
 
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)

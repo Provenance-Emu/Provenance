@@ -2,11 +2,6 @@
 
 #include "pico_port.h"
 
-typedef unsigned char  u8;
-typedef unsigned short u16;
-typedef unsigned int   u32;
-typedef uintptr_t      uptr; // unsigned pointer-sized int
-
 #define M68K_MEM_SHIFT 16
 // minimum size we can map
 #define M68K_BANK_SIZE (1 << M68K_MEM_SHIFT)
@@ -30,22 +25,34 @@ typedef void (cpu68k_write_f)(u32 a, u32 d);
 
 extern u32 m68k_read8(u32 a);
 extern u32 m68k_read16(u32 a);
+extern u32 m68k_read32(u32 a);
 extern void m68k_write8(u32 a, u8 d);
 extern void m68k_write16(u32 a, u16 d);
+extern void m68k_write32(u32 a, u32 d);
+
+extern u32 s68k_read8(u32 a);
+extern u32 s68k_read16(u32 a);
+extern u32 s68k_read32(u32 a);
+extern void s68k_write8(u32 a, u8 d);
+extern void s68k_write16(u32 a, u16 d);
+extern void s68k_write32(u32 a, u32 d);
 
 // z80
-#define Z80_MEM_SHIFT 13
+#define Z80_MEM_SHIFT 10 // must be <=10 to allow 1KB pages for SMS Sega mapper
 extern uptr z80_read_map [0x10000 >> Z80_MEM_SHIFT];
 extern uptr z80_write_map[0x10000 >> Z80_MEM_SHIFT];
 typedef unsigned char (z80_read_f)(unsigned short a);
 typedef void (z80_write_f)(unsigned int a, unsigned char data);
 
-void z80_map_set(uptr *map, int start_addr, int end_addr,
+void z80_map_set(uptr *map, u16 start_addr, u16 end_addr,
     const void *func_or_mh, int is_func);
-void cpu68k_map_set(uptr *map, int start_addr, int end_addr,
+void cpu68k_map_set(uptr *map, u32 start_addr, u32 end_addr,
     const void *func_or_mh, int is_func);
-void cpu68k_map_all_ram(int start_addr, int end_addr, void *ptr, int is_sub);
-void m68k_map_unmap(int start_addr, int end_addr);
+void cpu68k_map_read_mem(u32 start_addr, u32 end_addr, void *ptr, int is_sub);
+void cpu68k_map_all_ram(u32 start_addr, u32 end_addr, void *ptr, int is_sub);
+void cpu68k_map_read_funcs(u32 start_addr, u32 end_addr, u32 (*r8)(u32), u32 (*r16)(u32), int is_sub);
+void cpu68k_map_all_funcs(u32 start_addr, u32 end_addr, u32 (*r8)(u32), u32 (*r16)(u32), void (*w8)(u32, u32), void (*w16)(u32, u32), int is_sub);
+void m68k_map_unmap(u32 start_addr, u32 end_addr);
 
 #define MAP_FLAG ((uptr)1 << (sizeof(uptr) * 8 - 1))
 #define map_flag_set(x) ((x) & MAP_FLAG)
@@ -59,7 +66,7 @@ u32 name(u32 a)                                 \
   if (map_flag_set(v))                          \
     return ((cpu68k_read_f *)(v << 1))(a);      \
   else                                          \
-    return *(u8 *)((v << 1) + (a ^ 1));         \
+    return *(u8 *)((v << 1) + MEM_BE2(a));      \
 }
 
 #define MAKE_68K_READ16(name, map)              \
@@ -102,7 +109,7 @@ void name(u32 a, u8 d)                          \
   if (map_flag_set(v))                          \
     ((cpu68k_write_f *)(v << 1))(a, d);         \
   else                                          \
-    *(u8 *)((v << 1) + (a ^ 1)) = d;            \
+    *(u8 *)((v << 1) + MEM_BE2(a)) = d;         \
 }
 
 #define MAKE_68K_WRITE16(name, map)             \

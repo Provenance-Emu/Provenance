@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#ifdef USE_SDL
+#include <SDL.h>
+#endif
 
 #include "../libpicofe/input.h"
 #include "../libpicofe/plat.h"
@@ -18,7 +21,6 @@
 #include "version.h"
 #include <cpu/debug.h>
 
-
 static int load_state_slot = -1;
 char **g_argv;
 
@@ -26,7 +28,7 @@ void parse_cmd_line(int argc, char *argv[])
 {
 	int x, unrecognized = 0;
 
-	for (x = 1; x < argc; x++)
+	for (x = 1; x < argc && !unrecognized; x++)
 	{
 		if (argv[x][0] == '-')
 		{
@@ -45,15 +47,13 @@ void parse_cmd_line(int argc, char *argv[])
 				if (x+2 < argc) { pdb_net_connect(argv[x+1], argv[x+2]); x += 2; }
 			}
 			else {
-				unrecognized = 1;
-				break;
+				unrecognized = plat_parse_arg(argc, argv, &x);
 			}
 		} else {
 			FILE *f = fopen(argv[x], "rb");
 			if (f) {
 				fclose(f);
 				rom_fname_reload = argv[x];
-				engineState = PGS_ReloadRom;
 			}
 			else
 				unrecognized = 1;
@@ -82,21 +82,23 @@ int main(int argc, char *argv[])
 	//in_probe();
 
 	plat_target_init();
+	if (argc > 1)
+		parse_cmd_line(argc, argv);
+
 	plat_init();
+	menu_init();
 
 	emu_prep_defconfig(); // depends on input
 	emu_read_config(NULL, 0);
 
 	emu_init();
-	menu_init();
 
-	engineState = PGS_Menu;
-
-	if (argc > 1)
-		parse_cmd_line(argc, argv);
+	engineState = rom_fname_reload ? PGS_ReloadRom : PGS_Menu;
+	plat_video_menu_enter(0);
 
 	if (engineState == PGS_ReloadRom)
 	{
+		plat_video_menu_begin();
 		if (emu_reload_rom(rom_fname_reload)) {
 			engineState = PGS_Running;
 			if (load_state_slot >= 0) {
@@ -104,7 +106,9 @@ int main(int argc, char *argv[])
 				emu_save_load_game(1, 0);
 			}
 		}
+		plat_video_menu_end();
 	}
+	plat_video_menu_leave();
 
 	for (;;)
 	{
@@ -132,7 +136,13 @@ int main(int argc, char *argv[])
 				/* vvv fallthrough */
 
 			case PGS_Running:
+#ifdef GPERF
+	ProfilerStart("gperf.out");
+#endif
 				emu_loop();
+#ifdef GPERF
+	ProfilerStop();
+#endif
 				break;
 
 			case PGS_Quit:
