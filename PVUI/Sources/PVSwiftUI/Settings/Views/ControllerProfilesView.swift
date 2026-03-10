@@ -31,6 +31,9 @@ struct ControllerProfilesView: View {
     @State private var profiles: [PVControllerProfile] = []
     @State private var showNewProfileAlert = false
     @State private var newProfileName = ""
+    /// Frozen `PVControllerProfile` staged for rename. Must be frozen (see `reloadProfiles`) so it
+    /// is safe to hold across async boundaries and in SwiftUI `@State`. The live object is
+    /// re-fetched via `db.controllerProfile(withID:)` before any write in `commitRename`.
     @State private var profileToRename: PVControllerProfile?
     @State private var renameText = ""
     @State private var showRenameAlert = false
@@ -137,7 +140,7 @@ struct ControllerProfilesView: View {
                 Spacer()
 
                 // Last modified
-                Text(profile.lastModifiedDate, style: .date)
+                Text(profile.lastModifiedDate, style: .relative)
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }

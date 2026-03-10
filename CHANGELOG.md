@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **Controller Profile Scope Resolution** — `SceneCoordinator.loadControllerProfiles` now passes `coreIdentifier` to `loadActiveProfile`, enabling game+core and system+core profile scopes to match correctly at game launch (#2879 follow-up)
 - **RarExtractor Path Traversal** — Sanitize entry filenames in RAR archives to prevent `../` path traversal outside the destination directory (Part of #2663)
 - **CRC Lookup Error Logging** — `PVLookup.searchROM(byCRC:)` now logs database errors via `ELOG` instead of silently swallowing them with `try?` (Part of #2663)
 - **XZExtractor Memory Warning** — Log a warning when extracting XZ archives larger than 200 MB, since the entire file is loaded into memory (Part of #2663)
