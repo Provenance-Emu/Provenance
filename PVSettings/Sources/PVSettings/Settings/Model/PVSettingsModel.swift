@@ -610,7 +610,7 @@ internal func migrateLegacySkinModeIfNeeded(userDefaults: UserDefaults = .standa
 /// Builds the shared Defaults key after ensuring older persisted values are migrated forward.
 internal func makeSkinModeKey(defaultValue: SkinMode) -> Defaults.Key<SkinMode> {
     migrateLegacySkinModeIfNeeded()
-    return Key<SkinMode>(canonicalSkinModeDefaultsKey, default: defaultValue)
+    return Defaults.Key<SkinMode>(canonicalSkinModeDefaultsKey, default: defaultValue)
 }
 
 /// Migrates a legacy boolean preference into its canonical Defaults key the first time it is accessed.
@@ -629,7 +629,7 @@ internal func migrateLegacyBoolPreferenceIfNeeded(primaryKey: String, legacyKey:
 /// Builds a shared boolean Defaults key after migrating any legacy storage key.
 internal func makeMigratingBoolKey(_ primaryKey: String, legacyKey: String, defaultValue: Bool) -> Defaults.Key<Bool> {
     migrateLegacyBoolPreferenceIfNeeded(primaryKey: primaryKey, legacyKey: legacyKey)
-    return Key<Bool>(primaryKey, default: defaultValue)
+    return Defaults.Key<Bool>(primaryKey, default: defaultValue)
 }
 
 // MARK: Beta Options
