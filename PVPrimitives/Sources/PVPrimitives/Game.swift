@@ -113,6 +113,7 @@ extension Game: Equatable {
     }
 }
 
+#if canImport(CoreTransferable)
 import CoreTransferable
 import UniformTypeIdentifiers
 @available(iOS 16.0, macOS 13, tvOS 16.0, watchOS 9.0, *)
@@ -121,3 +122,4 @@ extension Game: Transferable {
         CodableRepresentation(contentType: .rom)
     }
 }
+#endif

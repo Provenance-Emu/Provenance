@@ -1,22 +1,31 @@
 {
-  "originHash" : "b76966cd156c7209b73e8afb2e7e066e4dd41103541b896645bb833031a0bab2",
+  "originHash" : "0fcca3f593e22edc5db8672912e32cb9c4f3394701cfb2dcf406e0dd6b903b0c",
   "pins" : [
     {
-      "identity" : "checksum",
+      "identity" : "swift-asn1",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/Checksum.git",
+      "location" : "https://github.com/apple/swift-asn1.git",
       "state" : {
-        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
-        "version" : "1.1.1"
+        "revision" : "810496cf121e525d660cd0ea89a758740476b85f",
+        "version" : "1.5.1"
       }
     },
     {
-      "identity" : "defaults",
+      "identity" : "swift-crypto",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "4c009d5c2496e7aa126e922c94dd3d6ae049efa2"
+        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+        "version" : "3.15.1"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
       }
     }
   ],

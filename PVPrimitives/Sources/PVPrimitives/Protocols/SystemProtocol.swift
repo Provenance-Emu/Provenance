@@ -8,7 +8,11 @@
 
 import Foundation
 
+#if canImport(Combine)
 public typealias _SystemProtocol = SystemProtocol & Identifiable & ObservableObject & Hashable
+#else
+public typealias _SystemProtocol = SystemProtocol & Identifiable & Hashable
+#endif
 public typealias AnySystem = any _SystemProtocol
 
 public protocol SystemProtocol : Hashable {
