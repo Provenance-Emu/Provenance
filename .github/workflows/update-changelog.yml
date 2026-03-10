@@ -60,13 +60,22 @@ jobs:
         run: |
           SINCE="${{ steps.since.outputs.since }}"
 
-          # Extract commits with PR numbers from merge commits and direct pushes
-          git log "${SINCE}..HEAD" \
-            --no-merges \
-            --format="%s %b" \
-            --grep="feat\|fix\|refactor\|perf\|docs\|chore\|build\|ci" \
-          | grep -E "^(feat|fix|refactor|perf|docs|chore|build|ci)(\([^)]+\))?:" \
-          > /tmp/raw_commits.txt || true
+          # Extract conventional commits from both direct commits and merge commit bodies.
+          # Merge commits (PRs) have the conventional commit message in --format="%b" (body)
+          # or are squash-merged with the subject being the conventional commit.
+          {
+            # Direct commits with conventional commit subjects
+            git log "${SINCE}..HEAD" \
+              --no-merges \
+              --format="%s" \
+            | grep -E "^(feat|fix|refactor|perf|docs|chore|build|ci)(\([^)]+\))?:"
+
+            # Merge commits: body lines (squash details) and subject lines like "feat: ... (#N)"
+            git log "${SINCE}..HEAD" \
+              --merges \
+              --format="%s%n%b" \
+            | grep -E "^(feat|fix|refactor|perf|docs|chore|build|ci)(\([^)]+\))?:"
+          } | sort -u > /tmp/raw_commits.txt || true
 
           echo "Raw commits found: $(wc -l < /tmp/raw_commits.txt)"
           cat /tmp/raw_commits.txt

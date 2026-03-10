@@ -62,7 +62,7 @@ jobs:
        github.event.review.user.type != 'Bot') ||
       (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

@@ -101,7 +101,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          git diff --quiet PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+          git diff --quiet PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
