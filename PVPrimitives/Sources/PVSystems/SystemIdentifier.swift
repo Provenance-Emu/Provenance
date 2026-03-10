@@ -157,11 +157,12 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         }
     }
 
+    /// Offset for ROM header skipping during MD5 calculation.
+    /// - Note: SNES uses dynamic detection in GameImporterDatabaseService (512-byte copier header)
     public
     var offset: UInt {
         switch self {
-        case .SNES: return 16
-        case .NES: return 16
+        case .NES: return 16  // iNES header
 //        case .Atari7800: return 128
 //        case .Lynx: return 64
         default: return 0
