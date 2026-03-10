@@ -23,7 +23,8 @@ public actor PatchCache {
         if let dir = cacheDirectory {
             self.cacheDirectory = dir
         } else {
-            let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+            let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+                ?? URL(fileURLWithPath: NSTemporaryDirectory())
             self.cacheDirectory = caches.appendingPathComponent("PVPatchedROMs", isDirectory: true)
         }
     }
@@ -86,6 +87,6 @@ public actor PatchCache {
         let romHash = SHA256.hash(data: romData).compactMap { String(format: "%02x", $0) }.joined()
         let patchHash = SHA256.hash(data: patchData).compactMap { String(format: "%02x", $0) }.joined()
         let combined = Data((romHash + patchHash).utf8)
-        return SHA256.hash(data: combined).compactMap { String(format: "%02x", $0) }.joined().prefix(32).description
+        return String(SHA256.hash(data: combined).compactMap { String(format: "%02x", $0) }.joined().prefix(32))
     }
 }
