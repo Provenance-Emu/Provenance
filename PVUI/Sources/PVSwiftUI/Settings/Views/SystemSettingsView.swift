@@ -30,16 +30,16 @@ struct SystemSettingsView: View {
             let validCores = system.cores.filter { core in
                 // Keep core if:
                 // 1. It's not disabled, OR unsupportedCores is true
-                // 2. AND (It's not app store disabled, OR we're not in the app store, OR unsupportedCores is true)
+                // 2. AND (It's not app store disabled, OR we're not in the app store) — always hard-hidden in App Store builds
                 (!core.disabled || unsupportedCores) &&
-                (!core.appStoreDisabled || !isAppStore || unsupportedCores)
+                (!core.appStoreDisabled || !isAppStore)
             }
 
             // System is valid if:
             // 1. It has valid cores (or unsupportedCores is true)
-            // 2. AND (It's not app store disabled, OR we're not in the app store, OR unsupportedCores is true)
+            // 2. AND (It's not app store disabled, OR we're not in the app store) — always hard-hidden in App Store builds
             let hasValidCores = !validCores.isEmpty || unsupportedCores
-            let isSystemValid = hasValidCores && (!system.appStoreDisabled || !isAppStore || unsupportedCores)
+            let isSystemValid = hasValidCores && (!system.appStoreDisabled || !isAppStore)
 
             if searchText.isEmpty {
                 return isSystemValid

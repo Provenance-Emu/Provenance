@@ -34,8 +34,8 @@ public extension PVEmulatorConfiguration {
         let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.supportedSystems]))
         let unsupportedCoresAvailable: Bool = Defaults[.unsupportedCores]
         
-        if core.disabled, unsupportedCoresAvailable {
-            // Do nothing
+        if core.disabled, !unsupportedCoresAvailable {
+            // Skip disabled core only when "unsupported cores" setting is OFF
             ILOG("Skipping disabled core \(core.identifier)")
         } else {
             DLOG("Importing core \(core.identifier)")

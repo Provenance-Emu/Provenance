@@ -387,7 +387,7 @@ public extension GameLaunchingViewController {
         let availableCores = system.cores.filter {
             (!$0.disabled || unsupportedCores) &&
             $0.hasCoreClass &&
-            !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+            !(AppState.shared.isAppStore && $0.appStoreDisabled)
         }
         let hasAvailableCores = !availableCores.isEmpty
 
@@ -1053,7 +1053,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             let unsupportedCores = Defaults[.unsupportedCores]
 
             let cores: [PVCore] = system.cores.filter {
-                (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+                (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
             }.sorted { a, b in
                 // If one has "retroarch" and the other doesn't, non-retroarch comes first
                 let aHasRetroarch = a.projectName.localizedCaseInsensitiveContains("retroarch")
@@ -1223,7 +1223,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         let unsupportedCores = Defaults[.unsupportedCores]
 
         let cores: [PVCore] = system.cores.filter {
-            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
         }.sorted(by: { core1, core2 in
             let core1IsRetroArch = core1.projectName.localizedCaseInsensitiveContains("retroarch")
             let core2IsRetroArch = core2.projectName.localizedCaseInsensitiveContains("retroarch")

@@ -72,7 +72,7 @@ public struct CoreListItem: Identifiable {
         // Process systems synchronously since we're already in an async context
         var systemsData: [SystemDisplayData] = []
         for system in core.supportedSystems {
-            if isAppStore && system.appStoreDisabled && !Defaults[.unsupportedCores] {
+            if isAppStore && system.appStoreDisabled {
                 DLOG("CoreOptions: Hiding options for system \(system.identifier) as it's app store disabled")
                 continue
             }

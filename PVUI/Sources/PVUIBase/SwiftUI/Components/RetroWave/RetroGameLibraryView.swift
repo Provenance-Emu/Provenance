@@ -1098,7 +1098,7 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
     private func availableSystems(forGame game: PVGame) -> [PVSystem] {
         PVEmulatorConfiguration.systems.filter {
             $0.identifier != game.systemIdentifier &&
-            !(AppState.shared.isAppStore && $0.appStoreDisabled && !Defaults[.unsupportedCores])
+            !(AppState.shared.isAppStore && $0.appStoreDisabled)
         }
     }
 

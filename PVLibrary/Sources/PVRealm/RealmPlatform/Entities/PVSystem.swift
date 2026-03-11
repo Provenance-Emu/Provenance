@@ -409,22 +409,25 @@ public extension PVSystem {
     /// - Parameters:
     ///   - isAppStore: Pass `true` when running an App Store build.
     ///   - unsupportedCores: Pass `true` when the user has enabled the "Unsupported Cores" setting.
-    ///     When enabled, disabled and App Store-restricted cores are treated as playable.
+    ///     When enabled, `PVDisabled` cores are treated as playable. `PVAppStoreDisabled` cores are
+    ///     always hard-hidden in App Store builds regardless of this setting.
     func coreSupportLevel(isAppStore: Bool, unsupportedCores: Bool = false) -> CoreSupportLevel {
         let allCores = Array(cores)
         guard !allCores.isEmpty else { return .noCores }
 
-        // Fully usable: satisfies disabled/appStoreDisabled constraints (respecting unsupportedCores) and has a loaded class
+        // Fully usable: satisfies disabled/appStoreDisabled constraints and has a loaded class.
+        // PVAppStoreDisabled is always hard-hidden in App Store builds — unsupportedCores does not override it.
         if allCores.contains(where: {
             (!$0.disabled || unsupportedCores) &&
-            (!$0.appStoreDisabled || !isAppStore || unsupportedCores) &&
+            (!$0.appStoreDisabled || !isAppStore) &&
             $0.hasCoreClass
         }) {
             return .fullySupported
         }
 
-        // App Store restricted: has working cores that need sideload/JIT (only when unsupportedCores is off)
-        if isAppStore && !unsupportedCores && allCores.contains(where: { !$0.disabled && $0.appStoreDisabled }) {
+        // App Store restricted: has working cores that are hidden due to App Store rules.
+        // PVAppStoreDisabled is always restricted in App Store builds regardless of unsupportedCores.
+        if isAppStore && allCores.contains(where: { !$0.disabled && $0.appStoreDisabled }) {
             return .appStoreRestricted
         }
 
