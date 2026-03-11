@@ -509,7 +509,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                   _ systemsService:GameImporterSystemsService,
                   _ artworkImporter:ArtworkImporting,
                   _ cdFileHandler:CDFileHandling,
-                  _ skinImporterService: SkinImporterServicing) {
+                  _ skinImporterService: SkinImporterServicing = SkinImporterInjector.shared) {
         self.fileManager = fm // Initialize fileManager
 
         // Create a local function for the auto-start callback that doesn't capture self
@@ -2509,8 +2509,63 @@ public final class GameImporter: GameImporting, ObservableObject {
         return nil
     }
 
-    /// Extracts an archive flatly and imports its contents
-    private func extractAndImportArchive(_ item: ImportQueueItem) async throws {
+    /// Moves `extractedFiles` to `importsPath`, deduplicating destination names as needed.
+    ///
+    /// Individual move failures are logged and counted but do not stop the batch — files that
+    /// can be moved are always queued so a single stuck file does not orphan the rest.
+    ///
+    /// Uses the injected `fileManager` so that tests can substitute a mock to force failures.
+    ///
+    /// - Parameters:
+    ///   - extractedFiles: File URLs currently in a temporary extraction directory.
+    ///   - importsPath: Destination directory for successfully moved files.
+    /// - Returns: A tuple of (successfully moved file URLs, whether every move succeeded).
+    internal func moveBatchExtractedFiles(_ extractedFiles: [URL], to importsPath: URL) -> (queued: [URL], allSucceeded: Bool) {
+        var filesToImport: [URL] = []
+        var moveFailures = 0
+
+        for extractedFile in extractedFiles {
+            let fileName = extractedFile.lastPathComponent
+            let destinationURL = importsPath.appendingPathComponent(fileName)
+
+            var finalDestinationURL = destinationURL
+            var counter = 1
+            while fileManager.fileExists(atPath: finalDestinationURL.path) {
+                let nameWithoutExt = destinationURL.deletingPathExtension().lastPathComponent
+                let ext = destinationURL.pathExtension
+
+                if ext.isEmpty {
+                    finalDestinationURL = importsPath.appendingPathComponent("\(nameWithoutExt)_\(counter)")
+                } else {
+                    let baseWithCounter = "\(nameWithoutExt)_\(counter)"
+                    finalDestinationURL = importsPath
+                        .appendingPathComponent(baseWithCounter)
+                        .appendingPathExtension(ext)
+                }
+                counter += 1
+            }
+
+            do {
+                try fileManager.moveItem(at: extractedFile, to: finalDestinationURL)
+                filesToImport.append(finalDestinationURL)
+            } catch {
+                moveFailures += 1
+                ELOG("Failed to move extracted file \(fileName) to imports: \(error.localizedDescription)")
+            }
+        }
+
+        if moveFailures > 0 {
+            ELOG("Batch move had \(moveFailures)/\(extractedFiles.count) failure(s) — "
+                 + "archive and temp dir preserved for retry")
+        }
+
+        return (queued: filesToImport, allSucceeded: moveFailures == 0)
+    }
+
+    /// Extracts an archive flatly and imports its contents.
+    /// `internal` instead of `private` so that unit tests can call it directly
+    /// (e.g. to verify that the archive is not deleted on partial batch-move failure).
+    internal func extractAndImportArchive(_ item: ImportQueueItem) async throws {
         let archiveURL = item.url
         let fileExtension = archiveURL.pathExtension.lowercased()
 
@@ -2522,39 +2577,43 @@ public final class GameImporter: GameImporting, ObservableObject {
             throw GameImporterError.unsupportedFile
         }
 
-        // Ensure file is fully written and not locked before attempting extraction
-        // Add a small delay to ensure file system has finished writing
-        try? await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
-
-        // Try to verify file is readable and not locked
-        // Attempt to open the file multiple times if needed
-        var fileReadable = false
-        for attempt in 1...5 {
-            // Try to read file attributes first (less intrusive than opening a handle)
-            if let attributes = try? FileManager.default.attributesOfItem(atPath: archiveURL.path),
-               let fileSize = attributes[.size] as? Int64,
-               fileSize > 0 {
-                // File exists and has size, try to open it
-                if let fileHandle = try? FileHandle(forReadingFrom: archiveURL) {
-                    fileHandle.closeFile()
-                    // Small delay after closing to ensure file handle is fully released
-                    try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
-                    fileReadable = true
-                    break
-                } else {
-                    ILOG("Archive file appears locked (attempt \(attempt)/5), waiting...")
-                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
-                }
-            } else {
-                ILOG("Archive file has no size or invalid attributes (attempt \(attempt)/5), waiting...")
-                try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
-            }
+        // Wait for file to stabilize using kqueue-based dispatch source monitoring.
+        // Replaces fixed 200ms poll + retry loop with event-driven detection.
+        let isStable = await FileStabilityChecker.waitForStability(at: archiveURL)
+        if !isStable {
+            WLOG("Archive \(archiveURL.lastPathComponent) did not stabilize within timeout, attempting extraction anyway")
         }
 
-        guard fileReadable else {
-            let error = ArchiveError.extractionFailed("Archive file is locked or not readable: \(archiveURL.lastPathComponent). Please ensure the file is not being accessed by another process.")
-            ELOG(error.localizedDescription)
-            throw error
+        if !FileManager.default.fileExists(atPath: archiveURL.path) {
+            let msg = "Archive file disappeared during stability wait: \(archiveURL.lastPathComponent)"
+            ELOG(msg)
+            throw ArchiveError.extractionFailed(msg)
+        }
+
+        // Bounded retry readability check after stability wait.
+        // A short retry handles transient locks that outlast the quiesce interval.
+        let maxOpenAttempts = isStable ? 2 : 3
+        var archiveIsReadable = false
+        for openAttempt in 1...maxOpenAttempts {
+            if let attrs = try? FileManager.default.attributesOfItem(atPath: archiveURL.path),
+               let size = attrs[.size] as? Int64, size > 0,
+               let handle = try? FileHandle(forReadingFrom: archiveURL) {
+                handle.closeFile()
+                archiveIsReadable = true
+                ILOG("Archive \(archiveURL.lastPathComponent) readable, size: \(size) bytes")
+                break
+            }
+            if openAttempt < maxOpenAttempts {
+                let delay: UInt64 = isStable ? 200_000_000 : 400_000_000
+                WLOG("Archive \(archiveURL.lastPathComponent) not readable or empty (attempt \(openAttempt)/\(maxOpenAttempts)), retrying...")
+                try? await Task.sleep(nanoseconds: delay)
+            }
+        }
+        if !archiveIsReadable {
+            let msg = "Archive file is locked, empty, or not readable after \(maxOpenAttempts) attempt(s): "
+                + "\(archiveURL.lastPathComponent)"
+            ELOG(msg)
+            throw ArchiveError.extractionFailed(msg)
         }
 
         // Detect actual archive type from file signature (not just extension)
@@ -2620,9 +2679,20 @@ public final class GameImporter: GameImporting, ObservableObject {
             .appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: tempExtractionDir, withIntermediateDirectories: true, attributes: nil)
 
+        /// Set to `true` when a partial batch-move leaves files in the temp
+        /// directory that must not be deleted.
+        var preserveTempDir = false
+
         defer {
-            // Clean up temp directory
-            try? FileManager.default.removeItem(at: tempExtractionDir)
+            if preserveTempDir {
+                WLOG("Preserving temp extraction directory for recovery: \(tempExtractionDir.path)")
+            } else {
+                do {
+                    try self.fileManager.removeItem(at: tempExtractionDir)
+                } catch {
+                    ELOG("Failed to clean up temp extraction directory \(tempExtractionDir.lastPathComponent): \(error.localizedDescription)")
+                }
+            }
         }
 
         // Extract files flatly (preserve only filenames, flatten directory structure)
@@ -2699,7 +2769,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                         let nameWithoutExt = flatDestination.deletingPathExtension().lastPathComponent
                         let ext = flatDestination.pathExtension
                         repeat {
-                            finalFlatURL = tempExtractionDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                            let newName = ext.isEmpty ? "\(nameWithoutExt)_\(counter)" : "\(nameWithoutExt)_\(counter).\(ext)"
+                            finalFlatURL = tempExtractionDir.appendingPathComponent(newName)
                             counter += 1
                         } while processedFilenames.contains(finalFlatURL.lastPathComponent.lowercased())
                     }
@@ -2718,7 +2789,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                         let ext = flatDestination.pathExtension
                         var finalFlatURL = flatDestination
                         repeat {
-                            finalFlatURL = tempExtractionDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                            let newName = ext.isEmpty ? "\(nameWithoutExt)_\(counter)" : "\(nameWithoutExt)_\(counter).\(ext)"
+                            finalFlatURL = tempExtractionDir.appendingPathComponent(newName)
                             counter += 1
                         } while FileManager.default.fileExists(atPath: finalFlatURL.path) || processedFilenames.contains(finalFlatURL.lastPathComponent.lowercased())
 
@@ -2816,27 +2888,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         ILOG("Extracted \(extractedFiles.count) files from archive \(archiveURL.lastPathComponent)")
 
-        // Move extracted files to imports directory for processing
+        // Move extracted files to imports directory for processing.
+        // Individual move failures are logged but do not abort the batch
+        // so that remaining files are not lost in a partially-moved state.
         let importsPath = self.importsPath
-        var filesToImport: [URL] = []
+        let (filesToImportResult, allMovesSucceeded) = moveBatchExtractedFiles(extractedFiles, to: importsPath)
+        var filesToImport = filesToImportResult
 
-        for extractedFile in extractedFiles {
-            let fileName = extractedFile.lastPathComponent
-            let destinationURL = importsPath.appendingPathComponent(fileName)
-
-            // Handle filename conflicts
-            var finalDestinationURL = destinationURL
-            var counter = 1
-            while FileManager.default.fileExists(atPath: finalDestinationURL.path) {
-                let nameWithoutExt = destinationURL.deletingPathExtension().lastPathComponent
-                let ext = destinationURL.pathExtension
-                finalDestinationURL = importsPath.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
-                counter += 1
-            }
-
-            try FileManager.default.moveItem(at: extractedFile, to: finalDestinationURL)
-            filesToImport.append(finalDestinationURL)
-        }
+        // When some moves fail, preserve both the temp directory (unmoved
+        // files) and the original archive so the user can retry.
+        preserveTempDir = !allMovesSucceeded
 
         // Clean up metadata files that won't match any system
         let metadataExtensions: Set<String> = ["txt", "md", "url", "nfo", "dat", "xml", "json", "html", "htm"]
@@ -2888,8 +2949,13 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("Added \(filesToImport.count) extracted files to import queue")
         }
 
-        // Delete original archive after successful extraction
-        try await FileManager.default.removeItem(at: archiveURL)
+        guard allMovesSucceeded else {
+            let failCount = extractedFiles.count - filesToImportResult.count
+            WLOG("Archive \(archiveURL.lastPathComponent) preserved — "
+                 + "\(failCount)/\(extractedFiles.count) move(s) failed; temp dir kept for recovery")
+            throw ArchiveError.batchMoveFailed(succeeded: filesToImportResult.count, total: extractedFiles.count)
+        }
+        try await self.fileManager.removeItem(at: archiveURL)
         ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
     }
 

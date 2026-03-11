@@ -243,67 +243,25 @@ public final class DirectoryWatcher: ObservableObject {
         ILOG("Starting archive extraction for file: \(filePath.path)")
         stopWatchingFile(at: filePath)
 
-        // Ensure file is fully written and not locked before attempting extraction
-        // Add a small delay to ensure file system has finished writing
-        try? await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
-
-        // Verify file still exists and is readable
+        // Wait for file to stabilize using kqueue-based dispatch source monitoring.
+        // Replaces fixed 200ms poll + retry loop with event-driven detection.
         guard FileManager.default.fileExists(atPath: filePath.path) else {
             ILOG("Archive file no longer exists: \(filePath.path)")
             return
         }
 
-        // Try to verify file is readable and not locked
-        // Attempt to open the file multiple times if needed
-        var fileReadable = false
-        var fileSize: Int64 = 0
-        for attempt in 1...5 {
-            // Try to read file attributes first (less intrusive than opening a handle)
-            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
-               let size = attributes[.size] as? Int64,
-               size > 0 {
-                fileSize = size
-                ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes (attempt \(attempt))")
-
-                // File exists and has size, try to open it
-                if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
-                    // Verify file is readable by checking signature
-                    let signature = fileHandle.readData(ofLength: 4)
-                    fileHandle.closeFile()
-
-                    // Check if it's a known archive format
-                    let isValidArchive = (signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B) || // ZIP
-                                        (signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A && signature[2] == 0xBC && signature[3] == 0xAF) // 7z
-
-                    if isValidArchive {
-                        let format = (signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B) ? "ZIP" : "7z"
-                        ILOG("Archive file \(filePath.lastPathComponent) has valid \(format) signature")
-                        // Small delay after closing to ensure file handle is fully released
-                        try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
-                        fileReadable = true
-                        break
-                    } else {
-                        let hexSignature = signature.prefix(4).map { String(format: "%02X", $0) }.joined(separator: " ")
-                        WLOG("Archive file \(filePath.lastPathComponent) does not have valid archive signature (got: \(hexSignature)), attempt \(attempt)/5")
-                        try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
-                    }
-                } else {
-                    ILOG("Archive file appears locked (attempt \(attempt)/5), waiting...")
-                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
-                }
-            } else {
-                ILOG("Archive file has no size or invalid attributes (attempt \(attempt)/5), waiting...")
-                try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
-            }
+        let isStable = await FileStabilityChecker.waitForStability(at: filePath)
+        if !isStable {
+            WLOG("File \(filePath.lastPathComponent) did not stabilize within timeout, attempting extraction anyway")
         }
 
-        guard fileReadable else {
-            let error = NSError(domain: "DirectoryWatcher", code: -1, userInfo: [NSLocalizedDescriptionKey: "Archive file is locked or not readable: \(filePath.lastPathComponent) (size: \(fileSize) bytes)"])
-            ELOG("Failed to verify archive file readiness: \(filePath.path)")
-            throw error
+        guard FileManager.default.fileExists(atPath: filePath.path) else {
+            ILOG("Archive file no longer exists after stability wait: \(filePath.path)")
+            return
         }
 
-        ILOG("Archive file \(filePath.lastPathComponent) verified as readable, proceeding with extraction")
+        // Bounded retry readability + signature check after stability wait.
+        try await verifyArchiveReadable(at: filePath, isStable: isStable)
 
         guard !filePath.path.contains("MACOSX") else {
             ILOG("Skipping MACOSX file: \(filePath.path)")
@@ -439,8 +397,6 @@ public final class DirectoryWatcher: ObservableObject {
                 ILOG("Extracted file: \(extractedFile.path)")
             }
 
-            // Delete archive AFTER extraction succeeds (before moving files)
-            try await FileManager.default.removeItem(at: filePath)
             updateExtractionStatus(.completedArchive(paths: extractedFiles))
             ILOG("Archive extraction completed for file: \(filePath.path)")
 
@@ -464,13 +420,36 @@ public final class DirectoryWatcher: ObservableObject {
 
             // Move files FLATLY to the watched directory (no subdirectory structure)
             // This ensures files are immediately available for import without race conditions
-            let movedFiles = try await moveExtractedFilesFlat(sortedFiles, from: tempExtractionDir, to: watchedDirectory)
+            let moveResult = await moveExtractedFilesFlat(sortedFiles, from: tempExtractionDir, to: watchedDirectory)
 
-            // Notify about the completed files
-            completedFilesContinuation?.yield(movedFiles)
+            if !moveResult.moved.isEmpty {
+                completedFilesContinuation?.yield(moveResult.moved)
+            }
 
-            // Clean up temporary directory
-            try await FileManager.default.removeItem(at: tempExtractionDir)
+            if moveResult.isComplete {
+                // All files moved — safe to delete archive and temp dir
+                do {
+                    try await FileManager.default.removeItem(at: filePath)
+                    ILOG("Deleted original archive after successful move: \(filePath.lastPathComponent)")
+                } catch {
+                    ELOG("Failed to delete original archive \(filePath.lastPathComponent): \(error.localizedDescription)")
+                }
+                do {
+                    try FileManager.default.removeItem(at: tempExtractionDir)
+                } catch {
+                    ELOG("Failed to clean up temp extraction directory \(tempExtractionDir.lastPathComponent): \(error.localizedDescription)")
+                }
+            } else {
+                // Archive NOT deleted — preserved alongside temp dir for retry
+                WLOG("Partial move: \(moveResult.failedCount) file(s) remain in \(tempExtractionDir.path), archive preserved at \(filePath.path)")
+                let partialError = ArchiveError.extractionFailed(
+                    "\(moveResult.failedCount) file(s) could not be moved from temp directory"
+                )
+                updateExtractionStatus(.failed(error: partialError))
+                await postArchiveExtractionFailed(error: partialError, filePath: filePath,
+                                                  movedCount: moveResult.moved.count, failedCount: moveResult.failedCount)
+                throw partialError // caught below; catch block skips re-post via .failed guard
+            }
         } catch {
             // Log detailed error information
             let errorDescription = error.localizedDescription
@@ -485,6 +464,8 @@ public final class DirectoryWatcher: ObservableObject {
                     ELOG("ArchiveError.fileTooLarge")
                 case .invalidArchive:
                     ELOG("ArchiveError.invalidArchive")
+                case .batchMoveFailed(let succeeded, let total):
+                    ELOG("ArchiveError.batchMoveFailed: \(succeeded)/\(total) file(s) moved successfully")
                 }
             }
 
@@ -495,20 +476,15 @@ public final class DirectoryWatcher: ObservableObject {
                 ELOG("Failed archive file size: \(sizeMB) MB")
             }
 
-            updateExtractionStatus(.failed(error: error))
-
-            // Post notification that extraction has failed
-            Task { @MainActor in
-                NotificationCenter.default.post(
-                    name: .archiveExtractionFailed,
-                    object: nil,
-                    userInfo: [
-                        "error": error.localizedDescription,
-                        "path": filePath.path,
-                        "filename": filePath.lastPathComponent,
-                        "timestamp": Date()
-                    ]
-                )
+            // Only update status/notify if the partial-move branch
+            // hasn't already done so (avoids duplicate notifications).
+            if case .failed = extractionStatus {
+                VLOG("Extraction status already .failed — skipping duplicate notification")
+            } else {
+                updateExtractionStatus(.failed(error: error))
+                await postArchiveExtractionFailed(
+                    error: error, filePath: filePath,
+                    movedCount: 0, failedCount: 0)
             }
 
             throw error
@@ -544,29 +520,115 @@ public final class DirectoryWatcher: ObservableObject {
         completedFilesContinuation?.yield([destinationURL])
     }
 
-    /// Move extracted files flatly (preserving only filenames, no directory structure)
-    private func moveExtractedFilesFlat(_ files: [URL], from sourceDir: URL, to destinationDir: URL) async throws -> [URL] {
+    /// Result of a batch file-move operation.
+    struct BatchMoveResult {
+        /// Files that were successfully moved to the destination.
+        let moved: [URL]
+        /// Number of files that failed to move.
+        let failedCount: Int
+        /// `true` when every file was moved successfully.
+        var isComplete: Bool { failedCount == 0 }
+    }
+
+    /// Posts the `archiveExtractionFailed` notification on the main actor.
+    private func postArchiveExtractionFailed(
+        error: Error, filePath: URL, movedCount: Int, failedCount: Int
+    ) async {
+        await MainActor.run {
+            NotificationCenter.default.post(name: .archiveExtractionFailed, object: nil, userInfo: [
+                "error": error.localizedDescription,
+                "path": filePath.path,
+                "filename": filePath.lastPathComponent,
+                "movedCount": movedCount,
+                "failedCount": failedCount,
+                "timestamp": Date()
+            ])
+        }
+    }
+
+    /// Verifies that an archive file is readable and has a recognizable
+    /// signature, retrying a bounded number of times with backoff to handle
+    /// transient file locks that may outlast the stability quiesce interval.
+    private func verifyArchiveReadable(at filePath: URL, isStable: Bool) async throws {
+        let maxAttempts = isStable ? 2 : 3
+        var fileSize: Int64 = 0
+
+        for attempt in 1...maxAttempts {
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
+               let size = attributes[.size] as? Int64, size > 0 {
+                fileSize = size
+                ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes")
+                if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
+                    let signature = fileHandle.readData(ofLength: 4)
+                    fileHandle.closeFile()
+                    let isZip = signature.count >= 2
+                        && signature[0] == 0x50 && signature[1] == 0x4B
+                    let is7z = signature.count >= 4
+                        && signature[0] == 0x37 && signature[1] == 0x7A
+                        && signature[2] == 0xBC && signature[3] == 0xAF
+                    if isZip || is7z {
+                        ILOG("Archive \(filePath.lastPathComponent) has valid \(isZip ? "ZIP" : "7z") signature")
+                    } else {
+                        let hex = signature.prefix(4)
+                            .map { String(format: "%02X", $0) }.joined(separator: " ")
+                        ILOG("Archive \(filePath.lastPathComponent) signature (\(hex)) not ZIP/7z, using extension detection")
+                    }
+                    ILOG("Archive \(filePath.lastPathComponent) verified readable on attempt \(attempt)")
+                    return
+                }
+            }
+            if attempt < maxAttempts {
+                let delay: UInt64 = isStable ? 200_000_000 : 400_000_000
+                WLOG("Archive \(filePath.lastPathComponent) not readable (attempt \(attempt)/\(maxAttempts)), retrying...")
+                try? await Task.sleep(nanoseconds: delay)
+            }
+        }
+
+        let description = "Archive file not readable after \(maxAttempts) attempt(s): "
+            + "\(filePath.lastPathComponent) (size: \(fileSize) bytes)"
+        ELOG("Failed to verify archive readiness after retries: \(filePath.path)")
+        throw NSError(domain: "DirectoryWatcher", code: -1,
+                      userInfo: [NSLocalizedDescriptionKey: description])
+    }
+
+    /// Moves extracted files to the destination directory, flattening any
+    /// subdirectory structure. Individual move failures are logged but do
+    /// not abort the batch — successfully moved files are still returned
+    /// alongside the failure count so callers can decide how to proceed.
+    private func moveExtractedFilesFlat(
+        _ files: [URL],
+        from sourceDir: URL,
+        to destinationDir: URL
+    ) async -> BatchMoveResult {
         var movedFiles: [URL] = []
+        var failedCount = 0
         for file in files {
-            // Only preserve the filename, flatten directory structure
             let fileName = file.lastPathComponent
             let destinationURL = destinationDir.appendingPathComponent(fileName)
 
-            // Handle filename conflicts
             var finalDestinationURL = destinationURL
             var counter = 1
             while FileManager.default.fileExists(atPath: finalDestinationURL.path) {
                 let nameWithoutExt = destinationURL.deletingPathExtension().lastPathComponent
                 let ext = destinationURL.pathExtension
-                finalDestinationURL = destinationDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                let newName = ext.isEmpty ? "\(nameWithoutExt)_\(counter)" : "\(nameWithoutExt)_\(counter).\(ext)"
+                finalDestinationURL = destinationDir.appendingPathComponent(newName)
                 counter += 1
             }
 
-            try FileManager.default.moveItem(at: file, to: finalDestinationURL)
-            movedFiles.append(finalDestinationURL)
-            ILOG("Moved extracted file flatly: \(fileName) -> \(finalDestinationURL.lastPathComponent)")
+            do {
+                try FileManager.default.moveItem(at: file, to: finalDestinationURL)
+                movedFiles.append(finalDestinationURL)
+                ILOG("Moved extracted file flatly: \(fileName) -> \(finalDestinationURL.lastPathComponent)")
+            } catch {
+                failedCount += 1
+                ELOG("Failed to move extracted file \(fileName): \(error.localizedDescription)")
+            }
         }
-        return movedFiles
+        if failedCount > 0 {
+            ELOG("Batch move: \(failedCount)/\(files.count) failure(s). Source dir preserved: \(sourceDir.path)")
+        }
+        return BatchMoveResult(moved: movedFiles, failedCount: failedCount)
     }
 
     private func sortExtractedFiles(_ files: [URL]) -> [URL] {

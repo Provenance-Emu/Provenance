@@ -25,10 +25,30 @@ import Unrar
 import Combine
 
 
-public enum ArchiveError: Error {
+public enum ArchiveError: Error, LocalizedError {
     case invalidArchive
     case fileTooLarge
     case extractionFailed(String)
+    /// Thrown when one or more extracted files could not be moved to the import
+    /// directory.  The archive and temp directory are preserved so the user can
+    /// retry.  `succeeded` is the number of files that were moved successfully;
+    /// `total` is the total number of files that were extracted.
+    case batchMoveFailed(succeeded: Int, total: Int)
+
+    public var errorDescription: String? {
+        switch self {
+        case .invalidArchive:
+            return "The archive file is invalid or in an unsupported format."
+        case .fileTooLarge:
+            return "The archive file is too large to extract."
+        case .extractionFailed(let message):
+            return message
+        case .batchMoveFailed(let succeeded, let total):
+            let failed = total - succeeded
+            return "Failed to move \(failed) of \(total) extracted file(s) to the import directory. "
+                + "The archive and extracted files have been preserved for retry."
+        }
+    }
 }
 
 public enum ArchiveType: String, CaseIterable {
