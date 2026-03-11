@@ -17,8 +17,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
-//#pragma clang diagnostic push
-//#pragma clang diagnostic error "-Wall"
+/// Diagnostic push/pop are handled in the .m file, not here.
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -50,16 +49,21 @@ typedef void* PFN_vkVoidFunction;
 __attribute__((weak_import))
 @interface PVLibRetroGLESCoreBridge : PVLibRetroCoreBridge
 
-// Hardware rendering support
+/// Hardware rendering setup — called from environment callback
 - (BOOL)setHardwareRenderCallback:(NSValue *)callbackValue;
 - (void)setupHardwareContext:(enum retro_hw_context_type)contextType;
 - (void)destroyHardwareContext;
 
-// Hardware rendering callbacks
+/// Hardware rendering callbacks invoked by libretro
 - (void)contextReset;
 - (void)contextDestroy;
 - (uintptr_t)getCurrentFramebuffer;
 - (void*)getProcAddress:(const char*)symbol;
+
+/// GL context and FBO management for the emu thread
+- (void)makeGLContextCurrent;
+- (void)setupEmuThreadFBO;
+- (void)destroyEmuThreadFBO;
 
 // Touch and mouse input support
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -70,5 +74,3 @@ __attribute__((weak_import))
 - (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
 
 @end
-
-#pragma clang diagnostic pop

@@ -134,7 +134,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 
-    var presentationFramebuffer: AnyObject? = nil
+    /// The IOSurface-backed FBO created by this view controller.
+    /// Note: GL FBO names are per-context and NOT shareable across EAGLContexts.
+    /// Callers on other threads/contexts should use renderIOSurface instead to
+    /// create their own FBO backed by the same IOSurface.
+    var presentationFramebuffer: AnyObject? {
+        get {
+            guard alternateThreadFramebufferBack > 0 else { return nil }
+            return NSNumber(value: alternateThreadFramebufferBack) as AnyObject
+        }
+    }
 
     weak var emulatorCore: PVEmulatorCore?
 
@@ -3374,6 +3383,25 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 }
+
+#if canImport(IOSurface)
+/// PVRenderDelegateIOSurface conformance: exposes the IOSurface backing the
+/// GL→Metal shared texture so that emu-thread GL contexts can create their own
+/// FBO backed by the same IOSurface for zero-copy rendering.
+extension PVMetalViewController: PVRenderDelegateIOSurface {
+    /// The IOSurface backing the GL→Metal shared texture.
+    var renderIOSurface: IOSurfaceRef? {
+        return backingIOSurface
+    }
+
+    /// Pixel dimensions of the IOSurface-backed render target.
+    var renderIOSurfaceSize: CGSize {
+        guard let surface = backingIOSurface else { return .zero }
+        return CGSize(width: IOSurfaceGetWidth(surface),
+                      height: IOSurfaceGetHeight(surface))
+    }
+}
+#endif
 
 /// Error types for Metal view controller operations
 enum MetalViewControllerError: Error {

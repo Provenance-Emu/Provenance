@@ -22,6 +22,24 @@
 #include "dynamic.h"
 #include <dynamic/dylib.h>
 
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+@import IOSurface;
+@import OpenGLES.EAGLIOSurface;
+
+/// Private SPI for binding an IOSurface to a GL texture on iOS/tvOS.
+/// See: https://developer.apple.com/documentation/opengles/eaglcontext/2890259-teximageiosurface
+@interface EAGLContext (IOSurfaceTexImage)
+- (BOOL)texImageIOSurface:(IOSurfaceRef)ioSurface
+                   target:(NSUInteger)target
+           internalFormat:(NSUInteger)internalFormat
+                    width:(uint32_t)width
+                   height:(uint32_t)height
+                   format:(NSUInteger)format
+                     type:(NSUInteger)type
+                    plane:(uint32_t)plane;
+@end
+#endif
+
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
@@ -57,13 +75,31 @@ extern void MakeCurrentThreadRealTime(void);
     dispatch_semaphore_t coreWaitToEndFrameSemaphore;
     dispatch_semaphore_t coreWaitForExitSemaphore;
 
+    /// Signaled when runGLESRenderThread fully exits its loop
+    dispatch_semaphore_t _renderThreadExitSemaphore;
+
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
 
-    // Hardware rendering state
+    /// Hardware rendering state
     struct retro_hw_render_callback *hw_render_callback;
     enum retro_hw_context_type current_context_type;
     BOOL hardware_context_active;
+
+    /// Core-provided callbacks — stored here because the frontend must not
+    /// overwrite the struct fields the core set (per libretro.h spec).
+    retro_hw_context_reset_t _coreContextReset;
+    retro_hw_context_reset_t _coreContextDestroy;
+
+    /// Tracks whether context_reset has been deferred until FBO is ready
+    BOOL _pendingContextReset;
+
+    /// FBO + texture created in hardware_context (emu thread) backed by the
+    /// same IOSurface as the render delegate. GL FBOs are per-context so
+    /// we must create our own rather than reusing the delegate's FBO name.
+    GLuint _emuThreadFBO;
+    GLuint _emuThreadColorTexture;
+    GLuint _emuThreadDepthRenderbuffer;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     EAGLContext *hardware_context;
@@ -97,9 +133,7 @@ void gl_swap() {
     [current swapBuffers];
 }
 
-// Forward declarations for hardware rendering callbacks
-static void hw_context_reset(void);
-static void hw_context_destroy(void);
+// Forward declarations for hardware rendering callbacks (frontend-owned fields)
 static uintptr_t hw_get_current_framebuffer(void);
 static void* hw_get_proc_address(const char *symbol);
 
@@ -110,21 +144,25 @@ static void* hw_get_proc_address(const char *symbol);
         glesWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
+        _renderThreadExitSemaphore     = dispatch_semaphore_create(0);
 
-        // Initialize hardware rendering state
         hw_render_callback = NULL;
         current_context_type = RETRO_HW_CONTEXT_NONE;
         hardware_context_active = NO;
         hardware_context = nil;
+        _coreContextReset = NULL;
+        _coreContextDestroy = NULL;
+        _pendingContextReset = NO;
+        _emuThreadFBO = 0;
+        _emuThreadColorTexture = 0;
+        _emuThreadDepthRenderbuffer = 0;
 
-        // Initialize Vulkan state
         vulkan_library = NULL;
         vulkan_instance = NULL;
         vulkan_device = NULL;
         vulkan_queue = NULL;
         vulkan_physical_device = NULL;
 
-        // Initialize Vulkan function pointers
         vkGetInstanceProcAddr = NULL;
         vkGetDeviceProcAddr = NULL;
         vkCreateInstance = NULL;
@@ -226,11 +264,17 @@ static void* hw_get_proc_address(const char *symbol);
 
     self.shouldStop = YES;
     dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
-    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 
+    /// Wake the render thread from frontBufferCondition so it can see shouldStop
+    /// and exit. The emu thread waits for the render thread to exit before
+    /// calling contextDestroy, so the render thread must not be blocked here.
     [self.frontBufferCondition lock];
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
+
+    /// Wait for the emu thread to exit — it waits for the render thread,
+    /// then calls contextDestroy on the emu thread, then signals this.
+    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 
     [super stopEmulation];
 }
@@ -325,33 +369,60 @@ static bool video_driver_cached_frame(void)
     @autoreleasepool
     {
         [[NSThread currentThread] setName:@"runGLESRenderThread"];
-        [self.renderDelegate startRenderingOnAlternateThread];
-//        BOOL success = gles_init();
-//        assert(success);
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-    EAGLContext* context = [self bestContext];
-    ILOG(@"%i", context.API);
-#endif
+
+        /// Ask the render delegate to create the IOSurface-backed FBO and GL contexts
+        if ([self.renderDelegate respondsToSelector:@selector(startRenderingOnAlternateThread)]) {
+            [self.renderDelegate startRenderingOnAlternateThread];
+        } else {
+            ELOG(@"PVLibRetroGLESCore: renderDelegate does not implement optional startRenderingOnAlternateThread; failing hardware-render setup.");
+
+            /// Treat this as a hard failure: mark emulation as stopping so any
+            /// waiters (e.g., -stopEmulation) can bail out instead of deadlocking.
+            self.shouldStop = YES;
+
+            /// Unblock any thread waiting for the emu thread to exit. Normally
+            /// coreWaitForExitSemaphore is signaled at the end of libretroMain
+            /// on the emu thread; in this failure path the emu thread never
+            /// starts, so we must signal it here instead.
+            if (coreWaitForExitSemaphore != NULL) {
+                dispatch_semaphore_signal(coreWaitForExitSemaphore);
+            }
+
+            /// Signal that the render thread is exiting so any emu-thread logic
+            /// waiting on the render thread can continue.
+            dispatch_semaphore_signal(_renderThreadExitSemaphore);
+            return;
+        }
+
+        /// context_reset is NOT fired here — it must run on the emu thread
+        /// because cores assume context_reset and retro_run share the same thread/context.
+        /// libretroMain will fire it after making hardware_context current.
+
         [NSThread detachNewThreadSelector:@selector(runGLESEmuThread) toTarget:self withObject:nil];
 
-//        CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
-
-        while (!has_init) {}
+        /// Wait for the emu thread to signal initialization. Yield CPU to avoid
+        /// pegging a core at 100%. Bail early if shouldStop is set.
+        while (!has_init && !self.shouldStop) { usleep(1000); }
         while ( !self.shouldStop )
         {
             [self.frontBufferCondition lock];
             while (!self.shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
             [self.frontBufferCondition unlock];
 
-//            CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
-//            CFTimeInterval deltaTime = now - lastTime;
+            if (self.shouldStop) break;
+
             while ( !self.shouldStop
                    && !video_driver_cached_frame()
-//                   && core_poll()
-                   ) {}
-            [self swapBuffers];
-//            lastTime = now;
+                   ) { usleep(500); }
+
+            if (!self.shouldStop) {
+                [self swapBuffers];
+            }
         }
+
+        /// Signal that the render thread has fully exited its loop.
+        /// The emu thread waits on this before calling contextDestroy.
+        dispatch_semaphore_signal(_renderThreadExitSemaphore);
     }
 }
 
@@ -376,9 +447,24 @@ static bool video_driver_cached_frame(void)
 
     MakeCurrentThreadRealTime();
 
-//    [self.renderDelegate startRenderingOnAlternateThread];
-    has_init = true;
+    /// Make the core's dedicated GL context current on the emu thread
+    [self makeGLContextCurrent];
 
+    /// Create the emu thread's own FBO backed by the shared IOSurface.
+    /// GL FBOs are per-context (not shareable across EAGLContexts), so we
+    /// must create our own in hardware_context rather than reusing the
+    /// render delegate's FBO name. The IOSurface bridge gives zero-copy.
+    [self setupEmuThreadFBO];
+
+    /// Fire any deferred context_reset on the emu thread — cores assume
+    /// context_reset and retro_run share the same thread and GL context.
+    if (_pendingContextReset && _coreContextReset) {
+        ILOG(@"Firing deferred context_reset on emu thread (FBO=%u)", _emuThreadFBO);
+        [self contextReset];
+        _pendingContextReset = NO;
+    }
+
+    has_init = true;
 
     do {
         switch (self->core_poll_type)
@@ -390,11 +476,37 @@ static bool video_driver_cached_frame(void)
                 core_input_polled = false;
                 break;
         }
+
+        /// Ensure GL context is current before each retro_run()
+        [self makeGLContextCurrent];
+
+        /// Bind the emu thread's IOSurface-backed FBO
+        if (_emuThreadFBO > 0) {
+            glBindFramebuffer(GL_FRAMEBUFFER, _emuThreadFBO);
+        }
+
         if (core->retro_run)
             core->retro_run();
         if (core_poll_type == POLL_TYPE_LATE && !core_input_polled)
             input_poll();
     } while(!self.shouldStop);
+
+    /// Wake the render thread from any frontBufferCondition wait so it can exit
+    [self.frontBufferCondition lock];
+    [self.frontBufferCondition signal];
+    [self.frontBufferCondition unlock];
+
+    /// Wait for the render thread to fully exit before tearing down GL resources.
+    /// This prevents races where the render thread is mid-frame in
+    /// video_driver_cached_frame() or swapBuffers while we destroy the context.
+    long renderThreadWaitResult = dispatch_semaphore_wait(_renderThreadExitSemaphore,
+                                      dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC));
+    if (renderThreadWaitResult != 0) {
+        WLOG(@"Render thread did not exit within 2s — proceeding with context teardown anyway (may race)");
+    }
+
+    /// Tear down HW context on the emu thread that owns it, before signaling exit.
+    [self contextDestroy];
 
     has_init = false;
 
@@ -407,6 +519,12 @@ static bool video_driver_cached_frame(void)
 
 #pragma mark - Hardware Rendering Support
 
+/// Called from the environment callback when a core requests hardware rendering.
+/// Per libretro.h, context_reset and context_destroy are set by the core and
+/// invoked by the frontend — we must NOT overwrite them. We store the core's
+/// callbacks and only set the frontend-owned fields (get_current_framebuffer,
+/// get_proc_address). The core's context_reset is deferred until the render
+/// delegate creates the FBO (in runGLESRenderThread).
 - (BOOL)setHardwareRenderCallback:(NSValue *)callbackValue {
     if (!callbackValue) {
         ELOG(@"Hardware render callback value is NULL");
@@ -421,24 +539,28 @@ static bool video_driver_cached_frame(void)
 
     current_context_type = hw_render_callback->context_type;
 
-    ILOG(@"Libretro core requesting hardware context type: %d", current_context_type);
+    ILOG(@"Libretro core requesting hardware context type: %d (depth=%d, stencil=%d, bottom_left=%d)",
+         current_context_type,
+         hw_render_callback->depth,
+         hw_render_callback->stencil,
+         hw_render_callback->bottom_left_origin);
 
-    // Set up the callback functions that libretro will call
-    hw_render_callback->context_reset = hw_context_reset;
-    hw_render_callback->context_destroy = hw_context_destroy;
+    /// Store core-provided callbacks before touching the struct
+    _coreContextReset = hw_render_callback->context_reset;
+    _coreContextDestroy = hw_render_callback->context_destroy;
+
+    /// Only set the fields the frontend is responsible for providing
     hw_render_callback->get_current_framebuffer = hw_get_current_framebuffer;
     hw_render_callback->get_proc_address = (retro_hw_get_proc_address_t)hw_get_proc_address;
 
-    ILOG(@"Hardware rendering callback set for context type: %d", current_context_type);
-
-    // Setup the appropriate hardware context
     [self setupHardwareContext:current_context_type];
 
-    // If context was successfully set up, call context_reset to initialize it
-    // This allows the core to set up its OpenGL state
-    if (hardware_context_active && hw_render_callback && hw_render_callback->context_reset) {
-        ILOG(@"Calling context_reset callback to initialize hardware context");
-        hw_render_callback->context_reset();
+    /// Defer context_reset: the FBO doesn't exist yet because
+    /// startRenderingOnAlternateThread hasn't run.
+    /// runGLESRenderThread will fire context_reset after the FBO is ready.
+    if (hardware_context_active) {
+        _pendingContextReset = YES;
+        ILOG(@"Hardware context created; context_reset deferred until FBO is ready");
     }
 
     return YES;
@@ -477,6 +599,9 @@ static bool video_driver_cached_frame(void)
     }
 }
 
+/// Creates an EAGLContext for the requested GL ES version. If the render
+/// delegate already has a GL context, share its sharegroup so the core's
+/// GL objects are visible to the IOSurface-backed FBO context.
 - (void)setupOpenGLESContext:(enum retro_hw_context_type)contextType {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     EAGLRenderingAPI api;
@@ -496,10 +621,27 @@ static bool video_driver_cached_frame(void)
 
     ILOG(@"Attempting to create OpenGL ES context with API: %ld", (long)api);
 
-    hardware_context = [[EAGLContext alloc] initWithAPI:api];
+    /// Try to share the render delegate's GL sharegroup so the core
+    /// can render directly into the IOSurface-backed FBO
+    EAGLContext *delegateContext = nil;
+    if ([self.renderDelegate respondsToSelector:@selector(glContext)]) {
+        delegateContext = [self.renderDelegate glContext];
+    }
+
+    if (delegateContext) {
+        hardware_context = [[EAGLContext alloc] initWithAPI:api
+                                                sharegroup:delegateContext.sharegroup];
+        if (hardware_context) {
+            ILOG(@"Created shared GL ES context with render delegate sharegroup");
+        }
+    }
+
+    if (!hardware_context) {
+        hardware_context = [[EAGLContext alloc] initWithAPI:api];
+    }
+
     if (!hardware_context) {
         ELOG(@"Failed to create OpenGL ES context for API: %ld", (long)api);
-        ELOG(@"This will cause hardware rendering to fail and fall back to software");
         return;
     }
 
@@ -599,17 +741,22 @@ static bool video_driver_cached_frame(void)
         return;
     }
 
+    /// Delete the FBO while the GL context is still current and valid
+    [self destroyEmuThreadFBO];
+
     switch (current_context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
         case RETRO_HW_CONTEXT_OPENGLES3:
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+            [EAGLContext setCurrentContext:nil];
+#endif
             hardware_context = nil;
             break;
 
         case RETRO_HW_CONTEXT_VULKAN:
-            // Clean up Vulkan resources
             [self destroyVulkanDevice];
             [self destroyVulkanInstance];
             [self unloadMoltenVKLibrary];
@@ -622,29 +769,16 @@ static bool video_driver_cached_frame(void)
     hardware_context_active = NO;
     current_context_type = RETRO_HW_CONTEXT_NONE;
     hw_render_callback = NULL;
+    _coreContextReset = NULL;
+    _coreContextDestroy = NULL;
+    _pendingContextReset = NO;
 
     ILOG(@"Hardware context destroyed");
 }
 
 #pragma mark - Hardware Rendering Callbacks
 
-// C callback functions that libretro will call
-static void hw_context_reset(void) {
-    GET_CURRENT_OR_RETURN();
-    if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
-        PVLibRetroGLESCoreBridge *glesCore = (PVLibRetroGLESCoreBridge *)current;
-        [glesCore contextReset];
-    }
-}
-
-static void hw_context_destroy(void) {
-    GET_CURRENT_OR_RETURN();
-    if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
-        PVLibRetroGLESCoreBridge *glesCore = (PVLibRetroGLESCoreBridge *)current;
-        [glesCore contextDestroy];
-    }
-}
-
+// C callback functions set on the hw_render_callback struct (frontend-owned)
 static uintptr_t hw_get_current_framebuffer(void) {
     GET_CURRENT_OR_RETURN(0);
     if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
@@ -663,70 +797,204 @@ static void* hw_get_proc_address(const char *symbol) {
     return NULL;
 }
 
-// Objective-C implementations of the callback methods
+/// Called when the GL/Vulkan context has been created or recreated.
+/// Performs frontend housekeeping (make context current, bind FBO) then
+/// invokes the core's stored context_reset so it can create its GL resources.
 - (void)contextReset {
-    ILOG(@"Hardware context reset called");
+    ILOG(@"Hardware context reset called (context_type=%d, FBO=%u)", current_context_type, _emuThreadFBO);
 
     switch (current_context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
         case RETRO_HW_CONTEXT_OPENGLES3:
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-            if (hardware_context) {
-                [EAGLContext setCurrentContext:hardware_context];
-            }
-#endif
-            break;
-
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
-#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
-            if (hardware_context) {
-                [hardware_context makeCurrentContext];
+            [self makeGLContextCurrent];
+            if (_emuThreadFBO > 0) {
+                glBindFramebuffer(GL_FRAMEBUFFER, _emuThreadFBO);
             }
-#endif
             break;
 
         case RETRO_HW_CONTEXT_VULKAN:
-            // Vulkan context reset would involve recreating command buffers, etc.
             ILOG(@"Vulkan context reset");
             break;
 
         default:
             break;
     }
+
+    /// Invoke the core's context_reset so it can initialize its GL/Vulkan resources
+    if (_coreContextReset) {
+        ILOG(@"Invoking core's context_reset callback");
+        _coreContextReset();
+    }
 }
 
+/// Invokes the core's context_destroy callback then tears down frontend resources.
 - (void)contextDestroy {
     ILOG(@"Hardware context destroy called");
+
+    if (_coreContextDestroy) {
+        ILOG(@"Invoking core's context_destroy callback");
+        _coreContextDestroy();
+    }
+
     [self destroyHardwareContext];
 }
 
+/// Returns the FBO the core should render into. This is an FBO created in
+/// hardware_context (emu thread) backed by the shared IOSurface, so the
+/// rendered pixels are zero-copy visible to the Metal display path.
 - (uintptr_t)getCurrentFramebuffer {
-    // Return the current framebuffer object name
-    // For OpenGL ES/OpenGL, this would be the FBO name
-    // For Vulkan, this would be handled differently
-
     switch (current_context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
         case RETRO_HW_CONTEXT_OPENGLES3:
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE: {
-            GLint framebuffer;
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
-            return (uintptr_t)framebuffer;
+            if (_emuThreadFBO > 0) {
+                return (uintptr_t)_emuThreadFBO;
+            }
+            [self setupEmuThreadFBO];
+            if (_emuThreadFBO > 0) {
+                return (uintptr_t)_emuThreadFBO;
+            }
+            return 0;
         }
 
         case RETRO_HW_CONTEXT_VULKAN:
-            // For Vulkan, return appropriate render target handle
-            return 0; // TODO: Implement Vulkan framebuffer handling
+            return 0; // TODO: Implement Vulkan framebuffer handling (#2634)
 
         default:
             return 0;
     }
 }
 
+#pragma mark - GL Context Helpers
+
+/// Makes the core's dedicated GL context current on the calling thread.
+/// Uses hardware_context (sharegroup-linked to the render delegate) rather than
+/// alternateThreadGLContext — each EAGLContext must only be current on one
+/// thread at a time, and the render thread already owns alternateThreadGLContext.
+- (void)makeGLContextCurrent {
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    EAGLContext *ctx = hardware_context;
+    if (ctx && [EAGLContext currentContext] != ctx) {
+        [EAGLContext setCurrentContext:ctx];
+    }
+#else
+    NSOpenGLContext *ctx = hardware_context;
+    if (ctx) {
+        [ctx makeCurrentContext];
+    }
+#endif
+}
+
+/// Creates an FBO in the emu thread's hardware_context backed by the render
+/// delegate's IOSurface. GL FBO names are per-context, so we cannot reuse
+/// the delegate's FBO — but IOSurface is an OS-level shared resource, and
+/// textures created from it via texImageIOSurface are visible across
+/// sharegroup-linked EAGLContexts.
+- (void)setupEmuThreadFBO {
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    if (_emuThreadFBO > 0) return;
+
+    IOSurfaceRef surface = NULL;
+    CGSize surfaceSize = CGSizeZero;
+
+    id delegate = self.renderDelegate;
+    if ([delegate respondsToSelector:@selector(renderIOSurface)]) {
+        surface = [delegate renderIOSurface];
+    }
+    if ([delegate respondsToSelector:@selector(renderIOSurfaceSize)]) {
+        surfaceSize = [delegate renderIOSurfaceSize];
+    }
+
+    if (!surface || surfaceSize.width <= 0 || surfaceSize.height <= 0) {
+        ELOG(@"Cannot create emu thread FBO: no IOSurface from render delegate");
+        return;
+    }
+
+    GLint width = (GLint)surfaceSize.width;
+    GLint height = (GLint)surfaceSize.height;
+
+    [self makeGLContextCurrent];
+
+    glGenTextures(1, &_emuThreadColorTexture);
+    glBindTexture(GL_TEXTURE_2D, _emuThreadColorTexture);
+
+    [EAGLContext.currentContext texImageIOSurface:surface
+                                          target:GL_TEXTURE_2D
+                                  internalFormat:GL_RGBA
+                                           width:(uint32_t)width
+                                          height:(uint32_t)height
+                                          format:GL_RGBA
+                                            type:GL_UNSIGNED_BYTE
+                                           plane:0];
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glGenFramebuffers(1, &_emuThreadFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, _emuThreadFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_2D, _emuThreadColorTexture, 0);
+
+    if (hw_render_callback && hw_render_callback->depth) {
+        glGenRenderbuffers(1, &_emuThreadDepthRenderbuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, _emuThreadDepthRenderbuffer);
+        GLenum depthFormat = (hw_render_callback->stencil)
+            ? GL_DEPTH24_STENCIL8_OES
+            : GL_DEPTH_COMPONENT16;
+        glRenderbufferStorage(GL_RENDERBUFFER, depthFormat, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, _emuThreadDepthRenderbuffer);
+        if (hw_render_callback->stencil) {
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                      GL_RENDERBUFFER, _emuThreadDepthRenderbuffer);
+        }
+    }
+
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        ELOG(@"Emu thread FBO incomplete: 0x%x", status);
+    } else {
+        ILOG(@"Created emu thread FBO %u (%dx%d) backed by shared IOSurface", _emuThreadFBO, width, height);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif
+}
+
+/// Tears down the emu thread's FBO and associated GL objects.
+/// Must be called while hardware_context is still valid and current.
+- (void)destroyEmuThreadFBO {
+    if (_emuThreadFBO == 0 && _emuThreadColorTexture == 0 && _emuThreadDepthRenderbuffer == 0) {
+        return;
+    }
+
+    [self makeGLContextCurrent];
+
+    if (_emuThreadDepthRenderbuffer > 0) {
+        glDeleteRenderbuffers(1, &_emuThreadDepthRenderbuffer);
+        _emuThreadDepthRenderbuffer = 0;
+    }
+    if (_emuThreadColorTexture > 0) {
+        glDeleteTextures(1, &_emuThreadColorTexture);
+        _emuThreadColorTexture = 0;
+    }
+    if (_emuThreadFBO > 0) {
+        glDeleteFramebuffers(1, &_emuThreadFBO);
+        _emuThreadFBO = 0;
+    }
+}
+
+/// Returns function pointers for the active rendering API.
+/// For GL ES: statically linked symbols via dlsym.
+/// For Vulkan: routes through vkGetInstanceProcAddr / vkGetDeviceProcAddr.
 - (void*)getProcAddress:(const char*)symbol {
     if (!symbol) {
         return NULL;
@@ -736,24 +1004,25 @@ static void* hw_get_proc_address(const char *symbol) {
         case RETRO_HW_CONTEXT_OPENGLES2:
         case RETRO_HW_CONTEXT_OPENGLES3:
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-            // On iOS, OpenGL ES functions are statically linked
-            return dlsym(RTLD_DEFAULT, symbol);
-#endif
-            break;
-
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
-#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
-            // On macOS, use NSOpenGLContext to get function pointers
             return dlsym(RTLD_DEFAULT, symbol);
-#endif
-            break;
 
         case RETRO_HW_CONTEXT_VULKAN:
-            // For Vulkan, we'd need to use vkGetInstanceProcAddr or vkGetDeviceProcAddr
-            ILOG(@"Vulkan proc address requested: %s", symbol);
-            return NULL; // TODO: Implement Vulkan function loading
+            if (vkGetDeviceProcAddr && vulkan_device) {
+                PFN_vkVoidFunction fn = vkGetDeviceProcAddr(vulkan_device, symbol);
+                if (fn) return (void *)fn;
+            }
+            if (vkGetInstanceProcAddr && vulkan_instance) {
+                PFN_vkVoidFunction fn = vkGetInstanceProcAddr(vulkan_instance, symbol);
+                if (fn) return (void *)fn;
+            }
+            if (vkGetInstanceProcAddr) {
+                PFN_vkVoidFunction fn = vkGetInstanceProcAddr(NULL, symbol);
+                if (fn) return (void *)fn;
+            }
+            DLOG(@"Vulkan symbol not found: %s", symbol);
+            return NULL;
 
         default:
             break;

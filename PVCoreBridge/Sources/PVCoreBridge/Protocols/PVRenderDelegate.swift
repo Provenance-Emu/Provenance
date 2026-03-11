@@ -8,10 +8,13 @@
 // MARK: Delegate Protocols
 
 import Foundation
-//#if USE_METAL
+#if canImport(IOSurface)
+import IOSurface
+#endif
 import Metal
+#if canImport(MetalKit)
 import MetalKit
-//#endif
+#endif
 
 @objc public protocol PVRenderDelegate {
     // Required methods
@@ -29,15 +32,26 @@ import MetalKit
     @objc optional var presentationFramebuffer: AnyObject? { get } // GLuint
 
     @objc func setPreferredRefreshRate(_ : Float)
-    // Optional property
-//#if USE_METAL
+#if canImport(MetalKit)
     @objc optional var mtlView: MTKView? { get set }
-//#endif
-    
+#endif
+
+#if canImport(OpenGLES)
     @objc optional var glContext: EAGLContext? { get }
     @objc optional var alternateThreadGLContext: EAGLContext? { get }
     @objc optional var alternateThreadBufferCopyGLContext: EAGLContext? { get }
+#endif
 }
+
+#if canImport(IOSurface)
+/// IOSurface-backed render target properties for HW-accelerated cores.
+/// Emu-thread GL contexts create their own FBO and bind a texture backed
+/// by this IOSurface for zero-copy rendering into the Metal display path.
+@objc public protocol PVRenderDelegateIOSurface {
+    @objc optional var renderIOSurface: IOSurfaceRef? { get }
+    @objc optional var renderIOSurfaceSize: CGSize { get }
+}
+#endif
 
 //public extension PVRenderDelegate {
 //
