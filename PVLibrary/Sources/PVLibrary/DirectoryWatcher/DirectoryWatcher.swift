@@ -464,6 +464,8 @@ public final class DirectoryWatcher: ObservableObject {
                     ELOG("ArchiveError.fileTooLarge")
                 case .invalidArchive:
                     ELOG("ArchiveError.invalidArchive")
+                case .batchMoveFailed(let succeeded, let total):
+                    ELOG("ArchiveError.batchMoveFailed: \(succeeded)/\(total) file(s) moved successfully")
                 }
             }
 
@@ -609,7 +611,8 @@ public final class DirectoryWatcher: ObservableObject {
             while FileManager.default.fileExists(atPath: finalDestinationURL.path) {
                 let nameWithoutExt = destinationURL.deletingPathExtension().lastPathComponent
                 let ext = destinationURL.pathExtension
-                finalDestinationURL = destinationDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                let newName = ext.isEmpty ? "\(nameWithoutExt)_\(counter)" : "\(nameWithoutExt)_\(counter).\(ext)"
+                finalDestinationURL = destinationDir.appendingPathComponent(newName)
                 counter += 1
             }
 

@@ -2769,7 +2769,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                         let nameWithoutExt = flatDestination.deletingPathExtension().lastPathComponent
                         let ext = flatDestination.pathExtension
                         repeat {
-                            finalFlatURL = tempExtractionDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                            let newName = ext.isEmpty ? "\(nameWithoutExt)_\(counter)" : "\(nameWithoutExt)_\(counter).\(ext)"
+                            finalFlatURL = tempExtractionDir.appendingPathComponent(newName)
                             counter += 1
                         } while processedFilenames.contains(finalFlatURL.lastPathComponent.lowercased())
                     }
@@ -2788,7 +2789,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                         let ext = flatDestination.pathExtension
                         var finalFlatURL = flatDestination
                         repeat {
-                            finalFlatURL = tempExtractionDir.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+                            let newName = ext.isEmpty ? "\(nameWithoutExt)_\(counter)" : "\(nameWithoutExt)_\(counter).\(ext)"
+                            finalFlatURL = tempExtractionDir.appendingPathComponent(newName)
                             counter += 1
                         } while FileManager.default.fileExists(atPath: finalFlatURL.path) || processedFilenames.contains(finalFlatURL.lastPathComponent.lowercased())
 
