@@ -41,15 +41,29 @@ extension PVEmulatorViewController {
 
     /// Stops the current ReplayKit recording and presents the share sheet.
     /// Updates `AppState.shared.emulationUIState.isRecording` on completion.
+    ///
+    /// The game **remains paused** while the preview sheet is visible.  Emulation
+    /// resumes automatically once the user dismisses the preview (save / discard).
     public func stopScreenRecording() {
+        // Register a callback so emulation resumes after the preview is dismissed.
+        PVRecordingManager.shared.onPreviewDismissed = { [weak self] in
+            guard let self, self.core.isOn else { return }
+            self.core.setPauseEmulation(false)
+            ILOG("[Recording] Resumed emulation after preview dismissed")
+        }
+
         Task { @MainActor in
             do {
                 try await PVRecordingManager.shared.stopRecording(presenter: self)
                 AppState.shared.emulationUIState.isRecording = false
                 ILOG("[Recording] Recording stopped and preview presented")
             } catch {
+                // On error clear the resume callback so we don't hang in a paused state
+                PVRecordingManager.shared.onPreviewDismissed = nil
                 AppState.shared.emulationUIState.isRecording = false
                 ELOG("[Recording] Could not stop recording: \(error.localizedDescription)")
+                // Resume emulation since we won't be showing the preview
+                if core.isOn { core.setPauseEmulation(false) }
                 showRecordingError(error)
             }
         }
