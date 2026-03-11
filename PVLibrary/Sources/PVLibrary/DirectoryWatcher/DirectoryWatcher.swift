@@ -260,30 +260,42 @@ public final class DirectoryWatcher: ObservableObject {
             return
         }
 
-        // Single readability + signature check after stability wait
+        // Bounded retry readability + signature check after stability wait.
+        // A short retry handles transient locks that outlast the quiesce interval.
+        let maxReadAttempts = isStable ? 2 : 3
         var fileReadable = false
         var fileSize: Int64 = 0
-        if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
-           let size = attributes[.size] as? Int64, size > 0 {
-            fileSize = size
-            ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes")
-            if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
-                let signature = fileHandle.readData(ofLength: 4)
-                fileHandle.closeFile()
-                let isZip = signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B
-                let is7z = signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A && signature[2] == 0xBC && signature[3] == 0xAF
-                if isZip || is7z {
-                    ILOG("Archive file \(filePath.lastPathComponent) has valid \(isZip ? "ZIP" : "7z") signature")
-                } else {
-                    let hexSignature = signature.prefix(4).map { String(format: "%02X", $0) }.joined(separator: " ")
-                    ILOG("Archive file \(filePath.lastPathComponent) signature (\(hexSignature)) not ZIP/7z, will use extension-based detection")
+        for readAttempt in 1...maxReadAttempts {
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
+               let size = attributes[.size] as? Int64, size > 0 {
+                fileSize = size
+                ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes")
+                if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
+                    let signature = fileHandle.readData(ofLength: 4)
+                    fileHandle.closeFile()
+                    let isZip = signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B
+                    let is7z = signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A
+                        && signature[2] == 0xBC && signature[3] == 0xAF
+                    if isZip || is7z {
+                        ILOG("Archive file \(filePath.lastPathComponent) has valid \(isZip ? "ZIP" : "7z") signature")
+                    } else {
+                        let hex = signature.prefix(4).map { String(format: "%02X", $0) }.joined(separator: " ")
+                        ILOG("Archive \(filePath.lastPathComponent) signature (\(hex)) not ZIP/7z, using extension detection")
+                    }
+                    fileReadable = true
+                    break
                 }
-                fileReadable = true
+            }
+            if readAttempt < maxReadAttempts {
+                let delay: UInt64 = isStable ? 200_000_000 : 400_000_000
+                WLOG("Archive \(filePath.lastPathComponent) not readable (attempt \(readAttempt)/\(maxReadAttempts)), retrying...")
+                try? await Task.sleep(nanoseconds: delay)
             }
         }
 
         guard fileReadable else {
-            let description = "Archive file is locked or not readable: \(filePath.lastPathComponent) (size: \(fileSize) bytes)"
+            let description = "Archive file is locked or not readable: "
+                + "\(filePath.lastPathComponent) (size: \(fileSize) bytes)"
             let error = NSError(domain: "DirectoryWatcher", code: -1,
                                 userInfo: [NSLocalizedDescriptionKey: description])
             ELOG("Failed to verify archive file readiness: \(filePath.path)")
@@ -454,7 +466,9 @@ public final class DirectoryWatcher: ObservableObject {
             let movedFiles = await moveExtractedFilesFlat(sortedFiles, from: tempExtractionDir, to: watchedDirectory)
 
             // Notify about the completed files
-            completedFilesContinuation?.yield(movedFiles)
+            if !movedFiles.isEmpty {
+                completedFilesContinuation?.yield(movedFiles)
+            }
 
             // Only clean up temp directory if all files were moved successfully.
             // If some remain, preserve the directory so files are not lost.
@@ -468,6 +482,24 @@ public final class DirectoryWatcher: ObservableObject {
                 }
             } else {
                 WLOG("Preserving temp directory with \(remainingItems.count) unmoved file(s): \(tempExtractionDir.path)")
+                let partialError = ArchiveError.extractionFailed(
+                    "\(remainingItems.count) file(s) could not be moved from temp directory"
+                )
+                updateExtractionStatus(.failed(error: partialError))
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: .archiveExtractionFailed,
+                        object: nil,
+                        userInfo: [
+                            "error": partialError.localizedDescription,
+                            "path": filePath.path,
+                            "filename": filePath.lastPathComponent,
+                            "movedCount": movedFiles.count,
+                            "failedCount": remainingItems.count,
+                            "timestamp": Date()
+                        ]
+                    )
+                }
             }
         } catch {
             // Log detailed error information
