@@ -16,16 +16,30 @@ import PVLogging
 /// `quiesceInterval` seconds, or the overall `timeout` is exceeded.
 enum FileStabilityChecker {
 
-    /// Shared serial queue for all stability checks. Per-call state is
-    /// kept in the closure, so a single queue is sufficient.
+    /// Shared serial queue for all stability checks.
     private static let queue = DispatchQueue(
         label: "org.provenance-emu.file-stability"
     )
 
-    /// Shared mutable reference so `withTaskCancellationHandler`'s
-    /// `onCancel` closure can trigger the same teardown path.
-    private final class CancelRef: @unchecked Sendable {
-        var finish: ((Bool) -> Void)?
+    /// Thread-safe handle that `onCancel` uses to trigger teardown.
+    /// All access to the stored closure is protected by `lock`.
+    private final class CancelHandle: @unchecked Sendable {
+        private let lock = NSLock()
+        private var _teardown: (() -> Void)?
+
+        func set(_ block: @escaping () -> Void) {
+            lock.lock()
+            _teardown = block
+            lock.unlock()
+        }
+
+        func fire() {
+            lock.lock()
+            let block = _teardown
+            _teardown = nil
+            lock.unlock()
+            block?()
+        }
     }
 
     /// Waits for a file to become stable (no active writes) using
@@ -56,23 +70,35 @@ enum FileStabilityChecker {
             return true
         }
 
-        let cancelRef = CancelRef()
+        let handle = CancelHandle()
 
         return await withTaskCancellationHandler {
             await withCheckedContinuation { continuation in
-                var hasResumed = false
+                // Dispatch all setup to the serial queue so every
+                // mutation of timers / hasResumed is confined to one
+                // thread, eliminating races with event callbacks.
+                queue.async {
+                    if Task.isCancelled {
+                        ILOG("FileStabilityChecker: Already cancelled for \(url.lastPathComponent)")
+                        close(fd)
+                        continuation.resume(returning: false)
+                        return
+                    }
 
-                let source = DispatchSource.makeFileSystemObjectSource(
-                    fileDescriptor: fd,
-                    eventMask: [.write, .extend, .attrib],
-                    queue: queue
-                )
+                    var hasResumed = false
+                    var stabilityTimer: DispatchWorkItem?
+                    var timeoutTimer: DispatchWorkItem?
 
-                var stabilityTimer: DispatchWorkItem?
-                var timeoutTimer: DispatchWorkItem?
+                    let source = DispatchSource.makeFileSystemObjectSource(
+                        fileDescriptor: fd,
+                        eventMask: [.write, .extend, .attrib],
+                        queue: queue
+                    )
 
-                let finish: (Bool) -> Void = { result in
-                    queue.async {
+                    /// Single-shot completion. Safe to call from any
+                    /// context — always dispatches to `queue`.
+                    let finish: (Bool) -> Void = { result in
+                        dispatchPrecondition(condition: .onQueue(queue))
                         guard !hasResumed else { return }
                         hasResumed = true
                         stabilityTimer?.cancel()
@@ -80,51 +106,49 @@ enum FileStabilityChecker {
                         source.cancel()
                         continuation.resume(returning: result)
                     }
-                }
 
-                cancelRef.finish = finish
-
-                if Task.isCancelled {
-                    ILOG("FileStabilityChecker: Already cancelled for \(url.lastPathComponent)")
-                    finish(false)
-                    return
-                }
-
-                func scheduleQuiesceTimer() {
-                    stabilityTimer?.cancel()
-                    let timer = DispatchWorkItem {
-                        ILOG("FileStabilityChecker: \(url.lastPathComponent) stable (no writes for \(quiesceInterval)s)")
-                        finish(true)
+                    handle.set {
+                        queue.async {
+                            ILOG("FileStabilityChecker: Task cancelled for \(url.lastPathComponent)")
+                            finish(false)
+                        }
                     }
-                    stabilityTimer = timer
-                    queue.asyncAfter(
-                        deadline: .now() + quiesceInterval,
-                        execute: timer
-                    )
-                }
 
-                source.setEventHandler {
-                    VLOG("FileStabilityChecker: Write activity on \(url.lastPathComponent), resetting timer")
+                    func scheduleQuiesceTimer() {
+                        stabilityTimer?.cancel()
+                        let timer = DispatchWorkItem {
+                            ILOG("FileStabilityChecker: \(url.lastPathComponent) stable (no writes for \(quiesceInterval)s)")
+                            finish(true)
+                        }
+                        stabilityTimer = timer
+                        queue.asyncAfter(
+                            deadline: .now() + quiesceInterval,
+                            execute: timer
+                        )
+                    }
+
+                    source.setEventHandler {
+                        VLOG("FileStabilityChecker: Write activity on \(url.lastPathComponent), resetting timer")
+                        scheduleQuiesceTimer()
+                    }
+
+                    source.setCancelHandler {
+                        close(fd)
+                    }
+
+                    let hardTimeout = DispatchWorkItem {
+                        WLOG("FileStabilityChecker: Timed out waiting for \(url.lastPathComponent) to stabilize")
+                        finish(false)
+                    }
+                    timeoutTimer = hardTimeout
+                    queue.asyncAfter(deadline: .now() + timeout, execute: hardTimeout)
+
+                    source.resume()
                     scheduleQuiesceTimer()
                 }
-
-                source.setCancelHandler {
-                    close(fd)
-                }
-
-                let hardTimeout = DispatchWorkItem {
-                    WLOG("FileStabilityChecker: Timed out waiting for \(url.lastPathComponent) to stabilize")
-                    finish(false)
-                }
-                timeoutTimer = hardTimeout
-                queue.asyncAfter(deadline: .now() + timeout, execute: hardTimeout)
-
-                source.resume()
-                scheduleQuiesceTimer()
             }
         } onCancel: {
-            ILOG("FileStabilityChecker: Task cancelled for \(url.lastPathComponent)")
-            cancelRef.finish?(false)
+            handle.fire()
         }
     }
 }
