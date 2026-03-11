@@ -97,14 +97,13 @@ public struct SkinCatalogBrowserView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    withAnimation {
-                        showingFilters.toggle()
-                    }
+                    showingFilters.toggle()
                 } label: {
                     Image(systemName: showingFilters ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
                         .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 }
                 .accessibilityLabel(showingFilters ? "Hide filters" : "Show filters")
+                .transaction { $0.animation = nil }
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -114,10 +113,11 @@ public struct SkinCatalogBrowserView: View {
                     Image(systemName: "arrow.clockwise")
                         .foregroundStyle(RetroTheme.retroHorizontalGradient)
                         .rotationEffect(.degrees(isRefreshing ? 360 : 0))
-                        .animation(isRefreshing ? .linear(duration: 0.8).repeatForever(autoreverses: false) : .default, value: isRefreshing)
+                        .animation(isRefreshing ? .linear(duration: 0.8).repeatForever(autoreverses: false) : .none, value: isRefreshing)
                 }
                 .disabled(isRefreshing)
                 .accessibilityLabel("Refresh catalog")
+                .transaction { $0.animation = nil }
             }
         }
         #endif
