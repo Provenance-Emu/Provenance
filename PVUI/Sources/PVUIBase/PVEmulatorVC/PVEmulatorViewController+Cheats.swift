@@ -34,6 +34,7 @@ extension PVEmulatorViewController {
         try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: .caseInsensitive)
     }()
 
+    @MainActor
     func setCheatState(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool, completion: @escaping CheatsCompletion) async {
         if let gameWithCheat = core as? GameWithCheat {
             // Normalize code: replace non-alphanumeric separators with '+', collapse multiples, strip leading/trailing
@@ -51,23 +52,29 @@ extension PVEmulatorViewController {
                     ELOG("Realm() failed")
                     return
                 }
-                guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
-                    completion(.error(.noCoreFound(self.core.coreIdentifier ?? "nil")))
+                // Look up coreIdentifier before any await to avoid @ThreadSafe re-resolution issues
+                let coreIdentifier = self.core.coreIdentifier
+                let gameMD5 = self.game.md5Hash
+                guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier) else {
+                    completion(.error(.noCoreFound(coreIdentifier ?? "nil")))
                     return
                 }
                 do {
-                    let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
+                    let baseFilename = "\(gameMD5).\(Date().timeIntervalSinceReferenceDate)"
                     let saveURL = cheatsPath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
                     let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
-                    var cheatsState: PVCheats?
+                    var frozenCheat: PVCheats?
                     try realm.write {
-                        let cs = PVCheats(withGame: self.game, core: core, code: modString, type: type, codeType: codeType, enabled: enabled, file: saveFile)
+                        // Look up game from the same realm instance to avoid cross-Realm relationship crash
+                        let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) ?? self.game
+                        let cs = PVCheats(withGame: realmGame, core: core, code: modString, type: type, codeType: codeType, enabled: enabled, file: saveFile)
                         realm.add(cs)
-                        cheatsState = cs
+                        // Freeze immediately so it can be safely used across thread boundaries
+                        frozenCheat = cs.freeze()
                     }
-                    if let cheatsState {
+                    if let frozenCheat, !frozenCheat.isInvalidated {
                         do {
-                            let url = try await LibrarySerializer.storeMetadata(cheatsState)
+                            let url = try await LibrarySerializer.storeMetadata(frozenCheat)
                             ILOG("Serialized cheats state metadata to (\(url.path))")
                         } catch {
                             ELOG("Failed to serialize cheats metadata. \(error)")
