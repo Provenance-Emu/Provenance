@@ -2596,11 +2596,38 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Use a more robust approach with retry logic
         var retryCount = 0
         let maxRetries = 3
+        let normalizedMD5 = md5.uppercased()
+        let recordHasAsset = recordDeclaresAssetPresence(record)
 
         while retryCount < maxRetries {
             do {
-                // Fetch game directly using RomDatabase with fresh realm access
-                guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
+                let updatedGame = try await withRealm { realm -> Bool in
+                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: normalizedMD5) else {
+                        return false
+                    }
+
+                    let applyUpdate = {
+                        liveGame.cloudRecordID = record.recordID.recordName
+                        if let modificationDate = record.modificationDate {
+                            liveGame.lastCloudSyncDate = modificationDate
+                        }
+                        liveGame.hasCloudAssets = recordHasAsset
+                    }
+
+                    try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
+                        if realm.isInWriteTransaction {
+                            applyUpdate()
+                        } else {
+                            try realm.write {
+                                applyUpdate()
+                            }
+                        }
+                    }
+
+                    return true
+                }
+
+                guard updatedGame else {
                     if retryCount < maxRetries - 1 {
                         WLOG("Game \(md5) not found in Realm (attempt \(retryCount + 1)/\(maxRetries)). Retrying...")
                         retryCount += 1
@@ -2612,22 +2639,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     }
                 }
 
-                // Perform update in write transaction
-                try RomDatabase.sharedInstance.writeTransaction {
-                    // Re-fetch the game inside the transaction to ensure we have a valid reference
-                    guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else {
-                        ELOG("Game \(md5) was invalidated during transaction.")
-                        return
-                    }
-
-                    liveGame.cloudRecordID = record.recordID.recordName
-                    if let modificationDate = record.modificationDate {
-                        liveGame.lastCloudSyncDate = modificationDate
-                    }
-                    liveGame.hasCloudAssets = recordDeclaresAssetPresence(record)
-
-                    VLOG("Successfully updated local game \(md5) with CloudKit record ID post-upload.")
-                }
+                VLOG("Successfully updated local game \(md5) with CloudKit record ID post-upload.")
 
                 // Success - break out of retry loop
                 break
