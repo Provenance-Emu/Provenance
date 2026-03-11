@@ -293,15 +293,15 @@ public final class DirectoryWatcher: ObservableObject {
             }
         }
 
-        if !fileReadable {
+        if fileReadable {
+            ILOG("Archive file \(filePath.lastPathComponent) verified as readable after \(maxReadAttempts) attempt(s)")
+        } else {
             let description = "Archive file not readable after \(maxReadAttempts) attempt(s): "
                 + "\(filePath.lastPathComponent) (size: \(fileSize) bytes)"
             ELOG("Failed to verify archive file readiness after retries: \(filePath.path)")
             throw NSError(domain: "DirectoryWatcher", code: -1,
                           userInfo: [NSLocalizedDescriptionKey: description])
         }
-
-        ILOG("Archive file \(filePath.lastPathComponent) verified as readable after \(maxReadAttempts) attempt(s)")
 
         guard !filePath.path.contains("MACOSX") else {
             ILOG("Skipping MACOSX file: \(filePath.path)")
