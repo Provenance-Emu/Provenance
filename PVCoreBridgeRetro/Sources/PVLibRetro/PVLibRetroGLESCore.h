@@ -17,8 +17,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
-//#pragma clang diagnostic push
-//#pragma clang diagnostic error "-Wall"
+/// Diagnostic push/pop are handled in the .m file, not here.
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -75,5 +74,3 @@ __attribute__((weak_import))
 - (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
 
 @end
-
-#pragma clang diagnostic pop

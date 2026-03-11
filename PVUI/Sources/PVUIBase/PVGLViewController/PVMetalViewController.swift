@@ -81,7 +81,7 @@ enum EffectFilterShaderError: Error {
 
 // MARK: - PVMetalViewController
 final
-class PVMetalViewController : PVGPUViewController, PVRenderDelegate, PVRenderDelegateIOSurface, MTKViewDelegate {
+class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDelegate {
     func setPreferredRefreshRate(_ rate: Float) {
         ILOG("Setting preferred refresh rate to \(rate) Hz")
 
@@ -143,20 +143,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, PVRenderDel
             guard alternateThreadFramebufferBack > 0 else { return nil }
             return NSNumber(value: alternateThreadFramebufferBack) as AnyObject
         }
-    }
-
-    /// The IOSurface backing the GL→Metal shared texture. Other EAGLContexts
-    /// can create their own textures/FBOs backed by this same IOSurface for
-    /// zero-copy rendering into the Metal display path.
-    var renderIOSurface: IOSurfaceRef? {
-        return backingIOSurface
-    }
-
-    /// Pixel dimensions of the IOSurface-backed render target.
-    var renderIOSurfaceSize: CGSize {
-        guard let surface = backingIOSurface else { return .zero }
-        return CGSize(width: IOSurfaceGetWidth(surface),
-                      height: IOSurfaceGetHeight(surface))
     }
 
     weak var emulatorCore: PVEmulatorCore?
@@ -3397,6 +3383,25 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, PVRenderDel
         }
     }
 }
+
+#if canImport(IOSurface)
+/// PVRenderDelegateIOSurface conformance: exposes the IOSurface backing the
+/// GL→Metal shared texture so that emu-thread GL contexts can create their own
+/// FBO backed by the same IOSurface for zero-copy rendering.
+extension PVMetalViewController: PVRenderDelegateIOSurface {
+    /// The IOSurface backing the GL→Metal shared texture.
+    var renderIOSurface: IOSurfaceRef? {
+        return backingIOSurface
+    }
+
+    /// Pixel dimensions of the IOSurface-backed render target.
+    var renderIOSurfaceSize: CGSize {
+        guard let surface = backingIOSurface else { return .zero }
+        return CGSize(width: IOSurfaceGetWidth(surface),
+                      height: IOSurfaceGetHeight(surface))
+    }
+}
+#endif
 
 /// Error types for Metal view controller operations
 enum MetalViewControllerError: Error {

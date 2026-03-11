@@ -11,10 +11,10 @@ import Foundation
 #if canImport(IOSurface)
 import IOSurface
 #endif
-//#if USE_METAL
 import Metal
+#if canImport(MetalKit)
 import MetalKit
-//#endif
+#endif
 
 @objc public protocol PVRenderDelegate {
     // Required methods
@@ -32,14 +32,15 @@ import MetalKit
     @objc optional var presentationFramebuffer: AnyObject? { get } // GLuint
 
     @objc func setPreferredRefreshRate(_ : Float)
-    // Optional property
-//#if USE_METAL
+#if canImport(MetalKit)
     @objc optional var mtlView: MTKView? { get set }
-//#endif
-    
+#endif
+
+#if canImport(OpenGLES)
     @objc optional var glContext: EAGLContext? { get }
     @objc optional var alternateThreadGLContext: EAGLContext? { get }
     @objc optional var alternateThreadBufferCopyGLContext: EAGLContext? { get }
+#endif
 }
 
 #if canImport(IOSurface)
