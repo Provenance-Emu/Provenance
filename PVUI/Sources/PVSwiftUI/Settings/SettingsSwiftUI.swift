@@ -2012,6 +2012,24 @@ private struct DeltaSkinsSection: View {
                             icon: .sfSymbol("folder.badge.gearshape"))
             }
 
+            // Button to browse the skin catalog
+            NavigationLink {
+                SkinCatalogBrowserView()
+            } label: {
+                SettingsRow(title: "Skin Browser",
+                            subtitle: "Browse and download skins from the community catalog.",
+                            icon: .sfSymbol("square.grid.2x2"))
+            }
+
+            // Button to open skin documentation in the built-in wiki
+            NavigationLink {
+                WikiPageView(path: "info/controller-skins.md", title: "Skin Documentation")
+            } label: {
+                SettingsRow(title: "Skin Documentation",
+                            subtitle: "Learn how to create and install controller skins.",
+                            icon: .sfSymbol("book.pages"))
+            }
+
             buttonSoundEFfect
 
             buttonTouchFeedback
