@@ -236,15 +236,15 @@ static void* hw_get_proc_address(const char *symbol);
 
     self.shouldStop = YES;
     dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
+
+    /// Wait for the emu thread to exit — it calls contextDestroy on its
+    /// own thread before signaling, ensuring GL context ownership is safe.
     dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 
     [self.frontBufferCondition lock];
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
 
-    /// contextDestroy calls the core's context_destroy then cleans up frontend resources
-    [self makeGLContextCurrent];
-    [self contextDestroy];
     [super stopEmulation];
 }
 
@@ -345,13 +345,9 @@ static bool video_driver_cached_frame(void)
         /// Capture the presentation FBO that the render delegate just created
         [self captureRenderDelegateFBO];
 
-        /// Fire any deferred context_reset now that the FBO is ready.
-        /// This calls the core's stored context_reset after frontend setup.
-        if (_pendingContextReset && _coreContextReset) {
-            ILOG(@"Firing deferred context_reset now that FBO is ready (FBO=%u)", _presentationFBO);
-            [self contextReset];
-            _pendingContextReset = NO;
-        }
+        /// context_reset is NOT fired here — it must run on the emu thread
+        /// because cores assume context_reset and retro_run share the same thread/context.
+        /// libretroMain will fire it after making hardware_context current.
 
         [NSThread detachNewThreadSelector:@selector(runGLESEmuThread) toTarget:self withObject:nil];
 
@@ -391,8 +387,16 @@ static bool video_driver_cached_frame(void)
 
     MakeCurrentThreadRealTime();
 
-    /// Make the GL context current on the emu thread so retro_run() can issue GL calls
+    /// Make the core's dedicated GL context current on the emu thread
     [self makeGLContextCurrent];
+
+    /// Fire any deferred context_reset on the emu thread — cores assume
+    /// context_reset and retro_run share the same thread and GL context.
+    if (_pendingContextReset && _coreContextReset) {
+        ILOG(@"Firing deferred context_reset on emu thread (FBO=%u)", _presentationFBO);
+        [self contextReset];
+        _pendingContextReset = NO;
+    }
 
     has_init = true;
 
@@ -421,6 +425,10 @@ static bool video_driver_cached_frame(void)
         if (core_poll_type == POLL_TYPE_LATE && !core_input_polled)
             input_poll();
     } while(!self.shouldStop);
+
+    /// Tear down HW context on the emu thread that owns it, before signaling exit.
+    /// This ensures no GL context thread-safety races with the render thread.
+    [self contextDestroy];
 
     has_init = false;
 
@@ -790,18 +798,13 @@ static void* hw_get_proc_address(const char *symbol) {
 
 #pragma mark - GL Context Helpers
 
-/// Makes the hardware GL context current on the calling thread.
-/// For iOS/tvOS this uses the alternateThreadGLContext from the render delegate
-/// (which shares the same sharegroup as the IOSurface-backed FBO context).
+/// Makes the core's dedicated GL context current on the calling thread.
+/// Uses hardware_context (sharegroup-linked to the render delegate) rather than
+/// alternateThreadGLContext — each EAGLContext must only be current on one
+/// thread at a time, and the render thread already owns alternateThreadGLContext.
 - (void)makeGLContextCurrent {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-    EAGLContext *ctx = nil;
-    if ([self.renderDelegate respondsToSelector:@selector(alternateThreadGLContext)]) {
-        ctx = [self.renderDelegate alternateThreadGLContext];
-    }
-    if (!ctx) {
-        ctx = hardware_context;
-    }
+    EAGLContext *ctx = hardware_context;
     if (ctx && [EAGLContext currentContext] != ctx) {
         [EAGLContext setCurrentContext:ctx];
     }

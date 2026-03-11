@@ -1677,8 +1677,8 @@ static bool environment_callback(unsigned cmd, void *data) {
         }
         case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS: {
             uint64_t *quirks = (uint64_t *)data;
-            ILOG(@"Environ SET_SERIALIZATION_QUIRKS: 0x%llx", *quirks);
-            return true;
+            ILOG(@"Environ SET_SERIALIZATION_QUIRKS (unsupported): 0x%llx", *quirks);
+            return false;
         }
         case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT: {
             /// Frontend supports shared GL contexts — we do via EAGLContext sharegroups
@@ -1967,8 +1967,13 @@ static bool environment_callback(unsigned cmd, void *data) {
             return false;
         }
         case RETRO_ENVIRONMENT_SHUTDOWN: {
-            ILOG(@"Environ SHUTDOWN requested");
-            [strongCurrent stopEmulation];
+            /// Dispatch async: SHUTDOWN can be called from the emu thread inside
+            /// retro_run, and stopEmulation blocks on coreWaitForExitSemaphore
+            /// which is signaled when the emu thread exits — synchronous call deadlocks.
+            ILOG(@"Environ SHUTDOWN requested — dispatching async");
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [strongCurrent stopEmulation];
+            });
             return true;
         }
         case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: {
