@@ -177,7 +177,9 @@ public class SpotlightHelper {
             
             // Create attribute set
             let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
-            attributeSet.displayName = "Save State: \(game.title)"
+            let saveStateTitle = "Save State: \(game.title)"
+            attributeSet.title = saveStateTitle
+            attributeSet.displayName = saveStateTitle
             attributeSet.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
             
             // Add date information

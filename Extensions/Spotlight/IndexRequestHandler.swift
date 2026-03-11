@@ -57,9 +57,16 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         // Use the shared RomDatabase instance to access Realm safely
         let database = RomDatabase.sharedInstance
         let realm = database.realm
-        
-        // Get games with specific identifiers and freeze them
-        let predicate = NSPredicate(format: "md5Hash IN %@", identifiers.map { $0.uppercased() })
+
+        // Identifiers are in the format "org.provenance-emu.game.MD5HASH" — extract just the MD5
+        let md5Hashes = identifiers.compactMap { id -> String? in
+            guard id.hasPrefix("org.provenance-emu.game.") else { return nil }
+            return String(id.dropFirst("org.provenance-emu.game.".count)).uppercased()
+        }
+
+        guard !md5Hashes.isEmpty else { return [] }
+
+        let predicate = NSPredicate(format: "md5Hash IN %@", md5Hashes)
         return realm.objects(PVGame.self).filter(predicate).map { $0.freeze() }
     }
     
