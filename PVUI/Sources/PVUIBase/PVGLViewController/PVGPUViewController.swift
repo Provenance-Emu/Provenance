@@ -141,12 +141,13 @@ public class PVGPUViewController: BaseViewController {
     /// Override GLKViewController's timeSinceLastDraw property
     public override var timeSinceLastDraw: TimeInterval {
         get {
-            frameTimestampsLock.withLock {
-                guard !frameTimestamps.isEmpty else { return super.timeSinceLastDraw }
-                /// Use efficient sum calculation
-                let sum = frameTimestamps.reduce(0, +)
-                return sum / Double(frameTimestamps.count)
-            }
+            // Snapshot timestamps under the lock, then compute outside it.
+            // Calling super.timeSinceLastDraw inside withLock risks lock-order
+            // inversion with GLKit internals and is flagged by #2982.
+            let timestamps = frameTimestampsLock.withLock { frameTimestamps }
+            guard !timestamps.isEmpty else { return super.timeSinceLastDraw }
+            let sum = timestamps.reduce(0, +)
+            return sum / Double(timestamps.count)
         }
     }
     #else
@@ -172,12 +173,14 @@ public class PVGPUViewController: BaseViewController {
     /// Instead, provide a computed property that calculates from timestamps
     @objc public var calculatedFramesPerSecond: Double {
         get {
-            frameTimestampsLock.withLock {
-                guard !frameTimestamps.isEmpty else { return Double(super.framesPerSecond) }
-                let sum = frameTimestamps.reduce(0, +)
-                let avgFrameTime = sum / Double(frameTimestamps.count)
-                return avgFrameTime > 0 ? 1.0 / avgFrameTime : Double(super.framesPerSecond)
-            }
+            // Snapshot timestamps under the lock, then compute outside it.
+            // Calling super.framesPerSecond inside withLock risks lock-order
+            // inversion with GLKit internals (#2982).
+            let timestamps = frameTimestampsLock.withLock { frameTimestamps }
+            guard !timestamps.isEmpty else { return Double(super.framesPerSecond) }
+            let sum = timestamps.reduce(0, +)
+            let avgFrameTime = sum / Double(timestamps.count)
+            return avgFrameTime > 0 ? 1.0 / avgFrameTime : Double(super.framesPerSecond)
         }
     }
     #else

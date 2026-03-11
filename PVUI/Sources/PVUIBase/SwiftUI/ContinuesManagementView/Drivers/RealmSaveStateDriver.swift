@@ -362,12 +362,17 @@ public class RealmSaveStateDriver: SaveStateDriver {
         // Skip updates during initialization to avoid redundant work
         guard isInitialSetupComplete else { return }
 
-        // Cancel any ongoing conversion task
-        currentConversionTask?.cancel()
-
-        // Generate a new task ID
+        // Cancel any in-flight task and atomically capture the new task ID under
+        // the lock to prevent a data race with concurrent callers (e.g. processingQueue
+        // vs @MainActor observers) — fixes the TSAN data race reported in #2982.
         let taskId = UUID()
-        taskLock.withLock { currentTaskId = taskId }
+        let previousTask: Task<Void, Never>? = taskLock.withLock {
+            let old = currentConversionTask
+            currentConversionTask = nil
+            currentTaskId = taskId
+            return old
+        }
+        previousTask?.cancel()
 
         // Create a new task for this update
         let task = Task { [weak self] in
@@ -506,9 +511,15 @@ public class RealmSaveStateDriver: SaveStateDriver {
                 isFavorite: realmSaveState.isFavorite
             )
 
+            // Calculate size BEFORE acquiring the lock.
+            // PVFile.size performs file I/O and may call realm.write; holding
+            // cacheLock during I/O causes priority inversion on the unfair lock and
+            // can produce the app-hang symptom described in #2982.
+            let size = realmSaveState.size
+
             // Cache the size and view model
             cacheLock.withLock {
-                sizeCache[realmSaveState.id] = realmSaveState.size
+                sizeCache[realmSaveState.id] = size
                 viewModelCache[realmSaveState.id] = viewModel
             }
 
