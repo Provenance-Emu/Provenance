@@ -71,7 +71,33 @@ public class AppBootupState: ObservableObject {
             }
             return false
         }
+
+        /// Deterministic progress fraction (0.0–1.0) for this boot stage.
+        ///
+        /// Use this to drive real progress UI instead of fake animations.
+        /// Intermediate values between states can be supplied via
+        /// ``AppBootupState/updateTaskProgress(_:fraction:)`` for finer-grained
+        /// reporting within a stage.
+        public var baseProgress: Double {
+            switch self {
+            case .notStarted:             return 0.0
+            case .initializingDatabase:   return 0.10
+            case .databaseInitialized:    return 0.40
+            case .initializingLibrary:    return 0.60
+            case .completed:              return 1.0
+            case .error:                  return 0.0
+            }
+        }
     }
+
+    /// The name of the task currently executing, suitable for display in the boot UI.
+    @Published public private(set) var currentTaskName: String = ""
+
+    /// Real boot progress in the range 0.0–1.0.
+    ///
+    /// Automatically advances to ``State/baseProgress`` on each state transition.
+    /// Call ``updateTaskProgress(_:fraction:)`` for sub-step granularity within a stage.
+    @Published public private(set) var stateProgress: Double = 0.0
 
     /// The current state of the bootup process
     @Published public private(set) var currentState: State = .notStarted {
@@ -97,6 +123,33 @@ public class AppBootupState: ObservableObject {
         }
     }
 
+    /// Update the displayed task name and optional sub-step progress within the current stage.
+    ///
+    /// - Parameters:
+    ///   - taskName: Human-readable name of the current sub-task (e.g. "Scanning ROMs…").
+    ///   - fraction: Fine-grained progress 0.0–1.0 within the current boot stage.
+    ///     The final ``stateProgress`` value is interpolated between the current
+    ///     state's ``State/baseProgress`` and the next stage's base progress.
+    public func updateTaskProgress(_ taskName: String, fraction: Double = 0.0) {
+        currentTaskName = taskName
+        let base = currentState.baseProgress
+        let next = nextStateBaseProgress(after: currentState)
+        stateProgress = base + (next - base) * max(0, min(1, fraction))
+        objectWillChange.send()
+    }
+
+    /// Returns the base progress of the state that follows `state` in the normal
+    /// boot sequence (used for interpolating sub-step progress).
+    private func nextStateBaseProgress(after state: State) -> Double {
+        switch state {
+        case .notStarted:           return State.initializingDatabase.baseProgress
+        case .initializingDatabase: return State.databaseInitialized.baseProgress
+        case .databaseInitialized:  return State.initializingLibrary.baseProgress
+        case .initializingLibrary:  return State.completed.baseProgress
+        case .completed, .error:    return state.baseProgress
+        }
+    }
+
     /// Function to transition to a new state
     public func transition(to state: State) {
         // Check if we're trying to transition when already completed
@@ -108,6 +161,10 @@ public class AppBootupState: ObservableObject {
 
         if state != currentState {
             ILOG("AppBootupState: Transitioning from \(currentState.localizedDescription) to \(state.localizedDescription)")
+
+            // Advance progress to the new state's base value
+            stateProgress = state.baseProgress
+            currentTaskName = state.localizedDescription
 
             // Update the state
             currentState = state

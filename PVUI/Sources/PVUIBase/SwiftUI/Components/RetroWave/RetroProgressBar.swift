@@ -9,13 +9,21 @@ import SwiftUI
 
 // Retrowave progress bar
 public struct RetroProgressBar: View {
-    @State private var progress: CGFloat = 0
-    
+    /// When set, the bar tracks this real value instead of animating.
+    private let realProgress: Double?
+
+    @State private var animatedProgress: CGFloat = 0
+
     // Accessibility setting for reduce motion
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
-    public init() {}
-    
+
+    /// Create a progress bar.
+    /// - Parameter progress: If `nil`, the bar uses a looping fake animation
+    ///   (legacy behaviour). Pass a value in 0.0–1.0 to show real progress.
+    public init(progress: Double? = nil) {
+        self.realProgress = progress
+    }
+
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
@@ -26,21 +34,31 @@ public struct RetroProgressBar: View {
                         startPoint: .leading,
                         endPoint: .trailing
                     ))
-                    .frame(width: geometry.size.width * progress, height: geometry.size.height)
+                    .frame(
+                        width: geometry.size.width * displayProgress,
+                        height: geometry.size.height
+                    )
                     .cornerRadius(4)
+                    .animation(.easeInOut(duration: 0.3), value: displayProgress)
             }
         }
         .onAppear {
+            guard realProgress == nil else { return }
+            // Legacy fake animation — only used when no real progress is supplied.
             if reduceMotion {
-                // If reduce motion is enabled, set a static progress value
-                // Use a value between 0.5-0.7 to indicate progress without animation
-                progress = 0.6
+                animatedProgress = 0.6
             } else {
-                // Animate progress only if reduce motion is disabled
                 withAnimation(Animation.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
-                    progress = 1.0
+                    animatedProgress = 1.0
                 }
             }
         }
+    }
+
+    private var displayProgress: CGFloat {
+        if let real = realProgress {
+            return CGFloat(max(0, min(1, real)))
+        }
+        return animatedProgress
     }
 }
