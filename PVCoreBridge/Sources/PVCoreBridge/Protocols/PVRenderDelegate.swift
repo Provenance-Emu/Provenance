@@ -16,7 +16,7 @@ import Metal
 import MetalKit
 #endif
 
-@objc public protocol PVRenderDelegate {
+@objc public protocol PVRenderDelegate: NSObjectProtocol {
     // Required methods
     @objc optional func startRenderingOnAlternateThread()
     @objc optional func didRenderFrameOnAlternateThread()
