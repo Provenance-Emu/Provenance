@@ -65,6 +65,11 @@ extern void MakeCurrentThreadRealTime(void);
     enum retro_hw_context_type current_context_type;
     BOOL hardware_context_active;
 
+    /// Core-provided callbacks — stored here because the frontend must not
+    /// overwrite the struct fields the core set (per libretro.h spec).
+    retro_hw_context_reset_t _coreContextReset;
+    retro_hw_context_reset_t _coreContextDestroy;
+
     /// Tracks whether context_reset has been deferred until FBO is ready
     BOOL _pendingContextReset;
 
@@ -103,9 +108,7 @@ void gl_swap() {
     [current swapBuffers];
 }
 
-// Forward declarations for hardware rendering callbacks
-static void hw_context_reset(void);
-static void hw_context_destroy(void);
+// Forward declarations for hardware rendering callbacks (frontend-owned fields)
 static uintptr_t hw_get_current_framebuffer(void);
 static void* hw_get_proc_address(const char *symbol);
 
@@ -121,6 +124,8 @@ static void* hw_get_proc_address(const char *symbol);
         current_context_type = RETRO_HW_CONTEXT_NONE;
         hardware_context_active = NO;
         hardware_context = nil;
+        _coreContextReset = NULL;
+        _coreContextDestroy = NULL;
         _pendingContextReset = NO;
         _presentationFBO = 0;
 
@@ -229,12 +234,6 @@ static void* hw_get_proc_address(const char *symbol);
 - (void)stopEmulation {
     has_init = false;
 
-    /// Call context_destroy before tearing down
-    if (hw_render_callback && hw_render_callback->context_destroy) {
-        [self makeGLContextCurrent];
-        hw_render_callback->context_destroy();
-    }
-
     self.shouldStop = YES;
     dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
     dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
@@ -243,7 +242,9 @@ static void* hw_get_proc_address(const char *symbol);
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
 
-    [self destroyHardwareContext];
+    /// contextDestroy calls the core's context_destroy then cleans up frontend resources
+    [self makeGLContextCurrent];
+    [self contextDestroy];
     [super stopEmulation];
 }
 
@@ -344,11 +345,11 @@ static bool video_driver_cached_frame(void)
         /// Capture the presentation FBO that the render delegate just created
         [self captureRenderDelegateFBO];
 
-        /// Fire any deferred context_reset now that the FBO is ready
-        if (_pendingContextReset && hw_render_callback && hw_render_callback->context_reset) {
+        /// Fire any deferred context_reset now that the FBO is ready.
+        /// This calls the core's stored context_reset after frontend setup.
+        if (_pendingContextReset && _coreContextReset) {
             ILOG(@"Firing deferred context_reset now that FBO is ready (FBO=%u)", _presentationFBO);
-            [self makeGLContextCurrent];
-            hw_render_callback->context_reset();
+            [self contextReset];
             _pendingContextReset = NO;
         }
 
@@ -433,9 +434,11 @@ static bool video_driver_cached_frame(void)
 #pragma mark - Hardware Rendering Support
 
 /// Called from the environment callback when a core requests hardware rendering.
-/// Sets up the GL/Vulkan context and wires the libretro callback pointers.
-/// context_reset is deferred until the render delegate has created the FBO
-/// (happens in runGLESRenderThread after startRenderingOnAlternateThread).
+/// Per libretro.h, context_reset and context_destroy are set by the core and
+/// invoked by the frontend — we must NOT overwrite them. We store the core's
+/// callbacks and only set the frontend-owned fields (get_current_framebuffer,
+/// get_proc_address). The core's context_reset is deferred until the render
+/// delegate creates the FBO (in runGLESRenderThread).
 - (BOOL)setHardwareRenderCallback:(NSValue *)callbackValue {
     if (!callbackValue) {
         ELOG(@"Hardware render callback value is NULL");
@@ -456,8 +459,11 @@ static bool video_driver_cached_frame(void)
          hw_render_callback->stencil,
          hw_render_callback->bottom_left_origin);
 
-    hw_render_callback->context_reset = hw_context_reset;
-    hw_render_callback->context_destroy = hw_context_destroy;
+    /// Store core-provided callbacks before touching the struct
+    _coreContextReset = hw_render_callback->context_reset;
+    _coreContextDestroy = hw_render_callback->context_destroy;
+
+    /// Only set the fields the frontend is responsible for providing
     hw_render_callback->get_current_framebuffer = hw_get_current_framebuffer;
     hw_render_callback->get_proc_address = (retro_hw_get_proc_address_t)hw_get_proc_address;
 
@@ -676,6 +682,8 @@ static bool video_driver_cached_frame(void)
     hardware_context_active = NO;
     current_context_type = RETRO_HW_CONTEXT_NONE;
     hw_render_callback = NULL;
+    _coreContextReset = NULL;
+    _coreContextDestroy = NULL;
     _presentationFBO = 0;
     _pendingContextReset = NO;
 
@@ -684,23 +692,7 @@ static bool video_driver_cached_frame(void)
 
 #pragma mark - Hardware Rendering Callbacks
 
-// C callback functions that libretro will call
-static void hw_context_reset(void) {
-    GET_CURRENT_OR_RETURN();
-    if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
-        PVLibRetroGLESCoreBridge *glesCore = (PVLibRetroGLESCoreBridge *)current;
-        [glesCore contextReset];
-    }
-}
-
-static void hw_context_destroy(void) {
-    GET_CURRENT_OR_RETURN();
-    if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
-        PVLibRetroGLESCoreBridge *glesCore = (PVLibRetroGLESCoreBridge *)current;
-        [glesCore contextDestroy];
-    }
-}
-
+// C callback functions set on the hw_render_callback struct (frontend-owned)
 static uintptr_t hw_get_current_framebuffer(void) {
     GET_CURRENT_OR_RETURN(0);
     if ([current isKindOfClass:[PVLibRetroGLESCoreBridge class]]) {
@@ -720,7 +712,8 @@ static void* hw_get_proc_address(const char *symbol) {
 }
 
 /// Called when the GL/Vulkan context has been created or recreated.
-/// Makes the context current and binds the presentation FBO.
+/// Performs frontend housekeeping (make context current, bind FBO) then
+/// invokes the core's stored context_reset so it can create its GL resources.
 - (void)contextReset {
     ILOG(@"Hardware context reset called (context_type=%d, FBO=%u)", current_context_type, _presentationFBO);
 
@@ -743,10 +736,23 @@ static void* hw_get_proc_address(const char *symbol) {
         default:
             break;
     }
+
+    /// Invoke the core's context_reset so it can initialize its GL/Vulkan resources
+    if (_coreContextReset) {
+        ILOG(@"Invoking core's context_reset callback");
+        _coreContextReset();
+    }
 }
 
+/// Invokes the core's context_destroy callback then tears down frontend resources.
 - (void)contextDestroy {
     ILOG(@"Hardware context destroy called");
+
+    if (_coreContextDestroy) {
+        ILOG(@"Invoking core's context_destroy callback");
+        _coreContextDestroy();
+    }
+
     [self destroyHardwareContext];
 }
 

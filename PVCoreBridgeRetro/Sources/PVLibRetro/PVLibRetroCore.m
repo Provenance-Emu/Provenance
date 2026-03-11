@@ -1672,10 +1672,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             ILOG(@"Environ SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: type=%d, version=%u",
                  iface->interface_type, iface->interface_version);
 
-            if (!video_driver_set_context_negotiation_interface(iface)) {
-                WLOG(@"video_driver_set_context_negotiation_interface reported unsupported interface");
-                return false;
-            }
+            video_driver_set_context_negotiation_interface(iface);
             return true;
         }
         case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS: {
