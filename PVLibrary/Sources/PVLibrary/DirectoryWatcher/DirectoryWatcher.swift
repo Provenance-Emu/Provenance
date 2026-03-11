@@ -446,7 +446,7 @@ public final class DirectoryWatcher: ObservableObject {
                     "\(moveResult.failedCount) file(s) could not be moved from temp directory"
                 )
                 updateExtractionStatus(.failed(error: partialError))
-                Task { @MainActor in
+                await MainActor.run {
                     NotificationCenter.default.post(
                         name: .archiveExtractionFailed,
                         object: nil,
