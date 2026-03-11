@@ -460,6 +460,7 @@ public final class DirectoryWatcher: ObservableObject {
                         ]
                     )
                 }
+                throw partialError
             }
         } catch {
             // Log detailed error information
