@@ -206,6 +206,9 @@ let targets: [Target] = [
       "mednafen"
     ],
     cSettings: [
+      .unsafeFlags([
+        "-fcxx-exceptions",
+      ]),
       .headerSearchPath("./include"),
       .headerSearchPath("./include/MednafenGameCoreC"),
       .headerSearchPath("../mednafen/mednafen/include_mednafen"),

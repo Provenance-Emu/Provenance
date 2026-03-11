@@ -94,15 +94,12 @@ class CppString {
                         break
                     }
                     
-#warning("TODO: Fix Swift String to C++ std::string")
-                    
-//                    let decoded = game.pointee.CheatInfo.pointee.CheatFormatInfo.pointee[Int(formatIndex)].DecodeCheat(cheatCode.cString(using: .utf8)!, &patch)
-//                    
-//                    if !decoded {
-//                        throw MednafenCheatError.invalidCode
-//                    }
-//                    patch.status = enabled
-                    
+                    let gamePtr = getGame()
+                    let _ = withUnsafeMutablePointer(to: &patch) { patchPtr in
+                        mednafen_decodeCheat(gamePtr, formatIndex, cheatCode, patchPtr)
+                    }
+                    patch.status = enabled
+
                     if cheatIndex < Mednafen.MDFNI_CheatSearchGetCount() {
                         Mednafen.MDFNI_SetCheat(uint32(cheatIndex), patch)
                         Mednafen.MDFNI_ToggleCheat(uint32(cheatIndex))
