@@ -12,12 +12,14 @@
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 @protocol PVMSXSystemResponderClient;
+@protocol KeyboardResponder;
+@protocol MouseResponder;
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
 __attribute__((visibility("default")))
-@interface PVfMSXCore : PVLibRetroCoreBridge <PVMSXSystemResponderClient> {
+@interface PVfMSXCoreBridge : PVLibRetroCoreBridge <PVMSXSystemResponderClient, KeyboardResponder, MouseResponder> {
 //	uint8_t padData[4][PVDOSButtonCount];
 //	int8_t xAxis[4];
 //	int8_t yAxis[4];
