@@ -401,10 +401,23 @@ extension PVRetroArchCoreCore: PVDOSSystemResponderClient {
         (_bridge as? PVDOSSystemResponderClient)?.keyUp(key)
     }
     public var gameSupportsMouse: Bool {
-        (_bridge as? PVDOSSystemResponderClient)?.gameSupportsMouse ?? false
+        // The DOSControls ObjC category declares <PVDOSSystemResponderClient> on
+        // PVRetroArchCoreBridge, so `_bridge as? PVDOSSystemResponderClient` succeeds
+        // for *every* RetroArch instance and its `gameSupportsMouse` always returns YES.
+        // Gate on systemIdentifier so the virtual-mouse overlay only appears for
+        // systems that genuinely use a pointing device.
+        let mouseSystemIDs: Set<String> = [
+            "com.provenance.dos"
+        ]
+        guard mouseSystemIDs.contains(systemIdentifier ?? "") else { return false }
+        return (_bridge as? PVDOSSystemResponderClient)?.gameSupportsMouse ?? false
     }
     public var requiresMouse: Bool {
-        (_bridge as? PVDOSSystemResponderClient)?.requiresMouse ?? false
+        let mouseSystemIDs: Set<String> = [
+            "com.provenance.dos"
+        ]
+        guard mouseSystemIDs.contains(systemIdentifier ?? "") else { return false }
+        return (_bridge as? PVDOSSystemResponderClient)?.requiresMouse ?? false
     }
     public func didScroll(_ cursor: GCDeviceCursor) {
         (_bridge as? PVDOSSystemResponderClient)?.didScroll(cursor)

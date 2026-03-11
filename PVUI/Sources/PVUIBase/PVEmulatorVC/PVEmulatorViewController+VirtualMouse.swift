@@ -69,6 +69,9 @@ extension PVEmulatorViewController {
         let trackpad = TouchTrackpadView(frame: view.bounds)
         trackpad.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         trackpad.mouseResponder = mouseCore
+        // Limit touch capture to the game viewport so skin buttons and the
+        // virtual keyboard remain interactive outside the display area.
+        trackpad.gameViewRef = gpuViewController.view
         view.addSubview(trackpad)
         touchTrackpadView = trackpad
 

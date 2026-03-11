@@ -1357,6 +1357,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 view.insertSubview(gpuView, belowSubview: skinContainer)
             }
             view.bringSubviewToFront(skinContainer)
+            #if !os(tvOS)
+            // After re-stacking the skin container, restore virtual input overlays
+            // (keyboard, trackpad, cursor) above it so they remain interactive.
+            bringVirtualInputOverlaysToFront()
+            #endif
         }
         #endif
     }

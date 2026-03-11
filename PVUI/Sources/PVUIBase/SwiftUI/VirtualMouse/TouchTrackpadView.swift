@@ -52,6 +52,16 @@ public final class TouchTrackpadView: UIView {
     /// Increase to make the cursor move faster relative to finger speed.
     public var sensitivity: CGFloat = 1.5
 
+    // MARK: Public configuration (viewport gating)
+
+    /// Weak reference to the GPU / game-screen view.
+    ///
+    /// When non-nil, `hitTest` only returns `self` for touch points that fall
+    /// within this view's frame (converted to the trackpad's coordinate space).
+    /// Touches outside the game viewport — e.g. on controller-skin buttons or
+    /// the virtual keyboard panel — pass straight through to the views beneath.
+    public weak var gameViewRef: UIView?
+
     // MARK: Private state
 
     /// Accumulated normalised cursor position (0–1 in each axis).
@@ -94,27 +104,34 @@ public final class TouchTrackpadView: UIView {
         addGestureRecognizer(longPress)
     }
 
-    // MARK: - Hit-testing: defer to sibling interactive views (e.g. controller skin buttons)
-    //
-    // If a sibling view in the parent hierarchy would respond to this touch
-    // (e.g. an on-screen button in the UIKit controller skin), pass the touch
-    // through rather than consuming it ourselves.  This prevents the trackpad
-    // from blocking button presses when it is laid out over a controller skin.
+    // MARK: - Hit-testing: only capture inside the game viewport
 
+    /// Returns `self` only when the touch falls within `gameViewRef`'s on-screen
+    /// bounds (i.e. the actual game display area).  Touches outside that region —
+    /// on controller-skin buttons, the virtual keyboard, or the menu bar — are
+    /// returned as `nil` so UIKit continues searching downward in the view hierarchy.
+    ///
+    /// This replaces an earlier sibling-iteration approach that was unreliable
+    /// because transparent container views (skinContainerView, etc.) respond to
+    /// hitTest even for empty/transparent pixels, causing the trackpad to
+    /// incorrectly pass through *all* touches including game-viewport ones.
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        // If any interactive sibling (e.g. an on-screen controller button) claims
-        // this touch location, yield to it so the trackpad doesn't block presses.
-        if let siblings = superview?.subviews {
-            for sibling in siblings.reversed() where sibling !== self {
-                guard sibling.isUserInteractionEnabled,
-                      !sibling.isHidden,
-                      sibling.alpha > 0 else { continue }
-                let siblingPoint = sibling.convert(point, from: self)
-                if sibling.hitTest(siblingPoint, with: event) != nil {
-                    return nil
-                }
+        guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
+        guard isPointInside(point, with: event) else { return nil }
+
+        // If we have a game-view reference, gate touch capture to that region.
+        if let gameView = gameViewRef {
+            // Convert the game view's frame from its superview's space to ours.
+            let gameFrameInSelf: CGRect
+            if let gameSuper = gameView.superview {
+                gameFrameInSelf = convert(gameView.frame, from: gameSuper)
+            } else {
+                gameFrameInSelf = gameView.frame
             }
+            // Only claim this touch if it is inside the game viewport.
+            guard gameFrameInSelf.contains(point) else { return nil }
         }
+
         return super.hitTest(point, with: event)
     }
 

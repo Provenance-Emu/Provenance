@@ -36,6 +36,12 @@ public final class VirtualKeyboardViewModel: ObservableObject {
     /// The currently active keyboard layout.
     @Published public var layout: VirtualKeyboardLayout = .full
 
+    /// Whether the keyboard panel is collapsed to just the drag handle.
+    ///
+    /// Defaults to `true` so the overlay boots in a minimal footprint.
+    /// The user can expand it by tapping the handle or pressing the chevron button.
+    @Published public var isCollapsed: Bool = true
+
     /// Keys currently held down (by HID code).
     @Published public private(set) var heldKeys: Set<GCKeyCode> = []
 
@@ -57,7 +63,7 @@ public final class VirtualKeyboardViewModel: ObservableObject {
 
     // MARK: - Callbacks
 
-    /// Called when the user dismisses the overlay (swipe-down or close button).
+    /// Called when the user fully dismisses the overlay (X button).
     public var dismissAction: (() -> Void)?
 
     // MARK: - Delegate
