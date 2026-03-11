@@ -12,6 +12,9 @@ import PVCoreBridge
 import PVCoreObjCBridge
 import PVCoreBridgeRetro
 
+#if canImport(GameController)
+import GameController
+#endif
 @objc
 @objcMembers
 open class PVfMSXEmuCore: PVEmulatorCore {
