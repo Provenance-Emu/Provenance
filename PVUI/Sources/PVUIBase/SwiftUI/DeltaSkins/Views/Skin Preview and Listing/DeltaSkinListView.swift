@@ -13,6 +13,7 @@ public struct DeltaSkinListView: View {
     @State private var screenAspectRatio: CGFloat?
     @State private var availableSkins: [any DeltaSkinProtocol] = []
     @State private var showingDocumentPicker = false
+    @State private var showingSkinCatalog = false
     @State private var showingImportError = false
     @State private var importError: Error?
 
@@ -31,14 +32,15 @@ public struct DeltaSkinListView: View {
             .navigationTitle("Skins")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showingDocumentPicker = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                    }
+                    #if os(tvOS)
+                    DeltaSkinImportMenuButton(catalogAction: { showingSkinCatalog = true })
+                    #else
+                    DeltaSkinImportMenuButton(importAction: { showingDocumentPicker = true }, catalogAction: { showingSkinCatalog = true })
+                    #endif
                 }
+            }
+            .sheet(isPresented: $showingSkinCatalog) {
+                SkinCatalogModalView()
             }
             .fullScreenCover(isPresented: $showingFullscreenPreview) {
                 if !availableSkins.isEmpty {

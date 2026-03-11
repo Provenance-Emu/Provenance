@@ -7,6 +7,7 @@ public struct DeltaSkinImportView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var isShowingFilePicker = false
+    @State private var showingSkinCatalog = false
     @State private var isImporting = false
     @State private var importError: String?
     @State private var importSuccess = false
@@ -32,12 +33,11 @@ public struct DeltaSkinImportView: View {
                     .padding(.horizontal)
 
                 // Import button
-                Button(action: {
-                    isShowingFilePicker = true
-                }) {
+                #if os(tvOS)
+                Button(action: { showingSkinCatalog = true }) {
                     HStack {
-                        Image(systemName: "square.and.arrow.down")
-                        Text("Select .deltaskin/.manicskin File")
+                        Image(systemName: "arrow.down.circle.fill")
+                        Text("Browse Skin Catalog")
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -46,7 +46,36 @@ public struct DeltaSkinImportView: View {
                     .cornerRadius(10)
                 }
                 .padding(.horizontal)
-                .disabled(isImporting)
+                #else
+                VStack(spacing: 12) {
+                    Button(action: { isShowingFilePicker = true }) {
+                        HStack {
+                            Image(systemName: "square.and.arrow.down")
+                            Text("Select .deltaskin/.manicskin File")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.accentColor)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    .disabled(isImporting)
+
+                    Button(action: { showingSkinCatalog = true }) {
+                        HStack {
+                            Image(systemName: "arrow.down.circle")
+                            Text("Download Skins…")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.secondary.opacity(0.2))
+                        .foregroundColor(.primary)
+                        .cornerRadius(10)
+                    }
+                    .disabled(isImporting)
+                }
+                .padding(.horizontal)
+                #endif
 
                 if isImporting {
                     ProgressView("Importing skin...")
@@ -92,11 +121,14 @@ public struct DeltaSkinImportView: View {
             .padding()
             .navigationTitle("Import Skin")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button("Done") {
                         dismiss()
                     }
                 }
+            }
+            .sheet(isPresented: $showingSkinCatalog) {
+                SkinCatalogModalView()
             }
             #if !os(tvOS)
             .fileImporter(

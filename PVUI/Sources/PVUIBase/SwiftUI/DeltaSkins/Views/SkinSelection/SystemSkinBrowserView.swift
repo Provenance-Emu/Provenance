@@ -21,6 +21,7 @@ public struct SystemSkinBrowserView: View {
 
     // UI state
     @State private var showingDocumentPicker = false
+    @State private var showingSkinCatalog = false
     @State private var showingImportError = false
     @State private var importError: Error?
     @State private var importingFiles = false
@@ -103,16 +104,13 @@ public struct SystemSkinBrowserView: View {
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    showingDocumentPicker = true
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title2)
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                }
+                DeltaSkinImportMenuButton(importAction: { showingDocumentPicker = true }, catalogAction: { showingSkinCatalog = true })
             }
         }
         #endif
+        .sheet(isPresented: $showingSkinCatalog) {
+            SkinCatalogModalView()
+        }
         .onAppear {
             withAnimation(.easeInOut(duration: 0.8)) {
                 appearAnimation = true

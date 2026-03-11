@@ -581,7 +581,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             .navigationBarTitleDisplayMode(.inline)
                         #endif
                             .toolbar {
-                                ToolbarItem(placement: .navigationBarTrailing) {
+                                ToolbarItem(placement: .navigationBarLeading) {
                                     Button("Done") {
                                         showSystemSkinSelection = false
                                     }
@@ -598,7 +598,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             .navigationBarTitleDisplayMode(.inline)
                         #endif
                             .toolbar {
-                                ToolbarItem(placement: .navigationBarTrailing) {
+                                ToolbarItem(placement: .navigationBarLeading) {
                                     Button("Done") {
                                         showSkinCatalog = false
                                     }
@@ -615,7 +615,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             .navigationBarTitleDisplayMode(.inline)
                         #endif
                             .toolbar {
-                                ToolbarItem(placement: .navigationBarTrailing) {
+                                ToolbarItem(placement: .navigationBarLeading) {
                                     Button("Done") {
                                         gameForSkinSelection = nil
                                     }
