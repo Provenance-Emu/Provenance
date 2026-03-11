@@ -2562,8 +2562,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         return (queued: filesToImport, allSucceeded: moveFailures == 0)
     }
 
-    /// Extracts an archive flatly and imports its contents
-    private func extractAndImportArchive(_ item: ImportQueueItem) async throws {
+    /// Extracts an archive flatly and imports its contents.
+    /// `internal` instead of `private` so that unit tests can call it directly
+    /// (e.g. to verify that the archive is not deleted on partial batch-move failure).
+    internal func extractAndImportArchive(_ item: ImportQueueItem) async throws {
         let archiveURL = item.url
         let fileExtension = archiveURL.pathExtension.lowercased()
 
