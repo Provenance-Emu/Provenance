@@ -588,6 +588,8 @@
 		B37CE670293F23F70010B746 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE66E293F23F70010B746 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE7C1293F287D0010B746 /* PVFreeIntv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; };
 		B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B37E05DD2F612F31006084E5 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37E05DC2F612F31006084E5 /* PVfMSX.framework */; };
+		B37E05DE2F612F31006084E5 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37E05DC2F612F31006084E5 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3816E152CA92AC700DBA1A0 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3816E142CA92AC700DBA1A0 /* PVGenesis.framework */; };
 		B3816E162CA92AC700DBA1A0 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3816E142CA92AC700DBA1A0 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B381A27C292639E400305322 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
@@ -1593,6 +1595,7 @@
 				B318E2782CAB4B3F00D0E599 /* PVGenesis.framework in Embed Frameworks */,
 				B318E29E2CAB58A300D0E599 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */,
+				B37E05DE2F612F31006084E5 /* PVfMSX.framework in Embed Frameworks */,
 				B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */,
 				B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */,
 				B341AD922E2BF4BA00B18E76 /* PVMelonDS.framework in Embed Frameworks */,
@@ -2260,6 +2263,7 @@
 		B37DDEFE2D6E857300E28FEA /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
 		B37DDF1C2D6E857300E28FEA /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
 		B37DDF202D6E857300E28FEA /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
+		B37E05DC2F612F31006084E5 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37F4AF4286E94C60043F1C9 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37F6A732BE7613200B499E3 /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38036682D6E8F1A00546C40 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
@@ -3788,6 +3792,7 @@
 				B394CD892BDEE53A006B63E8 /* CFNetwork.framework in Frameworks */,
 				B394CD8E2BDEE53A006B63E8 /* Security.framework in Frameworks */,
 				B37228CA2CCDC7A700E6F627 /* FreemiumKit in Frameworks */,
+				B37E05DD2F612F31006084E5 /* PVfMSX.framework in Frameworks */,
 				B318E2802CAB4C6400D0E599 /* PVFCEU.framework in Frameworks */,
 				B318E28A2CAB512F00D0E599 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B394CD942BDEE53A006B63E8 /* SystemConfiguration.framework in Frameworks */,
@@ -4203,6 +4208,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B37E05DC2F612F31006084E5 /* PVfMSX.framework */,
 				B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */,
 				B37CCD332E2FFD9400ABFCF5 /* MoltenVK-1.2.8.xcframework */,
 				B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */,

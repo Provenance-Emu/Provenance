@@ -21,6 +21,7 @@
 		B37022C92872554300B3F6DA /* PVfMSXCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVfMSXCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVfMSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVfMSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B37E05FE2F61302E006084E5 /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B37E05FD2F61302E006084E5 /* PVPrimitives */; };
 		B39768F82859E23200558958 /* libfMSX-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libfMSX-libretro.a */; };
 		B3AD6F2E2D246A10001E5EC3 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD6F2D2D246A10001E5EC3 /* OpenGL.framework */; platformFilter = maccatalyst; };
 		B3AD72422D246B03001E5EC3 /* PVfMSXCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AD72412D246B03001E5EC3 /* PVfMSXCore.swift */; };
@@ -325,6 +326,7 @@
 				B3E2AA652CB6531C00E2636D /* PVCoreObjCBridge in Frameworks */,
 				B3AD72472D246C37001E5EC3 /* PVPlists in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
+				B37E05FE2F61302E006084E5 /* PVPrimitives in Frameworks */,
 				B39768F82859E23200558958 /* libfMSX-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -852,6 +854,7 @@
 				B3E2AA642CB6531C00E2636D /* PVCoreObjCBridge */,
 				B3AD72462D246C37001E5EC3 /* PVPlists */,
 				B3AD724B2D246D7C001E5EC3 /* PVEmulatorCore */,
+				B37E05FD2F61302E006084E5 /* PVPrimitives */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVfMSX.framework */;
@@ -905,6 +908,7 @@
 				B3E2AA632CB6531C00E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B3AD72452D246C37001E5EC3 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 				B3AD724A2D246D7C001E5EC3 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B37E05FC2F61302E006084E5 /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -1158,7 +1162,7 @@
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-			IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1446,7 +1450,7 @@
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-			IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1488,7 +1492,7 @@
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-			IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1561,6 +1565,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B37E05FC2F61302E006084E5 /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 		B3AD72452D246C37001E5EC3 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
@@ -1583,6 +1591,10 @@
 		B30E99CB2C6F041900C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B37E05FD2F61302E006084E5 /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 		B3AD72462D246C37001E5EC3 /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
