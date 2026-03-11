@@ -18,6 +18,10 @@ import SwiftUI
 #if canImport(PVJIT)
 import PVJIT
 #endif
+#if canImport(PVJIT)
+import JITManager
+#endif
+
 import PVLogging
 
 // MARK: - Registry
@@ -152,12 +156,17 @@ public final class PVIndicatorRegistry: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
+            #if canImport(JITManager)
             // Check if JIT was actually acquired despite the failure
             if DOLJitManager.shared.appHasAcquiredJit() {
                 self?.updateJIT(.active)
             } else {
                 self?.updateJIT(.failed)
             }
+            #else
+            self?.updateJIT(.failed)
+            WLOG("Indicator: JIT AltJIT failed, JITManager not supported, assuming failure")
+            #endif
             WLOG("Indicator: JIT AltJIT failed, updated indicator accordingly")
         }
         jitObserverTokens.append(failureToken)

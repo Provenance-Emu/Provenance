@@ -401,7 +401,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         controllerViewController?.dismiss(animated: false)
         core.touchViewController = nil
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
-        teardownVirtualMouse()
+        Task { @MainActor [weak self] in
+            self?.teardownVirtualMouse()
+        }
         #endif
         #if os(iOS) || os(tvOS)
         Task.detached { @MainActor in
