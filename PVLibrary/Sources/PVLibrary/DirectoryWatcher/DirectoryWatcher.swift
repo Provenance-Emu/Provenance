@@ -243,62 +243,49 @@ public final class DirectoryWatcher: ObservableObject {
         ILOG("Starting archive extraction for file: \(filePath.path)")
         stopWatchingFile(at: filePath)
 
-        // Ensure file is fully written and not locked before attempting extraction
-        // Add a small delay to ensure file system has finished writing
-        try? await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
-
-        // Verify file still exists and is readable
+        // Wait for file to stabilize using kqueue-based dispatch source monitoring.
+        // Replaces fixed 200ms poll + retry loop with event-driven detection.
         guard FileManager.default.fileExists(atPath: filePath.path) else {
             ILOG("Archive file no longer exists: \(filePath.path)")
             return
         }
 
-        // Try to verify file is readable and not locked
-        // Attempt to open the file multiple times if needed
+        let isStable = await FileStabilityChecker.waitForStability(at: filePath)
+        if !isStable {
+            WLOG("File \(filePath.lastPathComponent) did not stabilize within timeout, attempting extraction anyway")
+        }
+
+        guard FileManager.default.fileExists(atPath: filePath.path) else {
+            ILOG("Archive file no longer exists after stability wait: \(filePath.path)")
+            return
+        }
+
+        // Single readability + signature check after stability wait
         var fileReadable = false
         var fileSize: Int64 = 0
-        for attempt in 1...5 {
-            // Try to read file attributes first (less intrusive than opening a handle)
-            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
-               let size = attributes[.size] as? Int64,
-               size > 0 {
-                fileSize = size
-                ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes (attempt \(attempt))")
-
-                // File exists and has size, try to open it
-                if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
-                    // Verify file is readable by checking signature
-                    let signature = fileHandle.readData(ofLength: 4)
-                    fileHandle.closeFile()
-
-                    // Check if it's a known archive format
-                    let isValidArchive = (signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B) || // ZIP
-                                        (signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A && signature[2] == 0xBC && signature[3] == 0xAF) // 7z
-
-                    if isValidArchive {
-                        let format = (signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B) ? "ZIP" : "7z"
-                        ILOG("Archive file \(filePath.lastPathComponent) has valid \(format) signature")
-                        // Small delay after closing to ensure file handle is fully released
-                        try? await Task.sleep(nanoseconds: 50_000_000) // 50ms delay
-                        fileReadable = true
-                        break
-                    } else {
-                        let hexSignature = signature.prefix(4).map { String(format: "%02X", $0) }.joined(separator: " ")
-                        WLOG("Archive file \(filePath.lastPathComponent) does not have valid archive signature (got: \(hexSignature)), attempt \(attempt)/5")
-                        try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
-                    }
+        if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
+           let size = attributes[.size] as? Int64, size > 0 {
+            fileSize = size
+            ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes")
+            if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
+                let signature = fileHandle.readData(ofLength: 4)
+                fileHandle.closeFile()
+                let isZip = signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B
+                let is7z = signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A && signature[2] == 0xBC && signature[3] == 0xAF
+                if isZip || is7z {
+                    ILOG("Archive file \(filePath.lastPathComponent) has valid \(isZip ? "ZIP" : "7z") signature")
                 } else {
-                    ILOG("Archive file appears locked (attempt \(attempt)/5), waiting...")
-                    try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+                    let hexSignature = signature.prefix(4).map { String(format: "%02X", $0) }.joined(separator: " ")
+                    ILOG("Archive file \(filePath.lastPathComponent) signature (\(hexSignature)) not ZIP/7z, will use extension-based detection")
                 }
-            } else {
-                ILOG("Archive file has no size or invalid attributes (attempt \(attempt)/5), waiting...")
-                try? await Task.sleep(nanoseconds: 300_000_000) // 300ms delay
+                fileReadable = true
             }
         }
 
         guard fileReadable else {
-            let error = NSError(domain: "DirectoryWatcher", code: -1, userInfo: [NSLocalizedDescriptionKey: "Archive file is locked or not readable: \(filePath.lastPathComponent) (size: \(fileSize) bytes)"])
+            let description = "Archive file is locked or not readable: \(filePath.lastPathComponent) (size: \(fileSize) bytes)"
+            let error = NSError(domain: "DirectoryWatcher", code: -1,
+                                userInfo: [NSLocalizedDescriptionKey: description])
             ELOG("Failed to verify archive file readiness: \(filePath.path)")
             throw error
         }
@@ -464,13 +451,24 @@ public final class DirectoryWatcher: ObservableObject {
 
             // Move files FLATLY to the watched directory (no subdirectory structure)
             // This ensures files are immediately available for import without race conditions
-            let movedFiles = try await moveExtractedFilesFlat(sortedFiles, from: tempExtractionDir, to: watchedDirectory)
+            let movedFiles = await moveExtractedFilesFlat(sortedFiles, from: tempExtractionDir, to: watchedDirectory)
 
             // Notify about the completed files
             completedFilesContinuation?.yield(movedFiles)
 
-            // Clean up temporary directory
-            try await FileManager.default.removeItem(at: tempExtractionDir)
+            // Only clean up temp directory if all files were moved successfully.
+            // If some remain, preserve the directory so files are not lost.
+            let remainingItems = (try? FileManager.default.contentsOfDirectory(at: tempExtractionDir, includingPropertiesForKeys: nil))?
+                .filter { !$0.lastPathComponent.hasPrefix(".") } ?? []
+            if remainingItems.isEmpty {
+                do {
+                    try FileManager.default.removeItem(at: tempExtractionDir)
+                } catch {
+                    ELOG("Failed to clean up temp extraction directory \(tempExtractionDir.lastPathComponent): \(error.localizedDescription)")
+                }
+            } else {
+                WLOG("Preserving temp directory with \(remainingItems.count) unmoved file(s): \(tempExtractionDir.path)")
+            }
         } catch {
             // Log detailed error information
             let errorDescription = error.localizedDescription
@@ -544,15 +542,18 @@ public final class DirectoryWatcher: ObservableObject {
         completedFilesContinuation?.yield([destinationURL])
     }
 
-    /// Move extracted files flatly (preserving only filenames, no directory structure)
-    private func moveExtractedFilesFlat(_ files: [URL], from sourceDir: URL, to destinationDir: URL) async throws -> [URL] {
+    /// Moves extracted files to the destination directory, flattening any
+    /// subdirectory structure. Individual move failures are logged but do
+    /// not abort the batch — successfully moved files are still returned.
+    /// The caller should check whether the source directory still contains
+    /// unmoved files before cleaning it up.
+    private func moveExtractedFilesFlat(_ files: [URL], from sourceDir: URL, to destinationDir: URL) async -> [URL] {
         var movedFiles: [URL] = []
+        var failedCount = 0
         for file in files {
-            // Only preserve the filename, flatten directory structure
             let fileName = file.lastPathComponent
             let destinationURL = destinationDir.appendingPathComponent(fileName)
 
-            // Handle filename conflicts
             var finalDestinationURL = destinationURL
             var counter = 1
             while FileManager.default.fileExists(atPath: finalDestinationURL.path) {
@@ -562,9 +563,17 @@ public final class DirectoryWatcher: ObservableObject {
                 counter += 1
             }
 
-            try FileManager.default.moveItem(at: file, to: finalDestinationURL)
-            movedFiles.append(finalDestinationURL)
-            ILOG("Moved extracted file flatly: \(fileName) -> \(finalDestinationURL.lastPathComponent)")
+            do {
+                try FileManager.default.moveItem(at: file, to: finalDestinationURL)
+                movedFiles.append(finalDestinationURL)
+                ILOG("Moved extracted file flatly: \(fileName) -> \(finalDestinationURL.lastPathComponent)")
+            } catch {
+                failedCount += 1
+                ELOG("Failed to move extracted file \(fileName): \(error.localizedDescription)")
+            }
+        }
+        if failedCount > 0 {
+            ELOG("Batch move completed with \(failedCount)/\(files.count) failure(s). Source directory preserved: \(sourceDir.path)")
         }
         return movedFiles
     }
