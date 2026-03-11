@@ -143,7 +143,7 @@ public extension PVEmulatorViewController {
         // Check core identifier against known JIT-requiring cores (Dolphin/GameCube/Wii).
         // TODO: Replace with the JIT Capability Matrix (#2793) when available.
         if let coreId = core.coreIdentifier?.lowercased() {
-            let jitCoreKeywords = ["dolphin", "pvdolphin", "gamecube", "wii"]
+            let jitCoreKeywords = ["dolphin", "pvdolphin", "gamecube", "wii", "ps2", "dreamcast", "flycast", "mupen"]
             return jitCoreKeywords.contains(where: { coreId.contains($0) })
         }
         return false
