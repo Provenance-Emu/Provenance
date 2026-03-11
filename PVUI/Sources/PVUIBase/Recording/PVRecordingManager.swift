@@ -30,6 +30,11 @@ import PVLogging
     /// keeping `PVRecordingManager` free of Objective-C inheritance.
     private let previewDelegate = PreviewDelegate()
 
+    /// Called on the main actor after the ReplayKit preview sheet is dismissed.
+    /// Set this before calling `stopRecording` to be notified when the user is done
+    /// with the recording preview (saved, discarded, or cancelled).
+    public var onPreviewDismissed: (() -> Void)?
+
     private init() {}
 
     // MARK: - Public API
@@ -95,6 +100,9 @@ import PVLogging
 
         previewVC.previewControllerDelegate = previewDelegate
         previewVC.modalPresentationStyle = .fullScreen
+        // Transfer the callback to the delegate; clear it so it isn't re-used
+        previewDelegate.onFinished = onPreviewDismissed
+        onPreviewDismissed = nil
         await presenter.present(previewVC, animated: true)
         ILOG("[Recording] Preview controller presented")
     }
@@ -113,9 +121,16 @@ import PVLogging
 
 extension PVRecordingManager {
     private final class PreviewDelegate: NSObject, RPPreviewViewControllerDelegate {
+        /// Called on the main actor after the preview sheet is dismissed.
+        var onFinished: (() -> Void)?
+
         func previewControllerDidFinish(_ previewController: RPPreviewViewController) {
-            previewController.dismiss(animated: true)
-            ILOG("[Recording] Preview controller dismissed")
+            previewController.dismiss(animated: true) { [weak self] in
+                ILOG("[Recording] Preview controller dismissed")
+                let action = self?.onFinished
+                self?.onFinished = nil
+                action?()
+            }
         }
     }
 }
