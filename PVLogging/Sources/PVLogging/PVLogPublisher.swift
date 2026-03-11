@@ -176,11 +176,21 @@ public struct LogEntry: Identifiable, Equatable, Sendable {
     /// Source line number
     public let line: Int
 
-    /// Formatted timestamp string
-    public var formattedTimestamp: String {
+    /// Shared date formatter for timestamps
+    private static let timestampFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss.SSS"
-        return formatter.string(from: timestamp)
+        return formatter
+    }()
+
+    /// Serial queue to ensure thread-safe formatter access
+    private static let timestampFormatterQueue = DispatchQueue(label: "com.provenance.logging.timestampFormatter")
+
+    /// Formatted timestamp string
+    public var formattedTimestamp: String {
+        return Self.timestampFormatterQueue.sync {
+            Self.timestampFormatter.string(from: timestamp)
+        }
     }
 
     /// Short description for display
