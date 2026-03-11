@@ -103,8 +103,8 @@ enum FileStabilityChecker {
                         queue: queue
                     )
 
-                    /// Single-shot completion. Safe to call from any
-                    /// context — always dispatches to `queue`.
+                    /// Single-shot completion. Must be called on `queue`.
+                    /// Callers running off-queue must dispatch to `queue` first.
                     let finish: (Bool) -> Void = { result in
                         dispatchPrecondition(condition: .onQueue(queue))
                         guard !hasResumed else { return }
