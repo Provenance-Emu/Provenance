@@ -121,4 +121,18 @@ extension PVEmulatorViewController {
         cursorHostingController = nil
     }
 }
+
+extension PVEmulatorViewController {
+    /// Captures and clears virtual-mouse associated objects without requiring a
+    /// main-actor hop, so `deinit` can schedule UI teardown safely.
+    nonisolated func takeVirtualMouseCleanupHandles() -> (TouchTrackpadView?, UIHostingController<MouseCursorOverlayView>?) {
+        let trackpadView = objc_getAssociatedObject(self, &VMKeys.trackpadViewKey) as? TouchTrackpadView
+        let cursorHost = objc_getAssociatedObject(self, &VMKeys.cursorHostKey) as? UIHostingController<MouseCursorOverlayView>
+
+        objc_setAssociatedObject(self, &VMKeys.trackpadViewKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        objc_setAssociatedObject(self, &VMKeys.cursorHostKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
+        return (trackpadView, cursorHost)
+    }
+}
 #endif // canImport(UIKit) && !os(tvOS)

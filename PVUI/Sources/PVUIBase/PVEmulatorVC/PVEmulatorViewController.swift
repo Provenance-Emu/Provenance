@@ -401,8 +401,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         controllerViewController?.dismiss(animated: false)
         core.touchViewController = nil
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
-        Task { @MainActor [weak self] in
-            self?.teardownVirtualMouse()
+        let (trackpadView, cursorHost) = takeVirtualMouseCleanupHandles()
+        Task { @MainActor in
+            trackpadView?.removeFromSuperview()
+            cursorHost?.view.removeFromSuperview()
+            cursorHost?.removeFromParent()
         }
         #endif
         #if os(iOS) || os(tvOS)
