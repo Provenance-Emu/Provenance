@@ -117,7 +117,7 @@ public final class TouchTrackpadView: UIView {
     /// incorrectly pass through *all* touches including game-viewport ones.
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
-        guard isPointInside(point, with: event) else { return nil }
+        guard self.point(inside: point, with: event) else { return nil }
 
         // If we have a game-view reference, gate touch capture to that region.
         if let gameView = gameViewRef {
