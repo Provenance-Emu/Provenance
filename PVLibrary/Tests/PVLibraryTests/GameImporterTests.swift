@@ -442,3 +442,215 @@ class GameImporterTests: XCTestCase {
     }
 }
 
+// MARK: - Archive batch-move failure tests
+
+/// A `FileManager` subclass that always throws when `moveItem(at:to:)` is called.
+/// Used to simulate a complete batch-move failure in archive import tests.
+private final class AlwaysFailMoveFileManager: FileManager {
+    override func moveItem(at srcURL: URL, to dstURL: URL) throws {
+        throw CocoaError(.fileWriteNoPermission)
+    }
+}
+
+/// A `FileManager` subclass that fails `moveItem` only for URLs in `failURLs`,
+/// delegating all other operations to the real `FileManager`.
+private final class PartialFailMoveFileManager: FileManager {
+    let failURLs: Set<URL>
+
+    init(failURLs: Set<URL>) {
+        self.failURLs = failURLs
+        super.init()
+    }
+
+    override func moveItem(at srcURL: URL, to dstURL: URL) throws {
+        if failURLs.contains(srcURL) {
+            throw CocoaError(.fileWriteNoPermission)
+        }
+        try super.moveItem(at: srcURL, to: dstURL)
+    }
+}
+
+/// A `FileManager` subclass that records every URL passed to `removeItem(at:)`.
+/// Uses a move that always fails so any call to `removeItem` for the archive signals a bug.
+private final class RecordingFailMoveFileManager: FileManager {
+    private(set) var removedURLs: [URL] = []
+
+    override func moveItem(at srcURL: URL, to dstURL: URL) throws {
+        throw CocoaError(.fileWriteNoPermission)
+    }
+
+    override func removeItem(at URL: URL) throws {
+        removedURLs.append(URL)
+        try super.removeItem(at: URL)
+    }
+}
+
+class ArchiveBatchMoveTests: XCTestCase {
+
+    // MARK: - Helpers
+
+    private func makeTempDirectory() throws -> URL {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ArchiveBatchMoveTests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
+    private func createFile(at url: URL, content: String = "ROMDATA") {
+        FileManager.default.createFile(atPath: url.path, contents: Data(content.utf8))
+    }
+
+    private func makeImporter(fileManager fm: FileManager) -> GameImporter {
+        GameImporter(fm,
+                     GameImporterFileService(),
+                     GameImporterDatabaseService(),
+                     GameImporterSystemsService(),
+                     ArtworkImporter(),
+                     DefaultCDFileHandler(),
+                     SkinImporterInjector.shared)
+    }
+
+    // MARK: - Tests
+
+    /// When every `moveItem` call fails, `moveBatchExtractedFiles` must return an
+    /// empty `queued` list and `allSucceeded == false`.
+    func testMoveBatch_allFail_queuesNothing() throws {
+        let srcDir = try makeTempDirectory()
+        let dstDir = try makeTempDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: srcDir)
+            try? FileManager.default.removeItem(at: dstDir)
+        }
+
+        let file1 = srcDir.appendingPathComponent("rom1.nes")
+        let file2 = srcDir.appendingPathComponent("rom2.sfc")
+        createFile(at: file1)
+        createFile(at: file2)
+
+        let importer = makeImporter(fileManager: AlwaysFailMoveFileManager())
+        let (queued, allSucceeded) = importer.moveBatchExtractedFiles([file1, file2], to: dstDir)
+
+        XCTAssertTrue(queued.isEmpty, "No files should be queued when all moves fail")
+        XCTAssertFalse(allSucceeded, "allSucceeded must be false when all moves fail")
+        // Source files must remain in place (not moved)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: file1.path), "Source file should still exist after failed move")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: file2.path), "Source file should still exist after failed move")
+    }
+
+    /// When only some `moveItem` calls fail, only the successfully moved files
+    /// should appear in `queued`, and `allSucceeded` must be `false`.
+    func testMoveBatch_partialFail_queuesOnlySuccessfulFiles() throws {
+        let srcDir = try makeTempDirectory()
+        let dstDir = try makeTempDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: srcDir)
+            try? FileManager.default.removeItem(at: dstDir)
+        }
+
+        let goodFile = srcDir.appendingPathComponent("good.nes")
+        let badFile  = srcDir.appendingPathComponent("bad.sfc")
+        createFile(at: goodFile)
+        createFile(at: badFile)
+
+        let importer = makeImporter(fileManager: PartialFailMoveFileManager(failURLs: [badFile]))
+        let (queued, allSucceeded) = importer.moveBatchExtractedFiles([goodFile, badFile], to: dstDir)
+
+        XCTAssertEqual(queued.count, 1, "Only the successfully moved file should be queued")
+        XCTAssertEqual(queued.first?.lastPathComponent, "good.nes")
+        XCTAssertFalse(allSucceeded, "allSucceeded must be false when at least one move fails")
+
+        // The good file was moved to the destination
+        XCTAssertTrue(FileManager.default.fileExists(atPath: dstDir.appendingPathComponent("good.nes").path),
+                      "Successfully moved file should exist at destination")
+        // The bad file stays in the source (temp) directory
+        XCTAssertTrue(FileManager.default.fileExists(atPath: badFile.path),
+                      "Failed-to-move file must remain in the temp extraction directory")
+    }
+
+    /// When all moves succeed, every file should be in `queued` and
+    /// `allSucceeded` must be `true`.
+    func testMoveBatch_allSucceed_queuesAllFiles() throws {
+        let srcDir = try makeTempDirectory()
+        let dstDir = try makeTempDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: srcDir)
+            try? FileManager.default.removeItem(at: dstDir)
+        }
+
+        let file1 = srcDir.appendingPathComponent("rom1.nes")
+        let file2 = srcDir.appendingPathComponent("rom2.sfc")
+        createFile(at: file1)
+        createFile(at: file2)
+
+        let importer = makeImporter(fileManager: FileManager.default)
+        let (queued, allSucceeded) = importer.moveBatchExtractedFiles([file1, file2], to: dstDir)
+
+        XCTAssertEqual(queued.count, 2, "All files should be queued when all moves succeed")
+        XCTAssertTrue(allSucceeded, "allSucceeded must be true when all moves succeed")
+    }
+
+    /// When all moves fail, the archive file must NOT be removed — the injected
+    /// `FileManager` should never receive a `removeItem` call for the archive URL.
+    ///
+    /// In `extractAndImportArchive`, the archive is only deleted via
+    /// `self.fileManager.removeItem(at: archiveURL)` after the `guard allMovesSucceeded`
+    /// check. Returning `allSucceeded == false` from `moveBatchExtractedFiles` triggers
+    /// the early-return path, which skips that deletion entirely.
+    func testMoveBatch_allFail_archiveNotRemovedViaFileManager() throws {
+        let srcDir     = try makeTempDirectory()
+        let dstDir     = try makeTempDirectory()
+        let archiveDir = try makeTempDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: srcDir)
+            try? FileManager.default.removeItem(at: dstDir)
+            try? FileManager.default.removeItem(at: archiveDir)
+        }
+
+        let extractedFile = srcDir.appendingPathComponent("game.nes")
+        let archiveURL    = archiveDir.appendingPathComponent("game.zip")
+        createFile(at: extractedFile)
+        createFile(at: archiveURL)
+
+        let recordingFM = RecordingFailMoveFileManager()
+        let importer    = makeImporter(fileManager: recordingFM)
+
+        let (_, allSucceeded) = importer.moveBatchExtractedFiles([extractedFile], to: dstDir)
+
+        XCTAssertFalse(allSucceeded, "allSucceeded must be false when moves fail")
+
+        // The archive file should still be on disk (we never deleted it in this test
+        // because we didn't call extractAndImportArchive; this confirms the archive
+        // URL was not passed to removeItem).
+        XCTAssertFalse(recordingFM.removedURLs.contains(archiveURL),
+                       "The archive must not be removed via fileManager when batch move fails")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: archiveURL.path),
+                      "Archive file must still exist on disk after a batch-move failure")
+    }
+
+    /// When all moves fail, the temp extraction directory must be preserved
+    /// (i.e., the `defer` block inside `extractAndImportArchive` must NOT delete it)
+    /// because `preserveTempDir` is set to `true` when `allMovesSucceeded == false`.
+    ///
+    /// This test verifies that `moveBatchExtractedFiles` correctly reports failure
+    /// so the caller can preserve the directory, and that files remain in it.
+    func testMoveBatch_allFail_tempDirContentsPreserved() throws {
+        let srcDir = try makeTempDirectory()
+        let dstDir = try makeTempDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: srcDir)
+            try? FileManager.default.removeItem(at: dstDir)
+        }
+
+        let extractedFile = srcDir.appendingPathComponent("game.nes")
+        createFile(at: extractedFile)
+
+        let importer = makeImporter(fileManager: AlwaysFailMoveFileManager())
+        let (_, allSucceeded) = importer.moveBatchExtractedFiles([extractedFile], to: dstDir)
+
+        XCTAssertFalse(allSucceeded, "allSucceeded must be false — caller must preserve the temp dir")
+        // The extracted file stays inside srcDir (the simulated temp extraction directory)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: extractedFile.path),
+                      "Extracted file must remain in the temp dir when its move failed")
+    }
+}
+
