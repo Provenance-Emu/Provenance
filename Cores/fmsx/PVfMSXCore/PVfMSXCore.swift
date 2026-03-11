@@ -17,7 +17,7 @@ import PVCoreBridgeRetro
 open class PVfMSXEmuCore: PVEmulatorCore {
 
     let _bridge: PVfMSXCoreBridge = .init()
-    
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
@@ -26,54 +26,52 @@ open class PVfMSXEmuCore: PVEmulatorCore {
 
 extension PVfMSXEmuCore: PVMSXSystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PVMSXButton, forPlayer player: Int) {
-        (_bridge as! PVMSXSystemResponderClient).didPush(button, forPlayer: player)
+        _bridge.didPush(button, forPlayer: player)
     }
     public func didRelease(_ button: PVCoreBridge.PVMSXButton, forPlayer player: Int) {
-        (_bridge as! PVMSXSystemResponderClient).didRelease(button, forPlayer: player)
+        _bridge.didRelease(button, forPlayer: player)
     }
-    
-    public var gameSupportsKeyboard: Bool { true }
-    public var requiresKeyboard: Bool { false }
+
+    public var gameSupportsKeyboard: Bool { _bridge.gameSupportsKeyboard }
+    public var requiresKeyboard: Bool { _bridge.requiresKeyboard }
 #if canImport(GameController)
-//    @objc optional var keyChangedHandler: GCKeyboardValueChangedHandler? { _bridge.keyChangedHandler }
     public func keyDown(_ key: GCKeyCode) {
-        (_bridge as! PVMSXSystemResponderClient).keyDown(key)
+        _bridge.keyDown(key)
     }
     public func keyUp(_ key: GCKeyCode) {
-        (_bridge as! PVMSXSystemResponderClient).keyUp(key)
+        _bridge.keyUp(key)
     }
 #endif
-}
 
-extension PVfMSXEmuCore: MouseResponder {
-    public var gameSupportsMouse: Bool { true }
-    public var requiresMouse: Bool { false }
+    public var gameSupportsMouse: Bool { _bridge.gameSupportsMouse }
+    public var requiresMouse: Bool { _bridge.requiresMouse }
 
 #if canImport(GameController)
     public func didScroll(_ cursor: GCDeviceCursor) {
-        (_bridge as! MouseResponder).didScroll(cursor)
+        _bridge.didScroll(cursor)
     }
-    public var mouseMovedHandler: GCMouseMoved? { nil }
+    public var mouseMovedHandler: GCMouseMoved? { _bridge.mouseMovedHandler }
 #endif
+
     public func mouseMoved(atPoint point: CGPoint) {
-        (_bridge as! MouseResponder).mouseMoved(atPoint: point)
+        _bridge.mouseMovedAtPoint(point)
     }
     public func mouseMoved(at point: CGPoint) {
-        (_bridge as! MouseResponder).mouseMoved(atPoint: point)
+        _bridge.mouseMovedAt(point)
     }
     public func leftMouseDown(at point: CGPoint) {
-        (_bridge as! MouseResponder).leftMouseDown(atPoint: point)
+        _bridge.leftMouseDown(at: point)
     }
     public func leftMouseDown(atPoint point: CGPoint) {
-        (_bridge as! MouseResponder).leftMouseDown(atPoint: point)
+        _bridge.leftMouseDown(atPoint: point)
     }
     public func leftMouseUp() {
-        (_bridge as! MouseResponder).leftMouseUp()
+        _bridge.leftMouseUp()
     }
     public func rightMouseDown(atPoint point: CGPoint) {
-        (_bridge as! MouseResponder).rightMouseDown(atPoint: point)
+        _bridge.rightMouseDown(atPoint: point)
     }
     public func rightMouseUp() {
-        (_bridge as! MouseResponder).rightMouseUp()
+        _bridge.rightMouseUp()
     }
 }

@@ -21,6 +21,7 @@ public enum CorePlist {
   public static let pvProjectURL: String = "http://fms.komkon.org/fMSX/"
   public static let pvProjectVersion: String = "0"
   public static let pvSupportedSystems: [String] = ["com.provenance.msx", "com.provenance.msx2"]
+  public static let pvDisabled: Bool = true
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {
@@ -30,7 +31,8 @@ public enum CorePlist {
             supportedSystems: CorePlist.pvSupportedSystems,
             projectName: CorePlist.pvProjectName,
             projectURL: CorePlist.pvProjectURL,
-            projectVersion: CorePlist.pvProjectVersion)
+            projectVersion: CorePlist.pvProjectVersion,
+            disabled: CorePlist.pvDisabled)
     }
 
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }

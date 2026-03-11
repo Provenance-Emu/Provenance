@@ -16,17 +16,12 @@
 //#import "PVfMSXCore+Audio.h"
 
 @import Foundation;
+@import GameController;
 @import PVCoreBridge;
 @import PVLoggingObjC;
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-#import <OpenGL/gl3.h>
-#import <GLUT/GLUT.h>
-#endif
-
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
-#define OpenEmu 1
 
 #pragma mark - Private
 @interface PVfMSXCoreBridge() {
@@ -153,17 +148,8 @@
 //    return info.timing.fps ?: 60;
 //}
 
-- (CGRect)screenRect {
-    return CGRectMake(0, 0, 272, 240);
-}
-
-//- (CGSize)aspectSize {
-//    return CGSizeMake(4, 3);
-//}
-
-- (CGSize)bufferSize {
-    return CGSizeMake(272, 240);
-}
+// screenRect and bufferSize are provided by PVLibRetroCoreBridge via
+// retro_get_system_av_info; no need to hardcode them here.
 
 # pragma mark - Audio
 
@@ -295,6 +281,60 @@ const struct retro_variable vars[] = {
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
     [self didReleaseMSXButton:(PVMSXButton)button forPlayer:player];
+}
+
+#pragma mark - Keyboard Support
+
+- (BOOL)gameSupportsKeyboard { return YES; }
+- (BOOL)requiresKeyboard { return NO; }
+
+/// GCKeyCode.rawValue == HID USB usage page key code
+- (void)keyDown:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    [self sendKeyboardEvent:YES hidCode:(unsigned)key character:0];
+}
+
+- (void)keyUp:(GCKeyCode)key API_AVAILABLE(ios(14.0), tvos(14.0)) {
+    [self sendKeyboardEvent:NO hidCode:(unsigned)key character:0];
+}
+
+#pragma mark - Mouse Support
+
+- (BOOL)gameSupportsMouse { return YES; }
+- (BOOL)requiresMouse { return NO; }
+
+- (GCMouseMoved)mouseMovedHandler { return nil; }
+
+- (void)didScroll:(GCDeviceCursor *)cursor API_AVAILABLE(ios(14.0), tvos(14.0)) {
+}
+
+- (void)mouseMovedAt:(CGPoint)point {
+    [self setMousePosition:point];
+}
+
+- (void)mouseMovedAtPoint:(CGPoint)point {
+    [self mouseMovedAt:point];
+}
+
+- (void)leftMouseDownAt:(CGPoint)point {
+    [self setMousePosition:point];
+    [self setLeftMouseButtonPressed:YES];
+}
+
+- (void)leftMouseDownAtPoint:(CGPoint)point {
+    [self leftMouseDownAt:point];
+}
+
+- (void)leftMouseUp {
+    [self setLeftMouseButtonPressed:NO];
+}
+
+- (void)rightMouseDownAtPoint:(CGPoint)point {
+    [self setMousePosition:point];
+    [self setRightMouseButtonPressed:YES];
+}
+
+- (void)rightMouseUp {
+    [self setRightMouseButtonPressed:NO];
 }
 
 @end
