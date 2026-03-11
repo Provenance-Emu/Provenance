@@ -510,6 +510,20 @@ class ArchiveBatchMoveTests: XCTestCase {
                      SkinImporterInjector.shared)
     }
 
+    /// Creates a minimal ZIP archive at `url` containing a single "game.nes" entry
+    /// with dummy content. Uses `SSZipArchive` to produce a well-formed archive
+    /// that the `ZipExtractor` inside `extractAndImportArchive` can open.
+    private func makeMinimalZipArchive(at url: URL) throws {
+        let tmpROM = url.deletingLastPathComponent()
+            .appendingPathComponent("_tmp_game_\(UUID().uuidString).nes")
+        FileManager.default.createFile(atPath: tmpROM.path, contents: Data("ROMDATA".utf8))
+        defer { try? FileManager.default.removeItem(at: tmpROM) }
+        guard SSZipArchive.createZipFile(atPath: url.path, withFilesAtPaths: [tmpROM.path]) else {
+            throw CocoaError(.fileWriteUnknown,
+                             userInfo: [NSLocalizedDescriptionKey: "SSZipArchive failed to create test fixture"])
+        }
+    }
+
     // MARK: - Tests
 
     /// When every `moveItem` call fails, `moveBatchExtractedFiles` must return an
@@ -589,38 +603,33 @@ class ArchiveBatchMoveTests: XCTestCase {
         XCTAssertTrue(allSucceeded, "allSucceeded must be true when all moves succeed")
     }
 
-    /// When all moves fail, the archive file must NOT be removed — the injected
-    /// `FileManager` should never receive a `removeItem` call for the archive URL.
+    /// Exercises the full `extractAndImportArchive` path: when every `moveItem`
+    /// call fails, the archive must **not** be removed via the injected
+    /// `fileManager.removeItem(at:)`.
     ///
-    /// In `extractAndImportArchive`, the archive is only deleted via
-    /// `self.fileManager.removeItem(at: archiveURL)` after the `guard allMovesSucceeded`
-    /// check. Returning `allSucceeded == false` from `moveBatchExtractedFiles` triggers
-    /// the early-return path, which skips that deletion entirely.
-    func testMoveBatch_allFail_archiveNotRemovedViaFileManager() throws {
-        let srcDir     = try makeTempDirectory()
-        let dstDir     = try makeTempDirectory()
+    /// `extractAndImportArchive` only reaches `self.fileManager.removeItem(at: archiveURL)`
+    /// after a `guard allMovesSucceeded` check; when moves fail the guard returns
+    /// early, so the archive is never passed to `removeItem`.  This test exercises
+    /// that exact code path with a real (minimal) ZIP archive and a
+    /// `RecordingFailMoveFileManager` to capture any `removeItem` calls.
+    func testMoveBatch_allFail_archiveNotRemovedViaFileManager() async throws {
         let archiveDir = try makeTempDirectory()
-        defer {
-            try? FileManager.default.removeItem(at: srcDir)
-            try? FileManager.default.removeItem(at: dstDir)
-            try? FileManager.default.removeItem(at: archiveDir)
-        }
+        defer { try? FileManager.default.removeItem(at: archiveDir) }
 
-        let extractedFile = srcDir.appendingPathComponent("game.nes")
-        let archiveURL    = archiveDir.appendingPathComponent("game.zip")
-        createFile(at: extractedFile)
-        createFile(at: archiveURL)
+        let archiveURL = archiveDir.appendingPathComponent("test_game.zip")
+        try makeMinimalZipArchive(at: archiveURL)
 
         let recordingFM = RecordingFailMoveFileManager()
         let importer    = makeImporter(fileManager: recordingFM)
+        let item        = ImportQueueItem(url: archiveURL)
 
-        let (_, allSucceeded) = importer.moveBatchExtractedFiles([extractedFile], to: dstDir)
+        // extractAndImportArchive extracts the archive, then tries to move
+        // each extracted file via the injected fileManager.  Because
+        // RecordingFailMoveFileManager always throws on moveItem, every move
+        // fails → allMovesSucceeded == false → the method returns early without
+        // ever calling fileManager.removeItem(at: archiveURL).
+        try await importer.extractAndImportArchive(item)
 
-        XCTAssertFalse(allSucceeded, "allSucceeded must be false when moves fail")
-
-        // The archive file should still be on disk (we never deleted it in this test
-        // because we didn't call extractAndImportArchive; this confirms the archive
-        // URL was not passed to removeItem).
         XCTAssertFalse(recordingFM.removedURLs.contains(archiveURL),
                        "The archive must not be removed via fileManager when batch move fails")
         XCTAssertTrue(FileManager.default.fileExists(atPath: archiveURL.path),
