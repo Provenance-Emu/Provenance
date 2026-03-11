@@ -2922,9 +2922,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
         } else {
             WLOG("Archive \(archiveURL.lastPathComponent) preserved — "
-                 + "\(moveFailures) file(s) failed to move, temp dir kept for recovery")
+                 + "\(moveFailures)/\(extractedFiles.count) file(s) failed to move; "
+                 + "temp dir kept for recovery")
         }
-    } // extractAndImportArchive
+    }
 
     private func performImport(for item: ImportQueueItem) async throws {
         let fileName = item.url.lastPathComponent
