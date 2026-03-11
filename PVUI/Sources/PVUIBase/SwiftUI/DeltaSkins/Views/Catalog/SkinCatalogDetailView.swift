@@ -246,6 +246,8 @@ public struct SkinCatalogDetailView: View {
                         .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
                 )
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("\(label), \(value)"))
     }
 
     // MARK: - Action Section (Download & Install)
