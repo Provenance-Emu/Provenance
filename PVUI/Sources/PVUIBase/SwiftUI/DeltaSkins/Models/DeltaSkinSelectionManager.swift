@@ -49,27 +49,43 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         orientation: SkinOrientation,
         scope: SkinScope
     ) {
+        // Update persistent preferences on the main actor (we are already @MainActor here).
+        // Only session-scoped changes skip preference storage.
+        switch scope {
+        case .session:
+            break // Session scope: no persistent preference change
+
+        case .game:
+            guard let gameId = gameId else {
+                ELOG("skins: Cannot set game scope without gameId")
+                return
+            }
+            // Game scope: persist preference on main actor (safe — we are @MainActor)
+            preferences.setSelectedSkin(skinIdentifier, for: gameId, orientation: orientation)
+            ILOG("skins: Set game preference: \(skinIdentifier ?? "nil") for game \(gameId)")
+
+        case .system:
+            // System scope: persist preference on main actor (safe — we are @MainActor)
+            preferences.setSelectedSkin(skinIdentifier, for: systemId, orientation: orientation)
+            ILOG("skins: Set system preference: \(skinIdentifier ?? "nil") for system \(systemId.rawValue)")
+        }
+
+        // Update the in-memory session skin via the serial queue for thread-safety
+        // (effectiveSkinIdentifier can be called from any thread via queue.sync).
         queue.sync {
             switch scope {
             case .session:
-                // Session scope: Only set session skin (temporary)
                 setSessionSkin(skinIdentifier, for: systemId, gameId: gameId, orientation: orientation)
 
             case .game:
-                guard let gameId = gameId else {
-                    ELOG("skins: Cannot set game scope without gameId")
-                    return
+                if let gameId = gameId {
+                    setSessionSkin(skinIdentifier, for: systemId, gameId: gameId, orientation: orientation)
+                    ILOG("skins: Set game session skin: \(skinIdentifier ?? "nil") for game \(gameId)")
                 }
-                // Game scope: Set preference AND session skin (for immediate application)
-                preferences.setSelectedSkin(skinIdentifier, for: gameId, orientation: orientation)
-                setSessionSkin(skinIdentifier, for: systemId, gameId: gameId, orientation: orientation)
-                ILOG("skins: Set game preference + session skin: \(skinIdentifier ?? "nil") for game \(gameId)")
 
             case .system:
-                // System scope: Set preference AND session skin (for immediate application)
-                preferences.setSelectedSkin(skinIdentifier, for: systemId, orientation: orientation)
                 setSessionSkin(skinIdentifier, for: systemId, gameId: gameId, orientation: orientation)
-                ILOG("skins: Set system preference + session skin: \(skinIdentifier ?? "nil") for system \(systemId.rawValue)")
+                ILOG("skins: Set system session skin: \(skinIdentifier ?? "nil") for system \(systemId.rawValue)")
             }
         }
 
