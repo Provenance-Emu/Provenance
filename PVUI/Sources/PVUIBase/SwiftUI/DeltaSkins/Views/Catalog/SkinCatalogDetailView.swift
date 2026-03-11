@@ -528,10 +528,24 @@ public struct SkinCatalogDetailView: View {
 
     /// Resolves a source string into a valid HTTP(S) URL, prepending `https://` for bare domains.
     private func resolvedSourceURL(from source: String) -> URL? {
-        if let url = URL(string: source), url.scheme?.hasPrefix("http") == true {
-            return url
+        // Trim whitespace/newlines first to avoid constructing malformed URLs.
+        let trimmed = source.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        if let url = URL(string: trimmed) {
+            if let scheme = url.scheme?.lowercased() {
+                // Only allow explicit http/https schemes.
+                if scheme == "http" || scheme == "https" {
+                    return url
+                } else {
+                    // Reject non-HTTP(S) schemes (e.g. mailto:, ftp:).
+                    return nil
+                }
+            }
         }
-        return URL(string: "https://\(source)")
+
+        // No scheme present: treat as bare domain and prepend https://.
+        return URL(string: "https://\(trimmed)")
     }
 
     private func sectionHeader(_ title: String) -> some View {
