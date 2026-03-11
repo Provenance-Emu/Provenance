@@ -294,11 +294,11 @@ public final class DirectoryWatcher: ObservableObject {
         }
 
         guard fileReadable else {
-            let description = "Archive file is locked or not readable: "
+            let description = "Archive file not readable after \(maxReadAttempts) attempt(s): "
                 + "\(filePath.lastPathComponent) (size: \(fileSize) bytes)"
             let error = NSError(domain: "DirectoryWatcher", code: -1,
                                 userInfo: [NSLocalizedDescriptionKey: description])
-            ELOG("Failed to verify archive file readiness: \(filePath.path)")
+            ELOG("Failed to verify archive file readiness after retries: \(filePath.path)")
             throw error
         }
 
@@ -463,27 +463,22 @@ public final class DirectoryWatcher: ObservableObject {
 
             // Move files FLATLY to the watched directory (no subdirectory structure)
             // This ensures files are immediately available for import without race conditions
-            let movedFiles = await moveExtractedFilesFlat(sortedFiles, from: tempExtractionDir, to: watchedDirectory)
+            let moveResult = await moveExtractedFilesFlat(sortedFiles, from: tempExtractionDir, to: watchedDirectory)
 
-            // Notify about the completed files
-            if !movedFiles.isEmpty {
-                completedFilesContinuation?.yield(movedFiles)
+            if !moveResult.moved.isEmpty {
+                completedFilesContinuation?.yield(moveResult.moved)
             }
 
-            // Only clean up temp directory if all files were moved successfully.
-            // If some remain, preserve the directory so files are not lost.
-            let remainingItems = (try? FileManager.default.contentsOfDirectory(at: tempExtractionDir, includingPropertiesForKeys: nil))?
-                .filter { !$0.lastPathComponent.hasPrefix(".") } ?? []
-            if remainingItems.isEmpty {
+            if moveResult.isComplete {
                 do {
                     try FileManager.default.removeItem(at: tempExtractionDir)
                 } catch {
                     ELOG("Failed to clean up temp extraction directory \(tempExtractionDir.lastPathComponent): \(error.localizedDescription)")
                 }
             } else {
-                WLOG("Preserving temp directory with \(remainingItems.count) unmoved file(s): \(tempExtractionDir.path)")
+                WLOG("Preserving temp directory with \(moveResult.failedCount) unmoved file(s): \(tempExtractionDir.path)")
                 let partialError = ArchiveError.extractionFailed(
-                    "\(remainingItems.count) file(s) could not be moved from temp directory"
+                    "\(moveResult.failedCount) file(s) could not be moved from temp directory"
                 )
                 updateExtractionStatus(.failed(error: partialError))
                 Task { @MainActor in
@@ -494,8 +489,8 @@ public final class DirectoryWatcher: ObservableObject {
                             "error": partialError.localizedDescription,
                             "path": filePath.path,
                             "filename": filePath.lastPathComponent,
-                            "movedCount": movedFiles.count,
-                            "failedCount": remainingItems.count,
+                            "movedCount": moveResult.moved.count,
+                            "failedCount": moveResult.failedCount,
                             "timestamp": Date()
                         ]
                     )
@@ -574,12 +569,25 @@ public final class DirectoryWatcher: ObservableObject {
         completedFilesContinuation?.yield([destinationURL])
     }
 
+    /// Result of a batch file-move operation.
+    struct BatchMoveResult {
+        /// Files that were successfully moved to the destination.
+        let moved: [URL]
+        /// Number of files that failed to move.
+        let failedCount: Int
+        /// `true` when every file was moved successfully.
+        var isComplete: Bool { failedCount == 0 }
+    }
+
     /// Moves extracted files to the destination directory, flattening any
     /// subdirectory structure. Individual move failures are logged but do
-    /// not abort the batch — successfully moved files are still returned.
-    /// The caller should check whether the source directory still contains
-    /// unmoved files before cleaning it up.
-    private func moveExtractedFilesFlat(_ files: [URL], from sourceDir: URL, to destinationDir: URL) async -> [URL] {
+    /// not abort the batch — successfully moved files are still returned
+    /// alongside the failure count so callers can decide how to proceed.
+    private func moveExtractedFilesFlat(
+        _ files: [URL],
+        from sourceDir: URL,
+        to destinationDir: URL
+    ) async -> BatchMoveResult {
         var movedFiles: [URL] = []
         var failedCount = 0
         for file in files {
@@ -605,9 +613,9 @@ public final class DirectoryWatcher: ObservableObject {
             }
         }
         if failedCount > 0 {
-            ELOG("Batch move completed with \(failedCount)/\(files.count) failure(s). Source directory preserved: \(sourceDir.path)")
+            ELOG("Batch move: \(failedCount)/\(files.count) failure(s). Source dir preserved: \(sourceDir.path)")
         }
-        return movedFiles
+        return BatchMoveResult(moved: movedFiles, failedCount: failedCount)
     }
 
     private func sortExtractedFiles(_ files: [URL]) -> [URL] {
