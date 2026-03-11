@@ -144,12 +144,23 @@ extension PVEmulatorViewController {
     /// Call this after the core has started and the view hierarchy is ready.
     /// Auto-shows the keyboard if the core requires it.
     /// Mouse cursor overlay is handled separately by `setupVirtualMouseIfNeeded()`.
+    ///
+    /// Hardware keyboard observation is started first so the virtual
+    /// keyboard is never briefly shown then hidden when a physical
+    /// keyboard is already connected.
     public func setupVirtualInputOverlaysIfNeeded() {
+        startObservingHardwareKeyboard()
+
+        if GCKeyboard.coalesced != nil {
+            ILOG("[VirtualKeyboard] Hardware keyboard present — skipping virtual keyboard auto-show")
+            return
+        }
+
         if coreRequiresVirtualKeyboard {
             showVirtualKeyboard()
         }
         applyKeyboardOverlayConfigIfNeeded()
-        startObservingHardwareKeyboard()
+        DLOG("[VirtualKeyboard] setupVirtualInputOverlaysIfNeeded completed, visible=\(isVirtualKeyboardVisible)")
     }
 
     /// Tears down the keyboard overlay. Call from `viewWillDisappear` or `deinit`.
