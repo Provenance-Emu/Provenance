@@ -211,6 +211,12 @@ public extension N64ROMNormalizer {
         let alignment = format.swapAlignment
         assert(offset % alignment == 0,
                "Offset \(offset) must be \(alignment)-byte aligned for \(format) format")
+        
+        guard offset % alignment == 0 else {
+            // TODO: Should throw from this function maybe
+            // ELOG("Offset \(offset) must be \(alignment)-byte aligned for \(format) format")
+            return nil
+        }
 
         // Seek to hash start offset
         do {
