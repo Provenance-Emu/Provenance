@@ -47,6 +47,7 @@ public struct SkinCatalogDetailView: View {
                 VStack(spacing: 0) {
                     screenshotSection
                     metadataSection
+                    statsSection
                     actionSection
                     systemTagsSection
                     if let tags = entry.tags, !tags.isEmpty {
@@ -75,7 +76,15 @@ public struct SkinCatalogDetailView: View {
     // MARK: - Screenshot Section
 
     private var screenshotSection: some View {
-        let screenshots = entry.screenshotURLs ?? (entry.thumbnailURL.map { [$0] } ?? [])
+        let screenshots: [URL] = {
+            if let urls = entry.screenshotURLs, !urls.isEmpty {
+                return urls
+            }
+            if let thumb = entry.thumbnailURL {
+                return [thumb]
+            }
+            return []
+        }()
 
         return Group {
             if !screenshots.isEmpty {
@@ -146,59 +155,99 @@ public struct SkinCatalogDetailView: View {
     // MARK: - Metadata Section
 
     private var metadataSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Title and author
-            VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
                 Text(entry.name)
                     .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundStyle(RetroTheme.retroHorizontalGradient)
                     .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.4), radius: 2)
 
-                HStack(spacing: 6) {
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 12))
+                Spacer()
+
+                if let version = entry.version {
+                    Text("v\(version)")
+                        .font(.system(size: 13, weight: .medium, design: .monospaced))
                         .foregroundColor(.white.opacity(0.5))
-                    Text(entry.author ?? "Unknown")
-                        .font(.system(size: 14))
-                        .foregroundColor(.white.opacity(0.7))
                 }
             }
 
-            // Stats row
-            HStack(spacing: 20) {
-                if let rating = entry.rating {
-                    statItem(icon: "star.fill", value: String(format: "%.1f", rating), label: "Rating")
-                }
-                if let downloads = entry.downloadCount, downloads > 0 {
-                    statItem(icon: "arrow.down.circle.fill", value: formatSkinDownloadCount(downloads), label: "Downloads")
-                }
-                if let size = entry.fileSize {
-                    statItem(icon: "internaldrive", value: formatFileSize(size), label: "Size")
-                }
-                if let version = entry.version {
-                    statItem(icon: "tag.fill", value: version, label: "Version")
-                }
-                if let updated = entry.lastUpdated {
-                    statItem(icon: "calendar", value: formatDate(updated), label: "Updated")
-                }
+            HStack(spacing: 6) {
+                Image(systemName: "person.fill")
+                    .font(.system(size: 12))
+                    .foregroundColor(.white.opacity(0.5))
+                Text("by \(entry.author ?? "Unknown")")
+                    .font(.system(size: 14))
+                    .foregroundColor(.white.opacity(0.7))
             }
         }
         .padding(.horizontal, 20)
         .padding(.top, 20)
     }
 
-    private func statItem(icon: String, value: String, label: String) -> some View {
-        VStack(spacing: 2) {
-            Image(systemName: icon)
-                .font(.system(size: 14))
-                .foregroundStyle(RetroTheme.retroHorizontalGradient)
-            Text(value)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
-            Text(label)
-                .font(.system(size: 10))
-                .foregroundColor(.white.opacity(0.5))
+    // MARK: - Stats Section
+
+    /// Dedicated stats section matching the design spec layout.
+    private var statsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionHeader("STATS")
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                statCard(
+                    icon: "arrow.down.circle.fill",
+                    value: entry.downloadCount.map { formatSkinDownloadCount($0) } ?? "—",
+                    label: "Downloads"
+                )
+                statCard(
+                    icon: "star.fill",
+                    value: entry.rating.map { String(format: "%.1f", $0) } ?? "—",
+                    label: "Rating"
+                )
+                statCard(
+                    icon: "internaldrive",
+                    value: entry.fileSize.map { formatFileSize($0) } ?? "—",
+                    label: "Size"
+                )
+                statCard(
+                    icon: "calendar",
+                    value: entry.lastUpdated.map { formatDate($0) } ?? "—",
+                    label: "Updated"
+                )
+            }
+            .padding(.horizontal, 20)
         }
+        .padding(.top, 20)
+    }
+
+    /// A single stat card rendered inside the stats grid.
+    private func statCard(icon: String, value: String, label: String) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 18))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .frame(width: 24)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(value)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                Text(label)
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.5))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.black.opacity(0.3))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
+                )
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("\(label), \(value)"))
     }
 
     // MARK: - Action Section (Download & Install)
@@ -440,7 +489,7 @@ public struct SkinCatalogDetailView: View {
     private var sourceSection: some View {
         Group {
             if let source = entry.source, !source.isEmpty,
-               let sourceURL = URL(string: source), sourceURL.scheme?.hasPrefix("http") == true {
+               let sourceURL = resolvedSourceURL(from: source) {
                 VStack(alignment: .leading, spacing: 10) {
                     sectionHeader("SOURCE")
 
@@ -477,6 +526,28 @@ public struct SkinCatalogDetailView: View {
                 .padding(.top, 16)
             }
         }
+    }
+
+    /// Resolves a source string into a valid HTTP(S) URL, prepending `https://` for bare domains.
+    private func resolvedSourceURL(from source: String) -> URL? {
+        // Trim whitespace/newlines first to avoid constructing malformed URLs.
+        let trimmed = source.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        if let url = URL(string: trimmed) {
+            if let scheme = url.scheme?.lowercased() {
+                // Only allow explicit http/https schemes.
+                if scheme == "http" || scheme == "https" {
+                    return url
+                } else {
+                    // Reject non-HTTP(S) schemes (e.g. mailto:, ftp:).
+                    return nil
+                }
+            }
+        }
+
+        // No scheme present: treat as bare domain and prepend https://.
+        return URL(string: "https://\(trimmed)")
     }
 
     private func sectionHeader(_ title: String) -> some View {
