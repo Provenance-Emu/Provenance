@@ -162,22 +162,42 @@ public class VecxOptions: NSObject, CoreOptional {
 
 // MARK: - Variable Accessors
 public extension VecxOptions {
+    /// Returns the title string of the currently selected value for an enumeration option.
+    /// The libretro C core expects option values as their string labels (e.g. "824x1024"),
+    /// not as integer indices — this helper performs that index→title lookup.
+    static func titleForOption(_ option: CoreOption) -> String {
+        let index: Int = valueForOption(option)
+        if case let .enumeration(_, values, defaultValue, _) = option {
+            return values.first { $0.value == index }?.title
+                ?? values.first { $0.value == defaultValue }?.title
+                ?? ""
+        }
+        return valueForOption(option).asString
+    }
+
     #if HAS_GPU
-    @objc static var useHardware: String { valueForOption(Options.Rendering.useHardwareOption).asString }
-    @objc static var resolutionHW: String { valueForOption(Options.Rendering.resolutionHWOption).asString }
+    /// "Software" or "Hardware" — the string the C libretro core compares with strcmp.
+    @objc static var useHardware: String { titleForOption(Options.Rendering.useHardwareOption) }
+    /// Resolution string like "824x1024" — parsed by the C core as "WIDTHxHEIGHT".
+    @objc static var resolutionHW: String { titleForOption(Options.Rendering.resolutionHWOption) }
     @objc static var lineBrightness: Int { valueForOption(Options.Rendering.lineBrightnessOption).asInt ?? 4 }
     @objc static var lineWidth: Int { valueForOption(Options.Rendering.lineWidthOption).asInt ?? 4 }
     @objc static var bloomBrightness: Int { valueForOption(Options.Rendering.bloomBrightnessOption).asInt ?? 4 }
-    @objc static var bloomWidth: String { valueForOption(Options.Rendering.bloomWidthOption).asString }
+    /// Bloom width multiplier string like "8x" — parsed by the C core with atoi.
+    @objc static var bloomWidth: String { titleForOption(Options.Rendering.bloomWidthOption) }
     #else
     @objc static var useHardware: String { "Software" }
     #endif
-    
+
     @objc static var resolutionMulti: Int { valueForOption(Options.Display.resolutionMultiOption).asInt ?? 1 }
-    @objc static var scaleX: String { valueForOption(Options.Display.scaleXOption).asString }
-    @objc static var scaleY: String { valueForOption(Options.Display.scaleYOption).asString }
-    @objc static var shiftX: String { valueForOption(Options.Display.shiftXOption).asString }
-    @objc static var shiftY: String { valueForOption(Options.Display.shiftYOption).asString }
+    /// Float string like "1.000" — parsed by the C core with atof.
+    @objc static var scaleX: String { titleForOption(Options.Display.scaleXOption) }
+    /// Float string like "1.000" — parsed by the C core with atof.
+    @objc static var scaleY: String { titleForOption(Options.Display.scaleYOption) }
+    /// Float string like "0.000" — parsed by the C core with atof.
+    @objc static var shiftX: String { titleForOption(Options.Display.shiftXOption) }
+    /// Float string like "0.000" — parsed by the C core with atof.
+    @objc static var shiftY: String { titleForOption(Options.Display.shiftYOption) }
     
     @objc(getVariable:)
     static func get(variable: String) -> Any? {
