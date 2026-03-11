@@ -151,20 +151,6 @@ struct SystemSettingsView: View {
             // Main content
             ScrollView {
                 VStack(spacing: 16) {
-                    // Title with retrowave styling
-                    Text("SYSTEMS")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundStyle(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .padding(.top, 20)
-                        .padding(.bottom, 10)
-                        .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-
                     // Search field with retrowave styling
                     HStack {
                         Image(systemName: "magnifyingglass")
@@ -213,7 +199,7 @@ struct SystemSettingsView: View {
         }
         .tvOSNavigationSupport(title: "Systems")
         #if !os(tvOS)
-        .navigationBarHidden(true)
+        .navigationTitle("Systems")
         #endif
 #endif
     }
