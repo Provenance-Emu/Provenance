@@ -19,6 +19,12 @@
     case reset
     case leftDiff
     case rightDiff
+    // Doom-specific controls
+    case strafeLeft    // L shoulder → RETRO_DEVICE_ID_JOYPAD_L (Strafe left in PrBoom)
+    case strafeRight   // R shoulder → RETRO_DEVICE_ID_JOYPAD_R (Strafe right in PrBoom)
+    case run           // X button → RETRO_DEVICE_ID_JOYPAD_X (Speed/Run in PrBoom)
+    case weaponNext    // R2 trigger → RETRO_DEVICE_ID_JOYPAD_R2 (Next weapon in PrBoom)
+    case weaponPrev    // L2 trigger → RETRO_DEVICE_ID_JOYPAD_L2 (Previous weapon in PrBoom)
     case count
 
     public init(_ value: String) {
@@ -27,13 +33,19 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "fire1", "1", "i", "a": self = .fire1
-            case "fire2", "2", "ii", "b": self = .fire2
+            case "fire1", "1", "i", "a", "fire": self = .fire1
+            case "fire2", "2", "ii", "b", "use": self = .fire2
             case "select", "s": self = .select
             case "pause", "p": self = .pause
-            case "reset", "r": self = .reset
-            case "leftdiff", "l": self = .leftDiff
-            case "rightdiff", "r": self = .rightDiff
+            case "reset": self = .reset
+            case "leftdiff": self = .leftDiff
+            case "rightdiff": self = .rightDiff
+            // Doom-specific: shoulder / trigger buttons
+            case "strafeleft", "sl", "l", "l1": self = .strafeLeft
+            case "straferight", "sr", "r", "r1": self = .strafeRight
+            case "run", "speed", "shift": self = .run
+            case "weaponnext", "wn", "nextweapon", "r2": self = .weaponNext
+            case "weaponprev", "wp", "prevweapon", "l2": self = .weaponPrev
             case "count": self = .count
             default: self = .up
         }
@@ -63,6 +75,16 @@
                 return "leftdiff"
             case .rightDiff:
                 return "rightdiff"
+            case .strafeLeft:
+                return "strafeleft"
+            case .strafeRight:
+                return "straferight"
+            case .run:
+                return "run"
+            case .weaponNext:
+                return "weaponnext"
+            case .weaponPrev:
+                return "weaponprev"
             case .count:
                 return "count"
         }

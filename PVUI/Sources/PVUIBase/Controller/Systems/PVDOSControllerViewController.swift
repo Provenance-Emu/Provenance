@@ -27,10 +27,12 @@ final class PVDOSControllerViewController: PVControllerViewController<PVDOSSyste
                 return
             }
             switch title.lowercased() {
-            case "fire 1", "1":
+            case "fire 1", "1", "fire":
                 button.buttonTag = .fire1
-            case "fire 2", "2":
+            case "fire 2", "2", "use":
                 button.buttonTag = .fire2
+            case "run", "speed":
+                button.buttonTag = .run
             case "select":
                 button.buttonTag = .select
             case "reset", "start":
@@ -42,6 +44,10 @@ final class PVDOSControllerViewController: PVControllerViewController<PVDOSSyste
             }
         }
 
+        leftShoulderButton?.buttonTag = .strafeLeft
+        rightShoulderButton?.buttonTag = .strafeRight
+        leftShoulderButton2?.buttonTag = .weaponPrev
+        rightShoulderButton2?.buttonTag = .weaponNext
         startButton?.buttonTag = .reset
         selectButton?.buttonTag = .select
     }
