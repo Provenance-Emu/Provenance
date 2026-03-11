@@ -1839,9 +1839,10 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: {
-            /// Async audio interface for cores with decoupled audio/video
-            ILOG(@"Environ SET_AUDIO_CALLBACK");
-            return true;
+            /// Async audio interface for cores with decoupled audio/video.
+            /// Not currently supported: report false so cores don't rely on it.
+            ILOG(@"Environ SET_AUDIO_CALLBACK (unsupported async audio, returning false)");
+            return false;
         }
         case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
             /// Tell the core which HW context type we prefer.
