@@ -22,19 +22,28 @@ enum FileStabilityChecker {
     )
 
     /// Thread-safe handle that `onCancel` uses to trigger teardown.
-    /// All access to the stored closure is protected by `lock`.
+    /// All access is protected by `lock`. If `fire()` is called before
+    /// `set(_:)`, a `cancelled` flag is stored so the teardown block
+    /// executes immediately when it is later registered.
     private final class CancelHandle: @unchecked Sendable {
         private let lock = NSLock()
         private var _teardown: (() -> Void)?
+        private var cancelled = false
 
         func set(_ block: @escaping () -> Void) {
             lock.lock()
-            _teardown = block
-            lock.unlock()
+            if cancelled {
+                lock.unlock()
+                block()
+            } else {
+                _teardown = block
+                lock.unlock()
+            }
         }
 
         func fire() {
             lock.lock()
+            cancelled = true
             let block = _teardown
             _teardown = nil
             lock.unlock()

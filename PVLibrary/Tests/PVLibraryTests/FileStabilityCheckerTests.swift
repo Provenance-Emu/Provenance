@@ -12,18 +12,18 @@ final class FileStabilityCheckerTests: XCTestCase {
 
     private var tempDir: URL!
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
         tempDir = FileManager.default.temporaryDirectory
             .appendingPathComponent("FileStabilityCheckerTests-\(UUID().uuidString)")
-        try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
     }
 
-    override func tearDown() {
+    override func tearDownWithError() throws {
         if let tempDir {
-            try? FileManager.default.removeItem(at: tempDir)
+            try FileManager.default.removeItem(at: tempDir)
         }
-        super.tearDown()
+        try super.tearDownWithError()
     }
 
     /// A file that already exists and isn't being written to should
@@ -64,6 +64,7 @@ final class FileStabilityCheckerTests: XCTestCase {
         )
 
         writeTask.cancel()
+        _ = await writeTask.result
         XCTAssertFalse(result, "Continuously written file should time out")
     }
 
@@ -97,6 +98,7 @@ final class FileStabilityCheckerTests: XCTestCase {
         let elapsed = Date().timeIntervalSince(start)
 
         writeTask.cancel()
+        _ = await writeTask.result
         XCTAssertFalse(result, "Cancelled task should return false")
         XCTAssertLessThan(elapsed, 5.0, "Cancellation should resolve promptly")
     }
