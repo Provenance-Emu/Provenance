@@ -417,48 +417,53 @@ struct RetroMenuView: View {
     // Main menu buttons - essential game controls only
     private var mainMenuButtons: some View {
         let shouldSave: Bool = shouldSaveOnQuit
+        // Determine cheat support once so button position stays fixed
+        let supportsCheatCodes: Bool = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
 
         return VStack(spacing: menuSpacing) {
-            // Resume game button
-            menuButton(title: "RESUME GAME", icon: "play.fill", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
+            // Position 1 — Resume game (green = safe/go)
+            menuButton(title: "RESUME GAME", icon: "play.fill", color: .retroGreen) {
                 dismissAction(true)
             }
 
-            // Reset game button
-            menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: palette.defaultTintColor.swiftUIColor) {
+            // Position 2 — Reset game (orange = caution)
+            menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: .retroOrange) {
                 dismissAction(true)
                 emulatorVC.core.resetEmulation()
             }
 
-            // Game info button
-            menuButton(title: "GAME INFO", icon: "info.circle", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
-                // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+            // Position 3 — Game info (blue = informational)
+            menuButton(title: "GAME INFO", icon: "info.circle", color: .retroBlue) {
                 dismissMenuForSubSheetThen {
                     emulatorVC.showMoreInfo()
                 }
             }
 
-            // Cheat codes button (if supported)
-            if let gameWithCheat = emulatorVC.core as? GameWithCheat, gameWithCheat.supportsCheatCode {
-                menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: palette.defaultTintColor.swiftUIColor) {
-                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+            // Position 4 — Cheat codes (purple = special/magic)
+            // Always rendered at this position so QUIT stays at position 5.
+            // Disabled/dimmed when the core does not support cheat codes.
+            menuButton(title: "CHEAT CODES", icon: "wand.and.stars", color: supportsCheatCodes ? .retroPurple : .gray) {
+                if supportsCheatCodes {
                     dismissMenuForSubSheetThen {
                         emulatorVC.showCheatsMenu()
                     }
                 }
             }
+            .opacity(supportsCheatCodes ? 1.0 : 0.4)
+            .allowsHitTesting(supportsCheatCodes)
 
-            // Quit game button - show different title if save option is available
-            menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: palette.defaultTintColor.swiftUIColor) {
+            // Position 5 — Quit (red/pink = destructive action)
+            // Label changes based on whether a save prompt is offered; position is always 5.
+            menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: .retroPink) {
                 dismissAction(false)
                 Task { @MainActor in
                     await emulatorVC.quit(optionallySave: false)
                 }
             }
 
-            // Save & Quit button - only show if save option is available
+            // Position 6 — Save & Quit (cyan = safe save action); only shown when applicable
             if shouldSave {
-                menuButton(title: "SAVE & QUIT", icon: "square.and.arrow.down", color: palette.defaultTintColor.swiftUIColor) {
+                menuButton(title: "SAVE & QUIT", icon: "square.and.arrow.down", color: .retroCyan) {
                     dismissAction(false)
                     let image = emulatorVC.captureScreenshot()
 
@@ -484,7 +489,7 @@ struct RetroMenuView: View {
             // Core action buttons (if available) - show first for prominence
             if let actionableCore = emulatorVC.core as? CoreActions, let actions = actionableCore.coreActions {
                 ForEach(actions) { coreAction in
-                    menuButton(title: coreAction.title, icon: "bolt", color: palette.defaultTintColor.swiftUIColor) {
+                    menuButton(title: coreAction.title, icon: "bolt", color: .retroYellow) {
                         dismissAction(true)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             actionableCore.selected(action: coreAction)
@@ -499,8 +504,7 @@ struct RetroMenuView: View {
 
             // Core options button (if available)
             if emulatorVC.core is CoreOptional {
-                menuButton(title: "CORE OPTIONS", icon: "gearshape", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
-                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                menuButton(title: "CORE OPTIONS", icon: "gearshape", color: .retroPurple) {
                     dismissMenuForSubSheetThen {
                         emulatorVC.showCoreOptions()
                     }
@@ -512,7 +516,7 @@ struct RetroMenuView: View {
                 menuButton(
                     title: emulatorVC.isVirtualKeyboardVisible ? "HIDE KEYBOARD" : "VIRTUAL KEYBOARD",
                     icon: "keyboard",
-                    color: palette.defaultTintColor.swiftUIColor
+                    color: .retroBlue
                 ) {
                     dismissAction(false)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
@@ -526,7 +530,7 @@ struct RetroMenuView: View {
                 menuButton(
                     title: emulatorVC.isVirtualMouseVisible ? "HIDE MOUSE" : "VIRTUAL MOUSE",
                     icon: "computermouse",
-                    color: palette.defaultTintColor.swiftUIColor
+                    color: .retroCyan
                 ) {
                     dismissAction(false)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
@@ -553,8 +557,8 @@ struct RetroMenuView: View {
     private var stateMenuButtons: some View {
         VStack(spacing: menuSpacing) {
             if emulatorVC.core.supportsSaveStates {
-                // Save state button
-                menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
+                // Save state button (cyan = write/save)
+                menuButton(title: "SAVE STATE", icon: "square.and.arrow.down", color: .retroCyan) {
                     // Capture screenshot while emulator is still paused
                     let screenshot = emulatorVC.captureScreenshot()
                     dismissAction(true)
@@ -567,17 +571,15 @@ struct RetroMenuView: View {
                     }
                 }
 
-                // Load state button
-                menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)) {
-                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                // Load state button (blue = read/load)
+                menuButton(title: "LOAD STATE", icon: "square.and.arrow.up", color: .retroBlue) {
                     dismissMenuForSubSheetThen {
                         emulatorVC.showSaveStateMenu()
                     }
                 }
 
-                // Save states menu button
-                menuButton(title: "SAVE STATES", icon: "list.bullet", color: palette.defaultTintColor.swiftUIColor) {
-                    // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+                // Save states list button (purple = browse)
+                menuButton(title: "SAVE STATES", icon: "list.bullet", color: .retroPurple) {
                     dismissMenuForSubSheetThen {
                         emulatorVC.showSaveStateMenu()
                     }
@@ -588,9 +590,9 @@ struct RetroMenuView: View {
                     .padding()
             }
 
-            // Screenshot button
+            // Screenshot button (yellow = capture)
 #if os(iOS) || targetEnvironment(macCatalyst)
-            menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: palette.defaultTintColor.swiftUIColor) {
+            menuButton(title: "SAVE SCREENSHOT", icon: "camera", color: .retroYellow) {
                 dismissAction(true)
                 emulatorVC.takeScreenshot()
             }
@@ -615,9 +617,7 @@ struct RetroMenuView: View {
         if isAvailable {
             let title = isRecording ? "STOP RECORDING" : "RECORD GAMEPLAY"
             let icon = isRecording ? "stop.circle" : "record.circle"
-            let color = isRecording
-                ? Color.red
-                : (palette.defaultTintColor.swiftUIColor)
+            let color: Color = isRecording ? .retroPink : .retroOrange
 #if canImport(FreemiumKit)
             PaidFeatureView {
                 menuButton(title: title, icon: icon, color: color) {
@@ -685,9 +685,8 @@ struct RetroMenuView: View {
     // Options related buttons - game settings and enhancements
     private var optionsMenuButtons: some View {
         VStack(spacing: menuSpacing) {
-            // Game speed button
-            menuButton(title: "GAME SPEED", icon: "speedometer", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
-                // Dismiss menu but keep game paused - sub-sheet will resume when dismissed
+            // Game speed button (yellow = speed/performance)
+            menuButton(title: "GAME SPEED", icon: "speedometer", color: .retroYellow) {
                 dismissMenuForSubSheetThen {
                     emulatorVC.showSpeedMenu()
                 }
@@ -702,7 +701,7 @@ struct RetroMenuView: View {
                 menuToggleRow(
                     title: "SHOW FPS COUNTER",
                     icon: "speedometer",
-                    color: palette.defaultTintColor.swiftUIColor,
+                    color: .retroYellow,
                     isOn: $showFPSCount
                 )
             }
@@ -769,30 +768,27 @@ struct RetroMenuView: View {
 
             let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(emulatorVC.game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
 
-            // P1 controls (if available)
+            // P1 controls (blue = primary player)
             if let player1 = PVControllerManager.shared.player1 {
 #if os(iOS)
                 if Defaults[.missingButtonsAlwaysOn] || (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
-                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
-                        // Show P1 controls submenu
+                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: .retroBlue) {
                         dismissAction(true)
                     }
                 }
 #else
                 if player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
-                        // Show P1 controls submenu
+                    menuButton(title: "P1 CONTROLS", icon: "gamecontroller", color: .retroBlue) {
                         dismissAction(true)
                     }
                 }
 #endif
             }
 
-            // P2 controls (if available)
+            // P2 controls (purple = secondary player)
             if let player2 = PVControllerManager.shared.player2 {
                 if player2.extendedGamepad != nil || wantsStartSelectInMenu {
-                    menuButton(title: "P2 CONTROLS", icon: "gamecontroller", color: palette.defaultTintColor.swiftUIColor) {
-                        // Show P2 controls submenu
+                    menuButton(title: "P2 CONTROLS", icon: "gamecontroller", color: .retroPurple) {
                         dismissAction(true)
                     }
                 }
@@ -809,11 +805,13 @@ struct RetroMenuView: View {
                 Image(systemName: icon)
                     .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
                     .foregroundColor(color)
+                    // Neon glow on icon — matches menuButton and AudioVisualizerButton style
+                    .shadow(color: color.opacity(0.8), radius: 4, x: 0, y: 0)
                     .frame(width: 30)
 
                 Text(title)
                     .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
-                    .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                    .foregroundColor(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
 
@@ -821,26 +819,19 @@ struct RetroMenuView: View {
 
                 Text(isOn.wrappedValue ? "ON" : "OFF")
                     .font(.system(size: isLandscape ? 14 : 16, weight: .bold, design: .monospaced))
-                    .foregroundColor(
-                        isOn.wrappedValue
-                            ? (palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
-                            : (palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7)
-                    )
+                    .foregroundColor(isOn.wrappedValue ? color : Color.gray.opacity(0.6))
             }
             .padding(.vertical, isLandscape ? 10 : 14)
             .padding(.horizontal, 16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                            .opacity(palette.dark ? 0.7 : 0.9)
-                    )
+                    .fill(Color.black.opacity(0.6))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(color, lineWidth: 2)
+                            .strokeBorder(color, lineWidth: 1.5)
                     )
             )
-            .shadow(color: color.opacity(palette.dark ? 0.5 : 0.3), radius: 5, x: 0, y: 0)
+            .shadow(color: color.opacity(0.4), radius: 6, x: 0, y: 0)
         }
         .retroFocusButtonStyle(
             focusScale: 1.06,
@@ -1188,7 +1179,7 @@ struct RetroMenuView: View {
                 }
 
                 // Apply button - applies both skin and filter changes after dismissing menu
-                menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor) {
+                menuButton(title: "APPLY SKIN AND FILTER", icon: "checkmark.circle", color: .retroGreen) {
                     dismissAction(true)
                     // Apply skin and filter changes after menu is dismissed
                     Task {
@@ -2675,17 +2666,21 @@ struct RetroMenuView: View {
     }
 
     // Helper function to create menu buttons
+    // Uses accent-color glow styling: distinct per-button colors with neon icon glow
+    // (modelled after AudioVisualizerButton's cyan-glow reference style)
     private func menuButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack {
                 Image(systemName: icon)
                     .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
                     .foregroundColor(color)
+                    // Neon glow on icon — matches AudioVisualizerButton reference style
+                    .shadow(color: color.opacity(0.8), radius: 4, x: 0, y: 0)
                     .frame(width: 30)
 
                 Text(title)
                     .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
-                    .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                    .foregroundColor(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
 
@@ -2693,22 +2688,19 @@ struct RetroMenuView: View {
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: isLandscape ? 12 : 14))
-                    .foregroundColor((palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.5))
+                    .foregroundColor(color.opacity(0.7))
             }
             .padding(.vertical, isLandscape ? 10 : 14)
             .padding(.horizontal, 16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                            .opacity(palette.dark ? 0.7 : 0.9)
-                    )
+                    .fill(Color.black.opacity(0.6))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(color, lineWidth: 2)
+                            .strokeBorder(color, lineWidth: 1.5)
                     )
             )
-            .shadow(color: color.opacity(palette.dark ? 0.5 : 0.3), radius: 5, x: 0, y: 0)
+            .shadow(color: color.opacity(0.4), radius: 6, x: 0, y: 0)
         }
         .retroFocusButtonStyle(
             focusScale: 1.06,
