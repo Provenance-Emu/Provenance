@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development, March 2026)
 
 ### Added
+- **Controller Skin Browser & Documentation in Settings** — Settings → Controller tab now includes a "Skin Browser" row (opens the community skin catalog) and a "Skin Documentation" row (opens the built-in wiki page for skins) (#2975)
 - **Keyboard Input for 11 Cores** — Physical keyboard (Bluetooth/USB) now forwarded via
   `apple_input_keyboard_event` in Dreamcast (Flycast), PSX, SNES, CDi, 3DO, Saturn, N64,
   ColecoVision, Atari 8-bit, EP128, and MAME RetroArch cores. Atari 8-bit and EP128 set
