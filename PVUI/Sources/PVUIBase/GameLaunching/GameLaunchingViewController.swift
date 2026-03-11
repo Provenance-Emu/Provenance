@@ -1186,6 +1186,14 @@ extension GameLaunchingViewController where Self: UIViewController {
     func openSaveState(_ saveState: PVSaveState) async {
 
         if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
+            if let currentCoreID = gameVC.core.coreIdentifier,
+               let currentCore = RomDatabase.sharedInstance.object(ofType: PVCore.self, wherePrimaryKeyEquals: currentCoreID) {
+                let decision = await confirmSaveStateLoadIfNeeded(saveState, currentCore: currentCore, allowsStartWithoutSave: false)
+                guard decision == .loadAnyway else {
+                    return
+                }
+            }
+
             //            try? RomDatabase.sharedInstance.writeTransaction {
             try? saveState.realm!.write {
                 saveState.lastOpened = Date()
@@ -1355,6 +1363,23 @@ extension GameLaunchingViewController where Self: UIViewController {
             ELOG("No core found for id: \(core.identifier)")
             return
         }
+        var selectedSaveState = saveState
+        var shouldSkipSaveStatePrompt = skipSaveStatePrompt
+
+        if let saveState {
+            let decision = await confirmSaveStateLoadIfNeeded(saveState, currentCore: core, allowsStartWithoutSave: true)
+            switch decision {
+            case .loadAnyway:
+                break
+            case .startWithoutSave:
+                selectedSaveState = nil
+                shouldSkipSaveStatePrompt = true
+            case .cancel:
+                AppState.shared.emulationUIState.reset()
+                SceneCoordinator.shared.closeEmulator()
+                return
+            }
+        }
         guard let system = game.system, let coreInstance = core.createInstance(forSystem: system) else {
             displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
             ELOG("Failed to init core instance")
@@ -1368,7 +1393,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         // This handles RetroArch cores where supportsSaveStates may be false before core initialization
         let hasSavesInDatabase = !game.saveStates.filter("core.identifier == %@", core.identifier).isEmpty ||
                                   !game.autoSaves.filter("core.identifier == %@", core.identifier).isEmpty
-        let shouldCheckForSaves = !skipSaveStatePrompt && saveState == nil && (emulatorViewController.core.supportsSaveStates || hasSavesInDatabase)
+        let shouldCheckForSaves = !shouldSkipSaveStatePrompt && selectedSaveState == nil && (emulatorViewController.core.supportsSaveStates || hasSavesInDatabase)
 
         if shouldCheckForSaves {
             @ThreadSafe var theadsafeCore = core
@@ -1378,7 +1403,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
             }
         } else {
-            presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: saveState)
+            presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: selectedSaveState)
         }
     }
 

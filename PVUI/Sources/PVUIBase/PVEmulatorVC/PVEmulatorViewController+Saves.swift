@@ -47,8 +47,15 @@ public extension PVEmulatorViewController {
 
     @MainActor
     public func loadSaveState(_ state: PVSaveState) async -> Bool {
+        let finishWithoutLoading = {
+            self.core.setPauseEmulation(false)
+            self.isShowingMenu = false
+            self.enableControllerInput(false)
+        }
+
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
+            finishWithoutLoading()
             return false
         }
 
@@ -56,22 +63,20 @@ public extension PVEmulatorViewController {
         if achievementsBlocksSaveStateLoad() {
             presentError(
                 "Save state loading is disabled in RetroAchievements Hardcore Mode.",
-                source: view
+                source: view,
+                completion: finishWithoutLoading
             )
             return false
         }
 
         guard let realm = try? await Realm() else {
             ELOG("Realm() failed")
+            finishWithoutLoading()
             return false
         }
         guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
-            presentError("No core in database with id \(self.core.coreIdentifier ?? "null")", source: self.view)
+            presentError("No core in database with id \(self.core.coreIdentifier ?? "null")", source: self.view, completion: finishWithoutLoading)
             return false
-        }
-
-        // Create a function to use later
-        let loadOk = {
         }
 
         let loadSave = Task.init { @MainActor () -> Bool in
@@ -107,23 +112,17 @@ public extension PVEmulatorViewController {
                 Save State is not valid
                 Please try another save state
                 """
-            presentWarning(message, source: self.view, completion: loadOk)
-            return await loadSave.value
+            presentWarning(message, source: self.view, completion: finishWithoutLoading)
+            return false
         }
-        if core.projectVersion != state.createdWithCoreVersion {
-            Task.detached { @MainActor [weak self] in
-                guard let self = self else { return }
-                let message =
-                """
-                Save state created with version \(state.createdWithCoreVersion ?? "nil") but current \(core.projectName) core is version \(core.projectVersion).
-                Save file may not load. Create a new save state to avoid this warning in the future.
-                """
-                presentWarning(message, source: self.view, completion: loadOk)
-            }
-            return await loadSave.value
-        } else {
-            return await loadSave.value
+
+        let decision = await confirmSaveStateLoadIfNeeded(state, currentCore: core, allowsStartWithoutSave: false)
+        guard decision == .loadAnyway else {
+            finishWithoutLoading()
+            return false
         }
+
+        return await loadSave.value
     }
 }
 
