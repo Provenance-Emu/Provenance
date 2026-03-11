@@ -562,7 +562,7 @@ private struct ProgressRow: View {
 // MARK: - Preview
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         BackupRestoreView()
     }
 }

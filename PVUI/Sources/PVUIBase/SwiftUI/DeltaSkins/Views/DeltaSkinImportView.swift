@@ -14,7 +14,7 @@ public struct DeltaSkinImportView: View {
     public init() {}
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 20) {
                 // Header image
                 Image(systemName: "gamecontroller.fill")
@@ -92,7 +92,7 @@ public struct DeltaSkinImportView: View {
             .padding()
             .navigationTitle("Import Skin")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
                         dismiss()
                     }

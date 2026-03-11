@@ -75,7 +75,7 @@ public struct SystemSkinBrowserView: View {
         #endif
         .toolbar {
             #if !os(tvOS)
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarLeading) {
                 NavigationLink(destination: SkinCatalogBrowserView()) {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.down.circle")
@@ -103,7 +103,7 @@ public struct SystemSkinBrowserView: View {
             }
 
             #if !os(tvOS)
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showingDocumentPicker = true
                 } label: {

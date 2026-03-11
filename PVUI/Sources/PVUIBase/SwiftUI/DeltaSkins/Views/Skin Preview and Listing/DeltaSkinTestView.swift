@@ -399,7 +399,7 @@ public struct DeltaSkinTestView: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         DeltaSkinTestView(skin: MockDeltaSkin())
     }
 }

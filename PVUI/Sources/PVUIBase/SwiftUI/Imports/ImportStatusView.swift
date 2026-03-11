@@ -119,7 +119,7 @@ public struct ImportStatusView: View {
 
     // Full import view when there are items to show
     private var fullImportView: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 // Background layers
                 backgroundLayers
@@ -298,7 +298,7 @@ public struct ImportStatusView: View {
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
                     .onAppear {
-                        // Start retrowave animations for NavigationView content
+                        // Start retrowave animations for NavigationStack content
                         withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
                             glowOpacity = 1.0
                         }

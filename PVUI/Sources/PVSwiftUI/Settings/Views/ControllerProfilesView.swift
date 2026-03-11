@@ -85,7 +85,7 @@ struct ControllerProfilesView: View {
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 EditButton()
             }
         }
@@ -257,7 +257,7 @@ struct ControllerProfilesView: View {
 #if DEBUG
 struct ControllerProfilesView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             Text("No controller available in preview")
                 .navigationTitle("Controller Profiles")
         }

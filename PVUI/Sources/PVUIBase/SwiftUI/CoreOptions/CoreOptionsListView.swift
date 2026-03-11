@@ -464,7 +464,7 @@ struct CoreOptionsListView: View {
         }
         .navigationTitle("Core Options")
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                     showResetAllConfirmation = true
                 }) {

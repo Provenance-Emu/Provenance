@@ -11,7 +11,7 @@ import PVUIBase
 /// A view that displays a list of Delta emulator skins
 struct ContentView: View {
     var body: some View {
-        NavigationView {
+        NavigationStack {
             DeltaSkinListView(manager: DeltaSkinManager.shared)
         }
     }

@@ -135,7 +135,7 @@ public struct FreeROMsView: View {
             .toolbar(.hidden, for: .navigationBar)
             #else
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     expandCollapseButton
                 }
             }

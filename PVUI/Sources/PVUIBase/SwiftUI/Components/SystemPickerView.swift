@@ -42,7 +42,7 @@ public struct SystemPickerView: View {
 
     public var body: some View {
         if !availableSystems.isEmpty {
-            NavigationView {
+            NavigationStack {
                 List {
                     ForEach(availableSystems) { system in
                         Button {
@@ -54,9 +54,13 @@ public struct SystemPickerView: View {
                     }
                 }
                 .navigationTitle("Select System")
-                .navigationBarItems(trailing: Button("Cancel") {
-                    isPresented = false
-                })
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Cancel") {
+                            isPresented = false
+                        }
+                    }
+                }
             }.onAppear {
                 DLOG("Loading systems for game: \(game.title)")
                 let systemsList = PVEmulatorConfiguration.systems.map{ $0.identifier }.joined(separator: ", ")

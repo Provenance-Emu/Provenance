@@ -1371,7 +1371,7 @@ public struct PagedGameMoreInfoView: View {
         .indexViewStyle(.page(backgroundDisplayMode: .always))
         .navigationTitle(viewModel.currentGameName)
         .toolbar {
-            SwiftUI.ToolbarItem(placement: .navigationBarLeading) {
+            SwiftUI.ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
                     dismiss()
                 }) {
@@ -1388,7 +1388,7 @@ public struct PagedGameMoreInfoView: View {
                 }
             }
 
-            SwiftUI.ToolbarItemGroup(placement: .navigationBarTrailing) {
+            SwiftUI.ToolbarItemGroup(placement: .topBarTrailing) {
                 webViewButton()
 
                 playButton()
@@ -1424,13 +1424,13 @@ struct GameReferenceWebView: View {
 #if DEBUG
 // MARK: - Preview
 #Preview("Mock Data") {
-    NavigationView {
+    NavigationStack {
         GameMoreInfoView(viewModel: .mockViewModel())
     }
 }
 
 #Preview("Realm Data") {
-    NavigationView {
+    NavigationStack {
         // Realm driver preview
         if let driver = try? RealmGameLibraryDriver.previewDriver(),
            let firstGameId = driver.firstGameId() {

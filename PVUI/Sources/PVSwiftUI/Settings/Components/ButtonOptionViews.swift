@@ -199,7 +199,8 @@ struct ButtonEffectPickerView: View {
         }
         .edgesIgnoringSafeArea(.all)
 #if !os(tvOS)
-        .navigationBarTitle("", displayMode: .inline)
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("BUTTON EFFECT")
@@ -244,7 +245,8 @@ struct ButtonSoundPickerView: View {
         }
         .edgesIgnoringSafeArea(.all)
 #if !os(tvOS)
-        .navigationBarTitle("", displayMode: .inline)
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("SOUND EFFECT")

@@ -748,7 +748,7 @@ extension EnvironmentValues {
 }
 
 #Preview("Artwork Search") {
-    NavigationView {
+    NavigationStack {
         ArtworkSearchView { selection in
             print("Preview selected artwork: \(selection.metadata.url)")
         }
@@ -757,7 +757,7 @@ extension EnvironmentValues {
 }
 
 #Preview("Artwork Search - With Results") {
-    NavigationView {
+    NavigationStack {
         ArtworkSearchView { selection in
             print("Preview selected artwork: \(selection.metadata.url)")
         }

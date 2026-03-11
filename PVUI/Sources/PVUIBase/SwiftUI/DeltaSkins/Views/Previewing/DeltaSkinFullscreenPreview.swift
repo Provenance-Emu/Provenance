@@ -230,7 +230,7 @@ private struct DeltaSkinInfoSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 SwiftUI.Section("Skin Information") {
                     LabeledContent("Name", value: skin.name)
@@ -245,7 +245,11 @@ private struct DeltaSkinInfoSheet: View {
                 }
             }
             .navigationTitle("Skin Details")
-            .navigationBarItems(trailing: Button("Done") { dismiss() })
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
         }
     }
 

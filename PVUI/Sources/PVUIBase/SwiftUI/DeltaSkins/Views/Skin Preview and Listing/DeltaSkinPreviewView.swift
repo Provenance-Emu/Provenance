@@ -134,7 +134,7 @@ struct DeltaSkinPreviewView: View {
             }
             .tabViewStyle(.page)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Text("\(selectedIndex + 1) of \(skins.count)")
                         .foregroundStyle(.secondary)
                 }
@@ -144,7 +144,7 @@ struct DeltaSkinPreviewView: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         DeltaSkinPreviewView(
             skins: [MockDeltaSkin(), MockDeltaSkin()],
             initialSkin: MockDeltaSkin(),

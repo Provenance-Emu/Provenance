@@ -151,7 +151,7 @@ public struct RetroGameLibraryView: View {
 #if !os(tvOS)
             .toolbar {
                 // Add button
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
                         /// Show the document picker directly using local state
                         /// This simplifies the implementation and avoids environment object issues
@@ -162,7 +162,7 @@ public struct RetroGameLibraryView: View {
                 }
 
                 // Notifications toggle button
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
                         viewModel.showStatusMessages.toggle()
                     }) {

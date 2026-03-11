@@ -409,7 +409,7 @@ private struct FullScreenPreview: View {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color.black.edgesIgnoringSafeArea(.all)
 
@@ -427,7 +427,7 @@ private struct FullScreenPreview: View {
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
                         dismiss()
                     }

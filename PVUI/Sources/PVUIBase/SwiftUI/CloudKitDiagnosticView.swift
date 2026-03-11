@@ -552,7 +552,7 @@ struct CloudKitRecordDetail {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         CloudKitDiagnosticView()
     }
 }

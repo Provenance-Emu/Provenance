@@ -38,7 +38,7 @@ struct SettingsWrapperView: View {
     #endif
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             let gameImporter = GameImporter.shared
             let pvgamelibraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
             let menuDelegate = MockPVMenuDelegate()
@@ -58,7 +58,6 @@ struct SettingsWrapperView: View {
             .environmentObject(FreemiumKit.shared)
 #endif
         }
-        .navigationViewStyle(.stack)
         #if !os(tvOS)
         .sheet(isPresented: $showingDocumentPicker) {
             DocumentPicker(onImport: importFiles)
@@ -134,7 +133,7 @@ struct SettingsWrapperView: View {
 }
 
 #if os(tvOS)
-/// Tracks whether the Settings `NavigationView` can pop (i.e. a subpage is pushed).
+/// Tracks whether the Settings navigation stack can pop (i.e. a subpage is pushed).
 /// This is used by the tvOS Media UI to suppress sidebar gestures while inside Settings subpages.
 private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable {
     @Binding var canPop: Bool

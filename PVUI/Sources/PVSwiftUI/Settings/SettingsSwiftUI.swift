@@ -49,7 +49,7 @@ struct TVOSNavigationSupport: ViewModifier {
         #if os(tvOS)
             .navigationTitle(title)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button("Back") {
                         dismiss()
                     }
@@ -486,7 +486,7 @@ public struct PVSettingsView: View {
     }
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 #if !os(tvOS)
                 navigationLinks

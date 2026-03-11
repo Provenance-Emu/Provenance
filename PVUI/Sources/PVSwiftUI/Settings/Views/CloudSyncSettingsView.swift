@@ -93,13 +93,13 @@ public struct CloudSyncSettingsView: View {
             viewModel.loadSyncInfo()
         }
         .sheet(isPresented: $showDiagnostics) {
-            NavigationView {
+            NavigationStack {
                 CloudKitDiagnosticView()
                     #if !os(tvOS)
                     .navigationBarTitleDisplayMode(.inline)
                     #endif
                     .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
+                        ToolbarItem(placement: .topBarTrailing) {
                             Button("Done") {
                                 showDiagnostics = false
                             }

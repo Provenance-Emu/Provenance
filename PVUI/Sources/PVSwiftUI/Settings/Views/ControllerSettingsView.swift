@@ -697,7 +697,7 @@ struct ButtonRemappingView: View {
 #if DEBUG
 struct ControllerSettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             ControllerSettingsView()
         }
     }

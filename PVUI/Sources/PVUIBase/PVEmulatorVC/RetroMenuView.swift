@@ -1040,10 +1040,10 @@ struct RetroMenuView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .sheet(isPresented: $showingSkinCatalog) {
-                    NavigationView {
+                    NavigationStack {
                         SkinCatalogBrowserView()
                             .toolbar {
-                                ToolbarItem(placement: .navigationBarTrailing) {
+                                ToolbarItem(placement: .topBarTrailing) {
                                     Button("Done") {
                                         showingSkinCatalog = false
                                     }
@@ -1195,7 +1195,7 @@ struct RetroMenuView: View {
 
     // Skin picker sheet view with retrowave styling
     private var skinPickerView: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 // Theme-aware background
                 Color(palette.gameLibraryBackground)
@@ -1317,9 +1317,10 @@ struct RetroMenuView: View {
                 }
             }
             #if !os(tvOS)
-            .navigationBarTitle("", displayMode: .inline)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
                         showingSkinPicker = false
                     }) {
@@ -1789,7 +1790,7 @@ struct RetroMenuView: View {
     // Filter picker sheet view
     private var filterPickerView: some View {
         #if os(tvOS)
-        NavigationView {
+        NavigationStack {
             Form {
                 Picker("Screen Filter", selection: $selectedMetalFilter) {
                     ForEach(MetalFilterSelectionOption.allCases, id: \.self) { option in
@@ -1801,7 +1802,7 @@ struct RetroMenuView: View {
             }
             .navigationTitle("Screen Filters")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
                         showingFilterPicker = false
                     }

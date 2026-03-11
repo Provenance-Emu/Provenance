@@ -29,7 +29,7 @@ struct PagedSkinTestView: View {
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Text("\(selectedIndex + 1) of \(skins.count)")
                     .foregroundStyle(.secondary)
             }

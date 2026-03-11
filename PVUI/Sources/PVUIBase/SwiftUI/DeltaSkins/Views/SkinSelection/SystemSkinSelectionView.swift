@@ -101,7 +101,7 @@ public struct SystemSkinSelectionView: View {
                 .ignoresSafeArea()
 
             // Main content
-            NavigationView {
+            NavigationStack {
                 Group {
                     if isLoading {
                         loadingView
@@ -125,7 +125,7 @@ public struct SystemSkinSelectionView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .topBarLeading) {
                         NavigationLink(destination: SkinCatalogBrowserView(preselectedSystem: catalogSystemFilter)) {
                             HStack(spacing: 4) {
                                 Image(systemName: "arrow.down.circle")
@@ -137,7 +137,7 @@ public struct SystemSkinSelectionView: View {
                     }
 
                     #if !os(tvOS)
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             showingDocumentPicker = true
                         } label: {
@@ -148,7 +148,7 @@ public struct SystemSkinSelectionView: View {
                     }
                     #endif
 
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             withAnimation {
                                 loadSkins()

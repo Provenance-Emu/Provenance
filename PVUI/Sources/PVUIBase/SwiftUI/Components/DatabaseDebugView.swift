@@ -193,7 +193,7 @@ public struct DatabaseDebugView: View {
     }
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 SwiftUI.Section(header: Text("Database Entities")) {
                     gamesSection

@@ -78,7 +78,7 @@ struct RetroArchConfigEditorView: View {
             }
         }
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 Button(action: {
                     filterVM.showOnlyModified.toggle()
                 }) {

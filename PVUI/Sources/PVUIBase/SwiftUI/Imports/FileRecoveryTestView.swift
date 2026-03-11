@@ -25,10 +25,9 @@ public struct FileRecoveryTestView: View {
     public var body: some View {
         mainContentView
         #if !os(tvOS)
-            .navigationViewStyle(.stack)
             .navigationBarTitleDisplayMode(.inline)
         #endif
-            .navigationBarTitle("File Recovery Test Utilities")
+            .navigationTitle("File Recovery Test Utilities")
     }
     
     // Break down the body into smaller components to help the compiler

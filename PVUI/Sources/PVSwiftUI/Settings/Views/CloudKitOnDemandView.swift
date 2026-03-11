@@ -627,7 +627,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             .navigationTitle("On-Demand Downloads")
             .searchable(text: $searchText, prompt: "Search Records")
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
+                ToolbarItemGroup(placement: .topBarLeading) {
                     Picker("Database Scope", selection: $viewModel.selectedScope) {
                         Text("Private").tag(CKDatabase.Scope.private)
                         Text("Shared").tag(CKDatabase.Scope.shared)
@@ -635,7 +635,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                     }
                     .pickerStyle(.segmented)
                 }
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     ProgressView()
                         .opacity(viewModel.isLoading ? 1 : 0)
 

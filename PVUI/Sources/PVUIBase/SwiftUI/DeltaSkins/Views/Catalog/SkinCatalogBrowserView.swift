@@ -95,7 +95,7 @@ public struct SkinCatalogBrowserView: View {
         #endif
         #if !os(tvOS)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showingFilters.toggle()
                 } label: {
@@ -106,7 +106,7 @@ public struct SkinCatalogBrowserView: View {
                 .transaction { $0.animation = nil }
             }
 
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     Task { await refreshCatalog() }
                 } label: {

@@ -821,7 +821,7 @@ extension String {
 #if DEBUG
 struct BatchArtworkMatchingView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             BatchArtworkMatchingView()
         }
     }

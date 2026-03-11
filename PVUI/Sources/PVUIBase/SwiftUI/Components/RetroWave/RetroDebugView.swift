@@ -157,7 +157,7 @@ public struct RetroDebugView: View {
             }
         }
         .sheet(isPresented: $showGameMoreInfo) {
-            NavigationView {
+            NavigationStack {
                 let driver = MockGameLibraryDriver()
                 PagedGameMoreInfoView(viewModel: PagedGameMoreInfoViewModel(driver: driver))
                     .navigationTitle("Game Info")
@@ -165,14 +165,14 @@ public struct RetroDebugView: View {
         }
         .sheet(isPresented: $showGameMoreInfoRealm) {
             if let driver = try? RealmGameLibraryDriver.previewDriver() {
-                NavigationView {
+                NavigationStack {
                     PagedGameMoreInfoView(viewModel: PagedGameMoreInfoViewModel(driver: driver))
                         .navigationTitle("Game Info")
                 }
             }
         }
         .sheet(isPresented: $showArtworkSearch) {
-            NavigationView {
+            NavigationStack {
                 ArtworkSearchView { selection in
                     print("Selected artwork: \(selection.metadata.url)")
                     showArtworkSearch = false
@@ -193,7 +193,7 @@ public struct RetroDebugView: View {
             }
         }
         .sheet(isPresented: $showDeltaSkinList) {
-            NavigationView {
+            NavigationStack {
                 DeltaSkinListView(manager: DeltaSkinManager.shared)
             }
         }
@@ -204,7 +204,7 @@ public struct RetroDebugView: View {
             DeltaSkinPreviewWrapper()
         }
         .sheet(isPresented: $showAIEnhancements) {
-            NavigationView {
+            NavigationStack {
                 DeltaSkinAIEnhancementView()
             }
         }

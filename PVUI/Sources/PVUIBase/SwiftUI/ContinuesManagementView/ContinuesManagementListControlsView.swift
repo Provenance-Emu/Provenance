@@ -260,7 +260,7 @@ public struct ContinuesManagementListControlsView: View {
         }
         .sheet(isPresented: $showingDatePicker) {
             #if !os(tvOS)
-            NavigationView {
+            NavigationStack {
                 DateRangePicker(
                     month: $viewModel.currentMonth,
                     year: $viewModel.currentYear,

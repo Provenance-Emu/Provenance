@@ -590,7 +590,7 @@ struct CloudKitRecordsManagementView: View {
     // MARK: - Record Detail Sheet
 
     private func recordDetailSheet(record: CloudKitRecordItem) -> some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     // Header
@@ -721,7 +721,7 @@ struct CloudKitRecordsManagementView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
                         showingRecordDetail = nil
                     }

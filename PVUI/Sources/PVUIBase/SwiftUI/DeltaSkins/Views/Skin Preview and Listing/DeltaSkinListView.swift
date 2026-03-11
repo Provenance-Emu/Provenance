@@ -30,7 +30,7 @@ public struct DeltaSkinListView: View {
         SkinGridView(manager: manager, columns: columns)
             .navigationTitle("Skins")
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     NavigationLink(destination: SkinCatalogBrowserView()) {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.down.circle")
@@ -42,7 +42,7 @@ public struct DeltaSkinListView: View {
                 }
 
                 #if !os(tvOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingDocumentPicker = true
                     } label: {

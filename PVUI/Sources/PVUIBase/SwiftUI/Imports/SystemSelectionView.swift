@@ -132,7 +132,8 @@ struct SystemSelectionView: View {
             }
         }
 #if !os(tvOS)
-        .navigationBarTitle("", displayMode: .inline)
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         #endif
         .onAppear {
             // Start retrowave animations
