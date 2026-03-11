@@ -2531,7 +2531,8 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         guard FileManager.default.fileExists(atPath: archiveURL.path) else {
             ELOG("Archive file no longer exists after stability wait: \(archiveURL.path)")
-            throw GameImporterError.unsupportedFile
+            throw ArchiveError.extractionFailed(
+                "Archive file disappeared during stability wait: \(archiveURL.lastPathComponent)")
         }
 
         // Bounded retry readability check after stability wait.
