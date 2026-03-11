@@ -134,7 +134,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 
-    var presentationFramebuffer: AnyObject? = nil
+    /// The IOSurface-backed FBO that HW-accelerated cores render into.
+    /// Wrapped as NSNumber so ObjC callers can extract the GLuint via -unsignedIntValue.
+    var presentationFramebuffer: AnyObject? {
+        get {
+            guard alternateThreadFramebufferBack > 0 else { return nil }
+            return NSNumber(value: alternateThreadFramebufferBack) as AnyObject
+        }
+    }
 
     weak var emulatorCore: PVEmulatorCore?
 

@@ -60,10 +60,16 @@ extern void MakeCurrentThreadRealTime(void);
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
 
-    // Hardware rendering state
+    /// Hardware rendering state
     struct retro_hw_render_callback *hw_render_callback;
     enum retro_hw_context_type current_context_type;
     BOOL hardware_context_active;
+
+    /// Tracks whether context_reset has been deferred until FBO is ready
+    BOOL _pendingContextReset;
+
+    /// FBO name provided by the render delegate (IOSurface-backed)
+    GLuint _presentationFBO;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     EAGLContext *hardware_context;
@@ -111,20 +117,19 @@ static void* hw_get_proc_address(const char *symbol);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
 
-        // Initialize hardware rendering state
         hw_render_callback = NULL;
         current_context_type = RETRO_HW_CONTEXT_NONE;
         hardware_context_active = NO;
         hardware_context = nil;
+        _pendingContextReset = NO;
+        _presentationFBO = 0;
 
-        // Initialize Vulkan state
         vulkan_library = NULL;
         vulkan_instance = NULL;
         vulkan_device = NULL;
         vulkan_queue = NULL;
         vulkan_physical_device = NULL;
 
-        // Initialize Vulkan function pointers
         vkGetInstanceProcAddr = NULL;
         vkGetDeviceProcAddr = NULL;
         vkCreateInstance = NULL;
@@ -224,6 +229,12 @@ static void* hw_get_proc_address(const char *symbol);
 - (void)stopEmulation {
     has_init = false;
 
+    /// Call context_destroy before tearing down
+    if (hw_render_callback && hw_render_callback->context_destroy) {
+        [self makeGLContextCurrent];
+        hw_render_callback->context_destroy();
+    }
+
     self.shouldStop = YES;
     dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
     dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
@@ -232,6 +243,7 @@ static void* hw_get_proc_address(const char *symbol);
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
 
+    [self destroyHardwareContext];
     [super stopEmulation];
 }
 
@@ -325,16 +337,22 @@ static bool video_driver_cached_frame(void)
     @autoreleasepool
     {
         [[NSThread currentThread] setName:@"runGLESRenderThread"];
-        [self.renderDelegate startRenderingOnAlternateThread];
-//        BOOL success = gles_init();
-//        assert(success);
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-    EAGLContext* context = [self bestContext];
-    ILOG(@"%i", context.API);
-#endif
-        [NSThread detachNewThreadSelector:@selector(runGLESEmuThread) toTarget:self withObject:nil];
 
-//        CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
+        /// Ask the render delegate to create the IOSurface-backed FBO and GL contexts
+        [self.renderDelegate startRenderingOnAlternateThread];
+
+        /// Capture the presentation FBO that the render delegate just created
+        [self captureRenderDelegateFBO];
+
+        /// Fire any deferred context_reset now that the FBO is ready
+        if (_pendingContextReset && hw_render_callback && hw_render_callback->context_reset) {
+            ILOG(@"Firing deferred context_reset now that FBO is ready (FBO=%u)", _presentationFBO);
+            [self makeGLContextCurrent];
+            hw_render_callback->context_reset();
+            _pendingContextReset = NO;
+        }
+
+        [NSThread detachNewThreadSelector:@selector(runGLESEmuThread) toTarget:self withObject:nil];
 
         while (!has_init) {}
         while ( !self.shouldStop )
@@ -343,14 +361,10 @@ static bool video_driver_cached_frame(void)
             while (!self.shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
             [self.frontBufferCondition unlock];
 
-//            CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
-//            CFTimeInterval deltaTime = now - lastTime;
             while ( !self.shouldStop
                    && !video_driver_cached_frame()
-//                   && core_poll()
                    ) {}
             [self swapBuffers];
-//            lastTime = now;
         }
     }
 }
@@ -376,9 +390,10 @@ static bool video_driver_cached_frame(void)
 
     MakeCurrentThreadRealTime();
 
-//    [self.renderDelegate startRenderingOnAlternateThread];
-    has_init = true;
+    /// Make the GL context current on the emu thread so retro_run() can issue GL calls
+    [self makeGLContextCurrent];
 
+    has_init = true;
 
     do {
         switch (self->core_poll_type)
@@ -390,6 +405,16 @@ static bool video_driver_cached_frame(void)
                 core_input_polled = false;
                 break;
         }
+
+        /// Ensure GL context is current before each retro_run() —
+        /// context can be lost if the app was backgrounded/foregrounded
+        [self makeGLContextCurrent];
+
+        /// Bind the presentation FBO so the core renders into the IOSurface-backed texture
+        if (_presentationFBO > 0) {
+            glBindFramebuffer(GL_FRAMEBUFFER, _presentationFBO);
+        }
+
         if (core->retro_run)
             core->retro_run();
         if (core_poll_type == POLL_TYPE_LATE && !core_input_polled)
@@ -407,6 +432,10 @@ static bool video_driver_cached_frame(void)
 
 #pragma mark - Hardware Rendering Support
 
+/// Called from the environment callback when a core requests hardware rendering.
+/// Sets up the GL/Vulkan context and wires the libretro callback pointers.
+/// context_reset is deferred until the render delegate has created the FBO
+/// (happens in runGLESRenderThread after startRenderingOnAlternateThread).
 - (BOOL)setHardwareRenderCallback:(NSValue *)callbackValue {
     if (!callbackValue) {
         ELOG(@"Hardware render callback value is NULL");
@@ -421,24 +450,25 @@ static bool video_driver_cached_frame(void)
 
     current_context_type = hw_render_callback->context_type;
 
-    ILOG(@"Libretro core requesting hardware context type: %d", current_context_type);
+    ILOG(@"Libretro core requesting hardware context type: %d (depth=%d, stencil=%d, bottom_left=%d)",
+         current_context_type,
+         hw_render_callback->depth,
+         hw_render_callback->stencil,
+         hw_render_callback->bottom_left_origin);
 
-    // Set up the callback functions that libretro will call
     hw_render_callback->context_reset = hw_context_reset;
     hw_render_callback->context_destroy = hw_context_destroy;
     hw_render_callback->get_current_framebuffer = hw_get_current_framebuffer;
     hw_render_callback->get_proc_address = (retro_hw_get_proc_address_t)hw_get_proc_address;
 
-    ILOG(@"Hardware rendering callback set for context type: %d", current_context_type);
-
-    // Setup the appropriate hardware context
     [self setupHardwareContext:current_context_type];
 
-    // If context was successfully set up, call context_reset to initialize it
-    // This allows the core to set up its OpenGL state
-    if (hardware_context_active && hw_render_callback && hw_render_callback->context_reset) {
-        ILOG(@"Calling context_reset callback to initialize hardware context");
-        hw_render_callback->context_reset();
+    /// Defer context_reset: the FBO doesn't exist yet because
+    /// startRenderingOnAlternateThread hasn't run.
+    /// runGLESRenderThread will fire context_reset after the FBO is ready.
+    if (hardware_context_active) {
+        _pendingContextReset = YES;
+        ILOG(@"Hardware context created; context_reset deferred until FBO is ready");
     }
 
     return YES;
@@ -477,6 +507,9 @@ static bool video_driver_cached_frame(void)
     }
 }
 
+/// Creates an EAGLContext for the requested GL ES version. If the render
+/// delegate already has a GL context, share its sharegroup so the core's
+/// GL objects are visible to the IOSurface-backed FBO context.
 - (void)setupOpenGLESContext:(enum retro_hw_context_type)contextType {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     EAGLRenderingAPI api;
@@ -496,10 +529,27 @@ static bool video_driver_cached_frame(void)
 
     ILOG(@"Attempting to create OpenGL ES context with API: %ld", (long)api);
 
-    hardware_context = [[EAGLContext alloc] initWithAPI:api];
+    /// Try to share the render delegate's GL sharegroup so the core
+    /// can render directly into the IOSurface-backed FBO
+    EAGLContext *delegateContext = nil;
+    if ([self.renderDelegate respondsToSelector:@selector(glContext)]) {
+        delegateContext = [self.renderDelegate glContext];
+    }
+
+    if (delegateContext) {
+        hardware_context = [[EAGLContext alloc] initWithAPI:api
+                                                sharegroup:delegateContext.sharegroup];
+        if (hardware_context) {
+            ILOG(@"Created shared GL ES context with render delegate sharegroup");
+        }
+    }
+
+    if (!hardware_context) {
+        hardware_context = [[EAGLContext alloc] initWithAPI:api];
+    }
+
     if (!hardware_context) {
         ELOG(@"Failed to create OpenGL ES context for API: %ld", (long)api);
-        ELOG(@"This will cause hardware rendering to fail and fall back to software");
         return;
     }
 
@@ -605,11 +655,15 @@ static bool video_driver_cached_frame(void)
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+            if ([EAGLContext currentContext] == hardware_context) {
+                [EAGLContext setCurrentContext:nil];
+            }
+#endif
             hardware_context = nil;
             break;
 
         case RETRO_HW_CONTEXT_VULKAN:
-            // Clean up Vulkan resources
             [self destroyVulkanDevice];
             [self destroyVulkanInstance];
             [self unloadMoltenVKLibrary];
@@ -622,6 +676,8 @@ static bool video_driver_cached_frame(void)
     hardware_context_active = NO;
     current_context_type = RETRO_HW_CONTEXT_NONE;
     hw_render_callback = NULL;
+    _presentationFBO = 0;
+    _pendingContextReset = NO;
 
     ILOG(@"Hardware context destroyed");
 }
@@ -663,32 +719,24 @@ static void* hw_get_proc_address(const char *symbol) {
     return NULL;
 }
 
-// Objective-C implementations of the callback methods
+/// Called when the GL/Vulkan context has been created or recreated.
+/// Makes the context current and binds the presentation FBO.
 - (void)contextReset {
-    ILOG(@"Hardware context reset called");
+    ILOG(@"Hardware context reset called (context_type=%d, FBO=%u)", current_context_type, _presentationFBO);
 
     switch (current_context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
         case RETRO_HW_CONTEXT_OPENGLES3:
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-            if (hardware_context) {
-                [EAGLContext setCurrentContext:hardware_context];
-            }
-#endif
-            break;
-
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
-#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
-            if (hardware_context) {
-                [hardware_context makeCurrentContext];
+            [self makeGLContextCurrent];
+            if (_presentationFBO > 0) {
+                glBindFramebuffer(GL_FRAMEBUFFER, _presentationFBO);
             }
-#endif
             break;
 
         case RETRO_HW_CONTEXT_VULKAN:
-            // Vulkan context reset would involve recreating command buffers, etc.
             ILOG(@"Vulkan context reset");
             break;
 
@@ -702,31 +750,89 @@ static void* hw_get_proc_address(const char *symbol) {
     [self destroyHardwareContext];
 }
 
+/// Returns the FBO the core should render into. For GL paths this is the
+/// IOSurface-backed FBO created by PVMetalViewController, which is then
+/// blitted to a Metal texture for display (zero-copy via IOSurface).
 - (uintptr_t)getCurrentFramebuffer {
-    // Return the current framebuffer object name
-    // For OpenGL ES/OpenGL, this would be the FBO name
-    // For Vulkan, this would be handled differently
-
     switch (current_context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
         case RETRO_HW_CONTEXT_OPENGLES3:
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE: {
+            if (_presentationFBO > 0) {
+                return (uintptr_t)_presentationFBO;
+            }
+            /// Fallback: try to capture FBO from the render delegate on demand
+            [self captureRenderDelegateFBO];
+            if (_presentationFBO > 0) {
+                return (uintptr_t)_presentationFBO;
+            }
+            /// Last resort: return currently bound FBO
             GLint framebuffer;
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
             return (uintptr_t)framebuffer;
         }
 
         case RETRO_HW_CONTEXT_VULKAN:
-            // For Vulkan, return appropriate render target handle
-            return 0; // TODO: Implement Vulkan framebuffer handling
+            return 0; // TODO: Implement Vulkan framebuffer handling (#2634)
 
         default:
             return 0;
     }
 }
 
+#pragma mark - GL Context Helpers
+
+/// Makes the hardware GL context current on the calling thread.
+/// For iOS/tvOS this uses the alternateThreadGLContext from the render delegate
+/// (which shares the same sharegroup as the IOSurface-backed FBO context).
+- (void)makeGLContextCurrent {
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    EAGLContext *ctx = nil;
+    if ([self.renderDelegate respondsToSelector:@selector(alternateThreadGLContext)]) {
+        ctx = [self.renderDelegate alternateThreadGLContext];
+    }
+    if (!ctx) {
+        ctx = hardware_context;
+    }
+    if (ctx && [EAGLContext currentContext] != ctx) {
+        [EAGLContext setCurrentContext:ctx];
+    }
+#else
+    NSOpenGLContext *ctx = hardware_context;
+    if (ctx) {
+        [ctx makeCurrentContext];
+    }
+#endif
+}
+
+/// Captures the presentation FBO from the render delegate.
+/// PVMetalViewController exposes this through the presentationFramebuffer property.
+- (void)captureRenderDelegateFBO {
+    if ([self.renderDelegate respondsToSelector:@selector(presentationFramebuffer)]) {
+        id fbo = [self.renderDelegate presentationFramebuffer];
+        if (fbo) {
+            _presentationFBO = (GLuint)[fbo unsignedIntValue];
+            ILOG(@"Captured presentation FBO from render delegate: %u", _presentationFBO);
+            return;
+        }
+    }
+
+    /// Fallback: read the currently bound FBO (set by startRenderingOnAlternateThread)
+    if (_presentationFBO == 0) {
+        GLint fbo = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
+        if (fbo > 0) {
+            _presentationFBO = (GLuint)fbo;
+            ILOG(@"Captured currently bound FBO as presentation FBO: %u", _presentationFBO);
+        }
+    }
+}
+
+/// Returns function pointers for the active rendering API.
+/// For GL ES: statically linked symbols via dlsym.
+/// For Vulkan: routes through vkGetInstanceProcAddr / vkGetDeviceProcAddr.
 - (void*)getProcAddress:(const char*)symbol {
     if (!symbol) {
         return NULL;
@@ -736,24 +842,25 @@ static void* hw_get_proc_address(const char *symbol) {
         case RETRO_HW_CONTEXT_OPENGLES2:
         case RETRO_HW_CONTEXT_OPENGLES3:
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-            // On iOS, OpenGL ES functions are statically linked
-            return dlsym(RTLD_DEFAULT, symbol);
-#endif
-            break;
-
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
-#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
-            // On macOS, use NSOpenGLContext to get function pointers
             return dlsym(RTLD_DEFAULT, symbol);
-#endif
-            break;
 
         case RETRO_HW_CONTEXT_VULKAN:
-            // For Vulkan, we'd need to use vkGetInstanceProcAddr or vkGetDeviceProcAddr
-            ILOG(@"Vulkan proc address requested: %s", symbol);
-            return NULL; // TODO: Implement Vulkan function loading
+            if (vkGetDeviceProcAddr && vulkan_device) {
+                PFN_vkVoidFunction fn = vkGetDeviceProcAddr(vulkan_device, symbol);
+                if (fn) return (void *)fn;
+            }
+            if (vkGetInstanceProcAddr && vulkan_instance) {
+                PFN_vkVoidFunction fn = vkGetInstanceProcAddr(vulkan_instance, symbol);
+                if (fn) return (void *)fn;
+            }
+            if (vkGetInstanceProcAddr) {
+                PFN_vkVoidFunction fn = vkGetInstanceProcAddr(NULL, symbol);
+                if (fn) return (void *)fn;
+            }
+            DLOG(@"Vulkan symbol not found: %s", symbol);
+            return NULL;
 
         default:
             break;

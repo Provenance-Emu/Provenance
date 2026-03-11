@@ -50,16 +50,20 @@ typedef void* PFN_vkVoidFunction;
 __attribute__((weak_import))
 @interface PVLibRetroGLESCoreBridge : PVLibRetroCoreBridge
 
-// Hardware rendering support
+/// Hardware rendering setup — called from environment callback
 - (BOOL)setHardwareRenderCallback:(NSValue *)callbackValue;
 - (void)setupHardwareContext:(enum retro_hw_context_type)contextType;
 - (void)destroyHardwareContext;
 
-// Hardware rendering callbacks
+/// Hardware rendering callbacks invoked by libretro
 - (void)contextReset;
 - (void)contextDestroy;
 - (uintptr_t)getCurrentFramebuffer;
 - (void*)getProcAddress:(const char*)symbol;
+
+/// GL context management for the emu thread
+- (void)makeGLContextCurrent;
+- (void)captureRenderDelegateFBO;
 
 // Touch and mouse input support
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX

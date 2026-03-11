@@ -1647,18 +1647,36 @@ static bool environment_callback(unsigned cmd, void *data) {
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", BIOSPath);
             return true;
         }
-//        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER : {
-//            const struct retro_framebuffer *fb =
-//                    (const struct retro_framebuffer *)data;
-//            fb->data = (void *)[strongCurrent videoBuffer];
-//            return true;
-//        }
-//            // TODO: When/if vulkan support add this
-////        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
-////            struct retro_hw_render_interface* rend = (struct retro_hw_render_interface*)data;
-////
-////            return true;
-////        }
+        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE: {
+            /// Vulkan cores call this after context_reset to get
+            /// the retro_hw_render_interface_vulkan struct.
+            /// GL cores typically don't need this.
+            ILOG(@"Environ GET_HW_RENDER_INTERFACE requested");
+            return false; // TODO: Wire Vulkan interface (#2634)
+        }
+        case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS: {
+            DLOG(@"Environ SET_SUPPORT_ACHIEVEMENTS: %d", *(const bool *)data);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: {
+            /// Stores the context negotiation interface for Vulkan device creation.
+            /// Used by cores that want to specify required Vulkan extensions/features.
+            const struct retro_hw_render_context_negotiation_interface *iface =
+                (const struct retro_hw_render_context_negotiation_interface *)data;
+            ILOG(@"Environ SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: type=%d, version=%u",
+                 iface->interface_type, iface->interface_version);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS: {
+            uint64_t *quirks = (uint64_t *)data;
+            ILOG(@"Environ SET_SERIALIZATION_QUIRKS: 0x%llx", *quirks);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT: {
+            /// Frontend supports shared GL contexts — we do via EAGLContext sharegroups
+            ILOG(@"Environ SET_HW_SHARED_CONTEXT");
+            return true;
+        }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent saveStatesPath];
 
@@ -1784,41 +1802,169 @@ static bool environment_callback(unsigned cmd, void *data) {
         }
         case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
         {
-                                                       /* const struct retro_system_av_info * --
-                                                        * Sets a new av_info structure. This can only be called from
-                                                        * within retro_run().
-                                                        * This should *only* be used if the core is completely altering the
-                                                        * internal resolutions, aspect ratios, timings, sampling rate, etc.
-                                                        * Calling this can require a full reinitialization of video/audio
-                                                        * drivers in the frontend,
-                                                        *
-                                                        * so it is important to call it very sparingly, and usually only with
-                                                        * the users explicit consent.
-                                                        * An eventual driver reinitialize will happen so that video and
-                                                        * audio callbacks
-                                                        * happening after this call within the same retro_run() call will
-                                                        * target the newly initialized driver.
-                                                        *
-                                                        * This callback makes it possible to support configurable resolutions
-                                                        * in games, which can be useful to
-                                                        * avoid setting the "worst case" in max_width/max_height.
-                                                        *
-                                                        * ***HIGHLY RECOMMENDED*** Do not call this callback every time
-                                                        * resolution changes in an emulator core if it's
-                                                        * expected to be a temporary change, for the reasons of possible
-                                                        * driver reinitialization.
-                                                        * This call is not a free pass for not trying to provide
-                                                        * correct values in retro_get_system_av_info(). If you need to change
-                                                        * things like aspect ratio or nominal width/height,
-                                                        * use RETRO_ENVIRONMENT_SET_GEOMETRY, which is a softer variant
-                                                        * of SET_SYSTEM_AV_INFO.
-                                                        *
-                                                        * If this returns false, the frontend does not acknowledge a
-                                                        * changed av_info struct.
-                                                        */
             struct retro_system_av_info info = *(const struct retro_system_av_info*)data;
             strongCurrent->av_info = info;
-            ILOG(@"%s", info.geometry.max_width, info.geometry.max_height, info.geometry.base_width, info.geometry.base_height, info.geometry.aspect_ratio, info.timing.sample_rate, info.timing.fps);
+            ILOG(@"Environ SET_SYSTEM_AV_INFO: %ux%u (base %ux%u) aspect=%.4f fps=%.2f sample_rate=%.1f",
+                 info.geometry.max_width, info.geometry.max_height,
+                 info.geometry.base_width, info.geometry.base_height,
+                 info.geometry.aspect_ratio, info.timing.fps, info.timing.sample_rate);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_GEOMETRY: {
+            /// Softer variant of SET_SYSTEM_AV_INFO that only updates geometry
+            const struct retro_game_geometry *geom = (const struct retro_game_geometry *)data;
+            if (!geom) return false;
+            strongCurrent->av_info.geometry = *geom;
+            ILOG(@"Environ SET_GEOMETRY: %ux%u (base %ux%u) aspect=%.4f",
+                 geom->max_width, geom->max_height,
+                 geom->base_width, geom->base_height,
+                 geom->aspect_ratio);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: {
+            /// Stores the frame time callback for timing-sensitive cores
+            const struct retro_frame_time_callback *cb = (const struct retro_frame_time_callback *)data;
+            ILOG(@"Environ SET_FRAME_TIME_CALLBACK: reference=%lld us", cb->reference);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: {
+            /// Async audio interface for cores with decoupled audio/video
+            ILOG(@"Environ SET_AUDIO_CALLBACK");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
+            /// Tell the core which HW context type we prefer.
+            /// On iOS/tvOS we prefer OpenGL ES 3; on macOS/Catalyst prefer OpenGL.
+            unsigned *preferred = (unsigned *)data;
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+            *preferred = RETRO_HW_CONTEXT_OPENGLES3;
+            ILOG(@"Environ GET_PREFERRED_HW_RENDER: OPENGLES3");
+#else
+            *preferred = RETRO_HW_CONTEXT_OPENGL_CORE;
+            ILOG(@"Environ GET_PREFERRED_HW_RENDER: OPENGL_CORE");
+#endif
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS: {
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO: {
+            DLOG(@"Environ SET_CONTROLLER_INFO");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_MEMORY_MAPS: {
+            DLOG(@"Environ SET_MEMORY_MAPS");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO: {
+            DLOG(@"Environ SET_SUBSYSTEM_INFO");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_USERNAME: {
+            *(const char **)data = "Provenance";
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_LANGUAGE: {
+            *(unsigned *)data = 0; // RETRO_LANGUAGE_ENGLISH
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME: {
+            DLOG(@"Environ SET_SUPPORT_NO_GAME: %d", data ? *(const bool *)data : false);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: {
+            *(const char **)data = NULL;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS: {
+            DLOG(@"Environ SET_INPUT_DESCRIPTORS");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL: {
+            DLOG(@"Environ SET_PERFORMANCE_LEVEL: %u", *(const unsigned *)data);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_OVERSCAN: {
+            *(bool *)data = false;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_PERF_INTERFACE: {
+            DLOG(@"Environ GET_PERF_INTERFACE");
+            return false;
+        }
+        case RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION: {
+            *(unsigned *)data = 2;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS:
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL:
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2:
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL: {
+            DLOG(@"Environ SET_CORE_OPTIONS (variant %u)", cmd);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY: {
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK: {
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_VARIABLE: {
+            DLOG(@"Environ SET_VARIABLE");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE: {
+            /// Bit 0 = video, Bit 1 = audio
+            *(int *)data = 1 | 2;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK: {
+            DLOG(@"Environ SET_AUDIO_BUFFER_STATUS_CALLBACK");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_DISK_CONTROL_INTERFACE_VERSION: {
+            *(unsigned *)data = 1;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE: {
+            DLOG(@"Environ SET_DISK_CONTROL_EXT_INTERFACE");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS: {
+            *(unsigned *)data = 4;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE: {
+            DLOG(@"Environ SET_CONTENT_INFO_OVERRIDE");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE: {
+            DLOG(@"Environ SET_FASTFORWARDING_OVERRIDE");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE: {
+            *(float *)data = 60.0f;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_FASTFORWARDING: {
+            *(bool *)data = false;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_THROTTLE_STATE: {
+            DLOG(@"Environ GET_THROTTLE_STATE");
+            return false;
+        }
+        case RETRO_ENVIRONMENT_SHUTDOWN: {
+            ILOG(@"Environ SHUTDOWN requested");
+            [strongCurrent stopEmulation];
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: {
+            DLOG(@"Environ SET_KEYBOARD_CALLBACK");
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK: {
+            DLOG(@"Environ SET_PROC_ADDRESS_CALLBACK");
             return true;
         }
         default : {
