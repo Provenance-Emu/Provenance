@@ -55,6 +55,12 @@ extension PVEmulatorViewController {
                 // Look up coreIdentifier before any await to avoid @ThreadSafe re-resolution issues
                 let coreIdentifier = self.core.coreIdentifier
                 let gameMD5 = self.game.md5Hash
+                guard !gameMD5.isEmpty else {
+                    ELOG("Game MD5 hash is empty — cannot save cheat")
+                    completion(.error(.realmWriteError(NSError(domain: cheatErrorDomain, code: 0,
+                        userInfo: [NSLocalizedDescriptionKey: "Game has no MD5 hash; cannot save cheat"]))))
+                    return
+                }
                 guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier) else {
                     completion(.error(.noCoreFound(coreIdentifier ?? "nil")))
                     return
@@ -66,9 +72,12 @@ extension PVEmulatorViewController {
                     let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
                     var frozenCheat: PVCheats?
                     try realm.write {
-                        // Look up game from the same realm instance to avoid cross-Realm relationship crash
-                        guard let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) ?? self.game else {
-                            throw NSError(domain: cheatErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "No game found"])
+                        // Look up game strictly from this realm instance.
+                        // Do NOT fall back to self.game (@ThreadSafe) — it may belong to a
+                        // different Realm instance and would cause a cross-Realm relationship crash.
+                        guard let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
+                            throw NSError(domain: cheatErrorDomain, code: 0,
+                                          userInfo: [NSLocalizedDescriptionKey: "Game not found in Realm (md5=\(gameMD5))"])
                         }
                         let cs = PVCheats(withGame: realmGame, core: core, code: modString, type: type, codeType: codeType, enabled: enabled, file: saveFile)
                         realm.add(cs)
