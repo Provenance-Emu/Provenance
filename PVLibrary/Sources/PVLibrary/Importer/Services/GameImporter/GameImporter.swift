@@ -2533,7 +2533,15 @@ public final class GameImporter: GameImporting, ObservableObject {
             while fileManager.fileExists(atPath: finalDestinationURL.path) {
                 let nameWithoutExt = destinationURL.deletingPathExtension().lastPathComponent
                 let ext = destinationURL.pathExtension
-                finalDestinationURL = importsPath.appendingPathComponent("\(nameWithoutExt)_\(counter).\(ext)")
+
+                if ext.isEmpty {
+                    finalDestinationURL = importsPath.appendingPathComponent("\(nameWithoutExt)_\(counter)")
+                } else {
+                    let baseWithCounter = "\(nameWithoutExt)_\(counter)"
+                    finalDestinationURL = importsPath
+                        .appendingPathComponent(baseWithCounter)
+                        .appendingPathExtension(ext)
+                }
                 counter += 1
             }
 
