@@ -2529,10 +2529,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             WLOG("Archive \(archiveURL.lastPathComponent) did not stabilize within timeout, attempting extraction anyway")
         }
 
-        guard FileManager.default.fileExists(atPath: archiveURL.path) else {
-            ELOG("Archive file no longer exists after stability wait: \(archiveURL.path)")
-            throw ArchiveError.extractionFailed(
-                "Archive file disappeared during stability wait: \(archiveURL.lastPathComponent)")
+        if !FileManager.default.fileExists(atPath: archiveURL.path) {
+            let msg = "Archive file disappeared during stability wait: \(archiveURL.lastPathComponent)"
+            ELOG(msg)
+            throw ArchiveError.extractionFailed(msg)
         }
 
         // Bounded retry readability check after stability wait.
@@ -2921,9 +2921,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             try await FileManager.default.removeItem(at: archiveURL)
             ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
         } else {
-            WLOG("Archive \(archiveURL.lastPathComponent) preserved — \(moveFailures) file(s) failed to move")
+            WLOG("Archive \(archiveURL.lastPathComponent) preserved — "
+                 + "\(moveFailures) file(s) failed to move, temp dir kept for recovery")
         }
-    }
+    } // extractAndImportArchive
 
     private func performImport(for item: ImportQueueItem) async throws {
         let fileName = item.url.lastPathComponent
