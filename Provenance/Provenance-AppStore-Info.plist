@@ -321,6 +321,7 @@
 		<string>PVOpenIntent</string>
 		<string>org.provenance-emu.game.play</string>
 		<string>org.provenance-emu.webserver</string>
+		<string>com.apple.corespotlight.search</string>
 		<string>org.provenance-emu.game-search</string>
 		<string>com.provenance-emu.provenance.openMD5</string>
 	</array>

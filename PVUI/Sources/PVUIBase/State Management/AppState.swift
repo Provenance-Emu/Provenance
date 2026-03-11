@@ -63,6 +63,11 @@ public class AppState: ObservableObject {
     @Published
     public var appOpenAction: AppOpenAction = .none
 
+    /// Pending search query forwarded from Siri "Search in App" handoff (`CSQueryContinuationActionType`).
+    /// Observed by search-capable views (e.g. HomeView) to pre-populate the search field.
+    @Published
+    public var pendingSearchQuery: String? = nil
+
     /// Hold the emulation core and other info
     @Published
     public var emulationUIState :EmulationUIState = .init()
