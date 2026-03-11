@@ -26,6 +26,7 @@ private enum VMKeys {
 
 // MARK: - Extension
 
+@MainActor
 extension PVEmulatorViewController {
 
     // MARK: Computed "stored" properties via associated objects
@@ -42,6 +43,18 @@ extension PVEmulatorViewController {
         set { objc_setAssociatedObject(self, &VMKeys.trackpadViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
+    // MARK: - Capability Checks
+
+    /// Whether the emulator core reports mouse support.
+    public var coreSupportsVirtualMouse: Bool {
+        (core as? MouseResponder)?.gameSupportsMouse == true
+    }
+
+    /// Whether the virtual mouse overlay is currently visible.
+    public var isVirtualMouseVisible: Bool {
+        cursorHostingController != nil
+    }
+
     // MARK: - Setup
 
     /// Attach the cursor overlay and trackpad layer when the active core supports mouse input.
@@ -53,14 +66,12 @@ extension PVEmulatorViewController {
 
         ILOG("[VirtualMouse] Core supports mouse — installing cursor overlay and trackpad")
 
-        // 1. Trackpad view (transparent, intercepts touches)
         let trackpad = TouchTrackpadView(frame: view.bounds)
         trackpad.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         trackpad.mouseResponder = mouseCore
         view.addSubview(trackpad)
         touchTrackpadView = trackpad
 
-        // 2. Cursor overlay (pass-through, no hit-testing) — must be above all other layers
         let overlay = MouseCursorOverlayView()
         let host = UIHostingController(rootView: overlay)
         host.view.backgroundColor = .clear
@@ -77,11 +88,32 @@ extension PVEmulatorViewController {
         ILOG("[VirtualMouse] Setup complete")
     }
 
+    // MARK: - Show / Hide / Toggle
+
+    /// Show the virtual mouse cursor and trackpad.
+    /// Does nothing if the core does not support mouse or if already visible.
+    public func showVirtualMouse() {
+        guard coreSupportsVirtualMouse, !isVirtualMouseVisible else { return }
+        setupVirtualMouseIfNeeded()
+    }
+
+    /// Hide the virtual mouse cursor and trackpad.
+    public func hideVirtualMouse() {
+        teardownVirtualMouse()
+    }
+
+    /// Toggle virtual mouse visibility.
+    public func toggleVirtualMouse() {
+        if isVirtualMouseVisible {
+            hideVirtualMouse()
+        } else {
+            showVirtualMouse()
+        }
+    }
+
     /// Remove cursor overlay and trackpad if present (called on teardown / core change).
     /// Safe to call from any thread — UIKit operations are dispatched to the main thread.
     func teardownVirtualMouse() {
-        // Capture views before clearing the stored references so the async block
-        // can remove them even if self has been released by then.
         let trackpad = touchTrackpadView
         let host = cursorHostingController
         touchTrackpadView = nil

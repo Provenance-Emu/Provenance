@@ -331,6 +331,16 @@ public enum VirtualKeyboardVariant: String, Codable, Hashable, Equatable, CaseIt
     case amstradCPC
 }
 
+extension VirtualKeyboardVariant {
+    /// Maps this skin-level variant identifier to the corresponding keyboard layout.
+    public func toLayout() -> VirtualKeyboardLayout {
+        if let layout = VirtualKeyboardLayout(rawValue: rawValue) {
+            return layout
+        }
+        return .full
+    }
+}
+
 /// Position on screen where the keyboard overlay should appear.
 public enum KeyboardOverlayPosition: String, Codable, Hashable, Equatable {
     case bottom

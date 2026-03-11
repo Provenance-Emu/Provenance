@@ -2396,6 +2396,10 @@ extension PVEmulatorViewController {
         }
         #endif
 
+        #if !os(tvOS)
+        bringVirtualInputOverlaysToFront()
+        #endif
+
         // If we have a menu button, make sure it's on top of everything
         if let menuButton = menuButton {
             view.bringSubviewToFront(menuButton)

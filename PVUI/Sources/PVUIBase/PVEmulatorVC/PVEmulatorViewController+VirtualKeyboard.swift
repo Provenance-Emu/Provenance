@@ -17,12 +17,15 @@ import SwiftUI
 import GameController
 import PVCoreBridge
 import PVLogging
+import PVSettings
 
 // MARK: - Associated-object keys
 
 private enum AssociatedKeys {
     static var keyboardHostingVC: UInt8 = 0
     static var keyboardViewModel: UInt8 = 0
+    static var keyboardHiddenByHW: UInt8 = 0
+    static var hwKeyboardObservers: UInt8 = 0
 }
 
 // MARK: - PVEmulatorViewController + VirtualKeyboard
@@ -55,6 +58,33 @@ extension PVEmulatorViewController {
         set {
             objc_setAssociatedObject(
                 self, &AssociatedKeys.keyboardViewModel,
+                newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
+    }
+
+    /// Tracks whether the virtual keyboard was auto-hidden due to a hardware keyboard
+    /// connecting, so it can be restored when the hardware keyboard disconnects.
+    private var keyboardHiddenByHardware: Bool {
+        get {
+            (objc_getAssociatedObject(self, &AssociatedKeys.keyboardHiddenByHW) as? Bool) ?? false
+        }
+        set {
+            objc_setAssociatedObject(
+                self, &AssociatedKeys.keyboardHiddenByHW,
+                newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
+    }
+
+    /// Notification observer tokens for hardware keyboard connect/disconnect.
+    private var hwKeyboardObservers: [NSObjectProtocol]? {
+        get {
+            objc_getAssociatedObject(self, &AssociatedKeys.hwKeyboardObservers) as? [NSObjectProtocol]
+        }
+        set {
+            objc_setAssociatedObject(
+                self, &AssociatedKeys.hwKeyboardObservers,
                 newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
             )
         }
@@ -112,19 +142,54 @@ extension PVEmulatorViewController {
     }
 
     /// Call this after the core has started and the view hierarchy is ready.
-    /// Auto-shows the keyboard if the core requires it.
-    /// Mouse cursor overlay is handled separately by `setupVirtualMouseIfNeeded()`.
+    /// Auto-shows the keyboard if the core requires it and no hardware keyboard
+    /// is already connected. Mouse cursor overlay is handled separately by
+    /// `setupVirtualMouseIfNeeded()`.
+    ///
+    /// Hardware keyboard observation is started first so the virtual
+    /// keyboard is never briefly shown then hidden when a physical
+    /// keyboard is already connected.
     public func setupVirtualInputOverlaysIfNeeded() {
+        startObservingHardwareKeyboard()
+
+        if GCKeyboard.coalesced != nil {
+            ILOG("[VirtualKeyboard] Hardware keyboard already connected — skipping auto-show")
+            keyboardHiddenByHardware = coreRequiresVirtualKeyboard || (effectiveKeyboardOverlayConfig?.autoShow == true)
+            return
+        }
+
         if coreRequiresVirtualKeyboard {
             showVirtualKeyboard()
         }
-        // Also honour DeltaSkin autoShow
         applyKeyboardOverlayConfigIfNeeded()
+        DLOG("[VirtualKeyboard] setupVirtualInputOverlaysIfNeeded completed, visible=\(isVirtualKeyboardVisible)")
     }
 
     /// Tears down the keyboard overlay. Call from `viewWillDisappear` or `deinit`.
     public func removeVirtualInputOverlays() {
+        stopObservingHardwareKeyboard()
         hideVirtualKeyboard()
+    }
+
+    /// Resolves which `VirtualKeyboardLayout` to use.
+    ///
+    /// Priority:
+    ///   1. Explicit skin JSON `keyboardOverlay` — skin authors' intent wins.
+    ///   2. User's persisted `preferredKeyboardVariant` — last layout the user chose.
+    ///   3. System default from `DeltaSkinDefaults` — built-in per-game-type fallback.
+    ///   4. `.full` — universal fallback.
+    private func resolvedKeyboardLayout() -> VirtualKeyboardLayout {
+        if let skinConfig = currentSkin?.keyboardOverlay {
+            return skinConfig.variant.toLayout()
+        }
+        if let variant = VirtualKeyboardVariant(rawValue: Defaults[.preferredKeyboardVariant]) {
+            return variant.toLayout()
+        }
+        if let gameType = currentSkin?.gameType,
+           let defaultConfig = DeltaSkinDefaults.defaultKeyboardOverlay(for: gameType) {
+            return defaultConfig.variant.toLayout()
+        }
+        return .full
     }
 
     /// Show the virtual keyboard overlay.
@@ -132,7 +197,10 @@ extension PVEmulatorViewController {
     public func showVirtualKeyboard(animated: Bool = true) {
         guard coreSupportsVirtualKeyboard, !isVirtualKeyboardVisible else { return }
 
-        let viewModel = VirtualKeyboardViewModel()
+        let layout = resolvedKeyboardLayout()
+        let opacity = effectiveKeyboardOverlayConfig?.opacity ?? 1.0
+
+        let viewModel = VirtualKeyboardViewModel(layout: layout)
         viewModel.delegate = self
         viewModel.dismissAction = { [weak self] in
             self?.hideVirtualKeyboard(animated: true)
@@ -154,16 +222,20 @@ extension PVEmulatorViewController {
             hostingVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             hostingVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             hostingVC.view.topAnchor.constraint(equalTo: view.topAnchor),
-            hostingVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            hostingVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
+        let targetAlpha = CGFloat(max(0, min(1, opacity)))
         if animated {
             hostingVC.view.alpha = 0
-            UIView.animate(withDuration: 0.25) { hostingVC.view.alpha = 1 }
+            UIView.animate(withDuration: 0.25) { hostingVC.view.alpha = targetAlpha }
+        } else {
+            hostingVC.view.alpha = targetAlpha
         }
 
         virtualKeyboardHostingVC = hostingVC
-        ILOG("[VirtualKeyboard] Keyboard overlay shown (animated: \(animated))")
+        keyboardHiddenByHardware = false
+        ILOG("[VirtualKeyboard] Keyboard overlay shown (layout: \(layout), opacity: \(opacity), animated: \(animated))")
     }
 
     /// Hide the virtual keyboard overlay, releasing all held keys first.
@@ -210,6 +282,50 @@ extension PVEmulatorViewController {
         if let cursorView = cursorHostingController?.view {
             view.bringSubviewToFront(cursorView)
         }
+    }
+
+    // MARK: - Hardware Keyboard Detection
+
+    /// Begin observing GCKeyboard connect/disconnect to auto-hide the virtual keyboard
+    /// when a physical keyboard is available.
+    private func startObservingHardwareKeyboard() {
+        guard hwKeyboardObservers == nil, coreSupportsVirtualKeyboard else { return }
+
+        let connectToken = NotificationCenter.default.addObserver(
+            forName: .GCKeyboardDidConnect, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.handleHardwareKeyboardConnected()
+        }
+        let disconnectToken = NotificationCenter.default.addObserver(
+            forName: .GCKeyboardDidDisconnect, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.handleHardwareKeyboardDisconnected()
+        }
+        hwKeyboardObservers = [connectToken, disconnectToken]
+    }
+
+    /// Stop observing hardware keyboard notifications.
+    private func stopObservingHardwareKeyboard() {
+        if let observers = hwKeyboardObservers {
+            for token in observers {
+                NotificationCenter.default.removeObserver(token)
+            }
+        }
+        hwKeyboardObservers = nil
+    }
+
+    private func handleHardwareKeyboardConnected() {
+        guard isVirtualKeyboardVisible else { return }
+        ILOG("[VirtualKeyboard] Hardware keyboard connected — auto-hiding virtual keyboard")
+        keyboardHiddenByHardware = true
+        hideVirtualKeyboard(animated: true)
+    }
+
+    private func handleHardwareKeyboardDisconnected() {
+        guard GCKeyboard.coalesced == nil, keyboardHiddenByHardware else { return }
+        ILOG("[VirtualKeyboard] Hardware keyboard disconnected — restoring virtual keyboard")
+        keyboardHiddenByHardware = false
+        showVirtualKeyboard(animated: true)
     }
 }
 
