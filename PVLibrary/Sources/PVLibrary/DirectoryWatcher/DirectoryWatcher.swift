@@ -435,7 +435,7 @@ public final class DirectoryWatcher: ObservableObject {
                     ELOG("Failed to delete original archive \(filePath.lastPathComponent): \(error.localizedDescription)")
                 }
                 do {
-                    try FileManager.default.removeItem(at: tempExtractionDir)
+                    try await FileManager.default.removeItem(at: tempExtractionDir)
                 } catch {
                     ELOG("Failed to clean up temp extraction directory \(tempExtractionDir.lastPathComponent): \(error.localizedDescription)")
                 }
