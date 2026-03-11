@@ -478,7 +478,7 @@ public class SceneCoordinator: ObservableObject {
         let availableCores = system.cores.filter {
             (!$0.disabled || unsupportedCores) &&
             $0.hasCoreClass &&
-            !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+            !(AppState.shared.isAppStore && $0.appStoreDisabled)
         }
         let hasAvailableCores = !availableCores.isEmpty
 
