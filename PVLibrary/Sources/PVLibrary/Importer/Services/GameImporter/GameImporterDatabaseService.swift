@@ -306,60 +306,65 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
 
         // Fix for race condition: If game was created from CloudKit before local scan,
-        // update the isDownloaded status and ensure PVFile is properly linked
-        if !existingGame.isDownloaded || existingGame.file == nil {
-            ILOG("[LOCAL SCAN FIX] Updating CloudKit-created game with local file: \(existingGame.title)")
-            do {
-                let realm = RomDatabase.sharedInstance.realm
+        // update the isDownloaded status and ensure PVFile is properly linked.
+        // This also repairs stale cloud-era file metadata when a matching ROM is imported locally.
+        ILOG("[LOCAL SCAN FIX] Reconciling game with local file: \(existingGame.title)")
+        do {
+            let realm = RomDatabase.sharedInstance.realm
 
-                // Get a live (thawed) version of the game for modification
-                let liveGame: PVGame?
-                if existingGame.isFrozen {
-                    liveGame = existingGame.thaw()
-                } else if let gameFromRealm = realm.object(ofType: PVGame.self, forPrimaryKey: existingGame.md5Hash) {
-                    liveGame = gameFromRealm
-                } else {
-                    liveGame = existingGame
-                }
-
-                guard let gameToUpdate = liveGame else {
-                    ELOG("[LOCAL SCAN FIX] Could not get live game reference for: \(existingGame.title)")
-                    return
-                }
-
-                try realm.write {
-                    // Update or create PVFile reference
-                    if gameToUpdate.file == nil {
-                        let pvFile = PVFile(withURL: file)
-                        gameToUpdate.file = pvFile
-                        ILOG("[LOCAL SCAN FIX] Created PVFile for game: \(gameToUpdate.title)")
-                    } else if let existingFile = gameToUpdate.file {
-                        // Update the partial path if it's different
-                        if existingFile.partialPath != partialPath {
-                            existingFile.partialPath = partialPath
-                            ILOG("[LOCAL SCAN FIX] Updated partialPath for game: \(gameToUpdate.title)")
-                        }
-                    }
-
-                    // Mark as downloaded since we found the file locally
-                    if !gameToUpdate.isDownloaded {
-                        gameToUpdate.isDownloaded = true
-                        ILOG("[LOCAL SCAN FIX] Marked game as downloaded: \(gameToUpdate.title)")
-                    }
-                }
-
-                // Dual-write: mirror romPath update into SwiftData (epic #2510).
-                // Only Sendable Strings are captured, so Task.detached is safe here.
-                let md5 = gameToUpdate.md5Hash
-                Task.detached(priority: .utility) {
-                    await GameImporterSwiftDataBridge.shared?.updateRelativePath(
-                        md5: md5,
-                        partialPath: partialPath
-                    )
-                }
-            } catch {
-                ELOG("[LOCAL SCAN FIX] Failed to update game \(existingGame.title): \(error.localizedDescription)")
+            // Get a live (thawed) version of the game for modification
+            let liveGame: PVGame?
+            if existingGame.isFrozen {
+                liveGame = existingGame.thaw()
+            } else if let gameFromRealm = realm.object(ofType: PVGame.self, forPrimaryKey: existingGame.md5Hash) {
+                liveGame = gameFromRealm
+            } else {
+                liveGame = existingGame
             }
+
+            guard let gameToUpdate = liveGame else {
+                ELOG("[LOCAL SCAN FIX] Could not get live game reference for: \(existingGame.title)")
+                return
+            }
+
+            try realm.write {
+                // Update or create PVFile reference
+                if gameToUpdate.file == nil {
+                    let pvFile = PVFile(withURL: file)
+                    gameToUpdate.file = pvFile
+                    ILOG("[LOCAL SCAN FIX] Created PVFile for game: \(gameToUpdate.title)")
+                } else if let existingFile = gameToUpdate.file {
+                    // Update the partial path if it's different
+                    if existingFile.partialPath != partialPath {
+                        existingFile.partialPath = partialPath
+                        ILOG("[LOCAL SCAN FIX] Updated partialPath for game: \(gameToUpdate.title)")
+                    }
+                }
+
+                /// Keep legacy launch and validation code paths aligned with the resolved local file.
+                if gameToUpdate.romPath != partialPath {
+                    gameToUpdate.romPath = partialPath
+                    ILOG("[LOCAL SCAN FIX] Updated romPath for game: \(gameToUpdate.title)")
+                }
+
+                // Mark as downloaded since we found the file locally
+                if !gameToUpdate.isDownloaded {
+                    ILOG("[LOCAL SCAN FIX] Marked game as downloaded: \(gameToUpdate.title)")
+                }
+                gameToUpdate.isDownloaded = true
+            }
+
+            // Dual-write: mirror romPath update into SwiftData (epic #2510).
+            // Only Sendable Strings are captured, so Task.detached is safe here.
+            let md5 = gameToUpdate.md5Hash
+            Task.detached(priority: .utility) {
+                await GameImporterSwiftDataBridge.shared?.updateRelativePath(
+                    md5: md5,
+                    partialPath: partialPath
+                )
+            }
+        } catch {
+            ELOG("[LOCAL SCAN FIX] Failed to update game \(existingGame.title): \(error.localizedDescription)")
         }
     }
 
