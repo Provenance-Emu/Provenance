@@ -2070,7 +2070,10 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
 
         // Common
-        if ["run", "play"].contains(s) { return "start" }
+        if ![SystemIdentifier.DOS, .DOOM, .Quake, .Quake2, .Wolf3D].contains(system) &&
+            ["run", "play"].contains(s) {
+            return "start"
+        }
         // 32X uses "mode" directly, so don't convert it to "select" for 32X
         if system != .Sega32X && ["mode", "option"].contains(s) { return "select" }
         /// Systems that use "l" and "r" directly (not "l1"/"r1"): VirtualBoy, 3DO, N64, Saturn, Dreamcast, GBA, DS, SNES

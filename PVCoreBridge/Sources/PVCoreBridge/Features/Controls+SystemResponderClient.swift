@@ -122,7 +122,7 @@ public extension SystemIdentifier {
         case .CPS3:
             return PVMAMESystemResponderClient.self
         case .DOOM:
-            return PVRetroArchCoreResponderClient.self
+            return PVDOSSystemResponderClient.self
         case .DOS:
             return PVDOSSystemResponderClient.self
         case .EP128:
