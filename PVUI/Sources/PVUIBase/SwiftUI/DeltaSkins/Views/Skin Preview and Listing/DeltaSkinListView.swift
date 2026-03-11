@@ -30,6 +30,18 @@ public struct DeltaSkinListView: View {
         SkinGridView(manager: manager, columns: columns)
             .navigationTitle("Skins")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink(destination: SkinCatalogBrowserView()) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.down.circle")
+                            Text("Get More")
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    }
+                }
+
+                #if !os(tvOS)
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showingDocumentPicker = true
@@ -39,6 +51,7 @@ public struct DeltaSkinListView: View {
                             .foregroundStyle(RetroTheme.retroHorizontalGradient)
                     }
                 }
+                #endif
             }
             .fullScreenCover(isPresented: $showingFullscreenPreview) {
                 if !availableSkins.isEmpty {
