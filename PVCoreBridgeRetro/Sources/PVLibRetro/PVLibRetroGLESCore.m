@@ -358,7 +358,9 @@ static bool video_driver_cached_frame(void)
 
         [NSThread detachNewThreadSelector:@selector(runGLESEmuThread) toTarget:self withObject:nil];
 
-        while (!has_init) {}
+        /// Wait for the emu thread to signal initialization. Also bail early if
+        /// shouldStop is set to avoid spinning forever on early shutdown.
+        while (!has_init && !self.shouldStop) {}
         while ( !self.shouldStop )
         {
             [self.frontBufferCondition lock];
@@ -431,9 +433,14 @@ static bool video_driver_cached_frame(void)
         /// context can be lost if the app was backgrounded/foregrounded
         [self makeGLContextCurrent];
 
-        /// Bind the presentation FBO so the core renders into the IOSurface-backed texture
-        if (_presentationFBO > 0) {
+        /// Bind the presentation FBO so the core renders into the IOSurface-backed texture.
+        /// Use glIsFramebuffer to guard against binding an FBO created in a different
+        /// GL context (FBOs are not shared across EAGLContext sharegroups on iOS).
+        if (_presentationFBO > 0 && glIsFramebuffer(_presentationFBO)) {
             glBindFramebuffer(GL_FRAMEBUFFER, _presentationFBO);
+        } else if (_presentationFBO > 0) {
+            WLOG(@"Presentation FBO %u is not valid in the current GL context — falling back to default framebuffer", _presentationFBO);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
         if (core->retro_run)
@@ -450,7 +457,11 @@ static bool video_driver_cached_frame(void)
     /// Wait for the render thread to fully exit before tearing down GL resources.
     /// This prevents races where the render thread is mid-frame in
     /// video_driver_cached_frame() or swapBuffers while we destroy the context.
-    dispatch_semaphore_wait(_renderThreadExitSemaphore, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC));
+    long renderThreadWaitResult = dispatch_semaphore_wait(_renderThreadExitSemaphore,
+                                      dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC));
+    if (renderThreadWaitResult != 0) {
+        WLOG(@"Render thread did not exit within 2s — proceeding with context teardown anyway (may race)");
+    }
 
     /// Tear down HW context on the emu thread that owns it, before signaling exit.
     [self contextDestroy];
@@ -757,7 +768,7 @@ static void* hw_get_proc_address(const char *symbol) {
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
             [self makeGLContextCurrent];
-            if (_presentationFBO > 0) {
+            if (_presentationFBO > 0 && glIsFramebuffer(_presentationFBO)) {
                 glBindFramebuffer(GL_FRAMEBUFFER, _presentationFBO);
             }
             break;
@@ -799,12 +810,12 @@ static void* hw_get_proc_address(const char *symbol) {
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE: {
-            if (_presentationFBO > 0) {
+            if (_presentationFBO > 0 && glIsFramebuffer(_presentationFBO)) {
                 return (uintptr_t)_presentationFBO;
             }
             /// Fallback: try to capture FBO from the render delegate on demand
             [self captureRenderDelegateFBO];
-            if (_presentationFBO > 0) {
+            if (_presentationFBO > 0 && glIsFramebuffer(_presentationFBO)) {
                 return (uintptr_t)_presentationFBO;
             }
             /// Last resort: return currently bound FBO
