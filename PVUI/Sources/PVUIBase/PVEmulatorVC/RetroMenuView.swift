@@ -855,6 +855,7 @@ struct RetroMenuView: View {
     @State private var showingFilterPicker = false
     @State private var showingSkinScopeAlert = false
     @State private var showingDocumentPicker = false
+    @State private var showingSkinCatalog = false
     @State private var pendingSkinSelection: (name: String, identifier: String, orientation: SkinOrientation)? = nil
     #if os(iOS)
     @State private var currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
@@ -1008,7 +1009,47 @@ struct RetroMenuView: View {
                         }
                     }
                 }
-                    #endif
+                #endif
+
+                // Browse online catalog button
+                Button(action: {
+                    showingSkinCatalog = true
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .font(.system(size: 14, weight: .medium))
+                        Text("BROWSE CATALOG")
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .foregroundColor(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(
+                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                    .opacity(palette.dark ? 0.6 : 0.9)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor, lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .sheet(isPresented: $showingSkinCatalog) {
+                    NavigationView {
+                        SkinCatalogBrowserView()
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") {
+                                        showingSkinCatalog = false
+                                    }
+                                }
+                            }
+                    }
+                }
+
                 .alert("Save Skin Selection", isPresented: $showingSkinScopeAlert) {
                     Button("Session Only") {
                         ILOG("skins: Alert - Session Only selected")
