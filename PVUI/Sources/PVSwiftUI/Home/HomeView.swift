@@ -552,6 +552,11 @@ struct HomeView: SwiftUI.View {
                 }
             }
         )
+        .onReceive(AppState.shared.$pendingSearchQuery) { query in
+            guard let query, !query.isEmpty else { return }
+            searchText = query
+            AppState.shared.pendingSearchQuery = nil
+        }
     }
 
     @ViewBuilder

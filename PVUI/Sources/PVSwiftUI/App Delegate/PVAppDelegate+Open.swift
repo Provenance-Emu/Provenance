@@ -173,6 +173,17 @@ public extension PVAppDelegate {
             }
         }
         #endif
+        // Siri "Search in App" — CSQueryContinuationActionType carries the search string
+#if os(iOS) || os(macOS)
+        if userActivity.activityType == CSQueryContinuationActionType {
+            if let searchQuery = userActivity.userInfo?[CSSearchQueryString] as? String, !searchQuery.isEmpty {
+                ILOG("PVAppDelegate: Setting pendingSearchQuery from Siri handoff: '\(searchQuery)'")
+                AppState.shared.pendingSearchQuery = searchQuery
+                return true
+            }
+        }
+#endif
+
         // Spotlight search click-through
 #if os(iOS) || os(macOS)
         if userActivity.activityType == CSSearchableItemActionType {

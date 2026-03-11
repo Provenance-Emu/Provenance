@@ -106,6 +106,10 @@ struct ProvenanceApp: App {
                 .onContinueUserActivity(CSSearchableItemActionType) { userActivity in
                     handleSpotlightActivity(userActivity)
                 }
+                .onContinueUserActivity(CSQueryContinuationActionType) { userActivity in
+                    ILOG("ProvenanceApp: Handling Siri 'Search in App' continuation activity")
+                    handleSiriSearchActivity(userActivity)
+                }
                 .onContinueUserActivity("PVOpenIntent") { userActivity in
                     ILOG("ProvenanceApp: Handling PVOpenIntent user activity")
                     handleIntentUserActivity(userActivity)
@@ -714,6 +718,23 @@ extension ProvenanceApp {
                 WLOG("ProvenanceApp: Intent user activity was not handled")
             }
         }
+        #endif
+    }
+
+    /// Handle a Siri "Search in App" continuation activity (`CSQueryContinuationActionType`).
+    /// Extracts the search string and stores it in `AppState.pendingSearchQuery` so that
+    /// search-capable views (e.g. HomeView) can pre-populate their search fields.
+    func handleSiriSearchActivity(_ userActivity: NSUserActivity) {
+        ILOG("ProvenanceApp: handleSiriSearchActivity activityType=\(userActivity.activityType)")
+        #if !os(tvOS)
+        guard userActivity.activityType == CSQueryContinuationActionType,
+              let searchQuery = userActivity.userInfo?[CSSearchQueryString] as? String,
+              !searchQuery.isEmpty else {
+            WLOG("ProvenanceApp: Siri search activity missing query string")
+            return
+        }
+        ILOG("ProvenanceApp: Setting pendingSearchQuery to: '\(searchQuery)'")
+        AppState.shared.pendingSearchQuery = searchQuery
         #endif
     }
 
