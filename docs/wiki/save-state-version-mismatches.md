@@ -49,7 +49,7 @@ When in doubt, create a new save state with the updated core.
 
 ## Technical Details
 
-- Save states store: `createdWithCoreVersion` (Realm, SwiftData, CloudKit).
+- Save states track the core version they were created with: `createdWithCoreVersion` in Realm/SwiftData (stored in CloudKit as `coreVersion` from `PVSaveState.createdWithCoreVersion`).
 - The app checks this against `core.projectVersion` before load.
 - You can always choose to load anyway; the warning is informational.
 
