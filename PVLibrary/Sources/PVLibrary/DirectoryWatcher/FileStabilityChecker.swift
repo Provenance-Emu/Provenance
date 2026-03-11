@@ -33,10 +33,10 @@ enum FileStabilityChecker {
         timeout: TimeInterval = 10.0
     ) async -> Bool {
         let fd = open(url.path, O_EVTONLY)
-        if fd < 0 {
+        guard fd >= 0 else {
             let code = errno
-            WLOG("FileStabilityChecker: Cannot open fd for \(url.lastPathComponent) — errno \(code): \(String(cString: strerror(code)))")
-            return false
+            WLOG("FileStabilityChecker: open(\(url.lastPathComponent)) failed — errno \(code) (\(String(cString: strerror(code))))")
+            return false // fd unavailable, assume file is ready
         }
 
         return await withCheckedContinuation { continuation in
