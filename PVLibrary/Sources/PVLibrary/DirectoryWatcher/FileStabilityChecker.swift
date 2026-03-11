@@ -118,7 +118,6 @@ enum FileStabilityChecker {
                     // Register cancellation handler — CancelHandle's
                     // cancelled flag ensures fire()-before-set() works.
                     handle.set { queue.async { finish(false) } }
-
                     func scheduleQuiesceTimer() {
                         stabilityTimer?.cancel()
                         let timer = DispatchWorkItem {
