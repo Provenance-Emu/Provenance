@@ -33,10 +33,9 @@ enum FileStabilityChecker {
         timeout: TimeInterval = 10.0
     ) async -> Bool {
         let fd = open(url.path, O_EVTONLY)
-        guard fd >= 0 else {
-            let errnoValue = errno
-            let reason = String(cString: strerror(errnoValue))
-            WLOG("FileStabilityChecker: Cannot open fd for \(url.lastPathComponent) — errno \(errnoValue): \(reason)")
+        if fd < 0 {
+            let code = errno
+            WLOG("FileStabilityChecker: Cannot open fd for \(url.lastPathComponent) — errno \(code): \(String(cString: strerror(code)))")
             return false
         }
 

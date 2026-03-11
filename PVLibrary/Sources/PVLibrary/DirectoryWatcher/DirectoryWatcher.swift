@@ -440,8 +440,8 @@ public final class DirectoryWatcher: ObservableObject {
                     ELOG("Failed to clean up temp extraction directory \(tempExtractionDir.lastPathComponent): \(error.localizedDescription)")
                 }
             } else {
-                WLOG("Preserving temp directory with \(moveResult.failedCount) unmoved file(s): \(tempExtractionDir.path)")
-                WLOG("Original archive preserved for retry: \(filePath.path)")
+                // Archive NOT deleted — preserved alongside temp dir for retry
+                WLOG("Partial move: \(moveResult.failedCount) file(s) remain in \(tempExtractionDir.path), archive preserved at \(filePath.path)")
                 let partialError = ArchiveError.extractionFailed(
                     "\(moveResult.failedCount) file(s) could not be moved from temp directory"
                 )
