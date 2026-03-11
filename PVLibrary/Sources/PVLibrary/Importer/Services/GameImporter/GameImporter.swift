@@ -2859,9 +2859,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         // When some moves fail, preserve both the temp directory (unmoved
         // files) and the original archive so the user can retry.
-        let allMoveSucceeded = moveFailures == 0
-        if !allMoveSucceeded {
-            preserveTempDir = true
+        let allMovesSucceeded = moveFailures == 0
+        preserveTempDir = !allMovesSucceeded
+        if !allMovesSucceeded {
             ELOG("Batch move had \(moveFailures)/\(extractedFiles.count) failure(s) — "
                  + "archive and temp dir preserved for retry")
         }
@@ -2916,7 +2916,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("Added \(filesToImport.count) extracted files to import queue")
         }
 
-        if allMoveSucceeded {
+        if allMovesSucceeded {
             try await FileManager.default.removeItem(at: archiveURL)
             ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
         } else {
