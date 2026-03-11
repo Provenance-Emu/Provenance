@@ -766,15 +766,9 @@ extension ProvenanceApp {
             else if uniqueIdentifier.hasPrefix("org.provenance-emu.savestate.") {
                 let saveStateId = uniqueIdentifier.replacingOccurrences(of: "org.provenance-emu.savestate.", with: "")
                 ILOG("Save state selected: \(saveStateId)")
-
-                // Parse the save state filename to extract the game MD5
-                let components = saveStateId.components(separatedBy: "-")
-                if components.count >= 2 {
-                    let potentialMD5 = components[components.count - 2]
-                    // Use the safe pattern that waits for bootup completion
-                    AppState.shared.appOpenAction = .openMD5(potentialMD5)
-                    openEmulatorSceneWhenReady()
-                }
+                // Use the save state ID directly to open and resume the specific save state
+                AppState.shared.appOpenAction = .openSaveStateID(saveStateId)
+                openEmulatorSceneWhenReady()
             }
         }
         #endif //!tvOS
