@@ -24,12 +24,16 @@
 
 import Foundation
 import AVFoundation
+#if canImport(OSLog)
 @_implementationOnly import os.log
+#endif
 import OpenEmuBase.OEGameCore
 
+#if canImport(OSLog)
 extension OSLog {
     static let audio = OSLog(subsystem: "org.openemu.OpenEmuKit", category: "GameAudio")
 }
+#endif
 
 @available(macOS, deprecated: 10.15, obsoleted: 11.0)
 final public class GameAudio: GameAudioProtocol {
@@ -104,8 +108,10 @@ final public class GameAudio: GameAudioProtocol {
         do {
             try engine.start()
         } catch {
+            #if canImport(os)
             os_log(.error, log: .audio, "Unable to start AVAudioEngine: %{public}s",
                    error.localizedDescription)
+            #endif
         }
     }
     
@@ -116,7 +122,9 @@ final public class GameAudio: GameAudioProtocol {
             .addObserver(forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { [weak self] _ in
                 guard let self = self else { return }
                 
+                #if canImport(os)
                 os_log(.info, log: .audio, "AVAudioEngine configuration change")
+                #endif
                 self.setOutputDeviceID(self.outputDeviceID)
             }
     }
@@ -189,8 +197,10 @@ final public class GameAudio: GameAudioProtocol {
         do {
             try bus.setFormat(renderFormat)
         } catch {
+            #if canImport(os)
             os_log(.error, log: .audio, "Unable to set input bus render format %{public}s: %{public}s",
                    renderFormat.description, error.localizedDescription)
+            #endif
             return
         }
         
@@ -232,7 +242,9 @@ final public class GameAudio: GameAudioProtocol {
         if newOutputDeviceID == 0 {
             id = defaultAudioOutputDeviceID
             isDefaultOutputDevice = true
+            #if canImport(os)
             os_log(.info, log: .audio, "Using default audio device %d", id)
+            #endif
         } else {
             id = newOutputDeviceID
             isDefaultOutputDevice = false
@@ -243,8 +255,10 @@ final public class GameAudio: GameAudioProtocol {
         do {
             try engine.outputNode.auAudioUnit.setDeviceID(id)
         } catch {
+            #if canImport(os)
             os_log(.error, log: .audio, "Unable to set output device ID %d: %{public}s",
                    id, error.localizedDescription)
+            #endif
         }
         
         connectNodes()

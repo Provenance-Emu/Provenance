@@ -1,7 +1,13 @@
+#if canImport(CryptoKit)
 import CryptoKit
+#else
+import Crypto
+#endif
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc
+#endif
 public extension NSData {
     var md5: String {
         let computed = Insecure.MD5.hash(data: self)

@@ -1,5 +1,8 @@
 import Foundation
-import os.log
+import PVLogging
+#if canImport(os)
+import os
+#endif
 import notify
 //import NotifyWrapper
 
@@ -30,7 +33,11 @@ public final class PVMuteSwitchMonitor {
                 self.isMuted = (state == 0)
                 muteHandler(self.isMuted)
             } else {
+                #if canImport(os)
                 os_log("Failed to get mute state. Error: %d", log: .default, type: .error, result)
+                #else
+                ELOG("Failed to get mute state. Error: \(result)")
+                #endif
             }
         }
 
@@ -52,7 +59,11 @@ public final class PVMuteSwitchMonitor {
         if status == NOTIFY_STATUS_OK {
             updateMutedState()
         } else {
+            #if canImport(os)
             os_log("Failed to register for mute switch notifications. Error: %d", log: .default, type: .error, status)
+            #else
+            ELOG("Failed to register for mute switch notifications. Error: \(status)")
+            #endif
         }
     }
 

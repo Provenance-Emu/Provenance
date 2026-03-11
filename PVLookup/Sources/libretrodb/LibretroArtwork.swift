@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import PVSystems
 import PVLookupTypes
 import PVSQLiteDatabase
@@ -9,11 +12,19 @@ public struct LibretroArtwork {
     private static let baseURL = "https://thumbnails.libretro.com"
 
     /// Cache for URL validation results
+    #if canImport(Darwin)
     private static let urlCache = URLCache(
-        memoryCapacity: 10 * 1024 * 1024,  // 10MB memory cache
-        diskCapacity: 50 * 1024 * 1024,    // 50MB disk cache
+        memoryCapacity: 10 * 1024 * 1024,
+        diskCapacity: 50 * 1024 * 1024,
         directory: nil
     )
+    #else
+    private static let urlCache = URLCache(
+        memoryCapacity: 10 * 1024 * 1024,
+        diskCapacity: 50 * 1024 * 1024,
+        diskPath: nil
+    )
+    #endif
 
     /// Cache duration for URL validation results
     private static let cacheDuration: TimeInterval = 3600 // 1 hour

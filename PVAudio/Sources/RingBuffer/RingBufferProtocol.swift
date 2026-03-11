@@ -9,7 +9,10 @@ import Foundation
 
 public typealias RingBufferSize = Int
 
-@objc public protocol RingBufferProtocol {
+#if canImport(ObjectiveC)
+@objc
+#endif
+public protocol RingBufferProtocol {
 
     init?(withLength: RingBufferSize)
 
@@ -20,7 +23,6 @@ public typealias RingBufferSize = Int
     @discardableResult func read(_ buffer: UnsafeMutableRawPointer, preferredSize: RingBufferSize) -> RingBufferSize
 
     func reset()
-//    func set(length: RingBufferSize)
 
-    @objc var availableBytes: RingBufferSize { get }
+    var availableBytes: RingBufferSize { get }
 }

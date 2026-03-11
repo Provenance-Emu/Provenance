@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if canImport(CoreServices)
 import CoreServices
+#endif
 
 public extension UTI {
     // General ROM types
@@ -182,6 +184,7 @@ public extension UTType {
 }
 #endif
 
+#if canImport(CoreServices)
 /// Instances of the UTI class represent a specific Universal Type Identifier, e.g. kUTTypeMPEG4.
 public final class UTI: RawRepresentable, Equatable {
     /**
@@ -491,9 +494,69 @@ public final class UTI: RawRepresentable, Equatable {
         return UTTypeIsDynamic(rawCFValue)
     }
 }
+#else
+/// Minimal UTI implementation for platforms without CoreServices (e.g. Linux).
+public final class UTI: RawRepresentable, Equatable {
+    public enum TagClass: String {
+        case fileExtension = "public.filename-extension"
+        case mimeType = "public.mime-type"
+        #if os(macOS)
+        case pbType = "com.apple.nspboard-type"
+        case osType = "com.apple.ostype"
+        #endif
+    }
+
+    public typealias RawValue = String
+    public let rawValue: String
+
+    public required init(rawValue: UTI.RawValue) {
+        self.rawValue = rawValue
+    }
+
+    public convenience init(withTagClass tagClass: TagClass, value: String, conformingTo conforming: UTI? = nil) {
+        self.init(rawValue: "public.data")
+    }
+
+    public convenience init(withExtension fileExtension: String, conformingTo conforming: UTI? = nil) {
+        self.init(withTagClass: .fileExtension, value: fileExtension, conformingTo: conforming)
+    }
+
+    public convenience init(withMimeType mimeType: String, conformingTo conforming: UTI? = nil) {
+        self.init(withTagClass: .mimeType, value: mimeType, conformingTo: conforming)
+    }
+
+    #if os(macOS)
+    public convenience init(withPBType pbType: String, conformingTo conforming: UTI? = nil) {
+        self.init(withTagClass: .pbType, value: pbType, conformingTo: conforming)
+    }
+    public convenience init(withOSType osType: String, conformingTo conforming: UTI? = nil) {
+        self.init(withTagClass: .osType, value: osType, conformingTo: conforming)
+    }
+    #endif
+
+    public func tag(with tagClass: TagClass) -> String? { nil }
+    public var fileExtension: String? { tag(with: .fileExtension) }
+    public var mimeType: String? { tag(with: .mimeType) }
+
+    #if os(macOS)
+    public var pbType: String? { tag(with: .pbType) }
+    public var osType: String? { tag(with: .osType) }
+    #endif
+
+    public func tags(with tagClass: TagClass) -> [String] { [] }
+    public static func utis(for tag: TagClass, value: String, conformingTo conforming: UTI? = nil) -> [UTI] { [] }
+    public func conforms(to otherUTI: UTI) -> Bool { rawValue == otherUTI.rawValue }
+    public static func == (lhs: UTI, rhs: UTI) -> Bool { lhs.rawValue == rhs.rawValue }
+    public var description: String? { nil }
+    public var declaration: [AnyHashable: Any]? { nil }
+    public var declaringBundleURL: URL? { nil }
+    public var isDynamic: Bool { false }
+}
+#endif
 
 // MARK: System defined UTIs
 
+#if canImport(UniformTypeIdentifiers)
 public extension UTI {
     nonisolated(unsafe) static let _3DContent = UTI(rawValue: UTType.threeDContent.identifier as String)
     nonisolated(unsafe) static let aliasFile = UTI(rawValue: UTType.aliasFile.identifier as String)
@@ -613,6 +676,7 @@ public extension UTI {
     nonisolated(unsafe) static let xpcService = UTI(rawValue: UTType.xpcService.identifier as String)
     nonisolated(unsafe) static let zipArchive = UTI(rawValue: UTType.zip.identifier as String)
 }
+#endif
 
 #if os(OSX)
 

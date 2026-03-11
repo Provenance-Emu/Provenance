@@ -5,7 +5,11 @@
 //  Created by Joseph Mattiello on 9/5/24.
 //
 
+#if canImport(CoreGraphics)
 import CoreGraphics
+#else
+public typealias CGFloat = Double
+#endif
 
 public enum PVGameBoxArtAspectRatio: CGFloat {
     case square = 1.0
@@ -27,6 +31,6 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
     case ggUSA = 0.7201
     case ggJAPAN = 0.86
     case Sega32XUSA = 0.7194636596
-    
+
     public static var jaguar: PVGameBoxArtAspectRatio { .tall }
 }

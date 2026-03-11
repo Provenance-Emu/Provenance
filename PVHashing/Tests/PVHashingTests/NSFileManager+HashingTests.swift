@@ -6,6 +6,9 @@
 //
 
 import XCTest
+#if canImport(Combine)
+import Combine
+#endif
 @testable import PVHashing
 
 class ChecksumTests: XCTestCase {
@@ -32,6 +35,7 @@ class ChecksumTests: XCTestCase {
         let content = try! String(contentsOf: url)
     }
 
+    #if canImport(Combine)
     func testCalculateMD5Asynchronously() throws {
         let expectation = XCTestExpectation(description: "Calculate MD5 asynchronously")
 
@@ -50,6 +54,7 @@ class ChecksumTests: XCTestCase {
 
         wait(for: [expectation], timeout: 5.0)
     }
+    #endif
 
     func testCalculateMD5Synchronously() {
         // This hash corresponds to "Hello, world!" with MD5

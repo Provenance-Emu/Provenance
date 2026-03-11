@@ -97,8 +97,9 @@ public extension LocalFileInfoProvider {
         guard let url = url else { return 0 }
         let fileSize: UInt64
 
-        if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
-            fileSize = attr.fileSize()
+        if let attr = try? FileManager.default.attributesOfItem(atPath: url.path),
+           let sizeValue = attr[.size] {
+            fileSize = (sizeValue as? NSNumber)?.uint64Value ?? 0
         } else {
             fileSize = 0
         }

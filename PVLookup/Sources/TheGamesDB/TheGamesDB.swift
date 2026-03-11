@@ -11,7 +11,11 @@ import PVLookupTypes
 import PVSystems
 import PVLogging
 import PVSQLiteDatabase
+#if canImport(CryptoKit)
 import CryptoKit
+#else
+import Crypto
+#endif
 import ROMMetadataProvider
 
 public final class TheGamesDB: ArtworkLookupService, ROMMetadataProvider, @unchecked Sendable {

@@ -7,10 +7,16 @@
 
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc
 public protocol PVLoggingEventProtocol: AnyObject {
     func updateHistory(sender: PVLogging)
 }
+#else
+public protocol PVLoggingEventProtocol: AnyObject {
+    func updateHistory(sender: PVLogging)
+}
+#endif
 
 //@nonobjc
 //extension PVLoggingEventProtocol: Equatable, Hashable { }

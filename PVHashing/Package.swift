@@ -2,6 +2,18 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
+#if os(Linux)
+let checksumDep: [Package.Dependency] = []
+let checksumTarget: [Target.Dependency] = []
+#else
+let checksumDep: [Package.Dependency] = [
+    .package(url: "https://github.com/JoeMatt/Checksum.git", from: "1.1.1"),
+]
+let checksumTarget: [Target.Dependency] = [
+    "Checksum",
+]
+#endif
+
 let package = Package(
     name: "PVHashing",
     platforms: [
@@ -20,13 +32,15 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../PVLogging"),
-//        .package(url: "https://github.com/rnine/Checksum.git", from: "1.0.2")
-        .package(url: "https://github.com/JoeMatt/Checksum.git", from: "1.1.1")
-    ],
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
+    ] + checksumDep,
     targets: [
         .target(
             name: "PVHashing",
-            dependencies: [ "Checksum", "PVLogging" ]
+            dependencies: [
+                "PVLogging",
+                .product(name: "Crypto", package: "swift-crypto"),
+            ] + checksumTarget
         ),
 
         // MARK: SwiftPM tests

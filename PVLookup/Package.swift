@@ -37,6 +37,7 @@ let package = Package(
         .package(path: "../PVLogging"),
         .package(path: "../PVPrimitives"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
 
         ///
         /// Database
@@ -102,6 +103,7 @@ let package = Package(
                 "PVSQLiteDatabase",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
 //                .product(name: "OpenAPIAsyncHTTPClient", package: "swift-openapi-async-http-client"),
+                .product(name: "Crypto", package: "swift-crypto"),
                 "PVLookupTypes",
                 "ROMMetadataProvider",
                 "PVPrimitives"

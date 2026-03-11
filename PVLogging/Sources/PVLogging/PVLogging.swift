@@ -5,8 +5,9 @@
 //
 
 import Foundation
+#if canImport(System)
 import System
-import os
+#endif
 
 //@_exported import PVLoggingObjC
 
@@ -14,14 +15,18 @@ let LOGGING_STACK_SIZE = 1024
 let ISO_TIMEZONE_UTC_FORMAT: String = "Z"
 let ISO_TIMEZONE_OFFSET_FORMAT: String = "%+02d%02d"
 
+#if canImport(ObjectiveC)
 @objcMembers
+#endif
 public final class PVLogging: NSObject {
+    #if canImport(ObjectiveC)
     @objc(sharedInstance)
+    #endif
     nonisolated(unsafe) public static let shared = PVLogging()
 
     public var entity: PVLoggingEntity?
     public let startupTime: Date = Date()
-    
+
     public private(set) var history = [PVLogEntry]()
     private var listeners = Array<any PVLoggingEventProtocol>()
 
@@ -83,27 +88,9 @@ public final class PVLogging: NSObject {
         PVLogging.shared.notifyListeners()
     }
 
-    @available(iOS 14.0, tvOS 14.0, *)
-    private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier!, category: "App")
-
     fileprivate func log(_ entry: PVLogEntry) {
         // TODO: Add array of "loggers" for os_log, nslogger
         // and iterate through them
-//        if #available(iOS 14.0, tvOS 14.0, *) {
-//            switch entry.level {
-//            case .Debug:
-//                Self.logger.log(level: .debug, .init(stringLiteral: entry.string))
-//            case .Error:
-//                Self.logger.log(level: .error, .init(stringLiteral: entry.string))
-//            case .Warn:
-//                Self.logger.log(level: .error, .init(stringLiteral: entry.string))
-//            case .U:
-//                Self.logger.log(level: .fault, .init(stringLiteral: entry.string))
-//            case .Info:
-//                Self.logger.log(level: .info, .init(stringLiteral: entry.string))
-//            }
-//        }
     }
 
 
@@ -115,20 +102,9 @@ public final class PVLogging: NSObject {
     public func logFileInfos() -> [Any]? {
         return entity?.logFileInfos
     }
-    //
-    //    public func logFileData() -> Data? {
-    //        return entity?.logFileData()
-    //    }
-    //
-    //    public func logFileDataAsString() -> String? {
-    //        return entity?.logFileDataAsString()
-    //    }
-    //
-    //    public func logFileDataAsAttributedString() -> NSAttributedString? {
-    //        return entity?.logFileDataAsAttributedString()
-    //    }
 
     // MARK: - Listeners
+    #if canImport(ObjectiveC)
     @objc(registerListener:)
     public func register(listener: any PVLoggingEventProtocol) {
         listeners.insert(listener, at: 0)
@@ -138,6 +114,14 @@ public final class PVLogging: NSObject {
     public func remove(listener: any PVLoggingEventProtocol) {
         //        listeners.removeAll(where: {$0 == listener})
     }
+    #else
+    public func register(listener: any PVLoggingEventProtocol) {
+        listeners.insert(listener, at: 0)
+    }
+
+    public func remove(listener: any PVLoggingEventProtocol) {
+    }
+    #endif
 
     /**
      *  Notify listerners of log updates
@@ -208,6 +192,7 @@ public final class PVLogging: NSObject {
         return ""
     }
 
+    #if !os(Linux)
     public static func logNSURLCacheUsage() {
         let defaultCache = URLCache.shared
         let defaultCacheSizeMemory = defaultCache.memoryCapacity
@@ -218,19 +203,5 @@ public final class PVLogging: NSObject {
         let usedDiskCache = defaultCache.currentDiskUsage / 1024 / 1024
         ILOG("URLCache: Memory: \(defaultCacheSizeMemoryMB)MB, Disk: \(defaultCacheSizeDiskMB)MB\nUsed Memory: \(usedCachedMemory)MB, Used Disk: \(usedDiskCache)MB")
     }
+    #endif
 }
-//
-//@_cdecl("PVLog")
-//public func PVLog(level: DDLogLevel, flag: DDLogFlag, file: String, function: String?, line: UInt, message: String) {
-//    let logMessage = DDLogMessage(message: message,
-//                                  level: level,
-//                                  flag: flag,
-//                                  context: 0,
-//                                  file: file,
-//                                  function: function,
-//                                  line: line,
-//                                  tag: nil,
-//                                  timestamp: Date())
-//    let asynchronous: Bool = level == .error
-//    DDLog.sharedInstance.log(asynchronous: asynchronous, message: logMessage)
-//}

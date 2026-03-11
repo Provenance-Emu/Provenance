@@ -2,6 +2,12 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
+#if os(Linux)
+let privacyResource: [Resource] = []
+#else
+let privacyResource: [Resource] = [.copy("PrivacyInfo.xcprivacy")]
+#endif
+
 let package = Package(
     name: "PVAudio",
     platforms: [
@@ -29,7 +35,6 @@ let package = Package(
     dependencies: [
         .package(name: "PVLogging", path: "../PVLogging/"),
         .package(url: "https://github.com/apple/swift-atomics.git", from: "1.0.0"),
-
     ],
 
     // MARK: - Targets
@@ -45,7 +50,7 @@ let package = Package(
                 "CARingBuffer",
                 "PVLogging"
             ],
-            resources: [.copy("PrivacyInfo.xcprivacy")]
+            resources: privacyResource
         ),
         // MARK: - RingBuffer Protocol
         .target(
@@ -53,11 +58,8 @@ let package = Package(
             dependencies: [
                 "PVLogging"
             ],
-            resources: [.copy("PrivacyInfo.xcprivacy")]
+            resources: privacyResource
         ),
-        // -----------------------------------------
-        // MARK: - RingBuffer Implementations
-        //==========================================
         // MARK: - PVRingBuffer
         .target(
             name: "PVRingBuffer",
@@ -65,10 +67,9 @@ let package = Package(
                 "RingBuffer",
                 "PVLogging",
                 .product(name: "Atomics", package: "swift-atomics")
-
             ],
             path: "Sources/Ring Buffers/PVRingBuffer",
-            resources: [.copy("PrivacyInfo.xcprivacy")]
+            resources: privacyResource
         ),
         // MARK: - AppleRingBuffer
         .target(
@@ -78,7 +79,7 @@ let package = Package(
                 "PVLogging"
             ],
             path: "Sources/Ring Buffers/AppleRingBuffer",
-            resources: [.copy("PrivacyInfo.xcprivacy")]
+            resources: privacyResource
         ),
         // MARK: - OERingBuffer
         .target(
@@ -88,7 +89,7 @@ let package = Package(
                 "PVLogging"
             ],
             path: "Sources/Ring Buffers/OERingBuffer",
-            resources: [.copy("PrivacyInfo.xcprivacy")]
+            resources: privacyResource
         ),
         // MARK: - CARingBuffer
         .target(
@@ -98,9 +99,8 @@ let package = Package(
                 "PVLogging"
             ],
             path: "Sources/Ring Buffers/CARingBuffer",
-            resources: [.copy("PrivacyInfo.xcprivacy")]
+            resources: privacyResource
         ),
-        // -----------------------------------------
         // MARK: - Tests
         .testTarget(
             name: "PVAudioTests",

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+import PVLogging
 
 /// Monitors changes to the metadata, to trigger downloads of new files or updates.
 final class MetadataMonitor: @unchecked Sendable {
@@ -58,7 +58,7 @@ final class MetadataMonitor: @unchecked Sendable {
             do {
                 try fileManager.startDownloadingUbiquitousItem(at: url)
             } catch {
-                os_log("Failed to start downloading file")
+                ELOG("Failed to start downloading file")
             }
         }
     }

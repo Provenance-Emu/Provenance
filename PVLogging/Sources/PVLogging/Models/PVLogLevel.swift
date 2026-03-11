@@ -7,7 +7,9 @@
 
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc
+#endif
 public enum PVLogLevel: Int, CaseIterable, Sendable {
     case U
     case Error

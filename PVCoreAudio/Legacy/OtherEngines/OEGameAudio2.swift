@@ -24,11 +24,15 @@
 
 import Foundation
 import AVFoundation
-@_implementationOnly import os
+#if canImport(OSLog)
+@_implementationOnly import OSLog
+#endif
 import OpenEmuBase.OEGameCore
 
+#if canImport(OSLog)
 @available(macOS 11.0, iOS 14.0, *)
 private var log = Logger(subsystem: "org.openemu.OpenEmuKit", category: "GameAudio2")
+#endif
 
 @available(macOS 11.0, iOS 14.0, *)
 final public class GameAudio2: GameAudioProtocol {
@@ -101,7 +105,9 @@ final public class GameAudio2: GameAudioProtocol {
         do {
             try engine.start()
         } catch {
+            #if canImport(OSLog)
             log.error("Unable to start AVAudioEngine: \(error.localizedDescription, privacy: .public)")
+            #endif
         }
     }
     
@@ -188,7 +194,9 @@ final public class GameAudio2: GameAudioProtocol {
             .addObserver(forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { [weak self] _ in
                 guard let self = self else { return }
                 
+                #if canImport(OSLog)
                 log.debug("AVAudioEngine configuration change")
+                #endif
                 self.setOutputDeviceID(self.outputDeviceID)
             }
     }
@@ -215,7 +223,9 @@ final public class GameAudio2: GameAudioProtocol {
         if newOutputDeviceID == 0 {
             id = defaultAudioOutputDeviceID
             isDefaultOutputDevice = true
+            #if canImport(OSLog)
             log.debug("Using default audio device \(id)")
+            #endif
         } else {
             id = newOutputDeviceID
             isDefaultOutputDevice = false
@@ -226,7 +236,9 @@ final public class GameAudio2: GameAudioProtocol {
         do {
             try engine.outputNode.auAudioUnit.setDeviceID(id)
         } catch {
+            #if canImport(OSLog)
             log.error("Unable to set output device ID \(id): \(error.localizedDescription, privacy: .public)")
+            #endif
         }
         
         connectNodes()
