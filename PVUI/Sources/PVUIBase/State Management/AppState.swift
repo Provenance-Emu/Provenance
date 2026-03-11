@@ -408,11 +408,24 @@ public class AppState: ObservableObject {
     @MainActor
     private func initializeLibrary() async {
         ILOG("AppState: Initializing library")
+        bootupStateManager.transition(to: .initializingLibrary)
+
+        // Guard against a hung importer — 45 s is generous for cold-start system init.
         ILOG("AppState: Starting GameImporter.shared.initSystems()")
-        await bootWorker.initializeImporter()
-        ILOG("AppState: GameImporter.shared.initSystems() completed")
+        bootupStateManager.updateTaskProgress("Initializing game importer…", fraction: 0.1)
+        do {
+            try await withTimeout(seconds: 45) {
+                await self.bootWorker.initializeImporter()
+            }
+            ILOG("AppState: GameImporter.shared.initSystems() completed")
+        } catch let error as TimeoutError {
+            ELOG("AppState: GameImporter.initSystems() timed out after \(error.seconds)s — continuing anyway")
+        } catch {
+            ELOG("AppState: GameImporter.initSystems() failed: \(error.localizedDescription) — continuing anyway")
+        }
 
         // Initialize gameLibrary
+        bootupStateManager.updateTaskProgress("Loading game library…", fraction: 0.4)
         self.gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
         ILOG("AppState: GameLibrary initialized")
 
@@ -426,10 +439,21 @@ public class AppState: ObservableObject {
         self.libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: self.gameImporter!)
         ILOG("AppState: LibraryUpdatesController initialized")
 
+        // Guard against a hung ROM cache reload — 30 s is ample for cache warm-up.
         ILOG("AppState: Reloading RomDatabase cache")
-        await bootWorker.reloadRomCache()
-        ILOG("AppState: RomDatabase cache reloaded")
+        bootupStateManager.updateTaskProgress("Reloading ROM database cache…", fraction: 0.7)
+        do {
+            try await withTimeout(seconds: 30) {
+                await self.bootWorker.reloadRomCache()
+            }
+            ILOG("AppState: RomDatabase cache reloaded")
+        } catch let error as TimeoutError {
+            ELOG("AppState: RomDatabase.reloadCache() timed out after \(error.seconds)s — continuing anyway")
+        } catch {
+            ELOG("AppState: RomDatabase.reloadCache() failed: \(error.localizedDescription) — continuing anyway")
+        }
 
+        bootupStateManager.updateTaskProgress("Finalizing…", fraction: 0.9)
         await finalizeBootup()
     }
 

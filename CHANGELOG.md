@@ -73,6 +73,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Siri/Spotlight — Games Not Surfacing** — Fixed four bugs causing only save states (not games) to appear when searching in Siri/Spotlight: (1) `IndexRequestHandler.getGames(withIdentifiers:)` now extracts the MD5 from the full `org.provenance-emu.game.<MD5>` URI before querying Realm (previously comparing the full URI against the md5Hash field, never matching); (2) `PVGame.spotlightContentSet` migrated from the deprecated `itemContentType:` initializer to `contentType: .data` and now sets `displayName` in addition to `title`; (3) `SpotlightHelper.reindexAllSaveStates()` now sets `title` on save-state attribute sets (was only setting `displayName`, which Spotlight ignores for matching); (4) All main-app `Info.plist` files now declare `org.provenance-emu.game-search` and `com.provenance-emu.provenance.openMD5` in `NSUserActivityTypes` so OS-level `NSUserActivity` donations from gameplay are eligible for Siri search (#2980)
 - **Clear Artwork Cache SF Symbol** — Replace `photo.badge.minus` (iOS 18+) with `photo.badge.xmark` (iOS 16+) so the icon renders on iOS 17 devices (#2971)
 - **Doom Controls** — Added missing critical input mappings for Doom (PrBoom via RetroArch): Strafe Left (L), Strafe Right (R), Weapon Prev (L2), Weapon Next (R2), and Run. Also added these buttons to the Doom on-screen control layout so they appear in the default skin. Fire and Use were already mapped; strafe, run, and weapon cycling now work correctly on touch and hardware controllers (#2974)
+- **Boot Hang on "Loading game library"** — `initializeLibrary()` in `AppState` now wraps
+  `GameImporter.initSystems()` (45 s) and `RomDatabase.reloadCache()` (30 s) in individual
+  timeouts so a stalled task transitions to an error state instead of hanging forever.
+  `BootstrapOrchestrator` gains a configurable per-task timeout (default 30 s) using the same
+  pattern, preventing any stalled side-service task from blocking the wave scheduler (#2965)
+- **Boot Screen Fake Progress** — `RetroProgressBar` now accepts a real `progress: Double`
+  value and smoothly animates to it; the bouncing fake animation is retained only when no real
+  value is supplied. `BootupViewRetroWave` passes `AppBootupState.stateProgress` (derived from
+  the current boot stage) and displays the active task name instead of blinking state text.
+  `AppBootupState` gains `stateProgress`, `currentTaskName`, and `updateTaskProgress(_:fraction:)`
+  for fine-grained sub-step reporting (#2965)
+- **Missing "Scanning games…" State** — `initializeLibrary()` now correctly transitions to
+  `.initializingLibrary` at entry, so the boot screen shows "Scanning games…" during the
+  library scan phase rather than staying on "Loading game library…" (#2965)
 - **Cheats & MultiDisc Pause Leak** — `onDone` closures in Cheats (tvOS + iOS) and error/cancel handlers in the disc-swap menu no longer call `setPauseEmulation(false)` or `isShowingMenu = false` directly, preventing the emulator from unpausing while the pause menu is still visible (Part of #2909)
 - **Virtual Mouse Cursor Z-Order** — Mouse cursor overlay now stays above the emulator surface and all other layers by calling `bringSubviewToFront` after insertion (#2925, Part of #2575)
 - **Virtual Keyboard Z-Order** — Keyboard overlay now renders above skin controller buttons; `bringSubviewToFront` called on show and after every skin change (#2926, Part of #2575)

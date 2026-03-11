@@ -184,16 +184,18 @@ public struct BootupViewRetroWave: View {
                         .scaleEffect(titleScale)
                 }
                 
-                // Status text with blinking effect
-                Text(appState.bootupStateManager.currentState.localizedDescription)
+                // Status text with blinking effect — shows real current task name
+                Text(appState.bootupStateManager.currentTaskName.isEmpty
+                     ? appState.bootupStateManager.currentState.localizedDescription
+                     : appState.bootupStateManager.currentTaskName)
                     .font(.headline)
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
                     .padding(.top, 10)
                     .opacity(showText ? 1.0 : 0.5)
-                
-                // Custom progress indicator
+
+                // Custom progress indicator — driven by real boot progress
                 ZStack {
                     // Progress bar background
                     RoundedRectangle(cornerRadius: 4)
@@ -207,9 +209,9 @@ public struct BootupViewRetroWave: View {
                                     endPoint: .trailing
                                 ), lineWidth: 1)
                         )
-                    
-                    // Progress bar glow
-                    RetroProgressBar()
+
+                    // Real progress bar
+                    RetroProgressBar(progress: appState.bootupStateManager.stateProgress)
                         .frame(width: 200, height: 8)
                 }
                 .padding(.top, 20)
