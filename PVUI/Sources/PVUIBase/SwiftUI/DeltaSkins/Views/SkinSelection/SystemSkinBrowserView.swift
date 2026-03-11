@@ -74,23 +74,7 @@ public struct SystemSkinBrowserView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .toolbar {
-            ToolbarItem(placement: .automatic) {
-                Button {
-                    withAnimation {
-                        isLoading = true
-                    }
-                    Task {
-                        await reloadAllSkins()
-                    }
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                }
-                .disabled(isLoading)
-            }
-        }
-        #if !os(tvOS)
-        .toolbar {
+            #if !os(tvOS)
             ToolbarItem(placement: .navigationBarLeading) {
                 NavigationLink(destination: SkinCatalogBrowserView()) {
                     HStack(spacing: 4) {
@@ -100,8 +84,25 @@ public struct SystemSkinBrowserView: View {
                     }
                     .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 }
+                .transaction { $0.animation = nil }
+            }
+            #endif
+
+            ToolbarItem(placement: .automatic) {
+                Button {
+                    isLoading = true
+                    Task {
+                        await reloadAllSkins()
+                    }
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                }
+                .disabled(isLoading)
+                .transaction { $0.animation = nil }
             }
 
+            #if !os(tvOS)
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     showingDocumentPicker = true
@@ -110,9 +111,10 @@ public struct SystemSkinBrowserView: View {
                         .font(.title2)
                         .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 }
+                .transaction { $0.animation = nil }
             }
+            #endif
         }
-        #endif
         .onAppear {
             withAnimation(.easeInOut(duration: 0.8)) {
                 appearAnimation = true
