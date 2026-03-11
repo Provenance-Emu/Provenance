@@ -15,7 +15,8 @@ import PVCoreBridgeRetro
 @objc
 @objcMembers
 open class PVDesmume2015Core: PVEmulatorCore {
-    public override var supportsSkins: Bool { true }
+    /// Dual-screen skin layouts are not yet supported; disable until implemented.
+    public override var supportsSkins: Bool { false }
 
     public override var supportsDualScreens: Bool { true }
     
