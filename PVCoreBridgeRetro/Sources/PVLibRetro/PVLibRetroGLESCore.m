@@ -357,7 +357,21 @@ static bool video_driver_cached_frame(void)
             [self.renderDelegate startRenderingOnAlternateThread];
         } else {
             ELOG(@"PVLibRetroGLESCore: renderDelegate does not implement optional startRenderingOnAlternateThread; failing hardware-render setup.");
-            /// Signal that the render thread is exiting so the emu thread does not hang.
+
+            /// Treat this as a hard failure: mark emulation as stopping so any
+            /// waiters (e.g., -stopEmulation) can bail out instead of deadlocking.
+            self.shouldStop = YES;
+
+            /// Unblock any thread waiting for the emu thread to exit. Normally
+            /// coreWaitForExitSemaphore is signaled at the end of libretroMain
+            /// on the emu thread; in this failure path the emu thread never
+            /// starts, so we must signal it here instead.
+            if (coreWaitForExitSemaphore != NULL) {
+                dispatch_semaphore_signal(coreWaitForExitSemaphore);
+            }
+
+            /// Signal that the render thread is exiting so any emu-thread logic
+            /// waiting on the render thread can continue.
             dispatch_semaphore_signal(_renderThreadExitSemaphore);
             return;
         }
