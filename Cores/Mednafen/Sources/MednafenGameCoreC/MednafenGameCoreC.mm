@@ -37,6 +37,11 @@ extern "C" {
     }
 
     bool mednafen_decodeCheat(const void* game, uint8_t formatIndex, const char* cheatCode, void* patch) {
+        // Defensive checks for pointers coming from external (Swift) callers.
+        if (!game || !patch || !cheatCode) {
+            return false;
+        }
+
         auto gi = static_cast<const Mednafen::MDFNGI*>(game);
         auto mp = static_cast<Mednafen::MemoryPatch*>(patch);
         const auto& formats = gi->CheatInfo.CheatFormatInfo;
