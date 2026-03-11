@@ -64,9 +64,9 @@ final class FileStabilityCheckerTests: XCTestCase {
         )
 
         writeTask.cancel()
-        _ = await writeTask.result
+        _ = await writeTask.result // ensure writer fully stops before teardown
         XCTAssertFalse(result, "Continuously written file should time out")
-    }
+    } // testTimeoutOnContinuousWrites
 
     /// Cancelling the enclosing Task should cause `waitForStability`
     /// to return `false` promptly and release resources.

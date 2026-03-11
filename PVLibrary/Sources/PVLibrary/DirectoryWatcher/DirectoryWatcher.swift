@@ -446,11 +446,9 @@ public final class DirectoryWatcher: ObservableObject {
                     "\(moveResult.failedCount) file(s) could not be moved from temp directory"
                 )
                 updateExtractionStatus(.failed(error: partialError))
-                await postArchiveExtractionFailed(
-                    error: partialError, filePath: filePath,
-                    movedCount: moveResult.moved.count,
-                    failedCount: moveResult.failedCount)
-                throw partialError
+                await postArchiveExtractionFailed(error: partialError, filePath: filePath,
+                                                  movedCount: moveResult.moved.count, failedCount: moveResult.failedCount)
+                throw partialError // caught below; catch block skips re-post via .failed guard
             }
         } catch {
             // Log detailed error information

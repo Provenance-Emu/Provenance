@@ -115,12 +115,9 @@ enum FileStabilityChecker {
                         continuation.resume(returning: result)
                     }
 
-                    handle.set {
-                        queue.async {
-                            ILOG("FileStabilityChecker: Task cancelled for \(url.lastPathComponent)")
-                            finish(false)
-                        }
-                    }
+                    // Register cancellation handler — CancelHandle's
+                    // cancelled flag ensures fire()-before-set() works.
+                    handle.set { queue.async { finish(false) } }
 
                     func scheduleQuiesceTimer() {
                         stabilityTimer?.cancel()

@@ -2554,12 +2554,11 @@ public final class GameImporter: GameImporting, ObservableObject {
                 try? await Task.sleep(nanoseconds: delay)
             }
         }
-        guard archiveIsReadable else {
-            let msg = "Archive file is locked, empty, or not readable: \(archiveURL.lastPathComponent). "
-                + "Please ensure the file is fully written and not accessed by another process."
-            let error = ArchiveError.extractionFailed(msg)
-            ELOG(error.localizedDescription)
-            throw error
+        if !archiveIsReadable {
+            let msg = "Archive file is locked, empty, or not readable after \(maxOpenAttempts) attempt(s): "
+                + "\(archiveURL.lastPathComponent)"
+            ELOG(msg)
+            throw ArchiveError.extractionFailed(msg)
         }
 
         // Detect actual archive type from file signature (not just extension)
