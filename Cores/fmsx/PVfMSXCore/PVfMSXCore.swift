@@ -20,7 +20,10 @@ open class PVfMSXEmuCore: PVEmulatorCore {
 
     public required init() {
         super.init()
-        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+        guard let bridgedCore = _bridge as? any ObjCBridgedCoreBridge else {
+            preconditionFailure("PVfMSXCoreBridge must conform to ObjCBridgedCoreBridge")
+        }
+        self.bridge = bridgedCore
     }
 }
 

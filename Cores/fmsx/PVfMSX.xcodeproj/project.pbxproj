@@ -29,7 +29,7 @@
 		B3AD72492D246C9A001E5EC3 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AD72482D246C9A001E5EC3 /* CorePlist-Generated.swift */; };
 		B3AD724C2D246D7C001E5EC3 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3AD724B2D246D7C001E5EC3 /* PVEmulatorCore */; };
 		B3AFCFB32977A87D00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCFB22977A87D00A01010 /* PVLogging */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3CBAF8B2D2490C000D5224E /* opll.c in Sources */ = {isa = PBXBuildFile; fileRef = B3CBAF872D2490C000D5224E /* opll.c */; };
 		B3CBAF8C2D2490C000D5224E /* WrapNukeYKT.c in Sources */ = {isa = PBXBuildFile; fileRef = B3CBAF892D2490C000D5224E /* WrapNukeYKT.c */; };

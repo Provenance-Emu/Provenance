@@ -51,7 +51,7 @@ extension PVfMSXEmuCore: EmulatorCoreInfoPlistProvider {
         }
 
         guard let plistObject = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] else {
-            fatalError("Could not generate parse Core.plist")
+            fatalError("Could not parse Core.plist into a dictionary")
         }
 
         guard let corePlist = EmulatorCoreInfoPlist.init(fromInfoDictionary: plistObject) else {
