@@ -2948,9 +2948,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         guard allMovesSucceeded else {
+            let failCount = extractedFiles.count - filesToImportResult.count
             WLOG("Archive \(archiveURL.lastPathComponent) preserved — "
-                 + "batch move failed; temp dir kept for recovery")
-            return
+                 + "\(failCount)/\(extractedFiles.count) move(s) failed; temp dir kept for recovery")
+            throw ArchiveError.batchMoveFailed(succeeded: filesToImportResult.count, total: extractedFiles.count)
         }
         try await self.fileManager.removeItem(at: archiveURL)
         ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")

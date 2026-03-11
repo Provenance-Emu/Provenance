@@ -608,9 +608,9 @@ class ArchiveBatchMoveTests: XCTestCase {
     /// `fileManager.removeItem(at:)`.
     ///
     /// `extractAndImportArchive` only reaches `self.fileManager.removeItem(at: archiveURL)`
-    /// after a `guard allMovesSucceeded` check; when moves fail the guard returns
-    /// early, so the archive is never passed to `removeItem`.  This test exercises
-    /// that exact code path with a real (minimal) ZIP archive and a
+    /// after a `guard allMovesSucceeded` check; when moves fail the guard throws
+    /// `ArchiveError.batchMoveFailed`, so the archive is never passed to `removeItem`.
+    /// This test exercises that exact code path with a real (minimal) ZIP archive and a
     /// `RecordingFailMoveFileManager` to capture any `removeItem` calls.
     func testMoveBatch_allFail_archiveNotRemovedViaFileManager() async throws {
         let archiveDir = try makeTempDirectory()
@@ -626,9 +626,18 @@ class ArchiveBatchMoveTests: XCTestCase {
         // extractAndImportArchive extracts the archive, then tries to move
         // each extracted file via the injected fileManager.  Because
         // RecordingFailMoveFileManager always throws on moveItem, every move
-        // fails → allMovesSucceeded == false → the method returns early without
-        // ever calling fileManager.removeItem(at: archiveURL).
-        try await importer.extractAndImportArchive(item)
+        // fails → allMovesSucceeded == false → the method throws
+        // ArchiveError.batchMoveFailed without ever calling
+        // fileManager.removeItem(at: archiveURL).
+        do {
+            try await importer.extractAndImportArchive(item)
+            XCTFail("Expected ArchiveError.batchMoveFailed to be thrown when all moves fail")
+        } catch let error as ArchiveError {
+            guard case .batchMoveFailed = error else {
+                XCTFail("Expected ArchiveError.batchMoveFailed, got \(error)")
+                return
+            }
+        }
 
         XCTAssertFalse(recordingFM.removedURLs.contains(archiveURL),
                        "The archive must not be removed via fileManager when batch move fails")
