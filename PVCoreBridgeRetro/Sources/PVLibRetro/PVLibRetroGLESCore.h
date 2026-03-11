@@ -61,9 +61,10 @@ __attribute__((weak_import))
 - (uintptr_t)getCurrentFramebuffer;
 - (void*)getProcAddress:(const char*)symbol;
 
-/// GL context management for the emu thread
+/// GL context and FBO management for the emu thread
 - (void)makeGLContextCurrent;
-- (void)captureRenderDelegateFBO;
+- (void)setupEmuThreadFBO;
+- (void)destroyEmuThreadFBO;
 
 // Touch and mouse input support
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX

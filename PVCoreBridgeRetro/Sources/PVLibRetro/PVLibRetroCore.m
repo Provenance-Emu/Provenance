@@ -1676,9 +1676,13 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS: {
+            /// Per libretro.h: "The frontend will zero any flags it doesn't
+            /// recognize or support." We don't currently act on any quirks,
+            /// so zero the value to tell the core none are honored.
             uint64_t *quirks = (uint64_t *)data;
-            ILOG(@"Environ SET_SERIALIZATION_QUIRKS (unsupported): 0x%llx", *quirks);
-            return false;
+            ILOG(@"Environ SET_SERIALIZATION_QUIRKS: core sent 0x%llx, masking to 0x0", *quirks);
+            *quirks = 0;
+            return true;
         }
         case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT: {
             /// Frontend supports shared GL contexts — we do via EAGLContext sharegroups

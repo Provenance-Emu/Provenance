@@ -134,13 +134,29 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 
-    /// The IOSurface-backed FBO that HW-accelerated cores render into.
-    /// Wrapped as NSNumber so ObjC callers can extract the GLuint via -unsignedIntValue.
+    /// The IOSurface-backed FBO created by this view controller.
+    /// Note: GL FBO names are per-context and NOT shareable across EAGLContexts.
+    /// Callers on other threads/contexts should use renderIOSurface instead to
+    /// create their own FBO backed by the same IOSurface.
     var presentationFramebuffer: AnyObject? {
         get {
             guard alternateThreadFramebufferBack > 0 else { return nil }
             return NSNumber(value: alternateThreadFramebufferBack) as AnyObject
         }
+    }
+
+    /// The IOSurface backing the GL→Metal shared texture. Other EAGLContexts
+    /// can create their own textures/FBOs backed by this same IOSurface for
+    /// zero-copy rendering into the Metal display path.
+    var renderIOSurface: IOSurfaceRef? {
+        return backingIOSurface
+    }
+
+    /// Pixel dimensions of the IOSurface-backed render target.
+    var renderIOSurfaceSize: CGSize {
+        guard let surface = backingIOSurface else { return .zero }
+        return CGSize(width: IOSurfaceGetWidth(surface),
+                      height: IOSurfaceGetHeight(surface))
     }
 
     weak var emulatorCore: PVEmulatorCore?

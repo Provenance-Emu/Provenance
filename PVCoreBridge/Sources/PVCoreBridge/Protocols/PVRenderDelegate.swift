@@ -8,6 +8,7 @@
 // MARK: Delegate Protocols
 
 import Foundation
+import IOSurface
 //#if USE_METAL
 import Metal
 import MetalKit
@@ -37,6 +38,14 @@ import MetalKit
     @objc optional var glContext: EAGLContext? { get }
     @objc optional var alternateThreadGLContext: EAGLContext? { get }
     @objc optional var alternateThreadBufferCopyGLContext: EAGLContext? { get }
+
+    /// The IOSurface backing the GL→Metal shared texture. Emu-thread GL contexts
+    /// can create their own FBO and bind a texture backed by this IOSurface for
+    /// zero-copy rendering into the Metal display path.
+    @objc optional var renderIOSurface: IOSurfaceRef? { get }
+
+    /// Size (in pixels) of the IOSurface-backed render target.
+    @objc optional var renderIOSurfaceSize: CGSize { get }
 }
 
 //public extension PVRenderDelegate {

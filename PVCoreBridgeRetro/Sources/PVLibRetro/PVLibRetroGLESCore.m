@@ -76,8 +76,12 @@ extern void MakeCurrentThreadRealTime(void);
     /// Tracks whether context_reset has been deferred until FBO is ready
     BOOL _pendingContextReset;
 
-    /// FBO name provided by the render delegate (IOSurface-backed)
-    GLuint _presentationFBO;
+    /// FBO + texture created in hardware_context (emu thread) backed by the
+    /// same IOSurface as the render delegate. GL FBOs are per-context so
+    /// we must create our own rather than reusing the delegate's FBO name.
+    GLuint _emuThreadFBO;
+    GLuint _emuThreadColorTexture;
+    GLuint _emuThreadDepthRenderbuffer;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     EAGLContext *hardware_context;
@@ -131,7 +135,9 @@ static void* hw_get_proc_address(const char *symbol);
         _coreContextReset = NULL;
         _coreContextDestroy = NULL;
         _pendingContextReset = NO;
-        _presentationFBO = 0;
+        _emuThreadFBO = 0;
+        _emuThreadColorTexture = 0;
+        _emuThreadDepthRenderbuffer = 0;
 
         vulkan_library = NULL;
         vulkan_instance = NULL;
@@ -356,18 +362,15 @@ static bool video_driver_cached_frame(void)
             return;
         }
 
-        /// Capture the presentation FBO that the render delegate just created
-        [self captureRenderDelegateFBO];
-
         /// context_reset is NOT fired here — it must run on the emu thread
         /// because cores assume context_reset and retro_run share the same thread/context.
         /// libretroMain will fire it after making hardware_context current.
 
         [NSThread detachNewThreadSelector:@selector(runGLESEmuThread) toTarget:self withObject:nil];
 
-        /// Wait for the emu thread to signal initialization. Also bail early if
-        /// shouldStop is set to avoid spinning forever on early shutdown.
-        while (!has_init && !self.shouldStop) {}
+        /// Wait for the emu thread to signal initialization. Yield CPU to avoid
+        /// pegging a core at 100%. Bail early if shouldStop is set.
+        while (!has_init && !self.shouldStop) { usleep(1000); }
         while ( !self.shouldStop )
         {
             [self.frontBufferCondition lock];
@@ -378,7 +381,7 @@ static bool video_driver_cached_frame(void)
 
             while ( !self.shouldStop
                    && !video_driver_cached_frame()
-                   ) {}
+                   ) { usleep(500); }
 
             if (!self.shouldStop) {
                 [self swapBuffers];
@@ -415,10 +418,16 @@ static bool video_driver_cached_frame(void)
     /// Make the core's dedicated GL context current on the emu thread
     [self makeGLContextCurrent];
 
+    /// Create the emu thread's own FBO backed by the shared IOSurface.
+    /// GL FBOs are per-context (not shareable across EAGLContexts), so we
+    /// must create our own in hardware_context rather than reusing the
+    /// render delegate's FBO name. The IOSurface bridge gives zero-copy.
+    [self setupEmuThreadFBO];
+
     /// Fire any deferred context_reset on the emu thread — cores assume
     /// context_reset and retro_run share the same thread and GL context.
     if (_pendingContextReset && _coreContextReset) {
-        ILOG(@"Firing deferred context_reset on emu thread (FBO=%u)", _presentationFBO);
+        ILOG(@"Firing deferred context_reset on emu thread (FBO=%u)", _emuThreadFBO);
         [self contextReset];
         _pendingContextReset = NO;
     }
@@ -436,18 +445,12 @@ static bool video_driver_cached_frame(void)
                 break;
         }
 
-        /// Ensure GL context is current before each retro_run() —
-        /// context can be lost if the app was backgrounded/foregrounded
+        /// Ensure GL context is current before each retro_run()
         [self makeGLContextCurrent];
 
-        /// Bind the presentation FBO so the core renders into the IOSurface-backed texture.
-        /// Use glIsFramebuffer to guard against binding an FBO created in a different
-        /// GL context (FBOs are not shared across EAGLContext sharegroups on iOS).
-        if (_presentationFBO > 0 && glIsFramebuffer(_presentationFBO)) {
-            glBindFramebuffer(GL_FRAMEBUFFER, _presentationFBO);
-        } else if (_presentationFBO > 0) {
-            WLOG(@"Presentation FBO %u is not valid in the current GL context — falling back to default framebuffer", _presentationFBO);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        /// Bind the emu thread's IOSurface-backed FBO
+        if (_emuThreadFBO > 0) {
+            glBindFramebuffer(GL_FRAMEBUFFER, _emuThreadFBO);
         }
 
         if (core->retro_run)
@@ -730,12 +733,13 @@ static bool video_driver_cached_frame(void)
             break;
     }
 
+    [self destroyEmuThreadFBO];
+
     hardware_context_active = NO;
     current_context_type = RETRO_HW_CONTEXT_NONE;
     hw_render_callback = NULL;
     _coreContextReset = NULL;
     _coreContextDestroy = NULL;
-    _presentationFBO = 0;
     _pendingContextReset = NO;
 
     ILOG(@"Hardware context destroyed");
@@ -766,7 +770,7 @@ static void* hw_get_proc_address(const char *symbol) {
 /// Performs frontend housekeeping (make context current, bind FBO) then
 /// invokes the core's stored context_reset so it can create its GL resources.
 - (void)contextReset {
-    ILOG(@"Hardware context reset called (context_type=%d, FBO=%u)", current_context_type, _presentationFBO);
+    ILOG(@"Hardware context reset called (context_type=%d, FBO=%u)", current_context_type, _emuThreadFBO);
 
     switch (current_context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
@@ -775,8 +779,8 @@ static void* hw_get_proc_address(const char *symbol) {
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
             [self makeGLContextCurrent];
-            if (_presentationFBO > 0 && glIsFramebuffer(_presentationFBO)) {
-                glBindFramebuffer(GL_FRAMEBUFFER, _presentationFBO);
+            if (_emuThreadFBO > 0) {
+                glBindFramebuffer(GL_FRAMEBUFFER, _emuThreadFBO);
             }
             break;
 
@@ -807,9 +811,9 @@ static void* hw_get_proc_address(const char *symbol) {
     [self destroyHardwareContext];
 }
 
-/// Returns the FBO the core should render into. For GL paths this is the
-/// IOSurface-backed FBO created by PVMetalViewController, which is then
-/// blitted to a Metal texture for display (zero-copy via IOSurface).
+/// Returns the FBO the core should render into. This is an FBO created in
+/// hardware_context (emu thread) backed by the shared IOSurface, so the
+/// rendered pixels are zero-copy visible to the Metal display path.
 - (uintptr_t)getCurrentFramebuffer {
     switch (current_context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
@@ -817,18 +821,14 @@ static void* hw_get_proc_address(const char *symbol) {
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE: {
-            if (_presentationFBO > 0 && glIsFramebuffer(_presentationFBO)) {
-                return (uintptr_t)_presentationFBO;
+            if (_emuThreadFBO > 0) {
+                return (uintptr_t)_emuThreadFBO;
             }
-            /// Fallback: try to capture FBO from the render delegate on demand
-            [self captureRenderDelegateFBO];
-            if (_presentationFBO > 0 && glIsFramebuffer(_presentationFBO)) {
-                return (uintptr_t)_presentationFBO;
+            [self setupEmuThreadFBO];
+            if (_emuThreadFBO > 0) {
+                return (uintptr_t)_emuThreadFBO;
             }
-            /// Last resort: return currently bound FBO
-            GLint framebuffer;
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
-            return (uintptr_t)framebuffer;
+            return 0;
         }
 
         case RETRO_HW_CONTEXT_VULKAN:
@@ -859,26 +859,97 @@ static void* hw_get_proc_address(const char *symbol) {
 #endif
 }
 
-/// Captures the presentation FBO from the render delegate.
-/// PVMetalViewController exposes this through the presentationFramebuffer property.
-- (void)captureRenderDelegateFBO {
-    if ([self.renderDelegate respondsToSelector:@selector(presentationFramebuffer)]) {
-        id fbo = [self.renderDelegate presentationFramebuffer];
-        if (fbo) {
-            _presentationFBO = (GLuint)[fbo unsignedIntValue];
-            ILOG(@"Captured presentation FBO from render delegate: %u", _presentationFBO);
-            return;
+/// Creates an FBO in the emu thread's hardware_context backed by the render
+/// delegate's IOSurface. GL FBO names are per-context, so we cannot reuse
+/// the delegate's FBO — but IOSurface is an OS-level shared resource, and
+/// textures created from it via texImageIOSurface are visible across
+/// sharegroup-linked EAGLContexts.
+- (void)setupEmuThreadFBO {
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    if (_emuThreadFBO > 0) return;
+
+    IOSurfaceRef surface = NULL;
+    CGSize surfaceSize = CGSizeZero;
+
+    if ([self.renderDelegate respondsToSelector:@selector(renderIOSurface)]) {
+        surface = [self.renderDelegate renderIOSurface];
+    }
+    if ([self.renderDelegate respondsToSelector:@selector(renderIOSurfaceSize)]) {
+        surfaceSize = [self.renderDelegate renderIOSurfaceSize];
+    }
+
+    if (!surface || surfaceSize.width <= 0 || surfaceSize.height <= 0) {
+        ELOG(@"Cannot create emu thread FBO: no IOSurface from render delegate");
+        return;
+    }
+
+    GLint width = (GLint)surfaceSize.width;
+    GLint height = (GLint)surfaceSize.height;
+
+    [self makeGLContextCurrent];
+
+    glGenTextures(1, &_emuThreadColorTexture);
+    glBindTexture(GL_TEXTURE_2D, _emuThreadColorTexture);
+
+    [EAGLContext.currentContext texImageIOSurface:surface
+                                          target:GL_TEXTURE_2D
+                                  internalFormat:GL_RGBA
+                                           width:(uint32_t)width
+                                          height:(uint32_t)height
+                                          format:GL_RGBA
+                                            type:GL_UNSIGNED_BYTE
+                                           plane:0];
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glGenFramebuffers(1, &_emuThreadFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, _emuThreadFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_2D, _emuThreadColorTexture, 0);
+
+    if (hw_render_callback && hw_render_callback->depth) {
+        glGenRenderbuffers(1, &_emuThreadDepthRenderbuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, _emuThreadDepthRenderbuffer);
+        GLenum depthFormat = (hw_render_callback->stencil)
+            ? GL_DEPTH24_STENCIL8_OES
+            : GL_DEPTH_COMPONENT16;
+        glRenderbufferStorage(GL_RENDERBUFFER, depthFormat, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, _emuThreadDepthRenderbuffer);
+        if (hw_render_callback->stencil) {
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                      GL_RENDERBUFFER, _emuThreadDepthRenderbuffer);
         }
     }
 
-    /// Fallback: read the currently bound FBO (set by startRenderingOnAlternateThread)
-    if (_presentationFBO == 0) {
-        GLint fbo = 0;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
-        if (fbo > 0) {
-            _presentationFBO = (GLuint)fbo;
-            ILOG(@"Captured currently bound FBO as presentation FBO: %u", _presentationFBO);
-        }
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        ELOG(@"Emu thread FBO incomplete: 0x%x", status);
+    } else {
+        ILOG(@"Created emu thread FBO %u (%dx%d) backed by shared IOSurface", _emuThreadFBO, width, height);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif
+}
+
+/// Tears down the emu thread's FBO and associated GL objects.
+- (void)destroyEmuThreadFBO {
+    if (_emuThreadDepthRenderbuffer > 0) {
+        glDeleteRenderbuffers(1, &_emuThreadDepthRenderbuffer);
+        _emuThreadDepthRenderbuffer = 0;
+    }
+    if (_emuThreadColorTexture > 0) {
+        glDeleteTextures(1, &_emuThreadColorTexture);
+        _emuThreadColorTexture = 0;
+    }
+    if (_emuThreadFBO > 0) {
+        glDeleteFramebuffers(1, &_emuThreadFBO);
+        _emuThreadFBO = 0;
     }
 }
 
