@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PVGMECoreBridge (Video)
 
-- (void)videoInterrupt;
-
 @end
 
 NS_ASSUME_NONNULL_END
