@@ -142,8 +142,9 @@ extension PVEmulatorViewController {
     }
 
     /// Call this after the core has started and the view hierarchy is ready.
-    /// Auto-shows the keyboard if the core requires it.
-    /// Mouse cursor overlay is handled separately by `setupVirtualMouseIfNeeded()`.
+    /// Auto-shows the keyboard if the core requires it and no hardware keyboard
+    /// is already connected. Mouse cursor overlay is handled separately by
+    /// `setupVirtualMouseIfNeeded()`.
     ///
     /// Hardware keyboard observation is started first so the virtual
     /// keyboard is never briefly shown then hidden when a physical
@@ -152,7 +153,8 @@ extension PVEmulatorViewController {
         startObservingHardwareKeyboard()
 
         if GCKeyboard.coalesced != nil {
-            ILOG("[VirtualKeyboard] Hardware keyboard present — skipping virtual keyboard auto-show")
+            ILOG("[VirtualKeyboard] Hardware keyboard already connected — skipping auto-show")
+            keyboardHiddenByHardware = coreRequiresVirtualKeyboard || (effectiveKeyboardOverlayConfig?.autoShow == true)
             return
         }
 
@@ -300,10 +302,6 @@ extension PVEmulatorViewController {
             self?.handleHardwareKeyboardDisconnected()
         }
         hwKeyboardObservers = [connectToken, disconnectToken]
-
-        if GCKeyboard.coalesced != nil, isVirtualKeyboardVisible {
-            handleHardwareKeyboardConnected()
-        }
     }
 
     /// Stop observing hardware keyboard notifications.
