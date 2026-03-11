@@ -15,6 +15,7 @@
 @import PVCoreBridge;
 
 #include "libretro.h"
+#include "libretro_vulkan.h"
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -99,6 +100,9 @@ static retro_environment_t environ_cb;
 //static retro_input_state_t input_state_cb;
 
 static dylib_t lib_handle;
+/// Standalone `PVLibRetro` keeps negotiation state locally rather than
+/// depending on the RetroArch `video_driver.c` singleton.
+static const struct retro_hw_render_context_negotiation_interface *pv_hw_render_context_negotiation_interface = NULL;
 
 // MARK: - Runloop
 //static rarch_dir_list_t runloop_shader_dir;
@@ -118,6 +122,11 @@ static bool runloop_paused                       = false;
 static bool runloop_idle                         = false;
 static bool runloop_exec                         = false;
 static bool runloop_slowmotion                   = false;
+static void pv_set_context_negotiation_interface(const struct retro_hw_render_context_negotiation_interface *iface)
+{
+    pv_hw_render_context_negotiation_interface = iface;
+}
+
 static bool runloop_shutdown_initiated           = false;
 static bool runloop_core_shutdown_initiated      = false;
 static bool runloop_perfcnt_enable               = false;
@@ -802,6 +811,7 @@ void uninit_libretro_sym(struct retro_core_t *current_core)
         dylib_close(lib_handle);
     lib_handle = NULL;
 #endif
+    pv_set_context_negotiation_interface(NULL);
 
     memset(current_core, 0, sizeof(struct retro_core_t));
 
@@ -1652,15 +1662,28 @@ static bool environment_callback(unsigned cmd, void *data) {
             /// the retro_hw_render_interface_vulkan struct.
             /// GL cores typically don't need this.
             ILOG(@"Environ GET_HW_RENDER_INTERFACE requested");
-            return false; // TODO: Wire Vulkan interface (#2634)
+            if (!data) {
+                WLOG(@"Environ GET_HW_RENDER_INTERFACE: NULL output pointer");
+                return false;
+            }
+
+            if ([strongCurrent respondsToSelector:@selector(getHardwareRenderInterface:)]) {
+                const struct retro_hw_render_interface **renderInterface = (const struct retro_hw_render_interface **)data;
+                BOOL success = [(PVLibRetroGLESCoreBridge *)strongCurrent getHardwareRenderInterface:renderInterface];
+                if (success && renderInterface && *renderInterface) {
+                    return true;
+                }
+            }
+
+            return false;
         }
         case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS: {
             DLOG(@"Environ SET_SUPPORT_ACHIEVEMENTS: %d", *(const bool *)data);
             return true;
         }
         case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: {
-            /// Stores the context negotiation interface for Vulkan device creation.
-            /// Used by cores that want to specify required Vulkan extensions/features.
+            /// Retains the core-provided negotiation interface for support queries
+            /// and future frontend-owned Vulkan device negotiation work.
             const struct retro_hw_render_context_negotiation_interface *iface =
                 (const struct retro_hw_render_context_negotiation_interface *)data;
 
@@ -1672,7 +1695,24 @@ static bool environment_callback(unsigned cmd, void *data) {
             ILOG(@"Environ SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: type=%d, version=%u",
                  iface->interface_type, iface->interface_version);
 
-            video_driver_set_context_negotiation_interface(iface);
+            pv_set_context_negotiation_interface(iface);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT: {
+            struct retro_hw_render_context_negotiation_interface *iface =
+                (struct retro_hw_render_context_negotiation_interface *)data;
+
+            if (!iface) {
+                WLOG(@"Environ GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT: NULL interface pointer");
+                return false;
+            }
+
+            if (iface->interface_type == RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN) {
+                iface->interface_version = RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN_VERSION;
+                return true;
+            }
+
+            iface->interface_version = 0;
             return true;
         }
         case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS: {

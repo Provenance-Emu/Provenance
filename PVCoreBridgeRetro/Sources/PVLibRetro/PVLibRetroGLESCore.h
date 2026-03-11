@@ -29,23 +29,6 @@
 #import <GLUT/GLUT.h>
 #endif
 
-// Vulkan support via MoltenVK
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// Forward declare Vulkan types to avoid requiring vulkan.h
-typedef struct VkInstance_T* VkInstance;
-typedef struct VkDevice_T* VkDevice;
-typedef struct VkQueue_T* VkQueue;
-typedef struct VkPhysicalDevice_T* VkPhysicalDevice;
-typedef uint32_t VkResult;
-typedef void* PFN_vkVoidFunction;
-
-#ifdef __cplusplus
-}
-#endif
-
 __attribute__((weak_import))
 @interface PVLibRetroGLESCoreBridge : PVLibRetroCoreBridge
 
@@ -59,6 +42,7 @@ __attribute__((weak_import))
 - (void)contextDestroy;
 - (uintptr_t)getCurrentFramebuffer;
 - (void*)getProcAddress:(const char*)symbol;
+- (BOOL)getHardwareRenderInterface:(const struct retro_hw_render_interface * _Nullable * _Nonnull)renderInterface;
 
 /// GL context and FBO management for the emu thread
 - (void)makeGLContextCurrent;

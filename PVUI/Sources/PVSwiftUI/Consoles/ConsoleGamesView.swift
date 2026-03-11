@@ -1476,9 +1476,12 @@ extension ConsoleGamesView {
                     } else {
                         showGamesList(fakeGames)
                     }
-                } else {
+                } else if AppState.shared.bootupStateManager.isBootupCompleted {
                     cloudSyncUpsell()
                         .padding(.vertical, 12)
+                } else {
+                    // Library still loading — show nothing to avoid a brief empty-state flash
+                    Color.clear
                 }
             } else {
                 VStack(alignment: .leading) {

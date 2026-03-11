@@ -65,6 +65,8 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ObservedObject var viewModel: PVRootViewModel
     weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
 
+    @ObservedObject private var bootupStateManager = AppState.shared.bootupStateManager
+
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
 
     @State private var showEmptySystems: Bool
@@ -158,8 +160,11 @@ struct ConsolesWrapperView: SwiftUI.View {
                 RetroDividerView()
                     .shadow(color: .retroPink, radius: 4, x: 0, y: 1)
 
-                if consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue) {
+                if bootupStateManager.isBootupCompleted && (consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue)) {
                     noConsolesView
+                } else if !bootupStateManager.isBootupCompleted {
+                    // Still loading — show nothing to avoid a jarring empty-state flash on launch
+                    Color.clear
                 } else {
                     consolesTabView
                         .sheet(item: $gameInfoState) { state in

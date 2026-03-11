@@ -27,7 +27,7 @@
 #include <vulkan/vulkan.h>
 
 #define RETRO_HW_RENDER_INTERFACE_VULKAN_VERSION 5
-#define RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN_VERSION 1
+#define RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN_VERSION 2
 
 struct retro_vulkan_image
 {
@@ -89,7 +89,8 @@ struct retro_hw_render_context_negotiation_interface_vulkan
 {
    /* Must be set to RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN. */
    enum retro_hw_render_context_negotiation_interface_type interface_type;
-   /* Must be set to RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN_VERSION. */
+   /* Usually set to RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN_VERSION,
+    * but can be lower depending on GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT. */
    unsigned interface_version;
 
    /* If non-NULL, returns a VkApplicationInfo struct that the frontend can use instead of

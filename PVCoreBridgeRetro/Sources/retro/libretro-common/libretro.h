@@ -1012,6 +1012,12 @@ enum retro_mod
                                             * This interface will be used when the frontend is trying to create a HW rendering context,
                                             * so it will be used after SET_HW_RENDER, but before the context_reset callback.
                                             */
+#define RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT (73 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           /* struct retro_hw_render_context_negotiation_interface * --
+                                            * Asks the frontend which negotiation interface version is supported
+                                            * for the requested HW rendering API. The frontend updates
+                                            * interface_version in-place.
+                                            */
 #define RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS 44
                                            /* uint64_t * --
                                             * Sets quirk flags associated with serialization. The frontend will zero any flags it doesn't

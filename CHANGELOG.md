@@ -68,6 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   1. `RealmSaveStateDriver.convertRealmResultsSync` was calling `PVFile.size` (file I/O + `realm.write`) inside `cacheLock.withLock`, causing priority inversion on the unfair spin-lock.
   2. `RealmSaveStateDriver.updateSaveStates` cancelled `currentConversionTask` outside `taskLock`, creating a TSan data race with concurrent callers.
   3. `PVGPUViewController.timeSinceLastDraw` / `calculatedFramesPerSecond` called `super.*` (GLKit) inside `frameTimestampsLock.withLock`, risking lock-order inversion with GLKit internals.
+- **No-ROMs Empty State Flicker** — `NoConsolesView` and the per-console `cloudSyncUpsell` are now guarded by `bootupStateManager.isBootupCompleted`, preventing a jarring flash of the "No Games Found" empty state while the library is still loading on launch (#2976)
 - **Cheats & MultiDisc Pause Leak** — `onDone` closures in Cheats (tvOS + iOS) and error/cancel handlers in the disc-swap menu no longer call `setPauseEmulation(false)` or `isShowingMenu = false` directly, preventing the emulator from unpausing while the pause menu is still visible (Part of #2909)
 - **Virtual Mouse Cursor Z-Order** — Mouse cursor overlay now stays above the emulator surface and all other layers by calling `bringSubviewToFront` after insertion (#2925, Part of #2575)
 - **Virtual Keyboard Z-Order** — Keyboard overlay now renders above skin controller buttons; `bringSubviewToFront` called on show and after every skin change (#2926, Part of #2575)

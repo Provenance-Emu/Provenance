@@ -52,6 +52,7 @@ extern bool runloop_ctl(enum runloop_ctl_state state, void *data);
 
 #include <mach/mach.h>
 #include <mach/mach_time.h>
+#include <os/lock.h>
 #include <pthread.h>
 #include <assert.h>
 #include <poll.h>
@@ -68,6 +69,8 @@ extern bool runloop_ctl(enum runloop_ctl_state state, void *data);
 // Real-time threading functions are defined in PVSupport - using external declarations
 extern void move_pthread_to_realtime_scheduling_class(pthread_t pthread);
 extern void MakeCurrentThreadRealTime(void);
+
+#include "libretro_vulkan.h"
 
 @interface PVLibRetroGLESCoreBridge ()
 {
@@ -113,6 +116,8 @@ extern void MakeCurrentThreadRealTime(void);
     VkDevice vulkan_device;
     VkQueue vulkan_queue;
     VkPhysicalDevice vulkan_physical_device;
+    struct retro_hw_render_interface_vulkan vulkan_render_interface;
+    os_unfair_lock vulkan_queue_lock;
 
     // Vulkan function pointers
     PFN_vkVoidFunction (*vkGetInstanceProcAddr)(VkInstance instance, const char* pName);
@@ -136,6 +141,14 @@ void gl_swap() {
 // Forward declarations for hardware rendering callbacks (frontend-owned fields)
 static uintptr_t hw_get_current_framebuffer(void);
 static void* hw_get_proc_address(const char *symbol);
+static void pv_vulkan_set_image(void *handle, const struct retro_vulkan_image *image, uint32_t num_semaphores, const VkSemaphore *semaphores, uint32_t src_queue_family);
+static uint32_t pv_vulkan_get_sync_index(void *handle);
+static uint32_t pv_vulkan_get_sync_index_mask(void *handle);
+static void pv_vulkan_set_command_buffers(void *handle, uint32_t num_cmd, const VkCommandBuffer *cmd);
+static void pv_vulkan_wait_sync_index(void *handle);
+static void pv_vulkan_lock_queue(void *handle);
+static void pv_vulkan_unlock_queue(void *handle);
+static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore);
 
 @implementation PVLibRetroGLESCoreBridge
 
@@ -162,6 +175,8 @@ static void* hw_get_proc_address(const char *symbol);
         vulkan_device = NULL;
         vulkan_queue = NULL;
         vulkan_physical_device = NULL;
+        memset(&vulkan_render_interface, 0, sizeof(vulkan_render_interface));
+        vulkan_queue_lock = OS_UNFAIR_LOCK_INIT;
 
         vkGetInstanceProcAddr = NULL;
         vkGetDeviceProcAddr = NULL;
@@ -517,6 +532,37 @@ static bool video_driver_cached_frame(void)
     return CGSizeMake(2048, 2048);
 }
 
+- (void)resetVulkanRenderInterface {
+    memset(&vulkan_render_interface, 0, sizeof(vulkan_render_interface));
+}
+
+- (void)refreshVulkanRenderInterface {
+    [self resetVulkanRenderInterface];
+
+    if (!vulkan_instance || !vulkan_device || !vulkan_queue || !vkGetInstanceProcAddr || !vkGetDeviceProcAddr) {
+        return;
+    }
+
+    vulkan_render_interface.interface_type = RETRO_HW_RENDER_INTERFACE_VULKAN;
+    vulkan_render_interface.interface_version = RETRO_HW_RENDER_INTERFACE_VULKAN_VERSION;
+    vulkan_render_interface.handle = (__bridge void *)self;
+    vulkan_render_interface.instance = vulkan_instance;
+    vulkan_render_interface.gpu = vulkan_physical_device;
+    vulkan_render_interface.device = vulkan_device;
+    vulkan_render_interface.get_device_proc_addr = (PFN_vkGetDeviceProcAddr)vkGetDeviceProcAddr;
+    vulkan_render_interface.get_instance_proc_addr = (PFN_vkGetInstanceProcAddr)vkGetInstanceProcAddr;
+    vulkan_render_interface.queue = vulkan_queue;
+    vulkan_render_interface.queue_index = 0;
+    vulkan_render_interface.set_image = pv_vulkan_set_image;
+    vulkan_render_interface.get_sync_index = pv_vulkan_get_sync_index;
+    vulkan_render_interface.get_sync_index_mask = pv_vulkan_get_sync_index_mask;
+    vulkan_render_interface.set_command_buffers = pv_vulkan_set_command_buffers;
+    vulkan_render_interface.wait_sync_index = pv_vulkan_wait_sync_index;
+    vulkan_render_interface.lock_queue = pv_vulkan_lock_queue;
+    vulkan_render_interface.unlock_queue = pv_vulkan_unlock_queue;
+    vulkan_render_interface.set_signal_semaphore = pv_vulkan_set_signal_semaphore;
+}
+
 #pragma mark - Hardware Rendering Support
 
 /// Called from the environment callback when a core requests hardware rendering.
@@ -731,6 +777,7 @@ static bool video_driver_cached_frame(void)
 
     // Get device queue
     [self getVulkanDeviceQueue];
+    [self refreshVulkanRenderInterface];
 
     hardware_context_active = YES;
     ILOG(@"Vulkan hardware context created successfully via MoltenVK");
@@ -772,6 +819,7 @@ static bool video_driver_cached_frame(void)
     _coreContextReset = NULL;
     _coreContextDestroy = NULL;
     _pendingContextReset = NO;
+    [self resetVulkanRenderInterface];
 
     ILOG(@"Hardware context destroyed");
 }
@@ -797,6 +845,86 @@ static void* hw_get_proc_address(const char *symbol) {
     return NULL;
 }
 
+static PVLibRetroGLESCoreBridge *pv_vulkan_bridge(void *handle) {
+    return (__bridge PVLibRetroGLESCoreBridge *)handle;
+}
+
+/// These callbacks intentionally expose a minimal Vulkan frontend surface:
+/// cores can discover the shared device/proc-address interface today, while
+/// explicit image handoff and frontend-driven queue submission remain future work.
+static void pv_vulkan_set_image(void *handle, const struct retro_vulkan_image *image, uint32_t num_semaphores, const VkSemaphore *semaphores, uint32_t src_queue_family) {
+    (void)image;
+    (void)num_semaphores;
+    (void)semaphores;
+    (void)src_queue_family;
+    PVLibRetroGLESCoreBridge *bridge = pv_vulkan_bridge(handle);
+    if (!bridge) {
+        return;
+    }
+}
+
+static uint32_t pv_vulkan_get_sync_index(void *handle) {
+    PVLibRetroGLESCoreBridge *bridge = pv_vulkan_bridge(handle);
+    if (!bridge) {
+        return 0;
+    }
+
+    return 0;
+}
+
+static uint32_t pv_vulkan_get_sync_index_mask(void *handle) {
+    PVLibRetroGLESCoreBridge *bridge = pv_vulkan_bridge(handle);
+    if (!bridge) {
+        return 0;
+    }
+
+    /// Single-queue placeholder until the standalone frontend owns a fuller
+    /// Vulkan frame lifecycle with multiple in-flight images.
+    return 1;
+}
+
+static void pv_vulkan_set_command_buffers(void *handle, uint32_t num_cmd, const VkCommandBuffer *cmd) {
+    (void)num_cmd;
+    (void)cmd;
+    PVLibRetroGLESCoreBridge *bridge = pv_vulkan_bridge(handle);
+    if (!bridge) {
+        return;
+    }
+}
+
+static void pv_vulkan_wait_sync_index(void *handle) {
+    PVLibRetroGLESCoreBridge *bridge = pv_vulkan_bridge(handle);
+    if (!bridge) {
+        return;
+    }
+}
+
+static void pv_vulkan_lock_queue(void *handle) {
+    PVLibRetroGLESCoreBridge *bridge = pv_vulkan_bridge(handle);
+    if (!bridge) {
+        return;
+    }
+
+    os_unfair_lock_lock(&bridge->vulkan_queue_lock);
+}
+
+static void pv_vulkan_unlock_queue(void *handle) {
+    PVLibRetroGLESCoreBridge *bridge = pv_vulkan_bridge(handle);
+    if (!bridge) {
+        return;
+    }
+
+    os_unfair_lock_unlock(&bridge->vulkan_queue_lock);
+}
+
+static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore) {
+    (void)semaphore;
+    PVLibRetroGLESCoreBridge *bridge = pv_vulkan_bridge(handle);
+    if (!bridge) {
+        return;
+    }
+}
+
 /// Called when the GL/Vulkan context has been created or recreated.
 /// Performs frontend housekeeping (make context current, bind FBO) then
 /// invokes the core's stored context_reset so it can create its GL resources.
@@ -817,6 +945,7 @@ static void* hw_get_proc_address(const char *symbol) {
 
         case RETRO_HW_CONTEXT_VULKAN:
             ILOG(@"Vulkan context reset");
+            [self refreshVulkanRenderInterface];
             break;
 
         default:
@@ -1029,6 +1158,26 @@ static void* hw_get_proc_address(const char *symbol) {
     }
 
     return NULL;
+}
+
+- (BOOL)getHardwareRenderInterface:(const struct retro_hw_render_interface **)renderInterface {
+    if (!renderInterface) {
+        return NO;
+    }
+
+    *renderInterface = NULL;
+
+    if (current_context_type != RETRO_HW_CONTEXT_VULKAN || !hardware_context_active) {
+        return NO;
+    }
+
+    [self refreshVulkanRenderInterface];
+    if (vulkan_render_interface.interface_version != RETRO_HW_RENDER_INTERFACE_VULKAN_VERSION) {
+        return NO;
+    }
+
+    *renderInterface = (const struct retro_hw_render_interface *)&vulkan_render_interface;
+    return YES;
 }
 
 #pragma mark - MoltenVK/Vulkan Support Methods
