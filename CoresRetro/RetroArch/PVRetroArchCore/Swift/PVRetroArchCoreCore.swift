@@ -107,6 +107,130 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
             }
     }
 }
+
+/// Resolves which virtual input overlays a RetroArch session can legitimately expose.
+///
+/// RetroArch's Objective-C categories add keyboard and mouse selectors to the shared
+/// `PVRetroArchCoreBridge` class, so plain protocol casts can over-report support for
+/// unrelated libretro cores. Prefer the loaded system identifier, then fall back to the
+/// selected core binary only when the session is still in the generic RetroArch bucket.
+private struct RetroArchVirtualInputSupport {
+    let supportsKeyboard: Bool
+    let requiresKeyboard: Bool
+    let supportsMouse: Bool
+    let requiresMouse: Bool
+
+    /// No virtual input overlay is available.
+    static let unsupported = Self(
+        supportsKeyboard: false,
+        requiresKeyboard: false,
+        supportsMouse: false,
+        requiresMouse: false
+    )
+
+    /// Keyboard-only support.
+    static func keyboard(required: Bool = false) -> Self {
+        .init(
+            supportsKeyboard: true,
+            requiresKeyboard: required,
+            supportsMouse: false,
+            requiresMouse: false
+        )
+    }
+
+    /// Keyboard + mouse support.
+    static func keyboardAndMouse(requiredKeyboard: Bool = false, requiredMouse: Bool = false) -> Self {
+        .init(
+            supportsKeyboard: true,
+            requiresKeyboard: requiredKeyboard,
+            supportsMouse: true,
+            requiresMouse: requiredMouse
+        )
+    }
+
+    /// Returns the effective support for the currently loaded RetroArch session.
+    static func resolve(systemIdentifier: String?, coreIdentifier: String?) -> Self {
+        if let systemIdentifier, let support = supportBySystemIdentifier[systemIdentifier] {
+            return support
+        }
+
+        guard isGenericRetroArchSystem(systemIdentifier),
+              let coreIdentifier,
+              let support = supportByCoreIdentifier[coreIdentifier] else {
+            return .unsupported
+        }
+
+        return support
+    }
+
+    /// Whether the system identifier is still unresolved/generic and needs a core fallback.
+    private static func isGenericRetroArchSystem(_ systemIdentifier: String?) -> Bool {
+        guard let systemIdentifier, !systemIdentifier.isEmpty else {
+            return true
+        }
+
+        return systemIdentifier == "com.provenance.retroarch"
+    }
+
+    /// Runtime capability keyed by the loaded content's system identifier.
+    private static let supportBySystemIdentifier: [String: Self] = [
+        "com.provenance.3DO": .keyboard(),
+        "com.provenance.appleII": .keyboard(),
+        "com.provenance.atari8bit": .keyboardAndMouse(requiredKeyboard: true),
+        "com.provenance.atarist": .keyboardAndMouse(),
+        "com.provenance.c64": .keyboard(),
+        "com.provenance.cdi": .keyboard(),
+        "com.provenance.colecovision": .keyboard(),
+        "com.provenance.doom": .keyboardAndMouse(),
+        "com.provenance.dos": .keyboardAndMouse(),
+        "com.provenance.dreamcast": .keyboardAndMouse(),
+        "com.provenance.ep128": .keyboardAndMouse(requiredKeyboard: true),
+        "com.provenance.macintosh": .keyboardAndMouse(),
+        "com.provenance.mame": .keyboard(),
+        "com.provenance.msx": .keyboardAndMouse(),
+        "com.provenance.msx2": .keyboardAndMouse(),
+        "com.provenance.n64": .keyboard(),
+        "com.provenance.palmos": .keyboard(),
+        "com.provenance.pc98": .keyboardAndMouse(),
+        "com.provenance.psx": .keyboard(),
+        "com.provenance.quake": .keyboardAndMouse(),
+        "com.provenance.quake2": .keyboardAndMouse(),
+        "com.provenance.saturn": .keyboard(),
+        "com.provenance.snes": .keyboard(),
+        "com.provenance.wolf3d": .keyboardAndMouse(),
+        "com.provenance.zxspectrum": .keyboardAndMouse(requiredKeyboard: true)
+    ]
+
+    /// Conservative fallback keyed by the selected libretro core when the system is still generic.
+    private static let supportByCoreIdentifier: [String: Self] = [
+        "atari800.libretro.framework": .keyboardAndMouse(requiredKeyboard: true),
+        "cap32.libretro.framework": .keyboard(),
+        "dosbox.pure.libretro.framework": .keyboardAndMouse(),
+        "ecwolf.libretro.framework": .keyboardAndMouse(),
+        "flycast-jitless.libretro.framework": .keyboardAndMouse(),
+        "flycast.libretro.framework": .keyboardAndMouse(),
+        "fuse.libretro.framework": .keyboardAndMouse(requiredKeyboard: true),
+        "hatari.libretro.framework": .keyboardAndMouse(),
+        "m2000.libretro.framework": .keyboard(),
+        "minivmac.libretro.framework": .keyboardAndMouse(),
+        "mu.libretro.framework": .keyboard(),
+        "np2kai.libretro.framework": .keyboardAndMouse(),
+        "numero.libretro.framework": .keyboard(),
+        "opera.libretro.framework": .keyboard(),
+        "prboom.libretro.framework": .keyboardAndMouse(),
+        "theodore.libretro.framework": .keyboard(),
+        "tyrquake.libretro.framework": .keyboardAndMouse(),
+        "vice.x128.libretro.framework": .keyboard(),
+        "vice.x64.libretro.framework": .keyboard(),
+        "vice.xpet.libretro.framework": .keyboard(),
+        "vice.xvic.libretro.framework": .keyboard(),
+        "vitaquake2-rogue.libretro.framework": .keyboardAndMouse(),
+        "vitaquake2-xatrix.libretro.framework": .keyboardAndMouse(),
+        "vitaquake2-zaero.libretro.framework": .keyboardAndMouse(),
+        "vitaquake2.libretro.framework": .keyboardAndMouse(),
+        "x1.libretro.framework": .keyboard()
+    ]
+}
 // MARK: RetroArch
 extension PVRetroArchCoreCore: PVRetroArchCoreResponderClient {
 }
@@ -382,16 +506,21 @@ extension PVRetroArchCoreCore: PVSupervisionSystemResponderClient {
 
 // PVDOSSystemResponderClient
 extension PVRetroArchCoreCore: PVDOSSystemResponderClient {
+    /// Resolves the effective virtual-input capability for the current RetroArch session.
+    private var virtualInputSupport: RetroArchVirtualInputSupport {
+        RetroArchVirtualInputSupport.resolve(systemIdentifier: systemIdentifier, coreIdentifier: coreIdentifier)
+    }
+
     public func didRelease(_ button: PVCoreBridge.PVDOSButton, forPlayer player: Int) {
         (_bridge as? PVDOSSystemResponderClient)?.didRelease(button, forPlayer: player)
     }
 
     public var gameSupportsKeyboard: Bool {
-        (_bridge as? PVDOSSystemResponderClient)?.gameSupportsKeyboard ?? false
+        virtualInputSupport.supportsKeyboard
     }
 
     public var requiresKeyboard: Bool {
-        (_bridge as? PVDOSSystemResponderClient)?.requiresKeyboard ?? false
+        virtualInputSupport.requiresKeyboard
     }
 
     public func keyDown(_ key: GCKeyCode) {
@@ -401,10 +530,10 @@ extension PVRetroArchCoreCore: PVDOSSystemResponderClient {
         (_bridge as? PVDOSSystemResponderClient)?.keyUp(key)
     }
     public var gameSupportsMouse: Bool {
-        (_bridge as? PVDOSSystemResponderClient)?.gameSupportsMouse ?? false
+        virtualInputSupport.supportsMouse
     }
     public var requiresMouse: Bool {
-        (_bridge as? PVDOSSystemResponderClient)?.requiresMouse ?? false
+        virtualInputSupport.requiresMouse
     }
     public func didScroll(_ cursor: GCDeviceCursor) {
         (_bridge as? PVDOSSystemResponderClient)?.didScroll(cursor)

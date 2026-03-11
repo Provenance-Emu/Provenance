@@ -234,17 +234,19 @@ public struct VirtualKeyboardView: View {
             }
             .ignoresSafeArea(.keyboard)
         }
-        .gesture(swipeDownDismiss)
+        .gesture(swipeDownCollapse)
     }
 
     // MARK: - Sheet
 
     private func keyboardSheet(in geometry: GeometryProxy) -> some View {
         VStack(spacing: 0) {
-            handleBar
-            closeButtonRow
-            layoutPickerToolbar
-            keyboardContent(in: geometry)
+            collapseHandleBar
+            if !viewModel.isCollapsed {
+                closeButtonRow
+                layoutPickerToolbar
+                keyboardContent(in: geometry)
+            }
         }
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -256,19 +258,36 @@ public struct VirtualKeyboardView: View {
         )
         .padding(.horizontal, 4)
         .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? 0 : 4)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.isCollapsed)
     }
 
-    // MARK: - Handle bar
+    // MARK: - Collapse handle bar
+    //
+    // Tapping the handle (or the "−" chevron) toggles collapsed ↔ expanded.
+    // A dedicated X button in the toolbar is the only way to fully dismiss.
 
-    private var handleBar: some View {
-        Capsule()
-            .fill(Color.white.opacity(0.35))
-            .frame(width: 36, height: 4)
-            .padding(.top, 8)
-            .padding(.bottom, 4)
+    private var collapseHandleBar: some View {
+        Button(action: {
+            haptic.impactOccurred()
+            viewModel.isCollapsed.toggle()
+        }) {
+            VStack(spacing: 4) {
+                Capsule()
+                    .fill(Color.white.opacity(0.35))
+                    .frame(width: 36, height: 4)
+                Image(systemName: viewModel.isCollapsed ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.5))
+            }
+            .padding(.top, 6)
+            .padding(.bottom, viewModel.isCollapsed ? 6 : 2)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
-    // MARK: - Close button
+    // MARK: - Close button (dismiss entirely)
 
     private var closeButtonRow: some View {
         HStack {
@@ -346,14 +365,14 @@ public struct VirtualKeyboardView: View {
         return max(24, (usable / totalFactors) * key.widthMultiplier)
     }
 
-    // MARK: - Dismiss gesture
+    // MARK: - Swipe-down collapses; does NOT dismiss
 
-    private var swipeDownDismiss: some Gesture {
+    private var swipeDownCollapse: some Gesture {
         DragGesture(minimumDistance: 30)
             .onEnded { value in
                 if value.translation.height > 40 {
                     haptic.impactOccurred()
-                    viewModel.dismissAction?()
+                    viewModel.isCollapsed = true
                 }
             }
     }

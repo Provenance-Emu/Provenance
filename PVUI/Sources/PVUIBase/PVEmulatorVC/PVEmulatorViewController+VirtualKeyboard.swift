@@ -273,11 +273,23 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Bring all virtual input overlays (keyboard + mouse cursor) to the front of the view
-    /// hierarchy.  Call this after applying a new skin so the overlays stay on top.
+    /// Bring all virtual input overlays (keyboard → trackpad → mouse cursor) to the front
+    /// of the view hierarchy in the correct stacking order.
+    ///
+    /// Call this after applying a new skin (or after `ensureProperZOrder`) so that
+    /// the overlays remain above the skin-container and its controller buttons.
+    ///
+    /// Desired order (back → front):
+    ///   …, skinContainer, **keyboard**, **trackpad**, **cursor overlay**
+    ///
+    /// The trackpad's `hitTest` gates capture to the game-viewport rect, so it
+    /// does not block keyboard or skin-button touches even though it sits on top.
     public func bringVirtualInputOverlaysToFront() {
         if let keyboardView = virtualKeyboardHostingVC?.view {
             view.bringSubviewToFront(keyboardView)
+        }
+        if let trackpadView = touchTrackpadView {
+            view.bringSubviewToFront(trackpadView)
         }
         if let cursorView = cursorHostingController?.view {
             view.bringSubviewToFront(cursorView)
