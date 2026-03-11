@@ -90,7 +90,7 @@
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B3344B522859E088006E6B3A;
-			remoteInfo = "dos-box-libretro-iOS";
+			remoteInfo = "fMSX-libretro";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -132,14 +132,14 @@
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVfMSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVfMSX.h; sourceTree = "<group>"; };
 		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B37022C5287253B300B3F6DA /* PVfMSXCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVfMSXCore.h; sourceTree = "<group>"; };
-		B37022C6287253B300B3F6DA /* PVfMSXCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVfMSXCore.mm; sourceTree = "<group>"; };
+		B37022C5287253B300B3F6DA /* PVfMSXCoreBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVfMSXCoreBridge.h; sourceTree = "<group>"; };
+		B37022C6287253B300B3F6DA /* PVfMSXCoreBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVfMSXCoreBridge.mm; sourceTree = "<group>"; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3AD6F2D2D246A10001E5EC3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		B3AD6F2D2D246A10001E5EC3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		B3AD72412D246B03001E5EC3 /* PVfMSXCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVfMSXCore.swift; sourceTree = "<group>"; };
 		B3AD72432D246BC9001E5EC3 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3AD72482D246C9A001E5EC3 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
