@@ -95,14 +95,15 @@ class CppString {
                     }
                     
                     let gamePtr = getGame()
-                    let decodeSucceeded = withUnsafeMutablePointer(to: &patch) { patchPtr in
+                    let morePartsNeeded = withUnsafeMutablePointer(to: &patch) { patchPtr in
                         mednafen_decodeCheat(gamePtr, formatIndex, cheatCode, patchPtr)
                     }
-                    // For the supported systems/cheat types (GB/NES/PSX/SNES with Game Genie/GameShark/Pro Action Replay/Rocky),
-                    // mednafen_decodeCheat returning false indicates a decoding failure. Multipart formats are not used here,
-                    // so we treat any failure as an invalid code and surface it via MednafenCheatError.invalidCode.
-                    guard decodeSucceeded else {
-                        throw MednafenCheatError.invalidCode
+                    // Note: In Mednafen, CheatFormatStruct::DecodeCheat returns true if more parts are needed for a multipart
+                    // code, and false when decoding has completed for the provided data. It does not directly signal success
+                    // vs. failure via this boolean. We currently assume the provided cheatCode contains all necessary parts
+                    // in one string and do not treat the boolean as an error indicator.
+                    if morePartsNeeded {
+                        ILOG("Cheat code may require additional parts; current UI provides only a single-part string.")
                     }
                     patch.status = enabled
 
