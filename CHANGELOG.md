@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **Import Queue Glass Borders** — Removed unwanted iOS/tvOS 26 liquid glass interference on custom-themed import queue rows and buttons. The gradient `strokeBorder` is now drawn as a top-level `.overlay()` rather than nested inside a `.background()`, ensuring retro borders remain visible above any system glass material. The "Select System" button uses a solid tinted background to prevent double-border artifacts (#2981)
 - **Cheats & MultiDisc Pause Leak** — `onDone` closures in Cheats (tvOS + iOS) and error/cancel handlers in the disc-swap menu no longer call `setPauseEmulation(false)` or `isShowingMenu = false` directly, preventing the emulator from unpausing while the pause menu is still visible (Part of #2909)
 - **Virtual Mouse Cursor Z-Order** — Mouse cursor overlay now stays above the emulator surface and all other layers by calling `bringSubviewToFront` after insertion (#2925, Part of #2575)
 - **Virtual Keyboard Z-Order** — Keyboard overlay now renders above skin controller buttons; `bringSubviewToFront` called on show and after every skin change (#2926, Part of #2575)
