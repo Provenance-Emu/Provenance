@@ -447,19 +447,16 @@ public final class DirectoryWatcher: ObservableObject {
                 )
                 updateExtractionStatus(.failed(error: partialError))
                 await MainActor.run {
-                    NotificationCenter.default.post(
-                        name: .archiveExtractionFailed,
-                        object: nil,
-                        userInfo: [
-                            "error": partialError.localizedDescription,
-                            "path": filePath.path,
-                            "filename": filePath.lastPathComponent,
-                            "movedCount": moveResult.moved.count,
-                            "failedCount": moveResult.failedCount,
-                            "timestamp": Date()
-                        ]
-                    )
+                    NotificationCenter.default.post(name: .archiveExtractionFailed, object: nil, userInfo: [
+                        "error": partialError.localizedDescription,
+                        "path": filePath.path,
+                        "filename": filePath.lastPathComponent,
+                        "movedCount": moveResult.moved.count,
+                        "failedCount": moveResult.failedCount,
+                        "timestamp": Date()
+                    ])
                 }
+                // Propagate so callers using try/await see the failure
                 throw partialError
             }
         } catch {
