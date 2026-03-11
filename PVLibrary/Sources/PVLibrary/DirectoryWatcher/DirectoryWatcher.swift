@@ -397,8 +397,6 @@ public final class DirectoryWatcher: ObservableObject {
                 ILOG("Extracted file: \(extractedFile.path)")
             }
 
-            // Delete archive AFTER extraction succeeds (before moving files)
-            try await FileManager.default.removeItem(at: filePath)
             updateExtractionStatus(.completedArchive(paths: extractedFiles))
             ILOG("Archive extraction completed for file: \(filePath.path)")
 
@@ -429,6 +427,13 @@ public final class DirectoryWatcher: ObservableObject {
             }
 
             if moveResult.isComplete {
+                // All files moved — safe to delete archive and temp dir
+                do {
+                    try await FileManager.default.removeItem(at: filePath)
+                    ILOG("Deleted original archive after successful move: \(filePath.lastPathComponent)")
+                } catch {
+                    ELOG("Failed to delete original archive \(filePath.lastPathComponent): \(error.localizedDescription)")
+                }
                 do {
                     try FileManager.default.removeItem(at: tempExtractionDir)
                 } catch {
@@ -436,6 +441,7 @@ public final class DirectoryWatcher: ObservableObject {
                 }
             } else {
                 WLOG("Preserving temp directory with \(moveResult.failedCount) unmoved file(s): \(tempExtractionDir.path)")
+                WLOG("Original archive preserved for retry: \(filePath.path)")
                 let partialError = ArchiveError.extractionFailed(
                     "\(moveResult.failedCount) file(s) could not be moved from temp directory"
                 )

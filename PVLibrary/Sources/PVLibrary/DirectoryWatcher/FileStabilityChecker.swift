@@ -34,7 +34,9 @@ enum FileStabilityChecker {
     ) async -> Bool {
         let fd = open(url.path, O_EVTONLY)
         guard fd >= 0 else {
-            WLOG("FileStabilityChecker: Cannot open file descriptor for \(url.lastPathComponent)")
+            let errnoValue = errno
+            let reason = String(cString: strerror(errnoValue))
+            WLOG("FileStabilityChecker: Cannot open fd for \(url.lastPathComponent) — errno \(errnoValue): \(reason)")
             return false
         }
 
