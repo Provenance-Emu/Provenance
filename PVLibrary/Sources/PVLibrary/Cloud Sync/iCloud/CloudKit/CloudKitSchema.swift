@@ -109,8 +109,38 @@ public enum CloudKitSchema {
         public static let metadataJSON = "metadataJSON" // String? (Serialized SavePackage metadata for re-import)
     }
 
-    // Note: Screenshots and other non-database files are handled using the generic "File" record type
-    // with directory-based filtering. This approach is simpler and avoids schema complexity.
+    // Note: Screenshots, Battery States, and Cheat metadata files (.svc.json) are handled
+    // using the generic "File" record type with directory-based filtering.
+    // Cheats are synced from Documents/Cheats/ by CloudKitNonDatabaseSyncer.
+    //
+    // Cheat *metadata* (code text, type, enabled state) is also synced automatically via
+    // SwiftData's native NSPersistentCloudKitContainer when Cheats_Data is registered in
+    // PVSwiftDataSchema.v1Schema and a CloudKit-backed ModelContainer is in use.
+    // That path requires no custom syncer code; it is always on for users with iCloud.
+
+    /// Field keys for the Cheats record type (reserved for future dedicated cheat syncer).
+    ///
+    /// Currently, cheat `.svc.json` files are synced as generic `File` records via
+    /// `CloudKitNonDatabaseSyncer` (directory: "Cheats"). These field keys document
+    /// the fields that a future dedicated syncer would use.
+    public struct CheatsFields {
+        public static let recordType = "Cheat"
+
+        // Identity
+        public static let cheatID = "cheatID"           // String (UUID, matches PVCheats.id)
+        public static let gameID = "gameID"             // String (PVGame primary key / MD5)
+        public static let coreIdentifier = "coreIdentifier" // String
+
+        // Cheat content
+        public static let code = "code"                 // String
+        public static let type = "type"                 // String (cheat name / description)
+        public static let codeType = "codeType"         // String (e.g. "Game Shark", "Action Replay")
+        public static let enabled = "enabled"           // Bool
+
+        // Versions / dates
+        public static let createdWithCoreVersion = "createdWithCoreVersion" // String
+        public static let lastModifiedDevice = "lastModifiedDevice"         // String?
+    }
 
     /// Field keys for the Metadata record type (e.g., for sync tokens).
     public struct MetadataFields {
@@ -242,8 +272,24 @@ public enum CloudKitSchema {
             return CKRecord.ID(recordName: "bios_\(systemID)_\(md5)")
         }
 
-        // Note: Screenshots and other non-database files use the generic fileRecordID method
-        // since they are handled as File records with directory filtering
+        /// Generate a deterministic record ID for a cheat entry.
+        ///
+        /// Uses the `PVCheats.id` UUID — which is unique per cheat — so the same
+        /// cheat on different devices resolves to the same CKRecord.ID, enabling
+        /// correct last-writer-wins merging.
+        ///
+        /// Currently, cheat files are also synced via `CloudKitNonDatabaseSyncer`
+        /// (directory: "Cheats") as generic `File` records.  This generator is
+        /// reserved for a future dedicated `CloudKitCheatsSyncer`.
+        ///
+        /// - Parameter cheatID: The UUID string from `PVCheats.id`.
+        /// - Returns: A `CKRecord.ID` with format `"cheat_<uuid>"`.
+        public static func cheatRecordID(cheatID: String) -> CKRecord.ID {
+            return CKRecord.ID(recordName: "cheat_\(cheatID)")
+        }
+
+        // Note: Screenshots, Battery States, and Cheat .svc.json files use the generic
+        // fileRecordID method since they are handled as File records with directory filtering.
 
         /// Generate a record ID for a generic file
         /// - Parameters:

@@ -43,7 +43,10 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     public static func defaultDirectories() -> Set<String> {
         var defaults: Set<String> = [
             "Battery States",
-            "Screenshots"
+            "Screenshots",
+            // Cheat metadata (.svc.json files) live in Documents/Cheats/<romName>/
+            // and are small enough to sync as generic File records.
+            "Cheats"
 //            "RetroArch"
         ]
         if DeltaSkinSyncSupport.isEnabled {
