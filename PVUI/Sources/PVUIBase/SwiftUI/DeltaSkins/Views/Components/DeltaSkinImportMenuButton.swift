@@ -36,4 +36,3 @@ public struct DeltaSkinImportMenuButton: View {
         .accessibilityLabel("Add skins")
     }
 }
-

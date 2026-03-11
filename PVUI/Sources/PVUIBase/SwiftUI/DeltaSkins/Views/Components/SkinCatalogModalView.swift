@@ -27,4 +27,3 @@ public struct SkinCatalogModalView: View {
         }
     }
 }
-

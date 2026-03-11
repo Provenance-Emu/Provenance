@@ -12,4 +12,3 @@ public extension SkinCatalogEntry {
         return "\(id).deltaskin"
     }
 }
-
