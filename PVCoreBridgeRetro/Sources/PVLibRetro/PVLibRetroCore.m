@@ -1833,10 +1833,10 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: {
-            /// Stores the frame time callback for timing-sensitive cores
-            const struct retro_frame_time_callback *cb = (const struct retro_frame_time_callback *)data;
-            ILOG(@"Environ SET_FRAME_TIME_CALLBACK: reference=%lld us", cb->reference);
-            return true;
+            /// Frame time callbacks are not currently supported in this frontend.
+            /// Return false so cores do not rely on an unimplemented timing path.
+            ILOG(@"Environ SET_FRAME_TIME_CALLBACK: unsupported");
+            return false;
         }
         case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: {
             /// Async audio interface for cores with decoupled audio/video.
