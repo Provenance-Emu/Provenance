@@ -59,6 +59,7 @@ extension PVEmulatorViewController {
                     completion(.error(.noCoreFound(coreIdentifier ?? "nil")))
                     return
                 }
+
                 do {
                     let baseFilename = "\(gameMD5).\(Date().timeIntervalSinceReferenceDate)"
                     let saveURL = cheatsPath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
@@ -66,7 +67,9 @@ extension PVEmulatorViewController {
                     var frozenCheat: PVCheats?
                     try realm.write {
                         // Look up game from the same realm instance to avoid cross-Realm relationship crash
-                        let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) ?? self.game
+                        guard let realmGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) ?? self.game else {
+                            throw NSError(domain: cheatErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: "No game found"])
+                        }
                         let cs = PVCheats(withGame: realmGame, core: core, code: modString, type: type, codeType: codeType, enabled: enabled, file: saveFile)
                         realm.add(cs)
                         // Freeze immediately so it can be safely used across thread boundaries

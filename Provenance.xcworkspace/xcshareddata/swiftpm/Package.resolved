@@ -380,6 +380,15 @@
         }
       },
       {
+        "package": "swift-asn1",
+        "repositoryURL": "https://github.com/apple/swift-asn1.git",
+        "state": {
+          "branch": null,
+          "revision": "810496cf121e525d660cd0ea89a758740476b85f",
+          "version": "1.5.1"
+        }
+      },
+      {
         "package": "swift-async-algorithms",
         "repositoryURL": "https://github.com/apple/swift-async-algorithms",
         "state": {
@@ -416,12 +425,30 @@
         }
       },
       {
+        "package": "swift-crypto",
+        "repositoryURL": "https://github.com/apple/swift-crypto.git",
+        "state": {
+          "branch": null,
+          "revision": "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+          "version": "3.15.1"
+        }
+      },
+      {
         "package": "swift-http-types",
         "repositoryURL": "https://github.com/apple/swift-http-types",
         "state": {
           "branch": null,
           "revision": "a0a57e949a8903563aba4615869310c0ebf14c03",
           "version": "1.4.0"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "bbd81b6725ae874c69e9b8c8804d462356b55523",
+          "version": "1.10.1"
         }
       },
       {

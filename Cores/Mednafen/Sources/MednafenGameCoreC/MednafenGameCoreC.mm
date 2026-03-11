@@ -6,15 +6,15 @@
 //  Copyright © 2024 Provenance EMU. All rights reserved.
 //
 
-#import <string>
-#import <Foundation/Foundation.h>
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wall"
 #pragma clang diagnostic ignored "-Wextra"
 #import <mednafen/mednafen.h>
 #import <mednafen/mempatcher.h>
 #pragma clang diagnostic pop
+
+#import <string>
+#import <Foundation/Foundation.h>
 
 #if __cplusplus
 extern "C" {

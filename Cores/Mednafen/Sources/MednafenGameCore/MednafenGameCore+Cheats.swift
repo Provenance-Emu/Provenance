@@ -95,13 +95,20 @@ class CppString {
                     }
                     
                     let gamePtr = getGame()
-                    let morePartsNeeded = withUnsafeMutablePointer(to: &patch) { patchPtr in
-                        mednafen_decodeCheat(gamePtr, formatIndex, cheatCode, patchPtr)
+                    /// The C bridge returns decode success and writes multipart state via an out-parameter.
+                    var morePartsNeeded = false
+                    let decodeSucceeded = withUnsafeMutablePointer(to: &patch) { patchPtr in
+                        withUnsafeMutablePointer(to: &morePartsNeeded) { morePartsNeededPtr in
+                            mednafen_decodeCheat(gamePtr, formatIndex, cheatCode, patchPtr, morePartsNeededPtr)
+                        }
                     }
-                    // Note: In Mednafen, CheatFormatStruct::DecodeCheat returns true if more parts are needed for a multipart
-                    // code, and false when decoding has completed for the provided data. It does not directly signal success
-                    // vs. failure via this boolean. We currently assume the provided cheatCode contains all necessary parts
-                    // in one string and do not treat the boolean as an error indicator.
+                    if !decodeSucceeded {
+                        ILOG("Failed to decode cheat code \(singleCode) for format index \(formatIndex).")
+                        continue
+                    }
+                    // Note: In Mednafen, CheatFormatStruct::DecodeCheat reports multipart state separately from
+                    // decode success. We currently assume the provided cheatCode contains all necessary parts
+                    // in one string and only log when additional parts are required.
                     if morePartsNeeded {
                         ILOG("Cheat code may require additional parts; current UI provides only a single-part string.")
                     }
