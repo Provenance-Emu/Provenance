@@ -176,7 +176,7 @@ public func WLOG(_ message: @autoclosure () -> String, category: PVLogCategory =
 public func VLOG(_ message: @autoclosure () -> String, category: PVLogCategory = .general, file: String = #file, function: String = #function, line: Int = #line) {
     #if DEBUG
     let msg = message()
-    log(msg, level: .debug, category: category, file: file, function: function, line: line)
+    log(msg, level: .verbose, category: category, file: file, function: function, line: line)
     PVLogPublisher.shared.verbose(msg, category: category, file: file, function: function, line: line)
     #endif
 }

@@ -98,8 +98,8 @@ public extension LocalFileInfoProvider {
         let fileSize: UInt64
 
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path),
-           let size = attr[.size] as? UInt64 {
-            fileSize = size
+           let sizeValue = attr[.size] {
+            fileSize = (sizeValue as? NSNumber)?.uint64Value ?? 0
         } else {
             fileSize = 0
         }

@@ -3,9 +3,11 @@
 import PackageDescription
 
 #if os(Linux)
+let loggingProductTargets: [String] = ["PVLogging"]
 let extraProducts: [Product] = []
 let extraTargets: [Target] = []
 #else
+let loggingProductTargets: [String] = ["PVLogging", "PVLoggingObjC"]
 let extraProducts: [Product] = [
     .library(
         name: "PVLoggingObjC",
@@ -35,15 +37,15 @@ let package = Package(
     products: [
         .library(
             name: "PVLogging",
-            targets: ["PVLogging"]),
+            targets: loggingProductTargets),
         .library(
             name: "PVLogging-Dynamic",
             type: .dynamic,
-            targets: ["PVLogging"]),
+            targets: loggingProductTargets),
         .library(
             name: "PVLogging-Static",
             type: .static,
-            targets: ["PVLogging"]),
+            targets: loggingProductTargets),
     ] + extraProducts,
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.0"),
