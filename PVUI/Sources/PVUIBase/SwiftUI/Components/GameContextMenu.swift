@@ -44,7 +44,7 @@ public struct GameContextMenu: View {
 
         // Initialize computed properties
         _availableCores = State(initialValue: game.system?.cores.toArray().filter {
-            !(AppState.shared.isAppStore && $0.appStoreDisabled && !unsupportedCores)
+            !(AppState.shared.isAppStore && $0.appStoreDisabled)
         } ?? [])
         _hasSaveStates = State(initialValue: !game.saveStates.isEmpty)
         _hasCloudRecord = State(initialValue: game.cloudRecordID != nil)

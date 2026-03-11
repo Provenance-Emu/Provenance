@@ -26,9 +26,9 @@ struct CoreProjectsView: View {
         self.cores = allCores.filter { core in
             // Keep core if:
             // 1. It's not disabled, OR unsupportedCores is true
-            // 2. AND (It's not app store disabled, OR we're not in the app store, OR unsupportedCores is true)
+            // 2. AND (It's not app store disabled, OR we're not in the app store) — always hard-hidden in App Store builds
             (!core.disabled || Defaults[.unsupportedCores]) &&
-            (!core.appStoreDisabled || !isAppStore || Defaults[.unsupportedCores])
+            (!core.appStoreDisabled || !isAppStore)
         }
     }
 
