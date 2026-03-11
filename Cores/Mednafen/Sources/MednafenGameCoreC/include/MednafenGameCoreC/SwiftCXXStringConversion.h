@@ -26,10 +26,16 @@ const char* getCppStringContents(void* cppStringPtr);
 /// @param game Opaque pointer to Mednafen::MDFNGI (obtained via getGame)
 /// @param formatIndex Index into CheatFormatInfo for the desired cheat format
 /// @param cheatCode Null-terminated cheat string
-/// @param patch Opaque pointer to a Mednafen::MemoryPatch
-/// @return true if this is part of a multipart cheat, false otherwise.
-///         Returns false and sets nothing on error.
-bool mednafen_decodeCheat(const void* game, uint8_t formatIndex, const char* cheatCode, void* patch);
+/// @param patch Opaque pointer to a Mednafen::MemoryPatch that will be updated on success
+/// @param needsMoreParts Out-parameter set to true if this cheat is multipart and requires further
+///        calls to DecodeCheat, or false if decoding is complete for this cheat.
+/// @return true if decoding succeeded and `patch` (and `*needsMoreParts`) were set successfully;
+///         false if an error occurred and no outputs were modified.
+bool mednafen_decodeCheat(const void* game,
+                          uint8_t formatIndex,
+                          const char* cheatCode,
+                          void* patch,
+                          bool *needsMoreParts);
 
 #if __cplusplus
 }
