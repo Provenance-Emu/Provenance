@@ -347,7 +347,14 @@ static bool video_driver_cached_frame(void)
         [[NSThread currentThread] setName:@"runGLESRenderThread"];
 
         /// Ask the render delegate to create the IOSurface-backed FBO and GL contexts
-        [self.renderDelegate startRenderingOnAlternateThread];
+        if ([self.renderDelegate respondsToSelector:@selector(startRenderingOnAlternateThread)]) {
+            [self.renderDelegate startRenderingOnAlternateThread];
+        } else {
+            ELOG(@"PVLibRetroGLESCore: renderDelegate does not implement optional startRenderingOnAlternateThread; failing hardware-render setup.");
+            /// Signal that the render thread is exiting so the emu thread does not hang.
+            dispatch_semaphore_signal(_renderThreadExitSemaphore);
+            return;
+        }
 
         /// Capture the presentation FBO that the render delegate just created
         [self captureRenderDelegateFBO];
