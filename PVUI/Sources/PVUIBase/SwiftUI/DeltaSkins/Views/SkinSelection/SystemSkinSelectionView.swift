@@ -55,6 +55,11 @@ public struct SystemSkinSelectionView: View {
         game?.id
     }
 
+    /// System short code for skin catalog filter (e.g. "nes", "snes")
+    private var catalogSystemFilter: String? {
+        PVEmulatorConfiguration.shortName(forSystemIdentifier: system)?.lowercased()
+    }
+
     /// Get the current device type
     private var currentDevice: DeltaSkinDevice {
         #if os(tvOS)
@@ -122,6 +127,18 @@ public struct SystemSkinSelectionView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
                 .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        NavigationLink(destination: SkinCatalogBrowserView(preselectedSystem: catalogSystemFilter)) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "arrow.down.circle")
+                                Text("Get More")
+                                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            }
+                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        }
+                    }
+
+                    #if !os(tvOS)
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             showingDocumentPicker = true
@@ -131,6 +148,7 @@ public struct SystemSkinSelectionView: View {
                                 .foregroundStyle(RetroTheme.retroHorizontalGradient)
                         }
                     }
+                    #endif
 
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
@@ -409,14 +427,57 @@ public struct SystemSkinSelectionView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Button {
-                showingDocumentPicker = true
-            } label: {
-                Text("IMPORT SKIN")
+            #if os(tvOS)
+            NavigationLink(destination: SkinCatalogBrowserView(preselectedSystem: catalogSystemFilter)) {
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.down.circle.fill")
+                    Text("BROWSE SKIN CATALOG")
+                }
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 24)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black.opacity(0.6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                        )
+                )
+                .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+            }
+            .retroFocusButtonStyle()
+            #else
+            HStack(spacing: 12) {
+                Button {
+                    showingDocumentPicker = true
+                } label: {
+                    Text("IMPORT SKIN")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 24)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.black.opacity(0.6))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 2)
+                                )
+                        )
+                        .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+                }
+
+                NavigationLink(destination: SkinCatalogBrowserView(preselectedSystem: catalogSystemFilter)) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.down.circle.fill")
+                        Text("BROWSE CATALOG")
+                    }
                     .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding(.vertical, 12)
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 24)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.black.opacity(0.6))
@@ -426,7 +487,9 @@ public struct SystemSkinSelectionView: View {
                             )
                     )
                     .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
+                }
             }
+            #endif
 
             // DeltaStyles link component
             DeltaStylesLinkView()
