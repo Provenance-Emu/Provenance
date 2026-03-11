@@ -57,6 +57,9 @@ extern void MakeCurrentThreadRealTime(void);
     dispatch_semaphore_t coreWaitToEndFrameSemaphore;
     dispatch_semaphore_t coreWaitForExitSemaphore;
 
+    /// Signaled when runGLESRenderThread fully exits its loop
+    dispatch_semaphore_t _renderThreadExitSemaphore;
+
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
 
@@ -119,6 +122,7 @@ static void* hw_get_proc_address(const char *symbol);
         glesWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
+        _renderThreadExitSemaphore     = dispatch_semaphore_create(0);
 
         hw_render_callback = NULL;
         current_context_type = RETRO_HW_CONTEXT_NONE;
@@ -237,13 +241,16 @@ static void* hw_get_proc_address(const char *symbol);
     self.shouldStop = YES;
     dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
 
-    /// Wait for the emu thread to exit — it calls contextDestroy on its
-    /// own thread before signaling, ensuring GL context ownership is safe.
-    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
-
+    /// Wake the render thread from frontBufferCondition so it can see shouldStop
+    /// and exit. The emu thread waits for the render thread to exit before
+    /// calling contextDestroy, so the render thread must not be blocked here.
     [self.frontBufferCondition lock];
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
+
+    /// Wait for the emu thread to exit — it waits for the render thread,
+    /// then calls contextDestroy on the emu thread, then signals this.
+    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 
     [super stopEmulation];
 }
@@ -358,11 +365,20 @@ static bool video_driver_cached_frame(void)
             while (!self.shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
             [self.frontBufferCondition unlock];
 
+            if (self.shouldStop) break;
+
             while ( !self.shouldStop
                    && !video_driver_cached_frame()
                    ) {}
-            [self swapBuffers];
+
+            if (!self.shouldStop) {
+                [self swapBuffers];
+            }
         }
+
+        /// Signal that the render thread has fully exited its loop.
+        /// The emu thread waits on this before calling contextDestroy.
+        dispatch_semaphore_signal(_renderThreadExitSemaphore);
     }
 }
 
@@ -426,8 +442,17 @@ static bool video_driver_cached_frame(void)
             input_poll();
     } while(!self.shouldStop);
 
+    /// Wake the render thread from any frontBufferCondition wait so it can exit
+    [self.frontBufferCondition lock];
+    [self.frontBufferCondition signal];
+    [self.frontBufferCondition unlock];
+
+    /// Wait for the render thread to fully exit before tearing down GL resources.
+    /// This prevents races where the render thread is mid-frame in
+    /// video_driver_cached_frame() or swapBuffers while we destroy the context.
+    dispatch_semaphore_wait(_renderThreadExitSemaphore, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC));
+
     /// Tear down HW context on the emu thread that owns it, before signaling exit.
-    /// This ensures no GL context thread-safety races with the render thread.
     [self contextDestroy];
 
     has_init = false;
