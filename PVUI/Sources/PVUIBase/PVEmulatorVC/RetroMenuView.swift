@@ -31,7 +31,10 @@ struct RetroMenuView: View {
     @Default(.showFPSCount) private var showFPSCount
 
     @State private var selectedCategory: MenuCategory = .main
-    @State private var isDraggingCategoryBar: Bool = false
+    /// Tracks whether the user is actively dragging the category scroll bar.
+    /// Using @GestureState ensures the flag is always reset — even on gesture cancellation —
+    /// which prevents the tab bar from locking up when a scroll ends mid-state-update.
+    @GestureState private var isDraggingCategoryBar: Bool = false
 
     private var palette: UXThemePalette { themeManager.currentPalette }
 
@@ -267,16 +270,8 @@ struct RetroMenuView: View {
                     #if !os(tvOS)
                     .simultaneousGesture(
                         DragGesture(minimumDistance: 5)
-                            .onChanged { _ in
-                                if !isDraggingCategoryBar {
-                                    isDraggingCategoryBar = true
-                                }
-                            }
-                            .onEnded { _ in
-                                // Delay resetting drag state to allow scroll to settle
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                    isDraggingCategoryBar = false
-                                }
+                            .updating($isDraggingCategoryBar) { _, state, _ in
+                                state = true
                             }
                     )
                     #endif
@@ -626,8 +621,16 @@ struct RetroMenuView: View {
 #if canImport(FreemiumKit)
             PaidFeatureView {
                 menuButton(title: title, icon: icon, color: color) {
-                    dismissAction(true)
-                    emulatorVC.toggleScreenRecording()
+                    if isRecording {
+                        // Keep game paused while the ReplayKit preview sheet is shown;
+                        // emulation resumes automatically when the preview is dismissed.
+                        dismissMenuForSubSheetThen {
+                            emulatorVC.stopScreenRecording()
+                        }
+                    } else {
+                        dismissAction(true)
+                        emulatorVC.startScreenRecording()
+                    }
                 }
             } lockedView: {
                 HStack {
@@ -663,8 +666,16 @@ struct RetroMenuView: View {
             .freemiumKitColorReset()
 #else
             menuButton(title: title, icon: icon, color: color) {
-                dismissAction(true)
-                emulatorVC.toggleScreenRecording()
+                if isRecording {
+                    // Keep game paused while the ReplayKit preview sheet is shown;
+                    // emulation resumes automatically when the preview is dismissed.
+                    dismissMenuForSubSheetThen {
+                        emulatorVC.stopScreenRecording()
+                    }
+                } else {
+                    dismissAction(true)
+                    emulatorVC.startScreenRecording()
+                }
             }
 #endif
         }
