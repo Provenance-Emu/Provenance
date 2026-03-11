@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development, March 2026)
 
 ### Added
+- **Controller Skin Browser & Documentation in Settings** — Settings → Controller tab now includes a "Skin Browser" row (opens the community skin catalog) and a "Skin Documentation" row (opens the built-in wiki page for skins) (#2975)
 - **Keyboard Input for 11 Cores** — Physical keyboard (Bluetooth/USB) now forwarded via
   `apple_input_keyboard_event` in Dreamcast (Flycast), PSX, SNES, CDi, 3DO, Saturn, N64,
   ColecoVision, Atari 8-bit, EP128, and MAME RetroArch cores. Atari 8-bit and EP128 set
@@ -59,6 +60,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Import Queue Glass Borders** — Removed unwanted iOS/tvOS 26 liquid glass interference on custom-themed import queue rows and buttons. The gradient `strokeBorder` is now drawn as a top-level `.overlay()` rather than nested inside a `.background()`, ensuring retro borders remain visible above any system glass material. The "Select System" button uses a solid tinted background to prevent double-border artifacts (#2981)
+- **PVGME Boot Crash** — Removed erroneously copy-pasted `PVDOSSystemResponderClient` conformance from `PVGMECore`; force-casting the bridge to a DOS responder it doesn't implement caused an immediate crash on boot (#2977)
+- **DS/3DS Skin Support Disabled** — `supportsSkins` set to `false` in melonDS and Desmume2015 cores to prevent broken display when users select skins with no dual-screen layout (#2973)
+- **Cheat Search Crash on First Add** — Removed unsafe `@ThreadSafe` game fallback inside `realm.write`; game is now looked up strictly from the current Realm instance to prevent cross-Realm relationship crash. Added guard for empty MD5 hash to surface the error cleanly instead of crashing (#2966)
+- **Controller Skin "Default" Revert** — Selecting "Default" in the skin picker now correctly clears the skin for all orientations (portrait + landscape) instead of only the currently-visible tab; fixes cases where the third-party skin remained active after reverting. The Default option is now always visible even when no third-party skins are installed. (#2972)
 - **Cheats & MultiDisc Pause Leak** — `onDone` closures in Cheats (tvOS + iOS) and error/cancel handlers in the disc-swap menu no longer call `setPauseEmulation(false)` or `isShowingMenu = false` directly, preventing the emulator from unpausing while the pause menu is still visible (Part of #2909)
 - **Virtual Mouse Cursor Z-Order** — Mouse cursor overlay now stays above the emulator surface and all other layers by calling `bringSubviewToFront` after insertion (#2925, Part of #2575)
 - **Virtual Keyboard Z-Order** — Keyboard overlay now renders above skin controller buttons; `bringSubviewToFront` called on show and after every skin change (#2926, Part of #2575)

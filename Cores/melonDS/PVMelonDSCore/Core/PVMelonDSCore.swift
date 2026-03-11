@@ -15,7 +15,8 @@ import PVCoreBridgeRetro
 @objc
 @objcMembers
 public final class PVMelonDSCore: PVEmulatorCore {
-    public override var supportsSkins: Bool { true }
+    /// Dual-screen skin layouts are not yet supported; disable until implemented.
+    public override var supportsSkins: Bool { false }
 
     public override var supportsDualScreens: Bool { true }
 

@@ -107,8 +107,6 @@ public struct SystemSkinSelectionView: View {
                         loadingView
                     } else if let error = errorMessage {
                         errorView(message: error)
-                    } else if availableSkins.isEmpty {
-                        noSkinsView
                     } else {
                         VStack(spacing: 0) {
                             // Header with system name
@@ -117,7 +115,7 @@ public struct SystemSkinSelectionView: View {
                             // Orientation picker
                             orientationPickerView
 
-                            // Skin grid for selected orientation
+                            // Skin grid for selected orientation (always shown so Default is accessible)
                             skinGridView
                         }
                     }
@@ -565,6 +563,22 @@ public struct SystemSkinSelectionView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 20)
 
+                // No third-party skins message (shown inline so Default is still accessible)
+                if filteredSkinsForCurrentOrientation.isEmpty {
+                    VStack(spacing: 8) {
+                        Text("No custom skins available for \(system.fullName)")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.6))
+                            .multilineTextAlignment(.center)
+                        Text("Download skins below or import a .deltaskin file.")
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.4))
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 4)
+                }
+
                 // DeltaStyles link component
                 DeltaStylesLinkView()
                     .padding(.horizontal)
@@ -895,20 +909,32 @@ public struct SystemSkinSelectionView: View {
     private func selectSkin(_ identifier: String?) {
         Task {
             let scope: SkinScope = isPerGameSelection ? .game : .system
-            await selectionManager.setSkin(
-                identifier,
-                for: system,
-                gameId: gameId,
-                orientation: selectedOrientation,
-                scope: scope
-            )
+            if identifier == nil {
+                // Reverting to default: clear both orientations so the emulator
+                // uses the built-in skin regardless of device orientation.
+                for orientation in SkinOrientation.allCases {
+                    await selectionManager.setSkin(nil, for: system, gameId: gameId, orientation: orientation, scope: scope)
+                }
+                await MainActor.run {
+                    self.selectedPortraitSkinId = nil
+                    self.selectedLandscapeSkinId = nil
+                }
+            } else {
+                await selectionManager.setSkin(
+                    identifier,
+                    for: system,
+                    gameId: gameId,
+                    orientation: selectedOrientation,
+                    scope: scope
+                )
 
-            // Update the appropriate state variable
-            await MainActor.run {
-                if selectedOrientation == .portrait {
-                    self.selectedPortraitSkinId = identifier
-                } else {
-                    self.selectedLandscapeSkinId = identifier
+                // Update the appropriate state variable
+                await MainActor.run {
+                    if selectedOrientation == .portrait {
+                        self.selectedPortraitSkinId = identifier
+                    } else {
+                        self.selectedLandscapeSkinId = identifier
+                    }
                 }
             }
         }
