@@ -15,7 +15,7 @@ public func VLOG(_ message: @autoclosure () -> String,
                  function: String = #function,
                  line: Int = #line) {
     let msg = message()
-    log(msg, level: .debug, category: .general, file: file, function: function, line: line)
+    log(msg, level: .verbose, category: .general, file: file, function: function, line: line)
 
     // Also send to the publisher
     PVLogPublisher.shared.verbose(msg, file: file, function: function, line: line)
