@@ -10,6 +10,12 @@ import Foundation
 import CoreSpotlight
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+typealias UIImage = NSImage
+#endif
 
 /// Helper class for Spotlight operations
 public class SpotlightHelper {
@@ -186,6 +192,15 @@ public class SpotlightHelper {
             attributeSet.contentCreationDate = frozenSaveState.date
             attributeSet.contentModificationDate = frozenSaveState.date
             
+            // Add screenshot thumbnail if available
+            if let imageURL = frozenSaveState.image?.url {
+                attributeSet.thumbnailURL = imageURL
+                if let imageData = try? Data(contentsOf: imageURL),
+                   let image = UIImage(data: imageData) {
+                    attributeSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
+                }
+            }
+
             // Add keywords
             var keywords = ["save state", "saved game", "provenance", "emulator"]
             if let systemName = game.system?.name {
