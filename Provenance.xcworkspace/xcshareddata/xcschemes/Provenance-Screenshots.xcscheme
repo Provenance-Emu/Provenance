@@ -1,18 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Provenance-Screenshots scheme
-  ==============================
-  Minimal scheme for App Store screenshot automation. Builds and tests the
-  UITesting host app together with ScreenshotUITests (via Milestone 2 deep links)
-  without pulling in heavy emulator cores. Used by `fastlane screenshots`.
-
-  To run locally:
-    xcodebuild test \
-      -workspace Provenance.xcworkspace \
-      -scheme "Provenance-Screenshots" \
-      -destination "platform=iOS Simulator,name=iPhone 16 Pro" \
-      -only-testing UITestingUITests/ScreenshotUITests
--->
 <Scheme
    LastUpgradeVersion = "1600"
    version = "1.7">
@@ -20,7 +6,6 @@
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
-         <!-- UITesting host app — lightweight, no emulator cores -->
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
@@ -35,7 +20,6 @@
                ReferencedContainer = "container:UITesting/UITesting.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <!-- Screenshot UI test bundle -->
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "NO"
@@ -67,6 +51,16 @@
             ReferencedContainer = "container:UITesting/UITesting.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-SCREENSHOT_MODE"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -79,17 +73,6 @@
             </BuildableReference>
          </TestableReference>
       </Testables>
-      <CommandLineArguments>
-         <!-- Enable screenshot mode: skips core loading, keeps UI snappy -->
-         <CommandLineArgument
-            argument = "-SCREENSHOT_MODE"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "1"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
