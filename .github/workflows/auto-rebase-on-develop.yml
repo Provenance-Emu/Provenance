@@ -141,27 +141,29 @@ jobs:
           # problem that happens when multiple agent PRs touch overlapping files.
           git checkout -B "$branch" "origin/$branch"
 
+          # Use git's built-in union merge driver for CHANGELOG so that concurrent
+          # agent PRs each adding entries never produce a real conflict — both sets
+          # of lines are kept (which is always the correct resolution for changelogs).
+          echo "CHANGELOG.md merge=union" >> .git/info/attributes
+          echo "CHANGELOG*.md merge=union" >> .git/info/attributes
+
+          # Fetch PR labels once — used in both push_and_retrigger() and the conflict path.
+          pr_labels=$(gh pr view "$pr_num" --repo "$REPO" \
+            --json labels --jq '[(.labels // [])[].name] | join(",")' \
+            2>/dev/null || echo "")
+
           push_and_retrigger() {
             if git push --force-with-lease origin "$branch"; then
               # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events
               gh workflow run agent-validation.yml --repo "$REPO" --ref "$branch" \
                 -f branch="$branch" -f pr_number="$pr_num" 2>/dev/null || true
 
-              # Fetch title + labels in a single API call (was two separate calls)
-              pr_meta=$(gh pr view "$pr_num" --repo "$REPO" \
-                --json title,labels \
-                --jq '{title: .title, labels: ([.labels[].name] | join(","))}' \
-                2>/dev/null || echo '{"title":"","labels":""}')
-              pr_title=$(echo "$pr_meta" | jq -r '.title')
-              pr_labels=$(echo "$pr_meta" | jq -r '.labels')
-
-              # Re-trigger AI review for [Agent] PRs — GITHUB_TOKEN force-push doesn't
-              # fire pull_request:synchronize so ai-review-trigger.yml never fires.
-              if echo "$pr_title" | grep -q "^\[Agent\]"; then
-                echo "  [Agent] PR — dispatching AI review for rebased code"
-                gh workflow run ai-review.yml --repo "$REPO" \
-                  -f pr_number="$pr_num" 2>/dev/null || true
-              fi
+              # NOTE: do NOT re-trigger ai-review.yml here. A clean rebase replays the
+              # same PR commits onto develop — the diff is identical, so re-reviewing
+              # wastes runners and causes an N-PR cascade on every merge to develop.
+              # AI review is only needed when the PR's own content changes (new commits
+              # from the author or a fix-cycle push), which is handled by ai-review-trigger.yml
+              # on pull_request:synchronize events from non-GITHUB_TOKEN pushes.
 
               # Re-trigger IPA build if PR has build-ipa label
               if echo "$pr_labels" | grep -q "build-ipa"; then

@@ -1,0 +1,5 @@
+# Use git's built-in union merge driver for changelog files.
+# Concurrent branches each adding entries will have both sets of lines kept
+# rather than producing a merge conflict that requires manual resolution.
+CHANGELOG.md   merge=union
+CHANGELOG*.md  merge=union

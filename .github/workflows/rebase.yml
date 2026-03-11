@@ -74,6 +74,11 @@ jobs:
 
           git checkout -B "$BRANCH" "origin/$BRANCH"
 
+          # Use git's built-in union merge driver for CHANGELOG so concurrent
+          # agent PRs never create a conflict for append-only files.
+          echo "CHANGELOG.md merge=union" >> .git/info/attributes
+          echo "CHANGELOG*.md merge=union" >> .git/info/attributes
+
           if git rebase origin/develop; then
             if git push --force-with-lease origin "$BRANCH"; then
               echo "result=success" >> "$GITHUB_OUTPUT"
