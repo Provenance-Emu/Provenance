@@ -1663,8 +1663,19 @@ static bool environment_callback(unsigned cmd, void *data) {
             /// Used by cores that want to specify required Vulkan extensions/features.
             const struct retro_hw_render_context_negotiation_interface *iface =
                 (const struct retro_hw_render_context_negotiation_interface *)data;
+
+            if (!iface) {
+                WLOG(@"Environ SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: NULL interface pointer");
+                return false;
+            }
+
             ILOG(@"Environ SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: type=%d, version=%u",
                  iface->interface_type, iface->interface_version);
+
+            if (!video_driver_set_context_negotiation_interface(iface)) {
+                WLOG(@"video_driver_set_context_negotiation_interface reported unsupported interface");
+                return false;
+            }
             return true;
         }
         case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS: {
