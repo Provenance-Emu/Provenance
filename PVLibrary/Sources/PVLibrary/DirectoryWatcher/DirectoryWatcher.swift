@@ -261,47 +261,7 @@ public final class DirectoryWatcher: ObservableObject {
         }
 
         // Bounded retry readability + signature check after stability wait.
-        // A short retry handles transient locks that outlast the quiesce interval.
-        let maxReadAttempts = isStable ? 2 : 3
-        var fileReadable = false
-        var fileSize: Int64 = 0
-        for readAttempt in 1...maxReadAttempts {
-            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
-               let size = attributes[.size] as? Int64, size > 0 {
-                fileSize = size
-                ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes")
-                if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
-                    let signature = fileHandle.readData(ofLength: 4)
-                    fileHandle.closeFile()
-                    let isZip = signature.count >= 2 && signature[0] == 0x50 && signature[1] == 0x4B
-                    let is7z = signature.count >= 4 && signature[0] == 0x37 && signature[1] == 0x7A
-                        && signature[2] == 0xBC && signature[3] == 0xAF
-                    if isZip || is7z {
-                        ILOG("Archive file \(filePath.lastPathComponent) has valid \(isZip ? "ZIP" : "7z") signature")
-                    } else {
-                        let hex = signature.prefix(4).map { String(format: "%02X", $0) }.joined(separator: " ")
-                        ILOG("Archive \(filePath.lastPathComponent) signature (\(hex)) not ZIP/7z, using extension detection")
-                    }
-                    fileReadable = true
-                    break
-                }
-            }
-            if readAttempt < maxReadAttempts {
-                let delay: UInt64 = isStable ? 200_000_000 : 400_000_000
-                WLOG("Archive \(filePath.lastPathComponent) not readable (attempt \(readAttempt)/\(maxReadAttempts)), retrying...")
-                try? await Task.sleep(nanoseconds: delay)
-            }
-        }
-
-        if fileReadable {
-            ILOG("Archive file \(filePath.lastPathComponent) verified as readable after \(maxReadAttempts) attempt(s)")
-        } else {
-            let description = "Archive file not readable after \(maxReadAttempts) attempt(s): "
-                + "\(filePath.lastPathComponent) (size: \(fileSize) bytes)"
-            ELOG("Failed to verify archive file readiness after retries: \(filePath.path)")
-            throw NSError(domain: "DirectoryWatcher", code: -1,
-                          userInfo: [NSLocalizedDescriptionKey: description])
-        }
+        try await verifyArchiveReadable(at: filePath, isStable: isStable)
 
         guard !filePath.path.contains("MACOSX") else {
             ILOG("Skipping MACOSX file: \(filePath.path)")
@@ -576,6 +536,51 @@ public final class DirectoryWatcher: ObservableObject {
         let failedCount: Int
         /// `true` when every file was moved successfully.
         var isComplete: Bool { failedCount == 0 }
+    }
+
+    /// Verifies that an archive file is readable and has a recognizable
+    /// signature, retrying a bounded number of times with backoff to handle
+    /// transient file locks that may outlast the stability quiesce interval.
+    private func verifyArchiveReadable(at filePath: URL, isStable: Bool) async throws {
+        let maxAttempts = isStable ? 2 : 3
+        var fileSize: Int64 = 0
+
+        for attempt in 1...maxAttempts {
+            if let attributes = try? FileManager.default.attributesOfItem(atPath: filePath.path),
+               let size = attributes[.size] as? Int64, size > 0 {
+                fileSize = size
+                ILOG("Archive file \(filePath.lastPathComponent) has size: \(size) bytes")
+                if let fileHandle = try? FileHandle(forReadingFrom: filePath) {
+                    let signature = fileHandle.readData(ofLength: 4)
+                    fileHandle.closeFile()
+                    let isZip = signature.count >= 2
+                        && signature[0] == 0x50 && signature[1] == 0x4B
+                    let is7z = signature.count >= 4
+                        && signature[0] == 0x37 && signature[1] == 0x7A
+                        && signature[2] == 0xBC && signature[3] == 0xAF
+                    if isZip || is7z {
+                        ILOG("Archive \(filePath.lastPathComponent) has valid \(isZip ? "ZIP" : "7z") signature")
+                    } else {
+                        let hex = signature.prefix(4)
+                            .map { String(format: "%02X", $0) }.joined(separator: " ")
+                        ILOG("Archive \(filePath.lastPathComponent) signature (\(hex)) not ZIP/7z, using extension detection")
+                    }
+                    ILOG("Archive \(filePath.lastPathComponent) verified readable on attempt \(attempt)")
+                    return
+                }
+            }
+            if attempt < maxAttempts {
+                let delay: UInt64 = isStable ? 200_000_000 : 400_000_000
+                WLOG("Archive \(filePath.lastPathComponent) not readable (attempt \(attempt)/\(maxAttempts)), retrying...")
+                try? await Task.sleep(nanoseconds: delay)
+            }
+        }
+
+        let description = "Archive file not readable after \(maxAttempts) attempt(s): "
+            + "\(filePath.lastPathComponent) (size: \(fileSize) bytes)"
+        ELOG("Failed to verify archive readiness after retries: \(filePath.path)")
+        throw NSError(domain: "DirectoryWatcher", code: -1,
+                      userInfo: [NSLocalizedDescriptionKey: description])
     }
 
     /// Moves extracted files to the destination directory, flattening any
