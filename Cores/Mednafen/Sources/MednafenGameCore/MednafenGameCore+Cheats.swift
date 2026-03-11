@@ -95,8 +95,14 @@ class CppString {
                     }
                     
                     let gamePtr = getGame()
-                    let _ = withUnsafeMutablePointer(to: &patch) { patchPtr in
+                    let decodeSucceeded = withUnsafeMutablePointer(to: &patch) { patchPtr in
                         mednafen_decodeCheat(gamePtr, formatIndex, cheatCode, patchPtr)
+                    }
+                    // For the supported systems/cheat types (GB/NES/PSX/SNES with Game Genie/GameShark/Pro Action Replay/Rocky),
+                    // mednafen_decodeCheat returning false indicates a decoding failure. Multipart formats are not used here,
+                    // so we treat any failure as an invalid code and surface it via MednafenCheatError.invalidCode.
+                    guard decodeSucceeded else {
+                        throw MednafenCheatError.invalidCode
                     }
                     patch.status = enabled
 
