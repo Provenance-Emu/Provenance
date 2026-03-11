@@ -51,12 +51,14 @@ enum FileStabilityChecker {
             )
 
             var stabilityTimer: DispatchWorkItem?
+            var timeoutTimer: DispatchWorkItem?
 
             /// Thread-safe single-shot resume helper.
             let finish: (Bool) -> Void = { result in
                 guard !hasResumed else { return }
                 hasResumed = true
                 stabilityTimer?.cancel()
+                timeoutTimer?.cancel()
                 source.cancel()
                 continuation.resume(returning: result)
             }
@@ -85,11 +87,13 @@ enum FileStabilityChecker {
                 close(fd)
             }
 
-            // Hard timeout to avoid waiting forever.
-            queue.asyncAfter(deadline: .now() + timeout) {
+            // Cancellable hard timeout to avoid waiting forever.
+            let hardTimeout = DispatchWorkItem {
                 WLOG("FileStabilityChecker: Timed out waiting for \(url.lastPathComponent) to stabilize")
                 finish(false)
             }
+            timeoutTimer = hardTimeout
+            queue.asyncAfter(deadline: .now() + timeout, execute: hardTimeout)
 
             source.resume()
             scheduleQuiesceTimer()

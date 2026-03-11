@@ -2534,13 +2534,29 @@ public final class GameImporter: GameImporting, ObservableObject {
             throw GameImporterError.unsupportedFile
         }
 
-        // Single readability check after stability wait
-        guard let fileHandle = try? FileHandle(forReadingFrom: archiveURL) else {
-            let error = ArchiveError.extractionFailed("Archive file is locked or not readable: \(archiveURL.lastPathComponent). Please ensure the file is not being accessed by another process.")
+        // Bounded retry readability check after stability wait.
+        // A short retry handles transient locks that outlast the quiesce interval.
+        let maxOpenAttempts = isStable ? 2 : 3
+        var archiveIsReadable = false
+        for openAttempt in 1...maxOpenAttempts {
+            if let handle = try? FileHandle(forReadingFrom: archiveURL) {
+                handle.closeFile()
+                archiveIsReadable = true
+                break
+            }
+            if openAttempt < maxOpenAttempts {
+                let delay: UInt64 = isStable ? 200_000_000 : 400_000_000
+                WLOG("Archive \(archiveURL.lastPathComponent) not readable (attempt \(openAttempt)/\(maxOpenAttempts)), retrying...")
+                try? await Task.sleep(nanoseconds: delay)
+            }
+        }
+        guard archiveIsReadable else {
+            let msg = "Archive file is locked or not readable: \(archiveURL.lastPathComponent). "
+                + "Please ensure the file is not being accessed by another process."
+            let error = ArchiveError.extractionFailed(msg)
             ELOG(error.localizedDescription)
             throw error
         }
-        fileHandle.closeFile()
 
         // Detect actual archive type from file signature (not just extension)
         // This handles cases where files have wrong extensions (e.g., .zip file that's actually 7z)
@@ -2896,9 +2912,15 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("Added \(filesToImport.count) extracted files to import queue")
         }
 
-        // Delete original archive after successful extraction
-        try await FileManager.default.removeItem(at: archiveURL)
-        ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
+        // Only delete the original archive when every extracted file was
+        // moved successfully. If some moves failed the archive is preserved
+        // so the user can retry.
+        if moveFailures == 0 {
+            try await FileManager.default.removeItem(at: archiveURL)
+            ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
+        } else {
+            WLOG("Archive \(archiveURL.lastPathComponent) preserved — \(moveFailures) file(s) failed to move")
+        }
     }
 
     private func performImport(for item: ImportQueueItem) async throws {
