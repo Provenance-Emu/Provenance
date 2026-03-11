@@ -15,6 +15,9 @@ import UIKit
 #if canImport(PVJIT)
 import PVJIT
 #endif
+#if canImport(JITManager)
+import JITManager
+#endif
 
 // MARK: - Stored properties via associated objects
 
@@ -131,12 +134,19 @@ public extension PVEmulatorViewController {
     // MARK: - Core JIT Capability
 
     /// Determines if the current core requires or benefits from JIT.
-    /// This is a placeholder implementation until the JIT Capability Matrix (#2793) is implemented.
-    /// Currently returns `true` for all cores since JIT generally improves performance.
+    /// Returns `false` for cores that do not use JIT to avoid showing the indicator on every core.
+    /// When the JIT Capability Matrix (#2793) is implemented, this should delegate to it.
     private func coreRequiresJIT() -> Bool {
-        // TODO: When JIT Capability Matrix is available, check core.identifier against the matrix
-        // For now, show the indicator for all cores that can benefit from JIT
-        return true
+        // Quick-exit: if the JIT manager has no JIT type configured, JIT is not in play at all
+        guard DOLJitManager.shared.getJitType() != .none else { return false }
+
+        // Check core identifier against known JIT-requiring cores (Dolphin/GameCube/Wii).
+        // TODO: Replace with the JIT Capability Matrix (#2793) when available.
+        if let coreId = core.coreIdentifier?.lowercased() {
+            let jitCoreKeywords = ["dolphin", "pvdolphin", "gamecube", "wii"]
+            return jitCoreKeywords.contains(where: { coreId.contains($0) })
+        }
+        return false
     }
     #endif
 }
