@@ -77,16 +77,16 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Notification observer tokens for hardware keyboard connect/disconnect.
+    /// Notification observer tokens (`NSObjectProtocol`) for hardware keyboard
+    /// connect/disconnect events — typed for safe `removeObserver(_:)` calls.
     private var hwKeyboardObservers: [NSObjectProtocol]? {
         get {
-            objc_getAssociatedObject(self, &AssociatedKeys.hwKeyboardObservers) as? [NSObjectProtocol]
+            objc_getAssociatedObject(self, &AssociatedKeys.hwKeyboardObservers)
+                as? [NSObjectProtocol]
         }
         set {
-            objc_setAssociatedObject(
-                self, &AssociatedKeys.hwKeyboardObservers,
-                newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-            )
+            objc_setAssociatedObject(self, &AssociatedKeys.hwKeyboardObservers,
+                                     newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 

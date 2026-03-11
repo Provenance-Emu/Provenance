@@ -90,8 +90,8 @@ extension PVEmulatorViewController {
 
     // MARK: - Show / Hide / Toggle
 
-    /// Show the virtual mouse cursor and trackpad.
-    /// Does nothing if the core does not support mouse or if already visible.
+    /// Show the virtual mouse cursor and trackpad (main-actor isolated).
+    /// No-op if the core does not support mouse or if already visible.
     public func showVirtualMouse() {
         guard coreSupportsVirtualMouse, !isVirtualMouseVisible else { return }
         setupVirtualMouseIfNeeded()
@@ -112,24 +112,13 @@ extension PVEmulatorViewController {
     }
 
     /// Remove cursor overlay and trackpad if present (called on teardown / core change).
-    /// Safe to call from any thread — UIKit operations are dispatched to the main thread.
+    /// Must be called on the main actor (enforced by the `@MainActor` extension).
     func teardownVirtualMouse() {
-        let trackpad = touchTrackpadView
-        let host = cursorHostingController
+        touchTrackpadView?.removeFromSuperview()
         touchTrackpadView = nil
+        cursorHostingController?.view.removeFromSuperview()
+        cursorHostingController?.removeFromParent()
         cursorHostingController = nil
-
-        let doTeardown = {
-            trackpad?.removeFromSuperview()
-            host?.view.removeFromSuperview()
-            host?.removeFromParent()
-        }
-
-        if Thread.isMainThread {
-            doTeardown()
-        } else {
-            DispatchQueue.main.async(execute: doTeardown)
-        }
     }
 }
 #endif // canImport(UIKit) && !os(tvOS)
