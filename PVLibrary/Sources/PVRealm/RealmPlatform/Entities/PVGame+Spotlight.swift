@@ -35,11 +35,14 @@ public extension PVGame {
             return CSSearchableItemAttributeSet()
         }
 
-        /// Create a content set using a more specific UTType for better handling
-        let contentSet = CSSearchableItemAttributeSet(itemContentType: "org.provenance-emu.game")
+        /// Create a content set using a known base UTType so the OS can surface it in Spotlight/Siri.
+        /// Using UTType.data (public.data) as the base since "org.provenance-emu.game" exported
+        /// types may not be recognized in extension processes.
+        let contentSet = CSSearchableItemAttributeSet(contentType: .data)
 
-        // Primary metadata
+        // Primary metadata — set both title and displayName so Spotlight and Siri both match
         contentSet.title = title
+        contentSet.displayName = title
         contentSet.relatedUniqueIdentifier = md5Hash
 
         // System information

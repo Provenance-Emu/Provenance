@@ -299,6 +299,8 @@
 		<string>$(ORG_PREFIX).game.play</string>
 		<string>$(ORG_PREFIX).webserver</string>
 		<string>com.apple.corespotlight.search</string>
+		<string>org.provenance-emu.game-search</string>
+		<string>com.provenance-emu.provenance.openMD5</string>
 	</array>
 	<key>PVAppType</key>
 	<string>standard</string>
