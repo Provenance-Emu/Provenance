@@ -1857,6 +1857,9 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS: {
+            if (data) {
+                *(bool *)data = false;
+            }
             return true;
         }
         case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO: {
