@@ -446,17 +446,10 @@ public final class DirectoryWatcher: ObservableObject {
                     "\(moveResult.failedCount) file(s) could not be moved from temp directory"
                 )
                 updateExtractionStatus(.failed(error: partialError))
-                await MainActor.run {
-                    NotificationCenter.default.post(name: .archiveExtractionFailed, object: nil, userInfo: [
-                        "error": partialError.localizedDescription,
-                        "path": filePath.path,
-                        "filename": filePath.lastPathComponent,
-                        "movedCount": moveResult.moved.count,
-                        "failedCount": moveResult.failedCount,
-                        "timestamp": Date()
-                    ])
-                }
-                // Propagate so callers using try/await see the failure
+                await postArchiveExtractionFailed(
+                    error: partialError, filePath: filePath,
+                    movedCount: moveResult.moved.count,
+                    failedCount: moveResult.failedCount)
                 throw partialError
             }
         } catch {
@@ -540,6 +533,22 @@ public final class DirectoryWatcher: ObservableObject {
         let failedCount: Int
         /// `true` when every file was moved successfully.
         var isComplete: Bool { failedCount == 0 }
+    }
+
+    /// Posts the `archiveExtractionFailed` notification on the main actor.
+    private func postArchiveExtractionFailed(
+        error: Error, filePath: URL, movedCount: Int, failedCount: Int
+    ) async {
+        await MainActor.run {
+            NotificationCenter.default.post(name: .archiveExtractionFailed, object: nil, userInfo: [
+                "error": error.localizedDescription,
+                "path": filePath.path,
+                "filename": filePath.lastPathComponent,
+                "movedCount": movedCount,
+                "failedCount": failedCount,
+                "timestamp": Date()
+            ])
+        }
     }
 
     /// Verifies that an archive file is readable and has a recognizable

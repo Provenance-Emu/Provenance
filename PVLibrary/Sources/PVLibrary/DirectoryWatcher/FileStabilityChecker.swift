@@ -57,12 +57,9 @@ enum FileStabilityChecker {
     ///   (e.g. sandbox/permissions), returns `true` optimistically
     ///   so callers proceed to their own readability checks.
     /// - Note: See `FileStabilityCheckerTests` for coverage of immediate
-    ///   stability, timeout, and task cancellation scenarios.
-    static func waitForStability(
-        at url: URL,
-        quiesceInterval: TimeInterval = 0.3,
-        timeout: TimeInterval = 10.0
-    ) async -> Bool {
+    ///   stability, continuous-write timeout, task cancellation, and
+    ///   nonexistent-file scenarios.
+    static func waitForStability(at url: URL, quiesceInterval: TimeInterval = 0.3, timeout: TimeInterval = 10.0) async -> Bool {
         let fd = open(url.path, O_EVTONLY)
         guard fd >= 0 else {
             let code = errno
