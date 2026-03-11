@@ -21,7 +21,7 @@
 #include "Common/Thread/ThreadManager.h"
 #include "Common/File/VFS/VFS.h"
 #include "Common/Data/Text/I18n.h"
-#include "Common/StringUtils.h""
+#include "Common/StringUtils.h"
 #include "Common/System/Display.h"
 #include "Common/System/NativeApp.h"
 #include "Common/System/System.h"
@@ -68,6 +68,7 @@
     if (cheatEngine->HasCheats()) {
        cheatEngine->Run();
     }
+    delete cheatEngine;
 }
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType: (NSString *)codeType
 		  setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled  error:(NSError**)error {
@@ -83,6 +84,9 @@
 	buffer << cheat_content.rdbuf();
 	std::string existing_cheats=ReplaceAll(buffer.str(), std::string("\n_C"), std::string("|"));
 	SplitString(existing_cheats, '|', cheats);
+
+	// Map parameter to local int before use
+	int index = cheatIndex;
 
 	// Generate Cheat String
 	std::stringstream cheat("");
@@ -106,7 +110,6 @@
 	}
 
 	// Add or Replace the Cheat
-	int index = cheatIndex;
 	if (index + 1 < cheats.size()) {
 		cheats[index + 1]=cheat.str();
 	} else {
@@ -129,6 +132,7 @@
 	if (cheatEngine->HasCheats()) {
 		cheatEngine->Run();
 	}
+	delete cheatEngine;
 	return true;
 }
 @end

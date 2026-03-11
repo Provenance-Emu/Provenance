@@ -9,6 +9,13 @@
 #import <string>
 #import <Foundation/Foundation.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
+#pragma clang diagnostic ignored "-Wextra"
+#import <mednafen/mednafen.h>
+#import <mednafen/mempatcher.h>
+#pragma clang diagnostic pop
+
 #if __cplusplus
 extern "C" {
 #endif
@@ -27,6 +34,26 @@ extern "C" {
 
     const char* getCppStringContents(void* cppStringPtr) {
         return static_cast<std::string*>(cppStringPtr)->c_str();
+    }
+
+    bool mednafen_decodeCheat(const void* game, uint8_t formatIndex, const char* cheatCode, void* patch) {
+        // Defensive checks for pointers coming from external (Swift) callers.
+        if (!game || !patch || !cheatCode) {
+            return false;
+        }
+
+        auto gi = static_cast<const Mednafen::MDFNGI*>(game);
+        auto mp = static_cast<Mednafen::MemoryPatch*>(patch);
+        const auto& formats = gi->CheatInfo.CheatFormatInfo;
+        if (formatIndex >= formats.size()) {
+            return false;
+        }
+        std::string codeStr(cheatCode);
+        try {
+            return formats[formatIndex].DecodeCheat(codeStr, mp);
+        } catch (...) {
+            return false;
+        }
     }
 #if __cplusplus
 }

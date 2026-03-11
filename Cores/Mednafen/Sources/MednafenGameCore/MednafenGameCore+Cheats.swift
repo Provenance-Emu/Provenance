@@ -94,15 +94,19 @@ class CppString {
                         break
                     }
                     
-#warning("TODO: Fix Swift String to C++ std::string")
-                    
-//                    let decoded = game.pointee.CheatInfo.pointee.CheatFormatInfo.pointee[Int(formatIndex)].DecodeCheat(cheatCode.cString(using: .utf8)!, &patch)
-//                    
-//                    if !decoded {
-//                        throw MednafenCheatError.invalidCode
-//                    }
-//                    patch.status = enabled
-                    
+                    let gamePtr = getGame()
+                    let morePartsNeeded = withUnsafeMutablePointer(to: &patch) { patchPtr in
+                        mednafen_decodeCheat(gamePtr, formatIndex, cheatCode, patchPtr)
+                    }
+                    // Note: In Mednafen, CheatFormatStruct::DecodeCheat returns true if more parts are needed for a multipart
+                    // code, and false when decoding has completed for the provided data. It does not directly signal success
+                    // vs. failure via this boolean. We currently assume the provided cheatCode contains all necessary parts
+                    // in one string and do not treat the boolean as an error indicator.
+                    if morePartsNeeded {
+                        ILOG("Cheat code may require additional parts; current UI provides only a single-part string.")
+                    }
+                    patch.status = enabled
+
                     if cheatIndex < Mednafen.MDFNI_CheatSearchGetCount() {
                         Mednafen.MDFNI_SetCheat(uint32(cheatIndex), patch)
                         Mednafen.MDFNI_ToggleCheat(uint32(cheatIndex))
