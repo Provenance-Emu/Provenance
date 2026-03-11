@@ -81,7 +81,7 @@ enum EffectFilterShaderError: Error {
 
 // MARK: - PVMetalViewController
 final
-class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDelegate {
+class PVMetalViewController : PVGPUViewController, PVRenderDelegate, PVRenderDelegateIOSurface, MTKViewDelegate {
     func setPreferredRefreshRate(_ rate: Float) {
         ILOG("Setting preferred refresh rate to \(rate) Hz")
 

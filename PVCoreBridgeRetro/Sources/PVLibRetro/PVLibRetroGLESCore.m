@@ -22,6 +22,24 @@
 #include "dynamic.h"
 #include <dynamic/dylib.h>
 
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+@import IOSurface;
+@import OpenGLES.EAGLIOSurface;
+
+/// Private SPI for binding an IOSurface to a GL texture on iOS/tvOS.
+/// See: https://developer.apple.com/documentation/opengles/eaglcontext/2890259-teximageiosurface
+@interface EAGLContext (IOSurfaceTexImage)
+- (BOOL)texImageIOSurface:(IOSurfaceRef)ioSurface
+                   target:(NSUInteger)target
+           internalFormat:(NSUInteger)internalFormat
+                    width:(uint32_t)width
+                   height:(uint32_t)height
+                   format:(NSUInteger)format
+                     type:(NSUInteger)type
+                    plane:(uint32_t)plane;
+@end
+#endif
+
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
@@ -723,6 +741,9 @@ static bool video_driver_cached_frame(void)
         return;
     }
 
+    /// Delete the FBO while the GL context is still current and valid
+    [self destroyEmuThreadFBO];
+
     switch (current_context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
         case RETRO_HW_CONTEXT_OPENGLES3:
@@ -730,9 +751,7 @@ static bool video_driver_cached_frame(void)
         case RETRO_HW_CONTEXT_OPENGL:
         case RETRO_HW_CONTEXT_OPENGL_CORE:
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-            if ([EAGLContext currentContext] == hardware_context) {
-                [EAGLContext setCurrentContext:nil];
-            }
+            [EAGLContext setCurrentContext:nil];
 #endif
             hardware_context = nil;
             break;
@@ -746,8 +765,6 @@ static bool video_driver_cached_frame(void)
         default:
             break;
     }
-
-    [self destroyEmuThreadFBO];
 
     hardware_context_active = NO;
     current_context_type = RETRO_HW_CONTEXT_NONE;
@@ -885,11 +902,12 @@ static void* hw_get_proc_address(const char *symbol) {
     IOSurfaceRef surface = NULL;
     CGSize surfaceSize = CGSizeZero;
 
-    if ([self.renderDelegate respondsToSelector:@selector(renderIOSurface)]) {
-        surface = [self.renderDelegate renderIOSurface];
+    id delegate = self.renderDelegate;
+    if ([delegate respondsToSelector:@selector(renderIOSurface)]) {
+        surface = [delegate renderIOSurface];
     }
-    if ([self.renderDelegate respondsToSelector:@selector(renderIOSurfaceSize)]) {
-        surfaceSize = [self.renderDelegate renderIOSurfaceSize];
+    if ([delegate respondsToSelector:@selector(renderIOSurfaceSize)]) {
+        surfaceSize = [delegate renderIOSurfaceSize];
     }
 
     if (!surface || surfaceSize.width <= 0 || surfaceSize.height <= 0) {
@@ -952,7 +970,14 @@ static void* hw_get_proc_address(const char *symbol) {
 }
 
 /// Tears down the emu thread's FBO and associated GL objects.
+/// Must be called while hardware_context is still valid and current.
 - (void)destroyEmuThreadFBO {
+    if (_emuThreadFBO == 0 && _emuThreadColorTexture == 0 && _emuThreadDepthRenderbuffer == 0) {
+        return;
+    }
+
+    [self makeGLContextCurrent];
+
     if (_emuThreadDepthRenderbuffer > 0) {
         glDeleteRenderbuffers(1, &_emuThreadDepthRenderbuffer);
         _emuThreadDepthRenderbuffer = 0;
