@@ -1,6 +1,6 @@
 //
-//  PVfMSXEmuCore.swift
-//  PVfMSXEmuCore
+//  PVfMSXCore.swift
+//  PVfMSXCore
 //
 //  Created by Joseph Mattiello on 12/31/24.
 //  Copyright © 2024 Provenance Emu. All rights reserved.
