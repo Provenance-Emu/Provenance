@@ -2917,14 +2917,14 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("Added \(filesToImport.count) extracted files to import queue")
         }
 
-        if allMovesSucceeded {
-            try await FileManager.default.removeItem(at: archiveURL)
-            ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
-        } else {
+        guard allMovesSucceeded else {
             WLOG("Archive \(archiveURL.lastPathComponent) preserved — "
                  + "\(moveFailures)/\(extractedFiles.count) file(s) failed to move; "
                  + "temp dir kept for recovery")
+            return
         }
+        try await FileManager.default.removeItem(at: archiveURL)
+        ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
     }
 
     private func performImport(for item: ImportQueueItem) async throws {
