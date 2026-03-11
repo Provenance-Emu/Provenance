@@ -87,6 +87,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Missing "Scanning games…" State** — `initializeLibrary()` now correctly transitions to
   `.initializingLibrary` at entry, so the boot screen shows "Scanning games…" during the
   library scan phase rather than staying on "Loading game library…" (#2965)
+- **Settings Systems Navigation** — "Systems" in Settings now pushes as a navigation link (with back button) instead of presenting as a dismissable sheet (#2970)
+- **Siri/Spotlight Save State Thumbnail** — Save state Spotlight entries now include the screenshot thumbnail image in search results (#2978)
+- **Siri/Spotlight Save State Launch** — Tapping a save state result in Siri/Spotlight now correctly boots and resumes that specific save state instead of starting the game from scratch (#2978)
+- **Controller Skin Toolbar Animation** — Toolbar items in `SystemSkinBrowserView` and `SkinCatalogBrowserView` no longer animate their coordinates during view transitions on iOS/tvOS 26 (liquid glass); fixed by consolidating toolbar blocks and suppressing layout animations via `.transaction { $0.animation = nil }` (#2967)
+- **Skin Catalog from Pause Menu** — Added "BROWSE CATALOG" button to the Skins tab in the pause menu (`RetroMenuView`), allowing direct access to the skin catalog without exiting to Settings (#2967)
 - **Cheats & MultiDisc Pause Leak** — `onDone` closures in Cheats (tvOS + iOS) and error/cancel handlers in the disc-swap menu no longer call `setPauseEmulation(false)` or `isShowingMenu = false` directly, preventing the emulator from unpausing while the pause menu is still visible (Part of #2909)
 - **Virtual Mouse Cursor Z-Order** — Mouse cursor overlay now stays above the emulator surface and all other layers by calling `bringSubviewToFront` after insertion (#2925, Part of #2575)
 - **Virtual Keyboard Z-Order** — Keyboard overlay now renders above skin controller buttons; `bringSubviewToFront` called on show and after every skin change (#2926, Part of #2575)
