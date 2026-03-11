@@ -286,12 +286,14 @@ public struct SkinCatalogBrowserView: View {
 
     private var catalogGridView: some View {
         ScrollView {
+            let installedIds = Set(skinManager.loadedSkins.map { $0.identifier.lowercased() })
+            let installedFiles = Set(skinManager.loadedSkins.map { $0.fileURL.lastPathComponent.lowercased() })
             LazyVGrid(
                 columns: [GridItem(.adaptive(minimum: horizontalSizeClass == .regular ? 200 : 160), spacing: 16)],
                 spacing: 20
             ) {
                 ForEach(entries) { entry in
-                    let isInstalled = skinManager.loadedSkins.contains { $0.identifier == entry.id }
+                    let isInstalled = installedIds.contains(entry.id.lowercased()) || installedFiles.contains(entry.expectedLocalFileName.lowercased())
                     NavigationLink(destination: SkinCatalogDetailView(entry: entry)) {
                         CatalogSkinCard(entry: entry, glowIntensity: glowIntensity, isInstalled: isInstalled)
                     }

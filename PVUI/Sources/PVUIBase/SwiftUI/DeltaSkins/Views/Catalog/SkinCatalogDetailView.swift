@@ -26,6 +26,9 @@ public struct SkinCatalogDetailView: View {
     @State private var glowIntensity: CGFloat = 0.5
     @State private var downloadTask: Task<Void, Never>?
 
+    /// Observe the skin manager so we can detect already-installed skins.
+    @StateObject private var skinManager = DeltaSkinManager.shared
+
     // MARK: - Types
 
     private enum DownloadState: Equatable {
@@ -65,6 +68,14 @@ public struct SkinCatalogDetailView: View {
         .onAppear {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowIntensity = 0.8
+            }
+            if isAlreadyInstalled {
+                downloadState = .installed
+            }
+        }
+        .onChange(of: skinManager.loadedSkins.count) { _ in
+            if downloadState == .idle, isAlreadyInstalled {
+                downloadState = .installed
             }
         }
         .onDisappear {
@@ -326,6 +337,7 @@ public struct SkinCatalogDetailView: View {
             .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 8)
         }
         .buttonStyle(PlainButtonStyle())
+        .disabled(isAlreadyInstalled)
     }
 
     private func downloadProgressView(progress: Double) -> some View {
@@ -506,6 +518,10 @@ public struct SkinCatalogDetailView: View {
 
     private func downloadAndInstall() async {
         guard !Task.isCancelled else { return }
+        if isAlreadyInstalled {
+            await MainActor.run { downloadState = .installed }
+            return
+        }
 
         await MainActor.run {
             downloadState = .downloading(progress: 0)
@@ -519,6 +535,13 @@ public struct SkinCatalogDetailView: View {
             // Check for cancellation before proceeding to install
             guard !Task.isCancelled else {
                 await MainActor.run { downloadState = .idle }
+                return
+            }
+
+            // Prevent duplicate installs if the user already has this skin by identifier.
+            if let downloadedSkin = try? DeltaSkin(fileURL: localURL),
+               skinManager.loadedSkins.contains(where: { $0.identifier.caseInsensitiveCompare(downloadedSkin.identifier) == .orderedSame }) {
+                await MainActor.run { downloadState = .installed }
                 return
             }
 
@@ -545,6 +568,15 @@ public struct SkinCatalogDetailView: View {
             await MainActor.run {
                 downloadState = .failed(error.localizedDescription)
             }
+        }
+    }
+
+    /// True when the catalog entry is already present locally.
+    private var isAlreadyInstalled: Bool {
+        let entryId = entry.id.lowercased()
+        let expectedFile = entry.expectedLocalFileName.lowercased()
+        return skinManager.loadedSkins.contains { skin in
+            skin.identifier.lowercased() == entryId || skin.fileURL.lastPathComponent.lowercased() == expectedFile
         }
     }
 

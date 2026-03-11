@@ -35,6 +35,9 @@ public struct TVOSSkinCatalogBrowserView: View {
     @State private var spinnerRotation: Double = 0
     @State private var searchTask: Task<Void, Never>?
 
+    /// Observe the skin manager so we can show which catalog skins are already installed.
+    @StateObject private var skinManager = DeltaSkinManager.shared
+
     // MARK: - Init
 
     /// Creates the browser, optionally pre-filtering to a system.
@@ -195,10 +198,13 @@ public struct TVOSSkinCatalogBrowserView: View {
                 .padding(.leading, 60)
 
             ScrollView(.horizontal, showsIndicators: false) {
+                let installedIds = Set(skinManager.loadedSkins.map { $0.identifier.lowercased() })
+                let installedFiles = Set(skinManager.loadedSkins.map { $0.fileURL.lastPathComponent.lowercased() })
                 HStack(spacing: 24) {
                     ForEach(skins) { entry in
                         NavigationLink(destination: SkinCatalogDetailView(entry: entry)) {
-                            TVOSSkinCard(entry: entry, glowIntensity: glowIntensity)
+                            let isInstalled = installedIds.contains(entry.id.lowercased()) || installedFiles.contains(entry.expectedLocalFileName.lowercased())
+                            TVOSSkinCard(entry: entry, glowIntensity: glowIntensity, isInstalled: isInstalled)
                         }
                         .retroFocusButtonStyle(focusScale: 1.08, cornerRadius: 16)
                     }
@@ -389,6 +395,7 @@ public struct TVOSSkinCatalogBrowserView: View {
 private struct TVOSSkinCard: View {
     let entry: SkinCatalogEntry
     let glowIntensity: CGFloat
+    var isInstalled: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -396,6 +403,15 @@ private struct TVOSSkinCard: View {
                 .frame(width: 280, height: 180)
                 .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(alignment: .topTrailing) {
+                    if isInstalled {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                            .background(Color.black.opacity(0.7).clipShape(Circle()))
+                            .padding(10)
+                    }
+                }
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(entry.name)
@@ -446,9 +462,9 @@ private struct TVOSSkinCard: View {
                 .fill(Color.black.opacity(0.4))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
+                        .strokeBorder(RetroTheme.retroGradient, lineWidth: isInstalled ? 2 : 1)
                 )
-                .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 8)
+                .shadow(color: isInstalled ? RetroTheme.retroPink.opacity(0.4) : RetroTheme.retroPurple.opacity(0.3), radius: 8)
         )
     }
 

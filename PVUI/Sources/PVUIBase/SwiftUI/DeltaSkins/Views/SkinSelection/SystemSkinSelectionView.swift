@@ -24,12 +24,14 @@ public struct SystemSkinSelectionView: View {
     @State private var selectedPortraitSkinId: String?
     @State private var selectedLandscapeSkinId: String?
     @State private var selectedOrientation: SkinOrientation = .portrait
+    @State private var lastAutoScrollKey: String?
 
     // UI state
     @State private var isLoading = true
     @State private var errorMessage: String?
     @State private var loadingProgress: Double = 0
     @State private var showingDocumentPicker = false
+    @State private var showingSkinCatalog = false
     @State private var showingImportError = false
     @State private var importError: Error?
 
@@ -123,13 +125,11 @@ public struct SystemSkinSelectionView: View {
                 #endif
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            showingDocumentPicker = true
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.title2)
-                                .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        }
+                        #if os(tvOS)
+                        DeltaSkinImportMenuButton(catalogAction: { showingSkinCatalog = true })
+                        #else
+                        DeltaSkinImportMenuButton(importAction: { showingDocumentPicker = true }, catalogAction: { showingSkinCatalog = true })
+                        #endif
                     }
 
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -144,6 +144,9 @@ public struct SystemSkinSelectionView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showingSkinCatalog) {
+            SkinCatalogModalView(preselectedSystem: system.skinCatalogSystemCode)
         }
         .onAppear {
             // Start glow animation
@@ -410,9 +413,17 @@ public struct SystemSkinSelectionView: View {
                 .padding(.horizontal)
 
             Button {
+                #if os(tvOS)
+                showingSkinCatalog = true
+                #else
                 showingDocumentPicker = true
+                #endif
             } label: {
+                #if os(tvOS)
+                Text("BROWSE CATALOG")
+                #else
                 Text("IMPORT SKIN")
+                #endif
                     .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding(.vertical, 12)
@@ -471,45 +482,73 @@ public struct SystemSkinSelectionView: View {
     }
 
     private var skinGridView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                // Show current selection status with retrowave styling
-                HStack {
-                    Image(systemName: "info.circle")
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        .font(.system(size: 14))
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    // Show current selection status with retrowave styling
+                    HStack {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                            .font(.system(size: 14))
 
-                    Text(selectedOrientation == .portrait ?
-                         "Selected skin will be used in portrait mode" :
-                         "Selected skin will be used in landscape mode")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.white.opacity(0.7))
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
-
-                // Skin grid with retrowave styling
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 20)], spacing: 24) {
-                    // Default option (system default)
-                    defaultSkinCell
-
-                    // Show only skins that support the selected orientation for current device
-                    ForEach(filteredSkinsForCurrentOrientation, id: \.identifier) { skin in
-                        skinCell(for: skin)
+                        Text(selectedOrientation == .portrait ?
+                             "Selected skin will be used in portrait mode" :
+                             "Selected skin will be used in landscape mode")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.white.opacity(0.7))
                     }
-                }
-                .padding(.horizontal)
-                .padding(.top, 8)
-                .padding(.bottom, 20)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
 
-                // DeltaStyles link component
-                DeltaStylesLinkView()
+                    // Skin grid with retrowave styling
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 20)], spacing: 24) {
+                        // Default option (system default)
+                        defaultSkinCell
+                            .id(systemDefaultScrollId)
+
+                        // Show only skins that support the selected orientation for current device
+                        ForEach(filteredSkinsForCurrentOrientation, id: \.identifier) { skin in
+                            skinCell(for: skin)
+                                .id(skin.identifier)
+                        }
+                    }
                     .padding(.horizontal)
                     .padding(.top, 8)
                     .padding(.bottom, 20)
+
+                    // DeltaStyles link component
+                    DeltaStylesLinkView()
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                        .padding(.bottom, 20)
+                }
             }
+            .scrollIndicators(.hidden)
+            .onAppear { autoScrollIfNeeded(using: proxy, animated: false) }
+            .onChange(of: currentSelectedSkinId) { _ in autoScrollIfNeeded(using: proxy, animated: true) }
+            .onChange(of: selectedOrientation) { _ in autoScrollIfNeeded(using: proxy, animated: true) }
+            .onChange(of: isLoading) { _ in autoScrollIfNeeded(using: proxy, animated: false) }
         }
-        .scrollIndicators(.hidden)
+    }
+
+    /// Scroll target used for the "System Default" cell.
+    private var systemDefaultScrollId: String { "__system_default__" }
+
+    /// Auto-scroll to the currently active selection when the grid is first shown (and when the orientation changes).
+    private func autoScrollIfNeeded(using proxy: ScrollViewProxy, animated: Bool) {
+        guard !isLoading else { return }
+
+        let target = currentSelectedSkinId ?? systemDefaultScrollId
+        let key = "\(selectedOrientation.rawValue)::\(target)"
+        guard lastAutoScrollKey != key else { return }
+        lastAutoScrollKey = key
+
+        let action = { proxy.scrollTo(target, anchor: .center) }
+        if animated {
+            withAnimation(.easeInOut(duration: 0.25)) { action() }
+        } else {
+            action()
+        }
     }
 
     private var defaultSkinCell: some View {
