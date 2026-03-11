@@ -4,7 +4,7 @@ These markdown files are intended to be added to the [Provenance-EMU/wiki](https
 
 ## save-state-version-mismatches.md
 
-Copy to: `info/save-state-version-mismatches.md` (or `info/saves/version-mismatches.md` if you prefer a subfolder).
+Copy to: `info/save-state-version-mismatches.md`. If you prefer to store it in a subfolder (for example, `info/saves/save-state-version-mismatches.md`), be sure to update any related links and URLs (including `SUMMARY.md` entries and the raw/web URLs below) to match the new path.
 
 ### Add to SUMMARY.md (in the wiki repo)
 
