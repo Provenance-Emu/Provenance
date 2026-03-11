@@ -26,6 +26,7 @@ private enum VMKeys {
 
 // MARK: - Extension
 
+@MainActor
 extension PVEmulatorViewController {
 
     // MARK: Computed "stored" properties via associated objects
