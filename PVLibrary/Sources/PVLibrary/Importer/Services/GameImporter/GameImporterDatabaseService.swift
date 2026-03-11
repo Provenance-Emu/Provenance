@@ -23,7 +23,6 @@ import CommonCrypto
 import Perception
 import SwiftUI
 import PVLookupTypes
-import RealmSwift
 
 public protocol GameImporterDatabaseServicing {
     typealias GameType = PVGame
@@ -857,10 +856,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     @objc
     public func calculateMD5(forGame game: PVGame) async -> String? {
         var offset: UInt = 0
+        let systemID = SystemIdentifier(rawValue: game.systemIdentifier)
 
         // Apply 16-byte offset for iNES header if the file appears to have one
         // This ensures we hash only the PRG+CHR ROM data, matching No-Intro/OpenVGDB expectations
-        if game.system?.identifier == "com.provenance.nes" {
+        if systemID == .NES {
             if let romPath = game.file?.url, hasINESHeader(at: romPath) {
                 offset = 16
                 ILOG("Detected iNES/NES 2.0 header for \(romPath.lastPathComponent), applying 16-byte MD5 offset")
@@ -868,7 +868,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
 
         // SNES .smc files may have a 512-byte copier header - detect and skip if present
-        let isSNES = game.system?.identifier == "com.provenance.snes"
+        let isSNES = systemID == .SNES
         let isSMC = game.file?.url?.pathExtension.lowercased() == "smc"
 
         let romPath = game.file?.url
@@ -878,6 +878,11 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             if !fm.fileExists(atPath: romPath.path) {
                 ELOG("Cannot find file at path: \(romPath)")
                 return nil
+            }
+
+            // Use N64 ROM normalizer for Nintendo 64 games to handle byte-swapping
+            if systemID == .N64 {
+                return await N64ROMNormalizer.md5ForN64ROMAsync(at: romPath, fromOffset: offset)
             }
 
             // For SNES .smc files, detect and skip 512-byte copier header if present
