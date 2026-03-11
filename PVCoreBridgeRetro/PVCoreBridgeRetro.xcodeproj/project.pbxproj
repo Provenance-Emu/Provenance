@@ -31,6 +31,7 @@
 		B377E9F72CB25F8800E9B750 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B377E9F62CB25F8800E9B750 /* PVLogging */; };
 		B377E9FA2CB25FA000E9B750 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B377E9F92CB25FA000E9B750 /* PVCoreObjCBridge */; };
 		B377EBDF2CB2A18A00E9B750 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBDE2CB2A18A00E9B750 /* PVSettings */; };
+		B37E0C992F6219B5006084E5 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37E0C982F6219B5006084E5 /* MoltenVK */; };
 		B392849128670348003BAC21 /* PVCoreBridgeRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVCoreBridgeRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
@@ -41,6 +42,7 @@
 		B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */; };
 		B3EA6C91292617F300010224 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
+		B4C5318E2F8A100100A1B2C3 /* libretro_vulkan.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6E82867202D00B60497 /* libretro_vulkan.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -907,6 +909,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B37E0C992F6219B5006084E5 /* MoltenVK in Frameworks */,
 				B341AD952E2BF5BE00B18E76 /* PVSupport in Frameworks */,
 				B377E9FA2CB25FA000E9B750 /* PVCoreObjCBridge in Frameworks */,
 				B377EBDF2CB2A18A00E9B750 /* PVSettings in Frameworks */,
@@ -2855,10 +2858,9 @@
 			files = (
 				B392849128670348003BAC21 /* PVCoreBridgeRetro.h in Headers */,
 				B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */,
-				B3702311287256DA00B3F6DA /* retro_inline.h in Headers */,
 				B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */,
-				B32299672878DBE000585AD8 /* dynamic.h in Headers */,
 				B364D4B42870E5F600B93A4B /* libretro.h in Headers */,
+				B4C5318E2F8A100100A1B2C3 /* libretro_vulkan.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2920,6 +2922,7 @@
 				B377EBDE2CB2A18A00E9B750 /* PVSettings */,
 				B345EAF62CC10F3600DE822B /* PVCoreBridge */,
 				B341AD942E2BF5BE00B18E76 /* PVSupport */,
+				B37E0C982F6219B5006084E5 /* MoltenVK */,
 			);
 			productName = PVLibRetro;
 			productReference = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */;
@@ -2965,6 +2968,7 @@
 				B377EBDD2CB2A18A00E9B750 /* XCLocalSwiftPackageReference "../PVSettings" */,
 				B345EAF52CC10F3600DE822B /* XCLocalSwiftPackageReference "../PVCoreBridge" */,
 				B341AD932E2BF5BE00B18E76 /* XCLocalSwiftPackageReference "../PVSupport" */,
+				B37E0C972F6219B5006084E5 /* XCLocalSwiftPackageReference "../MoltenVK" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -3184,6 +3188,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
 					"$(inherited)",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -3227,6 +3232,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
 					"$(inherited)",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -3270,6 +3276,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
 					"$(inherited)",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -3472,6 +3479,7 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
@@ -3544,6 +3552,7 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
@@ -3614,6 +3623,7 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
@@ -3712,6 +3722,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVSettings;
 		};
+		B37E0C972F6219B5006084E5 /* XCLocalSwiftPackageReference "../MoltenVK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MoltenVK;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3734,6 +3748,10 @@
 		B377EBDE2CB2A18A00E9B750 /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSettings;
+		};
+		B37E0C982F6219B5006084E5 /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MoltenVK;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
