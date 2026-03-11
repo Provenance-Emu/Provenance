@@ -2540,20 +2540,23 @@ public final class GameImporter: GameImporting, ObservableObject {
         let maxOpenAttempts = isStable ? 2 : 3
         var archiveIsReadable = false
         for openAttempt in 1...maxOpenAttempts {
-            if let handle = try? FileHandle(forReadingFrom: archiveURL) {
+            if let attrs = try? FileManager.default.attributesOfItem(atPath: archiveURL.path),
+               let size = attrs[.size] as? Int64, size > 0,
+               let handle = try? FileHandle(forReadingFrom: archiveURL) {
                 handle.closeFile()
                 archiveIsReadable = true
+                ILOG("Archive \(archiveURL.lastPathComponent) readable, size: \(size) bytes")
                 break
             }
             if openAttempt < maxOpenAttempts {
                 let delay: UInt64 = isStable ? 200_000_000 : 400_000_000
-                WLOG("Archive \(archiveURL.lastPathComponent) not readable (attempt \(openAttempt)/\(maxOpenAttempts)), retrying...")
+                WLOG("Archive \(archiveURL.lastPathComponent) not readable or empty (attempt \(openAttempt)/\(maxOpenAttempts)), retrying...")
                 try? await Task.sleep(nanoseconds: delay)
             }
         }
         guard archiveIsReadable else {
-            let msg = "Archive file is locked or not readable: \(archiveURL.lastPathComponent). "
-                + "Please ensure the file is not being accessed by another process."
+            let msg = "Archive file is locked, empty, or not readable: \(archiveURL.lastPathComponent). "
+                + "Please ensure the file is fully written and not accessed by another process."
             let error = ArchiveError.extractionFailed(msg)
             ELOG(error.localizedDescription)
             throw error

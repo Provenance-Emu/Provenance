@@ -476,20 +476,15 @@ public final class DirectoryWatcher: ObservableObject {
                 ELOG("Failed archive file size: \(sizeMB) MB")
             }
 
-            updateExtractionStatus(.failed(error: error))
-
-            // Post notification that extraction has failed
-            Task { @MainActor in
-                NotificationCenter.default.post(
-                    name: .archiveExtractionFailed,
-                    object: nil,
-                    userInfo: [
-                        "error": error.localizedDescription,
-                        "path": filePath.path,
-                        "filename": filePath.lastPathComponent,
-                        "timestamp": Date()
-                    ]
-                )
+            // Only update status/notify if the partial-move branch
+            // hasn't already done so (avoids duplicate notifications).
+            if case .failed = extractionStatus {
+                VLOG("Extraction status already .failed — skipping duplicate notification")
+            } else {
+                updateExtractionStatus(.failed(error: error))
+                await postArchiveExtractionFailed(
+                    error: error, filePath: filePath,
+                    movedCount: 0, failedCount: 0)
             }
 
             throw error
