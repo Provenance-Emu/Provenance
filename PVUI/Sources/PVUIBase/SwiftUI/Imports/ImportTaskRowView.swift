@@ -86,7 +86,16 @@ struct ImportTaskRowView: View {
     }
 
     var background: some View {
-        // Background with retrowave styling
+        // Solid background fill only — the gradient border is drawn as a separate overlay
+        // (see borderOverlay + mainView) so that iOS/tvOS 26 liquid glass applied to the
+        // background material does not interact with the custom retro gradient border.
+        RoundedRectangle(cornerRadius: 12)
+            .fill(Color.black.opacity(0.7))
+    }
+
+    /// Separate retro gradient border — drawn as an overlay so it stays visible above
+    /// any iOS/tvOS 26 liquid glass material applied to the background layer.
+    var borderOverlay: some View {
 #if os(tvOS)
         let lineWidth: CGFloat = isFocusedTV ? 3.0 : 1.5
         let shadowRadius: CGFloat = isFocusedTV ? 8 : 4
@@ -94,25 +103,20 @@ struct ImportTaskRowView: View {
         let lineWidth: CGFloat = isHovered ? 2.0 : 1.5
         let shadowRadius: CGFloat = isHovered ? 5 : 3
 #endif
-
         return RoundedRectangle(cornerRadius: 12)
-            .fill(Color.black.opacity(0.7))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: [primaryColor, secondaryColor]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: lineWidth
-                    )
-                    .shadow(
-                        color: primaryColor.opacity(glowOpacity),
-                        radius: shadowRadius,
-                        x: 0,
-                        y: 0
-                    )
+            .strokeBorder(
+                LinearGradient(
+                    gradient: Gradient(colors: [primaryColor, secondaryColor]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                lineWidth: lineWidth
+            )
+            .shadow(
+                color: primaryColor.opacity(glowOpacity),
+                radius: shadowRadius,
+                x: 0,
+                y: 0
             )
     }
 
@@ -234,6 +238,9 @@ struct ImportTaskRowView: View {
             // Content
             content
         }
+        // The gradient border is applied as an overlay on the ZStack rather than nested
+        // inside the background, keeping it above any iOS/tvOS 26 liquid glass treatment.
+        .overlay(borderOverlay)
         .frame(height: 90)
         .padding(.vertical, 4)
 #if !os(tvOS)

@@ -5723,7 +5723,12 @@ struct TVMediaImportStatusSheet: View {
                 .foregroundStyle(Color.retroBlue)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
-                .background(
+                // Use a solid fill background to prevent iOS/tvOS 26 liquid glass from
+                // clashing with the border. The strokeBorder is drawn as an overlay on
+                // top so it remains visible regardless of any system glass treatment.
+                .background(Color.retroBlue.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(Color.retroBlue.opacity(0.6), lineWidth: 1.5)
                 )
@@ -5751,22 +5756,25 @@ struct TVMediaImportStatusSheet: View {
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(Color.white.opacity(isFocused ? 0.06 : 0.03))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .strokeBorder(
-                            isFocused ?
-                                LinearGradient(
-                                    colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ) :
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.08), Color.white.opacity(0.04)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                ),
-                            lineWidth: isFocused ? 2 : 1
-                        )
+        )
+        // Draw the border as an overlay so it renders above any iOS/tvOS 26 liquid glass
+        // that may be applied to the background material. Only show the border when focused
+        // to avoid double-border artifacts caused by glass interacting with a permanent stroke.
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(
+                    isFocused ?
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ) :
+                        LinearGradient(
+                            colors: [Color.clear, Color.clear],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                    lineWidth: isFocused ? 2 : 0
                 )
         )
         .focusable()

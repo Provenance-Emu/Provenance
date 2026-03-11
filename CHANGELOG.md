@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **Import Queue Glass Borders** — Removed unwanted iOS/tvOS 26 liquid glass interference on custom-themed import queue rows and buttons. The gradient `strokeBorder` is now drawn as a top-level `.overlay()` rather than nested inside a `.background()`, ensuring retro borders remain visible above any system glass material. The "Select System" button uses a solid tinted background to prevent double-border artifacts (#2981)
 - **PVGME Boot Crash** — Removed erroneously copy-pasted `PVDOSSystemResponderClient` conformance from `PVGMECore`; force-casting the bridge to a DOS responder it doesn't implement caused an immediate crash on boot (#2977)
 - **DS/3DS Skin Support Disabled** — `supportsSkins` set to `false` in melonDS and Desmume2015 cores to prevent broken display when users select skins with no dual-screen layout (#2973)
 - **Cheat Search Crash on First Add** — Removed unsafe `@ThreadSafe` game fallback inside `realm.write`; game is now looked up strictly from the current Realm instance to prevent cross-Realm relationship crash. Added guard for empty MD5 hash to surface the error cleanly instead of crashing (#2966)
