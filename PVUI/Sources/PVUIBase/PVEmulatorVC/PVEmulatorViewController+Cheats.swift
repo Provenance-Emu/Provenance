@@ -139,6 +139,13 @@ extension PVEmulatorViewController {
     }
 
     @objc func showCheatsMenu() {
+        // Guard against a nil game reference — @ThreadSafe resolves an Optional
+        // and the IUO force-unwrap below would crash if the Realm object is gone.
+        guard game != nil else {
+            ELOG("showCheatsMenu: game is nil, cannot present cheat sheet")
+            return
+        }
+
         Task { @MainActor [weak self] in
             guard let self = self else { return }
             await self.recoverCheatCodes()
@@ -307,11 +314,18 @@ extension PVEmulatorViewController {
                            realm.object(ofType: PVCheats.self, forPrimaryKey: cheatInfo.id) != nil {
                             continue
                         } else {
-                            @ThreadSafe var realmCheat: PVCheats? = await cheatInfo.asRealm()
-                            if let realmCheat = realmCheat {
-                                realm.writeAsync {
+                            // Build the cheat object on the current (main) thread.
+                            // We MUST NOT use @ThreadSafe here — ThreadSafeReference requires
+                            // a *managed* (in-Realm) object, and asRealm() returns an unmanaged
+                            // object created via Object.build{}, which would cause a fatal error.
+                            // Use a synchronous write since we are already on the main actor.
+                            let realmCheat = cheatInfo.asRealm()
+                            do {
+                                try realm.write {
                                     realm.add(realmCheat)
                                 }
+                            } catch {
+                                ELOG("Failed to add recovered cheat to Realm: \(error)")
                             }
                         }
                     } catch {
