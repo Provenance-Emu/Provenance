@@ -126,7 +126,9 @@ public final class LibraryNavigator: ObservableObject {
         AppState.shared.$pendingSearchQuery
             .sink { [weak self] query in
                 guard let query, !query.isEmpty else { return }
-                self?.dispatch(.search(query: query))
+                Task { @MainActor [weak self] in
+                    self?.dispatch(.search(query: query))
+                }
             }
             .store(in: &cancellables)
     }
