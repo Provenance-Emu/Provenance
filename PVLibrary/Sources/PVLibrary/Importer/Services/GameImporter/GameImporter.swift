@@ -423,8 +423,13 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     public var importStatus: String = ""
 
-    /// Flag indicating if import is paused specifically for emulation (should not auto-resume)
-    @MainActor public private(set) var isPausedForEmulation: Bool = false
+    /// Active reasons the service is paused (PausableService conformance)
+    @MainActor public private(set) var activePauseReasons = Set<ServiceLifecycleReason>()
+
+    /// Backward-compatible flag — `true` when paused for `.emulation`
+    @MainActor public var isPausedForEmulation: Bool {
+        activePauseReasons.contains(.emulation)
+    }
 
     var importAutoStartDelayTask: Task<Void, Never>?
 
@@ -559,6 +564,11 @@ public final class GameImporter: GameImporting, ObservableObject {
                     await self.startProcessingSafely(trigger: "auto")
                 }
             }
+        }
+
+        /// Register with the central service registry
+        Task { @MainActor in
+            BackgroundServiceRegistry.shared.register(self)
         }
 
         // Listen for items being requeued (e.g., when user selects system for partial item)
@@ -3688,56 +3698,14 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    /// Pauses the import processing specifically for emulation
-    /// This prevents auto-resume while emulation is active
+    /// Legacy convenience — delegates to `pause(reason: .emulation)`
     public func pauseForEmulation() {
-        Task { @MainActor in
-            ILOG("GameImportQueue - Pausing import processing for emulation")
-            isPausedForEmulation = true
-
-            workQueue.isSuspended = true
-            serialImportQueue.isSuspended = true
-
-            // Also pause normal processing if it's running
-            if processingState == .processing {
-                processingState = .paused
-                updateImporterStatus("Import paused for emulation")
-
-                // Cancel any in-flight processing immediately
-                processingTaskLock.withLock {
-                    currentProcessingTask?.cancel()
-                    currentProcessingTask = nil
-                    currentTimeoutTask?.cancel()
-                    currentTimeoutTask = nil
-                    processingStartTime = nil
-                }
-
-                // Cancel queued operations so nothing continues
-                workQueue.cancelAllOperations()
-                serialImportQueue.cancelAllOperations()
-            }
-        }
+        pause(reason: .emulation)
     }
 
-    /// Resumes import processing after emulation ends
-    /// Called when emulation stops and user returns to library
+    /// Legacy convenience — delegates to `resume(reason: .emulation)`
     public func resumeFromEmulation() {
-        Task { @MainActor in
-            guard isPausedForEmulation else { return }
-
-            ILOG("GameImportQueue - Resuming import processing after emulation")
-            isPausedForEmulation = false
-
-            workQueue.isSuspended = false
-            serialImportQueue.isSuspended = false
-
-            // Resume processing if there are queued items
-            let queueSnapshot = await importQueueActor.getQueue()
-            let queuedCount = queueSnapshot.filter { $0.status == .queued }.count
-            if queuedCount > 0 {
-                await resumeSafely()
-            }
-        }
+        resume(reason: .emulation)
     }
 
     /// Resumes the import processing if it was paused
@@ -4142,7 +4110,67 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("Cleaned up failed import file: \(fileURL.path)")
         } catch {
             ELOG("Failed to clean up import file \(fileURL.path): \(error.localizedDescription)")
-            // Don't throw here - cleanup failure shouldn't stop the import process
+        }
+    }
+}
+
+// MARK: - PausableService
+
+extension GameImporter: PausableService {
+
+    public var serviceName: String { "GameImporter" }
+
+    @MainActor
+    public func pause(reason: ServiceLifecycleReason) {
+        guard !activePauseReasons.contains(reason) else { return }
+        let wasRunning = activePauseReasons.isEmpty
+        activePauseReasons.insert(reason)
+
+        guard wasRunning else { return }
+
+        ILOG("GameImporter: Pausing (reason: \(reason.rawValue))")
+
+        workQueue.isSuspended = true
+        serialImportQueue.isSuspended = true
+
+        if processingState == .processing {
+            processingState = .paused
+            updateImporterStatus("Import paused (\(reason.rawValue))")
+
+            processingTaskLock.withLock {
+                currentProcessingTask?.cancel()
+                currentProcessingTask = nil
+                currentTimeoutTask?.cancel()
+                currentTimeoutTask = nil
+                processingStartTime = nil
+            }
+
+            workQueue.cancelAllOperations()
+            serialImportQueue.cancelAllOperations()
+        }
+    }
+
+    @MainActor
+    public func resume(reason: ServiceLifecycleReason) {
+        guard activePauseReasons.contains(reason) else { return }
+        activePauseReasons.remove(reason)
+
+        guard activePauseReasons.isEmpty else {
+            ILOG("GameImporter: Cleared reason \(reason.rawValue) but still paused for: \(activePauseReasons.map(\.rawValue))")
+            return
+        }
+
+        ILOG("GameImporter: Resuming (cleared: \(reason.rawValue))")
+
+        workQueue.isSuspended = false
+        serialImportQueue.isSuspended = false
+
+        Task {
+            let queueSnapshot = await importQueueActor.getQueue()
+            let queuedCount = queueSnapshot.filter { $0.status == .queued }.count
+            if queuedCount > 0 {
+                await resumeSafely()
+            }
         }
     }
 }

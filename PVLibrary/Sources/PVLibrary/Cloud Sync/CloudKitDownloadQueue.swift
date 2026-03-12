@@ -10,6 +10,7 @@ import Foundation
 import CloudKit
 import Combine
 import PVLogging
+import PVPrimitives
 import PVSettings
 import Defaults
 import RealmSwift
@@ -27,6 +28,9 @@ public class CloudKitDownloadQueue: ObservableObject {
     private let maxConcurrentDownloads: Int
     private var activeDownloadTasks: [String: Task<Void, Error>] = [:]
     private var cancellables = Set<AnyCancellable>()
+
+    /// Active reasons the service is paused (PausableService conformance)
+    @MainActor public private(set) var activePauseReasons = Set<ServiceLifecycleReason>()
 
     // MARK: - Published Properties for UI
     @Published public var isProcessingQueue = false
@@ -78,6 +82,10 @@ public class CloudKitDownloadQueue: ObservableObject {
         }
 
         ILOG("CloudKit Download Queue initialized with max concurrent downloads: \(maxConcurrentDownloads)")
+
+        Task { @MainActor in
+            BackgroundServiceRegistry.shared.register(self)
+        }
     }
 
     // MARK: - Public Methods
@@ -414,23 +422,14 @@ public class CloudKitDownloadQueue: ObservableObject {
         ILOG("Cancelled all downloads")
     }
 
-    /// Pause the download queue
+    /// Legacy convenience — delegates to `pause(reason: .emulation)`
     public func pauseQueue() {
-        Task { @MainActor in
-            progressTracker.pauseDownloads()
-        }
-        ILOG("Paused download queue")
+        pause(reason: .emulation)
     }
 
-    /// Resume the download queue
+    /// Legacy convenience — delegates to `resume(reason: .emulation)`
     public func resumeQueue() {
-        Task { @MainActor in
-            progressTracker.resumeDownloads()
-            if !progressTracker.queuedDownloads.isEmpty && !isProcessingQueue {
-                await startProcessingQueue()
-            }
-        }
-        ILOG("Resumed download queue")
+        resume(reason: .emulation)
     }
 
     /// Retry a failed download
@@ -466,8 +465,45 @@ public class CloudKitDownloadQueue: ObservableObject {
     }
 
     private func pvGameExists(md5: String) -> Bool {
-        // Implement a lightweight lookup via RomDatabase/Realm if accessible here; otherwise assume false on tvOS until DB synced
         return true
+    }
+}
+
+// MARK: - PausableService
+
+extension CloudKitDownloadQueue: PausableService {
+
+    public var serviceName: String { "CloudKitDownloadQueue" }
+
+    @MainActor
+    public func pause(reason: ServiceLifecycleReason) {
+        guard !activePauseReasons.contains(reason) else { return }
+        let wasRunning = activePauseReasons.isEmpty
+        activePauseReasons.insert(reason)
+
+        guard wasRunning else { return }
+
+        ILOG("CloudKitDownloadQueue: Pausing (reason: \(reason.rawValue))")
+        progressTracker.pauseDownloads()
+    }
+
+    @MainActor
+    public func resume(reason: ServiceLifecycleReason) {
+        guard activePauseReasons.contains(reason) else { return }
+        activePauseReasons.remove(reason)
+
+        guard activePauseReasons.isEmpty else {
+            ILOG("CloudKitDownloadQueue: Cleared reason \(reason.rawValue) but still paused for: \(activePauseReasons.map(\.rawValue))")
+            return
+        }
+
+        ILOG("CloudKitDownloadQueue: Resuming (cleared: \(reason.rawValue))")
+        progressTracker.resumeDownloads()
+        Task {
+            if !progressTracker.queuedDownloads.isEmpty && !isProcessingQueue {
+                await startProcessingQueue()
+            }
+        }
     }
 }
 

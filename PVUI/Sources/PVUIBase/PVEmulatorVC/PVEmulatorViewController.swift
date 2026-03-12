@@ -445,8 +445,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Virtual keyboard / mouse cursor overlays are cleaned up in viewWillDisappear.
         // Associated objects are automatically released during dealloc.
 
-        // Resume GameImporter if view controller is deallocated (safety net)
-        GameImporter.shared.resume()
+        /// Safety net: resume all services if VC is torn down via an unexpected path
+        Task { @MainActor in
+            BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
+        }
     }
 
     private func initNotificationObservers() {
@@ -807,9 +809,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         try gameAudio.setupAudioGraph(for: core)
         try startAudio()
 
-        // Pause CloudKit and GameImporter when gameplay starts
-        CloudKitDownloadQueue.shared.pauseQueue()
-        GameImporter.shared.pause()
+        /// Pause all background services during gameplay via the central registry
+        BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
 
         core.startEmulation()
 
@@ -1395,11 +1396,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if audioInited {
             gameAudio.stopAudio()
         }
-        // Resume CloudKit and import/sync pipelines when gameplay stops
-        CloudKitDownloadQueue.shared.resumeQueue()
-        GameImporter.shared.resume()
-        CloudSyncManager.shared.resumeFromEmulation()
-        GameImporter.shared.resumeFromEmulation()
+        /// Resume all background services after gameplay via the central registry
+        BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
 
         // Remove KVO before stopping so the observer doesn't enqueue a redundant async updatePlayedDuration()
         removeRunningObserverIfNeeded()

@@ -208,6 +208,9 @@ public class AppState: ObservableObject {
 
         enforceTVMediaUIModeIfNeeded()
 
+        /// Touch DirectoryWatcherService so it self-registers with the service registry
+        _ = DirectoryWatcherService.shared
+
         // Set up import pause monitoring
         setupImportPauseMonitoring()
     }
@@ -232,26 +235,24 @@ public class AppState: ObservableObject {
     private func setupImportPauseMonitoring() {
         ILOG("AppState: Setting up import pause monitoring")
 
-        // Monitor emulation state - pause imports when emulation is active
+        /// Monitor emulation state and pause/resume all services via the central registry.
+        /// Individual callers (SceneCoordinator, EmulatorVC) may also call pauseAll/resumeAll;
+        /// reason-based tracking ensures only one actual pause/resume cycle occurs.
         $emulationUIState
             .map { $0.core?.isOn == true }
             .removeDuplicates()
             .sink { [weak self] isEmulationActive in
                 if isEmulationActive {
-                    ILOG("AppState: Pausing imports due to active emulation")
+                    ILOG("AppState: Pausing services due to active emulation")
                     self?.pauseImports(reason: "Emulation active")
-                    /// Pause CloudKit + importer pipelines while emulation is running.
-                    /// CloudKit syncers gate work off `CloudSyncManager.shared.isPausedForEmulation`.
                     Task { @MainActor in
-                        CloudSyncManager.shared.pauseForEmulation()
-                        self?.gameImporter?.pauseForEmulation()
+                        BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
                     }
                 } else {
-                    ILOG("AppState: Emulation inactive, can resume imports")
+                    ILOG("AppState: Emulation inactive, resuming services")
                     self?.resumeImportsIfNoOtherConditions(previousCondition: "Emulation")
                     Task { @MainActor in
-                        CloudSyncManager.shared.resumeFromEmulation()
-                        self?.gameImporter?.resumeFromEmulation()
+                        BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
                     }
                 }
             }

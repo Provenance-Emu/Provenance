@@ -111,8 +111,13 @@ public class CloudSyncManager {
     /// Current sync info - used to provide additional context about the current operation
     @Published public var currentSyncInfo: [String: Any]? = nil
 
-    /// Flag to indicate if sync operations should be paused (e.g., during emulation)
-    @Published public private(set) var isPausedForEmulation: Bool = false
+    /// Active reasons the service is paused (PausableService conformance)
+    @MainActor public private(set) var activePauseReasons = Set<ServiceLifecycleReason>()
+
+    /// Backward-compatible flag — `true` when paused for `.emulation`
+    @MainActor public var isPausedForEmulation: Bool {
+        activePauseReasons.contains(.emulation)
+    }
 
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
@@ -176,6 +181,7 @@ public class CloudSyncManager {
         registerForNotifications()
         Task.detached { @MainActor in
             self.setupObservers()
+            BackgroundServiceRegistry.shared.register(self)
         }
 
         // Initialize sync providers if iCloud sync is enabled
@@ -1190,6 +1196,12 @@ public class CloudSyncManager {
 
         guard Defaults[.iCloudSync] else { return }
 
+        // Do not run bootstrap while emulation is active; it will be re-triggered on emulationEnd
+        if isPausedForEmulation {
+            DLOG("[SYNC] Metadata bootstrap skipped (paused for emulation) — will retry on emulation end")
+            return
+        }
+
         // Capture current syncers
         let romSyncer = self.romsSyncer as? CloudKitRomsSyncer
         let saveStatesSyncer = self.saveStatesSyncer as? CloudKitSaveStatesSyncer
@@ -1501,6 +1513,12 @@ public class CloudSyncManager {
                 case .update(let collection, _, let insertions, _):
                     guard !insertions.isEmpty else { return }
 
+                    // Skip enqueueing uploads while emulation is active to avoid I/O during gameplay
+                    if self.isPausedForEmulation {
+                        DLOG("[SYNC] Skipping save-state upload enqueue (paused for emulation)")
+                        return
+                    }
+
                     let newSaveStates = insertions.compactMap { idx -> PVSaveState? in
                         guard idx < collection.count else { return nil }
                         let ss = collection[idx]
@@ -1646,6 +1664,12 @@ public class CloudSyncManager {
     @objc private func handleGameAdded(_ notification: Notification) {
         guard Defaults[.iCloudSync], let romsSyncer = romsSyncer else {
             DLOG("CloudKit sync disabled or ROM syncer not available. Skipping game upload.")
+            return
+        }
+
+        // Skip CloudKit upload while emulation is active
+        if isPausedForEmulation {
+            DLOG("[SYNC] Skipping game-added upload (paused for emulation)")
             return
         }
 
@@ -2021,18 +2045,37 @@ public class CloudSyncManager {
         }
     }
 
-    // MARK: - Emulation Pause/Resume
+    // MARK: - Emulation Pause/Resume (legacy wrappers)
 
-    /// Pauses sync operations during emulation for better performance
-    /// Called when emulation starts
+    /// Legacy convenience — delegates to `pause(reason: .emulation)`
     @MainActor
     public func pauseForEmulation() {
-        guard !isPausedForEmulation else { return }
+        pause(reason: .emulation)
+    }
 
-        ILOG("CloudSyncManager: Pausing sync operations for emulation")
-        isPausedForEmulation = true
+    /// Legacy convenience — delegates to `resume(reason: .emulation)`
+    @MainActor
+    public func resumeFromEmulation() {
+        resume(reason: .emulation)
+    }
+}
 
-        // Cancel any in-progress sync tasks
+// MARK: - PausableService
+
+extension CloudSyncManager: PausableService {
+
+    public var serviceName: String { "CloudSyncManager" }
+
+    @MainActor
+    public func pause(reason: ServiceLifecycleReason) {
+        guard !activePauseReasons.contains(reason) else { return }
+        let wasRunning = activePauseReasons.isEmpty
+        activePauseReasons.insert(reason)
+
+        guard wasRunning else { return }
+
+        ILOG("CloudSyncManager: Pausing sync operations (reason: \(reason.rawValue))")
+
         metadataBootstrapTask?.cancel()
         integrityAuditTask?.cancel()
         cancelAllActiveSyncTasks()
@@ -2048,16 +2091,23 @@ public class CloudSyncManager {
         saveStatesQueue.cancelAllOperations()
         biosQueue.cancelAllOperations()
         nonDbQueue.cancelAllOperations()
+
+        romsSyncer?.workQueue?.isSuspended = true
+        saveStatesSyncer?.workQueue?.isSuspended = true
+        biosSyncer?.workQueue?.isSuspended = true
     }
 
-    /// Resumes sync operations after emulation ends
-    /// Called when emulation stops and user returns to library
     @MainActor
-    public func resumeFromEmulation() {
-        guard isPausedForEmulation else { return }
+    public func resume(reason: ServiceLifecycleReason) {
+        guard activePauseReasons.contains(reason) else { return }
+        activePauseReasons.remove(reason)
 
-        ILOG("CloudSyncManager: Resuming sync operations after emulation")
-        isPausedForEmulation = false
+        guard activePauseReasons.isEmpty else {
+            ILOG("CloudSyncManager: Cleared reason \(reason.rawValue) but still paused for: \(activePauseReasons.map(\.rawValue))")
+            return
+        }
+
+        ILOG("CloudSyncManager: Resuming sync operations (cleared: \(reason.rawValue))")
 
         metadataQueue.isSuspended = false
         romsQueue.isSuspended = false
@@ -2065,10 +2115,12 @@ public class CloudSyncManager {
         biosQueue.isSuspended = false
         nonDbQueue.isSuspended = false
 
-        // Resume background sync tasks if enabled
+        romsSyncer?.workQueue?.isSuspended = false
+        saveStatesSyncer?.workQueue?.isSuspended = false
+        biosSyncer?.workQueue?.isSuspended = false
+
         if Defaults[.iCloudSync] {
-            // Restart metadata bootstrap to catch any changes that occurred during emulation
-            startMetadataBootstrap(reason: "emulationEnd")
+            startMetadataBootstrap(reason: "resume-\(reason.rawValue)")
         }
     }
 }
