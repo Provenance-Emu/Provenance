@@ -2425,13 +2425,6 @@
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.rileytestut.delta.skin</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>deltaskin</string>
-				</array>
-			</dict>
 		</dict>
 		<dict>
 			<key>UTTypeConformsTo</key>
