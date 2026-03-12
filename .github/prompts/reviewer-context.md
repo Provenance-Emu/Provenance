@@ -145,6 +145,10 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Content views (HomeView, RetroGameLibraryView) call `consumeSearch { ... }` which clears the action.
 - Deep links: `provenance://screen/search?q=<query>` → `AppRoute.search(query:)` →
   `LibraryRouteProvider` → `LibraryNavigator.dispatch(.search(query:))`.
+  `LibraryNavigator.routeProvider` is a static instance auto-registered with
+  `NavigationRouter.shared` in `LibraryNavigator.init()`, and `NavigationRouter.shared.handle(url:)`
+  is invoked in `ProvenanceApp.handle(appURL:)` for `provenance://screen/` URLs. No per-view
+  registration is required.
 - Future library actions: add a case to `LibraryAction`, a URL path to `AppRoute`, and a response in
   any interested view — no changes to `LibraryNavigator` core needed.
 

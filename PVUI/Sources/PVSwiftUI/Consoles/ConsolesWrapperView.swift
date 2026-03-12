@@ -204,6 +204,9 @@ struct ConsolesWrapperView: SwiftUI.View {
 
             // Navigate to the home tab on appearance if a search action is pending
             // (covers cold-launch: LibraryNavigator already has the action queued).
+            // Note: setTab persists the new tab to UserDefaults — this is intentional,
+            // since a Siri search leaves the user on the Home tab and that should be
+            // their restored tab on next launch.
             if case .search = LibraryNavigator.shared.pendingAction,
                delegate.selectedTab != "home" {
                 delegate.setTab("home")

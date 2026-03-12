@@ -18,7 +18,8 @@
 //  - It bridges `AppState.pendingSearchQuery` → `LibraryAction.search(query:)`.
 //  - It accepts programmatic dispatches for any `LibraryAction`.
 //  - It can be driven by `provenance://screen/search?q=<query>` deep links via
-//    the `AppRouteProvider` / `NavigationRouter` pipeline.
+//    `AppRoute.search` and a `LibraryRouteProvider` that is automatically registered
+//    with `NavigationRouter.shared` when this navigator is first accessed.
 //  - Each UI variant registers one `onReceive(LibraryNavigator.shared.$pendingAction)`
 //    to perform its own response (tab-switch or search-text population).
 //
@@ -105,9 +106,18 @@ public final class LibraryNavigator: ObservableObject {
     ///   (the view that populates the search field or shows game detail) should.
     @Published public private(set) var pendingAction: LibraryAction?
 
+    /// A long-lived `LibraryRouteProvider` registered with `NavigationRouter.shared` once at
+    /// initialization time. This enables `provenance://screen/search?q=…` deep links to be
+    /// forwarded to this navigator without requiring per-view registration.
+    public static let routeProvider = LibraryRouteProvider(name: "LibraryNavigator.routeProvider")
+
     private var cancellables = Set<AnyCancellable>()
 
     private init() {
+        // Register with NavigationRouter so provenance://screen/search?q=... deep links
+        // are forwarded to this navigator even before library views appear on screen.
+        NavigationRouter.shared.register(Self.routeProvider)
+
         // Bridge the legacy AppState.pendingSearchQuery → .search(query:) action.
         //
         // @Published uses CurrentValueSubject semantics, so the subscriber fires
