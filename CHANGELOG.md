@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **GameMoreInfoView Glass Borders** — Suppressed unwanted liquid glass borders on the DONE, Play, and web-reference toolbar buttons in `GameMoreInfoView` on iOS/tvOS 26+. Custom stroke borders and glow shadows are now conditionally skipped via `legacyStrokeBorder`/`legacyGlowShadow` helpers so the system provides its own glass treatment without visual doubling (#3017)
 - **DOS-style FPS Touch Controls** — Doom, Wolf3D, Quake, and Quake II now reuse the DOS controller overlay path so their UIKit touch controls honor run/strafe/weapon mappings, and Quake-family default layouts now expose shoulder + Run buttons like Doom (#3001)
 - **Import Queue Glass Borders** — Removed unwanted iOS/tvOS 26 liquid glass interference on custom-themed import queue rows and buttons. The gradient `strokeBorder` is now drawn as a top-level `.overlay()` rather than nested inside a `.background()`, ensuring retro borders remain visible above any system glass material. The "Select System" button uses a solid tinted background to prevent double-border artifacts (#2981)
 - **PVGME Boot Crash** — Removed erroneously copy-pasted `PVDOSSystemResponderClient` conformance from `PVGMECore`; force-casting the bridge to a DOS responder it doesn't implement caused an immediate crash on boot (#2977)

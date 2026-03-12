@@ -1254,11 +1254,8 @@ public struct PagedGameMoreInfoView: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(accentColor)
                     .padding(8)
-                    .background(
-                        Circle()
-                            .stroke(accentGradient(), lineWidth: 1.5)
-                    )
-                    .shadow(color: accentColor.opacity(0.7), radius: 3, x: 0, y: 0)
+                    .legacyStrokeBorder(Circle(), gradient: accentGradient())
+                    .legacyGlowShadow(accentColor.opacity(0.7))
             }
             .sheet(isPresented: $viewModel.showingWebView) {
                 GameReferenceWebView(url: url)
@@ -1287,11 +1284,8 @@ public struct PagedGameMoreInfoView: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(accentColor)
                     .padding(8)
-                    .background(
-                        Circle()
-                            .stroke(accentGradient(), lineWidth: 1.5)
-                    )
-                    .shadow(color: accentColor.opacity(0.7), radius: 3, x: 0, y: 0)
+                    .legacyStrokeBorder(Circle(), gradient: accentGradient())
+                    .legacyGlowShadow(accentColor.opacity(0.7))
             }
         } else {
             EmptyView()
@@ -1380,11 +1374,8 @@ public struct PagedGameMoreInfoView: View {
                         .foregroundColor(accentColor)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(accentGradient(), lineWidth: 1.5)
-                        )
-                        .shadow(color: accentColor.opacity(0.7), radius: 3, x: 0, y: 0)
+                        .legacyStrokeBorder(RoundedRectangle(cornerRadius: 8), gradient: accentGradient())
+                        .legacyGlowShadow(accentColor.opacity(0.7))
                 }
             }
 
@@ -1405,6 +1396,32 @@ public struct PagedGameMoreInfoView: View {
             gameToUpdateCover = nil
         }) {
             artworkSearchSheet()
+        }
+    }
+}
+
+// MARK: - Liquid-Glass-Aware Button Styling Helpers
+/// On iOS/tvOS 26+, the system provides liquid glass styling for toolbar buttons.
+/// These helpers conditionally suppress legacy custom borders and glow shadows
+/// to avoid doubled/conflicting visual treatments on those OS versions.
+private extension View {
+    /// Applies a stroke border background only on OS versions prior to iOS/tvOS 26.
+    @ViewBuilder
+    func legacyStrokeBorder<S: Shape>(_ shape: S, gradient: LinearGradient, lineWidth: CGFloat = 1.5) -> some View {
+        if #available(iOS 26, tvOS 26, *) {
+            self
+        } else {
+            self.background(shape.stroke(gradient, lineWidth: lineWidth))
+        }
+    }
+
+    /// Applies a glow shadow only on OS versions prior to iOS/tvOS 26.
+    @ViewBuilder
+    func legacyGlowShadow(_ color: Color, radius: CGFloat = 3) -> some View {
+        if #available(iOS 26, tvOS 26, *) {
+            self
+        } else {
+            self.shadow(color: color, radius: radius, x: 0, y: 0)
         }
     }
 }
