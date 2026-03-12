@@ -140,9 +140,11 @@ extension PVEmulatorViewController {
         if let targetFrame = currentTargetFrame, !targetFrame.isEmpty {
             // Skin system has determined the authoritative game rect — use it.
             trackpad.explicitGameViewRect = targetFrame
+        } else {
+            // No target frame is known — clear any stale explicit rect so hitTest
+            // falls back to the live gameViewRef frame derivation.
+            trackpad.explicitGameViewRect = nil
         }
-        // If no target frame is known yet, leave explicitGameViewRect unchanged
-        // so hitTest falls back to the live gameViewRef frame derivation.
     }
 }
 
