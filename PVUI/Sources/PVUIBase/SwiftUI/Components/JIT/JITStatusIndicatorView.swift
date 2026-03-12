@@ -116,6 +116,32 @@ public final class JITStatusViewModel: ObservableObject {
     }
 }
 
+// MARK: - JIT Explanation Popover
+
+/// Compact popover content showing the JIT status explanation
+private struct JITExplanationPopoverView: View {
+    let status: JITStatus
+    let explanation: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(status.iconColor)
+                    .frame(width: 10, height: 10)
+                Text(status.label)
+                    .font(.headline)
+            }
+            Text(explanation)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding()
+        .frame(maxWidth: 280)
+    }
+}
+
 // MARK: - JIT Status Indicator View
 
 /// A small, unobtrusive JIT status indicator for the emulator HUD
@@ -130,61 +156,40 @@ public struct JITStatusIndicatorView: View {
     public var body: some View {
         ZStack {
             if viewModel.status.isVisible {
-                VStack(spacing: 8) {
-                    // Main indicator button
-                    Button(action: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showExplanation.toggle()
-                        }
-                    }) {
-                        HStack(spacing: 8) {
-                            // Status dot
-                            Circle()
-                                .fill(viewModel.status.iconColor)
-                                .frame(width: 10, height: 10)
-                                .shadow(color: viewModel.status.iconColor.opacity(0.6), radius: 4, x: 0, y: 0)
+                // Main indicator button — tap shows a compact popover, not a cover sheet
+                Button(action: {
+                    showExplanation.toggle()
+                }) {
+                    HStack(spacing: 8) {
+                        // Status dot
+                        Circle()
+                            .fill(viewModel.status.iconColor)
+                            .frame(width: 10, height: 10)
+                            .shadow(color: viewModel.status.iconColor.opacity(0.6), radius: 4, x: 0, y: 0)
 
-                            // Label
-                            Text(viewModel.status.label)
-                                .font(.system(size: 12, weight: .semibold, design: .rounded))
-                                .foregroundColor(.white)
-
-                            // Expand/collapse indicator
-                            Image(systemName: showExplanation ? "chevron.up" : "chevron.down")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundColor(.white.opacity(0.7))
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.black.opacity(0.75))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .strokeBorder(viewModel.status.iconColor.opacity(0.5), lineWidth: 1)
-                                )
-                        )
+                        // Label
+                        Text(viewModel.status.label)
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
                     }
-                    .buttonStyle(PlainButtonStyle())
-
-                    // Expanded explanation
-                    if showExplanation {
-                        Text(viewModel.explanation)
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.9))
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.black.opacity(0.8))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.black.opacity(0.75))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .strokeBorder(viewModel.status.iconColor.opacity(0.5), lineWidth: 1)
                             )
-                            .frame(maxWidth: 280)
-                            .transition(.asymmetric(
-                                insertion: .scale.combined(with: .opacity),
-                                removal: .scale.combined(with: .opacity)
-                            ))
-                    }
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .popover(isPresented: $showExplanation, arrowEdge: .top) {
+                    JITExplanationPopoverView(
+                        status: viewModel.status,
+                        explanation: viewModel.explanation
+                    )
+                    .presentationCompactAdaptation(.popover)
                 }
             }
         }
@@ -212,11 +217,9 @@ struct JITStatusIndicatorView_Previews: PreviewProvider {
                     }
 
                 // Individual state previews
-                JITStatusIndicatorPreview(status: .active, isExpanded: false)
-                JITStatusIndicatorPreview(status: .active, isExpanded: true)
-                JITStatusIndicatorPreview(status: .interpreterFallback, isExpanded: false)
-                JITStatusIndicatorPreview(status: .interpreterFallback, isExpanded: true)
-                JITStatusIndicatorPreview(status: .unavailable, isExpanded: false)
+                JITStatusIndicatorPreview(status: .active)
+                JITStatusIndicatorPreview(status: .interpreterFallback)
+                JITStatusIndicatorPreview(status: .unavailable)
             }
         }
     }
@@ -224,13 +227,6 @@ struct JITStatusIndicatorView_Previews: PreviewProvider {
 
 struct JITStatusIndicatorPreview: View {
     let status: JITStatus
-    let isExpanded: Bool
-    @State private var localExpanded: Bool = false
-
-    init(status: JITStatus, isExpanded: Bool) {
-        self.status = status
-        self.isExpanded = isExpanded
-    }
 
     var body: some View {
         HStack(spacing: 8) {
