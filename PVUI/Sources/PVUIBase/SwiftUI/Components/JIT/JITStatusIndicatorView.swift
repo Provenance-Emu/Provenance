@@ -73,6 +73,11 @@ public final class JITStatusViewModel: ObservableObject {
         updateStatus()
     }
 
+    /// Creates a view model with a fixed status, useful for previews and testing
+    public init(fixedStatus: JITStatus) {
+        status = fixedStatus
+    }
+
     /// Updates the JIT status based on the current JIT manager state
     public func updateStatus() {
         #if canImport(JITManager)
@@ -184,6 +189,8 @@ public struct JITStatusIndicatorView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+                .accessibilityLabel("JIT Status: \(viewModel.status.label)")
+                .accessibilityHint("Tap to show details about the current emulation mode")
                 .popover(isPresented: $showExplanation, arrowEdge: .top) {
                     JITExplanationPopoverView(
                         status: viewModel.status,
@@ -210,11 +217,8 @@ struct JITStatusIndicatorView_Previews: PreviewProvider {
             Color.gray.edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 20) {
-                // Active state preview
-                JITStatusIndicatorView()
-                    .onAppear {
-                        // Simulate active state
-                    }
+                // Active state preview with injected view model
+                JITStatusIndicatorView(viewModel: JITStatusViewModel(fixedStatus: .active))
 
                 // Individual state previews
                 JITStatusIndicatorPreview(status: .active)
