@@ -238,6 +238,7 @@ extension PVEmulatorViewController {
         virtualKeyboardHostingVC = hostingVC
         keyboardHiddenByHardware = false
         ILOG("[VirtualKeyboard] Keyboard overlay shown (layout: \(layout), opacity: \(opacity), animated: \(animated))")
+        NotificationCenter.default.post(name: .pvShowVirtualKeyboard, object: nil)
     }
 
     /// Hide the virtual keyboard overlay, releasing all held keys first.
@@ -264,6 +265,7 @@ extension PVEmulatorViewController {
         virtualKeyboardHostingVC = nil
         virtualKeyboardViewModel = nil
         ILOG("[VirtualKeyboard] Keyboard overlay hidden (animated: \(animated))")
+        NotificationCenter.default.post(name: .pvHideVirtualKeyboard, object: nil)
     }
 
     /// Toggle keyboard visibility.
@@ -394,17 +396,13 @@ extension PVEmulatorViewController {
     }
 
     @objc private func handleToggleKeyboardNotification() {
+        // show/hideVirtualKeyboard post pvShow/HideVirtualKeyboard notifications directly
         toggleVirtualKeyboard()
-        // Broadcast visibility change so SwiftUI toggle buttons can sync their state
-        let name: Notification.Name = isVirtualKeyboardVisible ? .pvShowVirtualKeyboard : .pvHideVirtualKeyboard
-        NotificationCenter.default.post(name: name, object: nil)
     }
 
     @objc private func handleToggleMouseNotification() {
+        // show/hideVirtualMouse post pvShow/HideVirtualMouse notifications directly
         toggleVirtualMouse()
-        // Broadcast visibility change so SwiftUI toggle buttons can sync their state
-        let name: Notification.Name = isVirtualMouseVisible ? .pvShowVirtualMouse : .pvHideVirtualMouse
-        NotificationCenter.default.post(name: name, object: nil)
     }
 }
 

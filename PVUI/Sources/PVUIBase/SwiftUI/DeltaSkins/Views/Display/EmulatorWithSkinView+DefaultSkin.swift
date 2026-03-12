@@ -265,6 +265,8 @@ struct DefaultControllerSkinView: View {
 
                 // Virtual input quick-toggle buttons (keyboard / mouse) — top-leading corner.
                 // Only visible when the active core supports keyboard or mouse input.
+                // Not available on tvOS (virtual keyboard/mouse overlays are iOS-only).
+                #if !os(tvOS)
                 if validSize {
                     VStack {
                         HStack {
@@ -277,6 +279,7 @@ struct DefaultControllerSkinView: View {
                     }
                     .allowsHitTesting(true)
                 }
+                #endif
             }
             .id("DefaultControllerSkinView-\(validSize ? "valid" : "invalid")") // Stable ID to prevent unnecessary recreation
             .onAppear {

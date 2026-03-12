@@ -29,13 +29,6 @@ import SwiftUI
 import PVEmulatorCore
 import PVCoreBridge
 
-// MARK: - Notification names
-
-public extension Notification.Name {
-    /// Posted when the virtual mouse overlay should be toggled.
-    static let pvToggleVirtualMouse = Notification.Name("com.provenance.virtualMouse.toggle")
-}
-
 // MARK: - View Model
 
 /// Observable state that drives the keyboard/mouse toggle button appearance.

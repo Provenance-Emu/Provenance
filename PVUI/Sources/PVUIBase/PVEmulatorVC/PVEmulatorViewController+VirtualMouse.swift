@@ -98,11 +98,14 @@ extension PVEmulatorViewController {
     public func showVirtualMouse() {
         guard coreSupportsVirtualMouse, !isVirtualMouseVisible else { return }
         setupVirtualMouseIfNeeded()
+        NotificationCenter.default.post(name: .pvShowVirtualMouse, object: nil)
     }
 
     /// Hide the virtual mouse cursor and trackpad.
     public func hideVirtualMouse() {
+        guard isVirtualMouseVisible else { return }
         teardownVirtualMouse()
+        NotificationCenter.default.post(name: .pvHideVirtualMouse, object: nil)
     }
 
     /// Toggle virtual mouse visibility.
@@ -133,6 +136,10 @@ public extension Notification.Name {
 
     /// Posted when the virtual mouse overlay should be hidden.
     static let pvHideVirtualMouse = Notification.Name("com.provenance.virtualMouse.hide")
+
+    /// Posted when the virtual mouse overlay should be toggled.
+    /// Consumed by `PVEmulatorViewController` to toggle the mouse overlay without a direct reference.
+    static let pvToggleVirtualMouse = Notification.Name("com.provenance.virtualMouse.toggle")
 }
 
 extension PVEmulatorViewController {

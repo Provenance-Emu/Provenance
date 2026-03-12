@@ -187,8 +187,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     private var quickLoadButton: UIButton?
     private var fastForwardButton: UIButton?
     private var isFastForwardActive: Bool = false
+    #if !os(tvOS)
     private var keyboardToggleButton: UIButton?
     private var mouseToggleButton: UIButton?
+    #endif
     /// Transparent container for HUD quick-action buttons.
     /// Uses a custom hitTest so only direct button taps are intercepted;
     /// touches in the surrounding dead-zone pass through to the game view.
@@ -1610,6 +1612,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             self.quickSaveButton = qsButton
         }
 
+        // Virtual Keyboard/Mouse toggles — iOS only (virtual overlays not supported on tvOS)
+        #if !os(tvOS)
         // Virtual Keyboard toggle — only for cores that support keyboard input
         if coreSupportsVirtualKeyboard {
             let kbButton = makeQuickActionButton(
@@ -1649,16 +1653,18 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             ])
             self.mouseToggleButton = mouseButton
         }
+        #endif // !os(tvOS)
     }
 
     /// Resets the alpha of quick-action buttons to 1.0 after controller opacity has been
     /// applied globally.  Game-controller buttons dim with `controllerOpacity`, but the
     /// quick-action strip should remain fully opaque at all times.
     private func restoreQuickActionButtonAlpha() {
-        [fastForwardButton, quickSaveButton, quickLoadButton,
-         keyboardToggleButton, mouseToggleButton].compactMap { $0 }.forEach {
-            $0.alpha = 1.0
-        }
+        var buttons: [UIButton?] = [fastForwardButton, quickSaveButton, quickLoadButton]
+        #if !os(tvOS)
+        buttons += [keyboardToggleButton, mouseToggleButton]
+        #endif
+        buttons.compactMap { $0 }.forEach { $0.alpha = 1.0 }
     }
 
     private func makeQuickActionButton(systemImage: String, accessibilityLabel: String) -> UIButton {
@@ -1720,6 +1726,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             : UIColor.black.withAlphaComponent(0.4)
     }
 
+    #if !os(tvOS)
     @objc private func keyboardToggleTapped() {
         vibrate()
         guard let emulatorVC = parent as? PVEmulatorViewController else { return }
@@ -1749,6 +1756,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             ? UIColor.systemBlue.withAlphaComponent(0.6)
             : UIColor.black.withAlphaComponent(0.4)
     }
+    #endif // !os(tvOS)
 }
 
 // MARK: - QuickActionsContainerView
