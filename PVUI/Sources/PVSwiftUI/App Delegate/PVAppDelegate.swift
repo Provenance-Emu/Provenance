@@ -375,6 +375,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
         #endif
 
+        // Register MetricKit subscriber to capture hang / crash diagnostics passively
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            registerMetricKitSubscriber()
+        }
+
         Task { @MainActor in
             await initializeAppComponents()
         }
@@ -635,6 +640,9 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     // TODO: Move to ProvenanceApp
     public func applicationWillTerminate(_ application: UIApplication) {
         stopCore()
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            unregisterMetricKitSubscriber()
+        }
     }
 
     @MainActor

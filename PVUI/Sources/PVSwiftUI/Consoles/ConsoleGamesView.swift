@@ -63,44 +63,20 @@ struct ConsoleGamesView: SwiftUI.View {
 
     let gamesForSystemPredicate: NSPredicate
 
-    @ObservedResults(
-        PVGame.self,
-        filter: NSPredicate(value: true),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true)
-    ) var games
-
+    /// Observed only for the recent-save-states badge check in `continueSection()`.
+    /// All game/recent/favorites data is served by `gamesViewModel` (background-queue observer)
+    /// to avoid hammering the main thread on every CloudKit write.
     @ObservedResults(
         PVSaveState.self,
         filter: NSPredicate(value: true),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) var recentSaveStates
 
-    @ObservedResults(
-        PVRecentGame.self,
-        filter: NSPredicate(value: true),
-        sortDescriptor: SortDescriptor(keyPath: "lastPlayedDate", ascending: false)
-    ) var recentlyPlayedGames
-
-    @ObservedResults(
-        PVGame.self,
-        filter: NSPredicate(value: true)
-    ) var favorites
-
-    @ObservedResults(
-        PVGame.self,
-        filter: NSPredicate(value: true),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
-    ) var mostPlayed
-
     weak var rootDelegate: PVRootDelegate?
     var showGameInfo: (String) -> Void
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
-    @State private var gamesSnapshot: [PVGame] = []
-    @State private var favoritesSnapshot: [PVGame] = []
-    @State private var recentSnapshot: [PVRecentGame] = []
-
     init(
         console: PVSystem,
         viewModel: PVRootViewModel,
@@ -114,48 +90,16 @@ struct ConsoleGamesView: SwiftUI.View {
         self.rootDelegate = rootDelegate
         self.showGameInfo = showGameInfo
 
-        _games = ObservedResults(
-            PVGame.self,
-            filter: NSPredicate(format: "systemIdentifier == %@", console.identifier),
-            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)
-        )
+        // Only observe save-states for the recent-saves badge; everything else is
+        // served by ConsoleGamesViewModel which uses a background-queue Realm observer.
         _recentSaveStates = ObservedResults(
             PVSaveState.self,
             filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier),
-            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: viewModel.sortGamesAscending)
-        )
-        _recentlyPlayedGames = ObservedResults(
-            PVRecentGame.self,
-            filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier),
-            sortDescriptor: SortDescriptor(keyPath: "lastPlayedDate", ascending: false)
-        )
-        _favorites = ObservedResults(
-            PVGame.self,
-            filter: NSPredicate(format: "isFavorite == true AND systemIdentifier == %@", console.identifier)
-        )
-        _mostPlayed = ObservedResults(
-            PVGame.self,
-            filter: NSPredicate(format: "systemIdentifier == %@ AND playCount > 0", console.identifier),
-            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: viewModel.sortGamesAscending)
+            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
         )
     }
 
     @State private var shouldShowImportProgress = false
-
-    /// Models used for rendering. These update when relevant game metadata changes.
-    private var safeGames: [PVGame] {
-        gamesSnapshot.filter { !$0.isInvalidated }
-    }
-
-    private var sortedGames: [PVGame] {
-        safeGames.sorted {
-            if viewModel.sortGamesAscending {
-                return $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
-            } else {
-                return $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedDescending
-            }
-        }
-    }
 
     var allGamesModels: [GameCellModel] {
         gamesViewModel.allGamesModels
@@ -171,16 +115,6 @@ struct ConsoleGamesView: SwiftUI.View {
 
     private var hasRecentSaveStates: Bool {
         !recentSaveStates.isEmpty
-    }
-
-    private func sortModels(_ models: [GameCellModel]) -> [GameCellModel] {
-        models.sorted { lhs, rhs in
-            if viewModel.sortGamesAscending {
-                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
-            } else {
-                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedDescending
-            }
-        }
     }
 
     /// Resolve a live `PVGame` for actions / menus (on-demand).
@@ -804,12 +738,6 @@ struct ConsoleGamesView: SwiftUI.View {
                     await MainActor.run {
                         gamesViewModel.sortAscending = viewModel.sortGamesAscending
                     }
-                    // Prime snapshots once on appear to avoid per-render conversions.
-                    await MainActor.run {
-                        gamesSnapshot = games.toArray()
-                        favoritesSnapshot = favorites.toArray()
-                        recentSnapshot = recentlyPlayedGames.toArray()
-                    }
                 }
                 .task(priority: .utility) {
                     // Defer ImportProgressView initialization to avoid blocking initial render
@@ -822,17 +750,6 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
                 .onChange(of: viewModel.sortGamesAscending) { newValue in
                     gamesViewModel.sortAscending = newValue
-                    gamesSnapshot = games.toArray()
-                    favoritesSnapshot = favorites.toArray()
-                }
-                .onChange(of: games) { newValue in
-                    gamesSnapshot = newValue.toArray()
-                }
-                .onChange(of: favorites) { newValue in
-                    favoritesSnapshot = newValue.toArray()
-                }
-                .onChange(of: recentlyPlayedGames) { newValue in
-                    recentSnapshot = newValue.toArray()
                 }
             }
             .modifier(ConditionalSearchModifier(
@@ -1524,7 +1441,9 @@ extension ConsoleGamesView {
 
             Spacer()
 
-            Text("\(console.games.count)")
+            // Use the already-computed snapshot count to avoid a live Realm
+            // relationship traversal on every body evaluation.
+            Text("\(allGamesModels.count)")
                 .font(.caption)
                 .fontWeight(.medium)
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
