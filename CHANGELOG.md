@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **JIT Status Indicator Popover** — Tapping the JIT status indicator in the emulator HUD now shows a compact `.popover` instead of an inline expanding banner that overlapped game content (#3020)
 - **GameMoreInfoView Glass Borders** — Suppressed unwanted liquid glass borders on the DONE, Play, and web-reference toolbar buttons in `GameMoreInfoView` on iOS/tvOS 26+. Custom stroke borders and glow shadows are now conditionally skipped via `legacyStrokeBorder`/`legacyGlowShadow` helpers so the system provides its own glass treatment without visual doubling (#3017)
 - **Wiki Viewer — GitBook tag and HTML rendering** — GitBook liquid tab tags (`{% tabs %}`, `{% tab title="..." %}`, `{% endtab %}`, `{% endtabs %}`) now render as Markdown section headers and separators instead of raw strings. HTML `<table>`, `<strong>`, `<em>`, `<details>/<summary>`, and `<br>` blocks are converted to their Markdown equivalents before rendering. External links in wiki content open in an in-app Safari sheet; internal `.md` links navigate to the corresponding local wiki page (#3013)
 - **Springboard Quick Actions** — Long-pressing the Provenance app icon now correctly shows recently-played games and favorites again; fixed by ensuring `UIApplication.shared.shortcutItems` is always updated on the main thread via `MainScheduler.instance` (#3026)
