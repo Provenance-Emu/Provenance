@@ -60,6 +60,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **JIT Status Indicator Popover** — Tapping the JIT status indicator in the emulator HUD now shows a compact `.popover` instead of an inline expanding banner that overlapped game content (#3020)
+- **Springboard Quick Actions** — Long-pressing the Provenance app icon now correctly shows recently-played games and favorites again; fixed by ensuring `UIApplication.shared.shortcutItems` is always updated on the main thread via `MainScheduler.instance` (#3026)
+- **Browse Skins Done Button** — Moved the "Done" dismiss button in the Browse Skins sheet from the trailing (right) toolbar position to the leading (left) position (#3011)
+- **Settings Help Button Opens Internal Wiki** — The always-visible HELP button in the Settings header now opens the in-app `WikiHelpView` sheet instead of launching an external URL in Safari (#3028)
+- **Skin Catalog Selection Update** — Downloading and selecting a skin from the catalog now reactively updates the active skin shown in the pause menu Skins tab (#3012)
 - **Siri/Spotlight Save State Thumbnails** — Save states launched from Siri or Spotlight now display their screenshot thumbnail (falling back to game artwork) instead of appearing without artwork in search results (#3023)
 - **Skin Catalog System Pre-filter** — Opening the skin downloader from the pause menu now pre-selects the active game's system so only relevant skins are shown; the filter bar is revealed automatically (#3010)
 - **DOS-style FPS Touch Controls** — Doom, Wolf3D, Quake, and Quake II now reuse the DOS controller overlay path so their UIKit touch controls honor run/strafe/weapon mappings, and Quake-family default layouts now expose shoulder + Run buttons like Doom (#3001)
