@@ -555,8 +555,14 @@ struct HomeView: SwiftUI.View {
                 }
             }
         )
-        .onReceive(AppState.shared.$pendingSearchQuery) { _ in
-            consumePendingSearchQuery()
+        .onReceive(AppState.shared.$pendingSearchQuery) { newQuery in
+            // Use the emitted value directly — `@Published` fires in willSet so
+            // reading AppState.shared.pendingSearchQuery here may still return
+            // the old value if delivery is synchronous.
+            guard let query = newQuery, !query.isEmpty else { return }
+            searchText = query
+            isSearchBarVisible = true
+            AppState.shared.pendingSearchQuery = nil
         }
     }
 

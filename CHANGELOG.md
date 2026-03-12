@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **MetricKit Hang Reporting** — Passive `MXMetricManagerSubscriber` added to `PVAppDelegate`; hang, crash, and CPU-exception diagnostic call stacks are now logged via PVLogging on the next app launch after an event, enabling real-world hang analysis without user action (#3046)
 
 ### Fixed
+- **Siri "Search in App" now populates search field** — `handleSiriSearchActivity` sets `pendingSearchQuery` correctly; `HomeView.onReceive` now uses the emitted publisher value (avoiding a `willSet` race), and `ConsolesWrapperView` navigates to the Home tab on both cold- and hot-launch so the search results are immediately visible (#3056)
 - **Library View Main-Thread Blocking** — Removed 4 redundant `@ObservedResults` observers (`games`, `favorites`, `mostPlayed`, `recentlyPlayedGames`) from `ConsoleGamesView` that each fired a main-thread callback on every CloudKit write; `ConsoleGamesViewModel` already serves the same data via a background-queue observer. Also replaced a live Realm `console.games.count` relationship traversal in `titleBar()` with the cached `allGamesModels.count` value (#3046)
 
 - **Controller Skin Browser & Documentation in Settings** — Settings → Controller tab now includes a "Skin Browser" row (opens the community skin catalog) and a "Skin Documentation" row (opens the built-in wiki page for skins) (#2975)

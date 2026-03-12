@@ -202,6 +202,12 @@ struct ConsolesWrapperView: SwiftUI.View {
         .onAppear {
             isVisible = true
 
+            // Navigate to the home tab on appearance if a Siri search query is pending
+            // (covers cold-launch: the query is already stored before the view is rendered).
+            if let query = AppState.shared.pendingSearchQuery, !query.isEmpty {
+                delegate.setTab("home")
+            }
+
             // Defer non-critical operations to background
             Task.detached(priority: .utility) {
                 // Initialize cached sorted consoles off main thread
@@ -219,6 +225,14 @@ struct ConsolesWrapperView: SwiftUI.View {
 
                 // Load tab icons asynchronously off main thread
                 await self.loadTabIconsAsync()
+            }
+        }
+        .onReceive(AppState.shared.$pendingSearchQuery) { newQuery in
+            // Navigate to the home tab when a Siri "Search in App" query arrives
+            // while the app is already running (hot-launch / foreground).
+            guard newQuery?.isEmpty == false else { return }
+            if delegate.selectedTab != "home" {
+                delegate.setTab("home")
             }
         }
         .onChange(of: viewModel.sortConsolesAscending) { _ in
