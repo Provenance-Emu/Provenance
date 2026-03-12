@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Siri/Spotlight Save State Thumbnails** — Save states launched from Siri or Spotlight now display their screenshot thumbnail (falling back to game artwork) instead of appearing without artwork in search results (#3023)
+- **Skin Catalog System Pre-filter** — Opening the skin downloader from the pause menu now pre-selects the active game's system so only relevant skins are shown; the filter bar is revealed automatically (#3010)
 - **DOS-style FPS Touch Controls** — Doom, Wolf3D, Quake, and Quake II now reuse the DOS controller overlay path so their UIKit touch controls honor run/strafe/weapon mappings, and Quake-family default layouts now expose shoulder + Run buttons like Doom (#3001)
 - **Import Queue Glass Borders** — Removed unwanted iOS/tvOS 26 liquid glass interference on custom-themed import queue rows and buttons. The gradient `strokeBorder` is now drawn as a top-level `.overlay()` rather than nested inside a `.background()`, ensuring retro borders remain visible above any system glass material. The "Select System" button uses a solid tinted background to prevent double-border artifacts (#2981)
 - **PVGME Boot Crash** — Removed erroneously copy-pasted `PVDOSSystemResponderClient` conformance from `PVGMECore`; force-casting the bridge to a DOS responder it doesn't implement caused an immediate crash on boot (#2977)
