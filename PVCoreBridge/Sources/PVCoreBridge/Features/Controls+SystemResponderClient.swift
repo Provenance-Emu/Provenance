@@ -152,7 +152,7 @@ public extension SystemIdentifier {
         case .TIC80:
             return PVRetroArchCoreResponderClient.self
         case .Wolf3D:
-            return PVDOSSystemResponderClient.self
+            return PVWolf3DSystemResponderClient.self
         case .ZXSpectrum:
             return PVEP128SystemResponderClient.self
         case .Unknown:

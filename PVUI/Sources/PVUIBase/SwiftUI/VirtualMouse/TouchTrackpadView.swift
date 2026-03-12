@@ -62,6 +62,17 @@ public final class TouchTrackpadView: UIView {
     /// the virtual keyboard panel — pass straight through to the views beneath.
     public weak var gameViewRef: UIView?
 
+    /// Explicit game-screen rect in the trackpad's own coordinate space.
+    ///
+    /// When set (non-nil, non-empty), `hitTest` uses this rect directly instead of
+    /// deriving one from `gameViewRef` at call time.  The hosting view controller
+    /// should set this whenever the authoritative game-display rect is known —
+    /// e.g. after `applyFrameToGPUView` positions the GPU view — so that the
+    /// trackpad always uses the correct viewport even before the first layout pass.
+    ///
+    /// Clear to `nil` to fall back to the live `gameViewRef` frame derivation.
+    public var explicitGameViewRect: CGRect?
+
     // MARK: Private state
 
     /// Accumulated normalised cursor position (0–1 in each axis).
@@ -106,32 +117,39 @@ public final class TouchTrackpadView: UIView {
 
     // MARK: - Hit-testing: only capture inside the game viewport
 
-    /// Returns `self` only when the touch falls within `gameViewRef`'s on-screen
-    /// bounds (i.e. the actual game display area).  Touches outside that region —
-    /// on controller-skin buttons, the virtual keyboard, or the menu bar — are
-    /// returned as `nil` so UIKit continues searching downward in the view hierarchy.
+    /// Returns `self` only when the touch falls within the game display area.
+    /// Touches outside that region — on controller-skin buttons, the virtual
+    /// keyboard, or the menu bar — pass straight through to the views beneath.
     ///
-    /// This replaces an earlier sibling-iteration approach that was unreliable
-    /// because transparent container views (skinContainerView, etc.) respond to
-    /// hitTest even for empty/transparent pixels, causing the trackpad to
-    /// incorrectly pass through *all* touches including game-viewport ones.
+    /// The authoritative game rect is resolved in priority order:
+    /// 1. `explicitGameViewRect` — set by the VC after `applyFrameToGPUView`.
+    /// 2. `gameViewRef` — derived at call time via a full-hierarchy conversion.
+    /// 3. If neither is available or the resolved rect is empty, all touches
+    ///    pass through (safe default when the viewport is not yet known).
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard isUserInteractionEnabled, !isHidden, alpha > 0.01 else { return nil }
         guard self.point(inside: point, with: event) else { return nil }
 
-        // If we have a game-view reference, gate touch capture to that region.
-        if let gameView = gameViewRef {
-            // Convert the game view's frame from its superview's space to ours.
-            let gameFrameInSelf: CGRect
-            if let gameSuper = gameView.superview {
-                gameFrameInSelf = convert(gameView.frame, from: gameSuper)
-            } else {
-                gameFrameInSelf = gameView.frame
-            }
-            // Only claim this touch if it is inside the game viewport.
-            guard gameFrameInSelf.contains(point) else { return nil }
+        // Resolve the authoritative game-screen rect in our coordinate space.
+        let gameRect: CGRect
+        if let explicit = explicitGameViewRect, !explicit.isEmpty {
+            // Caller provided an authoritative rect — use it directly.
+            gameRect = explicit
+        } else if let gameView = gameViewRef {
+            // Derive from the live game view using a full-hierarchy coordinate
+            // conversion that works regardless of nesting depth.
+            let converted = gameView.convert(gameView.bounds, to: self)
+            // If the converted rect is empty/zero the viewport is not laid out
+            // yet — pass through so UI elements remain reachable.
+            guard !converted.isEmpty else { return nil }
+            gameRect = converted
+        } else {
+            // No viewport reference at all — pass all touches through so the
+            // views below (skin buttons, pause menu, etc.) remain responsive.
+            return nil
         }
 
+        guard gameRect.contains(point) else { return nil }
         return super.hitTest(point, with: event)
     }
 
