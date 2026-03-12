@@ -10,12 +10,12 @@
 @import PVCoreBridge;
 #import "./cocoa_common.h"
 
-// Forward-declare the Wolf3D button enum to allow use from Objective-C.
-// The actual declaration lives in PVWolf3DButton.swift (PVCoreBridge module).
-// We re-use the raw integer values here via the ObjC bridge name.
-// See PVWolf3DButton.swift for the canonical mapping.
+// Note: Button enums such as PVDOSButton are made visible to Objective-C
+// via the generated Swift header from the PVCoreBridge module
+// (imported above with `@import PVCoreBridge;`).
 
 /* RetroArch Includes */
+#include <stdint.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>
