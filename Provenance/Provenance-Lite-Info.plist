@@ -2427,10 +2427,6 @@
 				<array>
 					<string>deltaskin</string>
 				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/zip</string>
-				</array>
 			</dict>
 		</dict>
 		<dict>
