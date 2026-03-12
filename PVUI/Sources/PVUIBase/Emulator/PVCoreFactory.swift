@@ -332,8 +332,11 @@ public final class PVCoreFactory: NSObject {
         case .DOOM:
             if let core = core as? PVDoomSystemResponderClient {
                 return PVDoomControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if let core = core as? PVDOSSystemResponderClient {
+                // Fallback: cores that only implement PVDOSSystemResponderClient still get a working controller
+                return PVDOSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
-                fatalError("Core doesn't implement PVDoomSystemResponderClient")
+                fatalError("Core doesn't implement PVDoomSystemResponderClient or PVDOSSystemResponderClient")
             }
             break;
         case .DOS, .Quake, .Quake2:

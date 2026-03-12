@@ -84,6 +84,28 @@
     }
 }
 
+extension PVDoomButton {
+    /// Maps a Doom button to its equivalent PVDOSButton for forwarding through the DOS bridge.
+    public var asDOSButton: PVDOSButton {
+        switch self {
+        case .up:         return .up
+        case .down:       return .down
+        case .left:       return .left
+        case .right:      return .right
+        case .fire:       return .fire1
+        case .use:        return .fire2
+        case .run:        return .run
+        case .strafeLeft:  return .strafeLeft
+        case .strafeRight: return .strafeRight
+        case .weaponPrev: return .weaponPrev
+        case .weaponNext: return .weaponNext
+        case .map:        return .select
+        case .pause:      return .pause
+        case .count:      return .count
+        }
+    }
+}
+
 @objc public protocol PVDoomSystemResponderClient: ResponderClient, ButtonResponder, KeyboardResponder, MouseResponder {
     @objc(didPushDoomButton:forPlayer:)
     func didPush(_ button: PVDoomButton, forPlayer player: Int)

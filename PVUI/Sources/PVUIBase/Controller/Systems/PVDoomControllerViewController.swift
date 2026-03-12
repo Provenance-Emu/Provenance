@@ -44,18 +44,27 @@ final class PVDoomControllerViewController: PVControllerViewController<PVDoomSys
             button.doomButtonTag = PVDoomButton(title)
         }
 
-        // Shoulder buttons: strafe
-        leftShoulderButton?.doomButtonTag  = .strafeLeft    // L  → RETRO_JOYPAD_L
-        rightShoulderButton?.doomButtonTag = .strafeRight   // R  → RETRO_JOYPAD_R
-
-        // Triggers: weapon cycling
-        leftShoulderButton2?.doomButtonTag  = .weaponPrev   // L2 → RETRO_JOYPAD_L2
-        rightShoulderButton2?.doomButtonTag = .weaponNext   // R2 → RETRO_JOYPAD_R2
+        // Shoulder buttons / triggers: map by displayed label so layout order (R vs R2) does not matter.
+        [leftShoulderButton, rightShoulderButton, leftShoulderButton2, rightShoulderButton2].forEach {
+            configureShoulderButton($0)
+        }
 
         // Start = Pause (RETRO_JOYPAD_START in PrBoom)
         startButton?.doomButtonTag  = .pause
         // Select = Automap (RETRO_JOYPAD_SELECT in PrBoom)
         selectButton?.doomButtonTag = .map
+    }
+
+    private func configureShoulderButton(_ button: JSButton?) {
+        guard let button = button,
+              let title = button.titleLabel?.text else { return }
+        switch title.lowercased() {
+        case "l", "l1":   button.doomButtonTag = .strafeLeft    // L  → RETRO_JOYPAD_L
+        case "r", "r1":   button.doomButtonTag = .strafeRight   // R  → RETRO_JOYPAD_R
+        case "l2":        button.doomButtonTag = .weaponPrev    // L2 → RETRO_JOYPAD_L2
+        case "r2":        button.doomButtonTag = .weaponNext    // R2 → RETRO_JOYPAD_R2
+        default:          break
+        }
     }
 
     // MARK: - D-Pad
