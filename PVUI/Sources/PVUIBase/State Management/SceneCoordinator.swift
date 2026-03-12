@@ -130,44 +130,8 @@ public class SceneCoordinator: ObservableObject {
         currentScene = .emulator
         showEmulator = true
 
-        // Pause background services during emulation for better performance
-        pauseBackgroundServices()
-
-        // Pause directory watchers
-        Task {
-            await DirectoryWatcherRegistry.pauseAll()
-        }
-    }
-
-    /// Pauses background services (import queue, cloud sync) during emulation
-    private func pauseBackgroundServices() {
-        ILOG("SceneCoordinator: Pausing background services for emulation")
-
-        // Pause game importer (emulation-specific pause prevents auto-resume)
-        GameImporter.shared.pauseForEmulation()
-
-        // Pause cloud sync operations
-        if Defaults[.iCloudSync] {
-            CloudSyncManager.shared.pauseForEmulation()
-        }
-    }
-
-    /// Resumes background services after emulation ends
-    private func resumeBackgroundServices() {
-        ILOG("SceneCoordinator: Resuming background services after emulation")
-
-        // Resume game importer
-        GameImporter.shared.resumeFromEmulation()
-
-        // Resume cloud sync operations
-        if Defaults[.iCloudSync] {
-            CloudSyncManager.shared.resumeFromEmulation()
-        }
-
-        // Resume directory watchers (replaces notification-based approach)
-        Task {
-            await DirectoryWatcherRegistry.resumeAll()
-        }
+        /// Pause all background services via the central registry
+        BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
     }
 
     /// Launch a specific game with error handling and sync validation
@@ -1000,13 +964,8 @@ public class SceneCoordinator: ObservableObject {
         AppState.shared.emulationUIState.currentGame = nil
         ILOG("SceneCoordinator: Cleared emulation state")
 
-        // Resume background services that were paused during emulation
-        resumeBackgroundServices()
-
-        // Resume directory watchers
-        Task {
-            await DirectoryWatcherRegistry.resumeAll()
-        }
+        /// Resume all background services via the central registry
+        BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
 
         // Return to the main scene
         ILOG("SceneCoordinator: Calling openMainScene()")
