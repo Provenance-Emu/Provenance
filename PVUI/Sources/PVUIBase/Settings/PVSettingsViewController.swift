@@ -395,7 +395,7 @@ public final class PVSettingsViewController: QuickTableViewController {
             NavigationRow(
                 text: NSLocalizedString("Clear Artwork Cache", comment: ""),
                 detailText: .subtitle("Delete cached artwork to free up space. Images re-download automatically."),
-                icon: .sfSymbol("photo.badge.minus"),
+                icon: .sfSymbol("photo.trianglebadge.exclamationmark"),
                 customization: nil,
                 action: { [weak self] _ in
                     self?.emptyImageCacheAction()

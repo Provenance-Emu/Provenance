@@ -1876,7 +1876,7 @@ private struct LibrarySection2: View {
             Button(action: viewModel.emptyImageCache) {
                 SettingsRow(title: "Clear Artwork Cache",
                             subtitle: "Delete cached artwork to free up space. Images re-download automatically.",
-                            icon: .sfSymbol("photo.badge.xmark"))
+                            icon: .sfSymbol("photo.trianglebadge.exclamationmark"))
             }
 
             Button(role: .destructive, action: viewModel.resetData) {
