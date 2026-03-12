@@ -513,17 +513,26 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // Handle RetroArch cores
         if let viewport = core.bridge as? EmulatorCoreViewportPositioning {
             applyFrameToRetroArch(frame, gameScreenView: gameScreenView, viewport: viewport)
+            #if !os(tvOS)
+            refreshVirtualMouseLayout()
+            #endif
             return
         }
 
         // Handle Metal cores
         if let metalVC = gpuViewController as? PVMetalViewController {
             applyFrameToMetal(frame, metalVC: metalVC)
+            #if !os(tvOS)
+            refreshVirtualMouseLayout()
+            #endif
             return
         }
 
         // Handle GL cores
         applyFrameToGL(frame, gameScreenView: gameScreenView)
+        #if !os(tvOS)
+        refreshVirtualMouseLayout()
+        #endif
     }
 
     /// Apply frame to RetroArch core

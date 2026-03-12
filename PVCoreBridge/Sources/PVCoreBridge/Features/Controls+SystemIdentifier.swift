@@ -77,7 +77,7 @@ public extension SystemIdentifier {
         case .WonderSwanColor: return PVWSButton.self
         case .ZXSpectrum: return PVDOSButton.self // TODO: Add me
         case .Unknown: return PVPSXButton.self  // TODO: Add me
-        case .Wolf3D: return PVDOSButton.self    // TODO: Add me
+        case .Wolf3D: return PVWolf3DButton.self
         case .RetroArch: return PVPSXButton.self // TODO: Add me
 //        default: return PVRetroArchButton.self
         }

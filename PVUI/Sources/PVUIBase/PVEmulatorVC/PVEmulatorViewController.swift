@@ -983,6 +983,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             createAutosaveTimer()
         }
 
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        // Ensure the virtual-mouse trackpad uses the correct game viewport rect
+        // now that the view hierarchy is fully laid out.
+        refreshVirtualMouseLayout()
+        #endif
+
         #if os(iOS)
         // Initialize the audio visualizer based on saved preferences
         if visualizerMode == .off {
@@ -1364,6 +1370,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             bringVirtualInputOverlaysToFront()
             #endif
         }
+
+        #if !os(tvOS)
+        // Keep the virtual-mouse trackpad's game-viewport rect in sync with
+        // the current layout so hitTest never captures skin-button touches.
+        refreshVirtualMouseLayout()
+        #endif
         #endif
     }
 
@@ -2702,6 +2714,22 @@ extension PVEmulatorViewController {
         Task { [weak self] in
             guard let self = self else { return }
             if Defaults[.autoSave], self.core.supportsSaveStates {
+                // Skip auto-save when ReplayKit is setting up a recording session.
+                // Tapping "Record Game" causes the app to resign active while
+                // RPScreenRecorder shows its system UI. Attempting a Realm
+                // writeAsync at that moment can trigger an ObjC NSException from
+                // beginAsyncWriteTransaction that Swift do-catch cannot intercept,
+                // crashing the app. isPreparingRecording covers the window between
+                // the startRecording() call and the system callback completing;
+                // isRecording covers active recording sessions.
+#if os(iOS)
+                let recorderBusy = PVRecordingManager.shared.isPreparingRecording
+                                || PVRecordingManager.shared.isRecording
+                if recorderBusy {
+                    ILOG("appWillResignActive: Skipping auto-save — ReplayKit recording busy (preparing or active)")
+                    return
+                }
+#endif
                 do {
                     let success = try await self.autoSaveState()
                     if !success {
