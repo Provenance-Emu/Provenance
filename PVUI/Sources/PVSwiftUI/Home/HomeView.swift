@@ -249,6 +249,15 @@ struct HomeView: SwiftUI.View {
             if isControllerConnected {
                 setInitialFocus()
             }
+
+            // Consume any Siri "Search in App" query that was set before this view appeared.
+            // onReceive only fires for future changes; if the app was cold-launched by Siri
+            // the query is already in AppState before the view subscribes, so we must poll here.
+            if let pendingQuery = AppState.shared.pendingSearchQuery, !pendingQuery.isEmpty {
+                searchText = pendingQuery
+                isSearchBarVisible = true
+                AppState.shared.pendingSearchQuery = nil
+            }
         }
         .onChange(of: GamepadManager.shared.isControllerConnected) { isConnected in
             isControllerConnected = isConnected
