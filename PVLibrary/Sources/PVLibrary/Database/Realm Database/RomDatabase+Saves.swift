@@ -22,13 +22,11 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
 
     /// Resolves the Realm instance used for save-state writes.
     ///
-    /// This avoids placing an `await` inside `??`, which Swift treats as a
-    /// non-async autoclosure context and rejects during compilation.
+    /// Always creates a fresh Realm instance (never returns a cached/thread-local
+    /// one) to minimise the TOCTOU window between the `isInvalidated` pre-flight
+    /// check and the subsequent `writeAsync` call.  Using a cached instance risks
+    /// it being invalidated in the narrow window between the guard and the write.
     private func saveStateWriteRealm() async throws -> Realm {
-        if let threadRealm = Thread.current.realm?.realm {
-            return threadRealm
-        }
-
         do {
             return try await Realm(configuration: RealmConfiguration.realmConfig)
         } catch {
@@ -58,6 +56,19 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
         // asyncWriteTransaction returns early (without calling its block) when
         // Realm is unavailable — that silently leaves the continuation dangling.
         let realm = try await saveStateWriteRealm()
+
+        // Pre-flight: `writeAsync` calls `beginAsyncWriteTransaction` internally,
+        // which throws an ObjC NSException (not a Swift Error) when Realm is in an
+        // unexpected state (e.g. invalidated after the app resigns active during a
+        // ReplayKit recording setup). Swift `do-catch` cannot intercept ObjC
+        // NSExceptions, so we guard here to prevent a fatal crash.
+        guard !realm.isInvalidated else {
+            WLOG("registerSaveState: realm is invalidated — skipping async write")
+            throw SaveStateError.realmWriteError(
+                NSError(domain: "RomDatabase", code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "Realm instance is invalidated"])
+            )
+        }
 
         return try await withCheckedThrowingContinuation { continuation in
             realm.writeAsync {
