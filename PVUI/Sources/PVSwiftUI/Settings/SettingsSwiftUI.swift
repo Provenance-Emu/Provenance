@@ -475,6 +475,7 @@ public struct PVSettingsView: View {
     @State private var selectedTab: Int = 0
     #endif
     @State private var showCloudSync = false
+    @State private var showWiki = false
     @State private var destinationCancellable: AnyCancellable?
 
     // Update initializer to take dismissAction
@@ -554,7 +555,7 @@ public struct PVSettingsView: View {
 
                                 Spacer()
 
-                                Button(action: { viewModel.showHelp() }) {
+                                Button(action: { showWiki = true }) {
                                     Text("HELP")
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
@@ -677,6 +678,16 @@ public struct PVSettingsView: View {
         .onDisappear {
             destinationCancellable?.cancel()
             destinationCancellable = nil
+        }
+        .sheet(isPresented: $showWiki) {
+            NavigationStack {
+                WikiHelpView()
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Done") { showWiki = false }
+                        }
+                    }
+            }
         }
     }
 
