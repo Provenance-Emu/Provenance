@@ -506,18 +506,11 @@ jobs:
               --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
           fi
 
-      # GITHUB_TOKEN pushes/PR-creates don't fire pull_request events in other workflows.
-      # Explicitly dispatch ai-review after:
-      #   1. A new [Agent] PR is created from an issue
-      #   2. Fixes are pushed for fix_ai_review (next review cycle)
-      #   3. Rebase is resolved for fix_rebase_conflict (re-review after rebase)
+      # AI review dispatch DISABLED — GitHub Copilot handles PR reviews.
+      # To trigger manually: comment `/ai-review` on the PR, or:
+      #   gh workflow run ai-review.yml -f pr_number=<N>
       - name: Dispatch AI review for Agent PRs
-        if: |
-          steps.claude_run.outcome == 'success' &&
-          (github.event_name == 'issues' ||
-           (github.event_name == 'workflow_dispatch' &&
-            (github.event.inputs.action == 'fix_ai_review' ||
-             github.event.inputs.action == 'fix_rebase_conflict')))
+        if: false
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
