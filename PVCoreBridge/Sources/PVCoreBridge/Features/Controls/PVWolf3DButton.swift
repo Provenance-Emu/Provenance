@@ -59,8 +59,8 @@
         case "run", "speed": self = .run
         case "strafeleft", "sl", "l", "l1": self = .strafeLeft
         case "straferight", "sr", "r", "r1": self = .strafeRight
-        case "weaponprev", "wp", "prevweapon", "l2": self = .weaponPrev
-        case "weaponnext", "wn", "nextweapon", "r2": self = .weaponNext
+        case "weaponprev", "wp", "prevweapon", "l2", "prev": self = .weaponPrev
+        case "weaponnext", "wn", "nextweapon", "r2", "next": self = .weaponNext
         case "map", "automap", "select": self = .map
         case "menu", "pause", "start": self = .menu
         case "count": self = .count

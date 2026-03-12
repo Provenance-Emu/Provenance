@@ -12,7 +12,13 @@ import PVCoreBridge
 
 private extension JSButton {
     var wolf3DButtonTag: PVWolf3DButton {
-        get { return PVWolf3DButton(rawValue: tag)! }
+        get {
+            guard let mapped = PVWolf3DButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Wolf3D controller; defaulting to .fire")
+                return .fire
+            }
+            return mapped
+        }
         set { tag = newValue.rawValue }
     }
 }
