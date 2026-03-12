@@ -569,7 +569,9 @@ public class AppState: ObservableObject {
         ) { favorites, recents in
             Array((favorites + recents).prefix(maxShortcuts))
         }
+        .observe(on: MainScheduler.instance) // UIKit shortcutItems must be set on main thread
         .bind(onNext: { shortcuts in
+            ILOG("AppState: Registering \(shortcuts.count) springboard shortcut items")
             UIApplication.shared.shortcutItems = shortcuts
         })
         .disposed(by: disposeBag)
