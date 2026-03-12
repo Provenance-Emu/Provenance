@@ -86,10 +86,15 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
             [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
             break;
         case(PVDOSButtonSelect):
+            // buttonOptions → RETRO_DEVICE_ID_JOYPAD_SELECT → Automap in PrBoom / menu in DOS
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
-            [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
+            break;
+        case(PVDOSButtonPause):
+            // buttonMenu → RETRO_DEVICE_ID_JOYPAD_START → Pause in PrBoom
+            [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
             break;
         case(PVDOSButtonReset):
+            // buttonMenu → RETRO_DEVICE_ID_JOYPAD_START → used for reset/restart in generic DOS
             [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
             break;
         // Doom-specific controls (also usable by other FPS games via PrBoom/RetroArch)
@@ -102,8 +107,8 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
             [touch_controller.extendedGamepad.rightShoulder setValue:pressed?1:0];
             break;
         case(PVDOSButtonRun):
-            // Maps to RETRO_DEVICE_ID_JOYPAD_X (Speed/Run in PrBoom)
-            [touch_controller.extendedGamepad.buttonX setValue:pressed?1:0];
+            // buttonY (north) → RETRO_DEVICE_ID_JOYPAD_X → Speed/Run in PrBoom
+            [touch_controller.extendedGamepad.buttonY setValue:pressed?1:0];
             break;
         case(PVDOSButtonWeaponNext):
             // Maps to RETRO_DEVICE_ID_JOYPAD_R2 (Next weapon in PrBoom)
