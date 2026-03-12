@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   system (#2544, #2558)
 
 ### Changed
+- **Mednafen: Remove non-functional "Fullscreen" and "Use OpenGL" core options** — Both settings had no effect on iOS (no windowing system; Mednafen driver calls were commented out). `rendersToOpenGL` now correctly returns `NO` for the software renderer (#3024)
 - **Lock modernization in PVLibrary** — Replaced all `NSLock` instances with `OSAllocatedUnfairLock`
   (iOS/tvOS 16+), eliminating bare `.lock()` / `.unlock()` pairs in favour of deadlock-safe
   `withLock { }` closures across `GameImporter`, `DirectoryWatcher`, `CloudKitRemoteApplyGuard`,

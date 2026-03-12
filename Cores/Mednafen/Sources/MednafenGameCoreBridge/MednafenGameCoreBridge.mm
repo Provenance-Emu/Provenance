@@ -197,12 +197,6 @@ static void mednafen_init(MednafenGameCoreBridge* current)
     // Default: 1
 //    BOOL video_blit_timesync = current.video_blit_timesync;
 //    Mednafen::MDFNI_SetSettingUI("video.blit_timesync", video_blit_timesync);
-//
-//    BOOL video_fs = current.video_fs;
-//    Mednafen::MDFNI_SetSettingUI("video.fs", video_fs); // Enable fullscreen mode. Default: 0
-//
-//    const char* video_opengl = current.video_opengl ? "opengl" : "default";
-//    Mednafen::MDFNI_SetSetting("video.driver", video_opengl);
 
     // Cache cd's to memory
     BOOL cd_image_memcache = MednafenGameCoreOptions.cd_image_memcache;
@@ -648,8 +642,6 @@ static void emulation_run(BOOL skipFrame) {
 //        }
 //        return NO;
 //    }
-
-    self.video_opengl = MednafenGameCoreOptions.video_opengl;
 
     [[NSFileManager defaultManager] createDirectoryAtPath:[self batterySavesPath] withIntermediateDirectories:YES attributes:nil error:NULL];
 
@@ -1344,7 +1336,7 @@ static void emulation_run(BOOL skipFrame) {
 }
 
 - (BOOL)rendersToOpenGL {
-    return self.video_opengl;
+    return NO;
 }
 
 #pragma mark - Audio
