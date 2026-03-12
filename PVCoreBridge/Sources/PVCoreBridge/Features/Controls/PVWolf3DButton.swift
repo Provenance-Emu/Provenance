@@ -29,7 +29,7 @@
     case fire
     /// Open door / Use — JOYPAD_A → east/buttonB
     case open
-    /// Strafe On (hold) — JOYPAD_Y → west/buttonX
+    /// Strafe On (toggle strafe) — JOYPAD_Y → west/buttonX
     case strafeOn
     /// Run / Speed — JOYPAD_X → north/buttonY
     case run
