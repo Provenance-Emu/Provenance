@@ -266,7 +266,14 @@ extension PVEmulatorViewController {
                 // Re-apply viewport on explicit refresh
                 // Don't force layout here - applyViewportFromCurrentSkin handles layout naturally
                 self?.applyViewportFromCurrentSkin()
-            }
+            },
+            virtualInputState: {
+                #if !os(tvOS)
+                return virtualInputState
+                #else
+                return nil
+                #endif
+            }()
         )
 
         // Configure the container

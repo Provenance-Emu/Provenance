@@ -12,95 +12,53 @@
 /// Add this view as an overlay inside the default skin / SwiftUI emulator HUD:
 ///
 ///     .overlay(alignment: .topLeading) {
-///         VirtualInputToggleOverlayView(coreInstance: coreInstance)
+///         VirtualInputToggleOverlayView()
 ///             .padding(.top, safeTopPadding)
 ///             .padding(.leading, 8)
 ///     }
 ///
-/// The view communicates with `PVEmulatorViewController` via `NotificationCenter`
-/// using the existing `pvToggleVirtualKeyboard` and `pvToggleVirtualMouse` names,
-/// so no direct ViewController reference is required.
+/// State is driven by a `VirtualInputState` environment object owned by
+/// `PVEmulatorViewController` and injected via `.environmentObject(_:)`.
+/// No `NotificationCenter` coupling is required.
 ///
 /// Copyright © 2026 Provenance Emu. All rights reserved.
 ///
 
 #if canImport(UIKit) && !os(tvOS)
 import SwiftUI
-import PVEmulatorCore
-import PVCoreBridge
-
-// MARK: - View Model
-
-/// Observable state that drives the keyboard/mouse toggle button appearance.
-@MainActor
-final class VirtualInputToggleViewModel: ObservableObject {
-    @Published var isKeyboardVisible: Bool = false
-    @Published var isMouseVisible: Bool = false
-
-    let supportsKeyboard: Bool
-    let supportsMouse: Bool
-
-    init(coreInstance: PVEmulatorCore) {
-        supportsKeyboard = (coreInstance as? KeyboardResponder)?.gameSupportsKeyboard == true
-        supportsMouse = (coreInstance as? MouseResponder)?.gameSupportsMouse == true
-    }
-
-    func toggleKeyboard() {
-        NotificationCenter.default.post(name: .pvToggleVirtualKeyboard, object: nil)
-        // Optimistically flip local state — the emulator VC corrects it on the next run-loop
-        isKeyboardVisible.toggle()
-    }
-
-    func toggleMouse() {
-        NotificationCenter.default.post(name: .pvToggleVirtualMouse, object: nil)
-        isMouseVisible.toggle()
-    }
-}
 
 // MARK: - Toggle Overlay View
 
 /// A compact HUD strip that shows keyboard and/or mouse toggle buttons when the
 /// active core supports those input modes.
+///
+/// State is provided by `VirtualInputState` via the SwiftUI environment, ensuring
+/// the buttons always reflect the true overlay visibility regardless of which code
+/// path triggered the change (user tap, hardware keyboard connect, pause menu, etc.).
 public struct VirtualInputToggleOverlayView: View {
 
-    @StateObject private var viewModel: VirtualInputToggleViewModel
+    @EnvironmentObject private var state: VirtualInputState
 
-    public init(coreInstance: PVEmulatorCore) {
-        _viewModel = StateObject(wrappedValue: VirtualInputToggleViewModel(coreInstance: coreInstance))
-    }
+    public init() {}
 
     public var body: some View {
         HStack(spacing: 8) {
-            if viewModel.supportsKeyboard {
+            if state.supportsKeyboard {
                 toggleButton(
                     systemImage: "keyboard",
                     accessibilityLabel: "Toggle Virtual Keyboard",
-                    isActive: viewModel.isKeyboardVisible,
-                    action: { viewModel.toggleKeyboard() }
+                    isActive: state.isKeyboardVisible,
+                    action: { state.onToggleKeyboard() }
                 )
             }
-            if viewModel.supportsMouse {
+            if state.supportsMouse {
                 toggleButton(
                     systemImage: "cursorarrow",
                     accessibilityLabel: "Toggle Virtual Mouse",
-                    isActive: viewModel.isMouseVisible,
-                    action: { viewModel.toggleMouse() }
+                    isActive: state.isMouseVisible,
+                    action: { state.onToggleMouse() }
                 )
             }
-        }
-        // Observe keyboard visibility changes posted by the emulator VC
-        .onReceive(NotificationCenter.default.publisher(for: .pvShowVirtualKeyboard)) { _ in
-            viewModel.isKeyboardVisible = true
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .pvHideVirtualKeyboard)) { _ in
-            viewModel.isKeyboardVisible = false
-        }
-        // Observe mouse visibility changes
-        .onReceive(NotificationCenter.default.publisher(for: .pvShowVirtualMouse)) { _ in
-            viewModel.isMouseVisible = true
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .pvHideVirtualMouse)) { _ in
-            viewModel.isMouseVisible = false
         }
     }
 

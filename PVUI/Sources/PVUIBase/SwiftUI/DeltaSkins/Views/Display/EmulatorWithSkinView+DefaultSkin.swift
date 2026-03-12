@@ -270,7 +270,7 @@ struct DefaultControllerSkinView: View {
                 if validSize {
                     VStack {
                         HStack {
-                            VirtualInputToggleOverlayView(coreInstance: coreInstance)
+                            VirtualInputToggleOverlayView()
                                 .padding(.top, geometry.safeAreaInsets.top + 8)
                                 .padding(.leading, geometry.safeAreaInsets.leading + 8)
                             Spacer()

@@ -11,6 +11,7 @@
 
 #if canImport(UIKit)
 import AudioToolbox
+import Combine
 #if canImport(GameController)
 import GameController
 #endif
@@ -190,6 +191,11 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     #if !os(tvOS)
     private var keyboardToggleButton: UIButton?
     private var mouseToggleButton: UIButton?
+
+    /// Combine subscriptions for observing `VirtualInputState` changes.
+    /// Keeps the keyboard/mouse toggle button appearance in sync with any code path
+    /// that modifies virtual input visibility (user tap, hardware keyboard, pause menu, etc.).
+    private var virtualInputCancellables: Set<AnyCancellable> = []
     #endif
     /// Transparent container for HUD quick-action buttons.
     /// Uses a custom hitTest so only direct button taps are intercepted;
@@ -377,6 +383,33 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     @objc func tripleTapRecognized(_ gesture : UITapGestureRecognizer) {
         inMoveMode = !inMoveMode
     }
+
+    // MARK: - VirtualInputState observation
+
+    override public func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        #if !os(tvOS)
+        subscribeToVirtualInputStateIfNeeded()
+        #endif
+    }
+
+    #if !os(tvOS)
+    /// Subscribes to the parent emulator VC's `VirtualInputState` via Combine so that
+    /// the keyboard/mouse toggle button appearance stays current regardless of which code
+    /// path triggered the visibility change (user tap, hardware keyboard, pause menu, etc.).
+    private func subscribeToVirtualInputStateIfNeeded() {
+        virtualInputCancellables.removeAll()
+        guard let state = (parent as? PVEmulatorViewController)?.virtualInputState else { return }
+        state.$isKeyboardVisible
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updateKeyboardButtonAppearance() }
+            .store(in: &virtualInputCancellables)
+        state.$isMouseVisible
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updateMouseButtonAppearance() }
+            .store(in: &virtualInputCancellables)
+    }
+    #endif
 
     // MARK: - GameController Notifications
 
@@ -1742,7 +1775,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 
     private func updateKeyboardButtonAppearance() {
-        let isActive = (parent as? PVEmulatorViewController)?.isVirtualKeyboardVisible ?? false
+        // Read from VirtualInputState (single source of truth) so the button
+        // stays accurate regardless of which code path toggled the overlay.
+        let isActive = (parent as? PVEmulatorViewController)?.virtualInputState.isKeyboardVisible ?? false
         keyboardToggleButton?.tintColor = isActive ? .systemYellow : .white
         keyboardToggleButton?.backgroundColor = isActive
             ? UIColor.systemBlue.withAlphaComponent(0.6)
@@ -1750,7 +1785,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 
     private func updateMouseButtonAppearance() {
-        let isActive = (parent as? PVEmulatorViewController)?.isVirtualMouseVisible ?? false
+        let isActive = (parent as? PVEmulatorViewController)?.virtualInputState.isMouseVisible ?? false
         mouseToggleButton?.tintColor = isActive ? .systemYellow : .white
         mouseToggleButton?.backgroundColor = isActive
             ? UIColor.systemBlue.withAlphaComponent(0.6)
