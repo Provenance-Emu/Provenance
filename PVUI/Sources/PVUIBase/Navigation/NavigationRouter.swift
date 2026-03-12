@@ -296,7 +296,11 @@ public enum AppRoute: Hashable, CustomStringConvertible, Sendable {
         case .settingsAdvanced:         return "settings/advanced"
         case .systemBrowser(let id):    return "system/\(id)"
         case .gameDetail(let md5):      return "game?id=\(md5)"
-        case .search(let query):        return "search?q=\(query)"
+        case .search(let query):
+            var components = URLComponents()
+            components.path = "search"
+            components.queryItems = [URLQueryItem(name: "q", value: query)]
+            return components.string ?? "search"
         }
     }
 }
