@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Wiki Viewer — GitBook tag and HTML rendering** — GitBook liquid tab tags (`{% tabs %}`, `{% tab title="..." %}`, `{% endtab %}`, `{% endtabs %}`) now render as Markdown section headers and separators instead of raw strings. HTML `<table>`, `<strong>`, `<em>`, `<details>/<summary>`, and `<br>` blocks are converted to their Markdown equivalents before rendering. External links in wiki content open in an in-app Safari sheet; internal `.md` links navigate to the corresponding local wiki page (#3013)
+- **Springboard Quick Actions** — Long-pressing the Provenance app icon now correctly shows recently-played games and favorites again; fixed by ensuring `UIApplication.shared.shortcutItems` is always updated on the main thread via `MainScheduler.instance` (#3026)
 - **Browse Skins Done Button** — Moved the "Done" dismiss button in the Browse Skins sheet from the trailing (right) toolbar position to the leading (left) position (#3011)
 - **Settings Help Button Opens Internal Wiki** — The always-visible HELP button in the Settings header now opens the in-app `WikiHelpView` sheet instead of launching an external URL in Safari (#3028)
 - **Skin Catalog Selection Update** — Downloading and selecting a skin from the catalog now reactively updates the active skin shown in the pause menu Skins tab (#3012)
