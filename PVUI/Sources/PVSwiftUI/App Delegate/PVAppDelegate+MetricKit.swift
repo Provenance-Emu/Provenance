@@ -56,10 +56,8 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
             let duration = hang.hangDuration
             ELOG("MetricKit HANG detected — duration: \(duration)")
             // Log each call tree frame to the console so it appears in crash logs / Console.app
-            if let tree = hang.callStackTree {
-                let json = String(data: tree.jsonRepresentation(), encoding: .utf8)
-                ELOG("MetricKit hang call stack:\n\(json ?? "<unavailable>")")
-            }
+            let json = String(data: hang.callStackTree.jsonRepresentation(), encoding: .utf8)
+            ELOG("MetricKit hang call stack:\n\(json ?? "<unavailable>")")
         }
     }
 
@@ -67,10 +65,8 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
         guard let crashes = payload.crashDiagnostics, !crashes.isEmpty else { return }
         for crash in crashes {
             ELOG("MetricKit CRASH — signal: \(crash.signal), exception type: \(String(describing: crash.exceptionType)), exception code: \(String(describing: crash.exceptionCode))")
-            if let tree = crash.callStackTree {
-                let json = String(data: tree.jsonRepresentation(), encoding: .utf8)
-                ELOG("MetricKit crash call stack:\n\(json ?? "<unavailable>")")
-            }
+            let json = String(data: crash.callStackTree.jsonRepresentation(), encoding: .utf8)
+            ELOG("MetricKit crash call stack:\n\(json ?? "<unavailable>")")
         }
     }
 
@@ -78,10 +74,8 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
         guard let exceptions = payload.cpuExceptionDiagnostics, !exceptions.isEmpty else { return }
         for exception in exceptions {
             ELOG("MetricKit CPU EXCEPTION — total CPU time: \(exception.totalCPUTime), total sampled time: \(exception.totalSampledTime)")
-            if let tree = exception.callStackTree {
-                let json = String(data: tree.jsonRepresentation(), encoding: .utf8)
-                ELOG("MetricKit CPU exception call stack:\n\(json ?? "<unavailable>")")
-            }
+            let json = String(data: exception.callStackTree.jsonRepresentation(), encoding: .utf8)
+            ELOG("MetricKit CPU exception call stack:\n\(json ?? "<unavailable>")")
         }
     }
 }
