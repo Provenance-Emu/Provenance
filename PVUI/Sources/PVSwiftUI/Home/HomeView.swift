@@ -555,14 +555,8 @@ struct HomeView: SwiftUI.View {
                 }
             }
         )
-        .onReceive(AppState.shared.$pendingSearchQuery) { newQuery in
-            // Use the emitted value directly — `@Published` fires in willSet so
-            // reading AppState.shared.pendingSearchQuery here may still return
-            // the old value if delivery is synchronous.
-            guard let query = newQuery, !query.isEmpty else { return }
-            searchText = query
-            isSearchBarVisible = true
-            AppState.shared.pendingSearchQuery = nil
+        .onReceive(AppState.shared.$pendingSearchQuery) { _ in
+            consumePendingSearchQuery()
         }
     }
 
@@ -583,7 +577,7 @@ struct HomeView: SwiftUI.View {
 
     /// Reads and consumes any pending Siri "Search in App" query from `AppState`,
     /// populating the search field and ensuring the search bar is visible.
-    /// Called from both `.onAppear` (cold-launch) and `.onReceive` (hot-launch).
+    /// Single source of truth — called on both cold-launch (`.onAppear`) and hot-launch (`.onReceive`).
     private func consumePendingSearchQuery() {
         guard let query = AppState.shared.pendingSearchQuery, !query.isEmpty else { return }
         searchText = query

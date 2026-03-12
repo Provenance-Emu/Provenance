@@ -204,7 +204,8 @@ struct ConsolesWrapperView: SwiftUI.View {
 
             // Navigate to the home tab on appearance if a Siri search query is pending
             // (covers cold-launch: the query is already stored before the view is rendered).
-            if let query = AppState.shared.pendingSearchQuery, !query.isEmpty {
+            if let query = AppState.shared.pendingSearchQuery, !query.isEmpty,
+               delegate.selectedTab != "home" {
                 delegate.setTab("home")
             }
 
