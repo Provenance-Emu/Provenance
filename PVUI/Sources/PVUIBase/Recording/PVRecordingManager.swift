@@ -19,7 +19,23 @@ import PVLogging
     public static let shared = PVRecordingManager()
 
     /// Whether a recording session is currently active.
+    ///
+    /// Access is race-free because this class is `@MainActor`-isolated.
     public private(set) var isRecording: Bool = false
+
+    /// Whether `startRecording()` has been called but has not yet completed.
+    ///
+    /// This is `true` between the `startRecording()` call and the moment the
+    /// `RPScreenRecorder` completion handler fires (success or failure).  During
+    /// this window the system may present a permission/indicator UI that causes
+    /// the app to resign active; callers should treat this the same as
+    /// `isRecording == true` to avoid side-effects (e.g. auto-save) triggered
+    /// by the spurious resign-active notification.
+    ///
+    /// Access is race-free because this class is `@MainActor`-isolated —
+    /// all reads and writes happen on the main actor, consistent with
+    /// ReplayKit's main-thread requirements.
+    public private(set) var isPreparingRecording: Bool = false
 
     /// Whether the recorder is available on this device/session.
     public var isAvailable: Bool {
@@ -55,6 +71,14 @@ import PVLogging
 
         let recorder = RPScreenRecorder.shared()
         recorder.isMicrophoneEnabled = true
+
+        // Mark that a recording setup is in-flight *before* calling startRecording.
+        // The system may show a permission/indicator UI during startRecording, which
+        // causes the app to resign active. The `isPreparingRecording` flag lets call
+        // sites (e.g. appWillResignActive) detect this transient state and skip
+        // side-effects like auto-save that would otherwise crash Realm.
+        isPreparingRecording = true
+        defer { isPreparingRecording = false }
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             // Explicitly dispatch to main queue: RPScreenRecorder requires main-thread calls and
