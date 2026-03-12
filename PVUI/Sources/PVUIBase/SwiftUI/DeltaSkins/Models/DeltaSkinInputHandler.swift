@@ -820,7 +820,12 @@ public class DeltaSkinInputHandler: ObservableObject {
                 let b = PVEP128Button(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .DOS, .DOOM, .Wolf3D, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
+        case .Wolf3D:
+            if let r = core as? PVWolf3DSystemResponderClient {
+                let b = PVWolf3DButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .DOS, .DOOM, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
             if let r = core as? PVDOSSystemResponderClient {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -1582,7 +1587,13 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        case .DOS, .DOOM, .Wolf3D, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
+        case .Wolf3D:
+            if let r = core as? PVWolf3DSystemResponderClient {
+                let b = PVWolf3DButton(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .DOS, .DOOM, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
             if let r = core as? PVDOSSystemResponderClient {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)

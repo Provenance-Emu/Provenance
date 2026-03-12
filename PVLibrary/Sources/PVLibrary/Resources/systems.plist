@@ -8466,6 +8466,21 @@
 	<dict>
 		<key>PVAppStoreDisabled</key>
 		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>ECWolf engine data pak — place ecwolf.pk3 in BIOS/com.provenance.wolf3d/. Download from https://maniacsvault.net/ecwolf/</string>
+				<key>MD5</key>
+				<string>c011b428819eea4a80b455c245a5a04d</string>
+				<key>Name</key>
+				<string>ecwolf.pk3</string>
+				<key>Optional</key>
+				<false/>
+				<key>Size</key>
+				<integer>178755</integer>
+			</dict>
+		</array>
 		<key>PVBit</key>
 		<string>32</string>
 		<key>PVControlLayout</key>
@@ -8474,7 +8489,7 @@
 				<key>PVControlSize</key>
 				<string>{60,30}</string>
 				<key>PVControlTitle</key>
-				<string>L</string>
+				<string>Prev</string>
 				<key>PVControlType</key>
 				<string>PVLeftShoulderButton</string>
 			</dict>
@@ -8482,7 +8497,7 @@
 				<key>PVControlSize</key>
 				<string>{60,30}</string>
 				<key>PVControlTitle</key>
-				<string>L2</string>
+				<string>SL</string>
 				<key>PVControlType</key>
 				<string>PVLeftShoulderButton</string>
 			</dict>
@@ -8490,7 +8505,7 @@
 				<key>PVControlSize</key>
 				<string>{60,30}</string>
 				<key>PVControlTitle</key>
-				<string>R2</string>
+				<string>SR</string>
 				<key>PVControlType</key>
 				<string>PVRightShoulderButton</string>
 			</dict>
@@ -8498,7 +8513,7 @@
 				<key>PVControlSize</key>
 				<string>{60,30}</string>
 				<key>PVControlTitle</key>
-				<string>R</string>
+				<string>Next</string>
 				<key>PVControlType</key>
 				<string>PVRightShoulderButton</string>
 			</dict>
@@ -8515,7 +8530,7 @@
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 						<key>PVControlTitle</key>
-						<string>1</string>
+						<string>Shoot</string>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
@@ -8525,7 +8540,7 @@
 						<key>PVControlTint</key>
 						<string>#63a2f9</string>
 						<key>PVControlTitle</key>
-						<string>2</string>
+						<string>Open</string>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
@@ -8545,7 +8560,7 @@
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 				<key>PVControlTitle</key>
-				<string>Reset</string>
+				<string>Menu</string>
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 			</dict>
@@ -8553,7 +8568,7 @@
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>Map</string>
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 			</dict>
@@ -8573,7 +8588,7 @@
 		<key>PVReleaseYear</key>
 		<string>1992</string>
 		<key>PVRequiresBIOS</key>
-		<false/>
+		<true/>
 		<key>PVRequiresKeyboard</key>
 		<true/>
 		<key>PVRequiresMouse</key>
