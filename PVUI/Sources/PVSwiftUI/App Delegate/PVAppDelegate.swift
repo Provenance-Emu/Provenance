@@ -599,10 +599,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
     }
 
-
     public func applicationWillResignActive(_ application: UIApplication) {
         let emulationState = appState?.emulationUIState
         emulationState?.isInBackground = true
+#if !os(tvOS)
+        appState?.publishCachedShortcutItems()
+#endif
         pauseCore()
         sleep(1)
         Task {

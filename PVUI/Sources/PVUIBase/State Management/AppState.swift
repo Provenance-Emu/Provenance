@@ -124,6 +124,11 @@ public class AppState: ObservableObject {
     @Published
     public var libraryUpdatesController: PVGameLibraryUpdatesController?
 
+#if os(iOS) || targetEnvironment(macCatalyst)
+    /// Cached Home Screen quick actions so lifecycle hooks can republish the latest values.
+    public private(set) var cachedShortcutItems: [UIApplicationShortcutItem] = []
+#endif
+
     /// Coordinator for Popover HUD
     public let hudCoordinator = HUDCoordinator()
 
@@ -554,14 +559,13 @@ public class AppState: ObservableObject {
         }
     }
 
-
     @MainActor
     private func setupShortcutsListener() {
         guard let gameLibrary = gameLibrary else {
             ELOG("gameLibrary not yet initialized")
             return
         }
-#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || targetEnvironment(macCatalyst)
         // Setup shortcuts for favorites and recent games
         let maxShortcuts = 6 // iOS typically shows 4-6 shortcuts
         Observable.combineLatest(
@@ -572,12 +576,20 @@ public class AppState: ObservableObject {
         }
         .observe(on: MainScheduler.instance) // UIKit shortcutItems must be set on main thread
         .bind(onNext: { shortcuts in
-            ILOG("AppState: Registering \(shortcuts.count) springboard shortcut items")
-            UIApplication.shared.shortcutItems = shortcuts
+            self.cachedShortcutItems = shortcuts
+            self.publishCachedShortcutItems()
         })
         .disposed(by: disposeBag)
 #endif
     }
+
+#if os(iOS) || targetEnvironment(macCatalyst)
+    /// Republishes the latest dynamic quick actions for the Home Screen menu.
+    public func publishCachedShortcutItems() {
+        ILOG("AppState: Registering \(cachedShortcutItems.count) springboard shortcut items")
+        UIApplication.shared.shortcutItems = cachedShortcutItems
+    }
+#endif
 
     /// Handles app state changes (active, inactive, background)
     /// - Parameter scenePhase: The new scene phase
@@ -633,8 +645,8 @@ actor BootWorker {
     }
 }
 
-#if os(iOS) || os(macOS)
-@available(iOS 9.0, macOS 11.0, macCatalyst 11.0, *)
+#if os(iOS) || targetEnvironment(macCatalyst)
+@available(iOS 9.0, macCatalyst 11.0, *)
 extension PVGame {
     func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
         guard !isInvalidated else {

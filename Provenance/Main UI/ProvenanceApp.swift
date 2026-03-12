@@ -256,6 +256,12 @@ struct ProvenanceApp: App {
                 ILOG("skins: SkinImporterInjector service initialized")
             }
 
+#if !os(tvOS)
+            if newPhase == .inactive || newPhase == .background {
+                appState.publishCachedShortcutItems()
+            }
+#endif
+
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
         }
