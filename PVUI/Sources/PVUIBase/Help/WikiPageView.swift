@@ -61,10 +61,7 @@ public struct WikiPageView: View {
             .buttonStyle(.card)
         }
         #else
-        ScrollView {
-            MarkdownView(text: page.content, baseURL: WikiConstants.baseURL)
-                .padding()
-        }
+        WikiContentView(page: page)
         #endif
     }
 
@@ -91,3 +88,86 @@ public struct WikiPageView: View {
     }
     #endif
 }
+
+// MARK: - WikiContentView (iOS/macOS with link interception)
+
+#if !os(tvOS)
+/// A view that renders wiki markdown content and intercepts link taps.
+/// - External links (http/https) open in an in-app Safari sheet.
+/// - Internal wiki links (`.md` paths relative to the wiki base URL) push a new WikiPageView.
+private struct WikiContentView: View {
+    let page: WikiPage
+
+    @State private var externalURL: URL?
+    @State private var internalDestination: WikiLinkDestination?
+    @State private var showExternalLink = false
+
+    var body: some View {
+        ScrollView {
+            MarkdownView(text: page.content, baseURL: WikiConstants.baseURL)
+                .padding()
+        }
+        // Intercept link taps via the openURL environment action
+        .environment(\.openURL, OpenURLAction { url in
+            handleLink(url)
+            return .handled
+        })
+        // External link sheet
+        #if canImport(SafariServices)
+        .sheet(isPresented: $showExternalLink) {
+            if let url = externalURL {
+                SafariWebView(url: url)
+            }
+        }
+        #endif
+        // Internal wiki navigation link (hidden, activated programmatically)
+        .background(
+            NavigationLink(
+                isActive: Binding(
+                    get: { internalDestination != nil },
+                    set: { if !$0 { internalDestination = nil } }
+                ),
+                destination: {
+                    if let dest = internalDestination {
+                        WikiPageView(path: dest.path, title: dest.title)
+                    }
+                }
+            ) {
+                EmptyView()
+            }
+        )
+    }
+
+    private func handleLink(_ url: URL) {
+        let urlString = url.absoluteString
+        let baseURLString = WikiConstants.baseURL.absoluteString
+
+        // Detect internal wiki links — URLs that resolve against the base raw GitHub URL
+        if urlString.hasPrefix(baseURLString) {
+            let relativePath = String(urlString.dropFirst(baseURLString.count))
+            // Only navigate to .md pages within the wiki
+            if relativePath.hasSuffix(".md") {
+                let titleFromPath = relativePath
+                    .components(separatedBy: "/").last?
+                    .replacingOccurrences(of: ".md", with: "")
+                    .replacingOccurrences(of: "-", with: " ")
+                    .capitalized ?? relativePath
+                internalDestination = WikiLinkDestination(path: relativePath, title: titleFromPath)
+                return
+            }
+        }
+
+        // All other links (external http/https, anchors, etc.) open in Safari
+        if url.scheme == "http" || url.scheme == "https" {
+            externalURL = url
+            showExternalLink = true
+        }
+    }
+}
+
+private struct WikiLinkDestination: Identifiable {
+    let id = UUID()
+    let path: String
+    let title: String
+}
+#endif
