@@ -154,14 +154,9 @@ public enum GitBookPreprocessor {
         )
 
         var rows: [[String]] = []
-        var firstRowIsHeader = false
 
-        for (index, rowMatch) in rowMatches.enumerated() {
+        for rowMatch in rowMatches {
             let rowContent = nsTableString.substring(with: rowMatch.range(at: 1))
-
-            // Detect header cells
-            let hasThCells = rowContent.range(of: "<th", options: .caseInsensitive) != nil
-            if index == 0 && hasThCells { firstRowIsHeader = true }
 
             // Extract cell content (th or td)
             let cellPattern = #"(?i)<t[hd][^>]*>([\s\S]*?)</t[hd]>"#

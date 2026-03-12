@@ -109,8 +109,7 @@ private struct WikiContentView: View {
         }
         // Intercept link taps via the openURL environment action
         .environment(\.openURL, OpenURLAction { url in
-            handleLink(url)
-            return .handled
+            handleLink(url) ? .handled : .systemAction
         })
         // External link sheet
         #if canImport(SafariServices)
@@ -138,14 +137,20 @@ private struct WikiContentView: View {
         )
     }
 
-    private func handleLink(_ url: URL) {
-        let urlString = url.absoluteString
+    /// Returns `true` when the link was handled internally, `false` to let the system handle it.
+    @discardableResult
+    private func handleLink(_ url: URL) -> Bool {
         let baseURLString = WikiConstants.baseURL.absoluteString
 
+        // Strip fragment and query so paths like "Page.md#section" still match
+        var cleanComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        cleanComponents?.fragment = nil
+        cleanComponents?.query = nil
+        let cleanURLString = cleanComponents?.url?.absoluteString ?? url.absoluteString
+
         // Detect internal wiki links — URLs that resolve against the base raw GitHub URL
-        if urlString.hasPrefix(baseURLString) {
-            let relativePath = String(urlString.dropFirst(baseURLString.count))
-            // Only navigate to .md pages within the wiki
+        if cleanURLString.hasPrefix(baseURLString) {
+            let relativePath = String(cleanURLString.dropFirst(baseURLString.count))
             if relativePath.hasSuffix(".md") {
                 let titleFromPath = relativePath
                     .components(separatedBy: "/").last?
@@ -153,15 +158,19 @@ private struct WikiContentView: View {
                     .replacingOccurrences(of: "-", with: " ")
                     .capitalized ?? relativePath
                 internalDestination = WikiLinkDestination(path: relativePath, title: titleFromPath)
-                return
+                return true
             }
         }
 
-        // All other links (external http/https, anchors, etc.) open in Safari
+        // External http/https links open in Safari
         if url.scheme == "http" || url.scheme == "https" {
             externalURL = url
             showExternalLink = true
+            return true
         }
+
+        // Unhandled schemes (mailto:, tel:, #anchor, etc.) fall through to system
+        return false
     }
 }
 
