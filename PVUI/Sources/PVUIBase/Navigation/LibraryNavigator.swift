@@ -191,25 +191,31 @@ public final class LibraryNavigator: ObservableObject {
 
 // MARK: - LibraryRouteProvider
 
-/// A `RouteProvider` that translates `AppRoute.search` deep links into
-/// `LibraryNavigator.dispatch(.search(query:))` calls.
+/// A `RouteProvider` that translates `AppRoute.search`, `.systemBrowser`, and `.gameDetail`
+/// deep links into the appropriate `LibraryNavigator.dispatch(…)` calls.
 ///
-/// Register this provider in any root view that participates in the
-/// `NavigationRouter` pipeline so that `provenance://screen/search?q=<query>`
-/// URLs are handled even before library views are on screen:
+/// ## Default registration (no manual wiring needed)
+///
+/// `LibraryNavigator.routeProvider` is a shared static instance that is
+/// **automatically registered** with `NavigationRouter.shared` inside
+/// `LibraryNavigator.init()`. This means `provenance://screen/search?q=…`
+/// deep links are forwarded to `LibraryNavigator` from first access — no
+/// per-view registration is required.
+///
+/// ## Creating an additional provider
+///
+/// If you need a *second* provider (e.g., for testing or a secondary router),
+/// create an instance with a distinct name and manage its lifecycle manually:
 ///
 /// ```swift
-/// struct ContentView: View {
-///     @Environment(\.navigationRouter) private var router
-///     private let libraryRouteProvider = LibraryRouteProvider()
+/// private let extraProvider = LibraryRouteProvider(name: "MyView.libraryRouteProvider")
 ///
-///     var body: some View {
-///         MainLibraryView()
-///             .onAppear  { router.register(libraryRouteProvider) }
-///             .onDisappear { router.unregister(libraryRouteProvider) }
-///     }
-/// }
+/// .onAppear  { NavigationRouter.shared.register(extraProvider) }
+/// .onDisappear { NavigationRouter.shared.unregister(extraProvider) }
 /// ```
+///
+/// The `View.libraryRouteProvider(_:router:)` modifier is a convenience wrapper
+/// for this pattern.
 public final class LibraryRouteProvider: RouteProvider {
     public let routeProviderName: String
 
@@ -241,6 +247,10 @@ public final class LibraryRouteProvider: RouteProvider {
 public extension View {
     /// Register a `LibraryRouteProvider` with the given `NavigationRouter`
     /// for the lifetime this view is on screen.
+    ///
+    /// - Note: You typically do **not** need this for the standard library deep-link flow —
+    ///   `LibraryNavigator.routeProvider` is auto-registered at startup. Use this modifier
+    ///   only when adding a *secondary* provider (e.g., for a custom sub-router or testing).
     ///
     /// This is a convenience wrapper around the standard
     /// `.onAppear { router.register(…) } / .onDisappear { router.unregister(…) }` pattern.
