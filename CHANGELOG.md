@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Wiki Viewer — GitBook tag and HTML rendering** — GitBook liquid tab tags (`{% tabs %}`, `{% tab title="..." %}`, `{% endtab %}`, `{% endtabs %}`) now render as Markdown section headers and separators instead of raw strings. HTML `<table>`, `<strong>`, `<em>`, `<details>/<summary>`, and `<br>` blocks are converted to their Markdown equivalents before rendering. External links in wiki content open in an in-app Safari sheet; internal `.md` links navigate to the corresponding local wiki page (#3013)
+- **Skin Catalog Selection Update** — Downloading and selecting a skin from the catalog now reactively updates the active skin shown in the pause menu Skins tab (#3012)
 - **Siri/Spotlight Save State Thumbnails** — Save states launched from Siri or Spotlight now display their screenshot thumbnail (falling back to game artwork) instead of appearing without artwork in search results (#3023)
 - **Skin Catalog System Pre-filter** — Opening the skin downloader from the pause menu now pre-selects the active game's system so only relevant skins are shown; the filter bar is revealed automatically (#3010)
 - **DOS-style FPS Touch Controls** — Doom, Wolf3D, Quake, and Quake II now reuse the DOS controller overlay path so their UIKit touch controls honor run/strafe/weapon mappings, and Quake-family default layouts now expose shoulder + Run buttons like Doom (#3001)
