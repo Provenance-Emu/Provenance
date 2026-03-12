@@ -1043,7 +1043,7 @@ struct RetroMenuView: View {
                     NavigationStack {
                         SkinCatalogBrowserView()
                             .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
+                                ToolbarItem(placement: .topBarLeading) {
                                     Button("Done") {
                                         showingSkinCatalog = false
                                     }
