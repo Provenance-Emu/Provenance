@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   system (#2544, #2558)
 
 ### Changed
+- **Mednafen: Remove non-functional "Fullscreen" and "Use OpenGL" core options** — Both settings had no effect on iOS (no windowing system; Mednafen driver calls were commented out). `rendersToOpenGL` now correctly returns `NO` for the software renderer (#3024)
 - **Lock modernization in PVLibrary** — Replaced all `NSLock` instances with `OSAllocatedUnfairLock`
   (iOS/tvOS 16+), eliminating bare `.lock()` / `.unlock()` pairs in favour of deadlock-safe
   `withLock { }` closures across `GameImporter`, `DirectoryWatcher`, `CloudKitRemoteApplyGuard`,
@@ -60,6 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **JIT Status Indicator Popover** — Tapping the JIT status indicator in the emulator HUD now shows a compact `.popover` instead of an inline expanding banner that overlapped game content (#3020)
+- **GameMoreInfoView Glass Borders** — Suppressed unwanted liquid glass borders on the DONE, Play, and web-reference toolbar buttons in `GameMoreInfoView` on iOS/tvOS 26+. Custom stroke borders and glow shadows are now conditionally skipped via `legacyStrokeBorder`/`legacyGlowShadow` helpers so the system provides its own glass treatment without visual doubling (#3017)
+- **Wiki Viewer — GitBook tag and HTML rendering** — GitBook liquid tab tags (`{% tabs %}`, `{% tab title="..." %}`, `{% endtab %}`, `{% endtabs %}`) now render as Markdown section headers and separators instead of raw strings. HTML `<table>`, `<strong>`, `<em>`, `<details>/<summary>`, and `<br>` blocks are converted to their Markdown equivalents before rendering. External links in wiki content open in an in-app Safari sheet; internal `.md` links navigate to the corresponding local wiki page (#3013)
 - **Springboard Quick Actions** — Long-pressing the Provenance app icon now correctly shows recently-played games and favorites again; fixed by ensuring `UIApplication.shared.shortcutItems` is always updated on the main thread via `MainScheduler.instance` (#3026)
 - **Browse Skins Done Button** — Moved the "Done" dismiss button in the Browse Skins sheet from the trailing (right) toolbar position to the leading (left) position (#3011)
 - **Settings Help Button Opens Internal Wiki** — The always-visible HELP button in the Settings header now opens the in-app `WikiHelpView` sheet instead of launching an external URL in Safari (#3028)
