@@ -445,8 +445,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Virtual keyboard / mouse cursor overlays are cleaned up in viewWillDisappear.
         // Associated objects are automatically released during dealloc.
 
-        // Resume GameImporter if view controller is deallocated (safety net)
+        // Resume all services if view controller is deallocated (safety net)
         GameImporter.shared.resume()
+        GameImporter.shared.resumeFromEmulation()
+        CloudSyncManager.shared.resumeFromEmulation()
+        Task { await DirectoryWatcherRegistry.resumeAll() }
     }
 
     private func initNotificationObservers() {
@@ -810,6 +813,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Pause CloudKit and GameImporter when gameplay starts
         CloudKitDownloadQueue.shared.pauseQueue()
         GameImporter.shared.pause()
+        GameImporter.shared.pauseForEmulation()
+        CloudSyncManager.shared.pauseForEmulation()
+        Task { await DirectoryWatcherRegistry.pauseAll() }
 
         core.startEmulation()
 

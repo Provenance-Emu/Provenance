@@ -1190,6 +1190,12 @@ public class CloudSyncManager {
 
         guard Defaults[.iCloudSync] else { return }
 
+        // Do not run bootstrap while emulation is active; it will be re-triggered on emulationEnd
+        if isPausedForEmulation {
+            DLOG("[SYNC] Metadata bootstrap skipped (paused for emulation) — will retry on emulation end")
+            return
+        }
+
         // Capture current syncers
         let romSyncer = self.romsSyncer as? CloudKitRomsSyncer
         let saveStatesSyncer = self.saveStatesSyncer as? CloudKitSaveStatesSyncer
@@ -1501,6 +1507,12 @@ public class CloudSyncManager {
                 case .update(let collection, _, let insertions, _):
                     guard !insertions.isEmpty else { return }
 
+                    // Skip enqueueing uploads while emulation is active to avoid I/O during gameplay
+                    if self.isPausedForEmulation {
+                        DLOG("[SYNC] Skipping save-state upload enqueue (paused for emulation)")
+                        return
+                    }
+
                     let newSaveStates = insertions.compactMap { idx -> PVSaveState? in
                         guard idx < collection.count else { return nil }
                         let ss = collection[idx]
@@ -1646,6 +1658,12 @@ public class CloudSyncManager {
     @objc private func handleGameAdded(_ notification: Notification) {
         guard Defaults[.iCloudSync], let romsSyncer = romsSyncer else {
             DLOG("CloudKit sync disabled or ROM syncer not available. Skipping game upload.")
+            return
+        }
+
+        // Skip CloudKit upload while emulation is active
+        if isPausedForEmulation {
+            DLOG("[SYNC] Skipping game-added upload (paused for emulation)")
             return
         }
 
@@ -2048,6 +2066,11 @@ public class CloudSyncManager {
         saveStatesQueue.cancelAllOperations()
         biosQueue.cancelAllOperations()
         nonDbQueue.cancelAllOperations()
+
+        // Also suspend the syncer-owned work queues so in-flight operations drain immediately
+        romsSyncer?.workQueue?.isSuspended = true
+        saveStatesSyncer?.workQueue?.isSuspended = true
+        biosSyncer?.workQueue?.isSuspended = true
     }
 
     /// Resumes sync operations after emulation ends
@@ -2064,6 +2087,11 @@ public class CloudSyncManager {
         saveStatesQueue.isSuspended = false
         biosQueue.isSuspended = false
         nonDbQueue.isSuspended = false
+
+        // Resume syncer-owned work queues
+        romsSyncer?.workQueue?.isSuspended = false
+        saveStatesSyncer?.workQueue?.isSuspended = false
+        biosSyncer?.workQueue?.isSuspended = false
 
         // Resume background sync tasks if enabled
         if Defaults[.iCloudSync] {
