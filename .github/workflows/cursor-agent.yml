@@ -1,6 +1,8 @@
 name: Cursor Agent
 
 on:
+  issue_comment:
+    types: [created]
   workflow_dispatch:
     inputs:
       issue_number:
@@ -35,7 +37,13 @@ concurrency:
 
 jobs:
   cursor-agent:
-    if: github.event_name == 'workflow_dispatch'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request &&
+        contains(github.event.comment.body, '@cursoragent')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
@@ -57,11 +65,18 @@ jobs:
           set -euo pipefail
 
           EVENT_NAME="${{ github.event_name }}"
+          IS_PR_COMMENT="${{ github.event_name == 'issue_comment' && github.event.issue.pull_request.url != '' }}"
           ACTION="${{ github.event.inputs.action }}"
           ISSUE_NUMBER="${{ github.event.inputs.issue_number || github.event.issue.number }}"
           PR_NUMBER="${{ github.event.inputs.pr_number }}"
 
-          if [ -z "$ACTION" ]; then
+          if [ "$EVENT_NAME" = "issue_comment" ] && [ "$IS_PR_COMMENT" = "true" ]; then
+            PR_NUMBER="$ISSUE_NUMBER"
+          fi
+
+          if [ -z "$ACTION" ] && [ "$PR_NUMBER" != "" ]; then
+            ACTION="fix_bug"
+          elif [ -z "$ACTION" ]; then
             ACTION="implement_issue"
           fi
 
@@ -100,7 +115,11 @@ jobs:
 
           case "$ACTION" in
             fix_bug)
-              COMMIT_SUBJECT="fix: address issue #${ISSUE_NUMBER}"
+              if [ -n "$PR_NUMBER" ]; then
+                COMMIT_SUBJECT="fix: address PR #${PR_NUMBER} follow-up"
+              else
+                COMMIT_SUBJECT="fix: address issue #${ISSUE_NUMBER}"
+              fi
               ;;
             fix_ai_review)
               COMMIT_SUBJECT="fix: address AI review feedback on PR #${PR_NUMBER}"
@@ -256,11 +275,13 @@ jobs:
           ISSUE_TITLE: ${{ steps.context.outputs.issue_title }}
           PR_NUMBER: ${{ steps.context.outputs.pr_number }}
           BRANCH: ${{ steps.context.outputs.branch }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
         run: |
           set -euo pipefail
 
           ISSUE_BODY=""
           PR_BODY=""
+          COMMENT_BODY="${COMMENT_BODY:-}"
           REVIEW_BODY=""
           INLINE_REVIEW_COMMENTS=""
 
@@ -302,6 +323,14 @@ jobs:
           ${PR_BODY}
 
           EOF
+
+          if [ -n "$COMMENT_BODY" ]; then
+            cat >> /tmp/cursor_prompt.md <<EOF
+          Triggering PR comment:
+          ${COMMENT_BODY}
+
+          EOF
+          fi
 
           if [ "$ACTION" = "fix_ai_review" ]; then
             cat >> /tmp/cursor_prompt.md <<EOF
