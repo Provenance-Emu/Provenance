@@ -2382,7 +2382,7 @@
 				</array>
 				<key>public.mime-type</key>
 				<array>
-					<string>application/zip</string>
+					<string>application/x-provenance-deltaskin</string>
 				</array>
 			</dict>
 		</dict>
@@ -2403,6 +2403,10 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>manicskin</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-provenance-manicskin</string>
 				</array>
 			</dict>
 		</dict>
