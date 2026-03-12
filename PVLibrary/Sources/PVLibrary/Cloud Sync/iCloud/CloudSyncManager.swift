@@ -220,7 +220,8 @@ public class CloudSyncManager {
         op.addExecutionBlock { [weak self, weak op] in
             guard let self, let op, !op.isCancelled else { return }
             let task = Task {
-                if Task.isCancelled || self.isPausedForEmulation { return }
+                let pausedForEmulation = await MainActor.run(body: { self.isPausedForEmulation })
+                if Task.isCancelled || pausedForEmulation { return }
                 await work()
             }
             self.trackSyncTask(task)
@@ -233,7 +234,7 @@ public class CloudSyncManager {
     /// Check if sync should be allowed based on current device conditions and user settings
     private func shouldAllowSync() async -> Bool {
         // Check if paused for emulation
-        if isPausedForEmulation {
+        if await MainActor.run(body: { isPausedForEmulation }) {
             DLOG("Sync paused for emulation, skipping sync")
             return false
         }
@@ -459,7 +460,7 @@ public class CloudSyncManager {
     /// - Returns: Async function completes when initial sync is done (or immediately if not needed/disabled)
     public func startSync() async {
         // Hard guard: never start sync while emulation is paused
-        if isPausedForEmulation {
+        if await MainActor.run(body: { isPausedForEmulation }) {
             DLOG("[SYNC] startSync called while paused for emulation; skipping.")
             return
         }
@@ -535,7 +536,7 @@ public class CloudSyncManager {
     /// Fetch only remote changes without doing initial sync
     /// Useful for responding to CloudKit notifications
     public func fetchRemoteChangesOnly() async {
-        if isPausedForEmulation {
+        if await MainActor.run(body: { isPausedForEmulation }) {
             DLOG("[SYNC] fetchRemoteChangesOnly called while paused for emulation; skipping.")
             return
         }
@@ -1197,7 +1198,7 @@ public class CloudSyncManager {
         guard Defaults[.iCloudSync] else { return }
 
         // Do not run bootstrap while emulation is active; it will be re-triggered on emulationEnd
-        if isPausedForEmulation {
+        if await MainActor.run(body: { isPausedForEmulation }) {
             DLOG("[SYNC] Metadata bootstrap skipped (paused for emulation) — will retry on emulation end")
             return
         }
@@ -1804,7 +1805,7 @@ public class CloudSyncManager {
 
         let fileManager = FileManager.default
         var markedGamesCount = 0
-        let isPausedForEmulation = self.isPausedForEmulation
+        let isPausedForEmulation = await MainActor.run(body: { self.isPausedForEmulation })
 
         do {
             // Filter out contentless games (virtual entries for systems that boot without ROMs)

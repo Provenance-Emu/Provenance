@@ -1078,7 +1078,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     ///   - filename: The expected filename
     ///   - systemIdentifier: The system identifier for subdirectory
     private func downloadBIOSFromCloudKit(recordID: String, filename: String, systemIdentifier: String?) async throws {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[BIOS DOWNLOAD] Skipping BIOS download (paused for emulation): \(recordID)")
             return
         }

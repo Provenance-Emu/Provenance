@@ -297,7 +297,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Fetch and apply remote ROM changes using a persisted zone change token.
     public func fetchAndApplyRemoteChanges() async {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             return
         }
 
@@ -307,7 +307,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             let (records, newToken) = try await fetchZoneChanges(zoneID: zoneID, previousToken: previousToken)
 
             for record in records {
-                if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
+                if Task.isCancelled { break }
+                let pausedForEmulation = await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })
+                if pausedForEmulation { break }
 
                 switch record.recordType {
                 case CloudKitSchema.RecordType.rom.rawValue:
@@ -339,7 +341,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         timeSpentDelta: Int,
         lastPlayed: Date
     ) async throws {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             throw CloudSyncError.pausedForEmulation
         }
 
@@ -367,7 +369,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         let maxRetries = 4
         for attempt in 0..<maxRetries {
-            if CloudSyncManager.shared.isPausedForEmulation { throw CloudSyncError.pausedForEmulation }
+            if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) { throw CloudSyncError.pausedForEmulation }
 
             let existing = try await fetchRecord(recordID: recordID, desiredKeys: desiredKeys)
             let record = existing ?? CKRecord(recordType: CloudKitSchema.RecordType.rom.rawValue, recordID: recordID)
@@ -403,7 +405,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     private func fetchRecord(recordID: CKRecord.ID, desiredKeys: [CKRecord.FieldKey]) async throws -> CKRecord? {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             return nil
         }
 
@@ -480,7 +482,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Parameter md5: The MD5 hash of the ROM
     /// - Returns: True if the game was created or updated, false otherwise
     public func fetchAndProcessROMMetadata(md5: String) async -> Bool {
-        guard !CloudSyncManager.shared.isPausedForEmulation else {
+        guard !(await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })) else {
             ILOG("[SYNC] Emulation pause active, skipping ROM metadata fetch for MD5 \(md5)")
             return false
         }
@@ -522,7 +524,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     ///   - recordID: The CloudKit record identifier.
     ///   - includeAssets: When true, also fetches asset fields required for downloads.
     public func fetchRecord(recordID: CKRecord.ID, includeAssets: Bool = false) async throws -> CKRecord? {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Emulation pause active, skipping ROM fetch for \(recordID.recordName)")
             return nil
         }
@@ -603,7 +605,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         expectedSize: Int64? = nil,
         progressHandler: ((Double, String?) -> Void)? = nil
     ) async throws -> CKRecord? {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Emulation pause active, skipping ROM fetch (with progress) for \(recordID.recordName)")
             return nil
         }
@@ -2967,7 +2969,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     private func syncMetadataOnlyBody() async -> Int {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] ROM metadata sync skipped (paused for emulation)")
             return 0
         }
@@ -3076,7 +3078,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         for batch in batches {
             batchIndex += 1
-            if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
+            if Task.isCancelled { break }
+            let pausedForEmulation = await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })
+            if pausedForEmulation { break }
 
             // Build lightweight snapshots outside Realm to avoid touching Realm while parsing CloudKit records
             let snapshots: [ROMMetadataSnapshot] = batch.compactMap { makeMetadataSnapshot(from: $0) }
@@ -3106,6 +3110,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     private func applyMetadataSnapshotsBatch(_ snapshots: [ROMMetadataSnapshot]) async throws -> (created: Int, updated: Int, skipped: Int, failed: Int) {
+        let pausedForEmulation = await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })
         let result = try await withRealm { realm in
             var created = 0
             var updated = 0
@@ -3118,7 +3123,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
                 let applySnapshots = {
                     for snap in snapshots {
-                        if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
+                        if Task.isCancelled || pausedForEmulation { break }
 
                         guard let system = realm.object(ofType: PVSystem.self, forPrimaryKey: snap.systemIdentifier) else {
                             failed += 1
@@ -3225,7 +3230,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         for md5 in uniqueMD5s {
             await artworkDownloadGate.enqueue(md5: md5) { [weak self] md5 in
                 guard let self else { return }
-                if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled { return }
+                let pausedForEmulation = await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })
+                if pausedForEmulation || Task.isCancelled { return }
                 let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
                 guard let record = try? await self.fetchRecord(recordID: recordID, includeAssets: true) else { return }
                 guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
@@ -3238,7 +3244,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         for md5 in uniqueOriginalArtworkMD5s {
             await originalArtworkDownloadGate.enqueue(md5: md5) { [weak self] md5 in
                 guard let self else { return }
-                if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled { return }
+                let pausedForEmulation = await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })
+                if pausedForEmulation || Task.isCancelled { return }
                 await self.getArtwork(forGameMD5: md5)
             }
         }
@@ -3246,7 +3253,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Fallback: for games with no cloud artwork fields at all, use enhanced ArtworkSearchQueue (md5+filename+system).
         for item in result.lookupItems {
             await artworkLookupGate.enqueue(md5: item.md5) { md5 in
-                if CloudSyncManager.shared.isPausedForEmulation || Task.isCancelled { return }
+                let pausedForEmulation = await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })
+                if pausedForEmulation || Task.isCancelled { return }
                 let systemID = SystemIdentifier(rawValue: item.systemIdentifier)
                 await ArtworkSearchQueue.shared.queueGameForArtworkSearch(
                     gameID: md5,

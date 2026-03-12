@@ -42,7 +42,7 @@ public actor CloudKitGameMetadataUpdateQueue {
         defer { isDraining = false }
 
         while !pending.isEmpty {
-            if CloudSyncManager.shared.isPausedForEmulation {
+            if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
                 return
             }
 

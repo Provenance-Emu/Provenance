@@ -1545,15 +1545,15 @@ public class CloudKitSyncer: SyncProvider {
     /// - Returns: The saved CloudKit record.
     public func uploadFile(_ file: URL, gameID: String? = nil, systemID: SystemIdentifier? = nil) async throws -> CKRecord {
         return try await runOnQueue {
-        // Respect emulation pause: do not upload while emulation is running
-        if CloudSyncManager.shared.isPausedForEmulation {
-            WLOG("CloudKitSyncer: Upload skipped during emulation pause for file: \(file.lastPathComponent)")
-            throw CloudSyncError.genericError("Sync paused for emulation")
-        }
+            // Respect emulation pause: do not upload while emulation is running
+            if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
+                WLOG("CloudKitSyncer: Upload skipped during emulation pause for file: \(file.lastPathComponent)")
+                throw CloudSyncError.genericError("Sync paused for emulation")
+            }
 
-        // Start tracking analytics for this upload
-        let filename = file.lastPathComponent
-        DLOG("Initiating upload for file: \(filename)")
+            // Start tracking analytics for this upload
+            let filename = file.lastPathComponent
+            DLOG("Initiating upload for file: \(filename)")
 
         return try await SyncProgressTracker.shared.trackOperation(operation: "Uploading \(filename)") { progressTracker in
             // Use retry strategy for CloudKit operations

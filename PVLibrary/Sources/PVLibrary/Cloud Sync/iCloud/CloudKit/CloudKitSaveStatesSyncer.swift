@@ -175,7 +175,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     }
 
     private func fetchSaveStateMetadataRecords() async throws -> [CKRecord] {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Emulation pause active, skipping save state metadata query")
             return []
         }
@@ -275,7 +275,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
     /// Cache artwork for save states already in Realm that are missing images locally.
     private func cacheMissingArtworkForExistingSaveStates(limit: Int) async {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Artwork backfill skipped (paused for emulation)")
             return
         }
@@ -883,7 +883,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     }
 
     private func syncMetadataOnlyBody() async -> Int {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Save state metadata sync skipped (paused for emulation)")
             return 0
         }
@@ -904,7 +904,9 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             for batch in batches {
                 batchIndex += 1
-                if Task.isCancelled || CloudSyncManager.shared.isPausedForEmulation { break }
+                if Task.isCancelled { break }
+                let pausedForEmulation = await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })
+                if pausedForEmulation { break }
 
                 // Process batch concurrently
                 await withTaskGroup(of: Void.self) { group in
@@ -942,7 +944,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             return
         }
 
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Emulation pause active, skipping save state record: \(record.recordID.recordName)")
             return
         }
@@ -1476,7 +1478,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     ///   - saveState: The save state to download
     ///   - cloudRecord: The CloudKit record
     private func markSaveStateForDownload(_ saveState: PVSaveState, cloudRecord: CKRecord) async {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Emulation pause active, skipping save state download queue for: \(cloudRecord.recordID.recordName)")
             return
         }
@@ -1836,7 +1838,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     ///   - saveState: The save state to update with artwork
     ///   - saveStateURL: The local URL of the save state file
     private func downloadSaveStateArtworkAsset(from record: CKRecord, for saveState: PVSaveState, saveStateURL: URL) async throws {
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Emulation pause active, skipping artwork download for: \(saveState.id)")
             return
         }
@@ -1912,7 +1914,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             return
         }
 
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             ILOG("[SYNC] Emulation pause active, skipping artwork cache for: \(record.recordID.recordName)")
             return
         }

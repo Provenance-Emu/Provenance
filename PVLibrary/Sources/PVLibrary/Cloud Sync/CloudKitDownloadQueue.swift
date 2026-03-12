@@ -424,12 +424,16 @@ public class CloudKitDownloadQueue: ObservableObject {
 
     /// Legacy convenience — delegates to `pause(reason: .emulation)`
     public func pauseQueue() {
-        pause(reason: .emulation)
+        Task { @MainActor in
+            pause(reason: .emulation)
+        }
     }
 
     /// Legacy convenience — delegates to `resume(reason: .emulation)`
     public func resumeQueue() {
-        resume(reason: .emulation)
+        Task { @MainActor in
+            resume(reason: .emulation)
+        }
     }
 
     /// Retry a failed download

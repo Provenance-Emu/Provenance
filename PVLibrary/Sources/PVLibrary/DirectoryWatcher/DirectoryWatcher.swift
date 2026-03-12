@@ -862,7 +862,8 @@ fileprivate extension DirectoryWatcher {
 
             // Defer processing during emulation pause, but remember what arrived
             let importerPaused = await MainActor.run { GameImporter.shared.isPausedForEmulation }
-            if isPausedForEmulation || CloudSyncManager.shared.isPausedForEmulation || importerPaused {
+            let cloudSyncPaused = await MainActor.run { CloudSyncManager.shared.isPausedForEmulation }
+            if isPausedForEmulation || cloudSyncPaused || importerPaused {
                 bufferedEvents.append(contentsOf: contents)
                 ILOG("Deferring directory events while emulation paused. Buffered total: \(bufferedEvents.count)")
                 return
@@ -932,7 +933,8 @@ fileprivate extension DirectoryWatcher {
     private func flushBufferedEventsIfNeeded() async {
         if isFlushingBufferedEvents { return }
         let importerPaused = await MainActor.run { GameImporter.shared.isPausedForEmulation }
-        if isPausedForEmulation || CloudSyncManager.shared.isPausedForEmulation || importerPaused {
+        let cloudSyncPaused = await MainActor.run { CloudSyncManager.shared.isPausedForEmulation }
+        if isPausedForEmulation || cloudSyncPaused || importerPaused {
             ILOG("Pause flags still set; deferring flush")
             return
         }

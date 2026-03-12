@@ -961,7 +961,7 @@ public actor CloudKitInitialSyncer {
     /// - Returns: Number of files successfully synced
     private func syncFiles(_ files: [URL], using syncer: any SyncProvider, progressUpdater: @escaping (Int) -> CloudKitInitialSyncProgress) async -> Int {
         // Respect emulation pause: skip non-database uploads during emulation
-        if CloudSyncManager.shared.isPausedForEmulation {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             WLOG("[INITIAL SYNC] Skipping file sync batch because sync is paused for emulation")
             return 0
         }
@@ -990,7 +990,7 @@ public actor CloudKitInitialSyncer {
                 for fileURL in batch {
                     group.addTask {
                         // Abort early if emulation pause engaged after the batch started
-                        if CloudSyncManager.shared.isPausedForEmulation {
+                        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
                             return (fileURL, false, CloudSyncError.genericError("Sync paused for emulation"))
                         }
 

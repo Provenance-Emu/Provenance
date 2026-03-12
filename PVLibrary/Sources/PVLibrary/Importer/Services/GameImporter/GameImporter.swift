@@ -3700,12 +3700,16 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Legacy convenience — delegates to `pause(reason: .emulation)`
     public func pauseForEmulation() {
-        pause(reason: .emulation)
+        Task { @MainActor in
+            pause(reason: .emulation)
+        }
     }
 
     /// Legacy convenience — delegates to `resume(reason: .emulation)`
     public func resumeFromEmulation() {
-        resume(reason: .emulation)
+        Task { @MainActor in
+            resume(reason: .emulation)
+        }
     }
 
     /// Resumes the import processing if it was paused
