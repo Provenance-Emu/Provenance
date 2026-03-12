@@ -1,60 +1,36 @@
 name: AI Review Trigger
 
-# Lightweight trigger: catches pull_request events on agent/** branches,
-# then dispatches ai-review.yml via workflow_dispatch.
-#
-# Why pull_request instead of push:
-#   The agent (claude-code-action) pushes the branch THEN creates the PR in two
-#   separate steps. A push-event trigger fires before the PR exists, so
-#   `gh pr list` returns nothing and the review is silently skipped.
-#   pull_request:opened fires after both the push AND the PR creation are done.
-#   pull_request:synchronize fires on every subsequent push to an open PR,
-#   including force-pushes from rebase (which also use GITHUB_TOKEN and
-#   therefore don't fire push events in other workflows).
-#
-# This indirection is needed because claude-code-action@v1 does not support
-# push event contexts — it requires issue_comment, pull_request, or workflow_dispatch.
+# Auto-trigger DISABLED — GitHub Copilot handles PR reviews.
+# Trigger manually with:
+#   - Comment `/ai-review` on any PR
+#   - `gh workflow run ai-review.yml -f pr_number=<N>`
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    branches:
-      - develop
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: read
-  actions: write   # To dispatch ai-review.yml
+  actions: write
+  pull-requests: read
 
 jobs:
   dispatch:
-    name: Find PR & dispatch review
+    name: Dispatch on /ai-review comment
+    # Only fire on `/ai-review` comments on PRs (not issues)
+    if: |
+      github.event.issue.pull_request != '' &&
+      github.event.comment.body == '/ai-review'
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch ai-review.yml for [Agent] PRs
+      - name: Dispatch ai-review.yml
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set -e
-
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
+          PR_NUMBER="${{ github.event.issue.number }}"
           REPO="${{ github.repository }}"
-
-          echo "PR #$PR_NUMBER — $PR_TITLE (branch: $HEAD_BRANCH)"
-
-          # Auto-review only [Agent] PRs from agent/** branches
-          if ! echo "$PR_TITLE" | grep -q "^\[Agent\]"; then
-            echo "Not an [Agent] PR — skipping auto-review."
-            exit 0
-          fi
-
-          if ! echo "$HEAD_BRANCH" | grep -q "^agent/"; then
-            echo "Not an agent/** branch — skipping auto-review."
-            exit 0
-          fi
-
-          echo "Dispatching AI review for PR #$PR_NUMBER ($PR_TITLE)"
-          gh workflow run ai-review.yml \
-            --repo "$REPO" \
-            -f pr_number="$PR_NUMBER"
+          echo "Dispatching AI review for PR #$PR_NUMBER"
+          gh workflow run ai-review.yml --repo "$REPO" -f pr_number="$PR_NUMBER"
+          gh pr comment "$PR_NUMBER" --repo "$REPO" \
+            --body "🤖 AI code review dispatched — results will be posted shortly." \
+            2>/dev/null || true
