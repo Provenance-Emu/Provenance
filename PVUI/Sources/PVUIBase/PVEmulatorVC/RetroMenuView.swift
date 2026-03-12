@@ -1047,14 +1047,16 @@ struct RetroMenuView: View {
                     }
                 }) {
                     NavigationStack {
-                        SkinCatalogBrowserView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    Button("Done") {
-                                        showingSkinCatalog = false
-                                    }
+                        SkinCatalogBrowserView(
+                            preselectedSystem: emulatorVC.game.system?.systemIdentifier.skinCatalogSystemCode ?? nil
+                        )
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button("Done") {
+                                    showingSkinCatalog = false
                                 }
                             }
+                        }
                     }
                 }
 
