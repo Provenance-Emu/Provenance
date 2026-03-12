@@ -40,19 +40,8 @@ final class PVDoomControllerViewController: PVControllerViewController<PVDOSSyst
             guard let button = $0 as? JSButton,
                   let title = button.titleLabel?.text else { return }
 
-            switch title.lowercased() {
-            case "shoot", "fire", "fire 1", "1":
-                // South button → RETRO_DEVICE_ID_JOYPAD_B → Fire in PrBoom
-                button.doomButtonTag = .fire1
-            case "use", "fire 2", "2":
-                // East button → RETRO_DEVICE_ID_JOYPAD_A → Use/Interact in PrBoom
-                button.doomButtonTag = .fire2
-            case "run", "speed":
-                // North button → RETRO_DEVICE_ID_JOYPAD_X → Run/Speed in PrBoom
-                button.doomButtonTag = .run
-            default:
-                break
-            }
+            // Delegate label→button mapping to PVDOSButton initializer to avoid duplicate logic.
+            button.doomButtonTag = PVDOSButton(title)
         }
 
         // Shoulder buttons: strafe

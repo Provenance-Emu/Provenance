@@ -88,6 +88,12 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
         case(PVDOSButtonSelect):
             // buttonOptions → RETRO_DEVICE_ID_JOYPAD_SELECT → Automap in PrBoom / menu in DOS
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
+            // For non-Doom systems (e.g. DOSBox) also forward to buttonHome so the RetroArch
+            // menu remains accessible from the on-screen Select button. Doom intentionally
+            // omits this to prevent the automap press from toggling the RetroArch menu.
+            if (![self.systemIdentifier isEqualToString:@"com.provenance.doom"]) {
+                [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
+            }
             break;
         case(PVDOSButtonPause):
             // buttonMenu → RETRO_DEVICE_ID_JOYPAD_START → Pause in PrBoom
