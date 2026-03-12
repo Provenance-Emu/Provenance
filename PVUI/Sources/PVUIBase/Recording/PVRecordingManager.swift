@@ -57,12 +57,18 @@ import PVLogging
         recorder.isMicrophoneEnabled = true
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            recorder.startRecording { error in
-                if let error {
-                    ELOG("[Recording] Failed to start recording: \(error.localizedDescription)")
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
+            // Explicitly dispatch to main queue: RPScreenRecorder requires main-thread calls and
+            // its completion handler fires on the same queue it was called from.  Without this,
+            // the @Sendable continuation body may run off the main actor in Swift's concurrency
+            // runtime, causing a UIKit/ReplayKit main-thread assertion crash on iOS 17+.
+            DispatchQueue.main.async {
+                recorder.startRecording { error in
+                    if let error {
+                        ELOG("[Recording] Failed to start recording: \(error.localizedDescription)")
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
                 }
             }
         }
@@ -81,12 +87,16 @@ import PVLogging
         }
 
         let previewVC: RPPreviewViewController? = try await withCheckedThrowingContinuation { continuation in
-            RPScreenRecorder.shared().stopRecording { previewVC, error in
-                if let error {
-                    ELOG("[Recording] Failed to stop recording: \(error.localizedDescription)")
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: previewVC)
+            // Same main-queue dispatch as startRecording: ensures RPScreenRecorder is always
+            // called on the main thread and the handler fires on the main queue.
+            DispatchQueue.main.async {
+                RPScreenRecorder.shared().stopRecording { previewVC, error in
+                    if let error {
+                        ELOG("[Recording] Failed to stop recording: \(error.localizedDescription)")
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume(returning: previewVC)
+                    }
                 }
             }
         }

@@ -19,6 +19,20 @@ import Combine
 import PVSettings
 import PVLogging
 
+// MARK: - Pass-Through View
+
+/// A full-screen container view whose touch handling only claims hits that land on an
+/// interactive subview.  Any tap in the empty space between indicators falls through to
+/// the controller overlay and game view underneath.
+private final class PassThroughView: UIView {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let hit = super.hitTest(point, with: event)
+        // Return nil (pass-through) when nothing interactive was hit — this prevents
+        // the overlay from swallowing game touches in empty areas.
+        return hit === self ? nil : hit
+    }
+}
+
 // MARK: - Overlay View Controller
 
 /// A UIViewController that hosts the SwiftUI indicator overlay.
@@ -38,6 +52,11 @@ public final class PVIndicatorOverlayViewController: UIViewController {
         }
     }
 
+    public override func loadView() {
+        // Use a pass-through root view so dead-zone touches reach the controller overlay below.
+        view = PassThroughView()
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -54,12 +73,14 @@ public final class PVIndicatorOverlayViewController: UIViewController {
 
     private func setupView() {
         view.backgroundColor = .clear
-        view.isUserInteractionEnabled = true
+        // isUserInteractionEnabled is managed by updateVisibility(); start disabled so
+        // the overlay never blocks touches when no indicators are shown.
+        view.isUserInteractionEnabled = false
 
         let overlayView = PVIndicatorOverlayView(registry: PVIndicatorRegistry.shared)
         let host = UIHostingController(rootView: overlayView)
         host.view.backgroundColor = .clear
-        host.view.isUserInteractionEnabled = true
+        host.view.isUserInteractionEnabled = false
 
         addChild(host)
         view.addSubview(host.view)
@@ -97,6 +118,9 @@ public final class PVIndicatorOverlayViewController: UIViewController {
     private func updateVisibility() {
         let shouldShow = isOverlayEnabled && PVIndicatorRegistry.shared.hasVisibleIndicators
         view.isHidden = !shouldShow
+        // Only enable user interaction when indicators are actually visible so the
+        // overlay never intercepts game or controller-button touches in empty areas.
+        view.isUserInteractionEnabled = shouldShow
         hostingController?.view.isUserInteractionEnabled = shouldShow
     }
 
@@ -117,6 +141,8 @@ public final class PVIndicatorOverlayViewController: UIViewController {
     /// Temporarily hides the overlay (e.g., during menu presentation).
     public func temporarilyHide() {
         view.isHidden = true
+        view.isUserInteractionEnabled = false
+        hostingController?.view.isUserInteractionEnabled = false
     }
 
     /// Restores the overlay visibility based on settings.

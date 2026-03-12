@@ -191,6 +191,7 @@ public struct JITStatusIndicatorView: View {
                 .buttonStyle(PlainButtonStyle())
                 .accessibilityLabel("JIT Status: \(viewModel.status.label)")
                 .accessibilityHint("Tap to show details about the current emulation mode")
+                #if !os(tvOS)
                 .popover(isPresented: $showExplanation, arrowEdge: .top) {
                     JITExplanationPopoverView(
                         status: viewModel.status,
@@ -198,6 +199,9 @@ public struct JITStatusIndicatorView: View {
                     )
                     .presentationCompactAdaptation(.popover)
                 }
+                #else
+                // TODO: A tvOS version of the JIT popover?
+                #endif
             }
         }
         #if canImport(PVJIT)

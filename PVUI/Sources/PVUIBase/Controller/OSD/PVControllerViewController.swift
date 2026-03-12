@@ -395,6 +395,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 button.alpha = CGFloat(Defaults[.controllerOpacity])
             }
             print("Controller Alpha Set ", CGFloat(Defaults[.controllerOpacity]))
+            // Quick-action buttons always show at full opacity regardless of controllerOpacity
+            restoreQuickActionButtonAlpha()
             dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
         }
         setupTouchControls()
@@ -425,6 +427,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 button.alpha = CGFloat(Defaults[.controllerOpacity])
             }
             print("Controller Alpha Set", CGFloat(Defaults[.controllerOpacity]))
+            // Quick-action buttons always show at full opacity regardless of controllerOpacity
+            restoreQuickActionButtonAlpha()
             dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
         }
         setupTouchControls()
@@ -471,8 +475,13 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         updateHideTouchControls()
 #endif
 
-        /// Update toggle button visibility and keep it at the top of the z-order
+        /// Update toggle button visibility and keep it at the top of the z-order.
+        /// Also bring quickActionsContainer to the front so game-control views added by
+        /// setupTouchControls() don't sit on top of the quick-action buttons.
         toggleButton?.isHidden = !shouldShowToggleButton
+        if let quickActionsContainer = quickActionsContainer {
+            view.bringSubviewToFront(quickActionsContainer)
+        }
         if let toggleButton = toggleButton {
             view.bringSubviewToFront(toggleButton)
         }
@@ -1472,26 +1481,28 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     // Add this method to adjust D-Pad position
     private func adjustDPadPosition() {
-        guard let dPad = dPad else { return }
-        guard toggleButton != nil else { return } /// Ensure toggle button exists
+        guard let dPad = dPad, !dPad.isCustomMoved else { return }
+        guard let toggleButton = toggleButton else { return }
 
-        /// Ensure D-Pad has enough spacing from toggle button
-        let minSpacing: CGFloat = 60
+        /// Only adjust when the D-Pad frame actually intersects the toggle button area.
+        /// Previous code had an operator-precedence bug (`?? 0 - minSpacing` instead of
+        /// `(?? 0) - minSpacing`) that made the condition always true, pushing the D-Pad
+        /// off to safeAreaInsets.left on every layout pass.
+        let toggleMinX = toggleButton.frame.minX
+        let minSpacing: CGFloat = 16
         let dPadFrame = dPad.frame
 
-        /// Check if D-Pad is too close to toggle button
-        if dPadFrame.maxX > (toggleButton?.frame.minX ?? 0 - minSpacing) {
-            /// Move D-Pad left to create space
-            var newFrame = dPadFrame
-            newFrame.origin.x = toggleButton?.frame.minX ?? 0 - minSpacing - dPadFrame.width
+        guard dPadFrame.maxX > toggleMinX - minSpacing else { return }
 
-            /// Ensure we don't move the D-Pad off screen
-            if newFrame.origin.x < view.safeAreaInsets.left {
-                newFrame.origin.x = view.safeAreaInsets.left
-            }
+        /// Shift D-Pad right so it clears the toggle button with the required spacing.
+        var newFrame = dPadFrame
+        newFrame.origin.x = toggleMinX - minSpacing - dPadFrame.width
 
-            dPad.frame = newFrame
+        /// Clamp to safe area so we never push the D-Pad fully off screen.
+        if newFrame.origin.x < view.safeAreaInsets.left {
+            newFrame.origin.x = view.safeAreaInsets.left
         }
+        dPad.frame = newFrame
     }
 
     // Update the toggleButtons method
@@ -1584,6 +1595,15 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 qsButton.topAnchor.constraint(equalTo: ffButton.topAnchor),
             ])
             self.quickSaveButton = qsButton
+        }
+    }
+
+    /// Resets the alpha of quick-action buttons to 1.0 after controller opacity has been
+    /// applied globally.  Game-controller buttons dim with `controllerOpacity`, but the
+    /// quick-action strip should remain fully opaque at all times.
+    private func restoreQuickActionButtonAlpha() {
+        [fastForwardButton, quickSaveButton, quickLoadButton].compactMap { $0 }.forEach {
+            $0.alpha = 1.0
         }
     }
 
