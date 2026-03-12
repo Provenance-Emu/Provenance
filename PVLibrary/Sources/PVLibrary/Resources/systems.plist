@@ -8666,7 +8666,7 @@
 						<key>PVControlTint</key>
 						<string>#f96763</string>
 						<key>PVControlTitle</key>
-						<string>1</string>
+						<string>Shoot</string>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
@@ -8676,7 +8676,7 @@
 						<key>PVControlTint</key>
 						<string>#63a2f9</string>
 						<key>PVControlTitle</key>
-						<string>2</string>
+						<string>Use</string>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
@@ -8696,7 +8696,7 @@
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 				<key>PVControlTitle</key>
-				<string>Reset</string>
+				<string>Pause</string>
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 			</dict>
@@ -8704,7 +8704,7 @@
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>Map</string>
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 			</dict>

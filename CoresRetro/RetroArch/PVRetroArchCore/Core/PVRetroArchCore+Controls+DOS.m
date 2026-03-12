@@ -78,10 +78,12 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVDOSButtonFire1):
-            [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
+            // buttonA (south) → RETRO_DEVICE_ID_JOYPAD_B → Fire/Shoot in PrBoom
+            [touch_controller.extendedGamepad.buttonA setValue:pressed?1:0];
             break;
         case(PVDOSButtonFire2):
-            [touch_controller.extendedGamepad.buttonA setValue:pressed?1:0];
+            // buttonB (east) → RETRO_DEVICE_ID_JOYPAD_A → Use/Interact in PrBoom
+            [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
             break;
         case(PVDOSButtonSelect):
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
