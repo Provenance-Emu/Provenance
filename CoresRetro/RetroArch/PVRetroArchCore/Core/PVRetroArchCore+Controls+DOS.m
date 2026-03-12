@@ -10,7 +10,12 @@
 @import PVCoreBridge;
 #import "./cocoa_common.h"
 
+// Note: Button enums such as PVDOSButton are made visible to Objective-C
+// via the generated Swift header from the PVCoreBridge module
+// (imported above with `@import PVCoreBridge;`).
+
 /* RetroArch Includes */
+#include <stdint.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>
@@ -195,5 +200,108 @@ static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_RIGHT;
 }
+
+@end
+
+// MARK: - Wolf3D (ECWolf) Controls
+//
+// Wolfenstein 3D is served by the ECWolf RetroArch core whose libretro button layout
+// differs from PrBoom (DOS/Doom) in one important way:
+//   * Run/Speed  -> JOYPAD_X (north, GCController.buttonY) -- NOT JOYPAD_Y
+//   * Strafe On (toggle) -> JOYPAD_Y (west, GCController.buttonX)
+//
+// This category implements PVWolf3DSystemResponderClient on the shared
+// PVRetroArchCoreBridge so Wolf3D gets the correct ecwolf button constants
+// without polluting the generic DOS responder.
+
+@interface PVRetroArchCoreBridge (Wolf3DControls) <PVWolf3DSystemResponderClient>
+- (void)handleWolf3DButton:(PVWolf3DButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed;
+@end
+
+@implementation PVRetroArchCoreBridge (Wolf3DControls)
+
+#pragma mark - Gamepad
+
+- (void)didPushWolf3DButton:(PVWolf3DButton)button forPlayer:(NSInteger)player {
+    [self handleWolf3DButton:button forPlayer:player pressed:YES];
+}
+
+- (void)didReleaseWolf3DButton:(PVWolf3DButton)button forPlayer:(NSInteger)player {
+    [self handleWolf3DButton:button forPlayer:player pressed:NO];
+}
+
+- (void)handleWolf3DButton:(PVWolf3DButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed {
+    static float xAxis = 0;
+    static float yAxis = 0;
+    float v = pressed ? 1.0f : 0.0f;
+
+    switch (button) {
+        case PVWolf3DButtonUp:
+            yAxis = pressed ? (!xAxis ? 1.0f : 0.5f) : 0.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case PVWolf3DButtonDown:
+            yAxis = pressed ? (!xAxis ? -1.0f : -0.5f) : 0.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case PVWolf3DButtonLeft:
+            xAxis = pressed ? (!yAxis ? -1.0f : -0.5f) : 0.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case PVWolf3DButtonRight:
+            xAxis = pressed ? (!yAxis ? 1.0f : 0.5f) : 0.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case PVWolf3DButtonFire:
+            // JOYPAD_B (south) -> GCController.buttonA
+            [touch_controller.extendedGamepad.buttonA setValue:v];
+            break;
+        case PVWolf3DButtonOpen:
+            // JOYPAD_A (east) -> GCController.buttonB
+            [touch_controller.extendedGamepad.buttonB setValue:v];
+            break;
+        case PVWolf3DButtonStrafeOn:
+            // JOYPAD_Y (west) -> GCController.buttonX  (strafe-on toggle)
+            [touch_controller.extendedGamepad.buttonX setValue:v];
+            break;
+        case PVWolf3DButtonRun:
+            // JOYPAD_X (north) -> GCController.buttonY  (run/speed)
+            // NOTE: this differs from the generic DOS bridge which maps run->buttonX (west).
+            [touch_controller.extendedGamepad.buttonY setValue:v];
+            break;
+        case PVWolf3DButtonStrafeLeft:
+            // JOYPAD_L -> leftShoulder
+            [touch_controller.extendedGamepad.leftShoulder setValue:v];
+            break;
+        case PVWolf3DButtonStrafeRight:
+            // JOYPAD_R -> rightShoulder
+            [touch_controller.extendedGamepad.rightShoulder setValue:v];
+            break;
+        case PVWolf3DButtonWeaponPrev:
+            // JOYPAD_L2 -> leftTrigger
+            [touch_controller.extendedGamepad.leftTrigger setValue:v];
+            break;
+        case PVWolf3DButtonWeaponNext:
+            // JOYPAD_R2 -> rightTrigger
+            [touch_controller.extendedGamepad.rightTrigger setValue:v];
+            break;
+        case PVWolf3DButtonMap:
+            // JOYPAD_SELECT -> buttonOptions (+ buttonHome for controllers without Options)
+            [touch_controller.extendedGamepad.buttonOptions setValue:v];
+            [touch_controller.extendedGamepad.buttonHome setValue:v];
+            break;
+        case PVWolf3DButtonMenu:
+            // JOYPAD_START -> buttonMenu
+            [touch_controller.extendedGamepad.buttonMenu setValue:v];
+            break;
+        case PVWolf3DButtonCount:
+            break;
+    }
+}
+
+// Wolf3D shares the keyboard and mouse pipeline with DOS (same RetroArch backend).
+// The keyboard and mouse methods declared in PVWolf3DSystemResponderClient are
+// already implemented by the DOSControls category above on the same class,
+// so no duplicate implementations are needed here.
 
 @end

@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development, March 2026)
 
 ### Added
+- **Wolf3D Dedicated Input Responder** — Created `PVWolf3DButton` enum and `PVWolf3DSystemResponderClient` protocol with correct ECWolf libretro button constants (`run` maps to JOYPAD_X/north, `strafeOn` maps to JOYPAD_Y/west). Added `PVWolf3DControllerViewController` with Wolf3D-specific button labels (Shoot, Open, Run, Map, Menu). Fixes incorrect button mapping inherited from the generic DOS responder (#3054)
+- **Wolf3D BIOS Setup Guidance** — Wolf3D system now declares `ecwolf.pk3` as a required BIOS file (`PVRequiresBIOS = true`). When the file is missing, the app shows an in-app alert with the correct BIOS path and a link to the ECWolf download page (#3054)
 - **MetricKit Hang Reporting** — Passive `MXMetricManagerSubscriber` added to `PVAppDelegate`; hang, crash, and CPU-exception diagnostic call stacks are now logged via PVLogging on the next app launch after an event, enabling real-world hang analysis without user action (#3046)
 
 ### Fixed
