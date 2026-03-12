@@ -99,6 +99,12 @@ public struct WikiPageView: View {
 /// - External links (http/https) open in an in-app Safari sheet.
 /// - Internal wiki links (`.md` paths relative to the wiki base URL) push a new WikiPageView.
 /// - Anchor fragments in wiki links scroll to the matching heading section.
+///
+/// When no `fragment` is provided the page is rendered with a single `MarkdownView`
+/// to preserve full document-level parsing semantics (reference links, footnotes, etc.).
+/// When a `fragment` *is* provided the content is split into heading-bounded sections so
+/// `ScrollViewReader` can scroll to the target anchor; reference-link definitions are
+/// carried into every section to keep cross-section references intact.
 private struct WikiContentView: View {
     let page: WikiPage
     /// Optional anchor fragment (e.g. `"my-section"`) indicating which section to scroll to on appear.
@@ -109,20 +115,17 @@ private struct WikiContentView: View {
     @State private var showExternalLink = false
 
     var body: some View {
-        let sections = splitMarkdownIntoSections(page.content)
         ScrollViewReader { proxy in
             ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(sections) { section in
-                        MarkdownView(text: section.content, baseURL: WikiConstants.baseURL)
-                            .id(section.anchorID)
-                    }
+                if fragment != nil {
+                    sectionedContent
+                } else {
+                    MarkdownView(text: page.content, baseURL: WikiConstants.baseURL)
+                        .padding()
                 }
-                .padding()
             }
             .onAppear {
                 guard let fragment else { return }
-                // Delay slightly to allow SwiftUI layout to complete before scrolling
                 DispatchQueue.main.asyncAfter(deadline: .now() + scrollToAnchorDelay) {
                     withAnimation {
                         proxy.scrollTo(fragment, anchor: .top)
@@ -130,11 +133,9 @@ private struct WikiContentView: View {
                 }
             }
         }
-        // Intercept link taps via the openURL environment action
         .environment(\.openURL, OpenURLAction { url in
             handleLink(url) ? .handled : .systemAction
         })
-        // External link sheet
         #if canImport(SafariServices)
         .sheet(isPresented: $showExternalLink) {
             if let url = externalURL {
@@ -142,7 +143,6 @@ private struct WikiContentView: View {
             }
         }
         #endif
-        // Internal wiki navigation link (hidden, activated programmatically)
         .background(
             NavigationLink(
                 isActive: Binding(
@@ -158,6 +158,24 @@ private struct WikiContentView: View {
                 EmptyView()
             }
         )
+    }
+
+    /// Renders the page split into heading-bounded sections, each carrying an anchor ID.
+    /// Shared reference-link definitions are prepended to every section so that
+    /// cross-section `[ref]`-style links continue to resolve correctly.
+    private var sectionedContent: some View {
+        let sections = splitMarkdownIntoSections(page.content)
+        let referenceDefs = extractReferenceDefinitions(page.content)
+        return VStack(alignment: .leading, spacing: 0) {
+            ForEach(sections) { section in
+                MarkdownView(
+                    text: referenceDefs.isEmpty ? section.content : referenceDefs + "\n\n" + section.content,
+                    baseURL: WikiConstants.baseURL
+                )
+                .id(section.anchorID)
+            }
+        }
+        .padding()
     }
 
     /// Returns `true` when the link was handled internally, `false` to let the system handle it.
@@ -267,6 +285,15 @@ private func isATXHeading(_ line: String) -> Bool {
     guard hashes.count >= 1, hashes.count <= 6 else { return false }
     let afterHashes = line.dropFirst(hashes.count)
     return afterHashes.isEmpty || afterHashes.hasPrefix(" ")
+}
+
+/// Extracts Markdown reference-link definitions (e.g. `[key]: https://…`) from the full document.
+/// These definitions are invisible when rendered but are needed by any section that references them,
+/// so they are prepended to each section when splitting for anchor navigation.
+private func extractReferenceDefinitions(_ text: String) -> String {
+    text.components(separatedBy: "\n")
+        .filter { $0.range(of: #"^\s{0,3}\[.+\]:\s+"#, options: .regularExpression) != nil }
+        .joined(separator: "\n")
 }
 
 private extension String {
