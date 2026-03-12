@@ -27,7 +27,7 @@ final class PVDOSControllerViewController: PVControllerViewController<PVDOSSyste
                 return
             }
             switch title.lowercased() {
-            case "fire 1", "1", "fire":
+            case "fire 1", "1", "fire", "shoot":
                 button.buttonTag = .fire1
             case "fire 2", "2", "use":
                 button.buttonTag = .fire2
