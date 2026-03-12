@@ -62,8 +62,12 @@ public struct SkinCatalogBrowserView: View {
     // MARK: - Init
 
     /// Create the catalog browser, optionally pre-filtered to a system.
+    ///
+    /// When `preselectedSystem` is non-nil the filter bar is shown automatically
+    /// so the user immediately sees which system is active and can change it.
     public init(preselectedSystem: String? = nil) {
         _selectedSystem = State(initialValue: preselectedSystem)
+        _showingFilters = State(initialValue: preselectedSystem != nil)
     }
 
     // MARK: - Body

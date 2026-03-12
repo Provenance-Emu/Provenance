@@ -599,6 +599,15 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             attributeSet.contentCreationDate = saveState.date
             attributeSet.contentModificationDate = saveState.date
 
+            // Add screenshot thumbnail if available, fallback to game artwork
+            if let imageURL = saveState.image?.url {
+                attributeSet.thumbnailURL = imageURL
+                attributeSet.thumbnailData = try? Data(contentsOf: imageURL)
+            } else if let gameArtworkURL = game.pathOfCachedImage {
+                attributeSet.thumbnailURL = gameArtworkURL
+                attributeSet.thumbnailData = try? Data(contentsOf: gameArtworkURL)
+            }
+
             // Add keywords
             var keywords = ["save state", "saved game", "provenance", "emulator"]
             if let systemName = game.system?.name {

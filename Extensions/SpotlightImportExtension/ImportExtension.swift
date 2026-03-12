@@ -175,7 +175,20 @@ class ImportExtension: CSImportExtension {
                     
                     // Add game metadata (game is frozen, safe to use)
                     updateAttributesFromGame(attributes, game: game)
-                    
+
+                    // Restore save-state–specific display name (updateAttributesFromGame overwrites it)
+                    attributes.displayName = "Save State: \(game.title)"
+
+                    // Try to override thumbnail with the save state's own screenshot
+                    let filename = fileURL.lastPathComponent
+                    if let saveState = realm.objects(PVSaveState.self)
+                        .filter("file.partialPath ENDSWITH %@", filename)
+                        .first?.freeze(),
+                       let imageURL = saveState.image?.url {
+                        attributes.thumbnailURL = imageURL
+                        attributes.thumbnailData = try? Data(contentsOf: imageURL)
+                    }
+
                     // Add save state specific keywords
                     if var keywords = attributes.keywords {
                         keywords.append(contentsOf: ["save state", "saved game"])
