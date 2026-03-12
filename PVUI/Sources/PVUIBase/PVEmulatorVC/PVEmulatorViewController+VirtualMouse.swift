@@ -123,6 +123,27 @@ extension PVEmulatorViewController {
         cursorHostingController?.removeFromParent()
         cursorHostingController = nil
     }
+
+    /// Refresh the trackpad's authoritative game-viewport rect.
+    ///
+    /// Call this after any layout event that changes where the game screen
+    /// appears on screen — e.g. from `viewDidAppear`, `viewDidLayoutSubviews`,
+    /// and `applyFrameToGPUView` — so `TouchTrackpadView.hitTest` always uses
+    /// the correct bounds and never accidentally captures skin-button touches.
+    ///
+    /// When `currentTargetFrame` is set (skin is active and has been positioned),
+    /// it is pushed directly to the trackpad as `explicitGameViewRect`.  This
+    /// removes any dependency on the GPU view's autoresizing-mask frame that
+    /// exists between view-load and the first skin-repositioning callback.
+    func refreshVirtualMouseLayout() {
+        guard let trackpad = touchTrackpadView else { return }
+        if let targetFrame = currentTargetFrame, !targetFrame.isEmpty {
+            // Skin system has determined the authoritative game rect — use it.
+            trackpad.explicitGameViewRect = targetFrame
+        }
+        // If no target frame is known yet, leave explicitGameViewRect unchanged
+        // so hitTest falls back to the live gameViewRef frame derivation.
+    }
 }
 
 extension PVEmulatorViewController {
