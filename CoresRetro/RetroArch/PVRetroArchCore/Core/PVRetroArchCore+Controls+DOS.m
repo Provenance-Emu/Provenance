@@ -275,8 +275,9 @@ static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
             [touch_controller.extendedGamepad.rightTrigger setValue:v];
             break;
         case PVWolf3DButtonMap:
-            // JOYPAD_SELECT -> buttonOptions
+            // JOYPAD_SELECT -> buttonOptions (+ buttonHome for controllers without Options)
             [touch_controller.extendedGamepad.buttonOptions setValue:v];
+            [touch_controller.extendedGamepad.buttonHome setValue:v];
             break;
         case PVWolf3DButtonMenu:
             // JOYPAD_START -> buttonMenu
