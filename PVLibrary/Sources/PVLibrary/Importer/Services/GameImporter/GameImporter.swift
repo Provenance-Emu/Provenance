@@ -4120,52 +4120,52 @@ extension GameImporter: PausableService {
 
     public var serviceName: String { "GameImporter" }
 
+    @MainActor
     public func pause(reason: ServiceLifecycleReason) {
-        Task { @MainActor in
-            guard !activePauseReasons.contains(reason) else { return }
-            let wasRunning = activePauseReasons.isEmpty
-            activePauseReasons.insert(reason)
+        guard !activePauseReasons.contains(reason) else { return }
+        let wasRunning = activePauseReasons.isEmpty
+        activePauseReasons.insert(reason)
 
-            guard wasRunning else { return }
+        guard wasRunning else { return }
 
-            ILOG("GameImporter: Pausing (reason: \(reason.rawValue))")
+        ILOG("GameImporter: Pausing (reason: \(reason.rawValue))")
 
-            workQueue.isSuspended = true
-            serialImportQueue.isSuspended = true
+        workQueue.isSuspended = true
+        serialImportQueue.isSuspended = true
 
-            if processingState == .processing {
-                processingState = .paused
-                updateImporterStatus("Import paused (\(reason.rawValue))")
+        if processingState == .processing {
+            processingState = .paused
+            updateImporterStatus("Import paused (\(reason.rawValue))")
 
-                processingTaskLock.withLock {
-                    currentProcessingTask?.cancel()
-                    currentProcessingTask = nil
-                    currentTimeoutTask?.cancel()
-                    currentTimeoutTask = nil
-                    processingStartTime = nil
-                }
-
-                workQueue.cancelAllOperations()
-                serialImportQueue.cancelAllOperations()
+            processingTaskLock.withLock {
+                currentProcessingTask?.cancel()
+                currentProcessingTask = nil
+                currentTimeoutTask?.cancel()
+                currentTimeoutTask = nil
+                processingStartTime = nil
             }
+
+            workQueue.cancelAllOperations()
+            serialImportQueue.cancelAllOperations()
         }
     }
 
+    @MainActor
     public func resume(reason: ServiceLifecycleReason) {
-        Task { @MainActor in
-            guard activePauseReasons.contains(reason) else { return }
-            activePauseReasons.remove(reason)
+        guard activePauseReasons.contains(reason) else { return }
+        activePauseReasons.remove(reason)
 
-            guard activePauseReasons.isEmpty else {
-                ILOG("GameImporter: Cleared reason \(reason.rawValue) but still paused for: \(activePauseReasons.map(\.rawValue))")
-                return
-            }
+        guard activePauseReasons.isEmpty else {
+            ILOG("GameImporter: Cleared reason \(reason.rawValue) but still paused for: \(activePauseReasons.map(\.rawValue))")
+            return
+        }
 
-            ILOG("GameImporter: Resuming (cleared: \(reason.rawValue))")
+        ILOG("GameImporter: Resuming (cleared: \(reason.rawValue))")
 
-            workQueue.isSuspended = false
-            serialImportQueue.isSuspended = false
+        workQueue.isSuspended = false
+        serialImportQueue.isSuspended = false
 
+        Task {
             let queueSnapshot = await importQueueActor.getQueue()
             let queuedCount = queueSnapshot.filter { $0.status == .queued }.count
             if queuedCount > 0 {

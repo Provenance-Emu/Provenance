@@ -475,31 +475,31 @@ extension CloudKitDownloadQueue: PausableService {
 
     public var serviceName: String { "CloudKitDownloadQueue" }
 
+    @MainActor
     public func pause(reason: ServiceLifecycleReason) {
-        Task { @MainActor in
-            guard !activePauseReasons.contains(reason) else { return }
-            let wasRunning = activePauseReasons.isEmpty
-            activePauseReasons.insert(reason)
+        guard !activePauseReasons.contains(reason) else { return }
+        let wasRunning = activePauseReasons.isEmpty
+        activePauseReasons.insert(reason)
 
-            guard wasRunning else { return }
+        guard wasRunning else { return }
 
-            ILOG("CloudKitDownloadQueue: Pausing (reason: \(reason.rawValue))")
-            progressTracker.pauseDownloads()
-        }
+        ILOG("CloudKitDownloadQueue: Pausing (reason: \(reason.rawValue))")
+        progressTracker.pauseDownloads()
     }
 
+    @MainActor
     public func resume(reason: ServiceLifecycleReason) {
-        Task { @MainActor in
-            guard activePauseReasons.contains(reason) else { return }
-            activePauseReasons.remove(reason)
+        guard activePauseReasons.contains(reason) else { return }
+        activePauseReasons.remove(reason)
 
-            guard activePauseReasons.isEmpty else {
-                ILOG("CloudKitDownloadQueue: Cleared reason \(reason.rawValue) but still paused for: \(activePauseReasons.map(\.rawValue))")
-                return
-            }
+        guard activePauseReasons.isEmpty else {
+            ILOG("CloudKitDownloadQueue: Cleared reason \(reason.rawValue) but still paused for: \(activePauseReasons.map(\.rawValue))")
+            return
+        }
 
-            ILOG("CloudKitDownloadQueue: Resuming (cleared: \(reason.rawValue))")
-            progressTracker.resumeDownloads()
+        ILOG("CloudKitDownloadQueue: Resuming (cleared: \(reason.rawValue))")
+        progressTracker.resumeDownloads()
+        Task {
             if !progressTracker.queuedDownloads.isEmpty && !isProcessingQueue {
                 await startProcessingQueue()
             }

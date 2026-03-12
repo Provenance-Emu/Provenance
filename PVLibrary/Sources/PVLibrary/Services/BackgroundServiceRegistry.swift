@@ -16,6 +16,9 @@ import PVPrimitives
 /// reaching out to each service singleton. Services self-register via
 /// `register(_:)` during their own initialisation.
 ///
+/// The registry tracks globally-active pause reasons so that services
+/// registered *after* a `pauseAll` call are immediately paused.
+///
 /// Example:
 /// ```swift
 /// BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
@@ -31,17 +34,28 @@ public final class BackgroundServiceRegistry {
     /// Weak boxes keyed by `ObjectIdentifier` to avoid duplicates and retain cycles
     private var entries: [ObjectIdentifier: WeakServiceBox] = [:]
 
+    /// Globally active pause reasons. Any service registered while these are
+    /// non-empty will have the active reasons applied immediately.
+    private(set) var activeReasons = Set<ServiceLifecycleReason>()
+
     private init() {}
 
     // MARK: - Registration
 
     /// Register a service for lifecycle management.
-    /// Duplicate registrations for the same instance are ignored.
+    ///
+    /// If pause reasons are currently active the service is immediately paused
+    /// for each reason so that late-registered services don't run during
+    /// gameplay or other restricted periods.
     public func register(_ service: any PausableService) {
         let id = ObjectIdentifier(service)
         guard entries[id] == nil else { return }
         entries[id] = WeakServiceBox(service)
         ILOG("BackgroundServiceRegistry: Registered '\(service.serviceName)' (\(liveCount) services)")
+
+        for reason in activeReasons {
+            service.pause(reason: reason)
+        }
     }
 
     /// Remove a service from the registry
@@ -55,6 +69,7 @@ public final class BackgroundServiceRegistry {
 
     /// Pause every registered service for the given reason
     public func pauseAll(reason: ServiceLifecycleReason) {
+        activeReasons.insert(reason)
         pruneStale()
         let services = liveServices
         ILOG("BackgroundServiceRegistry: pauseAll(.\(reason.rawValue)) — \(services.count) services")
@@ -66,6 +81,7 @@ public final class BackgroundServiceRegistry {
     /// Resume every registered service for the given reason.
     /// Each service only actually resumes once *all* its pause reasons are cleared.
     public func resumeAll(reason: ServiceLifecycleReason) {
+        activeReasons.remove(reason)
         pruneStale()
         let services = liveServices
         ILOG("BackgroundServiceRegistry: resumeAll(.\(reason.rawValue)) — \(services.count) services")

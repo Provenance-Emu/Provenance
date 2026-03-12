@@ -27,9 +27,12 @@ public enum ServiceLifecycleReason: String, Sendable, CaseIterable, Hashable {
 /// Protocol adopted by long-running background services that should
 /// yield resources when the emulator (or other high-priority work) is active.
 ///
+/// All requirements are `@MainActor`-isolated to match `BackgroundServiceRegistry`
+/// and the typical call sites (view controllers, coordinators, app state).
 /// Each conformer maintains its own `activePauseReasons` set. The
 /// `BackgroundServiceRegistry` iterates registered services so callers
 /// need only a single `pauseAll(reason:)` / `resumeAll(reason:)` call.
+@MainActor
 public protocol PausableService: AnyObject {
 
     /// Human-readable identifier used in diagnostic logs
