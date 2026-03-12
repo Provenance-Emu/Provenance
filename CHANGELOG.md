@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development, March 2026)
 
 ### Added
+- **LibraryNavigator routing system** — New `LibraryNavigator` (`PVUIBase`) provides a typed, DRY routing hub for library-level UI actions. Replaces scattered `AppState.pendingSearchQuery` observations with a `LibraryAction` enum (`.search`, `.console`, `.game`) observed uniformly by `ConsolesWrapperView`, `RetroMainView`, `RetroGameLibraryView`, and `HomeView`. Adds `provenance://screen/search?q=<query>` deep-link support via `AppRoute.search` and `LibraryRouteProvider`. Part of #2571 (#3064)
 - **MetricKit Hang Reporting** — Passive `MXMetricManagerSubscriber` added to `PVAppDelegate`; hang, crash, and CPU-exception diagnostic call stacks are now logged via PVLogging on the next app launch after an event, enabling real-world hang analysis without user action (#3046)
 
 ### Fixed
