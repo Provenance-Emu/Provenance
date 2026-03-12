@@ -111,8 +111,13 @@ public class CloudSyncManager {
     /// Current sync info - used to provide additional context about the current operation
     @Published public var currentSyncInfo: [String: Any]? = nil
 
-    /// Flag to indicate if sync operations should be paused (e.g., during emulation)
-    @Published public private(set) var isPausedForEmulation: Bool = false
+    /// Active reasons the service is paused (PausableService conformance)
+    @MainActor public private(set) var activePauseReasons = Set<ServiceLifecycleReason>()
+
+    /// Backward-compatible flag — `true` when paused for `.emulation`
+    @MainActor public var isPausedForEmulation: Bool {
+        activePauseReasons.contains(.emulation)
+    }
 
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
@@ -176,6 +181,7 @@ public class CloudSyncManager {
         registerForNotifications()
         Task.detached { @MainActor in
             self.setupObservers()
+            BackgroundServiceRegistry.shared.register(self)
         }
 
         // Initialize sync providers if iCloud sync is enabled
@@ -2039,18 +2045,37 @@ public class CloudSyncManager {
         }
     }
 
-    // MARK: - Emulation Pause/Resume
+    // MARK: - Emulation Pause/Resume (legacy wrappers)
 
-    /// Pauses sync operations during emulation for better performance
-    /// Called when emulation starts
+    /// Legacy convenience — delegates to `pause(reason: .emulation)`
     @MainActor
     public func pauseForEmulation() {
-        guard !isPausedForEmulation else { return }
+        pause(reason: .emulation)
+    }
 
-        ILOG("CloudSyncManager: Pausing sync operations for emulation")
-        isPausedForEmulation = true
+    /// Legacy convenience — delegates to `resume(reason: .emulation)`
+    @MainActor
+    public func resumeFromEmulation() {
+        resume(reason: .emulation)
+    }
+}
 
-        // Cancel any in-progress sync tasks
+// MARK: - PausableService
+
+extension CloudSyncManager: PausableService {
+
+    public var serviceName: String { "CloudSyncManager" }
+
+    @MainActor
+    public func pause(reason: ServiceLifecycleReason) {
+        guard !activePauseReasons.contains(reason) else { return }
+        let wasRunning = activePauseReasons.isEmpty
+        activePauseReasons.insert(reason)
+
+        guard wasRunning else { return }
+
+        ILOG("CloudSyncManager: Pausing sync operations (reason: \(reason.rawValue))")
+
         metadataBootstrapTask?.cancel()
         integrityAuditTask?.cancel()
         cancelAllActiveSyncTasks()
@@ -2067,20 +2092,22 @@ public class CloudSyncManager {
         biosQueue.cancelAllOperations()
         nonDbQueue.cancelAllOperations()
 
-        // Also suspend the syncer-owned work queues so in-flight operations drain immediately
         romsSyncer?.workQueue?.isSuspended = true
         saveStatesSyncer?.workQueue?.isSuspended = true
         biosSyncer?.workQueue?.isSuspended = true
     }
 
-    /// Resumes sync operations after emulation ends
-    /// Called when emulation stops and user returns to library
     @MainActor
-    public func resumeFromEmulation() {
-        guard isPausedForEmulation else { return }
+    public func resume(reason: ServiceLifecycleReason) {
+        guard activePauseReasons.contains(reason) else { return }
+        activePauseReasons.remove(reason)
 
-        ILOG("CloudSyncManager: Resuming sync operations after emulation")
-        isPausedForEmulation = false
+        guard activePauseReasons.isEmpty else {
+            ILOG("CloudSyncManager: Cleared reason \(reason.rawValue) but still paused for: \(activePauseReasons.map(\.rawValue))")
+            return
+        }
+
+        ILOG("CloudSyncManager: Resuming sync operations (cleared: \(reason.rawValue))")
 
         metadataQueue.isSuspended = false
         romsQueue.isSuspended = false
@@ -2088,15 +2115,12 @@ public class CloudSyncManager {
         biosQueue.isSuspended = false
         nonDbQueue.isSuspended = false
 
-        // Resume syncer-owned work queues
         romsSyncer?.workQueue?.isSuspended = false
         saveStatesSyncer?.workQueue?.isSuspended = false
         biosSyncer?.workQueue?.isSuspended = false
 
-        // Resume background sync tasks if enabled
         if Defaults[.iCloudSync] {
-            // Restart metadata bootstrap to catch any changes that occurred during emulation
-            startMetadataBootstrap(reason: "emulationEnd")
+            startMetadataBootstrap(reason: "resume-\(reason.rawValue)")
         }
     }
 }
