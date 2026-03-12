@@ -250,14 +250,7 @@ struct HomeView: SwiftUI.View {
                 setInitialFocus()
             }
 
-            // Consume any Siri "Search in App" query that was set before this view appeared.
-            // onReceive only fires for future changes; if the app was cold-launched by Siri
-            // the query is already in AppState before the view subscribes, so we must poll here.
-            if let pendingQuery = AppState.shared.pendingSearchQuery, !pendingQuery.isEmpty {
-                searchText = pendingQuery
-                isSearchBarVisible = true
-                AppState.shared.pendingSearchQuery = nil
-            }
+            consumePendingSearchQuery()
         }
         .onChange(of: GamepadManager.shared.isControllerConnected) { isConnected in
             isControllerConnected = isConnected
@@ -561,10 +554,8 @@ struct HomeView: SwiftUI.View {
                 }
             }
         )
-        .onReceive(AppState.shared.$pendingSearchQuery) { query in
-            guard let query, !query.isEmpty else { return }
-            searchText = query
-            AppState.shared.pendingSearchQuery = nil
+        .onReceive(AppState.shared.$pendingSearchQuery) { _ in
+            consumePendingSearchQuery()
         }
     }
 
@@ -581,6 +572,16 @@ struct HomeView: SwiftUI.View {
                 NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
             }
         )
+    }
+
+    /// Reads and consumes any pending Siri "Search in App" query from `AppState`,
+    /// populating the search field and ensuring the search bar is visible.
+    /// Called from both `.onAppear` (cold-launch) and `.onReceive` (hot-launch).
+    private func consumePendingSearchQuery() {
+        guard let query = AppState.shared.pendingSearchQuery, !query.isEmpty else { return }
+        searchText = query
+        isSearchBarVisible = true
+        AppState.shared.pendingSearchQuery = nil
     }
 
     private func setupGamepadHandling() {
