@@ -683,7 +683,7 @@ public struct PVSettingsView: View {
             NavigationStack {
                 WikiHelpView()
                     .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
+                        ToolbarItem(placement: .cancellationAction) {
                             Button("Done") { showWiki = false }
                         }
                     }
