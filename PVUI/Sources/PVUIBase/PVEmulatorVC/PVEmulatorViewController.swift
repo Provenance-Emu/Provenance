@@ -983,6 +983,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             createAutosaveTimer()
         }
 
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        // Ensure the virtual-mouse trackpad uses the correct game viewport rect
+        // now that the view hierarchy is fully laid out.
+        refreshVirtualMouseLayout()
+        #endif
+
         #if os(iOS)
         // Initialize the audio visualizer based on saved preferences
         if visualizerMode == .off {
@@ -1364,6 +1370,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             bringVirtualInputOverlaysToFront()
             #endif
         }
+
+        #if !os(tvOS)
+        // Keep the virtual-mouse trackpad's game-viewport rect in sync with
+        // the current layout so hitTest never captures skin-button touches.
+        refreshVirtualMouseLayout()
+        #endif
         #endif
     }
 
