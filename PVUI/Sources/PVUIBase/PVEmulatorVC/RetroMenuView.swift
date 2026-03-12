@@ -1039,7 +1039,13 @@ struct RetroMenuView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
-                .sheet(isPresented: $showingSkinCatalog) {
+                .sheet(isPresented: $showingSkinCatalog, onDismiss: {
+                    // Reload skin list so any newly downloaded/selected skin is reflected in the tab
+                    Task {
+                        await MainActor.run { didLoadSkins = false }
+                        await loadAvailableSkins()
+                    }
+                }) {
                     NavigationStack {
                         SkinCatalogBrowserView()
                             .toolbar {
