@@ -47,6 +47,7 @@
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.rileytestut.delta.skin</string>
+				<string>com.provenance.deltaskin</string>
 			</array>
 		</dict>
 		<dict>
@@ -405,20 +406,44 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>public.archive</string>
+				<string>public.zip-archive</string>
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>Delta Skin</string>
+			<string>Provenance Delta Skin</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
 			<key>UTTypeIdentifier</key>
-			<string>com.rileytestut.delta.skin</string>
+			<string>com.provenance.deltaskin</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
 					<string>deltaskin</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/zip</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.zip-archive</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Provenance Manic Skin</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.provenance.manicskin</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>manicskin</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
@@ -2432,6 +2457,30 @@
 	</array>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.zip-archive</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Delta Skin</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.rileytestut.delta.skin</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>deltaskin</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/zip</string>
+				</array>
+			</dict>
+		</dict>
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development, March 2026)
 
 ### Added
+- **Delta/Manic Skin File Association** — Registered `.deltaskin` (`com.provenance.deltaskin`) and `.manicskin` (`com.provenance.manicskin`) UTI declarations and document type handlers across all build schemes so Provenance now appears in the iOS "Open with…" sheet when tapping these skin files in Safari or Files (#3058)
 - **MetricKit Hang Reporting** — Passive `MXMetricManagerSubscriber` added to `PVAppDelegate`; hang, crash, and CPU-exception diagnostic call stacks are now logged via PVLogging on the next app launch after an event, enabling real-world hang analysis without user action (#3046)
 
 ### Fixed
