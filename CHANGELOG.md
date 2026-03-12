@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `CloudKitSwiftDataSyncManager`, `PVSwiftDataSchema`, and `PVSaveState` (Part of #1681, #2807)
 
 ### Fixed
+- **Browse Skins Done Button** — Moved the "Done" dismiss button in the Browse Skins sheet from the trailing (right) toolbar position to the leading (left) position (#3011)
 - **Settings Help Button Opens Internal Wiki** — The always-visible HELP button in the Settings header now opens the in-app `WikiHelpView` sheet instead of launching an external URL in Safari (#3028)
 - **Skin Catalog Selection Update** — Downloading and selecting a skin from the catalog now reactively updates the active skin shown in the pause menu Skins tab (#3012)
 - **Siri/Spotlight Save State Thumbnails** — Save states launched from Siri or Spotlight now display their screenshot thumbnail (falling back to game artwork) instead of appearing without artwork in search results (#3023)
