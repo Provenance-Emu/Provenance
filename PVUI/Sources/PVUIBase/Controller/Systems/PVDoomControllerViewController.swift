@@ -13,7 +13,7 @@
 //  PrBoom RetroArch core default button mapping (RETRO_DEVICE_ID_JOYPAD_*):
 //    B (south)  → Fire / Shoot
 //    A (east)   → Use / Interact
-//    Y (north)  → Run / Speed
+//    X (north)  → Run / Speed
 //    L / R      → Strafe Left / Right
 //    L2 / R2    → Previous / Next Weapon
 //    SELECT     → Automap (Map)
@@ -23,9 +23,9 @@ import PVSupport
 import PVEmulatorCore
 
 private extension JSButton {
-    var doomButtonTag: PVDOSButton {
+    var doomButtonTag: PVDoomButton {
         get {
-            return PVDOSButton(rawValue: tag) ?? .up
+            return PVDoomButton(rawValue: tag) ?? .up
         }
         set {
             tag = newValue.rawValue
@@ -33,15 +33,15 @@ private extension JSButton {
     }
 }
 
-final class PVDoomControllerViewController: PVControllerViewController<PVDOSSystemResponderClient> {
+final class PVDoomControllerViewController: PVControllerViewController<PVDoomSystemResponderClient> {
     override func layoutViews() {
         // Map face buttons by their OSD label (set in the Doom system plist).
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton,
                   let title = button.titleLabel?.text else { return }
 
-            // Delegate label→button mapping to PVDOSButton initializer to avoid duplicate logic.
-            button.doomButtonTag = PVDOSButton(title)
+            // Delegate label→button mapping to PVDoomButton initializer to avoid duplicate logic.
+            button.doomButtonTag = PVDoomButton(title)
         }
 
         // Shoulder buttons: strafe
@@ -55,7 +55,7 @@ final class PVDoomControllerViewController: PVControllerViewController<PVDOSSyst
         // Start = Pause (RETRO_JOYPAD_START in PrBoom)
         startButton?.doomButtonTag  = .pause
         // Select = Automap (RETRO_JOYPAD_SELECT in PrBoom)
-        selectButton?.doomButtonTag = .select
+        selectButton?.doomButtonTag = .map
     }
 
     // MARK: - D-Pad
@@ -144,10 +144,10 @@ final class PVDoomControllerViewController: PVControllerViewController<PVDOSSyst
 
     override func pressSelect(forPlayer player: Int) {
         // Toggle automap (RETRO_DEVICE_ID_JOYPAD_SELECT in PrBoom)
-        emulatorCore.didPush(.select, forPlayer: player)
+        emulatorCore.didPush(.map, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        emulatorCore.didRelease(.select, forPlayer: player)
+        emulatorCore.didRelease(.map, forPlayer: player)
     }
 }

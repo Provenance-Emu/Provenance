@@ -49,6 +49,10 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 - (void)handleDOSButton:(PVDOSButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed;
 @end
 
+@interface PVRetroArchCoreBridge (DoomControls) <PVDoomSystemResponderClient>
+- (void)handleDoomButton:(PVDoomButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed;
+@end
+
 @implementation PVRetroArchCoreBridge (DOSControls)
 
 #pragma mark - Gamepad
@@ -91,14 +95,11 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
             [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
             break;
         case(PVDOSButtonSelect):
-            // buttonOptions → RETRO_DEVICE_ID_JOYPAD_SELECT → Automap in PrBoom / menu in DOS
+            // buttonOptions → RETRO_DEVICE_ID_JOYPAD_SELECT → menu/select in generic DOS
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
-            // For non-Doom systems (e.g. DOSBox) also forward to buttonHome so the RetroArch
-            // menu remains accessible from the on-screen Select button. Doom intentionally
-            // omits this to prevent the automap press from toggling the RetroArch menu.
-            if (![self.systemIdentifier isEqualToString:@"com.provenance.doom"]) {
-                [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
-            }
+            // Also forward to buttonHome so the RetroArch menu remains accessible
+            // from the on-screen Select button in generic DOS/DOSBox sessions.
+            [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
             break;
         case(PVDOSButtonPause):
             // buttonMenu → RETRO_DEVICE_ID_JOYPAD_START → Pause in PrBoom
@@ -200,6 +201,105 @@ static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_RIGHT;
 }
+
+@end
+
+// MARK: - Doom / PrBoom Controls
+//
+// Doom is served by the PrBoom RetroArch core. Its libretro button layout is:
+//   JOYPAD_B (south, buttonA)    → Fire / Shoot
+//   JOYPAD_A (east,  buttonB)    → Use / Interact
+//   JOYPAD_X (north, buttonY)    → Run / Speed
+//   JOYPAD_L (leftShoulder)      → Strafe Left
+//   JOYPAD_R (rightShoulder)     → Strafe Right
+//   JOYPAD_L2 (leftTrigger)      → Previous Weapon
+//   JOYPAD_R2 (rightTrigger)     → Next Weapon
+//   JOYPAD_SELECT (buttonOptions) → Automap (must NOT also fire buttonHome)
+//   JOYPAD_START (buttonMenu)    → Pause / Menu
+//
+// This dedicated category keeps Doom input logic fully separate from the generic
+// DOS responder so neither bleeds into the other.
+
+@implementation PVRetroArchCoreBridge (DoomControls)
+
+#pragma mark - Gamepad
+
+- (void)didPushDoomButton:(PVDoomButton)button forPlayer:(NSInteger)player {
+    [self handleDoomButton:button forPlayer:player pressed:YES];
+}
+
+- (void)didReleaseDoomButton:(PVDoomButton)button forPlayer:(NSInteger)player {
+    [self handleDoomButton:button forPlayer:player pressed:NO];
+}
+
+- (void)handleDoomButton:(PVDoomButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed {
+    static float xAxis = 0;
+    static float yAxis = 0;
+    float v = pressed ? 1.0f : 0.0f;
+
+    switch (button) {
+        case PVDoomButtonUp:
+            yAxis = pressed ? (!xAxis ? 1.0f : 0.5f) : 0.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case PVDoomButtonDown:
+            yAxis = pressed ? (!xAxis ? -1.0f : -0.5f) : 0.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case PVDoomButtonLeft:
+            xAxis = pressed ? (!yAxis ? -1.0f : -0.5f) : 0.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case PVDoomButtonRight:
+            xAxis = pressed ? (!yAxis ? 1.0f : 0.5f) : 0.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            break;
+        case PVDoomButtonFire:
+            // JOYPAD_B (south) → buttonA
+            [touch_controller.extendedGamepad.buttonA setValue:v];
+            break;
+        case PVDoomButtonUse:
+            // JOYPAD_A (east) → buttonB
+            [touch_controller.extendedGamepad.buttonB setValue:v];
+            break;
+        case PVDoomButtonRun:
+            // JOYPAD_X (north) → buttonY
+            [touch_controller.extendedGamepad.buttonY setValue:v];
+            break;
+        case PVDoomButtonStrafeLeft:
+            // JOYPAD_L → leftShoulder
+            [touch_controller.extendedGamepad.leftShoulder setValue:v];
+            break;
+        case PVDoomButtonStrafeRight:
+            // JOYPAD_R → rightShoulder
+            [touch_controller.extendedGamepad.rightShoulder setValue:v];
+            break;
+        case PVDoomButtonWeaponPrev:
+            // JOYPAD_L2 → leftTrigger
+            [touch_controller.extendedGamepad.leftTrigger setValue:v];
+            break;
+        case PVDoomButtonWeaponNext:
+            // JOYPAD_R2 → rightTrigger
+            [touch_controller.extendedGamepad.rightTrigger setValue:v];
+            break;
+        case PVDoomButtonMap:
+            // JOYPAD_SELECT → buttonOptions only; intentionally does NOT fire buttonHome
+            // so the automap button doesn't accidentally open the RetroArch menu.
+            [touch_controller.extendedGamepad.buttonOptions setValue:v];
+            break;
+        case PVDoomButtonPause:
+            // JOYPAD_START → buttonMenu
+            [touch_controller.extendedGamepad.buttonMenu setValue:v];
+            break;
+        case PVDoomButtonCount:
+            break;
+    }
+}
+
+// Doom shares the keyboard and mouse pipeline with DOS (same RetroArch backend).
+// The keyboard and mouse methods declared in PVDoomSystemResponderClient are
+// already implemented by the DOSControls category on the same class,
+// so no duplicate implementations are needed here.
 
 @end
 
