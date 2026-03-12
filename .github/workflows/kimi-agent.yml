@@ -142,13 +142,9 @@ jobs:
           # Enable auto-merge
           gh pr merge "$PR_NUMBER" --repo "$REPO" --auto --merge 2>/dev/null || true
 
-          # Dispatch AI review (bypasses pull_request event limitation)
-          gh workflow run ai-review.yml \
-            --repo "$REPO" \
-            --ref develop \
-            -f pr_number="$PR_NUMBER"
-
-          echo "Dispatched AI review for PR #${PR_NUMBER}"
+          # AI review disabled — GitHub Copilot handles reviews.
+          # Manual trigger: comment /ai-review on the PR.
+          echo "Skipping AI review dispatch (Copilot handles reviews)"
 
       - name: Post result
         if: always()

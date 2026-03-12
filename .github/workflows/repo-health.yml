@@ -73,9 +73,10 @@ except Exception:
             age_hours=$(( age_seconds / 3600 ))
 
             if [ "$run_status" != "completed" ] && [ "$age_hours" -ge 2 ]; then
-              echo "  PR #$pr_num: stuck in ai-reviewing for ${age_hours}h — re-dispatching"
-              gh workflow run ai-review.yml --repo "$REPO" -f pr_number="$pr_num" 2>/dev/null || true
-              stuck_reviews="$stuck_reviews PR #$pr_num (${age_hours}h, re-dispatched)"
+              # AI review disabled — Copilot handles reviews. Just clear stale label.
+              echo "  PR #$pr_num: stuck in ai-reviewing for ${age_hours}h — clearing stale label"
+              gh pr edit "$pr_num" --repo "$REPO" --remove-label "ai-reviewing" 2>/dev/null || true
+              stuck_reviews="$stuck_reviews PR #$pr_num (${age_hours}h, label-cleared)"
               stuck_review_count=$((stuck_review_count + 1))
             elif [ "$run_status" = "completed" ] && [ "$age_hours" -ge 1 ]; then
               # Review completed but label not cleared — remove stale label

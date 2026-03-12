@@ -536,10 +536,8 @@ jobs:
           gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file /tmp/cursor_marker.md 2>/dev/null || true
 
       - name: Dispatch shared AI review
-        if: |
-          steps.context.outputs.action != 'ai_approved' &&
-          steps.pr.outputs.pr_number != '' &&
-          steps.publish.outputs.result == 'pushed'
+        # AI review disabled — GitHub Copilot handles reviews.
+        if: false
         env:
           PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
         run: |
