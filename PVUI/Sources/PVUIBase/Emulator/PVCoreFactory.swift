@@ -329,11 +329,18 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PV3DSSystemResponderClient")
             }
             break;
-        case .DOS, .DOOM, .Quake, .Quake2, .Wolf3D:
+        case .DOS, .DOOM, .Quake, .Quake2:
             if let core = core as? PVDOSSystemResponderClient {
                 return PVDOSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
                 fatalError("Core doesn't implement PVDOSSystemResponderClient")
+            }
+            break;
+        case .Wolf3D:
+            if let core = core as? PVWolf3DSystemResponderClient {
+                return PVWolf3DControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PVWolf3DSystemResponderClient")
             }
             break;
         case .ZXSpectrum, .EP128:
