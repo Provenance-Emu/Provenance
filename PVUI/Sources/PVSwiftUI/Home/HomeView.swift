@@ -124,6 +124,7 @@ struct HomeView: SwiftUI.View {
     }
 
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var bootupStateManager = AppState.shared.bootupStateManager
 
     private var availableSections: [HomeSectionType] {
         [
@@ -195,7 +196,7 @@ struct HomeView: SwiftUI.View {
                 ) {
                     ScrollViewReader { proxy in
                         LazyVStack {
-                            if isLibraryCompletelyEmpty {
+                            if bootupStateManager.isBootupCompleted && isLibraryCompletelyEmpty {
                                 cloudSyncUpsell()
                                     .padding(.horizontal)
                             }
