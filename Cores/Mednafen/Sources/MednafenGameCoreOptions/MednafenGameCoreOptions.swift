@@ -21,10 +21,9 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
                                           subOptions: [cd_image_memcache_option])
         options.append(globalGroup)
         
-            // These seem to be broken, mednafen console says not found
         let videoGroup:CoreOption = .group(.init(title: "Video",
                                                 description: "Video options for all Mednafen cores."),
-                                           subOptions: [video_blit_timesync_option, video_fs_option, video_openglOption])
+                                           subOptions: [video_blit_timesync_option])
 
         options.append(videoGroup)
         
@@ -162,22 +161,6 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
             description: "Disable to reduce latency, at the cost of potentially increased video \"juddering\", with the maximum reduction in latency being about 1 video frame's time. Will work best with emulated systems that are not very computationally expensive to emulate, combined with running on a relatively fast CPU.",
             requiresRestart: true),
               defaultValue: true)
-    }
-    
-    static var video_fs_option: CoreOption {
-        .bool(.init(
-            title: "Fullscreen",
-            description: "Enable fullscreen mode. May effect performance and scaling.",
-            requiresRestart: true),
-                                         defaultValue: false)
-    }
-    
-    static var video_openglOption: CoreOption {
-        .bool(.init(
-            title: "Use OpenGL",
-            description: "Experimental OpenGL mode.",
-            requiresRestart: true),
-                                         defaultValue: false)
     }
     
     // MARK: Global - CD
@@ -398,8 +381,6 @@ public final class MednafenGameCoreOptions: NSObject, CoreOptions, CoreOptional 
 @objc public extension MednafenGameCoreOptions {
     // Global Video
     @objc(video_blit_timesync) static var video_blit_timesync: Bool { valueForOption(video_blit_timesync_option).asBool }
-    @objc(video_fs) static var video_fs: Bool { valueForOption(video_fs_option).asBool }
-    @objc(video_opengl) static var video_opengl: Bool { valueForOption(video_openglOption).asBool }
 
     // Global - CD
     @objc(cd_image_memcache) static var cd_image_memcache: Bool { valueForOption(cd_image_memcache_option).asBool }
