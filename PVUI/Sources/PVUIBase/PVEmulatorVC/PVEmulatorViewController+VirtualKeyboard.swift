@@ -151,6 +151,7 @@ extension PVEmulatorViewController {
     /// keyboard is already connected.
     public func setupVirtualInputOverlaysIfNeeded() {
         startObservingHardwareKeyboard()
+        startObservingVirtualInputToggleNotifications()
 
         if GCKeyboard.coalesced != nil {
             ILOG("[VirtualKeyboard] Hardware keyboard already connected — skipping auto-show")
@@ -168,6 +169,7 @@ extension PVEmulatorViewController {
     /// Tears down the keyboard overlay. Call from `viewWillDisappear` or `deinit`.
     public func removeVirtualInputOverlays() {
         stopObservingHardwareKeyboard()
+        stopObservingVirtualInputToggleNotifications()
         hideVirtualKeyboard()
     }
 
@@ -361,6 +363,48 @@ extension PVEmulatorViewController: VirtualKeyboardDelegate {
     ) {
         guard let keyboardResponder = core as? KeyboardResponder else { return }
         keyboardResponder.keyUp(keyCode)
+    }
+}
+
+// MARK: - Toggle Notification Observers
+
+extension PVEmulatorViewController {
+
+    /// Observes the `pvToggleVirtualKeyboard` and `pvToggleVirtualMouse` notifications
+    /// posted by the on-screen overlay buttons, so the overlay can request toggles without
+    /// needing a direct reference to this view controller.
+    func startObservingVirtualInputToggleNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleToggleKeyboardNotification),
+            name: .pvToggleVirtualKeyboard,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleToggleMouseNotification),
+            name: .pvToggleVirtualMouse,
+            object: nil
+        )
+    }
+
+    func stopObservingVirtualInputToggleNotifications() {
+        NotificationCenter.default.removeObserver(self, name: .pvToggleVirtualKeyboard, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .pvToggleVirtualMouse, object: nil)
+    }
+
+    @objc private func handleToggleKeyboardNotification() {
+        toggleVirtualKeyboard()
+        // Broadcast visibility change so SwiftUI toggle buttons can sync their state
+        let name: Notification.Name = isVirtualKeyboardVisible ? .pvShowVirtualKeyboard : .pvHideVirtualKeyboard
+        NotificationCenter.default.post(name: name, object: nil)
+    }
+
+    @objc private func handleToggleMouseNotification() {
+        toggleVirtualMouse()
+        // Broadcast visibility change so SwiftUI toggle buttons can sync their state
+        let name: Notification.Name = isVirtualMouseVisible ? .pvShowVirtualMouse : .pvHideVirtualMouse
+        NotificationCenter.default.post(name: name, object: nil)
     }
 }
 

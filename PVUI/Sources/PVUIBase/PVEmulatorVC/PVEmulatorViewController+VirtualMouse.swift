@@ -125,6 +125,16 @@ extension PVEmulatorViewController {
     }
 }
 
+// MARK: - Notification names for virtual mouse
+
+public extension Notification.Name {
+    /// Posted when the virtual mouse overlay should be shown.
+    static let pvShowVirtualMouse = Notification.Name("com.provenance.virtualMouse.show")
+
+    /// Posted when the virtual mouse overlay should be hidden.
+    static let pvHideVirtualMouse = Notification.Name("com.provenance.virtualMouse.hide")
+}
+
 extension PVEmulatorViewController {
     /// Captures and clears virtual-mouse associated objects without requiring a
     /// main-actor hop, so `deinit` can schedule UI teardown safely.

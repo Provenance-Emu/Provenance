@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development, March 2026)
 
 ### Added
+- **Virtual Input Quick-Toggle Buttons** — Keyboard and mouse-cursor toggle buttons now appear directly in the game overlay (both UIKit legacy and SwiftUI default skin) for cores that support virtual keyboard or mouse input (e.g. DOSBox, Doom). Buttons are shown only when the active core reports support, sit in the top-leading HUD corner, and visually indicate active/inactive state (#3057)
 - **MetricKit Hang Reporting** — Passive `MXMetricManagerSubscriber` added to `PVAppDelegate`; hang, crash, and CPU-exception diagnostic call stacks are now logged via PVLogging on the next app launch after an event, enabling real-world hang analysis without user action (#3046)
 
 ### Fixed
