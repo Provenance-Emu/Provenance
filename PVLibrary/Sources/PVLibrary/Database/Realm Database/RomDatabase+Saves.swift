@@ -22,13 +22,11 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
 
     /// Resolves the Realm instance used for save-state writes.
     ///
-    /// This avoids placing an `await` inside `??`, which Swift treats as a
-    /// non-async autoclosure context and rejects during compilation.
+    /// Always creates a fresh Realm instance (never returns a cached/thread-local
+    /// one) to minimise the TOCTOU window between the `isInvalidated` pre-flight
+    /// check and the subsequent `writeAsync` call.  Using a cached instance risks
+    /// it being invalidated in the narrow window between the guard and the write.
     private func saveStateWriteRealm() async throws -> Realm {
-        if let threadRealm = Thread.current.realm?.realm {
-            return threadRealm
-        }
-
         do {
             return try await Realm(configuration: RealmConfiguration.realmConfig)
         } catch {

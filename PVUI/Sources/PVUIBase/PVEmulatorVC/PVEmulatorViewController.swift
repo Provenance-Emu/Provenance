@@ -2726,7 +2726,7 @@ extension PVEmulatorViewController {
                 let recorderBusy = PVRecordingManager.shared.isPreparingRecording
                                 || PVRecordingManager.shared.isRecording
                 if recorderBusy {
-                    ILOG("appWillResignActive: Skipping auto-save — ReplayKit recording in progress")
+                    ILOG("appWillResignActive: Skipping auto-save — ReplayKit recording busy (preparing or active)")
                     return
                 }
 #endif
