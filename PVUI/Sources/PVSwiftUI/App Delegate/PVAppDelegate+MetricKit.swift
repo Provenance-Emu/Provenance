@@ -16,7 +16,6 @@ import PVLogging
 #if canImport(MetricKit)
 import MetricKit
 
-@available(iOS 14.0, tvOS 14.0, *)
 extension PVAppDelegate: MXMetricManagerSubscriber {
 
     /// Register this delegate as a MetricKit subscriber at app launch.
@@ -58,7 +57,7 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
             ELOG("MetricKit HANG detected — duration: \(duration)")
             // Log each call tree frame to the console so it appears in crash logs / Console.app
             if let tree = hang.callStackTree {
-                let json = (try? JSONEncoder().encode(tree)).flatMap { String(data: $0, encoding: .utf8) }
+                let json = String(data: tree.jsonRepresentation(), encoding: .utf8)
                 ELOG("MetricKit hang call stack:\n\(json ?? "<unavailable>")")
             }
         }
@@ -69,7 +68,7 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
         for crash in crashes {
             ELOG("MetricKit CRASH — signal: \(crash.signal), exception type: \(String(describing: crash.exceptionType)), exception code: \(String(describing: crash.exceptionCode))")
             if let tree = crash.callStackTree {
-                let json = (try? JSONEncoder().encode(tree)).flatMap { String(data: $0, encoding: .utf8) }
+                let json = String(data: tree.jsonRepresentation(), encoding: .utf8)
                 ELOG("MetricKit crash call stack:\n\(json ?? "<unavailable>")")
             }
         }
@@ -80,7 +79,7 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
         for exception in exceptions {
             ELOG("MetricKit CPU EXCEPTION — total CPU time: \(exception.totalCPUTime), total sampled time: \(exception.totalSampledTime)")
             if let tree = exception.callStackTree {
-                let json = (try? JSONEncoder().encode(tree)).flatMap { String(data: $0, encoding: .utf8) }
+                let json = String(data: tree.jsonRepresentation(), encoding: .utf8)
                 ELOG("MetricKit CPU exception call stack:\n\(json ?? "<unavailable>")")
             }
         }
