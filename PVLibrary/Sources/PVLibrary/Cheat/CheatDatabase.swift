@@ -314,6 +314,7 @@ public actor CheatDatabase {
         // Run libretro lookup only when systemIdentifier is present — it throws on nil/empty.
         // Use a do-catch so a libretro failure does not cancel the already-started GH.org task.
         var libretroResults: [CheatDatabaseEntry] = []
+        var libretroError: Error?
         if let sysID = systemIdentifier, !sysID.isEmpty {
             async let libretroFuture = CheatOnlineLookup.shared.searchCheats(
                 title: title,
@@ -322,6 +323,7 @@ public actor CheatDatabase {
             do {
                 libretroResults = try await libretroFuture
             } catch {
+                libretroError = error
                 WLOG("CheatDatabase: libretro online lookup failed: \(error)")
             }
         }
@@ -345,6 +347,9 @@ public actor CheatDatabase {
         }
 
         DLOG("CheatDatabase: searchCheatsOnline — libretro=\(libretroResults.count) ghorg=\(ghOrgResults.count) merged=\(merged.count)")
+        if merged.isEmpty, let libretroError {
+            throw libretroError
+        }
         return merged
     }
 }
