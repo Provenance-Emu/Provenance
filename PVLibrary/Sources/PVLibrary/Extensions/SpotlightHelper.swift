@@ -106,11 +106,6 @@ public class SpotlightHelper {
             // Create the searchable item
             let attributeSet = frozenGame.spotlightContentSet
             
-            // Add system information if available
-            if let system = frozenGame.system {
-                attributeSet.contentType = "\(system.manufacturer) \(system.name)"
-            }
-            
             // Add keywords for better searchability
             if var keywords = attributeSet.keywords as? [String] {
                 if let systemName = frozenGame.system?.name, !keywords.contains(systemName) {

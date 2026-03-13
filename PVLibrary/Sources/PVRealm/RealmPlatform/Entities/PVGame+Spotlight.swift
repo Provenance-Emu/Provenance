@@ -145,7 +145,6 @@ public extension PVGame {
         contentSet.keywords = keywords
 
         // Additional metadata
-        contentSet.contentType = systemName
         if let system = system {
             // Convert publishDate (String) to NSDate if available
             if let publishDate = publishDate {

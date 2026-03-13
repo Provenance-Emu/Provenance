@@ -509,11 +509,6 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 // Create the searchable item
                 let attributeSet = frozenGame.spotlightContentSet
 
-                // Add system information if available
-                if let system = frozenGame.system {
-                    attributeSet.contentType = "\(system.manufacturer) \(system.name)"
-                }
-
                 // Add keywords for better searchability
                 if var keywords = attributeSet.keywords as? [String] {
                     if let systemName = frozenGame.system?.name, !keywords.contains(systemName) {
@@ -592,7 +587,9 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         for (saveState, game) in saveStatesWithGames {
             // Create attribute set
             let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
-            attributeSet.displayName = "Save State: \(game.title)"
+            let saveStateTitle = "Save State: \(game.title)"
+            attributeSet.title = saveStateTitle
+            attributeSet.displayName = saveStateTitle
             attributeSet.contentDescription = "Save state for \(game.title) on \(game.system?.name ?? "Unknown System")"
 
             // Add date information

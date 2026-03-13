@@ -119,12 +119,12 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
             }
             
             acknowledgementHandler()
-        } else {
+        } else if RealmConfiguration.supportsAppGroups {
             Task {
                 do {
                     // Get all games using the shared RomDatabase instance
                     let allGames = try getAllGames()
-                    
+
                     if allGames.isEmpty {
                         WLOG("Spotlight: No games found to index")
                     } else {
@@ -134,10 +134,13 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 } catch {
                     ELOG("Spotlight: Error getting games: \(error)")
                 }
-                
+
                 // Always call the acknowledgement handler
                 acknowledgementHandler()
             }
+        } else {
+            WLOG("Spotlight: App Groups not setup, cannot reindex all items")
+            acknowledgementHandler()
         }
     }
     
@@ -275,11 +278,6 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
             if !game.md5Hash.isEmpty {
                 let uniqueIdentifier = "org.provenance-emu.game.\(game.md5Hash)"
                 let attributeSet = game.spotlightContentSet
-                
-                // Add system identifier if available
-                if let system = game.system {
-                    attributeSet.contentType = "\(system.manufacturer) \(system.name)"
-                }
                 
                 // Add additional keywords for better searchability
                 if var keywordsArray = attributeSet.keywords {
