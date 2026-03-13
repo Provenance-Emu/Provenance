@@ -1281,7 +1281,7 @@ private struct TVOSCheatSearchRow: View {
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                         .foregroundStyle(accentColor)
                         .lineLimit(2)
-                    Text("\(entry.deviceName)  ·  \(entry.category)")
+                    Text("\(entry.deviceFormat ?? entry.deviceName)  ·  \(entry.category)")
                         .font(.system(size: 18))
                         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.55))
                 }

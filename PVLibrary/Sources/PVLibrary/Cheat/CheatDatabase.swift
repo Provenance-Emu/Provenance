@@ -128,7 +128,7 @@ public actor CheatDatabase {
                             cheatCode: entry.cheatCode,
                             cheatDescription: nil,
                             deviceName: entry.deviceName,
-                            deviceFormat: nil,
+                            deviceFormat: entry.format,
                             category: "General",
                             romTitle: entry.gameTitle,
                             systemName: entry.systemName

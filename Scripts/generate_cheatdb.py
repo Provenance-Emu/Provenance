@@ -222,6 +222,66 @@ def _stem_without_device(filename_stem):
     return DEVICE_RE.sub("", filename_stem).strip()
 
 
+# Format detection patterns, evaluated in order.
+# Each entry: (compiled_regex, format_string)
+_FORMAT_PATTERNS = [
+    # Game Genie SNES/NES: XXXX-XXXX-XXXX (letters+digits, dash-separated triples)
+    (re.compile(r'^[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$'), "Game Genie (SNES/NES)"),
+    # Game Genie GB/GBA short: AAAA:DDDD (4-hex colon 4-hex)
+    (re.compile(r'^[0-9A-Fa-f]{4}:[0-9A-Fa-f]{4}$'), "Game Genie"),
+    # GameShark GBA-style: 0XXXXXXX YYYY (8 hex starting with 0, space, 4 hex)
+    (re.compile(r'^0[0-9A-Fa-f]{7}\s+[0-9A-Fa-f]{4}$'), "GameShark GBA"),
+    # Action Replay v2: XXXXXXXX:XXXXXXXX (8 hex colon 8 hex)
+    (re.compile(r'^[0-9A-Fa-f]{8}:[0-9A-Fa-f]{8}$'), "Action Replay v2"),
+    # GameShark: XXXXXXXX+XXXXXXXX (8 hex plus 8 hex)
+    (re.compile(r'^[0-9A-Fa-f]{8}\+[0-9A-Fa-f]{8}$'), "GameShark"),
+    # Raw AR/GS v3: XXXXXXXX XXXXXXXX (8 hex space 8 hex)
+    (re.compile(r'^[0-9A-Fa-f]{8}\s+[0-9A-Fa-f]{8}$'), "Raw (AR/GS v3)"),
+]
+
+# Device name → format override (when filename already tells us the exact device)
+_DEVICE_FORMAT_MAP = {
+    "action replay": "Action Replay",
+    "game genie": "Game Genie",
+    "gameshark": "GameShark",
+    "pro action replay": "Pro Action Replay",
+    "xploder": "Xploder",
+    "code breaker": "Code Breaker",
+    "codebreaker": "Code Breaker",
+    "goldfinger": "Gold Finger",
+}
+
+
+def detect_format(code, device_name):
+    """Detect the cheat code format from the code string and device name.
+
+    First checks device_name (extracted from filename suffix) for a direct match.
+    Falls back to pattern matching on the code string.
+    Returns a format string or None if no pattern matches.
+    """
+    # If the device name is specific (not the generic 'RetroArch'), use it directly.
+    dn_lower = device_name.lower()
+    if dn_lower != "retroarch":
+        mapped = _DEVICE_FORMAT_MAP.get(dn_lower)
+        if mapped:
+            return mapped
+        # Unknown named device — return the device name as-is
+        return device_name
+
+    # Pattern-match individual lines of the code (some codes are multi-line)
+    lines = [ln.strip() for ln in code.splitlines() if ln.strip()]
+    if not lines:
+        return None
+
+    # Use the first non-empty line for pattern detection
+    first_line = lines[0]
+    for pattern, fmt in _FORMAT_PATTERNS:
+        if pattern.match(first_line):
+            return fmt
+
+    return None
+
+
 def parse_dat_file(dat_path):
     """Parse a CLRMamePro DAT file and return a dict mapping game_name_stem -> md5.
 
@@ -347,7 +407,8 @@ def create_database(db_path):
             game_id INTEGER NOT NULL REFERENCES games(game_id),
             cheat_name TEXT NOT NULL,
             cheat_code TEXT NOT NULL,
-            device_name TEXT NOT NULL DEFAULT 'RetroArch'
+            device_name TEXT NOT NULL DEFAULT 'RetroArch',
+            format       TEXT
         );
 
         CREATE INDEX idx_games_title ON games(game_title COLLATE NOCASE);
@@ -426,9 +487,10 @@ def process_cht_directory(cht_root, db_path, md5_map=None):
             system_games += 1
 
             for desc, code in cheats:
+                fmt = detect_format(code, device)
                 c.execute(
-                    "INSERT INTO cheats (game_id, cheat_name, cheat_code, device_name) VALUES (?, ?, ?, ?)",
-                    (game_id, desc, code, device),
+                    "INSERT INTO cheats (game_id, cheat_name, cheat_code, device_name, format) VALUES (?, ?, ?, ?, ?)",
+                    (game_id, desc, code, device, fmt),
                 )
                 system_cheats += 1
 
