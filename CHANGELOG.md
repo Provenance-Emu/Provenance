@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] — 3.4.0 (in development, March 2026)
 
+### Changed
+- **Virtual Input State Management** — Replaced `NSNotificationCenter` toggle/show/hide notifications (`pvToggleVirtualKeyboard`, `pvShowVirtualMouse`, etc.) with a type-safe `VirtualInputState` `ObservableObject` injected via SwiftUI's environment. SwiftUI overlay buttons and UIKit OSD buttons now observe `@Published` properties directly; toggle actions are wired via closures, eliminating runtime selector mismatch risks and ensuring all observers stay in sync regardless of which code path changes overlay visibility (#3061)
+
 ### Added
+- **Virtual Input Quick-Toggle Buttons** — Keyboard and mouse-cursor toggle buttons now appear directly in the game overlay (both UIKit legacy and SwiftUI default skin) for cores that support virtual keyboard or mouse input (e.g. DOSBox, Doom). Buttons are shown only when the active core reports support, sit in the top-leading HUD corner, and visually indicate active/inactive state (#3057)
 - **Delta/Manic Skin File Association** — Registered `.deltaskin` (`com.provenance.deltaskin`) and `.manicskin` (`com.provenance.manicskin`) UTI declarations and document type handlers across all build schemes so Provenance now appears in the iOS "Open with…" sheet when tapping these skin files in Safari or Files (#3058)
 - **Wolf3D Dedicated Input Responder** — Created `PVWolf3DButton` enum and `PVWolf3DSystemResponderClient` protocol with correct ECWolf libretro button constants (`run` maps to JOYPAD_X/north, `strafeOn` maps to JOYPAD_Y/west). Added `PVWolf3DControllerViewController` with Wolf3D-specific button labels (Shoot, Open, Run, Map, Menu). Fixes incorrect button mapping inherited from the generic DOS responder (#3054)
 - **Wolf3D BIOS Setup Guidance** — Wolf3D system now declares `ecwolf.pk3` as a required BIOS file (`PVRequiresBIOS = true`). When the file is missing, the app shows an in-app alert with the correct BIOS path and a link to the ECWolf download page (#3054)

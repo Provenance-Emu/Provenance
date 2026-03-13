@@ -7,7 +7,14 @@ import PVLibrary
 class DeltaSkinContainerView: UIView {
 
     /// Create a container view with the emulator skin
-    static func create(game: PVGame, core: PVEmulatorCore, inputHandler: DeltaSkinInputHandler, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void) -> DeltaSkinContainerView {
+    static func create(
+        game: PVGame,
+        core: PVEmulatorCore,
+        inputHandler: DeltaSkinInputHandler,
+        onSkinLoaded: @escaping () -> Void,
+        onRefreshRequested: @escaping () -> Void,
+        virtualInputState: VirtualInputState? = nil
+    ) -> DeltaSkinContainerView {
         // Create the container view
         let containerView = DeltaSkinContainerView(frame: .zero)
 
@@ -22,7 +29,8 @@ class DeltaSkinContainerView: UIView {
             onSkinLoaded: onSkinLoaded,
             onRefreshRequested: onRefreshRequested,
             preselectedSkinIdentifier: nil,
-            inputHandler: inputHandler
+            inputHandler: inputHandler,
+            virtualInputState: virtualInputState
         )
 
         // Create the hosting controller
