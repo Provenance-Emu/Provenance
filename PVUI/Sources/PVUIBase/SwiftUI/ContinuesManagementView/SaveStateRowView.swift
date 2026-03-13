@@ -19,6 +19,11 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
     public let saveDate: Date
     public let thumbnailImage: Image
 
+    /// The core version that created this save state, if known.
+    public let createdWithCoreVersion: String?
+    /// The core identifier that created this save state, if known.
+    public let coreIdentifier: String?
+
     /// Size of the save state in bytes
     @Published public var size: UInt64 = 0
 
@@ -66,6 +71,8 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         isPinned: Bool = false,
         isFavorite: Bool = false,
         size: UInt64 = 0,
+        createdWithCoreVersion: String? = nil,
+        coreIdentifier: String? = nil,
         onDelete: (() -> Void)? = nil,
         onLoad: (() -> Void)? = nil
     ) {
@@ -80,6 +87,8 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         self.isPinned = isPinned
         self.isFavorite = isFavorite
         self.size = size
+        self.createdWithCoreVersion = createdWithCoreVersion
+        self.coreIdentifier = coreIdentifier
         self.onDelete = onDelete
         self.onLoad = onLoad
     }

@@ -508,7 +508,9 @@ public class RealmSaveStateDriver: SaveStateDriver {
                 description: realmSaveState.userDescription,
                 isAutoSave: realmSaveState.isAutosave,
                 isPinned: realmSaveState.isPinned,
-                isFavorite: realmSaveState.isFavorite
+                isFavorite: realmSaveState.isFavorite,
+                createdWithCoreVersion: realmSaveState.createdWithCoreVersion,
+                coreIdentifier: realmSaveState.core?.identifier
             )
 
             // Calculate size BEFORE acquiring the lock.

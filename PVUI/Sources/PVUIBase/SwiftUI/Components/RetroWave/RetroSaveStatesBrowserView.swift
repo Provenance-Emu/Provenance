@@ -19,6 +19,10 @@ public struct RetroSaveStateItem: Identifiable, Hashable {
     public let fileSize: Int
     public let imageURL: URL?
     public let coreName: String
+    /// The core version that created this save state, if known.
+    public let createdWithCoreVersion: String?
+    /// The core identifier that created this save state, if known.
+    public let coreIdentifier: String?
 }
 
 /// Shared store for save-state queries, thumbnail loading, and caching
@@ -238,7 +242,9 @@ public final class RetroSaveStatesStore: ObservableObject {
             isFavorite: state.isFavorite,
             fileSize: fileSize,
             imageURL: state.image?.url,
-            coreName: coreName
+            coreName: coreName,
+            createdWithCoreVersion: state.createdWithCoreVersion,
+            coreIdentifier: state.core?.identifier
         )
     }
 

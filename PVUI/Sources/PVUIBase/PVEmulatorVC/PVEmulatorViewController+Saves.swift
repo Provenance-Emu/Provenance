@@ -168,20 +168,17 @@ public extension PVEmulatorViewController {
             presentWarning(message, source: self.view, completion: loadOk)
             return await loadSave.value
         }
-        if core.projectVersion != state.createdWithCoreVersion {
-            Task.detached { @MainActor [weak self] in
-                guard let self = self else { return }
-                let message =
-                """
-                Save state created with version \(state.createdWithCoreVersion ?? "nil") but current \(core.projectName) core is version \(core.projectVersion).
-                Save file may not load. Create a new save state to avoid this warning in the future.
-                """
-                presentWarning(message, source: self.view, completion: loadOk)
-            }
-            return await loadSave.value
-        } else {
-            return await loadSave.value
+        // Confirm version mismatch with user before loading
+        let shouldLoad = await SaveStateVersionChecker.confirmLoad(
+            saveState: state,
+            overrideCore: core,
+            on: self
+        )
+        guard shouldLoad else {
+            return false
         }
+
+        return await loadSave.value
     }
 }
 
