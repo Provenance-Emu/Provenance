@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development, March 2026)
 
 ### Changed
+- **VirtualInputState lifted to tvOS** — `virtualInputState` and core capability helpers (`coreSupportsVirtualKeyboard`, `coreSupportsVirtualMouse`) moved to a new cross-platform extension (`PVEmulatorViewController+VirtualInputState.swift`) with no `#if !os(tvOS)` guard. `EmulatorWrapperView` now receives a non-nil `virtualInputState` on tvOS. Siri Remote keyboard/mouse handlers update `isKeyboardVisible` / `isMouseVisible` on activation, and `onToggleKeyboard` / `onToggleMouse` closures are wired to new `toggleSiriRemoteKeyboard()` / `toggleSiriRemoteMouse()` methods so future tvOS UI can flip input modes through the same typed interface as iOS (#3066, Part of #2575)
 - **Virtual Input State Management** — Replaced `NSNotificationCenter` toggle/show/hide notifications (`pvToggleVirtualKeyboard`, `pvShowVirtualMouse`, etc.) with a type-safe `VirtualInputState` `ObservableObject` injected via SwiftUI's environment. SwiftUI overlay buttons and UIKit OSD buttons now observe `@Published` properties directly; toggle actions are wired via closures, eliminating runtime selector mismatch risks and ensuring all observers stay in sync regardless of which code path changes overlay visibility (#3061)
 
 ### Added

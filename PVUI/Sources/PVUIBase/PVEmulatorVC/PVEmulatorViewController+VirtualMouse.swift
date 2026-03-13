@@ -45,11 +45,6 @@ extension PVEmulatorViewController {
 
     // MARK: - Capability Checks
 
-    /// Whether the emulator core reports mouse support.
-    public var coreSupportsVirtualMouse: Bool {
-        (core as? MouseResponder)?.gameSupportsMouse == true
-    }
-
     /// Whether the virtual mouse overlay is currently visible.
     public var isVirtualMouseVisible: Bool {
         cursorHostingController != nil

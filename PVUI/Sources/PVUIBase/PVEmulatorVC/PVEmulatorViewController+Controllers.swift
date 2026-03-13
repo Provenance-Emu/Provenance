@@ -137,6 +137,8 @@ extension PVEmulatorViewController {
     // We use associated objects to store per-instance state without stored properties.
     private static var siriKeyStateKey = "siriKeyStateKey"
     private static var siriPanStartKey = "siriPanStartKey"
+    private static var siriKeyboardActiveKey = "siriKeyboardActiveKey"
+    private static var siriMouseActiveKey = "siriMouseActiveKey"
 
     private var siriKeyState: SiriRemoteKeyState {
         get {
@@ -153,8 +155,22 @@ extension PVEmulatorViewController {
         set { objc_setAssociatedObject(self, &Self.siriPanStartKey, Box(newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
+    /// Whether the Siri Remote D-pad keyboard handler is currently installed.
+    private var isSiriKeyboardActive: Bool {
+        get { (objc_getAssociatedObject(self, &Self.siriKeyboardActiveKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &Self.siriKeyboardActiveKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    /// Whether the Siri Remote touch-surface mouse pan gesture is currently installed.
+    private var isSiriMouseActive: Bool {
+        get { (objc_getAssociatedObject(self, &Self.siriMouseActiveKey) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &Self.siriMouseActiveKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
     /// Installs value-changed handlers on the Siri Remote (GCMicroGamepad) for
     /// cores that implement KeyboardResponder / MouseResponder.
+    /// Also wires `VirtualInputState` toggle closures so future tvOS UI can
+    /// trigger input-mode changes through the same typed interface as iOS.
     func setupSiriRemoteForKeyboardCore() {
         guard let microGamepad = GCController.controllers().first(where: { $0.microGamepad != nil })?.microGamepad else {
             return
@@ -168,12 +184,63 @@ extension PVEmulatorViewController {
 
         ILOG("tvOS: Installing Siri Remote handlers for keyboard/mouse core")
 
+        // Wire toggle closures so any future tvOS UI (pause menu, status bar) can
+        // flip input modes through the same VirtualInputState interface as iOS.
+        virtualInputState.onToggleKeyboard = { [weak self] in self?.toggleSiriRemoteKeyboard() }
+        virtualInputState.onToggleMouse    = { [weak self] in self?.toggleSiriRemoteMouse() }
+
         if let kbCore = keyboardCore, kbCore.gameSupportsKeyboard {
             installDpadKeyboardHandler(on: microGamepad, core: kbCore)
+            isSiriKeyboardActive = true
+            virtualInputState.setKeyboardVisible(true)
         }
 
         if let msCore = mouseCore, msCore.gameSupportsMouse {
             installTouchSurfaceMouseHandler()
+            isSiriMouseActive = true
+            virtualInputState.setMouseVisible(true)
+        }
+    }
+
+    /// Toggle the Siri Remote D-pad keyboard handler on/off, keeping
+    /// `VirtualInputState` in sync so UI observers always reflect reality.
+    func toggleSiriRemoteKeyboard() {
+        if isSiriKeyboardActive {
+            // Remove the D-pad keyboard handler.
+            if let micro = GCController.controllers().first(where: { $0.microGamepad != nil })?.microGamepad {
+                micro.valueChangedHandler = nil
+            }
+            isSiriKeyboardActive = false
+            virtualInputState.setKeyboardVisible(false)
+            ILOG("tvOS: Siri Remote keyboard handler removed")
+        } else {
+            guard let kbCore = core as? KeyboardResponder, kbCore.gameSupportsKeyboard,
+                  let micro = GCController.controllers().first(where: { $0.microGamepad != nil })?.microGamepad else {
+                return
+            }
+            installDpadKeyboardHandler(on: micro, core: kbCore)
+            isSiriKeyboardActive = true
+            virtualInputState.setKeyboardVisible(true)
+            ILOG("tvOS: Siri Remote keyboard handler installed")
+        }
+    }
+
+    /// Toggle the Siri Remote touch-surface mouse pan gesture on/off, keeping
+    /// `VirtualInputState` in sync so UI observers always reflect reality.
+    func toggleSiriRemoteMouse() {
+        if isSiriMouseActive {
+            view.gestureRecognizers?
+                .filter { $0.name == "SiriRemoteMousePan" }
+                .forEach { view.removeGestureRecognizer($0) }
+            isSiriMouseActive = false
+            virtualInputState.setMouseVisible(false)
+            ILOG("tvOS: Siri Remote mouse pan gesture removed")
+        } else {
+            guard let mouseCore = core as? MouseResponder, mouseCore.gameSupportsMouse else { return }
+            installTouchSurfaceMouseHandler()
+            isSiriMouseActive = true
+            virtualInputState.setMouseVisible(true)
+            ILOG("tvOS: Siri Remote mouse pan gesture installed")
         }
     }
 
