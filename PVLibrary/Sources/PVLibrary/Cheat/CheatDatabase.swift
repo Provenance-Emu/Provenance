@@ -161,20 +161,30 @@ public actor CheatDatabase {
             }
         }
 
-        // 4. GeckoCodes online lookup for GameCube / Wii (requires romSerial from disc header)
+        // 4. GeckoCodes online lookup for GameCube / Wii (requires romSerial from disc header).
+        // Gate by valid 6-char alphanumeric disc ID format and GC/Wii system when known,
+        // to avoid spurious requests for ROMs from other platforms.
         if let serial = romSerial, !serial.isEmpty {
-            do {
-                let geckoResults = try await GeckoCodesLookup.shared.searchCheats(gameID: serial)
-                for entry in geckoResults {
-                    let key = entry.cheatCode.lowercased()
-                    if seenCodes.insert(key).inserted {
-                        results.append(entry)
+            let isValidDiscID = serial.count == 6 && serial.allSatisfy({ $0.isLetter || $0.isNumber })
+            let isGCWiiSystem = systemIdentifier == nil
+                || systemIdentifier?.contains("GameCube") == true
+                || systemIdentifier?.contains("Wii") == true
+            if isValidDiscID && isGCWiiSystem {
+                do {
+                    let geckoResults = try await GeckoCodesLookup.shared.searchCheats(gameID: serial)
+                    for entry in geckoResults {
+                        let key = entry.cheatCode.lowercased()
+                        if seenCodes.insert(key).inserted {
+                            results.append(entry)
+                        }
                     }
+                    DLOG("CheatDatabase: \(geckoResults.count) results from GeckoCodes for serial '\(serial)'")
+                } catch {
+                    WLOG("CheatDatabase: GeckoCodes lookup error for serial '\(serial)': \(error)")
+                    // GeckoCodes failure is non-fatal; do not update lastError
                 }
-                DLOG("CheatDatabase: \(geckoResults.count) results from GeckoCodes for serial '\(serial)'")
-            } catch {
-                WLOG("CheatDatabase: GeckoCodes lookup error for serial '\(serial)': \(error)")
-                // GeckoCodes failure is non-fatal; do not update lastError
+            } else {
+                DLOG("CheatDatabase: skipping GeckoCodes for serial '\(serial)' — not a GC/Wii disc ID or wrong system")
             }
         }
 
@@ -294,17 +304,30 @@ public actor CheatDatabase {
             }?.gameHackingOrgSlug
         }()
 
-        // Run libretro and GameHacking.org lookups concurrently.
-        async let libretroTask = CheatOnlineLookup.shared.searchCheats(
-            title: title,
-            systemIdentifier: systemIdentifier
-        )
-        async let ghOrgTask: [CheatDatabaseEntry] = GameHackingOrgLookup.shared.searchCheats(
+        // Start GameHacking.org lookup unconditionally (title-only when no slug available).
+        // GameHackingOrgLookup.searchCheats never throws, so it's safe to await independently.
+        async let ghOrgFuture: [CheatDatabaseEntry] = GameHackingOrgLookup.shared.searchCheats(
             title: title,
             systemSlug: ghOrgSlug
         )
 
-        let (libretroResults, ghOrgResults) = try await (libretroTask, ghOrgTask)
+        // Run libretro lookup only when systemIdentifier is present — it throws on nil/empty.
+        // Use a do-catch so a libretro failure does not cancel the already-started GH.org task.
+        var libretroResults: [CheatDatabaseEntry] = []
+        if let sysID = systemIdentifier, !sysID.isEmpty {
+            async let libretroFuture = CheatOnlineLookup.shared.searchCheats(
+                title: title,
+                systemIdentifier: sysID
+            )
+            do {
+                libretroResults = try await libretroFuture
+            } catch {
+                WLOG("CheatDatabase: libretro online lookup failed: \(error)")
+            }
+        }
+
+        // Await GH.org result (was already running in parallel above).
+        let ghOrgResults = await ghOrgFuture
 
         // Merge, deduplicating by normalised cheat code
         var seenCodes = Set<String>()

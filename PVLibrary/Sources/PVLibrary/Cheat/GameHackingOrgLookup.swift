@@ -175,15 +175,11 @@ public actor GameHackingOrgLookup {
     ///   `<a href="/game/12345">Game Title</a>`
     /// or similar patterns.  We use multiple regex strategies and pick
     /// the best title match.
-    private func bestGameLink(in html: String, for title: String) -> String? {
-        // Strategy 1: look for <a href="/game/...">Title</a>
+    func bestGameLink(in html: String, for title: String) -> String? {
+        // extractGameLinks tries multiple URL patterns (/game/ and /system/ style links).
+        // Return the highest-scoring title match, or nil if no links were found.
         let gameLinks = extractGameLinks(from: html)
-        if !gameLinks.isEmpty {
-            // Pick best match by title similarity
-            return bestMatch(for: title, among: gameLinks)?.path
-        }
-        // Strategy 2: look for /faqs/ or /system/ hrefs that could be game pages
-        return nil
+        return bestMatch(for: title, among: gameLinks)?.path
     }
 
     private struct GameLink {
@@ -230,7 +226,7 @@ public actor GameHackingOrgLookup {
     ///   1. Table rows with code/name columns (most common layout)
     ///   2. Definition list / dt+dd pairs
     ///   3. Plain code blocks
-    private func parseCheatPage(_ html: String, title: String) -> [CheatDatabaseEntry] {
+    func parseCheatPage(_ html: String, title: String) -> [CheatDatabaseEntry] {
         var entries: [CheatDatabaseEntry] = []
 
         // Strategy 1: table with code + name columns
@@ -250,7 +246,7 @@ public actor GameHackingOrgLookup {
     ///
     /// Expects a table with <tr> rows containing at minimum one cell with the
     /// cheat code (hex pattern) and one with the cheat name.
-    private func parseTableCheats(_ html: String, romTitle: String) -> [CheatDatabaseEntry] {
+    func parseTableCheats(_ html: String, romTitle: String) -> [CheatDatabaseEntry] {
         var entries: [CheatDatabaseEntry] = []
         var index = 0
 
@@ -267,17 +263,17 @@ public actor GameHackingOrgLookup {
              .trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
-        // Regex to detect a cheat code: groups of hex bytes
+        // Compile these regexes once before iterating rows to avoid repeated compilation overhead.
         let codePattern = try? NSRegularExpression(
             pattern: #"[0-9A-Fa-f]{4,16}[\s\+\-\:]*[0-9A-Fa-f]{0,16}"#
         )
+        let tdPattern = #"<t[dh][^>]*>(.*?)</t[dh]>"#
+        guard let tdRegex = try? NSRegularExpression(pattern: tdPattern, options: [.caseInsensitive, .dotMatchesLineSeparators]) else { return [] }
 
         for match in trMatches {
             let rowHTML = ns.substring(with: match.range(at: 1))
 
             // Extract <td> cells from the row
-            let tdPattern = #"<t[dh][^>]*>(.*?)</t[dh]>"#
-            guard let tdRegex = try? NSRegularExpression(pattern: tdPattern, options: [.caseInsensitive, .dotMatchesLineSeparators]) else { continue }
             let rowNS = rowHTML as NSString
             let tdMatches = tdRegex.matches(in: rowHTML, range: NSRange(location: 0, length: rowNS.length))
             let cells = tdMatches.map { stripTags(rowNS.substring(with: $0.range(at: 1))) }
@@ -326,7 +322,7 @@ public actor GameHackingOrgLookup {
     }
 
     /// Parse cheat codes from definition list (dt/dd) HTML patterns.
-    private func parseDefinitionListCheats(_ html: String, romTitle: String) -> [CheatDatabaseEntry] {
+    func parseDefinitionListCheats(_ html: String, romTitle: String) -> [CheatDatabaseEntry] {
         var entries: [CheatDatabaseEntry] = []
         var index = 0
 
@@ -365,7 +361,7 @@ public actor GameHackingOrgLookup {
     }
 
     /// Last-resort: scan for inline code+name patterns anywhere in the HTML body.
-    private func parseInlineCheats(_ html: String, romTitle: String) -> [CheatDatabaseEntry] {
+    func parseInlineCheats(_ html: String, romTitle: String) -> [CheatDatabaseEntry] {
         var entries: [CheatDatabaseEntry] = []
         var index = 0
 
@@ -411,7 +407,7 @@ public actor GameHackingOrgLookup {
          .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private func looksLikeCode(_ s: String) -> Bool {
+    func looksLikeCode(_ s: String) -> Bool {
         let hex = s.trimmingCharacters(in: .whitespacesAndNewlines)
         guard hex.count >= 4 else { return false }
         let hexPattern = try? NSRegularExpression(pattern: #"^[0-9A-Fa-f\s\+]{4,}$"#)

@@ -145,7 +145,7 @@ public actor GeckoCodesLookup {
     /// Lines matching 8 hex + space + 8 hex are code bytes for the current cheat.
     /// Lines beginning with `[` are game-header lines (skipped).
     /// Lines beginning with `#` are comments (skipped).
-    private func parseGeckoCodes(_ text: String, gameID: String) -> [CheatDatabaseEntry] {
+    func parseGeckoCodes(_ text: String, gameID: String) -> [CheatDatabaseEntry] {
         var entries: [CheatDatabaseEntry] = []
         var currentName: String?
         var currentLines: [String] = []
