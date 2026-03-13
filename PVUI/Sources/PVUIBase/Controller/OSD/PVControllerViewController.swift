@@ -197,10 +197,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     /// that modifies virtual input visibility (user tap, hardware keyboard, pause menu, etc.).
     private var virtualInputCancellables: Set<AnyCancellable> = []
     #endif
-    /// Transparent container for HUD quick-action buttons.
-    /// Uses a custom hitTest so only direct button taps are intercepted;
-    /// touches in the surrounding dead-zone pass through to the game view.
-    private var quickActionsContainer: QuickActionsContainerView?
+    /// Tracks all quick-action HUD buttons so they can be brought to front together
+    /// in viewDidLayoutSubviews without a full-screen container view.
+    private var quickActionButtons: [UIButton] = []
 
     // The toggle button is the sole always-on HUD control; hide it only during move mode.
     private var shouldShowToggleButton: Bool {
@@ -519,12 +518,13 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         updateHideTouchControls()
 #endif
 
-        /// Update toggle button visibility and keep it at the top of the z-order.
-        /// Also bring quickActionsContainer to the front so game-control views added by
-        /// setupTouchControls() don't sit on top of the quick-action buttons.
+        /// Update toggle button visibility and keep HUD controls at the top of the z-order.
+        /// Bring each quick-action button individually so the full-screen overlay is never
+        /// needed — game-button views added by setupTouchControls() sit beneath each HUD
+        /// button directly, and touches in the gaps fall through naturally.
         toggleButton?.isHidden = !shouldShowToggleButton
-        if let quickActionsContainer = quickActionsContainer {
-            view.bringSubviewToFront(quickActionsContainer)
+        for btn in quickActionButtons {
+            view.bringSubviewToFront(btn)
         }
         if let toggleButton = toggleButton {
             view.bringSubviewToFront(toggleButton)
@@ -1578,19 +1578,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         let spacing: CGFloat = 8
         let topPadding: CGFloat = 8
 
-        // Create a pass-through container so touches in the dead-zone around buttons
-        // reach the game view instead of being swallowed by a full-screen overlay.
-        let container = QuickActionsContainerView()
-        container.backgroundColor = .clear
-        container.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(container)
-        NSLayoutConstraint.activate([
-            container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            container.topAnchor.constraint(equalTo: view.topAnchor),
-            container.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-        self.quickActionsContainer = container
+        // Buttons are added directly to self.view — no full-screen container needed.
+        // Each button covers only its own small frame, so touches in the surrounding
+        // areas naturally reach the game controls beneath without any hitTest trickery.
 
         // Fast Forward — always available
         let ffButton = makeQuickActionButton(
@@ -1599,7 +1589,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         )
         ffButton.addTarget(self, action: #selector(fastForwardTapped), for: .touchUpInside)
         ffButton.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(ffButton)
+        view.addSubview(ffButton)
         NSLayoutConstraint.activate([
             ffButton.widthAnchor.constraint(equalToConstant: buttonSize),
             ffButton.heightAnchor.constraint(equalToConstant: buttonSize),
@@ -1607,6 +1597,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             ffButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
         ])
         self.fastForwardButton = ffButton
+        quickActionButtons.append(ffButton)
 
         // Quick Save / Load — only when core supports save states
         if coreSupportsStateSaves {
@@ -1616,7 +1607,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             )
             qlButton.addTarget(self, action: #selector(quickLoadTapped), for: .touchUpInside)
             qlButton.translatesAutoresizingMaskIntoConstraints = false
-            container.addSubview(qlButton)
+            view.addSubview(qlButton)
             NSLayoutConstraint.activate([
                 qlButton.widthAnchor.constraint(equalToConstant: buttonSize),
                 qlButton.heightAnchor.constraint(equalToConstant: buttonSize),
@@ -1624,6 +1615,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 qlButton.topAnchor.constraint(equalTo: ffButton.topAnchor),
             ])
             self.quickLoadButton = qlButton
+            quickActionButtons.append(qlButton)
 
             let qsButton = makeQuickActionButton(
                 systemImage: "square.and.arrow.down",
@@ -1631,7 +1623,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             )
             qsButton.addTarget(self, action: #selector(quickSaveTapped), for: .touchUpInside)
             qsButton.translatesAutoresizingMaskIntoConstraints = false
-            container.addSubview(qsButton)
+            view.addSubview(qsButton)
             NSLayoutConstraint.activate([
                 qsButton.widthAnchor.constraint(equalToConstant: buttonSize),
                 qsButton.heightAnchor.constraint(equalToConstant: buttonSize),
@@ -1639,6 +1631,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 qsButton.topAnchor.constraint(equalTo: ffButton.topAnchor),
             ])
             self.quickSaveButton = qsButton
+            quickActionButtons.append(qsButton)
         }
 
         // Virtual Keyboard/Mouse toggles — iOS only (virtual overlays not supported on tvOS)
@@ -1651,7 +1644,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             )
             kbButton.addTarget(self, action: #selector(keyboardToggleTapped), for: .touchUpInside)
             kbButton.translatesAutoresizingMaskIntoConstraints = false
-            container.addSubview(kbButton)
+            view.addSubview(kbButton)
             NSLayoutConstraint.activate([
                 kbButton.widthAnchor.constraint(equalToConstant: buttonSize),
                 kbButton.heightAnchor.constraint(equalToConstant: buttonSize),
@@ -1659,6 +1652,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 kbButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
             ])
             self.keyboardToggleButton = kbButton
+            quickActionButtons.append(kbButton)
         }
 
         // Virtual Mouse toggle — only for cores that support mouse input
@@ -1669,7 +1663,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             )
             mouseButton.addTarget(self, action: #selector(mouseToggleTapped), for: .touchUpInside)
             mouseButton.translatesAutoresizingMaskIntoConstraints = false
-            container.addSubview(mouseButton)
+            view.addSubview(mouseButton)
             let leftAnchor: NSLayoutXAxisAnchor = keyboardToggleButton.map {
                 $0.trailingAnchor
             } ?? view.leadingAnchor
@@ -1681,6 +1675,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 mouseButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
             ])
             self.mouseToggleButton = mouseButton
+            quickActionButtons.append(mouseButton)
         }
         #endif // !os(tvOS)
     }
@@ -1788,20 +1783,6 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             : UIColor.black.withAlphaComponent(0.4)
     }
     #endif // !os(tvOS)
-}
-
-// MARK: - QuickActionsContainerView
-
-/// A transparent full-screen container for HUD quick-action buttons.
-/// Overrides `hitTest` so only touches that land directly on a button subview
-/// are intercepted; all other touches pass through to the game view beneath.
-private final class QuickActionsContainerView: UIView {
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let hitView = super.hitTest(point, with: event)
-        // Return nil (pass-through) when the hit is on this container itself,
-        // so gaps between buttons do not consume game touches.
-        return hitView === self ? nil : hitView
-    }
 }
 
 #endif // UIKit
