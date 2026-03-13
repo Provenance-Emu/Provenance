@@ -96,6 +96,7 @@ struct HomeView: SwiftUI.View {
     @FocusState internal var renameTitleFieldIsFocused: Bool
     @State internal var systemMoveState: SystemMoveState?
     @State internal var continuesManagementState: ContinuesManagementState?
+    @State private var showAllSavesBrowser = false
 
     @State private var showArtworkSourceAlert = false
 
@@ -468,6 +469,12 @@ struct HomeView: SwiftUI.View {
                     showingRenameAlert = false
                 }
             ]
+        }
+        .sheet(isPresented: $showAllSavesBrowser) {
+            NavigationView {
+                AllSaveStatesBrowserView(rootDelegate: rootDelegate)
+            }
+            .navigationViewStyle(.stack)
         }
         .sheet(item: $systemMoveState) { state in
             SystemPickerView(
@@ -1043,18 +1050,41 @@ struct HomeView: SwiftUI.View {
     @ViewBuilder
     private func continuesSection() -> some View {
         if showRecentSaveStates {
-            HomeContinueSection(
-                rootDelegate: rootDelegate,
-                consoleIdentifier: nil,
-                parentFocusedSection: Binding(
-                    get: { self.focusedSection },
-                    set: { self.focusedSection = $0 }
-                ),
-                parentFocusedItem: Binding(
-                    get: { self.focusedItemInSection },
-                    set: { self.focusedItemInSection = $0 }
+            VStack(alignment: .leading, spacing: 0) {
+                // Section header with title and "Show All" button
+                HStack {
+                    Text("RECENT SAVES")
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                        .font(.system(size: 11))
+                    Spacer()
+                    if !recentSaveStates.isEmpty {
+                        Button {
+                            showAllSavesBrowser = true
+                        } label: {
+                            Text("Show All")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.top, 20)
+                .padding(.bottom, 8)
+
+                HomeContinueSection(
+                    rootDelegate: rootDelegate,
+                    consoleIdentifier: nil,
+                    parentFocusedSection: Binding(
+                        get: { self.focusedSection },
+                        set: { self.focusedSection = $0 }
+                    ),
+                    parentFocusedItem: Binding(
+                        get: { self.focusedItemInSection },
+                        set: { self.focusedItemInSection = $0 }
+                    )
                 )
-            )
+            }
         }
     }
 

@@ -444,6 +444,18 @@
     ]
   },
   {
+    "version": "3.5.0",
+    "title": "Save State Browser & More",
+    "features": [
+      {
+        "symbolName": "rectangle.stack.fill",
+        "symbolColor": "purple",
+        "title": "Full Save State Browser",
+        "subtitle": "Tap 'Show All' in the Recent Saves section to open a full-page browser that groups all your save states by game with sorting and favourites filtering."
+      }
+    ]
+  },
+  {
     "version": "3.4.0",
     "title": "Cheat Codes, Achievements & More",
     "features": [
