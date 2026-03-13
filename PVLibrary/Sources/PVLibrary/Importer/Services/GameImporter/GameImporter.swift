@@ -720,7 +720,11 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// run inside a detached task so the main-actor thread is never blocked.
     public func initCorePlists() async {
         let bundle = ThisBundle
-        await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+        guard let systemsPlistURL = bundle.url(forResource: "systems", withExtension: "plist") else {
+            ELOG("GameImporter: Failed to locate systems.plist in bundle \(bundle)")
+            return
+        }
+        await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
         // Scan frameworks directory off the main actor to avoid blocking UI updates.
         let corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
             CoreLoader.getCorePlists()
