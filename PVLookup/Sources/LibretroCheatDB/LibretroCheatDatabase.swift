@@ -20,6 +20,8 @@ public actor LibretroCheatDatabase {
     private var connection: SQLite.Connection?
     /// Cached at connect time — false when the DB was generated without `--dat-dir` (no md5 column).
     private var hasMD5Column: Bool = false
+    /// Cached at connect time — false when the DB was generated before the format column was added.
+    private var hasFormatColumn: Bool = false
 
     private init() {
         let bundle = Bundle.module
@@ -89,6 +91,16 @@ public actor LibretroCheatDatabase {
         hasMD5Column = md5DataCount > 0
         if !hasMD5Column {
             WLOG("LibretroCheatDatabase: No MD5 data in games table — DB was generated without --dat-dir; MD5 lookup disabled, falling back to title-only search")
+        }
+
+        // Check whether the cheats table has a format column.
+        // Old bundles generated before this feature was added will lack it.
+        let formatColCount = (try? conn.scalar(
+            "SELECT COUNT(*) FROM pragma_table_info('cheats') WHERE name='format'"
+        ) as? Int64) ?? 0
+        hasFormatColumn = formatColCount > 0
+        if !hasFormatColumn {
+            WLOG("LibretroCheatDatabase: cheats table has no format column — DB predates format detection; format will be nil for all entries")
         }
 
         return conn
@@ -212,6 +224,9 @@ public actor LibretroCheatDatabase {
             }
 
             let md5 = hasMD5Column ? row[6] as? String : nil
+            // format column index depends on whether md5 is present
+            let formatIdx = hasMD5Column ? 7 : 6
+            let format = hasFormatColumn ? row[formatIdx] as? String : nil
 
             results.append(LibretroCheatEntry(
                 id: Int(cheatID),
@@ -220,7 +235,8 @@ public actor LibretroCheatDatabase {
                 deviceName: deviceName,
                 gameTitle: gameTitle,
                 systemName: sysName,
-                md5: md5
+                md5: md5,
+                format: format
             ))
         }
 
@@ -232,24 +248,15 @@ public actor LibretroCheatDatabase {
 
     // MARK: - Private Queries
 
-    /// SELECT clause adapts based on whether the md5 column exists in the games table.
+    /// SELECT clause adapts based on whether the md5 and format columns exist.
+    ///
+    /// Column indices:
+    ///   0: cheat_id, 1: cheat_name, 2: cheat_code, 3: device_name,
+    ///   4: game_title, 5: system_name
+    ///   6: g.md5          (only when hasMD5Column)
+    ///   6 or 7: c.format  (only when hasFormatColumn; index depends on hasMD5Column)
     private var selectClause: String {
-        if hasMD5Column {
-            return """
-                SELECT
-                    c.cheat_id,
-                    c.cheat_name,
-                    c.cheat_code,
-                    c.device_name,
-                    g.game_title,
-                    s.system_name,
-                    g.md5
-                FROM cheats c
-                JOIN games g ON c.game_id = g.game_id
-                JOIN systems s ON g.system_id = s.system_id
-                """
-        } else {
-            return """
+        var cols = """
                 SELECT
                     c.cheat_id,
                     c.cheat_name,
@@ -257,11 +264,16 @@ public actor LibretroCheatDatabase {
                     c.device_name,
                     g.game_title,
                     s.system_name
+            """
+        if hasMD5Column { cols += ",\n                    g.md5" }
+        if hasFormatColumn { cols += ",\n                    c.format" }
+        cols += """
+
                 FROM cheats c
                 JOIN games g ON c.game_id = g.game_id
                 JOIN systems s ON g.system_id = s.system_id
                 """
-        }
+        return cols
     }
 
     private var queryByTitle: String {
