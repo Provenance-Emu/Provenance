@@ -2,11 +2,13 @@
 
 > **Note:** This file is **deprecated** and kept only for backwards compatibility.
 > The **canonical** template now lives at
-> `docs/wiki/save-state-version-mismatches.md` alongside the other wiki docs.
+> [`docs/wiki/save-state-version-mismatches.md`](wiki/save-state-version-mismatches.md)
+> alongside the other wiki docs.
 > When publishing to the [Provenance-EMU/wiki](https://github.com/Provenance-EMU/wiki)
 > repository, copy the contents from that canonical file to
 > `save-states/version-mismatch.md` in the wiki repo and update `SUMMARY.md`
-> accordingly.
+> accordingly. The path `save-states/version-mismatch.md` matches the
+> `WikiConstants.Paths.saveStateVersionMismatch` constant used for in-app linking.
 
 ---
 
