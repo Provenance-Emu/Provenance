@@ -470,6 +470,7 @@ public struct SystemSkinBrowserView: View {
 
         // Prefer explicit identifiers if the system recognizes them
         skinTypes.append(UTType.deltaSkin)
+        skinTypes.append(UTType.deltaAppSkin)
         skinTypes.append(UTType.manicSkin)
 
         // Accept files with these extensions (generic data)
