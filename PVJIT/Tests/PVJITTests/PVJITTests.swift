@@ -60,3 +60,55 @@ final class JITSourceTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
     }
 }
+
+// MARK: - DOLJitType tests
+
+final class DOLJitTypeTests: XCTestCase {
+
+    // MARK: - New cases
+
+    func testNewCasesExist() {
+        // Verify the three new cases compile and are distinct.
+        let stikDebug: DOLJitType = .stikDebug
+        let trollStore: DOLJitType = .trollStore
+        let nativeEntitlement: DOLJitType = .nativeEntitlement
+
+        XCTAssertNotEqual(stikDebug, trollStore)
+        XCTAssertNotEqual(trollStore, nativeEntitlement)
+        XCTAssertNotEqual(stikDebug, nativeEntitlement)
+    }
+
+    func testNewCasesDistinctFromLegacy() {
+        XCTAssertNotEqual(DOLJitType.stikDebug, .debugger)
+        XCTAssertNotEqual(DOLJitType.trollStore, .notRestricted)
+        XCTAssertNotEqual(DOLJitType.nativeEntitlement, .allowUnsigned)
+    }
+
+    func testAllLegacyCasesUnchanged() {
+        // Ensure legacy raw values are stable (they map to ObjC enum values
+        // used across the bridge, so changing them would be ABI-breaking).
+        XCTAssertEqual(DOLJitType.none.rawValue, 0)
+        XCTAssertEqual(DOLJitType.debugger.rawValue, 1)
+        XCTAssertEqual(DOLJitType.allowUnsigned.rawValue, 2)
+        XCTAssertEqual(DOLJitType.notRestricted.rawValue, 3)
+        XCTAssertEqual(DOLJitType.ptrace.rawValue, 4)
+    }
+
+    func testNewCaseRawValues() {
+        // New cases follow on from legacy values; verify they are distinct.
+        XCTAssertEqual(DOLJitType.stikDebug.rawValue, 5)
+        XCTAssertEqual(DOLJitType.trollStore.rawValue, 6)
+        XCTAssertEqual(DOLJitType.nativeEntitlement.rawValue, 7)
+    }
+
+    func testDOLJitTypeSendableConformance() {
+        let jitType: DOLJitType = .stikDebug
+        let expectation = XCTestExpectation(description: "Sendable DOLJitType crosses concurrency boundary")
+        Task.detached {
+            let captured: DOLJitType = jitType
+            XCTAssertEqual(captured, .stikDebug)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1)
+    }
+}

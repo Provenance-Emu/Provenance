@@ -41,8 +41,21 @@ public final class DOLJitManager {
     func attemptToAcquireJitOnStartup() {
 #if targetEnvironment(simulator)
         jitType = .notRestricted
-#elseif NONJAILBROKEN
-        if #available(iOS 14.5, tvOS 14.5, *) {
+#else
+        // iOS 26+ native JIT entitlement — highest priority after simulator.
+        // JITAuthorizer is a private/SPI class introduced in iOS 26 that authorizes
+        // JIT when the app has `com.apple.developer.kernel.allow-jit` entitlement.
+        // TODO: Replace NSClassFromString lookup with a direct import when public API.
+        if NSClassFromString("JITAuthorizer") != nil {
+            jitType = .nativeEntitlement
+        }
+        // TrollStore installs apps with unrestricted `get-task-allow` entitlement.
+        // Detect via known file-system markers left by TrollStore on-device.
+        else if isInstalledViaTrollStore() {
+            jitType = .trollStore
+        }
+#if NONJAILBROKEN
+        else if #available(iOS 14.5, tvOS 14.5, *) {
             jitType = .debugger
         } else if #available(iOS 14.4, tvOS 14.4, *) {
             var size = 0
@@ -70,8 +83,11 @@ public final class DOLJitManager {
             jitType = .debugger
         }
 #else // jailbroken
-        jitType = .debugger
+        else {
+            jitType = .debugger
+        }
 #endif
+#endif // !simulator
 
         switch jitType {
         case .debugger:
@@ -84,12 +100,13 @@ public final class DOLJitManager {
                 hasAcquiredJit = SetProcessDebuggedWithDaemon()
             }
 #endif
-        case .allowUnsigned, .notRestricted:
+        case .allowUnsigned, .notRestricted, .nativeEntitlement, .trollStore:
             hasAcquiredJit = true
         case .ptrace:
             SetProcessDebuggedWithPTrace()
             hasAcquiredJit = true
-        case .none:
+        case .stikDebug, .none:
+            // .stikDebug requires explicit call to attemptToAcquireJitByStikDebug().
             break
         }
 
@@ -225,6 +242,59 @@ public final class DOLJitManager {
         dataTask.resume()
     }
 
+    /// Asks StikDebug to attach its debugger to the current process via HTTP.
+    ///
+    /// StikDebug exposes a lightweight HTTP server over its VPN tunnel (similar
+    /// to JitStreamer). Calling this method sends a POST request to the StikDebug
+    /// attach endpoint. The call completes asynchronously; JIT is available once
+    /// `recheckHasAcquiredJit()` returns `true` (or the `DOLJitAcquired`
+    /// notification fires from `attemptToAcquireJitByWaitingForDebugger`).
+    ///
+    /// - Note: The VPN tunnel must be active before calling this method.
+    ///         StikDebug uses `10.80.80.2` as its tunnel gateway.
+    public
+    func attemptToAcquireJitByStikDebug() {
+        if jitType != .debugger && jitType != .stikDebug {
+            ELOG("StikDebug: unexpected jitType \(jitType)")
+            return
+        }
+
+        if hasAcquiredJit {
+            ILOG("StikDebug: JIT already acquired")
+            return
+        }
+
+        // StikDebug uses a VPN tunnel with gateway 10.80.80.2 and an HTTP
+        // attach endpoint mirroring JitStreamer's protocol.
+        let pid = getpid()
+        let urlString = "http://10.80.80.2/attach/\(pid)/"
+        ILOG("StikDebug: POST \(urlString)")
+
+        guard let url = URL(string: urlString) else {
+            ELOG("StikDebug: failed to construct URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = Data()
+        request.timeoutInterval = 10
+
+        let dataTask = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                ELOG("StikDebug: \(error.localizedDescription)")
+                return
+            }
+            if let response = response {
+                ILOG("StikDebug: Response: \(response)")
+            }
+            if let data = data, !data.isEmpty {
+                ILOG("StikDebug: \(String(data: data, encoding: .utf8) ?? "")")
+            }
+        }
+        dataTask.resume()
+    }
+
     public
     func getJitType() -> DOLJitType {
         return jitType
@@ -265,20 +335,15 @@ public final class DOLJitManager {
 #if targetEnvironment(simulator)
         return .system
 #else
-        // iOS 26+ native JIT API — check for the JITAuthorizer Objective-C class.
+        // iOS 26+ native JIT API — `nativeEntitlement` jitType maps to `.system`.
         // TODO: Replace NSClassFromString lookup with a direct import when the
         //       JITAuthorizer API becomes public (currently private/SPI in iOS 26).
-        if NSClassFromString("JITAuthorizer") != nil {
+        if jitType == .nativeEntitlement || NSClassFromString("JITAuthorizer") != nil {
             return .system
         }
 
-        // TrollStore leaves a known support-directory marker on-device.
-        let trollStorePaths = [
-            "/var/mobile/Library/Application Support/TrollStore",
-            "/usr/lib/TrollStore",
-            "/var/containers/Bundle/TrollStore",
-        ]
-        if trollStorePaths.contains(where: { FileManager.default.fileExists(atPath: $0) }) {
+        // TrollStore installs apps with unrestricted `get-task-allow` entitlement.
+        if isInstalledViaTrollStore() {
             return .trollStore
         }
 
@@ -292,6 +357,22 @@ public final class DOLJitManager {
         return .unknown
 #endif
 #endif
+    }
+
+    // MARK: - TrollStore Detection
+
+    /// Returns `true` if the app was installed via TrollStore.
+    ///
+    /// TrollStore grants unrestricted entitlements (including `get-task-allow`)
+    /// at install time and leaves identifiable file-system markers. This check
+    /// is filesystem-only and requires no entitlements or special permissions.
+    public func isInstalledViaTrollStore() -> Bool {
+        let markers = [
+            "/var/mobile/Library/Application Support/TrollStore",
+            "/usr/lib/TrollStore",
+            "/var/containers/Bundle/TrollStore",
+        ]
+        return markers.contains(where: { FileManager.default.fileExists(atPath: $0) })
     }
 
     private func getCpuArchitecture() -> String? {
