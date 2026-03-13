@@ -10,7 +10,101 @@ final class BPSPatcherTests: XCTestCase {
 
     private let patcher = BPSPatcher()
 
-    // MARK: - Minimum size guard
+    // MARK: - VLI / CRC helpers (self-contained, no @testable dependency)
+
+    /// Encode an integer as a BPS/UPS variable-length integer.
+    ///
+    /// Encoding mirrors the `readVLI` decode algorithm used by the patchers.
+    /// Single-byte form: `0x80 | value` for value ∈ 0…127.
+    /// Multi-byte form:  emit `value & 0x7F`, subtract 128, shift right 7, repeat.
+    private func encodeVLI(_ n: Int) -> [UInt8] {
+        var bytes: [UInt8] = []
+        var value = n
+        while true {
+            if value <= 127 {
+                bytes.append(UInt8(0x80 | value))
+                break
+            } else {
+                bytes.append(UInt8(value & 0x7F))
+                value = (value - 128) >> 7
+            }
+        }
+        return bytes
+    }
+
+    /// Write a UInt32 as 4 bytes little-endian.
+    private func le32(_ value: UInt32) -> [UInt8] {
+        [UInt8(value & 0xFF),
+         UInt8((value >> 8) & 0xFF),
+         UInt8((value >> 16) & 0xFF),
+         UInt8((value >> 24) & 0xFF)]
+    }
+
+    /// CRC32 — identical to the `patchCRC32` implementation in PatcherUtilities.swift.
+    private func crc32(_ data: Data) -> UInt32 {
+        var crc: UInt32 = 0xFFFF_FFFF
+        for byte in data {
+            crc ^= UInt32(byte)
+            for _ in 0..<8 {
+                crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
+            }
+        }
+        return ~crc
+    }
+
+    // MARK: - Patch builders
+
+    /// Build a valid BPS patch that writes `target` using a single **TargetRead** action.
+    ///
+    /// TargetRead embeds the target bytes verbatim in the patch file, making it trivial
+    /// to produce a known output without needing SourceCopy/TargetCopy offsets.
+    private func makeBPSPatchTargetRead(source: Data, target: Data) -> Data {
+        var body = Data("BPS1".utf8)
+        body.append(contentsOf: encodeVLI(source.count))  // source size
+        body.append(contentsOf: encodeVLI(target.count))  // target size
+        body.append(contentsOf: encodeVLI(0))             // metadata length = 0
+
+        if !target.isEmpty {
+            // TargetRead action: command = 1, length = target.count
+            // action VLI = ((length - 1) << 2) | command
+            let actionValue = ((target.count - 1) << 2) | 1
+            body.append(contentsOf: encodeVLI(actionValue))
+            body.append(contentsOf: target)
+        }
+
+        // Footer: sourceCRC (count-12), targetCRC (count-8), patchCRC (count-4)
+        body.append(contentsOf: le32(crc32(source)))
+        body.append(contentsOf: le32(crc32(target)))
+        let patchCRC = crc32(body)
+        body.append(contentsOf: le32(patchCRC))
+        return body
+    }
+
+    /// Build a valid BPS identity patch using a single **SourceRead** action.
+    ///
+    /// SourceRead copies bytes from the source into the target at the same offset,
+    /// producing an unchanged output (target == source).
+    private func makeBPSPatchSourceRead(source: Data) -> Data {
+        var body = Data("BPS1".utf8)
+        body.append(contentsOf: encodeVLI(source.count))
+        body.append(contentsOf: encodeVLI(source.count))  // target same size as source
+        body.append(contentsOf: encodeVLI(0))
+
+        if !source.isEmpty {
+            // SourceRead action: command = 0, length = source.count
+            let actionValue = ((source.count - 1) << 2) | 0
+            body.append(contentsOf: encodeVLI(actionValue))
+        }
+
+        let sourceCRC = crc32(source)
+        body.append(contentsOf: le32(sourceCRC))
+        body.append(contentsOf: le32(sourceCRC))  // target CRC == source CRC (identity)
+        let patchCRC = crc32(body)
+        body.append(contentsOf: le32(patchCRC))
+        return body
+    }
+
+    // MARK: - Minimum-size guard (pre-existing)
 
     func testEmptyPatchThrows() {
         XCTAssertThrowsError(try patcher.apply(patch: Data(), to: Data())) { error in
@@ -22,7 +116,6 @@ final class BPSPatcherTests: XCTestCase {
 
     func testTooSmallPatchThrows() {
         // 18 bytes: valid header + 14 trailing bytes — below the 19-byte minimum.
-        // Without the fix this would crash on readLE32(patch, at: patch.count - 12).
         var data = Data("BPS1".utf8)
         data.append(contentsOf: [UInt8](repeating: 0x00, count: 14))
         XCTAssertEqual(data.count, 18)
@@ -39,6 +132,103 @@ final class BPSPatcherTests: XCTestCase {
         XCTAssertThrowsError(try patcher.apply(patch: data, to: Data())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
+            }
+        }
+    }
+
+    // MARK: - Valid patch application
+
+    func testApplyTargetReadPatch() throws {
+        let source = Data([0x00, 0x01, 0x02])
+        let target = Data([0xDE, 0xAD, 0xBE])
+        let patch = makeBPSPatchTargetRead(source: source, target: target)
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(result, target)
+    }
+
+    func testApplySourceReadIdentityPatch() throws {
+        // SourceRead: output should be identical to input
+        let source = Data([0x01, 0x02, 0x03, 0x04])
+        let patch = makeBPSPatchSourceRead(source: source)
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(result, source)
+    }
+
+    func testApplyPatchProducesLargerTarget() throws {
+        // TargetRead can write a target that is larger than the source
+        let source = Data([0x01, 0x02])
+        let target = Data([0x01, 0x02, 0x03, 0x04, 0x05])
+        let patch = makeBPSPatchTargetRead(source: source, target: target)
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(result, target)
+    }
+
+    func testApplyEmptyTargetPatch() throws {
+        // Degenerate patch: target size is 0, no actions needed
+        let source = Data([0x01, 0x02])
+        var body = Data("BPS1".utf8)
+        body.append(contentsOf: encodeVLI(source.count))  // source size = 2
+        body.append(contentsOf: encodeVLI(0))             // target size = 0
+        body.append(contentsOf: encodeVLI(0))             // metadata length = 0
+        // No actions
+        body.append(contentsOf: le32(crc32(source)))
+        body.append(contentsOf: le32(crc32(Data())))      // CRC of empty target = 0x00000000
+        let patchCRC = crc32(body)
+        body.append(contentsOf: le32(patchCRC))
+
+        let result = try patcher.apply(patch: body, to: source)
+        XCTAssertEqual(result, Data())
+    }
+
+    func testApplyPatchWithSingleByteTarget() throws {
+        let source = Data([0xFF])
+        let target = Data([0x42])
+        let patch = makeBPSPatchTargetRead(source: source, target: target)
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(Array(result), [0x42])
+    }
+
+    // MARK: - CRC mismatch errors
+
+    func testPatchCRCMismatchThrows() {
+        let source = Data([0x01, 0x02, 0x03])
+        var patch = makeBPSPatchTargetRead(source: source, target: Data([0xAA, 0xBB, 0xCC]))
+        // Corrupt a byte in the patch body (before the CRC fields) to invalidate patch CRC
+        patch[5] ^= 0xFF
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
+            guard case PatchError.crcMismatch = error else {
+                return XCTFail("Expected crcMismatch, got \(error)")
+            }
+        }
+    }
+
+    func testSourceCRCMismatchThrows() {
+        // Build a valid patch for correctSource, then apply it with wrongSource
+        let correctSource = Data([0x01, 0x02, 0x03])
+        let wrongSource   = Data([0xFF, 0xFE, 0xFD])
+        let patch = makeBPSPatchTargetRead(source: correctSource, target: Data([0xAA, 0xBB, 0xCC]))
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: wrongSource)) { error in
+            guard case PatchError.sourceROMMismatch = error else {
+                return XCTFail("Expected sourceROMMismatch, got \(error)")
+            }
+        }
+    }
+
+    func testTargetCRCMismatchThrows() {
+        let source = Data([0x01, 0x02, 0x03])
+        var patch = makeBPSPatchTargetRead(source: source, target: Data([0xDE, 0xAD, 0xBE]))
+
+        // Corrupt the target CRC (at patch.count - 8) and recompute the patch CRC
+        // so that the patch-integrity check still passes — isolating the target CRC failure.
+        let targetCRCOffset = patch.count - 8
+        patch[targetCRCOffset] ^= 0xFF
+        let newPatchCRC = crc32(patch[0..<(patch.count - 4)])
+        let newCRCBytes = le32(newPatchCRC)
+        for i in 0..<4 { patch[patch.count - 4 + i] = newCRCBytes[i] }
+
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
+            guard case PatchError.patchedROMVerificationFailed = error else {
+                return XCTFail("Expected patchedROMVerificationFailed, got \(error)")
             }
         }
     }

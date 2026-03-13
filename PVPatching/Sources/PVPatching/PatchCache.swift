@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if canImport(CryptoKit)
 import CryptoKit
+#endif
 
 /// Manages a disk cache of pre-applied patched ROMs.
 ///
@@ -82,11 +84,24 @@ public actor PatchCache {
         return dir.appendingPathComponent("patched.\(ext.isEmpty ? "rom" : ext)")
     }
 
-    /// Cache key is SHA256(romSHA256 + patchSHA256).
+    /// Cache key derived from the rom and patch data.
     private func cacheKey(romData: Data, patchData: Data) -> String {
+#if canImport(CryptoKit)
         let romHash = SHA256.hash(data: romData).compactMap { String(format: "%02x", $0) }.joined()
         let patchHash = SHA256.hash(data: patchData).compactMap { String(format: "%02x", $0) }.joined()
         let combined = Data((romHash + patchHash).utf8)
         return String(SHA256.hash(data: combined).compactMap { String(format: "%02x", $0) }.joined().prefix(32))
+#else
+        // Linux fallback: combine CRC32 of both inputs as a hex key.
+        func crc32(_ data: Data) -> UInt32 {
+            var crc: UInt32 = 0xFFFF_FFFF
+            for byte in data {
+                crc ^= UInt32(byte)
+                for _ in 0..<8 { crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1)) }
+            }
+            return ~crc
+        }
+        return String(format: "%08x%08x%08x%08x", crc32(romData), crc32(patchData), romData.count, patchData.count)
+#endif
     }
 }
