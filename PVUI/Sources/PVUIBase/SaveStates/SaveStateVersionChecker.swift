@@ -11,6 +11,7 @@ import PVRealm
 import PVLogging
 #if canImport(UIKit)
 import UIKit
+import ObjectiveC
 #endif
 
 /// Result of a save state version mismatch check.
@@ -158,36 +159,92 @@ public enum SaveStateVersionChecker {
         // indirect dismissal path (e.g. the presenting VC is force-dismissed while
         // the alert is on screen) attempt to resume the continuation.
         var hasResumed = false
-        return await withCheckedContinuation { continuation in
-            func resume(_ value: Bool) {
-                guard !hasResumed else { return }
-                hasResumed = true
-                continuation.resume(returning: value)
+        var alertController: UIAlertController?
+        var resumeClosure: ((Bool) -> Void)?
+
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+                func resume(_ value: Bool) {
+                    guard !hasResumed else { return }
+                    hasResumed = true
+                    continuation.resume(returning: value)
+                }
+
+                // Make resume available to cancellation / dismissal handlers.
+                resumeClosure = resume
+
+                let alert = UIAlertController(
+                    title: "Save State Version Mismatch",
+                    message: warningMessage(for: mismatch),
+                    preferredStyle: .alert
+                )
+                alertController = alert
+
+                alert.addAction(UIAlertAction(title: "Load Anyway", style: .default) { _ in
+                    resume(true)
+                })
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    resume(false)
+                })
+
+                // Ensure the continuation also resumes if the alert is dismissed
+                // without an explicit action (e.g. presenting VC is dismissed).
+                if let presentationController = alert.presentationController {
+                    let delegate = SaveStateAlertPresentationDelegate {
+                        resume(false)
+                    }
+                    presentationController.delegate = delegate
+                    objc_setAssociatedObject(
+                        alert,
+                        &AssociatedKeys.presentationDelegate,
+                        delegate,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
+
+                // Guard against the continuation hanging if the VC cannot present
+                // (e.g. it's not in a window or is already presenting another controller).
+                guard viewController.view.window != nil,
+                      viewController.presentedViewController == nil else {
+                    WLOG("SaveStateVersionChecker: cannot present alert (VC not in window or already presenting) — defaulting to cancel")
+                    resume(false)
+                    return
+                }
+
+                viewController.present(alert, animated: true)
             }
+        } onCancel: {
+            // If the task is cancelled while the alert is visible, dismiss the alert
+            // and resume the continuation with `false` to avoid hanging callers.
+            Task { @MainActor in
+                if let alert = alertController, alert.presentingViewController != nil {
+                    alert.dismiss(animated: true)
+                }
 
-            let alert = UIAlertController(
-                title: "Save State Version Mismatch",
-                message: warningMessage(for: mismatch),
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(title: "Load Anyway", style: .default) { _ in
-                resume(true)
-            })
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                resume(false)
-            })
-
-            // Guard against the continuation hanging if the VC cannot present
-            // (e.g. it's not in a window or is already presenting another controller).
-            guard viewController.view.window != nil,
-                  viewController.presentedViewController == nil else {
-                WLOG("SaveStateVersionChecker: cannot present alert (VC not in window or already presenting) — defaulting to cancel")
-                resume(false)
-                return
+                if let resume = resumeClosure {
+                    resume(false)
+                }
             }
-
-            viewController.present(alert, animated: true)
         }
+    }
+
+    // MARK: - Private helpers (UIKit)
+
+    private final class SaveStateAlertPresentationDelegate: NSObject, UIAdaptivePresentationControllerDelegate {
+        private let onDismiss: () -> Void
+
+        init(onDismiss: @escaping () -> Void) {
+            self.onDismiss = onDismiss
+            super.init()
+        }
+
+        func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+            onDismiss()
+        }
+    }
+
+    private struct AssociatedKeys {
+        static var presentationDelegate = "SaveStateVersionCheckerPresentationDelegateKey"
     }
 #endif
 }
