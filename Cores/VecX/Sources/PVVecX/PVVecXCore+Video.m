@@ -83,6 +83,58 @@
     return videoBuffer;
 }
 
+#if HAS_GPU
+/// Parse the HW resolution string (e.g. "824x1024") into a CGSize.
+/// Returns CGSizeZero if the string is not in the expected "WxH" format.
+static CGSize parseHWResolution(NSString *resStr) {
+    NSArray<NSString *> *parts = [resStr componentsSeparatedByString:@"x"];
+    if (parts.count == 2) {
+        NSInteger w = [parts[0] integerValue];
+        NSInteger h = [parts[1] integerValue];
+        if (w > 0 && h > 0) {
+            return CGSizeMake((CGFloat)w, (CGFloat)h);
+        }
+    }
+    return CGSizeZero;
+}
+
+/// Override screenRect for hardware rendering mode.
+///
+/// retro_get_system_av_info() in the VecX libretro core hardcodes base_width=330
+/// and base_height=410 regardless of hardware rendering mode.  When in HW mode the
+/// GL viewport is set to the selected HW resolution (e.g. 824×1024), so we must
+/// return that size here so the Metal blit in didRenderFrameOnAlternateThread copies
+/// the full rendered frame rather than only the top-left 330×410 pixel strip.
+- (CGRect)screenRect {
+    if (self.rendersToOpenGL) {
+        CGSize hwSize = parseHWResolution(VecxOptions.resolutionHW);
+        if (!CGSizeEqualToSize(hwSize, CGSizeZero)) {
+            return CGRectMake(0, 0, hwSize.width, hwSize.height);
+        }
+        // Safe default — matches the "824x1024" option index 4 default.
+        return CGRectMake(0, 0, 824, 1024);
+    }
+    return [super screenRect];
+}
+
+/// Override aspectSize for hardware rendering mode.
+///
+/// The Vectrex has a native 33:41 aspect ratio (~0.805). All HW resolution presets
+/// maintain this ratio, so we can derive it from the parsed HW dimensions rather than
+/// relying on the hardcoded av_info aspect_ratio (also 33.0/41.0, but we want
+/// consistency with the overridden screenRect).
+- (CGSize)aspectSize {
+    if (self.rendersToOpenGL) {
+        CGSize hwSize = parseHWResolution(VecxOptions.resolutionHW);
+        if (!CGSizeEqualToSize(hwSize, CGSizeZero)) {
+            return CGSizeMake(hwSize.width, hwSize.height);
+        }
+        return CGSizeMake(33, 41);
+    }
+    return [super aspectSize];
+}
+#endif // HAS_GPU
+
 /*
  memset(info, 0, sizeof(*info));
  info->timing.fps            = 50.0;
