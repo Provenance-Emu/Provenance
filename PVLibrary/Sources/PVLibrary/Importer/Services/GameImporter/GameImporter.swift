@@ -716,7 +716,8 @@ public final class GameImporter: GameImporting, ObservableObject {
     fileprivate func initCorePlists() async {
         let bundle = ThisBundle
         await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-        let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
+        var corePlists: [EmulatorCoreInfoPlist] = CoreLoader.getCorePlists()
+        corePlists = PVDynamicLibretroCoreScanner.mergeDiscoveredLibretroCores(into: corePlists)
         await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 
