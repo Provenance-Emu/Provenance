@@ -19,4 +19,10 @@ public enum WikiConstants {
             .replacingOccurrences(of: "/README", with: "")
         return webBaseURL.appendingPathComponent(webPath)
     }
+
+    /// Well-known wiki page paths. Use `rawURL(for:)` or `webURL(for:)` to turn them into URLs.
+    public enum Paths {
+        public static let saveStateVersionMismatch = "save-states/version-mismatch.md"
+        public static let saveStates = "save-states/README.md"
+    }
 }
