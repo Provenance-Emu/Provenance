@@ -17,6 +17,7 @@ struct AppearanceView: View {
     @Default(.showRecentGames) var showRecentGames
     @Default(.showSearchbar) var showSearchbar
     @Default(.showRecentSaveStates) var showRecentSaveStates
+    @Default(.showAutoSavesInRecents) var showAutoSavesInRecents
     @Default(.showGameBadges) var showGameBadges
     @Default(.showFavorites) var showFavorites
     @Default(.missingArtworkStyle) private var missingArtworkStyle
@@ -96,6 +97,13 @@ struct AppearanceView: View {
                             }
                             .padding(.vertical, 4)
 
+                            ThemedToggle(isOn: $showAutoSavesInRecents) {
+                                SettingsRow(title: "Show All Auto-Saves in Recent Saves",
+                                            subtitle: "When off, only the latest auto-save per game is shown to reduce clutter.",
+                                            icon: .sfSymbol("clock.badge.checkmark"))
+                            }
+                            .padding(.vertical, 4)
+
                             ThemedToggle(isOn: $showFavorites) {
                                 SettingsRow(title: "Show Favorites",
                                             subtitle: "Display favorites section.",
@@ -171,6 +179,7 @@ internal struct AppearanceSection: View {
     @Default(.showRecentGames) var showRecentGames
     @Default(.showSearchbar) var showSearchbar
     @Default(.showRecentSaveStates) var showRecentSaveStates
+    @Default(.showAutoSavesInRecents) var showAutoSavesInRecents
     @Default(.showGameBadges) var showGameBadges
     @Default(.showFavorites) var showFavorites
 
@@ -195,6 +204,11 @@ internal struct AppearanceSection: View {
                 SettingsRow(title: "Show Recent Saves",
                             subtitle: "Display recent save states section.",
                             icon: .sfSymbol("clock.badge.checkmark"))
+            }
+            ThemedToggle(isOn: $showAutoSavesInRecents) {
+                SettingsRow(title: "Show All Auto-Saves in Recent Saves",
+                            subtitle: "When off, only the latest auto-save per game is shown.",
+                            icon: .sfSymbol("clock.arrow.circlepath"))
             }
             ThemedToggle(isOn: $showGameBadges) {
                 SettingsRow(title: "Show Game Badges",

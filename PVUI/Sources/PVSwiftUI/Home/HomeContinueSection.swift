@@ -74,7 +74,9 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
     private let queue = DispatchQueue(label: "org.provenance.realm.continues.driver", qos: .userInitiated)
 
     func stream(consoleIdentifier: String?) -> AsyncStream<[ContinueItemModel]> {
-        AsyncStream { continuation in
+        // Capture setting at stream-start time. The view will restart the stream on change.
+        let showAllAutosaves = Defaults[.showAutoSavesInRecents]
+        return AsyncStream { continuation in
             queue.async { [weak self] in
                 guard let self else { return }
                 do {
@@ -91,7 +93,8 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                         switch change {
                         case .initial(let collection),
                              .update(let collection, _, _, _):
-                            // Deduplicate autosaves: show at most one (the latest) autosave per game.
+                            // When showAllAutosaves is false (default), deduplicate timed autosaves:
+                            // show at most one (the latest) autosave per game to prevent UI flooding.
                             // Manual saves (isAutosave == false) are always included.
                             // Collection is already sorted date-descending, so the first autosave
                             // encountered for each game is the most recent one.
@@ -100,7 +103,7 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                                 .prefix(500) // safety cap to avoid huge bursts
                                 .compactMap { state -> ContinueItemModel? in
                                     guard !state.isInvalidated else { return nil }
-                                    if state.isAutosave {
+                                    if !showAllAutosaves, state.isAutosave {
                                         let gameID = state.game?.id ?? ""
                                         guard !gameID.isEmpty, seenAutoSaveGameIDs.insert(gameID).inserted else {
                                             return nil
@@ -480,6 +483,8 @@ struct HomeContinueSection: SwiftUI.View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
+    @Default(.showAutoSavesInRecents) private var showAutoSavesInRecents
+
     /// Filtered save states based on console identifier
     /// Data driver to allow different persistence backends.
     var dataDriver: ContinuesDataDriver = RealmContinuesDataDriver()
@@ -717,6 +722,21 @@ struct HomeContinueSection: SwiftUI.View {
             continuousNavigationTask?.cancel()
             filteredSaveStatesUpdateTask?.cancel()
             driverTask?.cancel()
+        }
+        .onChange(of: showAutoSavesInRecents) { _ in
+            // Restart the driver so it re-queries with the updated autosave display policy.
+            driverTask?.cancel()
+            driverTask = Task.detached(priority: .utility) { [consoleIdentifier] in
+                for await items in dataDriver.stream(consoleIdentifier: consoleIdentifier) {
+                    await MainActor.run {
+                        allItems = items
+                        totalSaveStatesCount = items.count
+                        lastAppliedFilteredSignature = 0
+                        updateSaveStateLimit(viewModel.currentLimit)
+                        syncSelectionState()
+                    }
+                }
+            }
         }
         .onChange(of: parentFocusedItem) { _ in
             syncSelectionState()

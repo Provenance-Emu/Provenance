@@ -36,6 +36,7 @@ struct HomeView: SwiftUI.View {
     @Default(.showRecentGames) private var showRecentGames
     @Default(.showSearchbar) private var showSearchbar
     @Default(.showFavorites) private var showFavorites
+    @Default(.showAutoSavesInRecents) private var showAutoSavesInRecents
 
     // Import status view properties
     @State private var showImportStatusView = false
@@ -126,10 +127,14 @@ struct HomeView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var bootupStateManager = AppState.shared.bootupStateManager
 
-    /// Deduplicated save state IDs for the Recent Saves carousel navigation.
-    /// Shows at most one (the latest) autosave per game; all manual saves are included.
-    /// Matches the deduplication applied by RealmContinuesDataDriver.stream().
+    /// Save state IDs for Recent Saves carousel navigation.
+    /// When showAutoSavesInRecents is false (default), deduplicates timed autosaves:
+    /// at most one (the latest) autosave per game is included to prevent flooding.
+    /// Manual saves are always included. Mirrors the filter in RealmContinuesDataDriver.
     private var recentSaveStateIDs: [String] {
+        if showAutoSavesInRecents {
+            return recentSaveStates.compactMap { $0.isInvalidated ? nil : $0.id }
+        }
         var seenAutoSaveGameIDs = Set<String>()
         return recentSaveStates.compactMap { state -> String? in
             guard !state.isInvalidated else { return nil }
@@ -145,7 +150,7 @@ struct HomeView: SwiftUI.View {
 
     private var availableSections: [HomeSectionType] {
         [
-            (showRecentSaveStates && !recentSaveStates.isEmpty) ? .recentSaveStates : nil,
+            (showRecentSaveStates && !recentSaveStateIDs.isEmpty) ? .recentSaveStates : nil,
             (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
             (showFavorites && !favorites.isEmpty) ? .favorites : nil,
             !mostPlayed.isEmpty ? .mostPlayed : nil,
@@ -280,7 +285,7 @@ struct HomeView: SwiftUI.View {
         .task {
             // Set initial focus
             if let firstSection = [
-                showRecentSaveStates && !recentSaveStates.isEmpty ? HomeSectionType.recentSaveStates : nil,
+                showRecentSaveStates && !recentSaveStateIDs.isEmpty ? HomeSectionType.recentSaveStates : nil,
                 showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
                 showFavorites && !favorites.isEmpty ? .favorites : nil,
                 !allGames.isEmpty ? .allGames : nil
@@ -1153,7 +1158,7 @@ struct HomeView: SwiftUI.View {
 
     private func setInitialFocus() {
         if let firstSection = [
-            showRecentSaveStates && !recentSaveStates.isEmpty ? HomeSectionType.recentSaveStates : nil,
+            showRecentSaveStates && !recentSaveStateIDs.isEmpty ? HomeSectionType.recentSaveStates : nil,
             showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
             showFavorites && !favorites.isEmpty ? .favorites : nil,
             !allGames.isEmpty ? .allGames : nil
