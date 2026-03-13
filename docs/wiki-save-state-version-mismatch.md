@@ -1,9 +1,12 @@
 # Save State Version Mismatch
 
-> **Note:** This file is a template for the [Provenance-EMU/wiki](https://github.com/Provenance-EMU/wiki)
-> repository. To publish it, copy the contents to
-> `save-states/version-mismatch.md` in that repo and update the `SUMMARY.md`
-> navigation tree accordingly.
+> **Note:** This file is **deprecated** and kept only for backwards compatibility.
+> The **canonical** template now lives at
+> `docs/wiki/save-state-version-mismatches.md` alongside the other wiki docs.
+> When publishing to the [Provenance-EMU/wiki](https://github.com/Provenance-EMU/wiki)
+> repository, copy the contents from that canonical file to
+> `save-states/version-mismatch.md` in the wiki repo and update `SUMMARY.md`
+> accordingly.
 
 ---
 
