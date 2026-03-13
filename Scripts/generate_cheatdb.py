@@ -111,6 +111,8 @@ SYSTEM_SHORT_NAMES = {
     "SNK - Neo Geo Pocket Color": "NGPC",
     "Sony - PlayStation": "PSX",
     "Sony - PlayStation 2": "PS2",
+    # PS3 cheat directory does not exist yet in libretro-database; preemptive mapping.
+    "Sony - PlayStation 3": "PS3",
     "Sony - PlayStation Portable": "PSP",
     "The 3DO Company - 3DO": "3DO",
     "TIC-80": "TIC80",
@@ -118,6 +120,14 @@ SYSTEM_SHORT_NAMES = {
     "FBNeo - Arcade Games": "MAME",
     "Watara - Supervision": "Supervision",
     "Philips - CD-i": "CDi",
+    # Id Software engine games — Wolf3D has an active cht/ directory; Quake/Quake II may follow.
+    # These are preemptive mappings in case libretro adds Quake cheat directories.
+    "Quake": "Quake",
+    "Quake II": "Quake2",
+    # Mega Duck (Cougar Boy) — supported by Provenance; preemptive mapping.
+    "Welback Holdings - Mega Duck": "MegaDuck",
+    # Apple II — supported by Provenance; preemptive mapping.
+    "Apple - Apple II": "AppleII",
 }
 
 # Libretro cht/ directories intentionally NOT mapped (Provenance does not support them):
@@ -125,6 +135,12 @@ SYSTEM_SHORT_NAMES = {
 #   "ChaiLove"             — Scripting/game engine, not a hardware system
 #   "PuzzleScript"         — Scripting/game engine, not a hardware system
 #   "Thomson - MOTO"       — Thomson MO/TO home computers; no Provenance core
+#
+# Provenance-supported systems with no libretro cht/ directory yet (preemptive mappings above):
+#   "Sony - PlayStation 3"       — PS3 has no libretro cheat directory yet
+#   "Quake" / "Quake II"         — Id Software engines; Wolf3D has cht/, Quake may follow
+#   "Welback Holdings - Mega Duck" — Supported but no cheat directory exists yet
+#   "Apple - Apple II"           — Supported but no cheat directory exists yet
 
 # Regex to extract region from filename like "Game Name (USA)" or "Game (USA, Europe)"
 REGION_RE = re.compile(r"\(([^)]*(?:USA|Europe|Japan|World|Korea|France|Germany|Spain|Italy|Brazil|Australia|Asia|China|Taiwan)[^)]*)\)")
