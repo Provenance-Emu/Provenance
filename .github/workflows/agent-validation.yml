@@ -64,18 +64,29 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Resolve the actual latest SwiftLint release tag from GitHub API.
-          # Avoids hard-coding a version that may not exist and silently
-          # downloading a 404 HTML page that unzip then chokes on.
+          # Resolve the latest release tag and pick the right Linux artifact.
+          # SwiftLint 0.63+ ships arch-specific zips (swiftlint_linux_amd64.zip /
+          # swiftlint_linux_arm64.zip); older releases used swiftlint_linux.zip.
           SWIFTLINT_VERSION=$(gh api repos/realm/SwiftLint/releases/latest \
             --jq '.tag_name' | sed 's/^v//')
           echo "Installing SwiftLint ${SWIFTLINT_VERSION}"
 
-          # --fail: treat HTTP 4xx/5xx as an error rather than saving the
-          # response body and letting unzip fail with a cryptic message.
-          curl --fail -sSL \
-            "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/swiftlint_linux.zip" \
-            -o swiftlint.zip
+          ARCH=$(uname -m)
+          case "$ARCH" in
+            x86_64)  ARCH_SUFFIX="amd64" ;;
+            aarch64) ARCH_SUFFIX="arm64" ;;
+            *)        ARCH_SUFFIX="$ARCH" ;;
+          esac
+
+          # Try arch-specific name first (0.63+), then fall back to generic name.
+          BASE_URL="https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}"
+          if curl --fail -sSL "${BASE_URL}/swiftlint_linux_${ARCH_SUFFIX}.zip" -o swiftlint.zip 2>/dev/null; then
+            echo "Downloaded swiftlint_linux_${ARCH_SUFFIX}.zip"
+          else
+            curl --fail -sSL "${BASE_URL}/swiftlint_linux.zip" -o swiftlint.zip
+            echo "Downloaded swiftlint_linux.zip (legacy name)"
+          fi
+
           unzip -q swiftlint.zip -d swiftlint_bin
           chmod +x swiftlint_bin/swiftlint
           sudo mv swiftlint_bin/swiftlint /usr/local/bin/swiftlint
