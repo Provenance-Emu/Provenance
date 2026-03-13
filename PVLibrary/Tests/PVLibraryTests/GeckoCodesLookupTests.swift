@@ -99,5 +99,14 @@ final class GeckoCodesLookupTests: XCTestCase {
         XCTAssertEqual(entries.count, 3)
         let ids = entries.map(\.id)
         XCTAssertEqual(Set(ids).count, 3, "All IDs should be unique")
+
+        let sortedIds = ids.sorted()
+        for index in 1..<sortedIds.count {
+            XCTAssertEqual(
+                sortedIds[index],
+                sortedIds[index - 1] + 1,
+                "IDs should be sequential and increase by 1"
+            )
+        }
     }
 }
