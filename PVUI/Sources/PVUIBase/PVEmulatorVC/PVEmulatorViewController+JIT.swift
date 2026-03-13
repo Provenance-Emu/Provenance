@@ -102,6 +102,13 @@ public extension PVEmulatorViewController {
     private func setupJITIndicator() {
         guard jitIndicatorViewController == nil else { return }
 
+        // Only add the indicator for cores that actually benefit from JIT.
+        // Avoids adding a full-screen child VC (even a transparent one) for every core.
+        guard coreRequiresJIT() else {
+            ILOG("[JIT] Core does not require JIT — skipping indicator")
+            return
+        }
+
         let indicator = JITStatusIndicatorViewController()
         jitIndicatorViewController = indicator
 
@@ -116,10 +123,7 @@ public extension PVEmulatorViewController {
         ])
         indicator.didMove(toParent: self)
 
-        // Determine if the current core benefits from JIT
-        // For now, we show for all cores but in the future this can use the JIT Capability Matrix
-        let requiresJIT = coreRequiresJIT()
-        indicator.updateForCore(requiresJIT: requiresJIT)
+        indicator.updateForCore(requiresJIT: true)
     }
 
     @MainActor
