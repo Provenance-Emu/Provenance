@@ -448,10 +448,22 @@
     "title": "Save State Browser & More",
     "features": [
       {
-        "symbolName": "rectangle.stack.fill",
+        "symbolName": "clock.arrow.circlepath",
         "symbolColor": "purple",
-        "title": "Full Save State Browser",
-        "subtitle": "Tap 'Show All' in the Recent Saves section to open a full-page browser that groups all your save states by game with sorting and favourites filtering."
+        "title": "Save States Tab",
+        "subtitle": "New dedicated Save States tab in the main navigation shows all save states grouped by game, with screenshots, dates, and core version info."
+      },
+      {
+        "symbolName": "rectangle.stack.fill",
+        "symbolColor": "blue",
+        "title": "Show All Browser",
+        "subtitle": "Tap 'Show All' in the Recent Saves section for a full-page browser with sorting (date/name) and favourites filtering."
+      },
+      {
+        "symbolName": "line.3.horizontal.decrease.circle",
+        "symbolColor": "green",
+        "title": "Filter & Search",
+        "subtitle": "Search games by name and toggle autosave visibility to find exactly the save state you need."
       }
     ]
   },
