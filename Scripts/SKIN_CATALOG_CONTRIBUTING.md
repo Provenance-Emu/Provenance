@@ -223,7 +223,7 @@ Commit **both files** together in your PR.
 
 ## Supported Systems
 
-The following system short codes are recognised by the catalog and the Provenance skin browser:
+The following system short codes are **currently scraped/populated** by the skin catalog and recognised by the Provenance skin browser:
 
 | Short Code | System | `gameTypeIdentifier` |
 |-----------|--------|----------------------|
@@ -236,7 +236,9 @@ The following system short codes are recognised by the catalog and the Provenanc
 | `genesis` | Sega Genesis / Mega Drive | `com.rileytestut.delta.game.genesis` |
 | `unofficial` | Multi-system / other | *(none)* |
 
-To add support for a new system, update the `SYSTEM_MAP` dictionary in `Scripts/scrape_skin_catalog.py`.
+Note: The app's system mapping supports additional codes (for example: `vb`, `pm`, `3ds`, `psx`, etc.). For the full, authoritative list of recognised system codes, see the `SYSTEM_MAP` dictionary in `Scripts/scrape_skin_catalog.py`.
+
+To add support for a new system (or adjust an existing one), update the `SYSTEM_MAP` dictionary in `Scripts/scrape_skin_catalog.py`.
 
 ---
 
