@@ -23,6 +23,11 @@ public enum PVFeature: String, CaseIterable {
     case retroarchBuiltinEditor = "retroarchBuiltinEditor"
     case advancedSkinFeatures = "advancedSkinFeatures"
     case contentlessCores = "contentlessCores"
+    /// Enables runtime scanning of Frameworks/ for bare libretro dylibs/frameworks
+    /// and registers them through the thin PVThinLibretroFrontend. Disabled by default;
+    /// enable via the PVFeatureFlags debug-override UI (accessible on all build types;
+    /// hidden behind a cheat code on App Store builds).
+    case dynamicLibretroScanner = "dynamicLibretroScanner"
 }
 
 /// Represents the type of app installation
@@ -91,6 +96,12 @@ public struct FeatureFlag: Codable, Sendable {
         minVersion: "3.0.5",
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
         description: "Enables contentless cores like DOOM, Quake, etc. Disabled for App Store builds."
+    )
+
+    public static let dynamicLibretroScanner = FeatureFlag(
+        enabled: false,
+        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+        description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. Disabled by default; enable via debug override UI (hidden behind cheat code on App Store builds)."
     )
 }
 
@@ -373,6 +384,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
     public var advancedSkinFeatures: Bool { featureStates[.advancedSkinFeatures] ?? false }
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
     public var cheatsOnlineLookup: Bool { featureStates[.cheatsOnlineLookup] ?? false }
+    public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
 
     // MARK: - Feature Queries
 

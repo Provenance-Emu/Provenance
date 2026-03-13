@@ -228,12 +228,15 @@ enum LibretroMetadataReader {
 }
 
 #if canImport(Darwin)
+/// Must mirror the layout of `struct retro_system_info` from libretro.h exactly.
+/// Internal so it can be shared with `PVDynamicLibretroCoreScanner` without
+/// duplicating the struct definition (avoids layout drift between the two readers).
 @_alignment(8)
-private struct LibretroSystemInfo {
-    var library_name: UnsafePointer<CChar>?
-    var library_version: UnsafePointer<CChar>?
-    var valid_extensions: UnsafePointer<CChar>?
-    var need_fullpath: Bool
-    var block_extract: Bool
+internal struct LibretroSystemInfo {
+    var library_name: UnsafePointer<CChar>? = nil
+    var library_version: UnsafePointer<CChar>? = nil
+    var valid_extensions: UnsafePointer<CChar>? = nil
+    var need_fullpath: Bool = false
+    var block_extract: Bool = false
 }
 #endif
