@@ -13,6 +13,7 @@
 #if os(tvOS)
 import SwiftUI
 import PVPrimitives
+import PVSystems
 import PVLogging
 
 // MARK: - TVOSSkinCatalogBrowserView
@@ -59,10 +60,15 @@ public struct TVOSSkinCatalogBrowserView: View {
     }
 
     private var skinsBySystem: [(system: String, skins: [SkinCatalogEntry])] {
-        let grouped = Dictionary(grouping: catalog) { entry in
-            entry.systems.first ?? "Other"
+        // Group by the first non-legacy system code (normalized to lowercase).
+        let grouped = Dictionary(grouping: catalog) { entry -> String in
+            entry.systems
+                .map { $0.lowercased() }
+                .first { !SkinCatalogService.isLegacySystemCode($0) }
+                ?? "other"
         }
         return grouped
+            .filter { !SkinCatalogService.isLegacySystemCode($0.key) }
             .map { (system: $0.key, skins: $0.value) }
             .sorted { $0.system < $1.system }
     }
@@ -131,7 +137,7 @@ public struct TVOSSkinCatalogBrowserView: View {
                 // By System sections
                 ForEach(skinsBySystem, id: \.system) { item in
                     if selectedSystem == nil || selectedSystem == item.system {
-                        sectionRow(title: item.system.uppercased(), skins: item.skins)
+                        sectionRow(title: SystemIdentifier.displayName(forCatalogCode: item.system), skins: item.skins)
                     }
                 }
             }
@@ -151,7 +157,7 @@ public struct TVOSSkinCatalogBrowserView: View {
                         withAnimation { selectedSystem = nil }
                     }
                     ForEach(availableSystems, id: \.self) { system in
-                        systemChip(system.uppercased(), isSelected: selectedSystem == system) {
+                        systemChip(SystemIdentifier.displayName(forCatalogCode: system), isSelected: selectedSystem == system) {
                             withAnimation { selectedSystem = (selectedSystem == system) ? nil : system }
                         }
                     }
@@ -409,9 +415,12 @@ private struct TVOSSkinCard: View {
                     .lineLimit(1)
 
                 HStack(spacing: 8) {
-                    // System tags (up to 2)
-                    ForEach(entry.systems.prefix(2), id: \.self) { system in
-                        Text(system.uppercased())
+                    // System tags (up to 2, excluding legacy codes)
+                    let validSystems = entry.systems
+                        .map { $0.lowercased() }
+                        .filter { !SkinCatalogService.isLegacySystemCode($0) }
+                    ForEach(validSystems.prefix(2), id: \.self) { system in
+                        Text(SystemIdentifier.displayName(forCatalogCode: system))
                             .font(.system(size: 14, weight: .bold, design: .rounded))
                             .tracking(0.5)
                             .padding(.horizontal, 8)

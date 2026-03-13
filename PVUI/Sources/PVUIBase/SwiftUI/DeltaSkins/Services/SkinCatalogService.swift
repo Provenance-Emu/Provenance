@@ -267,10 +267,16 @@ public actor SkinCatalogService {
     /// Legacy/invalid system codes (e.g. "unofficial") are excluded from the results —
     /// those catalog entries have been remapped to proper identifiers in the remote catalog.
     ///
-    /// - Returns: Sorted array of system codes.
+    /// All returned codes are normalized to lowercase so callers can compare them
+    /// directly against `SystemIdentifier.skinCatalogSystemCode` (which also returns
+    /// lowercase) without additional case-folding.  Mixed-case duplicates in the
+    /// remote catalog (e.g. both `"masterSystem"` and `"mastersystem"`) collapse into
+    /// a single entry here.
+    ///
+    /// - Returns: Sorted array of lowercased system codes.
     public func availableSystems() async throws -> [String] {
         let catalog = try await fetchCatalog()
-        let systems = Set(catalog.skins.flatMap { $0.systems })
+        let systems = Set(catalog.skins.flatMap { $0.systems.map { $0.lowercased() } })
             .filter { !Self.isLegacySystemCode($0) }
         return systems.sorted()
     }
