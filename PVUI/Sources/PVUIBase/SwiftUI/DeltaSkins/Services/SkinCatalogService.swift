@@ -270,7 +270,7 @@ public actor SkinCatalogService {
     /// - Returns: Sorted array of system codes.
     public func availableSystems() async throws -> [String] {
         let catalog = try await fetchCatalog()
-        let systems = Set(catalog.skins.flatMap { $0.systems.map { $0.lowercased() } })
+        let systems = Set(catalog.skins.flatMap { $0.systems })
             .filter { !Self.isLegacySystemCode($0) }
         return systems.sorted()
     }
