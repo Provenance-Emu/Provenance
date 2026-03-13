@@ -61,12 +61,25 @@ jobs:
 
       - name: Install SwiftLint
         if: steps.changed.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          SWIFTLINT_VERSION="0.63.2"
-          curl -sL "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/swiftlint_linux.zip" -o swiftlint.zip
-          unzip -q swiftlint.zip -d swiftlint
-          chmod +x swiftlint/swiftlint
-          sudo mv swiftlint/swiftlint /usr/local/bin/
+          # Resolve the actual latest SwiftLint release tag from GitHub API.
+          # Avoids hard-coding a version that may not exist and silently
+          # downloading a 404 HTML page that unzip then chokes on.
+          SWIFTLINT_VERSION=$(gh api repos/realm/SwiftLint/releases/latest \
+            --jq '.tag_name' | sed 's/^v//')
+          echo "Installing SwiftLint ${SWIFTLINT_VERSION}"
+
+          # --fail: treat HTTP 4xx/5xx as an error rather than saving the
+          # response body and letting unzip fail with a cryptic message.
+          curl --fail -sSL \
+            "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/swiftlint_linux.zip" \
+            -o swiftlint.zip
+          unzip -q swiftlint.zip -d swiftlint_bin
+          chmod +x swiftlint_bin/swiftlint
+          sudo mv swiftlint_bin/swiftlint /usr/local/bin/swiftlint
+          swiftlint version
 
       - name: Run SwiftLint on changed files
         if: steps.changed.outputs.skip == 'false'
