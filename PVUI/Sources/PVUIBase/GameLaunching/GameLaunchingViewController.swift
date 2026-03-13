@@ -1186,22 +1186,14 @@ extension GameLaunchingViewController where Self: UIViewController {
     func openSaveState(_ saveState: PVSaveState) async {
 
         if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
-            // Check for core version mismatch before loading
+            // Check for core version mismatch before loading.
+            // Self is always a UIViewController here (extension constraint), so cast is direct.
             let pvCore = saveState.core
-            let shouldLoad: Bool
-            if let vc = self as? UIViewController {
-                shouldLoad = await SaveStateVersionChecker.confirmLoad(
-                    saveState: saveState,
-                    overrideCore: pvCore,
-                    on: vc
-                )
-            } else {
-                // Not a UIViewController — log mismatch but allow load
-                if let mismatch = SaveStateVersionChecker.mismatch(for: saveState, overrideCore: pvCore) {
-                    WLOG("Save state version mismatch (no VC to show alert): saved=\(mismatch.savedVersion) current=\(mismatch.currentVersion)")
-                }
-                shouldLoad = true
-            }
+            let shouldLoad = await SaveStateVersionChecker.confirmLoad(
+                saveState: saveState,
+                overrideCore: pvCore,
+                on: self
+            )
             guard shouldLoad else {
                 return
             }

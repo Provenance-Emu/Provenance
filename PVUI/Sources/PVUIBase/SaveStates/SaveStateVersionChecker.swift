@@ -156,6 +156,16 @@ public enum SaveStateVersionChecker {
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
                 continuation.resume(returning: false)
             })
+
+            // Guard against the continuation hanging if the VC cannot present
+            // (e.g. it's not in a window or is already presenting another controller).
+            guard viewController.view.window != nil,
+                  viewController.presentedViewController == nil else {
+                WLOG("SaveStateVersionChecker: cannot present alert (VC not in window or already presenting) — defaulting to cancel")
+                continuation.resume(returning: false)
+                return
+            }
+
             viewController.present(alert, animated: true)
         }
     }

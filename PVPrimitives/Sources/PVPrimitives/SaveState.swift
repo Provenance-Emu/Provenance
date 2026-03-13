@@ -24,6 +24,12 @@ public protocol SaveStateInfoProvider {
     var createdWithCoreVersion: String? { get }
 }
 
+public extension SaveStateInfoProvider {
+    /// Default implementation returns `nil` so that existing conformers are not
+    /// required to implement this property when adopting the protocol.
+    var createdWithCoreVersion: String? { nil }
+}
+
 public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable {
     public let id: String
     public let game: Game
