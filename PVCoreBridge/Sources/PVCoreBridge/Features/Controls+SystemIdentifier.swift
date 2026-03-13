@@ -25,7 +25,7 @@ public extension SystemIdentifier {
         case .CPS1, .CPS2, .CPS3: return PVMAMEButton.self   // TODO: Add me
         case .ColecoVision: return PVColecoVisionButton.self
         case .DOS: return PVDOSButton.self
-        case .DOOM: return PVDOSButton.self
+        case .DOOM: return PVDoomButton.self
         case .Dreamcast: return PVDreamcastButton.self
         case .DS: return PVDSButton.self
         case .EP128: return PVEP128Button.self

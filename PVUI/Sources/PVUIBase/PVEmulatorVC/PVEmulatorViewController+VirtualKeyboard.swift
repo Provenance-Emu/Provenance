@@ -26,6 +26,7 @@ private enum AssociatedKeys {
     static var keyboardViewModel: UInt8 = 0
     static var keyboardHiddenByHW: UInt8 = 0
     static var hwKeyboardObservers: UInt8 = 0
+    static var virtualInputState: UInt8 = 0
 }
 
 // MARK: - PVEmulatorViewController + VirtualKeyboard
@@ -90,6 +91,29 @@ extension PVEmulatorViewController {
         }
     }
 
+    // MARK: - VirtualInputState (type-safe state & callback container)
+
+    /// The observable state object that drives virtual-input overlay UI.
+    ///
+    /// Created lazily on first access (after `core` is available).  The same
+    /// instance is reused for the lifetime of the session.  Inject it into the
+    /// SwiftUI environment via `.environmentObject(virtualInputState)`.
+    public var virtualInputState: VirtualInputState {
+        if let existing = objc_getAssociatedObject(self, &AssociatedKeys.virtualInputState)
+                            as? VirtualInputState {
+            return existing
+        }
+        let state = VirtualInputState(
+            supportsKeyboard: coreSupportsVirtualKeyboard,
+            supportsMouse: coreSupportsVirtualMouse
+        )
+        objc_setAssociatedObject(
+            self, &AssociatedKeys.virtualInputState,
+            state, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+        return state
+    }
+
     // MARK: - Capability Checks
 
     /// Whether the emulator core reports keyboard support.
@@ -142,14 +166,22 @@ extension PVEmulatorViewController {
     }
 
     /// Call this after the core has started and the view hierarchy is ready.
-    /// Auto-shows the keyboard if the core requires it and no hardware keyboard
-    /// is already connected. Mouse cursor overlay is handled separately by
-    /// `setupVirtualMouseIfNeeded()`.
+    /// Wires the `VirtualInputState` action callbacks, then auto-shows the
+    /// keyboard if the core requires it and no hardware keyboard is connected.
     ///
-    /// Hardware keyboard observation is started first so the virtual
-    /// keyboard is never briefly shown then hidden when a physical
-    /// keyboard is already connected.
+    /// Hardware keyboard observation is started first so the virtual keyboard
+    /// is never briefly shown then hidden when a physical keyboard is already
+    /// connected.
     public func setupVirtualInputOverlaysIfNeeded() {
+        // Wire action callbacks on the shared state object so SwiftUI buttons
+        // and UIKit buttons both route through the same typed interface.
+        virtualInputState.onToggleKeyboard = { [weak self] in
+            self?.toggleVirtualKeyboard()
+        }
+        virtualInputState.onToggleMouse = { [weak self] in
+            self?.toggleVirtualMouse()
+        }
+
         startObservingHardwareKeyboard()
 
         if GCKeyboard.coalesced != nil {
@@ -236,6 +268,9 @@ extension PVEmulatorViewController {
         virtualKeyboardHostingVC = hostingVC
         keyboardHiddenByHardware = false
         ILOG("[VirtualKeyboard] Keyboard overlay shown (layout: \(layout), opacity: \(opacity), animated: \(animated))")
+
+        // Update the type-safe state so all observers (SwiftUI and UIKit) stay in sync.
+        virtualInputState.setKeyboardVisible(true)
     }
 
     /// Hide the virtual keyboard overlay, releasing all held keys first.
@@ -262,6 +297,9 @@ extension PVEmulatorViewController {
         virtualKeyboardHostingVC = nil
         virtualKeyboardViewModel = nil
         ILOG("[VirtualKeyboard] Keyboard overlay hidden (animated: \(animated))")
+
+        // Update the type-safe state so all observers stay in sync.
+        virtualInputState.setKeyboardVisible(false)
     }
 
     /// Toggle keyboard visibility.
@@ -275,15 +313,6 @@ extension PVEmulatorViewController {
 
     /// Bring all virtual input overlays (keyboard → trackpad → mouse cursor) to the front
     /// of the view hierarchy in the correct stacking order.
-    ///
-    /// Call this after applying a new skin (or after `ensureProperZOrder`) so that
-    /// the overlays remain above the skin-container and its controller buttons.
-    ///
-    /// Desired order (back → front):
-    ///   …, skinContainer, **keyboard**, **trackpad**, **cursor overlay**
-    ///
-    /// The trackpad's `hitTest` gates capture to the game-viewport rect, so it
-    /// does not block keyboard or skin-button touches even though it sits on top.
     public func bringVirtualInputOverlaysToFront() {
         if let keyboardView = virtualKeyboardHostingVC?.view {
             view.bringSubviewToFront(keyboardView)
@@ -364,22 +393,4 @@ extension PVEmulatorViewController: VirtualKeyboardDelegate {
     }
 }
 
-// MARK: - Notification names
-
-public extension Notification.Name {
-    /// Posted when the virtual keyboard overlay should be shown.
-    static let pvShowVirtualKeyboard = Notification.Name("com.provenance.virtualKeyboard.show")
-
-    /// Posted when the virtual keyboard overlay should be hidden.
-    static let pvHideVirtualKeyboard = Notification.Name("com.provenance.virtualKeyboard.hide")
-
-    /// Posted when the virtual keyboard overlay should be toggled.
-    static let pvToggleVirtualKeyboard = Notification.Name("com.provenance.virtualKeyboard.toggle")
-}
-
-/// Namespace for virtual keyboard notification user-info keys.
-public enum PVVirtualKeyboardNotification {
-    /// `userInfo` key whose value is a `KeyboardOverlayConfig`.
-    public static let configKey = "keyboardOverlayConfig"
-}
 #endif // !os(tvOS)

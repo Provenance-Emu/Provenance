@@ -88,6 +88,10 @@ extension PVEmulatorViewController {
         host.didMove(toParent: self)
         cursorHostingController = host
 
+        // Update the shared state so SwiftUI overlay buttons and UIKit buttons
+        // both reflect the correct initial visibility.
+        virtualInputState.setMouseVisible(true)
+
         ILOG("[VirtualMouse] Setup complete")
     }
 
@@ -98,11 +102,15 @@ extension PVEmulatorViewController {
     public func showVirtualMouse() {
         guard coreSupportsVirtualMouse, !isVirtualMouseVisible else { return }
         setupVirtualMouseIfNeeded()
+        // State is updated inside setupVirtualMouseIfNeeded() when the overlay installs.
     }
 
     /// Hide the virtual mouse cursor and trackpad.
     public func hideVirtualMouse() {
+        guard isVirtualMouseVisible else { return }
         teardownVirtualMouse()
+        // Update the shared state so all observers stay in sync.
+        virtualInputState.setMouseVisible(false)
     }
 
     /// Toggle virtual mouse visibility.
@@ -130,11 +138,6 @@ extension PVEmulatorViewController {
     /// appears on screen — e.g. from `viewDidAppear`, `viewDidLayoutSubviews`,
     /// and `applyFrameToGPUView` — so `TouchTrackpadView.hitTest` always uses
     /// the correct bounds and never accidentally captures skin-button touches.
-    ///
-    /// When `currentTargetFrame` is set (skin is active and has been positioned),
-    /// it is pushed directly to the trackpad as `explicitGameViewRect`.  This
-    /// removes any dependency on the GPU view's autoresizing-mask frame that
-    /// exists between view-load and the first skin-repositioning callback.
     func refreshVirtualMouseLayout() {
         guard let trackpad = touchTrackpadView else { return }
         if let targetFrame = currentTargetFrame, !targetFrame.isEmpty {

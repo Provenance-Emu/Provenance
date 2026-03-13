@@ -626,8 +626,16 @@ import UniformTypeIdentifiers
 
 // Add UTType for .deltaskin files
 public extension UTType {
+    /// UTType for .deltaskin files. Prefers our exported `com.provenance.deltaskin` (which owns
+    /// the .deltaskin extension) so that file pickers accept files the system resolves to our UTI.
+    /// Falls back to the imported `com.rileytestut.delta.skin` for interop when Delta is installed.
     static var deltaSkin: UTType {
-        UTType(exportedAs: "com.rileytestut.delta.skin")  // Delta's official UTType
+        UTType("com.provenance.deltaskin") ?? UTType(importedAs: "com.rileytestut.delta.skin")
+    }
+
+    /// UTType for the Delta app's native skin identifier, used when interop with Delta is needed.
+    static var deltaAppSkin: UTType {
+        UTType(importedAs: "com.rileytestut.delta.skin")
     }
 
     static var manicSkin: UTType {

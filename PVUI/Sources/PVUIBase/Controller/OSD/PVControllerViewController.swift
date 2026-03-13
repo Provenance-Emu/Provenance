@@ -11,6 +11,7 @@
 
 #if canImport(UIKit)
 import AudioToolbox
+import Combine
 #if canImport(GameController)
 import GameController
 #endif
@@ -187,6 +188,15 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     private var quickLoadButton: UIButton?
     private var fastForwardButton: UIButton?
     private var isFastForwardActive: Bool = false
+    #if !os(tvOS)
+    private var keyboardToggleButton: UIButton?
+    private var mouseToggleButton: UIButton?
+
+    /// Combine subscriptions for observing `VirtualInputState` changes.
+    /// Keeps the keyboard/mouse toggle button appearance in sync with any code path
+    /// that modifies virtual input visibility (user tap, hardware keyboard, pause menu, etc.).
+    private var virtualInputCancellables: Set<AnyCancellable> = []
+    #endif
     /// Transparent container for HUD quick-action buttons.
     /// Uses a custom hitTest so only direct button taps are intercepted;
     /// touches in the surrounding dead-zone pass through to the game view.
@@ -199,6 +209,14 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     private var coreSupportsStateSaves: Bool {
         return (emulatorCore as? PVEmulatorCore)?.supportsSaveStates == true
+    }
+
+    private var coreSupportsVirtualKeyboard: Bool {
+        return (emulatorCore as? KeyboardResponder)?.gameSupportsKeyboard == true
+    }
+
+    private var coreSupportsVirtualMouse: Bool {
+        return (emulatorCore as? MouseResponder)?.gameSupportsMouse == true
     }
 
     public required init(controlLayout: [ControlLayoutEntry], system: PVSystem, responder: T) {
@@ -366,6 +384,33 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         inMoveMode = !inMoveMode
     }
 
+    // MARK: - VirtualInputState observation
+
+    override public func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        #if !os(tvOS)
+        subscribeToVirtualInputStateIfNeeded()
+        #endif
+    }
+
+    #if !os(tvOS)
+    /// Subscribes to the parent emulator VC's `VirtualInputState` via Combine so that
+    /// the keyboard/mouse toggle button appearance stays current regardless of which code
+    /// path triggered the visibility change (user tap, hardware keyboard, pause menu, etc.).
+    private func subscribeToVirtualInputStateIfNeeded() {
+        virtualInputCancellables.removeAll()
+        guard let state = (parent as? PVEmulatorViewController)?.virtualInputState else { return }
+        state.$isKeyboardVisible
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updateKeyboardButtonAppearance() }
+            .store(in: &virtualInputCancellables)
+        state.$isMouseVisible
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updateMouseButtonAppearance() }
+            .store(in: &virtualInputCancellables)
+    }
+    #endif
+
     // MARK: - GameController Notifications
 
     @objc func hideTouchControls(_: Notification?) {
@@ -411,6 +456,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             zTriggerButton, startButton, selectButton,
             leftAnalogButton, rightAnalogButton,
             quickSaveButton, quickLoadButton, fastForwardButton,
+            // Note: keyboardToggleButton and mouseToggleButton are intentionally excluded —
+            // they are always-on HUD controls like fastForwardButton and must not dim with
+            // the controller opacity setting.
         ].compactMap { $0 }
     }
 
@@ -1596,15 +1644,60 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             ])
             self.quickSaveButton = qsButton
         }
+
+        // Virtual Keyboard/Mouse toggles — iOS only (virtual overlays not supported on tvOS)
+        #if !os(tvOS)
+        // Virtual Keyboard toggle — only for cores that support keyboard input
+        if coreSupportsVirtualKeyboard {
+            let kbButton = makeQuickActionButton(
+                systemImage: "keyboard",
+                accessibilityLabel: "Toggle Virtual Keyboard"
+            )
+            kbButton.addTarget(self, action: #selector(keyboardToggleTapped), for: .touchUpInside)
+            kbButton.translatesAutoresizingMaskIntoConstraints = false
+            container.addSubview(kbButton)
+            NSLayoutConstraint.activate([
+                kbButton.widthAnchor.constraint(equalToConstant: buttonSize),
+                kbButton.heightAnchor.constraint(equalToConstant: buttonSize),
+                kbButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+                kbButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
+            ])
+            self.keyboardToggleButton = kbButton
+        }
+
+        // Virtual Mouse toggle — only for cores that support mouse input
+        if coreSupportsVirtualMouse {
+            let mouseButton = makeQuickActionButton(
+                systemImage: "cursorarrow",
+                accessibilityLabel: "Toggle Virtual Mouse"
+            )
+            mouseButton.addTarget(self, action: #selector(mouseToggleTapped), for: .touchUpInside)
+            mouseButton.translatesAutoresizingMaskIntoConstraints = false
+            container.addSubview(mouseButton)
+            let leftAnchor: NSLayoutXAxisAnchor = keyboardToggleButton.map {
+                $0.trailingAnchor
+            } ?? view.leadingAnchor
+            let leftConstant: CGFloat = keyboardToggleButton != nil ? spacing : 8
+            NSLayoutConstraint.activate([
+                mouseButton.widthAnchor.constraint(equalToConstant: buttonSize),
+                mouseButton.heightAnchor.constraint(equalToConstant: buttonSize),
+                mouseButton.leadingAnchor.constraint(equalTo: leftAnchor, constant: leftConstant),
+                mouseButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topPadding),
+            ])
+            self.mouseToggleButton = mouseButton
+        }
+        #endif // !os(tvOS)
     }
 
     /// Resets the alpha of quick-action buttons to 1.0 after controller opacity has been
     /// applied globally.  Game-controller buttons dim with `controllerOpacity`, but the
     /// quick-action strip should remain fully opaque at all times.
     private func restoreQuickActionButtonAlpha() {
-        [fastForwardButton, quickSaveButton, quickLoadButton].compactMap { $0 }.forEach {
-            $0.alpha = 1.0
-        }
+        var buttons: [UIButton?] = [fastForwardButton, quickSaveButton, quickLoadButton]
+        #if !os(tvOS)
+        buttons += [keyboardToggleButton, mouseToggleButton]
+        #endif
+        buttons.compactMap { $0 }.forEach { $0.alpha = 1.0 }
     }
 
     private func makeQuickActionButton(systemImage: String, accessibilityLabel: String) -> UIButton {
@@ -1665,6 +1758,40 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             ? UIColor.systemOrange.withAlphaComponent(0.6)
             : UIColor.black.withAlphaComponent(0.4)
     }
+
+    #if !os(tvOS)
+    @objc private func keyboardToggleTapped() {
+        vibrate()
+        guard let emulatorVC = parent as? PVEmulatorViewController else { return }
+        emulatorVC.toggleVirtualKeyboard()
+        updateKeyboardButtonAppearance()
+    }
+
+    @objc private func mouseToggleTapped() {
+        vibrate()
+        guard let emulatorVC = parent as? PVEmulatorViewController else { return }
+        emulatorVC.toggleVirtualMouse()
+        updateMouseButtonAppearance()
+    }
+
+    private func updateKeyboardButtonAppearance() {
+        // Read from VirtualInputState (single source of truth) so the button
+        // stays accurate regardless of which code path toggled the overlay.
+        let isActive = (parent as? PVEmulatorViewController)?.virtualInputState.isKeyboardVisible ?? false
+        keyboardToggleButton?.tintColor = isActive ? .systemYellow : .white
+        keyboardToggleButton?.backgroundColor = isActive
+            ? UIColor.systemBlue.withAlphaComponent(0.6)
+            : UIColor.black.withAlphaComponent(0.4)
+    }
+
+    private func updateMouseButtonAppearance() {
+        let isActive = (parent as? PVEmulatorViewController)?.virtualInputState.isMouseVisible ?? false
+        mouseToggleButton?.tintColor = isActive ? .systemYellow : .white
+        mouseToggleButton?.backgroundColor = isActive
+            ? UIColor.systemBlue.withAlphaComponent(0.6)
+            : UIColor.black.withAlphaComponent(0.4)
+    }
+    #endif // !os(tvOS)
 }
 
 // MARK: - QuickActionsContainerView
