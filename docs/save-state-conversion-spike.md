@@ -49,24 +49,32 @@ This is prohibitively expensive and error-prone.
 
 **Format:** Binary file with a 32-byte header followed by named sections.
 
-**Header layout:**
+**Header layout** (from `state.cpp`, Mednafen 1.32.1):
 ```
-Bytes  0–15: "MEDNAFENSVESTATE" or "MDFNSVST" (magic)
-Bytes 16–19: stateversion (uint32, little-endian) ← VERSION FIELD
-Bytes 20–23: total_len | endian flag
-Bytes 24–27: preview width
-Bytes 28–31: preview height
+Bytes  0– 7: "MDFNSVST" (8-byte magic — old saves may use 16-byte "MEDNAFENSVESTATE")
+Bytes  8–15: epoch timestamp (uint64 LE)
+Bytes 16–19: MEDNAFEN_VERSION_NUMERIC (uint32 LE) ← VERSION FIELD
+Bytes 20–23: total_len | 0x80000000 endian flag (bit 31 set = big-endian data)
+Bytes 24–27: preview width  (uint32 LE)
+Bytes 28–31: preview height (uint32 LE)
 ...sections follow...
 ```
 
 **Example version check in Mednafen's Saturn core (`ss.cpp`):**
 ```cpp
-// EventsPacker::Restore()
+// EventsPacker::Restore() — active migration for states before 1.02.6
 if(state_version < 0x00102600 && et >= 0x40000000)
     et = SS_EVENT_DISABLED_TS;
 
+// NOTE: The following block exists in source but is commented out as of Mednafen 1.32.1.
+// SS_EVENT_SCU_INT was removed from the event queue; the migration became a no-op.
+/*
 if(state_version < 0x00102800 && i == SS_EVENT_SCU_INT)
+{
     eo = i;
+    et = SS_EVENT_DISABLED_TS;
+}
+*/
 ```
 
 **Finding:** Mednafen internally handles forward compatibility. When loading an old save
