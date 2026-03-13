@@ -116,6 +116,24 @@ public extension PVEmulatorViewController {
                     "may not fully recover all cores)."
 
                 let resetGame = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+                    var resumed = false
+
+                    func resumeOnce(_ value: Bool) {
+                        guard !resumed else { return }
+                        resumed = true
+                        continuation.resume(returning: value)
+                    }
+
+                    Task { @MainActor in
+                        // Fallback in case the alert fails to present or never calls its actions.
+                        try? await Task.sleep(nanoseconds: 5_000_000_000)
+                        if !resumed {
+                            WLOG("Save-state error alert did not complete in time. Continuing without reset.")
+                            completion()
+                            resumeOnce(false)
+                        }
+                    }
+
                     self.presentMessage(
                         alertMessage,
                         title: "Save State Load Failed",
@@ -124,12 +142,12 @@ public extension PVEmulatorViewController {
                         secondaryActionStyle: .cancel,
                         secondaryCompletion: {
                             completion()
-                            continuation.resume(returning: false)
+                            resumeOnce(false)
                         },
                         defaultActionTitle: "Reset Game",
                         defaultActionStyle: .destructive,
                         completion: {
-                            continuation.resume(returning: true)
+                            resumeOnce(true)
                         }
                     )
                 }
