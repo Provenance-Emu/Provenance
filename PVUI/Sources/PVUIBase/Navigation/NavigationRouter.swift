@@ -236,6 +236,9 @@ public enum AppRoute: Hashable, CustomStringConvertible, Sendable {
     case settingsAdvanced
     case systemBrowser(systemID: String)
     case gameDetail(md5: String)
+    /// Activate in-library search, pre-populated with `query`.
+    /// URL: `provenance://screen/search?q=<query>`
+    case search(query: String)
 
     /// Parse a `provenance://screen/…` URL into an `AppRoute`.
     ///
@@ -274,6 +277,10 @@ public enum AppRoute: Hashable, CustomStringConvertible, Sendable {
             let md5 = components.queryItems?.first(where: { $0.name == "id" })?.value ?? ""
             return md5.isEmpty ? nil : .gameDetail(md5: md5)
 
+        case "search":
+            let query = components.queryItems?.first(where: { $0.name == "q" })?.value ?? ""
+            return query.isEmpty ? .library : .search(query: query)
+
         default:
             return nil
         }
@@ -289,6 +296,11 @@ public enum AppRoute: Hashable, CustomStringConvertible, Sendable {
         case .settingsAdvanced:         return "settings/advanced"
         case .systemBrowser(let id):    return "system/\(id)"
         case .gameDetail(let md5):      return "game?id=\(md5)"
+        case .search(let query):
+            var components = URLComponents()
+            components.path = "search"
+            components.queryItems = [URLQueryItem(name: "q", value: query)]
+            return components.string ?? "search"
         }
     }
 }

@@ -135,6 +135,23 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Both read AND write sides of shared state must use the same lock object.
 - For actor-isolated state, prefer actor isolation over NSLock.
 
+### LibraryNavigator / LibraryAction (March 2026)
+- `LibraryNavigator.shared` (`PVUIBase/Navigation/LibraryNavigator.swift`) is the single hub for
+  library-level UI actions (search, console navigation, game deep links).
+- **Do NOT** add new `onReceive(AppState.shared.$pendingSearchQuery)` calls to any view;
+  use `onReceive(LibraryNavigator.shared.$pendingAction)` instead.
+- Tab-switching views (ConsolesWrapperView, RetroMainView) check for `.search` and switch tabs
+  but **must NOT** call `LibraryNavigator.shared.clearPendingAction()`.
+- Content views (HomeView, RetroGameLibraryView) call `consumeSearch { ... }` which clears the action.
+- Deep links: `provenance://screen/search?q=<query>` → `AppRoute.search(query:)` →
+  `LibraryRouteProvider` → `LibraryNavigator.dispatch(.search(query:))`.
+  `LibraryNavigator.routeProvider` is a static instance auto-registered with
+  `NavigationRouter.shared` in `LibraryNavigator.init()`, and `NavigationRouter.shared.handle(url:)`
+  is invoked in `ProvenanceApp.handle(appURL:)` for `provenance://screen/` URLs. No per-view
+  registration is required.
+- Future library actions: add a case to `LibraryAction`, a URL path to `AppRoute`, and a response in
+  any interested view — no changes to `LibraryNavigator` core needed.
+
 ---
 
 ## Project Conventions

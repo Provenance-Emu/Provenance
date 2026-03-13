@@ -243,6 +243,17 @@ public struct RetroGameLibraryView: View {
             ) { [weak viewModel] _ in
                 updateWebServerStatus()
             }
+
+            // Consume any pending search action from LibraryNavigator (cold-launch).
+            LibraryNavigator.shared.consumeSearch { query in
+                viewModel.searchText = query
+            }
+        }
+        .onReceive(LibraryNavigator.shared.$pendingAction) { _ in
+            // Consume any incoming search action (hot-launch / foreground Siri handoff).
+            LibraryNavigator.shared.consumeSearch { query in
+                viewModel.searchText = query
+            }
         }
         .onDisappear {
             // Remove notification observer when view disappears

@@ -202,6 +202,16 @@ struct ConsolesWrapperView: SwiftUI.View {
         .onAppear {
             isVisible = true
 
+            // Navigate to the home tab on appearance if a search action is pending
+            // (covers cold-launch: LibraryNavigator already has the action queued).
+            // Note: setTab persists the new tab to UserDefaults — this is intentional,
+            // since a Siri search leaves the user on the Home tab and that should be
+            // their restored tab on next launch.
+            if case .search = LibraryNavigator.shared.pendingAction,
+               delegate.selectedTab != "home" {
+                delegate.setTab("home")
+            }
+
             // Defer non-critical operations to background
             Task.detached(priority: .utility) {
                 // Initialize cached sorted consoles off main thread
@@ -219,6 +229,14 @@ struct ConsolesWrapperView: SwiftUI.View {
 
                 // Load tab icons asynchronously off main thread
                 await self.loadTabIconsAsync()
+            }
+        }
+        .onReceive(LibraryNavigator.shared.$pendingAction) { action in
+            // Navigate to the home tab when a search action arrives
+            // while the app is already running (hot-launch / foreground).
+            guard case .search = action else { return }
+            if delegate.selectedTab != "home" {
+                delegate.setTab("home")
             }
         }
         .onChange(of: viewModel.sortConsolesAscending) { _ in

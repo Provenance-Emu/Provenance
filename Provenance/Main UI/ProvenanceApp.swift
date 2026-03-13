@@ -398,7 +398,10 @@ extension ProvenanceApp {
 
         switch action {
         case .screen, .debug:
-            // Route deep-link navigation to ScreenNavigator (SwiftUI lifecycle path)
+            // Try NavigationRouter first — handles library-level routes (e.g. search)
+            // via registered RouteProviders such as LibraryNavigator.routeProvider.
+            if NavigationRouter.shared.handle(url: url) { return true }
+            // Fall back to ScreenNavigator for UITest/automation deep links.
             return ScreenNavigator.shared.handle(url: url)
 
         case .save:

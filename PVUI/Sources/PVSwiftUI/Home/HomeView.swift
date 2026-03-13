@@ -251,7 +251,8 @@ struct HomeView: SwiftUI.View {
                 setInitialFocus()
             }
 
-            consumePendingSearchQuery()
+            // Consume any pending search action from LibraryNavigator (covers cold-launch).
+            consumePendingSearch()
         }
         .onChange(of: GamepadManager.shared.isControllerConnected) { isConnected in
             isControllerConnected = isConnected
@@ -555,8 +556,9 @@ struct HomeView: SwiftUI.View {
                 }
             }
         )
-        .onReceive(AppState.shared.$pendingSearchQuery) { _ in
-            consumePendingSearchQuery()
+        .onReceive(LibraryNavigator.shared.$pendingAction) { _ in
+            // Consume any incoming search action (hot-launch / foreground Siri handoff).
+            consumePendingSearch()
         }
     }
 
@@ -575,14 +577,14 @@ struct HomeView: SwiftUI.View {
         )
     }
 
-    /// Reads and consumes any pending Siri "Search in App" query from `AppState`,
-    /// populating the search field and ensuring the search bar is visible.
-    /// Called from both `.onAppear` (cold-launch) and `.onReceive` (hot-launch).
-    private func consumePendingSearchQuery() {
-        guard let query = AppState.shared.pendingSearchQuery, !query.isEmpty else { return }
-        searchText = query
-        isSearchBarVisible = true
-        AppState.shared.pendingSearchQuery = nil
+    /// Consume any pending `.search` action from `LibraryNavigator` and populate
+    /// the search field. Called from both `.onAppear` (cold-launch) and
+    /// `.onReceive(LibraryNavigator.shared.$pendingAction)` (hot-launch / foreground handoff).
+    private func consumePendingSearch() {
+        LibraryNavigator.shared.consumeSearch { query in
+            searchText = query
+            isSearchBarVisible = true
+        }
     }
 
     private func setupGamepadHandling() {

@@ -165,6 +165,18 @@ public struct RetroMainView: View {
 
             // Force home indicator update on view appearance
             setHomeIndicatorAutoHidden()
+
+            // Switch to the Games (library) tab if a search action is already pending
+            // (cold-launch: LibraryNavigator queues the action before the view appears).
+            if case .search = LibraryNavigator.shared.pendingAction, selectedTab != 0 {
+                selectedTab = 0
+            }
+        }
+        .onReceive(LibraryNavigator.shared.$pendingAction) { action in
+            // Switch to the Games tab when a search action arrives at runtime.
+            if case .search = action, selectedTab != 0 {
+                selectedTab = 0
+            }
         }
         .onDisappear {
             // Clean up timer when view disappears
