@@ -2034,7 +2034,7 @@ private struct DeltaSkinsSection: View {
 
             // Button to open skin documentation in the built-in wiki
             NavigationLink {
-                WikiPageView(path: "info/controller-skins.md", title: "Skin Documentation")
+                WikiPageView(path: "using-provenance/skins-guide.md", title: "Skin Documentation")
             } label: {
                 SettingsRow(title: "Skin Documentation",
                             subtitle: "Learn how to create and install controller skins.",
