@@ -216,8 +216,10 @@ enum DeltaSkinDefaults {
             return KeyboardOverlayConfig(variant: .zxSpectrum, autoShow: false, position: .bottom, opacity: 0.85)
         case .msx, .msx2:
             return KeyboardOverlayConfig(variant: .compact, autoShow: false, position: .bottom, opacity: 0.85)
-        case .atari8bit, .atarist:
+        case .atari8bit:
             return KeyboardOverlayConfig(variant: .compact, autoShow: false, position: .bottom, opacity: 0.85)
+        case .atarist:
+            return KeyboardOverlayConfig(variant: .atariST, autoShow: false, position: .bottom, opacity: 0.85)
         default:
             return nil
         }

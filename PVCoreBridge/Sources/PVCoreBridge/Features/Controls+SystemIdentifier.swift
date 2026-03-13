@@ -19,7 +19,7 @@ public extension SystemIdentifier {
         case .Atari8bit: return PVA8Button.self
         case .AtariJaguar: return PVJaguarButton.self
         case .AtariJaguarCD: return PVJaguarButton.self
-        case .AtariST: return PVA8Button.self   // TODO: Add me
+        case .AtariST: return PVDOSButton.self  // Atari ST uses DOS-style keyboard+mouse mapping
         case .C64: return PVDOSButton.self   // TODO: Add me
         case .CDi: return PVCDiButton.self
         case .CPS1, .CPS2, .CPS3: return PVMAMEButton.self   // TODO: Add me
