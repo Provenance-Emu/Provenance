@@ -177,7 +177,7 @@ printf 'manual:https://example.com/MySkin.deltaskin' | shasum -a 256 | cut -c1-1
 
 Open `Scripts/catalog_seed.json` and add a new entry to the `"skins"` array. Required fields are `id`, `name`, `systems`, `downloadURL`, and `source`.
 
-Make sure to place a comma between entries. Keep the array sorted by system code, then by name, for readability.
+Make sure to place a comma between entries and keep the JSON valid. Avoid reordering existing entries; just insert your new skin near similar systems to minimize diff noise. A strict global sort order is not required.
 
 ### Step 3: Validate JSON
 
