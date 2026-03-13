@@ -525,6 +525,19 @@ public final class PVControllerManager: NSObject, ObservableObject {
         }
 
         ILOG("Assign controller \(controller.vendorName ?? "nil")")
+
+        // Honour stored player-slot preference if the slot is available.
+        if let preferredSlot = preferredPlayer(for: controller) {
+            let occupant = self.controller(forPlayer: preferredSlot)
+            if occupant == nil {
+                setController(controller, toPlayer: preferredSlot)
+                NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)
+                return true
+            } else {
+                ILOG("Preferred player slot \(preferredSlot) for \(controller.vendorName ?? "nil") is occupied; falling back to auto-assign.")
+            }
+        }
+
         // Assign the controller to the first player without a controller assigned, or
         // if this is an extended controller, replace the first controller which is not extended (the Siri remote on tvOS).
         for i in 1 ... 8 {
@@ -913,6 +926,50 @@ public final class SortOptionsTableViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+// MARK: - Player-Slot Preferences
+
+public extension PVControllerManager {
+
+    /// A stable string identifier for a controller, used as a UserDefaults key component.
+    /// Uses ``GCController/vendorName`` when available, falling back to ``GCController/productCategory``.
+    func controllerIdentifier(for controller: GCController) -> String {
+        return controller.vendorName ?? controller.productCategory
+    }
+
+    /// Returns the stored preferred player slot (1–8) for a controller, or `nil` if none has been saved.
+    func preferredPlayer(for controller: GCController) -> Int? {
+        let key = PVControllerManager.preferredPlayerDefaultsKeyPrefix + controllerIdentifier(for: controller)
+        let value = UserDefaults.standard.integer(forKey: key)
+        guard value >= 1, value <= 8 else { return nil }
+        return value
+    }
+
+    /// Stores the preferred player slot for a controller so it is honoured on the next connect/reconnect.
+    /// Pass `nil` (or a value outside 1–8) to clear the preference.
+    func setPreferredPlayer(_ player: Int?, for controller: GCController) {
+        let key = PVControllerManager.preferredPlayerDefaultsKeyPrefix + controllerIdentifier(for: controller)
+        if let player = player, player >= 1, player <= 8 {
+            UserDefaults.standard.set(player, forKey: key)
+            ILOG("Stored preferred player slot \(player) for controller \(controllerIdentifier(for: controller))")
+        } else {
+            UserDefaults.standard.removeObject(forKey: key)
+            ILOG("Cleared preferred player slot for controller \(controllerIdentifier(for: controller))")
+        }
+    }
+
+    /// Stores the preferred player slot using the controller's current player index.
+    /// Call this after the user has manually re-ordered controllers so the preference is persisted.
+    func saveCurrentPlayerSlotAsPreference(for controller: GCController) {
+        if let currentSlot = index(forController: controller) {
+            setPreferredPlayer(currentSlot, for: controller)
+        }
+    }
+}
+
+private extension PVControllerManager {
+    static let preferredPlayerDefaultsKeyPrefix = "PVControllerPreferredPlayer_"
 }
 
 /// Dictionary to store remappable controller wrappers
