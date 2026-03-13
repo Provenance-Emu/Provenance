@@ -258,4 +258,40 @@ final class UPSPatcherTests: XCTestCase {
             }
         }
     }
+
+    // MARK: - Truncated patch
+
+    /// A patch file with bytes stripped from its end is rejected.
+    ///
+    /// The truncated file is still ≥ 18 bytes (so the size guard passes) but its
+    /// patch CRC field is now corrupt because the file content changed.
+    func testTruncatedPatch() {
+        let source = Data([0x00, 0x00, 0x00])
+        var valid = makeUPSPatch(source: source, target: Data([0xFF, 0x00, 0x00]))
+        XCTAssertGreaterThanOrEqual(valid.count, 20,
+            "Precondition: the valid patch must be long enough to truncate meaningfully")
+        // Drop 2 bytes — the patch CRC field is now corrupt.
+        valid = valid.dropLast(2)
+
+        XCTAssertThrowsError(try patcher.apply(patch: valid, to: source))
+    }
+
+    // MARK: - Source size mismatch
+
+    /// A source ROM that is shorter than the patch's declared `inputSize` fails the
+    /// CRC check, because the CRC is computed over `min(inputSize, source.count)` bytes
+    /// and therefore differs from the stored value (computed over the full `inputSize`).
+    func testSourceSizeMismatch() {
+        let fullSource  = Data([0x01, 0x02, 0x03, 0x04, 0x05])
+        let shortSource = Data([0x01, 0x02, 0x03])  // missing last 2 bytes
+
+        // Build the patch against fullSource; its inputCRC covers all 5 bytes.
+        let patch = makeUPSPatch(source: fullSource, target: Data([0xFE, 0xFD, 0xFC, 0xFB, 0xFA]))
+
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: shortSource)) { error in
+            guard case PatchError.sourceROMMismatch = error else {
+                return XCTFail("Expected sourceROMMismatch for short source, got \(error)")
+            }
+        }
+    }
 }

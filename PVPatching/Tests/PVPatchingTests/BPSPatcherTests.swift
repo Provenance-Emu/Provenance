@@ -80,6 +80,32 @@ final class BPSPatcherTests: XCTestCase {
         return body
     }
 
+    /// Build a valid BPS patch with caller-supplied action bytes.
+    ///
+    /// The three CRC32 footer fields are computed automatically.
+    /// Pass `invalidatePatchCRC: true` to corrupt the trailing CRC field.
+    private func buildBPSPatch(
+        source: Data,
+        target: Data,
+        actionBytes: [UInt8],
+        overrideTargetCRC: UInt32? = nil,
+        invalidatePatchCRC: Bool = false
+    ) -> Data {
+        var body = Data("BPS1".utf8)
+        body.append(contentsOf: encodeVLI(source.count))
+        body.append(contentsOf: encodeVLI(target.count))
+        body.append(contentsOf: encodeVLI(0))  // no metadata
+        body.append(contentsOf: actionBytes)
+        body.append(contentsOf: le32(crc32(source)))
+        body.append(contentsOf: le32(overrideTargetCRC ?? crc32(target)))
+        if invalidatePatchCRC {
+            body.append(contentsOf: le32(0xFFFF_FFFF))
+        } else {
+            body.append(contentsOf: le32(crc32(body)))
+        }
+        return body
+    }
+
     /// Build a valid BPS identity patch using a single **SourceRead** action.
     ///
     /// SourceRead copies bytes from the source into the target at the same offset,
@@ -229,6 +255,76 @@ final class BPSPatcherTests: XCTestCase {
         XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
             guard case PatchError.patchedROMVerificationFailed = error else {
                 return XCTFail("Expected patchedROMVerificationFailed, got \(error)")
+            }
+        }
+    }
+
+    // MARK: - SourceCopy
+
+    /// SourceCopy copies non-contiguous bytes from the source using a relative signed offset.
+    ///
+    /// This test uses two SourceCopy actions to rearrange source bytes:
+    ///   source[2..4] → target[0..2], source[0..1] → target[3..4]
+    func testSourceCopy() throws {
+        let source = Data([0x00, 0x01, 0x02, 0x03, 0x04])
+        let target = Data([0x02, 0x03, 0x04, 0x00, 0x01])
+
+        // Action 1 — SourceCopy 3 bytes, advance sourceRelOffset from 0 to +2:
+        //   action VLI = (3-1)<<2|2 = 10 → encodeVLI(10) = [0x8A]
+        //   rawOffset = 2*2 = 4 (positive delta 2, even) → [0x84]
+        //   After: sourceRelOffset=2, outputOffset=3
+        //
+        // Action 2 — SourceCopy 2 bytes, move sourceRelOffset from 5 back to 0 (delta -5):
+        //   action VLI = (2-1)<<2|2 = 6 → [0x86]
+        //   rawOffset = 2*5+1 = 11 (negative delta 5, odd) → [0x8B]
+        let actionBytes: [UInt8] = [0x8A, 0x84, 0x86, 0x8B]
+        let patch = buildBPSPatch(source: source, target: target, actionBytes: actionBytes)
+
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(Array(result), Array(target))
+    }
+
+    // MARK: - TargetCopy
+
+    /// TargetCopy replicates already-written target bytes within the output buffer.
+    ///
+    /// Strategy: write the first byte via TargetRead, then TargetCopy the remainder.
+    func testTargetCopy() throws {
+        let source = Data(repeating: 0x00, count: 8)
+        let target = Data(repeating: 0xAA, count: 8)
+
+        // TargetRead 1 byte [0xAA]:
+        //   action VLI = (1-1)<<2|1 = 1 → [0x81]
+        // TargetCopy 7 bytes, targetRelOffset from 0 + delta 0 = 0:
+        //   action VLI = (7-1)<<2|3 = 27 → [0x9B]
+        //   rawOffset = 0 (delta 0, positive) → [0x80]
+        let actionBytes: [UInt8] = [0x81, 0xAA, 0x9B, 0x80]
+        let patch = buildBPSPatch(source: source, target: target, actionBytes: actionBytes)
+
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(Array(result), Array(target))
+    }
+
+    // MARK: - TargetCopy forward-reference guard
+
+    /// TargetCopy must not reference a target position that has not yet been written.
+    ///
+    /// Attempting TargetCopy at outputOffset=0 (nothing written yet) must throw
+    /// `corruptPatchFile` before any output is produced.
+    func testTargetCopyForwardReferenceGuard() {
+        let source = Data([0xAA])
+        let target = Data([0xAA])
+
+        // TargetCopy 1 byte, targetRelOffset stays at 0 while outputOffset == 0:
+        //   action VLI = (1-1)<<2|3 = 3 → [0x83]
+        //   rawOffset = 0 → [0x80]
+        // The guard `targetRelOffset < outputOffset` (0 < 0 == false) must fire.
+        let actionBytes: [UInt8] = [0x83, 0x80]
+        let patch = buildBPSPatch(source: source, target: target, actionBytes: actionBytes)
+
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
+            guard case PatchError.corruptPatchFile = error else {
+                return XCTFail("Expected corruptPatchFile for forward reference, got \(error)")
             }
         }
     }
