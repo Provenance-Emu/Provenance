@@ -56,7 +56,7 @@ Calling `retro_reset()` after case (a) or (c) may not fix the inconsistency beca
 
 ## What We Fixed (App-Level)
 
-**PR #3077** changes the behavior after a failed save state load:
+**Issue #3077** describes the behavior change after a failed save state load (introduced in this PR):
 
 **Before:** Error is shown, emulator unpauses (potentially in corrupted state)
 
