@@ -210,6 +210,9 @@ extension PVEmulatorViewController {
             if let micro = GCController.controllers().first(where: { $0.microGamepad != nil })?.microGamepad {
                 micro.valueChangedHandler = nil
             }
+            // Reset Siri Remote key-tracking state so no stale flags persist
+            // across disable/enable cycles.
+            siriKeyState = SiriRemoteKeyState()
             isSiriKeyboardActive = false
             virtualInputState.setKeyboardVisible(false)
             ILOG("tvOS: Siri Remote keyboard handler removed")
@@ -218,6 +221,9 @@ extension PVEmulatorViewController {
                   let micro = GCController.controllers().first(where: { $0.microGamepad != nil })?.microGamepad else {
                 return
             }
+            // Start from a clean Siri Remote key-tracking state whenever we
+            // (re)install the D-pad keyboard handler.
+            siriKeyState = SiriRemoteKeyState()
             installDpadKeyboardHandler(on: micro, core: kbCore)
             isSiriKeyboardActive = true
             virtualInputState.setKeyboardVisible(true)
