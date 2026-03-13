@@ -121,7 +121,7 @@ cp Scripts/catalog_seed.json \
 Providing a GitHub token avoids the 60 req/hr anonymous API rate limit when scraping GitHub-hosted sources:
 
 ```bash
-export GITHUB_TOKEN="ghp_your_token_here"
+export GITHUB_TOKEN="YOUR_GITHUB_TOKEN"
 python3 Scripts/scrape_skin_catalog.py --source all --output Scripts/catalog_seed.json
 ```
 
