@@ -93,9 +93,32 @@ public extension PVEmulatorViewController {
                 completion()
                 return true
             } catch {
-                Task.detached { @MainActor in
-                    let message = error.localizedDescription
-                    self.presentError("Failed to load save state. " + message, source: self.view, completion: completion)
+                let message = error.localizedDescription
+                ELOG("Save state load failed: \(message)")
+                // Offer the user a choice: reset to a clean state, or continue with potentially
+                // corrupted emulator state. This is especially important for cores like PicoDrive
+                // where a failed load can leave the core in an inconsistent state.
+                let resetGame = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+                    self.presentMessage(
+                        "Failed to load save state: \(message)\n\nThe emulator may be in an inconsistent state. Would you like to reset the game to get back to a clean state?",
+                        title: "Save State Load Failed",
+                        source: self.view,
+                        secondaryActionTitle: "Continue",
+                        secondaryActionStyle: .cancel,
+                        secondaryCompletion: {
+                            completion()
+                            continuation.resume(returning: false)
+                        },
+                        defaultActionTitle: "Reset Game",
+                        defaultActionStyle: .destructive,
+                        completion: {
+                            continuation.resume(returning: true)
+                        }
+                    )
+                }
+                if resetGame {
+                    self.core.resetEmulation()
+                    completion()
                 }
                 return false
             }
