@@ -1,9 +1,26 @@
 name: Update Skin Catalog & Cheat Database
 
+# Triggers:
+#   schedule     — weekly Sunday 4am UTC, keeps DBs current with upstream repos
+#   push/develop — re-runs only when the generator scripts themselves change,
+#                  so a script fix on develop auto-produces an updated artifact
+#   workflow_dispatch — manual run, granular per-job opt-in via inputs
+#
+# Jobs are independently gated so a skin-only or cheatdb-only push doesn't
+# waste runner minutes running the other job.
+
 on:
   schedule:
-    # Run weekly on Sundays at 4am UTC
     - cron: '0 4 * * 0'
+  push:
+    branches: [develop]
+    paths:
+      # Cheat DB generator — re-run when the script or system mappings change
+      - 'Scripts/generate_cheatdb.py'
+      - 'Scripts/systems.py'
+      # Skin scraper — re-run when the scraper or its deps change
+      - 'Scripts/scrape_skin_catalog.py'
+      - 'Scripts/requirements-scraper.txt'
   workflow_dispatch:
     inputs:
       update_skins:
@@ -23,7 +40,15 @@ permissions:
 
 jobs:
   update-skin-catalog:
-    if: ${{ github.event_name == 'schedule' || github.event.inputs.update_skins == 'true' }}
+    # Run on: schedule, manual dispatch (with update_skins=true),
+    # or push that touched the skin scraper scripts.
+    if: |
+      github.event_name == 'schedule' ||
+      github.event.inputs.update_skins == 'true' ||
+      (github.event_name == 'push' && (
+        contains(github.event.commits[0].modified, 'Scripts/scrape_skin_catalog.py') ||
+        contains(github.event.commits[0].modified, 'Scripts/requirements-scraper.txt')
+      ))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -53,7 +78,9 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          git diff --quiet Scripts/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+          git diff --quiet Scripts/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json \
+            && echo "changed=false" >> "$GITHUB_OUTPUT" \
+            || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
@@ -71,7 +98,15 @@ jobs:
           labels: enhancement
 
   update-cheatdb:
-    if: ${{ github.event_name == 'schedule' || github.event.inputs.update_cheatdb == 'true' }}
+    # Run on: schedule, manual dispatch (with update_cheatdb=true),
+    # or push that touched the cheat DB generator script.
+    if: |
+      github.event_name == 'schedule' ||
+      github.event.inputs.update_cheatdb == 'true' ||
+      (github.event_name == 'push' && (
+        contains(github.event.commits[0].modified, 'Scripts/generate_cheatdb.py') ||
+        contains(github.event.commits[0].modified, 'Scripts/systems.py')
+      ))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -101,7 +136,9 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          git diff --quiet PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+          git diff --quiet PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite \
+            && echo "changed=false" >> "$GITHUB_OUTPUT" \
+            || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'

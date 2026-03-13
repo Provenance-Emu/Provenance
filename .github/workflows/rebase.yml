@@ -82,8 +82,9 @@ jobs:
           if git rebase origin/develop; then
             if git push --force-with-lease origin "$BRANCH"; then
               echo "result=success" >> "$GITHUB_OUTPUT"
-              # Re-trigger CI (GITHUB_TOKEN pushes don't fire pull_request events)
-              gh workflow run agent-validation.yml --repo "$REPO" -f branch="$BRANCH" -f pr_number="$PR_NUMBER" 2>/dev/null || true
+              # Re-trigger CI (GITHUB_TOKEN pushes don't fire pull_request events).
+              # triggered_by=rebase skips the smoke build — rebase doesn't change the diff.
+              gh workflow run agent-validation.yml --repo "$REPO" -f branch="$BRANCH" -f pr_number="$PR_NUMBER" -f triggered_by="rebase" 2>/dev/null || true
               # NOTE: ai-review-trigger.yml fires on pull_request:synchronize — no explicit dispatch needed
             else
               echo "result=push_failed" >> "$GITHUB_OUTPUT"

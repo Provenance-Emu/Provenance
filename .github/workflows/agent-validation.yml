@@ -17,6 +17,11 @@ on:
         description: 'PR number (for changed-file detection in lint/SPM jobs)'
         required: false
         type: string
+      triggered_by:
+        description: 'Trigger source: rebase | push (skips smoke-build when rebase)'
+        required: false
+        type: string
+        default: 'push'
 
 concurrency:
   group: agent-validation-${{ github.head_ref || github.event.inputs.branch }}
@@ -57,7 +62,7 @@ jobs:
       - name: Install SwiftLint
         if: steps.changed.outputs.skip == 'false'
         run: |
-          SWIFTLINT_VERSION="0.54.0"
+          SWIFTLINT_VERSION="0.63.2"
           curl -sL "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/swiftlint_linux.zip" -o swiftlint.zip
           unzip -q swiftlint.zip -d swiftlint
           chmod +x swiftlint/swiftlint
@@ -66,11 +71,13 @@ jobs:
       - name: Run SwiftLint on changed files
         if: steps.changed.outputs.skip == 'false'
         run: |
+          LINT_FAILED=0
           while IFS= read -r file; do
             if [ -f "$file" ]; then
-              swiftlint lint --path "$file" --config .swiftlint.yml --reporter github-actions-logging || true
+              swiftlint lint --path "$file" --config .swiftlint.yml --reporter github-actions-logging || LINT_FAILED=1
             fi
           done < changed_files.txt
+          exit $LINT_FAILED
 
   # Job 2: SPM Build/Test for leaf modules (~5-10 min)
   spm-test:
@@ -133,11 +140,15 @@ jobs:
   # Uses Provenance-CI target (no emulator cores) for fastest possible build
   # Skipped when the PR has build-ipa label: build.yml runs the full 5h archive build
   # which already validates compilation (redundant smoke build wastes runner time).
+  # Skipped for rebase-triggered runs: a clean rebase doesn't change the PR's diff,
+  # so compilation is unchanged. Saves 30 min × N PRs on every develop advance.
   smoke-build:
     name: Build (Provenance-CI Simulator)
     runs-on: macos-15
     timeout-minutes: 30
-    if: "!contains(github.event.pull_request.labels.*.name, 'build-ipa')"
+    if: |
+      !contains(github.event.pull_request.labels.*.name, 'build-ipa') &&
+      github.event.inputs.triggered_by != 'rebase'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -169,7 +180,7 @@ jobs:
           fi
 
       - name: Cache DerivedData
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/Library/Developer/Xcode/DerivedData
           # Include source file hashes so any Swift/ObjC change busts the cache.
