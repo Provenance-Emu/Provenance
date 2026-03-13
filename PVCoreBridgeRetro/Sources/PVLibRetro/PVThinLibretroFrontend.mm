@@ -197,7 +197,10 @@ static void thin_audio_sample(int16_t left, int16_t right) {
 
 static size_t thin_audio_sample_batch(const int16_t *data, size_t frames) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
-    if (!self) return frames;
+    // Return 0 (not `frames`) when there is no active instance: telling the core
+    // that zero frames were consumed is accurate and avoids advancing its audio
+    // timing clock when callbacks fire on a thread with no frontend attached.
+    if (!self) return 0;
     return [self.frontendDelegate libretroFrontend:self didEmitAudioBatch:data frames:frames];
 }
 
@@ -352,8 +355,22 @@ static bool thin_environment(unsigned cmd, void *data) {
     THIN_RESOLVE(_sym, _dylibHandle, retro_cheat_reset);
     THIN_RESOLVE(_sym, _dylibHandle, retro_cheat_set);
 
-    if (!_sym.retro_init || !_sym.retro_set_environment || !_sym.retro_run) {
-        NSString *reason = @"Core missing required retro_* symbols";
+    // All symbols called unconditionally in startWithROMPath: must be present.
+    // Checking only retro_init/retro_set_environment/retro_run is insufficient because
+    // startWithROMPath: also calls all retro_set_* callback setters and retro_load_game.
+    BOOL missingRequired = !_sym.retro_init
+        || !_sym.retro_deinit
+        || !_sym.retro_set_environment
+        || !_sym.retro_set_video_refresh
+        || !_sym.retro_set_audio_sample
+        || !_sym.retro_set_audio_sample_batch
+        || !_sym.retro_set_input_poll
+        || !_sym.retro_set_input_state
+        || !_sym.retro_load_game
+        || !_sym.retro_unload_game
+        || !_sym.retro_run;
+    if (missingRequired) {
+        NSString *reason = @"Core missing required retro_* symbols (init/deinit/load_game/run/set_* callbacks)";
         ELOG(@"ThinFrontend: %@", reason);
         if (error) {
             *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
@@ -743,17 +760,11 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Performance ----
         case RETRO_ENVIRONMENT_GET_PERF_INTERFACE: {
-            // Return a no-op performance interface
-            struct retro_perf_callback *perf = (struct retro_perf_callback *)data;
-            if (!perf) return false;
-            perf->get_time_usec    = NULL;
-            perf->get_cpu_features = NULL;
-            perf->get_perf_counter = NULL;
-            perf->perf_register    = NULL;
-            perf->perf_start       = NULL;
-            perf->perf_stop        = NULL;
-            perf->perf_log         = NULL;
-            return true;
+            // Return false (not supported). Returning true with NULL function pointers
+            // would allow cores to call them and crash. Cores that query this interface
+            // should fall back to their own timing/perf paths when the frontend returns false.
+            DLOG(@"ThinEnv GET_PERF_INTERFACE — not supported, returning false");
+            return false;
         }
         case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
             return true;
@@ -833,12 +844,13 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Audio callback ----
         case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: {
-            const struct retro_audio_callback *cb = (const struct retro_audio_callback *)data;
-            if (!cb) return false;
-            _audioCallback = *cb;
-            _hasAudioCallback = YES;
-            ILOG(@"ThinEnv SET_AUDIO_CALLBACK registered");
-            return true;
+            // Not implemented: the thin frontend does not run a dedicated audio thread
+            // that would call cb->callback on demand. Returning false tells the core to
+            // use the normal retro_audio_sample / retro_audio_sample_batch push model
+            // instead. Returning true here without actually invoking the callback would
+            // cause silence or timing errors for cores that rely on the pull model.
+            DLOG(@"ThinEnv SET_AUDIO_CALLBACK — not supported (returning false; core will use push model)");
+            return false;
         }
         case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY:
             return true;
@@ -1020,9 +1032,11 @@ static bool thin_environment(unsigned cmd, void *data) {
     ILOG(@"ThinFrontend: HW render context created (GLES%u) — context_reset will fire after FBO setup",
          api == kEAGLRenderingAPIOpenGLES2 ? 2 : 3);
 
-    // FBO setup and context_reset are deferred until the render delegate
-    // provides the IOSurface dimensions. Call -setupHardwareContextFBO:height:
-    // from the render thread once the IOSurface is ready.
+    // FBO setup and context_reset are deferred. The host must call
+    // -setupHardwareContextFBOWidth:height: from the EMULATION THREAD
+    // with _glContext current (i.e. after [EAGLContext setCurrentContext:_glContext]).
+    // context_reset fires at the end of that call, matching libretro's requirement
+    // that context_reset and subsequent retro_run() calls share the same GL context.
     return YES;
 #else
     WLOG(@"ThinFrontend: HW rendering not supported on macOS/Catalyst");

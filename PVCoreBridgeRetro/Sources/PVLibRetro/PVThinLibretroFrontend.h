@@ -128,8 +128,10 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 ///
 /// Hardware rendering:
 ///   If the core requests GLES3 hardware rendering (RETRO_ENVIRONMENT_SET_HW_RENDER),
-///   the frontend sets up an EAGLContext with a shared IOSurface-backed FBO.
-///   The render delegate must implement `startRenderingOnAlternateThread`.
+///   the frontend creates an EAGLContext pair sharing a GL sharegroup and an
+///   IOSurface-backed FBO. The host must call `-setupHardwareContextFBOWidth:height:`
+///   from the emulation thread (with the emu EAGLContext current) once the render
+///   surface dimensions are known. `context_reset` fires at the end of that call.
 ///
 __attribute__((weak_import))
 @interface PVThinLibretroFrontend : PVCoreObjCBridge

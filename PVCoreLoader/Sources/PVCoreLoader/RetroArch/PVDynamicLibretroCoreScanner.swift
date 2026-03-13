@@ -101,9 +101,19 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
     public static var isFeatureEnabled: Bool {
         // Check the PVFeatureFlags debug-override dict first (feature flag UI path).
         // Stored as [String: Any] under "PVFeatureFlagsDebugOverrides".
-        if let overrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides"),
-           let value = overrides[featureFlagKey] as? Bool {
-            return value
+        // PVFeatureFlags uses the string sentinel "nil" to represent a cleared override
+        // (i.e. "no override set"); in that case we fall through to the direct key check.
+        if let overrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") {
+            let entry = overrides[featureFlagKey]
+            if let boolValue = entry as? Bool {
+                return boolValue   // explicit true/false override
+            }
+            if (entry as? String) == "nil" {
+                // "nil" sentinel means the override was explicitly cleared — ignore it
+                // and fall through to the direct UserDefaults key below.
+            } else if entry != nil {
+                // Unknown type stored under this key — treat as no override.
+            }
         }
         // Fall back to a direct UserDefaults boolean (scripted / launch-arg override).
         return UserDefaults.standard.bool(forKey: featureFlagKey)
