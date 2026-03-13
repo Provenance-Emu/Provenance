@@ -362,7 +362,7 @@ public extension CoreLoader {
     /// - Returns: Updated array that includes a synthetic "Thin Libretro" parent
     ///            containing all newly-discovered dylib cores, or the original array
     ///            unchanged if the feature flag is disabled.
-    static func mergeDiscoveredLibretroCores(
+    public static func mergeDiscoveredLibretroCores(
         into plists: [EmulatorCoreInfoPlist]
     ) -> [EmulatorCoreInfoPlist] {
 
