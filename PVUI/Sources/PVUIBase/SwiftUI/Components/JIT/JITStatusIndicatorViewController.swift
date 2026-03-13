@@ -14,6 +14,9 @@ import PVJIT
 
 /// A UIViewController that hosts the SwiftUI JIT status indicator.
 /// Add it as a child of `PVEmulatorViewController` so it floats above the GPU view.
+///
+/// When the user taps the indicator pill, a compact `UIAlertController` is presented
+/// from the nearest view controller in the hierarchy — no full-screen cover sheet.
 @MainActor
 public final class JITStatusIndicatorViewController: UIViewController {
 
@@ -24,18 +27,23 @@ public final class JITStatusIndicatorViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
-        // Pass-through: the indicator is display-only; touches must reach the game/OSD beneath.
-        view.isUserInteractionEnabled = false
+        // The overlay itself should not intercept touches; only the pill button
+        // inside the hosting view does.  UIHostingController clips its content,
+        // so we leave `isUserInteractionEnabled = true` at both levels and rely
+        // on SwiftUI's hit-testing to ignore the transparent background.
+        view.isUserInteractionEnabled = true
 
         setupHostingController()
         setupNotificationObservers()
     }
 
     private func setupHostingController() {
-        let indicatorView = JITStatusIndicatorView(viewModel: viewModel)
+        let indicatorView = JITStatusIndicatorView(viewModel: viewModel, onTap: { [weak self] in
+            self?.presentStatusAlert()
+        })
         let host = UIHostingController(rootView: indicatorView)
         host.view.backgroundColor = .clear
-        host.view.isUserInteractionEnabled = false
+        host.view.isUserInteractionEnabled = true
 
         addChild(host)
         view.addSubview(host.view)
@@ -50,6 +58,20 @@ public final class JITStatusIndicatorViewController: UIViewController {
 
         host.didMove(toParent: self)
         hostingController = host
+    }
+
+    /// Presents a compact `UIAlertController` describing the current JIT status.
+    /// This replaces the previous SwiftUI popover / cover-sheet approach.
+    private func presentStatusAlert() {
+        let title = viewModel.status.label.isEmpty ? "JIT Status" : viewModel.status.label
+        let message = viewModel.explanation
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+
+        // Present from the parent (emulator) VC so the alert sits above the game view
+        let presenter = parent ?? self
+        presenter.present(alert, animated: true)
     }
 
     private func setupNotificationObservers() {

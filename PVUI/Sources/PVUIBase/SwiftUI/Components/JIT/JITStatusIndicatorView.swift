@@ -114,7 +114,8 @@ public final class JITStatusViewModel: ObservableObject {
         #endif
     }
 
-    /// Returns a brief explanation of the current mode, including the JIT source when active.
+    /// Returns a brief explanation of the current mode (shown in the compact alert on tap).
+    /// Includes the JIT acquisition source when active.
     public var explanation: String {
         switch status {
         case .active:
@@ -122,14 +123,14 @@ public final class JITStatusViewModel: ObservableObject {
             let sourceNote = jitSource != .none && jitSource != .unknown
                 ? " via \(jitSource.displayName)"
                 : ""
-            return "JIT compilation is active\(sourceNote), providing full-speed emulation with dynamic recompilation."
+            return "JIT compilation active\(sourceNote) — best performance enabled."
             #else
-            return "JIT compilation is active, providing full-speed emulation with dynamic recompilation."
+            return "JIT compilation active — best performance enabled."
             #endif
         case .interpreterFallback:
-            return "Running in interpreter mode. Emulation may be slower. Connect to a debugger or use AltJIT to enable JIT."
+            return "JIT unavailable — some cores may run slower or be unstable."
         case .unavailable:
-            return "JIT is required for this core but could not be acquired. Performance will be significantly reduced."
+            return "This game requires JIT to run. Enable JIT via SideJITServer, AltStore, or StikDebug."
         case .notApplicable:
             return ""
         }
@@ -208,21 +209,25 @@ private struct JITExplanationPopoverView: View {
 
 // MARK: - JIT Status Indicator View
 
-/// A small, unobtrusive JIT status indicator for the emulator HUD
+/// A small, unobtrusive JIT status indicator for the emulator HUD.
+/// Tap the indicator to trigger `onTap`, which the hosting UIViewController
+/// uses to present a compact `UIAlertController` — no full-screen sheet.
 public struct JITStatusIndicatorView: View {
     @StateObject private var viewModel: JITStatusViewModel
-    @State private var showExplanation: Bool = false
+    /// Called when the user taps the indicator pill.  The hosting layer is
+    /// responsible for presenting the compact alert (UIAlertController).
+    public var onTap: (() -> Void)?
 
-    public init(viewModel: JITStatusViewModel? = nil) {
+    public init(viewModel: JITStatusViewModel? = nil, onTap: (() -> Void)? = nil) {
         _viewModel = StateObject(wrappedValue: viewModel ?? JITStatusViewModel())
+        self.onTap = onTap
     }
 
     public var body: some View {
         ZStack {
             if viewModel.status.isVisible {
-                // Main indicator button — tap shows a compact popover, not a cover sheet
                 Button(action: {
-                    showExplanation.toggle()
+                    onTap?()
                 }) {
                     HStack(spacing: 8) {
                         // Status dot
@@ -249,14 +254,8 @@ public struct JITStatusIndicatorView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .accessibilityLabel(viewModel.indicatorAccessibilityLabel)
-                .accessibilityHint("Tap to show details about the current emulation mode")
-                #if !os(tvOS)
-                .popover(isPresented: $showExplanation, arrowEdge: .top) {
-                    explanationPopoverContent
-                }
-                #else
-                // TODO: A tvOS version of the JIT popover?
-                #endif
+<<<<<<< HEAD
+                .accessibilityHint("Tap to see details about the current emulation mode")
             }
         }
         #if canImport(JITManager)
