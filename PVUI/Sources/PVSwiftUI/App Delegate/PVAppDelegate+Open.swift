@@ -223,28 +223,29 @@ extension PVAppDelegate {
 
         case .save:
             guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+                ELOG("No query items found for save action")
                 return false
             }
 
-            guard let a = queryItems["action"] else {
+            guard let actionValue = queryItems["action"],
+                  let saveAction = AppURLKeys.SaveKeys(rawValue: actionValue) else {
+                ELOG("Invalid save action: \(queryItems["action"] ?? "nil")")
                 return false
             }
 
-            let md5QueryItem = queryItems["PVGameMD5Key"]
-            let systemItem = queryItems["system"]
-            let nameItem = queryItems["title"]
-
-            if let md5QueryItem = md5QueryItem {
-
+            guard let game = resolveGameForSaveAction(queryItems: queryItems) else {
+                ELOG("Failed to resolve game for save action")
+                return false
             }
-            if let systemItem = systemItem {
 
+            guard let saveState = resolveSaveState(for: game, action: saveAction) else {
+                ELOG("No matching save state found for action \(saveAction.rawValue) and game \(game.title)")
+                return false
             }
-            if let nameItem = nameItem {
 
-            }
-            return false
-            // .filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName)
+            ILOG("Open save by action \(saveAction.rawValue) for game \(game.title)")
+            AppState.shared.appOpenAction = .openSaveStateID(saveState.id)
+            return true
         case .open:
 
             guard let queryItems = components.queryItems, !queryItems.isEmpty else {
@@ -426,6 +427,59 @@ extension PVAppDelegate {
         // No matches found with system, fall back to just game name
         WLOG("No games found matching name: \(gameName) on system: \(systemName)")
         return handleOpenByGameName(gameName)
+    }
+
+    /// Resolves the target game for a save-action deep link using the same lookup rules as `open`.
+    @MainActor
+    private func resolveGameForSaveAction(queryItems: [URLQueryItem]) -> PVGame? {
+        if let md5Value = queryItems.first(where: { $0.name == AppURLKeys.OpenKeys.md5.rawValue })?.value,
+           !md5Value.isEmpty,
+           let matchedGame = fetchGame(byMD5: md5Value) {
+            return matchedGame
+        }
+
+        let md5QueryItem = queryItems[AppURLKeys.OpenKeys.md5Key.rawValue]
+        let systemItem = queryItems[AppURLKeys.OpenKeys.system.rawValue]
+        let nameItem = queryItems[AppURLKeys.OpenKeys.title.rawValue]
+
+        if let value = md5QueryItem, !value.isEmpty,
+           let matchedGame = fetchGame(byMD5: value) {
+            return matchedGame
+        }
+
+        if let gameName = nameItem, !gameName.isEmpty {
+            if let value = systemItem, !value.isEmpty,
+               let matchedSystem = fetchSystem(byIdentifier: value) {
+                return RomDatabase.sharedInstance
+                    .all(PVGame.self)
+                    .filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName)
+                    .first
+            }
+
+            return RomDatabase.sharedInstance
+                .all(PVGame.self, where: #keyPath(PVGame.title), value: gameName)
+                .first
+        }
+
+        return nil
+    }
+
+    /// Resolves the latest save state matching the requested save-action semantics.
+    @MainActor
+    private func resolveSaveState(for game: PVGame, action: AppURLKeys.SaveKeys) -> PVSaveState? {
+        switch action {
+        case .lastQuickSave:
+            return game.newestAutoSave
+        case .lastManualSave:
+            return game.saveStates
+                .filter("isAutosave == false")
+                .sorted(byKeyPath: "date", ascending: false)
+                .first
+        case .lastAnySave:
+            return game.saveStates
+                .sorted(byKeyPath: "date", ascending: false)
+                .first
+        }
     }
 
     /// Handle the `provenance://install-skin?url=<encoded-url>` deep link.

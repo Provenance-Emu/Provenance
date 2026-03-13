@@ -159,7 +159,7 @@ public enum SaveStateVersionChecker {
         // indirect dismissal path (e.g. the presenting VC is force-dismissed while
         // the alert is on screen) attempt to resume the continuation.
         var hasResumed = false
-        var alertController: UIAlertController?
+        var alertController: (any UIAlertControllerProtocol)?
         var resumeClosure: ((Bool) -> Void)?
 
         return await withTaskCancellationHandler {

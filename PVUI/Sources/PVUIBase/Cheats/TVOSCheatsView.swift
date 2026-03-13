@@ -514,6 +514,7 @@ struct CheatRowView: View {
         .focused($isFocused)
     ) // AnyView
 }
+}
 
 // MARK: - Add Cheat View
 
