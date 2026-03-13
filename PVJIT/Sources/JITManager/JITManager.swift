@@ -31,6 +31,9 @@ public final class DOLJitManager {
     private var auxError: String?
     private var hasAcquiredJit = false
     private var isDiscoveringAltserver = false
+    /// The detected JIT source. Starts as `.none`; updated after acquisition
+    /// and refined by UIKit-capable detection (see `JITSourceDetector`).
+    private var jitSource: JITSource = .none
 
     private init() {}
 
@@ -88,6 +91,12 @@ public final class DOLJitManager {
             hasAcquiredJit = true
         case .none:
             break
+        }
+
+        // Perform file-system-only JIT source detection (UIKit checks are done
+        // by JITSourceDetector in the PVJIT target and fed in via setJITSource).
+        if hasAcquiredJit {
+            jitSource = detectJITSourceFileSystem()
         }
     }
 
@@ -234,6 +243,55 @@ public final class DOLJitManager {
     public
     func getAuxiliaryError() -> String? {
         return auxError
+    }
+
+    /// Returns the currently detected JIT source.
+    public func getJITSource() -> JITSource {
+        return jitSource
+    }
+
+    /// Allows the UIKit-capable layer (`JITSourceDetector`) to refine the
+    /// detected source after URL-scheme checks complete.
+    public func setJITSource(_ source: JITSource) {
+        jitSource = source
+    }
+
+    // MARK: - File-system JIT Source Detection
+
+    /// Performs lightweight, file-system-only detection of the JIT source.
+    /// URL-scheme checks (StikDebug) are handled by `JITSourceDetector` in
+    /// the PVJIT target which has access to UIKit.
+    private func detectJITSourceFileSystem() -> JITSource {
+#if targetEnvironment(simulator)
+        return .system
+#else
+        // iOS 26+ native JIT API — check for the JITAuthorizer Objective-C class.
+        // TODO: Replace NSClassFromString lookup with a direct import when the
+        //       JITAuthorizer API becomes public (currently private/SPI in iOS 26).
+        if NSClassFromString("JITAuthorizer") != nil {
+            return .system
+        }
+
+        // TrollStore leaves a known support-directory marker on-device.
+        let trollStorePaths = [
+            "/var/mobile/Library/Application Support/TrollStore",
+            "/usr/lib/TrollStore",
+            "/var/containers/Bundle/TrollStore",
+        ]
+        if trollStorePaths.contains(where: { FileManager.default.fileExists(atPath: $0) }) {
+            return .trollStore
+        }
+
+        // Jailbroken / developer-provisioned builds that acquire JIT via a
+        // system daemon (jailbreakd) are treated as "system" since there is
+        // no specific third-party app involved.
+#if !NONJAILBROKEN
+        return .system
+#else
+        // Non-jailbroken; source will be refined by JITSourceDetector (UIKit layer).
+        return .unknown
+#endif
+#endif
     }
 
     private func getCpuArchitecture() -> String? {

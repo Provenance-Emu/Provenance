@@ -1,34 +1,62 @@
 //
-//  PVAppTests.swift
-//  PVApp
+//  PVJITTests.swift
+//  PVJITTests
 //
-//  Created by Joseph Mattiello on 2/21/23.
-//  Copyright © 2023 Joseph Mattiello. All rights reserved.
+//  Tests for PVJIT JIT detection types.
 //
 
 import XCTest
-@testable import PVApp
+@testable import JITManager
 
-class PVAppTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+final class JITSourceTests: XCTestCase {
+
+    // MARK: - Happy-path tests
+
+    func testJITSourceRawValues() {
+        XCTAssertEqual(JITSource.altStore.rawValue, "AltStore")
+        XCTAssertEqual(JITSource.stikDebug.rawValue, "StikDebug")
+        XCTAssertEqual(JITSource.trollStore.rawValue, "TrollStore")
+        XCTAssertEqual(JITSource.system.rawValue, "System")
+        XCTAssertEqual(JITSource.unknown.rawValue, "Unknown")
+        XCTAssertEqual(JITSource.none.rawValue, "None")
     }
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+    func testDisplayNameMatchesRawValue() {
+        for source in JITSource.allCases {
+            XCTAssertEqual(source.displayName, source.rawValue,
+                           "displayName should equal rawValue for \(source)")
         }
+    }
+
+    func testJITSourceEquality() {
+        XCTAssertEqual(JITSource.altStore, JITSource.altStore)
+        XCTAssertNotEqual(JITSource.altStore, JITSource.stikDebug)
+        XCTAssertNotEqual(JITSource.trollStore, JITSource.none)
+    }
+
+    // MARK: - Edge-case tests
+
+    func testJITSourceNoneIsDistinctFromUnknown() {
+        // .none = JIT not acquired; .unknown = acquired but source indeterminate
+        XCTAssertNotEqual(JITSource.none, JITSource.unknown)
+    }
+
+    func testAllCasesArePresent() {
+        // Ensure the allCases count matches the expected number of sources.
+        // Update this assertion whenever a new case is added.
+        XCTAssertEqual(JITSource.allCases.count, 6,
+                       "Expected 6 JITSource cases: altStore, stikDebug, trollStore, system, unknown, none")
+    }
+
+    func testJITSourceSendableConformance() {
+        // Verify we can pass JITSource across concurrency boundaries.
+        let source: JITSource = .altStore
+        let expectation = XCTestExpectation(description: "Sendable JITSource crosses concurrency boundary")
+        Task.detached {
+            let captured: JITSource = source
+            XCTAssertEqual(captured, .altStore)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1)
     }
 }
