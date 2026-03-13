@@ -93,8 +93,9 @@ public extension PVEmulatorConfiguration {
                 ELOG("Failed to register core \(corePlist.identifier)")
             }
         }
-        //this calls refresh anyway
-        await RomDatabase.reloadCache(force: true)
+        // Cache reload is deferred to the dedicated boot step at 70% progress
+        // (AppState.initializeLibrary → bootWorker.reloadRomCache) to avoid a
+        // redundant full reload here that adds several seconds on first launch.
         #if DEBUG
         printListOfSystems()
         #endif

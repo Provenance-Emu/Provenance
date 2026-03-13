@@ -712,11 +712,19 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
     }
 
-    /// Initializes core plists
-    fileprivate func initCorePlists() async {
+    /// Initializes core plists — safe to call multiple times (idempotent via internal guards).
+    ///
+    /// Exposed as `public` so the boot sequence can call it directly with
+    /// fine-grained progress reporting before invoking `initSystems()`.
+    /// `CoreLoader.getCorePlists()` performs synchronous filesystem I/O; it is
+    /// run inside a detached task so the main-actor thread is never blocked.
+    public func initCorePlists() async {
         let bundle = ThisBundle
         await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-        let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
+        // Scan frameworks directory off the main actor to avoid blocking UI updates.
+        let corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
+            CoreLoader.getCorePlists()
+        }.value
         await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 

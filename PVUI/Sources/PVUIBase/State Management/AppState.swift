@@ -411,11 +411,30 @@ public class AppState: ObservableObject {
         ILOG("AppState: Initializing library")
         bootupStateManager.transition(to: .initializingLibrary)
 
-        // Guard against a hung importer — 45 s is generous for cold-start system init.
-        ILOG("AppState: Starting GameImporter.shared.initSystems()")
-        bootupStateManager.updateTaskProgress("Initializing game importer…", fraction: 0.1)
+        // Phase A: Load system/core plist definitions and register cores.
+        // This is the heaviest sub-step (filesystem scan + Realm writes), so we
+        // call it separately to allow fine-grained progress reporting before the
+        // lighter initSystems() remainder (dir creation + Realm observer setup).
+        ILOG("AppState: Loading system/core plists via GameImporter.shared.initCorePlists()")
+        bootupStateManager.updateTaskProgress("Loading system definitions…", fraction: 0.06)
         do {
             try await withTimeout(seconds: 45) {
+                await GameImporter.shared.initCorePlists()
+            }
+            ILOG("AppState: initCorePlists() completed")
+        } catch let error as TimeoutError {
+            ELOG("AppState: initCorePlists() timed out after \(error.seconds)s — continuing anyway")
+        } catch {
+            ELOG("AppState: initCorePlists() failed: \(error.localizedDescription) — continuing anyway")
+        }
+
+        // Phase B: Finish importer init (directory creation + Realm observer).
+        // initCorePlists() is now idempotent so the inner call inside initSystems()
+        // returns immediately via its existing guard flags.
+        ILOG("AppState: Starting GameImporter.shared.initSystems()")
+        bootupStateManager.updateTaskProgress("Initializing game importer…", fraction: 0.22)
+        do {
+            try await withTimeout(seconds: 20) {
                 await self.bootWorker.initializeImporter()
             }
             ILOG("AppState: GameImporter.shared.initSystems() completed")
