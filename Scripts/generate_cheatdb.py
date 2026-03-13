@@ -51,7 +51,7 @@ SYSTEM_SHORT_NAMES = {
     "Atari - 2600": "2600",
     "Atari - 5200": "5200",
     "Atari - 7800": "7800",
-    "Atari - 8-bit": "Atari8bit",
+    "Atari - 8-bit Family": "Atari8bit",
     "Atari - Jaguar": "Jaguar",
     "Atari - Jaguar CD": "JaguarCD",
     "Atari - Lynx": "Lynx",
@@ -64,8 +64,10 @@ SYSTEM_SHORT_NAMES = {
     "GCE - Vectrex": "Vectrex",
     "Magnavox - Odyssey2": "Odyssey2",
     "Mattel - Intellivision": "Intellivision",
-    "Microsoft - MSX": "MSX",
-    "Microsoft - MSX2": "MSX2",
+    # MSX and MSX2 are consolidated into one directory in the libretro cheat DB.
+    # Both systems share the same cheats folder; MSX2 games are a superset of MSX.
+    "Microsoft - MSX - MSX2 - MSX2P - MSX Turbo R": "MSX",
+    "Microsoft - MSX - MSX2 - MSX2P - MSX Turbo R (fMSX core)": "MSX",
     "NEC - PC Engine - TurboGrafx 16": "PCE",
     "NEC - PC Engine CD - TurboGrafx-CD": "PCECD",
     "NEC - PC Engine SuperGrafx": "SGFX",
@@ -76,6 +78,10 @@ SYSTEM_SHORT_NAMES = {
     "Nintendo - Game Boy Color": "GBC",
     "Nintendo - GameCube": "GameCube",
     "Nintendo - Nintendo 64": "N64",
+    # N64-based hardware variants — map to the base N64 system.
+    "Nintendo - Nintendo 64 (Aleck64)": "N64",
+    "Nintendo - Nintendo 64 (iQue)": "N64",
+    "Nintendo - Nintendo 64 (Unreleased)": "N64",
     "Nintendo - Nintendo DS": "DS",
     "Nintendo - Nintendo Entertainment System": "NES",
     "Nintendo - Pokemon Mini": "PokemonMini",
@@ -87,6 +93,8 @@ SYSTEM_SHORT_NAMES = {
     "Nintendo - Nintendo 3DS": "3DS",
     # PrBoom runs Doom WADs; map to the DOOM system identifier.
     "PrBoom": "DOOM",
+    # Wolfenstein 3D engine cheats.
+    "Wolfenstein 3D": "Wolf3D",
     "Sega - 32X": "Sega32X",
     "Sega - Dreamcast": "Dreamcast",
     "Sega - Game Gear": "GameGear",
@@ -106,10 +114,17 @@ SYSTEM_SHORT_NAMES = {
     "Sony - PlayStation Portable": "PSP",
     "The 3DO Company - 3DO": "3DO",
     "TIC-80": "TIC80",
-    "MAME": "MAME",
+    # FBNeo (FinalBurn Neo) is the libretro arcade core; maps to Provenance's MAME system.
+    "FBNeo - Arcade Games": "MAME",
     "Watara - Supervision": "Supervision",
     "Philips - CD-i": "CDi",
 }
+
+# Libretro cht/ directories intentionally NOT mapped (Provenance does not support them):
+#   "Amstrad - GX4000"     — Amstrad GX4000 console; no Provenance core
+#   "ChaiLove"             — Scripting/game engine, not a hardware system
+#   "PuzzleScript"         — Scripting/game engine, not a hardware system
+#   "Thomson - MOTO"       — Thomson MO/TO home computers; no Provenance core
 
 # Regex to extract region from filename like "Game Name (USA)" or "Game (USA, Europe)"
 REGION_RE = re.compile(r"\(([^)]*(?:USA|Europe|Japan|World|Korea|France|Germany|Spain|Italy|Brazil|Australia|Asia|China|Taiwan)[^)]*)\)")
