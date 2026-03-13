@@ -135,7 +135,9 @@ public actor GameHackingOrgLookup {
     // MARK: - URL Construction
 
     private func searchURLFor(title: String, systemSlug: String?) -> String {
-        var components = URLComponents(string: Self.searchURL)!
+        guard var components = URLComponents(string: Self.searchURL) else {
+            return Self.searchURL
+        }
         var items = [URLQueryItem(name: "q", value: title)]
         if let slug = systemSlug {
             items.append(URLQueryItem(name: "system", value: slug))
