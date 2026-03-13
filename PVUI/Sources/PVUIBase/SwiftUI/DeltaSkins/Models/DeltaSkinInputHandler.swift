@@ -751,11 +751,10 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
         case .AtariST:
-            /// AtariST uses PVA8Button but goes through RetroArch responder
-            /// Try PVA8SystemResponderClient first, then fall back to RetroArch
-            if let r = core as? PVA8SystemResponderClient {
-                let b = PVA8Button(id)
-                DLOG("AtariST button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+            /// AtariST routes through PVDOSSystemResponderClient (keyboard + mouse)
+            if let r = core as? PVDOSSystemResponderClient {
+                let b = PVDOSButton(id)
+                DLOG("AtariST button (via DOS): original=\(buttonId), normalized=\(id), PVDOSButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
         case .PCFX, .SGFX:
@@ -1514,11 +1513,10 @@ public class DeltaSkinInputHandler: ObservableObject {
                 return true
             }
         case .AtariST:
-            /// AtariST uses PVA8Button but goes through RetroArch responder
-            /// Try PVA8SystemResponderClient first, then fall back to RetroArch
-            if let r = core as? PVA8SystemResponderClient {
-                let b = PVA8Button(id)
-                DLOG("AtariST button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+            /// AtariST routes through PVDOSSystemResponderClient (keyboard + mouse)
+            if let r = core as? PVDOSSystemResponderClient {
+                let b = PVDOSButton(id)
+                DLOG("AtariST button (via DOS): original=\(buttonId), normalized=\(id), PVDOSButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }

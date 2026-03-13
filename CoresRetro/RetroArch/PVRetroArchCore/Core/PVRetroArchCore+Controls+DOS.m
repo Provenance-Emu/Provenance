@@ -45,6 +45,32 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 #define COCOA_MOUSE_BTN_LEFT  (1u)
 #define COCOA_MOUSE_BTN_RIGHT (2u)
 
+// Atari ST / Hatari relative-mouse tracking.
+// Hatari libretro uses RETRO_DEVICE_MOUSE which expects *relative* delta (mouse_rel_x/y)
+// rather than the absolute window position (window_pos_x/y) used by RETRO_DEVICE_POINTER
+// cores such as DOSBox-Pure.  The TouchTrackpadView sends accumulated normalised 0–1
+// cursor positions; we compute the frame-to-frame delta here and scale it to useful units.
+//
+// NOTE: st_mouse_prev is file-scope static and therefore shared across all instances and
+// sessions.  The valid flag is reset on leftMouseUp and rightMouseUp (finger-lift events)
+// which covers the common case.  If a session is terminated while a button is held, valid
+// may be YES at the start of the next session; the first mouseMovedAt call will produce
+// a harmless delta from the stale position, and valid-tracking immediately becomes correct
+// from the second event onward.
+static struct {
+    CGFloat x, y;           // last known normalised cursor position
+    BOOL    valid;          // NO until the first mouse-moved event; reset on button-up
+} st_mouse_prev = { 0.5f, 0.5f, NO };
+
+// Scale factor: a 1 % (0.01) normalised delta → this many mouse_rel units.
+// Tuned so normal trackpad movement produces comfortable cursor speed on a 320×200 display.
+#define ST_MOUSE_SCALE (300.0f)
+
+static BOOL dos_is_atarist(PVRetroArchCoreBridge *bridge) {
+    return ([bridge.systemIdentifier containsString:@"atarist"] ||
+            [bridge.coreIdentifier   containsString:@"hatari"]);
+}
+
 @interface PVRetroArchCoreBridge (DOSControls) <PVDOSSystemResponderClient>
 - (void)handleDOSButton:(PVDOSButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed;
 @end
@@ -168,10 +194,9 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
     // RetroArch handles scroll via its own input driver; no extra forwarding needed here.
 }
 
-// Update the cocoa input driver's absolute mouse position (in view logical points).
-// RetroArch computes relative deltas from these on each poll.
-// Returns the cocoa input state pointer so callers can perform additional updates
-// without a second lookup, or NULL if the input driver is not yet initialised.
+// Update the cocoa input driver's absolute pointer position (in view logical points).
+// Used by RETRO_DEVICE_POINTER cores such as DOSBox-Pure.
+// Returns the cocoa input state pointer, or NULL if not yet initialised.
 static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return NULL;
@@ -180,26 +205,124 @@ static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
     return apple;
 }
 
-- (void)mouseMovedAt:(CGPoint)point { dos_ra_update_mouse_pos(point); }
+// Helper: clamp scaled mouse deltas to the int16_t range expected by cocoa_input_data_t.
+static int16_t st_clamp_mouse_delta(CGFloat value) {
+    if (value > (CGFloat)INT16_MAX) {
+        return INT16_MAX;
+    }
+    if (value < (CGFloat)INT16_MIN) {
+        return INT16_MIN;
+    }
+    return (int16_t)value;
+}
+
+// Drive relative mouse movement for Hatari / Atari ST.
+// The TouchTrackpadView sends normalised 0–1 cursor positions accumulated from touchpad
+// deltas.  We recover the per-event delta, scale it, and write it to mouse_rel_x/y which
+// is what RETRO_DEVICE_MOUSE cores (Hatari) read each frame.
+//
+// Some callers (e.g. tvOS Siri Remote pan handler) may instead send already-relative
+// deltas.  In that case, values will typically fall outside the [0, 1] range, and we
+// treat the incoming point directly as a delta without consulting st_mouse_prev.
+static void st_ra_update_mouse_rel(CGPoint point) {
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (!apple) return;
+
+    // Zero the absolute-position fields so the cocoa input path always returns mouse_rel_*
+    // deltas.  On iOS with HAVE_IOS_TOUCHMOUSE, window_pos_* takes priority over mouse_rel_*;
+    // if a prior pointer/absolute path left these non-zero, Hatari would silently ignore the
+    // relative values.
+    apple->window_pos_x = 0;
+    apple->window_pos_y = 0;
+
+    BOOL isNormalized =
+        (point.x >= 0.0f && point.x <= 1.0f &&
+         point.y >= 0.0f && point.y <= 1.0f);
+
+    CGFloat dx = 0.0f;
+    CGFloat dy = 0.0f;
+
+    if (isNormalized) {
+        // Absolute normalised 0–1 coordinates: compute per-event delta from the last point.
+        if (st_mouse_prev.valid) {
+            dx = point.x - st_mouse_prev.x;
+            dy = point.y - st_mouse_prev.y;
+        }
+
+        // Update the tracked absolute position for the next event.
+        st_mouse_prev.x     = point.x;
+        st_mouse_prev.y     = point.y;
+        st_mouse_prev.valid = YES;
+
+        // On the very first event (valid was NO), we have no prior position and therefore no
+        // delta to send; in that case dx/dy remain zero and we emit no movement.
+    } else {
+        // Already-relative deltas: use the incoming values directly.
+        dx = point.x;
+        dy = point.y;
+
+        // This path does not maintain a consistent absolute position, so reset the tracking
+        // state to avoid mixing coordinate systems across events.
+        st_mouse_prev.valid = NO;
+    }
+
+    // Assign to rel fields if we have a non-zero delta; RetroArch resets these each poll.
+    if (dx != 0.0f || dy != 0.0f) {
+        CGFloat scaledX = dx * ST_MOUSE_SCALE;
+        CGFloat scaledY = dy * ST_MOUSE_SCALE;
+        apple->mouse_rel_x = st_clamp_mouse_delta(scaledX);
+        apple->mouse_rel_y = st_clamp_mouse_delta(scaledY);
+    }
+}
+
+- (void)mouseMovedAt:(CGPoint)point {
+    if (dos_is_atarist(self)) {
+        st_ra_update_mouse_rel(point);
+    } else {
+        dos_ra_update_mouse_pos(point);
+    }
+}
 - (void)mouseMovedAtPoint:(CGPoint)point { [self mouseMovedAt:point]; }
 
 - (void)leftMouseDownAt:(CGPoint)point {
-    cocoa_input_data_t *apple = dos_ra_update_mouse_pos(point);
-    if (apple) apple->mouse_buttons |= COCOA_MOUSE_BTN_LEFT;
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (!apple) return;
+    if (dos_is_atarist(self)) {
+        // Relative-mouse path: update position then set button.
+        st_ra_update_mouse_rel(point);
+    } else {
+        dos_ra_update_mouse_pos(point);
+    }
+    apple->mouse_buttons |= COCOA_MOUSE_BTN_LEFT;
 }
 - (void)leftMouseDownAtPoint:(CGPoint)point { [self leftMouseDownAt:point]; }
 - (void)leftMouseUp {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_LEFT;
+    // Reset delta tracking so finger re-placement doesn't produce a phantom jump.
+    if (dos_is_atarist(self)) {
+        st_mouse_prev.valid = NO;
+    }
 }
 
 - (void)rightMouseDownAtPoint:(CGPoint)point {
-    cocoa_input_data_t *apple = dos_ra_update_mouse_pos(point);
-    if (apple) apple->mouse_buttons |= COCOA_MOUSE_BTN_RIGHT;
+    cocoa_input_data_t *apple = dos_get_cocoa_input();
+    if (!apple) return;
+    if (dos_is_atarist(self)) {
+        st_ra_update_mouse_rel(point);
+    } else {
+        dos_ra_update_mouse_pos(point);
+    }
+    apple->mouse_buttons |= COCOA_MOUSE_BTN_RIGHT;
 }
 - (void)rightMouseUp {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_RIGHT;
+    // Mirror leftMouseUp: reset delta tracking on right-button release so a subsequent
+    // touch doesn't produce a phantom jump from the stale previous position.
+    if (dos_is_atarist(self)) {
+        st_mouse_prev.valid = NO;
+    }
 }
 
 @end

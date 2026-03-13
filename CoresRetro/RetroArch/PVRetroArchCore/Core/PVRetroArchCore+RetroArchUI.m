@@ -343,38 +343,32 @@ int argc =  1;
         //settings->bools.cheevos_enable = true;
     }
     [self writeConfigFile];
-    /// Sync BIOS resources, but exclude tos.img as it's handled specially in writeConfigFile
-    /// This prevents overwriting the fixed TOS image
+    /// Sync BIOS resources to the RetroArch system directory.
+    /// writeConfigFile already validated and wrote tos.img (for Hatari/Atari ST) before this call.
+    /// syncResources only copies files that are absent at the destination, so if writeConfigFile
+    /// wrote a valid tos.img it will not be overwritten.  If writeConfigFile skipped tos.img
+    /// (e.g. because it detected a ZIP), syncResources would otherwise blindly copy the invalid
+    /// file — guard against that by removing any ZIP tos.img after the sync.
     NSString *systemDir = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
     [self syncResources:self.BIOSPath to:systemDir];
 
-    // SPIKE 2823: This byte-mutation is a temporary hack that only works with TOS 1.02 US.
-    // It should be replaced with proper Hatari configuration once the root cause of the
-    // crash (incorrect TOS path or TOS content validation) is determined.
-    // See: https://github.com/Provenance-Emu/Provenance/issues/2823
-    /// Re-apply TOS fix after sync to ensure it's not overwritten
+    // For Hatari/Atari ST: if a bad (ZIP) tos.img ended up in the system directory via the
+    // syncResources call above, remove it so Hatari doesn't try to boot with an invalid ROM.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
-        NSString *tosImagePath = [systemDir stringByAppendingPathComponent:@"tos.img"];
-        NSString *biosTosPath = [self.BIOSPath stringByAppendingPathComponent:@"tos.img"];
-        NSFileManager *fm = [[NSFileManager alloc] init];
-        if ([fm fileExistsAtPath:biosTosPath] && [fm fileExistsAtPath:tosImagePath]) {
-            NSData *tosData = [NSData dataWithContentsOfFile:biosTosPath];
-            if (tosData && tosData.length >= 12) {
-                NSMutableData *fixedTosData = [tosData mutableCopy];
-                const unsigned char *bytes = (const unsigned char *)tosData.bytes;
-                /// Ensure address bytes are correct
-                /// Try [0x00, 0x00, 0xFC, 0x00] which reads as LE 0x00FC0000 (no swap needed)
-                NSMutableData *postSyncTosData = [tosData mutableCopy];
-                unsigned char *postSyncBytes = (unsigned char *)postSyncTosData.mutableBytes;
-                postSyncBytes[8] = 0x00;
-                postSyncBytes[9] = 0x00;
-                postSyncBytes[10] = 0xFC;
-                postSyncBytes[11] = 0x00;
-                [postSyncTosData writeToFile:tosImagePath options:NSDataWritingAtomic error:nil];
-                ILOG(@"Re-applied TOS address fix after sync: set to [0x00, 0x00, 0xFC, 0x00]");
+        NSString *sysTos = [systemDir stringByAppendingPathComponent:@"tos.img"];
+        NSData *sysTosData = [NSData dataWithContentsOfFile:sysTos options:NSDataReadingMappedIfSafe error:nil];
+        if (sysTosData.length >= 2) {
+            const unsigned char *b = (const unsigned char *)sysTosData.bytes;
+            if (b[0] == 0x50 && b[1] == 0x4B) {
+                ELOG(@"Removing invalid (ZIP) tos.img from system dir: %@", sysTos);
+                [[NSFileManager defaultManager] removeItemAtPath:sysTos error:nil];
             }
         }
     }
+
+    // TOS image is synced clean (no byte-patching) by writeConfigFile — no re-apply needed.
+    // The previous byte-mutation hack (SPIKE 2823) was corrupting the TOS ROM and causing
+    // wrong colors and graphical corruption. Removed as part of fix for #2823.
 }
 
 - (void)startEmulation {
@@ -655,183 +649,49 @@ void extract_bundles();
     }
     NSString *systemDirectory = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
 
-    // SPIKE 2823: This byte-mutation is a temporary hack that only works with TOS 1.02 US.
-    // It should be replaced with proper Hatari configuration once the root cause of the
-    // crash (incorrect TOS path or TOS content validation) is determined.
-    // See: https://github.com/Provenance-Emu/Provenance/issues/2823
-    /// Ensure TOS image is properly synced for Hatari core (force update if corrupted)
+    /// Sync TOS image to RetroArch system directory for Hatari core.
+    /// The TOS ROM is copied unmodified — no byte patching.
+    /// The previous byte-mutation (SPIKE 2823) at offsets 8–11 corrupted the load address,
+    /// causing wrong colors, graphical glitches, and unstable boot. Fix: #2823.
     if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
         NSString *tosImagePath = [systemDirectory stringByAppendingPathComponent:@"tos.img"];
         NSString *biosTosPath = [self.BIOSPath stringByAppendingPathComponent:@"tos.img"];
 
         if ([fm fileExistsAtPath:biosTosPath]) {
-            /// Get file attributes to verify it's a valid TOS image
-            NSDictionary *biosAttrs = [fm attributesOfItemAtPath:biosTosPath error:nil];
-            NSNumber *biosSize = biosAttrs[NSFileSize];
-            ILOG(@"TOS image in BIOS directory: %@, size: %@ bytes", biosTosPath, biosSize);
-
-            /// Verify file is not a ZIP or other archive format
-            NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:biosTosPath];
-            if (fileHandle) {
-                NSData *header = [fileHandle readDataOfLength:4];
-                [fileHandle closeFile];
-
-                if (header.length >= 2) {
-                    const unsigned char *bytes = (const unsigned char *)header.bytes;
-                    /// Check for ZIP signature (PK)
-                    if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
-                        ELOG(@"ERROR: TOS image appears to be a ZIP file! The file must be extracted first. Expected raw ROM image, not ZIP archive.");
-                    }
-                    /// Check for common ROM signatures or validate it's binary data
-                    else if (bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2] == 0x00 && bytes[3] == 0x00) {
-                        WLOG(@"Warning: TOS image starts with all zeros - file may be empty or invalid");
-                    }
-                }
-            }
-
-            /// Expected TOS 1.02 US MD5: c1c57ce48e8ee4135885cee9e63a68a2
-            /// Valid TOS image sizes are typically: 192KB (0x30000), 256KB (0x40000), 512KB (0x80000)
-            BOOL shouldCopy = YES;
-            if ([fm fileExistsAtPath:tosImagePath]) {
-                NSDictionary *existingAttrs = [fm attributesOfItemAtPath:tosImagePath error:nil];
-                NSNumber *existingSize = existingAttrs[NSFileSize];
-                /// Always replace to ensure we have a fresh copy (file might be corrupted)
-                ILOG(@"Replacing existing TOS image (existing: %@ bytes, BIOS: %@ bytes)", existingSize, biosSize);
-                [fm removeItemAtPath:tosImagePath error:nil];
-            }
-
-            /// Always copy fresh from BIOS directory to ensure integrity
-            /// Use NSData to copy to ensure binary integrity (not text mode)
+            /// Read and validate the source BIOS before touching the destination.
             NSError *readError = nil;
             NSData *tosData = [NSData dataWithContentsOfFile:biosTosPath options:NSDataReadingMappedIfSafe error:&readError];
             if (readError || !tosData) {
                 ELOG(@"Failed to read TOS image from %@: %@", biosTosPath, readError.localizedDescription);
             } else {
-                /// Verify TOS version bytes at offset 2-3 (should be 0x01 0x02 for TOS 1.02)
-                /// Hatari reads: TosVersion = SDL_SwapBE16(*(Uint16 *)&pTosFile[2]);
-                /// SDL_SwapBE16 swaps FROM big-endian TO native (little-endian on iOS)
-                /// So if file has [0x01, 0x02] (BE 0x0102), after swap it becomes 0x0201 = 513 = 0x201
+                BOOL tosIsZip = NO;
                 if (tosData.length >= 16) {
                     const unsigned char *bytes = (const unsigned char *)tosData.bytes;
-                    ILOG(@"TOS image first 16 bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+                    ILOG(@"TOS image: %lu bytes, header: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+                         (unsigned long)tosData.length,
                          bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7],
                          bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
-
-                    /// Read version at offset 2-3 (big-endian)
-                    uint16_t versionBE = (bytes[2] << 8) | bytes[3];
-                    /// Simulate SDL_SwapBE16 on little-endian (swaps bytes)
-                    uint16_t versionLE = (versionBE >> 8) | ((versionBE & 0xFF) << 8);
-
-                    /// Read address at offset 8-11
-                    /// When Hatari does: TosAddress = SDL_SwapBE32(*(Uint32 *)&pTosFile[8]);
-                    /// On little-endian: bytes [0x00, 0xFC, 0x00, 0x00] read as Uint32 = 0x0000FC00 (LSB first)
-                    /// SDL_SwapBE32 assumes input is big-endian and swaps to native (little-endian)
-                    /// SDL_SwapBE32(0x0000FC00) treats it as BE 0x0000FC00 = bytes [0x00, 0x00, 0xFC, 0x00] in BE
-                    /// Swaps to LE: [0x00, 0xFC, 0x00, 0x00] = 0x00FC0000
-                    /// So: bytes [0x00, 0xFC, 0x00, 0x00] -> LE read 0x0000FC00 -> SDL_SwapBE32 -> 0x00FC0000 ✓
-                    /// On little-endian system, bytes [0x00, 0xFC, 0x00, 0x00] read as Uint32 = 0x0000FC00
-                    /// (LSB first: bytes[8]=0x00, bytes[9]=0xFC, bytes[10]=0x00, bytes[11]=0x00)
-                    uint32_t addressAsLE = (bytes[8]) | (bytes[9] << 8) | (bytes[10] << 16) | (bytes[11] << 24);
-                    /// SDL_SwapBE32 treats input as big-endian and swaps to little-endian
-                    /// For 0x0000FC00 (BE): bytes are [0x00, 0x00, 0xFC, 0x00] in BE
-                    /// Swap to LE: [0x00, 0xFC, 0x00, 0x00] = 0x00FC0000
-                    /// Extract bytes and swap: byte0->byte3, byte1->byte2, byte2->byte1, byte3->byte0
-                    uint32_t byte0 = (addressAsLE >> 0) & 0xFF;
-                    uint32_t byte1 = (addressAsLE >> 8) & 0xFF;
-                    uint32_t byte2 = (addressAsLE >> 16) & 0xFF;
-                    uint32_t byte3 = (addressAsLE >> 24) & 0xFF;
-                    uint32_t addressAfterSwap = (byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3;
-
-                    ILOG(@"TOS version: bytes[2-3] = [0x%02X, 0x%02X], BE=0x%04X, after SDL_SwapBE16=0x%04X (%u decimal)",
-                         bytes[2], bytes[3], versionBE, versionLE, versionLE);
-                    ILOG(@"TOS address: bytes[8-11] = [0x%02X, 0x%02X, 0x%02X, 0x%02X], read as LE Uint32=0x%08X, after SDL_SwapBE32=0x%08X",
-                         bytes[8], bytes[9], bytes[10], bytes[11], addressAsLE, addressAfterSwap);
-
-                    /// TOS 1.02 should have version bytes [0x01, 0x02] = BE 0x0102 -> LE 0x0201 = 513 = 0x201
-                    /// Address should be 0x00FC0000 (for TOS < 1.06) or 0x00E00000 (for TOS >= 1.06) after SDL_SwapBE32
-                    BOOL versionOK = (versionBE == 0x0102);
-                    BOOL addressOK = (addressAfterSwap == 0x00FC0000 || addressAfterSwap == 0x00E00000);
-
-                    if (versionOK && addressOK) {
-                        ILOG(@"TOS image validation PASSED: version 1.02, address 0x%08X", addressAfterSwap);
-                    } else {
-                        if (!versionOK) {
-                            ELOG(@"TOS version validation FAILED: expected [0x01, 0x02] (BE 0x0102 -> LE 0x0201), got [0x%02X, 0x%02X] (BE 0x%04X -> LE 0x%04X)",
-                                 bytes[2], bytes[3], versionBE, versionLE);
-                        }
-                        if (!addressOK) {
-                            ELOG(@"TOS address validation FAILED: expected 0x00FC0000 or 0x00E00000 after SDL_SwapBE32, got 0x%08X", addressAfterSwap);
-                        }
+                    if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
+                        /// Source looks like a ZIP archive — do not overwrite a potentially valid
+                        /// existing tos.img with invalid data.
+                        ELOG(@"TOS image appears to be a ZIP file — it must be extracted first. Skipping copy.");
+                        tosIsZip = YES;
                     }
                 }
 
-                /// Always ensure address bytes are correct for Hatari
-                /// Hatari reads: TosAddress = SDL_SwapBE32(*(Uint32 *)&pTosFile[8]);
-                /// Hatari expects TosAddress to be 0x00FC0000 or 0x00E00000 AFTER SDL_SwapBE32
-                ///
-                /// The issue: Hatari reports $fc00 (0x0000FC00) which is the value BEFORE swap
-                /// This suggests the bytes might need to be in a different order
-                ///
-                /// If file has [0x00, 0x00, 0xFC, 0x00]: LE read = 0x00FC0000, SDL_SwapBE32 = 0x0000FC00 (wrong)
-                /// If file has [0xFC, 0x00, 0x00, 0x00]: LE read = 0x000000FC, SDL_SwapBE32 = 0xFC000000 (wrong)
-                /// If file has [0x00, 0xFC, 0x00, 0x00]: LE read = 0x0000FC00, SDL_SwapBE32 = 0x00FC0000 (correct!)
-                ///
-                /// But Hatari reports $fc00, so maybe it's NOT swapping? Or reading differently?
-                /// Let's try the big-endian byte order directly: [0x00, 0x00, 0xFC, 0x00] = BE 0x0000FC00
-                /// If Hatari reads this as BE directly (without swap), it would get 0x0000FC00
-                /// But the code clearly does SDL_SwapBE32, so this shouldn't work...
-                ///
-                /// Actually, wait - maybe the file needs bytes that when read as LE give 0x00FC0000 directly?
-                /// That would be [0x00, 0x00, 0xFC, 0x00] in the file
-                /// But then SDL_SwapBE32 would swap it to 0x0000FC00, which is wrong
-                ///
-                /// Let's try: if Hatari is reporting the pre-swap value, maybe we need bytes that read as 0x00FC0000
-                /// File bytes: [0x00, 0x00, 0xFC, 0x00] -> LE read = 0x00FC0000
-                /// But SDL_SwapBE32(0x00FC0000) = 0x0000FC00, which Hatari reports as wrong
-                ///
-                /// Hmm, let's just try the reverse order: [0x00, 0x00, 0xFC, 0x00]
-                NSMutableData *fixedTosData = [tosData mutableCopy];
-                if (tosData.length >= 12) {
-                    const unsigned char *bytes = (const unsigned char *)tosData.bytes;
-                    /// Current bytes are [0x00, 0xFC, 0x00, 0x00] which should work but doesn't
-                    /// Try reverse order: [0x00, 0x00, 0xFC, 0x00]
-                    /// This gives: LE read = 0x00FC0000, SDL_SwapBE32 = 0x0000FC00
-                    /// But Hatari wants 0x00FC0000, so maybe it's NOT swapping?
-                    /// Let's try setting bytes to give 0x00FC0000 when read as LE (no swap needed)
-                    unsigned char *fixedBytes = (unsigned char *)fixedTosData.mutableBytes;
-                    fixedBytes[8] = 0x00;
-                    fixedBytes[9] = 0x00;
-                    fixedBytes[10] = 0xFC;
-                    fixedBytes[11] = 0x00;
-                    ILOG(@"TOS address bytes set to [0x%02X, 0x%02X, 0x%02X, 0x%02X] (was [0x%02X, 0x%02X, 0x%02X, 0x%02X]) - testing if Hatari reads without swap",
-                         fixedBytes[8], fixedBytes[9], fixedBytes[10], fixedBytes[11],
-                         bytes[8], bytes[9], bytes[10], bytes[11]);
-                }
-
-                /// Write using NSData to ensure binary integrity
-                NSError *writeError = nil;
-                BOOL writeSuccess = [fixedTosData writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError];
-                if (writeError || !writeSuccess) {
-                    ELOG(@"Failed to write TOS image to %@: %@", tosImagePath, writeError.localizedDescription);
-                } else {
-                    NSDictionary *copiedAttrs = [fm attributesOfItemAtPath:tosImagePath error:nil];
-                    NSNumber *copiedSize = copiedAttrs[NSFileSize];
-                    ILOG(@"Successfully synced TOS image to RetroArch system directory: %@ (size: %@ bytes)", tosImagePath, copiedSize);
-
-                    /// Verify file size matches expected TOS sizes
-                    unsigned long long sizeBytes = copiedSize.unsignedLongLongValue;
-                    if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
-                        WLOG(@"Warning: TOS image size (%llu bytes) doesn't match typical TOS sizes (192KB, 256KB, or 512KB). File may be invalid.", sizeBytes);
-                    }
-
-                    /// Verify the copied file matches source
-                    NSData *verifyData = [NSData dataWithContentsOfFile:tosImagePath];
-                    if (!verifyData || verifyData.length != tosData.length) {
-                        ELOG(@"ERROR: Copied TOS image size mismatch! Source: %lu bytes, Copied: %lu bytes", (unsigned long)tosData.length, (unsigned long)verifyData.length);
-                    } else if (![verifyData isEqualToData:tosData]) {
-                        ELOG(@"ERROR: Copied TOS image data doesn't match source! File may be corrupted.");
+                if (!tosIsZip) {
+                    /// Source validated; write atomically — NSDataWritingAtomic writes to a temp file
+                    /// then renames, so no pre-delete is needed and the last known-good tos.img is
+                    /// preserved if the write fails (e.g. low disk space).
+                    NSError *writeError = nil;
+                    if (![tosData writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError]) {
+                        ELOG(@"Failed to write TOS image to %@: %@", tosImagePath, writeError.localizedDescription);
                     } else {
-                        ILOG(@"TOS image copy verified - data integrity confirmed");
+                        unsigned long long sizeBytes = tosData.length;
+                        if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
+                            WLOG(@"TOS image size %llu bytes is not a typical size (192KB, 256KB, or 512KB)", sizeBytes);
+                        }
+                        ILOG(@"TOS image synced to system directory (unmodified): %@ (%llu bytes)", tosImagePath, sizeBytes);
                     }
                 }
             }

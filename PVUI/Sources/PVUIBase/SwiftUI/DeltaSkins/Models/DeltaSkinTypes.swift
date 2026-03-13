@@ -329,6 +329,8 @@ public enum VirtualKeyboardVariant: String, Codable, Hashable, Equatable, CaseIt
     case zxSpectrum
     /// Amstrad CPC keyboard layout
     case amstradCPC
+    /// Atari ST keyboard layout (Help, Undo, Clr/Home, F1-F10)
+    case atariST
 }
 
 extension VirtualKeyboardVariant {
