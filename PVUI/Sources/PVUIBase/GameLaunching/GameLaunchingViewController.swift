@@ -1187,12 +1187,13 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
             // Check for core version mismatch before loading.
-            // Self is always a UIViewController here (extension constraint), so cast is direct.
+            // Prefer presenting from the currently displayed emulator VC if possible.
             let pvCore = saveState.core
+            let presenter = (gameVC as? UIViewController) ?? self
             let shouldLoad = await SaveStateVersionChecker.confirmLoad(
                 saveState: saveState,
                 overrideCore: pvCore,
-                on: self
+                on: presenter
             )
             guard shouldLoad else {
                 return
