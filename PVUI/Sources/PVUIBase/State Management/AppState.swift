@@ -124,11 +124,6 @@ public class AppState: ObservableObject {
     @Published
     public var libraryUpdatesController: PVGameLibraryUpdatesController?
 
-#if os(iOS) || targetEnvironment(macCatalyst)
-    /// Cached Home Screen quick actions so lifecycle hooks can republish the latest values.
-    public private(set) var cachedShortcutItems: [UIApplicationShortcutItem] = []
-#endif
-
     /// Coordinator for Popover HUD
     public let hudCoordinator = HUDCoordinator()
 
@@ -537,11 +532,15 @@ public class AppState: ObservableObject {
 
         ILOG("AppState: Bootup finalized")
 
-        Task { @MainActor in
-            try? await self.withTimeout(seconds: 15) {
-                await self.setupShortcutsListener()
+        // Start Home Screen Quick Action observation off the critical path.
+        // HomeScreenShortcutService owns shortcut registration and tap queuing.
+#if os(iOS) || targetEnvironment(macCatalyst)
+        if let library = gameLibrary {
+            Task.detached(priority: .utility) {
+                await HomeScreenShortcutService.shared.startObserving(gameLibrary: library)
             }
         }
+#endif
     }
 
     func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
@@ -558,38 +557,6 @@ public class AppState: ObservableObject {
             return result
         }
     }
-
-    @MainActor
-    private func setupShortcutsListener() {
-        guard let gameLibrary = gameLibrary else {
-            ELOG("gameLibrary not yet initialized")
-            return
-        }
-#if os(iOS) || targetEnvironment(macCatalyst)
-        // Setup shortcuts for favorites and recent games
-        let maxShortcuts = 6 // iOS typically shows 4-6 shortcuts
-        Observable.combineLatest(
-            gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) }.map { Array($0.prefix(3)) },
-            gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }.map { Array($0.prefix(3)) }
-        ) { favorites, recents in
-            Array((favorites + recents).prefix(maxShortcuts))
-        }
-        .observe(on: MainScheduler.instance) // UIKit shortcutItems must be set on main thread
-        .bind(onNext: { shortcuts in
-            self.cachedShortcutItems = shortcuts
-            self.publishCachedShortcutItems()
-        })
-        .disposed(by: disposeBag)
-#endif
-    }
-
-#if os(iOS) || targetEnvironment(macCatalyst)
-    /// Republishes the latest dynamic quick actions for the Home Screen menu.
-    public func publishCachedShortcutItems() {
-        ILOG("AppState: Registering \(cachedShortcutItems.count) springboard shortcut items")
-        UIApplication.shared.shortcutItems = cachedShortcutItems
-    }
-#endif
 
     /// Handles app state changes (active, inactive, background)
     /// - Parameter scenePhase: The new scene phase

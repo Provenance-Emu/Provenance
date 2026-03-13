@@ -201,18 +201,8 @@ struct ProvenanceApp: App {
                         // CRITICAL: Now that bootup is complete, handle any pending emulator scene requests
                         openEmulatorSceneIfNeeded()
 
-                        // Also check for pending shortcuts
-                        #if !os(tvOS)
-                        if let pendingShortcut = appDelegate.pendingShortcutItem {
-                            ILOG("ProvenanceApp: Processing pending shortcut after bootup: \(pendingShortcut.type)")
-                            if let md5Value = pendingShortcut.userInfo?["PVGameHash"] as? String {
-                                ILOG("ProvenanceApp: Found MD5 in pending shortcut: \(md5Value)")
-                                appState.appOpenAction = .openMD5(md5Value)
-                                openEmulatorSceneIfNeeded()
-                            }
-                            appDelegate.pendingShortcutItem = nil
-                        }
-                        #endif
+                        // Home Screen Quick Action taps are handled by HomeScreenShortcutService
+                        // via PVSceneDelegate — no need to check pendingShortcutItem here.
                     }
                 }
                 // Observe appOpenAction changes to handle shortcuts and TopShelf launches
@@ -255,12 +245,6 @@ struct ProvenanceApp: App {
                 SkinImporterInjector.shared.service = DeltaSkinManager.shared
                 ILOG("skins: SkinImporterInjector service initialized")
             }
-
-#if !os(tvOS)
-            if newPhase == .inactive || newPhase == .background {
-                appState.publishCachedShortcutItems()
-            }
-#endif
 
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)

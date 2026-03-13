@@ -97,60 +97,14 @@ public extension PVAppDelegate {
     }
 
 #if os(iOS) || os(macOS)
+    /// Legacy fallback: called only when there is NO active scene session (e.g. non-scene builds).
+    /// In practice, PVSceneDelegate handles shortcut taps for all normal runs.
     public func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-        ILOG("PVAppDelegate: performActionFor shortcut called - type: \(shortcutItem.type)")
-
-        defer {
-            if isAppStore {
-                appRatingSignifigantEvent()
-            }
+        ILOG("PVAppDelegate: performActionFor shortcut (legacy path) type=\(shortcutItem.type)")
+        Task { @MainActor in
+            HomeScreenShortcutService.shared.handleShortcutTap(shortcutItem)
         }
-
-        /// Store shortcut and handle it immediately
-        /// If app is not active, it will be handled when app becomes active
-        pendingShortcutItem = shortcutItem
-
-        /// Handle directly - the method is accessible from the extension
-        handleShortcutDirectly(shortcutItem)
-
         completionHandler(true)
-    }
-
-    /// Direct shortcut handling when scene delegate is not available
-    private func handleShortcutDirectly(_ shortcutItem: UIApplicationShortcutItem) {
-        ILOG("PVAppDelegate: handleShortcutDirectly called with type: \(shortcutItem.type), userInfo: \(shortcutItem.userInfo ?? [:])")
-
-        guard shortcutItem.type == "kRecentGameShortcut" else {
-            ILOG("PVAppDelegate: Shortcut type mismatch - expected 'kRecentGameShortcut', got '\(shortcutItem.type)'")
-            return
-        }
-
-        guard let md5Value = shortcutItem.userInfo?["PVGameHash"] as? String else {
-            ILOG("PVAppDelegate: No PVGameHash found in shortcut userInfo: \(shortcutItem.userInfo ?? [:])")
-            return
-        }
-
-        ILOG("PVAppDelegate: Found MD5 hash in shortcut: \(md5Value), bootup state: \(AppState.shared.bootupState)")
-
-        /// Use the same pattern as Spotlight - set appOpenAction to .openMD5
-        /// This allows the game to be fetched when bootup completes
-        AppState.shared.appOpenAction = .openMD5(md5Value)
-        ILOG("PVAppDelegate: Set appOpenAction to .openMD5(\(md5Value))")
-
-        /// Try to fetch and set the game immediately if bootup is complete
-        /// If bootup isn't complete, the game will be fetched when bootup finishes
-        if AppState.shared.bootupState == .completed {
-            if let matchedGame = fetchGame(byMD5: md5Value) {
-                ILOG("PVAppDelegate: Bootup complete, found game: \(matchedGame.title), setting currentGame")
-                AppState.shared.emulationUIState.currentGame = matchedGame
-                SceneCoordinator.shared.openEmulatorScene()
-                ILOG("PVAppDelegate: Opened emulator scene for game: \(matchedGame.title)")
-            } else {
-                ILOG("PVAppDelegate: Bootup complete but could not find game with MD5: \(md5Value)")
-            }
-        } else {
-            ILOG("PVAppDelegate: Bootup not complete (state: \(AppState.shared.bootupState)), game will be fetched and opened when bootup finishes")
-        }
     }
 #endif
 

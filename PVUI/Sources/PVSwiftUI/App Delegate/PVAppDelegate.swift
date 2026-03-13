@@ -105,11 +105,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
     }
 
-    /// Track pending shortcut item for handling when app becomes active
-    #if os(iOS) || os(macOS)
-    @MainActor public var pendingShortcutItem: UIApplicationShortcutItem? = nil
-    #endif
-
     private var cancellables = Set<AnyCancellable>()
     @MainActor
     func _initLibraryNotificationHandlers() {
@@ -367,14 +362,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         ILOG("PVAppDelegate: Application did finish launching")
         RealmConfiguration.setDefaultRealmConfig()
 
-        #if !os(tvOS)
-        // Handle shortcut from launch options (for non-SwiftUI apps)
-        if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem {
-            ILOG("PVAppDelegate: Found shortcut in launchOptions: \(shortcut.type)")
-            pendingShortcutItem = shortcut
-        }
-        #endif
-
         // Register MetricKit subscriber to capture hang / crash diagnostics passively
         if #available(iOS 14.0, tvOS 14.0, *) {
             registerMetricKitSubscriber()
@@ -391,6 +378,20 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         return true
     }
+
+    /// Register `PVSceneDelegate` as the scene delegate so iOS routes
+    /// Home Screen Quick Action taps to it rather than SwiftUI's private no-op class.
+    #if os(iOS) || targetEnvironment(macCatalyst)
+    public func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let config = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+        config.delegateClass = PVSceneDelegate.self
+        return config
+    }
+    #endif
 
     /// Register BGTaskScheduler handlers at the earliest possible point in the app lifecycle
     private func registerBGTaskSchedulerHandlers() {
@@ -602,9 +603,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     public func applicationWillResignActive(_ application: UIApplication) {
         let emulationState = appState?.emulationUIState
         emulationState?.isInBackground = true
-#if !os(tvOS)
-        appState?.publishCachedShortcutItems()
-#endif
         pauseCore()
         sleep(1)
         Task {
@@ -623,20 +621,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     // TODO: Move to ProvenanceApp
     public func applicationDidBecomeActive(_ application: UIApplication) {
         appState?.emulationUIState.isInBackground = false
-
-        #if os(iOS) || os(macOS)
-        /// Check for pending shortcut when app becomes active
-        /// This handles shortcuts when app is already running
-        if let shortcut = pendingShortcutItem {
-            ILOG("PVAppDelegate: Processing pending shortcut when app became active: \(shortcut.type)")
-            ILOG("PVAppDelegate: Shortcut userInfo: \(shortcut.userInfo ?? [:])")
-            /// Handle using the scene delegate's method
-            handleShortcut(shortcut)
-            pendingShortcutItem = nil
-        } else {
-            ILOG("PVAppDelegate: No pending shortcut when app became active")
-        }
-        #endif
     }
 
     // TODO: Move to ProvenanceApp
@@ -753,99 +737,3 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     }
 }
 
-#if os(iOS) || os(macOS)
-/// Extension to handle shortcuts at the scene level for SwiftUI apps
-extension PVAppDelegate: UIWindowSceneDelegate {
-    public func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        ILOG("PVAppDelegate: Scene will connect - checking for shortcut in connection options")
-        ILOG("PVAppDelegate: Connection options shortcutItem: \(connectionOptions.shortcutItem?.type ?? "nil")")
-        ILOG("PVAppDelegate: Connection options userActivities: \(connectionOptions.userActivities.count)")
-
-        /// Handle shortcut if app was launched from shortcut
-        if let shortcutItem = connectionOptions.shortcutItem {
-            ILOG("PVAppDelegate: Found shortcut in connection options: \(shortcutItem.type), userInfo: \(shortcutItem.userInfo ?? [:])")
-            handleShortcut(shortcutItem)
-        } else {
-            ILOG("PVAppDelegate: No shortcut found in connection options")
-        }
-    }
-
-    public func sceneDidBecomeActive(_ scene: UIScene) {
-        ILOG("PVAppDelegate: Scene became active - checking for pending shortcuts")
-        /// Check if there's a pending shortcut when scene becomes active
-        /// This handles the case when app is already running and shortcut is tapped
-        if let pendingShortcut = pendingShortcutItem {
-            ILOG("PVAppDelegate: Processing pending shortcut when scene became active: \(pendingShortcut.type)")
-            handleShortcut(pendingShortcut)
-            pendingShortcutItem = nil
-        } else {
-            ILOG("PVAppDelegate: No pending shortcut found")
-        }
-        checkForPendingShortcut()
-    }
-
-    public func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-        ILOG("PVAppDelegate: windowScene performActionFor shortcut called - type: \(shortcutItem.type)")
-        handleShortcut(shortcutItem)
-        completionHandler(true)
-    }
-
-    /// Check for pending shortcuts by examining the current scene's connection options
-    private func checkForPendingShortcut() {
-        /// In SwiftUI, shortcuts might come through the scene's connection options
-        /// We need to check all connected scenes
-        for scene in UIApplication.shared.connectedScenes {
-            if let windowScene = scene as? UIWindowScene,
-               let delegate = windowScene.delegate as? PVAppDelegate {
-                /// Check if there's a shortcut in the scene's session
-                /// Note: This might not work directly, so we'll also listen for notifications
-            }
-        }
-    }
-
-    /// Centralized shortcut handling logic
-    @MainActor
-    func handleShortcut(_ shortcutItem: UIApplicationShortcutItem) {
-        ILOG("PVAppDelegate: handleShortcut called with type: \(shortcutItem.type), userInfo: \(shortcutItem.userInfo ?? [:])")
-        ILOG("PVAppDelegate: Current bootup state: \(AppState.shared.bootupState)")
-
-        defer {
-            if isAppStore {
-                appRatingSignifigantEvent()
-            }
-        }
-
-        guard shortcutItem.type == "kRecentGameShortcut" else {
-            ILOG("PVAppDelegate: Shortcut type mismatch - expected 'kRecentGameShortcut', got '\(shortcutItem.type)'")
-            return
-        }
-
-        guard let md5Value = shortcutItem.userInfo?["PVGameHash"] as? String else {
-            ILOG("PVAppDelegate: No PVGameHash found in shortcut userInfo: \(shortcutItem.userInfo ?? [:])")
-            return
-        }
-
-        ILOG("PVAppDelegate: Found MD5 hash in shortcut: \(md5Value)")
-
-        /// Use the same pattern as Spotlight - set appOpenAction to .openMD5
-        /// This allows the game to be fetched when bootup completes
-        AppState.shared.appOpenAction = .openMD5(md5Value)
-        ILOG("PVAppDelegate: Set appOpenAction to .openMD5(\(md5Value))")
-
-        /// Try to fetch and set the game immediately if bootup is complete
-        /// If bootup isn't complete, the game will be fetched when bootup finishes
-        if AppState.shared.bootupState == .completed {
-            if let matchedGame = fetchGame(byMD5: md5Value) {
-                ILOG("PVAppDelegate: Bootup complete, found game: \(matchedGame.title), setting currentGame")
-                AppState.shared.emulationUIState.currentGame = matchedGame
-                SceneCoordinator.shared.openEmulatorScene()
-                ILOG("PVAppDelegate: Opened emulator scene for game: \(matchedGame.title)")
-            } else {
-                ILOG("PVAppDelegate: Bootup complete but could not find game with MD5: \(md5Value)")
-            }
-        } else {
-            ILOG("PVAppDelegate: Bootup not complete (state: \(AppState.shared.bootupState)), game will be fetched and opened when bootup finishes")
-        }
-    }
-}
-#endif
