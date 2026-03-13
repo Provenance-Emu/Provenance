@@ -313,7 +313,9 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         }
 
         let getInfo = unsafeBitCast(sym, to: GetSystemInfoFn.self)
-        var raw = RawLibretroSystemInfo()
+        // Reuse the module-internal LibretroSystemInfo (defined in LibretroMetadataReader.swift)
+        // so both readers share a single layout definition that can't drift out of sync.
+        var raw = LibretroSystemInfo()
         withUnsafeMutablePointer(to: &raw) { ptr in
             getInfo(UnsafeMutableRawPointer(ptr))
         }
@@ -337,22 +339,6 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         #endif
     }
 }
-
-// ---------------------------------------------------------------------------
-// MARK: - C-layout system info mirror
-// ---------------------------------------------------------------------------
-
-#if canImport(Darwin)
-/// Must mirror the layout of `struct retro_system_info` from libretro.h exactly.
-@_alignment(8)
-private struct RawLibretroSystemInfo {
-    var library_name: UnsafePointer<CChar>? = nil
-    var library_version: UnsafePointer<CChar>? = nil
-    var valid_extensions: UnsafePointer<CChar>? = nil
-    var need_fullpath: Bool = false
-    var block_extract: Bool = false
-}
-#endif
 
 // ---------------------------------------------------------------------------
 // MARK: - CoreLoader integration
