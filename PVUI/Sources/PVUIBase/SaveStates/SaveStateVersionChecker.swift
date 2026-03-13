@@ -202,16 +202,21 @@ public enum SaveStateVersionChecker {
                     )
                 }
 
-                // Guard against the continuation hanging if the VC cannot present
-                // (e.g. it's not in a window or is already presenting another controller).
-                guard viewController.view.window != nil,
-                      viewController.presentedViewController == nil else {
-                    WLOG("SaveStateVersionChecker: cannot present alert (VC not in window or already presenting) — defaulting to cancel")
+                // Guard against the continuation hanging if the VC cannot present.
+                // Resolve a suitable presenter (the top-most presented VC attached to a window).
+                var presenter: UIViewController? = viewController
+                while let presented = presenter?.presentedViewController {
+                    presenter = presented
+                }
+
+                guard let resolvedPresenter = presenter,
+                      resolvedPresenter.view.window != nil else {
+                    WLOG("SaveStateVersionChecker: cannot present alert (no presenter in window) — defaulting to cancel")
                     resume(false)
                     return
                 }
 
-                viewController.present(alert, animated: true)
+                resolvedPresenter.present(alert, animated: true)
             }
         } onCancel: {
             // If the task is cancelled while the alert is visible, dismiss the alert
