@@ -76,12 +76,14 @@ public actor CheatDatabase {
     ///   - md5: The MD5 hash of the ROM (for exact match in DS cheatbase).
     ///   - title: The game title for fuzzy search across both databases.
     ///   - systemIdentifier: The libretro system directory name (e.g. "Nintendo - Super Nintendo Entertainment System").
+    ///   - romSerial: The ROM serial / disc ID for GC/Wii GeckoCodes lookup (e.g. "RMCE01").
     ///   - limit: Maximum number of results to return.
     /// - Returns: Combined, deduplicated array of cheat entries from both databases.
     public func searchAllCheats(
         byMD5 md5: String? = nil,
         title: String? = nil,
         systemIdentifier: String? = nil,
+        romSerial: String? = nil,
         limit: Int = 300
     ) async throws -> [CheatDatabaseEntry] {
         var results: [CheatDatabaseEntry] = []
@@ -156,6 +158,32 @@ public actor CheatDatabase {
             } catch {
                 ELOG("CheatDatabase: Title search error: \(error)")
                 lastError = error
+            }
+        }
+
+        // 4. GeckoCodes online lookup for GameCube / Wii (requires romSerial from disc header).
+        // Gate by valid 6-char alphanumeric disc ID format and GC/Wii system when known,
+        // to avoid spurious requests for ROMs from other platforms.
+        if let serial = romSerial, !serial.isEmpty {
+            let isValidDiscID = serial.count == 6 && serial.allSatisfy({ $0.isLetter || $0.isNumber })
+            let isGCWiiSystem = systemIdentifier?.contains("GameCube") == true
+                || systemIdentifier?.contains("Wii") == true
+            if isValidDiscID && isGCWiiSystem {
+                do {
+                    let geckoResults = try await GeckoCodesLookup.shared.searchCheats(gameID: serial)
+                    for entry in geckoResults {
+                        let key = entry.cheatCode.lowercased()
+                        if seenCodes.insert(key).inserted {
+                            results.append(entry)
+                        }
+                    }
+                    DLOG("CheatDatabase: \(geckoResults.count) results from GeckoCodes for serial '\(serial)'")
+                } catch {
+                    WLOG("CheatDatabase: GeckoCodes lookup error for serial '\(serial)': \(error)")
+                    // GeckoCodes failure is non-fatal; do not update lastError
+                }
+            } else {
+                DLOG("CheatDatabase: skipping GeckoCodes for serial '\(serial)' — not a GC/Wii disc ID or wrong system")
             }
         }
 
@@ -247,23 +275,81 @@ public actor CheatDatabase {
 
     // MARK: - Online Search
 
-    /// Fetch cheat codes from online sources (libretro cheat database on GitHub).
+    /// Fetch cheat codes from all online sources in parallel.
     ///
-    /// This is a thin wrapper around `CheatOnlineLookup` that can be called directly
-    /// from the UI layer after local searches return no results.
+    /// Sources queried:
+    ///   1. `CheatOnlineLookup` — libretro cheat database on GitHub
+    ///   2. `GameHackingOrgLookup` — GameHacking.org HTML scraper
+    ///
+    /// Results are merged and deduplicated by cheat code.
     ///
     /// - Parameters:
     ///   - title: The game title.
-    ///   - systemIdentifier: The libretro system directory name.
-    /// - Returns: Array of `CheatDatabaseEntry` values with `isOnlineResult == true`.
+    ///   - systemIdentifier: The libretro system directory name (used to derive
+    ///     the GameHacking.org system slug via `SystemIdentifier.gameHackingOrgSlug`).
+    /// - Returns: Combined, deduplicated array of `CheatDatabaseEntry` values
+    ///   with `isOnlineResult == true`.
     public func searchCheatsOnline(
         title: String,
         systemIdentifier: String? = nil
     ) async throws -> [CheatDatabaseEntry] {
-        try await CheatOnlineLookup.shared.searchCheats(
+        // Derive the GameHacking.org system slug from the libretro system identifier.
+        let ghOrgSlug: String? = {
+            guard let sysID = systemIdentifier else { return nil }
+            // Map from libretro database name back to SystemIdentifier, then to GH.org slug.
+            // The libretro name is the `libretroDatabaseName` or `libretroCheatSystemName` value.
+            return SystemIdentifier.allCases.first { id in
+                id.libretroDatabaseName == sysID || id.libretroCheatSystemName == sysID
+            }?.gameHackingOrgSlug
+        }()
+
+        // Start GameHacking.org lookup unconditionally (title-only when no slug available).
+        // GameHackingOrgLookup.searchCheats never throws, so it's safe to await independently.
+        async let ghOrgFuture: [CheatDatabaseEntry] = GameHackingOrgLookup.shared.searchCheats(
             title: title,
-            systemIdentifier: systemIdentifier
+            systemSlug: ghOrgSlug
         )
+
+        // Run libretro lookup only when systemIdentifier is present — it throws on nil/empty.
+        // Use a do-catch so a libretro failure does not cancel the already-started GH.org task.
+        var libretroResults: [CheatDatabaseEntry] = []
+        var libretroError: Error?
+        if let sysID = systemIdentifier, !sysID.isEmpty {
+            async let libretroFuture = CheatOnlineLookup.shared.searchCheats(
+                title: title,
+                systemIdentifier: sysID
+            )
+            do {
+                libretroResults = try await libretroFuture
+            } catch {
+                libretroError = error
+                WLOG("CheatDatabase: libretro online lookup failed: \(error)")
+            }
+        }
+
+        // Await GH.org result (was already running in parallel above).
+        let ghOrgResults = await ghOrgFuture
+
+        // Merge, deduplicating by normalised cheat code
+        var seenCodes = Set<String>()
+        var merged: [CheatDatabaseEntry] = []
+
+        for entry in libretroResults {
+            if seenCodes.insert(entry.cheatCode.lowercased()).inserted {
+                merged.append(entry)
+            }
+        }
+        for entry in ghOrgResults {
+            if seenCodes.insert(entry.cheatCode.lowercased()).inserted {
+                merged.append(entry)
+            }
+        }
+
+        DLOG("CheatDatabase: searchCheatsOnline — libretro=\(libretroResults.count) ghorg=\(ghOrgResults.count) merged=\(merged.count)")
+        if merged.isEmpty, let libretroError {
+            throw libretroError
+        }
+        return merged
     }
 }
 
