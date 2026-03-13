@@ -95,7 +95,10 @@ public actor GeckoCodesLookup {
 
     private func fetchGeckoCodes(gameID: String) async throws -> [CheatDatabaseEntry] {
         // Build URL: https://codes.rc24.xyz/txt.php?txt=geckocodes&id=GAMEID
-        var components = URLComponents(string: Self.endpointBase)!
+        guard var components = URLComponents(string: Self.endpointBase) else {
+            WLOG("GeckoCodesLookup: failed to construct URLComponents from endpointBase '\(Self.endpointBase)'")
+            return []
+        }
         components.queryItems = [
             URLQueryItem(name: "txt", value: "geckocodes"),
             URLQueryItem(name: "id", value: gameID.uppercased())
