@@ -23,9 +23,9 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
     /// Resolves the Realm instance used for save-state writes.
     ///
     /// Always creates a fresh Realm instance (never returns a cached/thread-local
-    /// one) to minimise the TOCTOU window between the `isInvalidated` pre-flight
-    /// check and the subsequent `writeAsync` call.  Using a cached instance risks
-    /// it being invalidated in the narrow window between the guard and the write.
+    /// one) immediately before `writeAsync`. `Realm` itself does not expose a
+    /// public invalidation/closed-state check in Swift, so reopening it here is
+    /// the safest available pre-flight before scheduling the async write.
     private func saveStateWriteRealm() async throws -> Realm {
         do {
             return try await Realm(configuration: RealmConfiguration.realmConfig)
@@ -58,17 +58,10 @@ extension RomDatabase: SaveStatePersistenceServiceProtocol {
         let realm = try await saveStateWriteRealm()
 
         // Pre-flight: `writeAsync` calls `beginAsyncWriteTransaction` internally,
-        // which throws an ObjC NSException (not a Swift Error) when Realm is in an
-        // unexpected state (e.g. invalidated after the app resigns active during a
-        // ReplayKit recording setup). Swift `do-catch` cannot intercept ObjC
-        // NSExceptions, so we guard here to prevent a fatal crash.
-        guard !realm.isInvalidated else {
-            WLOG("registerSaveState: realm is invalidated — skipping async write")
-            throw SaveStateError.realmWriteError(
-                NSError(domain: "RomDatabase", code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "Realm instance is invalidated"])
-            )
-        }
+        // which can throw an ObjC NSException (not a Swift Error) when Realm is in
+        // an unexpected lifecycle state. Swift cannot intercept ObjC NSExceptions,
+        // so the safest pre-flight available here is using a freshly opened Realm
+        // instance immediately before scheduling the async write.
 
         return try await withCheckedThrowingContinuation { continuation in
             realm.writeAsync {

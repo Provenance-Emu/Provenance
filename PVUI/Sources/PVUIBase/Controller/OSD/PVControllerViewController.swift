@@ -391,6 +391,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         #if !os(tvOS)
         subscribeToVirtualInputStateIfNeeded()
         #endif
+        if let superview = view.superview {
+            view.frame = superview.bounds
+        }
     }
 
     #if !os(tvOS)
@@ -496,13 +499,6 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         return .landscape
     }
 #endif
-
-    override open func didMove(toParent parent: UIViewController?) {
-        super.didMove(toParent: parent)
-        if let s = view.superview {
-            view.frame = s.bounds
-        }
-    }
 
     override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
