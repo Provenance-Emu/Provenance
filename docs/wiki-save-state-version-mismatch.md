@@ -70,6 +70,6 @@ per-core migration callbacks.
 
 ## Related
 
-- [Save States overview](README.md)
-- [Core updates and compatibility](../cores/compatibility.md)
+- [Save States overview](https://github.com/Provenance-EMU/wiki/blob/master/save-states/README.md)
+- [Core updates and compatibility](https://github.com/Provenance-EMU/wiki/blob/master/cores/compatibility.md)
 - GitHub issue [#2951 — Save State Version Mismatch Detection & UX](https://github.com/Provenance-Emu/Provenance/issues/2951)
