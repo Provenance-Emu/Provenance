@@ -560,6 +560,28 @@ private struct CatalogSkinCard: View {
     let glowIntensity: CGFloat
     var isInstalled: Bool = false
 
+    private func displayName(forSystemCode code: String) -> String {
+        let map: [String: String] = [
+            "nes": "NES",
+            "snes": "SNES",
+            "n64": "N64",
+            "gb": "Game Boy",
+            "gbc": "Game Boy Color",
+            "gba": "Game Boy Advance",
+            "mastersystem": "Master System",
+            "sms": "SMS",
+            "gamegear": "Game Gear",
+            "gg": "GG",
+            "genesis": "Genesis",
+            "megadrive": "Mega Drive",
+            "psx": "PlayStation",
+            "ps1": "PlayStation"
+        ]
+
+        let key = code.lowercased()
+        return map[key] ?? code.uppercased()
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Thumbnail with installed badge overlay
@@ -592,7 +614,7 @@ private struct CatalogSkinCard: View {
                     // System tags (max 2, excluding legacy codes like "unofficial")
                     let validSystems = entry.systems.filter { !SkinCatalogService.isLegacySystemCode($0) }
                     ForEach(validSystems.prefix(2), id: \.self) { system in
-                        Text(system.uppercased())
+                        Text(displayName(forSystemCode: system))
                             .font(.system(size: 9, weight: .bold, design: .rounded))
                             .tracking(0.5)
                             .padding(.horizontal, 5)
