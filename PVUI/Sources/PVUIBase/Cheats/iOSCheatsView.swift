@@ -646,7 +646,7 @@ private struct iOSCheatSearchRow: View {
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
-            Text("\(entry.deviceName) · \(entry.category)")
+            Text("\(entry.deviceFormat ?? entry.deviceName) · \(entry.category)")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }

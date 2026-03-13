@@ -51,7 +51,7 @@ SYSTEM_SHORT_NAMES = {
     "Atari - 2600": "2600",
     "Atari - 5200": "5200",
     "Atari - 7800": "7800",
-    "Atari - 8-bit": "Atari8bit",
+    "Atari - 8-bit Family": "Atari8bit",
     "Atari - Jaguar": "Jaguar",
     "Atari - Jaguar CD": "JaguarCD",
     "Atari - Lynx": "Lynx",
@@ -64,8 +64,10 @@ SYSTEM_SHORT_NAMES = {
     "GCE - Vectrex": "Vectrex",
     "Magnavox - Odyssey2": "Odyssey2",
     "Mattel - Intellivision": "Intellivision",
-    "Microsoft - MSX": "MSX",
-    "Microsoft - MSX2": "MSX2",
+    # MSX and MSX2 are consolidated into one directory in the libretro cheat DB.
+    # Both systems share the same cheats folder; MSX2 games are a superset of MSX.
+    "Microsoft - MSX - MSX2 - MSX2P - MSX Turbo R": "MSX",
+    "Microsoft - MSX - MSX2 - MSX2P - MSX Turbo R (fMSX core)": "MSX",
     "NEC - PC Engine - TurboGrafx 16": "PCE",
     "NEC - PC Engine CD - TurboGrafx-CD": "PCECD",
     "NEC - PC Engine SuperGrafx": "SGFX",
@@ -76,6 +78,10 @@ SYSTEM_SHORT_NAMES = {
     "Nintendo - Game Boy Color": "GBC",
     "Nintendo - GameCube": "GameCube",
     "Nintendo - Nintendo 64": "N64",
+    # N64-based hardware variants — map to the base N64 system.
+    "Nintendo - Nintendo 64 (Aleck64)": "N64",
+    "Nintendo - Nintendo 64 (iQue)": "N64",
+    "Nintendo - Nintendo 64 (Unreleased)": "N64",
     "Nintendo - Nintendo DS": "DS",
     "Nintendo - Nintendo Entertainment System": "NES",
     "Nintendo - Pokemon Mini": "PokemonMini",
@@ -87,6 +93,8 @@ SYSTEM_SHORT_NAMES = {
     "Nintendo - Nintendo 3DS": "3DS",
     # PrBoom runs Doom WADs; map to the DOOM system identifier.
     "PrBoom": "DOOM",
+    # Wolfenstein 3D engine cheats.
+    "Wolfenstein 3D": "Wolf3D",
     "Sega - 32X": "Sega32X",
     "Sega - Dreamcast": "Dreamcast",
     "Sega - Game Gear": "GameGear",
@@ -106,10 +114,17 @@ SYSTEM_SHORT_NAMES = {
     "Sony - PlayStation Portable": "PSP",
     "The 3DO Company - 3DO": "3DO",
     "TIC-80": "TIC80",
-    "MAME": "MAME",
+    # FBNeo (FinalBurn Neo) is the libretro arcade core; maps to Provenance's MAME system.
+    "FBNeo - Arcade Games": "MAME",
     "Watara - Supervision": "Supervision",
     "Philips - CD-i": "CDi",
 }
+
+# Libretro cht/ directories intentionally NOT mapped (Provenance does not support them):
+#   "Amstrad - GX4000"     — Amstrad GX4000 console; no Provenance core
+#   "ChaiLove"             — Scripting/game engine, not a hardware system
+#   "PuzzleScript"         — Scripting/game engine, not a hardware system
+#   "Thomson - MOTO"       — Thomson MO/TO home computers; no Provenance core
 
 # Regex to extract region from filename like "Game Name (USA)" or "Game (USA, Europe)"
 REGION_RE = re.compile(r"\(([^)]*(?:USA|Europe|Japan|World|Korea|France|Germany|Spain|Italy|Brazil|Australia|Asia|China|Taiwan)[^)]*)\)")
@@ -205,6 +220,66 @@ def extract_device_name(filename_stem):
 def _stem_without_device(filename_stem):
     """Return the cht stem with device suffix removed (for DAT lookup)."""
     return DEVICE_RE.sub("", filename_stem).strip()
+
+
+# Format detection patterns, evaluated in order.
+# Each entry: (compiled_regex, format_string)
+_FORMAT_PATTERNS = [
+    # Game Genie SNES/NES: XXXX-XXXX-XXXX (letters+digits, dash-separated triples)
+    (re.compile(r'^[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}$'), "Game Genie (SNES/NES)"),
+    # Game Genie GB/GBA short: AAAA:DDDD (4-hex colon 4-hex)
+    (re.compile(r'^[0-9A-Fa-f]{4}:[0-9A-Fa-f]{4}$'), "Game Genie"),
+    # GameShark GBA-style: 0XXXXXXX YYYY (8 hex starting with 0, space, 4 hex)
+    (re.compile(r'^0[0-9A-Fa-f]{7}\s+[0-9A-Fa-f]{4}$'), "GameShark GBA"),
+    # Action Replay v2: XXXXXXXX:XXXXXXXX (8 hex colon 8 hex)
+    (re.compile(r'^[0-9A-Fa-f]{8}:[0-9A-Fa-f]{8}$'), "Action Replay v2"),
+    # GameShark: XXXXXXXX+XXXXXXXX (8 hex plus 8 hex)
+    (re.compile(r'^[0-9A-Fa-f]{8}\+[0-9A-Fa-f]{8}$'), "GameShark"),
+    # Raw AR/GS v3: XXXXXXXX XXXXXXXX (8 hex space 8 hex)
+    (re.compile(r'^[0-9A-Fa-f]{8}\s+[0-9A-Fa-f]{8}$'), "Raw (AR/GS v3)"),
+]
+
+# Device name → format override (when filename already tells us the exact device)
+_DEVICE_FORMAT_MAP = {
+    "action replay": "Action Replay",
+    "game genie": "Game Genie",
+    "gameshark": "GameShark",
+    "pro action replay": "Pro Action Replay",
+    "xploder": "Xploder",
+    "code breaker": "Code Breaker",
+    "codebreaker": "Code Breaker",
+    "goldfinger": "Gold Finger",
+}
+
+
+def detect_format(code, device_name):
+    """Detect the cheat code format from the code string and device name.
+
+    First checks device_name (extracted from filename suffix) for a direct match.
+    Falls back to pattern matching on the code string.
+    Returns a format string or None if no pattern matches.
+    """
+    # If the device name is specific (not the generic 'RetroArch'), use it directly.
+    dn_lower = device_name.lower()
+    if dn_lower != "retroarch":
+        mapped = _DEVICE_FORMAT_MAP.get(dn_lower)
+        if mapped:
+            return mapped
+        # Unknown named device — return the device name as-is
+        return device_name
+
+    # Pattern-match individual lines of the code (some codes are multi-line)
+    lines = [ln.strip() for ln in code.splitlines() if ln.strip()]
+    if not lines:
+        return None
+
+    # Use the first non-empty line for pattern detection
+    first_line = lines[0]
+    for pattern, fmt in _FORMAT_PATTERNS:
+        if pattern.match(first_line):
+            return fmt
+
+    return None
 
 
 def parse_dat_file(dat_path):
@@ -332,7 +407,8 @@ def create_database(db_path):
             game_id INTEGER NOT NULL REFERENCES games(game_id),
             cheat_name TEXT NOT NULL,
             cheat_code TEXT NOT NULL,
-            device_name TEXT NOT NULL DEFAULT 'RetroArch'
+            device_name TEXT NOT NULL DEFAULT 'RetroArch',
+            format       TEXT
         );
 
         CREATE INDEX idx_games_title ON games(game_title COLLATE NOCASE);
@@ -411,9 +487,10 @@ def process_cht_directory(cht_root, db_path, md5_map=None):
             system_games += 1
 
             for desc, code in cheats:
+                fmt = detect_format(code, device)
                 c.execute(
-                    "INSERT INTO cheats (game_id, cheat_name, cheat_code, device_name) VALUES (?, ?, ?, ?)",
-                    (game_id, desc, code, device),
+                    "INSERT INTO cheats (game_id, cheat_name, cheat_code, device_name, format) VALUES (?, ?, ?, ?, ?)",
+                    (game_id, desc, code, device, fmt),
                 )
                 system_cheats += 1
 

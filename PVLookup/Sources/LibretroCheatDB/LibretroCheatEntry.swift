@@ -21,6 +21,9 @@ public struct LibretroCheatEntry: Sendable, Identifiable {
     public let systemName: String
     /// MD5 hash of the ROM file, if available from the libretro DAT database
     public let md5: String?
+    /// Detected cheat code format (e.g. "GameShark", "Game Genie (SNES/NES)", "Raw (AR/GS v3)").
+    /// Nil for entries from databases generated before the format column was added.
+    public let format: String?
 
     public init(
         id: Int,
@@ -29,7 +32,8 @@ public struct LibretroCheatEntry: Sendable, Identifiable {
         deviceName: String,
         gameTitle: String,
         systemName: String,
-        md5: String? = nil
+        md5: String? = nil,
+        format: String? = nil
     ) {
         self.id = id
         self.cheatName = cheatName
@@ -38,5 +42,6 @@ public struct LibretroCheatEntry: Sendable, Identifiable {
         self.gameTitle = gameTitle
         self.systemName = systemName
         self.md5 = md5
+        self.format = format
     }
 }
