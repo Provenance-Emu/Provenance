@@ -166,8 +166,7 @@ public actor CheatDatabase {
         // to avoid spurious requests for ROMs from other platforms.
         if let serial = romSerial, !serial.isEmpty {
             let isValidDiscID = serial.count == 6 && serial.allSatisfy({ $0.isLetter || $0.isNumber })
-            let isGCWiiSystem = systemIdentifier == nil
-                || systemIdentifier?.contains("GameCube") == true
+            let isGCWiiSystem = systemIdentifier?.contains("GameCube") == true
                 || systemIdentifier?.contains("Wii") == true
             if isValidDiscID && isGCWiiSystem {
                 do {
