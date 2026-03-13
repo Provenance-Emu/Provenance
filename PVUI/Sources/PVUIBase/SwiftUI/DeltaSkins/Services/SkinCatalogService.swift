@@ -170,7 +170,7 @@ public actor SkinCatalogService {
             // Empty query: return all skins, optionally filtered by system
             if let system = system {
                 let lowerSystem = system.lowercased()
-                return catalog.skins.filter { $0.systems.map { $0.lowercased() }.contains(lowerSystem) }
+                return catalog.skins.filter { $0.systems.contains(where: { $0.lowercased() == lowerSystem }) }
             }
             return catalog.skins
         }
@@ -180,7 +180,7 @@ public actor SkinCatalogService {
             // match correctly regardless of how the caller specifies the code.
             if let system = system {
                 let lowerSystem = system.lowercased()
-                guard entry.systems.map({ $0.lowercased() }).contains(lowerSystem) else { return false }
+                guard entry.systems.contains(where: { $0.lowercased() == lowerSystem }) else { return false }
             }
 
             // Text search across name, author, tags, source
@@ -214,7 +214,7 @@ public actor SkinCatalogService {
         // match correctly regardless of how the caller specifies the code.
         if let system = system {
             let lowerSystem = system.lowercased()
-            results = results.filter { $0.systems.map { $0.lowercased() }.contains(lowerSystem) }
+            results = results.filter { $0.systems.contains(where: { $0.lowercased() == lowerSystem }) }
         }
 
         // Filter by tags (match any)
@@ -270,7 +270,7 @@ public actor SkinCatalogService {
     /// - Returns: Sorted array of system codes.
     public func availableSystems() async throws -> [String] {
         let catalog = try await fetchCatalog()
-        let systems = Set(catalog.skins.flatMap { $0.systems })
+        let systems = Set(catalog.skins.flatMap { $0.systems.map { $0.lowercased() } })
             .filter { !Self.isLegacySystemCode($0) }
         return systems.sorted()
     }

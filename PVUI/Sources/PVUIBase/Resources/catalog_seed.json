@@ -2628,7 +2628,7 @@
       "name": "SMS Dpad",
       "author": "felix#6506",
       "systems": [
-        "masterSystem"
+        "mastersystem"
       ],
       "gameTypeIdentifier": null,
       "version": null,
@@ -2652,7 +2652,7 @@
       "name": "SMS Thumbstick",
       "author": "felix#6506",
       "systems": [
-        "masterSystem"
+        "mastersystem"
       ],
       "gameTypeIdentifier": null,
       "version": null,
