@@ -4,6 +4,70 @@ __Developers should start here first for breif instructions for building and wor
 
 ## Documentation
 
+## JIT Capability Matrix
+
+Provenance classifies every emulator core by its JIT (Just-In-Time compilation) behaviour using `PVJITRequirement` (defined in `PVPrimitives`).
+
+### Enum Cases
+
+| Case | Meaning | Safe without JIT? |
+|------|---------|-------------------|
+| `.notSupported` | Core has no JIT code path | ✅ Yes |
+| `.optional(fallback:)` | JIT improves perf/accuracy; interpreter fallback available | ✅ Yes |
+| `.automaticWithFallback` | Core self-detects JIT and selects execution path automatically | ✅ Yes |
+| `.requiredOrCrash` | Core crashes or produces garbage without JIT | ❌ No |
+
+### Known JIT-Capable Cores
+
+| Core | Classification | Notes |
+|------|---------------|-------|
+| Dolphin (Wii/GC) | `.automaticWithFallback` | Selects JIT or Cached Interpreter at startup |
+| melonDS (DS) | `.optional(fallback: "Interpreter")` | JIT recompiler boosts DS performance |
+| DeSmuME 2015 (DS) | `.optional(fallback: "Interpreter")` | Older DS core, optional JIT |
+| PCSX Rearmed (PSX) | `.optional(fallback: "Interpreter")` | ARM dynarec; interpreter always available |
+| Mupen64Plus (N64) | `.optional(fallback: "Interpreter")` | JIT recompiler; interpreter fallback |
+| PPSSPP (PSP) | `.optional(fallback: "Interpreter")` | JIT for full-speed PSP; interpreter available |
+| Azahar / Citra (3DS) | `.requiredOrCrash` | Hard crash without JIT when `enableJIT=true` |
+| emuThree (3DS) | `.requiredOrCrash` | Same Citra codebase; same JIT requirement |
+| Flycast (Dreamcast) | `.notSupported` (default) | No JIT path yet |
+
+### Usage
+
+Query a core's JIT requirement before launching a game:
+
+```swift
+let core: PVEmulatorCore = ...
+
+switch core.jitRequirement {
+case .notSupported:
+    break  // no JIT needed — launch immediately
+case .optional(let fallback):
+    // Try to acquire JIT; warn user if unavailable (will run via fallback)
+    acquireJITIfAvailable()
+case .automaticWithFallback:
+    // Attempt JIT acquisition, but launch regardless of outcome
+    acquireJITIfAvailable()
+case .requiredOrCrash:
+    // Must acquire JIT or refuse to launch
+    guard acquireJIT() else {
+        showJITRequiredError()
+        return
+    }
+}
+```
+
+### Adding a New Core
+
+Override `jitRequirement` in the core's `PVEmulatorCore` subclass:
+
+```swift
+open override var jitRequirement: PVJITRequirement {
+    .optional(fallback: "Interpreter")
+}
+```
+
+The default implementation returns `.notSupported`, so only JIT-capable cores need to override.
+
 ## Building
 
 ### Setup Code Signing

@@ -19,7 +19,10 @@ open class PVDesmume2015Core: PVEmulatorCore {
     public override var supportsSkins: Bool { false }
 
     public override var supportsDualScreens: Bool { true }
-    
+
+    /// DeSmuME 2015 can use JIT for better DS performance; falls back to interpreter.
+    public override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
+
     lazy var _bridge: PVDesmume2015CoreBridge = .init()
     
     public required init() {

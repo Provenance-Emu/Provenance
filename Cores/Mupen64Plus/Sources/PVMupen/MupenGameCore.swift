@@ -41,6 +41,9 @@ import GLKit
 //}
 
 @objc public class MupenGameCore: PVEmulatorCore, @unchecked Sendable {
+
+    /// Mupen64Plus uses a JIT recompiler for better N64 performance; interpreter available as fallback.
+    public override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
     
 //    // MARK: - Properties
 //    

@@ -125,6 +125,16 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Both use `@Environment(\.pvEmulatorCoordinator)` — don't access directly from core bridge.
 - Platform-specific layouts (C64, ZX Spectrum, CPC) in `PVUI/Sources/PVSwiftUI/VirtualKeyboard/`.
 
+### JIT Capability Matrix (`PVJITRequirement`)
+- `PVJITRequirement` enum in `PVPrimitives` (Tier 2) — four cases: `.notSupported`,
+  `.optional(fallback:)`, `.automaticWithFallback`, `.requiredOrCrash`.
+- `PVEmulatorCore.jitRequirement` — open var with default `.notSupported`; subclasses override.
+- **CRITICAL for `.requiredOrCrash` cores** (Azahar, emuThree): the app layer MUST acquire JIT
+  before launching. Skipping this check will crash the emulator.
+- When adding a new core, always set `jitRequirement` explicitly if the core has a JIT path.
+- `@_exported import PVPrimitives` added to `PVEmulatorCore.swift` so all core subclasses
+  get `PVJITRequirement` automatically without an explicit import.
+
 ### DS Dual-Screen Skins
 - `supportsSkins` flag on native DS cores (`PVDesmume2015Core`, `PVMelonDSCore`).
 - `DefaultDeltaSkin` layout handles dual-screen sizing independently.

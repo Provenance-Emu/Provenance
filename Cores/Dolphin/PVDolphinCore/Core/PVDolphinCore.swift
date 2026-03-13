@@ -22,6 +22,10 @@ open class PVDolphinCore: PVEmulatorCore, @unchecked Sendable {
 
     open override var supportsSkins: Bool { false }
 
+    /// Dolphin detects JIT availability at startup and selects the appropriate
+    /// execution back-end (JIT or Cached Interpreter) automatically.
+    open override var jitRequirement: PVJITRequirement { .automaticWithFallback }
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)

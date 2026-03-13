@@ -26,6 +26,9 @@ final class PVPPSSPPCore: PVEmulatorCore, @unchecked Sendable {
 
     public override var supportsSkins: Bool { true }
 
+    /// PPSSPP uses JIT for full-speed PSP emulation; interpreter available as fallback.
+    public override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
+
     // PVEmulatorCoreBridged
     public lazy var _bridge: PVPPSSPPCoreBridge = .init()
 
