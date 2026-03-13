@@ -91,6 +91,15 @@ SYSTEM_SHORT_NAMES = {
     "Nintendo - Virtual Boy": "VirtualBoy",
     "Nintendo - Wii": "Wii",
     "Nintendo - Nintendo 3DS": "3DS",
+    # e-Reader is a GBA accessory; its cartridges are GBA ROM files.
+    "Nintendo - e-Reader": "GBA",
+    # Sufami Turbo is a SNES pass-through peripheral; its games run on SNES hardware.
+    "Nintendo - Sufami Turbo": "SNES",
+    # Super Game Boy is a SNES cartridge that runs GB cartridges; map cheats to GB since
+    # the ROM files themselves are standard Game Boy cartridges.
+    "Nintendo - Super Game Boy": "GB",
+    # Super Game Boy 2 is functionally identical to Super Game Boy; also map to GB.
+    "Nintendo - Super Game Boy 2": "GB",
     # PrBoom runs Doom WADs; map to the DOOM system identifier.
     "PrBoom": "DOOM",
     # Wolfenstein 3D engine cheats.
@@ -130,17 +139,19 @@ SYSTEM_SHORT_NAMES = {
     "Apple - Apple II": "AppleII",
 }
 
-# Libretro cht/ directories intentionally NOT mapped (Provenance does not support them):
-#   "Amstrad - GX4000"     — Amstrad GX4000 console; no Provenance core
-#   "ChaiLove"             — Scripting/game engine, not a hardware system
-#   "PuzzleScript"         — Scripting/game engine, not a hardware system
-#   "Thomson - MOTO"       — Thomson MO/TO home computers; no Provenance core
-#
-# Provenance-supported systems with no libretro cht/ directory yet (preemptive mappings above):
-#   "Sony - PlayStation 3"       — PS3 has no libretro cheat directory yet
-#   "Quake" / "Quake II"         — Id Software engines; Wolf3D has cht/, Quake may follow
-#   "Welback Holdings - Mega Duck" — Supported but no cheat directory exists yet
-#   "Apple - Apple II"           — Supported but no cheat directory exists yet
+# Libretro cht/ directories intentionally excluded (Provenance does not support them).
+# Systems listed here are silently skipped — their cheats are NOT written to the database.
+# Add new entries here (with a reason) when a libretro system directory appears that
+# Provenance will never support, so future audits can confirm the omission is deliberate.
+EXCLUDED_SYSTEMS = {
+    "Amstrad - GX4000":       "Amstrad GX4000 console; no Provenance core",
+    "Bit Corporation - Gamate": "Gamate handheld; no Provenance core",
+    "Casio - Loopy":          "Casio Loopy console; no Provenance core",
+    "ChaiLove":               "Scripting/game engine, not a hardware system",
+    "Emerson - Arcadia 2001": "Arcadia 2001 console; no Provenance core",
+    "PuzzleScript":           "Scripting/game engine, not a hardware system",
+    "Thomson - MOTO":         "Thomson MO/TO home computers; no Provenance core",
+}
 
 # Regex to extract region from filename like "Game Name (USA)" or "Game (USA, Europe)"
 REGION_RE = re.compile(r"\(([^)]*(?:USA|Europe|Japan|World|Korea|France|Germany|Spain|Italy|Brazil|Australia|Asia|China|Taiwan)[^)]*)\)")
@@ -455,11 +466,17 @@ def process_cht_directory(cht_root, db_path, md5_map=None):
             continue
 
         system_name = system_dir.name
+
+        # Skip systems that are deliberately excluded (Provenance does not support them)
+        if system_name in EXCLUDED_SYSTEMS:
+            continue
+
         short_name = SYSTEM_SHORT_NAMES.get(system_name)
 
         if not short_name:
+            # Unknown system — still process it using the directory name as short name,
+            # but flag it for the operator so they can add a mapping or exclusion.
             skipped_systems.add(system_name)
-            # Still process it with the directory name as short name
             short_name = system_name
 
         # Insert or get system
@@ -526,7 +543,8 @@ def process_cht_directory(cht_root, db_path, md5_map=None):
         print(f"MD5 hashes found: {total_md5_hits}/{total_games} games ({100*total_md5_hits//max(total_games,1)}%)")
 
     if skipped_systems:
-        print(f"\nSystems without short name mapping ({len(skipped_systems)}):")
+        print(f"\nSystems without short name mapping ({len(skipped_systems)}) — ACTION REQUIRED:")
+        print("  Add an entry to SYSTEM_SHORT_NAMES (if Provenance supports it) or EXCLUDED_SYSTEMS (if not).")
         for s in sorted(skipped_systems):
             print(f"  - {s}")
 
