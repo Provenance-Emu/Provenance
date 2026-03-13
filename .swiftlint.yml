@@ -13,24 +13,13 @@ disabled_rules:
   - switch_case_alignment
   - todo
   - type_name
-  - type_body_length
-  - function_body_length
   - unused_closure_parameter
 
-# parameterized rules can be customized from this configuration file
+# Threshold-configured rules — kept enabled at high tolerances (not in disabled_rules)
 line_length: 200
-# parameterized rules are first parameterized as a warning level, then error level.
 type_body_length:
   - 300 # warning
   - 600 # error
-# parameterized rules are first parameterized as a warning level, then error level.
-# identifier_name_max_length:
-#   - 40 # warning
-#   - 60 # error
-# # parameterized rules are first parameterized as a warning level, then error level.
-# identifier_name_min_length:
-#   - 3 # warning
-#   - 2 # error
 function_body_length:
   - 200 # warning
   - 500 # error
@@ -39,41 +28,93 @@ large_tuple:
   - 6 # error
 
 opt_in_rules:
+  - closure_spacing
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
   - empty_count
+  - empty_string
+  - first_where
   - force_unwrapping
+  - last_where
+  - toggle_bool
 
+# Owned source — only first-party code, no submodules or vendored deps
 included:
+  # App targets
   - Provenance
-  - Provenance Tests
-  - ProvenanceShared
-  - ProvenanceShared-tvOS
+  - "Provenance Tests"
+  - "Provenance Mini Watch App"
+  - "Provenance Mini Watch AppTests"
+  - "Provenance Mini Watch AppUITests"
+  - "Provenance VR"
   - ProvenanceTV
+  # PV* Swift Package modules
+  - PVAudio
+  - PVCheevos
+  - PVCoreAudio
+  - PVCoreBridge
+  - PVCoreBridgeRetro
+  - PVCoreLoader
+  - PVCoreObjCBridge
+  - PVEmulatorCore
+  - PVFeatureFlags
+  - PVHashing
+  - PVHelp
+  - PVJIT
   - PVLibrary
+  - PVLogging
+  - PVLookup
+  - PVMacros
+  - PVObjCUtils
+  - PVPatching
+  - PVPatreon
+  - PVPlists
+  - PVPrimitives
+  - PVSettings
+  - PVShaders
   - PVSupport
-  - Spotlight
-  - TopShelf
+  - PVThemes
+  - PVUI
+  - PVWebServer
+  # Extensions (all first-party)
+  - Extensions/ActivityMonitorExtension
+  - Extensions/ActivityReportExtension
+  - Extensions/BackgroundDownloadExtension
+  - Extensions/macOS
+  - "Extensions/Provenance Stickers"
+  - Extensions/QuickLookPreview
+  - "Extensions/ROM File Provider"
+  - Extensions/Spotlight
+  - Extensions/SpotlightImportExtension
+  - Extensions/ThumbnailExtension
+  - Extensions/TopShelf
+  - Extensions/TopShelfv2
 
-excluded: # paths to ignore during linting. overridden byincluded.
+excluded:
   - Carthage
   - PVSupport/Carthage
   - PVLibrary/Carthage
   - Pods
-  - Cores
+  - Cores        # upstream emulator submodules — not our code
+  - CoresRetro   # RetroArch submodule
+  - Dependencies # vendored third-party (ZipArchive, cubeb, FFMpeg, etc.)
   - Scripts
   - fastlane
   - build
   - archive
   - .build
+  - .swiftpm
 
-analyzer_rules: # Rules run by `swiftlint analyze` (experimental)
+analyzer_rules: # Rules run by `swiftlint analyze`
   - explicit_self
 
-# Override these rules to be warnings for now
+# Severity overrides
 force_cast: warning
 force_try: warning
 empty_count: warning
+empty_string: warning
 
-reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit)
+reporter: "xcode" # override per-invocation with --reporter github-actions-logging in CI
 
 custom_rules:
   placeholders_in_comments:
@@ -84,10 +125,10 @@ custom_rules:
       - comment
       - doccomment
     message: "Placeholder left in comment."
+    severity: warning
   tiles_deprecated:
     included: ".*\\.swift"
     name: "Tiles are deprecated in favor of Frame"
-    regex: "([T,t]ile$|^[T,t]il[e,es])"
+    regex: "\\b[Tt]iles?\\b"
     message: "Tiles are deprecated in favor of Frame"
     severity: warning
-
