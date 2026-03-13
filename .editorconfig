@@ -1,0 +1,35 @@
+root = true
+
+[*]
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = lf
+
+# Swift, Objective-C, C++ — 4-space indent matching .swiftformat
+[*.{swift,m,mm,h,hpp,cpp,cc}]
+indent_style = space
+indent_size = 4
+
+# Config, markup, web
+[*.{yml,yaml,json,xml,plist,xcconfig}]
+indent_style = space
+indent_size = 2
+
+# Ruby (fastlane)
+[*.{rb,gemspec}]
+indent_style = space
+indent_size = 2
+
+# Shell scripts
+[*.{sh,bash,zsh}]
+indent_style = space
+indent_size = 2
+
+# Makefiles require hard tabs
+[Makefile]
+indent_style = tab
+
+# Markdown — preserve trailing spaces (intentional line breaks)
+[*.md]
+trim_trailing_whitespace = false
