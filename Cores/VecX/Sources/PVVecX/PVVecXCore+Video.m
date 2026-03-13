@@ -134,6 +134,7 @@ static CGSize parseHWResolution(NSString *resStr) {
 }
 #endif // HAS_GPU
 
+
 /*
  memset(info, 0, sizeof(*info));
  info->timing.fps            = 50.0;
