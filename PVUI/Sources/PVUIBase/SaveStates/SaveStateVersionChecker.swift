@@ -35,7 +35,7 @@ public enum SaveStateVersionChecker {
     /// strings or known sentinel values such as `"Unknown"` (case-insensitive) that
     /// indicate the version was never recorded (e.g. CloudKit-synced save states).
     private static func normalizedVersion(_ version: String?) -> String? {
-        guard let v = version?.trimmingCharacters(in: .whitespaces), !v.isEmpty else {
+        guard let v = version?.trimmingCharacters(in: .whitespacesAndNewlines), !v.isEmpty else {
             return nil
         }
         return v.caseInsensitiveCompare("unknown") == .orderedSame ? nil : v
