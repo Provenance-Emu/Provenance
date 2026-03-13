@@ -49,22 +49,18 @@ public enum iCloudDriveSync {
     /// Thread-safe set of files currently being recovered from iCloud
     static var filesBeingRecovered = ConcurrentSet<String>()
 
-    /// Check if a file is currently being recovered from iCloud
-    /// - Parameter path: The file path to check
-    /// - Returns: True if the file is currently being recovered
-    public static func isFileBeingRecovered(_ path: String) -> Bool {
-        // Create a synchronous wrapper for the async actor-isolated method
-        let semaphore = DispatchSemaphore(value: 0)
-        var result = false
-
-        Task {
-            result = await filesBeingRecovered.contains(path)
-            semaphore.signal()
-        }
-
-        // Wait with a short timeout to prevent deadlocks
-        _ = semaphore.wait(timeout: .now() + 0.1)
-        return result
+    /// Asynchronously check if a file is currently being recovered from iCloud.
+    ///
+    /// Prefer this over the legacy synchronous variant. Because `filesBeingRecovered`
+    /// is an actor-isolated `ConcurrentSet`, the only safe way to query it without
+    /// blocking a thread is via `await`.  The old synchronous wrapper used a
+    /// `DispatchSemaphore` + unstructured `Task`, which could deadlock when called
+    /// from a context whose executor was already busy (e.g. the main actor).
+    ///
+    /// - Parameter path: The file path to check.
+    /// - Returns: `true` if the file is currently being recovered.
+    public static func isFileBeingRecovered(_ path: String) async -> Bool {
+        await filesBeingRecovered.contains(path)
     }
 
     /// Handle file recovery status check requests

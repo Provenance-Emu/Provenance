@@ -98,7 +98,9 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// Handle frame update notification - single entry point for all frames
     @objc private func handleFrameUpdated(_ notification: Notification) {
         guard Thread.isMainThread else {
-            DispatchQueue.main.sync { [weak self] in self?.handleFrameUpdated(notification) }
+            // Use async (not sync) to avoid deadlocking the calling thread if the
+            // main queue is busy — frame updates are not latency-critical.
+            DispatchQueue.main.async { [weak self] in self?.handleFrameUpdated(notification) }
             return
         }
 
@@ -165,7 +167,9 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// Apply viewport from current skin - single, simple entry point
     internal func applyViewportFromCurrentSkin() {
         guard Thread.isMainThread else {
-            DispatchQueue.main.sync { [weak self] in self?.applyViewportFromCurrentSkin() }
+            // Use async (not sync) to avoid deadlocking the calling thread if the
+            // main queue is busy — viewport updates are not latency-critical.
+            DispatchQueue.main.async { [weak self] in self?.applyViewportFromCurrentSkin() }
             return
         }
 

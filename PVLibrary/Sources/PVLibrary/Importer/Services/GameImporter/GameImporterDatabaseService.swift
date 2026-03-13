@@ -81,8 +81,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         DLOG("Attempting to import game: \(destUrl.lastPathComponent) for system: \(targetSystem.libretroDatabaseName)")
 
         #if !os(tvOS)
-        // Check if this file is currently being recovered from iCloud
-        if iCloudDriveSync.isFileBeingRecovered(queueItem.url.path) {
+        // Check if this file is currently being recovered from iCloud (async — avoids semaphore deadlock)
+        if await iCloudDriveSync.isFileBeingRecovered(queueItem.url.path) {
             ILOG("File \(queueItem.url.lastPathComponent) is currently being recovered from iCloud. Delaying import.")
 
             // Re-queue this item with a delay
