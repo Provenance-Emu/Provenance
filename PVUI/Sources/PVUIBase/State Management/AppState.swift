@@ -532,13 +532,13 @@ public class AppState: ObservableObject {
 
         ILOG("AppState: Bootup finalized")
 
-        // Start Home Screen Quick Action observation off the critical path.
-        // HomeScreenShortcutService owns shortcut registration and tap queuing.
+        // Start Home Screen Quick Action observation. Runs on main actor (already here),
+        // does a synchronous Realm snapshot first so shortcuts appear immediately.
 #if os(iOS) || targetEnvironment(macCatalyst)
         if let library = gameLibrary {
-            Task.detached(priority: .utility) {
-                await HomeScreenShortcutService.shared.startObserving(gameLibrary: library)
-            }
+            HomeScreenShortcutService.shared.startObserving(gameLibrary: library)
+        } else {
+            ELOG("AppState: gameLibrary nil at finalizeBootup — Home Screen shortcuts skipped")
         }
 #endif
     }

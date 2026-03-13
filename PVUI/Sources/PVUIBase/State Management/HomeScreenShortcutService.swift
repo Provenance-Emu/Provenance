@@ -40,8 +40,15 @@ public final class HomeScreenShortcutService {
         guard !isReady else { return }
         isReady = true
 
-        let maxItems = 4   // iOS shows up to 4 Quick Actions
-        let maxPerGroup = maxItems / 2
+        // 1. Set shortcuts immediately from the current Realm snapshot so they show
+        //    even before the reactive observer fires its first emission.
+        applySnapshot(gameLibrary: gameLibrary)
+
+        // 2. Subscribe for live updates as favorites / recents change.
+        //    The closure captures gameLibrary weakly-by-reference; since it's a class
+        //    held by AppState for the app's lifetime, strong capture is also safe, but
+        //    explicit capture avoids a retain cycle through the DisposeBag.
+        let maxPerGroup = 2
 
         Observable.combineLatest(
             gameLibrary.favorites
@@ -49,23 +56,72 @@ public final class HomeScreenShortcutService {
                 .map { Array($0.prefix(maxPerGroup)) },
             gameLibrary.recents
                 .mapMany { $0.game?.asShortcut(isFavorite: false) }
-                .map { Array($0.compactMap { $0 }.prefix(maxPerGroup)) }
-        ) { favorites, recents in
-            Array((favorites + recents).prefix(maxItems))
-        }
+                .map { Array($0.prefix(maxPerGroup)) }
+        ) { favorites, recents in (favorites, recents) }
         .observe(on: MainScheduler.instance)
-        .bind(onNext: { shortcuts in
+        .bind(onNext: { [weak gameLibrary] (favorites, recents) in
+            guard let gameLibrary else { return }
+            let shortcuts = Self.buildShortcuts(
+                favorites: favorites, recents: recents, library: gameLibrary)
             UIApplication.shared.shortcutItems = shortcuts
-            ILOG("HomeScreenShortcutService: registered \(shortcuts.count) shortcut item(s)")
+            ILOG("HomeScreenShortcutService: updated \(shortcuts.count) shortcut item(s)")
         })
         .disposed(by: disposeBag)
 
-        // Deliver any tap that arrived during bootup
+        // 3. Deliver any tap that arrived during bootup.
         if let md5 = pendingMD5 {
             pendingMD5 = nil
             ILOG("HomeScreenShortcutService: delivering queued tap md5=\(md5)")
             deliverTap(md5: md5)
         }
+    }
+
+    /// Synchronous Realm snapshot — sets shortcutItems immediately without waiting for RxSwift.
+    private func applySnapshot(gameLibrary: PVGameLibrary<RealmDatabaseDriver>) {
+        let favorites = Array(gameLibrary.favoritesResults.prefix(2))
+            .map { $0.asShortcut(isFavorite: true) }
+        let recents = Array(gameLibrary.recentsResults.prefix(2))
+            .compactMap { $0.game?.asShortcut(isFavorite: false) }
+        let shortcuts = Self.buildShortcuts(favorites: favorites, recents: recents, library: gameLibrary)
+        UIApplication.shared.shortcutItems = shortcuts
+        ILOG("HomeScreenShortcutService: initial snapshot — \(shortcuts.count) item(s) " +
+             "(\(favorites.count) fav, \(recents.count) recent)")
+    }
+
+    /// Merges favorites + recents and backfills from recently imported games when the
+    /// combined total falls below `maxTotal`.  Deduplicates by MD5.
+    private static func buildShortcuts(
+        favorites: [UIApplicationShortcutItem],
+        recents: [UIApplicationShortcutItem],
+        library: PVGameLibrary<RealmDatabaseDriver>,
+        maxTotal: Int = 4
+    ) -> [UIApplicationShortcutItem] {
+        var result: [UIApplicationShortcutItem] = []
+        var seen = Set<String>()
+
+        for item in favorites + recents {
+            guard result.count < maxTotal,
+                  let md5 = item.userInfo?["PVGameHash"] as? String,
+                  !seen.contains(md5) else { continue }
+            result.append(item)
+            seen.insert(md5)
+        }
+
+        // Backfill with recently imported games if we still have open slots.
+        if result.count < maxTotal {
+            // Scan a small window — scanning the entire library would be wasteful.
+            let candidates = Array(library.database
+                .all(PVGame.self)
+                .sorted(byKeyPath: #keyPath(PVGame.importDate), ascending: false)
+                .prefix(maxTotal * 4))
+            for game in candidates where result.count < maxTotal {
+                guard !game.isInvalidated, !seen.contains(game.md5Hash) else { continue }
+                result.append(game.asShortcut(isFavorite: false))
+                seen.insert(game.md5Hash)
+            }
+        }
+
+        return result
     }
 
     // MARK: - Tap handling
