@@ -33,8 +33,8 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "fire1", "1", "i", "a", "fire", "shoot": self = .fire1
-            case "fire2", "2", "ii", "b", "use": self = .fire2
+            case "fire1", "fire 1", "1", "i", "a", "fire", "shoot": self = .fire1
+            case "fire2", "fire 2", "2", "ii", "b", "use": self = .fire2
             case "select", "s": self = .select
             case "pause", "p": self = .pause
             case "reset": self = .reset
