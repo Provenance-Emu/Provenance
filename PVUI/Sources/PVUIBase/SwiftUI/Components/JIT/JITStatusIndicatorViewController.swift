@@ -24,7 +24,8 @@ public final class JITStatusIndicatorViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
-        view.isUserInteractionEnabled = true
+        // Pass-through: the indicator is display-only; touches must reach the game/OSD beneath.
+        view.isUserInteractionEnabled = false
 
         setupHostingController()
         setupNotificationObservers()
@@ -34,7 +35,7 @@ public final class JITStatusIndicatorViewController: UIViewController {
         let indicatorView = JITStatusIndicatorView(viewModel: viewModel)
         let host = UIHostingController(rootView: indicatorView)
         host.view.backgroundColor = .clear
-        host.view.isUserInteractionEnabled = true
+        host.view.isUserInteractionEnabled = false
 
         addChild(host)
         view.addSubview(host.view)
