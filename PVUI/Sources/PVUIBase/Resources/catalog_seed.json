@@ -2604,7 +2604,7 @@
       "name": "Sega Game Gear",
       "author": "felix#6506",
       "systems": [
-        "unofficial"
+        "gamegear"
       ],
       "gameTypeIdentifier": null,
       "version": null,
@@ -2628,7 +2628,7 @@
       "name": "SMS Dpad",
       "author": "felix#6506",
       "systems": [
-        "unofficial"
+        "masterSystem"
       ],
       "gameTypeIdentifier": null,
       "version": null,
@@ -2652,7 +2652,7 @@
       "name": "SMS Thumbstick",
       "author": "felix#6506",
       "systems": [
-        "unofficial"
+        "masterSystem"
       ],
       "gameTypeIdentifier": null,
       "version": null,
@@ -2676,7 +2676,7 @@
       "name": "SEGA SG-1000 Thumbstick",
       "author": "felix#6506",
       "systems": [
-        "unofficial"
+        "sg1000"
       ],
       "gameTypeIdentifier": null,
       "version": null,
@@ -2724,7 +2724,7 @@
       "name": "Turbo Grafx 16",
       "author": "felix#6506",
       "systems": [
-        "unofficial"
+        "pce"
       ],
       "gameTypeIdentifier": null,
       "version": null,
@@ -2748,7 +2748,7 @@
       "name": "Turbo Grafx 16 DPAD",
       "author": "felix#6506",
       "systems": [
-        "unofficial"
+        "pce"
       ],
       "gameTypeIdentifier": null,
       "version": null,
@@ -2772,7 +2772,7 @@
       "name": "Mini Mame",
       "author": "felix#6506",
       "systems": [
-        "unofficial"
+        "mame"
       ],
       "gameTypeIdentifier": null,
       "version": null,

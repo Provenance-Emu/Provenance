@@ -22,7 +22,7 @@ extension SystemIdentifier {
         case .GB:            return "gbc"
         case .GBC:           return "gbc"
         case .GBA:           return "gba"
-        case .VirtualBoy:    return "vb"
+        case .VirtualBoy:    return "virtualBoy"
         case .PokemonMini:   return "pm"
         case .DS:            return "nds"
         case ._3DS:          return "3ds"

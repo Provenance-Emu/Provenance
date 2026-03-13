@@ -589,8 +589,9 @@ private struct CatalogSkinCard: View {
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
-                    // System tags (max 2)
-                    ForEach(entry.systems.prefix(2), id: \.self) { system in
+                    // System tags (max 2, excluding legacy codes like "unofficial")
+                    let validSystems = entry.systems.filter { !SkinCatalogService.isLegacySystemCode($0) }
+                    ForEach(validSystems.prefix(2), id: \.self) { system in
                         Text(system.uppercased())
                             .font(.system(size: 9, weight: .bold, design: .rounded))
                             .tracking(0.5)

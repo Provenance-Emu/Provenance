@@ -6,6 +6,16 @@
 //  Copyright © 2025 Provenance Emu. All rights reserved.
 //
 
+import Foundation
+
+// MARK: - Skin Install Notifications
+
+public extension Notification.Name {
+    /// Posted after a skin deep-link install succeeds. userInfo key: "skinName" (String).
+    static let skinInstallDidSucceed = Notification.Name("PVSkinInstallDidSucceed")
+    /// Posted after a skin deep-link install fails. userInfo key: "error" (String).
+    static let skinInstallDidFail = Notification.Name("PVSkinInstallDidFail")
+}
 
 public enum AppURLKeys: String, Codable {
     case open
@@ -14,6 +24,8 @@ public enum AppURLKeys: String, Codable {
     case screen
     /// Debug/automation actions: provenance://debug/<action>
     case debug
+    /// Install a remote skin: provenance://install-skin?url=<encoded-url>
+    case installSkin = "install-skin"
 
     public enum OpenKeys: String, Codable {
         case md5Key = "PVGameMD5Key"
@@ -30,5 +42,9 @@ public enum AppURLKeys: String, Codable {
         case lastQuickSave
         case lastAnySave
         case lastManualSave
+    }
+    public enum InstallSkinKeys: String, Codable {
+        /// The URL of the skin file to download and install.
+        case url = "url"
     }
 }

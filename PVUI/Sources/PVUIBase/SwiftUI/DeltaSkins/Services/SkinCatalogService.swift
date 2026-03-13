@@ -245,12 +245,29 @@ public actor SkinCatalogService {
         return results
     }
 
+    /// System codes that were used historically but have been remapped to proper identifiers.
+    /// These are filtered out of the available systems list to avoid showing stale labels.
+    private static let legacySystemCodes: Set<String> = ["unofficial", "unsupported", "unknown"]
+
+    /// Returns `true` if the given system code is a legacy/invalid placeholder
+    /// that should be hidden from the UI.
+    ///
+    /// This is a `nonisolated` static helper so it can be called from SwiftUI views
+    /// without needing to hop on the actor.
+    public nonisolated static func isLegacySystemCode(_ code: String) -> Bool {
+        legacySystemCodes.contains(code.lowercased())
+    }
+
     /// Get all unique system short codes that have at least one skin in the catalog.
+    ///
+    /// Legacy/invalid system codes (e.g. "unofficial") are excluded from the results —
+    /// those catalog entries have been remapped to proper identifiers in the remote catalog.
     ///
     /// - Returns: Sorted array of system codes.
     public func availableSystems() async throws -> [String] {
         let catalog = try await fetchCatalog()
         let systems = Set(catalog.skins.flatMap { $0.systems })
+            .subtracting(Self.legacySystemCodes)
         return systems.sorted()
     }
 

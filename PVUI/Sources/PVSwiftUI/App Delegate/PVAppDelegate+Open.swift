@@ -218,6 +218,9 @@ extension PVAppDelegate {
         case .screen, .debug:
             return ScreenNavigator.shared.handle(url: url)
 
+        case .installSkin:
+            return handleInstallSkin(url: url, components: components)
+
         case .save:
             guard let queryItems = components.queryItems, !queryItems.isEmpty else {
                 return false
@@ -423,5 +426,61 @@ extension PVAppDelegate {
         // No matches found with system, fall back to just game name
         WLOG("No games found matching name: \(gameName) on system: \(systemName)")
         return handleOpenByGameName(gameName)
+    }
+
+    /// Handle the `provenance://install-skin?url=<encoded-url>` deep link.
+    ///
+    /// Downloads the skin file at the given URL to a temporary location,
+    /// then passes it to `DeltaSkinManager.importSkin(from:)`.
+    /// A banner notification is shown on success or failure.
+    private func handleInstallSkin(url deepLink: URL, components: URLComponents) -> Bool {
+        guard let skinURLString = components.queryItems?.first(where: {
+            $0.name == AppURLKeys.InstallSkinKeys.url.rawValue
+        })?.value,
+              !skinURLString.isEmpty,
+              let skinURL = URL(string: skinURLString) else {
+            ELOG("install-skin: missing or invalid 'url' query parameter in \(deepLink.absoluteString)")
+            return false
+        }
+
+        ILOG("install-skin: downloading skin from \(skinURL.absoluteString)")
+
+        Task {
+            do {
+                // Download skin to a temporary file
+                let (tempURL, _) = try await URLSession.shared.download(from: skinURL)
+                defer { try? FileManager.default.removeItem(at: tempURL) }
+
+                // Derive a sensible filename from the source URL
+                let filename = skinURL.lastPathComponent
+                let destURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+                try? FileManager.default.removeItem(at: destURL)
+                try FileManager.default.moveItem(at: tempURL, to: destURL)
+                defer { try? FileManager.default.removeItem(at: destURL) }
+
+                // Import via DeltaSkinManager
+                try await DeltaSkinManager.shared.importSkin(from: destURL)
+                ILOG("install-skin: successfully installed '\(filename)'")
+
+                await MainActor.run {
+                    NotificationCenter.default.post(
+                        name: .skinInstallDidSucceed,
+                        object: nil,
+                        userInfo: ["skinName": filename]
+                    )
+                }
+            } catch {
+                ELOG("install-skin: failed to install skin from \(skinURL.absoluteString): \(error.localizedDescription)")
+                await MainActor.run {
+                    NotificationCenter.default.post(
+                        name: .skinInstallDidFail,
+                        object: nil,
+                        userInfo: ["error": error.localizedDescription]
+                    )
+                }
+            }
+        }
+
+        return true
     }
 }
