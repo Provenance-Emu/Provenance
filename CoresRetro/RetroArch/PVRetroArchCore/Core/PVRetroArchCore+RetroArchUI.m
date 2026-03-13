@@ -343,10 +343,28 @@ int argc =  1;
         //settings->bools.cheevos_enable = true;
     }
     [self writeConfigFile];
-    /// Sync BIOS resources, but exclude tos.img as it's handled specially in writeConfigFile
-    /// This prevents overwriting the fixed TOS image
+    /// Sync BIOS resources to the RetroArch system directory.
+    /// writeConfigFile already validated and wrote tos.img (for Hatari/Atari ST) before this call.
+    /// syncResources only copies files that are absent at the destination, so if writeConfigFile
+    /// wrote a valid tos.img it will not be overwritten.  If writeConfigFile skipped tos.img
+    /// (e.g. because it detected a ZIP), syncResources would otherwise blindly copy the invalid
+    /// file — guard against that by removing any ZIP tos.img after the sync.
     NSString *systemDir = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
     [self syncResources:self.BIOSPath to:systemDir];
+
+    // For Hatari/Atari ST: if a bad (ZIP) tos.img ended up in the system directory via the
+    // syncResources call above, remove it so Hatari doesn't try to boot with an invalid ROM.
+    if ([self.systemIdentifier containsString:@"atarist"] || [self.coreIdentifier containsString:@"hatari"]) {
+        NSString *sysTos = [systemDir stringByAppendingPathComponent:@"tos.img"];
+        NSData *sysTosData = [NSData dataWithContentsOfFile:sysTos options:NSDataReadingMappedIfSafe error:nil];
+        if (sysTosData.length >= 2) {
+            const unsigned char *b = (const unsigned char *)sysTosData.bytes;
+            if (b[0] == 0x50 && b[1] == 0x4B) {
+                ELOG(@"Removing invalid (ZIP) tos.img from system dir: %@", sysTos);
+                [[NSFileManager defaultManager] removeItemAtPath:sysTos error:nil];
+            }
+        }
+    }
 
     // TOS image is synced clean (no byte-patching) by writeConfigFile — no re-apply needed.
     // The previous byte-mutation hack (SPIKE 2823) was corrupting the TOS ROM and causing
@@ -662,10 +680,9 @@ void extract_bundles();
                 }
 
                 if (!tosIsZip) {
-                    /// Source validated; now replace the destination atomically.
-                    if ([fm fileExistsAtPath:tosImagePath]) {
-                        [fm removeItemAtPath:tosImagePath error:nil];
-                    }
+                    /// Source validated; write atomically — NSDataWritingAtomic writes to a temp file
+                    /// then renames, so no pre-delete is needed and the last known-good tos.img is
+                    /// preserved if the write fails (e.g. low disk space).
                     NSError *writeError = nil;
                     if (![tosData writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError]) {
                         ELOG(@"Failed to write TOS image to %@: %@", tosImagePath, writeError.localizedDescription);

@@ -50,9 +50,16 @@ static cocoa_input_data_t * _Nullable dos_get_cocoa_input(void) {
 // rather than the absolute window position (window_pos_x/y) used by RETRO_DEVICE_POINTER
 // cores such as DOSBox-Pure.  The TouchTrackpadView sends accumulated normalised 0–1
 // cursor positions; we compute the frame-to-frame delta here and scale it to useful units.
+//
+// NOTE: st_mouse_prev is file-scope static and therefore shared across all instances and
+// sessions.  The valid flag is reset on leftMouseUp and rightMouseUp (finger-lift events)
+// which covers the common case.  If a session is terminated while a button is held, valid
+// may be YES at the start of the next session; the first mouseMovedAt call will produce
+// a harmless delta from the stale position, and valid-tracking immediately becomes correct
+// from the second event onward.
 static struct {
     CGFloat x, y;           // last known normalised cursor position
-    BOOL    valid;          // NO until the first mouse-moved event this session
+    BOOL    valid;          // NO until the first mouse-moved event; reset on button-up
 } st_mouse_prev = { 0.5f, 0.5f, NO };
 
 // Scale factor: a 1 % (0.01) normalised delta → this many mouse_rel units.
@@ -206,6 +213,13 @@ static void st_ra_update_mouse_rel(CGPoint normPos) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
 
+    // Zero the absolute-position fields so the cocoa input path always returns mouse_rel_*
+    // deltas.  On iOS with HAVE_IOS_TOUCHMOUSE, window_pos_* takes priority over mouse_rel_*;
+    // if a prior pointer/absolute path left these non-zero, Hatari would silently ignore the
+    // relative values.
+    apple->window_pos_x = 0;
+    apple->window_pos_y = 0;
+
     if (st_mouse_prev.valid) {
         CGFloat dx = normPos.x - st_mouse_prev.x;
         CGFloat dy = normPos.y - st_mouse_prev.y;
@@ -261,6 +275,11 @@ static void st_ra_update_mouse_rel(CGPoint normPos) {
 - (void)rightMouseUp {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (apple) apple->mouse_buttons &= ~COCOA_MOUSE_BTN_RIGHT;
+    // Mirror leftMouseUp: reset delta tracking on right-button release so a subsequent
+    // touch doesn't produce a phantom jump from the stale previous position.
+    if (dos_is_atarist(self)) {
+        st_mouse_prev.valid = NO;
+    }
 }
 
 @end
