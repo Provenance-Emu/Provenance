@@ -19,6 +19,8 @@
 #import "PVThinLibretroFrontend.h"
 
 @import Foundation;
+@import QuartzCore;   // CACurrentMediaTime
+@import CoreVideo;    // kCVPixelFormatType_32BGRA
 @import PVLoggingObjC;
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
@@ -955,10 +957,6 @@ static bool thin_environment(unsigned cmd, void *data) {
             *(unsigned *)data = RETRO_HW_CONTEXT_OPENGLES3;
             return true;
         }
-
-        // ---- Cheevos ----
-        case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS:
-            return true;
 
         default:
             DLOG(@"ThinEnv UNSUPPORTED cmd=%u", cmd);

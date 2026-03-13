@@ -80,8 +80,31 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
     public static let shared = PVDynamicLibretroCoreScanner()
     private init() {}
 
+    // ---------------------------------------------------------------------------
+    // MARK: - Feature flag gate
+    // ---------------------------------------------------------------------------
+
+    /// UserDefaults key that enables the dynamic scanner.
+    /// Mirror of the `PVFeature.dynamicLibretroScanner` raw value in PVFeatureFlags.
+    public static let featureFlagKey = "dynamicLibretroScanner"
+
+    /// Returns `true` when the dynamic scanner is enabled.
+    ///
+    /// Toggle in debug builds via:
+    /// ```
+    /// UserDefaults.standard.set(true, forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
+    /// ```
+    /// Or from the PVFeatureFlags debug-override UI.
+    /// **Off by default** — enable to test buildbot-style libretro cores.
+    public static var isFeatureEnabled: Bool {
+        UserDefaults.standard.bool(forKey: featureFlagKey)
+    }
+
     // Thread-safe cache: identifier → DiscoveredLibretroCore
     private let discoveredStorage = OSAllocatedUnfairLock<[String: DiscoveredLibretroCore]>(initialState: [:])
+
+    // Tracks the set of paths already probed so repeat scan() calls skip them.
+    private let probedPaths = OSAllocatedUnfairLock<Set<String>>(initialState: [])
 
     // ---------------------------------------------------------------------------
     // MARK: - Scan
@@ -107,7 +130,21 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         var newCores: [DiscoveredLibretroCore] = []
 
         for url in candidates {
-            guard let core = probe(executableURL: url) else { continue }
+            let path = url.path
+
+            // Skip paths we have already probed (dlopen is expensive).
+            let alreadyProbed = probedPaths.withLock { $0.contains(path) }
+            if alreadyProbed {
+                DLOG("DynamicLibretroScanner: skipping already-probed \(url.lastPathComponent)")
+                continue
+            }
+
+            guard let core = probe(executableURL: url) else {
+                probedPaths.withLock { $0.insert(path) }
+                continue
+            }
+            probedPaths.withLock { $0.insert(path) }
+
             let id = core.syntheticIdentifier
 
             // Skip if already known via a static plist
@@ -290,11 +327,11 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
 /// Must mirror the layout of `struct retro_system_info` from libretro.h exactly.
 @_alignment(8)
 private struct RawLibretroSystemInfo {
-    var library_name: UnsafePointer<CChar>?
-    var library_version: UnsafePointer<CChar>?
-    var valid_extensions: UnsafePointer<CChar>?
-    var need_fullpath: Bool
-    var block_extract: Bool
+    var library_name: UnsafePointer<CChar>? = nil
+    var library_version: UnsafePointer<CChar>? = nil
+    var valid_extensions: UnsafePointer<CChar>? = nil
+    var need_fullpath: Bool = false
+    var block_extract: Bool = false
 }
 #endif
 
@@ -307,12 +344,24 @@ public extension CoreLoader {
     /// Injects dynamically-discovered libretro cores into the core-plist list.
     /// Call this after `getCorePlists()` to merge in thin-wrapper sub-cores.
     ///
+    /// The scan is guarded by the `dynamicLibretroScanner` feature flag (off by default).
+    /// Enable it for testing via:
+    /// ```
+    /// UserDefaults.standard.set(true, forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
+    /// ```
+    ///
     /// - Parameter plists: The existing static plist array.
     /// - Returns: Updated array that includes a synthetic "Thin Libretro" parent
-    ///            containing all newly-discovered dylib cores.
+    ///            containing all newly-discovered dylib cores, or the original array
+    ///            unchanged if the feature flag is disabled.
     static func mergeDiscoveredLibretroCores(
         into plists: [EmulatorCoreInfoPlist]
     ) -> [EmulatorCoreInfoPlist] {
+
+        guard PVDynamicLibretroCoreScanner.isFeatureEnabled else {
+            ILOG("DynamicLibretroScanner: disabled via feature flag — skipping scan (set '\(PVDynamicLibretroCoreScanner.featureFlagKey)' in UserDefaults to enable)")
+            return plists
+        }
 
         // Collect identifiers that are already registered
         var knownIds: Set<String> = []
@@ -331,7 +380,11 @@ public extension CoreLoader {
             return plists
         }
 
+        // Remove any previous synthetic parent so repeated calls don't duplicate it.
+        let thinLibretroID = syntheticParent.identifier
+        let deduplicated = plists.filter { $0.identifier != thinLibretroID }
+
         ILOG("DynamicLibretroScanner: merging \(syntheticParent.subCores?.count ?? 0) thin-wrapper sub-cores into plist")
-        return plists + [syntheticParent]
+        return deduplicated + [syntheticParent]
     }
 }
