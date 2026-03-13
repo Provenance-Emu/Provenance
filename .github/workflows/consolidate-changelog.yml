@@ -1,0 +1,309 @@
+name: Consolidate Changelog Fragments
+
+# Merges .changelog/NNNN.md fragment files into CHANGELOG.md [Unreleased].
+#
+# Runs automatically when a PR merges to develop (so the fragment is absorbed
+# immediately) and weekly on Mondays alongside update-changelog.yml.
+# Can also be triggered manually to absorb any pending fragments.
+#
+# Design goals
+# ─────────────
+# • Zero merge conflicts: each PR only touches .changelog/NNNN.md (unique file).
+# • PR numbers are always present: the filename is the source of truth.
+# • Entries are sorted (newest PR first within each section), deduplicated.
+# • Multi-line entries (indented continuation) are preserved correctly.
+# • The script is idempotent: running twice produces the same result.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [develop]
+  schedule:
+    # Every Monday at 07:30 UTC (30 min after update-changelog.yml)
+    - cron: '30 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  consolidate:
+    name: Absorb fragments into CHANGELOG.md
+    # For PR events: only when the PR was actually merged (not just closed).
+    if: |
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: develop
+          # Need write access; GITHUB_TOKEN works for same-repo pushes.
+          token: ${{ github.token }}
+
+      - name: Check for fragment files
+        id: check
+        run: |
+          count=$(find .changelog -maxdepth 1 -name '*.md' \
+                    ! -name 'README.md' | wc -l | tr -d ' ')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Fragment files found: $count"
+          if [ "$count" -gt 0 ]; then
+            find .changelog -maxdepth 1 -name '*.md' ! -name 'README.md' -print
+          fi
+
+      - name: Consolidate fragments into CHANGELOG.md
+        if: steps.check.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 << 'PYEOF'
+          import re, os, sys, subprocess, json
+
+          # ── Constants ────────────────────────────────────────────────────────
+          CHANGELOG_PATH = 'CHANGELOG.md'
+          FRAGMENT_DIR   = '.changelog'
+          # Canonical section order (controls the final rendered order)
+          SECTION_ORDER  = ['Added', 'Fixed', 'Changed', 'CI / Infrastructure']
+
+          # ── Helpers ──────────────────────────────────────────────────────────
+
+          def extract_pr_num(text: str) -> int | None:
+              """Return the first PR number in text, e.g. (#3064) → 3064."""
+              m = re.search(r'\(#(\d+)\)', text)
+              return int(m.group(1)) if m else None
+
+          def ensure_pr_ref(entry: str, pr_num: int | None) -> str:
+              """Append (#NNNN) to an entry if it has no PR reference yet."""
+              if pr_num is None:
+                  return entry
+              if re.search(r'\(#\d+\)', entry):
+                  return entry  # already has one
+              return entry.rstrip() + f' (#{pr_num})'
+
+          def parse_fragment(path: str) -> dict:
+              """
+              Parse a .changelog/NNNN.md file.
+              Returns {'pr_num': int|None, 'sections': {name: [entry_lines]}}
+              where each entry_lines is a list of strings (first is the '- ...'
+              bullet; subsequent lines are continuation lines with leading spaces).
+              """
+              basename = os.path.basename(path)
+              stem     = os.path.splitext(basename)[0]
+              pr_num   = int(stem) if stem.isdigit() else None
+
+              sections: dict[str, list[list[str]]] = {}
+              current_section: str | None = None
+              current_entry:   list[str] | None = None
+
+              with open(path, encoding='utf-8') as f:
+                  for raw in f:
+                      line = raw.rstrip('\n')
+                      stripped = line.strip()
+
+                      if stripped.startswith('### '):
+                          # Flush previous entry
+                          if current_section is not None and current_entry:
+                              sections[current_section].append(current_entry)
+                              current_entry = None
+                          current_section = stripped[4:].strip()
+                          sections.setdefault(current_section, [])
+
+                      elif stripped.startswith('- ') and current_section is not None:
+                          # Flush previous entry
+                          if current_entry:
+                              sections[current_section].append(current_entry)
+                          # Start new entry (ensure PR ref)
+                          bullet = ensure_pr_ref(stripped, pr_num)
+                          current_entry = [bullet]
+
+                      elif current_entry is not None and stripped:
+                          # Continuation line (indented detail)
+                          current_entry.append('  ' + stripped)
+
+                      # Blank lines inside entries are ignored to keep things clean.
+
+              # Flush last entry
+              if current_section is not None and current_entry:
+                  sections[current_section].append(current_entry)
+
+              return {'pr_num': pr_num, 'sections': sections}
+
+          def entry_sort_key(entry_lines: list[str]) -> int:
+              """Sort key: PR number descending (0 for no-PR entries → sort last)."""
+              pr = extract_pr_num(' '.join(entry_lines))
+              return -(pr if pr else 0)
+
+          def dedup_entries(entries: list[list[str]]) -> list[list[str]]:
+              """Remove duplicate entries by PR number (keep first occurrence)."""
+              seen: set[int] = set()
+              result: list[list[str]] = []
+              for e in entries:
+                  pr = extract_pr_num(' '.join(e))
+                  if pr:
+                      if pr in seen:
+                          continue
+                      seen.add(pr)
+                  result.append(e)
+              return result
+
+          # ── Parse CHANGELOG.md ───────────────────────────────────────────────
+
+          with open(CHANGELOG_PATH, encoding='utf-8') as f:
+              changelog = f.read()
+
+          unreleased_header_m = re.search(r'## \[Unreleased\][^\n]*\n', changelog)
+          if not unreleased_header_m:
+              print("No [Unreleased] section found — nothing to do.", file=sys.stderr)
+              sys.exit(0)
+
+          before_unreleased = changelog[:unreleased_header_m.start()]
+          header_line       = changelog[unreleased_header_m.start():unreleased_header_m.end()]
+          body_start        = unreleased_header_m.end()
+          next_release_m    = re.search(r'\n## \[', changelog[body_start:])
+          body_end          = body_start + next_release_m.start() if next_release_m else len(changelog)
+          after_unreleased  = changelog[body_end:]
+          existing_body     = changelog[body_start:body_end]
+
+          # Parse existing [Unreleased] body into sections
+          existing_sections: dict[str, list[list[str]]] = {}
+          current_section: str | None = None
+          current_entry:   list[str] | None = None
+
+          for raw in existing_body.split('\n'):
+              line    = raw.rstrip()
+              stripped = line.strip()
+
+              if stripped.startswith('### '):
+                  if current_section is not None and current_entry:
+                      existing_sections[current_section].append(current_entry)
+                      current_entry = None
+                  current_section = stripped[4:].strip()
+                  existing_sections.setdefault(current_section, [])
+
+              elif stripped.startswith('- ') and current_section is not None:
+                  if current_entry:
+                      existing_sections[current_section].append(current_entry)
+                  current_entry = [stripped]
+
+              elif current_entry is not None and stripped:
+                  current_entry.append('  ' + stripped)
+
+          if current_section is not None and current_entry:
+              existing_sections[current_section].append(current_entry)
+
+          # ── Parse fragment files ──────────────────────────────────────────────
+
+          fragment_paths = [
+              os.path.join(FRAGMENT_DIR, f)
+              for f in sorted(os.listdir(FRAGMENT_DIR))
+              if f.endswith('.md') and f != 'README.md'
+          ]
+
+          if not fragment_paths:
+              print("No fragment files found — nothing to merge.")
+              sys.exit(0)
+
+          print(f"Processing {len(fragment_paths)} fragment(s):", *fragment_paths, sep='\n  ')
+
+          fragments = [parse_fragment(p) for p in fragment_paths]
+
+          # ── Merge ─────────────────────────────────────────────────────────────
+
+          # Collect all section names (existing + from fragments)
+          all_sections: list[str] = list(SECTION_ORDER)
+          for frag in fragments:
+              for s in frag['sections']:
+                  if s not in all_sections:
+                      all_sections.append(s)
+
+          merged: dict[str, list[list[str]]] = {}
+          for section in all_sections:
+              existing = existing_sections.get(section, [])
+              incoming: list[list[str]] = []
+              for frag in fragments:
+                  incoming.extend(frag['sections'].get(section, []))
+
+              combined = existing + incoming
+              combined = dedup_entries(combined)
+              combined.sort(key=entry_sort_key)
+              if combined:
+                  merged[section] = combined
+
+          # ── Rebuild [Unreleased] body ──────────────────────────────────────────
+
+          section_blocks: list[str] = []
+          for section in all_sections:
+              entries = merged.get(section)
+              if not entries:
+                  continue
+              lines = [f'### {section}']
+              for entry_lines in entries:
+                  lines.extend(entry_lines)
+              section_blocks.append('\n'.join(lines))
+
+          new_body = '\n\n'.join(section_blocks) + '\n' if section_blocks else ''
+
+          # ── Write CHANGELOG.md ────────────────────────────────────────────────
+
+          new_changelog = before_unreleased + header_line + '\n' + new_body + after_unreleased
+
+          with open(CHANGELOG_PATH, 'w', encoding='utf-8') as f:
+              f.write(new_changelog)
+
+          print("CHANGELOG.md updated.")
+
+          # ── Remove processed fragment files ───────────────────────────────────
+
+          for p in fragment_paths:
+              os.remove(p)
+              print(f"  Deleted {p}")
+
+          PYEOF
+
+      - name: Commit consolidated changelog
+        if: steps.check.outputs.count != '0'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage deletions in .changelog/ and CHANGELOG.md update
+          git add CHANGELOG.md
+          git add -u .changelog/     # stage any deleted fragment files
+
+          if git diff --cached --quiet; then
+            echo "No changes after consolidation — nothing to commit."
+            exit 0
+          fi
+
+          # Build a compact summary of which PRs were absorbed
+          absorbed=$(git diff --cached --name-only \
+            | grep '^\.changelog/' \
+            | grep -v 'README' \
+            | sed 's|\.changelog/||; s|\.md||' \
+            | sort -n \
+            | sed 's/^/#/' \
+            | paste -sd ', ')
+
+          msg="chore(changelog): absorb fragments${absorbed:+ ($absorbed)}"
+
+          git commit -m "$msg
+
+Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+          # Push with retry in case of a race with auto-rebase
+          for attempt in 1 2 3; do
+            git pull --rebase origin develop 2>/dev/null || true
+            if git push origin develop; then
+              echo "Pushed successfully."
+              break
+            fi
+            echo "Push attempt $attempt failed, retrying..."
+            sleep $((attempt * 3))
+          done

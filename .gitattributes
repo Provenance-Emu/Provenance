@@ -1,5 +1,9 @@
-# Use git's built-in union merge driver for changelog files.
-# Concurrent branches each adding entries will have both sets of lines kept
-# rather than producing a merge conflict that requires manual resolution.
+# Use git's built-in union merge driver for CHANGELOG.md.
+# This is a last-resort fallback — prefer .changelog/ fragment files (see
+# .changelog/README.md) which eliminate conflicts entirely because each PR
+# writes to a unique .changelog/NNNN.md file.
 CHANGELOG.md   merge=union
 CHANGELOG*.md  merge=union
+
+# .changelog fragment files: each is named after a unique PR number so two
+# branches will never touch the same fragment file — no merge driver needed.

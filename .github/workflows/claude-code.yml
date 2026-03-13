@@ -207,13 +207,25 @@ jobs:
 
             ## Documentation & Quality (do these for every significant PR)
 
-            7b. CHANGELOG.md — For any feature addition, bug fix, or refactor, add an entry
-               under the `[Unreleased]` section at the top of `CHANGELOG.md`. Format:
-               - Under `### Added` for new features
-               - Under `### Fixed` for bug fixes
-               - Under `### Changed` for refactors / behavior changes
-               Example: `- **Feature Name** — one-sentence description (#PR_NUMBER)`
-               Do NOT add entries for trivial doc changes or CI tweaks.
+            7b. Changelog fragment — For any feature addition, bug fix, or refactor, create
+               a changelog fragment file at `.changelog/<PR_NUMBER>.md` (where PR_NUMBER is
+               the current PR number from step 1 above). Do NOT edit CHANGELOG.md directly —
+               a consolidation workflow merges fragments automatically on every PR merge,
+               adds the PR number link, sorts entries, and eliminates merge conflicts.
+
+               Fragment format (only include sections that apply):
+               ```
+               ### Added
+               - **Feature Name** — one-sentence description of what was added.
+
+               ### Fixed
+               - **Bug Name** — what was broken and what the fix is.
+
+               ### Changed
+               - **Thing Changed** — why the behavior or API changed.
+               ```
+               Omit `(#PR_NUMBER)` — it is appended automatically from the filename.
+               Do NOT create fragments for trivial doc changes or CI tweaks.
 
             7c. Release Notes — When adding a major user-visible feature, also add a new
                version entry to `PVUI/Sources/PVSwiftUI/Resources/whats-new.json`.
