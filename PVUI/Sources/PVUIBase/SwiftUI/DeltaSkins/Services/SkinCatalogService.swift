@@ -169,15 +169,18 @@ public actor SkinCatalogService {
         guard !lowercasedQuery.isEmpty else {
             // Empty query: return all skins, optionally filtered by system
             if let system = system {
-                return catalog.skins.filter { $0.systems.contains(system.lowercased()) }
+                let lowerSystem = system.lowercased()
+                return catalog.skins.filter { $0.systems.contains(where: { $0.lowercased() == lowerSystem }) }
             }
             return catalog.skins
         }
 
         return catalog.skins.filter { entry in
-            // System filter
+            // System filter — normalize both sides so mixed-case catalog codes (e.g. "masterSystem")
+            // match correctly regardless of how the caller specifies the code.
             if let system = system {
-                guard entry.systems.contains(system.lowercased()) else { return false }
+                let lowerSystem = system.lowercased()
+                guard entry.systems.contains(where: { $0.lowercased() == lowerSystem }) else { return false }
             }
 
             // Text search across name, author, tags, source
@@ -207,10 +210,11 @@ public actor SkinCatalogService {
         let catalog = try await fetchCatalog()
         var results = catalog.skins
 
-        // Filter by system
+        // Filter by system — normalize both sides so mixed-case catalog codes (e.g. "masterSystem")
+        // match correctly regardless of how the caller specifies the code.
         if let system = system {
             let lowerSystem = system.lowercased()
-            results = results.filter { $0.systems.contains(lowerSystem) }
+            results = results.filter { $0.systems.contains(where: { $0.lowercased() == lowerSystem }) }
         }
 
         // Filter by tags (match any)
@@ -245,12 +249,29 @@ public actor SkinCatalogService {
         return results
     }
 
+    /// System codes that were used historically but have been remapped to proper identifiers.
+    /// These are filtered out of the available systems list to avoid showing stale labels.
+    private static let legacySystemCodes: Set<String> = ["unofficial", "unsupported", "unknown"]
+
+    /// Returns `true` if the given system code is a legacy/invalid placeholder
+    /// that should be hidden from the UI.
+    ///
+    /// This is a `nonisolated` static helper so it can be called from SwiftUI views
+    /// without needing to hop on the actor.
+    public nonisolated static func isLegacySystemCode(_ code: String) -> Bool {
+        legacySystemCodes.contains(code.lowercased())
+    }
+
     /// Get all unique system short codes that have at least one skin in the catalog.
+    ///
+    /// Legacy/invalid system codes (e.g. "unofficial") are excluded from the results —
+    /// those catalog entries have been remapped to proper identifiers in the remote catalog.
     ///
     /// - Returns: Sorted array of system codes.
     public func availableSystems() async throws -> [String] {
         let catalog = try await fetchCatalog()
         let systems = Set(catalog.skins.flatMap { $0.systems })
+            .filter { !Self.isLegacySystemCode($0) }
         return systems.sorted()
     }
 
