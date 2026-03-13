@@ -75,7 +75,7 @@ public actor SkinCatalogService {
     // MARK: - Init
 
     public init(
-        catalogURL: URL = URL(string: "https://raw.githubusercontent.com/Provenance-Emu/provenance-skins/main/catalog.json")!,
+        catalogURL: URL = URL(string: "https://raw.githubusercontent.com/Provenance-Emu/skins/main/catalog.json")!,
         cacheTTL: TimeInterval = 24 * 60 * 60,
         urlSession: URLSession = .shared
     ) {
