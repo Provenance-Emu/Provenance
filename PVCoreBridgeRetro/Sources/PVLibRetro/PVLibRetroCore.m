@@ -2028,6 +2028,45 @@ static bool environment_callback(unsigned cmd, void *data) {
             DLOG(@"Environ SET_PROC_ADDRESS_CALLBACK");
             return true;
         }
+
+        // MARK: - VFS (Virtual File System) — env 45
+        case RETRO_ENVIRONMENT_GET_VFS_INTERFACE: {
+            /// Cores that request the VFS interface want an abstracted I/O API.
+            /// We return false here so that cores fall back to their default
+            /// POSIX I/O path, which works fine for our app-sandbox layout.
+            /// A full VFS implementation can be added here in the future if
+            /// a core requires it — the libretro.h structs for `retro_vfs_interface`
+            /// and `retro_vfs_interface_info` define the complete API.
+            DLOG(@"Environ GET_VFS_INTERFACE — not implemented, core will use POSIX I/O");
+            return false;
+        }
+
+        // MARK: - LED Interface — env 46
+        case RETRO_ENVIRONMENT_GET_LED_INTERFACE: {
+            /// Used by arcade-style cores that want to control physical LEDs.
+            /// Not relevant on iOS/tvOS — return false so the core skips it.
+            DLOG(@"Environ GET_LED_INTERFACE — not supported on this platform");
+            return false;
+        }
+
+        // MARK: - Current Software Framebuffer — env 40
+        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER: {
+            /// Cores can request a pointer to the current software framebuffer
+            /// so they can render directly into it without extra copies.
+            /// We don't support zero-copy direct rendering at this level —
+            /// cores should use their own buffers and pass them via video_refresh.
+            DLOG(@"Environ GET_CURRENT_SOFTWARE_FRAMEBUFFER — not supported");
+            return false;
+        }
+
+        // MARK: - MIDI Interface — env 48
+        case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
+            /// MIDI I/O for cores like dosbox or music-focused emulators.
+            /// Not currently supported — return false so the core skips MIDI.
+            DLOG(@"Environ GET_MIDI_INTERFACE — not supported on this platform");
+            return false;
+        }
+
         default : {
             DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
