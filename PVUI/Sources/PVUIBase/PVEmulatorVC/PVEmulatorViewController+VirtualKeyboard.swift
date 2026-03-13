@@ -26,7 +26,6 @@ private enum AssociatedKeys {
     static var keyboardViewModel: UInt8 = 0
     static var keyboardHiddenByHW: UInt8 = 0
     static var hwKeyboardObservers: UInt8 = 0
-    static var virtualInputState: UInt8 = 0
 }
 
 // MARK: - PVEmulatorViewController + VirtualKeyboard
@@ -91,35 +90,7 @@ extension PVEmulatorViewController {
         }
     }
 
-    // MARK: - VirtualInputState (type-safe state & callback container)
-
-    /// The observable state object that drives virtual-input overlay UI.
-    ///
-    /// Created lazily on first access (after `core` is available).  The same
-    /// instance is reused for the lifetime of the session.  Inject it into the
-    /// SwiftUI environment via `.environmentObject(virtualInputState)`.
-    public var virtualInputState: VirtualInputState {
-        if let existing = objc_getAssociatedObject(self, &AssociatedKeys.virtualInputState)
-                            as? VirtualInputState {
-            return existing
-        }
-        let state = VirtualInputState(
-            supportsKeyboard: coreSupportsVirtualKeyboard,
-            supportsMouse: coreSupportsVirtualMouse
-        )
-        objc_setAssociatedObject(
-            self, &AssociatedKeys.virtualInputState,
-            state, .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-        )
-        return state
-    }
-
     // MARK: - Capability Checks
-
-    /// Whether the emulator core reports keyboard support.
-    public var coreSupportsVirtualKeyboard: Bool {
-        (core as? KeyboardResponder)?.gameSupportsKeyboard == true
-    }
 
     /// Whether the emulator core requires the keyboard to be shown automatically on launch.
     public var coreRequiresVirtualKeyboard: Bool {

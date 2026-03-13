@@ -1821,13 +1821,7 @@ extension PVEmulatorViewController {
             },
             preselectedSkinIdentifier: skin.identifier,
             inputHandler: inputHandler,
-            virtualInputState: {
-                #if !os(tvOS)
-                return self.virtualInputState
-                #else
-                return nil
-                #endif
-            }()
+            virtualInputState: self.virtualInputState
         )
 
         // Create a UIHostingController to host the SwiftUI view
