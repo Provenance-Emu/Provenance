@@ -56,6 +56,8 @@ public enum VirtualKeyboardLayout: String, CaseIterable, Identifiable, Sendable 
     case zxSpectrum
     /// Amstrad CPC keyboard layout with CPC function keys f0-f9.
     case amstradCPC
+    /// Atari ST keyboard layout with Help, Undo, Clr/Home, and F1-F10.
+    case atariST
 
     public var id: String { rawValue }
 
@@ -68,6 +70,7 @@ public enum VirtualKeyboardLayout: String, CaseIterable, Identifiable, Sendable 
         case .c64:         return "C64"
         case .zxSpectrum:  return "Spectrum"
         case .amstradCPC:  return "CPC"
+        case .atariST:     return "Atari ST"
         }
     }
 
@@ -80,6 +83,7 @@ public enum VirtualKeyboardLayout: String, CaseIterable, Identifiable, Sendable 
         case .c64:         return VirtualKeyboardLayouts.c64Layout
         case .zxSpectrum:  return VirtualKeyboardLayouts.zxSpectrumLayout
         case .amstradCPC:  return VirtualKeyboardLayouts.amstradCPCLayout
+        case .atariST:     return VirtualKeyboardLayouts.atariSTLayout
         }
     }
 }
@@ -512,6 +516,116 @@ public enum VirtualKeyboardLayouts {
             .init(label: "0",  keyCode: .keypad0,     widthMultiplier: 2.0),
             .init(label: ".",  keyCode: .keypadPeriod),
             .init(label: "ENT", keyCode: .keypadEnter, symbolName: "return"),
+        ],
+    ]
+
+    // MARK: Atari ST Layout
+    //
+    // Matches the Atari ST keyboard, including:
+    //   • F1–F10 function keys (GCKeyCode F1–F10)
+    //   • Atari-specific keys: Help (F11), Undo (F12), Insert (Insert), Delete (Backspace),
+    //     Clr/Home (Home), and the numeric keypad with ( ) / * 7–0 . Enter
+    //   • Standard modifier row: Shift, Control, Alternate (Option)
+    //   • QWERTY alpha rows identical to a standard PC layout
+
+    public static let atariSTLayout: [[VirtualKey]] = [
+        // Row 1: Function keys F1–F10 + Atari extras
+        [
+            .init(label: "F1",   keyCode: .F1),
+            .init(label: "F2",   keyCode: .F2),
+            .init(label: "F3",   keyCode: .F3),
+            .init(label: "F4",   keyCode: .F4),
+            .init(label: "F5",   keyCode: .F5),
+            .init(label: "F6",   keyCode: .F6),
+            .init(label: "F7",   keyCode: .F7),
+            .init(label: "F8",   keyCode: .F8),
+            .init(label: "F9",   keyCode: .F9),
+            .init(label: "F10",  keyCode: .F10),
+            .init(label: "Help", keyCode: .F11),
+            .init(label: "Undo", keyCode: .F12),
+        ],
+        // Row 2: Number row
+        [
+            .init(label: "Esc",  keyCode: .escape,              symbolName: "escape"),
+            .init(label: "1",    keyCode: .one),
+            .init(label: "2",    keyCode: .two),
+            .init(label: "3",    keyCode: .three),
+            .init(label: "4",    keyCode: .four),
+            .init(label: "5",    keyCode: .five),
+            .init(label: "6",    keyCode: .six),
+            .init(label: "7",    keyCode: .seven),
+            .init(label: "8",    keyCode: .eight),
+            .init(label: "9",    keyCode: .nine),
+            .init(label: "0",    keyCode: .zero),
+            .init(label: "BS",   keyCode: .deleteOrBackspace,   symbolName: "delete.left"),
+        ],
+        // Row 3: QWERTY row
+        [
+            .init(label: "Tab",  keyCode: .tab,                 widthMultiplier: 1.5, symbolName: "arrow.right.to.line"),
+            .init(label: "Q",    keyCode: .q),
+            .init(label: "W",    keyCode: .w),
+            .init(label: "E",    keyCode: .e),
+            .init(label: "R",    keyCode: .r),
+            .init(label: "T",    keyCode: .t),
+            .init(label: "Y",    keyCode: .y),
+            .init(label: "U",    keyCode: .u),
+            .init(label: "I",    keyCode: .i),
+            .init(label: "O",    keyCode: .o),
+            .init(label: "P",    keyCode: .p),
+            .init(label: "Ret",  keyCode: .returnOrEnter,       widthMultiplier: 1.5, symbolName: "return"),
+        ],
+        // Row 4: ASDF row
+        [
+            .init(label: "Ctrl", keyCode: .leftControl,         isModifier: true, widthMultiplier: 1.5, symbolName: "control"),
+            .init(label: "A",    keyCode: .a),
+            .init(label: "S",    keyCode: .s),
+            .init(label: "D",    keyCode: .d),
+            .init(label: "F",    keyCode: .f),
+            .init(label: "G",    keyCode: .g),
+            .init(label: "H",    keyCode: .h),
+            .init(label: "J",    keyCode: .j),
+            .init(label: "K",    keyCode: .k),
+            .init(label: "L",    keyCode: .l),
+            .init(label: "Ins",  keyCode: .insert,              symbolName: "plus.rectangle"),
+            .init(label: "Home", keyCode: .home,                symbolName: "house"),
+        ],
+        // Row 5: ZXCV row
+        [
+            .init(label: "Shift", keyCode: .leftShift,          isModifier: true, widthMultiplier: 2.0, symbolName: "shift"),
+            .init(label: "Z",    keyCode: .z),
+            .init(label: "X",    keyCode: .x),
+            .init(label: "C",    keyCode: .c),
+            .init(label: "V",    keyCode: .v),
+            .init(label: "B",    keyCode: .b),
+            .init(label: "N",    keyCode: .n),
+            .init(label: "M",    keyCode: .m),
+            .init(label: "↑",    keyCode: .upArrow,             symbolName: "arrow.up"),
+            .init(label: "Del",  keyCode: .deleteForward,       symbolName: "delete.right"),
+        ],
+        // Row 6: Bottom row with space and arrows
+        [
+            .init(label: "Alt",  keyCode: .leftAlt,             isModifier: true, symbolName: "option"),
+            .init(label: "Space", keyCode: .spacebar,           widthMultiplier: 6.0),
+            .init(label: "←",    keyCode: .leftArrow,           symbolName: "arrow.left"),
+            .init(label: "↓",    keyCode: .downArrow,           symbolName: "arrow.down"),
+            .init(label: "→",    keyCode: .rightArrow,          symbolName: "arrow.right"),
+        ],
+        // Row 7: Numeric keypad
+        [
+            .init(label: "7",  keyCode: .keypad7),
+            .init(label: "8",  keyCode: .keypad8),
+            .init(label: "9",  keyCode: .keypad9),
+            .init(label: "(",  keyCode: .keypadHyphen),
+            .init(label: "4",  keyCode: .keypad4),
+            .init(label: "5",  keyCode: .keypad5),
+            .init(label: "6",  keyCode: .keypad6),
+            .init(label: ")",  keyCode: .keypadPlus),
+            .init(label: "1",  keyCode: .keypad1),
+            .init(label: "2",  keyCode: .keypad2),
+            .init(label: "3",  keyCode: .keypad3),
+            .init(label: "0",  keyCode: .keypad0,     widthMultiplier: 2.0),
+            .init(label: ".",  keyCode: .keypadPeriod),
+            .init(label: "Ent", keyCode: .keypadEnter, symbolName: "return"),
         ],
     ]
 }
