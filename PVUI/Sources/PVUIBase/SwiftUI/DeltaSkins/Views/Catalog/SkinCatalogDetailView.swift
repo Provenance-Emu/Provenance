@@ -8,6 +8,7 @@
 import SwiftUI
 import PVLogging
 import PVPrimitives
+import PVSystems
 
 /// Full-detail view for a single skin catalog entry.
 ///
@@ -424,8 +425,8 @@ public struct SkinCatalogDetailView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(entry.systems, id: \.self) { system in
-                        Text(system.uppercased())
+                    ForEach(entry.systems.filter { !SkinCatalogService.isLegacySystemCode($0) }, id: \.self) { system in
+                        Text(SystemIdentifier.displayName(forCatalogCode: system))
                             .font(.system(size: 11, weight: .bold, design: .rounded))
                             .tracking(1)
                             .padding(.horizontal, 10)

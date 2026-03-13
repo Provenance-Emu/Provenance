@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVPrimitives
+import PVSystems
 import PVLogging
 
 /// View for browsing and downloading skins from the remote skin catalog.
@@ -222,7 +223,7 @@ public struct SkinCatalogBrowserView: View {
                             selectedSystem = nil
                         }
                         ForEach(availableSystems, id: \.self) { system in
-                            filterChip(system.uppercased(), isSelected: selectedSystem == system) {
+                            filterChip(SystemIdentifier.displayName(forCatalogCode: system), isSelected: selectedSystem == system) {
                                 selectedSystem = (selectedSystem == system) ? nil : system
                             }
                         }
@@ -561,25 +562,7 @@ private struct CatalogSkinCard: View {
     var isInstalled: Bool = false
 
     private func displayName(forSystemCode code: String) -> String {
-        let map: [String: String] = [
-            "nes": "NES",
-            "snes": "SNES",
-            "n64": "N64",
-            "gb": "Game Boy",
-            "gbc": "Game Boy Color",
-            "gba": "Game Boy Advance",
-            "mastersystem": "Master System",
-            "sms": "SMS",
-            "gamegear": "Game Gear",
-            "gg": "GG",
-            "genesis": "Genesis",
-            "megadrive": "Mega Drive",
-            "psx": "PlayStation",
-            "ps1": "PlayStation"
-        ]
-
-        let key = code.lowercased()
-        return map[key] ?? code.uppercased()
+        SystemIdentifier.displayName(forCatalogCode: code)
     }
 
     var body: some View {
