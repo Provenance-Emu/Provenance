@@ -133,11 +133,22 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PVA8SystemResponderClient")
             }
             break;
-        case .Atari7800, .AtariST:
+        case .Atari7800:
             if let core = core as? PV7800SystemResponderClient {
                 return PVAtari7800ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
                 fatalError("Core doesn't implement PV7800SystemResponderClient")
+            }
+            break;
+        case .AtariST:
+            // AtariST uses keyboard+mouse (PVDOSSystemResponderClient) via Hatari libretro core.
+            // Routing through PV7800SystemResponderClient caused a force-unwrap crash in
+            // PVAtari7800ControllerViewController when button tags from the AtariST skin did not
+            // correspond to valid PV7800Button raw values.
+            if let core = core as? PVDOSSystemResponderClient {
+                return PVDOSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PVDOSSystemResponderClient")
             }
             break;
         case .AtariJaguar, .AtariJaguarCD:
