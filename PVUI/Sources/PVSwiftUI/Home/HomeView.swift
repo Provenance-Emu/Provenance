@@ -126,6 +126,23 @@ struct HomeView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var bootupStateManager = AppState.shared.bootupStateManager
 
+    /// Deduplicated save state IDs for the Recent Saves carousel navigation.
+    /// Shows at most one (the latest) autosave per game; all manual saves are included.
+    /// Matches the deduplication applied by RealmContinuesDataDriver.stream().
+    private var recentSaveStateIDs: [String] {
+        var seenAutoSaveGameIDs = Set<String>()
+        return recentSaveStates.compactMap { state -> String? in
+            guard !state.isInvalidated else { return nil }
+            if state.isAutosave {
+                let gameID = state.game?.id ?? ""
+                guard !gameID.isEmpty, seenAutoSaveGameIDs.insert(gameID).inserted else {
+                    return nil
+                }
+            }
+            return state.id
+        }
+    }
+
     private var availableSections: [HomeSectionType] {
         [
             (showRecentSaveStates && !recentSaveStates.isEmpty) ? .recentSaveStates : nil,
@@ -963,7 +980,7 @@ struct HomeView: SwiftUI.View {
     private func getLastItemInSection(_ section: HomeSectionType) -> String? {
         switch section {
         case .recentSaveStates:
-            return recentSaveStates.last?.id
+            return recentSaveStateIDs.last
         case .recentlyPlayedGames:
             return recentlyPlayedGames.last?.game?.id
         case .favorites:
@@ -978,7 +995,7 @@ struct HomeView: SwiftUI.View {
     private func getItemsForSection(_ section: HomeSectionType) -> [String] {
         switch section {
         case .recentSaveStates:
-            return recentSaveStates.map { $0.id }
+            return recentSaveStateIDs
         case .recentlyPlayedGames:
             return recentlyPlayedGames.compactMap { $0.game?.id }
         case .favorites:
@@ -993,7 +1010,7 @@ struct HomeView: SwiftUI.View {
     private func getFirstItemInSection(_ section: HomeSectionType) -> String? {
         switch section {
         case .recentSaveStates:
-            return recentSaveStates.first?.id
+            return recentSaveStateIDs.first
         case .recentlyPlayedGames:
             return recentlyPlayedGames.first?.game?.id
         case .favorites:

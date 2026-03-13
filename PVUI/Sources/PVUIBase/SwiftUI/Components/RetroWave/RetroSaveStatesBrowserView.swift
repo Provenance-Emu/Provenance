@@ -54,7 +54,8 @@ public final class RetroSaveStatesStore: ObservableObject {
 
         let items = await fetchSaveStates(
             predicate: NSPredicate(format: "game.systemIdentifier == %@", systemID),
-            limit: limit
+            limit: limit,
+            deduplicateAutosaves: true
         )
 
         await MainActor.run {
@@ -114,7 +115,7 @@ public final class RetroSaveStatesStore: ObservableObject {
     /// Loads recent save states across all systems
     @discardableResult
     public func loadAllRecent(limit: Int = 50) async -> [RetroSaveStateItem] {
-        await fetchSaveStates(predicate: NSPredicate(value: true), limit: limit)
+        await fetchSaveStates(predicate: NSPredicate(value: true), limit: limit, deduplicateAutosaves: true)
     }
 
     /// Loads recent save states filtered by multiple system IDs
@@ -124,7 +125,7 @@ public final class RetroSaveStatesStore: ObservableObject {
             return await loadAllRecent(limit: limit)
         }
         let predicate = NSPredicate(format: "game.systemIdentifier IN %@", Array(systemIDs))
-        return await fetchSaveStates(predicate: predicate, limit: limit)
+        return await fetchSaveStates(predicate: predicate, limit: limit, deduplicateAutosaves: true)
     }
 
     /// Returns all system IDs that have at least one save state
@@ -197,7 +198,14 @@ public final class RetroSaveStatesStore: ObservableObject {
         }
     }
 
-    private func fetchSaveStates(predicate: NSPredicate, limit: Int?) async -> [RetroSaveStateItem] {
+    /// Fetches save states matching `predicate`, sorted newest-first.
+    /// - Parameters:
+    ///   - predicate: Realm filter predicate.
+    ///   - limit: Maximum number of results to return; `nil` fetches all (used by full management UI).
+    ///   - deduplicateAutosaves: When `true`, only the most-recent autosave per game is included;
+    ///     all manual saves are always included. Defaults to `false` so the full save management
+    ///     UI remains unfiltered.
+    private func fetchSaveStates(predicate: NSPredicate, limit: Int?, deduplicateAutosaves: Bool = false) async -> [RetroSaveStateItem] {
         await withCheckedContinuation { continuation in
             workQueue.async {
                 do {
@@ -214,8 +222,25 @@ public final class RetroSaveStatesStore: ObservableObject {
                         }
                     }()
 
-                    let items = collection.compactMap { state in
-                        self.mapSaveState(state)
+                    let items: [RetroSaveStateItem]
+                    if deduplicateAutosaves {
+                        // For "Recent Saves" strips: show at most one (the latest) autosave per game.
+                        // collection is already date-descending, so the first autosave seen per game
+                        // is the most recent one.
+                        var seenAutoSaveGameIDs = Set<String>()
+                        items = collection.compactMap { state -> RetroSaveStateItem? in
+                            if state.isAutosave {
+                                let gameID = state.game?.id ?? ""
+                                guard !gameID.isEmpty, seenAutoSaveGameIDs.insert(gameID).inserted else {
+                                    return nil
+                                }
+                            }
+                            return self.mapSaveState(state)
+                        }
+                    } else {
+                        items = collection.compactMap { state in
+                            self.mapSaveState(state)
+                        }
                     }
                     continuation.resume(returning: items)
                 } catch {

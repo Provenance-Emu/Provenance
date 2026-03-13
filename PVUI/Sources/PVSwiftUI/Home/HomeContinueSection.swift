@@ -91,10 +91,21 @@ final class RealmContinuesDataDriver: ContinuesDataDriver {
                         switch change {
                         case .initial(let collection),
                              .update(let collection, _, _, _):
+                            // Deduplicate autosaves: show at most one (the latest) autosave per game.
+                            // Manual saves (isAutosave == false) are always included.
+                            // Collection is already sorted date-descending, so the first autosave
+                            // encountered for each game is the most recent one.
+                            var seenAutoSaveGameIDs = Set<String>()
                             let models = collection
                                 .prefix(500) // safety cap to avoid huge bursts
                                 .compactMap { state -> ContinueItemModel? in
                                     guard !state.isInvalidated else { return nil }
+                                    if state.isAutosave {
+                                        let gameID = state.game?.id ?? ""
+                                        guard !gameID.isEmpty, seenAutoSaveGameIDs.insert(gameID).inserted else {
+                                            return nil
+                                        }
+                                    }
                                     return ContinueItemModel(saveState: state)
                                 }
                             continuation.yield(Array(models))
