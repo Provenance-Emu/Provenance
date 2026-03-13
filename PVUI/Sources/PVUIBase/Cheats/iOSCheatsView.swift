@@ -504,8 +504,7 @@ struct iOSCheatSearchView: View {
                 }
             }
 
-            if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty,
-               let sysID = gameSystemIdentifier, !sysID.isEmpty {
+            if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty {
                 Button {
                     Task { await searchOnline() }
                 } label: {
