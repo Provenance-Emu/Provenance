@@ -93,9 +93,67 @@ public extension PVEmulatorViewController {
                 completion()
                 return true
             } catch {
-                Task.detached { @MainActor in
-                    let message = error.localizedDescription
-                    self.presentError("Failed to load save state. " + message, source: self.view, completion: completion)
+                let message = error.localizedDescription
+                ELOG("Save state load failed: \(message)")
+                // Offer the user a choice: attempt to reset, or continue with potentially
+                // corrupted emulator state. This is especially important for cores like PicoDrive
+                // where a failed load can leave the core in an inconsistent state.
+                // Note: retro_reset() is best-effort and may not fully recover from
+                // retro_unserialize() corruption for all cores.
+
+                // Guard against the case where the view is not in a window (e.g. dismissal timing).
+                // If we cannot present the alert, fall through and unpause rather than hanging.
+                guard self.view.window != nil else {
+                    WLOG("Cannot present save-state error alert — view not in window. Continuing.")
+                    completion()
+                    return false
+                }
+
+                let alertMessage =
+                    "Failed to load save state: \(message)\n\n" +
+                    "The emulator may be in an inconsistent state. " +
+                    "Reset Game will attempt to restore a playable state (best effort, " +
+                    "may not fully recover all cores)."
+
+                let resetGame = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+                    var resumed = false
+
+                    func resumeOnce(_ value: Bool) {
+                        guard !resumed else { return }
+                        resumed = true
+                        continuation.resume(returning: value)
+                    }
+
+                    Task { @MainActor in
+                        // Fallback in case the alert fails to present or never calls its actions.
+                        try? await Task.sleep(nanoseconds: 5_000_000_000)
+                        if !resumed {
+                            WLOG("Save-state error alert did not complete in time. Continuing without reset.")
+                            completion()
+                            resumeOnce(false)
+                        }
+                    }
+
+                    self.presentMessage(
+                        alertMessage,
+                        title: "Save State Load Failed",
+                        source: self.view,
+                        secondaryActionTitle: "Continue",
+                        secondaryActionStyle: .cancel,
+                        secondaryCompletion: {
+                            completion()
+                            resumeOnce(false)
+                        },
+                        defaultActionTitle: "Reset Game",
+                        defaultActionStyle: .destructive,
+                        completion: {
+                            resumeOnce(true)
+                        }
+                    )
+                }
+                if resetGame {
+                    self.core.resetEmulation()
+                    completion()
                 }
                 return false
             }
