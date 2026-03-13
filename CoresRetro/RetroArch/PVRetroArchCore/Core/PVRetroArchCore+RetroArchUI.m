@@ -640,16 +640,13 @@ void extract_bundles();
         NSString *biosTosPath = [self.BIOSPath stringByAppendingPathComponent:@"tos.img"];
 
         if ([fm fileExistsAtPath:biosTosPath]) {
-            /// Always replace to ensure a fresh unmodified copy from the BIOS directory.
-            if ([fm fileExistsAtPath:tosImagePath]) {
-                [fm removeItemAtPath:tosImagePath error:nil];
-            }
-
+            /// Read and validate the source BIOS before touching the destination.
             NSError *readError = nil;
             NSData *tosData = [NSData dataWithContentsOfFile:biosTosPath options:NSDataReadingMappedIfSafe error:&readError];
             if (readError || !tosData) {
                 ELOG(@"Failed to read TOS image from %@: %@", biosTosPath, readError.localizedDescription);
             } else {
+                BOOL tosIsZip = NO;
                 if (tosData.length >= 16) {
                     const unsigned char *bytes = (const unsigned char *)tosData.bytes;
                     ILOG(@"TOS image: %lu bytes, header: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
@@ -657,19 +654,28 @@ void extract_bundles();
                          bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7],
                          bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]);
                     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
-                        ELOG(@"TOS image appears to be a ZIP file — it must be extracted first.");
+                        /// Source looks like a ZIP archive — do not overwrite a potentially valid
+                        /// existing tos.img with invalid data.
+                        ELOG(@"TOS image appears to be a ZIP file — it must be extracted first. Skipping copy.");
+                        tosIsZip = YES;
                     }
                 }
 
-                NSError *writeError = nil;
-                if (![tosData writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError]) {
-                    ELOG(@"Failed to write TOS image to %@: %@", tosImagePath, writeError.localizedDescription);
-                } else {
-                    unsigned long long sizeBytes = tosData.length;
-                    if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
-                        WLOG(@"TOS image size %llu bytes is not a typical size (192KB, 256KB, or 512KB)", sizeBytes);
+                if (!tosIsZip) {
+                    /// Source validated; now replace the destination atomically.
+                    if ([fm fileExistsAtPath:tosImagePath]) {
+                        [fm removeItemAtPath:tosImagePath error:nil];
                     }
-                    ILOG(@"TOS image synced to system directory (unmodified): %@ (%llu bytes)", tosImagePath, sizeBytes);
+                    NSError *writeError = nil;
+                    if (![tosData writeToFile:tosImagePath options:NSDataWritingAtomic error:&writeError]) {
+                        ELOG(@"Failed to write TOS image to %@: %@", tosImagePath, writeError.localizedDescription);
+                    } else {
+                        unsigned long long sizeBytes = tosData.length;
+                        if (sizeBytes != 192*1024 && sizeBytes != 256*1024 && sizeBytes != 512*1024) {
+                            WLOG(@"TOS image size %llu bytes is not a typical size (192KB, 256KB, or 512KB)", sizeBytes);
+                        }
+                        ILOG(@"TOS image synced to system directory (unmodified): %@ (%llu bytes)", tosImagePath, sizeBytes);
+                    }
                 }
             }
         } else {

@@ -202,14 +202,14 @@ static cocoa_input_data_t * _Nullable dos_ra_update_mouse_pos(CGPoint point) {
 // The TouchTrackpadView sends normalised 0–1 cursor positions accumulated from touchpad
 // deltas.  We recover the per-event delta, scale it, and write it to mouse_rel_x/y which
 // is what RETRO_DEVICE_MOUSE cores (Hatari) read each frame.
-static void st_ra_update_mouse_rel(PVRetroArchCoreBridge *bridge, CGPoint normPos) {
+static void st_ra_update_mouse_rel(CGPoint normPos) {
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
 
     if (st_mouse_prev.valid) {
         CGFloat dx = normPos.x - st_mouse_prev.x;
         CGFloat dy = normPos.y - st_mouse_prev.y;
-        // Accumulate into rel fields; RetroArch resets these each poll.
+        // Assign to rel fields; RetroArch resets these each poll.
         apple->mouse_rel_x = (int16_t)(dx * ST_MOUSE_SCALE);
         apple->mouse_rel_y = (int16_t)(dy * ST_MOUSE_SCALE);
     }
@@ -220,7 +220,7 @@ static void st_ra_update_mouse_rel(PVRetroArchCoreBridge *bridge, CGPoint normPo
 
 - (void)mouseMovedAt:(CGPoint)point {
     if (dos_is_atarist(self)) {
-        st_ra_update_mouse_rel(self, point);
+        st_ra_update_mouse_rel(point);
     } else {
         dos_ra_update_mouse_pos(point);
     }
@@ -232,7 +232,7 @@ static void st_ra_update_mouse_rel(PVRetroArchCoreBridge *bridge, CGPoint normPo
     if (!apple) return;
     if (dos_is_atarist(self)) {
         // Relative-mouse path: update position then set button.
-        st_ra_update_mouse_rel(self, point);
+        st_ra_update_mouse_rel(point);
     } else {
         dos_ra_update_mouse_pos(point);
     }
@@ -252,7 +252,7 @@ static void st_ra_update_mouse_rel(PVRetroArchCoreBridge *bridge, CGPoint normPo
     cocoa_input_data_t *apple = dos_get_cocoa_input();
     if (!apple) return;
     if (dos_is_atarist(self)) {
-        st_ra_update_mouse_rel(self, point);
+        st_ra_update_mouse_rel(point);
     } else {
         dos_ra_update_mouse_pos(point);
     }
