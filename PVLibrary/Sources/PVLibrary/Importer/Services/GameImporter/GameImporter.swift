@@ -718,11 +718,16 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// fine-grained progress reporting before invoking `initSystems()`.
     /// `CoreLoader.getCorePlists()` performs synchronous filesystem I/O; it is
     /// run inside a detached task so the main-actor thread is never blocked.
-    public func initCorePlists() async {
+    fileprivate enum GameImporterError: Error {
+        case systemsPlistNotFound(bundle: Bundle)
+    }
+
+    public func initCorePlists() async throws {
         let bundle = ThisBundle
         guard let systemsPlistURL = bundle.url(forResource: "systems", withExtension: "plist") else {
-            ELOG("GameImporter: Failed to locate systems.plist in bundle \(bundle)")
-            return
+            let error = GameImporterError.systemsPlistNotFound(bundle: bundle)
+            ELOG("GameImporter: Failed to locate systems.plist in bundle \(bundle): \(error)")
+            throw error
         }
         await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
         // Scan frameworks directory off the main actor to avoid blocking UI updates.
