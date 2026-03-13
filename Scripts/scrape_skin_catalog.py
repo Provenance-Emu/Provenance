@@ -7,6 +7,7 @@ files compatible with Delta/Ignited/Provenance emulators, producing a unified
 catalog of available skins with download URLs and metadata.
 
 Supported sources:
+  - provenance-emu/skins    (canonical catalog JSON — provenance-emu.com/skins/catalog.json)
   - delta-skins.github.io  (HTML data attributes on <img> tags)
   - Polyphian/deltaEmu      (GitHub repo directory listing)
   - LitRitt/emuskins        (GitHub repo directory listing)
@@ -106,6 +107,8 @@ BROANK_SYSTEMS = ["GBA", "GBC", "NDS", "N64", "SNES"]
 LITRITT_REPO = "LitRitt/emuskins.litritt.com"
 
 # Rate-limit: minimum seconds between HTTP requests
+PROVENANCE_SKINS_CATALOG_URL = "https://raw.githubusercontent.com/Provenance-Emu/skins/main/docs/catalog.json"
+
 RATE_LIMIT_SECONDS = 1.0
 
 # ---------------------------------------------------------------------------
@@ -601,6 +604,82 @@ def _scrape_litritt_hosted_dir(system_name, system_path, source_name, skins):
 
 
 # ---------------------------------------------------------------------------
+# Source: provenance-emu/skins catalog (provenance-emu.com/skins/catalog.json)
+# ---------------------------------------------------------------------------
+
+def scrape_provenance_skins(dry_run=False):
+    """Fetch the official Provenance skins catalog from provenance-emu/skins.
+
+    This is the canonical community skin registry maintained by the Provenance
+    project.  It is a single JSON endpoint — no HTML scraping or GitHub API
+    pagination required.  The catalog uses schema v2; we normalise to our
+    internal schema on the way in.
+
+    Schema v2 fields we care about:
+        id, name, author, systems, gameTypeIdentifier, version,
+        downloadURL, thumbnailURL, screenshotURLs, tags, deviceSupport,
+        downloadCount, rating, lastUpdated, fileSize, source
+    """
+    source_name = "provenance-emu-skins"
+    log(f"\n=== Scraping {source_name} ({PROVENANCE_SKINS_CATALOG_URL}) ===")
+
+    if dry_run:
+        log(f"  [DRY RUN] Would fetch {PROVENANCE_SKINS_CATALOG_URL}")
+        return []
+
+    data = _get_json(PROVENANCE_SKINS_CATALOG_URL)
+    if data is None:
+        log("  WARNING: could not fetch provenance-emu/skins catalog — skipping")
+        return []
+
+    catalog_version = data.get("version", "?")
+    raw_skins = data.get("skins", [])
+    log(f"  Catalog version: {catalog_version}, total entries: {len(raw_skins)}")
+
+    skins = []
+    for raw in raw_skins:
+        download_url = raw.get("downloadURL", "").strip()
+        if not download_url:
+            continue
+
+        # Normalise systems: v2 uses short codes matching our SYSTEM_MAP keys,
+        # but gameTypeIdentifier may already be set directly.
+        systems = raw.get("systems", [])
+        game_type_id = raw.get("gameTypeIdentifier")
+
+        # If gameTypeIdentifier is missing, try to derive it from the first system code.
+        if not game_type_id and systems:
+            _, game_type_id = lookup_system(systems[0])
+
+        # Preserve the upstream source tag so dedup can identify origin.
+        upstream_source = raw.get("source") or source_name
+
+        skin_entry = {
+            "id": raw.get("id") or make_id(source_name, download_url),
+            "name": raw.get("name", "").strip() or os.path.splitext(
+                os.path.basename(urllib.parse.urlparse(download_url).path))[0],
+            "author": raw.get("author"),
+            "systems": systems,
+            "gameTypeIdentifier": game_type_id,
+            "version": raw.get("version"),
+            "downloadURL": download_url,
+            "thumbnailURL": raw.get("thumbnailURL"),
+            "screenshotURLs": raw.get("screenshotURLs") or [],
+            "tags": raw.get("tags") or [],
+            "deviceSupport": raw.get("deviceSupport") or [],
+            "downloadCount": raw.get("downloadCount"),
+            "rating": raw.get("rating"),
+            "lastUpdated": raw.get("lastUpdated"),
+            "fileSize": raw.get("fileSize"),
+            "source": upstream_source,
+        }
+        skins.append(skin_entry)
+
+    log(f"  Total from {source_name}: {len(skins)} skins")
+    return skins
+
+
+# ---------------------------------------------------------------------------
 # Deduplication & validation
 # ---------------------------------------------------------------------------
 
@@ -741,6 +820,11 @@ def cmd_validate(catalog_path):
 # ---------------------------------------------------------------------------
 
 SOURCE_SCRAPERS = {
+    # Canonical Provenance community registry — check this first so its entries
+    # win deduplication over the individual source scrapers below.
+    "provenance-skins": scrape_provenance_skins,
+    # Legacy individual source scrapers (same repos are also crawled by provenance-skins;
+    # kept here to backfill while the new catalog is still being populated).
     "delta-skins": scrape_delta_skins,
     "broank":      scrape_broank,
     "litritt":     scrape_litritt,
