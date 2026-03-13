@@ -57,7 +57,9 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
         lhs.isFavorite == rhs.isFavorite &&
         lhs.isEditing == rhs.isEditing &&
         lhs.isSelected == rhs.isSelected &&
-        lhs.size == rhs.size
+        lhs.size == rhs.size &&
+        lhs.createdWithCoreVersion == rhs.createdWithCoreVersion &&
+        lhs.coreIdentifier == rhs.coreIdentifier
     }
 
     public init(

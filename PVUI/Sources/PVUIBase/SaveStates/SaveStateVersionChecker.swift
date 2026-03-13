@@ -30,6 +30,16 @@ public struct SaveStateVersionMismatch {
 /// - Only a definitive version string difference triggers a mismatch.
 public enum SaveStateVersionChecker {
 
+    /// Normalizes a version string by trimming whitespace and returning `nil` for empty
+    /// strings or known sentinel values such as `"Unknown"` (case-insensitive) that
+    /// indicate the version was never recorded (e.g. CloudKit-synced save states).
+    private static func normalizedVersion(_ version: String?) -> String? {
+        guard let v = version?.trimmingCharacters(in: .whitespaces), !v.isEmpty else {
+            return nil
+        }
+        return v.caseInsensitiveCompare("unknown") == .orderedSame ? nil : v
+    }
+
     /// Returns a `SaveStateVersionMismatch` if the save state was created with a different
     /// core version than the currently installed one, or `nil` if they match (or if either
     /// version is unknown).
@@ -42,8 +52,8 @@ public enum SaveStateVersionChecker {
         let core = overrideCore ?? saveState.core
 
         guard
-            let savedVersion = saveState.createdWithCoreVersion, !savedVersion.isEmpty,
-            let currentVersion = core?.projectVersion, !currentVersion.isEmpty,
+            let savedVersion = normalizedVersion(saveState.createdWithCoreVersion),
+            let currentVersion = normalizedVersion(core?.projectVersion),
             savedVersion != currentVersion
         else {
             return nil
@@ -144,17 +154,27 @@ public enum SaveStateVersionChecker {
 
         WLOG("SaveStateVersionChecker: version mismatch — saved=\(mismatch.savedVersion) current=\(mismatch.currentVersion) core=\(mismatch.coreName)")
 
+        // hasResumed prevents double-resume if both an alert action fires and an
+        // indirect dismissal path (e.g. the presenting VC is force-dismissed while
+        // the alert is on screen) attempt to resume the continuation.
+        var hasResumed = false
         return await withCheckedContinuation { continuation in
+            func resume(_ value: Bool) {
+                guard !hasResumed else { return }
+                hasResumed = true
+                continuation.resume(returning: value)
+            }
+
             let alert = UIAlertController(
                 title: "Save State Version Mismatch",
                 message: warningMessage(for: mismatch),
                 preferredStyle: .alert
             )
             alert.addAction(UIAlertAction(title: "Load Anyway", style: .default) { _ in
-                continuation.resume(returning: true)
+                resume(true)
             })
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                continuation.resume(returning: false)
+                resume(false)
             })
 
             // Guard against the continuation hanging if the VC cannot present
@@ -162,7 +182,7 @@ public enum SaveStateVersionChecker {
             guard viewController.view.window != nil,
                   viewController.presentedViewController == nil else {
                 WLOG("SaveStateVersionChecker: cannot present alert (VC not in window or already presenting) — defaulting to cancel")
-                continuation.resume(returning: false)
+                resume(false)
                 return
             }
 
