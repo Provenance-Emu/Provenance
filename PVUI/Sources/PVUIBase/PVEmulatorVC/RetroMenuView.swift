@@ -421,13 +421,13 @@ struct RetroMenuView: View {
         let supportsCheatCodes: Bool = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
 
         return VStack(spacing: menuSpacing) {
-            // Position 1 — Resume game (green = safe/go)
-            menuButton(title: "RESUME GAME", icon: "play.fill", color: .retroGreen) {
+            // Position 1 — Resume game (green = safe/go); primary action
+            menuButton(title: "RESUME GAME", icon: "play.fill", color: .retroGreen, role: .primary) {
                 dismissAction(true)
             }
 
-            // Position 2 — Reset game (orange = caution)
-            menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: .retroOrange) {
+            // Position 2 — Reset game (orange = caution); destructive — resets progress
+            menuButton(title: "RESET GAME", icon: "arrow.counterclockwise", color: .retroOrange, role: .destructive) {
                 dismissAction(true)
                 emulatorVC.core.resetEmulation()
             }
@@ -452,9 +452,9 @@ struct RetroMenuView: View {
             .opacity(supportsCheatCodes ? 1.0 : 0.4)
             .allowsHitTesting(supportsCheatCodes)
 
-            // Position 5 — Quit (red/pink = destructive action)
+            // Position 5 — Quit (red/pink = destructive action); clearly marks irreversible exit
             // Label changes based on whether a save prompt is offered; position is always 5.
-            menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: .retroPink) {
+            menuButton(title: shouldSave ? "QUIT (WITHOUT SAVING)" : "QUIT GAME", icon: "xmark.circle", color: .retroPink, role: .destructive) {
                 dismissAction(false)
                 Task { @MainActor in
                     await emulatorVC.quit(optionallySave: false)
@@ -622,9 +622,10 @@ struct RetroMenuView: View {
             let title = isRecording ? "STOP RECORDING" : "RECORD GAMEPLAY"
             let icon = isRecording ? "stop.circle" : "record.circle"
             let color: Color = isRecording ? .retroPink : .retroOrange
+            let role: MenuButtonRole = isRecording ? .destructive : .secondary
 #if canImport(FreemiumKit)
             PaidFeatureView {
-                menuButton(title: title, icon: icon, color: color) {
+                menuButton(title: title, icon: icon, color: color, role: role) {
                     if isRecording {
                         // Keep game paused while the ReplayKit preview sheet is shown;
                         // emulation resumes automatically when the preview is dismissed.
@@ -638,7 +639,7 @@ struct RetroMenuView: View {
                 }
             } lockedView: {
                 HStack {
-                    menuButton(title: title, icon: icon, color: color) {}
+                    menuButton(title: title, icon: icon, color: color, role: role) {}
                         .disabled(true)
                         .opacity(0.6)
                     HStack(spacing: 3) {
@@ -669,7 +670,7 @@ struct RetroMenuView: View {
             }
             .freemiumKitColorReset()
 #else
-            menuButton(title: title, icon: icon, color: color) {
+            menuButton(title: title, icon: icon, color: color, role: role) {
                 if isRecording {
                     // Keep game paused while the ReplayKit preview sheet is shown;
                     // emulation resumes automatically when the preview is dismissed.
@@ -829,7 +830,12 @@ struct RetroMenuView: View {
             .padding(.horizontal, 16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.6))
+                    // Subtle color tint — matches updated menuButton background style
+                    .fill(color.opacity(0.08))
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.black.opacity(0.6))
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .strokeBorder(color, lineWidth: 1.5)
@@ -2678,22 +2684,43 @@ struct RetroMenuView: View {
         )
     }
 
-    // Helper function to create menu buttons
-    // Uses accent-color glow styling: distinct per-button colors with neon icon glow
-    // (modelled after AudioVisualizerButton's cyan-glow reference style)
-    private func menuButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+    // Helper function to create menu buttons.
+    // Each button carries a semantic `role` that drives visual weight:
+    //   .primary    — bold fill + strong glow (e.g. Resume)
+    //   .destructive — red tinted fill + intense glow (e.g. Quit, Reset)
+    //   .secondary  — subtle tint, standard weight (all other actions)
+    // (modelled after AudioVisualizerButton's accent-color glow reference style)
+    enum MenuButtonRole {
+        case primary, secondary, destructive
+    }
+
+    private func menuButton(
+        title: String,
+        icon: String,
+        color: Color,
+        role: MenuButtonRole = .secondary,
+        action: @escaping () -> Void
+    ) -> some View {
+        // Visual tuning per role
+        let iconGlowRadius: CGFloat   = role == .destructive ? 8  : role == .primary ? 6  : 4
+        let outerGlowRadius: CGFloat  = role == .destructive ? 12 : role == .primary ? 10 : 6
+        let outerGlowOpacity: Double  = role == .destructive ? 0.6 : role == .primary ? 0.5 : 0.3
+        let borderWidth: CGFloat      = role == .destructive ? 2.0 : role == .primary ? 2.0 : 1.5
+        let backgroundTint: Double    = role == .destructive ? 0.18 : role == .primary ? 0.14 : 0.08
+        let titleWeight: Font.Weight  = role == .primary ? .heavy : .bold
+
+        return Button(action: action) {
             HStack {
                 Image(systemName: icon)
                     .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
                     .foregroundColor(color)
                     // Neon glow on icon — matches AudioVisualizerButton reference style
-                    .shadow(color: color.opacity(0.8), radius: 4, x: 0, y: 0)
+                    .shadow(color: color.opacity(0.9), radius: iconGlowRadius, x: 0, y: 0)
                     .frame(width: 30)
 
                 Text(title)
-                    .font(.system(size: isLandscape ? 16 : 18, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(.system(size: isLandscape ? 16 : 18, weight: titleWeight))
+                    .foregroundColor(role == .destructive ? color : .white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
 
@@ -2707,13 +2734,18 @@ struct RetroMenuView: View {
             .padding(.horizontal, 16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.6))
+                    // Subtle color tint in background — differentiates buttons at a glance
+                    .fill(color.opacity(backgroundTint))
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.black.opacity(0.6))
+                    )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(color, lineWidth: 1.5)
+                            .strokeBorder(color, lineWidth: borderWidth)
                     )
             )
-            .shadow(color: color.opacity(0.4), radius: 6, x: 0, y: 0)
+            .shadow(color: color.opacity(outerGlowOpacity), radius: outerGlowRadius, x: 0, y: 0)
         }
         .retroFocusButtonStyle(
             focusScale: 1.06,
