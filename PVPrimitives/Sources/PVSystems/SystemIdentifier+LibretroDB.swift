@@ -356,4 +356,39 @@ extension SystemIdentifier {
         default:            return libretroDatabaseName
         }
     }
+
+    /// The system slug used by GameHacking.org for direct URL-based cheat lookups.
+    ///
+    /// Returns `nil` for systems that GameHacking.org does not index or whose slug
+    /// is unknown.  When `nil`, the lookup falls back to a title-only search with
+    /// no system filter.
+    ///
+    /// Reference: https://gamehacking.org — system slugs observed in game URLs.
+    public var gameHackingOrgSlug: String? {
+        switch self {
+        case .NES:          return "nes"
+        case .SNES:         return "snes"
+        case .N64:          return "n64"
+        case .GameCube:     return "gc"
+        case .Wii:          return "wii"
+        case .GB:           return "gb"
+        case .GBC:          return "gbc"
+        case .GBA:          return "gba"
+        case .DS:           return "nds"
+        case .Genesis:      return "genesis"
+        case .SegaCD:       return "segacd"
+        case .Sega32X:      return "32x"
+        case .Saturn:       return "saturn"
+        case .Dreamcast:    return "dreamcast"
+        case .GameGear:     return "gamegear"
+        case .MasterSystem: return "sms"
+        case .PSX:          return "psx"
+        case .PS2:          return "ps2"
+        case .PSP:          return "psp"
+        case .Atari2600:    return "2600"
+        case .Atari7800:    return "7800"
+        case .Lynx:         return "lynx"
+        default:            return nil
+        }
+    }
 }

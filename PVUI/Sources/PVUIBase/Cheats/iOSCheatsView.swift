@@ -26,6 +26,7 @@ public struct iOSCheatsView: View {
     let gameMD5: String?
     let gameTitle: String?
     let gameSystemIdentifier: String?
+    let romSerial: String?
     let onSaveCheat: (String, String, String, UInt8, Bool) -> Void
     let onUpdateCheat: (PVCheats, UInt8) -> Void
     let onDone: () -> Void
@@ -48,6 +49,7 @@ public struct iOSCheatsView: View {
         gameMD5: String? = nil,
         gameTitle: String? = nil,
         gameSystemIdentifier: String? = nil,
+        romSerial: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
@@ -58,6 +60,7 @@ public struct iOSCheatsView: View {
         self.gameMD5 = gameMD5
         self.gameTitle = gameTitle
         self.gameSystemIdentifier = gameSystemIdentifier
+        self.romSerial = romSerial
         self.onSaveCheat = onSaveCheat
         self.onUpdateCheat = onUpdateCheat
         self.onDone = onDone
@@ -149,6 +152,7 @@ public struct iOSCheatsView: View {
                     gameMD5: gameMD5,
                     gameTitle: gameTitle,
                     gameSystemIdentifier: gameSystemIdentifier,
+                    romSerial: romSerial,
                     cheatIndex: nextCheatIndex,
                     onImport: { code, name, deviceName, index, enabled in
                         onSaveCheat(code, name, deviceName, index, enabled)
@@ -399,6 +403,7 @@ struct iOSCheatSearchView: View {
     let gameMD5: String?
     let gameTitle: String?
     let gameSystemIdentifier: String?
+    let romSerial: String?
     let cheatIndex: UInt8
     let onImport: (String, String, String, UInt8, Bool) -> Void
 
@@ -511,7 +516,7 @@ struct iOSCheatSearchView: View {
                 }
                 .buttonStyle(.borderedProminent)
 
-                Text("Fetches from libretro cheat database on GitHub")
+                Text("Fetches from libretro cheat database and GameHacking.org")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -583,12 +588,13 @@ struct iOSCheatSearchView: View {
     private func loadCheats() async {
         isLoading = true
         errorMessage = nil
-        DLOG("iOSCheatSearch: Starting search md5=\(gameMD5 ?? "nil") title=\(gameTitle ?? "nil") system=\(gameSystemIdentifier ?? "nil")")
+        DLOG("iOSCheatSearch: Starting search md5=\(gameMD5 ?? "nil") title=\(gameTitle ?? "nil") system=\(gameSystemIdentifier ?? "nil") serial=\(romSerial ?? "nil")")
         do {
             let found = try await CheatDatabase.shared.searchAllCheats(
                 byMD5: gameMD5,
                 title: gameTitle,
-                systemIdentifier: gameSystemIdentifier
+                systemIdentifier: gameSystemIdentifier,
+                romSerial: romSerial
             )
             DLOG("iOSCheatSearch: \(found.count) results (unified search)")
             results = found
@@ -793,6 +799,7 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
         gameMD5: String? = nil,
         gameTitle: String? = nil,
         gameSystemIdentifier: String? = nil,
+        romSerial: String? = nil,
         onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
@@ -804,6 +811,7 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
             gameMD5: gameMD5,
             gameTitle: gameTitle,
             gameSystemIdentifier: gameSystemIdentifier,
+            romSerial: romSerial,
             onSaveCheat: onSaveCheat,
             onUpdateCheat: onUpdateCheat,
             onDone: onDone

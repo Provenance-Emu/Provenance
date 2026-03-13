@@ -162,6 +162,7 @@ extension PVEmulatorViewController {
             gameMD5: game.md5Hash,
             gameTitle: game.title,
             gameSystemIdentifier: gameLibretroDatabaseName,
+            romSerial: game.romSerial,
             onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
                 guard let self = self else { return }
                 Task { @MainActor in
@@ -209,6 +210,7 @@ extension PVEmulatorViewController {
             gameMD5: game.md5Hash,
             gameTitle: game.title,
             gameSystemIdentifier: gameLibretroDatabaseName,
+            romSerial: game.romSerial,
             onSaveCheat: { [weak self] code, type, codeType, cheatIndex, enabled in
                 guard let self = self else { return }
                 Task { @MainActor in
