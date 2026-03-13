@@ -61,7 +61,8 @@ public final class PVMupenBridgeRumbleHelper: NSObject {
                     highFrequency: highFrequency,
                     duration: duration
                 )
-                GCControllerHapticsManager.shared.register(controller: controller(for: player, bridge: bridge), forPlayer: player)
+                // Do NOT call register() here — PVEmulatorCore already registers controllers
+                // when assigned to players. Calling register(nil) would clear that registration.
                 GCControllerHapticsManager.shared.rumble(player: player, params: params)
                 return
             }
