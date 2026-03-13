@@ -1,5 +1,4 @@
 import XCTest
-import PVCoreBridge
 @testable import PVCoreLoader
 
 /// Tests for PVDynamicLibretroCoreScanner and CoreLoader.mergeDiscoveredLibretroCores.
@@ -69,29 +68,46 @@ final class TestDynamicLibretroScanner: XCTestCase {
         UserDefaults.standard.set(true, forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
         defer { UserDefaults.standard.removeObject(forKey: PVDynamicLibretroCoreScanner.featureFlagKey) }
         XCTAssertTrue(PVDynamicLibretroCoreScanner.isFeatureEnabled,
-            "Feature flag must reflect UserDefaults value")
+            "Feature flag must reflect direct UserDefaults boolean value")
+    }
+
+    func testFeatureFlagCanBeEnabledViaDebugOverrides() {
+        // Simulate the PVFeatureFlags debug-override UI path (stored as a dict).
+        let key = PVDynamicLibretroCoreScanner.featureFlagKey
+        UserDefaults.standard.set([key: true], forKey: "PVFeatureFlagsDebugOverrides")
+        defer { UserDefaults.standard.removeObject(forKey: "PVFeatureFlagsDebugOverrides") }
+        XCTAssertTrue(PVDynamicLibretroCoreScanner.isFeatureEnabled,
+            "Feature flag must be enabled via PVFeatureFlagsDebugOverrides dict (feature flag UI path)")
+    }
+
+    func testDebugOverrideCanDisableFlag() {
+        // Direct key set to true, but debug override says false — override wins.
+        let key = PVDynamicLibretroCoreScanner.featureFlagKey
+        UserDefaults.standard.set(true, forKey: key)
+        UserDefaults.standard.set([key: false], forKey: "PVFeatureFlagsDebugOverrides")
+        defer {
+            UserDefaults.standard.removeObject(forKey: key)
+            UserDefaults.standard.removeObject(forKey: "PVFeatureFlagsDebugOverrides")
+        }
+        XCTAssertFalse(PVDynamicLibretroCoreScanner.isFeatureEnabled,
+            "Debug override (false) must take priority over the direct UserDefaults key")
     }
 
     // MARK: - DiscoveredLibretroCore.syntheticIdentifier
 
     func testSyntheticIdentifierSlugifiesName() {
-        // We can instantiate DiscoveredLibretroCore only via the scanner probe path,
-        // so we validate the slug logic indirectly via a dummy URL and known inputs
-        // by using its public computed var through reflection-free construction.
-        //
-        // Build a fake core by round-tripping the slug logic directly:
-        let rawName = "mGBA / Game Boy Advance"
-        let expected = "mgba___game_boy_advance.libretro.framework"
-            .replacingOccurrences(of: "/", with: "_")   // extra safety
-
-        let slug = rawName
-            .lowercased()
-            .replacingOccurrences(of: " ", with: "_")
-            .replacingOccurrences(of: "/", with: "_")
-        let identifier = "\(slug).libretro.framework"
-
-        XCTAssertEqual(identifier, "mgba_/_game_boy_advance.libretro.framework".replacingOccurrences(of: "/", with: "_"),
-            "Slug must lower-case, replace spaces and slashes with underscores")
-        _ = expected  // silence unused warning
+        // DiscoveredLibretroCore is constructed via the scanner's probe path, but its
+        // memberwise init is accessible with @testable import. Verify the computed
+        // syntheticIdentifier property directly against known inputs.
+        let core = DiscoveredLibretroCore(
+            executablePath: URL(fileURLWithPath: "/tmp/fake.dylib"),
+            libraryName: "mGBA / Game Boy Advance",
+            libraryVersion: "1.0",
+            validExtensions: ["gba"],
+            needFullPath: false
+        )
+        XCTAssertEqual(core.syntheticIdentifier,
+                       "mgba___game_boy_advance.libretro.framework",
+                       "syntheticIdentifier must lower-case and replace spaces/slashes with underscores")
     }
 }

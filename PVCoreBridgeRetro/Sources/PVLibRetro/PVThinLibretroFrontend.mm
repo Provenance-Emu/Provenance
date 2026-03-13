@@ -159,6 +159,10 @@ typedef struct PVThinLibretroSymbols {
 
     // Rumble
     struct retro_rumble_interface _rumbleInterface;
+
+    // Stable C-string pointer for RETRO_ENVIRONMENT_GET_USERNAME; retained for
+    // the core's lifetime so the pointer remains valid after the callback returns.
+    NSString *_usernameString;
 }
 @end
 
@@ -428,6 +432,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                                          userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Cannot read ROM: %@", romPath]}];
             }
             _sym.retro_deinit();
+            _thinCurrentTLS = nil;
             return NO;
         }
         gameInfo.data = romData.bytes;
@@ -445,6 +450,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                                      userInfo:@{NSLocalizedDescriptionKey: @"retro_load_game failed"}];
         }
         _sym.retro_deinit();
+        _thinCurrentTLS = nil;
         return NO;
     }
 
@@ -783,8 +789,12 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Username / Language ----
         case RETRO_ENVIRONMENT_GET_USERNAME: {
-            NSString *name = NSUserName() ?: @"Provenance";
-            *(const char **)data = name.UTF8String;
+            // Retain the NSString in an ivar so the UTF8String pointer stays
+            // valid for the entire lifetime of the loaded core.
+            if (!_usernameString) {
+                _usernameString = NSUserName() ?: @"Provenance";
+            }
+            *(const char **)data = _usernameString.UTF8String;
             return true;
         }
         case RETRO_ENVIRONMENT_GET_LANGUAGE: {
@@ -1025,6 +1035,13 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (!_glContext || !_hwRenderRequested) return;
 
     [EAGLContext setCurrentContext:_glContext];
+
+    // Release any previously-allocated GL objects and IOSurface before recreating
+    // (handles resize / repeated setup calls without leaking resources).
+    if (_emuFBO) { glDeleteFramebuffers(1, &_emuFBO); _emuFBO = 0; }
+    if (_emuColorTex) { glDeleteTextures(1, &_emuColorTex); _emuColorTex = 0; }
+    if (_emuDepthRB) { glDeleteRenderbuffers(1, &_emuDepthRB); _emuDepthRB = 0; }
+    if (_ioSurface) { CFRelease(_ioSurface); _ioSurface = NULL; }
 
     // Create an IOSurface-backed texture so the render delegate can read the
     // frame without a GPU readback.

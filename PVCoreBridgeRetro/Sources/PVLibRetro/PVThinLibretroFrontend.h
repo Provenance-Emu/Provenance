@@ -185,7 +185,9 @@ __attribute__((weak_import))
 /// @returns YES on success.
 - (BOOL)startWithROMPath:(NSString *)romPath error:(NSError **)error;
 
-/// Stop emulation: calls `retro_unload_game`, `retro_deinit`, and `unloadCore`.
+/// Stop emulation: calls `retro_unload_game`, `retro_deinit`, and tears down the
+/// HW render context. Does NOT dlclose the core dylib — call `-unloadCore` separately
+/// (or let dealloc handle it) to fully unload the library.
 - (void)stopEmulation;
 
 /// Run one emulation frame (calls `retro_run()`).

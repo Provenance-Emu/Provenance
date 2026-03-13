@@ -25,7 +25,8 @@ public enum PVFeature: String, CaseIterable {
     case contentlessCores = "contentlessCores"
     /// Enables runtime scanning of Frameworks/ for bare libretro dylibs/frameworks
     /// and registers them through the thin PVThinLibretroFrontend. Disabled by default;
-    /// enable via UserDefaults debug override or features.json to test dynamic cores.
+    /// enable via the PVFeatureFlags debug-override UI (accessible on all build types;
+    /// hidden behind a cheat code on App Store builds).
     case dynamicLibretroScanner = "dynamicLibretroScanner"
 }
 
@@ -99,8 +100,8 @@ public struct FeatureFlag: Codable, Sendable {
 
     public static let dynamicLibretroScanner = FeatureFlag(
         enabled: false,
-        allowedAppTypes: ["standard", "lite"],
-        description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. Enable to test buildbot cores without RetroArch. Non-AppStore only."
+        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+        description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. Disabled by default; enable via debug override UI (hidden behind cheat code on App Store builds)."
     )
 }
 

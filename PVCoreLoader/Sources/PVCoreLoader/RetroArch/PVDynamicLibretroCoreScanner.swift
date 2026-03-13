@@ -84,20 +84,29 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
     // MARK: - Feature flag gate
     // ---------------------------------------------------------------------------
 
-    /// UserDefaults key that enables the dynamic scanner.
-    /// Mirror of the `PVFeature.dynamicLibretroScanner` raw value in PVFeatureFlags.
+    /// UserDefaults key used by `isFeatureEnabled` for direct boolean overrides
+    /// and as the key inside `PVFeatureFlagsDebugOverrides`.
+    /// Mirrors `PVFeature.dynamicLibretroScanner.rawValue` in PVFeatureFlags.
     public static let featureFlagKey = "dynamicLibretroScanner"
 
     /// Returns `true` when the dynamic scanner is enabled.
     ///
-    /// Toggle in debug builds via:
-    /// ```
-    /// UserDefaults.standard.set(true, forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
-    /// ```
-    /// Or from the PVFeatureFlags debug-override UI.
+    /// Checks (in order):
+    /// 1. `PVFeatureFlagsDebugOverrides` dict — set via the feature-flag debug UI
+    ///    (accessible on all build types; hidden behind cheat code on App Store).
+    /// 2. A direct UserDefaults boolean under `featureFlagKey` — for scripted or
+    ///    launch-argument overrides: `UserDefaults.standard.set(true, forKey: ...)`.
+    ///
     /// **Off by default** — enable to test buildbot-style libretro cores.
     public static var isFeatureEnabled: Bool {
-        UserDefaults.standard.bool(forKey: featureFlagKey)
+        // Check the PVFeatureFlags debug-override dict first (feature flag UI path).
+        // Stored as [String: Any] under "PVFeatureFlagsDebugOverrides".
+        if let overrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides"),
+           let value = overrides[featureFlagKey] as? Bool {
+            return value
+        }
+        // Fall back to a direct UserDefaults boolean (scripted / launch-arg override).
+        return UserDefaults.standard.bool(forKey: featureFlagKey)
     }
 
     // Thread-safe cache: identifier → DiscoveredLibretroCore
@@ -110,7 +119,7 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
     // MARK: - Scan
     // ---------------------------------------------------------------------------
 
-    /// Scans the app bundle's `Frameworks/` directory (and the main bundle root)
+    /// Scans the app bundle's `Frameworks/` directory and private frameworks directory
     /// for libretro dylibs that are NOT already listed in `knownIdentifiers`.
     ///
     /// Calls `retro_get_system_info` via `dlopen`/`dlsym` for each candidate.
@@ -192,7 +201,7 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
             let systems: [String] = core.validExtensions.flatMap { ext in
                 systemsMappings[ext.lowercased()] ?? []
             }
-            let uniqueSystems = Array(Set(systems))
+            let uniqueSystems = Array(Set(systems)).sorted()
 
             return EmulatorCoreInfoPlist(
                 identifier:        core.syntheticIdentifier,
