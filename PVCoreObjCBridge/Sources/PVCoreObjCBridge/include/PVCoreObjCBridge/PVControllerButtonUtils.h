@@ -211,4 +211,56 @@ PVResolveStartSelectShareButtons(GCController * _Nonnull controller,
     }
 }
 
+#pragma mark - Universal Analog Deadzone Helpers
+
+/**
+ Returns the user-configured universal analog deadzone (0.0–0.5).
+
+ Reads the "analogDeadzone" key from NSUserDefaults (set by PVSettings).
+ Returns 0.0 when the preference has not been written (i.e., the user has not
+ changed the default), meaning no additional deadzone is applied.
+ */
+static inline float PVAnalogDeadzone(void) {
+    return (float)[[NSUserDefaults standardUserDefaults] floatForKey:@"analogDeadzone"];
+}
+
+/**
+ Applies the universal analog deadzone to a normalized axis value in [-1, 1].
+
+ Values inside [-deadzone, deadzone] snap to 0.  Outside values are rescaled so
+ the output still spans the full [-1, 1] range (i.e. output is not compressed).
+
+ If the universal deadzone setting is 0 (the default), the value is returned
+ unchanged, imposing zero additional dead region on top of the hardware deadzone
+ already applied by the GameController framework.
+
+ @param value  Normalized axis value in [-1, 1].
+ @return       Deadzoned and rescaled axis value in [-1, 1].
+ */
+static inline float PVApplyAnalogDeadzone(float value) {
+    float dz = PVAnalogDeadzone();
+    if (dz <= 0.0f) { return value; }
+    float absVal = fabsf(value);
+    if (absVal <= dz) { return 0.0f; }
+    float sign = (value >= 0.0f) ? 1.0f : -1.0f;
+    return sign * (absVal - dz) / (1.0f - dz);
+}
+
+/**
+ Returns the effective digital-input threshold: the larger of @p fallback
+ (the core's own hardcoded threshold) and the universal analog deadzone.
+
+ Use this for cores that convert analog stick movement into digital button
+ presses.  When the user has configured a larger universal deadzone the
+ threshold grows to match, preventing partial stick deflections in the dead
+ region from triggering digital presses.
+
+ @param fallback  The core's own hardcoded digital conversion threshold.
+ @return          The effective threshold to use for analog→digital conversion.
+ */
+static inline float PVAnalogDigitalThreshold(float fallback) {
+    float dz = PVAnalogDeadzone();
+    return (dz > fallback) ? dz : fallback;
+}
+
 NS_ASSUME_NONNULL_END

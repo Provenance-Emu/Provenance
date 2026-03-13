@@ -152,6 +152,19 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - Future library actions: add a case to `LibraryAction`, a URL path to `AppRoute`, and a response in
   any interested view — no changes to `LibraryNavigator` core needed.
 
+### Analog Deadzone Coordination (March 2026)
+- Universal deadzone is stored in `Defaults[.analogDeadzone]` (Float 0–0.5) via PVSettings.
+- **On-screen analog sticks** (DeltaSkins): `DeltaSkinInputHandler.analogStickMoved` applies
+  deadzone via `Float.applyingDeadzone(_:)` before dispatching to the core.
+- **Physical controllers** (bridge files): use `PVApplyAnalogDeadzone(value)` for true analog cores,
+  `PVAnalogDigitalThreshold(fallback)` for digital-conversion thresholds. Both are inlines in
+  `PVCoreObjCBridge/PVControllerButtonUtils.h`.
+- **No-double-apply rule**: each core uses MAX(hardcoded, universal) — never additively stacks.
+  Cores that fully manage their own deadzone should conform to `CoreDeadzoneCapable` and return
+  `coreHandlesDeadzone = true`; the mode picker in settings controls whether this is respected.
+- `CoreDeadzoneMode` enum: `.auto` (respect CoreDeadzoneCapable), `.universal` (always apply),
+  `.coreManaged` (never apply universal).
+
 ---
 
 ## Project Conventions

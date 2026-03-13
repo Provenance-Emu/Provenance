@@ -65,7 +65,6 @@ public extension CoreOptional {
             switch option {
             case .bool(let d, _, _):             display = d
             case .range(let d, _, _, _):         display = d
-            case .rangef(let d, _, _, _):        display = d
             case .multi(let d, _, _):            display = d
             case .enumeration(let d, _, _, _):   display = d
             case .string(let d, _, _):           display = d
