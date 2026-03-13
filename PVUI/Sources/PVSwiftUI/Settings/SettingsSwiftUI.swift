@@ -1640,6 +1640,8 @@ private struct ControllerSection: View {
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
     @Default(.hapticFeedback) var hapticFeedback
     @Default(.controllerHapticIntensity) var controllerHapticIntensity
+    @Default(.analogDeadzone) var analogDeadzone
+    @Default(.coreDeadzoneMode) var coreDeadzoneMode
 
     var body: some View {
         Group {
@@ -1692,6 +1694,49 @@ private struct ControllerSection: View {
             #if !os(tvOS)
             OnScreenControllerSection()
             #endif
+            AnalogDeadzoneSection(analogDeadzone: $analogDeadzone, coreDeadzoneMode: $coreDeadzoneMode)
+        }
+    }
+}
+
+/// Settings section for analog-stick deadzone coordination.
+private struct AnalogDeadzoneSection: View {
+    @Binding var analogDeadzone: Float
+    @Binding var coreDeadzoneMode: Int
+
+    private let modeLabels = ["Auto", "Universal", "Core-Managed"]
+    private let modeDescriptions = [
+        "Skip universal if core has its own deadzone",
+        "Always apply universal deadzone",
+        "Let each core manage its own deadzone"
+    ]
+
+    var body: some View {
+        Section(header: Text("Analog Deadzone")) {
+            VStack(alignment: .leading, spacing: 4) {
+                SettingsRow(title: "Universal Deadzone",
+                            subtitle: "Dead region at center of analog sticks (0 = off). Applied on top of hardware deadzoning.",
+                            icon: .sfSymbol("circle.dashed"))
+                RetroWaveSlider(value: $analogDeadzone, in: 0.0...0.5, step: 0.01) {
+                    Text("Deadzone")
+                } minimumValueLabel: {
+                    Image(systemName: "circle")
+                } maximumValueLabel: {
+                    Image(systemName: "circle.dashed")
+                }
+            }
+            Picker("Core Deadzone Mode", selection: $coreDeadzoneMode) {
+                ForEach(0..<modeLabels.count, id: \.self) { index in
+                    VStack(alignment: .leading) {
+                        Text(modeLabels[index])
+                        Text(modeDescriptions[index])
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .tag(index)
+                }
+            }
+            .pickerStyle(.menu)
         }
     }
 }
