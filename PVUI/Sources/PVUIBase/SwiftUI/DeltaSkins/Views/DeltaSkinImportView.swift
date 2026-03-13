@@ -101,7 +101,7 @@ public struct DeltaSkinImportView: View {
             #if !os(tvOS)
             .fileImporter(
                 isPresented: $isShowingFilePicker,
-                allowedContentTypes: [UTType.deltaSkin],
+                allowedContentTypes: [UTType.deltaSkin, UTType.deltaAppSkin],
                 allowsMultipleSelection: false
             ) { result in
                 handleFileImport(result)

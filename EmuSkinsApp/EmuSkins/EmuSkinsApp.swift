@@ -28,7 +28,7 @@ struct EmuSkinsApp: App {
                     handleIncomingURL(url)
                 }
                 // Handle files opened from Finder/Files app
-                .onDrop(of: [UTType.deltaSkin], isTargeted: nil) { providers in
+                .onDrop(of: [UTType.deltaSkin, UTType.deltaAppSkin], isTargeted: nil) { providers in
                     Task {
                         await handleDroppedItems(providers)
                     }
