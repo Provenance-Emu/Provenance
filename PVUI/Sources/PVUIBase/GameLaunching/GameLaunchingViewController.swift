@@ -1186,7 +1186,19 @@ extension GameLaunchingViewController where Self: UIViewController {
     func openSaveState(_ saveState: PVSaveState) async {
 
         if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
-            //            try? RomDatabase.sharedInstance.writeTransaction {
+            // Check for core version mismatch before loading.
+            // Prefer presenting from the currently displayed emulator VC if possible.
+            let pvCore = saveState.core
+            let presenter = (gameVC as? UIViewController) ?? self
+            let shouldLoad = await SaveStateVersionChecker.confirmLoad(
+                saveState: saveState,
+                overrideCore: pvCore,
+                on: presenter
+            )
+            guard shouldLoad else {
+                return
+            }
+
             try? saveState.realm!.write {
                 saveState.lastOpened = Date()
             }

@@ -70,117 +70,112 @@ public extension PVEmulatorViewController {
             return false
         }
 
-        // Create a function to use later
-        let loadOk = {
-        }
-
-        let loadSave = Task.init { @MainActor () -> Bool in
-            try! realm.write {
-                state.lastOpened = Date()
-            }
-            if let url = state.file!.url, !FileManager.default.fileExists(atPath: url.path) {
-                return false
-            }
-
-            let completion = {
-                self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
-                self.enableControllerInput(false)
-            }
-
-            do {
-                try await self.core.loadState(fromFileAtPath: state.file!.url!.path)
-                completion()
-                return true
-            } catch {
-                let message = error.localizedDescription
-                ELOG("Save state load failed: \(message)")
-                // Offer the user a choice: attempt to reset, or continue with potentially
-                // corrupted emulator state. This is especially important for cores like PicoDrive
-                // where a failed load can leave the core in an inconsistent state.
-                // Note: retro_reset() is best-effort and may not fully recover from
-                // retro_unserialize() corruption for all cores.
-
-                // Guard against the case where the view is not in a window (e.g. dismissal timing).
-                // If we cannot present the alert, fall through and unpause rather than hanging.
-                guard self.view.window != nil else {
-                    WLOG("Cannot present save-state error alert — view not in window. Continuing.")
-                    completion()
-                    return false
-                }
-
-                let alertMessage =
-                    "Failed to load save state: \(message)\n\n" +
-                    "The emulator may be in an inconsistent state. " +
-                    "Reset Game will attempt to restore a playable state (best effort, " +
-                    "may not fully recover all cores)."
-
-                let resetGame = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
-                    var resumed = false
-
-                    func resumeOnce(_ value: Bool) {
-                        guard !resumed else { return }
-                        resumed = true
-                        continuation.resume(returning: value)
-                    }
-
-                    Task { @MainActor in
-                        // Fallback in case the alert fails to present or never calls its actions.
-                        try? await Task.sleep(nanoseconds: 5_000_000_000)
-                        if !resumed {
-                            WLOG("Save-state error alert did not complete in time. Continuing without reset.")
-                            completion()
-                            resumeOnce(false)
-                        }
-                    }
-
-                    self.presentMessage(
-                        alertMessage,
-                        title: "Save State Load Failed",
-                        source: self.view,
-                        secondaryActionTitle: "Continue",
-                        secondaryActionStyle: .cancel,
-                        secondaryCompletion: {
-                            completion()
-                            resumeOnce(false)
-                        },
-                        defaultActionTitle: "Reset Game",
-                        defaultActionStyle: .destructive,
-                        completion: {
-                            resumeOnce(true)
-                        }
-                    )
-                }
-                if resetGame {
-                    self.core.resetEmulation()
-                    completion()
-                }
-                return false
-            }
-        }
-
+        // Validate the save file exists before prompting the user
         if let url = state.file?.url, !FileManager.default.fileExists(atPath: url.path) {
             let message =
                 """
                 Save State is not valid
                 Please try another save state
                 """
-            presentWarning(message, source: self.view, completion: loadOk)
-            return await loadSave.value
+            presentWarning(message, source: self.view, completion: {})
+            return false
         }
-        if core.projectVersion != state.createdWithCoreVersion {
-            Task.detached { @MainActor [weak self] in
-                guard let self = self else { return }
-                let message =
-                """
-                Save state created with version \(state.createdWithCoreVersion ?? "nil") but current \(core.projectName) core is version \(core.projectVersion).
-                Save file may not load. Create a new save state to avoid this warning in the future.
-                """
-                presentWarning(message, source: self.view, completion: loadOk)
+
+        // Confirm version mismatch with user before loading.
+        // The load task is intentionally deferred until after the user confirms,
+        // so that cancelling the dialog reliably prevents the load.
+        let shouldLoad = await SaveStateVersionChecker.confirmLoad(
+            saveState: state,
+            overrideCore: core,
+            on: self
+        )
+        guard shouldLoad else {
+            return false
+        }
+
+        // Perform the actual load only after user confirmation
+        try! realm.write {
+            state.lastOpened = Date()
+        }
+
+        guard let stateURL = state.file?.url, FileManager.default.fileExists(atPath: stateURL.path) else {
+            return false
+        }
+
+        let completion = {
+            self.core.setPauseEmulation(false)
+            self.isShowingMenu = false
+            self.enableControllerInput(false)
+        }
+
+        do {
+            try await self.core.loadState(fromFileAtPath: stateURL.path)
+            completion()
+            return true
+        } catch {
+            let message = error.localizedDescription
+            ELOG("Save state load failed: \(message)")
+            // Offer the user a choice: attempt to reset, or continue with potentially
+            // corrupted emulator state. This is especially important for cores like PicoDrive
+            // where a failed load can leave the core in an inconsistent state.
+            // Note: retro_reset() is best-effort and may not fully recover from
+            // retro_unserialize() corruption for all cores.
+
+            // Guard against the case where the view is not in a window (e.g. dismissal timing).
+            // If we cannot present the alert, fall through and unpause rather than hanging.
+            guard self.view.window != nil else {
+                WLOG("Cannot present save-state error alert — view not in window. Continuing.")
+                completion()
+                return false
             }
-            return await loadSave.value
-        } else {
-            return await loadSave.value
+
+            let alertMessage =
+                "Failed to load save state: \(message)\n\n" +
+                "The emulator may be in an inconsistent state. " +
+                "Reset Game will attempt to restore a playable state (best effort, " +
+                "may not fully recover all cores)."
+
+            let resetGame = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+                var resumed = false
+
+                func resumeOnce(_ value: Bool) {
+                    guard !resumed else { return }
+                    resumed = true
+                    continuation.resume(returning: value)
+                }
+
+                Task { @MainActor in
+                    // Fallback in case the alert fails to present or never calls its actions.
+                    try? await Task.sleep(nanoseconds: 5_000_000_000)
+                    if !resumed {
+                        WLOG("Save-state error alert did not complete in time. Continuing without reset.")
+                        completion()
+                        resumeOnce(false)
+                    }
+                }
+
+                self.presentMessage(
+                    alertMessage,
+                    title: "Save State Load Failed",
+                    source: self.view,
+                    secondaryActionTitle: "Continue",
+                    secondaryActionStyle: .cancel,
+                    secondaryCompletion: {
+                        completion()
+                        resumeOnce(false)
+                    },
+                    defaultActionTitle: "Reset Game",
+                    defaultActionStyle: .destructive,
+                    completion: {
+                        resumeOnce(true)
+                    }
+                )
+            }
+            if resetGame {
+                self.core.resetEmulation()
+                completion()
+            }
+            return false
         }
     }
 }

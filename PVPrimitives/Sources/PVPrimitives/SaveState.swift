@@ -20,6 +20,14 @@ public protocol SaveStateInfoProvider {
     var isPinned: Bool { get }
     var isFavorite: Bool { get }
     var userDescription: String? { get }
+    /// The emulator core version that created this save state, if known.
+    var createdWithCoreVersion: String? { get }
+}
+
+public extension SaveStateInfoProvider {
+    /// Default implementation returns `nil` so that existing conformers are not
+    /// required to implement this property when adopting the protocol.
+    var createdWithCoreVersion: String? { nil }
 }
 
 public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable {
@@ -34,8 +42,10 @@ public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable 
     public let isPinned: Bool
     public let isFavorite: Bool
     public let userDescription: String?
+    /// The emulator core version that created this save state, if known.
+    public let createdWithCoreVersion: String?
 
-    public init(id: String, game: Game, core: Core, file: FileInfo, date: Date, lastOpened: Date?, image: LocalFile?, isAutosave: Bool, isPinned: Bool = false, isFavorite: Bool = false, userDescription: String? = nil) {
+    public init(id: String, game: Game, core: Core, file: FileInfo, date: Date, lastOpened: Date?, image: LocalFile?, isAutosave: Bool, isPinned: Bool = false, isFavorite: Bool = false, userDescription: String? = nil, createdWithCoreVersion: String? = nil) {
         self.id = id
         self.game = game
         self.core = core
@@ -47,8 +57,9 @@ public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable 
         self.isPinned = isPinned
         self.isFavorite = isFavorite
         self.userDescription = userDescription
+        self.createdWithCoreVersion = createdWithCoreVersion
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
@@ -62,7 +73,7 @@ public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable 
         self.isPinned = try container.decode(Bool.self, forKey: .isPinned)
         self.isFavorite = try container.decode(Bool.self, forKey: .isFavorite)
         self.userDescription = try container.decodeIfPresent(String.self, forKey: .userDescription)
-
+        self.createdWithCoreVersion = try container.decodeIfPresent(String.self, forKey: .createdWithCoreVersion)
     }
 }
 
