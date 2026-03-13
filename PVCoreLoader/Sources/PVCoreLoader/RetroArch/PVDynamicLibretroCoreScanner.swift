@@ -172,12 +172,15 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
                 continue
             }
 
-            discoveredStorage.withLock { cache in
-                if cache[id] == nil {
-                    cache[id] = core
-                    newCores.append(core)
-                    ILOG("DynamicLibretroScanner: discovered new core '\(core.libraryName)' v\(core.libraryVersion) → \(id)")
-                }
+            let insertedCore = discoveredStorage.withLock { cache -> DiscoveredLibretroCore? in
+                guard cache[id] == nil else { return nil }
+                cache[id] = core
+                return core
+            }
+
+            if let insertedCore {
+                newCores.append(insertedCore)
+                ILOG("DynamicLibretroScanner: discovered new core '\(insertedCore.libraryName)' v\(insertedCore.libraryVersion) → \(id)")
             }
         }
 
